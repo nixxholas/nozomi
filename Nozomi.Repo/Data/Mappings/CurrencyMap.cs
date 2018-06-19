@@ -16,6 +16,7 @@ namespace Nozomi.Repo.Data.Mappings
 
             entityTypeBuilder.Property(c => c.Abbrv).IsRequired();
             entityTypeBuilder.Property(c => c.Name).IsRequired();
+            entityTypeBuilder.Property(c => c.WalletTypeId).IsRequired(false);
 
             entityTypeBuilder.HasOne(c => c.CurrencyType).WithMany(ct => ct.Currencies)
                 .HasForeignKey(c => c.CurrencyTypeId).OnDelete(DeleteBehavior.Cascade);
