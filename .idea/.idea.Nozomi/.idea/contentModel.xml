@@ -5,6 +5,16 @@
     <e p="$PROJECT_DIR$" t="IncludeFlat">
       <e p="Nozomi.Data" t="IncludeRecursive">
         <e p="bin" t="ExcludeRecursive" />
+        <e p="CurrencyModels" t="Include">
+          <e p="ComponentType.cs" t="Include" />
+          <e p="Currency.cs" t="Include" />
+          <e p="CurrencyPair.cs" t="Include" />
+          <e p="CurrencyPairComponent.cs" t="Include" />
+          <e p="CurrencyPairType.cs" t="Include" />
+          <e p="CurrencyType.cs" t="Include" />
+          <e p="PartialCurrencyPair.cs" t="Include" />
+          <e p="Source.cs" t="Include" />
+        </e>
         <e p="Nozomi.Data.csproj" t="IncludeRecursive" />
         <e p="obj" t="ExcludeRecursive">
           <e p="Debug" t="Include">
@@ -14,11 +24,24 @@
           </e>
         </e>
         <e p="WebModels" t="Include">
-          <e p="RESTRequest.cs" t="Include" />
+          <e p="CurrencyPairRequest.cs" t="Include" />
+          <e p="CurrencyPairRequestComponent.cs" t="Include" />
+          <e p="CurrencyPairRequestComponentType.cs" t="Include" />
+          <e p="Request.cs" t="Include" />
+          <e p="RequestComponent.cs" t="Include" />
+          <e p="RequestProperty.cs" t="Include" />
+          <e p="RequestPropertyType.cs" t="Include" />
+          <e p="RequestType.cs" t="Include" />
         </e>
       </e>
       <e p="Nozomi.Repo" t="IncludeRecursive">
         <e p="bin" t="ExcludeRecursive" />
+        <e p="Data" t="Include">
+          <e p="Mappings" t="Include">
+            <e p="CurrencyMap.cs" t="Include" />
+          </e>
+          <e p="NozomiDbContext.cs" t="Include" />
+        </e>
         <e p="Nozomi.Repo.csproj" t="IncludeRecursive" />
         <e p="obj" t="ExcludeRecursive">
           <e p="Debug" t="Include">
