@@ -1,5 +1,4 @@
 ﻿using Counter.SDK.SharedModels;
-using CounterCore.Data.Models.CommonCurrencyModels;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;

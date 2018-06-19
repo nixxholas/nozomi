@@ -1,6 +1,7 @@
 ﻿using System;
 
 namespace Nozomi.Data.CurrencyModels
+{ 
     public enum CurrencyPairType
     {
         UNKNOWN = 0, // Not usable until set.

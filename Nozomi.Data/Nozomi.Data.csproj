@@ -3,6 +3,6 @@
     <TargetFramework>netcoreapp2.1</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="CounterCore.Data" Version="1.0.0" />
+    <PackageReference Include="Counter.SDK" Version="1.0.0" />
   </ItemGroup>
 </Project>
