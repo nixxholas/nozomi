@@ -11,7 +11,7 @@ namespace Nozomi.Repo.Data
     {
         public DbSet<Currency> Currencies { get; set; }
 
-        public NozomiDbContext(DbContextOptions<NozomiDbContext> options) : base(options)
+        public NozomiDbContext(DbContextOptions options) : base(options)
         {
         }
 
