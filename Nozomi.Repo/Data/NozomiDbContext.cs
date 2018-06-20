@@ -67,8 +67,8 @@ namespace Nozomi.Repo.Data
             AddTimestamps(userId);
             return await base.SaveChangesAsync(cancellationToken);
         }
-        
-        private void AddTimestamps(long userId = 0)
+
+        public void AddTimestamps(long userId = 0)
         {
             var entities = ChangeTracker.Entries().Where(x =>
                 x.Entity is BaseEntityModel && (x.State == EntityState.Added || x.State == EntityState.Modified));
