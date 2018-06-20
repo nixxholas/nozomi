@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Nozomi.Data.WebModels;
 
-namespace Nozomi.Repo.Data.Mappings.WebModel
+namespace Nozomi.Repo.Data.Mappings.WebModels
 {
     public class RequestMap
     {

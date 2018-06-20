@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Nozomi.Data.CurrencyModels;
 
-namespace Nozomi.Repo.Data.Mappings
+namespace Nozomi.Repo.Data.Mappings.CurrencyModels
 {
     public class CurrencyPairMap
     {

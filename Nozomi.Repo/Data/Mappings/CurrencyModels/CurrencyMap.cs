@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Nozomi.Repo.Data.Mappings
+namespace Nozomi.Repo.Data.Mappings.CurrencyModels
 {
     public class CurrencyMap
     {

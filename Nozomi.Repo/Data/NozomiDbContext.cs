@@ -1,9 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Nozomi.Data.CurrencyModels;
-using Nozomi.Repo.Data.Mappings;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Nozomi.Repo.Data.Mappings.CurrencyModels;
 
 namespace Nozomi.Repo.Data
 {
