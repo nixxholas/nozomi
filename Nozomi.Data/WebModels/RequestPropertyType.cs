@@ -11,5 +11,6 @@ namespace Nozomi.Data.WebModels
 
         // more to come
         SocketBody = 50,
+        SocketSubscription = 51
     }
 }
