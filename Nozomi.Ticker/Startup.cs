@@ -7,8 +7,10 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Nozomi.Repo.Data;
 
 namespace Nozomi.Ticker
 {
@@ -24,6 +26,27 @@ namespace Nozomi.Ticker
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            // Environment Inclusion
+            var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+
+            if (!string.IsNullOrEmpty(env) && !env.Equals("production", StringComparison.OrdinalIgnoreCase))
+            {
+                Console.WriteLine(@"Welcome to dev, your machine is named: " + Environment.MachineName);
+
+                services.AddDbContext<NozomiDbContext>(options =>
+                {
+                    options.UseNpgsql(Configuration.GetConnectionString(@Environment.MachineName + "/NozomiDb"));
+                });
+            }
+            else
+            {
+                // Database
+                services.AddDbContext<NozomiDbContext>(options =>
+                {
+                    options.UseNpgsql(Configuration.GetConnectionString("NozomiDb"));
+                });
+            }
+            
             services.Configure<CookiePolicyOptions>(options =>
             {
                 // This lambda determines whether user consent for non-essential cookies is needed for a given request.
