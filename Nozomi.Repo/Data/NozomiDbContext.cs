@@ -2,7 +2,11 @@
 using Nozomi.Data.CurrencyModels;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
+using Counter.SDK.SharedModels;
 using Nozomi.Data.WebModels;
 using Nozomi.Repo.Data.Mappings.CurrencyModels;
 using Nozomi.Repo.Data.Mappings.WebModels;
@@ -42,6 +46,50 @@ namespace Nozomi.Repo.Data
             var sourceMap = new SourceMap(modelBuilder.Entity<Source>());
             
             base.OnModelCreating(modelBuilder);
+        }
+        
+        public int SaveChanges(long userId = 0)
+        {
+            AddTimestamps(userId);
+            return base.SaveChanges();
+        }
+
+        public override async Task<int> SaveChangesAsync(
+            CancellationToken cancellationToken = default(CancellationToken))
+        {
+            AddTimestamps(0);
+            return await base.SaveChangesAsync(cancellationToken);
+        }
+
+        public async Task<int> SaveChangesAsync(long userId = 0,
+            CancellationToken cancellationToken = default(CancellationToken))
+        {
+            AddTimestamps(userId);
+            return await base.SaveChangesAsync(cancellationToken);
+        }
+        
+        private void AddTimestamps(long userId = 0)
+        {
+            var entities = ChangeTracker.Entries().Where(x =>
+                x.Entity is BaseEntityModel && (x.State == EntityState.Added || x.State == EntityState.Modified));
+
+            foreach (var entity in entities)
+            {
+                switch (entity.State)
+                {
+                    case EntityState.Added:
+                        ((BaseEntityModel) entity.Entity).CreatedAt = DateTime.UtcNow;
+                        ((BaseEntityModel) entity.Entity).CreatedBy = userId;
+                        break;
+                    case EntityState.Deleted:
+                        ((BaseEntityModel) entity.Entity).DeletedAt = DateTime.UtcNow;
+                        ((BaseEntityModel) entity.Entity).DeletedBy = userId;
+                        break;
+                }
+
+                ((BaseEntityModel) entity.Entity).ModifiedAt = DateTime.UtcNow;
+                ((BaseEntityModel) entity.Entity).ModifiedBy = userId;
+            }
         }
     }
 }
