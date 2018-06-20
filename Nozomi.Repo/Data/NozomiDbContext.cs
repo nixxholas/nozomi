@@ -13,7 +13,7 @@ using Nozomi.Repo.Data.Mappings.WebModels;
 
 namespace Nozomi.Repo.Data
 {
-    public class NozomiDbContext : DbContext
+    public class NozomiDbContext : DbContext, IDbContext
     {
         public DbSet<Currency> Currencies { get; set; }
         public DbSet<CurrencyPair> CurrencyPairs { get; set; }
