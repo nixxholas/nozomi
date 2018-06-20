@@ -32,10 +32,11 @@ namespace Nozomi.Ticker
             if (!string.IsNullOrEmpty(env) && !env.Equals("production", StringComparison.OrdinalIgnoreCase))
             {
                 Console.WriteLine(@"Welcome to dev, your machine is named: " + Environment.MachineName);
+                var str = Configuration.GetConnectionString("Local:" + @Environment.MachineName);
 
                 services.AddDbContext<NozomiDbContext>(options =>
                 {
-                    options.UseNpgsql(Configuration.GetConnectionString(@Environment.MachineName + "/NozomiDb"));
+                    options.UseNpgsql(Configuration.GetConnectionString("Local:" + @Environment.MachineName));
                 });
             }
             else
