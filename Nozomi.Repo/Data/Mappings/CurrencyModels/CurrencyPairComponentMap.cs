@@ -12,7 +12,7 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
             entityTypeBuilder.Property(cpc => cpc.Id).ValueGeneratedOnAdd();
 
             entityTypeBuilder.Property(cpc => cpc.QueryComponent).IsRequired();
-            entityTypeBuilder.Property(cpc => cpc.Value).IsRequired(false);
+            entityTypeBuilder.Property(cpc => cpc.Value);
 
             entityTypeBuilder.HasOne(cpc => cpc.CurrencyPair).WithMany(cp => cp.CurrencyPairComponents)
                 .HasForeignKey(cpc => cpc.CurrencyPairId).OnDelete(DeleteBehavior.Cascade);
