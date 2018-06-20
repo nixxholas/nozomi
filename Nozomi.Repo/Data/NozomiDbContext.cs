@@ -17,6 +17,7 @@ namespace Nozomi.Repo.Data
         public DbSet<CurrencyType> CurrencyTypes { get; set; }
         public DbSet<PartialCurrencyPair> PartialCurrencyPairs { get; set; }
         public DbSet<Request> Requests { get; set; }
+        public DbSet<RequestComponent> RequestComponents { get; set; }
         public DbSet<Source> Sources { get; set; }
 
         public NozomiDbContext(DbContextOptions options) : base(options)
@@ -31,6 +32,7 @@ namespace Nozomi.Repo.Data
             var currencyTypeMap = new CurrencyTypeMap(modelBuilder.Entity<CurrencyType>());
             var partialCurrencyPairMap = new PartialCurrencyPairMap(modelBuilder.Entity<PartialCurrencyPair>());
             var requestMap = new RequestMap(modelBuilder.Entity<Request>());
+            var requestComponentMap = new RequestComponentMap(modelBuilder.Entity<RequestComponent>());
             var sourceMap = new SourceMap(modelBuilder.Entity<Source>());
             
             base.OnModelCreating(modelBuilder);
