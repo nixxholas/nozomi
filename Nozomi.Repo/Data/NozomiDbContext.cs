@@ -10,6 +10,7 @@ namespace Nozomi.Repo.Data
     public class NozomiDbContext : DbContext
     {
         public DbSet<Currency> Currencies { get; set; }
+        public DbSet<CurrencyPair> CurrencyPairs { get; set; }
 
         public NozomiDbContext(DbContextOptions options) : base(options)
         {
@@ -18,7 +19,8 @@ namespace Nozomi.Repo.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             var currencyMap = new CurrencyMap(modelBuilder.Entity<Currency>());
-
+            var currencyPairMap = new CurrencyPairMap(modelBuilder.Entity<CurrencyPair>());
+            
             base.OnModelCreating(modelBuilder);
         }
     }
