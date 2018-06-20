@@ -1,10 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nozomi.Web", "Nozomi.Web\Nozomi.Web.csproj", "{BBEE616B-A441-4FD5-A894-973D978BB180}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nozomi.Data", "Nozomi.Data\Nozomi.Data.csproj", "{AA3857F1-A9AA-4156-A8D5-A10971C731CA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nozomi.Repo", "Nozomi.Repo\Nozomi.Repo.csproj", "{CB82BD49-6D8E-4808-8208-375B9AAA776C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nozomi.Service", "Nozomi.Service\Nozomi.Service.csproj", "{66206D94-625E-4EC6-B2BA-2063C9CA7E25}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -24,5 +27,9 @@ Global
 		{CB82BD49-6D8E-4808-8208-375B9AAA776C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CB82BD49-6D8E-4808-8208-375B9AAA776C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CB82BD49-6D8E-4808-8208-375B9AAA776C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{66206D94-625E-4EC6-B2BA-2063C9CA7E25}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{66206D94-625E-4EC6-B2BA-2063C9CA7E25}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{66206D94-625E-4EC6-B2BA-2063C9CA7E25}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{66206D94-625E-4EC6-B2BA-2063C9CA7E25}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
