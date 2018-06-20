@@ -7,7 +7,7 @@ namespace Nozomi.Data.WebModels
     public class CurrencyPairRequestComponent : RequestComponent
     {
         public new CurrencyPairRequest Request { get; set; }
-        
-        public CurrencyPairRequestComponentType ComponentType { get; set; }
+
+        public CurrencyPairRequestComponentType ComponentType { get; set; } = CurrencyPairRequestComponentType.UNKNOWN;
     }
 }
