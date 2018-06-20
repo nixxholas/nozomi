@@ -39,6 +39,8 @@
         <e p="Data" t="Include">
           <e p="Mappings" t="Include">
             <e p="CurrencyMap.cs" t="Include" />
+            <e p="CurrencyPairComponentMap.cs" t="Include" />
+            <e p="CurrencyPairMap.cs" t="Include" />
           </e>
           <e p="NozomiDbContext.cs" t="Include" />
         </e>
@@ -47,6 +49,17 @@
           <e p="Debug" t="Include">
             <e p="netcoreapp2.1" t="Include">
               <e p="Nozomi.Repo.AssemblyInfo.cs" t="Include" />
+            </e>
+          </e>
+        </e>
+      </e>
+      <e p="Nozomi.Service" t="IncludeRecursive">
+        <e p="bin" t="ExcludeRecursive" />
+        <e p="Nozomi.Service.csproj" t="IncludeRecursive" />
+        <e p="obj" t="ExcludeRecursive">
+          <e p="Debug" t="Include">
+            <e p="netcoreapp2.1" t="Include">
+              <e p="Nozomi.Service.AssemblyInfo.cs" t="Include" />
             </e>
           </e>
         </e>
