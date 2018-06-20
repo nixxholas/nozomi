@@ -10,7 +10,7 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
         {
             entityTypeBuilder.HasKey(rc => rc.Id).HasName("RequestComponent_PK_Id");
             entityTypeBuilder.Property(rc => rc.Id).ValueGeneratedOnAdd();
-
+            
             entityTypeBuilder.Property(rc => rc.QueryComponent).IsRequired(false);
             entityTypeBuilder.Property(rc => rc.Value).IsRequired(false);
 

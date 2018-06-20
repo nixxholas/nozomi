@@ -11,6 +11,7 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
             entityTypeBuilder.HasKey(r => r.Id).HasName("Request_PK_Id");
             entityTypeBuilder.Property(r => r.Id).ValueGeneratedOnAdd();
 
+            entityTypeBuilder.HasAlternateKey(r => r.Guid).HasName("Request_AK_Guid");
             entityTypeBuilder.Property(r => r.Guid).ValueGeneratedOnAdd();
 
             // We need this to determine the type of request to execute with
