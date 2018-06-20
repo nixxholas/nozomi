@@ -8,4 +8,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Nozomi.Service\Nozomi.Service.csproj" />
+  </ItemGroup>
 </Project>
