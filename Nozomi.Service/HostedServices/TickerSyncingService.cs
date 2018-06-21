@@ -11,6 +11,7 @@ using Counter.SDK.Utils;
 using Counter.SDK.Utils.Numerics;
 using Nozomi.Data.CurrencyModels;
 using Nozomi.Service.HostedServices.Interfaces;
+using Nozomi.Service.Services.Interfaces;
 
 namespace Nozomi.Service.HostedServices
 {
