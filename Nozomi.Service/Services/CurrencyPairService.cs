@@ -142,8 +142,7 @@ namespace Nozomi.Service.Services
             return _unitOfWork.GetRepository<CurrencyPair>()
                 .GetQueryable()
                 .Include(cp => cp.CurrencyPairComponents)
-                .Where(cp => cp.DeletedAt == null)
-                .Where(cp => cp.IsEnabled);
+                .Where(cp => cp.DeletedAt == null && cp.IsEnabled);
         }
 
         public IDictionary<string, IDictionary<long, long>> GetCurrencyPairSources()
