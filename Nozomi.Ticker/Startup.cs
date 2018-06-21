@@ -11,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Nozomi.Repo.Data;
+using Nozomi.Service.Hubs;
 
 namespace Nozomi.Ticker
 {
@@ -55,6 +56,7 @@ namespace Nozomi.Ticker
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
+            services.AddSignalR();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
@@ -75,6 +77,11 @@ namespace Nozomi.Ticker
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseCookiePolicy();
+
+            app.UseSignalR(route =>
+            {
+                route.MapHub<TickerHub>("/ticker");
+            });
 
             app.UseMvc(routes =>
             {
