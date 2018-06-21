@@ -1,6 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
+    <PackOnBuild>true</PackOnBuild>
+    <PackageId>CN-NOZ-DATA</PackageId>
+    <PackageVersion>0.0.1</PackageVersion>
+    <Authors>Nicholas Chen</Authors>
+    <Description>The Data Layer for the Nozomi Ticker Project.</Description>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Counter.SDK" Version="1.0.0" />
