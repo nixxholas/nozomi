@@ -18,6 +18,8 @@ using Nozomi.Service.HostedServices;
 using Nozomi.Service.Hubs;
 using Nozomi.Service.Services;
 using Nozomi.Service.Services.Interfaces;
+using Nozomi.Service.Services.Requests;
+using Nozomi.Service.Services.Requests.Interfaces;
 using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 
 namespace Nozomi.Ticker
@@ -71,6 +73,7 @@ namespace Nozomi.Ticker
             services.AddTransient<ICurrencyPairService, CurrencyPairService>();
             services.AddTransient<ICurrencyPairComponentService, CurrencyPairComponentService>();
             services.AddTransient<ICurrencyPairRequestService, CurrencyPairRequestService>();
+            services.AddTransient<IRequestService, RequestService>();
             services.AddTransient<ISourceService, SourceService>();
             
             services.AddSingleton<IHostedService, RequestSyncingService>();
