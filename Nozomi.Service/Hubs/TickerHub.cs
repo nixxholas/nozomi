@@ -5,14 +5,17 @@ using Microsoft.AspNetCore.SignalR;
 using Nozomi.Data;
 using Nozomi.Data.CurrencyModels;
 using Nozomi.Data.HubModels.Interfaces;
+using Nozomi.Service.Services.Interfaces;
 
 namespace Nozomi.Service.Hubs
 {
     public class TickerHub : Hub, ITickerHubClient
     {
-        public TickerHub()
+        private readonly ICurrencyPairService _cpService;
+        
+        public TickerHub(ICurrencyPairService cpService)
         {
-            
+            _cpService = cpService;
         }
         
         // We can use this to return a payload
@@ -25,7 +28,7 @@ namespace Nozomi.Service.Hubs
             // drop the clients after awhile.
             var channel = Channel.CreateUnbounded<NozomiResult<CurrencyPair>>();
 
-            _ = WriteToChannel(channel.Writer, null); // Write all Currency Pairs to the channel
+            _ = WriteToChannel(channel.Writer, _cpService.GetAllActive()); // Write all Currency Pairs to the channel
 
             // Return the reader
             return channel.Reader;
