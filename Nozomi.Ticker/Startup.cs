@@ -10,8 +10,14 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Nozomi.Repo.Data;
+using Nozomi.Repo.Repositories;
+using Nozomi.Service.HostedServices;
 using Nozomi.Service.Hubs;
+using Nozomi.Service.Services;
+using Nozomi.Service.Services.Interfaces;
+using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 
 namespace Nozomi.Ticker
 {
@@ -55,7 +61,14 @@ namespace Nozomi.Ticker
                 options.CheckConsentNeeded = context => true;
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
+            
+            // Scopes
+            services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 
+            services.AddTransient<ICurrencyPairService, CurrencyPairService>();
+            
+            services.AddSingleton<IHostedService, RequestSyncingService>();
+            
             services.AddSignalR()
                 .AddMessagePackProtocol();
 
