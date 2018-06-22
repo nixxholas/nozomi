@@ -13,5 +13,6 @@
     <PackageReference Include="Counter.SDK" Version="1.0.0" />
     <PackageReference Include="NuGet.Build.Packaging" Version="0.2.2" />
     <PackageReference Include="Microsoft.NETCore.App" Version="2.1.1" />
+    <PackageReference Include="System.Threading.Channels" Version="4.5.0" />
   </ItemGroup>
 </Project>
