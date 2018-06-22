@@ -151,7 +151,18 @@ namespace Nozomi.Service.Services.Requests
 
         public IEnumerable<Request> GetAll(bool track = false)
         {
-            throw new System.NotImplementedException();
+            if (!track)
+            {
+                return _unitOfWork.GetRepository<Request>()
+                    .GetQueryable()
+                    .AsNoTracking();
+            }
+
+            return _unitOfWork.GetRepository<Request>()
+                .GetQueryable()
+                .AsNoTracking()
+                .Include(r => r.RequestComponents)
+                .Include(r => r.RequestProperties);
         }
 
         public IEnumerable<dynamic> GetAllObsc(bool track = false)
