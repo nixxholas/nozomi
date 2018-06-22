@@ -56,7 +56,8 @@ namespace Nozomi.Ticker
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
-            services.AddSignalR();
+            services.AddSignalR()
+                .AddMessagePackProtocol();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
