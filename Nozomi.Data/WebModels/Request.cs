@@ -20,5 +20,11 @@ namespace Nozomi.Data.WebModels
 
         public ICollection<RequestComponent> RequestComponents { get; set; }
         public ICollection<RequestProperty> RequestProperties { get; set; }
+
+        public bool IsValid()
+        {
+            return (!string.IsNullOrEmpty(DataPath) && !string.IsNullOrWhiteSpace(DataPath)
+                    && RequestType >= 0);
+        }
     }
 }
