@@ -145,6 +145,18 @@ namespace Nozomi.Service.Services.Requests
                             createdBy = rc.CreatedBy,
                             modifiedAt = rc.ModifiedAt,
                             modifiedBy = rc.ModifiedBy
+                        }),
+                    requestProperties = r.RequestProperties
+                        .Select(rp => new
+                        {
+                            id = rp.Id,
+                            requestPropertyType = rp.RequestPropertyType,
+                            key = rp.Key,
+                            value = rp.Value,
+                            createdAt = rp.CreatedAt,
+                            createdBy = rp.CreatedBy,
+                            modifiedAt = rp.ModifiedAt,
+                            modifiedBy = rp.ModifiedBy
                         })
                 });
         }
