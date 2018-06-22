@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data.WebModels;
@@ -18,7 +19,7 @@ namespace Nozomi.Service.Services.Requests
         public long Create(Request req, long userId = 0)
         {
             // Safetynet
-            if (req != null && req.IsValid() && userId >= 0)
+            if (req != null && req.IsValid())
             {
                 _unitOfWork.GetRepository<Request>().Add(req);
                 _unitOfWork.Commit(userId);
@@ -32,7 +33,7 @@ namespace Nozomi.Service.Services.Requests
         public bool Update(Request req, long userId = 0)
         {
             // Safetynet
-            if (req == null || !req.IsValid() || userId < 0) return false;
+            if (req == null || !req.IsValid()) return false;
             
             var reqToUpd = _unitOfWork.GetRepository<Request>()
                 .Get(r => r.Id.Equals(req.Id) && r.DeletedAt == null)
@@ -53,7 +54,24 @@ namespace Nozomi.Service.Services.Requests
 
         public bool SoftDelete(long reqId, long userId = 0)
         {
-            throw new System.NotImplementedException();
+            if (reqId > 0)
+            {
+                var reqToDel = _unitOfWork.GetRepository<Request>()
+                    .Get(r => r.Id.Equals(reqId) && r.DeletedAt == null)
+                    .SingleOrDefault();
+
+                if (reqToDel != null)
+                {
+                    reqToDel.DeletedAt = DateTime.UtcNow;
+                    reqToDel.DeletedBy = userId;
+
+                    _unitOfWork.Commit(userId);
+
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         public IEnumerable<Request> GetAllActive(bool track = false)
