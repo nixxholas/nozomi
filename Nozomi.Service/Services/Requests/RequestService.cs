@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data.WebModels;
 using Nozomi.Repo.Data;
@@ -76,7 +77,20 @@ namespace Nozomi.Service.Services.Requests
 
         public IEnumerable<Request> GetAllActive(bool track = false)
         {
-            throw new System.NotImplementedException();
+            if (!track)
+            {
+                return _unitOfWork.GetRepository<Request>()
+                    .GetQueryable()
+                    .AsNoTracking()
+                    .Where(r => r.DeletedAt == null && r.IsEnabled);
+            }
+
+            return _unitOfWork.GetRepository<Request>()
+                .GetQueryable()
+                .AsNoTracking()
+                .Where(r => r.DeletedAt == null && r.IsEnabled)
+                .Include(r => r.RequestComponents)
+                .Include(r => r.RequestProperties);
         }
 
         public IEnumerable<dynamic> GetAllActiveObsc(bool track = false)
