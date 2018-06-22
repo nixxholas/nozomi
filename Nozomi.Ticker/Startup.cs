@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using CounterCore.Service.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -65,7 +66,12 @@ namespace Nozomi.Ticker
             // Scopes
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 
+            // Service Injections
+            services.AddTransient<ICurrencyService, CurrencyService>();
             services.AddTransient<ICurrencyPairService, CurrencyPairService>();
+            services.AddTransient<ICurrencyPairComponentService, CurrencyPairComponentService>();
+            services.AddTransient<ICurrencyPairRequestService, CurrencyPairRequestService>();
+            services.AddTransient<ISourceService, SourceService>();
             
             services.AddSingleton<IHostedService, RequestSyncingService>();
             
