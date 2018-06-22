@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data.WebModels;
 using Nozomi.Repo.Data;
@@ -30,7 +31,24 @@ namespace Nozomi.Service.Services.Requests
 
         public bool Update(Request req, long userId = 0)
         {
-            throw new System.NotImplementedException();
+            // Safetynet
+            if (req == null || !req.IsValid() || userId < 0) return false;
+            
+            var reqToUpd = _unitOfWork.GetRepository<Request>()
+                .Get(r => r.Id.Equals(req.Id) && r.DeletedAt == null)
+                .SingleOrDefault();
+
+            if (reqToUpd == null) return false;
+                
+            req.DataPath = req.DataPath;
+            req.RequestType = req.RequestType;
+            req.IsEnabled = req.IsEnabled;
+                
+            _unitOfWork.GetRepository<Request>().Update(reqToUpd);
+            _unitOfWork.Commit(userId);
+
+            return true;
+
         }
 
         public bool SoftDelete(long reqId, long userId = 0)
