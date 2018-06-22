@@ -95,7 +95,58 @@ namespace Nozomi.Service.Services.Requests
 
         public IEnumerable<dynamic> GetAllActiveObsc(bool track = false)
         {
-            throw new System.NotImplementedException();
+            if (!track)
+            {
+                return _unitOfWork.GetRepository<Request>()
+                    .GetQueryable()
+                    .AsNoTracking()
+                    .Where(r => r.DeletedAt == null && r.IsEnabled)
+                    .Select(r => new
+                    {
+                        id = r.Id,
+                        dataPath = r.DataPath,
+                        guid = r.Guid,
+                        requestType = r.RequestType,
+                        createdAt = r.CreatedAt,
+                        createdBy = r.CreatedBy,
+                        modifiedAt = r.ModifiedAt,
+                        modifiedBy = r.ModifiedBy
+                    });
+            }
+
+            return _unitOfWork.GetRepository<Request>()
+                .GetQueryable()
+                .AsNoTracking()
+                .Where(r => r.DeletedAt == null && r.IsEnabled)
+                .Include(r => r.RequestComponents)
+                .Include(r => r.RequestProperties)
+                .Where(r => r.RequestComponents
+                    .Any(rc => rc.DeletedAt == null && rc.IsEnabled))
+                .Where(r => r.RequestProperties
+                    .Any(rp => rp.DeletedAt == null & rp.IsEnabled))
+                .Select(r => new
+                {
+                    id = r.Id,
+                    dataPath = r.DataPath,
+                    guid = r.Guid,
+                    requestType = r.RequestType,
+                    createdAt = r.CreatedAt,
+                    createdBy = r.CreatedBy,
+                    modifiedAt = r.ModifiedAt,
+                    modifiedBy = r.ModifiedBy,
+                    requestComponents = r.RequestComponents
+                        .Select(rc => new
+                        {
+                            id = rc.Id,
+                            queryComponent = rc.QueryComponent,
+                            value = rc.Value,
+                            isEnabled = rc.IsEnabled,
+                            createdAt = rc.CreatedAt,
+                            createdBy = rc.CreatedBy,
+                            modifiedAt = rc.ModifiedAt,
+                            modifiedBy = rc.ModifiedBy
+                        })
+                });
         }
 
         public IEnumerable<Request> GetAll(bool track = false)
