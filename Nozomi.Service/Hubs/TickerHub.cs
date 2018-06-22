@@ -30,7 +30,7 @@ namespace Nozomi.Service.Hubs
             // Return the reader
             return channel.Reader;
 
-            // This is a nested function, allowing us to write repeated methods
+            // This is a nested method, allowing us to write repeated methods
             // with the same semantic conventions while maintaining conformity.
             async Task WriteToChannel(ChannelWriter<NozomiResult<CurrencyPair>> writer, 
                 IEnumerable<CurrencyPair> currencyPairs)
