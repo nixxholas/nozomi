@@ -76,7 +76,7 @@ namespace Nozomi.Ticker
             services.AddTransient<IRequestService, RequestService>();
             services.AddTransient<ISourceService, SourceService>();
             
-            services.AddSingleton<IHostedService, RequestSyncingService>();
+            
             
             services.AddSignalR()
                 .AddMessagePackProtocol();
