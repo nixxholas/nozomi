@@ -167,7 +167,75 @@ namespace Nozomi.Service.Services.Requests
 
         public IEnumerable<dynamic> GetAllObsc(bool track = false)
         {
-            throw new System.NotImplementedException();
+            if (!track)
+            {
+                return _unitOfWork.GetRepository<Request>()
+                    .GetQueryable()
+                    .AsNoTracking()
+                    .Select(r => new
+                    {
+                        id = r.Id,
+                        dataPath = r.DataPath,
+                        guid = r.Guid,
+                        requestType = r.RequestType,
+                        isEnabled = r.IsEnabled,
+                        createdAt = r.CreatedAt,
+                        createdBy = r.CreatedBy,
+                        modifiedAt = r.ModifiedAt,
+                        modifiedBy = r.ModifiedBy,
+                        deletedAt = r.DeletedAt,
+                        deletedBy = r.DeletedBy
+                    });
+            }
+
+            return _unitOfWork.GetRepository<Request>()
+                .GetQueryable()
+                .AsNoTracking()
+                .Include(r => r.RequestComponents)
+                .Include(r => r.RequestProperties)
+                .Select(r => new
+                {
+                    id = r.Id,
+                    dataPath = r.DataPath,
+                    guid = r.Guid,
+                    requestType = r.RequestType,
+                    isEnabled = r.IsEnabled,
+                    createdAt = r.CreatedAt,
+                    createdBy = r.CreatedBy,
+                    modifiedAt = r.ModifiedAt,
+                    modifiedBy = r.ModifiedBy,
+                    deletedAt = r.DeletedAt,
+                    deletedBy = r.DeletedBy,
+                    requestComponents = r.RequestComponents
+                        .Select(rc => new
+                        {
+                            id = rc.Id,
+                            queryComponent = rc.QueryComponent,
+                            value = rc.Value,
+                            isEnabled = rc.IsEnabled,
+                            createdAt = rc.CreatedAt,
+                            createdBy = rc.CreatedBy,
+                            modifiedAt = rc.ModifiedAt,
+                            modifiedBy = rc.ModifiedBy,
+                            deletedAt = rc.DeletedAt,
+                            deletedBy = rc.DeletedBy
+                        }),
+                    requestProperties = r.RequestProperties
+                        .Select(rp => new
+                        {
+                            id = rp.Id,
+                            requestPropertyType = rp.RequestPropertyType,
+                            key = rp.Key,
+                            value = rp.Value,
+                            isEnabled = rp.IsEnabled,
+                            createdAt = rp.CreatedAt,
+                            createdBy = rp.CreatedBy,
+                            modifiedAt = rp.ModifiedAt,
+                            modifiedBy = rp.ModifiedBy,
+                            deletedAt = rp.DeletedAt,
+                            deletedBy = rp.DeletedBy
+                        })
+                });
         }
     }
 }
