@@ -12,6 +12,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Nozomi.Data.WebModels.LoggingModels;
 using Nozomi.Repo.Data;
 using Nozomi.Repo.Repositories;
 using Nozomi.Service.HostedServices;
@@ -76,6 +77,7 @@ namespace Nozomi.Ticker
             services.AddTransient<ICurrencyPairComponentService, CurrencyPairComponentService>();
             services.AddTransient<ICurrencyPairRequestService, CurrencyPairRequestService>();
             services.AddTransient<IRequestService, RequestService>();
+            services.AddTransient<IRequestLogService, RequestLogService>();
             services.AddTransient<ISourceService, SourceService>();
             
             // Hosted Services
