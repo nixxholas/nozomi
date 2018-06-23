@@ -132,7 +132,19 @@ namespace Nozomi.Service.Services.Requests
 
         public IEnumerable<RequestLog> GetAll(Expression<Func<RequestLog, bool>> predicate, bool track = false)
         {
-            throw new NotImplementedException();
+            if (!track)
+            {
+                return _unitOfWork.GetRepository<RequestLog>()
+                    .GetQueryable()
+                    .AsNoTracking()
+                    .Where(predicate);
+            }
+
+            return _unitOfWork.GetRepository<RequestLog>()
+                .GetQueryable()
+                .AsNoTracking()
+                .Include(rl => rl.Request)
+                .Where(predicate);
         }
     }
 }
