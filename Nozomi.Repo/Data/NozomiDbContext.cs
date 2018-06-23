@@ -8,8 +8,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using Counter.SDK.SharedModels;
 using Nozomi.Data.WebModels;
+using Nozomi.Data.WebModels.LoggingModels;
 using Nozomi.Repo.Data.Mappings.CurrencyModels;
 using Nozomi.Repo.Data.Mappings.WebModels;
+using Nozomi.Repo.Data.Mappings.WebModels.LoggingModels;
 
 namespace Nozomi.Repo.Data
 {
@@ -24,6 +26,7 @@ namespace Nozomi.Repo.Data
         public DbSet<PartialCurrencyPair> PartialCurrencyPairs { get; set; }
         public DbSet<Request> Requests { get; set; }
         public DbSet<RequestComponent> RequestComponents { get; set; }
+        public DbSet<RequestLog> RequestLogs { get; set; }
         public DbSet<RequestProperty> RequestProperties { get; set; }
         public DbSet<Source> Sources { get; set; }
 
@@ -42,6 +45,7 @@ namespace Nozomi.Repo.Data
             var partialCurrencyPairMap = new PartialCurrencyPairMap(modelBuilder.Entity<PartialCurrencyPair>());
             var requestMap = new RequestMap(modelBuilder.Entity<Request>());
             var requestComponentMap = new RequestComponentMap(modelBuilder.Entity<RequestComponent>());
+            var requestLogMap = new RequestLogMap(modelBuilder.Entity<RequestLog>());
             var requestPropertyMap = new RequestPropertyMap(modelBuilder.Entity<RequestProperty>());
             var sourceMap = new SourceMap(modelBuilder.Entity<Source>());
             
