@@ -15,6 +15,8 @@ using Microsoft.Extensions.Hosting;
 using Nozomi.Repo.Data;
 using Nozomi.Repo.Repositories;
 using Nozomi.Service.HostedServices;
+using Nozomi.Service.HostedServices.RequestTypes;
+using Nozomi.Service.HostedServices.RequestTypes.Interfaces;
 using Nozomi.Service.Hubs;
 using Nozomi.Service.Services;
 using Nozomi.Service.Services.Interfaces;
@@ -76,7 +78,8 @@ namespace Nozomi.Ticker
             services.AddTransient<IRequestService, RequestService>();
             services.AddTransient<ISourceService, SourceService>();
             
-            
+            // Hosted Services
+            services.AddTransient<IHttpGetSyncingService, HttpGetSyncingService>();
             
             services.AddSignalR()
                 .AddMessagePackProtocol();
