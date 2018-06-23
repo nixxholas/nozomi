@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data.WebModels.LoggingModels;
 using Nozomi.Repo.Data;
@@ -60,7 +61,58 @@ namespace Nozomi.Service.Services.Requests
 
         public IEnumerable<dynamic> GetAllObsc(bool track = false)
         {
-            throw new NotImplementedException();
+            if (!track)
+            {
+                return _unitOfWork.GetRepository<RequestLog>()
+                    .GetQueryable()
+                    .AsNoTracking()
+                    .Select(rl => new
+                    {
+                        id = rl.Id,
+                        rawPayload = rl.RawPayload,
+                        requestId = rl.RequestId,
+                        type = rl.Type,
+                        isEnabled = rl.IsEnabled,
+                        createdAt = rl.CreatedAt,
+                        createdBy = rl.CreatedBy,
+                        modifiedAt = rl.ModifiedAt,
+                        modifiedBy = rl.ModifiedBy,
+                        deletedAt = rl.DeletedAt,
+                        deletedBy = rl.DeletedBy
+                    });
+            }
+
+            return _unitOfWork.GetRepository<RequestLog>()
+                .GetQueryable()
+                .AsNoTracking()
+                .Include(rl => rl.Request)
+                .Select(rl => new
+                {
+                    id = rl.Id,
+                    rawPayload = rl.RawPayload,
+                    requestId = rl.RequestId,
+                    request = new
+                    {
+                        dataPath = rl.Request.DataPath,
+                        guid = rl.Request.Guid,
+                        requestType = rl.Request.RequestType,
+                        isEnabled = rl.Request.IsEnabled,
+                        createdAt = rl.Request.CreatedAt,
+                        createdBy = rl.Request.CreatedBy,
+                        modifiedAt = rl.Request.ModifiedAt,
+                        modifiedBy = rl.Request.ModifiedBy,
+                        deletedAt = rl.Request.DeletedAt,
+                        deletedBy = rl.Request.DeletedBy
+                    },
+                    type = rl.Type,
+                    isEnabled = rl.IsEnabled,
+                    createdAt = rl.CreatedAt,
+                    createdBy = rl.CreatedBy,
+                    modifiedAt = rl.ModifiedAt,
+                    modifiedBy = rl.ModifiedBy,
+                    deletedAt = rl.DeletedAt,
+                    deletedBy = rl.DeletedBy
+                });
         }
 
         public IEnumerable<RequestLog> GetAll(bool track = false)
