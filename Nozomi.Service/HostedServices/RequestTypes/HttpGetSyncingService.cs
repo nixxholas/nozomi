@@ -38,6 +38,25 @@ namespace Nozomi.Service.HostedServices.RequestTypes
 
             while (!stoppingToken.IsCancellationRequested)
             {
+                // We will need to resync the Request collection to make sure we're polling only the ones we want to poll
+                var getBasedRequests = _requestService.GetAll(r => r.IsEnabled && r.DeletedAt == null
+                                                                               && r.RequestType.Equals(RequestType
+                                                                                   .HttpGet), true);
+
+                // Iterate the requests
+                // NOTE: Let's not call a parallel loop since HttpClients might tend to result in memory leaks.
+                foreach (var rq in getBasedRequests)
+                {
+                    // Process the request
+                    if (Process(rq))
+                    {
+                        // Since its successful
+                    }
+                    else
+                    {
+                        // Since its unsuccessful
+                    }
+                }
             }
 
             _logger.LogWarning("HttpGetSyncingService background task is stopping.");
