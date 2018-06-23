@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data.WebModels;
@@ -175,6 +176,24 @@ namespace Nozomi.Service.Services.Requests
                 .AsNoTracking()
                 .Include(r => r.RequestComponents)
                 .Include(r => r.RequestProperties);
+        }
+
+        public IEnumerable<Request> GetAll(Expression<Func<Request, bool>> predicate, bool track = false)
+        {
+            if (!track)
+            {
+                return _unitOfWork.GetRepository<Request>()
+                    .GetQueryable()
+                    .Where(predicate)
+                    .AsNoTracking();
+            }
+
+            return _unitOfWork.GetRepository<Request>()
+                .GetQueryable()
+                .AsNoTracking()
+                .Include(r => r.RequestComponents)
+                .Include(r => r.RequestProperties)
+                .Where(predicate);
         }
 
         public IEnumerable<dynamic> GetAllObsc(bool track = false)

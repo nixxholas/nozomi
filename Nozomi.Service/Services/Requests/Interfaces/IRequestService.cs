@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq.Expressions;
 using Nozomi.Data.WebModels;
 
 namespace Nozomi.Service.Services.Requests.Interfaces
@@ -16,6 +18,8 @@ namespace Nozomi.Service.Services.Requests.Interfaces
         IEnumerable<dynamic> GetAllActiveObsc(bool track = false);
 
         IEnumerable<Request> GetAll(bool track = false);
+
+        IEnumerable<Request> GetAll(Expression<Func<Request, bool>> predicate, bool track = false);
 
         IEnumerable<dynamic> GetAllObsc(bool track = false);
     } 
