@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data.WebModels.LoggingModels;
@@ -31,7 +32,30 @@ namespace Nozomi.Service.Services.Requests
 
         public bool Update(RequestLog rLog, long userId = 0)
         {
-            throw new NotImplementedException();
+            if (rLog != null)
+            {
+                var rLogToUpd = _unitOfWork.GetRepository<RequestLog>()
+                    .Get(rl => rl.Id.Equals(rLog.Id) && rl.DeletedAt == null)
+                    .SingleOrDefault();
+
+                if (rLogToUpd != null)
+                {
+                    // Prohibit Log Contamination
+                    // Relax... I didn't make these codes work, i wrote them here to make sure no
+                    // one approves such an example through code review
+                    
+                    // rLogToUpd.RawPayload = rLog.RawPayload
+                    rLogToUpd.Type = rLog.Type;
+                    rLogToUpd.IsEnabled = rLog.IsEnabled; // idk why we need this but...
+                    
+                    _unitOfWork.GetRepository<RequestLog>().Update(rLogToUpd);
+                    _unitOfWork.Commit(userId);
+
+                    return true;
+                } 
+            }
+
+            return false;
         }
 
         public IEnumerable<dynamic> GetAllObsc(bool track = false)
