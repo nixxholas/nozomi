@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data.WebModels;
+using Nozomi.Data.WebModels.LoggingModels;
 using Nozomi.Service.HostedServices.RequestTypes.Interfaces;
 using Nozomi.Service.Services.Requests;
 using Nozomi.Service.Services.Requests.Interfaces;
@@ -15,12 +16,14 @@ namespace Nozomi.Service.HostedServices.RequestTypes
     public class HttpGetSyncingService : BaseHostedService, IHttpGetSyncingService
     {
         private readonly IRequestService _requestService;
+        private readonly IRequestLogService _requestLogService;
         private readonly ILogger<HttpGetSyncingService> _logger;
         private List<Request> _requestList;
         
         public HttpGetSyncingService(IServiceProvider serviceProvider) : base(serviceProvider)
         {
             _requestService = _scope.ServiceProvider.GetRequiredService<RequestService>();
+            _requestLogService = _scope.ServiceProvider.GetRequiredService<RequestLogService>();
             
             _logger = _scope.ServiceProvider.GetRequiredService<ILogger<HttpGetSyncingService>>();
 
@@ -55,6 +58,8 @@ namespace Nozomi.Service.HostedServices.RequestTypes
                     else
                     {
                         // Since its unsuccessful
+                        
+                        // log it.
                     }
                 }
             }
