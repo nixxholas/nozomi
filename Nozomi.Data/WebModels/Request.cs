@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Nozomi.Data.WebModels.LoggingModels;
 
 namespace Nozomi.Data.WebModels
 {
@@ -19,6 +20,7 @@ namespace Nozomi.Data.WebModels
         public string DataPath { get; set; }
 
         public ICollection<RequestComponent> RequestComponents { get; set; }
+        public ICollection<RequestLog> RequestLogs { get; set; }
         public ICollection<RequestProperty> RequestProperties { get; set; }
 
         public bool IsValid()
