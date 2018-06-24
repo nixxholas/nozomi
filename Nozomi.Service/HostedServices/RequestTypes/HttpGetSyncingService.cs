@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Nozomi.Data.WebModels;
 using Nozomi.Data.WebModels.LoggingModels;
 using Nozomi.Service.HostedServices.RequestTypes.Interfaces;
@@ -283,6 +284,37 @@ namespace Nozomi.Service.HostedServices.RequestTypes
                 // Pull in the payload
                 var payload = await _httpClient.GetAsync(req.DataPath);
 
+                // Succcessful?
+                if (payload.IsSuccessStatusCode)
+                {
+                    var content = await payload.Content.ReadAsStringAsync();
+
+                    var contentToken = JToken.Parse(content);
+
+                    if (contentToken is JArray)
+                    {
+                        
+                    }
+                    
+                    // Populate the request components
+                    foreach (var reqComp in req.RequestComponents)
+                    {
+                        
+                    }
+                }
+                else
+                {
+                    // Log the failure
+                    if (_requestLogService.Create(new RequestLog()
+                    {
+                        Type = RequestLogType.Failure,
+                        RawPayload = JsonConvert.SerializeObject(payload),
+                        RequestId = req.Id
+                    }) <= 0)
+                    {
+                        // Logging Failure!!!!
+                    }
+                }
             }
             
             // Log the failure
