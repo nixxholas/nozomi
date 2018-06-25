@@ -19,6 +19,23 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                 .HasForeignKey(c=> c.CurrencySourceId);
             entityTypeBuilder.HasMany(s => s.CurrencyPairs).WithOne(cp => cp.CurrencySource)
                 .HasForeignKey(cp => cp.CurrencySourceId);
+
+            entityTypeBuilder.HasData(
+                new Source()
+                {
+                    Id = 1,
+                    Abbreviation = "BFX",
+                    Name = "Bitfinex",
+                    APIDocsURL = "https://docs.bitfinex.com/docs/introduction"
+                },
+                new Source()
+                {
+                    Id = 2,
+                    Abbreviation = "HAKO",
+                    Name = "Coinhako",
+                    APIDocsURL = "None"
+                }
+            );
         }
     }
 }
