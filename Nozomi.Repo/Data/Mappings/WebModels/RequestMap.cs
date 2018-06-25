@@ -12,7 +12,7 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
             entityTypeBuilder.Property(r => r.Id).ValueGeneratedOnAdd();
 
             entityTypeBuilder.HasAlternateKey(r => r.Guid).HasName("Request_AK_Guid");
-            entityTypeBuilder.Property(r => r.Guid).ValueGeneratedOnAdd();
+            entityTypeBuilder.Property(r => r.Guid).HasDefaultValueSql("uuid_generate_v4()");
 
             // We need this to determine the type of request to execute with
             entityTypeBuilder.Property(r => r.RequestType).IsRequired();
