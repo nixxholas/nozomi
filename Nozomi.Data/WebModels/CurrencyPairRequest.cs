@@ -12,5 +12,13 @@ namespace Nozomi.Data.WebModels
         public CurrencyPair CurrencyPair { get; set; }
 
         public new ICollection<CurrencyPairRequestComponent> RequestComponents { get; set; }
+
+        public new bool IsValidForPolling()
+        {
+            return (!string.IsNullOrEmpty(DataPath) && !string.IsNullOrWhiteSpace(DataPath)
+                                                    && RequestType >= 0)
+                && (CurrencyPair != null) && CurrencyPair.CurrencyPairComponents != null
+                && CurrencyPair.CurrencyPairComponents.Count > 0;
+        }
     }
 }
