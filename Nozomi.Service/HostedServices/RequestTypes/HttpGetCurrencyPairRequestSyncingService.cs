@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
+using Counter.SDK.Utils.Numerics;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -295,13 +297,62 @@ namespace Nozomi.Service.HostedServices.RequestTypes
 
                     if (contentToken is JArray)
                     {
-                        
-                    }
-                    
-                    // Populate the request components
-                    foreach (var reqComp in req.RequestComponents)
+                        // Pump in the array
+                        List<string> dataList = contentToken.ToObject<List<string>>();
+
+                        // If the db really hodls a number,
+                        foreach (var component in req.RequestComponents)
+                        {
+                            if (component.QueryComponent != null &&
+                                int.TryParse(component.QueryComponent, out int index))
+                            {
+                                // let's work it out
+                                if (index >= 0 && index < dataList.Count)
+                                {
+                                    // Number checks
+                                    // Make sure the datalist element we're targetting contains a proper value.
+                                    if (decimal.TryParse(dataList[index], out decimal val))
+                                    {
+                                        // Add the value in
+                                        component.Value = val.ToString();
+
+                                        // Update it
+                                    }
+                                }
+                            }
+                        }
+                    } else if (contentToken is JObject)
                     {
-                        
+                        // Pump in the object
+                        JObject obj = contentToken.ToObject<JObject>();
+
+                        foreach (var component in req.RequestComponents)
+                        {
+                            if (component.QueryComponent != null)
+                            {
+                                var rawData = (string)obj.SelectToken(component.QueryComponent);
+
+                                if (rawData != null)
+                                {
+                                    // https://stackoverflow.com/questions/23131414/culture-invariant-decimal-tryparse
+                                    var style = NumberStyles.Any;
+                                    if (ExponentHelper.IsExponentialFormat(rawData))
+                                    {
+                                        style = NumberStyles.Float;
+                                    }
+
+                                    // If it is an exponent
+                                    if (decimal.TryParse(rawData, style, CultureInfo.InvariantCulture,
+                                        out decimal val))
+                                    {
+                                        if (val > 0)
+                                        {
+                                            component.Value = val.ToString();
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
                 else
