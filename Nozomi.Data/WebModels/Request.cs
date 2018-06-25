@@ -33,8 +33,7 @@ namespace Nozomi.Data.WebModels
         {
             return (!string.IsNullOrEmpty(DataPath) && !string.IsNullOrWhiteSpace(DataPath)
                                                     && RequestType >= 0)
-                && (RequestComponents != null) && RequestComponents.Count > 0
-                && (RequestProperties != null) && RequestProperties.Count > 0; 
+                && (RequestComponents != null) && RequestComponents.Count > 0; 
         }
     }
 }
