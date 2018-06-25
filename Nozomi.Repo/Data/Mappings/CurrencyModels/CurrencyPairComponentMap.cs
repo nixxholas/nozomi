@@ -21,7 +21,8 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                     CurrencyPairId = 1,
                     ComponentType = ComponentType.Ask,
                     QueryComponent = "0",
-                    Value = "0"
+                    Value = "0",
+                    RequestId = 1
                 },
                 new CurrencyPairComponent()
                 {
@@ -29,7 +30,8 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                     CurrencyPairId = 2,
                     ComponentType = ComponentType.Ask,
                     QueryComponent = "0",
-                    Value = "0"
+                    Value = "0",
+                    RequestId = 2
                 }
             );
         }
