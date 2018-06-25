@@ -33,9 +33,9 @@ namespace Nozomi.Service.HostedServices.RequestTypes
         
         public HttpGetCurrencyPairRequestSyncingService(IServiceProvider serviceProvider) : base(serviceProvider)
         {
-            _currencyPairComponentService = _scope.ServiceProvider.GetRequiredService<CurrencyPairComponentService>();
-            _currencyPairRequestService = _scope.ServiceProvider.GetRequiredService<CurrencyPairRequestService>();
-            _requestLogService = _scope.ServiceProvider.GetRequiredService<RequestLogService>();
+            _currencyPairComponentService = _scope.ServiceProvider.GetRequiredService<ICurrencyPairComponentService>();
+            _currencyPairRequestService = _scope.ServiceProvider.GetRequiredService<ICurrencyPairRequestService>();
+            _requestLogService = _scope.ServiceProvider.GetRequiredService<IRequestLogService>();
             
             _logger = _scope.ServiceProvider.GetRequiredService<ILogger<HttpGetCurrencyPairRequestSyncingService>>();
 
