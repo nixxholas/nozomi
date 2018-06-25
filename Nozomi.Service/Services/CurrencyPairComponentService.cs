@@ -26,7 +26,7 @@ namespace CounterCore.Service.Services
 
             if (pairToUpd != null)
             {
-                pairToUpd.Value = val;
+                pairToUpd.Value = val.ToString();
 
                 try
                 {
