@@ -7,6 +7,7 @@ using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
 using Counter.SDK.Utils.Numerics;
+using CounterCore.Service.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -24,6 +25,7 @@ namespace Nozomi.Service.HostedServices.RequestTypes
     public class HttpGetCurrencyPairRequestSyncingService : BaseHostedService, IHttpGetCurrencyPairRequestSyncingService
     {
         private HttpClient _httpClient = new HttpClient();
+        private readonly ICurrencyPairComponentService _currencyPairComponentService;
         private readonly ICurrencyPairRequestService _currencyPairRequestService;
         private readonly IRequestLogService _requestLogService;
         private readonly ILogger<HttpGetCurrencyPairRequestSyncingService> _logger;
@@ -31,6 +33,7 @@ namespace Nozomi.Service.HostedServices.RequestTypes
         
         public HttpGetCurrencyPairRequestSyncingService(IServiceProvider serviceProvider) : base(serviceProvider)
         {
+            _currencyPairComponentService = _scope.ServiceProvider.GetRequiredService<CurrencyPairComponentService>();
             _currencyPairRequestService = _scope.ServiceProvider.GetRequiredService<CurrencyPairRequestService>();
             _requestLogService = _scope.ServiceProvider.GetRequiredService<RequestLogService>();
             
@@ -70,7 +73,7 @@ namespace Nozomi.Service.HostedServices.RequestTypes
             _logger.LogWarning("HttpGetCurrencyPairRequestSyncingService background task is stopping.");
         }
 
-        public async Task<bool> Process(Request req)
+        public async Task<bool> Process(CurrencyPairRequest req)
         {
             if (req != null && req.IsValidForPolling())
             {
@@ -288,12 +291,17 @@ namespace Nozomi.Service.HostedServices.RequestTypes
                 // Pull in the payload
                 var payload = await _httpClient.GetAsync(req.DataPath);
 
-                // Succcessful?
-                if (payload.IsSuccessStatusCode)
+                // Succcessful? and is there even any Components to update?
+                if (payload.IsSuccessStatusCode && req.CurrencyPair?.CurrencyPairComponents != null && req.CurrencyPair.CurrencyPairComponents.Count > 0)
                 {
+                    // Pull the content
                     var content = await payload.Content.ReadAsStringAsync();
-
+                    // Parse the content
                     var contentToken = JToken.Parse(content);
+
+                    // Pull the components wanted
+                    var requestComponents = req.CurrencyPair.CurrencyPairComponents
+                        .Where(cpc => cpc.DeletedAt == null && cpc.IsEnabled);
 
                     if (contentToken is JArray)
                     {
@@ -301,7 +309,7 @@ namespace Nozomi.Service.HostedServices.RequestTypes
                         List<string> dataList = contentToken.ToObject<List<string>>();
 
                         // If the db really hodls a number,
-                        foreach (var component in req.RequestComponents)
+                        foreach (var component in requestComponents)
                         {
                             if (component.QueryComponent != null &&
                                 int.TryParse(component.QueryComponent, out int index))
@@ -313,10 +321,8 @@ namespace Nozomi.Service.HostedServices.RequestTypes
                                     // Make sure the datalist element we're targetting contains a proper value.
                                     if (decimal.TryParse(dataList[index], out decimal val))
                                     {
-                                        // Add the value in
-                                        component.Value = val.ToString();
-
                                         // Update it
+                                        _currencyPairComponentService.UpdatePairValue(component.Id, val);
                                     }
                                 }
                             }
@@ -326,7 +332,7 @@ namespace Nozomi.Service.HostedServices.RequestTypes
                         // Pump in the object
                         JObject obj = contentToken.ToObject<JObject>();
 
-                        foreach (var component in req.RequestComponents)
+                        foreach (var component in requestComponents)
                         {
                             if (component.QueryComponent != null)
                             {
@@ -347,7 +353,8 @@ namespace Nozomi.Service.HostedServices.RequestTypes
                                     {
                                         if (val > 0)
                                         {
-                                            component.Value = val.ToString();
+                                            // Update it
+                                            _currencyPairComponentService.UpdatePairValue(component.Id, val);
                                         }
                                     }
                                 }

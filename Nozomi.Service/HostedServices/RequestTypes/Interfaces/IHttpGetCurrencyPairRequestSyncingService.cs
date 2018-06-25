@@ -6,6 +6,6 @@ namespace Nozomi.Service.HostedServices.RequestTypes.Interfaces
 {
     public interface IHttpGetCurrencyPairRequestSyncingService
     {
-        Task<bool> Process(Request req);
+        Task<bool> Process(CurrencyPairRequest req);
     }
 }
