@@ -81,7 +81,7 @@ namespace Nozomi.Ticker
             services.AddTransient<ISourceService, SourceService>();
             
             // Hosted Services
-            services.AddTransient<IHttpGetSyncingService, HttpGetSyncingService>();
+            services.AddTransient<IHttpGetCurrencyPairRequestSyncingService, HttpGetCurrencyPairRequestSyncingService>();
             
             services.AddSignalR()
                 .AddMessagePackProtocol();

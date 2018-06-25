@@ -19,20 +19,20 @@ using Nozomi.Service.Services.Requests.Interfaces;
 
 namespace Nozomi.Service.HostedServices.RequestTypes
 {
-    public class HttpGetSyncingService : BaseHostedService, IHttpGetSyncingService
+    public class HttpGetCurrencyPairRequestSyncingService : BaseHostedService, IHttpGetCurrencyPairRequestSyncingService
     {
         private HttpClient _httpClient = new HttpClient();
         private readonly ICurrencyPairRequestService _currencyPairRequestService;
         private readonly IRequestLogService _requestLogService;
-        private readonly ILogger<HttpGetSyncingService> _logger;
+        private readonly ILogger<HttpGetCurrencyPairRequestSyncingService> _logger;
         private List<CurrencyPairRequest> _currencyPairRequestList;
         
-        public HttpGetSyncingService(IServiceProvider serviceProvider) : base(serviceProvider)
+        public HttpGetCurrencyPairRequestSyncingService(IServiceProvider serviceProvider) : base(serviceProvider)
         {
             _currencyPairRequestService = _scope.ServiceProvider.GetRequiredService<CurrencyPairRequestService>();
             _requestLogService = _scope.ServiceProvider.GetRequiredService<RequestLogService>();
             
-            _logger = _scope.ServiceProvider.GetRequiredService<ILogger<HttpGetSyncingService>>();
+            _logger = _scope.ServiceProvider.GetRequiredService<ILogger<HttpGetCurrencyPairRequestSyncingService>>();
 
             // Initialize the request list for all GET requests
             _currencyPairRequestList = _currencyPairRequestService.GetAllActive(true)
@@ -42,9 +42,9 @@ namespace Nozomi.Service.HostedServices.RequestTypes
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         { 
-            _logger.LogInformation("HttpGetSyncingService is starting.");
+            _logger.LogInformation("HttpGetCurrencyPairRequestSyncingService is starting.");
 
-            stoppingToken.Register(() => _logger.LogInformation("HttpGetSyncingService is stopping."));
+            stoppingToken.Register(() => _logger.LogInformation("HttpGetCurrencyPairRequestSyncingService is stopping."));
 
             while (!stoppingToken.IsCancellationRequested)
             {
@@ -65,7 +65,7 @@ namespace Nozomi.Service.HostedServices.RequestTypes
                 }
             }
 
-            _logger.LogWarning("HttpGetSyncingService background task is stopping.");
+            _logger.LogWarning("HttpGetCurrencyPairRequestSyncingService background task is stopping.");
         }
 
         public async Task<bool> Process(Request req)

@@ -4,7 +4,7 @@ using Nozomi.Data.WebModels;
 
 namespace Nozomi.Service.HostedServices.RequestTypes.Interfaces
 {
-    public interface IHttpGetSyncingService
+    public interface IHttpGetCurrencyPairRequestSyncingService
     {
         Task<bool> Process(Request req);
     }
