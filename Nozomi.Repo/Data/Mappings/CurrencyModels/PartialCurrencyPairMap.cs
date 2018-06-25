@@ -4,9 +4,9 @@ using Nozomi.Data.CurrencyModels;
 
 namespace Nozomi.Repo.Data.Mappings.CurrencyModels
 {
-    public class PartialCurrencyPairMap
+    public class PartialCurrencyPairMap : BaseMap<PartialCurrencyPair>
     {
-        public PartialCurrencyPairMap(EntityTypeBuilder<PartialCurrencyPair> entityTypeBuilder)
+        public PartialCurrencyPairMap(EntityTypeBuilder<PartialCurrencyPair> entityTypeBuilder) : base(entityTypeBuilder)
         {
             entityTypeBuilder.HasKey(pcp => new { pcp.CurrencyPairId, pcp.IsMain });
 

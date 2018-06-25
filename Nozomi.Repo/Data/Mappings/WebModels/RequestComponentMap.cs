@@ -4,9 +4,9 @@ using Nozomi.Data.WebModels;
 
 namespace Nozomi.Repo.Data.Mappings.WebModels
 {
-    public class RequestComponentMap
+    public class RequestComponentMap : BaseMap<RequestComponent>
     {
-        public RequestComponentMap(EntityTypeBuilder<RequestComponent> entityTypeBuilder)
+        public RequestComponentMap(EntityTypeBuilder<RequestComponent> entityTypeBuilder) : base(entityTypeBuilder)
         {
             entityTypeBuilder.HasKey(rc => rc.Id).HasName("RequestComponent_PK_Id");
             entityTypeBuilder.Property(rc => rc.Id).ValueGeneratedOnAdd();

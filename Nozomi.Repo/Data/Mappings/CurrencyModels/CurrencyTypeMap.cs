@@ -3,9 +3,9 @@ using Nozomi.Data.CurrencyModels;
 
 namespace Nozomi.Repo.Data.Mappings.CurrencyModels
 {
-    public class CurrencyTypeMap
+    public class CurrencyTypeMap : BaseMap<CurrencyType>
     {
-        public CurrencyTypeMap(EntityTypeBuilder<CurrencyType> entityTypeBuilder)
+        public CurrencyTypeMap(EntityTypeBuilder<CurrencyType> entityTypeBuilder) : base(entityTypeBuilder)
         {
             entityTypeBuilder.HasKey(ct => ct.Id);
             entityTypeBuilder.Property(ct => ct.Id).ValueGeneratedOnAdd();

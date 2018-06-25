@@ -4,9 +4,9 @@ using Nozomi.Data.WebModels.LoggingModels;
 
 namespace Nozomi.Repo.Data.Mappings.WebModels.LoggingModels
 {
-    public class RequestLogMap
+    public class RequestLogMap : BaseMap<RequestLog>
     {
-        public RequestLogMap(EntityTypeBuilder<RequestLog> entityTypeBuilder)
+        public RequestLogMap(EntityTypeBuilder<RequestLog> entityTypeBuilder) : base(entityTypeBuilder)
         {
             entityTypeBuilder.HasKey(rl => rl.Id).HasName("RequestLog_PK_Id");
             entityTypeBuilder.Property(rl => rl.Id).ValueGeneratedOnAdd();

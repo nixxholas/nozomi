@@ -5,9 +5,9 @@ using Nozomi.Data.WebModels;
 
 namespace Nozomi.Repo.Data.Mappings.WebModels
 {
-    public class CurrencyPairRequestComponentMap
+    public class CurrencyPairRequestComponentMap : BaseMap<CurrencyPairRequestComponent>
     {
-        public CurrencyPairRequestComponentMap(EntityTypeBuilder<CurrencyPairRequestComponent> entityTypeBuilder)
+        public CurrencyPairRequestComponentMap(EntityTypeBuilder<CurrencyPairRequestComponent> entityTypeBuilder) : base(entityTypeBuilder)
         {
             entityTypeBuilder.Property(cprc => cprc.ComponentType).IsRequired();
 

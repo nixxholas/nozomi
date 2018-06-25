@@ -7,9 +7,9 @@ using System.Text;
 
 namespace Nozomi.Repo.Data.Mappings.CurrencyModels
 {
-    public class CurrencyMap
+    public class CurrencyMap : BaseMap<Currency>
     {
-        public CurrencyMap(EntityTypeBuilder<Currency> entityTypeBuilder)
+        public CurrencyMap(EntityTypeBuilder<Currency> entityTypeBuilder) : base(entityTypeBuilder)
         {
             entityTypeBuilder.HasKey(c => c.Id);
             entityTypeBuilder.Property(c => c.Id).ValueGeneratedOnAdd();
