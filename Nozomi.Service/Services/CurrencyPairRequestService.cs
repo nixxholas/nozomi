@@ -164,6 +164,7 @@ namespace Nozomi.Service.Services
                 .GetQueryable()
                 .AsNoTracking()
                 .Where(r => r.DeletedAt == null && r.IsEnabled)
+                .Include(r => r.CurrencyPair)
                 .Include(r => r.RequestComponents)
                 .Include(r => r.RequestProperties);
         }
