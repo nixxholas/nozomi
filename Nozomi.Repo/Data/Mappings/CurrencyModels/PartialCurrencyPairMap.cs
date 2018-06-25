@@ -14,6 +14,33 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                 .HasForeignKey(pcp => pcp.CurrencyId);
             entityTypeBuilder.HasOne(pcp => pcp.CurrencyPair).WithMany(cp => cp.PartialCurrencyPairs)
                 .HasForeignKey(pcp => pcp.CurrencyPairId);
+
+            entityTypeBuilder.HasData(
+                new PartialCurrencyPair()
+                {
+                    CurrencyId = 1,
+                    IsMain = false,
+                    CurrencyPairId = 1
+                },
+                new PartialCurrencyPair()
+                {
+                    CurrencyId = 2,
+                    IsMain = true,
+                    CurrencyPairId = 1
+                },
+                new PartialCurrencyPair()
+                {
+                    CurrencyId = 1,
+                    IsMain = false,
+                    CurrencyPairId = 2
+                },
+                new PartialCurrencyPair()
+                {
+                    CurrencyId = 3,
+                    IsMain = true,
+                    CurrencyPairId = 2
+                }
+            );
         }
     }
 }

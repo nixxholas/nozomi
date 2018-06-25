@@ -13,6 +13,25 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
 
             entityTypeBuilder.HasOne(cpc => cpc.CurrencyPair).WithMany(cp => cp.CurrencyPairComponents)
                 .HasForeignKey(cpc => cpc.CurrencyPairId).OnDelete(DeleteBehavior.Cascade);
+
+            entityTypeBuilder.HasData(
+                new CurrencyPairComponent()
+                {
+                    Id = 1,
+                    CurrencyPairId = 1,
+                    ComponentType = ComponentType.Ask,
+                    QueryComponent = "0",
+                    Value = "0"
+                },
+                new CurrencyPairComponent()
+                {
+                    Id = 2,
+                    CurrencyPairId = 2,
+                    ComponentType = ComponentType.Ask,
+                    QueryComponent = "0",
+                    Value = "0"
+                }
+            );
         }
     }
 }

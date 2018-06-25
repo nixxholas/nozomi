@@ -23,6 +23,25 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                 .HasForeignKey(cpr => cpr.CurrencyPairId);
             entityTypeBuilder.HasMany(cp => cp.PartialCurrencyPairs).WithOne(pcp => pcp.CurrencyPair)
                 .HasForeignKey(pcp => pcp.CurrencyPairId);
+
+            entityTypeBuilder.HasData(
+                new CurrencyPair()
+                {
+                    Id = 1,
+                    CurrencyPairType = CurrencyPairType.TRADEABLE,
+                    APIUrl = "https://api.ethfinex.com/v2/ticker/tETHUSD",
+                    DefaultComponent = "0",
+                    CurrencySourceId = 1
+                },
+                new CurrencyPair()
+                {
+                    Id = 2,
+                    CurrencyPairType = CurrencyPairType.TRADEABLE,
+                    APIUrl = "https://api.ethfinex.com/v2/ticker/tKNCUSD",
+                    DefaultComponent = "0",
+                    CurrencySourceId = 1
+                }
+            );
         }
     }
 }
