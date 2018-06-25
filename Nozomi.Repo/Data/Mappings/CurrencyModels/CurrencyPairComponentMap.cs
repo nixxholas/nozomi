@@ -8,9 +8,6 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
     {
         public CurrencyPairComponentMap(EntityTypeBuilder<CurrencyPairComponent> entityTypeBuilder) : base(entityTypeBuilder)
         {
-            entityTypeBuilder.HasKey(cpc => cpc.Id);
-            entityTypeBuilder.Property(cpc => cpc.Id).ValueGeneratedOnAdd();
-
             entityTypeBuilder.Property(cpc => cpc.QueryComponent).IsRequired();
             entityTypeBuilder.Property(cpc => cpc.Value);
 
