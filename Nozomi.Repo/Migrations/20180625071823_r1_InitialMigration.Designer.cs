@@ -10,7 +10,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Nozomi.Repo.Migrations
 {
     [DbContext(typeof(NozomiDbContext))]
-    [Migration("20180620100703_r1_InitialMigration")]
+    [Migration("20180625071823_r1_InitialMigration")]
     partial class r1_InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -18,7 +18,7 @@ namespace Nozomi.Repo.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn)
-                .HasAnnotation("ProductVersion", "2.1.0-rtm-30799")
+                .HasAnnotation("ProductVersion", "2.1.1-rtm-30846")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             modelBuilder.Entity("Nozomi.Data.CurrencyModels.Currency", b =>
@@ -51,6 +51,11 @@ namespace Nozomi.Repo.Migrations
                         .IsRequired();
 
                     b.Property<long>("WalletTypeId");
+
+                    b.Property<uint>("xmin")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid");
 
                     b.HasKey("Id");
 
@@ -90,46 +95,16 @@ namespace Nozomi.Repo.Migrations
 
                     b.Property<long>("ModifiedBy");
 
+                    b.Property<uint>("xmin")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid");
+
                     b.HasKey("Id");
 
                     b.HasIndex("CurrencySourceId");
 
                     b.ToTable("CurrencyPairs");
-                });
-
-            modelBuilder.Entity("Nozomi.Data.CurrencyModels.CurrencyPairComponent", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<int>("ComponentType");
-
-                    b.Property<DateTime>("CreatedAt");
-
-                    b.Property<long>("CreatedBy");
-
-                    b.Property<long>("CurrencyPairId");
-
-                    b.Property<DateTime?>("DeletedAt");
-
-                    b.Property<long>("DeletedBy");
-
-                    b.Property<bool>("IsEnabled");
-
-                    b.Property<DateTime>("ModifiedAt");
-
-                    b.Property<long>("ModifiedBy");
-
-                    b.Property<string>("QueryComponent")
-                        .IsRequired();
-
-                    b.Property<decimal>("Value");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CurrencyPairId");
-
-                    b.ToTable("CurrencyPairComponents");
                 });
 
             modelBuilder.Entity("Nozomi.Data.CurrencyModels.CurrencyType", b =>
@@ -158,6 +133,11 @@ namespace Nozomi.Repo.Migrations
                         .IsRequired()
                         .HasMaxLength(12);
 
+                    b.Property<uint>("xmin")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid");
+
                     b.HasKey("Id");
 
                     b.ToTable("CurrencyTypes");
@@ -170,6 +150,11 @@ namespace Nozomi.Repo.Migrations
                     b.Property<bool>("IsMain");
 
                     b.Property<long>("CurrencyId");
+
+                    b.Property<uint>("xmin")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid");
 
                     b.HasKey("CurrencyPairId", "IsMain");
 
@@ -205,11 +190,54 @@ namespace Nozomi.Repo.Migrations
                     b.Property<string>("Name")
                         .IsRequired();
 
+                    b.Property<uint>("xmin")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid");
+
                     b.HasKey("Id");
 
                     b.HasIndex("Abbreviation");
 
                     b.ToTable("Sources");
+                });
+
+            modelBuilder.Entity("Nozomi.Data.WebModels.LoggingModels.RequestLog", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<DateTime>("CreatedAt");
+
+                    b.Property<long>("CreatedBy");
+
+                    b.Property<DateTime?>("DeletedAt");
+
+                    b.Property<long>("DeletedBy");
+
+                    b.Property<bool>("IsEnabled");
+
+                    b.Property<DateTime>("ModifiedAt");
+
+                    b.Property<long>("ModifiedBy");
+
+                    b.Property<string>("RawPayload");
+
+                    b.Property<long>("RequestId");
+
+                    b.Property<int>("Type");
+
+                    b.Property<uint>("xmin")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid");
+
+                    b.HasKey("Id")
+                        .HasName("RequestLog_PK_Id");
+
+                    b.HasIndex("RequestId");
+
+                    b.ToTable("RequestLogs");
                 });
 
             modelBuilder.Entity("Nozomi.Data.WebModels.Request", b =>
@@ -231,7 +259,8 @@ namespace Nozomi.Repo.Migrations
                         .IsRequired();
 
                     b.Property<Guid>("Guid")
-                        .ValueGeneratedOnAdd();
+                        .ValueGeneratedOnAdd()
+                        .HasDefaultValueSql("uuid_generate_v4()");
 
                     b.Property<bool>("IsEnabled");
 
@@ -240,6 +269,11 @@ namespace Nozomi.Repo.Migrations
                     b.Property<long>("ModifiedBy");
 
                     b.Property<int>("RequestType");
+
+                    b.Property<uint>("xmin")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid");
 
                     b.HasKey("Id")
                         .HasName("Request_PK_Id");
@@ -280,6 +314,11 @@ namespace Nozomi.Repo.Migrations
 
                     b.Property<string>("Value");
 
+                    b.Property<uint>("xmin")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid");
+
                     b.HasKey("Id")
                         .HasName("RequestComponent_PK_Id");
 
@@ -317,6 +356,11 @@ namespace Nozomi.Repo.Migrations
 
                     b.Property<string>("Value");
 
+                    b.Property<uint>("xmin")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid");
+
                     b.HasKey("Id")
                         .HasName("RequestProperty_PK_Id");
 
@@ -346,6 +390,19 @@ namespace Nozomi.Repo.Migrations
                     b.HasDiscriminator().HasValue("CurrencyPairRequestComponent");
                 });
 
+            modelBuilder.Entity("Nozomi.Data.CurrencyModels.CurrencyPairComponent", b =>
+                {
+                    b.HasBaseType("Nozomi.Data.WebModels.CurrencyPairRequestComponent");
+
+                    b.Property<long>("CurrencyPairId");
+
+                    b.HasIndex("CurrencyPairId");
+
+                    b.ToTable("CurrencyPairComponent");
+
+                    b.HasDiscriminator().HasValue("CurrencyPairComponent");
+                });
+
             modelBuilder.Entity("Nozomi.Data.CurrencyModels.Currency", b =>
                 {
                     b.HasOne("Nozomi.Data.CurrencyModels.Source", "CurrencySource")
@@ -367,14 +424,6 @@ namespace Nozomi.Repo.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("Nozomi.Data.CurrencyModels.CurrencyPairComponent", b =>
-                {
-                    b.HasOne("Nozomi.Data.CurrencyModels.CurrencyPair", "CurrencyPair")
-                        .WithMany("CurrencyPairComponents")
-                        .HasForeignKey("CurrencyPairId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
             modelBuilder.Entity("Nozomi.Data.CurrencyModels.PartialCurrencyPair", b =>
                 {
                     b.HasOne("Nozomi.Data.CurrencyModels.Currency", "Currency")
@@ -385,6 +434,14 @@ namespace Nozomi.Repo.Migrations
                     b.HasOne("Nozomi.Data.CurrencyModels.CurrencyPair", "CurrencyPair")
                         .WithMany("PartialCurrencyPairs")
                         .HasForeignKey("CurrencyPairId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("Nozomi.Data.WebModels.LoggingModels.RequestLog", b =>
+                {
+                    b.HasOne("Nozomi.Data.WebModels.Request", "Request")
+                        .WithMany("RequestLogs")
+                        .HasForeignKey("RequestId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
@@ -401,6 +458,14 @@ namespace Nozomi.Repo.Migrations
                     b.HasOne("Nozomi.Data.WebModels.Request", "Request")
                         .WithMany("RequestProperties")
                         .HasForeignKey("RequestId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("Nozomi.Data.CurrencyModels.CurrencyPairComponent", b =>
+                {
+                    b.HasOne("Nozomi.Data.CurrencyModels.CurrencyPair", "CurrencyPair")
+                        .WithMany("CurrencyPairComponents")
+                        .HasForeignKey("CurrencyPairId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 #pragma warning restore 612, 618
