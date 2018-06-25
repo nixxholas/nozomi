@@ -23,6 +23,36 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                 .HasForeignKey(c => c.CurrencySourceId).OnDelete(DeleteBehavior.Cascade);
             entityTypeBuilder.HasMany(c => c.PartialCurrencyPairs).WithOne(pcp => pcp.Currency)
                 .HasForeignKey(pcp => pcp.CurrencyId);
+
+            entityTypeBuilder.HasData(
+                new Currency()
+                {
+                    Id = 1,
+                    CurrencyTypeId = 1,
+                    Abbrv = "USD",
+                    Name = "United States Dollar",
+                    CurrencySourceId = 1,
+                    WalletTypeId = 0
+                },
+                new Currency()
+                {
+                    Id = 2,
+                    CurrencyTypeId = 2,
+                    Abbrv = "ETH",
+                    Name = "Ethereum",
+                    CurrencySourceId = 1,
+                    WalletTypeId = 1 // As per CNWallet
+                },
+                new Currency()
+                {
+                    Id = 3,
+                    CurrencyTypeId = 2,
+                    Abbrv = "KNC",
+                    Name = "Kyber Network Coin",
+                    CurrencySourceId = 1,
+                    WalletTypeId = 4 // As per CNWallet
+                }
+            );
         }
     }
 }
