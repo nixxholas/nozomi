@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Counter.SDK.SharedModels;
+using Nozomi.Data.WebModels;
 
 namespace Nozomi.Data.CurrencyModels
 {
@@ -25,6 +26,7 @@ namespace Nozomi.Data.CurrencyModels
 
         // =========== RELATIONS ============ //
         public ICollection<CurrencyPairComponent> CurrencyPairComponents { get; set; }
+        public ICollection<CurrencyPairRequest> CurrencyPairRequests { get; set; }
         public ICollection<PartialCurrencyPair> PartialCurrencyPairs { get; set; }
 
         public bool IsValid()
