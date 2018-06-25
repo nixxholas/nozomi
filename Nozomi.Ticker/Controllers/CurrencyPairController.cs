@@ -9,6 +9,7 @@ using Nozomi.Service.Hubs;
 
 namespace Nozomi.Ticker.Controllers
 {
+    [Route("/api/[controller]")]
     [ApiController]
     public class CurrencyPairController : ControllerBase
     {
@@ -19,7 +20,7 @@ namespace Nozomi.Ticker.Controllers
             _tickerHubContext = tickerHubContext;
         }
         
-        [HttpPost]
+        [HttpPost("Create")]
         public async Task CreateCurrencyPair(CurrencyPair currencyPair)
         {
             
