@@ -315,22 +315,23 @@ namespace Nozomi.Repo.Migrations
                 });
 
             migrationBuilder.InsertData(
-                table: "RequestComponents",
-                columns: new[] { "Id", "CreatedAt", "CreatedBy", "DeletedAt", "DeletedBy", "Discriminator", "IsEnabled", "ModifiedAt", "ModifiedBy", "QueryComponent", "RequestId", "Value", "ComponentType", "CurrencyPairId" },
-                values: new object[,]
-                {
-                    { 1L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, null, 0L, "CurrencyPairComponent", true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "0", 0L, "0", 1, 1L },
-                    { 2L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, null, 0L, "CurrencyPairComponent", true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "0", 0L, "0", 1, 2L }
-                });
-
-            migrationBuilder.InsertData(
                 table: "Requests",
                 columns: new[] { "Id", "CreatedAt", "CreatedBy", "DataPath", "DeletedAt", "DeletedBy", "Discriminator", "Guid", "IsEnabled", "ModifiedAt", "ModifiedBy", "RequestType", "CurrencyPairId" },
                 values: new object[,]
                 {
-                    { 1L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, null, null, 0L, "CurrencyPairRequest", new Guid("9386124f-451a-43f5-b2b4-6d7a0d155d12"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 1L },
-                    { 2L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, null, null, 0L, "CurrencyPairRequest", new Guid("9788582f-03ab-454a-88f5-e95e12e3433f"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 2L }
+                    { 1L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, null, null, 0L, "CurrencyPairRequest", new Guid("48d3a131-4b7d-4f62-ba62-f3dadc18fca3"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 1L },
+                    { 2L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, null, null, 0L, "CurrencyPairRequest", new Guid("9ee78ac4-c166-4e02-a092-6673bb321fbc"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 2L }
                 });
+
+            migrationBuilder.InsertData(
+                table: "RequestComponents",
+                columns: new[] { "Id", "CreatedAt", "CreatedBy", "DeletedAt", "DeletedBy", "Discriminator", "IsEnabled", "ModifiedAt", "ModifiedBy", "QueryComponent", "RequestId", "Value", "ComponentType", "CurrencyPairId" },
+                values: new object[] { 1L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, null, 0L, "CurrencyPairComponent", true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "0", 1L, "0", 1, 1L });
+
+            migrationBuilder.InsertData(
+                table: "RequestComponents",
+                columns: new[] { "Id", "CreatedAt", "CreatedBy", "DeletedAt", "DeletedBy", "Discriminator", "IsEnabled", "ModifiedAt", "ModifiedBy", "QueryComponent", "RequestId", "Value", "ComponentType", "CurrencyPairId" },
+                values: new object[] { 2L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, null, 0L, "CurrencyPairComponent", true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "0", 2L, "0", 1, 2L });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Currencies_CurrencySourceId",
