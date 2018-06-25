@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Nozomi.Data.CurrencyModels;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -8,6 +9,6 @@ namespace Nozomi.Data.WebModels
     {
         public new CurrencyPairRequest Request { get; set; }
 
-        public CurrencyPairRequestComponentType ComponentType { get; set; } = CurrencyPairRequestComponentType.UNKNOWN;
+        public ComponentType ComponentType { get; set; } = ComponentType.Unknown;
     }
 }
