@@ -10,7 +10,6 @@ namespace Nozomi.Repo.Data.Mappings
     {
         public BaseMap(EntityTypeBuilder<T> entityTypeBuilder)
         {
-            entityTypeBuilder.ForNpgsqlUseXminAsConcurrencyToken();
         }
     }
 }
