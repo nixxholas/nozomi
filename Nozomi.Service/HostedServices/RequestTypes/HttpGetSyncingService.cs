@@ -12,6 +12,8 @@ using Newtonsoft.Json.Linq;
 using Nozomi.Data.WebModels;
 using Nozomi.Data.WebModels.LoggingModels;
 using Nozomi.Service.HostedServices.RequestTypes.Interfaces;
+using Nozomi.Service.Services;
+using Nozomi.Service.Services.Interfaces;
 using Nozomi.Service.Services.Requests;
 using Nozomi.Service.Services.Requests.Interfaces;
 
@@ -20,22 +22,22 @@ namespace Nozomi.Service.HostedServices.RequestTypes
     public class HttpGetSyncingService : BaseHostedService, IHttpGetSyncingService
     {
         private HttpClient _httpClient = new HttpClient();
-        private readonly IRequestService _requestService;
+        private readonly ICurrencyPairRequestService _currencyPairRequestService;
         private readonly IRequestLogService _requestLogService;
         private readonly ILogger<HttpGetSyncingService> _logger;
-        private List<Request> _requestList;
+        private List<CurrencyPairRequest> _currencyPairRequestList;
         
         public HttpGetSyncingService(IServiceProvider serviceProvider) : base(serviceProvider)
         {
-            _requestService = _scope.ServiceProvider.GetRequiredService<RequestService>();
+            _currencyPairRequestService = _scope.ServiceProvider.GetRequiredService<CurrencyPairRequestService>();
             _requestLogService = _scope.ServiceProvider.GetRequiredService<RequestLogService>();
             
             _logger = _scope.ServiceProvider.GetRequiredService<ILogger<HttpGetSyncingService>>();
 
             // Initialize the request list for all GET requests
-            _requestList = _requestService.GetAllActive(true)
+            _currencyPairRequestList = _currencyPairRequestService.GetAllActive(true)
                                .Where(r => r.RequestType.Equals(RequestType.HttpGet))
-                               .ToList() ?? new List<Request>();
+                               .ToList() ?? new List<CurrencyPairRequest>();
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -47,7 +49,7 @@ namespace Nozomi.Service.HostedServices.RequestTypes
             while (!stoppingToken.IsCancellationRequested)
             {
                 // We will need to resync the Request collection to make sure we're polling only the ones we want to poll
-                var getBasedRequests = _requestService.GetAll(r => r.IsEnabled && r.DeletedAt == null
+                var getBasedRequests = _currencyPairRequestService.GetAllActive(r => r.IsEnabled && r.DeletedAt == null
                                                                                && r.RequestType.Equals(RequestType
                                                                                    .HttpGet), true);
 
