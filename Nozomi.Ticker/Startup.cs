@@ -79,9 +79,12 @@ namespace Nozomi.Ticker
             services.AddTransient<IRequestService, RequestService>();
             services.AddTransient<IRequestLogService, RequestLogService>();
             services.AddTransient<ISourceService, SourceService>();
-            
+
+            services.AddTransient<IUnitOfWork<NozomiDbContext>, UnitOfWork<NozomiDbContext>>();
+            services.AddTransient<IDbContext, NozomiDbContext>();
+
             // Hosted Services
-            services.AddTransient<IHttpGetCurrencyPairRequestSyncingService, HttpGetCurrencyPairRequestSyncingService>();
+            services.AddSingleton<IHostedService, HttpGetCurrencyPairRequestSyncingService>();
             
             services.AddSignalR()
                 .AddMessagePackProtocol();
