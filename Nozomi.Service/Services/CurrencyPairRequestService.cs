@@ -46,5 +46,10 @@ namespace Nozomi.Service.Services
         {
             throw new NotImplementedException();
         }
+
+        public IEnumerable<CurrencyPairRequest> GetAllActive(Expression<Func<CurrencyPairRequest, bool>> predicate, bool track = false)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

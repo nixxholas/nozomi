@@ -19,5 +19,7 @@ namespace Nozomi.Service.Services.Interfaces
         bool SoftDelete(long cpRequestId, long userId = 0);
         
         IEnumerable<CurrencyPairRequest> GetAllActive(bool track = false);
+
+        IEnumerable<CurrencyPairRequest> GetAllActive(Expression<Func<CurrencyPairRequest, bool>> predicate, bool track = false);
     }
 }
