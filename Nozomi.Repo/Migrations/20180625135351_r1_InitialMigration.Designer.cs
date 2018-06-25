@@ -10,8 +10,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Nozomi.Repo.Migrations
 {
     [DbContext(typeof(NozomiDbContext))]
-    [Migration("20180625130026_r2_CurrencyPairRequestDataFix")]
-    partial class r2_CurrencyPairRequestDataFix
+    [Migration("20180625135351_r1_InitialMigration")]
+    partial class r1_InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -364,8 +364,8 @@ namespace Nozomi.Repo.Migrations
                     b.HasDiscriminator().HasValue("CurrencyPairRequest");
 
                     b.HasData(
-                        new { Id = 1L, CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), CreatedBy = 0L, DataPath = "https://api.ethfinex.com/v2/ticker/tETHUSD", DeletedBy = 0L, Guid = new Guid("404a7273-ce5f-4cd0-a77a-43a6069774c6"), IsEnabled = true, ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), ModifiedBy = 0L, RequestType = 0, CurrencyPairId = 1L },
-                        new { Id = 2L, CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), CreatedBy = 0L, DataPath = "https://api.ethfinex.com/v2/ticker/tKNCUSD", DeletedBy = 0L, Guid = new Guid("cd9f8166-3340-463d-9acd-57d9fb5d040d"), IsEnabled = true, ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), ModifiedBy = 0L, RequestType = 0, CurrencyPairId = 2L }
+                        new { Id = 1L, CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), CreatedBy = 0L, DataPath = "https://api.ethfinex.com/v2/ticker/tETHUSD", DeletedBy = 0L, Guid = new Guid("ee6d8194-780e-45ae-a4a4-72140d7e7576"), IsEnabled = true, ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), ModifiedBy = 0L, RequestType = 0, CurrencyPairId = 1L },
+                        new { Id = 2L, CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), CreatedBy = 0L, DataPath = "https://api.ethfinex.com/v2/ticker/tKNCUSD", DeletedBy = 0L, Guid = new Guid("149630a1-3ca9-48a5-bd26-4b81cf115090"), IsEnabled = true, ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), ModifiedBy = 0L, RequestType = 0, CurrencyPairId = 2L }
                     );
                 });
 

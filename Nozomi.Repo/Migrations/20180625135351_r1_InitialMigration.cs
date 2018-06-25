@@ -319,8 +319,8 @@ namespace Nozomi.Repo.Migrations
                 columns: new[] { "Id", "CreatedAt", "CreatedBy", "DataPath", "DeletedAt", "DeletedBy", "Discriminator", "Guid", "IsEnabled", "ModifiedAt", "ModifiedBy", "RequestType", "CurrencyPairId" },
                 values: new object[,]
                 {
-                    { 1L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, null, null, 0L, "CurrencyPairRequest", new Guid("48d3a131-4b7d-4f62-ba62-f3dadc18fca3"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 1L },
-                    { 2L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, null, null, 0L, "CurrencyPairRequest", new Guid("9ee78ac4-c166-4e02-a092-6673bb321fbc"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 2L }
+                    { 1L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "https://api.ethfinex.com/v2/ticker/tETHUSD", null, 0L, "CurrencyPairRequest", new Guid("ee6d8194-780e-45ae-a4a4-72140d7e7576"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 1L },
+                    { 2L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "https://api.ethfinex.com/v2/ticker/tKNCUSD", null, 0L, "CurrencyPairRequest", new Guid("149630a1-3ca9-48a5-bd26-4b81cf115090"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 2L }
                 });
 
             migrationBuilder.InsertData(
