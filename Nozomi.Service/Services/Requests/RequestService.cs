@@ -42,16 +42,15 @@ namespace Nozomi.Service.Services.Requests
                 .SingleOrDefault();
 
             if (reqToUpd == null) return false;
-                
-            req.DataPath = req.DataPath;
-            req.RequestType = req.RequestType;
-            req.IsEnabled = req.IsEnabled;
+
+            reqToUpd.DataPath = req.DataPath;
+            reqToUpd.RequestType = req.RequestType;
+            reqToUpd.IsEnabled = req.IsEnabled;
                 
             _unitOfWork.GetRepository<Request>().Update(reqToUpd);
             _unitOfWork.Commit(userId);
 
             return true;
-
         }
 
         public bool SoftDelete(long reqId, long userId = 0)
@@ -67,6 +66,7 @@ namespace Nozomi.Service.Services.Requests
                     reqToDel.DeletedAt = DateTime.UtcNow;
                     reqToDel.DeletedBy = userId;
 
+                    _unitOfWork.GetRepository<Request>().Update(reqToDel);
                     _unitOfWork.Commit(userId);
 
                     return true;
