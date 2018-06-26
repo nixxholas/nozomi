@@ -327,6 +327,8 @@ namespace Nozomi.Service.HostedServices.RequestTypes
                                 }
                             }
                         }
+
+                        return true;
                     } else if (contentToken is JObject)
                     {
                         // Pump in the object
@@ -360,6 +362,8 @@ namespace Nozomi.Service.HostedServices.RequestTypes
                                 }
                             }
                         }
+
+                        return true;
                     }
                 }
                 else
