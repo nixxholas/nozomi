@@ -24,19 +24,13 @@ namespace CounterCore.Service.Services
                                      .Where(cp => cp.Id.Equals(id))
                                      .SingleOrDefault(cp => cp.DeletedAt == null);
 
-            if (pairToUpd != null)
+            // Anormaly Detection
+            if (pairToUpd != null && pairToUpd.IsValueAbnormal(val.ToString()))
             {
                 pairToUpd.Value = val.ToString();
 
-                try
-                {
-                    _unitOfWork.GetRepository<CurrencyPairComponent>().Update(pairToUpd);
-                    _unitOfWork.Commit();
-                }
-                catch (Exception ex)
-                {
-                    return false;
-                }
+                _unitOfWork.GetRepository<CurrencyPairComponent>().Update(pairToUpd);
+                _unitOfWork.Commit();
 
                 return true;
             }
