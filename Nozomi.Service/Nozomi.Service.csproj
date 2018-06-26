@@ -2,12 +2,6 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
   </PropertyGroup>
-  <PropertyGroup>
-    <RuntimeFrameworkVersion>2.1.1</RuntimeFrameworkVersion>
-  </PropertyGroup>
-  <ItemGroup>
-    <Compile Remove="Class1.cs" />
-  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Nozomi.Repo\Nozomi.Repo.csproj" />
   </ItemGroup>
@@ -15,6 +9,5 @@
     <PackageReference Include="Microsoft.AspNetCore.SignalR" Version="1.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.SignalR.Protocols.MessagePack" Version="1.0.1" />
     <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="2.1.1" />
-    <PackageReference Include="Microsoft.NETCore.App" Version="2.1.1" />
   </ItemGroup>
 </Project>
