@@ -19,7 +19,7 @@ namespace Nozomi.Service.Hubs
         }
         
         // We can use this to return a payload
-        public async Task<ChannelReader<NozomiResult<CurrencyPair>>> ReturnPayload()
+        public async Task<ChannelReader<NozomiResult<CurrencyPair>>> SubscribeToAll()
         {
             // Initialize an unbounded channel
             // 
