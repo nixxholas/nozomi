@@ -25,7 +25,7 @@ namespace CounterCore.Service.Services
                                      .SingleOrDefault(cp => cp.DeletedAt == null);
 
             // Anormaly Detection
-            if (pairToUpd != null && pairToUpd.IsValueAbnormal(val.ToString()))
+            if (pairToUpd != null && !pairToUpd.IsValueAbnormal(val.ToString()))
             {
                 pairToUpd.Value = val.ToString();
 
