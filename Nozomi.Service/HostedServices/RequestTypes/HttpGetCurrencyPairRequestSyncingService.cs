@@ -8,6 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Counter.SDK.Utils.Numerics;
 using CounterCore.Service.Services;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -15,6 +16,7 @@ using Newtonsoft.Json.Linq;
 using Nozomi.Data.WebModels;
 using Nozomi.Data.WebModels.LoggingModels;
 using Nozomi.Service.HostedServices.RequestTypes.Interfaces;
+using Nozomi.Service.Hubs;
 using Nozomi.Service.Services;
 using Nozomi.Service.Services.Interfaces;
 using Nozomi.Service.Services.Requests;
@@ -51,6 +53,8 @@ namespace Nozomi.Service.HostedServices.RequestTypes
 
             stoppingToken.Register(() => _logger.LogInformation("HttpGetCurrencyPairRequestSyncingService is stopping."));
 
+            var tickerHubContext = _scope.ServiceProvider.GetRequiredService<TickerHub>();
+
             while (!stoppingToken.IsCancellationRequested)
             {
                 // We will need to resync the Request collection to make sure we're polling only the ones we want to poll
@@ -68,6 +72,7 @@ namespace Nozomi.Service.HostedServices.RequestTypes
                         // Since its successful
                     }
                 }
+                
 
                 await Task.Delay(5000);
             }
