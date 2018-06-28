@@ -11,6 +11,7 @@ namespace Nozomi.Service.Hubs
 {
     public class TickerHub : Hub, ITickerHubClient
     {
+        private IEnumerable<CurrencyPair> _currencyPairs;
         private readonly ICurrencyPairService _cpService;
         
         public TickerHub(ICurrencyPairService cpService)
@@ -28,30 +29,39 @@ namespace Nozomi.Service.Hubs
             // drop the clients after awhile.
             var channel = Channel.CreateUnbounded<NozomiResult<CurrencyPair>>();
 
-            _ = WriteToChannel(channel.Writer, _cpService.GetAllActive()); // Write all Currency Pairs to the channel
+            _ = WriteToChannel(channel.Writer); // Write all Currency Pairs to the channel
 
             // Return the reader
             return channel.Reader;
 
             // This is a nested method, allowing us to write repeated methods
             // with the same semantic conventions while maintaining conformity.
-            async Task WriteToChannel(ChannelWriter<NozomiResult<CurrencyPair>> writer, 
-                IEnumerable<CurrencyPair> currencyPairs)
+            async Task WriteToChannel(ChannelWriter<NozomiResult<CurrencyPair>> writer)
             {
-                // Iterate them currency pairs
-                foreach (var cPair in currencyPairs)
+                while (true)
                 {
-                    // Write one by one, and the client receives them one by one as well
-                    await writer.WriteAsync(new NozomiResult<CurrencyPair>()
+                    // Pull in the latest data
+                    _currencyPairs = _cpService.GetAllActive();
+
+                    // Iterate them currency pairs
+                    foreach (var cPair in _currencyPairs)
                     {
-                        Success = (cPair != null),
-                        ResultType = (cPair != null) ? NozomiResultType.Success : NozomiResultType.Failed,
-                        Data = new[] { cPair }
-                    });
+                        // Write one by one, and the client receives them one by one as well
+                        await writer.WriteAsync(new NozomiResult<CurrencyPair>()
+                        {
+                            Success = (cPair != null),
+                            ResultType = (cPair != null) ? NozomiResultType.Success : NozomiResultType.Failed,
+                            Data = new[] { cPair }
+                        });
+                    }
+
+                    writer.Complete();
+
+                    await Task.Delay(1000);
                 }
                 
                 // Beep the client, telling them you're done
-                writer.Complete();
+                //writer.Complete();
             }
         }
     }
