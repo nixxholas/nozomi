@@ -8,5 +8,6 @@ namespace Nozomi.Data.HubModels.Interfaces
     public interface ITickerHubClient
     {
         Task<ChannelReader<NozomiResult<CurrencyPair>>> SubscribeToAll();
+        void BroadcastData<T>(T data) where T : class;
     }
 }

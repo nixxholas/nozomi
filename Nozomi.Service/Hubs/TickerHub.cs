@@ -18,6 +18,20 @@ namespace Nozomi.Service.Hubs
         {
             _cpService = cpService;
         }
+
+        public async void BroadcastData<T>(T data) where T : class
+        {
+            var channel = Channel.CreateUnbounded<NozomiResult<T>>();
+
+            await channel.Writer.WriteAsync(new NozomiResult<T>()
+            {
+                Success = true,
+                ResultType = NozomiResultType.Success,
+                Data = new[] { data }
+            });
+            
+            channel.Writer.Complete();
+        }
         
         public async Task<NozomiResult<CurrencyPair>> Tickers(IEnumerable<CurrencyPair> currencyPairs = null)
         {
