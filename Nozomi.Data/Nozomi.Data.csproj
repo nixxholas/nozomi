@@ -11,7 +11,7 @@
     <Copyright>Hayate Ltd</Copyright>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Counter.SDK" Version="1.0.0" />
+    <PackageReference Include="Counter.SDK" Version="1.0.1" />
     <PackageReference Include="NuGet.Build.Packaging" Version="0.2.2" />
     <PackageReference Include="System.Threading.Channels" Version="4.5.0" />
   </ItemGroup>
