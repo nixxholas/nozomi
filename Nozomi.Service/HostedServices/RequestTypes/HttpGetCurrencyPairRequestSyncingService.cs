@@ -53,8 +53,6 @@ namespace Nozomi.Service.HostedServices.RequestTypes
 
             stoppingToken.Register(() => _logger.LogInformation("HttpGetCurrencyPairRequestSyncingService is stopping."));
 
-            var tickerHubContext = _scope.ServiceProvider.GetRequiredService<TickerHub>();
-
             while (!stoppingToken.IsCancellationRequested)
             {
                 // We will need to resync the Request collection to make sure we're polling only the ones we want to poll
