@@ -10,4 +10,9 @@
     <PackageReference Include="Microsoft.AspNetCore.SignalR.Protocols.MessagePack" Version="1.0.3" />
     <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="2.1.1" />
   </ItemGroup>
+  <ItemGroup>
+    <Reference Include="StackExchange.Redis, Version=2.0.0.0, Culture=neutral, PublicKeyToken=c219ff1ca8c2ce46">
+      <HintPath>..\..\..\.nuget\packages\stackexchange.redis\2.0.505\lib\netstandard2.0\StackExchange.Redis.dll</HintPath>
+    </Reference>
+  </ItemGroup>
 </Project>

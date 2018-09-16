@@ -9,20 +9,21 @@ using Nozomi.Data.CurrencyModels;
 using Nozomi.Service.HostedServices.Interfaces;
 using Nozomi.Service.Services;
 using Nozomi.Service.Services.Interfaces;
+using StackExchange.Redis;
 
 namespace Nozomi.Service.HostedServices
 {
     public class CurrencyPairCacheManagementService : BaseHostedService, ICurrencyPairCacheManagementService
     {
         private ICurrencyPairService _currencyPairService;
-        private IMemoryCache _cache;
+        private IConnectionMultiplexer _connectionMultiplexer;
         private ILogger<CurrencyPairCacheManagementService> _logger;
         
-        public CurrencyPairCacheManagementService(IMemoryCache memoryCache,
+        public CurrencyPairCacheManagementService(IConnectionMultiplexer connectionMultiplexer,
             IServiceProvider serviceProvider) : base(serviceProvider)
         {
             _currencyPairService = serviceProvider.GetService<CurrencyPairService>();
-            _cache = memoryCache;
+            _connectionMultiplexer = connectionMultiplexer;
             _logger = _scope.ServiceProvider.GetRequiredService<ILogger<CurrencyPairCacheManagementService>>();
             
             InitializeCache(serviceProvider);
@@ -67,7 +68,7 @@ namespace Nozomi.Service.HostedServices
             {
                 // Naming convention => PREFIX + CURRENCYPAIRID
                 // Set the object into the cache
-                _cache.Set(NozomiServiceConstants.CurrencyPairCachePrefix + cPair.Id, cPair);
+                
             }
         }
 
