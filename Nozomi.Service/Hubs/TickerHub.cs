@@ -2,6 +2,7 @@
 using System.Threading.Channels;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
+using Newtonsoft.Json.Linq;
 using Nozomi.Data;
 using Nozomi.Data.CurrencyModels;
 using Nozomi.Data.HubModels.Interfaces;
@@ -19,11 +20,18 @@ namespace Nozomi.Service.Hubs
             _cpService = cpService;
         }
 
-        public async void BroadcastData<T>(T data) where T : class
+        /// <summary>
+        /// Allows Nozomi to Broadcast data to subscribed clients.
+        ///
+        /// We're unable to use Generics in a SignalR Hub class.
+        /// https://stackoverflow.com/questions/21759577/using-generic-methods-on-signalr-hub
+        /// </summary>
+        /// <param name="data"></param>
+        public async void BroadcastData(JObject data)
         {
-            var channel = Channel.CreateUnbounded<NozomiResult<T>>();
+            var channel = Channel.CreateUnbounded<NozomiResult<JObject>>();
 
-            await channel.Writer.WriteAsync(new NozomiResult<T>()
+            await channel.Writer.WriteAsync(new NozomiResult<JObject>()
             {
                 Success = true,
                 ResultType = NozomiResultType.Success,
