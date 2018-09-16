@@ -23,6 +23,7 @@ using Nozomi.Service.Services;
 using Nozomi.Service.Services.Interfaces;
 using Nozomi.Service.Services.Requests;
 using Nozomi.Service.Services.Requests.Interfaces;
+using StackExchange.Redis;
 using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 
 namespace Nozomi.Ticker
@@ -91,6 +92,8 @@ namespace Nozomi.Ticker
             
             // In-memory data storage
             services.AddMemoryCache();
+            
+            services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect("localhost"));
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
