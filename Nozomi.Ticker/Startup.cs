@@ -135,9 +135,6 @@ namespace Nozomi.Ticker
             services.AddSignalR()
                 .AddMessagePackProtocol();
             
-            // In-memory data storage
-            services.AddMemoryCache();
-            
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
 
