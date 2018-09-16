@@ -45,13 +45,37 @@ namespace Nozomi.Ticker
 
             if (!string.IsNullOrEmpty(env) && !env.Equals("production", StringComparison.OrdinalIgnoreCase))
             {
+                // Greet the beloved dev
                 Console.WriteLine(@"Welcome to dev, your machine is named: " + Environment.MachineName);
+                
+                // Postgres DB Setup
                 var str = Configuration.GetConnectionString("Local:" + @Environment.MachineName);
 
                 services.AddDbContext<NozomiDbContext>(options =>
                 {
                     options.UseNpgsql(Configuration.GetConnectionString("Local:" + @Environment.MachineName));
                 });
+                
+                // Redis Config
+                var redisConfig = new ConfigurationOptions
+                {
+                    EndPoints =
+                    {
+                        { "localhost", 6379 }    
+                    },
+                    CommandMap = CommandMap.Create(new HashSet<string>
+                    { 
+                        // EXCLUDE a few commands
+                        "INFO", "CONFIG", "CLUSTER",
+                        "PING", "ECHO", "CLIENT"
+                    }, available: false),
+                    KeepAlive = 180,
+                    //DefaultVersion = new Version(2, 8, 8),
+                    Password = ""
+                };
+            
+                // Redis Multiplexer
+                services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect(redisConfig));
             }
             else
             {
@@ -60,6 +84,27 @@ namespace Nozomi.Ticker
                 {
                     options.UseNpgsql(Configuration.GetConnectionString("NozomiDb"));
                 });
+                
+                // Redis Config
+                var redisConfig = new ConfigurationOptions
+                {
+                    EndPoints =
+                    {
+                        { Configuration.GetConnectionString("RedisPath"), 6379 }
+                    },
+                    CommandMap = CommandMap.Create(new HashSet<string>
+                    { 
+                        // EXCLUDE a few commands
+                        "INFO", "CONFIG", "CLUSTER",
+                        "PING", "ECHO", "CLIENT"
+                    }, available: false),
+                    KeepAlive = 180,
+                    //DefaultVersion = new Version(2, 8, 8),
+                    Password = Configuration.GetConnectionString("RedisKey") ?? string.Empty
+                };
+            
+                // Redis Multiplexer
+                services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect(redisConfig));
             }
             
             services.Configure<CookiePolicyOptions>(options =>
@@ -93,8 +138,6 @@ namespace Nozomi.Ticker
             // In-memory data storage
             services.AddMemoryCache();
             
-            services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect("localhost"));
-
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
 
