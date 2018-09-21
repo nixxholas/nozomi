@@ -13,6 +13,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Nozomi.Data.HubModels.Interfaces;
 using Nozomi.Data.WebModels;
 using Nozomi.Data.WebModels.LoggingModels;
 using Nozomi.Service.HostedServices.RequestTypes.Interfaces;
@@ -26,14 +27,16 @@ namespace Nozomi.Service.HostedServices.RequestTypes
 {
     public class HttpGetCurrencyPairRequestSyncingService : BaseHostedService, IHttpGetCurrencyPairRequestSyncingService
     {
-        private HttpClient _httpClient = new HttpClient();
+        private readonly HttpClient _httpClient = new HttpClient();
         private readonly ICurrencyPairComponentService _currencyPairComponentService;
         private readonly ICurrencyPairRequestService _currencyPairRequestService;
         private readonly IRequestLogService _requestLogService;
         private readonly ILogger<HttpGetCurrencyPairRequestSyncingService> _logger;
         private List<CurrencyPairRequest> _currencyPairRequestList;
+        private IHubContext<TickerHub, ITickerHubClient> _tickerHub;
         
-        public HttpGetCurrencyPairRequestSyncingService(IServiceProvider serviceProvider) : base(serviceProvider)
+        public HttpGetCurrencyPairRequestSyncingService(IServiceProvider serviceProvider,
+            IHubContext<TickerHub, ITickerHubClient> tickerHub) : base(serviceProvider)
         {
             _currencyPairComponentService = _scope.ServiceProvider.GetRequiredService<ICurrencyPairComponentService>();
             _currencyPairRequestService = _scope.ServiceProvider.GetRequiredService<ICurrencyPairRequestService>();
@@ -45,6 +48,7 @@ namespace Nozomi.Service.HostedServices.RequestTypes
             _currencyPairRequestList = _currencyPairRequestService.GetAllActive(true)
                                .Where(r => r.RequestType.Equals(RequestType.HttpGet))
                                .ToList() ?? new List<CurrencyPairRequest>();
+            _tickerHub = tickerHub;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -67,7 +71,8 @@ namespace Nozomi.Service.HostedServices.RequestTypes
                     // Process the request
                     if (await Process(rq))
                     {
-                        // Since its successful
+                        // Since its successful, broadcast its success
+                        _tickerHub.Clients.All.BroadcastData((JObject.FromObject(rq)));
                     }
                 }
                 
