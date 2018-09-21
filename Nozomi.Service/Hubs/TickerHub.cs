@@ -10,7 +10,7 @@ using Nozomi.Service.Services.Interfaces;
 
 namespace Nozomi.Service.Hubs
 {
-    public class TickerHub : Hub, ITickerHubClient
+    public class TickerHub : Hub<ITickerHubClient>
     {
         private IEnumerable<CurrencyPair> _currencyPairs;
         private readonly ICurrencyPairService _cpService;
