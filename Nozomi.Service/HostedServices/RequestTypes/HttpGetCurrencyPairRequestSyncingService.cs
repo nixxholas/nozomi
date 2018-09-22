@@ -33,7 +33,7 @@ namespace Nozomi.Service.HostedServices.RequestTypes
         private readonly IRequestLogService _requestLogService;
         private readonly ILogger<HttpGetCurrencyPairRequestSyncingService> _logger;
         private List<CurrencyPairRequest> _currencyPairRequestList;
-        private IHubContext<TickerHub, ITickerHubClient> _tickerHub;
+        private readonly IHubContext<TickerHub, ITickerHubClient> _tickerHub;
         
         public HttpGetCurrencyPairRequestSyncingService(IServiceProvider serviceProvider,
             IHubContext<TickerHub, ITickerHubClient> tickerHub) : base(serviceProvider)
@@ -72,7 +72,7 @@ namespace Nozomi.Service.HostedServices.RequestTypes
                     if (await Process(rq))
                     {
                         // Since its successful, broadcast its success
-                        _tickerHub.Clients.All.BroadcastData((JObject.FromObject(rq)));
+                        _tickerHub.Clients.All.BroadcastData(rq.ObscureToPublicJson());
                     }
                 }
                 
