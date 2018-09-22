@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace Nozomi.Service.HostedServices
 {
@@ -10,17 +11,18 @@ namespace Nozomi.Service.HostedServices
     /// <summary>
     /// Base class for implementing a long running <see cref="IHostedService"/>.
     /// </summary>
-    public abstract class BaseHostedService : IHostedService, IDisposable
+    public abstract class BaseHostedService<T> where T : class, IHostedService, IDisposable
     {
         // Use a service provider to access scoped services.
         // https://forums.asp.net/t/2134510.aspx?Inject+dbcontext+in+IHostedService
         protected readonly IServiceScope _scope;
         private Task _executingTask;
-        private readonly CancellationTokenSource _stoppingCts =
-                                                       new CancellationTokenSource();
+        private readonly CancellationTokenSource _stoppingCts = new CancellationTokenSource();
+        public readonly ILogger<T> _logger;
 
-        public BaseHostedService(IServiceProvider serviceProvider) {
+        protected BaseHostedService(IServiceProvider serviceProvider) {
             _scope = serviceProvider.CreateScope();
+            _logger = _scope.ServiceProvider.GetRequiredService<ILogger<T>>();
         }
 
         protected abstract Task ExecuteAsync(CancellationToken stoppingToken);
