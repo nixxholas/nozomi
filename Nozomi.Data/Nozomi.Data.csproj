@@ -15,4 +15,7 @@
     <PackageReference Include="NuGet.Build.Packaging" Version="0.2.2" />
     <PackageReference Include="System.Threading.Channels" Version="4.5.0" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Nozomi.Core\Nozomi.Core.csproj" />
+  </ItemGroup>
 </Project>
