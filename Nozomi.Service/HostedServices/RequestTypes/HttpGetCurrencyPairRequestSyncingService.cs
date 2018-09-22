@@ -23,6 +23,18 @@ using Nozomi.Service.Services.Interfaces;
 using Nozomi.Service.Services.Requests;
 using Nozomi.Service.Services.Requests.Interfaces;
 
+/*
+ * HttpGetCurrencyPairRequestSyncingService
+ * Created by Nicholas Chen, 2018
+ *
+ * This Background service acts as a cron job to process, validate and update currency pair data on the fly,
+ * with the ability to support dozens of API headers on the HTTP protocol, omitting the standard way of writing one
+ * wrapper for one vendor. Although it is able to handle all kinds of vendors with variants in their API structure,
+ * HttpGetCurrencyPairRequestSyncingService assumes that the API has limitless API access and would call as much as it
+ * wants when it has to.
+ *
+ * Further development of writing a feature to prevent this limitless API calling will be done.
+ */
 namespace Nozomi.Service.HostedServices.RequestTypes
 {
     public class HttpGetCurrencyPairRequestSyncingService : BaseHostedService, IHttpGetCurrencyPairRequestSyncingService
@@ -76,8 +88,8 @@ namespace Nozomi.Service.HostedServices.RequestTypes
                     }
                 }
                 
-
-                await Task.Delay(5000);
+                // No naps taken
+                //await Task.Delay(0, stoppingToken);
             }
 
             _logger.LogWarning("HttpGetCurrencyPairRequestSyncingService background task is stopping.");
