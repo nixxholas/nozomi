@@ -10,6 +10,7 @@ using Counter.SDK.Utils.Numerics;
 using CounterCore.Service.Services;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -37,13 +38,13 @@ using Nozomi.Service.Services.Requests.Interfaces;
  */
 namespace Nozomi.Service.HostedServices.RequestTypes
 {
-    public class HttpGetCurrencyPairRequestSyncingService : BaseHostedService, IHttpGetCurrencyPairRequestSyncingService
+    public class HttpGetCurrencyPairRequestSyncingService : BaseHostedService<HttpGetCurrencyPairRequestSyncingService>, 
+        IHttpGetCurrencyPairRequestSyncingService, IHostedService, IDisposable
     {
         private readonly HttpClient _httpClient = new HttpClient();
         private readonly ICurrencyPairComponentService _currencyPairComponentService;
         private readonly ICurrencyPairRequestService _currencyPairRequestService;
         private readonly IRequestLogService _requestLogService;
-        private readonly ILogger<HttpGetCurrencyPairRequestSyncingService> _logger;
         private List<CurrencyPairRequest> _currencyPairRequestList;
         private readonly IHubContext<TickerHub, ITickerHubClient> _tickerHub;
         
@@ -54,8 +55,6 @@ namespace Nozomi.Service.HostedServices.RequestTypes
             _currencyPairRequestService = _scope.ServiceProvider.GetRequiredService<ICurrencyPairRequestService>();
             _requestLogService = _scope.ServiceProvider.GetRequiredService<IRequestLogService>();
             
-            _logger = _scope.ServiceProvider.GetRequiredService<ILogger<HttpGetCurrencyPairRequestSyncingService>>();
-
             // Initialize the request list for all GET requests
             _currencyPairRequestList = _currencyPairRequestService.GetAllActive(true)
                                .Where(r => r.RequestType.Equals(RequestType.HttpGet))
