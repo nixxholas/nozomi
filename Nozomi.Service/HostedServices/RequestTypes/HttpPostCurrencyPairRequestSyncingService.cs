@@ -253,6 +253,10 @@ namespace Nozomi.Service.HostedServices.RequestTypes
                             }
                             
                             break;
+                        // Declares a Custom Header Value
+                        case RequestPropertyType.HttpHeader_Custom:
+                            _httpClient.DefaultRequestHeaders.Add(reqProp.Key, reqProp.Value);
+                            break;
                         // Declares the Http POST Body
                         case RequestPropertyType.HttpBody:
                             body = reqProp.Value;
