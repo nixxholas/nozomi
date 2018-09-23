@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data.CurrencyModels;
 using Nozomi.Service.HostedServices.Interfaces;
@@ -13,18 +14,17 @@ using StackExchange.Redis;
 
 namespace Nozomi.Service.HostedServices
 {
-    public class CurrencyPairCacheManagementService : BaseHostedService, ICurrencyPairCacheManagementService
+    public class CurrencyPairCacheManagementService : BaseHostedService<CurrencyPairCacheManagementService>
+        , ICurrencyPairCacheManagementService, IHostedService, IDisposable
     {
         private ICurrencyPairService _currencyPairService;
         private IConnectionMultiplexer _connectionMultiplexer;
-        private ILogger<CurrencyPairCacheManagementService> _logger;
         
         public CurrencyPairCacheManagementService(IConnectionMultiplexer connectionMultiplexer,
             IServiceProvider serviceProvider) : base(serviceProvider)
         {
             _currencyPairService = serviceProvider.GetService<CurrencyPairService>();
             _connectionMultiplexer = connectionMultiplexer;
-            _logger = _scope.ServiceProvider.GetRequiredService<ILogger<CurrencyPairCacheManagementService>>();
             
             InitializeCache(serviceProvider);
         }

@@ -9,13 +9,15 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
 using Counter.SDK.Utils;
 using Counter.SDK.Utils.Numerics;
+using Microsoft.Extensions.Hosting;
 using Nozomi.Data.CurrencyModels;
 using Nozomi.Service.HostedServices.Interfaces;
 using Nozomi.Service.Services.Interfaces;
 
 namespace Nozomi.Service.HostedServices
 {
-    public class TickerSyncingService : BaseHostedService, ITickerSyncingService
+    public class TickerSyncingService : BaseHostedService<TickerSyncingService>
+        , ITickerSyncingService, IHostedService, IDisposable
     {
         private ICurrencyPairService _cpService;
         private ICurrencyPairComponentService _cpcService;
