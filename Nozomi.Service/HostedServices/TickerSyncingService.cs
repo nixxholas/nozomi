@@ -21,13 +21,11 @@ namespace Nozomi.Service.HostedServices
     {
         private ICurrencyPairService _cpService;
         private ICurrencyPairComponentService _cpcService;
-        private ILogger<TickerSyncingService> _logger;
 
         public TickerSyncingService(IServiceProvider serviceProvider) : base(serviceProvider)
         {
             _cpService = _scope.ServiceProvider.GetRequiredService<ICurrencyPairService>();
             _cpcService = _scope.ServiceProvider.GetRequiredService<ICurrencyPairComponentService>();
-            _logger = _scope.ServiceProvider.GetRequiredService<ILogger<TickerSyncingService>>();
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
