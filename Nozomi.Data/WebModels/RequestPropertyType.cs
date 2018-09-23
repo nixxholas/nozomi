@@ -38,6 +38,7 @@ namespace Nozomi.Data.WebModels
         HttpHeader_UserAgent = 29,
         HttpHeader_Via = 30,
         HttpHeader_Warning = 31,
+        HttpHeader_Custom = 32,
         HttpBody = 200,
 
         // more to come
