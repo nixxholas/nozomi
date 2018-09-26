@@ -14,6 +14,8 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
             entityTypeBuilder.HasAlternateKey(r => r.Guid).HasName("Request_AK_Guid");
             entityTypeBuilder.Property(r => r.Guid).ValueGeneratedOnAdd();
 
+            entityTypeBuilder.Property(r => r.Delay).HasDefaultValue(0).IsRequired();
+            
             // We need this to determine the type of request to execute with
             entityTypeBuilder.Property(r => r.RequestType).IsRequired();
             // Sometimes, some APIs don't really have a deep declaration requirement

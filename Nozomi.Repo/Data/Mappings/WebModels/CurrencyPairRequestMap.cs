@@ -20,14 +20,16 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
                     Id = 1,
                     Guid = Guid.NewGuid(),
                     DataPath = "https://api.ethfinex.com/v2/ticker/tETHUSD",
-                    CurrencyPairId = 1
+                    CurrencyPairId = 1,
+                    Delay = 5000
                 },
                 new CurrencyPairRequest()
                 {
                     Id = 2,
                     Guid = Guid.NewGuid(),
                     DataPath = "https://api.ethfinex.com/v2/ticker/tKNCUSD",
-                    CurrencyPairId = 2
+                    CurrencyPairId = 2,
+                    Delay = 5000
                 }
             );
         }

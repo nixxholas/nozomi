@@ -18,6 +18,11 @@ namespace Nozomi.Data.WebModels
         /// URL.
         /// </summary>
         public string DataPath { get; set; }
+        
+        /// <summary>
+        /// Defines the delay of repeating in milliseconds.
+        /// </summary>
+        public int Delay { get; set; }
 
         public ICollection<RequestComponent> RequestComponents { get; set; }
         public ICollection<RequestLog> RequestLogs { get; set; }
