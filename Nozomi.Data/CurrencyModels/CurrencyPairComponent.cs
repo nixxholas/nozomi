@@ -7,10 +7,14 @@ using Nozomi.Data.WebModels;
 
 namespace Nozomi.Data.CurrencyModels
 {
-    public class CurrencyPairComponent : CurrencyPairRequestComponent
+    public class CurrencyPairComponent : RequestComponent
     {
         public long CurrencyPairId { get; set; }
         public CurrencyPair CurrencyPair { get; set; }
+        
+        public new CurrencyPairRequest Request { get; set; }
+
+        public ComponentType ComponentType { get; set; } = ComponentType.Unknown;
 
         public bool IsValueAbnormal(string incomingValue)
         {
