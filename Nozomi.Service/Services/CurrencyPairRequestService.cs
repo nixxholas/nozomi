@@ -170,6 +170,7 @@ namespace Nozomi.Service.Services
                 .Include(r => r.CurrencyPair)
                     .ThenInclude(cp => cp.CurrencyPairComponents)
                 .Include(r => r.RequestComponents)
+                    .ThenInclude(rc => rc.RequestComponentData)
                 .Include(r => r.RequestProperties);
         }
 
