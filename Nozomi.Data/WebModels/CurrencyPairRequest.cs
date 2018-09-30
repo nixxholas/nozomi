@@ -1,10 +1,10 @@
-﻿using Nozomi.Data.CurrencyModels;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Text;
-using Newtonsoft.Json;
+using System.Linq;
 using Newtonsoft.Json.Linq;
 using Nozomi.Core;
+using Nozomi.Core.Helpers.Native.Collections;
+using Nozomi.Data.CurrencyModels;
 
 namespace Nozomi.Data.WebModels
 {
@@ -18,10 +18,17 @@ namespace Nozomi.Data.WebModels
 
         public new bool IsValidForPolling()
         {
+            if (RequestComponents.IsNullOrEmpty()) return false;
+            
+            var first = RequestComponents.FirstOrDefault();
+
             return (!string.IsNullOrEmpty(DataPath) && !string.IsNullOrWhiteSpace(DataPath)
                                                     && RequestType >= 0)
-                && (CurrencyPair != null) && CurrencyPair.CurrencyPairComponents != null
-                && CurrencyPair.CurrencyPairComponents.Count > 0;
+                   && first != null && CurrencyPair?.CurrencyPairComponents != null 
+                   && CurrencyPair.CurrencyPairComponents.Count > 0 && (first
+                       .RequestComponentData
+                       .OrderByDescending(rcd => rcd.CreatedAt)
+                       .Select(rcd => rcd.CreatedAt).SingleOrDefault()).AddMilliseconds(Delay) >= DateTime.Now;
         }
 
         public JObject ObscureToPublicJson()
