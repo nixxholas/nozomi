@@ -1,6 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System;
+using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Nozomi.Data.CurrencyModels;
+using Nozomi.Data.WebModels;
 
 namespace Nozomi.Repo.Data.Mappings.CurrencyModels
 {
@@ -20,7 +23,11 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                     CurrencyPairId = 1,
                     ComponentType = ComponentType.Ask,
                     QueryComponent = "0",
-                    RequestId = 1
+                    RequestId = 1,
+                    RequestComponentData = new List<RequestComponentDatum>(),
+                    CreatedAt = DateTime.Now,
+                    ModifiedAt = DateTime.Now,
+                    DeletedAt = null
                 },
                 new CurrencyPairComponent()
                 {
@@ -28,7 +35,11 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                     CurrencyPairId = 2,
                     ComponentType = ComponentType.Ask,
                     QueryComponent = "0",
-                    RequestId = 2
+                    RequestId = 2,
+                    RequestComponentData = new List<RequestComponentDatum>(),
+                    CreatedAt = DateTime.Now,
+                    ModifiedAt = DateTime.Now,
+                    DeletedAt = null
                 }
             );
         }
