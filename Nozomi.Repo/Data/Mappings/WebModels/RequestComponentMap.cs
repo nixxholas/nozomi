@@ -12,10 +12,11 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
             entityTypeBuilder.Property(rc => rc.Id).ValueGeneratedOnAdd();
             
             entityTypeBuilder.Property(rc => rc.QueryComponent).IsRequired(false);
-            entityTypeBuilder.Property(rc => rc.Value).IsRequired(false);
-
+            
             entityTypeBuilder.HasOne(rc => rc.Request).WithMany(r => r.RequestComponents)
                 .HasForeignKey(rc => rc.RequestId);
+            entityTypeBuilder.HasMany(rc => rc.RequestComponentData).WithOne(rcd => rcd.RequestComponent)
+                .HasForeignKey(rcd => rcd.RequestComponentId);
         }
     }
 }
