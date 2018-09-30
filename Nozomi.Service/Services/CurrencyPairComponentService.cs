@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Globalization;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data.CurrencyModels;
+using Nozomi.Data.WebModels;
 using Nozomi.Repo.Data;
 using Nozomi.Repo.Repositories;
 using Nozomi.Service.Services;
@@ -22,14 +25,19 @@ namespace CounterCore.Service.Services
                                      .GetRepository<CurrencyPairComponent>()
                                      .GetQueryable()
                                      .Where(cp => cp.Id.Equals(id))
+                                     .Include(cpc => cpc.RequestComponentData)
                                      .SingleOrDefault(cp => cp.DeletedAt == null);
 
             // Anormaly Detection
-            if (pairToUpd != null && !pairToUpd.IsValueAbnormal(val.ToString()))
+            if (pairToUpd != null && !pairToUpd.IsValueAbnormal(val.ToString(CultureInfo.InvariantCulture)))
             {
-                pairToUpd.Value = val.ToString();
-
-                _unitOfWork.GetRepository<CurrencyPairComponent>().Update(pairToUpd);
+                var newRcd = new RequestComponentDatum()
+                {
+                    RequestComponentId = pairToUpd.Id,
+                    Value = val.ToString(CultureInfo.InvariantCulture)
+                };
+                
+                _unitOfWork.GetRepository<RequestComponentDatum>().Add(newRcd);
                 _unitOfWork.Commit();
 
                 return true;

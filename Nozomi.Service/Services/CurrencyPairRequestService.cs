@@ -51,6 +51,7 @@ namespace Nozomi.Service.Services
                 .AsNoTracking()
                 .Where(cpr => cpr.DeletedAt == null && cpr.IsEnabled)
                 .Include(r => r.RequestComponents)
+                    .ThenInclude(rc => rc.RequestComponentData)
                 .Include(r => r.RequestProperties)
                 .Include(r => r.RequestLogs)
                 .Where(predicate)
@@ -66,7 +67,9 @@ namespace Nozomi.Service.Services
                             id = rc.Id,
                             componentType = rc.ComponentType,
                             queryComponent = rc.QueryComponent,
-                            value = rc.Value,
+                            value = rc.RequestComponentData
+                                .OrderByDescending(rcd => rcd.CreatedAt)
+                                .Select(rcd => rcd.Value).FirstOrDefault(),
                             isEnabled = rc.IsEnabled,
                             createdAt = rc.CreatedAt,
                             createdBy = rc.CreatedBy,
