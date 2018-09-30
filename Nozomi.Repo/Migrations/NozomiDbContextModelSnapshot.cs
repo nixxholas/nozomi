@@ -302,24 +302,51 @@ namespace Nozomi.Repo.Migrations
 
                     b.Property<long>("ModifiedBy");
 
-                    b.Property<string>("QueryComponent")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasDefaultValue("");
+                    b.Property<string>("QueryComponent");
 
                     b.Property<long>("RequestId");
-
-                    b.Property<string>("Value");
 
                     b.HasKey("Id")
                         .HasName("RequestComponent_PK_Id");
 
-                    b.HasAlternateKey("RequestId", "QueryComponent", "CreatedAt")
-                        .HasName("RequestComponent_RequestId_QueryComponent_CreatedAt");
+                    b.HasIndex("RequestId");
 
                     b.ToTable("RequestComponents");
 
                     b.HasDiscriminator<string>("Discriminator").HasValue("RequestComponent");
+                });
+
+            modelBuilder.Entity("Nozomi.Data.WebModels.RequestComponentDatum", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<DateTime>("CreatedAt");
+
+                    b.Property<long>("CreatedBy");
+
+                    b.Property<DateTime?>("DeletedAt");
+
+                    b.Property<long>("DeletedBy");
+
+                    b.Property<bool>("IsEnabled");
+
+                    b.Property<DateTime>("ModifiedAt");
+
+                    b.Property<long>("ModifiedBy");
+
+                    b.Property<long>("RequestComponentId");
+
+                    b.Property<string>("Value")
+                        .ValueGeneratedOnAdd()
+                        .HasDefaultValue("");
+
+                    b.HasKey("Id")
+                        .HasName("RequestComponenDatum_PK_Id");
+
+                    b.HasIndex("RequestComponentId");
+
+                    b.ToTable("RequestComponentData");
                 });
 
             modelBuilder.Entity("Nozomi.Data.WebModels.RequestProperty", b =>
@@ -370,8 +397,8 @@ namespace Nozomi.Repo.Migrations
                     b.HasDiscriminator().HasValue("CurrencyPairRequest");
 
                     b.HasData(
-                        new { Id = 1L, CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), CreatedBy = 0L, DataPath = "https://api.ethfinex.com/v2/ticker/tETHUSD", Delay = 5000, DeletedBy = 0L, Guid = new Guid("54c3dc21-dd27-4129-9e58-0e9c5ba96eb3"), IsEnabled = true, ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), ModifiedBy = 0L, RequestType = 0, CurrencyPairId = 1L },
-                        new { Id = 2L, CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), CreatedBy = 0L, DataPath = "https://api.ethfinex.com/v2/ticker/tKNCUSD", Delay = 5000, DeletedBy = 0L, Guid = new Guid("bb503a5a-8e44-4477-bb35-994844af5f95"), IsEnabled = true, ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), ModifiedBy = 0L, RequestType = 0, CurrencyPairId = 2L }
+                        new { Id = 1L, CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), CreatedBy = 0L, DataPath = "https://api.ethfinex.com/v2/ticker/tETHUSD", Delay = 5000, DeletedBy = 0L, Guid = new Guid("d53a48c1-ca6a-470d-9773-0e52f1e95f00"), IsEnabled = true, ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), ModifiedBy = 0L, RequestType = 0, CurrencyPairId = 1L },
+                        new { Id = 2L, CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), CreatedBy = 0L, DataPath = "https://api.ethfinex.com/v2/ticker/tKNCUSD", Delay = 5000, DeletedBy = 0L, Guid = new Guid("536f006e-3007-4af8-a56e-37860173a481"), IsEnabled = true, ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), ModifiedBy = 0L, RequestType = 0, CurrencyPairId = 2L }
                     );
                 });
 
@@ -399,8 +426,8 @@ namespace Nozomi.Repo.Migrations
                     b.HasDiscriminator().HasValue("CurrencyPairComponent");
 
                     b.HasData(
-                        new { Id = 1L, CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), CreatedBy = 0L, DeletedBy = 0L, IsEnabled = true, ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), ModifiedBy = 0L, QueryComponent = "0", RequestId = 1L, Value = "0", ComponentType = 1, CurrencyPairId = 1L },
-                        new { Id = 2L, CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), CreatedBy = 0L, DeletedBy = 0L, IsEnabled = true, ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), ModifiedBy = 0L, QueryComponent = "0", RequestId = 2L, Value = "0", ComponentType = 1, CurrencyPairId = 2L }
+                        new { Id = 1L, CreatedAt = new DateTime(2018, 9, 30, 21, 58, 53, 370, DateTimeKind.Local), CreatedBy = 0L, DeletedBy = 0L, IsEnabled = true, ModifiedAt = new DateTime(2018, 9, 30, 21, 58, 53, 372, DateTimeKind.Local), ModifiedBy = 0L, QueryComponent = "0", RequestId = 1L, ComponentType = 1, CurrencyPairId = 1L },
+                        new { Id = 2L, CreatedAt = new DateTime(2018, 9, 30, 21, 58, 53, 372, DateTimeKind.Local), CreatedBy = 0L, DeletedBy = 0L, IsEnabled = true, ModifiedAt = new DateTime(2018, 9, 30, 21, 58, 53, 372, DateTimeKind.Local), ModifiedBy = 0L, QueryComponent = "0", RequestId = 2L, ComponentType = 1, CurrencyPairId = 2L }
                     );
                 });
 
@@ -451,6 +478,14 @@ namespace Nozomi.Repo.Migrations
                     b.HasOne("Nozomi.Data.WebModels.Request", "Request")
                         .WithMany("RequestComponents")
                         .HasForeignKey("RequestId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("Nozomi.Data.WebModels.RequestComponentDatum", b =>
+                {
+                    b.HasOne("Nozomi.Data.WebModels.RequestComponent", "RequestComponent")
+                        .WithMany("RequestComponentData")
+                        .HasForeignKey("RequestComponentId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 

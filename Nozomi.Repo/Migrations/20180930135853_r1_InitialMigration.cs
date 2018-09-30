@@ -152,11 +152,12 @@ namespace Nozomi.Repo.Migrations
                     CreatedBy = table.Column<long>(nullable: false),
                     ModifiedBy = table.Column<long>(nullable: false),
                     DeletedBy = table.Column<long>(nullable: false),
-                    Guid = table.Column<Guid>(nullable: false),
                     Id = table.Column<long>(nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn),
+                    Guid = table.Column<Guid>(nullable: false),
                     RequestType = table.Column<int>(nullable: false),
                     DataPath = table.Column<string>(nullable: true),
+                    Delay = table.Column<int>(nullable: false, defaultValue: 0),
                     Discriminator = table.Column<string>(nullable: false),
                     CurrencyPairId = table.Column<long>(nullable: true)
                 },
@@ -185,9 +186,8 @@ namespace Nozomi.Repo.Migrations
                     DeletedBy = table.Column<long>(nullable: false),
                     Id = table.Column<long>(nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn),
-                    RequestId = table.Column<long>(nullable: false),
                     QueryComponent = table.Column<string>(nullable: true),
-                    Value = table.Column<string>(nullable: true),
+                    RequestId = table.Column<long>(nullable: false),
                     Discriminator = table.Column<string>(nullable: false),
                     ComponentType = table.Column<int>(nullable: true),
                     CurrencyPairId = table.Column<long>(nullable: true)
@@ -266,6 +266,33 @@ namespace Nozomi.Repo.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "RequestComponentData",
+                columns: table => new
+                {
+                    IsEnabled = table.Column<bool>(nullable: false),
+                    CreatedAt = table.Column<DateTime>(nullable: false),
+                    ModifiedAt = table.Column<DateTime>(nullable: false),
+                    DeletedAt = table.Column<DateTime>(nullable: true),
+                    CreatedBy = table.Column<long>(nullable: false),
+                    ModifiedBy = table.Column<long>(nullable: false),
+                    DeletedBy = table.Column<long>(nullable: false),
+                    Id = table.Column<long>(nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn),
+                    RequestComponentId = table.Column<long>(nullable: false),
+                    Value = table.Column<string>(nullable: true, defaultValue: "")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("RequestComponenDatum_PK_Id", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_RequestComponentData_RequestComponents_RequestComponentId",
+                        column: x => x.RequestComponentId,
+                        principalTable: "RequestComponents",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.InsertData(
                 table: "CurrencyTypes",
                 columns: new[] { "Id", "CreatedAt", "CreatedBy", "DeletedAt", "DeletedBy", "IsEnabled", "ModifiedAt", "ModifiedBy", "Name", "TypeShortForm" },
@@ -316,22 +343,22 @@ namespace Nozomi.Repo.Migrations
 
             migrationBuilder.InsertData(
                 table: "Requests",
-                columns: new[] { "Id", "CreatedAt", "CreatedBy", "DataPath", "DeletedAt", "DeletedBy", "Discriminator", "Guid", "IsEnabled", "ModifiedAt", "ModifiedBy", "RequestType", "CurrencyPairId" },
+                columns: new[] { "Id", "CreatedAt", "CreatedBy", "DataPath", "Delay", "DeletedAt", "DeletedBy", "Discriminator", "Guid", "IsEnabled", "ModifiedAt", "ModifiedBy", "RequestType", "CurrencyPairId" },
                 values: new object[,]
                 {
-                    { 1L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "https://api.ethfinex.com/v2/ticker/tETHUSD", null, 0L, "CurrencyPairRequest", new Guid("ee6d8194-780e-45ae-a4a4-72140d7e7576"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 1L },
-                    { 2L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "https://api.ethfinex.com/v2/ticker/tKNCUSD", null, 0L, "CurrencyPairRequest", new Guid("149630a1-3ca9-48a5-bd26-4b81cf115090"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 2L }
+                    { 1L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "https://api.ethfinex.com/v2/ticker/tETHUSD", 5000, null, 0L, "CurrencyPairRequest", new Guid("d53a48c1-ca6a-470d-9773-0e52f1e95f00"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 1L },
+                    { 2L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "https://api.ethfinex.com/v2/ticker/tKNCUSD", 5000, null, 0L, "CurrencyPairRequest", new Guid("536f006e-3007-4af8-a56e-37860173a481"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 2L }
                 });
 
             migrationBuilder.InsertData(
                 table: "RequestComponents",
-                columns: new[] { "Id", "CreatedAt", "CreatedBy", "DeletedAt", "DeletedBy", "Discriminator", "IsEnabled", "ModifiedAt", "ModifiedBy", "QueryComponent", "RequestId", "Value", "ComponentType", "CurrencyPairId" },
-                values: new object[] { 1L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, null, 0L, "CurrencyPairComponent", true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "0", 1L, "0", 1, 1L });
+                columns: new[] { "Id", "CreatedAt", "CreatedBy", "DeletedAt", "DeletedBy", "Discriminator", "IsEnabled", "ModifiedAt", "ModifiedBy", "QueryComponent", "RequestId", "ComponentType", "CurrencyPairId" },
+                values: new object[] { 1L, new DateTime(2018, 9, 30, 21, 58, 53, 370, DateTimeKind.Local), 0L, null, 0L, "CurrencyPairComponent", true, new DateTime(2018, 9, 30, 21, 58, 53, 372, DateTimeKind.Local), 0L, "0", 1L, 1, 1L });
 
             migrationBuilder.InsertData(
                 table: "RequestComponents",
-                columns: new[] { "Id", "CreatedAt", "CreatedBy", "DeletedAt", "DeletedBy", "Discriminator", "IsEnabled", "ModifiedAt", "ModifiedBy", "QueryComponent", "RequestId", "Value", "ComponentType", "CurrencyPairId" },
-                values: new object[] { 2L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, null, 0L, "CurrencyPairComponent", true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "0", 2L, "0", 1, 2L });
+                columns: new[] { "Id", "CreatedAt", "CreatedBy", "DeletedAt", "DeletedBy", "Discriminator", "IsEnabled", "ModifiedAt", "ModifiedBy", "QueryComponent", "RequestId", "ComponentType", "CurrencyPairId" },
+                values: new object[] { 2L, new DateTime(2018, 9, 30, 21, 58, 53, 372, DateTimeKind.Local), 0L, null, 0L, "CurrencyPairComponent", true, new DateTime(2018, 9, 30, 21, 58, 53, 372, DateTimeKind.Local), 0L, "0", 2L, 1, 2L });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Currencies_CurrencySourceId",
@@ -352,6 +379,11 @@ namespace Nozomi.Repo.Migrations
                 name: "IX_PartialCurrencyPairs_CurrencyId",
                 table: "PartialCurrencyPairs",
                 column: "CurrencyId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_RequestComponentData_RequestComponentId",
+                table: "RequestComponentData",
+                column: "RequestComponentId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_RequestComponents_CurrencyPairId",
@@ -390,7 +422,7 @@ namespace Nozomi.Repo.Migrations
                 name: "PartialCurrencyPairs");
 
             migrationBuilder.DropTable(
-                name: "RequestComponents");
+                name: "RequestComponentData");
 
             migrationBuilder.DropTable(
                 name: "RequestLogs");
@@ -402,10 +434,13 @@ namespace Nozomi.Repo.Migrations
                 name: "Currencies");
 
             migrationBuilder.DropTable(
-                name: "Requests");
+                name: "RequestComponents");
 
             migrationBuilder.DropTable(
                 name: "CurrencyTypes");
+
+            migrationBuilder.DropTable(
+                name: "Requests");
 
             migrationBuilder.DropTable(
                 name: "CurrencyPairs");
