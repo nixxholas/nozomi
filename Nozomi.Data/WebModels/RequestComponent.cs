@@ -21,9 +21,9 @@ namespace Nozomi.Data.WebModels
         /// to distinguish if we're offloading data from an array or object.
         public string QueryComponent { get; set; }
 
-        public string Value { get; set; }
-
         public long RequestId { get; set; }
         public Request Request { get; set; }
+        
+        public ICollection<RequestComponentDatum> RequestComponentData { get; set; }
     }
 }
