@@ -98,6 +98,8 @@ namespace Nozomi.Service.HostedServices.RequestTypes
         {
             if (req != null && req.IsValidForPolling())
             {
+                Console.WriteLine("HttpGetCurrencyPairRequestSyncingService PROCESSING: " + req.Id);
+                
                 // FLUSH
                 _httpClient.DefaultRequestHeaders.Clear();
                 
