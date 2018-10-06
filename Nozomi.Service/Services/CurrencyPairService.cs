@@ -19,6 +19,26 @@ namespace Nozomi.Service.Services
         {
         }
 
+        public bool Create(CurrencyPair currencyPair, long userId)
+        {
+            if (currencyPair == null) return false;
+            
+            if (userId > 0)
+            {
+                _unitOfWork.GetRepository<CurrencyPair>().Add(currencyPair);
+                _unitOfWork.Commit(userId);
+
+                return true;
+            }
+            else
+            {
+                _unitOfWork.GetRepository<CurrencyPair>().Add(currencyPair);
+                _unitOfWork.Commit();
+
+                return true;
+            }
+        }
+
         public dynamic GetByIdObsc(long id, bool track = false)
         {
             if (!track)
