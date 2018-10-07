@@ -54,6 +54,7 @@ namespace Nozomi.Ticker
                 services.AddDbContext<NozomiDbContext>(options =>
                 {
                     options.UseNpgsql(Configuration.GetConnectionString("Local:" + @Environment.MachineName));
+                    options.EnableSensitiveDataLogging(false);
                 },
                     ServiceLifetime.Transient);
                 
@@ -84,6 +85,7 @@ namespace Nozomi.Ticker
                 services.AddDbContext<NozomiDbContext>(options =>
                 {
                     options.UseNpgsql(Configuration.GetConnectionString("NozomiDb"));
+                    options.EnableSensitiveDataLogging(false);
                 }, ServiceLifetime.Transient);
                 
                 // Redis Config
