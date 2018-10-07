@@ -22,12 +22,12 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                 .HasForeignKey(cpc => cpc.RequestId);
             
             entityTypeBuilder.HasData(
-                new CurrencyPairComponent()
+                new CurrencyPairComponent
                 {
                     Id = 1,
                     CurrencyPairId = 1,
                     ComponentType = ComponentType.Ask,
-                    QueryComponent = "0",
+                    QueryComponent = "1",
                     RequestId = 1,
                     RequestComponentData = new List<RequestComponentDatum>(),
                     CreatedAt = DateTime.Now,
@@ -37,6 +37,18 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                 new CurrencyPairComponent()
                 {
                     Id = 2,
+                    CurrencyPairId = 1,
+                    ComponentType = ComponentType.Bid,
+                    QueryComponent = "0",
+                    RequestId = 1,
+                    RequestComponentData = new List<RequestComponentDatum>(),
+                    CreatedAt = DateTime.Now,
+                    ModifiedAt = DateTime.Now,
+                    DeletedAt = null
+                },
+                new CurrencyPairComponent
+                {
+                    Id = 3,
                     CurrencyPairId = 2,
                     ComponentType = ComponentType.Ask,
                     QueryComponent = "0",
