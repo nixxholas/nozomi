@@ -54,7 +54,8 @@ namespace Nozomi.Ticker
                 services.AddDbContext<NozomiDbContext>(options =>
                 {
                     options.UseNpgsql(Configuration.GetConnectionString("Local:" + @Environment.MachineName));
-                });
+                },
+                    ServiceLifetime.Transient);
                 
                 // Redis Config
                 var redisConfig = new ConfigurationOptions
