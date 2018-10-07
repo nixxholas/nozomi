@@ -45,20 +45,15 @@ namespace Nozomi.Service.HostedServices.RequestTypes
         private readonly ICurrencyPairComponentService _currencyPairComponentService;
         private readonly ICurrencyPairRequestService _currencyPairRequestService;
         private readonly IRequestLogService _requestLogService;
-        private List<CurrencyPairRequest> _currencyPairRequestList;
         private readonly IHubContext<TickerHub, ITickerHubClient> _tickerHub;
         
         public HttpGetCurrencyPairRequestSyncingService(IServiceProvider serviceProvider,
             IHubContext<TickerHub, ITickerHubClient> tickerHub) : base(serviceProvider)
         {
-            _currencyPairComponentService = _scope.ServiceProvider.GetRequiredService<ICurrencyPairComponentService>();
-            _currencyPairRequestService = _scope.ServiceProvider.GetRequiredService<ICurrencyPairRequestService>();
-            _requestLogService = _scope.ServiceProvider.GetRequiredService<IRequestLogService>();
+            _currencyPairComponentService = _scope.ServiceProvider.GetService<ICurrencyPairComponentService>();
+            _currencyPairRequestService = _scope.ServiceProvider.GetService<ICurrencyPairRequestService>();
+            _requestLogService = _scope.ServiceProvider.GetService<IRequestLogService>();
             
-            // Initialize the request list for all GET requests
-            _currencyPairRequestList = _currencyPairRequestService.GetAllActive(true)
-                               .Where(r => r.RequestType.Equals(RequestType.HttpGet))
-                               .ToList() ?? new List<CurrencyPairRequest>();
             _tickerHub = tickerHub;
         }
 
@@ -72,8 +67,8 @@ namespace Nozomi.Service.HostedServices.RequestTypes
             {
                 // We will need to resync the Request collection to make sure we're polling only the ones we want to poll
                 var getBasedRequests = _currencyPairRequestService.GetAllActive(r => r.IsEnabled && r.DeletedAt == null
-                                                                               && r.RequestType.Equals(RequestType
-                                                                                   .HttpGet), true);
+                                                                               && r.RequestType == RequestType.HttpGet, true)
+                                                                               .ToList();
 
                 // Iterate the requests
                 // NOTE: Let's not call a parallel loop since HttpClients might tend to result in memory leaks.
