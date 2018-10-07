@@ -191,8 +191,7 @@ namespace Nozomi.Service.Services
                 .Where(cpr => cpr.DeletedAt == null && cpr.IsEnabled)
                 .Include(r => r.CurrencyPair)
                     .ThenInclude(cp => cp.CurrencyPairComponents)
-                .Include(r => r.RequestComponents)
-                    .ThenInclude(rc => rc.RequestComponentData)
+                        .ThenInclude(cpc => cpc.RequestComponentData)
                 .Include(r => r.RequestProperties)
                 .Where(predicate);
         }
