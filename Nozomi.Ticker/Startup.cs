@@ -55,6 +55,7 @@ namespace Nozomi.Ticker
                 {
                     options.UseNpgsql(Configuration.GetConnectionString("Local:" + @Environment.MachineName));
                     options.EnableSensitiveDataLogging(false);
+                    options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
                 },
                     ServiceLifetime.Transient);
                 
@@ -86,6 +87,7 @@ namespace Nozomi.Ticker
                 {
                     options.UseNpgsql(Configuration.GetConnectionString("NozomiDb"));
                     options.EnableSensitiveDataLogging(false);
+                    options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
                 }, ServiceLifetime.Transient);
                 
                 // Redis Config
