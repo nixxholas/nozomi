@@ -18,7 +18,7 @@ namespace Nozomi.Data.WebModels
 
         public new bool IsValidForPolling()
         {
-            if (RequestComponents.IsNullOrEmpty()) return false;
+            if (RequestComponents == null || !RequestComponents.Any()) return false;
             
             var first = RequestComponents.FirstOrDefault();
 
