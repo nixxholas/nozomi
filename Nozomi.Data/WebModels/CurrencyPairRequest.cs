@@ -20,12 +20,19 @@ namespace Nozomi.Data.WebModels
             
             var first = RequestComponents.FirstOrDefault();
 
+            if (first?.RequestComponentData?.Count > 0)
+            {
+                return (!string.IsNullOrEmpty(DataPath) && !string.IsNullOrWhiteSpace(DataPath)
+                                                        && RequestType >= 0) 
+                                                        && (first.RequestComponentData
+                                                        .OrderByDescending(rcd => rcd.CreatedAt)
+                                                        .Select(rcd => rcd.CreatedAt)
+                                                        .FirstOrDefault()
+                                                        .AddMilliseconds(Delay) <= DateTime.UtcNow);
+            }
+
             return (!string.IsNullOrEmpty(DataPath) && !string.IsNullOrWhiteSpace(DataPath)
-                                                    && RequestType >= 0)
-                   && first != null && ((first.RequestComponentData
-                       .OrderByDescending(rcd => rcd.CreatedAt)
-                       .Select(rcd => rcd.CreatedAt).SingleOrDefault()).AddMilliseconds(Delay) >= DateTime.Now || 
-                                        (first.RequestComponentData.Count == 0 || first.RequestComponentData != null));
+                                                    && RequestType >= 0) && first != null;
         }
 
         public JObject ObscureToPublicJson()
