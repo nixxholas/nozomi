@@ -318,9 +318,9 @@ namespace Nozomi.Repo.Migrations
                     b.HasDiscriminator<string>("Discriminator").HasValue("RequestComponent");
 
                     b.HasData(
-                        new { Id = 1L, ComponentType = 1, CreatedAt = new DateTime(2018, 10, 11, 0, 17, 24, 50, DateTimeKind.Local), CreatedBy = 0L, DeletedBy = 0L, IsEnabled = true, ModifiedAt = new DateTime(2018, 10, 11, 0, 17, 24, 53, DateTimeKind.Local), ModifiedBy = 0L, QueryComponent = "1", RequestId = 1L },
-                        new { Id = 2L, ComponentType = 2, CreatedAt = new DateTime(2018, 10, 11, 0, 17, 24, 53, DateTimeKind.Local), CreatedBy = 0L, DeletedBy = 0L, IsEnabled = true, ModifiedAt = new DateTime(2018, 10, 11, 0, 17, 24, 53, DateTimeKind.Local), ModifiedBy = 0L, QueryComponent = "0", RequestId = 1L },
-                        new { Id = 3L, ComponentType = 1, CreatedAt = new DateTime(2018, 10, 11, 0, 17, 24, 53, DateTimeKind.Local), CreatedBy = 0L, DeletedBy = 0L, IsEnabled = true, ModifiedAt = new DateTime(2018, 10, 11, 0, 17, 24, 53, DateTimeKind.Local), ModifiedBy = 0L, QueryComponent = "0", RequestId = 2L }
+                        new { Id = 1L, ComponentType = 1, CreatedAt = new DateTime(2018, 10, 11, 0, 24, 30, 715, DateTimeKind.Local), CreatedBy = 0L, DeletedBy = 0L, IsEnabled = true, ModifiedAt = new DateTime(2018, 10, 11, 0, 24, 30, 717, DateTimeKind.Local), ModifiedBy = 0L, QueryComponent = "1", RequestId = 1L },
+                        new { Id = 2L, ComponentType = 2, CreatedAt = new DateTime(2018, 10, 11, 0, 24, 30, 718, DateTimeKind.Local), CreatedBy = 0L, DeletedBy = 0L, IsEnabled = true, ModifiedAt = new DateTime(2018, 10, 11, 0, 24, 30, 718, DateTimeKind.Local), ModifiedBy = 0L, QueryComponent = "0", RequestId = 1L },
+                        new { Id = 3L, ComponentType = 1, CreatedAt = new DateTime(2018, 10, 11, 0, 24, 30, 718, DateTimeKind.Local), CreatedBy = 0L, DeletedBy = 0L, IsEnabled = true, ModifiedAt = new DateTime(2018, 10, 11, 0, 24, 30, 718, DateTimeKind.Local), ModifiedBy = 0L, QueryComponent = "0", RequestId = 2L }
                     );
                 });
 
@@ -405,8 +405,8 @@ namespace Nozomi.Repo.Migrations
                     b.HasDiscriminator().HasValue("CurrencyPairRequest");
 
                     b.HasData(
-                        new { Id = 1L, CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), CreatedBy = 0L, DataPath = "https://api.ethfinex.com/v2/ticker/tETHUSD", Delay = 5000, DeletedBy = 0L, Guid = new Guid("b476e03b-deb2-4ee3-8481-2fcf80b17b76"), IsEnabled = true, ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), ModifiedBy = 0L, RequestType = 0, CurrencyPairId = 1L },
-                        new { Id = 2L, CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), CreatedBy = 0L, DataPath = "https://api.ethfinex.com/v2/ticker/tKNCUSD", Delay = 5000, DeletedBy = 0L, Guid = new Guid("f086af5a-1e63-4a49-88a8-cb92251b43e3"), IsEnabled = true, ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), ModifiedBy = 0L, RequestType = 0, CurrencyPairId = 2L }
+                        new { Id = 1L, CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), CreatedBy = 0L, DataPath = "https://api.ethfinex.com/v2/ticker/tETHUSD", Delay = 5000, DeletedBy = 0L, Guid = new Guid("766ef46b-bac3-4c5c-84cb-c62dac85423f"), IsEnabled = true, ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), ModifiedBy = 0L, RequestType = 0, CurrencyPairId = 1L },
+                        new { Id = 2L, CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), CreatedBy = 0L, DataPath = "https://api.ethfinex.com/v2/ticker/tKNCUSD", Delay = 5000, DeletedBy = 0L, Guid = new Guid("053037db-7fc0-4863-aa94-bfcb72b7b9a6"), IsEnabled = true, ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), ModifiedBy = 0L, RequestType = 0, CurrencyPairId = 2L }
                     );
                 });
 

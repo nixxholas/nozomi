@@ -186,10 +186,10 @@ namespace Nozomi.Repo.Migrations
                     DeletedBy = table.Column<long>(nullable: false),
                     Id = table.Column<long>(nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn),
+                    ComponentType = table.Column<int>(nullable: false),
                     QueryComponent = table.Column<string>(nullable: true),
                     RequestId = table.Column<long>(nullable: false),
                     Discriminator = table.Column<string>(nullable: false),
-                    ComponentType = table.Column<int>(nullable: true),
                     CurrencyPairId = table.Column<long>(nullable: true)
                 },
                 constraints: table =>
@@ -346,19 +346,24 @@ namespace Nozomi.Repo.Migrations
                 columns: new[] { "Id", "CreatedAt", "CreatedBy", "DataPath", "Delay", "DeletedAt", "DeletedBy", "Discriminator", "Guid", "IsEnabled", "ModifiedAt", "ModifiedBy", "RequestType", "CurrencyPairId" },
                 values: new object[,]
                 {
-                    { 1L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "https://api.ethfinex.com/v2/ticker/tETHUSD", 5000, null, 0L, "CurrencyPairRequest", new Guid("d53a48c1-ca6a-470d-9773-0e52f1e95f00"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 1L },
-                    { 2L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "https://api.ethfinex.com/v2/ticker/tKNCUSD", 5000, null, 0L, "CurrencyPairRequest", new Guid("536f006e-3007-4af8-a56e-37860173a481"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 2L }
+                    { 1L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "https://api.ethfinex.com/v2/ticker/tETHUSD", 5000, null, 0L, "CurrencyPairRequest", new Guid("766ef46b-bac3-4c5c-84cb-c62dac85423f"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 1L },
+                    { 2L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "https://api.ethfinex.com/v2/ticker/tKNCUSD", 5000, null, 0L, "CurrencyPairRequest", new Guid("053037db-7fc0-4863-aa94-bfcb72b7b9a6"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 2L }
                 });
 
             migrationBuilder.InsertData(
                 table: "RequestComponents",
-                columns: new[] { "Id", "CreatedAt", "CreatedBy", "DeletedAt", "DeletedBy", "Discriminator", "IsEnabled", "ModifiedAt", "ModifiedBy", "QueryComponent", "RequestId", "ComponentType", "CurrencyPairId" },
-                values: new object[] { 1L, new DateTime(2018, 9, 30, 21, 58, 53, 370, DateTimeKind.Local), 0L, null, 0L, "CurrencyPairComponent", true, new DateTime(2018, 9, 30, 21, 58, 53, 372, DateTimeKind.Local), 0L, "0", 1L, 1, 1L });
+                columns: new[] { "Id", "ComponentType", "CreatedAt", "CreatedBy", "DeletedAt", "DeletedBy", "Discriminator", "IsEnabled", "ModifiedAt", "ModifiedBy", "QueryComponent", "RequestId" },
+                values: new object[] { 1L, 1, new DateTime(2018, 10, 11, 0, 24, 30, 715, DateTimeKind.Local), 0L, null, 0L, "RequestComponent", true, new DateTime(2018, 10, 11, 0, 24, 30, 717, DateTimeKind.Local), 0L, "1", 1L });
 
             migrationBuilder.InsertData(
                 table: "RequestComponents",
-                columns: new[] { "Id", "CreatedAt", "CreatedBy", "DeletedAt", "DeletedBy", "Discriminator", "IsEnabled", "ModifiedAt", "ModifiedBy", "QueryComponent", "RequestId", "ComponentType", "CurrencyPairId" },
-                values: new object[] { 2L, new DateTime(2018, 9, 30, 21, 58, 53, 372, DateTimeKind.Local), 0L, null, 0L, "CurrencyPairComponent", true, new DateTime(2018, 9, 30, 21, 58, 53, 372, DateTimeKind.Local), 0L, "0", 2L, 1, 2L });
+                columns: new[] { "Id", "ComponentType", "CreatedAt", "CreatedBy", "DeletedAt", "DeletedBy", "Discriminator", "IsEnabled", "ModifiedAt", "ModifiedBy", "QueryComponent", "RequestId" },
+                values: new object[] { 2L, 2, new DateTime(2018, 10, 11, 0, 24, 30, 718, DateTimeKind.Local), 0L, null, 0L, "RequestComponent", true, new DateTime(2018, 10, 11, 0, 24, 30, 718, DateTimeKind.Local), 0L, "0", 1L });
+
+            migrationBuilder.InsertData(
+                table: "RequestComponents",
+                columns: new[] { "Id", "ComponentType", "CreatedAt", "CreatedBy", "DeletedAt", "DeletedBy", "Discriminator", "IsEnabled", "ModifiedAt", "ModifiedBy", "QueryComponent", "RequestId" },
+                values: new object[] { 3L, 1, new DateTime(2018, 10, 11, 0, 24, 30, 718, DateTimeKind.Local), 0L, null, 0L, "RequestComponent", true, new DateTime(2018, 10, 11, 0, 24, 30, 718, DateTimeKind.Local), 0L, "0", 2L });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Currencies_CurrencySourceId",

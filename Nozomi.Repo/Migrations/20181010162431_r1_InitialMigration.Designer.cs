@@ -10,8 +10,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Nozomi.Repo.Migrations
 {
     [DbContext(typeof(NozomiDbContext))]
-    [Migration("20181007085719_r3_CPCFurtherSeeding")]
-    partial class r3_CPCFurtherSeeding
+    [Migration("20181010162431_r1_InitialMigration")]
+    partial class r1_InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -287,6 +287,8 @@ namespace Nozomi.Repo.Migrations
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<int>("ComponentType");
+
                     b.Property<DateTime>("CreatedAt");
 
                     b.Property<long>("CreatedBy");
@@ -316,6 +318,12 @@ namespace Nozomi.Repo.Migrations
                     b.ToTable("RequestComponents");
 
                     b.HasDiscriminator<string>("Discriminator").HasValue("RequestComponent");
+
+                    b.HasData(
+                        new { Id = 1L, ComponentType = 1, CreatedAt = new DateTime(2018, 10, 11, 0, 24, 30, 715, DateTimeKind.Local), CreatedBy = 0L, DeletedBy = 0L, IsEnabled = true, ModifiedAt = new DateTime(2018, 10, 11, 0, 24, 30, 717, DateTimeKind.Local), ModifiedBy = 0L, QueryComponent = "1", RequestId = 1L },
+                        new { Id = 2L, ComponentType = 2, CreatedAt = new DateTime(2018, 10, 11, 0, 24, 30, 718, DateTimeKind.Local), CreatedBy = 0L, DeletedBy = 0L, IsEnabled = true, ModifiedAt = new DateTime(2018, 10, 11, 0, 24, 30, 718, DateTimeKind.Local), ModifiedBy = 0L, QueryComponent = "0", RequestId = 1L },
+                        new { Id = 3L, ComponentType = 1, CreatedAt = new DateTime(2018, 10, 11, 0, 24, 30, 718, DateTimeKind.Local), CreatedBy = 0L, DeletedBy = 0L, IsEnabled = true, ModifiedAt = new DateTime(2018, 10, 11, 0, 24, 30, 718, DateTimeKind.Local), ModifiedBy = 0L, QueryComponent = "0", RequestId = 2L }
+                    );
                 });
 
             modelBuilder.Entity("Nozomi.Data.WebModels.RequestComponentDatum", b =>
@@ -399,16 +407,14 @@ namespace Nozomi.Repo.Migrations
                     b.HasDiscriminator().HasValue("CurrencyPairRequest");
 
                     b.HasData(
-                        new { Id = 1L, CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), CreatedBy = 0L, DataPath = "https://api.ethfinex.com/v2/ticker/tETHUSD", Delay = 5000, DeletedBy = 0L, Guid = new Guid("5b14895a-2ede-46ea-bf50-01b1c3ba71fe"), IsEnabled = true, ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), ModifiedBy = 0L, RequestType = 0, CurrencyPairId = 1L },
-                        new { Id = 2L, CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), CreatedBy = 0L, DataPath = "https://api.ethfinex.com/v2/ticker/tKNCUSD", Delay = 5000, DeletedBy = 0L, Guid = new Guid("af646f80-f04e-4660-add3-43cf112b1b7d"), IsEnabled = true, ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), ModifiedBy = 0L, RequestType = 0, CurrencyPairId = 2L }
+                        new { Id = 1L, CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), CreatedBy = 0L, DataPath = "https://api.ethfinex.com/v2/ticker/tETHUSD", Delay = 5000, DeletedBy = 0L, Guid = new Guid("766ef46b-bac3-4c5c-84cb-c62dac85423f"), IsEnabled = true, ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), ModifiedBy = 0L, RequestType = 0, CurrencyPairId = 1L },
+                        new { Id = 2L, CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), CreatedBy = 0L, DataPath = "https://api.ethfinex.com/v2/ticker/tKNCUSD", Delay = 5000, DeletedBy = 0L, Guid = new Guid("053037db-7fc0-4863-aa94-bfcb72b7b9a6"), IsEnabled = true, ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), ModifiedBy = 0L, RequestType = 0, CurrencyPairId = 2L }
                     );
                 });
 
             modelBuilder.Entity("Nozomi.Data.CurrencyModels.CurrencyPairComponent", b =>
                 {
                     b.HasBaseType("Nozomi.Data.WebModels.RequestComponent");
-
-                    b.Property<int>("ComponentType");
 
                     b.Property<long>("CurrencyPairId");
 
@@ -417,12 +423,6 @@ namespace Nozomi.Repo.Migrations
                     b.ToTable("CurrencyPairComponent");
 
                     b.HasDiscriminator().HasValue("CurrencyPairComponent");
-
-                    b.HasData(
-                        new { Id = 1L, CreatedAt = new DateTime(2018, 10, 7, 16, 57, 19, 261, DateTimeKind.Local), CreatedBy = 0L, DeletedBy = 0L, IsEnabled = true, ModifiedAt = new DateTime(2018, 10, 7, 16, 57, 19, 264, DateTimeKind.Local), ModifiedBy = 0L, QueryComponent = "1", RequestId = 1L, ComponentType = 1, CurrencyPairId = 1L },
-                        new { Id = 2L, CreatedAt = new DateTime(2018, 10, 7, 16, 57, 19, 264, DateTimeKind.Local), CreatedBy = 0L, DeletedBy = 0L, IsEnabled = true, ModifiedAt = new DateTime(2018, 10, 7, 16, 57, 19, 264, DateTimeKind.Local), ModifiedBy = 0L, QueryComponent = "0", RequestId = 1L, ComponentType = 2, CurrencyPairId = 1L },
-                        new { Id = 3L, CreatedAt = new DateTime(2018, 10, 7, 16, 57, 19, 264, DateTimeKind.Local), CreatedBy = 0L, DeletedBy = 0L, IsEnabled = true, ModifiedAt = new DateTime(2018, 10, 7, 16, 57, 19, 264, DateTimeKind.Local), ModifiedBy = 0L, QueryComponent = "0", RequestId = 2L, ComponentType = 1, CurrencyPairId = 2L }
-                    );
                 });
 
             modelBuilder.Entity("Nozomi.Data.CurrencyModels.Currency", b =>
@@ -502,7 +502,7 @@ namespace Nozomi.Repo.Migrations
             modelBuilder.Entity("Nozomi.Data.CurrencyModels.CurrencyPairComponent", b =>
                 {
                     b.HasOne("Nozomi.Data.CurrencyModels.CurrencyPair", "CurrencyPair")
-                        .WithMany("CurrencyPairComponents")
+                        .WithMany()
                         .HasForeignKey("CurrencyPairId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
