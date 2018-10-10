@@ -22,11 +22,10 @@ namespace Nozomi.Data.WebModels
 
             return (!string.IsNullOrEmpty(DataPath) && !string.IsNullOrWhiteSpace(DataPath)
                                                     && RequestType >= 0)
-                   && first != null && RequestComponents != null 
-                   && RequestComponents.Count > 0 && (first
-                       .RequestComponentData
+                   && first != null && ((first.RequestComponentData
                        .OrderByDescending(rcd => rcd.CreatedAt)
-                       .Select(rcd => rcd.CreatedAt).SingleOrDefault()).AddMilliseconds(Delay) >= DateTime.Now;
+                       .Select(rcd => rcd.CreatedAt).SingleOrDefault()).AddMilliseconds(Delay) >= DateTime.Now || 
+                                        (first.RequestComponentData.Count == 0 || first.RequestComponentData != null));
         }
 
         public JObject ObscureToPublicJson()
