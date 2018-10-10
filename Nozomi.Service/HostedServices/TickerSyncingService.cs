@@ -107,57 +107,57 @@ namespace Nozomi.Service.HostedServices
                         List<string> dataList = jsonToken.ToObject<List<string>>();
 
                         // If the db really hodls a number,
-                        foreach (var component in pair.CurrencyPairComponents)
-                        {
-                            if (component.QueryComponent != null &&
-                                int.TryParse(component.QueryComponent, out int index))
-                            {
-                                // let's work it out
-                                if (index >= 0 && index < dataList.Count)
-                                {
-                                    // Number checks
-                                    // Make sure the datalist element we're targetting contains a proper value.
-                                    if (decimal.TryParse(dataList[index], out decimal val))
-                                    {
-                                        // Add the value in
-                                        dataSet.Add(component.Id, val);
-                                    }
-                                }
-                            }
-                        }
+//                        foreach (var component in pair.CurrencyPairComponents)
+//                        {
+//                            if (component.QueryComponent != null &&
+//                                int.TryParse(component.QueryComponent, out int index))
+//                            {
+//                                // let's work it out
+//                                if (index >= 0 && index < dataList.Count)
+//                                {
+//                                    // Number checks
+//                                    // Make sure the datalist element we're targetting contains a proper value.
+//                                    if (decimal.TryParse(dataList[index], out decimal val))
+//                                    {
+//                                        // Add the value in
+//                                        dataSet.Add(component.Id, val);
+//                                    }
+//                                }
+//                            }
+//                        }
                     }
                     else if (jsonToken is JObject)
                     {
                         // Pump in the object
                         JObject obj = jsonToken.ToObject<JObject>();
 
-                        foreach (var component in pair.CurrencyPairComponents)
-                        {
-                            if (component.QueryComponent != null)
-                            {
-                                var rawData = (string) obj.SelectToken(component.QueryComponent);
-
-                                if (rawData != null)
-                                {
-                                    // https://stackoverflow.com/questions/23131414/culture-invariant-decimal-tryparse
-                                    var style = NumberStyles.Any;
-                                    if (ExponentHelper.IsExponentialFormat(rawData))
-                                    {
-                                        style = NumberStyles.Float;
-                                    }
-
-                                    // If it is an exponent
-                                    if (decimal.TryParse(rawData, style, CultureInfo.InvariantCulture,
-                                        out decimal val))
-                                    {
-                                        if (val > 0)
-                                        {
-                                            dataSet.Add(pair.Id, val);
-                                        }
-                                    }
-                                }
-                            }
-                        }
+//                        foreach (var component in pair.CurrencyPairComponents)
+//                        {
+//                            if (component.QueryComponent != null)
+//                            {
+//                                var rawData = (string) obj.SelectToken(component.QueryComponent);
+//
+//                                if (rawData != null)
+//                                {
+//                                    // https://stackoverflow.com/questions/23131414/culture-invariant-decimal-tryparse
+//                                    var style = NumberStyles.Any;
+//                                    if (ExponentHelper.IsExponentialFormat(rawData))
+//                                    {
+//                                        style = NumberStyles.Float;
+//                                    }
+//
+//                                    // If it is an exponent
+//                                    if (decimal.TryParse(rawData, style, CultureInfo.InvariantCulture,
+//                                        out decimal val))
+//                                    {
+//                                        if (val > 0)
+//                                        {
+//                                            dataSet.Add(pair.Id, val);
+//                                        }
+//                                    }
+//                                }
+//                            }
+//                        }
                     }
                 }
             }

@@ -2,12 +2,15 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Nozomi.Data.CurrencyModels;
 
 namespace Nozomi.Data.WebModels
 {
     public class RequestComponent : BaseEntityModel
     {
         public long Id { get; set; }
+
+        public ComponentType ComponentType { get; set; } = ComponentType.Unknown;
 
         /// <summary>
         /// Gets or sets the query component of the JSON data retrieved from the APIUrl.

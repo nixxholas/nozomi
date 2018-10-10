@@ -25,7 +25,6 @@ namespace Nozomi.Data.CurrencyModels
         public Source CurrencySource { get; set; }
 
         // =========== RELATIONS ============ //
-        public ICollection<CurrencyPairComponent> CurrencyPairComponents { get; set; }
         public ICollection<CurrencyPairRequest> CurrencyPairRequests { get; set; }
         public ICollection<PartialCurrencyPair> PartialCurrencyPairs { get; set; }
 
@@ -37,7 +36,6 @@ namespace Nozomi.Data.CurrencyModels
             return (CurrencyPairType > 0) && (!string.IsNullOrEmpty(APIUrl)) 
                                           && (!string.IsNullOrEmpty(DefaultComponent))
                                           && (CurrencySourceId > 0)
-                                          && (CurrencyPairComponents.Count > 0)
                                           && (PartialCurrencyPairs.Count == 2)
                                           && (firstPair.CurrencyId != lastPair.CurrencyId)
                                           && (!firstPair.IsMain == lastPair.IsMain);

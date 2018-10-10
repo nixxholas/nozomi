@@ -24,8 +24,8 @@ namespace Nozomi.Data.WebModels
 
             return (!string.IsNullOrEmpty(DataPath) && !string.IsNullOrWhiteSpace(DataPath)
                                                     && RequestType >= 0)
-                   && first != null && CurrencyPair?.CurrencyPairComponents != null 
-                   && CurrencyPair.CurrencyPairComponents.Count > 0 && (first
+                   && first != null && RequestComponents != null 
+                   && RequestComponents.Count > 0 && (first
                        .RequestComponentData
                        .OrderByDescending(rcd => rcd.CreatedAt)
                        .Select(rcd => rcd.CreatedAt).SingleOrDefault()).AddMilliseconds(Delay) >= DateTime.Now;
@@ -33,8 +33,8 @@ namespace Nozomi.Data.WebModels
 
         public JObject ObscureToPublicJson()
         {
-            if (CurrencyPair?.CurrencyPairComponents != null
-                && CurrencyPair.CurrencyPairComponents.Count > 0)
+            if (RequestComponents != null
+                && RequestComponents.Count > 0)
             {
             
                 return new NozomiJObject(true)

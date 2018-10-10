@@ -310,7 +310,7 @@ namespace Nozomi.Service.HostedServices.RequestTypes
                 var payload = await _httpClient.GetAsync(req.DataPath);
 
                 // Succcessful? and is there even any Components to update?
-                if (payload.IsSuccessStatusCode && req.CurrencyPair?.CurrencyPairComponents != null && req.CurrencyPair.CurrencyPairComponents.Count > 0)
+                if (payload.IsSuccessStatusCode && req?.RequestComponents != null && req.RequestComponents.Count > 0)
                 {
                     // Pull the content
                     var content = await payload.Content.ReadAsStringAsync();
@@ -318,7 +318,7 @@ namespace Nozomi.Service.HostedServices.RequestTypes
                     var contentToken = JToken.Parse(content);
 
                     // Pull the components wanted
-                    var requestComponents = req.CurrencyPair.CurrencyPairComponents
+                    var requestComponents = req.RequestComponents
                         .Where(cpc => cpc.DeletedAt == null && cpc.IsEnabled);
 
                     if (contentToken is JArray)

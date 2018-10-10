@@ -62,8 +62,9 @@ namespace Nozomi.Service.Services
                 .Where(cp => cp.Id.Equals(id))
                 //.Include(cp => cp.Adverts)
                 //.Include(cp => cp.CurrencyPairAdvertTypes)
-                .Include(cp => cp.CurrencyPairComponents)
-                    .ThenInclude(cpc => cpc.RequestComponentData)
+                .Include(cp => cp.CurrencyPairRequests)
+                    .ThenInclude(cpr => cpr.RequestComponents)
+                        .ThenInclude(rc => rc.RequestComponentData)
                 .Include(cp => cp.CurrencySource)
                 .Include(cp => cp.PartialCurrencyPairs)
                 .Select(cp => new
@@ -79,7 +80,9 @@ namespace Nozomi.Service.Services
                         name = cp.CurrencySource.Name
                     },
                     //advertCount = cp.Adverts.Count,
-                    currencyPairComponents = cp.CurrencyPairComponents.Select(cpc => new
+                    currencyPairComponents = cp.CurrencyPairRequests
+                        .FirstOrDefault(cpr => cpr.IsEnabled && cpr.DeletedAt == null)
+                        .RequestComponents.Select(cpc => new
                     {
                         id = cpc.Id,
                         componentType = cpc.ComponentType,
@@ -123,8 +126,9 @@ namespace Nozomi.Service.Services
                 .GetQueryable()
                 //.Include(cp => cp.Adverts)
                 //.Include(cp => cp.CurrencyPairAdvertTypes)
-                .Include(cp => cp.CurrencyPairComponents)
-                    .ThenInclude(cpc => cpc.RequestComponentData)
+                .Include(cp => cp.CurrencyPairRequests)
+                    .ThenInclude(cpr => cpr.RequestComponents)
+                        .ThenInclude(rc => rc.RequestComponentData)
                 .Include(cp => cp.CurrencySource)
                 .Include(cp => cp.PartialCurrencyPairs)
                 .Select(cp => new
@@ -140,7 +144,9 @@ namespace Nozomi.Service.Services
                         name = cp.CurrencySource.Name
                     },
                     //advertCount = cp.Adverts.Count,
-                    currencyPairComponents = cp.CurrencyPairComponents.Select(cpc => new
+                    currencyPairComponents = cp.CurrencyPairRequests
+                        .FirstOrDefault(cpr => cpr.IsEnabled && cpr.DeletedAt == null)
+                        .RequestComponents.Select(cpc => new
                     {
                         id = cpc.Id,
                         componentType = cpc.ComponentType,
@@ -167,7 +173,9 @@ namespace Nozomi.Service.Services
         {
             return _unitOfWork.GetRepository<CurrencyPair>()
                 .GetQueryable()
-                .Include(cp => cp.CurrencyPairComponents)
+                .Include(cp => cp.CurrencyPairRequests)
+                    .ThenInclude(cpr => cpr.RequestComponents)
+                        .ThenInclude(rc => rc.RequestComponentData)
                 .Where(cp => cp.DeletedAt == null && cp.IsEnabled);
         }
 
@@ -282,13 +290,16 @@ namespace Nozomi.Service.Services
                 return query
                     .Where(wExpression)
                     .Include(cp => cp.PartialCurrencyPairs)
-                    .Include(cp => cp.CurrencyPairComponents)
-                        .ThenInclude(cpc => cpc.RequestComponentData)
+                    .Include(cp => cp.CurrencyPairRequests)
+                        .ThenInclude(cpr => cpr.RequestComponents)
+                            .ThenInclude(rc => rc.RequestComponentData)
                     .Select(cp => new
                     {
                         id = cp.Id,
                         currencySourceId = cp.CurrencySourceId,
-                        currencyPairComponents = cp.CurrencyPairComponents
+                        currencyPairComponents = cp.CurrencyPairRequests
+                            .FirstOrDefault(cpr => cpr.IsEnabled && cpr.DeletedAt == null)
+                            .RequestComponents
                             .Select(cpc => new
                             {
                                 id = cpc.Id,

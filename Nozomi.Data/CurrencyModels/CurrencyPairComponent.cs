@@ -14,8 +14,6 @@ namespace Nozomi.Data.CurrencyModels
         
         public new CurrencyPairRequest Request { get; set; }
 
-        public ComponentType ComponentType { get; set; } = ComponentType.Unknown;
-
         public bool IsValueAbnormal(string incomingValue)
         {
             switch (ComponentType)
