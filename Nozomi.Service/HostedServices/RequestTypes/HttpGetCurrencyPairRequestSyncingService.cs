@@ -78,12 +78,12 @@ namespace Nozomi.Service.HostedServices.RequestTypes
                     if (await Process(rq))
                     {
                         // Since its successful, broadcast its success
-                        await _tickerHub.Clients.All.BroadcastData(rq.ObscureToPublicJson());
+                        // await _tickerHub.Clients.All.BroadcastData(rq.ObscureToPublicJson());
                     }
                 }
                 
                 // No naps taken
-                //await Task.Delay(0, stoppingToken);
+                await Task.Delay(0, stoppingToken);
             }
 
             _logger.LogWarning("HttpGetCurrencyPairRequestSyncingService background task is stopping.");
