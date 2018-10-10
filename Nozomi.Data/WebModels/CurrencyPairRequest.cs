@@ -14,8 +14,6 @@ namespace Nozomi.Data.WebModels
 
         public CurrencyPair CurrencyPair { get; set; }
 
-        public new ICollection<CurrencyPairComponent> RequestComponents { get; set; }
-
         public new bool IsValidForPolling()
         {
             if (RequestComponents == null || !RequestComponents.Any()) return false;

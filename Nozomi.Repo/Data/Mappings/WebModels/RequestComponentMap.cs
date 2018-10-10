@@ -25,6 +25,7 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
                 new RequestComponent
                 {
                     Id = 1,
+                    
                     ComponentType = ComponentType.Ask,
                     QueryComponent = "1",
                     RequestId = 1,
