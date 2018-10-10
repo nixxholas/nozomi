@@ -22,14 +22,14 @@ namespace CounterCore.Service.Services
         public bool UpdatePairValue(long id, decimal val)
         {
             var pairToUpd = _unitOfWork
-                                     .GetRepository<CurrencyPairComponent>()
+                                     .GetRepository<RequestComponent>()
                                      .GetQueryable()
                                      .Where(cp => cp.Id.Equals(id))
                                      .Include(cpc => cpc.RequestComponentData)
-                                     .SingleOrDefault(cp => cp.DeletedAt == null);
+                                     .SingleOrDefault(cp => cp.DeletedAt == null && cp.IsEnabled);
 
-            // Anormaly Detection
-            if (pairToUpd != null && !pairToUpd.IsValueAbnormal(val.ToString(CultureInfo.InvariantCulture)))
+            // Anomaly Detection
+            if (pairToUpd != null)
             {
                 var newRcd = new RequestComponentDatum()
                 {
