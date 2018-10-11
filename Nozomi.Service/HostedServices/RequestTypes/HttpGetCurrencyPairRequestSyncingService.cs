@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Counter.SDK.Utils.Numerics;
 using CounterCore.Service.Services;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -67,8 +68,11 @@ namespace Nozomi.Service.HostedServices.RequestTypes
             {
                 // We will need to resync the Request collection to make sure we're polling only the ones we want to poll
                 var getBasedRequests = _currencyPairRequestService.GetAllActive(r => r.IsEnabled && r.DeletedAt == null
-                                                                               && r.RequestType == RequestType.HttpGet, true)
-                                                                               .ToList();
+                                            && r.RequestType == RequestType.HttpGet
+                                            && r.RequestComponents.Any(rc => !rc.RequestComponentData.Any() 
+                                            || (DateTime.UtcNow > rc.RequestComponentData.OrderByDescending(rcd => rcd.CreatedAt)
+                                                 .FirstOrDefault().CreatedAt.AddMilliseconds(r.Delay))), true)
+                                            .ToList();
 
                 // Iterate the requests
                 // NOTE: Let's not call a parallel loop since HttpClients might tend to result in memory leaks.
