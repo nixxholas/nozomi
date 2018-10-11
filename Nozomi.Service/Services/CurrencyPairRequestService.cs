@@ -153,7 +153,7 @@ namespace Nozomi.Service.Services
             return false;
         }
 
-        public IEnumerable<CurrencyPairRequest> GetAllActive(bool track = false)
+        public IQueryable<CurrencyPairRequest> GetAllActive(bool track = false)
         {
             if (!track)
             {
@@ -173,7 +173,7 @@ namespace Nozomi.Service.Services
                 .Include(r => r.RequestProperties);
         }
 
-        public IEnumerable<CurrencyPairRequest> GetAllActive(Expression<Func<CurrencyPairRequest, bool>> predicate, bool track = false)
+        public IQueryable<CurrencyPairRequest> GetAllActive(Expression<Func<CurrencyPairRequest, bool>> predicate, bool track = false)
         {
             if (!track)
             {

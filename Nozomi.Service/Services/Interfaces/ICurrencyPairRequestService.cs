@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using Nozomi.Data.CurrencyModels;
 using Nozomi.Data.WebModels;
@@ -18,8 +19,8 @@ namespace Nozomi.Service.Services.Interfaces
 
         bool SoftDelete(long cpRequestId, long userId = 0);
         
-        IEnumerable<CurrencyPairRequest> GetAllActive(bool track = false);
+        IQueryable<CurrencyPairRequest> GetAllActive(bool track = false);
 
-        IEnumerable<CurrencyPairRequest> GetAllActive(Expression<Func<CurrencyPairRequest, bool>> predicate, bool track = false);
+        IQueryable<CurrencyPairRequest> GetAllActive(Expression<Func<CurrencyPairRequest, bool>> predicate, bool track = false);
     }
 }
