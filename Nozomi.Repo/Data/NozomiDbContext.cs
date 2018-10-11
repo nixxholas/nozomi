@@ -28,7 +28,39 @@ namespace Nozomi.Repo.Data
         public DbSet<RequestLog> RequestLogs { get; set; }
         public DbSet<RequestProperty> RequestProperties { get; set; }
         public DbSet<Source> Sources { get; set; }
-
+        
+        // Introducing Compiled Queries
+        private static Func<NozomiDbContext, long, ICollection<CurrencyPairRequest>> _getCurrencyPairRequestForGet =
+            EF.CompileQuery((NozomiDbContext context, long id) =>
+                context.CurrencyPairRequests
+                    .AsQueryable()
+                    .Include(cpr => cpr.RequestComponents)
+                        .ThenInclude(rc => rc.RequestComponentData)
+                    .Include(r => r.CurrencyPair)
+                    .Include(r => r.RequestProperties)
+                    .Where(r => r.IsEnabled && r.DeletedAt == null
+                                            && r.RequestType == RequestType.HttpGet
+                                            && r.RequestComponents.Any(rc => !rc.RequestComponentData.Any() 
+                                            || (DateTime.UtcNow > rc.RequestComponentData
+                                                    .OrderByDescending(rcd => rcd.CreatedAt)
+                                                    .FirstOrDefault().CreatedAt.AddMilliseconds(r.Delay))))
+                    .ToList());
+        private static Func<NozomiDbContext, long, ICollection<CurrencyPairRequest>> _getCurrencyPairRequestForPost =
+            EF.CompileQuery((NozomiDbContext context, long id) =>
+                context.CurrencyPairRequests
+                    .AsQueryable()
+                    .Include(cpr => cpr.RequestComponents)
+                        .ThenInclude(rc => rc.RequestComponentData)
+                    .Include(r => r.CurrencyPair)
+                    .Include(r => r.RequestProperties)
+                    .Where(r => r.IsEnabled && r.DeletedAt == null
+                                            && r.RequestType == RequestType.HttpPost
+                                            && r.RequestComponents.Any(rc => !rc.RequestComponentData.Any() 
+                                            || (DateTime.UtcNow > rc.RequestComponentData
+                                                    .OrderByDescending(rcd => rcd.CreatedAt)
+                                                    .FirstOrDefault().CreatedAt.AddMilliseconds(r.Delay))))
+                    .ToList());
+        
         public NozomiDbContext(DbContextOptions options) : base(options)
         {
         }
