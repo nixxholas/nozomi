@@ -194,5 +194,26 @@ namespace Nozomi.Service.Services
                 .Include(r => r.RequestProperties)
                 .Where(predicate);
         }
+
+        // Introducing Compiled Queries
+        private static readonly Func<NozomiDbContext, RequestType, IEnumerable<CurrencyPairRequest>> _getCurrencyPairRequestByRequestType =
+            EF.CompileQuery((NozomiDbContext context, RequestType type) =>
+                context.CurrencyPairRequests
+                    .AsQueryable()
+                    .Include(cpr => cpr.RequestComponents)
+                    .ThenInclude(rc => rc.RequestComponentData)
+                    .Include(r => r.CurrencyPair)
+                    .Include(r => r.RequestProperties)
+                    .Where(r => r.IsEnabled && r.DeletedAt == null
+                                            && r.RequestType == type
+                                            && r.RequestComponents.Any(rc => !rc.RequestComponentData.Any() 
+                                                                             || (DateTime.UtcNow > rc.RequestComponentData
+                                                                                     .OrderByDescending(rcd => rcd.CreatedAt)
+                                                                                     .FirstOrDefault().CreatedAt.AddMilliseconds(r.Delay)))));
+
+        public ICollection<CurrencyPairRequest> GetAllByRequestType(RequestType requestType)
+        {
+            return _getCurrencyPairRequestByRequestType(_unitOfWork.Context, requestType).ToList();
+        }
     }
 }
