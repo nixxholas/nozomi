@@ -10,4 +10,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Nozomi.Service\Nozomi.Service.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Controllers\v1" />
+  </ItemGroup>
 </Project>
