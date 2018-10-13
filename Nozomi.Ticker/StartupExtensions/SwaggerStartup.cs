@@ -1,4 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
+using Nozomi.Ticker.Controllers;
 using Swashbuckle.AspNetCore.Swagger;
 
 namespace Nozomi.Ticker.StartupExtensions
@@ -9,22 +10,22 @@ namespace Nozomi.Ticker.StartupExtensions
         {
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new Info
+                c.SwaggerDoc(GlobalApiVariables.CURRENT_API_VERSION, new Info
                 {
-                    Version = "v1",
-                    Title = "ToDo API",
-                    Description = "A simple example ASP.NET Core Web API",
+                    Version = GlobalApiVariables.CURRENT_API_VERSION,
+                    Title = "Nozomi API Docs",
+                    Description = "Reference documentation for the usage of Nozomi.",
                     TermsOfService = "None",
                     Contact = new Contact
                     {
-                        Name = "Shayne Boyer",
-                        Email = string.Empty,
-                        Url = "https://twitter.com/spboyer"
+                        Name = "Nicholas Chen",
+                        Email = "nicholas@counter.network",
+                        Url = "https://twitter.com/nixxholas"
                     },
                     License = new License
                     {
-                        Name = "Use under LICX",
-                        Url = "https://example.com/license"
+                        Name = "Copyright (C) Hayate Inc. - All Rights Reserved",
+                        Url = ""
                     }
                 });
             });
