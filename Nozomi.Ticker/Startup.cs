@@ -23,6 +23,7 @@ using Nozomi.Service.Services;
 using Nozomi.Service.Services.Interfaces;
 using Nozomi.Service.Services.Requests;
 using Nozomi.Service.Services.Requests.Interfaces;
+using Nozomi.Ticker.StartupExtensions;
 using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 
 namespace Nozomi.Ticker
@@ -72,30 +73,20 @@ namespace Nozomi.Ticker
             services.Configure<CookiePolicyOptions>(options =>
             {
                 // This lambda determines whether user consent for non-essential cookies is needed for a given request.
-                options.CheckConsentNeeded = context => true;
+                options.CheckConsentNeeded = context => false;
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
             
-            // Scopes
-            services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
-
-            // Service Injections
-            services.AddTransient<ICurrencyService, CurrencyService>();
-            services.AddTransient<ICurrencyPairService, CurrencyPairService>();
-            services.AddTransient<ICurrencyPairComponentService, CurrencyPairComponentService>();
-            services.AddTransient<ICurrencyPairRequestService, CurrencyPairRequestService>();
-            services.AddTransient<IRequestService, RequestService>();
-            services.AddTransient<IRequestLogService, RequestLogService>();
-            services.AddTransient<ISourceService, SourceService>();
-
-            services.AddTransient<IUnitOfWork<NozomiDbContext>, UnitOfWork<NozomiDbContext>>();
-            services.AddTransient<IDbContext, NozomiDbContext>();
-
-            // Hosted Services
-            services.AddSingleton<IHostedService, HttpGetCurrencyPairRequestSyncingService>();
+            // Repository Layer
+            services.ConfigureRepo();
+            
+            // Service Layer
+            services.ConfigureService();
             
             services.AddSignalR()
                 .AddMessagePackProtocol();
+            
+            services.ConfigureCors();
             
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
