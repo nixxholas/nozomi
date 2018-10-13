@@ -46,6 +46,11 @@ namespace Nozomi.Repo.Data
                                                     .FirstOrDefault().CreatedAt.AddMilliseconds(r.Delay))))
                     .ToList());
 
+        public ICollection<CurrencyPairRequest> GetCurrencyPairRequestByRequestType(RequestType requestType)
+        {
+            return _getCurrencyPairRequestByRequestType(this, requestType);
+        }
+
         public NozomiDbContext(DbContextOptions options) : base(options)
         {
         }
