@@ -11,7 +11,7 @@ namespace Nozomi.Ticker.StartupExtensions
 {
     public static class ServiceStartup
     {
-        public static void ConfigureService(this IServiceCollection services)
+        public static void ConfigureServiceLayer(this IServiceCollection services)
         {
             services.AddCors(options =>
             {

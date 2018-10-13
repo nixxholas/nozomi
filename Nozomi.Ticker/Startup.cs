@@ -78,10 +78,10 @@ namespace Nozomi.Ticker
             });
             
             // Repository Layer
-            services.ConfigureRepo();
+            services.ConfigureRepoLayer();
             
             // Service Layer
-            services.ConfigureService();
+            services.ConfigureServiceLayer();
             
             services.AddSignalR()
                 .AddMessagePackProtocol();

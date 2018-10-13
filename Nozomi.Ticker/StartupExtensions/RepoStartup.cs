@@ -6,7 +6,7 @@ namespace Nozomi.Ticker.StartupExtensions
 {
     public static class RepoStartup
     {
-        public static void ConfigureRepo(this IServiceCollection services)
+        public static void ConfigureRepoLayer(this IServiceCollection services)
         {
             services.AddCors(options =>
             {
