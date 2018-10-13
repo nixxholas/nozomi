@@ -67,12 +67,13 @@ namespace Nozomi.Service.HostedServices.RequestTypes
             while (!stoppingToken.IsCancellationRequested)
             {
                 // We will need to resync the Request collection to make sure we're polling only the ones we want to poll
-                var getBasedRequests = _currencyPairRequestService.GetAllActive(r => r.IsEnabled && r.DeletedAt == null
-                                            && r.RequestType == RequestType.HttpGet
-                                            && r.RequestComponents.Any(rc => !rc.RequestComponentData.Any() 
-                                            || (DateTime.UtcNow > rc.RequestComponentData.OrderByDescending(rcd => rcd.CreatedAt)
-                                                 .FirstOrDefault().CreatedAt.AddMilliseconds(r.Delay))), true)
-                                            .ToList();
+//                var getBasedRequests = _currencyPairRequestService.GetAllActive(r => r.IsEnabled && r.DeletedAt == null
+//                                            && r.RequestType == RequestType.HttpGet
+//                                            && r.RequestComponents.Any(rc => !rc.RequestComponentData.Any() 
+//                                            || (DateTime.UtcNow > rc.RequestComponentData.OrderByDescending(rcd => rcd.CreatedAt)
+//                                                 .FirstOrDefault().CreatedAt.AddMilliseconds(r.Delay))), true)
+//                                            .ToList();
+                var getBasedRequests = _currencyPairRequestService.GetAllByRequestType(RequestType.HttpGet);
 
                 // Iterate the requests
                 // NOTE: Let's not call a parallel loop since HttpClients might tend to result in memory leaks.
