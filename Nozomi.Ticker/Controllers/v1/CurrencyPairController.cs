@@ -8,10 +8,10 @@ using Nozomi.Data;
 using Nozomi.Data.CurrencyModels;
 using Nozomi.Service.Hubs;
 using Nozomi.Service.Services.Interfaces;
+using Swashbuckle.AspNetCore.Swagger;
 
 namespace Nozomi.Ticker.Controllers.v1
 {
-    [Route("/api/[controller]")]
     [ApiController]
     public class CurrencyPairController : BaseController<CurrencyPairController>
     {

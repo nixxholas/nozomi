@@ -88,9 +88,10 @@ namespace Nozomi.Ticker
             
             services.ConfigureCors();
             
-            services.ConfigureSwagger();
+            services.AddMvc()
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.ConfigureSwagger();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -114,6 +115,13 @@ namespace Nozomi.Ticker
             {
                 route.MapHub<TickerHub>("/ticker");
             });
+
+            app.UseMvc(routes =>
+            {
+                routes.MapRoute(
+                    name: "default",
+                    template: "{controller=Home}/{action=Index}/{id?}");
+            });
             
             // Enable middleware to serve generated Swagger as a JSON endpoint.
             app.UseSwagger();
@@ -122,14 +130,7 @@ namespace Nozomi.Ticker
             // specifying the Swagger JSON endpoint.
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Nozomi API Docs");
-            });
-
-            app.UseMvc(routes =>
-            {
-                routes.MapRoute(
-                    name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
+                c.SwaggerEndpoint("/swagger/v1.0/swagger.json", "Nozomi API Docs");
             });
         }
     }
