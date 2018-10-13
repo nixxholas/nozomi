@@ -30,7 +30,7 @@ namespace Nozomi.Repo.Data
         public DbSet<Source> Sources { get; set; }
         
         // Introducing Compiled Queries
-        private static readonly Func<NozomiDbContext, RequestType, ICollection<CurrencyPairRequest>> _getCurrencyPairRequestByRequestType =
+        private static readonly Func<NozomiDbContext, RequestType, IEnumerable<CurrencyPairRequest>> _getCurrencyPairRequestByRequestType =
             EF.CompileQuery((NozomiDbContext context, RequestType type) =>
                 context.CurrencyPairRequests
                     .AsQueryable()
@@ -43,10 +43,9 @@ namespace Nozomi.Repo.Data
                                             && r.RequestComponents.Any(rc => !rc.RequestComponentData.Any() 
                                             || (DateTime.UtcNow > rc.RequestComponentData
                                                     .OrderByDescending(rcd => rcd.CreatedAt)
-                                                    .FirstOrDefault().CreatedAt.AddMilliseconds(r.Delay))))
-                    .ToList());
+                                                    .FirstOrDefault().CreatedAt.AddMilliseconds(r.Delay)))));
 
-        public ICollection<CurrencyPairRequest> GetCurrencyPairRequestByRequestType(RequestType requestType)
+        public IEnumerable<CurrencyPairRequest> GetCurrencyPairRequestByRequestType(RequestType requestType)
         {
             return _getCurrencyPairRequestByRequestType(this, requestType);
         }
