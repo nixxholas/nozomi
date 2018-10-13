@@ -6,7 +6,7 @@ namespace Nozomi.Ticker.StartupExtensions
 {
     public static class SwaggerStartup
     {
-        public static void ConfigureService(this IServiceCollection services)
+        public static void ConfigureSwagger(this IServiceCollection services)
         {
             services.AddSwaggerGen(c =>
             {

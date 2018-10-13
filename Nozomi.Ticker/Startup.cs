@@ -88,6 +88,8 @@ namespace Nozomi.Ticker
             
             services.ConfigureCors();
             
+            services.ConfigureSwagger();
+            
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
 
