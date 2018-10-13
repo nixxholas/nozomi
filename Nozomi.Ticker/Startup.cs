@@ -23,7 +23,6 @@ using Nozomi.Service.Services;
 using Nozomi.Service.Services.Interfaces;
 using Nozomi.Service.Services.Requests;
 using Nozomi.Service.Services.Requests.Interfaces;
-using StackExchange.Redis;
 using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 
 namespace Nozomi.Ticker
@@ -58,27 +57,6 @@ namespace Nozomi.Ticker
                     options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
                 },
                     ServiceLifetime.Transient);
-                
-                // Redis Config
-                var redisConfig = new ConfigurationOptions
-                {
-                    EndPoints =
-                    {
-                        { "localhost", 6379 }    
-                    },
-                    CommandMap = CommandMap.Create(new HashSet<string>
-                    { 
-                        // EXCLUDE a few commands
-                        "INFO", "CONFIG", "CLUSTER",
-                        "PING", "ECHO", "CLIENT"
-                    }, available: false),
-                    KeepAlive = 180,
-                    //DefaultVersion = new Version(2, 8, 8),
-                    Password = ""
-                };
-            
-                // Redis Multiplexer
-                services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect(redisConfig));
             }
             else
             {
@@ -89,27 +67,6 @@ namespace Nozomi.Ticker
                     options.EnableSensitiveDataLogging(false);
                     options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
                 }, ServiceLifetime.Transient);
-                
-                // Redis Config
-                var redisConfig = new ConfigurationOptions
-                {
-                    EndPoints =
-                    {
-                        { Configuration.GetConnectionString("RedisPath"), 6379 }
-                    },
-                    CommandMap = CommandMap.Create(new HashSet<string>
-                    { 
-                        // EXCLUDE a few commands
-                        "INFO", "CONFIG", "CLUSTER",
-                        "PING", "ECHO", "CLIENT"
-                    }, available: false),
-                    KeepAlive = 180,
-                    //DefaultVersion = new Version(2, 8, 8),
-                    Password = Configuration.GetConnectionString("RedisKey") ?? string.Empty
-                };
-            
-                // Redis Multiplexer
-                services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect(redisConfig));
             }
             
             services.Configure<CookiePolicyOptions>(options =>
