@@ -43,7 +43,9 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                 {
                     Id = 3,
                     CurrencyPairType = CurrencyPairType.TRADEABLE,
-                    APIUrl = "https://api.binance.com/api/v3/ticker/bookTicker?symbol=KNCETH"
+                    APIUrl = "https://api.binance.com/api/v3/ticker/bookTicker?symbol=KNCETH",
+                    DefaultComponent = "askPrice",
+                    CurrencySourceId = 3
                 }
             );
         }

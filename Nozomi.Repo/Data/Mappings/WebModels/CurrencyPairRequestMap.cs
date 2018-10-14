@@ -36,7 +36,7 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
                     Id = 3,
                     Guid = Guid.NewGuid(),
                     RequestType = RequestType.HttpGet,
-                    DataPath = "https://api.ethfinex.com/v2/ticker/tKNCUSD",
+                    DataPath = "https://api.binance.com/api/v3/ticker/bookTicker?symbol=KNCETH",
                     CurrencyPairId = 3,
                     Delay = 5000
                 }
