@@ -51,6 +51,24 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                     Name = "Kyber Network Coin",
                     CurrencySourceId = 1,
                     WalletTypeId = 4 // As per CNWallet
+                },
+                new Currency()
+                {
+                    Id = 4,
+                    CurrencyTypeId = 2,
+                    Abbrv = "KNC",
+                    Name = "Kyber Network Coin",
+                    CurrencySourceId = 3,
+                    WalletTypeId = 4 // As per CNWallet
+                },
+                new Currency()
+                {
+                    Id = 5,
+                    CurrencyTypeId = 2,
+                    Abbrv = "ETH",
+                    Name = "Ethereum",
+                    CurrencySourceId = 3,
+                    WalletTypeId = 1 // As per CNWallet
                 }
             );
         }

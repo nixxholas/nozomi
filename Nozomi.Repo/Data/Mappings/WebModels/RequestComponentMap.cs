@@ -55,6 +55,28 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
                     CreatedAt = DateTime.Now,
                     ModifiedAt = DateTime.Now,
                     DeletedAt = null
+                },
+                new RequestComponent
+                {
+                    Id = 4,
+                    ComponentType = ComponentType.Ask,
+                    QueryComponent = "askPrice",
+                    RequestId = 3,
+                    RequestComponentData = new List<RequestComponentDatum>(),
+                    CreatedAt = DateTime.Now,
+                    ModifiedAt = DateTime.Now,
+                    DeletedAt = null
+                },
+                new RequestComponent
+                {
+                    Id = 5,
+                    ComponentType = ComponentType.Bid,
+                    QueryComponent = "bidPrice",
+                    RequestId = 3,
+                    RequestComponentData = new List<RequestComponentDatum>(),
+                    CreatedAt = DateTime.Now,
+                    ModifiedAt = DateTime.Now,
+                    DeletedAt = null
                 });
         }
     }

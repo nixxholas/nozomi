@@ -34,6 +34,13 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                     Abbreviation = "HAKO",
                     Name = "Coinhako",
                     APIDocsURL = "None"
+                },
+                new Source()
+                {
+                    Id = 3,
+                    Abbreviation = "BNA",
+                    Name = "Binance",
+                    APIDocsURL = "https://github.com/binance-exchange/binance-official-api-docs/blob/master/rest-api.md"
                 }
             );
         }

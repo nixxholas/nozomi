@@ -38,6 +38,12 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                     APIUrl = "https://api.ethfinex.com/v2/ticker/tKNCUSD",
                     DefaultComponent = "0",
                     CurrencySourceId = 1
+                },
+                new CurrencyPair()
+                {
+                    Id = 3,
+                    CurrencyPairType = CurrencyPairType.TRADEABLE,
+                    APIUrl = "https://api.binance.com/api/v3/ticker/bookTicker?symbol=KNCETH"
                 }
             );
         }
