@@ -383,19 +383,17 @@ namespace Nozomi.Service.HostedServices.RequestTypes
             while (!stoppingToken.IsCancellationRequested)
             {
                 // We will need to resync the Request collection to make sure we're polling only the ones we want to poll
-                var getBasedRequests = _currencyPairRequestService.GetAllActive(r => r.IsEnabled && r.DeletedAt == null
-                                                                                                 && r.RequestType.Equals(RequestType
-                                                                                                     .HttpGet), true);
+                var requests = _currencyPairRequestService.GetAllByRequestType(RequestType.HttpPost);
 
                 // Iterate the requests
                 // NOTE: Let's not call a parallel loop since HttpClients might tend to result in memory leaks.
-                foreach (var rq in getBasedRequests)
+                foreach (var rq in requests)
                 {
                     // Process the request
                     if (await Process(rq))
                     {
                         // Since its successful, broadcast its success
-                        await _tickerHub.Clients.All.BroadcastData(rq.ObscureToPublicJson());
+                        //await _tickerHub.Clients.All.BroadcastData(rq.ObscureToPublicJson());
                     }
                 }
                 

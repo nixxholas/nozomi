@@ -46,7 +46,7 @@ namespace Nozomi.Ticker
             if (!string.IsNullOrEmpty(env) && !env.Equals("production", StringComparison.OrdinalIgnoreCase))
             {
                 // Greet the beloved dev
-                Console.WriteLine(@"Welcome to dev, your machine is named: " + Environment.MachineName);
+                Console.WriteLine(@"Welcome to the dev environment, your machine is named: " + Environment.MachineName);
                 
                 // Postgres DB Setup
                 var str = Configuration.GetConnectionString("Local:" + @Environment.MachineName);
