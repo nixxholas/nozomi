@@ -110,6 +110,7 @@ namespace Nozomi.Ticker
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseCookiePolicy();
+            app.UseAutoDbMigration(env);
 
             app.UseSignalR(route =>
             {
