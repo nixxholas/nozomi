@@ -22,9 +22,6 @@ namespace Nozomi.Ticker.StartupExtensions
             services.AddTransient<IRequestLogService, RequestLogService>();
             services.AddTransient<ISourceService, SourceService>();
             services.AddTransient<ITickerService, TickerService>();
-
-            // Hosted Services
-            services.AddHostedService<HttpGetCurrencyPairRequestSyncingService>();
         }
     }
 }

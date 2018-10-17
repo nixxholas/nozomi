@@ -51,9 +51,9 @@ namespace Nozomi.Service.HostedServices.RequestTypes
         public HttpGetCurrencyPairRequestSyncingService(IServiceProvider serviceProvider,
             IHubContext<TickerHub, ITickerHubClient> tickerHub) : base(serviceProvider)
         {
-            _currencyPairComponentService = _scope.ServiceProvider.GetService<ICurrencyPairComponentService>();
-            _currencyPairRequestService = _scope.ServiceProvider.GetService<ICurrencyPairRequestService>();
-            _requestLogService = _scope.ServiceProvider.GetService<IRequestLogService>();
+            _currencyPairComponentService = _scope.ServiceProvider.GetRequiredService<ICurrencyPairComponentService>();
+            _currencyPairRequestService = _scope.ServiceProvider.GetRequiredService<ICurrencyPairRequestService>();
+            _requestLogService = _scope.ServiceProvider.GetRequiredService<IRequestLogService>();
             
             _tickerHub = tickerHub;
         }
