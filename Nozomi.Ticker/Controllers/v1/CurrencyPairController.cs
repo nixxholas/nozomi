@@ -17,14 +17,16 @@ namespace Nozomi.Ticker.Controllers.v1
     public class CurrencyPairController : BaseController<CurrencyPairController>, ICurrencyPairController
     {
         private readonly ICurrencyPairService _currencyPairService;
+        private readonly ITickerService _tickerService;
         private readonly IHubContext<TickerHub> _tickerHubContext;
 
         public CurrencyPairController(IHubContext<TickerHub> tickerHubContext, ICurrencyPairService currencyPairService,
-            ILogger<CurrencyPairController> logger) 
+            ITickerService tickerService, ILogger<CurrencyPairController> logger) 
             : base(logger)
         {
             _tickerHubContext = tickerHubContext;
             _currencyPairService = currencyPairService;
+            _tickerService = tickerService;
         }
         
         [HttpPost("create")]
@@ -47,12 +49,13 @@ namespace Nozomi.Ticker.Controllers.v1
         [HttpGet("ticker")]
         public Task Ticker(long id)
         {
-            
+            return _tickerService.GetById(id);
         }
 
+        [HttpGet("ticker-am")]
         public Task Ticker(string abbreviation)
         {
-            throw new System.NotImplementedException();
+            return _tickerService.GetTickers(abbreviation);
         }
     }
 }
