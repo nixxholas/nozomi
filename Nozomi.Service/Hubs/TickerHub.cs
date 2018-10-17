@@ -29,9 +29,9 @@ namespace Nozomi.Service.Hubs
         /// <param name="data"></param>
         public async void BroadcastData(JObject data)
         {
-            var channel = Channel.CreateUnbounded<NozomiResult<JObject>>();
+            var channel = Channel.CreateUnbounded<NozomiResult<IEnumerable<JObject>>>();
 
-            await channel.Writer.WriteAsync(new NozomiResult<JObject>()
+            await channel.Writer.WriteAsync(new NozomiResult<IEnumerable<JObject>>()
             {
                 Success = true,
                 ResultType = NozomiResultType.Success,
@@ -41,9 +41,9 @@ namespace Nozomi.Service.Hubs
             channel.Writer.Complete();
         }
         
-        public async Task<NozomiResult<CurrencyPair>> Tickers(IEnumerable<CurrencyPair> currencyPairs = null)
+        public async Task<NozomiResult<IEnumerable<CurrencyPair>>> Tickers(IEnumerable<CurrencyPair> currencyPairs = null)
         {
-            var nozRes = new NozomiResult<CurrencyPair>()
+            var nozRes = new NozomiResult<IEnumerable<CurrencyPair>>()
             {
                 Success = true,
                 ResultType = NozomiResultType.Success,
@@ -54,14 +54,14 @@ namespace Nozomi.Service.Hubs
         }
 
         // We can use this to return a payload
-        public async Task<ChannelReader<NozomiResult<CurrencyPair>>> SubscribeToAll()
+        public async Task<ChannelReader<NozomiResult<IEnumerable<CurrencyPair>>>> SubscribeToAll()
         {
             // Initialize an unbounded channel
             // 
             // Unbounded Channels have no boundaries, allowing the server/client to transmit
             // limitless amounts of payload. Bounded channels have limits and will tend to 
             // drop the clients after awhile.
-            var channel = Channel.CreateUnbounded<NozomiResult<CurrencyPair>>();
+            var channel = Channel.CreateUnbounded<NozomiResult<IEnumerable<CurrencyPair>>>();
 
             _ = WriteToChannel(channel.Writer); // Write all Currency Pairs to the channel
 
@@ -70,7 +70,7 @@ namespace Nozomi.Service.Hubs
 
             // This is a nested method, allowing us to write repeated methods
             // with the same semantic conventions while maintaining conformity.
-            async Task WriteToChannel(ChannelWriter<NozomiResult<CurrencyPair>> writer)
+            async Task WriteToChannel(ChannelWriter<NozomiResult<IEnumerable<CurrencyPair>>> writer)
             {
                 // Pull in the latest data
                 _currencyPairs = _cpService.GetAllActive();
@@ -79,7 +79,7 @@ namespace Nozomi.Service.Hubs
                 foreach (var cPair in _currencyPairs)
                 {
                     // Write one by one, and the client receives them one by one as well
-                    await writer.WriteAsync(new NozomiResult<CurrencyPair>()
+                    await writer.WriteAsync(new NozomiResult<IEnumerable<CurrencyPair>>()
                     {
                         Success = (cPair != null),
                         ResultType = (cPair != null) ? NozomiResultType.Success : NozomiResultType.Failed,
