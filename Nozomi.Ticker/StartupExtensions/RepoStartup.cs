@@ -8,13 +8,10 @@ namespace Nozomi.Ticker.StartupExtensions
     {
         public static void ConfigureRepoLayer(this IServiceCollection services)
         {
-            services.AddCors(options =>
-            {
-                services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+            services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 
-                services.AddTransient<IUnitOfWork<NozomiDbContext>, UnitOfWork<NozomiDbContext>>();
-                services.AddTransient<IDbContext, NozomiDbContext>();
-            });
+            services.AddTransient<IUnitOfWork<NozomiDbContext>, UnitOfWork<NozomiDbContext>>();
+            services.AddTransient<IDbContext, NozomiDbContext>();
         }
     }
 }
