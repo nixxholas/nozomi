@@ -13,20 +13,18 @@ namespace Nozomi.Ticker.StartupExtensions
     {
         public static void ConfigureServiceLayer(this IServiceCollection services)
         {
-            services.AddCors(options =>
-            {
-                // Service Injections
-                services.AddTransient<ICurrencyService, CurrencyService>();
-                services.AddTransient<ICurrencyPairService, CurrencyPairService>();
-                services.AddTransient<ICurrencyPairComponentService, CurrencyPairComponentService>();
-                services.AddTransient<ICurrencyPairRequestService, CurrencyPairRequestService>();
-                services.AddTransient<IRequestService, RequestService>();
-                services.AddTransient<IRequestLogService, RequestLogService>();
-                services.AddTransient<ISourceService, SourceService>();
+            // Service Injections
+            services.AddTransient<ICurrencyService, CurrencyService>();
+            services.AddTransient<ICurrencyPairService, CurrencyPairService>();
+            services.AddTransient<ICurrencyPairComponentService, CurrencyPairComponentService>();
+            services.AddTransient<ICurrencyPairRequestService, CurrencyPairRequestService>();
+            services.AddTransient<IRequestService, RequestService>();
+            services.AddTransient<IRequestLogService, RequestLogService>();
+            services.AddTransient<ISourceService, SourceService>();
+            services.AddTransient<ITickerService, TickerService>();
 
-                // Hosted Services
-                services.AddSingleton<IHostedService, HttpGetCurrencyPairRequestSyncingService>();
-            });
+            // Hosted Services
+            services.AddHostedService<HttpGetCurrencyPairRequestSyncingService>();
         }
     }
 }
