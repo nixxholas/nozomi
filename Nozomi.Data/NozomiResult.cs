@@ -8,6 +8,6 @@ namespace Nozomi.Data
 
         public NozomiResultType ResultType { get; set; } = NozomiResultType.Unknown;
         
-        public IEnumerable<TEntity> Data { get; set; }
+        public TEntity Data { get; set; }
     }
 }
