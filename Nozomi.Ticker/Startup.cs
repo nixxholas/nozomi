@@ -23,6 +23,7 @@ using Nozomi.Service.Services;
 using Nozomi.Service.Services.Interfaces;
 using Nozomi.Service.Services.Requests;
 using Nozomi.Service.Services.Requests.Interfaces;
+using Nozomi.Ticker.Controllers;
 using Nozomi.Ticker.StartupExtensions;
 using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 
@@ -131,7 +132,7 @@ namespace Nozomi.Ticker
             // specifying the Swagger JSON endpoint.
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("/swagger/v1.0/swagger.json", "Nozomi API Docs");
+                c.SwaggerEndpoint("/swagger/" + GlobalApiVariables.CURRENT_API_VERSION + "/swagger.json", "Nozomi API v1.0");
             });
         }
     }
