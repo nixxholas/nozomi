@@ -4,7 +4,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace Nozomi.Repo.Migrations
 {
-    public partial class r1_InitialMigration : Migration
+    public partial class r1_InitialMigrations : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -188,19 +188,11 @@ namespace Nozomi.Repo.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn),
                     ComponentType = table.Column<int>(nullable: false),
                     QueryComponent = table.Column<string>(nullable: true),
-                    RequestId = table.Column<long>(nullable: false),
-                    Discriminator = table.Column<string>(nullable: false),
-                    CurrencyPairId = table.Column<long>(nullable: true)
+                    RequestId = table.Column<long>(nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("RequestComponent_PK_Id", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_RequestComponents_CurrencyPairs_CurrencyPairId",
-                        column: x => x.CurrencyPairId,
-                        principalTable: "CurrencyPairs",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_RequestComponents_Requests_RequestId",
                         column: x => x.RequestId,
@@ -308,7 +300,8 @@ namespace Nozomi.Repo.Migrations
                 values: new object[,]
                 {
                     { 1L, "https://docs.bitfinex.com/docs/introduction", "BFX", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, null, 0L, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "Bitfinex" },
-                    { 2L, "None", "HAKO", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, null, 0L, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "Coinhako" }
+                    { 2L, "None", "HAKO", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, null, 0L, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "Coinhako" },
+                    { 3L, "https://github.com/binance-exchange/binance-official-api-docs/blob/master/rest-api.md", "BNA", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, null, 0L, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "Binance" }
                 });
 
             migrationBuilder.InsertData(
@@ -318,7 +311,9 @@ namespace Nozomi.Repo.Migrations
                 {
                     { 1L, "USD", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 1L, 1L, null, 0L, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "United States Dollar", 0L },
                     { 2L, "ETH", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 1L, 2L, null, 0L, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "Ethereum", 1L },
-                    { 3L, "KNC", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 1L, 2L, null, 0L, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "Kyber Network Coin", 4L }
+                    { 3L, "KNC", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 1L, 2L, null, 0L, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "Kyber Network Coin", 4L },
+                    { 4L, "KNC", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 3L, 2L, null, 0L, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "Kyber Network Coin", 4L },
+                    { 5L, "ETH", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 3L, 2L, null, 0L, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "Ethereum", 1L }
                 });
 
             migrationBuilder.InsertData(
@@ -327,7 +322,8 @@ namespace Nozomi.Repo.Migrations
                 values: new object[,]
                 {
                     { 1L, "https://api.ethfinex.com/v2/ticker/tETHUSD", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 1, 1L, "0", null, 0L, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L },
-                    { 2L, "https://api.ethfinex.com/v2/ticker/tKNCUSD", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 1, 1L, "0", null, 0L, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L }
+                    { 2L, "https://api.ethfinex.com/v2/ticker/tKNCUSD", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 1, 1L, "0", null, 0L, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L },
+                    { 3L, "https://api.binance.com/api/v3/ticker/bookTicker?symbol=KNCETH", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 1, 3L, "askPrice", null, 0L, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L }
                 });
 
             migrationBuilder.InsertData(
@@ -338,7 +334,9 @@ namespace Nozomi.Repo.Migrations
                     { 1L, false, 1L },
                     { 1L, true, 2L },
                     { 2L, false, 1L },
-                    { 2L, true, 3L }
+                    { 2L, true, 3L },
+                    { 3L, true, 4L },
+                    { 3L, false, 5L }
                 });
 
             migrationBuilder.InsertData(
@@ -346,24 +344,22 @@ namespace Nozomi.Repo.Migrations
                 columns: new[] { "Id", "CreatedAt", "CreatedBy", "DataPath", "Delay", "DeletedAt", "DeletedBy", "Discriminator", "Guid", "IsEnabled", "ModifiedAt", "ModifiedBy", "RequestType", "CurrencyPairId" },
                 values: new object[,]
                 {
-                    { 1L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "https://api.ethfinex.com/v2/ticker/tETHUSD", 5000, null, 0L, "CurrencyPairRequest", new Guid("766ef46b-bac3-4c5c-84cb-c62dac85423f"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 1L },
-                    { 2L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "https://api.ethfinex.com/v2/ticker/tKNCUSD", 5000, null, 0L, "CurrencyPairRequest", new Guid("053037db-7fc0-4863-aa94-bfcb72b7b9a6"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 2L }
+                    { 1L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "https://api.ethfinex.com/v2/ticker/tETHUSD", 5000, null, 0L, "CurrencyPairRequest", new Guid("082e2578-3ea3-42c1-a427-7ad8297e2766"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 1L },
+                    { 2L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "https://api.ethfinex.com/v2/ticker/tKNCUSD", 5000, null, 0L, "CurrencyPairRequest", new Guid("23c9711f-62d5-41d8-8350-fac6429b22b7"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 2L },
+                    { 3L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "https://api.binance.com/api/v3/ticker/bookTicker?symbol=KNCETH", 5000, null, 0L, "CurrencyPairRequest", new Guid("6c64f8e9-8e41-4c3a-82c0-6367c6ad5e6d"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 3L }
                 });
 
             migrationBuilder.InsertData(
                 table: "RequestComponents",
-                columns: new[] { "Id", "ComponentType", "CreatedAt", "CreatedBy", "DeletedAt", "DeletedBy", "Discriminator", "IsEnabled", "ModifiedAt", "ModifiedBy", "QueryComponent", "RequestId" },
-                values: new object[] { 1L, 1, new DateTime(2018, 10, 11, 0, 24, 30, 715, DateTimeKind.Local), 0L, null, 0L, "RequestComponent", true, new DateTime(2018, 10, 11, 0, 24, 30, 717, DateTimeKind.Local), 0L, "1", 1L });
-
-            migrationBuilder.InsertData(
-                table: "RequestComponents",
-                columns: new[] { "Id", "ComponentType", "CreatedAt", "CreatedBy", "DeletedAt", "DeletedBy", "Discriminator", "IsEnabled", "ModifiedAt", "ModifiedBy", "QueryComponent", "RequestId" },
-                values: new object[] { 2L, 2, new DateTime(2018, 10, 11, 0, 24, 30, 718, DateTimeKind.Local), 0L, null, 0L, "RequestComponent", true, new DateTime(2018, 10, 11, 0, 24, 30, 718, DateTimeKind.Local), 0L, "0", 1L });
-
-            migrationBuilder.InsertData(
-                table: "RequestComponents",
-                columns: new[] { "Id", "ComponentType", "CreatedAt", "CreatedBy", "DeletedAt", "DeletedBy", "Discriminator", "IsEnabled", "ModifiedAt", "ModifiedBy", "QueryComponent", "RequestId" },
-                values: new object[] { 3L, 1, new DateTime(2018, 10, 11, 0, 24, 30, 718, DateTimeKind.Local), 0L, null, 0L, "RequestComponent", true, new DateTime(2018, 10, 11, 0, 24, 30, 718, DateTimeKind.Local), 0L, "0", 2L });
+                columns: new[] { "Id", "ComponentType", "CreatedAt", "CreatedBy", "DeletedAt", "DeletedBy", "IsEnabled", "ModifiedAt", "ModifiedBy", "QueryComponent", "RequestId" },
+                values: new object[,]
+                {
+                    { 1L, 1, new DateTime(2018, 10, 20, 23, 38, 18, 456, DateTimeKind.Local), 0L, null, 0L, true, new DateTime(2018, 10, 20, 23, 38, 18, 459, DateTimeKind.Local), 0L, "1", 1L },
+                    { 2L, 2, new DateTime(2018, 10, 20, 23, 38, 18, 459, DateTimeKind.Local), 0L, null, 0L, true, new DateTime(2018, 10, 20, 23, 38, 18, 459, DateTimeKind.Local), 0L, "0", 1L },
+                    { 3L, 1, new DateTime(2018, 10, 20, 23, 38, 18, 459, DateTimeKind.Local), 0L, null, 0L, true, new DateTime(2018, 10, 20, 23, 38, 18, 459, DateTimeKind.Local), 0L, "0", 2L },
+                    { 4L, 1, new DateTime(2018, 10, 20, 23, 38, 18, 459, DateTimeKind.Local), 0L, null, 0L, true, new DateTime(2018, 10, 20, 23, 38, 18, 459, DateTimeKind.Local), 0L, "askPrice", 3L },
+                    { 5L, 2, new DateTime(2018, 10, 20, 23, 38, 18, 459, DateTimeKind.Local), 0L, null, 0L, true, new DateTime(2018, 10, 20, 23, 38, 18, 459, DateTimeKind.Local), 0L, "bidPrice", 3L }
+                });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Currencies_CurrencySourceId",
@@ -389,11 +385,6 @@ namespace Nozomi.Repo.Migrations
                 name: "IX_RequestComponentData_RequestComponentId",
                 table: "RequestComponentData",
                 column: "RequestComponentId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_RequestComponents_CurrencyPairId",
-                table: "RequestComponents",
-                column: "CurrencyPairId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_RequestComponents_RequestId",
