@@ -43,13 +43,13 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                 new PartialCurrencyPair()
                 {
                     CurrencyId = 4,
-                    IsMain = false,
+                    IsMain = true,
                     CurrencyPairId = 3
                 },
                 new PartialCurrencyPair()
                 {
                     CurrencyId = 5,
-                    IsMain = true,
+                    IsMain = false,
                     CurrencyPairId = 3
                 }
             );
