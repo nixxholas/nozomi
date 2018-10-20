@@ -207,9 +207,9 @@ namespace Nozomi.Service.Services
                     .Where(r => r.IsEnabled && r.DeletedAt == null
                                             && r.RequestType == type
                                             && r.RequestComponents.Any(rc => !rc.RequestComponentData.Any() 
-                                                                             || (DateTime.UtcNow > rc.RequestComponentData
+                                                                             || (DateTime.UtcNow > (rc.RequestComponentData
                                                                                      .OrderByDescending(rcd => rcd.CreatedAt)
-                                                                                     .FirstOrDefault().CreatedAt.AddMilliseconds(r.Delay)))));
+                                                                                     .FirstOrDefault().CreatedAt.AddMilliseconds(r.Delay))))));
 
         public ICollection<CurrencyPairRequest> GetAllByRequestType(RequestType requestType)
         {
