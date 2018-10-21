@@ -2,8 +2,11 @@
 using System.Globalization;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using Nozomi.Data.CurrencyModels;
+using Nozomi.Data.NozomiRedisModels;
 using Nozomi.Data.WebModels;
 using Nozomi.Repo.Data;
 using Nozomi.Repo.Repositories;
@@ -14,9 +17,12 @@ namespace CounterCore.Service.Services
 {
     public class CurrencyPairComponentService : BaseService<CurrencyPairComponentService, NozomiDbContext>, ICurrencyPairComponentService
     {
+        private readonly IDistributedCache _distributedCache;
+        
         public CurrencyPairComponentService(ILogger<CurrencyPairComponentService> logger, 
-            IUnitOfWork<NozomiDbContext> unitOfWork) : base(logger, unitOfWork)
+            IUnitOfWork<NozomiDbContext> unitOfWork, IDistributedCache distributedCache) : base(logger, unitOfWork)
         {
+            _distributedCache = distributedCache;
         }
 
         public bool UpdatePairValue(long id, decimal val)
@@ -25,19 +31,24 @@ namespace CounterCore.Service.Services
                                      .GetRepository<RequestComponent>()
                                      .GetQueryable()
                                      .Where(cp => cp.Id.Equals(id))
-                                     .Include(cpc => cpc.RequestComponentData)
+                                     .Include(cpc => cpc.RequestComponentDatum)
                                      .SingleOrDefault(cp => cp.DeletedAt == null && cp.IsEnabled);
 
             // Anomaly Detection
-            if (pairToUpd != null)
+            if (pairToUpd?.RequestComponentDatum != null)
             {
-                var newRcd = new RequestComponentDatum()
-                {
-                    RequestComponentId = pairToUpd.Id,
-                    Value = val.ToString(CultureInfo.InvariantCulture)
-                };
+                // Redis, Toss the old datum there.
+                _distributedCache.SetString(
+                    JsonConvert.SerializeObject(new RCCachedDatumKey()
+                    {
+                        Id = pairToUpd.RequestComponentDatumId, 
+                        DatumTime = pairToUpd.RequestComponentDatum.ModifiedAt
+                    }),
+                    pairToUpd.RequestComponentDatum.Value);
                 
-                _unitOfWork.GetRepository<RequestComponentDatum>().Add(newRcd);
+                pairToUpd.RequestComponentDatum.Value = val.ToString(CultureInfo.InvariantCulture);
+                
+                _unitOfWork.GetRepository<RequestComponentDatum>().Update(pairToUpd.RequestComponentDatum);
                 _unitOfWork.Commit();
 
                 return true;
