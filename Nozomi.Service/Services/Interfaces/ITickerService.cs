@@ -12,6 +12,6 @@ namespace Nozomi.Service.Services.Interfaces
     {
         Task<NozomiResult<TickerResponse>> GetById(long id);
 
-        Task<NozomiResult<ICollection<TickerResponse>>> GetTickers(string ticker);
+        NozomiResult<ICollection<TickerResponse>> GetByAbbreviation(string ticker);
     }
 }

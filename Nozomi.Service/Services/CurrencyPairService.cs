@@ -64,7 +64,7 @@ namespace Nozomi.Service.Services
                 //.Include(cp => cp.CurrencyPairAdvertTypes)
                 .Include(cp => cp.CurrencyPairRequests)
                     .ThenInclude(cpr => cpr.RequestComponents)
-                        .ThenInclude(rc => rc.RequestComponentData)
+                        .ThenInclude(rc => rc.RequestComponentDatum)
                 .Include(cp => cp.CurrencySource)
                 .Include(cp => cp.PartialCurrencyPairs)
                 .Select(cp => new
@@ -87,9 +87,7 @@ namespace Nozomi.Service.Services
                         id = cpc.Id,
                         componentType = cpc.ComponentType,
                         queryComponent = cpc.QueryComponent,
-                        value = cpc.RequestComponentData
-                            .OrderByDescending(rcd => rcd.CreatedAt)
-                            .Select(rcd => rcd.Value).FirstOrDefault()
+                        value = cpc.RequestComponentDatum
                     }),
                     partialCurrencyPairs = cp.PartialCurrencyPairs.Select(pcp => new
                     {
@@ -128,7 +126,7 @@ namespace Nozomi.Service.Services
                 //.Include(cp => cp.CurrencyPairAdvertTypes)
                 .Include(cp => cp.CurrencyPairRequests)
                     .ThenInclude(cpr => cpr.RequestComponents)
-                        .ThenInclude(rc => rc.RequestComponentData)
+                        .ThenInclude(rc => rc.RequestComponentDatum)
                 .Include(cp => cp.CurrencySource)
                 .Include(cp => cp.PartialCurrencyPairs)
                 .Select(cp => new
@@ -151,9 +149,7 @@ namespace Nozomi.Service.Services
                         id = cpc.Id,
                         componentType = cpc.ComponentType,
                         queryComponent = cpc.QueryComponent,
-                        value = cpc.RequestComponentData
-                            .OrderByDescending(rcd => rcd.CreatedAt)
-                            .Select(rcd => rcd.Value).FirstOrDefault()
+                        value = cpc.RequestComponentDatum
                     }),
                     partialCurrencyPairs = cp.PartialCurrencyPairs.Select(pcp => new
                     {
@@ -175,7 +171,7 @@ namespace Nozomi.Service.Services
                 .GetQueryable()
                 .Include(cp => cp.CurrencyPairRequests)
                     .ThenInclude(cpr => cpr.RequestComponents)
-                        .ThenInclude(rc => rc.RequestComponentData)
+                        .ThenInclude(rc => rc.RequestComponentDatum)
                 .Where(cp => cp.DeletedAt == null && cp.IsEnabled);
         }
 
@@ -292,7 +288,7 @@ namespace Nozomi.Service.Services
                     .Include(cp => cp.PartialCurrencyPairs)
                     .Include(cp => cp.CurrencyPairRequests)
                         .ThenInclude(cpr => cpr.RequestComponents)
-                            .ThenInclude(rc => rc.RequestComponentData)
+                            .ThenInclude(rc => rc.RequestComponentDatum)
                     .Select(cp => new
                     {
                         id = cp.Id,
@@ -304,9 +300,7 @@ namespace Nozomi.Service.Services
                             {
                                 id = cpc.Id,
                                 componentType = cpc.ComponentType,
-                                value = cpc.RequestComponentData
-                                    .OrderByDescending(rcd => rcd.CreatedAt)
-                                    .Select(rcd => rcd.Value).FirstOrDefault(),
+                                value = cpc.RequestComponentDatum,
                                 isEnabled = cpc.IsEnabled
                             }),
                         partialCurrencyPairs = cp.PartialCurrencyPairs
