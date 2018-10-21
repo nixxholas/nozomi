@@ -9,6 +9,6 @@ namespace Nozomi.Data.ResponseModels
     {
         public DateTime LastUpdated { get; set; }
         
-        public ICollection<RequestComponent> Properties { get; set; }
+        public ICollection<KeyValuePair<string, string>> Properties { get; set; }
     }
 }
