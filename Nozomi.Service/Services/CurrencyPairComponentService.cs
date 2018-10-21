@@ -30,6 +30,7 @@ namespace CounterCore.Service.Services
             var pairToUpd = _unitOfWork
                                      .GetRepository<RequestComponent>()
                                      .GetQueryable()
+                                     .AsTracking()
                                      .Where(cp => cp.Id.Equals(id))
                                      .Include(cpc => cpc.RequestComponentDatum)
                                      .SingleOrDefault(cp => cp.DeletedAt == null && cp.IsEnabled);
@@ -38,7 +39,7 @@ namespace CounterCore.Service.Services
             if (pairToUpd?.RequestComponentDatum != null)
             {
                 // Redis, Toss the old datum there.
-                _distributedCache.SetString(
+                _distributedCache.SetStringAsync(
                     JsonConvert.SerializeObject(new RCCachedDatumKey()
                     {
                         Id = pairToUpd.RequestComponentDatumId, 
@@ -48,7 +49,20 @@ namespace CounterCore.Service.Services
                 
                 pairToUpd.RequestComponentDatum.Value = val.ToString(CultureInfo.InvariantCulture);
                 
+                _unitOfWork.GetRepository<RequestComponent>().Update(pairToUpd);
                 _unitOfWork.GetRepository<RequestComponentDatum>().Update(pairToUpd.RequestComponentDatum);
+                _unitOfWork.Commit();
+
+                return true;
+            }
+            else if (pairToUpd != null && pairToUpd.RequestComponentDatum == null)
+            {
+                // Since the RCD is null but not the RC,
+                _unitOfWork.GetRepository<RequestComponentDatum>().Add(new RequestComponentDatum()
+                {
+                    RequestComponentId = pairToUpd.Id,
+                    Value = val.ToString(CultureInfo.InvariantCulture)
+                });
                 _unitOfWork.Commit();
 
                 return true;
