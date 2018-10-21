@@ -38,14 +38,17 @@ namespace CounterCore.Service.Services
             // Anomaly Detection
             if (pairToUpd?.RequestComponentDatum != null)
             {
-                // Redis, Toss the old datum there.
-                _distributedCache.SetStringAsync(
-                    JsonConvert.SerializeObject(new RCCachedDatumKey()
-                    {
-                        Id = pairToUpd.RequestComponentDatumId, 
-                        DatumTime = pairToUpd.RequestComponentDatum.ModifiedAt
-                    }),
-                    pairToUpd.RequestComponentDatum.Value);
+                if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT").Equals("Development"))
+                {
+                    // Redis, Toss the old datum there.
+                    _distributedCache.SetStringAsync(
+                        JsonConvert.SerializeObject(new RCCachedDatumKey()
+                        {
+                            Id = pairToUpd.RequestComponentDatumId, 
+                            DatumTime = pairToUpd.RequestComponentDatum.ModifiedAt
+                        }),
+                        pairToUpd.RequestComponentDatum.Value);
+                }
                 
                 pairToUpd.RequestComponentDatum.Value = val.ToString(CultureInfo.InvariantCulture);
                 

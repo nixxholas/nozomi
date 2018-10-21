@@ -59,6 +59,13 @@ namespace Nozomi.Ticker
                     options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
                 },
                     ServiceLifetime.Transient);
+            
+                // Redis
+                services.AddDistributedRedisCache(option =>
+                {
+                    option.Configuration = "127.0.0.1:6379";
+                    option.InstanceName = "nozomi-cache";
+                });
             }
             else
             {
