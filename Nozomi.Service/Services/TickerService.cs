@@ -51,7 +51,7 @@ namespace Nozomi.Service.Services
             });
         }
 
-        public NozomiResult<ICollection<TickerResponse>> GetByAbbreviation(string ticker)
+        public NozomiResult<ICollection<DistinctiveTickerResponse>> GetByAbbreviation(string ticker)
         {
             try
             {
@@ -67,6 +67,8 @@ namespace Nozomi.Service.Services
                                       .Abbrv // Make sure the first currency (main) is equal to the ticker's first
                                   + cp.PartialCurrencyPairs.SingleOrDefault(pcp => !pcp.IsMain).Currency.Abbrv) // other way round
                         .Equals(ticker, StringComparison.InvariantCultureIgnoreCase))
+                    .Include(cp => cp.CurrencySource)
+                    .Where(cp => cp.CurrencySource != null) // Make sure we have a source
                     .Include(cp => cp.CurrencyPairRequests)
                         .ThenInclude(cpr => cpr.RequestComponents)
                             .ThenInclude(rc => rc.RequestComponentDatum)
@@ -74,8 +76,9 @@ namespace Nozomi.Service.Services
                     .Where(cp => cp.CurrencyPairRequests
                         .Any(cpr => cpr.RequestComponents.Any(rc => rc.IsEnabled && rc.DeletedAt == null && 
                                                                     rc.RequestComponentDatum != null)))
-                    .Select(cp => new TickerResponse()
+                    .Select(cp => new DistinctiveTickerResponse()
                     {
+                        Exchange = cp.CurrencySource.Name,
                         LastUpdated = cp.CurrencyPairRequests.FirstOrDefault()
                             .RequestComponents.FirstOrDefault().CreatedAt,
                         Properties = cp.CurrencyPairRequests.FirstOrDefault()
@@ -87,7 +90,7 @@ namespace Nozomi.Service.Services
                     })
                     .ToList();
 
-                return new NozomiResult<ICollection<TickerResponse>>()
+                return new NozomiResult<ICollection<DistinctiveTickerResponse>>()
                 {
                     Success = true,
                     ResultType = NozomiResultType.Success,

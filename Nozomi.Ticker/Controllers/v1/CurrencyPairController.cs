@@ -54,7 +54,7 @@ namespace Nozomi.Ticker.Controllers.v1
         }
 
         [HttpGet("ticker-am")]
-        public NozomiResult<ICollection<TickerResponse>> Ticker(string abbreviation)
+        public NozomiResult<ICollection<DistinctiveTickerResponse>> Ticker(string abbreviation)
         {
             return _tickerService.GetByAbbreviation(abbreviation);
         }
