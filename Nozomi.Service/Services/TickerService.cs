@@ -82,7 +82,8 @@ namespace Nozomi.Service.Services
                         Exchange = cp.CurrencySource.Name,
                         ExchangeAbbrv = cp.CurrencySource.Abbreviation,
                         LastUpdated = cp.CurrencyPairRequests.FirstOrDefault()
-                            .RequestComponents.FirstOrDefault().CreatedAt,
+                            .RequestComponents.FirstOrDefault()
+                            .RequestComponentDatum.CreatedAt,
                         Properties = cp.CurrencyPairRequests.FirstOrDefault()
                             .RequestComponents
                             .Select(rc => new KeyValuePair<string, string>(
@@ -91,6 +92,7 @@ namespace Nozomi.Service.Services
                             .ToList()
                     });
 
+                // Exchange-based filter
                 if (!exchangeAbbrv.IsNullOrEmpty())
                 {
                     query = query.Where(cp => cp.ExchangeAbbrv.Equals(exchangeAbbrv));
