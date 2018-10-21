@@ -19,6 +19,7 @@ using Nozomi.Service.HostedServices;
 using Nozomi.Service.HostedServices.RequestTypes;
 using Nozomi.Service.HostedServices.RequestTypes.Interfaces;
 using Nozomi.Service.Hubs;
+using Nozomi.Service.Middleware;
 using Nozomi.Service.Services;
 using Nozomi.Service.Services.Interfaces;
 using Nozomi.Service.Services.Requests;
@@ -115,6 +116,7 @@ namespace Nozomi.Ticker
             else
             {
                 app.UseExceptionHandler("/Home/Error");
+                app.UseNozomiExceptionMiddleware();
                 app.UseHsts();
             }
 

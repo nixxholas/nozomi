@@ -1,6 +1,7 @@
 using System;
 using System.Net;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using Nozomi.Core.Exceptions;
@@ -51,6 +52,15 @@ namespace Nozomi.Service.Middleware
                 Message = message,
                 Description = description
             }));
+        }
+    }
+        
+    // Extension method used to add the middleware to the HTTP request pipeline.
+    public static class NozomiExceptionMiddlewareExtensions
+    {
+        public static IApplicationBuilder UseNozomiExceptionMiddleware(this IApplicationBuilder builder)
+        {
+            return builder.UseMiddleware<NozomiExceptionMiddleware>();
         }
     }
 }
