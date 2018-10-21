@@ -3,6 +3,7 @@ using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Nozomi.Core.Exceptions;
 using Nozomi.Core.Responses;
@@ -12,10 +13,12 @@ namespace Nozomi.Service.Middleware
     public class NozomiExceptionMiddleware
     {
         private readonly RequestDelegate _next;
+        private readonly ILogger<NozomiExceptionMiddleware> _logger;
 
-        public NozomiExceptionMiddleware(RequestDelegate next)
+        public NozomiExceptionMiddleware(RequestDelegate next, ILogger<NozomiExceptionMiddleware> logger)
         {
             _next = next;
+            _logger = logger;
         }
         
         public async Task Invoke(HttpContext httpContext)
@@ -47,6 +50,10 @@ namespace Nozomi.Service.Middleware
 
             response.ContentType = "application/json";
             response.StatusCode = statusCode;
+            
+            // Log via GELF
+            _logger.LogWarning(exception, message);
+            
             await response.WriteAsync(JsonConvert.SerializeObject(new NozomiRequestResponse
             {
                 Message = message,
