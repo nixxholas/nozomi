@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data;
 using Nozomi.Data.CurrencyModels;
+using Nozomi.Data.ResponseModels;
 using Nozomi.Service.Hubs;
 using Nozomi.Service.Services.Interfaces;
 using Nozomi.Ticker.Controllers.v1.Interfaces;
@@ -53,9 +54,11 @@ namespace Nozomi.Ticker.Controllers.v1
         }
 
         [HttpGet("ticker-am")]
-        public Task Ticker(string abbreviation)
+        public NozomiResult<ICollection<TickerResponse>> Ticker(string abbreviation)
         {
-            return _tickerService.GetTickers(abbreviation);
+            return _tickerService.GetByAbbreviation(abbreviation);
         }
+        
+        
     }
 }

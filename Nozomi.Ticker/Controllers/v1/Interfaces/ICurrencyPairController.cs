@@ -1,6 +1,8 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Nozomi.Data;
 using Nozomi.Data.CurrencyModels;
+using Nozomi.Data.ResponseModels;
 
 namespace Nozomi.Ticker.Controllers.v1.Interfaces
 {
@@ -37,6 +39,6 @@ namespace Nozomi.Ticker.Controllers.v1.Interfaces
         /// </summary>
         /// <param name="abbreviation">The abbreviation of the ticker, i.e. ETHUSD</param>
         /// <returns>Ticker Price Array</returns>
-        Task Ticker(string abbreviation);
+        NozomiResult<ICollection<TickerResponse>> Ticker(string abbreviation);
     }
 }
