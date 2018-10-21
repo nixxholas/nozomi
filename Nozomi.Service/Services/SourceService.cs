@@ -4,6 +4,7 @@ using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data.CurrencyModels;
+using Nozomi.Data.RequestModels;
 using Nozomi.Repo.Data;
 using Nozomi.Repo.Repositories;
 using Nozomi.Service.Services.Interfaces;
@@ -15,6 +16,20 @@ namespace Nozomi.Service.Services
         public SourceService(ILogger<SourceService> logger, 
             IUnitOfWork<NozomiDbContext> unitOfWork) : base(logger, unitOfWork)
         {
+        }
+
+        public bool Create(CreateSource createSource)
+        {
+            if (!createSource.IsValid()) return false;
+            
+            _unitOfWork.GetRepository<Source>().Add(new Source()
+            {
+                APIDocsURL = createSource.ApiDocsUrl,
+                Abbreviation = createSource.Abbreviation,
+                Name = createSource.Name
+            });
+
+            return true;
         }
 
         public IEnumerable<Source> GetAllActive(bool includeNested = false)
