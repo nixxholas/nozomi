@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Logging;
+using Nozomi.Core.Helpers.Native.Collections;
 using Nozomi.Data;
 using Nozomi.Data.CurrencyModels;
 using Nozomi.Data.ResponseModels;
@@ -51,7 +52,7 @@ namespace Nozomi.Service.Services
             });
         }
 
-        public NozomiResult<ICollection<DistinctiveTickerResponse>> GetByAbbreviation(string ticker)
+        public NozomiResult<ICollection<DistinctiveTickerResponse>> GetByAbbreviation(string ticker, string exchangeAbbrv = null)
         {
             try
             {
@@ -79,6 +80,7 @@ namespace Nozomi.Service.Services
                     .Select(cp => new DistinctiveTickerResponse()
                     {
                         Exchange = cp.CurrencySource.Name,
+                        ExchangeAbbrv = cp.CurrencySource.Abbreviation,
                         LastUpdated = cp.CurrencyPairRequests.FirstOrDefault()
                             .RequestComponents.FirstOrDefault().CreatedAt,
                         Properties = cp.CurrencyPairRequests.FirstOrDefault()
@@ -87,14 +89,18 @@ namespace Nozomi.Service.Services
                                 rc.ComponentType.ToString(), 
                                 rc.RequestComponentDatum.Value))
                             .ToList()
-                    })
-                    .ToList();
+                    });
+
+                if (!exchangeAbbrv.IsNullOrEmpty())
+                {
+                    query = query.Where(cp => cp.ExchangeAbbrv.Equals(exchangeAbbrv));
+                }
 
                 return new NozomiResult<ICollection<DistinctiveTickerResponse>>()
                 {
                     Success = true,
                     ResultType = NozomiResultType.Success,
-                    Data = query
+                    Data = query.ToList()
                 };
             }
             catch (Exception ex)

@@ -39,6 +39,6 @@ namespace Nozomi.Ticker.Controllers.v1.Interfaces
         /// </summary>
         /// <param name="abbreviation">The abbreviation of the ticker, i.e. ETHUSD</param>
         /// <returns>Ticker Price Array</returns>
-        NozomiResult<ICollection<DistinctiveTickerResponse>> Ticker(string abbreviation);
+        NozomiResult<ICollection<DistinctiveTickerResponse>> Ticker(string abbreviation, string exchangeAbbrv = null);
     }
 }
