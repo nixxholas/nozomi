@@ -77,7 +77,7 @@ namespace Nozomi.Service.HostedServices.RequestTypes
                 //============================= End of check and update new data =============================// 
                 
                 // No naps taken
-                //await Task.Delay(0, stoppingToken);
+                await Task.Delay(1000, stoppingToken);
             }
 
             _logger.LogWarning("WebsocketCurrencyPairRequestSyncingService background task is stopping.");

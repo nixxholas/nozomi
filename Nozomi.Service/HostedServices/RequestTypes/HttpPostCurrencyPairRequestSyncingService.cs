@@ -398,7 +398,7 @@ namespace Nozomi.Service.HostedServices.RequestTypes
                 }
                 
                 // No naps taken
-                //await Task.Delay(0, stoppingToken);
+                await Task.Delay(1000, stoppingToken);
             }
 
             _logger.LogWarning("HttpGetCurrencyPairRequestSyncingService background task is stopping.");
