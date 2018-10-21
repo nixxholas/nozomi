@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using Nozomi.Data.CurrencyModels;
+using Nozomi.Data.WebModels;
 
 namespace Nozomi.Data.ResponseModels
 {
@@ -7,6 +9,6 @@ namespace Nozomi.Data.ResponseModels
     {
         public DateTime LastUpdated { get; set; }
         
-        public Dictionary<string, string> Properties { get; set; }
+        public ICollection<RequestComponent> Properties { get; set; }
     }
 }
