@@ -33,7 +33,6 @@ namespace Nozomi.Service.Hubs
 
             await channel.Writer.WriteAsync(new NozomiResult<IEnumerable<JObject>>()
             {
-                Success = true,
                 ResultType = NozomiResultType.Success,
                 Data = new[] { data }
             });
@@ -45,7 +44,6 @@ namespace Nozomi.Service.Hubs
         {
             var nozRes = new NozomiResult<IEnumerable<CurrencyPair>>()
             {
-                Success = true,
                 ResultType = NozomiResultType.Success,
                 Data = currencyPairs
             };
@@ -81,7 +79,6 @@ namespace Nozomi.Service.Hubs
                     // Write one by one, and the client receives them one by one as well
                     await writer.WriteAsync(new NozomiResult<IEnumerable<CurrencyPair>>()
                     {
-                        Success = (cPair != null),
                         ResultType = (cPair != null) ? NozomiResultType.Success : NozomiResultType.Failed,
                         Data = new[] {cPair}
                     });

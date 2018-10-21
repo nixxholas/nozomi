@@ -100,7 +100,6 @@ namespace Nozomi.Service.Services
 
                 return new NozomiResult<ICollection<DistinctiveTickerResponse>>()
                 {
-                    Success = true,
                     ResultType = NozomiResultType.Success,
                     Data = query.ToList()
                 };
