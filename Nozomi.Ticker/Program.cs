@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Gelf.Extensions.Logging;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -34,6 +35,21 @@ namespace Nozomi.Ticker
             WebHost.CreateDefaultBuilder(args)
                 .UseKestrel()
                 .UseContentRoot(Directory.GetCurrentDirectory())
-                .UseStartup<Startup>();
+                .UseStartup<Startup>()
+                .ConfigureLogging((context, builder) =>
+                {
+                    // Read GelfLoggerOptions from appsettings.json
+                    builder.Services.Configure<GelfLoggerOptions>(context.Configuration.GetSection("Graylog"));
+
+                    // Optionally configure GelfLoggerOptions further.
+                    builder.Services.PostConfigure<GelfLoggerOptions>(options =>
+                        options.AdditionalFields["machine_name"] = Environment.MachineName);
+
+                    // Read Logging settings from appsettings.json and add providers.
+                    builder.AddConfiguration(context.Configuration.GetSection("Logging"))
+                        .AddConsole()
+                        .AddDebug()
+                        .AddGelf();
+                });
     }
 }
