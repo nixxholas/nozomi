@@ -18,8 +18,8 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
             
             entityTypeBuilder.HasOne(rc => rc.Request).WithMany(r => r.RequestComponents)
                 .HasForeignKey(rc => rc.RequestId);
-            entityTypeBuilder.HasMany(rc => rc.RequestComponentData).WithOne(rcd => rcd.RequestComponent)
-                .HasForeignKey(rcd => rcd.RequestComponentId);
+            entityTypeBuilder.HasOne(rc => rc.RequestComponentDatum).WithOne(rcd => rcd.RequestComponent)
+                .HasForeignKey<RequestComponent>(rcd => rcd.RequestComponentDatumId);
 
             entityTypeBuilder.HasData(
                 new RequestComponent
@@ -28,7 +28,6 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
                     ComponentType = ComponentType.Ask,
                     QueryComponent = "1",
                     RequestId = 1,
-                    RequestComponentData = new List<RequestComponentDatum>(),
                     CreatedAt = DateTime.Now,
                     ModifiedAt = DateTime.Now,
                     DeletedAt = null
@@ -39,7 +38,6 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
                     ComponentType = ComponentType.Bid,
                     QueryComponent = "0",
                     RequestId = 1,
-                    RequestComponentData = new List<RequestComponentDatum>(),
                     CreatedAt = DateTime.Now,
                     ModifiedAt = DateTime.Now,
                     DeletedAt = null
@@ -50,7 +48,6 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
                     ComponentType = ComponentType.Ask,
                     QueryComponent = "0",
                     RequestId = 2,
-                    RequestComponentData = new List<RequestComponentDatum>(),
                     CreatedAt = DateTime.Now,
                     ModifiedAt = DateTime.Now,
                     DeletedAt = null
@@ -61,7 +58,6 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
                     ComponentType = ComponentType.Ask,
                     QueryComponent = "askPrice",
                     RequestId = 3,
-                    RequestComponentData = new List<RequestComponentDatum>(),
                     CreatedAt = DateTime.Now,
                     ModifiedAt = DateTime.Now,
                     DeletedAt = null
@@ -72,7 +68,6 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
                     ComponentType = ComponentType.Bid,
                     QueryComponent = "bidPrice",
                     RequestId = 3,
-                    RequestComponentData = new List<RequestComponentDatum>(),
                     CreatedAt = DateTime.Now,
                     ModifiedAt = DateTime.Now,
                     DeletedAt = null

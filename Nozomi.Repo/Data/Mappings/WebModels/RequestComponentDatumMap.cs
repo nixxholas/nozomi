@@ -9,13 +9,13 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
         
         public RequestComponentDatumMap(EntityTypeBuilder<RequestComponentDatum> entityTypeBuilder) : base(entityTypeBuilder)
         {
-            entityTypeBuilder.HasKey(rcd => rcd.Id).HasName("RequestComponenDatum_PK_Id");
+            entityTypeBuilder.HasKey(rcd => rcd.Id).HasName("RequestComponentDatum_PK_Id");
             entityTypeBuilder.Property(rc => rc.Id).ValueGeneratedOnAdd();
             
             entityTypeBuilder.Property(rc => rc.Value).HasDefaultValue(string.Empty);
 
-            entityTypeBuilder.HasOne(rcd => rcd.RequestComponent).WithMany(rc => rc.RequestComponentData)
-                .HasForeignKey(rcd => rcd.RequestComponentId).OnDelete(DeleteBehavior.Cascade);
+            entityTypeBuilder.HasOne(rcd => rcd.RequestComponent).WithOne(rc => rc.RequestComponentDatum)
+                .HasForeignKey<RequestComponentDatum>(rcd => rcd.RequestComponentId).OnDelete(DeleteBehavior.Cascade);
         }
     }
 }
