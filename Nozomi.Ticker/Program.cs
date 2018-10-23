@@ -17,7 +17,29 @@ namespace Nozomi.Ticker
     {
         public static void Main(string[] args)
         {
-            var host = CreateWebHostBuilder(args).Build();
+            var hostBuilder = CreateWebHostBuilder(args);
+
+            if (!string.IsNullOrEmpty(Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")) &&
+                Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT").Equals("Production"))
+            {
+                hostBuilder.ConfigureLogging((context, builder) =>
+                {
+                    // Read GelfLoggerOptions from appsettings.json
+                    builder.Services.Configure<GelfLoggerOptions>(context.Configuration.GetSection("Graylog"));
+
+                    // Optionally configure GelfLoggerOptions further.
+                    builder.Services.PostConfigure<GelfLoggerOptions>(options =>
+                        options.AdditionalFields["machine_name"] = Environment.MachineName);
+
+                    // Read Logging settings from appsettings.json and add providers.
+                    builder.AddConfiguration(context.Configuration.GetSection("Logging"))
+                        .AddConsole()
+                        .AddDebug()
+                        .AddGelf();
+                });
+            }
+
+            var host = hostBuilder.Build();
             
             using (var scope = host.Services.CreateScope())
             {
@@ -35,21 +57,6 @@ namespace Nozomi.Ticker
             WebHost.CreateDefaultBuilder(args)
                 .UseKestrel()
                 .UseContentRoot(Directory.GetCurrentDirectory())
-                .UseStartup<Startup>()
-                .ConfigureLogging((context, builder) =>
-                {
-                    // Read GelfLoggerOptions from appsettings.json
-                    builder.Services.Configure<GelfLoggerOptions>(context.Configuration.GetSection("Graylog"));
-
-                    // Optionally configure GelfLoggerOptions further.
-                    builder.Services.PostConfigure<GelfLoggerOptions>(options =>
-                        options.AdditionalFields["machine_name"] = Environment.MachineName);
-
-                    // Read Logging settings from appsettings.json and add providers.
-                    builder.AddConfiguration(context.Configuration.GetSection("Logging"))
-                        .AddConsole()
-                        .AddDebug()
-                        .AddGelf();
-                });
+                .UseStartup<Startup>();
     }
 }
