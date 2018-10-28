@@ -1,8 +1,7 @@
-using System.Reflection;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
-namespace Nozomi.Ticker.Controllers.v1
+namespace Nozomi.Ticker.Areas.v1
 {
     [Route("/api/[controller]")]
     [ApiVersion("v1.0", Deprecated = false)]

@@ -1,11 +1,11 @@
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using Nozomi.Data;
 using Nozomi.Data.RequestModels;
 using Nozomi.Service.Services.Interfaces;
 
-namespace Nozomi.Ticker.Controllers.v1
+namespace Nozomi.Ticker.Areas.v1.CurrencySource
 {
     public class CurrencySourceController : BaseController<CurrencySourceController>
     {
@@ -15,6 +15,12 @@ namespace Nozomi.Ticker.Controllers.v1
             ISourceService sourceService) : base(logger)
         {
             _sourceService = sourceService;
+        }
+
+        [HttpGet]
+        public NozomiResult<ICollection<JsonResult>> All()
+        {
+            return null;
         }
 
         [HttpPost]

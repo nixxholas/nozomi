@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Nozomi.Ticker.Models;
 
-namespace Nozomi.Ticker.Controllers
+namespace Nozomi.Ticker.Areas
 {
     public class HomeController : Controller
     {

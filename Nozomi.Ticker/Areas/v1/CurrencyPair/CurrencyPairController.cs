@@ -1,18 +1,14 @@
 ﻿using System.Collections.Generic;
-using System.Threading.Channels;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data;
-using Nozomi.Data.CurrencyModels;
 using Nozomi.Data.ResponseModels;
 using Nozomi.Service.Hubs;
 using Nozomi.Service.Services.Interfaces;
-using Nozomi.Ticker.Controllers.v1.Interfaces;
-using Swashbuckle.AspNetCore.Swagger;
 
-namespace Nozomi.Ticker.Controllers.v1
+namespace Nozomi.Ticker.Areas.v1.CurrencyPair
 {
     [ApiController]
     public class CurrencyPairController : BaseController<CurrencyPairController>, ICurrencyPairController
@@ -31,17 +27,17 @@ namespace Nozomi.Ticker.Controllers.v1
         }
         
         [HttpPost("create")]
-        public async Task<NozomiResult<CurrencyPair>> CreateCurrencyPair(CurrencyPair currencyPair)
+        public async Task<NozomiResult<Data.CurrencyModels.CurrencyPair>> CreateCurrencyPair(Data.CurrencyModels.CurrencyPair currencyPair)
         {
             if (_currencyPairService.Create(currencyPair, currencyPair.CreatedBy))
             {
-                return new NozomiResult<CurrencyPair>()
+                return new NozomiResult<Data.CurrencyModels.CurrencyPair>()
                 {
                     ResultType = NozomiResultType.Success
                 };
             }
             
-            return new NozomiResult<CurrencyPair>()
+            return new NozomiResult<Data.CurrencyModels.CurrencyPair>()
             {
                 ResultType = NozomiResultType.Failed
             };
