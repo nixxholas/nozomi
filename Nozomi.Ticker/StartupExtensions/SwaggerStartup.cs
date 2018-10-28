@@ -1,5 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
-using Nozomi.Ticker.Controllers;
+using Nozomi.Ticker.Areas;
 using Swashbuckle.AspNetCore.Swagger;
 
 namespace Nozomi.Ticker.StartupExtensions
@@ -13,7 +13,7 @@ namespace Nozomi.Ticker.StartupExtensions
                 c.SwaggerDoc(GlobalApiVariables.CURRENT_API_VERSION, new Info
                 {
                     Version = GlobalApiVariables.CURRENT_API_VERSION,
-                    Title = "Nozomi API v1.0",
+                    Title = "Nozomi API",
                     Description = "Reference documentation for the usage of Nozomi.",
                     TermsOfService = "None",
                     Contact = new Contact

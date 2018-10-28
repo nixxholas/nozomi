@@ -24,7 +24,7 @@ using Nozomi.Service.Services;
 using Nozomi.Service.Services.Interfaces;
 using Nozomi.Service.Services.Requests;
 using Nozomi.Service.Services.Requests.Interfaces;
-using Nozomi.Ticker.Controllers;
+using Nozomi.Ticker.Areas;
 using Nozomi.Ticker.StartupExtensions;
 using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 
