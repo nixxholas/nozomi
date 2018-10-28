@@ -32,6 +32,52 @@ namespace Nozomi.Service.Services
             return true;
         }
 
+        public bool Update(UpdateSource updateSource)
+        {
+            if (updateSource == null) return false;
+
+            var sourceToUpd = _unitOfWork.GetRepository<Source>()
+                .GetQueryable()
+                .Include(s => s.Currencies)
+                .Include(s => s.CurrencyPairs)
+                .SingleOrDefault(s => s.IsEnabled && s.DeletedAt == null
+                                      && s.Id.Equals(updateSource.Id));
+
+            if (sourceToUpd != null)
+            {
+                // Don't perform string checks for more efficiency, allow the user to 
+                // comply via due diligence
+                sourceToUpd.Abbreviation = updateSource.Abbreviation;
+                sourceToUpd.Name = updateSource.Name;
+                sourceToUpd.APIDocsURL = updateSource.APIDocsURL;
+
+                if (updateSource.UpdateSourceCurrencies != null & updateSource.UpdateSourceCurrencies.Count > 0)
+                {
+                    foreach (var usc in updateSource.UpdateSourceCurrencies)
+                    {
+                        // Deletion or Addition?
+                        if (sourceToUpd.Currencies.Any(c => c.Id.Equals(usc.Id))
+                            && usc.CurrencySourceId >= 0)
+                        {
+                            // Deletion
+                            
+                        }
+                        else if (!sourceToUpd.Currencies.Any(c => c.Id.Equals(usc.Id)))
+                        {
+                            // Addition?
+                            
+                        }
+                    }
+                }
+
+                _unitOfWork.Commit();
+                
+                return true;
+            }
+
+            return false;
+        }
+
         public IEnumerable<Source> GetAllActive(bool includeNested = false)
         {
             if (includeNested) {
