@@ -1,4 +1,4 @@
-namespace Nozomi.Data.RequestModels
+namespace Nozomi.Data.AreaModels.v1.CurrencySource
 {
     public class CreateSource
     {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using Nozomi.Data.AreaModels.v1.CurrencySource;
 using Nozomi.Data.CurrencyModels;
-using Nozomi.Data.RequestModels;
 
 namespace Nozomi.Service.Services.Interfaces
 {
