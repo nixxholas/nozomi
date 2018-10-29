@@ -51,21 +51,115 @@ namespace Nozomi.Service.Services
                 sourceToUpd.Name = updateSource.Name;
                 sourceToUpd.APIDocsURL = updateSource.APIDocsURL;
 
-                if (updateSource.UpdateSourceCurrencies != null & updateSource.UpdateSourceCurrencies.Count > 0)
+                if (updateSource.UpdateSourceCurrencies != null && updateSource.UpdateSourceCurrencies.Count > 0)
                 {
                     foreach (var usc in updateSource.UpdateSourceCurrencies)
                     {
-                        // Deletion or Addition?
-                        if (sourceToUpd.Currencies.Any(c => c.Id.Equals(usc.Id))
-                            && usc.CurrencySourceId >= 0)
+                        // Modification or Addition?
+                        if (sourceToUpd.Currencies
+                                .Any(c => c.Id.Equals(usc.Id)) // Make sure this source has the currency first
+                            && usc.CurrencySourceId >= 0) // Make sure we're not making an invalid modification
                         {
-                            // Deletion
-                            
+                            // Modification
+                            var currency = _unitOfWork.GetRepository<Currency>()
+                                .Get(c => c.Id.Equals(usc.Id) && c.DeletedAt == null).SingleOrDefault();
+
+                            if (currency != null)
+                            {
+                                if (usc.CurrencySourceId.Equals(0))
+                                {
+                                    currency.DeletedAt = DateTime.Now;
+                                }
+                                else
+                                {
+                                    currency.CurrencySourceId = usc.CurrencySourceId;
+                                }
+
+                                _unitOfWork.GetRepository<Currency>().Update(currency);
+                                _unitOfWork.Commit(); // Commit this modification.
+                            }
+                            else
+                            {
+                                // Log failure
+                            }
                         }
-                        else if (!sourceToUpd.Currencies.Any(c => c.Id.Equals(usc.Id)))
+                        else if (!sourceToUpd.Currencies.Any(c => c.Id.Equals(usc.Id) 
+                                                                  && c.CurrencySourceId.Equals(usc.CurrencySourceId))
+                            && usc.CurrencySourceId.Equals(sourceToUpd.Id))
                         {
                             // Addition?
-                            
+                            var currency = _unitOfWork.GetRepository<Currency>()
+                                .Get(c => c.Id.Equals(usc.Id) && c.DeletedAt == null)
+                                .SingleOrDefault();
+
+                            if (currency != null)
+                            {
+                                currency.CurrencySourceId = usc.CurrencySourceId;
+                                
+                                _unitOfWork.GetRepository<Currency>().Update(currency);
+                                _unitOfWork.Commit();
+                            }
+                            else
+                            {
+                                // Log failure
+                            }
+                        }
+                    }
+                }
+
+                if (updateSource.UpdateCurrencyPairs != null && updateSource.UpdateCurrencyPairs.Count > 0)
+                {
+                    foreach (var ucp in updateSource.UpdateCurrencyPairs)
+                    {
+                        // Modification or addition?
+                        if (sourceToUpd.CurrencyPairs
+                                .Any(cp => cp.Id.Equals(ucp.Id)) // Make sure this source has the currency first
+                            && ucp.CurrencySourceId >= 0) // Make sure we're not making an invalid modification
+                        {
+                            // Modification
+                            var currencyPair = _unitOfWork.GetRepository<CurrencyPair>()
+                                .Get(cp => cp.Id.Equals(ucp.Id) && cp.DeletedAt == null)
+                                .SingleOrDefault();
+
+                            if (currencyPair != null)
+                            {
+                                if (ucp.CurrencySourceId.Equals(0))
+                                {
+                                    currencyPair.DeletedAt = DateTime.Now;
+                                }
+                                else
+                                {
+                                    currencyPair.CurrencySourceId = ucp.CurrencySourceId;
+                                }
+
+                                _unitOfWork.GetRepository<CurrencyPair>().Update(currencyPair);
+                                _unitOfWork.Commit(); // Commit this modification.
+                            }
+                            else
+                            {
+                                // Log failure
+                            }
+                        }
+                        else if (!sourceToUpd.CurrencyPairs.Any(cp => cp.Id.Equals(ucp.Id) 
+                                                                  && cp.CurrencySourceId.Equals(ucp.CurrencySourceId))
+                            && ucp.CurrencySourceId.Equals(sourceToUpd.Id))
+                        {
+                            // Addition?
+                            var currencyPair = _unitOfWork.GetRepository<CurrencyPair>()
+                                .Get(cp => cp.Id.Equals(ucp.Id) && cp.DeletedAt == null)
+                                .SingleOrDefault();
+
+                            if (currencyPair != null)
+                            {
+                                currencyPair.CurrencySourceId = ucp.CurrencySourceId;
+                                
+                                _unitOfWork.GetRepository<CurrencyPair>().Update(currencyPair);
+                                _unitOfWork.Commit();
+                            }
+                            else
+                            {
+                                // Log failure
+                            }
                         }
                     }
                 }
