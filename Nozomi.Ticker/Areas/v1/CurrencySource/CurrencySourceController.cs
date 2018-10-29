@@ -51,5 +51,15 @@ namespace Nozomi.Ticker.Areas.v1.CurrencySource
                 Data = new JsonResult("")
             };
         }
+
+        public NozomiResult<JsonResult> Delete(DeleteSource source)
+        {
+            return new NozomiResult<JsonResult>()
+            {
+                ResultType = _sourceService.Delete(source.Id, source.HardDelete) 
+                    ? NozomiResultType.Success : NozomiResultType.Failed,
+                Data = new JsonResult("")
+            };
+        }
     }
 }
