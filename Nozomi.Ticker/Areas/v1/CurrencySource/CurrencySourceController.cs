@@ -1,16 +1,18 @@
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using Nozomi.Data;
 using Nozomi.Data.AreaModels.v1.CurrencySource;
 using Nozomi.Service.Services.Interfaces;
 
 namespace Nozomi.Ticker.Areas.v1.CurrencySource
 {
-    public class CurrencySourceController : BaseController<CurrencySourceController>
+    public class CurrencySourceController : BaseController<CurrencySourceController>, ICurrencySourceController
     {
         private readonly ISourceService _sourceService;
-        
+        private ICurrencySourceController _currencySourceControllerImplementation;
+
         public CurrencySourceController(ILogger<CurrencySourceController> logger,
             ISourceService sourceService) : base(logger)
         {
@@ -39,6 +41,15 @@ namespace Nozomi.Ticker.Areas.v1.CurrencySource
             return new NozomiResult<JsonResult>()
             {
                 ResultType = NozomiResultType.Failed
+            };
+        }
+
+        public NozomiResult<JsonResult> Update(UpdateSource source)
+        {
+            return new NozomiResult<JsonResult>()
+            {
+                ResultType = _sourceService.Update(source) ? NozomiResultType.Success : NozomiResultType.Failed,
+                Data = new JsonResult("")
             };
         }
     }

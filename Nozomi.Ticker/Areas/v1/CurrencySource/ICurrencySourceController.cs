@@ -10,5 +10,7 @@ namespace Nozomi.Ticker.Areas.v1.CurrencySource
          NozomiResult<ICollection<JsonResult>> All();
 
          NozomiResult<JsonResult> Create([FromBody] CreateSource source);
+
+         NozomiResult<JsonResult> Update([FromBody] UpdateSource source);
      }
  }
