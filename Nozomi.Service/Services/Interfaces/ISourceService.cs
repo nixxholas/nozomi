@@ -18,6 +18,6 @@ namespace Nozomi.Service.Services.Interfaces
 
         bool Update(UpdateSource updateSource);
 
-        bool Delete(Expression<Func<Source, bool>> predicate, bool hardDelete = false, long userId = 0);
+        bool Delete(long id, bool hardDelete = false, long userId = 0);
     }
 }

@@ -173,11 +173,11 @@ namespace Nozomi.Service.Services
             return false;
         }
 
-        public bool Delete(Expression<Func<Source, bool>> predicate, bool hardDelete = false, long userId = 0)
+        public bool Delete(long id, bool hardDelete = false, long userId = 0)
         {
             var source = _unitOfWork.GetRepository<Source>()
                 .GetQueryable()
-                .SingleOrDefault(predicate);
+                .SingleOrDefault(s => s.Id.Equals(id) && s.DeletedAt == null);
 
             if (source == null) return false; // Null predicate result.
             
