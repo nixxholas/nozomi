@@ -14,5 +14,7 @@ namespace Nozomi.Service.Services.Interfaces
         IEnumerable<Source> GetAllActive(bool includeNested);
 
         IEnumerable<dynamic> GetAllActiveObsc(bool includeNested);
+
+        bool Update(UpdateSource updateSource);
     }
 }
