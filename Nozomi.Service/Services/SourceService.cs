@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data.AreaModels.v1.CurrencySource;
@@ -170,6 +171,40 @@ namespace Nozomi.Service.Services
             }
 
             return false;
+        }
+
+        public bool Delete(Expression<Func<Source, bool>> predicate, bool hardDelete = false, long userId = 0)
+        {
+            var source = _unitOfWork.GetRepository<Source>()
+                .GetQueryable()
+                .SingleOrDefault(predicate);
+
+            if (source == null) return false; // Null predicate result.
+            
+            if (hardDelete)
+            {
+                _logger.LogInformation("[SourceService] Hard delete of source id: " + source.Id 
+                                                                                    + " is in progress by" 
+                                                                                    + userId + " .");
+                    
+                _unitOfWork.GetRepository<Source>().Delete(source);
+                _unitOfWork.Commit();
+            }
+            else
+            {
+                _logger.LogInformation("[SourceService] Soft delete of source id: " + source.Id 
+                                                                                    + " is in progress by" 
+                                                                                    + userId + " .");
+
+                source.DeletedAt = DateTime.UtcNow;
+
+                if (userId > 0) source.DeletedBy = userId;
+                    
+                _unitOfWork.GetRepository<Source>().Update(source);
+                _unitOfWork.Commit();
+            }
+
+            return true;
         }
 
         public IEnumerable<Source> GetAllActive(bool includeNested = false)
