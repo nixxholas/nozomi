@@ -11,8 +11,7 @@ namespace Nozomi.Ticker.Areas.v1.CurrencySource
     public class CurrencySourceController : BaseController<CurrencySourceController>, ICurrencySourceController
     {
         private readonly ISourceService _sourceService;
-        private ICurrencySourceController _currencySourceControllerImplementation;
-
+        
         public CurrencySourceController(ILogger<CurrencySourceController> logger,
             ISourceService sourceService) : base(logger)
         {
