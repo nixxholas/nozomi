@@ -1,14 +1,16 @@
+using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data;
 using Nozomi.Data.AreaModels.v1.CurrencyPairRequest;
+using Nozomi.Data.WebModels;
 using Nozomi.Service.Services.Interfaces;
 
 namespace Nozomi.Ticker.Areas.v1.CurrencyPairRequest
 {
     public class CurrencyPairRequestController : BaseController<CurrencyPairRequestController>, ICurrencyPairRequestController
     {
-        private ICurrencyPairRequestService _currencyPairRequestService;
+        private readonly ICurrencyPairRequestService _currencyPairRequestService;
         
         public CurrencyPairRequestController(ILogger<CurrencyPairRequestController> logger,
             ICurrencyPairRequestService currencyPairRequestService) : base(logger)
@@ -30,7 +32,34 @@ namespace Nozomi.Ticker.Areas.v1.CurrencyPairRequest
 
         public NozomiResult<JsonResult> Create(CreateCurrencyPairRequest obj, long userId = 0)
         {
-            throw new System.NotImplementedException();
+            var res = _currencyPairRequestService.Create(new Data.WebModels.CurrencyPairRequest()
+            {
+                CurrencyPairId = obj.CurrencyPairId,
+                RequestType = obj.RequestType,
+                DataPath = obj.DataPath,
+                Delay = obj.Delay,
+                RequestComponents = obj.RequestComponents
+                    .Select(rc => new RequestComponent()
+                    {
+                        ComponentType = rc.ComponentType,
+                        QueryComponent = rc.QueryComponent
+                    })
+                    .ToList(),
+                RequestProperties = obj.RequestProperties
+                    .Select(rp => new RequestProperty()
+                    {
+                        RequestPropertyType = rp.RequestPropertyType,
+                        Key = rp.Key,
+                        Value = rp.Value
+                    })
+                    .ToList()
+            });
+            
+            return new NozomiResult<JsonResult>()
+            {
+                ResultType = (res > 0) ? NozomiResultType.Success : NozomiResultType.Failed,
+                Data = new JsonResult(string.Empty)
+            };
         }
 
         public NozomiResult<JsonResult> Update(UpdateCurrencyPairRequest obj, long userId = 0)
