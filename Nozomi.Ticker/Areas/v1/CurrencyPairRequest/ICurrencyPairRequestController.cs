@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Nozomi.Data;
+using Nozomi.Data.AreaModels.v1.CurrencyPairRequest;
 
 namespace Nozomi.Ticker.Areas.v1.CurrencyPairRequest
 {
@@ -7,12 +8,12 @@ namespace Nozomi.Ticker.Areas.v1.CurrencyPairRequest
     {
         NozomiResult<JsonResult> All(bool includeNested);
 
-        NozomiResult<JsonResult> Create();
+        NozomiResult<JsonResult> Create(CreateCurrencyPairRequest obj, long userId = 0);
 
-        NozomiResult<JsonResult> Update();
+        NozomiResult<JsonResult> Update(UpdateCurrencyPairRequest obj, long userId = 0);
 
-        NozomiResult<JsonResult> Delete();
+        NozomiResult<JsonResult> Delete(long id, bool hardDelete = false, long userId = 0);
 
-        NozomiResult<JsonResult> ManualPoll();
+        NozomiResult<JsonResult> ManualPoll(long requestId, long userId = 0);
     }
 }
