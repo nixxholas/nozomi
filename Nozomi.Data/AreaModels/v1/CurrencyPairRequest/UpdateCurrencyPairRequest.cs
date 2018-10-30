@@ -8,6 +8,8 @@ namespace Nozomi.Data.AreaModels.v1.CurrencyPairRequest
 {
     public class UpdateCurrencyPairRequest
     {
+        public long Id { get; set; }
+        
         public long CurrencyPairId { get; set; }
         
         public RequestType RequestType { get; set; }
@@ -15,6 +17,8 @@ namespace Nozomi.Data.AreaModels.v1.CurrencyPairRequest
         public string DataPath { get; set; }
         
         public int Delay { get; set; }
+        
+        public bool IsEnabled { get; set; }
         
         public ICollection<UpdateCurrencyPairComponent> CurrencyPairComponents { get; set; }
         
