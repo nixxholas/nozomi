@@ -27,7 +27,7 @@ namespace Nozomi.Ticker.Areas.v1.CurrencyPair
         }
         
         [HttpPost("create")]
-        public async Task<NozomiResult<Data.CurrencyModels.CurrencyPair>> CreateCurrencyPair(Data.CurrencyModels.CurrencyPair currencyPair)
+        public async Task<NozomiResult<Data.CurrencyModels.CurrencyPair>> Create(Data.CurrencyModels.CurrencyPair currencyPair)
         {
             if (_currencyPairService.Create(currencyPair, currencyPair.CreatedBy))
             {

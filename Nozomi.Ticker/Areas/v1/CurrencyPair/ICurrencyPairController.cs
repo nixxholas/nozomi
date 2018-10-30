@@ -13,17 +13,18 @@ namespace Nozomi.Ticker.Areas.v1.CurrencyPair
         /// /// <remarks>
         /// Sample request:
         ///
-        ///     POST /Todo
+        ///     POST /api/v1/CurrencyPair/Create
         ///     {
         ///        "id": 1,
-        ///        "name": "Item1",
-        ///        "isComplete": true
+        ///        "apiUrl": "https://coinhako.com/api/v2",
+        ///        "DefaultComponent": "0",
+        ///        "CurrencySourceId": 1
         ///     }
         ///
         /// </remarks>
         /// <param name="currencyPair">Object containing the currency pair information.</param>
         /// <returns>NozomiResult</returns>
-        Task<NozomiResult<Data.CurrencyModels.CurrencyPair>> CreateCurrencyPair(Data.CurrencyModels.CurrencyPair currencyPair);
+        Task<NozomiResult<Data.CurrencyModels.CurrencyPair>> Create(Data.CurrencyModels.CurrencyPair currencyPair);
 
         /// <summary>
         /// An explicitly-defined variation of the GET Ticker API, allows the user to explicitly call a single ticker
