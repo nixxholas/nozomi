@@ -5,6 +5,8 @@ using System.Linq;
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Nozomi.Data.AreaModels.v1.CurrencyPairRequest;
+using Nozomi.Data.CurrencyModels;
 using Nozomi.Data.WebModels;
 using Nozomi.Repo.Data;
 using Nozomi.Repo.Repositories;
@@ -127,8 +129,88 @@ namespace Nozomi.Service.Services
 
             return true;
         }
+        
+        public bool Update(UpdateCurrencyPairRequest cpRequest, long userId = 0)
+        {
+            // Safetynet
+            if (cpRequest == null) return false;
 
-        public bool SoftDelete(long cpRequestId, long userId = 0)
+            var reqToUpd = _unitOfWork.GetRepository<CurrencyPairRequest>()
+                .GetQueryable(r => r.Id.Equals(cpRequest.Id) && r.DeletedAt == null)
+                .Include(cpr => cpr.RequestComponents)
+                .Include(cpr => cpr.RequestProperties)
+                .SingleOrDefault();
+
+            if (reqToUpd == null) return false;
+
+            // Include RequestComponents if there are any modified objects
+            if (cpRequest.CurrencyPairComponents != null && cpRequest.CurrencyPairComponents.Count > 0)
+            {
+                foreach (var ucpc in cpRequest.CurrencyPairComponents)
+                {
+                    var cpc = reqToUpd.RequestComponents.SingleOrDefault(rc => rc.Id.Equals(ucpc.Id));
+ 
+                    if (cpc == null) return false;
+
+                    // Deleting?
+                    if (ucpc.ToBeDeleted())
+                    {
+                        cpc.DeletedAt = DateTime.UtcNow;
+                        cpc.DeletedBy = userId;
+                        
+                        _unitOfWork.GetRepository<RequestComponent>().Update(cpc);
+                    }
+                    // Updating?
+                    else
+                    {
+                        if (ucpc.ComponentType >= 0) cpc.ComponentType = ucpc.ComponentType;
+                        if (!string.IsNullOrEmpty(ucpc.QueryComponent)) cpc.QueryComponent = ucpc.QueryComponent;
+                        
+                        _unitOfWork.GetRepository<RequestComponent>().Update(cpc);
+                    }
+                }
+            }
+            
+            // Include RequestProperties if there are any modified objects
+            if (cpRequest.RequestProperties != null && cpRequest.RequestProperties.Count > 0)
+            {
+                foreach (var urp in cpRequest.RequestProperties)
+                {
+                    var requestProperty = reqToUpd.RequestProperties.SingleOrDefault(rc => rc.Id.Equals(urp.Id));
+ 
+                    if (requestProperty == null) return false;
+
+                    // Deleting?
+                    if (urp.ToBeDeleted())
+                    {
+                        requestProperty.DeletedAt = DateTime.UtcNow;
+                        requestProperty.DeletedBy = userId;
+                        
+                        _unitOfWork.GetRepository<RequestProperty>().Update(requestProperty);
+                    }
+                    // Updating?
+                    else
+                    {
+                        if (urp.RequestPropertyType > 0) requestProperty.RequestPropertyType = urp.RequestPropertyType;
+                        if (urp.Key != null) requestProperty.Key = urp.Key;
+                        if (urp.Value != null) requestProperty.Value = urp.Value;
+                        
+                        _unitOfWork.GetRepository<RequestProperty>().Update(requestProperty);
+                    }
+                }
+            }
+
+            reqToUpd.DataPath = cpRequest.DataPath;
+            reqToUpd.RequestType = cpRequest.RequestType;
+            reqToUpd.IsEnabled = cpRequest.IsEnabled;
+
+            _unitOfWork.GetRepository<CurrencyPairRequest>().Update(reqToUpd);
+            _unitOfWork.Commit(userId);
+
+            return true;
+        }
+
+        public bool Delete(long cpRequestId, bool hardDelete, long userId = 0)
         {
             if (cpRequestId > 0)
             {
