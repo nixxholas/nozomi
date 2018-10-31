@@ -43,7 +43,8 @@ namespace Nozomi.Ticker.Areas.v1.CurrencySource
             };
         }
 
-        public NozomiResult<JsonResult> Update(UpdateSource source)
+        [HttpPut]
+        public NozomiResult<JsonResult> Update([FromBody]UpdateSource source)
         {
             return new NozomiResult<JsonResult>()
             {
@@ -52,7 +53,8 @@ namespace Nozomi.Ticker.Areas.v1.CurrencySource
             };
         }
 
-        public NozomiResult<JsonResult> Delete(DeleteSource source)
+        [HttpDelete]
+        public NozomiResult<JsonResult> Delete([FromBody]DeleteSource source)
         {
             return new NozomiResult<JsonResult>()
             {
