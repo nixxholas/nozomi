@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Nozomi.Data;
+using Nozomi.Data.AreaModels.v1.CurrencyPair;
 using Nozomi.Data.ResponseModels;
 
 namespace Nozomi.Ticker.Areas.v1.CurrencyPair
@@ -24,7 +25,7 @@ namespace Nozomi.Ticker.Areas.v1.CurrencyPair
         /// </remarks>
         /// <param name="currencyPair">Object containing the currency pair information.</param>
         /// <returns>NozomiResult</returns>
-        Task<NozomiResult<Data.CurrencyModels.CurrencyPair>> Create(Data.CurrencyModels.CurrencyPair currencyPair);
+        Task<NozomiResult<string>> Create(CreateCurrencyPair currencyPair);
 
         /// <summary>
         /// An explicitly-defined variation of the GET Ticker API, allows the user to explicitly call a single ticker
