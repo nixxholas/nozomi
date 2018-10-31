@@ -294,5 +294,10 @@ namespace Nozomi.Service.Services
         {
             return _getCurrencyPairRequestByRequestType(_unitOfWork.Context, requestType).ToList();
         }
+
+        public bool ManualPoll(long id, long userId = 0)
+        {
+            return false;
+        }
     }
 }

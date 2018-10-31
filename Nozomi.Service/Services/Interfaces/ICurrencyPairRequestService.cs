@@ -27,5 +27,7 @@ namespace Nozomi.Service.Services.Interfaces
         IQueryable<CurrencyPairRequest> GetAllActive(Expression<Func<CurrencyPairRequest, bool>> predicate, bool track = false);
 
         ICollection<CurrencyPairRequest> GetAllByRequestType(RequestType requestType);
+
+        bool ManualPoll(long id, long userId = 0);
     }
 }

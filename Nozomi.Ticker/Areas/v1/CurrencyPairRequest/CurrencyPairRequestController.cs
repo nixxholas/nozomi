@@ -86,7 +86,13 @@ namespace Nozomi.Ticker.Areas.v1.CurrencyPairRequest
 
         public NozomiResult<JsonResult> ManualPoll(long requestId, long userId = 0)
         {
-            throw new System.NotImplementedException();
+            return new NozomiResult<JsonResult>()
+            {
+                ResultType = _currencyPairRequestService.ManualPoll(requestId, userId) 
+                    ? NozomiResultType.Success 
+                    : NozomiResultType.Failed,
+                Data = new JsonResult(string.Empty)
+            };
         }
     }
 }
