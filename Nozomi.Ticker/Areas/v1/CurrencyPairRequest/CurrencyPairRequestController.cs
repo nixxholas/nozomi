@@ -8,6 +8,7 @@ using Nozomi.Service.Services.Interfaces;
 
 namespace Nozomi.Ticker.Areas.v1.CurrencyPairRequest
 {
+    [ApiController]
     public class CurrencyPairRequestController : BaseController<CurrencyPairRequestController>, ICurrencyPairRequestController
     {
         private readonly ICurrencyPairRequestService _currencyPairRequestService;
@@ -18,6 +19,7 @@ namespace Nozomi.Ticker.Areas.v1.CurrencyPairRequest
             _currencyPairRequestService = currencyPairRequestService;
         }
 
+        [HttpGet]
         public NozomiResult<JsonResult> All(bool includeNested)
         {
             var res = _currencyPairRequestService.GetAllActive();
@@ -30,7 +32,8 @@ namespace Nozomi.Ticker.Areas.v1.CurrencyPairRequest
             };
         }
 
-        public NozomiResult<JsonResult> Create(CreateCurrencyPairRequest obj, long userId = 0)
+        [HttpPost("{userId}")]
+        public NozomiResult<JsonResult> Create([FromBody]CreateCurrencyPairRequest obj, long userId = 0)
         {
             var res = _currencyPairRequestService.Create(new Data.WebModels.CurrencyPairRequest()
             {
@@ -62,7 +65,8 @@ namespace Nozomi.Ticker.Areas.v1.CurrencyPairRequest
             };
         }
 
-        public NozomiResult<JsonResult> Update(UpdateCurrencyPairRequest obj, long userId = 0)
+        [HttpPost("{userId}")]
+        public NozomiResult<JsonResult> Update([FromBody]UpdateCurrencyPairRequest obj, long userId = 0)
         {
             return new NozomiResult<JsonResult>()
             {
@@ -73,6 +77,7 @@ namespace Nozomi.Ticker.Areas.v1.CurrencyPairRequest
             };
         }
 
+        [HttpDelete("{id}")]
         public NozomiResult<JsonResult> Delete(long id, bool hardDelete = false, long userId = 0)
         {
             return new NozomiResult<JsonResult>()
@@ -82,8 +87,9 @@ namespace Nozomi.Ticker.Areas.v1.CurrencyPairRequest
                     : NozomiResultType.Failed,
                 Data = new JsonResult(string.Empty)
             };
-        }
+        }                                                 
 
+        [HttpPost("{requestId}")]
         public NozomiResult<JsonResult> ManualPoll(long requestId, long userId = 0)
         {
             return new NozomiResult<JsonResult>()
