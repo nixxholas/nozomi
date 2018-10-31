@@ -75,7 +75,13 @@ namespace Nozomi.Ticker.Areas.v1.CurrencyPairRequest
 
         public NozomiResult<JsonResult> Delete(long id, bool hardDelete = false, long userId = 0)
         {
-            throw new System.NotImplementedException();
+            return new NozomiResult<JsonResult>()
+            {
+                ResultType = _currencyPairRequestService.Delete(id, hardDelete, userId)
+                    ? NozomiResultType.Success
+                    : NozomiResultType.Failed,
+                Data = new JsonResult(string.Empty)
+            };
         }
 
         public NozomiResult<JsonResult> ManualPoll(long requestId, long userId = 0)
