@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data;
+using Nozomi.Data.AreaModels.v1.CurrencyPair;
 using Nozomi.Data.ResponseModels;
 using Nozomi.Service.Hubs;
 using Nozomi.Service.Services.Interfaces;
@@ -27,19 +28,21 @@ namespace Nozomi.Ticker.Areas.v1.CurrencyPair
         }
 
         [HttpPost]
-        public async Task<NozomiResult<Data.CurrencyModels.CurrencyPair>> Create([FromBody]Data.CurrencyModels.CurrencyPair currencyPair)
+        public async Task<NozomiResult<string>> Create([FromBody]CreateCurrencyPair currencyPair)
         {
-            if (_currencyPairService.Create(currencyPair, currencyPair.CreatedBy))
+            if (_currencyPairService.Create(currencyPair, 0 /* 0 for now */))
             {
-                return new NozomiResult<Data.CurrencyModels.CurrencyPair>()
+                return new NozomiResult<string>()
                 {
-                    ResultType = NozomiResultType.Success
+                    ResultType = NozomiResultType.Success,
+                    Data = "Currency pair successfully created!"
                 };
             }
             
-            return new NozomiResult<Data.CurrencyModels.CurrencyPair>()
+            return new NozomiResult<string>()
             {
-                ResultType = NozomiResultType.Failed
+                ResultType = NozomiResultType.Failed,
+                Data = "An error has occurred"
             };
         }
 
@@ -50,7 +53,7 @@ namespace Nozomi.Ticker.Areas.v1.CurrencyPair
         }
 
         [HttpGet("{abbreviation}")]
-        public NozomiResult<ICollection<DistinctiveTickerResponse>> Ticker(string abbreviation, [FromRoute]string exchangeAbbrv = null)
+        public NozomiResult<ICollection<DistinctiveTickerResponse>> Ticker(string abbreviation, string exchangeAbbrv = null)
         {
             return _tickerService.GetByAbbreviation(abbreviation, exchangeAbbrv);
         }
