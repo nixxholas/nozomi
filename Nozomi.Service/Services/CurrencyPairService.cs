@@ -4,7 +4,9 @@ using System.Linq;
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Nozomi.Data.AreaModels.v1.CurrencyPair;
 using Nozomi.Data.CurrencyModels;
+using Nozomi.Data.WebModels;
 using Nozomi.Repo.Data;
 using Nozomi.Repo.Repositories;
 using Nozomi.Service.Services.Interfaces;
@@ -19,9 +21,47 @@ namespace Nozomi.Service.Services
         {
         }
 
-        public bool Create(CurrencyPair currencyPair, long userId)
+        public bool Create(CreateCurrencyPair createCurrencyPair, long userId)
         {
-            if (currencyPair == null) return false;
+            if (createCurrencyPair == null || !createCurrencyPair.IsValid()) return false;
+
+            var currencyPair = new CurrencyPair()
+            {
+                CurrencyPairType = createCurrencyPair.CurrencyPairType,
+                APIUrl = createCurrencyPair.ApiUrl,
+                DefaultComponent = createCurrencyPair.DefaultComponent,
+                CurrencySourceId = createCurrencyPair.CurrencySourceId,
+                PartialCurrencyPairs = createCurrencyPair.PartialCurrencyPairs
+                    .Select(pcp => new PartialCurrencyPair()
+                    {
+                        CurrencyId = pcp.CurrencyId,
+                        IsMain = pcp.IsMain
+                    })
+                    .ToList(),
+                CurrencyPairRequests = createCurrencyPair.CurrencyPairRequests
+                    .Select(cpr => new CurrencyPairRequest()
+                    {
+                        RequestType = cpr.RequestType,
+                        DataPath = cpr.DataPath,
+                        Delay = cpr.Delay,
+                        RequestComponents = cpr.RequestComponents
+                            .Select(rc => new RequestComponent()
+                            {
+                                ComponentType = rc.ComponentType,
+                                QueryComponent = rc.QueryComponent
+                            })
+                            .ToList(),
+                        RequestProperties = cpr.RequestProperties
+                            .Select(rp => new RequestProperty()
+                            {
+                                RequestPropertyType = rp.RequestPropertyType,
+                                Key = rp.Key,
+                                Value = rp.Value
+                            })
+                            .ToList()
+                    })
+                    .ToList()
+            };
             
             if (userId > 0)
             {
