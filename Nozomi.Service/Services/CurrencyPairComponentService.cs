@@ -127,7 +127,26 @@ namespace CounterCore.Service.Services
 
         public bool Update(UpdateCurrencyPairComponent obj, long userId = 0)
         {
-            throw new NotImplementedException();
+            if (obj == null || userId < 0) return false;
+
+            var cpcToUpd = _unitOfWork.GetRepository<RequestComponent>()
+                .Get(rc => rc.Id.Equals(obj.Id) && rc.DeletedAt == null && rc.IsEnabled)
+                .SingleOrDefault();
+
+            if (cpcToUpd != null)
+            {
+                cpcToUpd.ComponentType = obj.ComponentType;
+                cpcToUpd.QueryComponent = obj.QueryComponent;
+                
+                _unitOfWork.GetRepository<RequestComponent>().Update(cpcToUpd);
+                _unitOfWork.Commit(userId);
+                
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
         public bool Delete(long id, long userId = 0, bool hardDelete = false)
