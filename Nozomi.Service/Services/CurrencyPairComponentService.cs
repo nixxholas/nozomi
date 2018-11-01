@@ -151,7 +151,34 @@ namespace CounterCore.Service.Services
 
         public bool Delete(long id, long userId = 0, bool hardDelete = false)
         {
-            throw new NotImplementedException();
+            if (id < 1 || userId < 0) return false;
+
+            var cpcToDel = _unitOfWork.GetRepository<RequestComponent>()
+                .Get(rc => rc.Id.Equals(id) && rc.DeletedAt == null && rc.IsEnabled)
+                .SingleOrDefault();
+
+            if (cpcToDel != null)
+            {
+                if (hardDelete)
+                {
+                    _unitOfWork.GetRepository<RequestComponent>().Delete(cpcToDel);
+                }
+                else
+                {
+                    cpcToDel.DeletedAt = DateTime.UtcNow;
+                    cpcToDel.DeletedBy = userId;
+
+                    _unitOfWork.GetRepository<RequestComponent>().Update(cpcToDel);
+                }
+
+                _unitOfWork.Commit(userId);
+                
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 }
