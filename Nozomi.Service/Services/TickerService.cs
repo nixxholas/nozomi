@@ -83,7 +83,7 @@ namespace Nozomi.Service.Services
                         ExchangeAbbrv = cp.CurrencySource.Abbreviation,
                         LastUpdated = cp.CurrencyPairRequests.FirstOrDefault()
                             .RequestComponents.FirstOrDefault()
-                            .RequestComponentDatum.CreatedAt,
+                            .RequestComponentDatum.ModifiedAt,
                         Properties = cp.CurrencyPairRequests.FirstOrDefault()
                             .RequestComponents
                             .Select(rc => new KeyValuePair<string, string>(
