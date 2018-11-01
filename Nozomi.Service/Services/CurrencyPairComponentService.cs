@@ -44,7 +44,17 @@ namespace CounterCore.Service.Services
 
         public ICollection<RequestComponent> All(bool includeNested = false)
         {
-            throw new NotImplementedException();
+            return includeNested ?
+                _unitOfWork.GetRepository<RequestComponent>()
+                    .GetQueryable(rc => rc.DeletedAt == null && rc.IsEnabled)
+                    .AsNoTracking()
+                    .Include(rc => rc.RequestComponentDatum)
+                    .Include(rc => rc.Request)
+                    .ToList() :
+                _unitOfWork.GetRepository<RequestComponent>()
+                    .GetQueryable(rc => rc.DeletedAt == null && rc.IsEnabled)
+                    .AsNoTracking()
+                    .ToList();
         }
 
         public bool Create(CreateCurrencyPairComponent obj, long userId = 0)
