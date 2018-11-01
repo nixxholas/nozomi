@@ -34,7 +34,7 @@ namespace Nozomi.Ticker
                     // Read Logging settings from appsettings.json and add providers.
                     builder.AddConfiguration(context.Configuration.GetSection("Logging"))
                         .AddConsole()
-                        .AddDebug()
+                        //.AddDebug()
                         .AddGelf();
                 });
             }
