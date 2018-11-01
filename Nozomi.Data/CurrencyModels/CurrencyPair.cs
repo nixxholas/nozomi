@@ -3,10 +3,13 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Counter.SDK.SharedModels;
+using Nozomi.Data.AreaModels.v1.CurrencyPair;
 using Nozomi.Data.WebModels;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace Nozomi.Data.CurrencyModels
 {
+    [SwaggerSchemaFilter(typeof(CurrencyPairSchemaFilter))]
     public class CurrencyPair : BaseEntityModel
     {
         [Key]
