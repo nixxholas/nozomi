@@ -101,7 +101,7 @@ namespace Nozomi.Ticker
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
             // Hosted Services
-            services.AddSingleton<IHostedService, HttpGetCurrencyPairRequestSyncingService>();
+            services.AddHostedService<HttpGetCurrencyPairRequestSyncingService>();
             
             services.ConfigureSwagger();
         }
