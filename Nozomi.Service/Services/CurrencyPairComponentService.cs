@@ -61,7 +61,17 @@ namespace CounterCore.Service.Services
 
         public bool Create(CreateCurrencyPairComponent obj, long userId = 0)
         {
-            throw new NotImplementedException();
+            if (obj == null || userId < 0) return false;
+            
+            _unitOfWork.GetRepository<RequestComponent>().Add(new RequestComponent()
+            {
+                ComponentType = obj.ComponentType,
+                QueryComponent = obj.QueryComponent,
+                RequestId = obj.RequestId
+            });
+            _unitOfWork.Commit(userId);
+
+            return true;
         }
 
         public bool UpdatePairValue(long id, decimal val)
