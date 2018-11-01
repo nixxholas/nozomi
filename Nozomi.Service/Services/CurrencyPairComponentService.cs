@@ -29,6 +29,8 @@ namespace CounterCore.Service.Services
 
         public ICollection<RequestComponent> AllByRequestId(long requestId, bool includeNested = false)
         {
+            if (requestId <= 0) return null;
+            
             return includeNested ? 
                 _unitOfWork.GetRepository<RequestComponent>()
                     .GetQueryable(rc => rc.RequestId.Equals(requestId) && rc.DeletedAt == null && rc.IsEnabled)
