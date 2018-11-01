@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using Nozomi.Data;
 using Nozomi.Data.CurrencyModels;
 
 namespace Nozomi.Service.Services.Interfaces
 {
     public interface ICurrencyService
     {
-        long Create(Currency currency, long userId = 0);
+        NozomiResult<string> Create(Currency currency, long userId = 0);
         bool Update(long userId, long currencyId, Currency currency);
         bool SoftDelete(long currencyId, long userId = 0);
         

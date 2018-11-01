@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Counter.SDK.SharedModels.WalletModels;
 using Counter.SDK.Utils.Iterations;
+using Nozomi.Data;
 using Nozomi.Data.CurrencyModels;
 using Nozomi.Repo.Data;
 using Nozomi.Repo.Repositories;
@@ -25,17 +26,19 @@ namespace Nozomi.Service.Services
         {
         }
 
-        public long Create(Currency currency, long userId = 0)
+        public NozomiResult<string> Create(Currency currency, long userId = 0)
         {
             if (currency != null && currency.IsValid())
             {
                 _unitOfWork.GetRepository<Currency>().Add(currency);
                 _unitOfWork.Commit(userId);
 
-                return currency.Id;
+                return new NozomiResult<string>(NozomiResultType.Success, 
+                    $"Currency successfully created with ID: {currency.Id}");
             }
 
-            return -1;
+            return new NozomiResult<string>(NozomiResultType.Failed, "Failed to create currency. Please make sure" +
+                                                                     "that your currency object is proper.");
         }
 
         public bool Update(long userId, long currencyId,Currency currency)
