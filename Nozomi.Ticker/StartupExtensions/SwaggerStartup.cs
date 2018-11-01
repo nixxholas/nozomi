@@ -8,9 +8,9 @@ namespace Nozomi.Ticker.StartupExtensions
     {
         public static void ConfigureSwagger(this IServiceCollection services)
         {
-            services.AddSwaggerGen(c =>
+            services.AddSwaggerGen(swaggerGenOptions =>
             {
-                c.SwaggerDoc(GlobalApiVariables.CURRENT_API_VERSION, new Info
+                swaggerGenOptions.SwaggerDoc(GlobalApiVariables.CURRENT_API_VERSION, new Info
                 {
                     Version = GlobalApiVariables.CURRENT_API_VERSION,
                     Title = "Nozomi API v1",
@@ -28,6 +28,8 @@ namespace Nozomi.Ticker.StartupExtensions
                         Url = ""
                     }
                 });
+                
+                swaggerGenOptions.EnableAnnotations();
             });
         }
     }
