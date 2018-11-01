@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using Nozomi.Data.AreaModels.v1.CurrencyPairComponent;
 using Nozomi.Data.CurrencyModels;
 using Nozomi.Data.NozomiRedisModels;
 using Nozomi.Data.WebModels;
@@ -23,6 +25,31 @@ namespace CounterCore.Service.Services
             IUnitOfWork<NozomiDbContext> unitOfWork, IDistributedCache distributedCache) : base(logger, unitOfWork)
         {
             _distributedCache = distributedCache;
+        }
+
+        public ICollection<RequestComponent> AllByRequestId(long requestId, bool includeNested = false)
+        {
+            return includeNested ? 
+                _unitOfWork.GetRepository<RequestComponent>()
+                    .GetQueryable(rc => rc.RequestId.Equals(requestId) && rc.DeletedAt == null && rc.IsEnabled)
+                    .AsNoTracking()
+                    .Include(rc => rc.RequestComponentDatum)
+                    .Include(rc => rc.Request)
+                    .ToList() :
+                _unitOfWork.GetRepository<RequestComponent>()
+                    .GetQueryable(rc => rc.RequestId.Equals(requestId) && rc.DeletedAt == null && rc.IsEnabled)
+                    .AsNoTracking()
+                    .ToList();
+        }
+
+        public ICollection<RequestComponent> All(bool includeNested = false)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool Create(CreateCurrencyPairComponent obj, long userId = 0)
+        {
+            throw new NotImplementedException();
         }
 
         public bool UpdatePairValue(long id, decimal val)
@@ -74,6 +101,16 @@ namespace CounterCore.Service.Services
             {
                 return false;
             }
+        }
+
+        public bool Update(UpdateCurrencyPairComponent obj, long userId = 0)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool Delete(long id, long userId = 0, bool hardDelete = false)
+        {
+            throw new NotImplementedException();
         }
     }
 }
