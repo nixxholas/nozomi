@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using Nozomi.Data;
 using Nozomi.Data.AreaModels.v1.CurrencyPairComponent;
 using Nozomi.Data.CurrencyModels;
 using Nozomi.Data.NozomiRedisModels;
@@ -59,9 +60,10 @@ namespace CounterCore.Service.Services
                     .ToList();
         }
 
-        public bool Create(CreateCurrencyPairComponent obj, long userId = 0)
+        public NozomiResult<string> Create(CreateCurrencyPairComponent obj, long userId = 0)
         {
-            if (obj == null || userId < 0) return false;
+            if (obj == null || userId < 0) return new NozomiResult<string>
+                (NozomiResultType.Failed, "Invalid payload or userId.");
             
             _unitOfWork.GetRepository<RequestComponent>().Add(new RequestComponent()
             {
@@ -71,10 +73,11 @@ namespace CounterCore.Service.Services
             });
             _unitOfWork.Commit(userId);
 
-            return true;
+            return new NozomiResult<string>
+                (NozomiResultType.Success, "Currency Pair Component successfully created!");
         }
 
-        public bool UpdatePairValue(long id, decimal val)
+        public NozomiResult<string> UpdatePairValue(long id, decimal val)
         {
             var pairToUpd = _unitOfWork
                                      .GetRepository<RequestComponent>()
@@ -105,7 +108,8 @@ namespace CounterCore.Service.Services
                 _unitOfWork.GetRepository<RequestComponentDatum>().Update(pairToUpd.RequestComponentDatum);
                 _unitOfWork.Commit();
 
-                return true;
+                return new NozomiResult<string>
+                    (NozomiResultType.Success, "Currency Pair Component successfully updated!");
             }
             else if (pairToUpd != null && pairToUpd.RequestComponentDatum == null)
             {
@@ -117,17 +121,21 @@ namespace CounterCore.Service.Services
                 });
                 _unitOfWork.Commit();
 
-                return true;
+                return new NozomiResult<string>
+                    (NozomiResultType.Success, "Currency Pair Component successfully updated!");
             }
             else
             {
-                return false;
+                return new NozomiResult<string>
+                    (NozomiResultType.Failed, "Invalid component datum. Please make sure that the " +
+                                              "RequestComponent is properly instantiated.");
             }
         }
 
-        public bool Update(UpdateCurrencyPairComponent obj, long userId = 0)
+        public NozomiResult<string> Update(UpdateCurrencyPairComponent obj, long userId = 0)
         {
-            if (obj == null || userId < 0) return false;
+            if (obj == null || userId < 0) return new NozomiResult<string>
+                (NozomiResultType.Failed, "Invalid payload or userId.");
 
             var cpcToUpd = _unitOfWork.GetRepository<RequestComponent>()
                 .Get(rc => rc.Id.Equals(obj.Id) && rc.DeletedAt == null && rc.IsEnabled)
@@ -141,17 +149,21 @@ namespace CounterCore.Service.Services
                 _unitOfWork.GetRepository<RequestComponent>().Update(cpcToUpd);
                 _unitOfWork.Commit(userId);
                 
-                return true;
+                return new NozomiResult<string>
+                    (NozomiResultType.Success, "Currency Pair Component successfully updated!");
             }
             else
             {
-                return false;
+                return new NozomiResult<string>
+                    (NozomiResultType.Failed, "Invalid Currency Pair Component. " +
+                                              "Please make sure it is not deleted or disabled.");
             }
         }
 
-        public bool Delete(long id, long userId = 0, bool hardDelete = false)
+        public NozomiResult<string> Delete(long id, long userId = 0, bool hardDelete = false)
         {
-            if (id < 1 || userId < 0) return false;
+            if (id < 1 || userId < 0) return new NozomiResult<string>
+                (NozomiResultType.Failed, "Invalid payload or userId.");
 
             var cpcToDel = _unitOfWork.GetRepository<RequestComponent>()
                 .Get(rc => rc.Id.Equals(id) && rc.DeletedAt == null && rc.IsEnabled)
@@ -173,11 +185,14 @@ namespace CounterCore.Service.Services
 
                 _unitOfWork.Commit(userId);
                 
-                return true;
+                return new NozomiResult<string>(NozomiResultType.Success,
+                    "Currency Pair Component Successfully deleted!");
             }
             else
             {
-                return false;
+                return new NozomiResult<string>(NozomiResultType.Failed,
+                    "Invalid Currency Pair Component. Please make sure it isn't deleted and" +
+                    " is enabled before attempting to delete.");
             }
         }
     }
