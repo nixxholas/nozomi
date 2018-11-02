@@ -11,7 +11,9 @@ namespace Nozomi.Service.Services.Interfaces
         ICollection<RequestComponent> AllByRequestId(long requestId, bool includeNested = false);
 
         ICollection<RequestComponent> All(bool includeNested = false);
-        
+
+        NozomiResult<RequestComponent> Get(long id, bool includeNested = false);
+
         NozomiResult<string> Create(CreateCurrencyPairComponent obj, long userId = 0);
         
         NozomiResult<string> UpdatePairValue(long id, decimal val);

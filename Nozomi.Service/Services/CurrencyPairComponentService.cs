@@ -60,6 +60,13 @@ namespace CounterCore.Service.Services
                     .ToList();
         }
 
+        public NozomiResult<RequestComponent> Get(long id, bool includeNested = false)
+        {
+            var component = _distributedCache.Get(id.ToString());
+
+            return null;
+        }
+
         public NozomiResult<string> Create(CreateCurrencyPairComponent obj, long userId = 0)
         {
             if (obj == null || userId < 0) return new NozomiResult<string>
