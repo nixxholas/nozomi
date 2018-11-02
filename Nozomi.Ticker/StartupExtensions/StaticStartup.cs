@@ -34,12 +34,11 @@ namespace Nozomi.Ticker.StartupExtensions
 
                     foreach (var cp in currencyPairs)
                     {
-                        NozomiServiceConstants.CurrencyPairDictionary.Add(
+                        NozomiServiceConstants.CurrencySourceSymbolDictionary.Add(
                             new Tuple<long, string>(cp.CurrencySourceId, string.Join("", cp.PartialCurrencyPairs
                                     .OrderByDescending(pcp => pcp.IsMain)
                                     .Select(pcp => pcp.Currency.Abbrv))), 
-                            cp.CurrencyPairRequests.First().RequestComponents.Select(rc => 
-                                rc.Id.ToString(CultureInfo.InvariantCulture)).ToArray());
+                            cp.Id);
                     }
                 }
             }
