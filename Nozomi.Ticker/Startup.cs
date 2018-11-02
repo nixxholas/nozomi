@@ -132,6 +132,9 @@ namespace Nozomi.Ticker
             app.UseStaticFiles();
             app.UseCookiePolicy();
             app.UseAutoDbMigration(env);
+            
+            // Setup the hot collections
+            app.ConfigureStatics();
 
             app.UseSignalR(route =>
             {
