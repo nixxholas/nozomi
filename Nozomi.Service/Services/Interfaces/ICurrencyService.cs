@@ -8,8 +8,8 @@ namespace Nozomi.Service.Services.Interfaces
     public interface ICurrencyService
     {
         NozomiResult<string> Create(Currency currency, long userId = 0);
-        bool Update(long userId, long currencyId, Currency currency);
-        bool SoftDelete(long currencyId, long userId = 0);
+        NozomiResult<string> Update(long currencyId, Currency currency, long userId = 0);
+        NozomiResult<string> Delete(long currencyId, bool hardDelete = false, long userId = 0);
         
         IEnumerable<Currency> GetAllActive(bool includeNested = false);
         IEnumerable<dynamic> GetAllActiveObsc(bool includeNested = false);

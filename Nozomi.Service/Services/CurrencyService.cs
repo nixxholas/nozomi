@@ -41,7 +41,7 @@ namespace Nozomi.Service.Services
                                                                      "that your currency object is proper.");
         }
 
-        public bool Update(long userId, long currencyId,Currency currency)
+        public NozomiResult<string> Update(long currencyId, Currency currency, long userId = 0)
         {
             if (currency != null && currency.IsValid() && currencyId > 0)
             {
@@ -60,16 +60,17 @@ namespace Nozomi.Service.Services
                     _unitOfWork.GetRepository<Currency>().Update(currToUpd);
                     _unitOfWork.Commit(userId);
 
-                    return true;
+                    return new NozomiResult<string>(NozomiResultType.Success, "Currency successfully updated!");
                 }
             }
 
-            return false;
+            return new NozomiResult<string>(NozomiResultType.Failed, "Invalid payload, please ensure that your currency" +
+                                                                     " payload contains valid entries.");
         }
 
-        public bool SoftDelete(long currencyId, long userId)
+        public NozomiResult<string> Delete(long currencyId, bool hardDelete = false, long userId = 0)
         {
-            if (currencyId > 0 && userId > 0)
+            if (currencyId > 0 && userId >= 0)
             {
                 var currToDel = _unitOfWork.GetRepository<Currency>()
                     .Get(c => c.Id.Equals(currencyId) && c.DeletedAt == null)
@@ -83,11 +84,11 @@ namespace Nozomi.Service.Services
                     _unitOfWork.GetRepository<Currency>().Update(currToDel);
                     _unitOfWork.Commit(userId);
 
-                    return true;
+                    return new NozomiResult<string>(NozomiResultType.Success, "Currency successfully deleted!");
                 }
             }
 
-            return false;
+            return new NozomiResult<string>(NozomiResultType.Failed, "Invalid Currency ID.");
         }
 
         public IEnumerable<Currency> GetAllActive(bool includeNested = false)
