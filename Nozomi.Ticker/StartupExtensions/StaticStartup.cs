@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using System.Linq;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
@@ -37,7 +38,8 @@ namespace Nozomi.Ticker.StartupExtensions
                             new Tuple<long, string>(cp.CurrencySourceId, string.Join("", cp.PartialCurrencyPairs
                                     .OrderByDescending(pcp => pcp.IsMain)
                                     .Select(pcp => pcp.Currency.Abbrv))), 
-                            cp.CurrencyPairRequests.First().Id);
+                            cp.CurrencyPairRequests.First().RequestComponents.Select(rc => 
+                                rc.Id.ToString(CultureInfo.InvariantCulture)).ToArray());
                     }
                 }
             }
