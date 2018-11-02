@@ -27,7 +27,8 @@ namespace Nozomi.Ticker.StartupExtensions
                         .Include(cp => cp.PartialCurrencyPairs)
                             .ThenInclude(pcp => pcp.Currency)
                         .Include(cp => cp.CurrencyPairRequests)
-                        .Where(cp => cp.CurrencyPairRequests.Any(cpr => cpr.DeletedAt == null && cpr.IsEnabled)
+                        .Where(cp => cp.CurrencyPairRequests.Any(cpr => cpr.DeletedAt == null && cpr.IsEnabled
+                                     && cpr.RequestComponents.Any(rc => rc.DeletedAt == null && rc.IsEnabled))
                         && cp.PartialCurrencyPairs.Count == 2);
 
                     foreach (var cp in currencyPairs)
@@ -36,7 +37,7 @@ namespace Nozomi.Ticker.StartupExtensions
                             new Tuple<long, string>(cp.CurrencySourceId, string.Join("", cp.PartialCurrencyPairs
                                     .OrderByDescending(pcp => pcp.IsMain)
                                     .Select(pcp => pcp.Currency.Abbrv))), 
-                            cp);
+                            cp.CurrencyPairRequests.First().Id);
                     }
                 }
             }
