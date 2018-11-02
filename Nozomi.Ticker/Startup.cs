@@ -26,6 +26,7 @@ using Nozomi.Service.Services.Requests;
 using Nozomi.Service.Services.Requests.Interfaces;
 using Nozomi.Ticker.Areas;
 using Nozomi.Ticker.StartupExtensions;
+using StackExchange.Redis;
 using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 
 namespace Nozomi.Ticker
@@ -77,6 +78,13 @@ namespace Nozomi.Ticker
                     options.EnableSensitiveDataLogging(false);
                     options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
                 }, ServiceLifetime.Transient);
+            
+                // Redis
+                services.AddDistributedRedisCache(option =>
+                {
+                    option.Configuration = Configuration.GetConnectionString("RedisConfiguration");
+                    option.InstanceName = "nozomi-cache";
+                });
             }
             
             services.Configure<CookiePolicyOptions>(options =>
