@@ -20,7 +20,8 @@ namespace Nozomi.Service
         /// <summary>
         /// A dictionary with a key of the ticker symbol and the value of an array of currency pairs ids
         /// </summary>
-        public static Dictionary<string, long[]> TickerSymbolDictionary = new Dictionary<string, long[]>();
+        public static Dictionary<string, LinkedList<long>> TickerSymbolDictionary = 
+            new Dictionary<string, LinkedList<long>>();
         
         /// <summary>
         /// A dictionary with a key of the currencypairid and the value of the currencypair's ticker response.
