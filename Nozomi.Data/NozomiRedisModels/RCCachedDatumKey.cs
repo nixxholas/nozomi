@@ -1,11 +1,12 @@
 using System;
+using Nozomi.Data.CurrencyModels;
 
 namespace Nozomi.Data.NozomiRedisModels
 {
     public class RCCachedDatumKey
     {
-        public long Id { get; set; }
+        public long RequestId { get; set; }
         
-        public DateTime DatumTime { get; set; }
+        public ComponentType ComponentType { get; set; }
     }
 }

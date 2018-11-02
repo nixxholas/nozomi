@@ -97,17 +97,15 @@ namespace CounterCore.Service.Services
             // Anomaly Detection
             if (pairToUpd?.RequestComponentDatum != null)
             {
-                // Redis, Toss the old datum there.
-                _distributedCache.SetStringAsync(
-                    JsonConvert.SerializeObject(new RCCachedDatumKey()
-                    {
-                        Id = pairToUpd.RequestComponentDatumId, 
-                        DatumTime = pairToUpd.RequestComponentDatum.ModifiedAt
-                        
-                    }),
-                    pairToUpd.RequestComponentDatum.Value);
-                
                 pairToUpd.RequestComponentDatum.Value = val.ToString(CultureInfo.InvariantCulture);
+
+                // Redis push
+                _distributedCache.SetStringAsync(JsonConvert.SerializeObject(new RCCachedDatumKey()
+                    {
+                        ComponentType = pairToUpd.ComponentType,
+                        RequestId = pairToUpd.RequestId
+                    }), 
+                    JsonConvert.SerializeObject(pairToUpd));
                 
                 _unitOfWork.GetRepository<RequestComponent>().Update(pairToUpd);
                 _unitOfWork.GetRepository<RequestComponentDatum>().Update(pairToUpd.RequestComponentDatum);
