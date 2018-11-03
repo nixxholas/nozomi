@@ -86,7 +86,7 @@ namespace Nozomi.Service.HostedServices.StaticUpdater
                 }
                 
                 // No naps taken
-                await Task.Delay(100, stoppingToken);
+                await Task.Delay(5000, stoppingToken);
             }
 
             _logger.LogWarning("TSDSyncingService background task is stopping.");
