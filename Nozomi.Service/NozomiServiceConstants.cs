@@ -11,7 +11,7 @@ namespace Nozomi.Service
         
         /// <summary>
         /// A dictionary with a key of CurrencySourceId and the Currency pair ticker symbol to return the
-        /// list of request components in question.
+        /// currency pair id in question.
         /// </summary>
         /// <returns>ID of the CurrencyPair's Request</returns>
         public static Dictionary<Tuple<long, string>, long> CurrencySourceSymbolDictionary = 
