@@ -18,6 +18,7 @@ using Nozomi.Repo.Repositories;
 using Nozomi.Service.HostedServices;
 using Nozomi.Service.HostedServices.RequestTypes;
 using Nozomi.Service.HostedServices.RequestTypes.Interfaces;
+using Nozomi.Service.HostedServices.StaticUpdater;
 using Nozomi.Service.Hubs;
 using Nozomi.Service.Middleware;
 using Nozomi.Service.Services;
@@ -110,6 +111,7 @@ namespace Nozomi.Ticker
 
             // Hosted Services
             services.AddHostedService<HttpGetCurrencyPairRequestSyncingService>();
+            services.AddHostedService<CSSSyncingService>();
             
             services.ConfigureSwagger();
         }

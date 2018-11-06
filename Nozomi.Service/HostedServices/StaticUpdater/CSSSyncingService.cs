@@ -45,7 +45,7 @@ namespace Nozomi.Service.HostedServices.StaticUpdater
             {
                 try
                 {
-                    var currencyPairs = GetActiveCurrencyPairs(_nozomiDbContext);
+                    var currencyPairs = GetActiveCurrencyPairs(_nozomiDbContext).ToList();
 
                     foreach (var cp in currencyPairs)
                     {
