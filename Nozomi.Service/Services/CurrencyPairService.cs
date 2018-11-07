@@ -205,14 +205,21 @@ namespace Nozomi.Service.Services
                 });
         }
 
-        public IEnumerable<CurrencyPair> GetAllActive()
+        public IEnumerable<CurrencyPair> GetAllActive(int index = 0, bool includeNested = false)
         {
-            return _unitOfWork.GetRepository<CurrencyPair>()
+            return !includeNested ? _unitOfWork.GetRepository<CurrencyPair>()
                 .GetQueryable()
                 .Include(cp => cp.CurrencyPairRequests)
                     .ThenInclude(cpr => cpr.RequestComponents)
                         .ThenInclude(rc => rc.RequestComponentDatum)
-                .Where(cp => cp.DeletedAt == null && cp.IsEnabled);
+                .Where(cp => cp.DeletedAt == null && cp.IsEnabled)
+                .Skip(index * 20)
+                .Take(20) :
+                _unitOfWork.GetRepository<CurrencyPair>()
+                    .GetQueryable()
+                    .Where(cp => cp.DeletedAt == null && cp.IsEnabled)
+                    .Skip(index * 20)
+                    .Take(20);
         }
 
         public IDictionary<string, IDictionary<long, long>> GetCurrencyPairSources()
@@ -306,7 +313,7 @@ namespace Nozomi.Service.Services
             return -1; // bad
         }
 
-        public ICollection<dynamic> GetAvailCPairsObsc(bool track = false)
+        public ICollection<dynamic> GetAvailCPairsObsc(int index = 0, bool track = false)
         {
             var query = _unitOfWork.GetRepository<CurrencyPair>()
                 .GetQueryable()
@@ -358,6 +365,8 @@ namespace Nozomi.Service.Services
                             }),
                         defaultComponent = cp.DefaultComponent
                     })
+                    .Skip(index * 20)
+                    .Take(20)
                     .ToList<dynamic>();
             }
             else
@@ -369,6 +378,8 @@ namespace Nozomi.Service.Services
                         currencySourceId = cp.CurrencySourceId,
                         defaultComponent = cp.DefaultComponent
                     })
+                    .Skip(index * 20)
+                    .Take(20)
                     .ToList<dynamic>();
             }
         }
