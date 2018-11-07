@@ -45,7 +45,7 @@ namespace CounterCore.Service.Services
                     .ToList();
         }
 
-        public ICollection<RequestComponent> All(bool includeNested = false)
+        public ICollection<RequestComponent> All(int index = 0, bool includeNested = false)
         {
             return includeNested ?
                 _unitOfWork.GetRepository<RequestComponent>()
@@ -53,10 +53,14 @@ namespace CounterCore.Service.Services
                     .AsNoTracking()
                     .Include(rc => rc.RequestComponentDatum)
                     .Include(rc => rc.Request)
+                    .Skip(index * 20)
+                    .Take(20)
                     .ToList() :
                 _unitOfWork.GetRepository<RequestComponent>()
                     .GetQueryable(rc => rc.DeletedAt == null && rc.IsEnabled)
                     .AsNoTracking()
+                    .Skip(index * 20)
+                    .Take(20)
                     .ToList();
         }
 

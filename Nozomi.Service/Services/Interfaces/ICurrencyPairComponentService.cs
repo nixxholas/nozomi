@@ -10,7 +10,7 @@ namespace Nozomi.Service.Services.Interfaces
     {
         ICollection<RequestComponent> AllByRequestId(long requestId, bool includeNested = false);
 
-        ICollection<RequestComponent> All(bool includeNested = false);
+        ICollection<RequestComponent> All(int index = 0, bool includeNested = false);
 
         NozomiResult<RequestComponent> Get(long id, bool includeNested = false);
 
