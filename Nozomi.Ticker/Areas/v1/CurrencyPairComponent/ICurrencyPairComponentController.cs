@@ -10,7 +10,7 @@ namespace Nozomi.Ticker.Areas.v1.CurrencyPairComponent
     {
         NozomiResult<ICollection<RequestComponent>> AllByRequestId(long requestId, bool includeNested = false);
 
-        NozomiResult<ICollection<RequestComponent>> All(bool includeNested = false);
+        NozomiResult<ICollection<RequestComponent>> All(int index = 0, bool includeNested = false);
 
         NozomiResult<string> Create(CreateCurrencyPairComponent createCurrencyPairComponent);
 

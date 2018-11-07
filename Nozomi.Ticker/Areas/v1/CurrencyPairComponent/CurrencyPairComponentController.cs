@@ -34,10 +34,10 @@ namespace Nozomi.Ticker.Areas.v1.CurrencyPairComponent
         }
 
         [HttpGet]
-        public NozomiResult<ICollection<RequestComponent>> All(bool includeNested = false)
+        public NozomiResult<ICollection<RequestComponent>> All(int index = 0, bool includeNested = false)
         {
             return new NozomiResult<ICollection<RequestComponent>>
-                (_currencyPairComponentService.All(includeNested));
+                (_currencyPairComponentService.All(index, includeNested));
         }
 
         [HttpPost]
