@@ -71,7 +71,7 @@ namespace Nozomi.Service.HostedServices.StaticUpdater
             {
                 try
                 {
-                    var dtrList = GetActiveDiscoverableTickerResponses(_nozomiDbContext);
+                    var dtrList = GetActiveDiscoverableTickerResponses(_nozomiDbContext).ToList();
                     
                     foreach (var dtr in dtrList)
                     {

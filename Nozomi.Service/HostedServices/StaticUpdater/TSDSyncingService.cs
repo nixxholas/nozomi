@@ -46,7 +46,7 @@ namespace Nozomi.Service.HostedServices.StaticUpdater
             {
                 try
                 {
-                    var cPairs = GetActiveCurrencyPairs(_nozomiDbContext);
+                    var cPairs = GetActiveCurrencyPairs(_nozomiDbContext).ToList();
                     
                     // Populate a new TickerSymbolDictionary
                     var newTsd = new Dictionary<string, LinkedList<long>>();

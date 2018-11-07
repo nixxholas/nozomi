@@ -108,11 +108,9 @@ namespace Nozomi.Ticker
             
             services.AddMvc()
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
-
-            // Hosted Services
-            services.AddHostedService<HttpGetCurrencyPairRequestSyncingService>();
-            services.AddHostedService<CSSSyncingService>();
             
+            services.ConfigureHostedServices();
+
             services.ConfigureSwagger();
         }
 
