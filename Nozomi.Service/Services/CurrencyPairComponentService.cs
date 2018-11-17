@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Logging;
@@ -103,13 +104,15 @@ namespace CounterCore.Service.Services
             {
                 pairToUpd.RequestComponentDatum.Value = val.ToString(CultureInfo.InvariantCulture);
 
-                // Redis push
-                _distributedCache.SetStringAsync(JsonConvert.SerializeObject(new RCCachedDatumKey()
-                    {
-                        ComponentType = pairToUpd.ComponentType,
-                        RequestId = pairToUpd.RequestId
-                    }), 
-                    JsonConvert.SerializeObject(pairToUpd));
+                Task.Run(() => {
+                    // Redis push
+                    _distributedCache.SetStringAsync(JsonConvert.SerializeObject(new RCCachedDatumKey()
+                        {
+                            ComponentType = pairToUpd.ComponentType,
+                            RequestId = pairToUpd.RequestId
+                        }), 
+                        JsonConvert.SerializeObject(pairToUpd));
+                });
                 
                 _unitOfWork.GetRepository<RequestComponent>().Update(pairToUpd);
                 _unitOfWork.GetRepository<RequestComponentDatum>().Update(pairToUpd.RequestComponentDatum);
