@@ -11,26 +11,26 @@ namespace Nozomi.Ticker.StartupExtensions
             services.AddSwaggerGen(swaggerGenOptions =>
             {
                 swaggerGenOptions.SwaggerDoc(GlobalApiVariables.CURRENT_API_VERSION, new Info
-                {
-                    Version = GlobalApiVariables.CURRENT_API_VERSION,
-                    Title = "Nozomi API v1",
-                    Description = "Reference documentation for the usage of Nozomi.",
-                    TermsOfService = "None",
-                    Contact = new Contact
-                    {
-                        Name = "Nicholas Chen",
-                        Email = "nicholas@counter.network",
-                        Url = "https://twitter.com/nixxholas"
-                    },
-                    License = new License
-                    {
-                        Name = "Copyright (C) Hayate Inc. - All Rights Reserved",
-                        Url = ""
-                    }
-                });
-                
-                swaggerGenOptions.EnableAnnotations();
-            });
-        }
-    }
-}
+                 {
+                     Version = GlobalApiVariables.CURRENT_API_VERSION,
+                     Title = "Nozomi API v1",
+                     Description = "Reference documentation for the usage of Nozomi.",
+                     TermsOfService = "None",
+                     Contact = new Contact
+                     {
+                         Name = "Nicholas Chen",
+                         Email = "nicholas@counter.network",
+                         Url = "https://twitter.com/nixxholas"
+                     },
+                     License = new License
+                     {
+                         Name = "Copyright (C) Hayate Inc. - All Rights Reserved",
+                         Url = ""
+                     }
+                 });
+                 
+                 swaggerGenOptions.EnableAnnotations();
+             });
+         }
+     }
+ }

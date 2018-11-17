@@ -18,9 +18,9 @@ namespace Nozomi.Ticker
         public static void Main(string[] args)
         {
             var hostBuilder = CreateWebHostBuilder(args);
-
-            if (!string.IsNullOrEmpty(Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")) &&
-                Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT").Equals("Production"))
+            var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+            
+            if (!string.IsNullOrEmpty(env) && env.Equals("Production"))
             {
                 hostBuilder.ConfigureLogging((context, builder) =>
                 {
