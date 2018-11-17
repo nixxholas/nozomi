@@ -10,8 +10,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Nozomi.Repo.Migrations
 {
     [DbContext(typeof(NozomiDbContext))]
-    [Migration("20181021053147_r1_InitialMigrations")]
-    partial class r1_InitialMigrations
+    [Migration("20181117080036_r1_InitialMigration")]
+    partial class r1_InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -318,16 +318,18 @@ namespace Nozomi.Repo.Migrations
                     b.HasKey("Id")
                         .HasName("RequestComponent_PK_Id");
 
-                    b.HasIndex("RequestId");
+                    b.HasIndex("RequestId", "ComponentType")
+                        .IsUnique()
+                        .HasName("RequestComponent_AK_RequestId_ComponentType");
 
                     b.ToTable("RequestComponents");
 
                     b.HasData(
-                        new { Id = 1L, ComponentType = 1, CreatedAt = new DateTime(2018, 10, 21, 13, 31, 46, 640, DateTimeKind.Local), CreatedBy = 0L, DeletedBy = 0L, IsEnabled = true, ModifiedAt = new DateTime(2018, 10, 21, 13, 31, 46, 642, DateTimeKind.Local), ModifiedBy = 0L, QueryComponent = "1", RequestComponentDatumId = 0L, RequestId = 1L },
-                        new { Id = 2L, ComponentType = 2, CreatedAt = new DateTime(2018, 10, 21, 13, 31, 46, 642, DateTimeKind.Local), CreatedBy = 0L, DeletedBy = 0L, IsEnabled = true, ModifiedAt = new DateTime(2018, 10, 21, 13, 31, 46, 642, DateTimeKind.Local), ModifiedBy = 0L, QueryComponent = "0", RequestComponentDatumId = 0L, RequestId = 1L },
-                        new { Id = 3L, ComponentType = 1, CreatedAt = new DateTime(2018, 10, 21, 13, 31, 46, 642, DateTimeKind.Local), CreatedBy = 0L, DeletedBy = 0L, IsEnabled = true, ModifiedAt = new DateTime(2018, 10, 21, 13, 31, 46, 642, DateTimeKind.Local), ModifiedBy = 0L, QueryComponent = "0", RequestComponentDatumId = 0L, RequestId = 2L },
-                        new { Id = 4L, ComponentType = 1, CreatedAt = new DateTime(2018, 10, 21, 13, 31, 46, 642, DateTimeKind.Local), CreatedBy = 0L, DeletedBy = 0L, IsEnabled = true, ModifiedAt = new DateTime(2018, 10, 21, 13, 31, 46, 642, DateTimeKind.Local), ModifiedBy = 0L, QueryComponent = "askPrice", RequestComponentDatumId = 0L, RequestId = 3L },
-                        new { Id = 5L, ComponentType = 2, CreatedAt = new DateTime(2018, 10, 21, 13, 31, 46, 642, DateTimeKind.Local), CreatedBy = 0L, DeletedBy = 0L, IsEnabled = true, ModifiedAt = new DateTime(2018, 10, 21, 13, 31, 46, 642, DateTimeKind.Local), ModifiedBy = 0L, QueryComponent = "bidPrice", RequestComponentDatumId = 0L, RequestId = 3L }
+                        new { Id = 1L, ComponentType = 1, CreatedAt = new DateTime(2018, 11, 17, 16, 0, 35, 907, DateTimeKind.Local), CreatedBy = 0L, DeletedBy = 0L, IsEnabled = true, ModifiedAt = new DateTime(2018, 11, 17, 16, 0, 35, 910, DateTimeKind.Local), ModifiedBy = 0L, QueryComponent = "1", RequestComponentDatumId = 0L, RequestId = 1L },
+                        new { Id = 2L, ComponentType = 2, CreatedAt = new DateTime(2018, 11, 17, 16, 0, 35, 910, DateTimeKind.Local), CreatedBy = 0L, DeletedBy = 0L, IsEnabled = true, ModifiedAt = new DateTime(2018, 11, 17, 16, 0, 35, 910, DateTimeKind.Local), ModifiedBy = 0L, QueryComponent = "0", RequestComponentDatumId = 0L, RequestId = 1L },
+                        new { Id = 3L, ComponentType = 1, CreatedAt = new DateTime(2018, 11, 17, 16, 0, 35, 910, DateTimeKind.Local), CreatedBy = 0L, DeletedBy = 0L, IsEnabled = true, ModifiedAt = new DateTime(2018, 11, 17, 16, 0, 35, 910, DateTimeKind.Local), ModifiedBy = 0L, QueryComponent = "0", RequestComponentDatumId = 0L, RequestId = 2L },
+                        new { Id = 4L, ComponentType = 1, CreatedAt = new DateTime(2018, 11, 17, 16, 0, 35, 910, DateTimeKind.Local), CreatedBy = 0L, DeletedBy = 0L, IsEnabled = true, ModifiedAt = new DateTime(2018, 11, 17, 16, 0, 35, 910, DateTimeKind.Local), ModifiedBy = 0L, QueryComponent = "askPrice", RequestComponentDatumId = 0L, RequestId = 3L },
+                        new { Id = 5L, ComponentType = 2, CreatedAt = new DateTime(2018, 11, 17, 16, 0, 35, 910, DateTimeKind.Local), CreatedBy = 0L, DeletedBy = 0L, IsEnabled = true, ModifiedAt = new DateTime(2018, 11, 17, 16, 0, 35, 910, DateTimeKind.Local), ModifiedBy = 0L, QueryComponent = "bidPrice", RequestComponentDatumId = 0L, RequestId = 3L }
                     );
                 });
 
@@ -357,7 +359,7 @@ namespace Nozomi.Repo.Migrations
                         .HasDefaultValue("");
 
                     b.HasKey("Id")
-                        .HasName("RequestComponenDatum_PK_Id");
+                        .HasName("RequestComponentDatum_PK_Id");
 
                     b.HasIndex("RequestComponentId")
                         .IsUnique();
@@ -413,9 +415,9 @@ namespace Nozomi.Repo.Migrations
                     b.HasDiscriminator().HasValue("CurrencyPairRequest");
 
                     b.HasData(
-                        new { Id = 1L, CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), CreatedBy = 0L, DataPath = "https://api.ethfinex.com/v2/ticker/tETHUSD", Delay = 5000, DeletedBy = 0L, Guid = new Guid("7314aaab-0e64-4dbe-a2d2-271f4e68e5ae"), IsEnabled = true, ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), ModifiedBy = 0L, RequestType = 0, CurrencyPairId = 1L },
-                        new { Id = 2L, CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), CreatedBy = 0L, DataPath = "https://api.ethfinex.com/v2/ticker/tKNCUSD", Delay = 5000, DeletedBy = 0L, Guid = new Guid("40861286-11f4-443c-a215-05da268c5f8a"), IsEnabled = true, ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), ModifiedBy = 0L, RequestType = 0, CurrencyPairId = 2L },
-                        new { Id = 3L, CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), CreatedBy = 0L, DataPath = "https://api.binance.com/api/v3/ticker/bookTicker?symbol=KNCETH", Delay = 5000, DeletedBy = 0L, Guid = new Guid("5285f92f-cf72-495c-a193-f33b046c3a0f"), IsEnabled = true, ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), ModifiedBy = 0L, RequestType = 0, CurrencyPairId = 3L }
+                        new { Id = 1L, CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), CreatedBy = 0L, DataPath = "https://api.ethfinex.com/v2/ticker/tETHUSD", Delay = 5000, DeletedBy = 0L, Guid = new Guid("190a36d4-7d07-4c95-9fc2-19655b7b83d4"), IsEnabled = true, ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), ModifiedBy = 0L, RequestType = 0, CurrencyPairId = 1L },
+                        new { Id = 2L, CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), CreatedBy = 0L, DataPath = "https://api.ethfinex.com/v2/ticker/tKNCUSD", Delay = 5000, DeletedBy = 0L, Guid = new Guid("2d214248-b9aa-45c7-9bf1-863c01ef5689"), IsEnabled = true, ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), ModifiedBy = 0L, RequestType = 0, CurrencyPairId = 2L },
+                        new { Id = 3L, CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), CreatedBy = 0L, DataPath = "https://api.binance.com/api/v3/ticker/bookTicker?symbol=KNCETH", Delay = 5000, DeletedBy = 0L, Guid = new Guid("9a40481e-3a37-45af-bdfe-0af60d923487"), IsEnabled = true, ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), ModifiedBy = 0L, RequestType = 0, CurrencyPairId = 3L }
                     );
                 });
 
