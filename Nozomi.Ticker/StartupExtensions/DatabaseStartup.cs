@@ -16,6 +16,12 @@ namespace Nozomi.Ticker.StartupExtensions
             {
                 using (var context = serviceScope.ServiceProvider.GetService<NozomiDbContext>())
                 {
+                    // Auto Wipe
+                    if (env.IsDevelopment())
+                    {
+                        context.Database.EnsureDeleted();
+                    }
+                    
                     context.Database.EnsureCreated();
                 }
             }
