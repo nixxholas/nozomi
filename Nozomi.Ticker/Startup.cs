@@ -155,6 +155,7 @@ namespace Nozomi.Ticker
             // specifying the Swagger JSON endpoint.
             app.UseSwaggerUI(c =>
             {
+                
                 c.RoutePrefix = "docs";
                 c.SwaggerEndpoint("/swagger/" + GlobalApiVariables.CURRENT_API_VERSION + "/swagger.json", "Nozomi API v1");
             });
