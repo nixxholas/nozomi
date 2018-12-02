@@ -4,8 +4,10 @@ using Nozomi.Ticker.Models;
 
 namespace Nozomi.Ticker.Areas
 {
+    [ApiExplorerSettings(IgnoreApi = true)]
     public class HomeController : Controller
     {
+        [Route("/")]
         public IActionResult Index()
         {
             return View();
@@ -22,6 +24,17 @@ namespace Nozomi.Ticker.Areas
         {
             ViewData["Message"] = "Your contact page.";
 
+            return View();
+        }
+        
+        [Route("/swagger")]
+        public IActionResult Docs()
+        {
+            return new RedirectResult("~/docs");
+        }
+
+        public IActionResult Pricing()
+        {
             return View();
         }
 
