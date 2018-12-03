@@ -18,6 +18,9 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
             
             // We need this to determine the type of request to execute with
             entityTypeBuilder.Property(r => r.RequestType).IsRequired();
+
+            entityTypeBuilder.Property(r => r.ResponseType).IsRequired().HasDefaultValue(ResponseType.Json);
+            
             // Sometimes, some APIs don't really have a deep declaration requirement
             entityTypeBuilder.Property(r => r.DataPath).IsRequired(false);
 
