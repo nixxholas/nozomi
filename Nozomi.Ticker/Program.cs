@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Gelf.Extensions.Logging;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -49,6 +50,9 @@ namespace Nozomi.Ticker
                 // place your DB seeding code here
                 //DbSeeder.Seed(dbContext);
                 dbContext.Database.EnsureCreated();
+                
+                // Ensure database is properly migrated
+                dbContext.Database.Migrate();
             }
             
             host.Run();
