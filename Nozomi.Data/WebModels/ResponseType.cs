@@ -6,7 +6,7 @@ namespace Nozomi.Data.WebModels
     {
         [Description("application/json")]
         Json = 1,
-        [Description("application/xml")]
+        [Description("text/xml")]
         XML = 2
     }
 }
