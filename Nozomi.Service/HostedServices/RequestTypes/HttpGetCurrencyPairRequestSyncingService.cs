@@ -15,6 +15,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Nozomi.Core.Helpers.Attribute;
 using Nozomi.Data.HubModels.Interfaces;
 using Nozomi.Data.WebModels;
 using Nozomi.Data.WebModels.LoggingModels;
@@ -24,6 +25,7 @@ using Nozomi.Service.Services;
 using Nozomi.Service.Services.Interfaces;
 using Nozomi.Service.Services.Requests;
 using Nozomi.Service.Services.Requests.Interfaces;
+using Swashbuckle.AspNetCore.Swagger;
 
 /*
  * HttpGetCurrencyPairRequestSyncingService
@@ -325,64 +327,32 @@ namespace Nozomi.Service.HostedServices.RequestTypes
                 {
                     // Pull the content
                     var content = await payload.Content.ReadAsStringAsync();
-                    // Parse the content
-                    var contentToken = JToken.Parse(content);
-
+                    
                     // Pull the components wanted
                     var requestComponents = req.RequestComponents
                         .Where(cpc => cpc.DeletedAt == null && cpc.IsEnabled);
-
-                    if (contentToken is JArray)
+                    
+                    // Parse the content
+                    if (payload.Content.Headers.ContentType.MediaType.Equals(ResponseType.Json.GetDescription()))
                     {
-                        // Pump in the array
-                        List<string> dataList = contentToken.ToObject<List<string>>();
-
-                        // If the db really hodls a number,
-                        foreach (var component in requestComponents)
+                        var contentToken = JToken.Parse(content);
+                        if (contentToken is JArray)
                         {
-                            if (component.QueryComponent != null &&
-                                int.TryParse(component.QueryComponent, out int index))
+                            // Pump in the array
+                            List<string> dataList = contentToken.ToObject<List<string>>();
+    
+                            // If the db really hodls a number,
+                            foreach (var component in requestComponents)
                             {
-                                // let's work it out
-                                if (index >= 0 && index < dataList.Count)
+                                if (component.QueryComponent != null &&
+                                    int.TryParse(component.QueryComponent, out int index))
                                 {
-                                    // Number checks
-                                    // Make sure the datalist element we're targetting contains a proper value.
-                                    if (decimal.TryParse(dataList[index], out decimal val))
+                                    // let's work it out
+                                    if (index >= 0 && index < dataList.Count)
                                     {
-                                        // Update it
-                                        _currencyPairComponentService.UpdatePairValue(component.Id, val);
-                                    }
-                                }
-                            }
-                        }
-
-                        return true;
-                    } else if (contentToken is JObject)
-                    {
-                        // Pump in the object
-                        JObject obj = contentToken.ToObject<JObject>();
-
-                        foreach (var component in requestComponents)
-                        {
-                            if (component.QueryComponent != null)
-                            {
-                                var rawData = (string)obj.SelectToken(component.QueryComponent);
-
-                                if (rawData != null)
-                                {
-                                    // https://stackoverflow.com/questions/23131414/culture-invariant-decimal-tryparse
-                                    var style = NumberStyles.Any;
-                                    if (ExponentHelper.IsExponentialFormat(rawData))
-                                    {
-                                        style = NumberStyles.Float;
-                                    }
-
-                                    // If it is an exponent
-                                    if (decimal.TryParse(rawData, style, CultureInfo.InvariantCulture,
-                                        out decimal val))
-                                    {
-                                        if (val > 0)
+                                        // Number checks
+                                        // Make sure the datalist element we're targetting contains a proper value.
+                                        if (decimal.TryParse(dataList[index], out decimal val))
                                         {
                                             // Update it
                                             _currencyPairComponentService.UpdatePairValue(component.Id, val);
@@ -390,10 +360,50 @@ namespace Nozomi.Service.HostedServices.RequestTypes
                                     }
                                 }
                             }
+    
+                            return true;
+                        } else if (contentToken is JObject)
+                        {
+                            // Pump in the object
+                            JObject obj = contentToken.ToObject<JObject>();
+    
+                            foreach (var component in requestComponents)
+                            {
+                                if (component.QueryComponent != null)
+                                {
+                                    var rawData = (string)obj.SelectToken(component.QueryComponent);
+    
+                                    if (rawData != null)
+                                    {
+                                        // https://stackoverflow.com/questions/23131414/culture-invariant-decimal-tryparse
+                                        var style = NumberStyles.Any;
+                                        if (ExponentHelper.IsExponentialFormat(rawData))
+                                        {
+                                            style = NumberStyles.Float;
+                                        }
+    
+                                        // If it is an exponent
+                                        if (decimal.TryParse(rawData, style, CultureInfo.InvariantCulture,
+                                            out decimal val))
+                                        {
+                                            if (val > 0)
+                                            {
+                                                // Update it
+                                                _currencyPairComponentService.UpdatePairValue(component.Id, val);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+    
+                            return true;
                         }
-
-                        return true;
+                    } else if (payload.Content.Headers.ContentType.MediaType.Equals(ResponseType.XML.GetDescription()))
+                    {
+                        
                     }
+                    
+                    // Else error
                 }
                 else
                 {
