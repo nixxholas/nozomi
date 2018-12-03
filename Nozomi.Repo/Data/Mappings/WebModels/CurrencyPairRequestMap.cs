@@ -39,6 +39,16 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
                     DataPath = "https://api.binance.com/api/v3/ticker/bookTicker?symbol=KNCETH",
                     CurrencyPairId = 3,
                     Delay = 5000
+                },
+                new CurrencyPairRequest()
+                {
+                    Id = 4,
+                    Guid = Guid.NewGuid(),
+                    RequestType = RequestType.HttpGet,
+                    ResponseType = ResponseType.XML,
+                    DataPath = "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml",
+                    CurrencyPairId = 4,
+                    Delay = 5000
                 }
             );
         }

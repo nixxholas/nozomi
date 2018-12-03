@@ -74,6 +74,16 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
                     CreatedAt = DateTime.Now,
                     ModifiedAt = DateTime.Now,
                     DeletedAt = null
+                },
+                new RequestComponent()
+                {
+                    Id = 6,
+                    ComponentType = ComponentType.Ask,
+                    QueryComponent = "Cube",
+                    RequestId = 4,
+                    CreatedAt = DateTime.Now,
+                    ModifiedAt = DateTime.Now,
+                    DeletedAt = null
                 });
         }
     }
