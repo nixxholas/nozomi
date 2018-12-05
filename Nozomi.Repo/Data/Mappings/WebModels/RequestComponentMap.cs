@@ -79,7 +79,7 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
                 {
                     Id = 6,
                     ComponentType = ComponentType.Ask,
-                    QueryComponent = "Cube",
+                    QueryComponent = "gesmes:Envelope/Cube/Cube",
                     RequestId = 4,
                     CreatedAt = DateTime.Now,
                     ModifiedAt = DateTime.Now,

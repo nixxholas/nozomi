@@ -418,6 +418,24 @@ namespace Nozomi.Service.HostedServices.RequestTypes
                             if (component.QueryComponent != null)
                             {
                                 var qComTree = component.QueryComponent.Split('/');
+                                // If https://stackoverflow.com/questions/17831011/how-to-initialize-ienumerableobject-that-be-empty-and-allow-to-concat-to-it
+                                var res = xmlElement.Descendants(qComTree[0]);
+                                
+                                for (var i = 1; i < qComTree.Length; i++) 
+                                {
+                                    // if its not the last
+                                    if (i != qComTree.Length - 1)
+                                    {
+                                        res = res.Elements(qComTree[i]);
+                                    }
+                                    else // Since its the last, let's save it
+                                    {
+                                        var kvpArr = qComTree[i].Split("=>");
+                                        var kvp = new KeyValuePair<string, string>(kvpArr[0], kvpArr[1]);
+                                        _currencyPairComponentService.UpdatePairValue(component.Id,
+                                            decimal.Parse(kvp.Key));
+                                    }
+                                }
                             }
                         }
                     }

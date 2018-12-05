@@ -48,7 +48,7 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
                     ResponseType = ResponseType.XML,
                     DataPath = "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml",
                     CurrencyPairId = 4,
-                    Delay = 5000
+                    Delay = 86400000
                 }
             );
         }
