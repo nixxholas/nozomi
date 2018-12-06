@@ -155,11 +155,7 @@ namespace Nozomi.Ticker
             // specifying the Swagger JSON endpoint.
             app.UseSwaggerUI(c =>
             {
-<<<<<<< HEAD
                 // https://stackoverflow.com/questions/39116047/how-to-change-base-url-of-swagger-in-asp-net-core
-=======
-                
->>>>>>> staging
                 c.RoutePrefix = "docs";
                 c.SwaggerEndpoint("/swagger/" + GlobalApiVariables.CURRENT_API_VERSION + "/swagger.json", "Nozomi API v1");
             });
