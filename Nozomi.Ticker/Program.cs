@@ -55,7 +55,6 @@ namespace Nozomi.Ticker
                 }
                 // place your DB seeding code here
                 //DbSeeder.Seed(dbContext);
-                dbContext.Database.Migrate();
             }
             
             host.Run();
