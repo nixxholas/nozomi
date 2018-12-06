@@ -13,6 +13,8 @@ namespace Nozomi.Data.WebModels
         public Guid Guid { get; set; }
 
         public RequestType RequestType { get; set; }
+        
+        public ResponseType ResponseType { get; set; }
 
         /// <summary>
         /// URL.

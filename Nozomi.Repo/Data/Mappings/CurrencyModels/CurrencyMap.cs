@@ -69,6 +69,24 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                     Name = "Ethereum",
                     CurrencySourceId = 3,
                     WalletTypeId = 1 // As per CNWallet
+                },
+                new Currency()
+                {
+                    Id = 6,
+                    CurrencyTypeId = 1,
+                    Abbrv = "EUR",
+                    Name = "Euro",
+                    CurrencySourceId = 4,
+                    WalletTypeId = 0
+                },
+                new Currency()
+                {
+                    Id = 7,
+                    CurrencyTypeId = 1,
+                    Abbrv = "USD",
+                    Name = "United States Dollar",
+                    CurrencySourceId = 4,
+                    WalletTypeId = 0
                 }
             );
         }

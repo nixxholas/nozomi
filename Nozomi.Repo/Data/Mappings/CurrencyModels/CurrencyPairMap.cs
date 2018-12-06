@@ -46,6 +46,14 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                     APIUrl = "https://api.binance.com/api/v3/ticker/bookTicker?symbol=KNCETH",
                     DefaultComponent = "askPrice",
                     CurrencySourceId = 3
+                },
+                new CurrencyPair()
+                {
+                    Id = 4,
+                    CurrencyPairType = CurrencyPairType.TRADEABLE,
+                    APIUrl = "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml",
+                    DefaultComponent = "Cube",
+                    CurrencySourceId = 4
                 }
             );
         }

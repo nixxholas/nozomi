@@ -74,6 +74,16 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
                     CreatedAt = DateTime.Now,
                     ModifiedAt = DateTime.Now,
                     DeletedAt = null
+                },
+                new RequestComponent()
+                {
+                    Id = 6,
+                    ComponentType = ComponentType.Ask,
+                    QueryComponent = "gesmes:Envelope/Cube/Cube/Cube/0=>@rate",
+                    RequestId = 4,
+                    CreatedAt = DateTime.Now,
+                    ModifiedAt = DateTime.Now,
+                    DeletedAt = null
                 });
         }
     }

@@ -51,6 +51,18 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                     CurrencyId = 5,
                     IsMain = false,
                     CurrencyPairId = 3
+                },
+                new PartialCurrencyPair()
+                {
+                    CurrencyId = 6,
+                    IsMain = true,
+                    CurrencyPairId = 4
+                },
+                new PartialCurrencyPair()
+                {
+                    CurrencyId = 7,
+                    IsMain = false,
+                    CurrencyPairId = 4
                 }
             );
         }
