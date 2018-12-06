@@ -3,7 +3,7 @@ using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
 
-namespace Nozomi.Core.Helpers.Attribute
+namespace Nozomi.Core.Helpers.Enumerator
 {
     public static class EnumHelper
     {
