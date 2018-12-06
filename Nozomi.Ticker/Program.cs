@@ -46,12 +46,16 @@ namespace Nozomi.Ticker
             using (var scope = host.Services.CreateScope())
             {
                 // Retrieve your DbContext isntance here
-                var dbContext = scope.ServiceProvider.GetService<NozomiDbContext>();
+                var dbContext = scope.ServiceProvider.GetRequiredService<NozomiDbContext>();
 
                 if (env != null && !env.Equals("Production"))
                 {
                     dbContext.Database.EnsureDeleted();
                     dbContext.Database.EnsureCreated();
+                }
+                else
+                {
+                    dbContext.Database.Migrate();
                 }
                 // place your DB seeding code here
                 //DbSeeder.Seed(dbContext);
