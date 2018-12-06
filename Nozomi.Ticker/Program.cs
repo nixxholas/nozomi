@@ -45,21 +45,29 @@ namespace Nozomi.Ticker
             
             using (var scope = host.Services.CreateScope())
             {
-                // Retrieve your DbContext isntance here
-                var dbContext = scope.ServiceProvider.GetRequiredService<NozomiDbContext>();
+                try
+                {
+                    // Retrieve your DbContext isntance here
+                    var dbContext = scope.ServiceProvider.GetRequiredService<NozomiDbContext>();
 
-                if (env != null && !env.Equals("Production"))
-                {
-                    dbContext.Database.EnsureDeleted();
-                    dbContext.Database.EnsureCreated();
+                    if (env != null && !env.Equals("Production"))
+                    {
+                        dbContext.Database.EnsureDeleted();
+                        dbContext.Database.EnsureCreated();
+                    }
+                    else
+                    {
+                        dbContext.Database.SetCommandTimeout((int)TimeSpan.FromMinutes(10).TotalSeconds);
+                        dbContext.Database.Migrate();
+                    }
+                    // place your DB seeding code here
+                    //DbSeeder.Seed(dbContext);
                 }
-                else
+                catch (Exception ex)
                 {
-                    dbContext.Database.EnsureCreated();
-                    dbContext.Database.Migrate();
+                    Console.WriteLine(ex); 
+                    // Continue
                 }
-                // place your DB seeding code here
-                //DbSeeder.Seed(dbContext);
             }
             
             host.Run();
