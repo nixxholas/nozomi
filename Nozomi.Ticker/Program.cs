@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Nozomi.Core.Helpers.Native.Collections;
 using Nozomi.Repo.Data;
 
 namespace Nozomi.Ticker
@@ -46,7 +47,12 @@ namespace Nozomi.Ticker
             {
                 // Retrieve your DbContext isntance here
                 var dbContext = scope.ServiceProvider.GetService<NozomiDbContext>();
- 
+
+                if (env != null && !env.Equals("Production"))
+                {
+                    dbContext.Database.EnsureDeleted();
+                    dbContext.Database.EnsureCreated();
+                }
                 // place your DB seeding code here
                 //DbSeeder.Seed(dbContext);
                 dbContext.Database.Migrate();
