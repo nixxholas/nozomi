@@ -24,7 +24,7 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
                 {
                     Id = 1,
                     RequestPropertyType = RequestPropertyType.HttpQuery,
-                    Key = "apiKey",
+                    Key = "apikey",
                     Value = "TV5HJJHNP8094BRO",
                     RequestId = 5
                 },

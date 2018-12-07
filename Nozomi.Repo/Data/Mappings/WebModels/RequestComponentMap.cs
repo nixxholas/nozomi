@@ -89,7 +89,7 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
                 {
                     Id = 7,
                     ComponentType = ComponentType.Ask,
-                    QueryComponent = "Realtime Currency Exchange Rate/5. Exchange Rate",
+                    QueryComponent = "['Realtime Currency Exchange Rate']/['5. Exchange Rate']",
                     RequestId = 5,
                     CreatedAt = DateTime.Now,
                     ModifiedAt = DateTime.Now,
