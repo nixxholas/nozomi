@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Globalization;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Web;
 using System.Xml;
 using System.Xml.Linq;
 using Counter.SDK.Utils.Numerics;
@@ -115,6 +117,10 @@ namespace Nozomi.Service.HostedServices.RequestTypes
 
                 // FLUSH
                 _httpClient.DefaultRequestHeaders.Clear();
+                
+                // Setup the url
+                var uri = new UriBuilder(req.DataPath);
+                var urlParams = HttpUtility.ParseQueryString(string.Empty);
 
                 // Setup the request properties
                 foreach (var reqProp in req.RequestProperties)
@@ -320,14 +326,23 @@ namespace Nozomi.Service.HostedServices.RequestTypes
                             }
 
                             break;
+                        case RequestPropertyType.HttpQuery:
+                            urlParams.Add(reqProp.Key, reqProp.Value);
+                            break;
                         default:
                             // Do nothing for now
                             break;
                     }
                 }
 
+                if (urlParams.Count > 0)
+                {
+                    // Setup the url
+                    uri.Query = urlParams.ToString();
+                }
+
                 // Pull in the payload
-                var payload = await _httpClient.GetAsync(req.DataPath);
+                var payload = await _httpClient.GetAsync(uri.ToString());
 
                 // Succcessful? and is there even any Components to update?
                 if (payload.IsSuccessStatusCode && req?.RequestComponents != null && req.RequestComponents.Count > 0)

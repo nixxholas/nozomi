@@ -41,6 +41,7 @@ namespace Nozomi.Data.WebModels
         HttpHeader_Custom = 32,
         HttpBody = 200,
 
+        HttpQuery = 300,
         // more to come
         SocketSubscription = 500,
         SocketBody = 600,
