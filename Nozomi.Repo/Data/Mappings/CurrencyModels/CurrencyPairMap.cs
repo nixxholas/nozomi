@@ -57,6 +57,14 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                     APIUrl = "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml",
                     DefaultComponent = "Cube",
                     CurrencySourceId = 4
+                },
+                new CurrencyPair()
+                {
+                    Id = 5,
+                    CurrencyPairType = CurrencyPairType.TRADEABLE,
+                    APIUrl = "https://www.alphavantage.co/query",
+                    DefaultComponent = "Realtime Currency Exchange Rate/5. Exchange Rate",
+                    CurrencySourceId = 5
                 }
             );
         }

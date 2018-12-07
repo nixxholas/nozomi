@@ -84,6 +84,16 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
                     CreatedAt = DateTime.Now,
                     ModifiedAt = DateTime.Now,
                     DeletedAt = null
+                },
+                new RequestComponent()
+                {
+                    Id = 7,
+                    ComponentType = ComponentType.Ask,
+                    QueryComponent = "Realtime Currency Exchange Rate/5. Exchange Rate",
+                    RequestId = 5,
+                    CreatedAt = DateTime.Now,
+                    ModifiedAt = DateTime.Now,
+                    DeletedAt = null
                 });
         }
     }

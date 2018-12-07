@@ -90,6 +90,24 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                     Name = "United States Dollar",
                     CurrencySourceId = 4,
                     WalletTypeId = 0
+                },
+                new Currency()
+                {
+                    Id = 8,
+                    CurrencyTypeId = 1,
+                    Abbrv = "EUR",
+                    Name = "Euro",
+                    CurrencySourceId = 5,
+                    WalletTypeId = 0
+                },
+                new Currency()
+                {
+                    Id = 9,
+                    CurrencyTypeId = 1,
+                    Abbrv = "USD",
+                    Name = "United States Dollar",
+                    CurrencySourceId = 5,
+                    WalletTypeId = 0
                 }
             );
         }

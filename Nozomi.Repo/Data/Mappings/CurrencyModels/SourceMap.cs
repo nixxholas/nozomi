@@ -51,6 +51,13 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                     Abbreviation = "ECB",
                     Name = "European Central Bank",
                     APIDocsURL = "https://www.ecb.europa.eu/stats/policy_and_exchange_rates/euro_reference_exchange_rates/html/index.en.html"
+                },
+                new Source()
+                {
+                    Id = 5,
+                    Abbreviation = "AVG",
+                    Name = "AlphaVantage",
+                    APIDocsURL = "https://www.alphavantage.co/documentation/"
                 }
             );
         }

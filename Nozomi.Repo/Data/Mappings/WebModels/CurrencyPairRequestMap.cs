@@ -49,6 +49,16 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
                     DataPath = "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml",
                     CurrencyPairId = 4,
                     Delay = 86400000
+                },
+                new CurrencyPairRequest()
+                {
+                    Id = 5,
+                    Guid = Guid.NewGuid(),
+                    RequestType = RequestType.HttpGet,
+                    ResponseType = ResponseType.Json,
+                    DataPath = "https://www.alphavantage.co/query",
+                    CurrencyPairId = 5,
+                    Delay = 5000
                 }
             );
         }
