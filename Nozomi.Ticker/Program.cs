@@ -43,33 +43,6 @@ namespace Nozomi.Ticker
 
             var host = hostBuilder.Build();
             
-            using (var scope = host.Services.CreateScope())
-            {
-                try
-                {
-                    // Retrieve your DbContext isntance here
-                    var dbContext = scope.ServiceProvider.GetRequiredService<NozomiDbContext>();
-
-                    if (env != null && !env.Equals("Production"))
-                    {
-                        dbContext.Database.EnsureDeleted();
-                        dbContext.Database.EnsureCreated();
-                    }
-                    else
-                    {
-                        dbContext.Database.SetCommandTimeout((int)TimeSpan.FromMinutes(10).TotalSeconds);
-                        dbContext.Database.Migrate();
-                    }
-                    // place your DB seeding code here
-                    //DbSeeder.Seed(dbContext);
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(ex); 
-                    // Continue
-                }
-            }
-            
             host.Run();
         }
 
