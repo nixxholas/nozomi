@@ -233,7 +233,26 @@ namespace Nozomi.Ticker.StartupExtensions
                                         RequestType = RequestType.HttpGet,
                                         DataPath = "https://api.ethfinex.com/v2/ticker/tETHUSD",
                                         CurrencyPairId = currencyPairs[0].Id,
-                                        Delay = 5000
+                                        Delay = 5000,
+                                        RequestComponents = new List<RequestComponent>()
+                                        {
+                                            new RequestComponent
+                                            {
+                                                ComponentType = ComponentType.Ask,
+                                                QueryComponent = "1",
+                                                CreatedAt = DateTime.Now,
+                                                ModifiedAt = DateTime.Now,
+                                                DeletedAt = null
+                                            },
+                                            new RequestComponent()
+                                            {
+                                                ComponentType = ComponentType.Bid,
+                                                QueryComponent = "0",
+                                                CreatedAt = DateTime.Now,
+                                                ModifiedAt = DateTime.Now,
+                                                DeletedAt = null
+                                            }
+                                        }
                                     },
                                     new CurrencyPairRequest()
                                     {
@@ -241,7 +260,18 @@ namespace Nozomi.Ticker.StartupExtensions
                                         RequestType = RequestType.HttpGet,
                                         DataPath = "https://api.ethfinex.com/v2/ticker/tKNCUSD",
                                         CurrencyPairId = currencyPairs[1].Id,
-                                        Delay = 5000
+                                        Delay = 5000,
+                                        RequestComponents = new List<RequestComponent>()
+                                        {
+                                            new RequestComponent
+                                            {
+                                                ComponentType = ComponentType.Ask,
+                                                QueryComponent = "0",
+                                                CreatedAt = DateTime.Now,
+                                                ModifiedAt = DateTime.Now,
+                                                DeletedAt = null
+                                            }
+                                        }
                                     },
                                     new CurrencyPairRequest()
                                     {
@@ -249,7 +279,26 @@ namespace Nozomi.Ticker.StartupExtensions
                                         RequestType = RequestType.HttpGet,
                                         DataPath = "https://api.binance.com/api/v3/ticker/bookTicker?symbol=KNCETH",
                                         CurrencyPairId = currencyPairs[2].Id,
-                                        Delay = 5000
+                                        Delay = 5000,
+                                        RequestComponents = new List<RequestComponent>()
+                                        {
+                                            new RequestComponent
+                                            {
+                                                ComponentType = ComponentType.Ask,
+                                                QueryComponent = "askPrice",
+                                                CreatedAt = DateTime.Now,
+                                                ModifiedAt = DateTime.Now,
+                                                DeletedAt = null
+                                            },
+                                            new RequestComponent
+                                            {
+                                                ComponentType = ComponentType.Bid,
+                                                QueryComponent = "bidPrice",
+                                                CreatedAt = DateTime.Now,
+                                                ModifiedAt = DateTime.Now,
+                                                DeletedAt = null
+                                            }
+                                        }
                                     },
                                     new CurrencyPairRequest()
                                     {
@@ -258,7 +307,18 @@ namespace Nozomi.Ticker.StartupExtensions
                                         ResponseType = ResponseType.XML,
                                         DataPath = "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml",
                                         CurrencyPairId = currencyPairs[3].Id,
-                                        Delay = 86400000
+                                        Delay = 86400000,
+                                        RequestComponents = new List<RequestComponent>()
+                                        {
+                                            new RequestComponent()
+                                            {
+                                                ComponentType = ComponentType.Ask,
+                                                QueryComponent = "gesmes:Envelope/Cube/Cube/Cube/0=>@rate",
+                                                CreatedAt = DateTime.Now,
+                                                ModifiedAt = DateTime.Now,
+                                                DeletedAt = null
+                                            }
+                                        }
                                     },
                                     new CurrencyPairRequest()
                                     {
@@ -268,6 +328,17 @@ namespace Nozomi.Ticker.StartupExtensions
                                         DataPath = "https://www.alphavantage.co/query",
                                         CurrencyPairId = currencyPairs[4].Id,
                                         Delay = 5000,
+                                        RequestComponents = new List<RequestComponent>()
+                                        {
+                                            new RequestComponent()
+                                            {
+                                                ComponentType = ComponentType.Ask,
+                                                QueryComponent = "['Realtime Currency Exchange Rate']/['5. Exchange Rate']",
+                                                CreatedAt = DateTime.Now,
+                                                ModifiedAt = DateTime.Now,
+                                                DeletedAt = null
+                                            }
+                                        },
                                         RequestProperties = new List<RequestProperty>()
                                         {
                                             new RequestProperty()
