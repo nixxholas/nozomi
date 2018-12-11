@@ -65,82 +65,109 @@ namespace Nozomi.Ticker.StartupExtensions
                         context.SaveChanges();
                     }
 
+                    if (!context.CurrencyTypes.Any())
+                    {
+                        context.CurrencyTypes.AddRange(
+                            new CurrencyType()
+                            {
+                                TypeShortForm = "FIAT",
+                                Name = "FIAT Cash"
+                            },
+                            new CurrencyType()
+                            {
+                                TypeShortForm = "CRYPTO",
+                                Name = "Cryptocurrency"
+                            });
+
+                        context.SaveChanges();
+                    }
+
                     if (!context.Currencies.Any() && context.CurrencyTypes.Any() && context.Sources.Any())
                     {
-                        context.Currencies.AddRange(
-                            new Currency()
-                            {
-                                CurrencyTypeId = 1,
-                                Abbrv = "USD",
-                                Name = "United States Dollar",
-                                CurrencySourceId = 1,
-                                WalletTypeId = 0
-                            },
-                            new Currency()
-                            {
-                                CurrencyTypeId = 2,
-                                Abbrv = "ETH",
-                                Name = "Ethereum",
-                                CurrencySourceId = 1,
-                                WalletTypeId = 1 // As per CNWallet
-                            },
-                            new Currency()
-                            {
-                                CurrencyTypeId = 2,
-                                Abbrv = "KNC",
-                                Name = "Kyber Network Coin",
-                                CurrencySourceId = 1,
-                                WalletTypeId = 4 // As per CNWallet
-                            },
-                            new Currency()
-                            {
-                                CurrencyTypeId = 2,
-                                Abbrv = "KNC",
-                                Name = "Kyber Network Coin",
-                                CurrencySourceId = 3,
-                                WalletTypeId = 4 // As per CNWallet
-                            },
-                            new Currency()
-                            {
-                                CurrencyTypeId = 2,
-                                Abbrv = "ETH",
-                                Name = "Ethereum",
-                                CurrencySourceId = 3,
-                                WalletTypeId = 1 // As per CNWallet
-                            },
-                            new Currency()
-                            {
-                                CurrencyTypeId = 1,
-                                Abbrv = "EUR",
-                                Name = "Euro",
-                                CurrencySourceId = 4,
-                                WalletTypeId = 0
-                            },
-                            new Currency()
-                            {
-                                CurrencyTypeId = 1,
-                                Abbrv = "USD",
-                                Name = "United States Dollar",
-                                CurrencySourceId = 4,
-                                WalletTypeId = 0
-                            },
-                            new Currency()
-                            {
-                                CurrencyTypeId = 1,
-                                Abbrv = "EUR",
-                                Name = "Euro",
-                                CurrencySourceId = 5,
-                                WalletTypeId = 0
-                            },
-                            new Currency()
-                            {
-                                CurrencyTypeId = 1,
-                                Abbrv = "USD",
-                                Name = "United States Dollar",
-                                CurrencySourceId = 5,
-                                WalletTypeId = 0
-                            }
-                        );
+                        var fiatType = context.CurrencyTypes.SingleOrDefault(ct => ct.TypeShortForm.Equals("FIAT"));
+                        var cryptoType = context.CurrencyTypes.SingleOrDefault(ct => ct.TypeShortForm.Equals("CRYPTO"));
+
+                        var bfxSource = context.Sources.SingleOrDefault(s => s.Abbreviation.Equals("BFX"));
+                        var bnaSource = context.Sources.SingleOrDefault(s => s.Abbreviation.Equals("BNA"));
+                        var ecbSource = context.Sources.SingleOrDefault(s => s.Abbreviation.Equals("ECB"));
+                        var avgSource = context.Sources.SingleOrDefault(s => s.Abbreviation.Equals("AVG"));
+
+                        if (fiatType != null && cryptoType != null && bfxSource != null && bnaSource != null
+                            && ecbSource != null && avgSource != null)
+                            context.Currencies.AddRange(
+                                new Currency()
+                                {
+                                    CurrencyTypeId = fiatType.Id,
+                                    Abbrv = "USD",
+                                    Name = "United States Dollar",
+                                    CurrencySourceId = bfxSource.Id,
+                                    WalletTypeId = 0
+                                },
+                                new Currency()
+                                {
+                                    CurrencyTypeId = cryptoType.Id,
+                                    Abbrv = "ETH",
+                                    Name = "Ethereum",
+                                    CurrencySourceId = bfxSource.Id,
+                                    WalletTypeId = 1 // As per CNWallet
+                                },
+                                new Currency()
+                                {
+                                    CurrencyTypeId = cryptoType.Id,
+                                    Abbrv = "KNC",
+                                    Name = "Kyber Network Coin",
+                                    CurrencySourceId = bfxSource.Id,
+                                    WalletTypeId = 4 // As per CNWallet
+                                },
+                                new Currency()
+                                {
+                                    CurrencyTypeId = cryptoType.Id,
+                                    Abbrv = "KNC",
+                                    Name = "Kyber Network Coin",
+                                    CurrencySourceId = bnaSource.Id,
+                                    WalletTypeId = 4 // As per CNWallet
+                                },
+                                new Currency()
+                                {
+                                    CurrencyTypeId = cryptoType.Id,
+                                    Abbrv = "ETH",
+                                    Name = "Ethereum",
+                                    CurrencySourceId = bnaSource.Id,
+                                    WalletTypeId = 1 // As per CNWallet
+                                },
+                                new Currency()
+                                {
+                                    CurrencyTypeId = fiatType.Id,
+                                    Abbrv = "EUR",
+                                    Name = "Euro",
+                                    CurrencySourceId = ecbSource.Id,
+                                    WalletTypeId = 0
+                                },
+                                new Currency()
+                                {
+                                    CurrencyTypeId = fiatType.Id,
+                                    Abbrv = "USD",
+                                    Name = "United States Dollar",
+                                    CurrencySourceId = ecbSource.Id,
+                                    WalletTypeId = 0
+                                },
+                                new Currency()
+                                {
+                                    CurrencyTypeId = fiatType.Id,
+                                    Abbrv = "EUR",
+                                    Name = "Euro",
+                                    CurrencySourceId = avgSource.Id,
+                                    WalletTypeId = 0
+                                },
+                                new Currency()
+                                {
+                                    CurrencyTypeId = fiatType.Id,
+                                    Abbrv = "USD",
+                                    Name = "United States Dollar",
+                                    CurrencySourceId = avgSource.Id,
+                                    WalletTypeId = 0
+                                }
+                            );
 
                         context.SaveChanges();
                     }
