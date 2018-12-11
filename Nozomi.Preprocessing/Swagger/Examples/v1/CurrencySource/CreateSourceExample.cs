@@ -1,11 +1,14 @@
 using Nozomi.Data.AreaModels.v1.CurrencySource;
 using Swashbuckle.AspNetCore.Examples;
+using Swashbuckle.AspNetCore.Filters;
 
 namespace Nozomi.Preprocessing.Swagger.Examples.v1.CurrencySource
 {
-    public class CreateSourceExample : IExamplesProvider
+    // Defining the model class automates the annotation.
+    // https://github.com/mattfrear/Swashbuckle.AspNetCore.Filters#automatic-annotation
+    public class CreateSourceExample : IExamplesProvider<CreateSource>
     {
-        public object GetExamples()
+        public CreateSource GetExamples()
         {
             return new CreateSource()
             {

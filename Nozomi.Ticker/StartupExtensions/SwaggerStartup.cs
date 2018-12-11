@@ -1,5 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
+using Nozomi.Preprocessing.Swagger.Examples.v1.CurrencySource;
 using Nozomi.Ticker.Areas;
+using Swashbuckle.AspNetCore.Filters;
 using Swashbuckle.AspNetCore.Swagger;
 
 namespace Nozomi.Ticker.StartupExtensions
@@ -8,6 +10,8 @@ namespace Nozomi.Ticker.StartupExtensions
     {
         public static void ConfigureSwagger(this IServiceCollection services)
         {
+            // https://github.com/mattfrear/Swashbuckle.AspNetCore.Filters/issues/56
+            services.AddSwaggerExamplesFromAssemblyOf<CreateSourceExample>();
             services.AddSwaggerGen(swaggerGenOptions =>
             {
                 swaggerGenOptions.SwaggerDoc(GlobalApiVariables.CURRENT_API_VERSION, new Info
@@ -28,8 +32,13 @@ namespace Nozomi.Ticker.StartupExtensions
                          Url = ""
                      }
                  });
+                    
+                swaggerGenOptions.OperationFilter<AppendAuthorizeToSummaryOperationFilter>(); // Adds "(Auth)" to the summary so that you can see which endpoints have Authorization
+                swaggerGenOptions.OperationFilter<AddFileParamTypesOperationFilter>(); // Adds an Upload button to endpoints which have [AddSwaggerFileUploadButton]
+                swaggerGenOptions.OperationFilter<AddResponseHeadersFilter>(); // [SwaggerResponseHeader]
                  
-                 swaggerGenOptions.EnableAnnotations();
+                swaggerGenOptions.ExampleFilters();
+                swaggerGenOptions.EnableAnnotations();
              });
          }
      }
