@@ -11,6 +11,7 @@ using Microsoft.Extensions.Logging;
 using Counter.SDK.SharedModels.WalletModels;
 using Counter.SDK.Utils.Iterations;
 using Nozomi.Data;
+using Nozomi.Data.AreaModels.v1.Currency;
 using Nozomi.Data.CurrencyModels;
 using Nozomi.Repo.Data;
 using Nozomi.Repo.Repositories;
@@ -26,15 +27,21 @@ namespace Nozomi.Service.Services
         {
         }
 
-        public NozomiResult<string> Create(Currency currency, long userId = 0)
+        public NozomiResult<string> Create(CreateCurrency createCurrency, long userId = 0)
         {
-            if (currency != null && currency.IsValid())
+            if (createCurrency != null && createCurrency.IsValid())
             {
-                _unitOfWork.GetRepository<Currency>().Add(currency);
+                _unitOfWork.GetRepository<Currency>().Add(new Currency()
+                {
+                    Abbrv = createCurrency.Abbrv,
+                    Name = createCurrency.Name,
+                    CurrencyTypeId = createCurrency.CurrencyTypeId,
+                    CurrencySourceId = createCurrency.CurrencySourceId,
+                    WalletTypeId = createCurrency.WalletTypeId
+                });
                 _unitOfWork.Commit(userId);
 
-                return new NozomiResult<string>(NozomiResultType.Success, 
-                    $"Currency successfully created with ID: {currency.Id}");
+                return new NozomiResult<string>(NozomiResultType.Success, "Currency successfully created!");
             }
 
             return new NozomiResult<string>(NozomiResultType.Failed, "Failed to create currency. Please make sure" +
