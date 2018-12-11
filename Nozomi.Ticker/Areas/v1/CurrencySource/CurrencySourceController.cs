@@ -7,7 +7,6 @@ using Nozomi.Data;
 using Nozomi.Data.AreaModels.v1.CurrencySource;
 using Nozomi.Data.CurrencyModels;
 using Nozomi.Service.Services.Interfaces;
-using Swashbuckle.AspNetCore.Examples;
 
 namespace Nozomi.Ticker.Areas.v1.CurrencySource
 {

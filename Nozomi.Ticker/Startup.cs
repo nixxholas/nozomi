@@ -28,7 +28,6 @@ using Nozomi.Service.Services.Requests.Interfaces;
 using Nozomi.Ticker.Areas;
 using Nozomi.Ticker.StartupExtensions;
 using StackExchange.Redis;
-using Swashbuckle.AspNetCore.Examples;
 using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 
 namespace Nozomi.Ticker
