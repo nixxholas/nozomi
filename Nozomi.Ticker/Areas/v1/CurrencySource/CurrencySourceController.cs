@@ -31,18 +31,19 @@ namespace Nozomi.Ticker.Areas.v1.CurrencySource
         {
             if (source.IsValid())
             {
+                var svcRes = _sourceService.Create(source);
+                
                 return new NozomiResult<JsonResult>()
                 {
-                    ResultType = NozomiResultType.Success,
-                    Data = new JsonResult(_sourceService.Create(source) ? 
-                        "Source successfully created." : "Source creation failed")
+                    ResultType = svcRes.ResultType,
+                    Message = svcRes.Message
                 };
             }
             
             return new NozomiResult<JsonResult>()
             {
                 ResultType = NozomiResultType.Failed,
-                Message = "Source creation failed"
+                Message = "Invalid payload."
             };
         }
 

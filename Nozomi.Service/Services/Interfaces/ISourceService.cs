@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using Nozomi.Data;
 using Nozomi.Data.AreaModels.v1.CurrencySource;
 using Nozomi.Data.CurrencyModels;
 
@@ -8,7 +9,7 @@ namespace Nozomi.Service.Services.Interfaces
 {
     public interface ISourceService
     {
-        bool Create(CreateSource createSource);
+        NozomiResult<string> Create(CreateSource createSource);
         
         IEnumerable<dynamic> GetAllNested();
 

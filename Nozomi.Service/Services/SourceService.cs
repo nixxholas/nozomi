@@ -4,6 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Nozomi.Data;
 using Nozomi.Data.AreaModels.v1.CurrencySource;
 using Nozomi.Data.CurrencyModels;
 using Nozomi.Repo.Data;
@@ -19,18 +20,40 @@ namespace Nozomi.Service.Services
         {
         }
 
-        public bool Create(CreateSource createSource)
+        public NozomiResult<string> Create(CreateSource createSource)
         {
-            if (!createSource.IsValid()) return false;
-            
-            _unitOfWork.GetRepository<Source>().Add(new Source()
-            {
-                APIDocsURL = createSource.ApiDocsUrl,
-                Abbreviation = createSource.Abbreviation,
-                Name = createSource.Name
-            });
+            var res = new NozomiResult<string>(string.Empty);
 
-            return true;
+            if (!createSource.IsValid())
+            {
+                res.ResultType = NozomiResultType.Failed;
+                res.Message = "Invalid payload.";
+                return res;
+            }
+
+            try
+            {
+                _unitOfWork.GetRepository<Source>().Add(new Source()
+                {
+                    APIDocsURL = createSource.ApiDocsUrl,
+                    Abbreviation = createSource.Abbreviation,
+                    Name = createSource.Name
+                });
+
+                _unitOfWork.Commit();
+                
+                res.ResultType = NozomiResultType.Success;
+                res.Message = "Source created successfully.";
+                return res;
+            }
+            catch (DbUpdateException ex)
+            {
+                Console.WriteLine(ex);
+                
+                res.ResultType = NozomiResultType.Failed;
+                res.Message = "An existing source already exists.";
+                return res;
+            }
         }
 
         public bool Update(UpdateSource updateSource)
