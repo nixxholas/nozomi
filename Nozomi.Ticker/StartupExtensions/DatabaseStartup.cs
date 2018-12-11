@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -89,48 +90,6 @@ namespace Nozomi.Ticker.StartupExtensions
                         var ecbSource = context.Sources.SingleOrDefault(s => s.Abbreviation.Equals("ECB"));
                         var avgSource = context.Sources.SingleOrDefault(s => s.Abbreviation.Equals("AVG"));
 
-                        if (!context.CurrencyPairs.Any())
-                        {
-                            context.CurrencyPairs.AddRange(
-                                new CurrencyPair()
-                                {
-                                    CurrencyPairType = CurrencyPairType.TRADEABLE,
-                                    APIUrl = "https://api.ethfinex.com/v2/ticker/tETHUSD",
-                                    DefaultComponent = "0",
-                                    CurrencySourceId = bfxSource.Id
-                                },
-                                new CurrencyPair()
-                                {
-                                    CurrencyPairType = CurrencyPairType.TRADEABLE,
-                                    APIUrl = "https://api.ethfinex.com/v2/ticker/tKNCUSD",
-                                    DefaultComponent = "0",
-                                    CurrencySourceId = bfxSource.Id
-                                },
-                                new CurrencyPair()
-                                {
-                                    CurrencyPairType = CurrencyPairType.TRADEABLE,
-                                    APIUrl = "https://api.binance.com/api/v3/ticker/bookTicker?symbol=KNCETH",
-                                    DefaultComponent = "askPrice",
-                                    CurrencySourceId = bnaSource.Id
-                                },
-                                new CurrencyPair()
-                                {
-                                    CurrencyPairType = CurrencyPairType.TRADEABLE,
-                                    APIUrl = "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml",
-                                    DefaultComponent = "Cube",
-                                    CurrencySourceId = ecbSource.Id
-                                },
-                                new CurrencyPair()
-                                {
-                                    CurrencyPairType = CurrencyPairType.TRADEABLE,
-                                    APIUrl = "https://www.alphavantage.co/query",
-                                    DefaultComponent = "Realtime Currency Exchange Rate/5. Exchange Rate",
-                                    CurrencySourceId = avgSource.Id
-                                });
-
-                            context.SaveChanges();
-                        }
-
                         if (!context.Currencies.Any() && context.CurrencyTypes.Any())
                         {
                             var fiatType = context.CurrencyTypes.SingleOrDefault(ct => ct.TypeShortForm.Equals("FIAT"));
@@ -215,6 +174,129 @@ namespace Nozomi.Ticker.StartupExtensions
                                 );
 
                             context.SaveChanges();
+                        }
+
+                        if (!context.CurrencyPairs.Any())
+                        {
+                            var currencyPairs = new List<CurrencyPair>()
+                            {
+                                new CurrencyPair()
+                                {
+                                    CurrencyPairType = CurrencyPairType.TRADEABLE,
+                                    APIUrl = "https://api.ethfinex.com/v2/ticker/tETHUSD",
+                                    DefaultComponent = "0",
+                                    CurrencySourceId = bfxSource.Id
+                                },
+                                new CurrencyPair()
+                                {
+                                    CurrencyPairType = CurrencyPairType.TRADEABLE,
+                                    APIUrl = "https://api.ethfinex.com/v2/ticker/tKNCUSD",
+                                    DefaultComponent = "0",
+                                    CurrencySourceId = bfxSource.Id
+                                },
+                                new CurrencyPair()
+                                {
+                                    CurrencyPairType = CurrencyPairType.TRADEABLE,
+                                    APIUrl = "https://api.binance.com/api/v3/ticker/bookTicker?symbol=KNCETH",
+                                    DefaultComponent = "askPrice",
+                                    CurrencySourceId = bnaSource.Id
+                                },
+                                new CurrencyPair()
+                                {
+                                    CurrencyPairType = CurrencyPairType.TRADEABLE,
+                                    APIUrl = "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml",
+                                    DefaultComponent = "Cube",
+                                    CurrencySourceId = ecbSource.Id
+                                },
+                                new CurrencyPair()
+                                {
+                                    CurrencyPairType = CurrencyPairType.TRADEABLE,
+                                    APIUrl = "https://www.alphavantage.co/query",
+                                    DefaultComponent = "Realtime Currency Exchange Rate/5. Exchange Rate",
+                                    CurrencySourceId = avgSource.Id
+                                }
+                            };
+
+                            context.CurrencyPairs.AddRange();
+
+                            context.SaveChanges();
+
+                            if (!context.PartialCurrencyPairs.Any() && context.CurrencyPairs.Any() &&
+                                context.Currencies.Any())
+                            {
+                                var usdBfx = context.Currencies.Include(c => c.CurrencySource)
+                                    .SingleOrDefault(c =>
+                                        c.Abbrv.Equals("USD") &&
+                                        c.CurrencySource.Abbreviation.Equals(bfxSource.Abbreviation));
+                                var ethBfx = context.Currencies.Include(c => c.CurrencySource)
+                                    .SingleOrDefault(c =>
+                                        c.Abbrv.Equals("ETH") &&
+                                        c.CurrencySource.Abbreviation.Equals(bfxSource.Abbreviation));
+
+                                context.PartialCurrencyPairs.AddRange(
+                                    new PartialCurrencyPair()
+                                    {
+                                        CurrencyId = usdBfx.Id,
+                                        IsMain = false,
+                                        CurrencyPairId = currencyPairs[0].Id
+                                    },
+                                    new PartialCurrencyPair()
+                                    {
+                                        CurrencyId = ethBfx.Id,
+                                        IsMain = true,
+                                        CurrencyPairId = currencyPairs[0].Id
+                                    },
+                                    new PartialCurrencyPair()
+                                    {
+                                        CurrencyId = 1,
+                                        IsMain = false,
+                                        CurrencyPairId = currencyPairs[1].Id
+                                    },
+                                    new PartialCurrencyPair()
+                                    {
+                                        CurrencyId = 3,
+                                        IsMain = true,
+                                        CurrencyPairId = currencyPairs[1].Id
+                                    },
+                                    new PartialCurrencyPair()
+                                    {
+                                        CurrencyId = 4,
+                                        IsMain = true,
+                                        CurrencyPairId = currencyPairs[2].Id
+                                    },
+                                    new PartialCurrencyPair()
+                                    {
+                                        CurrencyId = 5,
+                                        IsMain = false,
+                                        CurrencyPairId = currencyPairs[2].Id
+                                    },
+                                    new PartialCurrencyPair()
+                                    {
+                                        CurrencyId = 6,
+                                        IsMain = true,
+                                        CurrencyPairId = currencyPairs[3].Id
+                                    },
+                                    new PartialCurrencyPair()
+                                    {
+                                        CurrencyId = 7,
+                                        IsMain = false,
+                                        CurrencyPairId = currencyPairs[3].Id
+                                    },
+                                    new PartialCurrencyPair()
+                                    {
+                                        CurrencyId = 8,
+                                        IsMain = true,
+                                        CurrencyPairId = currencyPairs[4].Id
+                                    },
+                                    new PartialCurrencyPair()
+                                    {
+                                        CurrencyId = 9,
+                                        IsMain = false,
+                                        CurrencyPairId = currencyPairs[4].Id
+                                    });
+
+                                context.SaveChanges();
+                            }
                         }
                     }
                 }

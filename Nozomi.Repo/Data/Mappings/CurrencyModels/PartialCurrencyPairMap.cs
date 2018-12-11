@@ -18,69 +18,6 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
             entityTypeBuilder.HasOne(pcp => pcp.CurrencyPair).WithMany(cp => cp.PartialCurrencyPairs)
                 .HasForeignKey(pcp => pcp.CurrencyPairId)
                 .HasConstraintName("PartialCurrencyPairs_CurrencyPair_Constraint");
-
-            entityTypeBuilder.HasData(
-                new PartialCurrencyPair()
-                {
-                    CurrencyId = 1,
-                    IsMain = false,
-                    CurrencyPairId = 1
-                },
-                new PartialCurrencyPair()
-                {
-                    CurrencyId = 2,
-                    IsMain = true,
-                    CurrencyPairId = 1
-                },
-                new PartialCurrencyPair()
-                {
-                    CurrencyId = 1,
-                    IsMain = false,
-                    CurrencyPairId = 2
-                },
-                new PartialCurrencyPair()
-                {
-                    CurrencyId = 3,
-                    IsMain = true,
-                    CurrencyPairId = 2
-                },
-                new PartialCurrencyPair()
-                {
-                    CurrencyId = 4,
-                    IsMain = true,
-                    CurrencyPairId = 3
-                },
-                new PartialCurrencyPair()
-                {
-                    CurrencyId = 5,
-                    IsMain = false,
-                    CurrencyPairId = 3
-                },
-                new PartialCurrencyPair()
-                {
-                    CurrencyId = 6,
-                    IsMain = true,
-                    CurrencyPairId = 4
-                },
-                new PartialCurrencyPair()
-                {
-                    CurrencyId = 7,
-                    IsMain = false,
-                    CurrencyPairId = 4
-                },
-                new PartialCurrencyPair()
-                {
-                    CurrencyId = 8,
-                    IsMain = true,
-                    CurrencyPairId = 5
-                },
-                new PartialCurrencyPair()
-                {
-                    CurrencyId = 9,
-                    IsMain = false,
-                    CurrencyPairId = 5
-                }
-            );
         }
     }
 }
