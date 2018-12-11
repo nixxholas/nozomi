@@ -10,7 +10,7 @@ namespace Nozomi.Data.AreaModels.v1.CurrencySource
 
         public bool IsValid()
         {
-            return string.IsNullOrEmpty(Name) && string.IsNullOrEmpty(Abbreviation) && string.IsNullOrEmpty(ApiDocsUrl);
+            return !string.IsNullOrEmpty(Name) && !string.IsNullOrEmpty(Abbreviation) && !string.IsNullOrEmpty(ApiDocsUrl);
         }
     }
 }
