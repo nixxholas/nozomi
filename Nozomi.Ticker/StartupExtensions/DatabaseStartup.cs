@@ -391,7 +391,7 @@ namespace Nozomi.Ticker.StartupExtensions
                                         c.CurrencySource.Abbreviation.Equals(bfxSource.Abbreviation));
                                 var kncBna = context.Currencies.Include(c => c.CurrencySource)
                                     .SingleOrDefault(c =>
-                                        c.Abbrv.Equals("BNA") &&
+                                        c.Abbrv.Equals("KNC") &&
                                         c.CurrencySource.Abbreviation.Equals(bnaSource.Abbreviation));
                                 var ethBna = context.Currencies.Include(c => c.CurrencySource)
                                     .SingleOrDefault(c =>
