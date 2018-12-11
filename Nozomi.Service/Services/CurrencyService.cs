@@ -48,12 +48,12 @@ namespace Nozomi.Service.Services
                                                                      "that your currency object is proper.");
         }
 
-        public NozomiResult<string> Update(long currencyId, Currency currency, long userId = 0)
+        public NozomiResult<string> Update(UpdateCurrency currency, long userId = 0)
         {
-            if (currency != null && currency.IsValid() && currencyId > 0)
+            if (currency != null && currency.IsValid())
             {
                 var currToUpd = _unitOfWork.GetRepository<Currency>()
-                    .Get(c => c.Id.Equals(currencyId) && c.DeletedAt == null)
+                    .Get(c => c.Id.Equals(currency.Id) && c.DeletedAt == null)
                     .SingleOrDefault();
 
                 if (currToUpd != null)
