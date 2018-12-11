@@ -82,94 +82,140 @@ namespace Nozomi.Ticker.StartupExtensions
                         context.SaveChanges();
                     }
 
-                    if (!context.Currencies.Any() && context.CurrencyTypes.Any() && context.Sources.Any())
+                    if (context.Sources.Any())
                     {
-                        var fiatType = context.CurrencyTypes.SingleOrDefault(ct => ct.TypeShortForm.Equals("FIAT"));
-                        var cryptoType = context.CurrencyTypes.SingleOrDefault(ct => ct.TypeShortForm.Equals("CRYPTO"));
-
                         var bfxSource = context.Sources.SingleOrDefault(s => s.Abbreviation.Equals("BFX"));
                         var bnaSource = context.Sources.SingleOrDefault(s => s.Abbreviation.Equals("BNA"));
                         var ecbSource = context.Sources.SingleOrDefault(s => s.Abbreviation.Equals("ECB"));
                         var avgSource = context.Sources.SingleOrDefault(s => s.Abbreviation.Equals("AVG"));
 
-                        if (fiatType != null && cryptoType != null && bfxSource != null && bnaSource != null
-                            && ecbSource != null && avgSource != null)
-                            context.Currencies.AddRange(
-                                new Currency()
+                        if (!context.CurrencyPairs.Any())
+                        {
+                            context.CurrencyPairs.AddRange(
+                                new CurrencyPair()
                                 {
-                                    CurrencyTypeId = fiatType.Id,
-                                    Abbrv = "USD",
-                                    Name = "United States Dollar",
-                                    CurrencySourceId = bfxSource.Id,
-                                    WalletTypeId = 0
+                                    CurrencyPairType = CurrencyPairType.TRADEABLE,
+                                    APIUrl = "https://api.ethfinex.com/v2/ticker/tETHUSD",
+                                    DefaultComponent = "0",
+                                    CurrencySourceId = bfxSource.Id
                                 },
-                                new Currency()
+                                new CurrencyPair()
                                 {
-                                    CurrencyTypeId = cryptoType.Id,
-                                    Abbrv = "ETH",
-                                    Name = "Ethereum",
-                                    CurrencySourceId = bfxSource.Id,
-                                    WalletTypeId = 1 // As per CNWallet
+                                    CurrencyPairType = CurrencyPairType.TRADEABLE,
+                                    APIUrl = "https://api.ethfinex.com/v2/ticker/tKNCUSD",
+                                    DefaultComponent = "0",
+                                    CurrencySourceId = bfxSource.Id
                                 },
-                                new Currency()
+                                new CurrencyPair()
                                 {
-                                    CurrencyTypeId = cryptoType.Id,
-                                    Abbrv = "KNC",
-                                    Name = "Kyber Network Coin",
-                                    CurrencySourceId = bfxSource.Id,
-                                    WalletTypeId = 4 // As per CNWallet
+                                    CurrencyPairType = CurrencyPairType.TRADEABLE,
+                                    APIUrl = "https://api.binance.com/api/v3/ticker/bookTicker?symbol=KNCETH",
+                                    DefaultComponent = "askPrice",
+                                    CurrencySourceId = bnaSource.Id
                                 },
-                                new Currency()
+                                new CurrencyPair()
                                 {
-                                    CurrencyTypeId = cryptoType.Id,
-                                    Abbrv = "KNC",
-                                    Name = "Kyber Network Coin",
-                                    CurrencySourceId = bnaSource.Id,
-                                    WalletTypeId = 4 // As per CNWallet
+                                    CurrencyPairType = CurrencyPairType.TRADEABLE,
+                                    APIUrl = "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml",
+                                    DefaultComponent = "Cube",
+                                    CurrencySourceId = ecbSource.Id
                                 },
-                                new Currency()
+                                new CurrencyPair()
                                 {
-                                    CurrencyTypeId = cryptoType.Id,
-                                    Abbrv = "ETH",
-                                    Name = "Ethereum",
-                                    CurrencySourceId = bnaSource.Id,
-                                    WalletTypeId = 1 // As per CNWallet
-                                },
-                                new Currency()
-                                {
-                                    CurrencyTypeId = fiatType.Id,
-                                    Abbrv = "EUR",
-                                    Name = "Euro",
-                                    CurrencySourceId = ecbSource.Id,
-                                    WalletTypeId = 0
-                                },
-                                new Currency()
-                                {
-                                    CurrencyTypeId = fiatType.Id,
-                                    Abbrv = "USD",
-                                    Name = "United States Dollar",
-                                    CurrencySourceId = ecbSource.Id,
-                                    WalletTypeId = 0
-                                },
-                                new Currency()
-                                {
-                                    CurrencyTypeId = fiatType.Id,
-                                    Abbrv = "EUR",
-                                    Name = "Euro",
-                                    CurrencySourceId = avgSource.Id,
-                                    WalletTypeId = 0
-                                },
-                                new Currency()
-                                {
-                                    CurrencyTypeId = fiatType.Id,
-                                    Abbrv = "USD",
-                                    Name = "United States Dollar",
-                                    CurrencySourceId = avgSource.Id,
-                                    WalletTypeId = 0
-                                }
-                            );
+                                    CurrencyPairType = CurrencyPairType.TRADEABLE,
+                                    APIUrl = "https://www.alphavantage.co/query",
+                                    DefaultComponent = "Realtime Currency Exchange Rate/5. Exchange Rate",
+                                    CurrencySourceId = avgSource.Id
+                                });
 
-                        context.SaveChanges();
+                            context.SaveChanges();
+                        }
+
+                        if (!context.Currencies.Any() && context.CurrencyTypes.Any())
+                        {
+                            var fiatType = context.CurrencyTypes.SingleOrDefault(ct => ct.TypeShortForm.Equals("FIAT"));
+                            var cryptoType =
+                                context.CurrencyTypes.SingleOrDefault(ct => ct.TypeShortForm.Equals("CRYPTO"));
+
+                            if (fiatType != null && cryptoType != null && bfxSource != null && bnaSource != null
+                                && ecbSource != null && avgSource != null)
+                                context.Currencies.AddRange(
+                                    new Currency()
+                                    {
+                                        CurrencyTypeId = fiatType.Id,
+                                        Abbrv = "USD",
+                                        Name = "United States Dollar",
+                                        CurrencySourceId = bfxSource.Id,
+                                        WalletTypeId = 0
+                                    },
+                                    new Currency()
+                                    {
+                                        CurrencyTypeId = cryptoType.Id,
+                                        Abbrv = "ETH",
+                                        Name = "Ethereum",
+                                        CurrencySourceId = bfxSource.Id,
+                                        WalletTypeId = 1 // As per CNWallet
+                                    },
+                                    new Currency()
+                                    {
+                                        CurrencyTypeId = cryptoType.Id,
+                                        Abbrv = "KNC",
+                                        Name = "Kyber Network Coin",
+                                        CurrencySourceId = bfxSource.Id,
+                                        WalletTypeId = 4 // As per CNWallet
+                                    },
+                                    new Currency()
+                                    {
+                                        CurrencyTypeId = cryptoType.Id,
+                                        Abbrv = "KNC",
+                                        Name = "Kyber Network Coin",
+                                        CurrencySourceId = bnaSource.Id,
+                                        WalletTypeId = 4 // As per CNWallet
+                                    },
+                                    new Currency()
+                                    {
+                                        CurrencyTypeId = cryptoType.Id,
+                                        Abbrv = "ETH",
+                                        Name = "Ethereum",
+                                        CurrencySourceId = bnaSource.Id,
+                                        WalletTypeId = 1 // As per CNWallet
+                                    },
+                                    new Currency()
+                                    {
+                                        CurrencyTypeId = fiatType.Id,
+                                        Abbrv = "EUR",
+                                        Name = "Euro",
+                                        CurrencySourceId = ecbSource.Id,
+                                        WalletTypeId = 0
+                                    },
+                                    new Currency()
+                                    {
+                                        CurrencyTypeId = fiatType.Id,
+                                        Abbrv = "USD",
+                                        Name = "United States Dollar",
+                                        CurrencySourceId = ecbSource.Id,
+                                        WalletTypeId = 0
+                                    },
+                                    new Currency()
+                                    {
+                                        CurrencyTypeId = fiatType.Id,
+                                        Abbrv = "EUR",
+                                        Name = "Euro",
+                                        CurrencySourceId = avgSource.Id,
+                                        WalletTypeId = 0
+                                    },
+                                    new Currency()
+                                    {
+                                        CurrencyTypeId = fiatType.Id,
+                                        Abbrv = "USD",
+                                        Name = "United States Dollar",
+                                        CurrencySourceId = avgSource.Id,
+                                        WalletTypeId = 0
+                                    }
+                                );
+
+                            context.SaveChanges();
+                        }
                     }
                 }
             }
