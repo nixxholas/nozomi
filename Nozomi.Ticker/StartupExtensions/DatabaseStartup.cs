@@ -219,7 +219,7 @@ namespace Nozomi.Ticker.StartupExtensions
                                 }
                             };
 
-                            context.CurrencyPairs.AddRange();
+                            context.CurrencyPairs.AddRange(currencyPairs);
 
                             context.SaveChanges();
 
@@ -368,6 +368,10 @@ namespace Nozomi.Ticker.StartupExtensions
                                         }
                                     }
                                 };
+
+                                context.CurrencyPairRequests.AddRange(currencyPairRequests);
+
+                                context.SaveChanges();
                             }
 
                             if (!context.PartialCurrencyPairs.Any() && context.CurrencyPairs.Any() &&
@@ -381,6 +385,34 @@ namespace Nozomi.Ticker.StartupExtensions
                                     .SingleOrDefault(c =>
                                         c.Abbrv.Equals("ETH") &&
                                         c.CurrencySource.Abbreviation.Equals(bfxSource.Abbreviation));
+                                var kncBfx = context.Currencies.Include(c => c.CurrencySource)
+                                    .SingleOrDefault(c =>
+                                        c.Abbrv.Equals("KNC") &&
+                                        c.CurrencySource.Abbreviation.Equals(bfxSource.Abbreviation));
+                                var kncBna = context.Currencies.Include(c => c.CurrencySource)
+                                    .SingleOrDefault(c =>
+                                        c.Abbrv.Equals("BNA") &&
+                                        c.CurrencySource.Abbreviation.Equals(bnaSource.Abbreviation));
+                                var ethBna = context.Currencies.Include(c => c.CurrencySource)
+                                    .SingleOrDefault(c =>
+                                        c.Abbrv.Equals("ETH") &&
+                                        c.CurrencySource.Abbreviation.Equals(bnaSource.Abbreviation));
+                                var eurECB = context.Currencies.Include(c => c.CurrencySource)
+                                    .SingleOrDefault(c =>
+                                        c.Abbrv.Equals("EUR") &&
+                                        c.CurrencySource.Abbreviation.Equals(ecbSource.Abbreviation));
+                                var usdECB = context.Currencies.Include(c => c.CurrencySource)
+                                    .SingleOrDefault(c =>
+                                        c.Abbrv.Equals("USD") &&
+                                        c.CurrencySource.Abbreviation.Equals(ecbSource.Abbreviation));
+                                var eurAVG = context.Currencies.Include(c => c.CurrencySource)
+                                    .SingleOrDefault(c =>
+                                        c.Abbrv.Equals("EUR") &&
+                                        c.CurrencySource.Abbreviation.Equals(avgSource.Abbreviation));
+                                var usdAVG = context.Currencies.Include(c => c.CurrencySource)
+                                    .SingleOrDefault(c =>
+                                        c.Abbrv.Equals("USD") &&
+                                        c.CurrencySource.Abbreviation.Equals(avgSource.Abbreviation));
 
                                 context.PartialCurrencyPairs.AddRange(
                                     new PartialCurrencyPair()
@@ -397,49 +429,49 @@ namespace Nozomi.Ticker.StartupExtensions
                                     },
                                     new PartialCurrencyPair()
                                     {
-                                        CurrencyId = 1,
+                                        CurrencyId = usdBfx.Id,
                                         IsMain = false,
                                         CurrencyPairId = currencyPairs[1].Id
                                     },
                                     new PartialCurrencyPair()
                                     {
-                                        CurrencyId = 3,
+                                        CurrencyId = kncBfx.Id,
                                         IsMain = true,
                                         CurrencyPairId = currencyPairs[1].Id
                                     },
                                     new PartialCurrencyPair()
                                     {
-                                        CurrencyId = 4,
+                                        CurrencyId = kncBna.Id,
                                         IsMain = true,
                                         CurrencyPairId = currencyPairs[2].Id
                                     },
                                     new PartialCurrencyPair()
                                     {
-                                        CurrencyId = 5,
+                                        CurrencyId = ethBna.Id,
                                         IsMain = false,
                                         CurrencyPairId = currencyPairs[2].Id
                                     },
                                     new PartialCurrencyPair()
                                     {
-                                        CurrencyId = 6,
+                                        CurrencyId = eurECB.Id,
                                         IsMain = true,
                                         CurrencyPairId = currencyPairs[3].Id
                                     },
                                     new PartialCurrencyPair()
                                     {
-                                        CurrencyId = 7,
+                                        CurrencyId = usdECB.Id,
                                         IsMain = false,
                                         CurrencyPairId = currencyPairs[3].Id
                                     },
                                     new PartialCurrencyPair()
                                     {
-                                        CurrencyId = 8,
+                                        CurrencyId = eurAVG.Id,
                                         IsMain = true,
                                         CurrencyPairId = currencyPairs[4].Id
                                     },
                                     new PartialCurrencyPair()
                                     {
-                                        CurrencyId = 9,
+                                        CurrencyId = usdAVG.Id,
                                         IsMain = false,
                                         CurrencyPairId = currencyPairs[4].Id
                                     });
