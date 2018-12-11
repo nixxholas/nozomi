@@ -1,4 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
+using Nozomi.Preprocessing.Swagger.Examples.Requests.v1.Currency;
 using Nozomi.Preprocessing.Swagger.Examples.Requests.v1.CurrencySource;
 using Nozomi.Preprocessing.Swagger.Examples.Responses.Generic;
 using Nozomi.Ticker.Areas;
@@ -12,6 +13,7 @@ namespace Nozomi.Ticker.StartupExtensions
         public static void ConfigureSwagger(this IServiceCollection services)
         {
             // https://github.com/mattfrear/Swashbuckle.AspNetCore.Filters/issues/56
+            services.AddSwaggerExamplesFromAssemblyOf<CreateCurrencyExample>();
             services.AddSwaggerExamplesFromAssemblyOf<CreateSourceExample>();
             services.AddSwaggerExamplesFromAssemblyOf<NozomiJsonResultExample>();
             services.AddSwaggerExamplesFromAssemblyOf<NozomiStringResultExample>();
