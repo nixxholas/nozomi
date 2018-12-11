@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Builder;
@@ -6,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.DependencyInjection;
 using Nozomi.Data.CurrencyModels;
+using Nozomi.Data.WebModels;
 using Nozomi.Repo.Data;
 
 namespace Nozomi.Ticker.StartupExtensions
@@ -220,6 +222,55 @@ namespace Nozomi.Ticker.StartupExtensions
                             context.CurrencyPairs.AddRange();
 
                             context.SaveChanges();
+
+                            if (!context.CurrencyPairRequests.Any() && context.CurrencyPairs.Any())
+                            {
+                                var currencyPairRequests = new List<CurrencyPairRequest>()
+                                {
+                                    new CurrencyPairRequest()
+                                    {
+                                        Guid = Guid.NewGuid(),
+                                        RequestType = RequestType.HttpGet,
+                                        DataPath = "https://api.ethfinex.com/v2/ticker/tETHUSD",
+                                        CurrencyPairId = currencyPairs[0].Id,
+                                        Delay = 5000
+                                    },
+                                    new CurrencyPairRequest()
+                                    {
+                                        Guid = Guid.NewGuid(),
+                                        RequestType = RequestType.HttpGet,
+                                        DataPath = "https://api.ethfinex.com/v2/ticker/tKNCUSD",
+                                        CurrencyPairId = currencyPairs[1].Id,
+                                        Delay = 5000
+                                    },
+                                    new CurrencyPairRequest()
+                                    {
+                                        Guid = Guid.NewGuid(),
+                                        RequestType = RequestType.HttpGet,
+                                        DataPath = "https://api.binance.com/api/v3/ticker/bookTicker?symbol=KNCETH",
+                                        CurrencyPairId = currencyPairs[2].Id,
+                                        Delay = 5000
+                                    },
+                                    new CurrencyPairRequest()
+                                    {
+                                        Guid = Guid.NewGuid(),
+                                        RequestType = RequestType.HttpGet,
+                                        ResponseType = ResponseType.XML,
+                                        DataPath = "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml",
+                                        CurrencyPairId = currencyPairs[3].Id,
+                                        Delay = 86400000
+                                    },
+                                    new CurrencyPairRequest()
+                                    {
+                                        Guid = Guid.NewGuid(),
+                                        RequestType = RequestType.HttpGet,
+                                        ResponseType = ResponseType.Json,
+                                        DataPath = "https://www.alphavantage.co/query",
+                                        CurrencyPairId = currencyPairs[4].Id,
+                                        Delay = 5000
+                                    }
+                                };
+                            }
 
                             if (!context.PartialCurrencyPairs.Any() && context.CurrencyPairs.Any() &&
                                 context.Currencies.Any())
