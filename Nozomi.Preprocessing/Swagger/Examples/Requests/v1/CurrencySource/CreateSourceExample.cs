@@ -1,8 +1,7 @@
 using Nozomi.Data.AreaModels.v1.CurrencySource;
-using Swashbuckle.AspNetCore.Examples;
 using Swashbuckle.AspNetCore.Filters;
 
-namespace Nozomi.Preprocessing.Swagger.Examples.v1.CurrencySource
+namespace Nozomi.Preprocessing.Swagger.Examples.Requests.v1.CurrencySource
 {
     // Defining the model class automates the annotation.
     // https://github.com/mattfrear/Swashbuckle.AspNetCore.Filters#automatic-annotation

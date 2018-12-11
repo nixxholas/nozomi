@@ -6,7 +6,6 @@ using Newtonsoft.Json;
 using Nozomi.Data;
 using Nozomi.Data.AreaModels.v1.CurrencySource;
 using Nozomi.Data.CurrencyModels;
-using Nozomi.Preprocessing.Swagger.Examples.v1.CurrencySource;
 using Nozomi.Service.Services.Interfaces;
 using Swashbuckle.AspNetCore.Examples;
 

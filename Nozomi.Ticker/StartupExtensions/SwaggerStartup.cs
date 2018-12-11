@@ -1,5 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
-using Nozomi.Preprocessing.Swagger.Examples.v1.CurrencySource;
+using Nozomi.Preprocessing.Swagger.Examples.Requests.v1.CurrencySource;
 using Nozomi.Ticker.Areas;
 using Swashbuckle.AspNetCore.Filters;
 using Swashbuckle.AspNetCore.Swagger;

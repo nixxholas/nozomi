@@ -17,4 +17,9 @@
       <ProjectReference Include="..\Nozomi.Repo\Nozomi.Repo.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Swagger\Examples\Requests" />
+      <Folder Include="Swagger\Examples\Responses\v1\CurrencySource" />
+    </ItemGroup>
+
 </Project>
