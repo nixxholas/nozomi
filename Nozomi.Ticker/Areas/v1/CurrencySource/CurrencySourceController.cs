@@ -39,7 +39,8 @@ namespace Nozomi.Ticker.Areas.v1.CurrencySource
             
             return new NozomiResult<JsonResult>()
             {
-                ResultType = NozomiResultType.Failed
+                ResultType = NozomiResultType.Failed,
+                Message = "Source creation failed"
             };
         }
 
