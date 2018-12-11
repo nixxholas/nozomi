@@ -21,5 +21,11 @@ namespace Nozomi.Ticker.Areas.v1.Currency
         {
             return _currencyService.Create(createCurrency);
         }
+
+        [HttpPost]
+        public NozomiResult<string> Update(UpdateCurrency updateCurrency)
+        {
+            return _currencyService.Update(updateCurrency);
+        }
     }
 }
