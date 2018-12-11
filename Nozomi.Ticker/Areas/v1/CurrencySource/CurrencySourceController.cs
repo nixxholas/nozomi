@@ -1,9 +1,11 @@
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Nozomi.Data;
 using Nozomi.Data.AreaModels.v1.CurrencySource;
+using Nozomi.Data.CurrencyModels;
 using Nozomi.Service.Services.Interfaces;
 
 namespace Nozomi.Ticker.Areas.v1.CurrencySource
@@ -19,9 +21,9 @@ namespace Nozomi.Ticker.Areas.v1.CurrencySource
         }
 
         [HttpGet]
-        public NozomiResult<ICollection<JsonResult>> All()
+        public NozomiResult<ICollection<Source>> All()
         {
-            return null;
+            return new NozomiResult<ICollection<Source>>(_sourceService.GetAllActive(false).ToList());
         }
 
         [HttpPost]
