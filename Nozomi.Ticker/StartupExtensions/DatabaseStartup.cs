@@ -267,7 +267,34 @@ namespace Nozomi.Ticker.StartupExtensions
                                         ResponseType = ResponseType.Json,
                                         DataPath = "https://www.alphavantage.co/query",
                                         CurrencyPairId = currencyPairs[4].Id,
-                                        Delay = 5000
+                                        Delay = 5000,
+                                        RequestProperties = new List<RequestProperty>()
+                                        {
+                                            new RequestProperty()
+                                            {
+                                                RequestPropertyType = RequestPropertyType.HttpQuery,
+                                                Key = "apikey",
+                                                Value = "TV5HJJHNP8094BRO"
+                                            },
+                                            new RequestProperty()
+                                            {
+                                                RequestPropertyType = RequestPropertyType.HttpQuery,
+                                                Key = "function",
+                                                Value = "CURRENCY_EXCHANGE_RATE"
+                                            },
+                                            new RequestProperty()
+                                            {
+                                                RequestPropertyType = RequestPropertyType.HttpQuery,
+                                                Key = "from_currency",
+                                                Value = "USD"
+                                            },
+                                            new RequestProperty()
+                                            {
+                                                RequestPropertyType = RequestPropertyType.HttpQuery,
+                                                Key = "to_currency",
+                                                Value = "CNY"
+                                            }
+                                        }
                                     }
                                 };
                             }
