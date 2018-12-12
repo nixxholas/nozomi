@@ -7,7 +7,7 @@ namespace Nozomi.Ticker.Areas.v1.RequestType
 {
     public class RequestTypeController : BaseController<RequestTypeController>, IRequestTypeController
     {
-        private IRequestTypeService _requestTypeService;
+        private readonly IRequestTypeService _requestTypeService;
         
         public RequestTypeController(ILogger<RequestTypeController> logger,
             IRequestTypeService requestTypeService) : base(logger)
