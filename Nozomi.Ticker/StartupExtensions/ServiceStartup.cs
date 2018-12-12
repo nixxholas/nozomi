@@ -28,6 +28,7 @@ namespace Nozomi.Ticker.StartupExtensions
             // Singleton service injections for in-memory-related processes.
             services.AddScoped<IComponentTypeService, ComponentTypeService>();
             services.AddScoped<ICurrencyPairTypeService, CurrencyPairTypeService>();
+            services.AddScoped<IRequestPropertyTypeService, RequestPropertyTypeService>();
             services.AddScoped<IRequestTypeService, RequestTypeService>();
         }
     }
