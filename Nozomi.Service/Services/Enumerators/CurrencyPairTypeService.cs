@@ -1,18 +1,16 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Microsoft.Extensions.Logging;
-using Nozomi.Core.Helpers.Enumerator;
 using Nozomi.Data.CurrencyModels;
 using Nozomi.Repo.Data;
 using Nozomi.Repo.Repositories;
-using Nozomi.Service.Services.Interfaces;
+using Nozomi.Service.Services.Enumerators.Interfaces;
 
-namespace Nozomi.Service.Services
+namespace Nozomi.Service.Services.Enumerators
 {
     public class CurrencyPairTypeService : BaseService<CurrencyPairTypeService, NozomiDbContext>, ICurrencyPairTypeService
     {
-        private ICollection<KeyValuePair<string, int>> _currencyPairTypeMap;
+        private readonly ICollection<KeyValuePair<string, int>> _currencyPairTypeMap;
 
         public CurrencyPairTypeService(ILogger<CurrencyPairTypeService> logger,
             IUnitOfWork<NozomiDbContext> unitOfWork) : base(logger, unitOfWork)

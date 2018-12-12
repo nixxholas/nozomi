@@ -1,8 +1,6 @@
-using System;
 using System.Collections.Generic;
-using Nozomi.Data.CurrencyModels;
 
-namespace Nozomi.Service.Services.Interfaces
+namespace Nozomi.Service.Services.Enumerators.Interfaces
 {
     public interface ICurrencyPairTypeService
     {

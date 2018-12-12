@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Nozomi.Core.Helpers.JSON;
 using Nozomi.Data;
+using Nozomi.Service.Services.Enumerators.Interfaces;
 using Nozomi.Service.Services.Interfaces;
 
 namespace Nozomi.Ticker.Areas.v1.CurrencyPairType

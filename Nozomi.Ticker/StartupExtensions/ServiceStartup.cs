@@ -3,6 +3,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Nozomi.Service.HostedServices.RequestTypes;
 using Nozomi.Service.Services;
+using Nozomi.Service.Services.Enumerators;
+using Nozomi.Service.Services.Enumerators.Interfaces;
 using Nozomi.Service.Services.Interfaces;
 using Nozomi.Service.Services.Requests;
 using Nozomi.Service.Services.Requests.Interfaces;
