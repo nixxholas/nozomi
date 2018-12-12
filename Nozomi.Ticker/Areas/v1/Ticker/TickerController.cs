@@ -1,19 +1,26 @@
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data;
 using Nozomi.Data.ResponseModels;
+using Nozomi.Service.Services.Interfaces;
 
 namespace Nozomi.Ticker.Areas.v1.Ticker
 {
     public class TickerController : BaseController<TickerController>, ITickerController
     {
-        public TickerController(ILogger<TickerController> logger) : base(logger)
+        private readonly ITickerService _tickerService;
+        
+        public TickerController(ILogger<TickerController> logger,
+            ITickerService tickerService) : base(logger)
         {
+            _tickerService = tickerService;
         }
 
-        public NozomiResult<ICollection<DistinctiveTickerResponse>> Get(long currencySourceId, string symbol, bool includeNested = false)
+        [HttpGet]
+        public NozomiResult<ICollection<DistinctiveTickerResponse>> Get(string symbol, bool includeNested = false)
         {
-            throw new System.NotImplementedException();
+            return _tickerService.GetByAbbreviation(symbol);
         }
     }
 }
