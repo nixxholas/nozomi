@@ -107,7 +107,12 @@ namespace Nozomi.Service.Services
             catch (Exception ex)
             {
                 Console.WriteLine(ex.ToString());
-                return null; 
+                return new NozomiResult<ICollection<DistinctiveTickerResponse>>()
+                {
+                    ResultType = NozomiResultType.Failed,
+                    Message = "An error has occurred.",
+                    Data = null
+                }; 
             }
         }
     }
