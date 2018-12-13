@@ -9,10 +9,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Models" />
-    </ItemGroup>
-
-    <ItemGroup>
       <Reference Include="Microsoft.AspNetCore.Mvc.Abstractions, Version=2.1.2.0, Culture=neutral, PublicKeyToken=adb9793829ddae60">
         <HintPath>..\..\..\.nuget\packages\microsoft.aspnetcore.mvc.abstractions\2.1.2\lib\netstandard2.0\Microsoft.AspNetCore.Mvc.Abstractions.dll</HintPath>
       </Reference>
@@ -22,6 +18,10 @@
       <Reference Include="Microsoft.AspNetCore.Mvc.ViewFeatures, Version=2.1.2.0, Culture=neutral, PublicKeyToken=adb9793829ddae60">
         <HintPath>..\..\..\.nuget\packages\microsoft.aspnetcore.mvc.viewfeatures\2.1.2\lib\netstandard2.0\Microsoft.AspNetCore.Mvc.ViewFeatures.dll</HintPath>
       </Reference>
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Nozomi.Core\Nozomi.Core.csproj" />
     </ItemGroup>
 
 </Project>
