@@ -12,6 +12,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Nozomi.Preprocessing\Nozomi.Preprocessing.csproj" />
+    <ProjectReference Include="..\Nozomi.Service.Identity\Nozomi.Service.Identity.csproj" />
     <ProjectReference Include="..\Nozomi.Service\Nozomi.Service.csproj" />
   </ItemGroup>
   <ItemGroup>
