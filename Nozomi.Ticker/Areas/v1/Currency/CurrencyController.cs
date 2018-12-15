@@ -6,9 +6,10 @@ using Nozomi.Service.Services.Interfaces;
 
 namespace Nozomi.Ticker.Areas.v1.Currency
 {
+    [ApiController]
     public class CurrencyController : BaseController<CurrencyController>, ICurrencyController
     {
-        private ICurrencyService _currencyService;
+        private readonly ICurrencyService _currencyService;
         
         public CurrencyController(ILogger<CurrencyController> logger,
             ICurrencyService currencyService) : base(logger)
