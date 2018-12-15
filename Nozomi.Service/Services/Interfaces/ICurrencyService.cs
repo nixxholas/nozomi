@@ -8,6 +8,8 @@ namespace Nozomi.Service.Services.Interfaces
 {
     public interface ICurrencyService
     {
+        bool Any(CreateCurrency currency);
+        
         NozomiResult<string> Create(CreateCurrency currency, long userId = 0);
         NozomiResult<string> Update(UpdateCurrency currency, long userId = 0);
         NozomiResult<string> Delete(long currencyId, bool hardDelete = false, long userId = 0);

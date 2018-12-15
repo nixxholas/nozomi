@@ -27,6 +27,18 @@ namespace Nozomi.Service.Services
         {
         }
 
+        public bool Any(CreateCurrency createCurrency)
+        {
+            if (createCurrency != null && createCurrency.IsValid())
+            {
+                return _unitOfWork.GetRepository<Currency>()
+                    .Get(c => c.CurrencySourceId.Equals(createCurrency.CurrencySourceId)
+                    && c.Abbrv.Equals(createCurrency.Abbrv)).Any();
+            }
+
+            return false;
+        }
+
         public NozomiResult<string> Create(CreateCurrency createCurrency, long userId = 0)
         {
             if (createCurrency != null && createCurrency.IsValid())
@@ -44,7 +56,7 @@ namespace Nozomi.Service.Services
                 return new NozomiResult<string>(NozomiResultType.Success, "Currency successfully created!");
             }
 
-            return new NozomiResult<string>(NozomiResultType.Failed, "Failed to create currency. Please make sure" +
+            return new NozomiResult<string>(NozomiResultType.Failed, "Failed to create currency. Please make sure " +
                                                                      "that your currency object is proper.");
         }
 

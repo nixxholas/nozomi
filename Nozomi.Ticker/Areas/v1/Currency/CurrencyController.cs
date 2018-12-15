@@ -17,9 +17,18 @@ namespace Nozomi.Ticker.Areas.v1.Currency
         }
 
         [HttpPost]
-        public NozomiResult<string> Create(CreateCurrency createCurrency)
+        public ActionResult<NozomiResult<string>> Create([FromBody]CreateCurrency createCurrency)
         {
-            return _currencyService.Create(createCurrency);
+            if (_currencyService.Any(createCurrency))
+            {
+                return BadRequest(new NozomiResult<string>()
+                {
+                    ResultType = NozomiResultType.Failed,
+                    Message = "A currency with the data provided already exists."
+                });
+            }
+            
+            return Ok(_currencyService.Create(createCurrency));
         }
 
         [HttpPost]

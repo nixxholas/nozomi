@@ -6,7 +6,7 @@ namespace Nozomi.Ticker.Areas.v1.Currency
 {
     public interface ICurrencyController
     {
-        NozomiResult<string> Create(CreateCurrency createCurrency);
+        ActionResult<NozomiResult<string>> Create(CreateCurrency createCurrency);
 
         NozomiResult<string> Update(UpdateCurrency updateCurrency);
     }
