@@ -41,23 +41,30 @@ namespace Nozomi.Service.Services
 
         public NozomiResult<string> Create(CreateCurrency createCurrency, long userId = 0)
         {
-            if (createCurrency != null && createCurrency.IsValid())
+            try
             {
-                _unitOfWork.GetRepository<Currency>().Add(new Currency()
+                if (createCurrency != null && createCurrency.IsValid())
                 {
-                    Abbrv = createCurrency.Abbrv,
-                    Name = createCurrency.Name,
-                    CurrencyTypeId = createCurrency.CurrencyTypeId,
-                    CurrencySourceId = createCurrency.CurrencySourceId,
-                    WalletTypeId = createCurrency.WalletTypeId
-                });
-                _unitOfWork.Commit(userId);
+                    _unitOfWork.GetRepository<Currency>().Add(new Currency()
+                    {
+                        Abbrv = createCurrency.Abbrv,
+                        Name = createCurrency.Name,
+                        CurrencyTypeId = createCurrency.CurrencyTypeId,
+                        CurrencySourceId = createCurrency.CurrencySourceId,
+                        WalletTypeId = createCurrency.WalletTypeId
+                    });
+                    _unitOfWork.Commit(userId);
 
-                return new NozomiResult<string>(NozomiResultType.Success, "Currency successfully created!");
+                    return new NozomiResult<string>(NozomiResultType.Success, "Currency successfully created!");
+                }
+
+                return new NozomiResult<string>(NozomiResultType.Failed, "Failed to create currency. Please make sure " +
+                                                                         "that your currency object is proper.");
             }
-
-            return new NozomiResult<string>(NozomiResultType.Failed, "Failed to create currency. Please make sure " +
-                                                                     "that your currency object is proper.");
+            catch (Exception ex)
+            {
+                return new NozomiResult<string>(NozomiResultType.Failed, ex.ToString());
+            }
         }
 
         public NozomiResult<string> Update(UpdateCurrency currency, long userId = 0)
