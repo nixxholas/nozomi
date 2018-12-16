@@ -5,7 +5,7 @@ using Nozomi.Ticker.Models;
 namespace Nozomi.Ticker.Areas
 {
     [ApiExplorerSettings(IgnoreApi = true)]
-    public class HomeController : Controller
+    public class HomeController : BaseViewController
     {
         [Route("/")]
         public IActionResult Index()
