@@ -254,6 +254,16 @@ namespace Nozomi.Ticker.Areas
             return View("LoggedOut", vm);
         }
 
+        /// <summary>
+        /// Show registration page
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        public async Task<IActionResult> Register(string returnUrl)
+        {
+            return View();
+        }
+
         /*****************************************/
         /* helper APIs for the AccountController */
         /*****************************************/
