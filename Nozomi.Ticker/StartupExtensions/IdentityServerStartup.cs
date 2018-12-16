@@ -25,7 +25,8 @@ namespace Nozomi.Ticker.StartupExtensions
             }
 
             services.AddIdentity<User, Role>()
-                .AddEntityFrameworkStores<NozomiAuthContext>();
+                .AddEntityFrameworkStores<NozomiAuthContext>()
+                .AddDefaultTokenProviders();
             
             services.Configure<IdentityOptions>(options =>
             {
