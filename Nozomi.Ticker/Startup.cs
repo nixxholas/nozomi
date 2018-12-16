@@ -14,6 +14,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Nozomi.Data.WebModels.LoggingModels;
 using Nozomi.Repo.Data;
+using Nozomi.Repo.Identity.Data;
 using Nozomi.Repo.Repositories;
 using Nozomi.Service.HostedServices;
 using Nozomi.Service.HostedServices.RequestTypes;
@@ -62,6 +63,13 @@ namespace Nozomi.Ticker
                     options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
                 },
                     ServiceLifetime.Transient);
+
+                services.AddDbContext<NozomiAuthContext>(options =>
+                {
+                    options.UseNpgsql(Configuration.GetConnectionString("LocalAuth:" + Environment.MachineName));
+                    options.EnableSensitiveDataLogging(false);
+                    options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
+                });
             
                 // Redis
                 services.AddDistributedRedisCache(option =>
@@ -79,6 +87,13 @@ namespace Nozomi.Ticker
                     options.EnableSensitiveDataLogging(false);
                     options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
                 }, ServiceLifetime.Transient);
+
+                services.AddDbContext<NozomiAuthContext>(options =>
+                {
+                    options.UseNpgsql(Configuration.GetConnectionString("NozomiAuthDb"));
+                    options.EnableSensitiveDataLogging(false);
+                    options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
+                });
             
                 // Redis
                 services.AddDistributedRedisCache(option =>
@@ -111,6 +126,8 @@ namespace Nozomi.Ticker
             
             services.ConfigureHostedServices();
 
+            services.ConfigureIdentityServer();
+            
             services.ConfigureSwagger();
         }
 
@@ -145,7 +162,7 @@ namespace Nozomi.Ticker
             {
                 routes.MapRoute(
                     name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
+                    template: "{controller=home}/{action=index}/{id?}");
             });
             
             // Enable middleware to serve generated Swagger as a JSON endpoint.
