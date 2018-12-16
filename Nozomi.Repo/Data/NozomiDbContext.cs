@@ -29,7 +29,7 @@ namespace Nozomi.Repo.Data
         public DbSet<RequestProperty> RequestProperties { get; set; }
         public DbSet<Source> Sources { get; set; }
         
-        public NozomiDbContext(DbContextOptions options) : base(options)
+        public NozomiDbContext(DbContextOptions<NozomiDbContext> options) : base(options)
         {
         }
 
