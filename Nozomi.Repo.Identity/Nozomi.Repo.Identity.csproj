@@ -5,10 +5,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="Stores\Interfaces" />
-    </ItemGroup>
-
-    <ItemGroup>
       <Reference Include="IdentityServer4.Storage, Version=2.3.1.0, Culture=neutral, PublicKeyToken=93d4430489de4ef4">
         <HintPath>..\..\..\.nuget\packages\identityserver4.storage\2.3.1\lib\netstandard2.0\IdentityServer4.Storage.dll</HintPath>
       </Reference>

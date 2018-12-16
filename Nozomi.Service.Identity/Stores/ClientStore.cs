@@ -5,7 +5,7 @@ using IdentityServer4.Stores;
 using Microsoft.Extensions.Logging;
 using Nozomi.Repo.Identity.Data;
 
-namespace Nozomi.Repo.Identity.Stores
+namespace Nozomi.Service.Identity.Stores
 {
     public class ClientStore : IClientStore
     {
