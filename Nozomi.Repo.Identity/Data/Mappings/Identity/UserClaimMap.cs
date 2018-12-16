@@ -5,11 +5,11 @@ using Nozomi.Core.Helpers.Mapping;
 
 namespace Nozomi.Repo.Identity.Data.Mappings.Identity
 {
-    public class RoleMap : BaseMap<Role>
+    public class UserClaimMap : BaseMap<UserClaim>
     {
-        public RoleMap(EntityTypeBuilder<Role> entityTypeBuilder) : base(entityTypeBuilder)
+        public UserClaimMap(EntityTypeBuilder<UserClaim> entityTypeBuilder) : base(entityTypeBuilder)
         {
-            entityTypeBuilder.ToTable("Roles");
+            entityTypeBuilder.ToTable("UserClaims");
         }
     }
 }

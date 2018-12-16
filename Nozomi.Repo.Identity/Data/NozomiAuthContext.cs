@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Nozomi.Base.Identity.Models;
 using Nozomi.Base.Identity.Models.Identity;
+using Nozomi.Repo.Identity.Data.Mappings.Identity;
 
 namespace Nozomi.Repo.Identity.Data
 {
@@ -16,8 +17,14 @@ namespace Nozomi.Repo.Identity.Data
          
  
         protected override void OnModelCreating(ModelBuilder builder)
-        { 
-            
+        {
+            var roleClaimMap = new RoleClaimMap(builder.Entity<RoleClaim>());
+            var roleMap = new RoleMap(builder.Entity<Role>());
+            var userClaimMap = new UserClaimMap(builder.Entity<UserClaim>());
+            var userLoginMap = new UserLoginMap(builder.Entity<UserLogin>());
+            var userMap = new UserMap(builder.Entity<User>());
+            var userRoleMap = new UserRoleMap(builder.Entity<UserRole>());
+            var userTokenMap = new UserTokenMap(builder.Entity<UserToken>());
             
             builder.Entity<ClientEntity>().HasKey(m => m.ClientId);
             builder.Entity<ApiResourceEntity>().HasKey(m => m.ApiResourceName);
