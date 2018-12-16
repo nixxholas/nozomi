@@ -1,27 +1,23 @@
 @model Nozomi.Data.AreaModels.Account.LoginViewModel
 
-<div class="login-page">
-    <div class="page-header">
-        <h1>Login</h1>
-    </div>
+@{
+    ViewData["Title"] = "Login";
+}
 
-    @Html.Partial("_ValidationSummary")
-
-    <div class="row">
-
-        @if (Model.EnableLocalLogin)
-        {
-            <div class="col-sm-6">
+<div class="position-relative overflow-hidden p-3 p-md-5 m-md-3 text-center bg-light">
+    <div class="col-md-5 p-lg-5 mx-auto my-5">
+        <h2 class="display-5">@ViewData["Title"]</h2>
+        <p class="lead">
+            @Html.Partial("_ValidationSummary")
+            @if (Model.EnableLocalLogin)
+            {
                 <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h3 class="panel-title">Local Login</h3>
-                    </div>
                     <div class="panel-body">
 
                         <form asp-route="Login">
-                            <input type="hidden" asp-for="ReturnUrl" />
+                            <input type="hidden" asp-for="ReturnUrl"/>
 
-                            <fieldset>
+                            <fieldset class="form-group">
                                 <div class="form-group">
                                     <label asp-for="Username"></label>
                                     <input class="form-control" placeholder="Username" asp-for="Username" autofocus>
@@ -40,10 +36,6 @@
                                     </div>
                                 }
 
-                                <div>
-                                    <p>The default users are alice/bob, password: Pass123$</p>
-                                </div>
-
                                 <div class="form-group">
                                     <button class="btn btn-primary" name="button" value="login">Login</button>
                                     <button class="btn btn-default" name="button" value="cancel">Cancel</button>
@@ -52,12 +44,10 @@
                         </form>
                     </div>
                 </div>
-            </div>
-        }
+            }
 
-        @if (Model.VisibleExternalProviders.Any())
-        {
-            <div class="col-md-6 col-sm-6 external-providers">
+            @if (Model.VisibleExternalProviders.Any())
+            {
                 <div class="panel panel-default">
                     <div class="panel-heading">
                         <h3 class="panel-title">External Login</h3>
@@ -78,28 +68,15 @@
                         </ul>
                     </div>
                 </div>
-            </div>
-        }
+            }
 
-        @if (!Model.EnableLocalLogin && !Model.VisibleExternalProviders.Any())
-        {
-            <div class="alert alert-warning">
-                <strong>Invalid login request</strong>
-                There are no login schemes configured for this client.
-            </div>
-        }
+            @if (!Model.EnableLocalLogin && !Model.VisibleExternalProviders.Any())
+            {
+                <div class="alert alert-warning">
+                    <strong>Invalid login request</strong>
+                    There are no login schemes configured for this client.
+                </div>
+            }
+        </p>
     </div>
 </div>
-
-<!DOCTYPE html>
-
-<html>
-<head>
-    <title>title</title>
-</head>
-<body>
-<div>
-      
-</div>
-</body>
-</html>
