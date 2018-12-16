@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Nozomi.Core.Helpers.Mapping;
 using Nozomi.Data.CurrencyModels;
 using Nozomi.Data.WebModels;
 

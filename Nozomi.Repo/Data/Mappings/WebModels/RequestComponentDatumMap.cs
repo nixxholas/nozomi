@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Nozomi.Core.Helpers.Mapping;
 using Nozomi.Data.WebModels;
 
 namespace Nozomi.Repo.Data.Mappings.WebModels
