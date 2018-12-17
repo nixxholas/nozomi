@@ -261,8 +261,11 @@ namespace Nozomi.Ticker.Areas
         [HttpGet]
         public async Task<IActionResult> Register(string returnUrl)
         {
+            ViewData["ReturnUrl"] = returnUrl;
             return View();
         }
+        
+        
 
         /*****************************************/
         /* helper APIs for the AccountController */
