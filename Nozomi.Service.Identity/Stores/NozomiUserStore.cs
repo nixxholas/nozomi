@@ -250,7 +250,9 @@ namespace Nozomi.Service.Identity.Stores
             if (claim == null)
                 throw new ArgumentNullException(nameof(claim));
 
-            var result = _unitOfWork.GetRepository<UserClaim>()
+            // Do not implicitly declare the collection type
+            // https://stackoverflow.com/questions/30051725/cannot-implicitly-convert-type-system-collections-ilist-to-system-collections
+            IList<User> result = _unitOfWork.GetRepository<UserClaim>()
                 .GetQueryable()
                 .Include(uc => uc.User)
                 .Where(uc => uc.ClaimType.Equals(claim.Type) && uc.ClaimValue.Equals(claim.Value))
