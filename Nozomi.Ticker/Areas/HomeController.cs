@@ -1,12 +1,20 @@
 ﻿using System.Diagnostics;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using Nozomi.Base.Identity.Models.Identity;
 using Nozomi.Ticker.Models;
 
 namespace Nozomi.Ticker.Areas
 {
     [ApiExplorerSettings(IgnoreApi = true)]
-    public class HomeController : BaseViewController
+    public class HomeController : BaseViewController<HomeController>
     {
+        public HomeController(ILogger<HomeController> logger, UserManager<User> userManager) 
+            : base(logger, userManager)
+        {
+        }
+        
         [Route("/")]
         public IActionResult Index()
         {
