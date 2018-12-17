@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
+using Nozomi.Repo.BCL.Context;
 
 namespace Nozomi.Repo.BCL.Repository
 {

@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.Extensions.Logging;
+using Nozomi.Repo.BCL.Context;
 using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Data;
 

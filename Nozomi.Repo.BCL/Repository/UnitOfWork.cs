@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using Nozomi.Repo.BCL.Context;
 
 namespace Nozomi.Repo.BCL.Repository
 {
     public class UnitOfWork<TContext>  : IRepositoryFactory, IUnitOfWork<TContext>, IUnitOfWork
+        where TContext : IDbContext
     {
         private Dictionary<Type, object> _repositories;
 

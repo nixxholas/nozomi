@@ -1,4 +1,5 @@
 ﻿using System;
+using Nozomi.Repo.BCL.Context;
 
 namespace Nozomi.Repo.BCL.Repository
 {
@@ -9,7 +10,7 @@ namespace Nozomi.Repo.BCL.Repository
         int Commit(long userId = 0);
     }
 
-    public interface IUnitOfWork<TContext> : IUnitOfWork
+    public interface IUnitOfWork<TContext> : IUnitOfWork where TContext : IDbContext
     {
         TContext Context { get; }
     }

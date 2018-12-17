@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Counter.SDK.SharedModels;
 using Nozomi.Data.WebModels;
 using Nozomi.Data.WebModels.LoggingModels;
+using Nozomi.Repo.BCL.Context;
 using Nozomi.Repo.Data.Mappings.CurrencyModels;
 using Nozomi.Repo.Data.Mappings.WebModels;
 using Nozomi.Repo.Data.Mappings.WebModels.LoggingModels;
