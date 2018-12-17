@@ -5,6 +5,7 @@ using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Nozomi.Base.Identity.Models.Identity;
 using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Identity.Data;
@@ -130,7 +131,15 @@ namespace Nozomi.Service.Identity.Stores
 
         protected override Task<UserLogin> FindUserLoginAsync(long userId, string loginProvider, string providerKey, CancellationToken cancellationToken)
         {
-            throw new System.NotImplementedException();
+            if (cancellationToken != null)
+                cancellationToken.ThrowIfCancellationRequested();
+
+            var userLoginEntity = _unitOfWork.GetRepository<UserLogin>()
+                .Get(ul => ul.UserId.Equals(userId) && ul.LoginProvider.Equals(loginProvider) 
+                                                    && ul.ProviderKey.Equals(providerKey))
+                .SingleOrDefault();
+
+            return Task.FromResult(userLoginEntity);
         }
 
         protected override Task<UserLogin> FindUserLoginAsync(string loginProvider, string providerKey, CancellationToken cancellationToken)
@@ -242,47 +251,144 @@ namespace Nozomi.Service.Identity.Stores
                 throw new ArgumentNullException(nameof(claim));
 
             var result = _unitOfWork.GetRepository<UserClaim>()
-                .GetUsersForClaim(claim.Type, claim.Value).Select(x => getApplicationUser(x)).ToList();
+                .GetQueryable()
+                .Include(uc => uc.User)
+                .Where(uc => uc.ClaimType.Equals(claim.Type) && uc.ClaimValue.Equals(claim.Value))
+                .Select(uc => uc.User)
+                .ToList();
 
             return Task.FromResult(result);
         }
 
         protected override Task<UserToken> FindTokenAsync(User user, string loginProvider, string name, CancellationToken cancellationToken)
         {
-            throw new System.NotImplementedException();
+            if (cancellationToken != null)
+                cancellationToken.ThrowIfCancellationRequested();
+
+            if (user == null)
+                throw new ArgumentNullException(nameof(user));
+
+            if (string.IsNullOrWhiteSpace(loginProvider))
+                throw new ArgumentNullException(nameof(loginProvider));
+
+            if (string.IsNullOrWhiteSpace(name))
+                throw new ArgumentNullException(nameof(name));
+
+            var userTokenEntity = _unitOfWork.GetRepository<UserToken>()
+                .Get(ut => ut.UserId.Equals(user.Id) && ut.LoginProvider.Equals(loginProvider) && ut.Name.Equals(name))
+                .SingleOrDefault();
+
+            return Task.FromResult(userTokenEntity);
         }
 
         protected override Task AddUserTokenAsync(UserToken token)
         {
-            throw new System.NotImplementedException();
+            if (token == null)
+                throw new ArgumentNullException(nameof(token));
+
+            _unitOfWork.GetRepository<UserToken>().Add(token);
+            _unitOfWork.Commit();
+
+            return Task.CompletedTask;
         }
 
         protected override Task RemoveUserTokenAsync(UserToken token)
         {
-            throw new System.NotImplementedException();
+            if (token == null)
+                throw new ArgumentNullException(nameof(token));
+
+            var userTokenEntity = _unitOfWork.GetRepository<UserToken>()
+                .Get(ut => ut.UserId.Equals(token.UserId) && ut.LoginProvider.Equals(token.LoginProvider)
+                           && ut.Name.Equals(token.Name))
+                            .SingleOrDefault();
+            if (userTokenEntity != null)
+            {
+                _unitOfWork.GetRepository<UserToken>().Delete(userTokenEntity);
+                _unitOfWork.Commit();
+            }
+
+            return Task.CompletedTask;
         }
 
         public override IQueryable<User> Users { get; }
 
         public override Task AddLoginAsync(User user, UserLoginInfo login, CancellationToken cancellationToken = new CancellationToken())
         {
-            throw new System.NotImplementedException();
+            if (cancellationToken != null)
+                cancellationToken.ThrowIfCancellationRequested();
+
+            if (user == null)
+                throw new ArgumentNullException(nameof(user));
+
+            if (login == null)
+                throw new ArgumentNullException(nameof(login));
+
+            if (string.IsNullOrWhiteSpace(login.LoginProvider))
+                throw new ArgumentNullException(nameof(login.LoginProvider));
+
+            if (string.IsNullOrWhiteSpace(login.ProviderKey))
+                throw new ArgumentNullException(nameof(login.ProviderKey));
+
+            var loginEntity = new UserLogin
+            {
+                LoginProvider = login.LoginProvider,
+                ProviderDisplayName = login.ProviderDisplayName,
+                ProviderKey = login.ProviderKey,
+                UserId = user.Id
+            };
+
+            _unitOfWork.GetRepository<UserLogin>().Add(loginEntity);
+            _unitOfWork.Commit();
+
+            return Task.CompletedTask;
         }
 
         public override Task RemoveLoginAsync(User user, string loginProvider, string providerKey,
             CancellationToken cancellationToken = new CancellationToken())
         {
-            throw new System.NotImplementedException();
+            if (cancellationToken != null)
+                cancellationToken.ThrowIfCancellationRequested();
+
+            if (user == null)
+                throw new ArgumentNullException(nameof(user));
+
+            if (string.IsNullOrWhiteSpace(loginProvider))
+                throw new ArgumentNullException(nameof(loginProvider));
+
+            if (string.IsNullOrWhiteSpace(providerKey))
+                throw new ArgumentNullException(nameof(providerKey));
+
+            _unitOfWork.GetRepository<UserLogin>().Delete(ul => ul.LoginProvider.Equals(loginProvider) 
+                                                                && ul.ProviderKey.Equals(providerKey));
+            _unitOfWork.Commit();
+            
+            return Task.CompletedTask;
         }
 
         public override Task<IList<UserLoginInfo>> GetLoginsAsync(User user, CancellationToken cancellationToken = new CancellationToken())
         {
-            throw new System.NotImplementedException();
+            if (cancellationToken != null)
+                cancellationToken.ThrowIfCancellationRequested();
+
+            if (user == null)
+                throw new ArgumentNullException(nameof(user));
+
+            IList<UserLoginInfo> result = _unitOfWork.GetRepository<UserLogin>().Get(ul => ul.UserId.Equals(user.Id))
+                .Select(x => new UserLoginInfo(x.LoginProvider, x.ProviderKey, x.ProviderDisplayName))
+                .ToList();
+
+            return Task.FromResult(result);
         }
 
         public override Task<User> FindByEmailAsync(string normalizedEmail, CancellationToken cancellationToken = new CancellationToken())
         {
-            throw new System.NotImplementedException();
+            if (string.IsNullOrWhiteSpace(normalizedEmail))
+                throw new ArgumentNullException(nameof(normalizedEmail));
+
+            var userEntity = _unitOfWork.GetRepository<User>().Get(u => u.NormalizedEmail.Equals(normalizedEmail))
+                .SingleOrDefault();
+
+            return Task.FromResult(getApplicationUser(userEntity));
         }
         
         #region Private Methods

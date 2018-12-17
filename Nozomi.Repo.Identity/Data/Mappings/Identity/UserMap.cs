@@ -10,6 +10,9 @@ namespace Nozomi.Repo.Identity.Data.Mappings.Identity
         public UserMap(EntityTypeBuilder<User> entityTypeBuilder) : base(entityTypeBuilder)
         {
             entityTypeBuilder.ToTable("Users");
+
+            entityTypeBuilder.HasMany(u => u.UserClaims).WithOne(uc => uc.User)
+                .HasForeignKey(uc => uc.UserId);
         }
     }
 }
