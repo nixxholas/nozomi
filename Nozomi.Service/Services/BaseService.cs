@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.Extensions.Logging;
+using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Data;
-using Nozomi.Repo.Repositories;
 
 namespace Nozomi.Service.Services
 {

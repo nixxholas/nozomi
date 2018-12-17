@@ -1,7 +1,6 @@
 ﻿using System;
-using Nozomi.Repo.Data;
 
-namespace Nozomi.Repo.Repositories
+namespace Nozomi.Repo.BCL.Repository
 {
     public interface IUnitOfWork : IDisposable
     {
@@ -10,7 +9,7 @@ namespace Nozomi.Repo.Repositories
         int Commit(long userId = 0);
     }
 
-    public interface IUnitOfWork<TContext> : IUnitOfWork where TContext : IDbContext
+    public interface IUnitOfWork<TContext> : IUnitOfWork
     {
         TContext Context { get; }
     }

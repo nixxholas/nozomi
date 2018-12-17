@@ -17,5 +17,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="ClientApp\configs" />
+    <Folder Include="Configs" />
   </ItemGroup>
 </Project>

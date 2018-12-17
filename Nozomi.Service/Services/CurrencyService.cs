@@ -13,8 +13,8 @@ using Counter.SDK.Utils.Iterations;
 using Nozomi.Data;
 using Nozomi.Data.AreaModels.v1.Currency;
 using Nozomi.Data.CurrencyModels;
+using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Data;
-using Nozomi.Repo.Repositories;
 using Nozomi.Service.Services;
 using Nozomi.Service.Services.Interfaces;
 

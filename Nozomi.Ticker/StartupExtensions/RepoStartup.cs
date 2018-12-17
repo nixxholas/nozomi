@@ -1,6 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
+using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Data;
-using Nozomi.Repo.Repositories;
 
 namespace Nozomi.Ticker.StartupExtensions
 {

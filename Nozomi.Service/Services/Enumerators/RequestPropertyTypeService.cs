@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data.CurrencyModels;
 using Nozomi.Data.WebModels;
+using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Data;
-using Nozomi.Repo.Repositories;
 using Nozomi.Service.Services.Enumerators.Interfaces;
 
 namespace Nozomi.Service.Services.Enumerators

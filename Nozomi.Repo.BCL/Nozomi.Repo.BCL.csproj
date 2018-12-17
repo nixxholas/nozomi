@@ -4,4 +4,10 @@
         <TargetFramework>netcoreapp2.1</TargetFramework>
     </PropertyGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\Nozomi.Base.Identity\Nozomi.Base.Identity.csproj" />
+      <ProjectReference Include="..\Nozomi.Core\Nozomi.Core.csproj" />
+      <ProjectReference Include="..\Nozomi.Data\Nozomi.Data.csproj" />
+    </ItemGroup>
+
 </Project>

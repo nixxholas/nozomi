@@ -11,7 +11,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Nozomi.Base.Identity\Nozomi.Base.Identity.csproj" />
+      <ProjectReference Include="..\Nozomi.Repo.BCL\Nozomi.Repo.BCL.csproj" />
     </ItemGroup>
 
 </Project>

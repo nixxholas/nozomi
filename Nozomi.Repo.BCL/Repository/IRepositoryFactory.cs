@@ -1,4 +1,4 @@
-﻿namespace Nozomi.Repo.Repositories
+﻿namespace Nozomi.Repo.BCL.Repository
 {
     public interface IRepositoryFactory
     {

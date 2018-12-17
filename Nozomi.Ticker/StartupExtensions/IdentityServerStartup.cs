@@ -6,8 +6,8 @@ using Nozomi.Base.Identity.Debugging;
 using Nozomi.Base.Identity.Models;
 using Nozomi.Base.Identity.Models.Identity;
 using Nozomi.Repo.Identity.Data;
-using Nozomi.Repo.Identity.Stores;
 using Nozomi.Service.Identity;
+using Nozomi.Service.Identity.Stores;
 
 namespace Nozomi.Ticker.StartupExtensions
 {

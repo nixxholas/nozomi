@@ -7,20 +7,22 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Nozomi.Base.Identity.Models.Identity;
 using Nozomi.Data.WebModels.LoggingModels;
 using Nozomi.Repo.Data;
 using Nozomi.Repo.Identity.Data;
-using Nozomi.Repo.Repositories;
 using Nozomi.Service.HostedServices;
 using Nozomi.Service.HostedServices.RequestTypes;
 using Nozomi.Service.HostedServices.RequestTypes.Interfaces;
 using Nozomi.Service.HostedServices.StaticUpdater;
 using Nozomi.Service.Hubs;
+using Nozomi.Service.Identity.Stores;
 using Nozomi.Service.Middleware;
 using Nozomi.Service.Services;
 using Nozomi.Service.Services.Interfaces;
@@ -47,7 +49,7 @@ namespace Nozomi.Ticker
         {
             // Environment Inclusion
             var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-
+            
             if (!string.IsNullOrEmpty(env) && !env.Equals("production", StringComparison.OrdinalIgnoreCase))
             {
                 // Greet the beloved dev

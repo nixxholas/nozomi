@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 
-namespace Nozomi.Repo.Repositories
+namespace Nozomi.Repo.BCL.Repository
 {
     public interface IRepository<T> where T : class
     {

@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
-using Nozomi.Repo.Data;
 
-namespace Nozomi.Repo.Repositories
+namespace Nozomi.Repo.BCL.Repository
 {
     public class Repository<T> : IRepository<T> where T : class
     {

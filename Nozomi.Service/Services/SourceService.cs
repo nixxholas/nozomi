@@ -7,8 +7,8 @@ using Microsoft.Extensions.Logging;
 using Nozomi.Data;
 using Nozomi.Data.AreaModels.v1.CurrencySource;
 using Nozomi.Data.CurrencyModels;
+using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Data;
-using Nozomi.Repo.Repositories;
 using Nozomi.Service.Services.Interfaces;
 
 namespace Nozomi.Service.Services
