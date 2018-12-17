@@ -17,8 +17,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Nozomi.Base.Identity.Attributes;
+using Nozomi.Base.Identity.Models.Areas.Account;
 using Nozomi.Base.Identity.Models.Identity;
-using Nozomi.Data.AreaModels.Account;
 
 namespace Nozomi.Ticker.Areas
 {

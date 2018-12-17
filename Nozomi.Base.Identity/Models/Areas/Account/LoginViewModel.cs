@@ -1,8 +1,7 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Nozomi.Data.AreaModels.Account
+namespace Nozomi.Base.Identity.Models.Areas.Account
 {
     public class LoginViewModel : LoginInputModel
     {
