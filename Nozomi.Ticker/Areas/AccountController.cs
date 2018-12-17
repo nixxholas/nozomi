@@ -559,6 +559,45 @@ namespace Nozomi.Ticker.Areas
                 return View(model);
             }
         }
+        
+        //
+        // GET: /Account/UseRecoveryCode
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<IActionResult> UseRecoveryCode(string returnUrl = null)
+        {
+            // Require that the user has already logged in via username/password or external login
+            var user = await _signInManager.GetTwoFactorAuthenticationUserAsync();
+            if (user == null)
+            {
+                return View("Error");
+            }
+            return View(new UseRecoveryCodeInputModel { ReturnUrl = returnUrl });
+        }
+
+        //
+        // POST: /Account/UseRecoveryCode
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UseRecoveryCode(UseRecoveryCodeViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var result = await _signInManager.TwoFactorRecoveryCodeSignInAsync(model.Code);
+            if (result.Succeeded)
+            {
+                return RedirectToLocal(model.ReturnUrl);
+            }
+            else
+            {
+                ModelState.AddModelError(string.Empty, "Invalid code.");
+                return View(model);
+            }
+        }
 
         /*****************************************/
         /* helper APIs for the AccountController */
