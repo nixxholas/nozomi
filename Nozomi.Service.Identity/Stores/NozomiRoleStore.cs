@@ -15,8 +15,10 @@ namespace Nozomi.Service.Identity.Stores
     {
         private readonly IUnitOfWork<NozomiAuthContext> _unitOfWork;
         
-        public NozomiRoleStore(IdentityErrorDescriber describer) : base(describer)
+        public NozomiRoleStore(IdentityErrorDescriber describer,
+            IUnitOfWork<NozomiAuthContext> unitOfWork) : base(describer)
         {
+            _unitOfWork = unitOfWork;
         }
 
         public override Task<IdentityResult> CreateAsync(Role role, CancellationToken cancellationToken = new CancellationToken())
