@@ -295,6 +295,25 @@ namespace Nozomi.Ticker.Areas
             // If we got this far, something failed, redisplay form
             return View(model);
         }
+        
+        // GET: /Account/ConfirmEmail
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<IActionResult> ConfirmEmail(string userId, string code)
+        {
+            if (userId == null || code == null)
+            {
+                return View("Error");
+            }
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return View("Error");
+            }
+            
+            var result = await _userManager.ConfirmEmailAsync(user, code);
+            return View(result.Succeeded ? "ConfirmEmail" : "Error");
+        }
 
         /*****************************************/
         /* helper APIs for the AccountController */
