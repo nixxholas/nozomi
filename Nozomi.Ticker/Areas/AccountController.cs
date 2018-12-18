@@ -530,7 +530,8 @@ namespace Nozomi.Ticker.Areas
             {
                 return View("Error");
             }
-            return View(new VerifyAuthenticatorCodeInputModel { ReturnUrl = returnUrl, RememberMe = rememberMe });
+            return View((VerifyAuthenticatorCodeViewModel) 
+                new VerifyAuthenticatorCodeInputModel { ReturnUrl = returnUrl, RememberMe = rememberMe });
         }
 
         //
