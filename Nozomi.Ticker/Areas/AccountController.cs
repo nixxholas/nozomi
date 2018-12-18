@@ -20,6 +20,7 @@ using Microsoft.Extensions.Logging;
 using Nozomi.Base.Identity.Attributes;
 using Nozomi.Base.Identity.Models.Areas.Account;
 using Nozomi.Base.Identity.Models.Identity;
+using Nozomi.Preprocessing.Events.Interfaces;
 using Nozomi.Service.Identity.Managers;
 
 namespace Nozomi.Ticker.Areas
@@ -27,10 +28,12 @@ namespace Nozomi.Ticker.Areas
     [SecurityHeaders]
     public class AccountController : BaseViewController<AccountController>
     {
+        private readonly IAuthenticationSchemeProvider _schemeProvider;
         private readonly IIdentityServerInteractionService _interaction;
         private readonly IClientStore _clientStore;
-        private readonly IAuthenticationSchemeProvider _schemeProvider;
+        private readonly IEmailSender _emailSender;
         private readonly IEventService _events;
+        private readonly ISmsSender _smsSender;
 
         public AccountController(
             ILogger<AccountController> logger,
@@ -39,12 +42,15 @@ namespace Nozomi.Ticker.Areas
             IIdentityServerInteractionService interaction,
             IClientStore clientStore,
             IAuthenticationSchemeProvider schemeProvider,
-            IEventService events) : base(logger, signInManager, userManager)
+            IEventService events, IEmailSender emailSender,
+            ISmsSender smsSender) : base(logger, signInManager, userManager)
         {
             _interaction = interaction;
             _clientStore = clientStore;
             _schemeProvider = schemeProvider;
             _events = events;
+            _emailSender = emailSender;
+            _smsSender = smsSender;
         }
 
         /// <summary>

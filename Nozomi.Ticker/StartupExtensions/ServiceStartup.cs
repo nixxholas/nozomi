@@ -1,6 +1,8 @@
 using CounterCore.Service.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Nozomi.Preprocessing.Events;
+using Nozomi.Preprocessing.Events.Interfaces;
 using Nozomi.Service.HostedServices.RequestTypes;
 using Nozomi.Service.Services;
 using Nozomi.Service.Services.Enumerators;
@@ -30,6 +32,9 @@ namespace Nozomi.Ticker.StartupExtensions
             services.AddScoped<ICurrencyPairTypeService, CurrencyPairTypeService>();
             services.AddScoped<IRequestPropertyTypeService, RequestPropertyTypeService>();
             services.AddScoped<IRequestTypeService, RequestTypeService>();
+
+            services.AddTransient<IEmailSender, EmailSender>();
+            services.AddTransient<ISmsSender, SmsSender>();
         }
     }
 }
