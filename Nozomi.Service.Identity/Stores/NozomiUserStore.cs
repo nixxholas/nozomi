@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading;
@@ -9,10 +10,11 @@ using Microsoft.EntityFrameworkCore;
 using Nozomi.Base.Identity.Models.Identity;
 using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Identity.Data;
+using Nozomi.Service.Identity.Stores.Interfaces;
 
 namespace Nozomi.Service.Identity.Stores
 {
-    public class NozomiUserStore : UserStoreBase<User, long, UserClaim, UserLogin, UserToken>
+    public class NozomiUserStore : UserStoreBase<User, long, UserClaim, UserLogin, UserToken>, INozomiUserStore
     {
         private readonly IUnitOfWork<NozomiAuthContext> _unitOfWork;
         
@@ -281,6 +283,45 @@ namespace Nozomi.Service.Identity.Stores
                 .SingleOrDefault();
 
             return Task.FromResult(userTokenEntity);
+        }
+
+        public Task ForceConfirmEmailAsync(long userId)
+        {
+            if (userId <= 0)
+                throw new ArgumentNullException(nameof(userId));
+
+            var user = _unitOfWork.GetRepository<User>()
+                .Get(u => u.Id.Equals(userId))
+                .SingleOrDefault(u => !u.EmailConfirmed);
+            
+            if (user == null)
+                throw new InvalidDataException(nameof(user));
+
+            user.EmailConfirmed = true;
+            _unitOfWork.GetRepository<User>().Update(user);
+            _unitOfWork.Commit();
+
+            return Task.CompletedTask;
+        }
+
+        public Task ForceConfirmEmailAsync(User user)
+        {
+            if (user == null)
+                throw new ArgumentNullException(nameof(user));
+
+            var userData = _unitOfWork.GetRepository<User>()
+                .Get(u => u.Id.Equals(user.Id) 
+                          || u.NormalizedEmail.Equals(user.Email.ToUpper()))
+                .SingleOrDefault(u => !u.EmailConfirmed);
+            
+            if (userData == null)
+                throw new InvalidDataException(nameof(user));
+
+            user.EmailConfirmed = true;
+            _unitOfWork.GetRepository<User>().Update(user);
+            _unitOfWork.Commit();
+
+            return Task.CompletedTask;
         }
 
         protected override Task AddUserTokenAsync(UserToken token)
