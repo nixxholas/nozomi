@@ -8,4 +8,8 @@
       <ProjectReference Include="..\Nozomi.Preprocessing\Nozomi.Preprocessing.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Configs" />
+    </ItemGroup>
+
 </Project>
