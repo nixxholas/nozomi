@@ -578,7 +578,7 @@ namespace Nozomi.Ticker.Areas
             {
                 return View("Error");
             }
-            return View(new UseRecoveryCodeInputModel { ReturnUrl = returnUrl });
+            return View((UseRecoveryCodeViewModel) new UseRecoveryCodeInputModel { ReturnUrl = returnUrl });
         }
 
         //
