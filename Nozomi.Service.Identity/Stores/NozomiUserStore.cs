@@ -311,6 +311,7 @@ namespace Nozomi.Service.Identity.Stores
 
             var userData = _unitOfWork.GetRepository<User>()
                 .Get(u => u.Id.Equals(user.Id) 
+                          || u.NormalizedEmail.Equals(user.NormalizedEmail)
                           || u.NormalizedEmail.Equals(user.Email.ToUpper()))
                 .SingleOrDefault(u => !u.EmailConfirmed);
             
