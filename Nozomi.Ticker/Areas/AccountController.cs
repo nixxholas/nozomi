@@ -483,7 +483,7 @@ namespace Nozomi.Ticker.Areas
             {
                 return View("Error");
             }
-            return View(new VerifyCodeInputModel { Provider = provider, ReturnUrl = returnUrl, RememberMe = rememberMe });
+            return View((VerifyCodeViewModel) new VerifyCodeInputModel { Provider = provider, ReturnUrl = returnUrl, RememberMe = rememberMe });
         }
 
         //
