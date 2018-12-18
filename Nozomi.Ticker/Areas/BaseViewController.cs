@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Nozomi.Base.Identity.Models.Identity;
+using Nozomi.Service.Identity.Managers;
 
 namespace Nozomi.Ticker.Areas
 {
@@ -10,12 +11,14 @@ namespace Nozomi.Ticker.Areas
     public class BaseViewController<TController> : Controller where TController : class
     {
         public readonly ILogger<TController> _logger;
-        public readonly UserManager<User> _userManager;
+        public readonly NozomiSignInManager _signInManager;
+        public readonly NozomiUserManager _userManager;
         
         public BaseViewController(ILogger<TController> logger,
-            UserManager<User> userManager)
+            NozomiSignInManager signInManager, NozomiUserManager userManager)
         {
             _logger = logger;
+            _signInManager = signInManager;
             _userManager = userManager;
         }
         
