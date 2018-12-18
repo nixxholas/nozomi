@@ -9,6 +9,7 @@ using Nozomi.Repo.Identity.Data;
 using Nozomi.Service.Identity;
 using Nozomi.Service.Identity.Managers;
 using Nozomi.Service.Identity.Stores;
+using Nozomi.Service.Identity.Stores.Interfaces;
 
 namespace Nozomi.Ticker.StartupExtensions
 {
@@ -24,10 +25,14 @@ namespace Nozomi.Ticker.StartupExtensions
             } else
             {
             }
+            
+            // Identity-related service injections
+            services.AddTransient<INozomiUserStore, NozomiUserStore>();
 
             services.AddIdentity<User, Role>()
                 .AddEntityFrameworkStores<NozomiAuthContext>()
                 .AddUserManager<NozomiUserManager>()
+                .AddSignInManager<NozomiSignInManager>()
                 .AddUserStore<NozomiUserStore>()
                 .AddRoleStore<NozomiRoleStore>()
                 .AddDefaultTokenProviders();
