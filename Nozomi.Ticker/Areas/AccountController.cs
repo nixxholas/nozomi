@@ -286,6 +286,7 @@ namespace Nozomi.Ticker.Areas
                 if (result.Succeeded)
                 {
                     #if DEBUG
+                    await _userManager.ForceConfirmEmail(user);
                     await _signInManager.SignInAsync(user, false);
                     _logger.LogInformation(3, "User created a new account with password.");
                     #else
