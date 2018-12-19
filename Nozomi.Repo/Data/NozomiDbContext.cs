@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Counter.SDK.SharedModels;
+using Nozomi.Data;
 using Nozomi.Data.WebModels;
 using Nozomi.Data.WebModels.LoggingModels;
 using Nozomi.Repo.BCL.Context;

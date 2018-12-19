@@ -1,5 +1,3 @@
-using Counter.SDK.SharedModels;
-
 namespace Nozomi.Data.WebModels
 {
     public class RequestComponentDatum : BaseEntityModel

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using Counter.SDK.SharedModels;
 
 namespace Nozomi.Data.CurrencyModels
 {

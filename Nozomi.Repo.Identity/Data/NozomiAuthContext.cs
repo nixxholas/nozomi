@@ -2,11 +2,11 @@ using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Counter.SDK.SharedModels;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Nozomi.Base.Identity.Models;
 using Nozomi.Base.Identity.Models.Identity;
+using Nozomi.Data;
 using Nozomi.Repo.BCL.Context;
 using Nozomi.Repo.Identity.Data.Mappings.Identity;
 

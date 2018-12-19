@@ -1,6 +1,4 @@
-﻿using Counter.SDK.SharedModels;
-
-namespace Nozomi.Data.WebModels.LoggingModels
+﻿namespace Nozomi.Data.WebModels.LoggingModels
 {
     public class RequestLog : BaseEntityModel
     {
