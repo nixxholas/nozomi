@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Nozomi.Base.Identity.Models.Identity;
 using Nozomi.Service.Identity.Managers.Interfaces;
+using Nozomi.Service.Identity.Stores;
 using Nozomi.Service.Identity.Stores.Interfaces;
 
 namespace Nozomi.Service.Identity.Managers
@@ -23,6 +24,7 @@ namespace Nozomi.Service.Identity.Managers
             : base(store, optionsAccessor, passwordHasher, userValidators, passwordValidators, keyNormalizer, 
                 errors, services, logger)
         {
+            Store = store;
         }
 
         public async Task<User> FindAsync(string id, string password)
