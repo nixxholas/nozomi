@@ -146,7 +146,14 @@ namespace Nozomi.Service.Identity.Stores
 
         protected override Task<UserLogin> FindUserLoginAsync(string loginProvider, string providerKey, CancellationToken cancellationToken)
         {
-            throw new System.NotImplementedException();
+            if (cancellationToken != null)
+                cancellationToken.ThrowIfCancellationRequested();
+
+            var userLoginEntity = _unitOfWork.GetRepository<UserLogin>()
+                .Get(ul => ul.LoginProvider.Equals(loginProvider) && ul.ProviderKey.Equals(providerKey))
+                .SingleOrDefault();
+
+            return Task.FromResult(userLoginEntity);
         }
 
         public override Task<IList<Claim>> GetClaimsAsync(User user, CancellationToken cancellationToken = new CancellationToken())
