@@ -10,7 +10,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Nozomi.Repo.Identity.Migrations
 {
     [DbContext(typeof(NozomiAuthContext))]
-    [Migration("20181219151946_r1_InitialMigrations")]
+    [Migration("20181219155320_r1_InitialMigrations")]
     partial class r1_InitialMigrations
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -124,14 +124,24 @@ namespace Nozomi.Repo.Identity.Migrations
                     b.Property<string>("UserName")
                         .HasMaxLength(256);
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("User_PK_Id");
+
+                    b.HasIndex("Email")
+                        .IsUnique()
+                        .HasName("User_Index_Email");
 
                     b.HasIndex("NormalizedEmail")
-                        .HasName("EmailIndex");
+                        .IsUnique()
+                        .HasName("User_Index_NormalizedEmail");
 
                     b.HasIndex("NormalizedUserName")
                         .IsUnique()
-                        .HasName("UserNameIndex");
+                        .HasName("User_Index_NormalizedUserName");
+
+                    b.HasIndex("UserName")
+                        .IsUnique()
+                        .HasName("User_Index_UserName");
 
                     b.ToTable("Users");
                 });

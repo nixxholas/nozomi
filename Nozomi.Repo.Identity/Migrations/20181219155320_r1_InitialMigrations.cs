@@ -82,7 +82,7 @@ namespace Nozomi.Repo.Identity.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Users", x => x.Id);
+                    table.PrimaryKey("User_PK_Id", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -218,14 +218,27 @@ namespace Nozomi.Repo.Identity.Migrations
                 column: "RoleId");
 
             migrationBuilder.CreateIndex(
-                name: "EmailIndex",
+                name: "User_Index_Email",
                 table: "Users",
-                column: "NormalizedEmail");
+                column: "Email",
+                unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "UserNameIndex",
+                name: "User_Index_NormalizedEmail",
+                table: "Users",
+                column: "NormalizedEmail",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "User_Index_NormalizedUserName",
                 table: "Users",
                 column: "NormalizedUserName",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "User_Index_UserName",
+                table: "Users",
+                column: "UserName",
                 unique: true);
         }
 
