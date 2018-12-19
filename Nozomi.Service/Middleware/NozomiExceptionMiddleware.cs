@@ -5,8 +5,8 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using Nozomi.Core.Exceptions;
-using Nozomi.Core.Responses;
+using Nozomi.Base.Core.Exceptions;
+using Nozomi.Base.Core.Responses;
 
 namespace Nozomi.Service.Middleware
 {

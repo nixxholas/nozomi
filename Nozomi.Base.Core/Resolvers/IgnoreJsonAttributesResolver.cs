@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
-namespace Nozomi.Core.Resolvers
+namespace Nozomi.Base.Core.Resolvers
 {
     public class IgnoreJsonAttributesResolver : DefaultContractResolver
     {

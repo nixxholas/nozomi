@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 
-namespace Nozomi.Core.Helpers.JSON
+namespace Nozomi.Base.Core.Helpers.JSON
 {
     public class SerializationConverter : JsonConverter
     {

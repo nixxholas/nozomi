@@ -3,7 +3,7 @@ using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using Nozomi.Core.Responses;
+using Nozomi.Base.Core.Responses;
 
 namespace Nozomi.Ticker.Middlewares
 {

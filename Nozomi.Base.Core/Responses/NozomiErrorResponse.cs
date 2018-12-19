@@ -1,4 +1,4 @@
-namespace Nozomi.Core.Responses
+namespace Nozomi.Base.Core.Responses
 {
     public class NozomiErrorResponse
     {

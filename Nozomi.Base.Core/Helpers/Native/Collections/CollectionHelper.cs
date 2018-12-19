@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Nozomi.Core.Helpers.Native.Collections
+namespace Nozomi.Base.Core.Helpers.Native.Collections
 {
     public static class CollectionHelper
     {

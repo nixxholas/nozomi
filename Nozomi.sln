@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nozomi.Data", "Nozomi.Data\Nozomi.Data.csproj", "{AA3857F1-A9AA-4156-A8D5-A10971C731CA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nozomi.Base.Domain", "Nozomi.Base.Domain\Nozomi.Base.Domain.csproj", "{AA3857F1-A9AA-4156-A8D5-A10971C731CA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nozomi.Repo", "Nozomi.Repo\Nozomi.Repo.csproj", "{CB82BD49-6D8E-4808-8208-375B9AAA776C}"
 EndProject
@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nozomi.Service", "Nozomi.Se
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nozomi.Ticker", "Nozomi.Ticker\Nozomi.Ticker.csproj", "{C2DE3793-B136-4821-9DD6-27FCB355FB85}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nozomi.Core", "Nozomi.Core\Nozomi.Core.csproj", "{08B57962-9841-4DFA-8DC3-E95042220750}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nozomi.Base.Core", "Nozomi.Base.Core\Nozomi.Base.Core.csproj", "{08B57962-9841-4DFA-8DC3-E95042220750}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Nozomi.Infra", "Nozomi.Infra", "{D54DB59C-EB6F-4CBD-9FC0-EF423F88248E}"
 EndProject

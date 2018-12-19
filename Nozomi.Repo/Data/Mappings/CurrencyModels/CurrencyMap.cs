@@ -4,7 +4,7 @@ using Nozomi.Data.CurrencyModels;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Nozomi.Core.Helpers.Mapping;
+using Nozomi.Base.Core.Helpers.Mapping;
 
 namespace Nozomi.Repo.Data.Mappings.CurrencyModels
 {

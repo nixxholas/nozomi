@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json.Linq;
-using Nozomi.Core;
-using Nozomi.Core.Helpers.Native.Collections;
+using Nozomi.Base.Core;
+using Nozomi.Base.Core.Helpers.Native.Collections;
 using Nozomi.Data.CurrencyModels;
 
 namespace Nozomi.Data.WebModels

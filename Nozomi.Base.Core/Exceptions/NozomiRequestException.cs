@@ -1,4 +1,4 @@
-namespace Nozomi.Core.Exceptions
+namespace Nozomi.Base.Core.Exceptions
 {
     public class NozomiRequestException : System.Exception
     {

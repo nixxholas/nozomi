@@ -1,13 +1,13 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
         <TargetFramework>netcoreapp2.1</TargetFramework>
     </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Nozomi.Base.Core\Nozomi.Base.Core.csproj" />
+      <ProjectReference Include="..\Nozomi.Base.Domain\Nozomi.Base.Domain.csproj" />
       <ProjectReference Include="..\Nozomi.Base.Identity\Nozomi.Base.Identity.csproj" />
-      <ProjectReference Include="..\Nozomi.Core\Nozomi.Core.csproj" />
-      <ProjectReference Include="..\Nozomi.Data\Nozomi.Data.csproj" />
     </ItemGroup>
 
 </Project>

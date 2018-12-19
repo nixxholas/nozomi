@@ -3,7 +3,7 @@
     <TargetFramework>netcoreapp2.1</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Nozomi.Data\Nozomi.Data.csproj" />
+    <ProjectReference Include="..\Nozomi.Base.Domain\Nozomi.Base.Domain.csproj" />
     <ProjectReference Include="..\Nozomi.Repo.BCL\Nozomi.Repo.BCL.csproj" />
   </ItemGroup>
 </Project>

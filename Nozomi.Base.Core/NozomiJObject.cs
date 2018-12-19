@@ -1,6 +1,6 @@
 using Newtonsoft.Json.Linq;
 
-namespace Nozomi.Core
+namespace Nozomi.Base.Core
 {
     public class NozomiJObject : JObject
     {

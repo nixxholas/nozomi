@@ -12,7 +12,8 @@ using Nozomi.Repo.Identity.Data.Mappings.Identity;
 
 namespace Nozomi.Repo.Identity.Data
 {
-    public class NozomiAuthContext : IdentityDbContext<User, Role, long>, IDbContext
+    public class NozomiAuthContext : 
+        IdentityDbContext<User, Role, long, UserClaim, UserRole, UserLogin, RoleClaim, UserToken>, IDbContext
     {
         public NozomiAuthContext(DbContextOptions options) : base(options)
         { }
@@ -24,6 +25,8 @@ namespace Nozomi.Repo.Identity.Data
  
         protected override void OnModelCreating(ModelBuilder builder)
         {
+            base.OnModelCreating(builder);
+            
             var roleClaimMap = new RoleClaimMap(builder.Entity<RoleClaim>());
             var roleMap = new RoleMap(builder.Entity<Role>());
             var userClaimMap = new UserClaimMap(builder.Entity<UserClaim>());
@@ -35,7 +38,6 @@ namespace Nozomi.Repo.Identity.Data
             builder.Entity<ClientEntity>().HasKey(m => m.ClientId);
             builder.Entity<ApiResourceEntity>().HasKey(m => m.ApiResourceName);
             builder.Entity<IdentityResourceEntity>().HasKey(m => m.IdentityResourceName);
-            base.OnModelCreating(builder);
         }
 
         public int SaveChanges(long userId = 0)
