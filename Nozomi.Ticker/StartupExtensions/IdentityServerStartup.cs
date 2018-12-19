@@ -25,9 +25,6 @@ namespace Nozomi.Ticker.StartupExtensions
             } else
             {
             }
-            
-            // Identity-related service injections
-            services.AddTransient<INozomiUserStore, NozomiUserStore>();
 
             services.AddIdentity<User, Role>()
                 .AddEntityFrameworkStores<NozomiAuthContext>()
