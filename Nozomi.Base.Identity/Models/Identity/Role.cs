@@ -5,8 +5,8 @@ namespace Nozomi.Base.Identity.Models.Identity
 {
     public class Role : IdentityRole<long>
     {
-        public ICollection<RoleClaim> RoleClaims { get; set; }
+        public virtual ICollection<RoleClaim> RoleClaims { get; set; }
         
-        public ICollection<UserRole> UserRoles { get; set; }
+        public virtual ICollection<UserRole> UserRoles { get; set; }
     }
 }

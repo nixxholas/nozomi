@@ -4,6 +4,6 @@ namespace Nozomi.Base.Identity.Models.Identity
 {
     public class UserLogin : IdentityUserLogin<long>
     {
-        public User User { get; set; }
+        public virtual User User { get; set; }
     }
 }

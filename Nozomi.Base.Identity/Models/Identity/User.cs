@@ -6,12 +6,12 @@ namespace Nozomi.Base.Identity.Models.Identity
 {
     public class User : IdentityUser<long>
     {
-        public ICollection<UserClaim> UserClaims { get; }
+        public virtual ICollection<UserClaim> UserClaims { get; }
         
-        public ICollection<UserLogin> UserLogins { get; }
+        public virtual ICollection<UserLogin> UserLogins { get; }
         
-        public ICollection<UserRole> UserRoles { get; }
+        public virtual ICollection<UserRole> UserRoles { get; }
         
-        public ICollection<UserToken> UserTokens { get; }
+        public virtual ICollection<UserToken> UserTokens { get; }
     }
 }
