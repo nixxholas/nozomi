@@ -287,7 +287,15 @@ namespace Nozomi.Ticker.Areas
                 {
                     UserName = model.Username, 
                     Email = model.Email,
-                    SecurityStamp = SHA.GenerateSHA512String(Randomizer.GenerateRandomCryptographicKey(10))
+                    SecurityStamp = SHA.GenerateSHA512String(Randomizer.GenerateRandomCryptographicKey(10)),
+                    UserClaims = new List<UserClaim>()
+                    {
+                        new UserClaim()
+                        {
+                            ClaimType = JwtClaimTypes.Email,
+                            ClaimValue = model.Email
+                        }
+                    }
                 };
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
