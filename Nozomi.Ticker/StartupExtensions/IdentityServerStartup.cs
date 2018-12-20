@@ -3,6 +3,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 using IdentityServer4.Stores;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
@@ -41,6 +42,8 @@ namespace Nozomi.Ticker.StartupExtensions
                 .AddDefaultTokenProviders();
             
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear(); // Wipe default claims
+            
+            // Configure Authentication
             services.AddAuthentication(options =>
                 {
                     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -51,14 +54,19 @@ namespace Nozomi.Ticker.StartupExtensions
                 {
                     config.RequireHttpsMetadata = true;
                     config.SaveToken = true;
+                    config.Authority = "Nozomi";
                     config.TokenValidationParameters = new TokenValidationParameters
                     {
+                        ValidateIssuer = true,
                         ValidIssuer = configuration["Identity:JwtIssuer"],
                         ValidAudience = configuration["Identity:JwtIssuer"],
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Identity:JwtKey"])),
                         ClockSkew = TimeSpan.FromHours(1)
                     };
                 });
+            
+            // Configure Authorization
+            services.AddAuthorization();
             
             services.Configure<IdentityOptions>(options =>
             {
