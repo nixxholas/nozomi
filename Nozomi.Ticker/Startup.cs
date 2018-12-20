@@ -166,6 +166,8 @@ namespace Nozomi.Ticker
                     name: "default",
                     template: "{controller=home}/{action=index}/{id?}");
             });
+
+            app.UseMiddleware<NozomiExceptionMiddleware>();
             
             // Enable middleware to serve generated Swagger as a JSON endpoint.
             app.UseSwagger();

@@ -1,15 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nozomi.Data", "Nozomi.Data\Nozomi.Data.csproj", "{AA3857F1-A9AA-4156-A8D5-A10971C731CA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nozomi.Base.Domain", "Nozomi.Base.Domain\Nozomi.Base.Domain.csproj", "{AA3857F1-A9AA-4156-A8D5-A10971C731CA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nozomi.Repo", "Nozomi.Repo\Nozomi.Repo.csproj", "{CB82BD49-6D8E-4808-8208-375B9AAA776C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nozomi.Service", "Nozomi.Service\Nozomi.Service.csproj", "{66206D94-625E-4EC6-B2BA-2063C9CA7E25}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nozomi.Infra.Service", "Nozomi.Infra.Service\Nozomi.Infra.Service.csproj", "{66206D94-625E-4EC6-B2BA-2063C9CA7E25}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nozomi.Ticker", "Nozomi.Ticker\Nozomi.Ticker.csproj", "{C2DE3793-B136-4821-9DD6-27FCB355FB85}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nozomi.Core", "Nozomi.Core\Nozomi.Core.csproj", "{08B57962-9841-4DFA-8DC3-E95042220750}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nozomi.Base.Core", "Nozomi.Base.Core\Nozomi.Base.Core.csproj", "{08B57962-9841-4DFA-8DC3-E95042220750}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Nozomi.Infra", "Nozomi.Infra", "{D54DB59C-EB6F-4CBD-9FC0-EF423F88248E}"
 EndProject
@@ -19,13 +19,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Nozomi.DataAccess", "Nozomi
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Nozomi.Presentation", "Nozomi.Presentation", "{67D06790-261E-455B-BA5C-1033C2EC4A09}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nozomi.Preprocessing", "Nozomi.Preprocessing\Nozomi.Preprocessing.csproj", "{82F91DE5-FF08-4FA1-9EB5-03B73BA14E4E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nozomi.Infra.Preprocessing", "Nozomi.Infra.Preprocessing\Nozomi.Infra.Preprocessing.csproj", "{82F91DE5-FF08-4FA1-9EB5-03B73BA14E4E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nozomi.Base.Identity", "Nozomi.Base.Identity\Nozomi.Base.Identity.csproj", "{EDB295B0-0D22-4988-928B-A662F270D6A9}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nozomi.Repo.Identity", "Nozomi.Repo.Identity\Nozomi.Repo.Identity.csproj", "{3358B99B-D494-43EF-8C21-476EF18C5B4E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nozomi.Service.Identity", "Nozomi.Service.Identity\Nozomi.Service.Identity.csproj", "{0D48F797-3856-4631-9005-A8065109337D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nozomi.Infra.Service.Identity", "Nozomi.Infra.Service.Identity\Nozomi.Infra.Service.Identity.csproj", "{0D48F797-3856-4631-9005-A8065109337D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nozomi.Repo.BCL", "Nozomi.Repo.BCL\Nozomi.Repo.BCL.csproj", "{D0EDBECA-0DE0-41E0-8675-70FF8D94B583}"
 EndProject

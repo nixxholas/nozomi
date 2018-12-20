@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netcoreapp2.1</TargetFramework>
+        <RootNamespace>Nozomi.Service.Identity</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <Folder Include="Configs" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Nozomi.Infra.Preprocessing\Nozomi.Infra.Preprocessing.csproj" />
+    </ItemGroup>
+
+</Project>
