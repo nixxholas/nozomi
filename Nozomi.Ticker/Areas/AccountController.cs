@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Security.Principal;
 using System.Threading.Tasks;
 using IdentityModel;
@@ -17,6 +18,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Logging;
+using Nozomi.Base.Core.Helpers.Crypto;
 using Nozomi.Base.Identity.Attributes;
 using Nozomi.Base.Identity.Models.Areas.Account;
 using Nozomi.Base.Identity.Models.Identity;
@@ -281,7 +283,12 @@ namespace Nozomi.Ticker.Areas
             ViewData["ReturnUrl"] = returnUrl;
             if (ModelState.IsValid)
             {
-                var user = new User { UserName = model.Username, Email = model.Email };
+                var user = new User
+                {
+                    UserName = model.Username, 
+                    Email = model.Email,
+                    SecurityStamp = SHA.GenerateSHA512String(Randomizer.GenerateRandomCryptographicKey(10))
+                };
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
