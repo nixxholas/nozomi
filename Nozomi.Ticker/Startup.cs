@@ -70,7 +70,6 @@ namespace Nozomi.Ticker
                 {
                     options.UseNpgsql(Configuration.GetConnectionString("LocalAuth:" + Environment.MachineName));
                     options.EnableSensitiveDataLogging(false);
-                    options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
                 });
             
                 // Redis
@@ -94,7 +93,6 @@ namespace Nozomi.Ticker
                 {
                     options.UseNpgsql(Configuration.GetConnectionString("NozomiAuthDb"));
                     options.EnableSensitiveDataLogging(false);
-                    options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
                 });
             
                 // Redis
