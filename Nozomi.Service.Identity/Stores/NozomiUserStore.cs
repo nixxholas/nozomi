@@ -325,8 +325,8 @@ namespace Nozomi.Service.Identity.Stores
             if (userData == null)
                 throw new InvalidDataException(nameof(user));
 
-            user.EmailConfirmed = true;
-            _unitOfWork.GetRepository<User>().Update(user);
+            userData.EmailConfirmed = true;
+            _unitOfWork.GetRepository<User>().Update(userData);
             _unitOfWork.Commit();
 
             return Task.CompletedTask;
