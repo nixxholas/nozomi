@@ -14,6 +14,7 @@ using Nozomi.Base.Identity.Models;
 using Nozomi.Base.Identity.Models.Identity;
 using Nozomi.Repo.Identity.Data;
 using Nozomi.Service.Identity;
+using Nozomi.Service.Identity.Factories;
 using Nozomi.Service.Identity.Managers;
 using Nozomi.Service.Identity.Stores;
 using Nozomi.Service.Identity.Stores.Interfaces;
@@ -40,6 +41,8 @@ namespace Nozomi.Ticker.StartupExtensions
                 .AddUserStore<NozomiUserStore>()
                 .AddRoleStore<NozomiRoleStore>()
                 .AddDefaultTokenProviders();
+
+            services.AddScoped<IUserClaimsPrincipalFactory<User>, NozomiUserClaimsPrincipalFactory>();
             
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear(); // Wipe default claims
             
@@ -52,7 +55,7 @@ namespace Nozomi.Ticker.StartupExtensions
                 })
                 .AddJwtBearer(config =>
                 {
-                    config.RequireHttpsMetadata = true;
+                    config.RequireHttpsMetadata = false;
                     config.SaveToken = true;
                     config.Authority = "Nozomi";
                     config.TokenValidationParameters = new TokenValidationParameters
