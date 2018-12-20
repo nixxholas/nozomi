@@ -128,7 +128,7 @@ namespace Nozomi.Ticker
             
             services.ConfigureHostedServices();
 
-            services.ConfigureIdentityServer();
+            services.ConfigureNozomiAuth(Configuration);
             
             services.ConfigureSwagger();
         }
@@ -169,6 +169,8 @@ namespace Nozomi.Ticker
 
             app.UseMiddleware<NozomiExceptionMiddleware>();
             
+            app.UseNozomiAuth();
+
             // Enable middleware to serve generated Swagger as a JSON endpoint.
             app.UseSwagger();
 

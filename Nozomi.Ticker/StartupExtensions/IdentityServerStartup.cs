@@ -1,7 +1,13 @@
 using System;
+using System.IdentityModel.Tokens.Jwt;
+using System.Text;
 using IdentityServer4.Stores;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
 using Nozomi.Base.Identity.Debugging;
 using Nozomi.Base.Identity.Models;
 using Nozomi.Base.Identity.Models.Identity;
@@ -15,7 +21,7 @@ namespace Nozomi.Ticker.StartupExtensions
 {
     public static class IdentityServerStartup
     {
-        public static void ConfigureIdentityServer(this IServiceCollection services)
+        public static void ConfigureNozomiAuth(this IServiceCollection services, IConfiguration configuration)
         {
             var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
 
@@ -33,6 +39,26 @@ namespace Nozomi.Ticker.StartupExtensions
                 .AddUserStore<NozomiUserStore>()
                 .AddRoleStore<NozomiRoleStore>()
                 .AddDefaultTokenProviders();
+            
+            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear(); // Wipe default claims
+            services.AddAuthentication(options =>
+                {
+                    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+                    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                })
+                .AddJwtBearer(config =>
+                {
+                    config.RequireHttpsMetadata = true;
+                    config.SaveToken = true;
+                    config.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidIssuer = configuration["Identity:JwtIssuer"],
+                        ValidAudience = configuration["Identity:JwtIssuer"],
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Identity:JwtKey"])),
+                        ClockSkew = TimeSpan.FromHours(1)
+                    };
+                });
             
             services.Configure<IdentityOptions>(options =>
             {
@@ -57,8 +83,8 @@ namespace Nozomi.Ticker.StartupExtensions
                 options.ExpireTimeSpan = TimeSpan.FromMinutes(5);
 
                 // TODO: finish this
-                //options.LoginPath = "/Identity/Account/Login";
-                //options.AccessDeniedPath = "/Identity/Account/AccessDenied";
+                options.LoginPath = "/account/login";
+                options.AccessDeniedPath = "/account/accessdenied";
                 options.SlidingExpiration = true;
             });
             
@@ -71,7 +97,11 @@ namespace Nozomi.Ticker.StartupExtensions
             
             services.AddTransient<IClientStore, ClientStore>();
             services.AddTransient<IResourceStore, ResourceStore>();
-            
+        }
+        
+        public static void UseNozomiAuth(this IApplicationBuilder app)
+        {
+            app.UseAuthentication();
         }
     }
 }
