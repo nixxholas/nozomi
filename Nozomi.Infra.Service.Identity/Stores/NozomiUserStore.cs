@@ -24,6 +24,39 @@ namespace Nozomi.Service.Identity.Stores
             _unitOfWork = unitOfWork;
         }
 
+        /// <summary>
+        /// Gets the user identifier for the specified <paramref name="user" />.
+        /// </summary>
+        /// <param name="user">The user whose identifier should be retrieved.</param>
+        /// <param name="cancellationToken">The <see cref="T:System.Threading.CancellationToken" /> used to propagate notifications that the operation should be canceled.</param>
+        /// <returns>The <see cref="T:System.Threading.Tasks.Task" /> that represents the asynchronous operation, containing the identifier for the specified <paramref name="user" />.</returns>
+        public override Task<string> GetUserIdAsync(User user, CancellationToken cancellationToken)
+        {
+            try
+            {
+                if (cancellationToken != null)
+                    cancellationToken.ThrowIfCancellationRequested();
+                
+                if (user == null)
+                    throw new ArgumentException(nameof(user));
+
+                var res = _unitOfWork.GetRepository<User>().Get(u =>
+                        u.Email.Equals(user.Email, StringComparison.InvariantCultureIgnoreCase)
+                        || user.UserName.Equals(user.UserName, StringComparison.InvariantCultureIgnoreCase))
+                    .Select(u => u.Id)
+                    .SingleOrDefault();
+                
+                if (res == null)
+                    throw new ArgumentOutOfRangeException(nameof(user));
+
+                return Task.FromResult(res.ToString());
+            }
+            catch (Exception ex)
+            {
+                return Task.FromResult("-1");
+            }
+        }
+
         public override Task<IdentityResult> CreateAsync(User user, CancellationToken cancellationToken = new CancellationToken())
         {
             try

@@ -46,5 +46,16 @@ namespace Nozomi.Service.Identity.Managers
         {
             return Store.ForceConfirmEmailAsync(user);
         }
+        
+        /// <summary>
+        /// Gets the user identifier for the specified <paramref name="user" />.
+        /// </summary>
+        /// <param name="user">The user whose identifier should be retrieved.</param>
+        /// <returns>The <see cref="T:System.Threading.Tasks.Task" /> that represents the asynchronous operation, containing the identifier for the specified <paramref name="user" />.</returns>
+        public override async Task<string> GetUserIdAsync(User user)
+        {
+            ThrowIfDisposed();
+            return await Store.GetUserIdAsync(user, CancellationToken);
+        }
     }
 }
