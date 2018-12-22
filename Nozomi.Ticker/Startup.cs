@@ -121,6 +121,8 @@ namespace Nozomi.Ticker
                 .AddMessagePackProtocol();
             
             services.ConfigureCors();
+
+            services.AddSession();
             
             services.AddMvc()
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
@@ -159,6 +161,8 @@ namespace Nozomi.Ticker
                 route.MapHub<TickerHub>("/ticker");
             });
 
+            app.UseSession();
+            
             app.UseMvc(routes =>
             {
                 routes.MapRoute(

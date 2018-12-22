@@ -6,12 +6,14 @@ using System.Security.Cryptography;
 using System.Security.Principal;
 using System.Threading.Tasks;
 using IdentityModel;
+using IdentityServer4;
 using IdentityServer4.Events;
 using IdentityServer4.Extensions;
 using IdentityServer4.Models;
 using IdentityServer4.Services;
 using IdentityServer4.Stores;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -304,7 +306,8 @@ namespace Nozomi.Ticker.Areas
                 {
                     #if DEBUG
                     await _userManager.ForceConfirmEmail(user);
-                    await _signInManager.SignInAsync(user, false);
+                    await _signInManager.SignInAsync(user, false, 
+                        IdentityServerConstants.DefaultCookieAuthenticationScheme);
                     _logger.LogInformation(3, "User created a new account with password.");
                     #else
                     // For more information on how to enable account confirmation and password reset

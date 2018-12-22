@@ -1,6 +1,9 @@
 using System;
 using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using System.Text;
+using System.Threading.Tasks;
+using IdentityServer4;
 using IdentityServer4.Stores;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -44,28 +47,12 @@ namespace Nozomi.Ticker.StartupExtensions
 
             services.AddScoped<IUserClaimsPrincipalFactory<User>, NozomiUserClaimsPrincipalFactory>();
             
-            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear(); // Wipe default claims
-            
             // Configure Authentication
             services.AddAuthentication(options =>
                 {
-                    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-                    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                })
-                .AddJwtBearer(config =>
-                {
-                    config.RequireHttpsMetadata = false;
-                    config.SaveToken = true;
-                    config.Authority = "Nozomi";
-                    config.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidateIssuer = true,
-                        ValidIssuer = configuration["Identity:JwtIssuer"],
-                        ValidAudience = configuration["Identity:JwtIssuer"],
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Identity:JwtKey"])),
-                        ClockSkew = TimeSpan.FromHours(1)
-                    };
+                    options.DefaultAuthenticateScheme = IdentityServerConstants.DefaultCookieAuthenticationScheme;
+                    options.DefaultScheme = IdentityServerConstants.DefaultCookieAuthenticationScheme;
+                    options.DefaultChallengeScheme = IdentityServerConstants.DefaultCookieAuthenticationScheme;
                 });
             
             // Configure Authorization
