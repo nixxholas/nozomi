@@ -100,7 +100,7 @@ namespace Nozomi.Ticker.StartupExtensions
         
         public static void UseNozomiAuth(this IApplicationBuilder app)
         {
-            app.UseAuthentication();
+            app.UseIdentityServer();
         }
     }
 }
