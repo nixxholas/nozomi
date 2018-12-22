@@ -48,12 +48,13 @@ namespace Nozomi.Ticker.StartupExtensions
             services.AddScoped<IUserClaimsPrincipalFactory<User>, NozomiUserClaimsPrincipalFactory>();
             
             // Configure Authentication
-            services.AddAuthentication(options =>
-                {
-                    options.DefaultAuthenticateScheme = IdentityServerConstants.DefaultCookieAuthenticationScheme;
-                    options.DefaultScheme = IdentityServerConstants.DefaultCookieAuthenticationScheme;
-                    options.DefaultChallengeScheme = IdentityServerConstants.DefaultCookieAuthenticationScheme;
-                });
+            // https://github.com/aspnet/Security/issues/1414 Redundant to add in this
+//            services.AddAuthentication(options =>
+//                {
+//                    options.DefaultAuthenticateScheme = IdentityServerConstants.DefaultCookieAuthenticationScheme;
+//                    options.DefaultScheme = IdentityServerConstants.DefaultCookieAuthenticationScheme;
+//                    options.DefaultChallengeScheme = IdentityServerConstants.DefaultCookieAuthenticationScheme;
+//                });
             
             // Configure Authorization
             services.AddAuthorization();
