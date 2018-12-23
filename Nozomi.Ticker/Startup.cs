@@ -111,12 +111,6 @@ namespace Nozomi.Ticker
                 options.Secure = CookieSecurePolicy.Always;
             });
             
-            // Repository Layer
-            services.ConfigureRepoLayer();
-            
-            // Service Layer
-            services.ConfigureServiceLayer();
-            
             services.AddSignalR()
                 .AddMessagePackProtocol();
             
@@ -126,7 +120,17 @@ namespace Nozomi.Ticker
             
             services.AddMvc()
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+
+            // https://stackoverflow.com/questions/38184583/how-to-add-ihttpcontextaccessor-in-the-startup-class-in-the-di-in-asp-net-core-1
+            //services.AddHttpContextAccessor();
             
+            // Repository Layer
+            services.ConfigureRepoLayer();
+            
+            // Service Layer
+            services.ConfigureServiceLayer();
+
+            // Hosted Service Layer
             services.ConfigureHostedServices();
 
             services.ConfigureNozomiAuth(Configuration);

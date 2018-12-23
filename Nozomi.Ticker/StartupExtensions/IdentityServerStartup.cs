@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using Nozomi.Base.Identity;
 using Nozomi.Base.Identity.Debugging;
 using Nozomi.Base.Identity.Models;
 using Nozomi.Base.Identity.Models.Identity;
@@ -43,18 +44,35 @@ namespace Nozomi.Ticker.StartupExtensions
                 .AddSignInManager<NozomiSignInManager>()
                 .AddUserStore<NozomiUserStore>()
                 .AddRoleStore<NozomiRoleStore>()
+                .AddClaimsPrincipalFactory<NozomiUserClaimsPrincipalFactory>()
                 .AddDefaultTokenProviders();
-
-            services.AddScoped<IUserClaimsPrincipalFactory<User>, NozomiUserClaimsPrincipalFactory>();
             
             // Configure Authentication
             // https://github.com/aspnet/Security/issues/1414 Redundant to add in this
-//            services.AddAuthentication(options =>
-//                {
-//                    options.DefaultAuthenticateScheme = IdentityServerConstants.DefaultCookieAuthenticationScheme;
-//                    options.DefaultScheme = IdentityServerConstants.DefaultCookieAuthenticationScheme;
-//                    options.DefaultChallengeScheme = IdentityServerConstants.DefaultCookieAuthenticationScheme;
-//                });
+            //
+            // Findings have shown this affects IdentityServerAuthenticationService. Removing this will 
+            // default all constants to .NET Core Identity's defaults.
+            services.AddAuthentication(options =>
+            {
+                options.DefaultScheme = NozomiAuthConstants.ApplicationScheme;
+                options.DefaultAuthenticateScheme = NozomiAuthConstants.ApplicationScheme;
+                options.DefaultChallengeScheme = NozomiAuthConstants.ApplicationScheme;
+                options.DefaultForbidScheme = NozomiAuthConstants.ApplicationScheme;
+                options.DefaultSignInScheme = NozomiAuthConstants.ApplicationScheme;
+                options.DefaultSignOutScheme = NozomiAuthConstants.ApplicationScheme;
+            }).AddCookie(options =>
+            {
+                options.Cookie.Name = NozomiAuthConstants.ApplicationScheme;
+                
+                // Cookie settings
+                options.ExpireTimeSpan = TimeSpan.FromMinutes(5);
+
+                // TODO: finish this
+                options.LoginPath = "/account/login";
+                options.LogoutPath = "/account/logout";
+                options.AccessDeniedPath = "/account/accessdenied";
+                options.SlidingExpiration = true;
+            });
             
             // Configure Authorization
             services.AddAuthorization();
@@ -75,19 +93,8 @@ namespace Nozomi.Ticker.StartupExtensions
                 options.User.RequireUniqueEmail = true;
             });
 
-            services.ConfigureApplicationCookie(options =>
-            {
-                // Cookie settings
-                options.Cookie.HttpOnly = true;
-                options.ExpireTimeSpan = TimeSpan.FromMinutes(5);
-
-                // TODO: finish this
-                options.LoginPath = "/account/login";
-                options.AccessDeniedPath = "/account/accessdenied";
-                options.SlidingExpiration = true;
-            });
-            
             services.AddIdentityServer()
+                .AddRequiredPlatformServices()
                 //.AddSigningCredential(cert)
                 .AddResourceStore<ResourceStore>()
                 .AddClientStore<ClientStore>()

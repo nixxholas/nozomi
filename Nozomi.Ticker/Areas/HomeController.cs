@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -18,8 +19,10 @@ namespace Nozomi.Ticker.Areas
         }
         
         [Route("/")]
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
+            var user = await GetCurrentUserAsync();
+            
             return View();
         }
 

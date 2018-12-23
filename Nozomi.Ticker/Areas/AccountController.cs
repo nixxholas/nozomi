@@ -21,6 +21,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Logging;
 using Nozomi.Base.Core.Helpers.Crypto;
+using Nozomi.Base.Identity;
 using Nozomi.Base.Identity.Attributes;
 using Nozomi.Base.Identity.Models.Areas.Account;
 using Nozomi.Base.Identity.Models.Identity;
@@ -290,24 +291,14 @@ namespace Nozomi.Ticker.Areas
                 var user = new User
                 {
                     UserName = model.Username, 
-                    Email = model.Email,
-                    SecurityStamp = SHA.GenerateSHA512String(Randomizer.GenerateRandomCryptographicKey(10)),
-                    UserClaims = new List<UserClaim>()
-                    {
-                        new UserClaim()
-                        {
-                            ClaimType = JwtClaimTypes.Email,
-                            ClaimValue = model.Email
-                        }
-                    }
+                    Email = model.Email
                 };
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
                     #if DEBUG
                     await _userManager.ForceConfirmEmail(user);
-                    await _signInManager.SignInAsync(user, false, 
-                        IdentityServerConstants.DefaultCookieAuthenticationScheme);
+                    await _signInManager.SignInAsync(user, false, NozomiAuthConstants.ApplicationScheme);
                     _logger.LogInformation(3, "User created a new account with password.");
                     #else
                     // For more information on how to enable account confirmation and password reset

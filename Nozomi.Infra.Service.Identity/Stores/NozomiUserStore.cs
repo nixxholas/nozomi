@@ -30,7 +30,7 @@ namespace Nozomi.Service.Identity.Stores
         /// <param name="user">The user whose identifier should be retrieved.</param>
         /// <param name="cancellationToken">The <see cref="T:System.Threading.CancellationToken" /> used to propagate notifications that the operation should be canceled.</param>
         /// <returns>The <see cref="T:System.Threading.Tasks.Task" /> that represents the asynchronous operation, containing the identifier for the specified <paramref name="user" />.</returns>
-        public override Task<string> GetUserIdAsync(User user, CancellationToken cancellationToken)
+        public override Task<string> GetUserIdAsync(User user, CancellationToken cancellationToken = default (CancellationToken))
         {
             try
             {

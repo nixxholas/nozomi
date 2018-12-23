@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.JsonWebTokens;
+using Nozomi.Base.Identity;
 using Nozomi.Base.Identity.Models.Identity;
 using Nozomi.Service.Identity.Managers;
 
@@ -34,16 +35,9 @@ namespace Nozomi.Service.Identity.Factories
         /// operation, containing the created <see cref="T:System.Security.Claims.ClaimsPrincipal" />.</returns>
         public override async Task<ClaimsPrincipal> CreateAsync(User user)
         {
-            var principal = await base.CreateAsync(user);
-            var identity = (ClaimsIdentity)principal.Identity;
- 
-            var claims = new List<Claim>
-            {
-                new Claim(JwtClaimTypes.Role, "user")
-            };
- 
-            identity.AddClaims(claims);
-            return principal;
+            if ((object) user == null)
+                throw new ArgumentNullException(nameof (user));
+            return new ClaimsPrincipal(await GenerateClaimsAsync(user));
         }
         
         /// <summary>Generate the claims for a user.</summary>
@@ -54,7 +48,7 @@ namespace Nozomi.Service.Identity.Factories
             var userId = await UserManager.GetUserIdAsync(user);
             var userNameAsync = await UserManager.GetUserNameAsync(user);
                 
-            var id = new ClaimsIdentity(IdentityServerConstants.DefaultCookieAuthenticationScheme, 
+            var id = new ClaimsIdentity(NozomiAuthConstants.ApplicationScheme, 
                 this.Options.ClaimsIdentity.UserNameClaimType, this.Options.ClaimsIdentity.RoleClaimType);
             id.AddClaim(new Claim(this.Options.ClaimsIdentity.UserIdClaimType, userId));
             id.AddClaim(new Claim(this.Options.ClaimsIdentity.UserNameClaimType, userNameAsync));
