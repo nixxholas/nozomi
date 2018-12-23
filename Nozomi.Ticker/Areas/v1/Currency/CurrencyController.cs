@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data;
@@ -17,6 +18,7 @@ namespace Nozomi.Ticker.Areas.v1.Currency
             _currencyService = currencyService;
         }
 
+        [Authorize]
         [HttpPost]
         public ActionResult<NozomiResult<string>> Create([FromBody]CreateCurrency createCurrency)
         {
@@ -32,6 +34,7 @@ namespace Nozomi.Ticker.Areas.v1.Currency
             return Ok(_currencyService.Create(createCurrency));
         }
 
+        [Authorize]
         [HttpPost]
         public NozomiResult<string> Update(UpdateCurrency updateCurrency)
         {
