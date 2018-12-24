@@ -18,11 +18,6 @@ namespace Nozomi.Repo.Identity.Data
         public NozomiAuthContext(DbContextOptions options) : base(options)
         { }
  
-        public DbSet<ClientEntity> Clients { get; set; }
-        public DbSet<ApiResourceEntity> ApiResources { get; set; }
-        public DbSet<IdentityResourceEntity> IdentityResources { get; set; }
-         
- 
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
@@ -34,10 +29,6 @@ namespace Nozomi.Repo.Identity.Data
             var userMap = new UserMap(builder.Entity<User>());
             var userRoleMap = new UserRoleMap(builder.Entity<UserRole>());
             var userTokenMap = new UserTokenMap(builder.Entity<UserToken>());
-            
-            builder.Entity<ClientEntity>().HasKey(m => m.ClientId);
-            builder.Entity<ApiResourceEntity>().HasKey(m => m.ApiResourceName);
-            builder.Entity<IdentityResourceEntity>().HasKey(m => m.IdentityResourceName);
         }
 
         public int SaveChanges(long userId = 0)

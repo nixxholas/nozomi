@@ -9,7 +9,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Nozomi.Base.Identity;
 using Nozomi.Base.Identity.Models.Identity;
-using Nozomi.Service.Identity.Factories;
 
 namespace Nozomi.Service.Identity.Managers
 {
@@ -18,16 +17,14 @@ namespace Nozomi.Service.Identity.Managers
         private readonly IHttpContextAccessor _contextAccessor;
         private HttpContext _context;
         private new readonly NozomiUserManager UserManager;
-        private new readonly NozomiUserClaimsPrincipalFactory ClaimsFactory;
         
         public NozomiSignInManager(NozomiUserManager userManager, IHttpContextAccessor contextAccessor, 
-            NozomiUserClaimsPrincipalFactory claimsFactory, IOptions<IdentityOptions> optionsAccessor, 
+            IUserClaimsPrincipalFactory<User> claimsFactory, IOptions<IdentityOptions> optionsAccessor, 
             ILogger<NozomiSignInManager> logger, IAuthenticationSchemeProvider schemes) : 
             base(userManager, contextAccessor, claimsFactory, optionsAccessor, logger, schemes)
         {
             _contextAccessor = contextAccessor;
             UserManager = userManager;
-            ClaimsFactory = claimsFactory;
         }
         
         /// <summary>
@@ -89,7 +86,7 @@ namespace Nozomi.Service.Identity.Managers
                 throw new ArgumentNullException(nameof(principal));
             }
             return principal?.Identities != null &&
-                   principal.Identities.Any(i => i.AuthenticationType == NozomiAuthConstants.ApplicationScheme);
+                   principal.Identities.Any(i => i.AuthenticationType == IdentityConstants.ApplicationScheme);
         }
 
         /// <summary>
@@ -100,7 +97,7 @@ namespace Nozomi.Service.Identity.Managers
         /// <returns>The task object representing the asynchronous operation.</returns>
         public override async Task RefreshSignInAsync(User user)
         {
-            var auth = await Context.AuthenticateAsync(NozomiAuthConstants.ApplicationScheme);
+            var auth = await Context.AuthenticateAsync(IdentityConstants.ApplicationScheme);
             var authenticationMethod = auth?.Principal?.FindFirstValue(ClaimTypes.AuthenticationMethod);
             await SignInAsync(user, auth?.Properties, authenticationMethod);
         }
@@ -135,7 +132,7 @@ namespace Nozomi.Service.Identity.Managers
                     userPrincipal.Identities.First().AddClaim(new Claim(ClaimTypes.AuthenticationMethod, authenticationMethod));
                 }
 
-                await Context.SignInAsync(NozomiAuthConstants.ApplicationScheme,
+                await Context.SignInAsync(IdentityConstants.ApplicationScheme,
                     userPrincipal,
                     authenticationProperties ?? new AuthenticationProperties());
                 // https://github.com/aspnet/Security/issues/1131#issuecomment-280896191
@@ -152,7 +149,6 @@ namespace Nozomi.Service.Identity.Managers
         /// </summary>
         public override async Task SignOutAsync()
         {
-            await Context.SignOutAsync(NozomiAuthConstants.ApplicationScheme);
             await Context.SignOutAsync(IdentityConstants.ApplicationScheme);
             await Context.SignOutAsync(IdentityConstants.ExternalScheme);
             await Context.SignOutAsync(IdentityConstants.TwoFactorUserIdScheme);

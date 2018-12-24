@@ -3,8 +3,6 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
-using IdentityServer4;
-using IdentityServer4.Stores;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -13,12 +11,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Nozomi.Base.Identity;
-using Nozomi.Base.Identity.Debugging;
 using Nozomi.Base.Identity.Models;
 using Nozomi.Base.Identity.Models.Identity;
 using Nozomi.Repo.Identity.Data;
 using Nozomi.Service.Identity;
-using Nozomi.Service.Identity.Factories;
 using Nozomi.Service.Identity.Managers;
 using Nozomi.Service.Identity.Stores;
 using Nozomi.Service.Identity.Stores.Interfaces;
@@ -44,7 +40,6 @@ namespace Nozomi.Ticker.StartupExtensions
                 .AddSignInManager<NozomiSignInManager>()
                 .AddUserStore<NozomiUserStore>()
                 .AddRoleStore<NozomiRoleStore>()
-                .AddClaimsPrincipalFactory<NozomiUserClaimsPrincipalFactory>()
                 .AddDefaultTokenProviders();
             
             // Configure Authentication
@@ -52,18 +47,8 @@ namespace Nozomi.Ticker.StartupExtensions
             //
             // Findings have shown this affects IdentityServerAuthenticationService. Removing this will 
             // default all constants to .NET Core Identity's defaults.
-            services.AddAuthentication(options =>
+            services.AddAuthentication().AddCookie(options =>
             {
-                options.DefaultScheme = NozomiAuthConstants.ApplicationScheme;
-                options.DefaultAuthenticateScheme = NozomiAuthConstants.ApplicationScheme;
-                options.DefaultChallengeScheme = NozomiAuthConstants.ApplicationScheme;
-                options.DefaultForbidScheme = NozomiAuthConstants.ApplicationScheme;
-                options.DefaultSignInScheme = NozomiAuthConstants.ApplicationScheme;
-                options.DefaultSignOutScheme = NozomiAuthConstants.ApplicationScheme;
-            }).AddCookie(options =>
-            {
-                options.Cookie.Name = NozomiAuthConstants.ApplicationScheme;
-                
                 // Cookie settings
                 options.ExpireTimeSpan = TimeSpan.FromMinutes(5);
 
@@ -92,22 +77,11 @@ namespace Nozomi.Ticker.StartupExtensions
                     "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
                 options.User.RequireUniqueEmail = true;
             });
-
-            services.AddIdentityServer()
-                .AddRequiredPlatformServices()
-                //.AddSigningCredential(cert)
-                .AddResourceStore<ResourceStore>()
-                .AddClientStore<ClientStore>()
-                .AddAspNetIdentity<User>()
-                .AddProfileService<NozomiProfileService>();
-            
-            services.AddTransient<IClientStore, ClientStore>();
-            services.AddTransient<IResourceStore, ResourceStore>();
         }
         
         public static void UseNozomiAuth(this IApplicationBuilder app)
         {
-            app.UseIdentityServer();
+            app.UseAuthentication();
         }
     }
 }

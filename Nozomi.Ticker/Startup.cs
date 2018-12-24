@@ -155,6 +155,7 @@ namespace Nozomi.Ticker
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
+            app.UseNozomiAuth();
             app.UseCookiePolicy();
             app.UseAutoDbMigration(env);
             
@@ -177,7 +178,6 @@ namespace Nozomi.Ticker
 
             app.UseMiddleware<NozomiExceptionMiddleware>();
             
-            app.UseNozomiAuth();
 
             // Enable middleware to serve generated Swagger as a JSON endpoint.
             app.UseSwagger();
