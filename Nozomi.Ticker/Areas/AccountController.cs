@@ -313,12 +313,12 @@ namespace Nozomi.Ticker.Areas
             if (user == null)
             {
                 // Don't reveal that the user does not exist
-                return RedirectToAction(nameof(AccountController.ResetPasswordConfirmation), "Account");
+                return RedirectToAction(nameof(ResetPasswordConfirmation), "Account");
             }
             var result = await _userManager.ResetPasswordAsync(user, model.Code, model.Password);
             if (result.Succeeded)
             {
-                return RedirectToAction(nameof(AccountController.ResetPasswordConfirmation), "Account");
+                return RedirectToAction(nameof(ResetPasswordConfirmation), "Account");
             }
             AddErrors(result);
             return View();
@@ -369,7 +369,9 @@ namespace Nozomi.Ticker.Areas
 
             if (model.SelectedProvider == "Authenticator")
             {
-                return RedirectToAction(nameof(VerifyAuthenticatorCode), new { ReturnUrl = model.ReturnUrl, RememberMe = model.RememberMe });
+                return RedirectToAction(nameof(VerifyAuthenticatorCode), 
+                    new VerifyAuthenticatorCodeInputModel { ReturnUrl = model.ReturnUrl, 
+                        RememberMe = model.RememberMe });
             }
 
             // Generate the token and send it
@@ -389,7 +391,9 @@ namespace Nozomi.Ticker.Areas
                 await _smsSender.SendSmsAsync(await _userManager.GetPhoneNumberAsync(user), message);
             }
 
-            return RedirectToAction(nameof(VerifyCode), new { Provider = model.SelectedProvider, ReturnUrl = model.ReturnUrl, RememberMe = model.RememberMe });
+            return RedirectToAction(nameof(VerifyCode), 
+                new SendCodeViewModel { Provider = model.SelectedProvider, ReturnUrl = model.ReturnUrl, 
+                    RememberMe = model.RememberMe });
         }
 
         //
@@ -524,35 +528,5 @@ namespace Nozomi.Ticker.Areas
                 return View(model);
             }
         }
-
-
-        #region Helpers
-
-        private void AddErrors(IdentityResult result)
-        {
-            foreach (var error in result.Errors)
-            {
-                ModelState.AddModelError(string.Empty, error.Description);
-            }
-        }
-
-        private Task<User> GetCurrentUserAsync()
-        {
-            return _userManager.GetUserAsync(HttpContext.User);
-        }
-
-        private IActionResult RedirectToLocal(string returnUrl)
-        {
-            if (Url.IsLocalUrl(returnUrl))
-            {
-                return Redirect(returnUrl);
-            }
-            else
-            {
-                return RedirectToAction(nameof(HomeController.Index), "Home");
-            }
-        }
-
-        #endregion
     }
 }
