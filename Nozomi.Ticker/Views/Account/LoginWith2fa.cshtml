@@ -1,5 +1,4 @@
-﻿@page
-@model LoginWith2faModel
+@model Nozomi.Base.Identity.Models.Areas.Account.VerifyCodeViewModel
 @{
     ViewData["Title"] = "Two-factor authentication";
 }
@@ -13,15 +12,15 @@
             <input asp-for="RememberMe" type="hidden" />
             <div asp-validation-summary="All" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="Input.TwoFactorCode"></label>
-                <input asp-for="Input.TwoFactorCode" class="form-control" autocomplete="off" />
-                <span asp-validation-for="Input.TwoFactorCode" class="text-danger"></span>
+                <label asp-for="@Model.Code"></label>
+                <input asp-for="@Model.Code" class="form-control" autocomplete="off" />
+                <span asp-validation-for="@Model.Code" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <div class="checkbox">
-                    <label asp-for="Input.RememberMachine">
-                        <input asp-for="Input.RememberMachine" />
-                        @Html.DisplayNameFor(m => m.Input.RememberMachine)
+                    <label asp-for="@Model.RememberBrowser">
+                        <input asp-for="@Model.RememberBrowser" />
+                        @Html.DisplayNameFor(m => m.RememberBrowser)
                     </label>
                 </div>
             </div>
@@ -33,7 +32,8 @@
 </div>
 <p>
     Don't have access to your authenticator device? You can
-    <a id="recovery-code-login" asp-page="./LoginWithRecoveryCode" asp-route-returnUrl="@Model.ReturnUrl">log in with a recovery code</a>.
+    <a id="recovery-code-login" asp-page="./LoginWithRecoveryCode" 
+       asp-route-returnUrl="@Model.ReturnUrl">log in with a recovery code</a>.
 </p>
 
 @section Scripts {
