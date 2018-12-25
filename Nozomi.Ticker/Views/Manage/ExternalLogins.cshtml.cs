@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Nozomi.Base.Identity.Models.Identity;
 
-namespace Nozomi.Ticker.Areas.Identity.Pages.Account.Manage
+namespace Nozomi.Ticker.Views.Manage
 {
     public class ExternalLoginsModel : PageModel
     {

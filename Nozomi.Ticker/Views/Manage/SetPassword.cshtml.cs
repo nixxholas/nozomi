@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
+﻿using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Nozomi.Base.Identity.Models.Identity;
 
-namespace Nozomi.Ticker.Areas.Identity.Pages.Account.Manage
+namespace Nozomi.Ticker.Views.Manage
 {
     public class SetPasswordModel : PageModel
     {

@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
-namespace Nozomi.Ticker.Areas.Identity.Pages.Account.Manage
+namespace Nozomi.Ticker.Views.Manage
 {
     public static class ManageNavPages
     {

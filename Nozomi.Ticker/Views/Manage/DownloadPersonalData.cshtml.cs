@@ -10,7 +10,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Nozomi.Base.Identity.Models.Identity;
 
-namespace Nozomi.Ticker.Areas.Identity.Pages.Account.Manage
+namespace Nozomi.Ticker.Views.Manage
 {
     public class DownloadPersonalDataModel : PageModel
     {

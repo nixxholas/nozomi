@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -9,7 +6,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 using Nozomi.Base.Identity.Models.Identity;
 
-namespace Nozomi.Ticker.Areas.Identity.Pages.Account
+namespace Nozomi.Ticker.Views.Account
 {
     [AllowAnonymous]
     public class LogoutModel : PageModel

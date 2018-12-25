@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 using Nozomi.Base.Identity.Models.Identity;
 
-namespace Nozomi.Ticker.Areas.Identity.Pages.Account.Manage
+namespace Nozomi.Ticker.Views.Manage
 {
     public class DeletePersonalDataModel : PageModel
     {

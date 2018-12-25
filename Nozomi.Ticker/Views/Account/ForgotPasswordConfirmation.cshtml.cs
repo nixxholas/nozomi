@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace Nozomi.Ticker.Areas.Identity.Pages.Account
+namespace Nozomi.Ticker.Views.Account
 {
     [AllowAnonymous]
     public class ForgotPasswordConfirmation : PageModel
