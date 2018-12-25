@@ -18,4 +18,7 @@
   <ItemGroup>
     <Folder Include="ClientApp\configs" />
   </ItemGroup>
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="Areas\Identity\Pages\_ViewImports.cshtml" />
+  </ItemGroup>
 </Project>
