@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
@@ -89,6 +90,39 @@ namespace Nozomi.Ticker.Areas
             var code = await _userManager.GenerateChangePhoneNumberTokenAsync(user, model.PhoneNumber);
             await _smsSender.SendSmsAsync(model.PhoneNumber, "Your security code is: " + code);
             return RedirectToAction(nameof(VerifyPhoneNumber), new { PhoneNumber = model.PhoneNumber });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeletePersonalData(DeletePersonalDataInputModel model)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
+
+            if (await _userManager.HasPasswordAsync(user))
+            {
+                if (!await _userManager.CheckPasswordAsync(user, model.Password))
+                {
+                    ModelState.AddModelError(string.Empty, "Password not correct.");
+                    return View();
+                }
+            }
+
+            var result = await _userManager.DeleteAsync(user);
+            if (!result.Succeeded)
+            {
+                throw new InvalidOperationException($"Unexpected error occurred deleting user with ID " +
+                                                    $"'{user.Id}'.");
+            }
+
+            await _signInManager.SignOutAsync();
+
+            _logger.LogInformation("User with ID '{UserId}' deleted themselves.", user.Id);
+
+            return Redirect("~/");
         }
 
         //
