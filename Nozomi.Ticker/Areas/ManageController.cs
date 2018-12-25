@@ -1,9 +1,12 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using Nozomi.Base.Identity.Models.Areas.Manage;
 using Nozomi.Base.Identity.Models.Identity;
 using Nozomi.Preprocessing.Events.Interfaces;
@@ -90,6 +93,31 @@ namespace Nozomi.Ticker.Areas
             var code = await _userManager.GenerateChangePhoneNumberTokenAsync(user, model.PhoneNumber);
             await _smsSender.SendSmsAsync(model.PhoneNumber, "Your security code is: " + code);
             return RedirectToAction(nameof(VerifyPhoneNumber), new { PhoneNumber = model.PhoneNumber });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DownloadPersonalData()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
+
+            _logger.LogInformation("User with ID '{UserId}' asked for their personal data.", _userManager.GetUserId(User));
+
+            // Only include personal data for download
+            var personalData = new Dictionary<string, string>();
+            var personalDataProps = typeof(User).GetProperties().Where(
+                prop => Attribute.IsDefined(prop, typeof(PersonalDataAttribute)));
+            foreach (var p in personalDataProps)
+            {
+                personalData.Add(p.Name, p.GetValue(user)?.ToString() ?? "null");
+            }
+
+            Response.Headers.Add("Content-Disposition", "attachment; filename=PersonalData.json");
+            return new FileContentResult(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(personalData)), "text/json");
         }
 
         [HttpPost]
