@@ -1,4 +1,6 @@
-﻿@using Nozomi.Ticker.Views.Manage
+﻿@using Microsoft.AspNetCore.Identity
+@using Nozomi.Base.Identity.Models.Identity
+@using Nozomi.Ticker.Views.Manage
 @inject SignInManager<User> SignInManager
 @{
     var hasExternalLogins = (await SignInManager.GetExternalAuthenticationSchemesAsync()).Any();
