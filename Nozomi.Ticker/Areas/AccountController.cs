@@ -57,7 +57,8 @@ namespace Nozomi.Ticker.Areas
                 }
                 if (result.RequiresTwoFactor)
                 {
-                    return RedirectToAction(nameof(SendCode), new { ReturnUrl = returnUrl, RememberMe = model.RememberLogin });
+                    return RedirectToAction(nameof(SendCode), 
+                        new { ReturnUrl = returnUrl, RememberMe = model.RememberLogin });
                 }
                 if (result.IsLockedOut)
                 {
