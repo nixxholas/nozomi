@@ -154,7 +154,7 @@ namespace Nozomi.Ticker.Areas
             var info = await _signInManager.GetExternalLoginInfoAsync();
             if (info == null)
             {
-                return RedirectToAction(nameof(Login));
+                return View(@"Login");
             }
 
             // Sign in the user with this external login provider if the user already has a login.
