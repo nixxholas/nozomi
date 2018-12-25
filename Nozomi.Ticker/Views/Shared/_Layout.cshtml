@@ -28,11 +28,8 @@
             <a class="py-2 d-none d-md-inline-block" asp-area="" asp-controller="Home" asp-action="About">About</a>
             <a class="py-2 d-none d-md-inline-block" asp-area="" asp-controller="Home" asp-action="Pricing">Pricing</a>
             <a class="py-2 d-none d-md-inline-block" asp-area="" asp-controller="Home" asp-action="Docs">Documentation</a>
-          <a class="py-2 d-none d-md-inline-block" asp-area="" asp-controller="Home" asp-action="Tutorials">Tutorials</a>
-          @if (SignInManager.IsSignedIn(User))
-          {
             <a class="py-2 d-none d-md-inline-block" asp-area="" asp-controller="Home" asp-action="Tutorials">Tutorials</a>
-          }        
+            <partial name="_LoginPartial" />
           </div>
     </nav>
 
