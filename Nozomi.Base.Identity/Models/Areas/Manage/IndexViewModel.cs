@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Nozomi.Base.Identity.Models.Areas.Manage
 {
-    public class IndexViewModel
+    public class IndexViewModel : BaseViewModel
     {
         public bool HasPassword { get; set; }
 

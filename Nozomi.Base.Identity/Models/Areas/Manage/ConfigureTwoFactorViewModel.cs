@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Nozomi.Base.Identity.Models.Areas.Manage
 {
-    public class ConfigureTwoFactorViewModel
+    public class ConfigureTwoFactorViewModel : BaseViewModel
     {
         public string SelectedProvider { get; set; }
 

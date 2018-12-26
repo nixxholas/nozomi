@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Nozomi.Base.Identity.Models.Areas.Manage
 {
-    public class AddPhoneNumberViewModel
+    public class AddPhoneNumberViewModel : BaseViewModel
     {
         [Required]
         [Phone]

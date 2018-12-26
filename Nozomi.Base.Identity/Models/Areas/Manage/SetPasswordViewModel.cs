@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Nozomi.Base.Identity.Models.Areas.Manage
 {
-    public class SetPasswordViewModel
+    public class SetPasswordViewModel : BaseViewModel
     {
         [Required]
         [StringLength(100, ErrorMessage = "The {0} must be at least {2} characters long.", MinimumLength = 6)]

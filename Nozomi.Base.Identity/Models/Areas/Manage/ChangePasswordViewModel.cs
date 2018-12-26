@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Nozomi.Base.Identity.Models.Areas.Manage
 {
-    public class ChangePasswordViewModel
+    public class ChangePasswordViewModel : BaseViewModel
     {
         [Required]
         [DataType(DataType.Password)]
