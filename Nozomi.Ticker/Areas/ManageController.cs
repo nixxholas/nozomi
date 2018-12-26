@@ -96,6 +96,7 @@ namespace Nozomi.Ticker.Areas
         }
 
         [HttpPost]
+        [Produces("text/json")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DownloadPersonalData()
         {
@@ -117,7 +118,8 @@ namespace Nozomi.Ticker.Areas
             }
 
             Response.Headers.Add("Content-Disposition", "attachment; filename=PersonalData.json");
-            return new FileContentResult(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(personalData)), "text/json");
+            return new FileContentResult(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(personalData)), 
+                "text/json");
         }
 
         [HttpPost]
