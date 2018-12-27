@@ -7,12 +7,34 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 module.exports = {
     entry: {
-        core: "./ClientApp/scripts/index.ts"
+        core: "./ClientApp/scripts/index.ts",
+        stream: path.resolve(__dirname, './ClientApp/scripts/stream/global.js')
     },
     output: {
         path: path.resolve(__dirname, "wwwroot"),
-        filename: "[name].bundle.js",
+        filename: '[name].[contenthash].js',
         publicPath: "/"
+    },
+    optimization: {
+        runtimeChunk: 'single',
+        splitChunks: {
+            chunks: 'all',
+            maxInitialRequests: Infinity,
+            minSize: 0,
+            cacheGroups: {
+                vendor: {
+                    test: /[\\/]node_modules[\\/]/,
+                    name(module) {
+                        // get the name. E.g. node_modules/packageName/not/this/part.js
+                        // or node_modules/packageName
+                        const packageName = module.context.match(/[\\/]node_modules[\\/](.*?)([\\/]|$)/)[1];
+
+                        // npm package names are URL-safe, but some servers don't like @ symbols
+                        return `npm.${packageName.replace('@', '')}`;
+                    }
+                }
+            }
+        }
     },
     resolve: {
         extensions: [".js", ".ts", ".tsx", ".scss"]
@@ -39,6 +61,12 @@ module.exports = {
             jQuery: 'jquery',
             $: 'jquery',
             jquery: 'jquery'
+        }),
+        new HtmlWebpackPlugin({
+            hash: true,
+            // Load a custom template (lodash by default)
+            template: 'ClientApp/html/_WebpackScripts.cshtml',
+            filename: '../Views/Shared/_WebpackScripts.cshtml'
         })
     ]
 };
