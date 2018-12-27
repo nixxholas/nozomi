@@ -16,5 +16,9 @@ namespace Nozomi.Base.Identity.Models.Areas.Manage
         public bool BrowserRemembered { get; set; }
 
         public string AuthenticatorKey { get; set; }
+        
+        public string Email { get; set; }
+
+        public bool EmailConfirmed { get; set; } = false;
     }
 }

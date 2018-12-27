@@ -38,7 +38,12 @@ namespace Nozomi.Ticker.Areas
                 : message == ManageMessageId.RemovePhoneSuccess ? "Your phone number was removed."
                 : "";
 
-            var user = await GetCurrentUserAsync();
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
+
             var model = new IndexViewModel
             {
                 HasPassword = await _userManager.HasPasswordAsync(user),
@@ -46,7 +51,8 @@ namespace Nozomi.Ticker.Areas
                 TwoFactor = await _userManager.GetTwoFactorEnabledAsync(user),
                 Logins = await _userManager.GetLoginsAsync(user),
                 BrowserRemembered = await _signInManager.IsTwoFactorClientRememberedAsync(user),
-                AuthenticatorKey = await _userManager.GetAuthenticatorKeyAsync(user)
+                AuthenticatorKey = await _userManager.GetAuthenticatorKeyAsync(user),
+                EmailConfirmed = user.EmailConfirmed
             };
             return View(model);
         }
