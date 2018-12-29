@@ -69,6 +69,7 @@ module.exports = {
         }),
         new HtmlWebpackPlugin({
             hash: true,
+            inject: 'head',
             // Load a custom template (lodash by default)
             template: 'ClientApp/html/_WebpackScripts.cshtml',
             filename: '../Views/Shared/_WebpackScripts.cshtml'
