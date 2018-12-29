@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Nozomi.Base.Identity.Models.Identity;
 using Nozomi.Service.Identity.Managers;
+using Nozomi.Service.Services.Interfaces;
 using Nozomi.Ticker.Models;
 
 namespace Nozomi.Ticker.Areas
@@ -12,17 +13,18 @@ namespace Nozomi.Ticker.Areas
     [ApiExplorerSettings(IgnoreApi = true)]
     public class HomeController : BaseViewController<HomeController>
     {
+        private readonly ITickerService _tickerService;
+        
         public HomeController(ILogger<HomeController> logger, NozomiSignInManager signInManager, 
-            NozomiUserManager userManager) 
+            NozomiUserManager userManager, ITickerService tickerService) 
             : base(logger, signInManager, userManager)
         {
+            _tickerService = tickerService;
         }
         
         [Route("/")]
         public async Task<IActionResult> Index()
         {
-            var user = await GetCurrentUserAsync();
-            
             return View();
         }
 
