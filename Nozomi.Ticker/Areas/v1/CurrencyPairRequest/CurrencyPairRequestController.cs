@@ -1,4 +1,5 @@
 using System.Linq;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data;
@@ -32,6 +33,7 @@ namespace Nozomi.Ticker.Areas.v1.CurrencyPairRequest
             };
         }
 
+        [Authorize]
         [HttpPost("{userId}")]
         public NozomiResult<JsonResult> Create([FromBody]CreateCurrencyPairRequest obj, long userId = 0)
         {
@@ -65,6 +67,7 @@ namespace Nozomi.Ticker.Areas.v1.CurrencyPairRequest
             };
         }
 
+        [Authorize]
         [HttpPost("{userId}")]
         public NozomiResult<JsonResult> Update([FromBody]UpdateCurrencyPairRequest obj, long userId = 0)
         {
@@ -77,6 +80,7 @@ namespace Nozomi.Ticker.Areas.v1.CurrencyPairRequest
             };
         }
 
+        [Authorize]
         [HttpDelete("{id}")]
         public NozomiResult<JsonResult> Delete(long id, bool hardDelete = false, long userId = 0)
         {

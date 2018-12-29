@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
@@ -27,6 +28,7 @@ namespace Nozomi.Ticker.Areas.v1.CurrencyPair
             _tickerService = tickerService;
         }
 
+        [Authorize]
         [HttpPost]
         public async Task<NozomiResult<string>> Create([FromBody]CreateCurrencyPair currencyPair)
         {

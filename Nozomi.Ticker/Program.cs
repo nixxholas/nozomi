@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Nozomi.Core.Helpers.Native.Collections;
+using Nozomi.Base.Core.Helpers.Native.Collections;
 using Nozomi.Repo.Data;
 
 namespace Nozomi.Ticker

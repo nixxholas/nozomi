@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -26,6 +27,7 @@ namespace Nozomi.Ticker.Areas.v1.CurrencySource
             return new NozomiResult<ICollection<Source>>(_sourceService.GetAllActive(false).ToList());
         }
 
+        [Authorize]
         [HttpPost]
         public NozomiResult<JsonResult> Create([FromBody]CreateSource source)
         {
@@ -47,6 +49,7 @@ namespace Nozomi.Ticker.Areas.v1.CurrencySource
             };
         }
 
+        [Authorize]
         [HttpPut]
         public NozomiResult<JsonResult> Update([FromBody]UpdateSource source)
         {
@@ -57,6 +60,7 @@ namespace Nozomi.Ticker.Areas.v1.CurrencySource
             };
         }
 
+        [Authorize]
         [HttpDelete]
         public NozomiResult<JsonResult> Delete([FromBody]DeleteSource source)
         {

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data;
@@ -40,18 +41,21 @@ namespace Nozomi.Ticker.Areas.v1.CurrencyPairComponent
                 (_currencyPairComponentService.All(index, includeNested));
         }
 
+        [Authorize]
         [HttpPost]
         public NozomiResult<string> Create(CreateCurrencyPairComponent createCurrencyPairComponent)
         {
             return _currencyPairComponentService.Create(createCurrencyPairComponent);
         }
 
+        [Authorize]
         [HttpPost]
         public NozomiResult<string> Update(UpdateCurrencyPairComponent updateCurrencyPairComponent)
         {
             return _currencyPairComponentService.Update(updateCurrencyPairComponent);
         }
 
+        [Authorize]
         [HttpDelete]
         public NozomiResult<string> Delete(long id, long userId = 0, bool hardDelete = false)
         {

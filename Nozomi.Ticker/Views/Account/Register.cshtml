@@ -1,0 +1,49 @@
+@model Nozomi.Base.Identity.Models.Areas.Account.RegisterViewModel
+@{
+    ViewData["Title"] = "Register";
+}
+<div class="container mt-xl-5 pb-5">
+    <header class="mx-auto text-center pb-5">
+        <h2 class="h1 font-weight-light mb-1">@ViewData["Title"]</h2>
+    </header>
+
+    <form asp-controller="Account" asp-action="Register" asp-route-returnurl="@ViewData["ReturnUrl"]"
+          method="post" role="form">
+        <div class="row">
+            <div class="u-box-shadow-lg card w-50 mx-auto">
+                <!-- Card Body -->
+                <div class="card-body">
+                    <div class="form-group">
+                        <label asp-for="Username" class="u-font-size-90"></label>
+                        <input class="form-control" asp-for="Username"/>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="Email" class="u-font-size-90"></label>
+                        <input class="form-control" asp-for="Email"/>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="Password" class="u-font-size-90"></label>
+                        <input class="form-control" asp-for="Password"/>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="ConfirmPassword" class="u-font-size-90"></label>
+                        <input class="form-control" asp-for="ConfirmPassword"/>
+                    </div>
+
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-secondary">Register</button>
+                        <a class="btn btn-light" asp-area="" asp-controller="Home" asp-action="Index">Cancel</a>
+                    </div>
+                </div>
+                <!-- End Card Body -->
+            </div>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}

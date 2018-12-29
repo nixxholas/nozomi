@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Nozomi.Data.WebModels;
 using System;
+using Nozomi.Base.Core.Helpers.Mapping;
 
 namespace Nozomi.Repo.Data.Mappings.WebModels
 {

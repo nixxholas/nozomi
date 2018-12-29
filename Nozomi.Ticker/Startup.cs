@@ -7,19 +7,22 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Nozomi.Base.Identity.Models.Identity;
 using Nozomi.Data.WebModels.LoggingModels;
 using Nozomi.Repo.Data;
-using Nozomi.Repo.Repositories;
+using Nozomi.Repo.Identity.Data;
 using Nozomi.Service.HostedServices;
 using Nozomi.Service.HostedServices.RequestTypes;
 using Nozomi.Service.HostedServices.RequestTypes.Interfaces;
 using Nozomi.Service.HostedServices.StaticUpdater;
 using Nozomi.Service.Hubs;
+using Nozomi.Service.Identity.Stores;
 using Nozomi.Service.Middleware;
 using Nozomi.Service.Services;
 using Nozomi.Service.Services.Interfaces;
@@ -46,7 +49,7 @@ namespace Nozomi.Ticker
         {
             // Environment Inclusion
             var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-
+            
             if (!string.IsNullOrEmpty(env) && !env.Equals("production", StringComparison.OrdinalIgnoreCase))
             {
                 // Greet the beloved dev
@@ -62,6 +65,12 @@ namespace Nozomi.Ticker
                     options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
                 },
                     ServiceLifetime.Transient);
+
+                services.AddDbContext<NozomiAuthContext>(options =>
+                {
+                    options.UseNpgsql(Configuration.GetConnectionString("LocalAuth:" + Environment.MachineName));
+                    options.EnableSensitiveDataLogging(false);
+                });
             
                 // Redis
                 services.AddDistributedRedisCache(option =>
@@ -79,6 +88,12 @@ namespace Nozomi.Ticker
                     options.EnableSensitiveDataLogging(false);
                     options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
                 }, ServiceLifetime.Transient);
+
+                services.AddDbContext<NozomiAuthContext>(options =>
+                {
+                    options.UseNpgsql(Configuration.GetConnectionString("NozomiAuthDb"));
+                    options.EnableSensitiveDataLogging(false);
+                });
             
                 // Redis
                 services.AddDistributedRedisCache(option =>
@@ -92,25 +107,35 @@ namespace Nozomi.Ticker
             {
                 // This lambda determines whether user consent for non-essential cookies is needed for a given request.
                 options.CheckConsentNeeded = context => false;
-                options.MinimumSameSitePolicy = SameSiteMode.None;
+                options.MinimumSameSitePolicy = SameSiteMode.Lax;
+                options.Secure = CookieSecurePolicy.Always;
             });
+            
+            services.AddSignalR()
+                .AddMessagePackProtocol();
+            
+            services.ConfigureCors();
+
+            services.AddSession();
+            
+            services.AddMvc()
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
+                .AddSessionStateTempDataProvider();
+
+            // https://stackoverflow.com/questions/38184583/how-to-add-ihttpcontextaccessor-in-the-startup-class-in-the-di-in-asp-net-core-1
+            //services.AddHttpContextAccessor();
             
             // Repository Layer
             services.ConfigureRepoLayer();
             
             // Service Layer
             services.ConfigureServiceLayer();
-            
-            services.AddSignalR()
-                .AddMessagePackProtocol();
-            
-            services.ConfigureCors();
-            
-            services.AddMvc()
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
-            
+
+            // Hosted Service Layer
             services.ConfigureHostedServices();
 
+            services.ConfigureNozomiAuth(Configuration);
+            
             services.ConfigureSwagger();
         }
 
@@ -130,6 +155,7 @@ namespace Nozomi.Ticker
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
+            app.UseNozomiAuth();
             app.UseCookiePolicy();
             app.UseAutoDbMigration(env);
             
@@ -141,13 +167,18 @@ namespace Nozomi.Ticker
                 route.MapHub<TickerHub>("/ticker");
             });
 
+            app.UseSession();
+            
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
                     name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
+                    template: "{controller=home}/{action=index}/{id?}");
             });
+
+            app.UseMiddleware<NozomiExceptionMiddleware>();
             
+
             // Enable middleware to serve generated Swagger as a JSON endpoint.
             app.UseSwagger();
 

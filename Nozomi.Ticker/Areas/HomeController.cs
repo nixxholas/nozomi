@@ -1,15 +1,28 @@
 ﻿using System.Diagnostics;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using Nozomi.Base.Identity.Models.Identity;
+using Nozomi.Service.Identity.Managers;
 using Nozomi.Ticker.Models;
 
 namespace Nozomi.Ticker.Areas
 {
     [ApiExplorerSettings(IgnoreApi = true)]
-    public class HomeController : Controller
+    public class HomeController : BaseViewController<HomeController>
     {
-        [Route("/")]
-        public IActionResult Index()
+        public HomeController(ILogger<HomeController> logger, NozomiSignInManager signInManager, 
+            NozomiUserManager userManager) 
+            : base(logger, signInManager, userManager)
         {
+        }
+        
+        [Route("/")]
+        public async Task<IActionResult> Index()
+        {
+            var user = await GetCurrentUserAsync();
+            
             return View();
         }
 

@@ -6,9 +6,11 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.DependencyInjection;
+using Nozomi.Base.Identity.Models.Identity;
 using Nozomi.Data.CurrencyModels;
 using Nozomi.Data.WebModels;
 using Nozomi.Repo.Data;
+using Nozomi.Repo.Identity.Data;
 
 namespace Nozomi.Ticker.StartupExtensions
 {
@@ -20,6 +22,17 @@ namespace Nozomi.Ticker.StartupExtensions
                 .GetRequiredService<IServiceScopeFactory>()
                 .CreateScope())
             {
+                using (var context = serviceScope.ServiceProvider.GetService<NozomiAuthContext>())
+                {
+                    // Auto wipe
+                    if (env.IsDevelopment())
+                    {
+                        context.Database.EnsureDeleted();
+                    }
+                    
+                    context.Database.Migrate();
+                }
+                
                 using (var context = serviceScope.ServiceProvider.GetService<NozomiDbContext>())
                 {
                     // Auto Wipe

@@ -22,7 +22,7 @@ namespace Nozomi.Repo.Migrations
                 .HasAnnotation("ProductVersion", "2.1.4-rtm-31024")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
-            modelBuilder.Entity("Nozomi.Data.CurrencyModels.Currency", b =>
+            modelBuilder.Entity("Nozomi.Base.Domain.CurrencyModels.Currency", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd();
@@ -73,7 +73,7 @@ namespace Nozomi.Repo.Migrations
                     );
                 });
 
-            modelBuilder.Entity("Nozomi.Data.CurrencyModels.CurrencyPair", b =>
+            modelBuilder.Entity("Nozomi.Base.Domain.CurrencyModels.CurrencyPair", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd();
@@ -117,7 +117,7 @@ namespace Nozomi.Repo.Migrations
                     );
                 });
 
-            modelBuilder.Entity("Nozomi.Data.CurrencyModels.CurrencyType", b =>
+            modelBuilder.Entity("Nozomi.Base.Domain.CurrencyModels.CurrencyType", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd();
@@ -154,7 +154,7 @@ namespace Nozomi.Repo.Migrations
                     );
                 });
 
-            modelBuilder.Entity("Nozomi.Data.CurrencyModels.PartialCurrencyPair", b =>
+            modelBuilder.Entity("Nozomi.Base.Domain.CurrencyModels.PartialCurrencyPair", b =>
                 {
                     b.Property<long>("CurrencyPairId");
 
@@ -181,7 +181,7 @@ namespace Nozomi.Repo.Migrations
                     );
                 });
 
-            modelBuilder.Entity("Nozomi.Data.CurrencyModels.Source", b =>
+            modelBuilder.Entity("Nozomi.Base.Domain.CurrencyModels.Source", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd();
@@ -224,7 +224,7 @@ namespace Nozomi.Repo.Migrations
                     );
                 });
 
-            modelBuilder.Entity("Nozomi.Data.WebModels.LoggingModels.RequestLog", b =>
+            modelBuilder.Entity("Nozomi.Base.Domain.WebModels.LoggingModels.RequestLog", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd();
@@ -257,7 +257,7 @@ namespace Nozomi.Repo.Migrations
                     b.ToTable("RequestLogs");
                 });
 
-            modelBuilder.Entity("Nozomi.Data.WebModels.Request", b =>
+            modelBuilder.Entity("Nozomi.Base.Domain.WebModels.Request", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd();
@@ -305,7 +305,7 @@ namespace Nozomi.Repo.Migrations
                     b.HasDiscriminator<string>("Discriminator").HasValue("Request");
                 });
 
-            modelBuilder.Entity("Nozomi.Data.WebModels.RequestComponent", b =>
+            modelBuilder.Entity("Nozomi.Base.Domain.WebModels.RequestComponent", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd();
@@ -351,7 +351,7 @@ namespace Nozomi.Repo.Migrations
                     );
                 });
 
-            modelBuilder.Entity("Nozomi.Data.WebModels.RequestComponentDatum", b =>
+            modelBuilder.Entity("Nozomi.Base.Domain.WebModels.RequestComponentDatum", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd();
@@ -385,7 +385,7 @@ namespace Nozomi.Repo.Migrations
                     b.ToTable("RequestComponentData");
                 });
 
-            modelBuilder.Entity("Nozomi.Data.WebModels.RequestProperty", b =>
+            modelBuilder.Entity("Nozomi.Base.Domain.WebModels.RequestProperty", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd();
@@ -420,9 +420,9 @@ namespace Nozomi.Repo.Migrations
                     b.ToTable("RequestProperties");
                 });
 
-            modelBuilder.Entity("Nozomi.Data.WebModels.CurrencyPairRequest", b =>
+            modelBuilder.Entity("Nozomi.Base.Domain.WebModels.CurrencyPairRequest", b =>
                 {
-                    b.HasBaseType("Nozomi.Data.WebModels.Request");
+                    b.HasBaseType("Nozomi.Base.Domain.WebModels.Request");
 
                     b.Property<long>("CurrencyPairId");
 
@@ -440,80 +440,80 @@ namespace Nozomi.Repo.Migrations
                     );
                 });
 
-            modelBuilder.Entity("Nozomi.Data.CurrencyModels.Currency", b =>
+            modelBuilder.Entity("Nozomi.Base.Domain.CurrencyModels.Currency", b =>
                 {
-                    b.HasOne("Nozomi.Data.CurrencyModels.Source", "CurrencySource")
+                    b.HasOne("Nozomi.Base.Domain.CurrencyModels.Source", "CurrencySource")
                         .WithMany("Currencies")
                         .HasForeignKey("CurrencySourceId")
                         .HasConstraintName("Source_Currencies_Constraint")
                         .OnDelete(DeleteBehavior.Cascade);
 
-                    b.HasOne("Nozomi.Data.CurrencyModels.CurrencyType", "CurrencyType")
+                    b.HasOne("Nozomi.Base.Domain.CurrencyModels.CurrencyType", "CurrencyType")
                         .WithMany("Currencies")
                         .HasForeignKey("CurrencyTypeId")
                         .HasConstraintName("CurrencyType_Currencies_Constraint")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("Nozomi.Data.CurrencyModels.CurrencyPair", b =>
+            modelBuilder.Entity("Nozomi.Base.Domain.CurrencyModels.CurrencyPair", b =>
                 {
-                    b.HasOne("Nozomi.Data.CurrencyModels.Source", "CurrencySource")
+                    b.HasOne("Nozomi.Base.Domain.CurrencyModels.Source", "CurrencySource")
                         .WithMany("CurrencyPairs")
                         .HasForeignKey("CurrencySourceId")
                         .HasConstraintName("Source_CurrencyPairs_Constraint")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("Nozomi.Data.CurrencyModels.PartialCurrencyPair", b =>
+            modelBuilder.Entity("Nozomi.Base.Domain.CurrencyModels.PartialCurrencyPair", b =>
                 {
-                    b.HasOne("Nozomi.Data.CurrencyModels.Currency", "Currency")
+                    b.HasOne("Nozomi.Base.Domain.CurrencyModels.Currency", "Currency")
                         .WithMany("PartialCurrencyPairs")
                         .HasForeignKey("CurrencyId")
                         .HasConstraintName("PartialCurrencyPairs_Currency_Constraint")
                         .OnDelete(DeleteBehavior.Cascade);
 
-                    b.HasOne("Nozomi.Data.CurrencyModels.CurrencyPair", "CurrencyPair")
+                    b.HasOne("Nozomi.Base.Domain.CurrencyModels.CurrencyPair", "CurrencyPair")
                         .WithMany("PartialCurrencyPairs")
                         .HasForeignKey("CurrencyPairId")
                         .HasConstraintName("PartialCurrencyPairs_CurrencyPair_Constraint")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("Nozomi.Data.WebModels.LoggingModels.RequestLog", b =>
+            modelBuilder.Entity("Nozomi.Base.Domain.WebModels.LoggingModels.RequestLog", b =>
                 {
-                    b.HasOne("Nozomi.Data.WebModels.Request", "Request")
+                    b.HasOne("Nozomi.Base.Domain.WebModels.Request", "Request")
                         .WithMany("RequestLogs")
                         .HasForeignKey("RequestId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("Nozomi.Data.WebModels.RequestComponent", b =>
+            modelBuilder.Entity("Nozomi.Base.Domain.WebModels.RequestComponent", b =>
                 {
-                    b.HasOne("Nozomi.Data.WebModels.Request", "Request")
+                    b.HasOne("Nozomi.Base.Domain.WebModels.Request", "Request")
                         .WithMany("RequestComponents")
                         .HasForeignKey("RequestId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("Nozomi.Data.WebModels.RequestComponentDatum", b =>
+            modelBuilder.Entity("Nozomi.Base.Domain.WebModels.RequestComponentDatum", b =>
                 {
-                    b.HasOne("Nozomi.Data.WebModels.RequestComponent", "RequestComponent")
+                    b.HasOne("Nozomi.Base.Domain.WebModels.RequestComponent", "RequestComponent")
                         .WithOne("RequestComponentDatum")
-                        .HasForeignKey("Nozomi.Data.WebModels.RequestComponentDatum", "RequestComponentId")
+                        .HasForeignKey("Nozomi.Base.Domain.WebModels.RequestComponentDatum", "RequestComponentId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("Nozomi.Data.WebModels.RequestProperty", b =>
+            modelBuilder.Entity("Nozomi.Base.Domain.WebModels.RequestProperty", b =>
                 {
-                    b.HasOne("Nozomi.Data.WebModels.Request", "Request")
+                    b.HasOne("Nozomi.Base.Domain.WebModels.Request", "Request")
                         .WithMany("RequestProperties")
                         .HasForeignKey("RequestId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("Nozomi.Data.WebModels.CurrencyPairRequest", b =>
+            modelBuilder.Entity("Nozomi.Base.Domain.WebModels.CurrencyPairRequest", b =>
                 {
-                    b.HasOne("Nozomi.Data.CurrencyModels.CurrencyPair", "CurrencyPair")
+                    b.HasOne("Nozomi.Base.Domain.CurrencyModels.CurrencyPair", "CurrencyPair")
                         .WithMany("CurrencyPairRequests")
                         .HasForeignKey("CurrencyPairId")
                         .HasConstraintName("CurrencyPair_CurrencyPairRequest_Constraint")

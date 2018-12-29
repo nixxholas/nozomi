@@ -6,9 +6,10 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Counter.SDK.SharedModels;
+using Nozomi.Data;
 using Nozomi.Data.WebModels;
 using Nozomi.Data.WebModels.LoggingModels;
+using Nozomi.Repo.BCL.Context;
 using Nozomi.Repo.Data.Mappings.CurrencyModels;
 using Nozomi.Repo.Data.Mappings.WebModels;
 using Nozomi.Repo.Data.Mappings.WebModels.LoggingModels;
@@ -29,7 +30,7 @@ namespace Nozomi.Repo.Data
         public DbSet<RequestProperty> RequestProperties { get; set; }
         public DbSet<Source> Sources { get; set; }
         
-        public NozomiDbContext(DbContextOptions options) : base(options)
+        public NozomiDbContext(DbContextOptions<NozomiDbContext> options) : base(options)
         {
         }
 

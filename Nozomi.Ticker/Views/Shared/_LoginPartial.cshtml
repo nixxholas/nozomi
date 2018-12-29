@@ -1,0 +1,34 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using Nozomi.Base.Identity.Models.Identity
+@inject SignInManager<User> SignInManager
+@inject UserManager<User> UserManager
+
+@if (SignInManager.IsSignedIn(User))
+{
+    <ul class="ml-auto navbar-nav">
+        <li class="nav-item dropdown">
+            <a class="nav-link" asp-controller="Manage" asp-action="Index" title="Manage" 
+               id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <img class="rounded-circle u-box-shadow-sm mr-2" width="35" height="35" src="assets/img-temp/ava/img3.jpg" alt="Htmlstream"> 
+                <i class="fas fa-angle-down small ml-1"></i>
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <a class="dropdown-item" asp-controller="Manage" asp-action="Index" 
+                   title="Manage">Profile</a>
+                <div class="dropdown-divider"></div>
+                <form id="logoutForm" class="invisible" asp-controller="Manage" asp-action="Index" 
+                      asp-route-returnUrl="@Url.Action("Index", "Home")">
+                    <button id="logout" type="submit" class="dropdown-item">Logout</button>
+                </form>
+            </div>
+        </li>
+    </ul>
+}
+else
+{
+    <ul class="ml-auto navbar-nav">
+        <li class="nav-item mr-3">
+            <a class="nav-link" asp-area="" asp-controller="Account" asp-action="Register">Sign Up</a>
+        </li>
+    </ul>
+}
