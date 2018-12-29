@@ -3,7 +3,6 @@ const webpack = require("webpack");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const CleanWebpackPlugin = require("clean-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 module.exports = {
     entry: {
@@ -30,7 +29,7 @@ module.exports = {
                         const packageName = module.context.match(/[\\/]node_modules[\\/](.*?)([\\/]|$)/)[1];
 
                         // npm package names are URL-safe, but some servers don't like @ symbols
-                        return `npm.${packageName.replace('@', '')}`;
+                        return `yarn.${packageName.replace('@', '')}`;
                     }
                 }
             }
@@ -47,16 +46,22 @@ module.exports = {
             },
             {
                 test: /\.scss$/,
-                use: ExtractTextPlugin.extract({
-                    fallback: "style-loader",
-                    use: "css-loader!sass-loader"
-                })
+                use: [
+                    MiniCssExtractPlugin.loader,
+                    { loader: 'css-loader', options: { sourceMap: true, importLoaders: 1 } },
+                    { loader: 'sass-loader', options: { sourceMap: true } },
+                ],
             }
         ]
     },
     plugins: [
         new CleanWebpackPlugin(["wwwroot/*"]),
-        new ExtractTextPlugin({filename: 'bundle.css'}),
+        new MiniCssExtractPlugin({
+            // Options similar to the same options in webpackOptions.output
+            // both options are optional
+            filename: "[name].css",
+            chunkFilename: "[id].css"
+        }),
         new webpack.ProvidePlugin({
             jQuery: 'jquery',
             $: 'jquery',
