@@ -13,5 +13,7 @@ namespace Nozomi.Service.Services.Interfaces
         Task<NozomiResult<TickerResponse>> GetById(long id);
 
         NozomiResult<ICollection<DistinctiveTickerResponse>> GetByAbbreviation(string ticker, string exchangeAbbrv = null);
+
+        NozomiResult<ICollection<DistinctiveTickerResponse>> GetAllActive();
     }
 }

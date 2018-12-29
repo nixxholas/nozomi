@@ -115,5 +115,45 @@ namespace Nozomi.Service.Services
                 }; 
             }
         }
+
+        public NozomiResult<ICollection<DistinctiveTickerResponse>> GetAllActive()
+        {
+            var query = _unitOfWork.GetRepository<CurrencyPair>()
+                    .GetQueryable()
+                    .AsNoTracking()
+                    .Where(cp => cp.DeletedAt == null && cp.IsEnabled)
+                    .Include(cp => cp.PartialCurrencyPairs)
+                    .ThenInclude(pcp => pcp.Currency)
+                    .Include(cp => cp.CurrencySource)
+                    .Where(cp => cp.CurrencySource != null) // Make sure we have a source
+                    .Include(cp => cp.CurrencyPairRequests)
+                        .ThenInclude(cpr => cpr.RequestComponents)
+                            .ThenInclude(rc => rc.RequestComponentDatum)
+                    // Make sure there's something
+                    .Where(cp => cp.CurrencyPairRequests
+                        .Any(cpr => cpr.RequestComponents.Any(rc => rc.IsEnabled && rc.DeletedAt == null && 
+                                                                    rc.RequestComponentDatum != null)))
+                    .Select(cp => new DistinctiveTickerResponse()
+                    {
+                        Exchange = cp.CurrencySource.Name,
+                        ExchangeAbbrv = cp.CurrencySource.Abbreviation,
+                        LastUpdated = cp.CurrencyPairRequests.FirstOrDefault()
+                            .RequestComponents.FirstOrDefault()
+                            .RequestComponentDatum.ModifiedAt,
+                        Properties = cp.CurrencyPairRequests.FirstOrDefault()
+                            .RequestComponents
+                            .Select(rc => new KeyValuePair<string, string>(
+                                rc.ComponentType.ToString(), 
+                                rc.RequestComponentDatum.Value))
+                            .ToList()
+                    })
+                    .ToList();
+            
+            return new NozomiResult<ICollection<DistinctiveTickerResponse>>()
+            {
+                ResultType = (query != null) ? NozomiResultType.Success : NozomiResultType.Failed,
+                Data = (query != null) ? query : new List<DistinctiveTickerResponse>()
+            };
+        }
     }
 }
