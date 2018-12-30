@@ -13,6 +13,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Nozomi.Base.Core.Configurations;
 using Nozomi.Base.Identity.Models.Identity;
 using Nozomi.Data.WebModels.LoggingModels;
 using Nozomi.Repo.Data;
@@ -101,6 +102,13 @@ namespace Nozomi.Ticker
                     option.Configuration = Configuration.GetConnectionString("RedisConfiguration");
                     option.InstanceName = "nozomi-cache";
                 });
+            
+                // Stripe
+                services.Configure<StripeSettings>(ss =>
+                    {
+                        ss.SecretKey = Configuration.GetConnectionString("Stripe:TestPriv");
+                        ss.PublishableKey = Configuration.GetConnectionString("Stripe:TestPub");
+                    });
             }
             
             services.Configure<CookiePolicyOptions>(options =>
