@@ -100,7 +100,8 @@ namespace CounterCore.Service.Services
                                      .SingleOrDefault(cp => cp.DeletedAt == null && cp.IsEnabled);
 
             // Anomaly Detection
-            if (pairToUpd?.RequestComponentDatum != null)
+            if (pairToUpd?.RequestComponentDatum != null && 
+                pairToUpd.RequestComponentDatum.HasAbnormalValue(val))
             {
                 pairToUpd.RequestComponentDatum.Value = val.ToString(CultureInfo.InvariantCulture);
 

@@ -10,5 +10,16 @@ namespace Nozomi.Data.WebModels
         public RequestComponent RequestComponent { get; set; }
 
         public string Value { get; set; }
+
+        public bool HasAbnormalValue(decimal val)
+        {
+            if (decimal.TryParse(Value, out var currVal))
+            {
+                // If the difference is > 50% or if the difference is less than -50%
+                return !((val / (currVal / 100)) - 100 > 50) || !((val / (currVal / 100)) - 100 < -50);
+            }
+
+            return false;
+        }
     }
 }
