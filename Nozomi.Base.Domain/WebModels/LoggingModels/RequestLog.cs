@@ -1,4 +1,6 @@
-﻿namespace Nozomi.Data.WebModels.LoggingModels
+﻿using Nozomi.Base.Core;
+
+namespace Nozomi.Data.WebModels.LoggingModels
 {
     public class RequestLog : BaseEntityModel
     {

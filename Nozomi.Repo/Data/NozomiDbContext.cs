@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Nozomi.Base.Core;
 using Nozomi.Data;
 using Nozomi.Data.WebModels;
 using Nozomi.Data.WebModels.LoggingModels;

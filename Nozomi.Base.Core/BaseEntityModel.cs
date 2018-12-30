@@ -1,6 +1,6 @@
 using System;
 
-namespace Nozomi.Data
+namespace Nozomi.Base.Core
 {
     public abstract class BaseEntityModel
     {

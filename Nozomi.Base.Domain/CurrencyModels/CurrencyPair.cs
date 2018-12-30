@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using Nozomi.Base.Core;
 using Nozomi.Data.AreaModels.v1.CurrencyPair;
 using Nozomi.Data.WebModels;
 using Swashbuckle.AspNetCore.Annotations;

@@ -1,3 +1,5 @@
+using Nozomi.Base.Core;
+
 namespace Nozomi.Data.WebModels
 {
     public class RequestComponentDatum : BaseEntityModel

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Nozomi.Base.Core;
 using Nozomi.Data.CurrencyModels;
 
 namespace Nozomi.Data.WebModels
