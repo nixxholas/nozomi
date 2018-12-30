@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Nozomi.Base.Core;
 using Nozomi.Base.Identity.Models;
 using Nozomi.Base.Identity.Models.Identity;
 using Nozomi.Data;
