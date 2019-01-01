@@ -24,6 +24,7 @@ import '../scripts/components/hs.go-to.js';
 import '../scripts/components/hs.malihu-scrollbar.js';
 import '../scripts/components/hs.slick-carousel.js';
 import '../scripts/components/hs.svg-injector.js';
+import '../scripts/components/hs.toggle-state.js'
 import '../scripts/components/hs.unfold.js';
 
 $(document).on('ready', function () {
@@ -32,6 +33,13 @@ $(document).on('ready', function () {
 
     // initialization of slick carousel
     $.HSCore.components.HSSlickCarousel.init('.js-slick-carousel');
+
+    // initialization of unfold component
+    $.HSCore.components.HSUnfold.init($('[data-unfold-target]'), {
+        afterOpen: function () {
+            $(this).find('input[type="search"]').focus();
+        }
+    });
 
     // initialization of horizontal progress bars
     var horizontalProgressBars = $.HSCore.components.HSProgressBar.init('.js-hr-progress', {

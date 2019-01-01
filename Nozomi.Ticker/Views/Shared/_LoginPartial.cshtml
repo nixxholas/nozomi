@@ -2,27 +2,224 @@
 @using Nozomi.Base.Identity.Models.Identity
 @inject SignInManager<User> SignInManager
 @inject UserManager<User> UserManager
-
 @if (SignInManager.IsSignedIn(User))
 {
-    <ul class="ml-auto navbar-nav">
-        <li class="nav-item dropdown">
-            <a class="nav-link" asp-controller="Manage" asp-action="Index" title="Manage" 
-               id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <img class="rounded-circle u-box-shadow-sm mr-2" width="35" height="35" src="img-temp/ava/img3.jpg" alt="Htmlstream"> 
-                <i class="fas fa-angle-down small ml-1"></i>
-            </a>
-            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                <a class="dropdown-item" asp-controller="Manage" asp-action="Index" 
-                   title="Manage">Profile</a>
-                <div class="dropdown-divider"></div>
-                <form id="logoutForm" class="invisible" asp-controller="Manage" asp-action="Index" 
-                      asp-route-returnUrl="@Url.Action("Index", "Home")">
-                    <button id="logout" type="submit" class="dropdown-item">Logout</button>
-                </form>
+    <div class="ml-auto">
+        <!-- Account Sidebar Toggle Button -->
+        <a id="sidebarNavToggler" class="btn btn-xs btn-text-secondary u-sidebar--account__toggle-bg ml-1 target-of-invoker-has-unfolds active"
+           href="javascript:;" role="button" aria-controls="sidebarContent" aria-haspopup="true" aria-expanded="true"
+           data-unfold-event="click" data-unfold-hide-on-scroll="false" data-unfold-target="#sidebarContent"
+           data-unfold-type="css-animation" data-unfold-animation-in="fadeInRight" data-unfold-animation-out="fadeOutRight"
+           data-unfold-duration="500">
+            <span class="position-relative">
+                <span class="u-sidebar--account__toggle-text">@User.Identity.Name</span>
+                @* <img class="u-sidebar--account__toggle-img" src="../../assets/img/100x100/img1.jpg" alt="Image Description"> *@
+                @* <span class="badge badge-sm badge-success badge-pos rounded-circle">3</span> *@
+            </span>
+        </a>
+        <!-- End Account Sidebar Toggle Button -->
+    </div>
+
+    <aside id="sidebarContent" class="u-sidebar u-unfold--css-animation fadeInRight" aria-labelledby="sidebarNavToggler" 
+           style="animation-duration: 500ms; right: 0px;">
+        <div class="u-sidebar__scroller">
+            <div class="u-sidebar__container">
+                <div class="u-sidebar--account__footer-offset">
+                    <!-- Toggle Button -->
+                    <div class="d-flex justify-content-between align-items-center pt-4 px-7">
+                        <h3 class="h6 mb-0">My Account</h3>
+
+                        <button type="button" class="close ml-auto target-of-invoker-has-unfolds active" 
+                                aria-controls="sidebarContent" aria-haspopup="true" aria-expanded="true" 
+                                data-unfold-event="click" data-unfold-hide-on-scroll="false" 
+                                data-unfold-target="#sidebarContent" data-unfold-type="css-animation" 
+                                data-unfold-animation-in="fadeInRight" data-unfold-animation-out="fadeOutRight" 
+                                data-unfold-duration="500">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                    </div>
+                    <!-- End Toggle Button -->
+
+                    <!-- Content -->
+                    <div class="js-scrollbar u-sidebar__body mCustomScrollbar _mCS_1 mCS-autoHide mCS_no_scrollbar" 
+                         style="position: relative; overflow: visible;">
+                        <div id="mCSB_1" class="mCustomScrollBox mCS-minimal-dark mCSB_vertical mCSB_outside" 
+                             style="max-height: none;" tabindex="0">
+                            <div id="mCSB_1_container" class="mCSB_container mCS_y_hidden mCS_no_scrollbar_y" 
+                                 style="position: relative; top: 0; left: 0;" dir="ltr">
+                                <!-- Holder Info -->
+                                <header class="d-flex align-items-center u-sidebar--account__holder mt-3">
+                                    <div class="position-relative">
+                                        <img class="u-sidebar--account__holder-img mCS_img_loaded" src="../../assets/img/100x100/img1.jpg" alt="Image Description">
+                                        <span class="badge badge-xs badge-outline-success badge-pos rounded-circle"></span>
+                                    </div>
+                                    <div class="ml-3">
+                                        <span class="font-weight-semi-bold">@User.Identity.Name 
+                                            @* <span class="badge badge-success ml-1">Pro</span> *@
+                                            </span>
+                                        @* <span class="u-sidebar--account__holder-text">Lead Support Adviser</span> *@
+                                    </div>
+
+                                    <!-- Settings -->
+                                    <div class="btn-group position-relative ml-auto mb-auto">
+                                        <a id="sidebar-account-settings-invoker" 
+                                           class="btn btn-xs btn-icon btn-text-secondary rounded" href="javascript:;" 
+                                           role="button" aria-controls="sidebar-account-settings" aria-haspopup="true" 
+                                           aria-expanded="false" data-toggle="dropdown" data-unfold-event="click" 
+                                           data-unfold-target="#sidebar-account-settings" data-unfold-type="css-animation" 
+                                           data-unfold-duration="300" data-unfold-delay="300" 
+                                           data-unfold-animation-in="slideInUp" data-unfold-animation-out="fadeOut">
+                                            <span class="fas fa-ellipsis-v btn-icon__inner"></span>
+                                        </a>
+
+                                        <div id="sidebar-account-settings" class="dropdown-menu dropdown-unfold dropdown-menu-right u-unfold--css-animation u-unfold--hidden fadeOut" 
+                                             aria-labelledby="sidebar-account-settings-invoker" style="animation-duration: 300ms;">
+                                            @* <a class="dropdown-item" href="#">Settings</a> *@
+                                            @* <a class="dropdown-item" href="#">History</a> *@
+                                            @* <div class="dropdown-divider"></div> *@
+                                            <form id="logoutForm" asp-controller="Account" asp-action="LogOff" 
+                                                  asp-route-returnUrl="@Url.Action("Index", "Home")">
+                                                <button type="submit" class="dropdown-item">Sign Out</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                    <!-- End Settings -->
+                                </header>
+                                <!-- End Holder Info -->
+
+                                <div class="u-sidebar__content--account">
+                                    <!-- List Links -->
+                                    <ul class="list-unstyled u-sidebar--account__list">
+                                        <li class="u-sidebar--account__list-item">
+                                            <a class="u-sidebar--account__list-link" 
+                                               asp-controller="Manage" asp-action="Index">
+                                                <span class="fas fa-home u-sidebar--account__list-icon mr-2"></span>
+                                                Dashboard
+                                            </a>
+                                        </li>
+                                        @* <li class="u-sidebar--account__list-item"> *@
+                                        @*     <a class="u-sidebar--account__list-link" href="profile.html"> *@
+                                        @*         <span class="fas fa-user-circle u-sidebar--account__list-icon mr-2"></span> *@
+                                        @*         Profile *@
+                                        @*     </a> *@
+                                        @* </li> *@
+                                        @* <li class="u-sidebar--account__list-item"> *@
+                                        @*     <a class="u-sidebar--account__list-link" href="my-tasks.html"> *@
+                                        @*         <span class="fas fa-tasks u-sidebar--account__list-icon mr-2"></span> *@
+                                        @*         My tasks *@
+                                        @*     </a> *@
+                                        @* </li> *@
+                                        @* <li class="u-sidebar--account__list-item"> *@
+                                        @*     <a class="u-sidebar--account__list-link" href="projects.html"> *@
+                                        @*         <span class="fas fa-layer-group u-sidebar--account__list-icon mr-2"></span> *@
+                                        @*         Projects <span class="badge badge-danger float-right mt-1">3</span> *@
+                                        @*     </a> *@
+                                        @* </li> *@
+                                        @* <li class="u-sidebar--account__list-item"> *@
+                                        @*     <a class="u-sidebar--account__list-link" href="members.html"> *@
+                                        @*         <span class="fas fa-users u-sidebar--account__list-icon mr-2"></span> *@
+                                        @*         Members *@
+                                        @*     </a> *@
+                                        @* </li> *@
+                                        @* <li class="u-sidebar--account__list-item"> *@
+                                        @*     <a class="u-sidebar--account__list-link" href="activity.html"> *@
+                                        @*         <span class="fas fa-exchange-alt u-sidebar--account__list-icon mr-2"></span> *@
+                                        @*         Activity *@
+                                        @*     </a> *@
+                                        @* </li> *@
+                                        @* <li class="u-sidebar--account__list-item"> *@
+                                        @*     <a class="u-sidebar--account__list-link" href="payment-methods.html"> *@
+                                        @*         <span class="fas fa-wallet u-sidebar--account__list-icon mr-2"></span> *@
+                                        @*         Payment methods *@
+                                        @*     </a> *@
+                                        @* </li> *@
+                                        @* <li class="u-sidebar--account__list-item"> *@
+                                        @*     <a class="u-sidebar--account__list-link" href="plans.html"> *@
+                                        @*         <span class="fas fa-cubes u-sidebar--account__list-icon mr-2"></span> *@
+                                        @*         Plans *@
+                                        @*     </a> *@
+                                        @* </li> *@
+                                    </ul>
+                                    <!-- End List Links -->
+
+                                    @* <div class="u-sidebar--account__list-divider"></div> *@
+                                    @* *@
+                                    @* <!-- List Links --> *@
+                                    @* <ul class="list-unstyled u-sidebar--account__list"> *@
+                                    @*     <li class="u-sidebar--account__list-item"> *@
+                                    @*         <a class="u-sidebar--account__list-link" href="invite-friends.html"> *@
+                                    @*             <span class="fas fa-user-plus u-sidebar--account__list-icon mr-2"></span> *@
+                                    @*             Invite friends *@
+                                    @*         </a> *@
+                                    @*     </li> *@
+                                    @*     <li class="u-sidebar--account__list-item"> *@
+                                    @*         <a class="u-sidebar--account__list-link" href="api-token.html"> *@
+                                    @*             <span class="fas fa-key u-sidebar--account__list-icon mr-2"></span> *@
+                                    @*             API Token *@
+                                    @*         </a> *@
+                                    @*     </li> *@
+                                    @* </ul> *@
+                                    @* <!-- End List Links --> *@
+                                </div>
+                            </div>
+                        </div>
+                        <div id="mCSB_1_scrollbar_vertical" class="mCSB_scrollTools mCSB_1_scrollbar mCS-minimal-dark mCSB_scrollTools_vertical" style="display: none;">
+                            <div class="mCSB_draggerContainer">
+                                <div id="mCSB_1_dragger_vertical" class="mCSB_dragger" style="position: absolute; min-height: 50px; top: 0px; height: 0px;">
+                                    <div class="mCSB_dragger_bar" style="line-height: 50px;"></div>
+                                </div>
+                                <div class="mCSB_draggerRail"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Footer -->
+                <footer id="SVGwaveWithDots" class="u-sidebar__footer u-sidebar__footer--account" style="">
+                    <ul class="list-inline mb-0">
+                        <li class="list-inline-item pr-3">
+                            <a class="u-sidebar__footer--account__text" href="../pages/privacy.html">Privacy</a>
+                        </li>
+                        <li class="list-inline-item pr-3">
+                            <a class="u-sidebar__footer--account__text" href="../pages/terms.html">Terms</a>
+                        </li>
+                        <li class="list-inline-item">
+                            <a class="u-sidebar__footer--account__text" href="../pages/help.html">
+                                <i class="fas fa-info-circle"></i>
+                            </a>
+                        </li>
+                    </ul>
+
+                    <!-- SVG Background Shape -->
+                    <div class="position-absolute right-0 bottom-0 left-0">
+                        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 300 126.5" style="margin-bottom: -5px; enable-background: new 0 0 300 126.5;" xml:space="preserve" class="injected-svg js-svg-injector" data-parent="#SVGwaveWithDots">
+                            <style type="text/css">
+                                .wave-bottom-with-dots-0 { fill: #377DFF; }
+
+                                .wave-bottom-with-dots-1 { fill: #377DFF; }
+
+                                .wave-bottom-with-dots-2 { fill: #DE4437; }
+
+                                .wave-bottom-with-dots-3 { fill: #00C9A7; }
+
+                                .wave-bottom-with-dots-4 { fill: #FFC107; }
+                            </style>
+                            <path class="wave-bottom-with-dots-0 fill-primary" opacity=".6" d="M0,58.9c0-0.9,5.1-2,5.8-2.2c6-0.8,11.8,2.2,17.2,4.6c4.5,2.1,8.6,5.3,13.3,7.1C48.2,73.3,61,73.8,73,69  c43-16.9,40-7.9,84-2.2c44,5.7,83-31.5,143-10.1v69.8H0C0,126.5,0,59,0,58.9z"></path>
+                            <path class="wave-bottom-with-dots-1 fill-primary" d="M300,68.5v58H0v-58c0,0,43-16.7,82,5.6c12.4,7.1,26.5,9.6,40.2,5.9c7.5-2.1,14.5-6.1,20.9-11  c6.2-4.7,12-10.4,18.8-13.8c7.3-3.8,15.6-5.2,23.6-5.2c16.1,0.1,30.7,8.2,45,16.1c13.4,7.4,28.1,12.2,43.3,11.2  C282.5,76.7,292.7,74.4,300,68.5z"></path>
+                            <g>
+                                <circle class="wave-bottom-with-dots-2 fill-danger" cx="259.5" cy="17" r="13"></circle>
+                                <circle class="wave-bottom-with-dots-1 fill-primary" cx="290" cy="35.5" r="8.5"></circle>
+                                <circle class="wave-bottom-with-dots-3 fill-success" cx="288" cy="5.5" r="5.5"></circle>
+                                <circle class="wave-bottom-with-dots-4 fill-warning" cx="232.5" cy="34" r="2"></circle>
+                            </g>
+                        </svg>
+                    </div>
+                    <!-- End SVG Background Shape -->
+                </footer>
+                <!-- End Footer -->
             </div>
-        </li>
-    </ul>
+        </div>
+    </aside>
 }
 else
 {
