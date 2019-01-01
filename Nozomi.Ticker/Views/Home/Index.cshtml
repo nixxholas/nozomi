@@ -1,6 +1,4 @@
 ﻿@using Nozomi.Data
-@using Nozomi.Service.Services.Interfaces
-@inject ITickerService TickerService
 @{
     ViewData["Title"] = "Home Page";
 }
@@ -17,10 +15,10 @@
             <div class="position-relative z-index-2">
               <div class="mb-7">
                 <span class="d-none d-sm-block btn btn-lg btn-icon btn-white text-primary rounded-circle mb-4">
-                  <span class="fas fa-credit-card btn-icon__inner"></span>
+                  <span class="fas fa-wifi btn-icon__inner"></span>
                 </span>
-                <h1 class="display-4 font-size-md-down-5 text-white font-weight-semi-bold">Bitcoin <span class="text-warning">wallet</span></h1>
-                <p class="text-white-70">Simple, secure, industry-standard and elite product step-by-step explanation in three key categories, based on over 100 million users globally.</p>
+                <h1 class="display-4 font-size-md-down-5 text-white font-weight-semi-bold">Your entrusted <span class="text-warning">data streamer.</span></h1>
+                <p class="text-white-70">Nozomi is a simple and lightweight data polling service for all value-based API endpoints.</p>
               </div>
               
               <a class="btn btn-warning transition-3d-hover" asp-controller="Account" asp-action="Login">
@@ -45,8 +43,9 @@
                     <span class="btn btn-icon btn-soft-primary rounded-circle mb-4">
                       <span class="small font-weight-semi-bold btn-icon__inner">01.</span>
                     </span>
-                    <h2 class="h4 text-primary">Learn about Bitcoin</h2>
-                    <p>Bitcoin is changing the way people think about money. Educate yourself about this ground-breaking payment system.</p>
+                    <h2 class="h4 text-primary">Value integrity</h2>
+                    <p>Nozomi comes with guaranteed availability, scalable volumes and responds within milliseconds,
+                      sourced from financial data providers and banks, like the European Central Bank.</p>
                   </div>
                   <!-- End Title -->
 
@@ -66,8 +65,9 @@
                     <span class="btn btn-icon btn-soft-primary rounded-circle mb-4">
                       <span class="small font-weight-semi-bold btn-icon__inner">02.</span>
                     </span>
-                    <h2 class="h4 text-primary">Download a Wallet</h2>
-                    <p>Bitcoin is received, stored, and sent using software known as a 'Bitcoin Wallet'. Download the official Bitcoin.com Wallet for free.</p>
+                    <h2 class="h4 text-primary">Accessible</h2>
+                    <p>Nozomi is easily accessible through any platform with an optimized set of endpoints catered to 
+                      all.</p>
                   </div>
                   <!-- End Title -->
 
@@ -87,8 +87,9 @@
                     <span class="btn btn-icon btn-soft-primary rounded-circle mb-4">
                       <span class="small font-weight-semi-bold btn-icon__inner">03.</span>
                     </span>
-                    <h2 class="h4 text-primary">Use Bitcoin</h2>
-                    <p>Bitcoin makes it easy to send real money quickly to anywhere in the world! Bitcoin can also be used to make purchases from a variety of online retailers.</p>
+                    <h2 class="h4 text-primary">Payment ready</h2>
+                    <p>Nozomi makes it easy to operate financial technology systems that is used to create transactions 
+                      from your partners.</p>
                   </div>
                   <!-- End Title -->
 
@@ -130,11 +131,11 @@
           <!-- Coins Name -->
           <div class="media align-items-center">
             <span class="btn btn-icon btn-soft-warning rounded-circle mr-3">
-              <span class="fab fa-bitcoin btn-icon__inner"></span>
+              <span class="fab fa-ethereum btn-icon__inner"></span>
             </span>
             <div class="media-body">
-              <h3 class="h5 mb-0">1 Bitcoin</h3>
-              <span class="d-block text-secondary text-uppercase">BTC</span>
+              <h3 class="h5 mb-0">Ethereum</h3>
+              <span class="d-block text-secondary text-uppercase">ETHUSD</span>
             </div>
           </div>
           <!-- End Coins Name -->
@@ -184,8 +185,8 @@
     <div class="container space-2 space-md-3">
       <!-- Title -->
       <div class="w-md-80 w-lg-50 text-center mx-md-auto mb-9">
-        <h2 class="text-primary font-weight-semi-bold">Bitcoin charts</h2>
-        <p>The Bitcoin ecosystem at a glance. Explore the world of popular Bitcoin countries in 2 minutes.</p>
+        <h2 class="text-primary font-weight-semi-bold">Data charts</h2>
+        <p>The Nozomi ecosystem at a glance.</p>
       </div>
       <!-- End Title -->
 
@@ -397,36 +398,36 @@
     </div>
     <!-- End Charts Section -->
 
-    <!-- CTA -->
-    <div class="gradient-overlay-half-primary-v1 bg-img-hero" style="background-image: url(../../assets/img/1920x400/img1.jpg);">
-      <div class="container space-2">
-        <div class="row align-items-md-center">
-          <div class="col-md-8 mb-7 mb-md-0">
-            <!-- Content -->
-            <div class="media">
-              <span class="btn btn-lg btn-icon btn-soft-light rounded-circle mr-4">
-                <span class="fab fa-bitcoin btn-icon__inner"></span>
-              </span>
-              <div class="media-body">
-                <h2 class="text-white font-weight-semi-bold">What Happened to <span class="text-warning">Bitcoin?</span></h2>
-                <p class="text-white-70 mb-0"><strong class="text-white">The Bitcoin Core (BTC)</strong> – network is in trouble due to high fees and slow transaction times. Bitcoin Cash (BCH) is the upgrade that solves these problems.</p>
-              </div>
-            </div>
-            <!-- End Content -->
-          </div>
-
-          <div class="col-md-4 text-md-right">
-            <!-- Button Link -->
-            <a class="btn btn-warning transition-3d-hover" href="#">
-              Cash with Our Guide
-              <span class="fas fa-angle-right ml-2"></span>
-            </a>
-            <!-- End Button Link -->
-          </div>
-        </div>
-      </div>
-    </div>
-    <!-- End CTA -->
+    @* <!-- CTA --> *@
+    @* <div class="gradient-overlay-half-primary-v1 bg-img-hero" style="background-image: url(../../assets/img/1920x400/img1.jpg);"> *@
+    @*   <div class="container space-2"> *@
+    @*     <div class="row align-items-md-center"> *@
+    @*       <div class="col-md-8 mb-7 mb-md-0"> *@
+    @*         <!-- Content --> *@
+    @*         <div class="media"> *@
+    @*           <span class="btn btn-lg btn-icon btn-soft-light rounded-circle mr-4"> *@
+    @*             <span class="fab fa-bitcoin btn-icon__inner"></span> *@
+    @*           </span> *@
+    @*           <div class="media-body"> *@
+    @*             <h2 class="text-white font-weight-semi-bold">What Happened to <span class="text-warning">Bitcoin?</span></h2> *@
+    @*             <p class="text-white-70 mb-0"><strong class="text-white">The Bitcoin Core (BTC)</strong> – network is in trouble due to high fees and slow transaction times. Bitcoin Cash (BCH) is the upgrade that solves these problems.</p> *@
+    @*           </div> *@
+    @*         </div> *@
+    @*         <!-- End Content --> *@
+    @*       </div> *@
+    @* *@
+    @*       <div class="col-md-4 text-md-right"> *@
+    @*         <!-- Button Link --> *@
+    @*         <a class="btn btn-warning transition-3d-hover" href="#"> *@
+    @*           Cash with Our Guide *@
+    @*           <span class="fas fa-angle-right ml-2"></span> *@
+    @*         </a> *@
+    @*         <!-- End Button Link --> *@
+    @*       </div> *@
+    @*     </div> *@
+    @*   </div> *@
+    @* </div> *@
+    @* <!-- End CTA --> *@
 
     <!-- Mockup Block -->
     <div class="container space-2 space-md-3">
@@ -437,8 +438,9 @@
             <span class="btn btn-icon btn-soft-primary rounded-circle mb-3">
               <span class="small font-weight-semi-bold btn-icon__inner">01.</span>
             </span>
-            <h2 class="h4 font-weight-semi-bold text-primary">Smart evaluation model</h2>
-            <p class="mb-0">Sophisticated model providing analysis for the entire blockchain asset ecosystem. Strategic insights based on research, trends,and 50+ unique indicators to properly evaluate investment potential and risk.</p>
+            <h2 class="h4 font-weight-semi-bold text-primary">Cost effective</h2>
+            <p class="mb-0">Our plans are technically limitless.. You don't have to pay any overcharge because
+              there isn't one!</p>
           </div>
           <!-- End Title -->
         </div>
@@ -465,7 +467,8 @@
               <span class="small font-weight-semi-bold btn-icon__inner">02.</span>
             </span>
             <h2 class="h4 font-weight-semi-bold text-primary">Safe. Stable. Secure.</h2>
-            <p class="mb-0">Advanced distributed system architecture built to protect against DDoS and other potential threats. More than 98% of digital assets stored in multi-signature,cold wallets. Security protocols are fully aligned and compliant with industry best practices.</p>
+            <p class="mb-0">Advanced distributed system architecture built to protect against DDoS and other potential 
+              threats. Security protocols are fully aligned and compliant with industry best practices.</p>
           </div>
           <!-- End Title -->
         </div>
@@ -491,8 +494,9 @@
             <span class="btn btn-icon btn-soft-primary rounded-circle mb-3">
               <span class="small font-weight-semi-bold btn-icon__inner">03.</span>
             </span>
-            <h2 class="h4 font-weight-semi-bold text-primary">Now, zero fees for everyone</h2>
-            <p class="mb-0">Empowering millions of users, across 130+ countries. Over $1 Billion in assets. 24/7/365 customer access and support. A trusted world-class operation designed specifically for knowledgeable crypto-investors.</p>
+            <h2 class="h4 font-weight-semi-bold text-primary">Analyse the history.</h2>
+            <p class="mb-0">Nozomi provides a handful of nifty features that will empower you to create powerful
+              analytical results to help with your business based on the historical data we've obtained.</p>
           </div>
           <!-- End Title -->
         </div>
@@ -509,153 +513,153 @@
     </div>
     <!-- End Mockup Block -->
 
-    <!-- Testimonials -->
-    <div class="gradient-half-primary-v1">
-      <div class="container space-2">
-        <!-- Avatar -->
-        <div class="media d-block d-md-flex">
-          <div class="u-lg-avatar mr-md-7 mb-7 mb-md-0">
-            <img class="img-fluid rounded-circle" src="../../assets/img/160x160/img2.jpg" alt="Image Description">
-          </div>
-          <div class="media-body">
-            <!-- SVG Quote -->
-            <figure class="mb-3">
-              <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="40px" height="40px"
-                 viewBox="0 0 8 8" style="enable-background:new 0 0 8 8;" xml:space="preserve">
-                <path class="fill-warning" d="M3,1.3C2,1.7,1.2,2.7,1.2,3.6c0,0.2,0,0.4,0.1,0.5c0.2-0.2,0.5-0.3,0.9-0.3c0.8,0,1.5,0.6,1.5,1.5c0,0.9-0.7,1.5-1.5,1.5
-                  C1.4,6.9,1,6.6,0.7,6.1C0.4,5.6,0.3,4.9,0.3,4.5c0-1.6,0.8-2.9,2.5-3.7L3,1.3z M7.1,1.3c-1,0.4-1.8,1.4-1.8,2.3
-                  c0,0.2,0,0.4,0.1,0.5c0.2-0.2,0.5-0.3,0.9-0.3c0.8,0,1.5,0.6,1.5,1.5c0,0.9-0.7,1.5-1.5,1.5c-0.7,0-1.1-0.3-1.4-0.8
-                  C4.4,5.6,4.4,4.9,4.4,4.5c0-1.6,0.8-2.9,2.5-3.7L7.1,1.3z"/>
-              </svg>
-            </figure>
-            <!-- End SVG Quote -->
+@*     <!-- Testimonials --> *@
+@*     <div class="gradient-half-primary-v1"> *@
+@*       <div class="container space-2"> *@
+@*         <!-- Avatar --> *@
+@*         <div class="media d-block d-md-flex"> *@
+@*           <div class="u-lg-avatar mr-md-7 mb-7 mb-md-0"> *@
+@*             <img class="img-fluid rounded-circle" src="../../assets/img/160x160/img2.jpg" alt="Image Description"> *@
+@*           </div> *@
+@*           <div class="media-body"> *@
+@*             <!-- SVG Quote --> *@
+@*             <figure class="mb-3"> *@
+@*               <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="40px" height="40px" *@
+@*                  viewBox="0 0 8 8" style="enable-background:new 0 0 8 8;" xml:space="preserve"> *@
+@*                 <path class="fill-warning" d="M3,1.3C2,1.7,1.2,2.7,1.2,3.6c0,0.2,0,0.4,0.1,0.5c0.2-0.2,0.5-0.3,0.9-0.3c0.8,0,1.5,0.6,1.5,1.5c0,0.9-0.7,1.5-1.5,1.5 *@
+@*                   C1.4,6.9,1,6.6,0.7,6.1C0.4,5.6,0.3,4.9,0.3,4.5c0-1.6,0.8-2.9,2.5-3.7L3,1.3z M7.1,1.3c-1,0.4-1.8,1.4-1.8,2.3 *@
+@*                   c0,0.2,0,0.4,0.1,0.5c0.2-0.2,0.5-0.3,0.9-0.3c0.8,0,1.5,0.6,1.5,1.5c0,0.9-0.7,1.5-1.5,1.5c-0.7,0-1.1-0.3-1.4-0.8 *@
+@*                   C4.4,5.6,4.4,4.9,4.4,4.5c0-1.6,0.8-2.9,2.5-3.7L7.1,1.3z"/> *@
+@*               </svg> *@
+@*             </figure> *@
+@*             <!-- End SVG Quote --> *@
+@* *@
+@*             <blockquote class="lead text-white mb-4">I love to have extra money. If I have time I invest by myself, but sometimes you want to have time for your family or friends, especially when you are on holidays. It's sooo great to come back rested, tanned etc and with extra money at your accounts. Good work, guys!</blockquote> *@
+@*             <h4 class="h5 text-white">Samantha Wilson</h4> *@
+@*             <span class="d-block text-warning pl-3">&#8212; Durbanville, South Africa</span> *@
+@*           </div> *@
+@*         </div> *@
+@*         <!-- End Avatar --> *@
+@*       </div> *@
+@*     </div> *@
+@*     <!-- End Testimonials --> *@
 
-            <blockquote class="lead text-white mb-4">I love to have extra money. If I have time I invest by myself, but sometimes you want to have time for your family or friends, especially when you are on holidays. It's sooo great to come back rested, tanned etc and with extra money at your accounts. Good work, guys!</blockquote>
-            <h4 class="h5 text-white">Samantha Wilson</h4>
-            <span class="d-block text-warning pl-3">&#8212; Durbanville, South Africa</span>
-          </div>
-        </div>
-        <!-- End Avatar -->
-      </div>
-    </div>
-    <!-- End Testimonials -->
-
-    <!-- Multi-Platform Accessible -->
-    <div id="SVGcrossPlatformHero" class="svg-preloader gradient-half-primary-v1 overflow-hidden">
-      <div class="container space-2 space-md-3">
-        <div class="row">
-          <div class="col-lg-5">
-            <!-- Title -->
-            <div class="pr-md-4 mb-7">
-              <span class="btn btn-lg btn-icon btn-white text-primary rounded-circle mb-4">
-                <span class="fas fa-mobile-alt btn-icon__inner"></span>
-              </span>
-              <h2 class="text-white font-weight-semi-bold">Multi-platform <span class="text-warning">accessible</span></h2>
-              <p class="text-white-70">Our solution is unique as it is accessible by iOS, Android, Windows and Mac in a cross-platform system.</p>
-            </div>
-            <!-- End Title -->
-
-            <h3 class="h6 text-white">Download for:</h3>
-
-            <!-- Download Buttons -->
-            <div class="row mx-gutters-2">
-              <div class="col-sm-6 col-md-4 col-lg-5 mb-3">
-                <button type="button" class="btn btn-block btn-warning transition-3d-hover">
-                  <span class="fab fa-apple mr-2"></span>
-                  iOS
-                </button>
-              </div>
-
-              <div class="col-sm-6 col-md-4 col-lg-5 mb-3">
-                <button type="button" class="btn btn-block text-primary btn-white transition-3d-hover">
-                  <span class="fab fa-windows mr-2"></span>
-                  Windows
-                </button>
-              </div>
-            </div>
-            <!-- End Download Buttons -->
-
-            <!-- Download Buttons -->
-            <div class="row mx-gutters-2">
-              <div class="col-sm-6 col-md-4 col-lg-5 mb-3">
-                <button type="button" class="btn btn-block text-primary btn-white transition-3d-hover">
-                  <span class="fab fa-android mr-2"></span>
-                  Android
-                </button>
-              </div>
-
-              <div class="col-sm-6 col-md-4 col-lg-5 mb-3">
-                <button type="button" class="btn btn-block text-primary btn-white transition-3d-hover">
-                  <span class="fab fa-apple mr-2"></span>
-                  Mac
-                </button>
-              </div>
-            </div>
-            <!-- End Download Buttons -->
-          </div>
-        </div>
-
-        <!-- Mockup Devices v4 -->
-        <div class="u-devices-v4">
-          <div class="d-none d-lg-flex flex-lg-wrap u-devices-v4__content">
-            <!-- SVG Horizontal Tablet Mockup -->
-            <div class="align-self-end u-devices-v4__tablet-ver mb-4">
-              <div class="u-devices-v4__tablet-svg">
-                <figure class="ie-devices-v4-tablet-horizontal">
-                  <img class="js-svg-injector" src="../../assets/svg/components/tablet-horizontal.svg" alt="Image Description"
-                       data-img-paths='[
-                         {"targetId": "#SVGhorizontalTabletImg1", "newPath": "../../assets/img/711x533/img1.jpg"}
-                       ]'
-                       data-parent="#SVGcrossPlatformHero">
-                </figure>
-              </div>
-            </div>
-            <!-- End SVG Horizontal Tablet Mockup -->
-
-            <!-- SVG Vertical Tablet Mockup -->
-            <div class="u-devices-v4__tablet mb-4">
-              <div class="u-devices-v4__tablet-svg">
-                <figure class="ie-devices-v4-tablet">
-                  <img class="js-svg-injector" src="../../assets/svg/components/tablet.svg" alt="Image Description"
-                       data-img-paths='[
-                         {"targetId": "#SVGtabletImg1", "newPath": "../../assets/img/533x711/img4.jpg"}
-                       ]'
-                       data-parent="#SVGcrossPlatformHero">
-                </figure>
-              </div>
-            </div>
-            <!-- End SVG Vertical Tablet Mockup -->
-
-            <!-- SVG Laptop Mockup -->
-            <div class="u-devices-v4__laptop">
-              <figure class="ie-devices-v4-laptop">
-                <img class="js-svg-injector" src="../../assets/svg/components/laptop.svg" alt="Image Description"
-                     data-img-paths='[
-                       {"targetId": "#SVGlaptopImg1", "newPath": "../../assets/img/1618x1010/img1.jpg"}
-                     ]'
-                     data-parent="#SVGcrossPlatformHero">
-              </figure>
-            </div>
-            <!-- SVG Laptop Mockup -->
-
-            <!-- SVG Phone Mockup -->
-            <div class="align-self-start u-devices-v4__phone">
-              <div class="u-devices-v4__phone-svg">
-                <figure class="ie-devices-v4-iphone">
-                  <img class="js-svg-injector" src="../../assets/svg/components/iphone.svg" alt="Image Description"
-                       data-img-paths='[
-                         {"targetId": "#SVGiphoneImg1", "newPath": "../../assets/img/282x500/img7.jpg"}
-                       ]'
-                       data-parent="#SVGcrossPlatformHero">
-                </figure>
-              </div>
-            </div>
-            <!-- End SVG Phone Mockup -->
-          </div>
-          <!-- End Mockup Devices v4 -->
-        </div>
-      </div>
-    </div>
-    <!-- End Multi-Platform Accessible -->
+@*     <!-- Multi-Platform Accessible --> *@
+@*     <div id="SVGcrossPlatformHero" class="svg-preloader gradient-half-primary-v1 overflow-hidden"> *@
+@*       <div class="container space-2 space-md-3"> *@
+@*         <div class="row"> *@
+@*           <div class="col-lg-5"> *@
+@*             <!-- Title --> *@
+@*             <div class="pr-md-4 mb-7"> *@
+@*               <span class="btn btn-lg btn-icon btn-white text-primary rounded-circle mb-4"> *@
+@*                 <span class="fas fa-mobile-alt btn-icon__inner"></span> *@
+@*               </span> *@
+@*               <h2 class="text-white font-weight-semi-bold">Multi-platform <span class="text-warning">accessible</span></h2> *@
+@*               <p class="text-white-70">Our solution is unique as it is accessible by iOS, Android, Windows and Mac in a cross-platform system.</p> *@
+@*             </div> *@
+@*             <!-- End Title --> *@
+@* *@
+@*             <h3 class="h6 text-white">Download for:</h3> *@
+@* *@
+@*             <!-- Download Buttons --> *@
+@*             <div class="row mx-gutters-2"> *@
+@*               <div class="col-sm-6 col-md-4 col-lg-5 mb-3"> *@
+@*                 <button type="button" class="btn btn-block btn-warning transition-3d-hover"> *@
+@*                   <span class="fab fa-apple mr-2"></span> *@
+@*                   iOS *@
+@*                 </button> *@
+@*               </div> *@
+@* *@
+@*               <div class="col-sm-6 col-md-4 col-lg-5 mb-3"> *@
+@*                 <button type="button" class="btn btn-block text-primary btn-white transition-3d-hover"> *@
+@*                   <span class="fab fa-windows mr-2"></span> *@
+@*                   Windows *@
+@*                 </button> *@
+@*               </div> *@
+@*             </div> *@
+@*             <!-- End Download Buttons --> *@
+@* *@
+@*             <!-- Download Buttons --> *@
+@*             <div class="row mx-gutters-2"> *@
+@*               <div class="col-sm-6 col-md-4 col-lg-5 mb-3"> *@
+@*                 <button type="button" class="btn btn-block text-primary btn-white transition-3d-hover"> *@
+@*                   <span class="fab fa-android mr-2"></span> *@
+@*                   Android *@
+@*                 </button> *@
+@*               </div> *@
+@* *@
+@*               <div class="col-sm-6 col-md-4 col-lg-5 mb-3"> *@
+@*                 <button type="button" class="btn btn-block text-primary btn-white transition-3d-hover"> *@
+@*                   <span class="fab fa-apple mr-2"></span> *@
+@*                   Mac *@
+@*                 </button> *@
+@*               </div> *@
+@*             </div> *@
+@*             <!-- End Download Buttons --> *@
+@*           </div> *@
+@*         </div> *@
+@* *@
+@*         <!-- Mockup Devices v4 --> *@
+@*         <div class="u-devices-v4"> *@
+@*           <div class="d-none d-lg-flex flex-lg-wrap u-devices-v4__content"> *@
+@*             <!-- SVG Horizontal Tablet Mockup --> *@
+@*             <div class="align-self-end u-devices-v4__tablet-ver mb-4"> *@
+@*               <div class="u-devices-v4__tablet-svg"> *@
+@*                 <figure class="ie-devices-v4-tablet-horizontal"> *@
+@*                   <img class="js-svg-injector" src="../../assets/svg/components/tablet-horizontal.svg" alt="Image Description" *@
+@*                        data-img-paths='[ *@
+@*                          {"targetId": "#SVGhorizontalTabletImg1", "newPath": "../../assets/img/711x533/img1.jpg"} *@
+@*                        ]' *@
+@*                        data-parent="#SVGcrossPlatformHero"> *@
+@*                 </figure> *@
+@*               </div> *@
+@*             </div> *@
+@*             <!-- End SVG Horizontal Tablet Mockup --> *@
+@* *@
+@*             <!-- SVG Vertical Tablet Mockup --> *@
+@*             <div class="u-devices-v4__tablet mb-4"> *@
+@*               <div class="u-devices-v4__tablet-svg"> *@
+@*                 <figure class="ie-devices-v4-tablet"> *@
+@*                   <img class="js-svg-injector" src="../../assets/svg/components/tablet.svg" alt="Image Description" *@
+@*                        data-img-paths='[ *@
+@*                          {"targetId": "#SVGtabletImg1", "newPath": "../../assets/img/533x711/img4.jpg"} *@
+@*                        ]' *@
+@*                        data-parent="#SVGcrossPlatformHero"> *@
+@*                 </figure> *@
+@*               </div> *@
+@*             </div> *@
+@*             <!-- End SVG Vertical Tablet Mockup --> *@
+@* *@
+@*             <!-- SVG Laptop Mockup --> *@
+@*             <div class="u-devices-v4__laptop"> *@
+@*               <figure class="ie-devices-v4-laptop"> *@
+@*                 <img class="js-svg-injector" src="../../assets/svg/components/laptop.svg" alt="Image Description" *@
+@*                      data-img-paths='[ *@
+@*                        {"targetId": "#SVGlaptopImg1", "newPath": "../../assets/img/1618x1010/img1.jpg"} *@
+@*                      ]' *@
+@*                      data-parent="#SVGcrossPlatformHero"> *@
+@*               </figure> *@
+@*             </div> *@
+@*             <!-- SVG Laptop Mockup --> *@
+@* *@
+@*             <!-- SVG Phone Mockup --> *@
+@*             <div class="align-self-start u-devices-v4__phone"> *@
+@*               <div class="u-devices-v4__phone-svg"> *@
+@*                 <figure class="ie-devices-v4-iphone"> *@
+@*                   <img class="js-svg-injector" src="../../assets/svg/components/iphone.svg" alt="Image Description" *@
+@*                        data-img-paths='[ *@
+@*                          {"targetId": "#SVGiphoneImg1", "newPath": "../../assets/img/282x500/img7.jpg"} *@
+@*                        ]' *@
+@*                        data-parent="#SVGcrossPlatformHero"> *@
+@*                 </figure> *@
+@*               </div> *@
+@*             </div> *@
+@*             <!-- End SVG Phone Mockup --> *@
+@*           </div> *@
+@*           <!-- End Mockup Devices v4 --> *@
+@*         </div> *@
+@*       </div> *@
+@*     </div> *@
+@*     <!-- End Multi-Platform Accessible --> *@
   </main>
   <!-- ========== END MAIN CONTENT ========== -->
