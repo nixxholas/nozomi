@@ -1,6 +1,9 @@
 ﻿@using Nozomi.Data
+@using Nozomi.Service.Services.Interfaces
+@inject ITickerService TickerService
 @{
-    ViewData["Title"] = "Home Page";
+  ViewData["Title"] = "Home Page";
+  var ethusdTickers = TickerService.GetByAbbreviation("ETHUSD");
 }
 
 <!-- ========== MAIN CONTENT ========== -->
@@ -122,8 +125,13 @@
     </div>
     <!-- End Hero Section -->
 
-    <hr class="my-0">
+  @{
+    var ethusd = ethusdTickers.Data.FirstOrDefault();
 
+    if (ethusd != null)
+    {
+      <hr class="my-0">
+      
     <!-- Graphics Section -->
     <div id="graphicsSection" class="container space-1">
       <div class="row align-items-lg-center">
@@ -135,7 +143,7 @@
             </span>
             <div class="media-body">
               <h3 class="h5 mb-0">Ethereum</h3>
-              <span class="d-block text-secondary text-uppercase">ETHUSD</span>
+              <span class="d-block text-secondary text-uppercase">ETHUSD (@ethusd.Exchange)</span>
             </div>
           </div>
           <!-- End Coins Name -->
@@ -147,37 +155,38 @@
             <li class="list-inline-item col-6 col-sm-4 col-md-auto u-ver-divider u-ver-divider--xs u-ver-divider--none-md px-md-7 mx-0 mb-4 mb-md-0">
               <small class="d-block">Market Cap</small>
               <a class="d-block text-success" href="#">
-                1.3649%
+                1.3649% (Mock Data)
                 <span class="fas fa-angle-up ml-2"></span>
               </a>
             </li>
             <li class="list-inline-item col-6 col-sm-4 col-md-auto u-ver-divider u-ver-divider--xs u-ver-divider--none-md px-md-7 mx-0 mb-4 mb-md-0">
               <small class="d-block">Price</small>
-              <a class="d-block text-danger" href="#">
-                -1.01%
-                <span class="fas fa-angle-down ml-2"></span>
+              <a class="d-block" href="#">
+                @ethusd.Properties.SingleOrDefault(kvp => kvp.Key.Equals("Bid")).Value
               </a>
             </li>
-            <li class="list-inline-item col-6 col-sm-4 col-md-auto u-ver-divider u-ver-divider--xs u-ver-divider--none-md px-md-7 mx-0 mb-4 mb-md-0">
-              <small class="d-block">Volume <small>(24h)</small></small>
-              <a class="d-block text-success" href="#">
-                5.12%
-                <span class="fas fa-angle-up ml-2"></span>
-              </a>
-            </li>
-            <li class="list-inline-item col-6 col-sm-4 col-md-auto pl-md-7 mx-0 mb-4 mb-md-0">
-              <small class="d-block">Change <small>(24h)</small></small>
-              <a class="d-block text-danger" href="#">
-                -3.38%
-                <span class="fas fa-angle-down ml-2"></span>
-              </a>
-            </li>
+            @* <li class="list-inline-item col-6 col-sm-4 col-md-auto u-ver-divider u-ver-divider--xs u-ver-divider--none-md px-md-7 mx-0 mb-4 mb-md-0"> *@
+            @*   <small class="d-block">Volume <small>(24h)</small></small> *@
+            @*   <a class="d-block text-success" href="#"> *@
+            @*     5.12% *@
+            @*     <span class="fas fa-angle-up ml-2"></span> *@
+            @*   </a> *@
+            @* </li> *@
+            @* <li class="list-inline-item col-6 col-sm-4 col-md-auto pl-md-7 mx-0 mb-4 mb-md-0"> *@
+            @*   <small class="d-block">Change <small>(24h)</small></small> *@
+            @*   <a class="d-block text-danger" href="#"> *@
+            @*     -3.38% *@
+            @*     <span class="fas fa-angle-down ml-2"></span> *@
+            @*   </a> *@
+            @* </li> *@
           </ul>
           <!-- End Market Capitalization List -->
         </div>
       </div>
     </div>
     <!-- End Graphics Section -->
+    }
+  }
 
     <hr class="my-0">
 
