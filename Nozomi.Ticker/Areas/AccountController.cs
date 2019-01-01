@@ -34,7 +34,7 @@ namespace Nozomi.Ticker.Areas
         public IActionResult Login(string returnUrl = null)
         {
             ViewData["ReturnUrl"] = returnUrl;
-            return View();
+            return PartialView();
         }
 
         //
@@ -63,17 +63,17 @@ namespace Nozomi.Ticker.Areas
                 if (result.IsLockedOut)
                 {
                     _logger.LogWarning(2, "User account locked out.");
-                    return View("Lockout");
+                    return PartialView("Lockout");
                 }
                 else
                 {
                     ModelState.AddModelError(string.Empty, "Invalid login attempt.");
-                    return View(model);
+                    return PartialView(model);
                 }
             }
 
             // If we got this far, something failed, redisplay form
-            return View(model);
+            return PartialView(model);
         }
 
         //
@@ -83,7 +83,7 @@ namespace Nozomi.Ticker.Areas
         public IActionResult Register(string returnUrl = null)
         {
             ViewData["ReturnUrl"] = returnUrl;
-            return View();
+            return PartialView();
         }
 
         //
@@ -114,7 +114,7 @@ namespace Nozomi.Ticker.Areas
             }
 
             // If we got this far, something failed, redisplay form
-            return View(model);
+            return PartialView(model);
         }
 
         //
@@ -150,12 +150,12 @@ namespace Nozomi.Ticker.Areas
             if (remoteError != null)
             {
                 ModelState.AddModelError(string.Empty, $"Error from external provider: {remoteError}");
-                return View(nameof(Login));
+                return PartialView(nameof(Login));
             }
             var info = await _signInManager.GetExternalLoginInfoAsync();
             if (info == null)
             {
-                return View(@"Login");
+                return PartialView(@"Login");
             }
 
             // Sign in the user with this external login provider if the user already has a login.
@@ -174,7 +174,7 @@ namespace Nozomi.Ticker.Areas
             }
             if (result.IsLockedOut)
             {
-                return View("Lockout");
+                return PartialView("Lockout");
             }
             else
             {
@@ -182,7 +182,7 @@ namespace Nozomi.Ticker.Areas
                 ViewData["ReturnUrl"] = returnUrl;
                 ViewData["ProviderDisplayName"] = info.ProviderDisplayName;
                 var email = info.Principal.FindFirstValue(ClaimTypes.Email);
-                return View("ExternalLoginConfirmation", new ExternalLoginConfirmationViewModel { Email = email });
+                return PartialView("ExternalLoginConfirmation", new ExternalLoginConfirmationViewModel { Email = email });
             }
         }
 
@@ -199,7 +199,7 @@ namespace Nozomi.Ticker.Areas
                 var info = await _signInManager.GetExternalLoginInfoAsync();
                 if (info == null)
                 {
-                    return View("ExternalLoginFailure");
+                    return PartialView("ExternalLoginFailure");
                 }
                 var user = new User { UserName = model.Email, Email = model.Email };
                 var result = await _userManager.CreateAsync(user);
@@ -221,7 +221,7 @@ namespace Nozomi.Ticker.Areas
             }
 
             ViewData["ReturnUrl"] = returnUrl;
-            return View(model);
+            return PartialView(model);
         }
 
         // GET: /Account/ConfirmEmail
@@ -231,15 +231,15 @@ namespace Nozomi.Ticker.Areas
         {
             if (userId == null || code == null)
             {
-                return View("Error");
+                return PartialView("Error");
             }
             var user = await _userManager.FindByIdAsync(userId);
             if (user == null)
             {
-                return View("Error");
+                return PartialView("Error");
             }
             var result = await _userManager.ConfirmEmailAsync(user, code);
-            return View(result.Succeeded ? "ConfirmEmail" : "Error");
+            return PartialView(result.Succeeded ? "ConfirmEmail" : "Error");
         }
 
         //
@@ -248,7 +248,7 @@ namespace Nozomi.Ticker.Areas
         [AllowAnonymous]
         public IActionResult ForgotPassword()
         {
-            return View();
+            return PartialView();
         }
 
         //
@@ -264,7 +264,7 @@ namespace Nozomi.Ticker.Areas
                 if (user == null || !(await _userManager.IsEmailConfirmedAsync(user)))
                 {
                     // Don't reveal that the user does not exist or is not confirmed
-                    return View("ForgotPasswordConfirmation");
+                    return PartialView("ForgotPasswordConfirmation");
                 }
 
                 // Send an email with this link
@@ -273,11 +273,11 @@ namespace Nozomi.Ticker.Areas
                     new ResetPasswordInputModel { Email = user.Email, Code = code }, protocol: HttpContext.Request.Scheme);
                 await _emailSender.SendEmailAsync(model.Email, "Reset Password",
                    "Please reset your password by clicking here: <a href=\"" + callbackUrl + "\">link</a>");
-                return View("ForgotPasswordConfirmation");
+                return PartialView("ForgotPasswordConfirmation");
             }
 
             // If we got this far, something failed, redisplay form
-            return View(model);
+            return PartialView(model);
         }
 
         //
@@ -286,7 +286,7 @@ namespace Nozomi.Ticker.Areas
         [AllowAnonymous]
         public IActionResult ForgotPasswordConfirmation()
         {
-            return View();
+            return PartialView();
         }
 
         //
@@ -307,7 +307,7 @@ namespace Nozomi.Ticker.Areas
         {
             if (!ModelState.IsValid)
             {
-                return View(model);
+                return PartialView(model);
             }
             var user = await _userManager.FindByEmailAsync(model.Email);
             if (user == null)
@@ -321,7 +321,7 @@ namespace Nozomi.Ticker.Areas
                 return RedirectToAction(nameof(ResetPasswordConfirmation), "Account");
             }
             AddErrors(result);
-            return View();
+            return PartialView();
         }
 
         //
@@ -330,7 +330,7 @@ namespace Nozomi.Ticker.Areas
         [AllowAnonymous]
         public IActionResult ResetPasswordConfirmation()
         {
-            return View();
+            return PartialView();
         }
 
         //
@@ -342,11 +342,11 @@ namespace Nozomi.Ticker.Areas
             var user = await _signInManager.GetTwoFactorAuthenticationUserAsync();
             if (user == null)
             {
-                return View("Error");
+                return PartialView("Error");
             }
             var userFactors = await _userManager.GetValidTwoFactorProvidersAsync(user);
             var factorOptions = userFactors.Select(purpose => new SelectListItem { Text = purpose, Value = purpose }).ToList();
-            return View(new SendCodeViewModel { Providers = factorOptions, ReturnUrl = returnUrl, RememberMe = rememberMe });
+            return PartialView(new SendCodeViewModel { Providers = factorOptions, ReturnUrl = returnUrl, RememberMe = rememberMe });
         }
 
         //
@@ -358,13 +358,13 @@ namespace Nozomi.Ticker.Areas
         {
             if (!ModelState.IsValid)
             {
-                return View();
+                return PartialView();
             }
 
             var user = await _signInManager.GetTwoFactorAuthenticationUserAsync();
             if (user == null)
             {
-                return View("Error");
+                return PartialView("Error");
             }
 
             if (model.SelectedProvider == "Authenticator")
@@ -378,7 +378,7 @@ namespace Nozomi.Ticker.Areas
             var code = await _userManager.GenerateTwoFactorTokenAsync(user, model.SelectedProvider);
             if (string.IsNullOrWhiteSpace(code))
             {
-                return View("Error");
+                return PartialView("Error");
             }
 
             var message = "Your security code is: " + code;
@@ -406,9 +406,9 @@ namespace Nozomi.Ticker.Areas
             var user = await _signInManager.GetTwoFactorAuthenticationUserAsync();
             if (user == null)
             {
-                return View("Error");
+                return PartialView("Error");
             }
-            return View(new VerifyCodeViewModel { Provider = provider, ReturnUrl = returnUrl, RememberMe = rememberMe });
+            return PartialView(new VerifyCodeViewModel { Provider = provider, ReturnUrl = returnUrl, RememberMe = rememberMe });
         }
 
         //
@@ -420,7 +420,7 @@ namespace Nozomi.Ticker.Areas
         {
             if (!ModelState.IsValid)
             {
-                return View(model);
+                return PartialView(model);
             }
 
             // The following code protects for brute force attacks against the two factor codes.
@@ -434,12 +434,12 @@ namespace Nozomi.Ticker.Areas
             if (result.IsLockedOut)
             {
                 _logger.LogWarning(7, "User account locked out.");
-                return View("Lockout");
+                return PartialView("Lockout");
             }
             else
             {
                 ModelState.AddModelError(string.Empty, "Invalid code.");
-                return View(model);
+                return PartialView(model);
             }
         }
 
@@ -453,9 +453,9 @@ namespace Nozomi.Ticker.Areas
             var user = await _signInManager.GetTwoFactorAuthenticationUserAsync();
             if (user == null)
             {
-                return View("Error");
+                return PartialView("Error");
             }
-            return View(new VerifyAuthenticatorCodeViewModel { ReturnUrl = returnUrl, RememberMe = rememberMe });
+            return PartialView(new VerifyAuthenticatorCodeViewModel { ReturnUrl = returnUrl, RememberMe = rememberMe });
         }
 
         //
@@ -467,7 +467,7 @@ namespace Nozomi.Ticker.Areas
         {
             if (!ModelState.IsValid)
             {
-                return View(model);
+                return PartialView(model);
             }
 
             // The following code protects for brute force attacks against the two factor codes.
@@ -481,12 +481,12 @@ namespace Nozomi.Ticker.Areas
             if (result.IsLockedOut)
             {
                 _logger.LogWarning(7, "User account locked out.");
-                return View("Lockout");
+                return PartialView("Lockout");
             }
             else
             {
                 ModelState.AddModelError(string.Empty, "Invalid code.");
-                return View(model);
+                return PartialView(model);
             }
         }
 
@@ -500,9 +500,9 @@ namespace Nozomi.Ticker.Areas
             var user = await _signInManager.GetTwoFactorAuthenticationUserAsync();
             if (user == null)
             {
-                return View("Error");
+                return PartialView("Error");
             }
-            return View(new UseRecoveryCodeViewModel { ReturnUrl = returnUrl });
+            return PartialView(new UseRecoveryCodeViewModel { ReturnUrl = returnUrl });
         }
 
         //
@@ -514,7 +514,7 @@ namespace Nozomi.Ticker.Areas
         {
             if (!ModelState.IsValid)
             {
-                return View(model);
+                return PartialView(model);
             }
 
             var result = await _signInManager.TwoFactorRecoveryCodeSignInAsync(model.Code);
