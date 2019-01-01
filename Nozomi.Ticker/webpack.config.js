@@ -3,6 +3,7 @@ const webpack = require("webpack");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const CleanWebpackPlugin = require("clean-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = {
     entry: {
@@ -19,27 +20,34 @@ module.exports = {
         splitChunks: {
             chunks: 'all',
             maxInitialRequests: Infinity,
-            minSize: 0,
-            cacheGroups: {
-                vendor: {
-                    test: /[\\/]node_modules[\\/]/,
-                    name(module) {
-                        // get the name. E.g. node_modules/packageName/not/this/part.js
-                        // or node_modules/packageName
-                        const packageName = module.context.match(/[\\/]node_modules[\\/](.*?)([\\/]|$)/)[1];
-
-                        // npm package names are URL-safe, but some servers don't like @ symbols
-                        return `yarn.${packageName.replace('@', '')}`;
-                    }
-                }
-            }
+            minSize: 0
         }
     },
     resolve: {
-        extensions: [".js", ".ts", ".tsx", ".scss"]
+        extensions: [".js", ".ts", ".tsx", ".scss", ".css"]
     },
     module: {
         rules: [
+            // https://stackoverflow.com/questions/50536553/what-webpack4-loader-is-used-to-load-svg-files-gif-eot
+            {
+                test: /\.(jpg|gif)$/,
+                use: [
+                    {
+                        loader: 'file-loader',
+                        options: {
+                            outputPath: 'images/',
+                            name: '[name][hash].[ext]',
+                        },
+                    },
+                ],
+            },
+            {
+                test: /\.js$/,
+                exclude: /node_modules/,
+                use: {
+                    loader: "babel-loader"
+                }
+            },
             {
                 test: /\.tsx?$/,
                 loader: "ts-loader"
@@ -51,11 +59,17 @@ module.exports = {
                     { loader: 'css-loader', options: { sourceMap: true, importLoaders: 1 } },
                     { loader: 'sass-loader', options: { sourceMap: true } },
                 ],
-            }
+            },
+            // https://stackoverflow.com/questions/45489897/load-fonts-with-webpack-and-font-face
+            { test: /\.(png|woff|woff2|eot|ttf|svg)$/, loader: 'url-loader?limit=100000' }
         ]
     },
     plugins: [
         new CleanWebpackPlugin(["wwwroot/*"]),
+        // https://github.com/webpack-contrib/copy-webpack-plugin
+        new CopyWebpackPlugin([
+            { from: 'ClientApp/assets', to: 'assets' }
+        ]),
         new MiniCssExtractPlugin({
             // Options similar to the same options in webpackOptions.output
             // both options are optional
@@ -65,7 +79,9 @@ module.exports = {
         new webpack.ProvidePlugin({
             jQuery: 'jquery',
             $: 'jquery',
-            jquery: 'jquery'
+            jquery: 'jquery',
+            'window.jQuery': 'jquery',
+            SVGInjector : 'svg-injector'
         }),
         new HtmlWebpackPlugin({
             hash: true,
