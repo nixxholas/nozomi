@@ -81,7 +81,8 @@ module.exports = {
             $: 'jquery',
             jquery: 'jquery',
             'window.jQuery': 'jquery',
-            SVGInjector : 'svg-injector'
+            SVGInjector : 'svg-injector',
+            Typed: 'typed.js'
         }),
         new HtmlWebpackPlugin({
             hash: true,

@@ -6,7 +6,6 @@
   var ethusdTickers = TickerService.GetByAbbreviation("ETHUSD");
 }
 
-<!-- ========== MAIN CONTENT ========== -->
   <main id="content" role="main">
     <!-- Hero Section -->
     <div class="position-relative">
@@ -125,288 +124,88 @@
     </div>
     <!-- End Hero Section -->
 
-  @{
-    var ethusd = ethusdTickers.Data.FirstOrDefault();
-
-    if (ethusd != null)
-    {
-      <hr class="my-0">
-      
-    <!-- Graphics Section -->
-    <div id="graphicsSection" class="container space-1">
-      <div class="row align-items-lg-center">
-        <div class="col-lg-3 mb-7 mb-lg-0">
-          <!-- Coins Name -->
-          <div class="media align-items-center">
-            <span class="btn btn-icon btn-soft-warning rounded-circle mr-3">
-              <span class="fab fa-ethereum btn-icon__inner"></span>
-            </span>
-            <div class="media-body">
-              <h3 class="h5 mb-0">Ethereum</h3>
-              <span class="d-block text-secondary text-uppercase">ETHUSD (@ethusd.Exchange)</span>
-            </div>
-          </div>
-          <!-- End Coins Name -->
+@*   @{ *@
+@*     var ethusd = ethusdTickers.Data.FirstOrDefault(); *@
+@* *@
+@*     if (ethusd != null) *@
+@*     { *@
+@*       <hr class="my-0"> *@
+@*        *@
+@*     <!-- Graphics Section --> *@
+@*     <div id="graphicsSection" class="container space-1"> *@
+@*       <div class="row align-items-lg-center"> *@
+@*         <div class="col-lg-3 mb-7 mb-lg-0"> *@
+@*           <!-- Coins Name --> *@
+@*           <div class="media align-items-center"> *@
+@*             <span class="btn btn-icon btn-soft-warning rounded-circle mr-3"> *@
+@*               <span class="fab fa-ethereum btn-icon__inner"></span> *@
+@*             </span> *@
+@*             <div class="media-body"> *@
+@*               <h3 class="h5 mb-0">Ethereum</h3> *@
+@*               <span class="d-block text-secondary text-uppercase">ETHUSD (@ethusd.Exchange)</span> *@
+@*             </div> *@
+@*           </div> *@
+@*           <!-- End Coins Name --> *@
+@*         </div> *@
+@* *@
+@*         <div class="col-lg-9"> *@
+@*           <!-- Market Capitalization List --> *@
+@*           <ul class="list-inline row justify-content-lg-end text-secondary text-uppercase mb-0"> *@
+@*             <li class="list-inline-item col-6 col-sm-4 col-md-auto u-ver-divider u-ver-divider--xs u-ver-divider--none-md px-md-7 mx-0 mb-4 mb-md-0"> *@
+@*               <small class="d-block">Market Cap</small> *@
+@*               <a class="d-block text-success" href="#"> *@
+@*                 1.3649% (Mock Data) *@
+@*                 <span class="fas fa-angle-up ml-2"></span> *@
+@*               </a> *@
+@*             </li> *@
+@*             <li class="list-inline-item col-6 col-sm-4 col-md-auto u-ver-divider u-ver-divider--xs u-ver-divider--none-md px-md-7 mx-0 mb-4 mb-md-0"> *@
+@*               <small class="d-block">Price</small> *@
+@*               <a class="d-block" href="#"> *@
+@*                 @ethusd.Properties.SingleOrDefault(kvp => kvp.Key.Equals("Bid")).Value *@
+@*               </a> *@
+@*             </li> *@
+@*             <li class="list-inline-item col-6 col-sm-4 col-md-auto u-ver-divider u-ver-divider--xs u-ver-divider--none-md px-md-7 mx-0 mb-4 mb-md-0"> *@
+@*               <small class="d-block">Volume <small>(24h)</small></small> *@
+@*               <a class="d-block text-success" href="#"> *@
+@*                 5.12% *@
+@*                 <span class="fas fa-angle-up ml-2"></span> *@
+@*               </a> *@
+@*             </li> *@
+@*             <li class="list-inline-item col-6 col-sm-4 col-md-auto pl-md-7 mx-0 mb-4 mb-md-0"> *@
+@*               <small class="d-block">Change <small>(24h)</small></small> *@
+@*               <a class="d-block text-danger" href="#"> *@
+@*                 -3.38% *@
+@*                 <span class="fas fa-angle-down ml-2"></span> *@
+@*               </a> *@
+@*             </li> *@
+@*           </ul> *@
+@*           <!-- End Market Capitalization List --> *@
+@*         </div> *@
+@*       </div> *@
+@*     </div> *@
+@*     <!-- End Graphics Section --> *@
+@*     } *@
+@*   } *@
+  
+  <div class="gradient-half-primary-v4">
+    <div class="container">
+      <div class="row justify-content-lg-between align-items-md-center space-2">
+        <div class="col-md-6 col-lg-5 mb-5 mb-md-0">
+          <h3 class="text-white font-weight-medium mb-1">Ready to get started?</h3>
+          <p class="text-white-70 mb-0">Create your account and obtain the data you need.</p>
         </div>
 
-        <div class="col-lg-9">
-          <!-- Market Capitalization List -->
-          <ul class="list-inline row justify-content-lg-end text-secondary text-uppercase mb-0">
-            <li class="list-inline-item col-6 col-sm-4 col-md-auto u-ver-divider u-ver-divider--xs u-ver-divider--none-md px-md-7 mx-0 mb-4 mb-md-0">
-              <small class="d-block">Market Cap</small>
-              <a class="d-block text-success" href="#">
-                1.3649% (Mock Data)
-                <span class="fas fa-angle-up ml-2"></span>
-              </a>
-            </li>
-            <li class="list-inline-item col-6 col-sm-4 col-md-auto u-ver-divider u-ver-divider--xs u-ver-divider--none-md px-md-7 mx-0 mb-4 mb-md-0">
-              <small class="d-block">Price</small>
-              <a class="d-block" href="#">
-                @ethusd.Properties.SingleOrDefault(kvp => kvp.Key.Equals("Bid")).Value
-              </a>
-            </li>
-            @* <li class="list-inline-item col-6 col-sm-4 col-md-auto u-ver-divider u-ver-divider--xs u-ver-divider--none-md px-md-7 mx-0 mb-4 mb-md-0"> *@
-            @*   <small class="d-block">Volume <small>(24h)</small></small> *@
-            @*   <a class="d-block text-success" href="#"> *@
-            @*     5.12% *@
-            @*     <span class="fas fa-angle-up ml-2"></span> *@
-            @*   </a> *@
-            @* </li> *@
-            @* <li class="list-inline-item col-6 col-sm-4 col-md-auto pl-md-7 mx-0 mb-4 mb-md-0"> *@
-            @*   <small class="d-block">Change <small>(24h)</small></small> *@
-            @*   <a class="d-block text-danger" href="#"> *@
-            @*     -3.38% *@
-            @*     <span class="fas fa-angle-down ml-2"></span> *@
-            @*   </a> *@
-            @* </li> *@
-          </ul>
-          <!-- End Market Capitalization List -->
+        <div class="col-md-6 col-lg-5 text-md-right">
+          <a class="btn btn-success btn-wide transition-3d-hover mb-1 mb-sm-0 mr-sm-1" 
+             asp-controller="Account" asp-action="Register">Sign Up</a>
+          <a class="btn text-primary btn-white btn-wide transition-3d-hover mb-1 mb-sm-0" href="#">Learn More</a>
         </div>
       </div>
     </div>
-    <!-- End Graphics Section -->
-    }
-  }
+  </div>
 
-    <hr class="my-0">
-
-    <!-- Charts Section -->
-    <div class="container space-2 space-md-3">
-      <!-- Title -->
-      <div class="w-md-80 w-lg-50 text-center mx-md-auto mb-9">
-        <h2 class="text-primary font-weight-semi-bold">Data charts</h2>
-        <p>The Nozomi ecosystem at a glance.</p>
-      </div>
-      <!-- End Title -->
-
-      <div class="card-deck d-block d-lg-flex card-lg-gutters-3">
-        <!-- Charts -->
-        <div class="card border-0 shadow-sm mb-5 mb-lg-0">
-          <header class="card-header p-6">
-            <!-- Info -->
-            <div class="d-flex justify-content-between align-items-center mb-3">
-              <small class="d-block text-muted">22 February, 2018</small>
-              <a class="btn btn-sm btn-icon btn-soft-primary rounded-circle" href="javascript:;" data-toggle="tooltip" data-placement="top" title="Download overall report">
-                <span class="fas fa-cloud-download-alt btn-icon__inner"></span>
-              </a>
-            </div>
-            <!-- End Info -->
-
-            <!-- Statistics -->
-            <div class="media align-items-center">
-              <div class="u-avatar mr-3">
-                <span class="flag-icon flag-icon-us" alt="United States Flag"></span>
-              </div>
-              <div class="media-body">
-                <h3 class="h6 mb-0">35, 298 USD</h3>
-                <a class="small text-success" href="#">
-                  1.3649%
-                  <span class="fas fa-angle-up ml-2"></span>
-                </a>
-              </div>
-            </div>
-            <!-- End Statistics -->
-          </header>
-
-          <div class="card-body p-6">
-            <!-- Goal -->
-            <div class="row mb-7">
-              <div class="col-6">
-                <h4 class="small text-muted">
-                  Goal: <strong class="text-secondary">$70,000</strong>
-                </h4>
-                <div class="js-hr-progress progress" style="height: 6px;">
-                  <div class="js-hr-progress-bar progress-bar bg-success" role="progressbar" style="width: 75%;" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"></div>
-                </div>
-              </div>
-              <div class="col-6">
-                <h4 class="small text-muted">
-                  Duration: <strong class="text-secondary">1 week</strong>
-                </h4>
-                <div class="js-hr-progress progress" style="height: 6px;">
-                  <div class="js-hr-progress-bar progress-bar bg-warning" role="progressbar" style="width: 50%;" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
-                </div>
-              </div>
-            </div>
-            <!-- End Goal -->
-
-            <!-- Chart -->
-            <div class="js-bar-chart"
-                 data-series='[
-                   [10,8,5,7,6,6,10,10,8,5,7,6,6,10,6,6,10,10,8,5,7,6,6,10,6,6,10,10,8]
-                 ]'
-                 data-is-show-axis-x="false"
-                 data-is-show-axis-y="false"
-                 data-height="62px"
-                 data-high="10"
-                 data-low="0"
-                 data-distance="5"
-                 data-stroke-width="6"
-                 data-stroke-color="#19a0ff"></div>
-            <!-- Chart -->
-          </div>
-        </div>
-        <!-- End Charts -->
-
-        <!-- Charts -->
-        <div class="card border-0 shadow-sm mb-5 mb-lg-0">
-          <header class="card-header p-6">
-            <!-- Info -->
-            <div class="d-flex justify-content-between align-items-center mb-3">
-              <small class="d-block text-muted">22 February, 2018</small>
-              <a class="btn btn-sm btn-icon btn-soft-primary rounded-circle" href="javascript:;" data-toggle="tooltip" data-placement="top" title="Download overall report">
-                <span class="fas fa-cloud-download-alt btn-icon__inner"></span>
-              </a>
-            </div>
-            <!-- End Info -->
-
-            <!-- Statistics -->
-            <div class="media align-items-center">
-              <div class="u-avatar mr-3">
-                <span class="flag-icon flag-icon-gb" alt="Great Britain Flag"></span>
-              </div>
-              <div class="media-body">
-                <h3 class="h6 mb-0">27, 092 LP</h3>
-                <a class="small text-danger" href="#">
-                  -4.812%
-                  <span class="fas fa-angle-down ml-2"></span>
-                </a>
-              </div>
-            </div>
-            <!-- End Statistics -->
-          </header>
-
-          <div class="card-body p-6">
-            <!-- Goal -->
-            <div class="row mb-7">
-              <div class="col-6">
-                <h4 class="small text-muted">
-                  Goal: <strong class="text-secondary">$12,500</strong>
-                </h4>
-                <div class="js-hr-progress progress" style="height: 6px;">
-                  <div class="js-hr-progress-bar progress-bar bg-success" role="progressbar" style="width: 12%;" aria-valuenow="12" aria-valuemin="0" aria-valuemax="100"></div>
-                </div>
-              </div>
-              <div class="col-6">
-                <h4 class="small text-muted">
-                  Duration: <strong class="text-secondary">1 month</strong>
-                </h4>
-                <div class="js-hr-progress progress" style="height: 6px;">
-                  <div class="js-hr-progress-bar progress-bar bg-warning" role="progressbar" style="width: 15%;" aria-valuenow="15" aria-valuemin="0" aria-valuemax="100"></div>
-                </div>
-              </div>
-            </div>
-            <!-- End Goal -->
-
-            <!-- Chart -->
-            <div class="js-bar-chart"
-                 data-series='[
-                   [3,5,5,7,6,1,10,1,8,5,7,2,6,10,6,6,4,10,8,5,7,2,6,10,6,6,10,1,8]
-                 ]'
-                 data-is-show-axis-x="false"
-                 data-is-show-axis-y="false"
-                 data-height="62px"
-                 data-high="10"
-                 data-low="0"
-                 data-distance="5"
-                 data-stroke-width="6"
-                 data-stroke-color="#ec5245"></div>
-            <!-- Chart -->
-          </div>
-        </div>
-        <!-- End Charts -->
-
-        <!-- Charts -->
-        <div class="card border-0 shadow-sm">
-          <header class="card-header p-6">
-            <!-- Info -->
-            <div class="d-flex justify-content-between align-items-center mb-3">
-              <small class="d-block text-muted">22 February, 2018</small>
-              <a class="btn btn-sm btn-icon btn-soft-primary rounded-circle" href="javascript:;" data-toggle="tooltip" data-placement="top" title="Download overall report">
-                <span class="fas fa-cloud-download-alt btn-icon__inner"></span>
-              </a>
-            </div>
-            <!-- End Info -->
-
-            <!-- Statistics -->
-            <div class="media align-items-center">
-              <div class="u-avatar mr-3">
-                <span class="flag-icon flag-icon-de" alt="United States Flag"></span>
-              </div>
-              <div class="media-body">
-                <h3 class="h6 mb-0">7, 233 EURO</h3>
-                <a class="small text-danger" href="#">
-                  -8.4%
-                  <span class="fas fa-angle-down ml-2"></span>
-                </a>
-              </div>
-            </div>
-            <!-- End Statistics -->
-          </header>
-
-          <div class="card-body p-6">
-            <!-- Goal -->
-            <div class="row mb-7">
-              <div class="col-6">
-                <h4 class="small text-muted">
-                  Goal: <strong class="text-secondary">$45,500</strong>
-                </h4>
-                <div class="js-hr-progress progress" style="height: 6px;">
-                  <div class="js-hr-progress-bar progress-bar bg-success" role="progressbar" style="width: 45%;" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100"></div>
-                </div>
-              </div>
-              <div class="col-6">
-                <h4 class="small text-muted">
-                  Duration: <strong class="text-secondary">3 weeks</strong>
-                </h4>
-                <div class="js-hr-progress progress" style="height: 6px;">
-                  <div class="js-hr-progress-bar progress-bar bg-warning" role="progressbar" style="width: 40%;" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100"></div>
-                </div>
-              </div>
-            </div>
-            <!-- End Goal -->
-
-            <!-- Chart -->
-            <div class="js-bar-chart"
-                 data-series='[
-                   [2,3,5,7,4,6,5,6,8,7,7,6,6,10,6,6,10,7,8,5,7,6,3,10,6,6,1,3,1]
-                 ]'
-                 data-is-show-axis-x="false"
-                 data-is-show-axis-y="false"
-                 data-height="62px"
-                 data-high="10"
-                 data-low="0"
-                 data-distance="5"
-                 data-stroke-width="6"
-                 data-stroke-color="#fdd14e"></div>
-            <!-- Chart -->
-          </div>
-        </div>
-        <!-- End Charts -->
-      </div>
-    </div>
-    <!-- End Charts Section -->
-
+  <hr class="my-0">
+  
     @* <!-- CTA --> *@
     @* <div class="gradient-overlay-half-primary-v1 bg-img-hero" style="background-image: url(../../assets/img/1920x400/img1.jpg);"> *@
     @*   <div class="container space-2"> *@
@@ -671,4 +470,3 @@
 @*     </div> *@
 @*     <!-- End Multi-Platform Accessible --> *@
   </main>
-  <!-- ========== END MAIN CONTENT ========== -->

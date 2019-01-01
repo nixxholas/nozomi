@@ -41,7 +41,4 @@ $(document).on('ready', function () {
 
     // initialization of chartist bar chart
     $.HSCore.components.HSChartistBarChart.init('.js-bar-chart');
-    
-    // ======= CUSTOM CODE FOR INDEX ====== //
-
 });
