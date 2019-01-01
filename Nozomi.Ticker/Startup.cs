@@ -14,6 +14,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Nozomi.Base.Core.Configurations;
+using Nozomi.Base.Core.Helpers.Routing;
 using Nozomi.Base.Identity.Models.Identity;
 using Nozomi.Data.WebModels.LoggingModels;
 using Nozomi.Repo.Data;
@@ -129,6 +130,12 @@ namespace Nozomi.Ticker
             services.AddMvc()
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
                 .AddSessionStateTempDataProvider();
+            
+            services.AddRouting(option =>
+            {
+                option.ConstraintMap["slugify"] = typeof(SlugifyParameterTransformer);
+                option.LowercaseUrls = true;
+            });
 
             // https://stackoverflow.com/questions/38184583/how-to-add-ihttpcontextaccessor-in-the-startup-class-in-the-di-in-asp-net-core-1
             //services.AddHttpContextAccessor();
