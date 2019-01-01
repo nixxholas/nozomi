@@ -131,6 +131,7 @@ namespace Nozomi.Ticker
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
                 .AddSessionStateTempDataProvider();
             
+            // https://stackoverflow.com/questions/36358751/how-do-you-enforce-lowercase-routing-in-asp-net-core
             services.AddRouting(option =>
             {
                 option.ConstraintMap["slugify"] = typeof(SlugifyParameterTransformer);
