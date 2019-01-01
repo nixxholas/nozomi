@@ -41,4 +41,7 @@ $(document).on('ready', function () {
 
     // initialization of chartist bar chart
     $.HSCore.components.HSChartistBarChart.init('.js-bar-chart');
+
+    // initialization of form validation
+    $.HSCore.components.HSValidation.init('.js-validate');
 });

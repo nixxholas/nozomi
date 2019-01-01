@@ -1,0 +1,32 @@
+<header id="header" class="u-header u-header--bg-transparent u-header--abs-top">
+    <div class="u-header__section">
+        <div id="logoAndNav" class="container-fluid">
+            <!-- Nav -->
+            <nav class="navbar navbar-expand u-header__navbar">
+                <!-- White Logo -->
+                <a class="d-none d-lg-flex navbar-brand u-header__navbar-brand u-header__navbar-brand-center u-header__navbar-brand-text-white"
+                   asp-controller="Home" asp-action="Index" aria-label="Front">
+                    <span class="u-header__navbar-brand-text">Nozomi</span>
+                </a>
+                <!-- End White Logo -->
+
+                <!-- Default Logo -->
+                <a class="d-flex d-lg-none navbar-brand u-header__navbar-brand u-header__navbar-brand-center u-header__navbar-brand-collapsed"
+                   asp-controller="Home" asp-action="Index" aria-label="Front">
+                    <span class="d-inline-block u-header__navbar-brand-text">Nozomi</span>
+                </a>
+                <!-- End Default Logo -->
+
+                <!-- Button -->
+                <div class="ml-auto">
+                    <a class="btn btn-sm btn-primary transition-3d-hover" asp-controller="Account"
+                       asp-action="Register">
+                        Signup
+                    </a>
+                </div>
+                <!-- End Button -->
+            </nav>
+            <!-- End Nav -->
+        </div>
+    </div>
+</header>
