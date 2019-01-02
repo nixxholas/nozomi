@@ -4,6 +4,7 @@
 import '../styles/index.scss';
 
 import * as $ from 'jquery';
+import 'jquery-validation';
 import 'jquery-migrate';
 import Typed from 'typed.js';
 import 'popper.js';
@@ -20,14 +21,43 @@ import '../assets/vendor/hs-megamenu/src/hs.megamenu';
 import '../scripts/hs.core.js';
 import '../scripts/components/hs.bg-video.js';
 import '../scripts/components/hs.chart-pie.js';
+import '../scripts/components/hs.focus-state.js';
 import '../scripts/components/hs.go-to.js';
+import '../scripts/components/hs.header.js';
 import '../scripts/components/hs.malihu-scrollbar.js';
+import '../scripts/components/hs.modal-window.js';
 import '../scripts/components/hs.slick-carousel.js';
+import '../scripts/components/hs.step-form.js';
 import '../scripts/components/hs.svg-injector.js';
 import '../scripts/components/hs.toggle-state.js'
 import '../scripts/components/hs.unfold.js';
+import '../scripts/components/hs.validation.js';
+
+$(window).on('load', function () {
+    // initialization of HSMegaMenu component
+    $('.js-mega-menu').HSMegaMenu({
+        event: 'hover',
+        pageContainer: $('.container'),
+        breakpoint: 767.98,
+        hideTimeOut: 0
+    });
+
+    // initialization of HSMegaMenu component
+    $('.js-breadcrumb-menu').HSMegaMenu({
+        event: 'hover',
+        pageContainer: $('.container'),
+        breakpoint: 991.98,
+        hideTimeOut: 0
+    });
+
+    // initialization of svg injector module
+    $.HSCore.components.HSSVGIngector.init('.js-svg-injector');
+});
 
 $(document).on('ready', function () {
+    // initialization of header
+    $.HSCore.components.HSHeader.init($('#header'));
+
     // initialization of svg injector module
     $.HSCore.components.HSSVGIngector.init('.js-svg-injector');
 
@@ -41,6 +71,23 @@ $(document).on('ready', function () {
         }
     });
 
+    // initialization of malihu scrollbar
+    $.HSCore.components.HSMalihuScrollBar.init($('.js-scrollbar'));
+
+    // initialization of forms
+    $.HSCore.components.HSFocusState.init();
+
+    // initialization of form validation
+    $.HSCore.components.HSValidation.init('.js-validate');
+
+    // initialization of autonomous popups
+    $.HSCore.components.HSModalWindow.init('[data-modal-target]', '.js-modal-window', {
+        autonomous: true
+    });
+
+    // initialization of step form
+    $.HSCore.components.HSStepForm.init('.js-step-form');
+
     // initialization of horizontal progress bars
     var horizontalProgressBars = $.HSCore.components.HSProgressBar.init('.js-hr-progress', {
         direction: 'horizontal',
@@ -52,4 +99,7 @@ $(document).on('ready', function () {
 
     // initialization of form validation
     $.HSCore.components.HSValidation.init('.js-validate');
+
+    // initialization of go to
+    $.HSCore.components.HSGoTo.init('.js-go-to');
 });
