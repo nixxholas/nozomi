@@ -21,7 +21,7 @@ namespace Nozomi.Base.Identity.Models.Subscription
         public long UserId { get; set; }
         public User User { get; set; }
         public string Key { get; set; }
-        
+
         public string GenerateAPIKey(string userId)
         {
             var key = new byte[32];
@@ -29,6 +29,8 @@ namespace Nozomi.Base.Identity.Models.Subscription
             {
                 generator.GetBytes(key);
             }
+
             return Convert.ToBase64String(key);
+        }
     }
 }
