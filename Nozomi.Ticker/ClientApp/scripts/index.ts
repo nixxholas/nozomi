@@ -9,6 +9,8 @@ import 'jquery-migrate';
 import Typed from 'typed.js';
 import 'popper.js';
 import 'bootstrap';
+import 'chartist';
+import 'custombox';
 import 'slick-carousel';
 import 'svg-injector';
 import 'malihu-custom-scrollbar-plugin';
@@ -19,22 +21,24 @@ import '../scripts/components/appear.js';
 import '../assets/vendor/hs-megamenu/src/hs.megamenu';
 
 import '../scripts/hs.core.js';
+import '../scripts/components/hs.header.js';
+import '../scripts/components/hs.unfold.js';
+
 import '../scripts/components/hs.bg-video.js';
-import '../scripts/components/hs.chart-pie.js';
 import '../scripts/components/hs.chartist-bar-chart.js';
 import '../scripts/components/hs.focus-state.js';
 import '../scripts/components/hs.go-to.js';
-import '../scripts/components/hs.header.js';
 import '../scripts/components/hs.malihu-scrollbar.js';
 import '../scripts/components/hs.modal-window.js';
 import '../scripts/components/hs.progress-bar.js';
 import '../scripts/components/hs.show-animation.js';
+import '../scripts/components/hs.selectpicker.js';
 import '../scripts/components/hs.slick-carousel.js';
 import '../scripts/components/hs.step-form.js';
 import '../scripts/components/hs.svg-injector.js';
 import '../scripts/components/hs.toggle-state.js'
-import '../scripts/components/hs.unfold.js';
 import '../scripts/components/hs.validation.js';
+import '../scripts/components/hs.chart-pie.js';
 
 $(window).on('load', function () {
     // initialization of HSMegaMenu component
@@ -88,6 +92,9 @@ $(document).on('ready', function () {
         autonomous: true
     });
 
+    // initialization of select picker
+    $.HSCore.components.HSSelectPicker.init('.js-select');
+
     // initialization of step form
     $.HSCore.components.HSStepForm.init('.js-step-form');
 
@@ -95,12 +102,17 @@ $(document).on('ready', function () {
     $.HSCore.components.HSShowAnimation.init('.js-animation-link');
 
     // initialization of chart pies
-    var items = $.HSCore.components.HSChartPie.init('.js-pie');
-
+    let items = $.HSCore.components.HSChartPie.init('.js-pie');
+    
     // initialization of horizontal progress bars
     var horizontalProgressBars = $.HSCore.components.HSProgressBar.init('.js-hr-progress', {
         direction: 'horizontal',
         indicatorSelector: '.js-hr-progress-bar'
+    });
+
+    var verticalProgressBars = $.HSCore.components.HSProgressBar.init('.js-vr-progress', {
+        direction: 'vertical',
+        indicatorSelector: '.js-vr-progress-bar'
     });
 
     // initialization of chartist bar chart
