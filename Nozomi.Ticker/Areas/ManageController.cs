@@ -403,6 +403,14 @@ namespace Nozomi.Ticker.Areas
             return RedirectToAction(nameof(ManageLogins), new { Message = message });
         }
 
+        //
+        // GET: /Manage/PaymentMethods
+        [HttpGet]
+        public async Task<IActionResult> PaymentMethods()
+        {
+            return View();
+        }
+
         #region Helpers
 
         private void AddErrors(IdentityResult result)
