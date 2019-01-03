@@ -7,7 +7,7 @@ namespace Nozomi.Base.Identity.Models.Identity
 {
     public class User : IdentityUser<long>
     {
-        public string StripeSourceId { get; set; }
+        public string StripeCustomerId { get; set; }
         
         public virtual ICollection<DevKey> DevKeys { get; set; }
         

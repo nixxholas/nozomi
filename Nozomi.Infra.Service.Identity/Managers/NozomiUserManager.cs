@@ -30,20 +30,17 @@ namespace Nozomi.Service.Identity.Managers
 
         public override async Task<IdentityResult> CreateAsync(User user)
         {
-            var options = new SourceCreateOptions {
-                Type = SourceType.SepaDebit,
-                Currency = "usd",
-                Owner = new SourceOwnerOptions {
-                    Email = user.Email
-                }
+            var options = new CustomerCreateOptions {
+                Description = "Customer for jenny.rosen@example.com",
+                SourceToken = "tok_mastercard"
             };
 
-            var sourceService = new SourceService();
-            var source = await sourceService.CreateAsync(options);
-
-            if (source != null)
+            var service = new CustomerService();
+            var customer = service.Create(options);
+            
+            if (customer != null)
             {
-                user.StripeSourceId = source.Id;
+                user.StripeCustomerId = customer.Id;
                 return await base.CreateAsync(user);
             }
             
