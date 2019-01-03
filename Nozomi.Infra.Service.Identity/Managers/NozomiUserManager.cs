@@ -30,27 +30,6 @@ namespace Nozomi.Service.Identity.Managers
 
         public override async Task<IdentityResult> CreateAsync(User user)
         {
-            var options = new CustomerCreateOptions {
-                Description = "Customer for jenny.rosen@example.com",
-                SourceToken = "tok_mastercard"
-            };
-
-            var service = new CustomerService();
-            var customer = service.Create(options);
-            
-            if (customer != null)
-            {
-                user.StripeCustomerId = customer.Id;
-            }
-            else
-            {
-                return IdentityResult.Failed(new IdentityError
-                {
-                    Code = IdentityErrorType.CreateAccountStripeIssue.ToString(),
-                    Description = IdentityErrorType.CreateAccountStripeIssue.GetDescription()
-                });
-            }
-            
             var sourceOptions = new SourceCreateOptions
             {
                 Type = SourceType.SepaDebit,
@@ -68,7 +47,6 @@ namespace Nozomi.Service.Identity.Managers
             if (source != null)
             {
                 user.StripeSourceId = source.Id;
-                return await base.CreateAsync(user);
             }
             else
             {
@@ -76,6 +54,28 @@ namespace Nozomi.Service.Identity.Managers
                 {
                     Code = IdentityErrorType.CreateAccountStripeSourceIssue.ToString(),
                     Description = IdentityErrorType.CreateAccountStripeSourceIssue.GetDescription()
+                });
+            }
+            
+            var options = new CustomerCreateOptions {
+                Description = "Customer for " + user.Email,
+                SourceToken = source.Id
+            };
+
+            var service = new CustomerService();
+            var customer = service.Create(options);
+            
+            if (customer != null)
+            {
+                user.StripeCustomerId = customer.Id;
+                return await base.CreateAsync(user);
+            }
+            else
+            {
+                return IdentityResult.Failed(new IdentityError
+                {
+                    Code = IdentityErrorType.CreateAccountStripeIssue.ToString(),
+                    Description = IdentityErrorType.CreateAccountStripeIssue.GetDescription()
                 });
             }
         }
