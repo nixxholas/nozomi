@@ -41,14 +41,43 @@ namespace Nozomi.Service.Identity.Managers
             if (customer != null)
             {
                 user.StripeCustomerId = customer.Id;
-                return await base.CreateAsync(user);
+            }
+            else
+            {
+                return IdentityResult.Failed(new IdentityError
+                {
+                    Code = IdentityErrorType.CreateAccountStripeIssue.ToString(),
+                    Description = IdentityErrorType.CreateAccountStripeIssue.GetDescription()
+                });
             }
             
-            return IdentityResult.Failed(new IdentityError()
+            var sourceOptions = new SourceCreateOptions
             {
-                Code = IdentityErrorType.CreateAccountStripeIssue.ToString(),
-                Description = IdentityErrorType.CreateAccountStripeIssue.GetDescription()
-            });
+                Type = SourceType.SepaDebit,
+                Currency = "usd",
+                Usage = "reusable",
+                Owner = new SourceOwnerOptions
+                {
+                    Email = user.Email
+                }
+            };
+
+            var sourceService = new SourceService();
+            var source = await sourceService.CreateAsync(sourceOptions);
+
+            if (source != null)
+            {
+                user.StripeSourceId = source.Id;
+                return await base.CreateAsync(user);
+            }
+            else
+            {
+                return IdentityResult.Failed(new IdentityError
+                {
+                    Code = IdentityErrorType.CreateAccountStripeSourceIssue.ToString(),
+                    Description = IdentityErrorType.CreateAccountStripeSourceIssue.GetDescription()
+                });
+            }
         }
 
         public async Task<User> FindAsync(string id, string password)
