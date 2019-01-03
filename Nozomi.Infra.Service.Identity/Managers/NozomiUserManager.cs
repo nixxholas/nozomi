@@ -5,10 +5,12 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Nozomi.Base.Core.Helpers.Enumerator;
 using Nozomi.Base.Identity.Models.Identity;
 using Nozomi.Service.Identity.Managers.Interfaces;
 using Nozomi.Service.Identity.Stores;
 using Nozomi.Service.Identity.Stores.Interfaces;
+using Stripe;
 
 namespace Nozomi.Service.Identity.Managers
 {
@@ -24,6 +26,32 @@ namespace Nozomi.Service.Identity.Managers
                 errors, services, logger)
         {
             Store = store;
+        }
+
+        public override async Task<IdentityResult> CreateAsync(User user)
+        {
+            var options = new SourceCreateOptions {
+                Type = SourceType.SepaDebit,
+                Currency = "usd",
+                Owner = new SourceOwnerOptions {
+                    Email = user.Email
+                }
+            };
+
+            var sourceService = new SourceService();
+            var source = await sourceService.CreateAsync(options);
+
+            if (source != null)
+            {
+                user.StripeSourceId = source.Id;
+                return await base.CreateAsync(user);
+            }
+            
+            return IdentityResult.Failed(new IdentityError()
+            {
+                Code = IdentityErrorType.CreateAccountStripeIssue.ToString(),
+                Description = IdentityErrorType.CreateAccountStripeIssue.GetDescription()
+            });
         }
 
         public async Task<User> FindAsync(string id, string password)
