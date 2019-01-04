@@ -10,6 +10,8 @@ namespace Nozomi.Preprocessing.Events.Interfaces
 
         Task<ICollection<Plan>> Plans(PlanListOptions options);
 
+        Task<ICollection<Product>> Products(ProductListOptions options);
+
         Task<ICollection<Subscription>> Subscriptions(SubscriptionListOptions options);
     }
 }

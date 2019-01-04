@@ -44,6 +44,14 @@ namespace Nozomi.Preprocessing.Events
             return plans.Data;
         }
 
+        public async Task<ICollection<Product>> Products(ProductListOptions options)
+        {
+            var productService = new ProductService();
+            var products = await productService.ListAsync(options);
+
+            return products.Data;
+        }
+
         public async Task<ICollection<Subscription>> Subscriptions(SubscriptionListOptions options)
         {
             var subService = new SubscriptionService();
@@ -51,5 +59,7 @@ namespace Nozomi.Preprocessing.Events
 
             return subs.Data;
         }
+        
+        
     }
 }
