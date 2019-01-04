@@ -5,6 +5,7 @@ using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data.WebModels.LoggingModels;
+using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Data;
 using Nozomi.Service.Services.Requests.Interfaces;

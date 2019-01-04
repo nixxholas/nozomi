@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data.CurrencyModels;
 using Nozomi.Data.WebModels;
+using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Data;
 using Nozomi.Service.Services.Enumerators.Interfaces;

@@ -1,10 +1,8 @@
-﻿using System;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using Nozomi.Repo.BCL.Context;
 using Nozomi.Repo.BCL.Repository;
-using Nozomi.Repo.Data;
 
-namespace Nozomi.Service.Services
+namespace Nozomi.Preprocessing.Abstracts
 {
     public abstract class BaseService<T, TContext>
         where T : class

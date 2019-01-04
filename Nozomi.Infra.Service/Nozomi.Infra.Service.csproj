@@ -4,6 +4,7 @@
     <RootNamespace>Nozomi.Service</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Nozomi.Infra.Preprocessing\Nozomi.Infra.Preprocessing.csproj" />
     <ProjectReference Include="..\Nozomi.Repo\Nozomi.Repo.csproj" />
   </ItemGroup>
   <ItemGroup>

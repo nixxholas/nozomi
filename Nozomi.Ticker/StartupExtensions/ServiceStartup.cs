@@ -1,4 +1,3 @@
-using CounterCore.Service.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Nozomi.Preprocessing.Events;
