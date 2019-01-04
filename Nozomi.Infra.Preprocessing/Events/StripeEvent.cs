@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using Nozomi.Base.Core.Configurations;
 using Nozomi.Preprocessing.Events.Interfaces;
@@ -32,6 +34,14 @@ namespace Nozomi.Preprocessing.Events
             });
 
             return true;
+        }
+
+        public async Task<ICollection<Plan>> Plans(PlanListOptions options)
+        {
+            var planService = new PlanService();
+            var plans = await planService.ListAsync(options);
+
+            return plans.Data;
         }
     }
 }
