@@ -9,5 +9,7 @@ namespace Nozomi.Preprocessing.Events.Interfaces
         bool Subscribe();
 
         Task<ICollection<Plan>> Plans(PlanListOptions options);
+
+        Task<ICollection<Subscription>> Subscriptions(SubscriptionListOptions options);
     }
 }

@@ -43,5 +43,13 @@ namespace Nozomi.Preprocessing.Events
 
             return plans.Data;
         }
+
+        public async Task<ICollection<Subscription>> Subscriptions(SubscriptionListOptions options)
+        {
+            var subService = new SubscriptionService();
+            var subs = await subService.ListAsync(options);
+
+            return subs.Data;
+        }
     }
 }
