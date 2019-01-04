@@ -14,6 +14,8 @@ namespace Nozomi.Preprocessing.Events
         public StripeEvent(IOptions<StripeSettings> options)
         {
             _options = options;
+            
+            StripeConfiguration.SetApiKey(options.Value.SecretKey);
         }
 
         public bool Subscribe()

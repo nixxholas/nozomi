@@ -1,5 +1,7 @@
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using Nozomi.Base.Core.Configurations;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Identity.Data;
@@ -15,9 +17,11 @@ namespace Nozomi.Service.Identity.Services
     {
         private static readonly string ServiceName = "[StripeService]";
         
-        public StripeService(ILogger<StripeService> logger, IUnitOfWork<NozomiAuthContext> unitOfWork) : 
+        public StripeService(ILogger<StripeService> logger, IUnitOfWork<NozomiAuthContext> unitOfWork,
+            IOptions<StripeSettings> options) : 
             base(logger, unitOfWork)
         {
+            StripeConfiguration.SetApiKey(options.Value.SecretKey);
         }
 
 
