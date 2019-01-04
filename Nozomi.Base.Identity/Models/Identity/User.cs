@@ -11,6 +11,8 @@ namespace Nozomi.Base.Identity.Models.Identity
         
         public string StripeSourceId { get; set; }
         
+        public string StripePlanId { get; set; }
+        
         public virtual ICollection<DevKey> DevKeys { get; set; }
         
         public virtual ICollection<UserClaim> UserClaims { get; set; }
