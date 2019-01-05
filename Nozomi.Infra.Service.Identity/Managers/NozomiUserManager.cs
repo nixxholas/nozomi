@@ -35,17 +35,9 @@ namespace Nozomi.Service.Identity.Managers
         public override async Task<IdentityResult> CreateAsync(User user)
         {
             // Stripe processing
-            user = await _stripeService.ConfigureNewUser(user);
+            user = await _stripeService.ConfigureUserForStripe(user);
 
-            if (string.IsNullOrEmpty(user.StripeSourceId))
-            {
-                return IdentityResult.Failed(new IdentityError
-                {
-                    Code = IdentityErrorType.CreateAccountStripeSourceIssue.ToString(),
-                    Description = IdentityErrorType.CreateAccountStripeSourceIssue.GetDescription()
-                });
-            }
-            else if (string.IsNullOrEmpty(user.StripeCustomerId))
+            if (string.IsNullOrEmpty(user.StripeCustomerId))
             {
                 return IdentityResult.Failed(new IdentityError
                 {

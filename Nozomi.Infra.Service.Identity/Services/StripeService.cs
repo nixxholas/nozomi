@@ -2,7 +2,9 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Nozomi.Base.Core.Configurations;
+using Nozomi.Base.Core.Helpers.Enumerator;
 using Nozomi.Base.Identity.Models.Identity;
+using Nozomi.Base.Identity.Models.Subscription;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Identity.Data;
@@ -23,39 +25,17 @@ namespace Nozomi.Service.Identity.Services
             IOptions<StripeSettings> options) : 
             base(logger, unitOfWork)
         {
+            _options = options;
         }
 
-        public async Task<User> ConfigureNewUser(User user)
+        public async Task<User> ConfigureUserForStripe(User user)
         {
             StripeConfiguration.SetApiKey(_options.Value.SecretKey);
             
-            var sourceOptions = new SourceCreateOptions
-            {
-                Type = SourceType.SepaDebit,
-                Currency = "usd",
-                Usage = "reusable",
-                Owner = new SourceOwnerOptions
-                {
-                    Email = user.Email
-                }
-            };
-
-            var sourceService = new SourceService();
-            var source = await sourceService.CreateAsync(sourceOptions);
-
-            if (!string.IsNullOrEmpty(source.Id))
-            {
-                user.StripeSourceId = source.Id;
-            }
-            else
-            {
-                // Failed, send it back immediately.
-                return user;
-            }
-            
             var customerOptions = new CustomerCreateOptions {
                 Description = "Customer for " + user.Email,
-                SourceToken = source.Id
+                Email = user.Email,
+                //PlanId = PlanType.Basic.GetDescription() // TODO
             };
 
             var customerService = new CustomerService();
@@ -72,6 +52,35 @@ namespace Nozomi.Service.Identity.Services
             }
 
             return user;
+        }
+
+        public async Task<bool> CreateSource(User user)
+        {
+            // TODO!
+            var sourceOptions = new SourceCreateOptions
+            {
+                Type = SourceType.Card,
+                Currency = "usd",
+                Usage = "reusable",
+                Owner = new SourceOwnerOptions
+                {
+                    Email = user.Email
+                }
+            };
+
+            var sourceService = new SourceService();
+            var source = await sourceService.CreateAsync(sourceOptions);
+
+            if (!string.IsNullOrEmpty(source.Id))
+            {
+                user.StripeSourceId = source.Id;
+                return true;
+            }
+            else
+            {
+                // Failed, send it back immediately.
+                return false;
+            }
         }
 
         public async Task<bool> CreatePlan(PlanCreateOptions options)

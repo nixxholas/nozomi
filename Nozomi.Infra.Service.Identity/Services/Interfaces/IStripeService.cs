@@ -6,7 +6,9 @@ namespace Nozomi.Service.Identity.Services.Interfaces
 {
     public interface IStripeService
     {
-        Task<User> ConfigureNewUser(User user);
+        Task<User> ConfigureUserForStripe(User user);
+
+        Task<bool> CreateSource(User user);
         
         /// <summary>
         /// Allows us to create a plan for the user to pick to unlock more features.
