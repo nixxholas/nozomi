@@ -2,10 +2,12 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using Nozomi.Base.Core.Configurations;
-using Nozomi.Preprocessing.Events.Interfaces;
+using Nozomi.Base.Core.Helpers.Enumerator;
+using Nozomi.Base.Identity.Models.Subscription;
+using Nozomi.Service.Identity.Events.Interfaces;
 using Stripe;
 
-namespace Nozomi.Preprocessing.Events
+namespace Nozomi.Service.Identity.Events
 {
     public class StripeEvent : IStripeEvent
     {
@@ -18,23 +20,22 @@ namespace Nozomi.Preprocessing.Events
             StripeConfiguration.SetApiKey(options.Value.SecretKey);
         }
 
-        public bool Subscribe()
+        public async Task<bool> Subscribe(string stripeCustId, PlanType planType)
         {
-            var customers = new CustomerService();
-            var charges = new ChargeService();
+            var subService = new SubscriptionService();
 
-            var customer = customers.Create(new CustomerCreateOptions {
-                Email = "",
-                SourceToken = "" // STRIPE TOKEN
-            });
+            var items = new List<SubscriptionItemOption> {
+                new SubscriptionItemOption {
+                    PlanId = planType.GetDescription()
+                }
+            };
+            var options = new SubscriptionCreateOptions {
+                CustomerId = stripeCustId,
+                Items = items
+            };
 
-            var charge = charges.Create(new ChargeCreateOptions {
-                Amount = 500,
-                Description = "Sample Charge",
-                Currency = "usd",
-                CustomerId = customer.Id
-            });
-
+            var subscription = await subService.CreateAsync(options);
+            
             return true;
         }
 

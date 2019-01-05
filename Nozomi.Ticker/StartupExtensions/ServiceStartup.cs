@@ -3,6 +3,8 @@ using Microsoft.Extensions.Hosting;
 using Nozomi.Preprocessing.Events;
 using Nozomi.Preprocessing.Events.Interfaces;
 using Nozomi.Service.HostedServices.RequestTypes;
+using Nozomi.Service.Identity.Events;
+using Nozomi.Service.Identity.Events.Interfaces;
 using Nozomi.Service.Identity.Stores;
 using Nozomi.Service.Identity.Stores.Interfaces;
 using Nozomi.Service.Services;

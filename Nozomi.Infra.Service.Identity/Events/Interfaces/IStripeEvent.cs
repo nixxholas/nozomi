@@ -1,12 +1,13 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Nozomi.Base.Identity.Models.Subscription;
 using Stripe;
 
-namespace Nozomi.Preprocessing.Events.Interfaces
+namespace Nozomi.Service.Identity.Events.Interfaces
 {
     public interface IStripeEvent
     {
-        bool Subscribe();
+        Task<bool> Subscribe(string stripeCustId, PlanType planType);
 
         Task<ICollection<Plan>> Plans(PlanListOptions options);
 
