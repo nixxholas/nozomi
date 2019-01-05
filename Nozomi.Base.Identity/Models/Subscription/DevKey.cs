@@ -9,17 +9,20 @@ namespace Nozomi.Base.Identity.Models.Subscription
     {
         public DevKey() {}
         
-        public DevKey(long userId)
+        public DevKey(long userSubscriptionId)
         {
-            if (userId <= 0) throw new ArgumentException("Invalid UserId.");
+            if (userSubscriptionId <= 0) throw new ArgumentException("Invalid UserSubscriptionId.");
             
-            UserId = userId;
-            Key = GenerateAPIKey(userId.ToString());
+            UserSubscriptionId = userSubscriptionId;
+            Key = GenerateAPIKey(userSubscriptionId.ToString());
         }
         
         public long Id { get; set; }
-        public long UserId { get; set; }
-        public User User { get; set; }
+        
+        public long UserSubscriptionId { get; set; }
+        
+        public UserSubscription UserSubscription { get; set; }
+        
         public string Key { get; set; }
 
         public string GenerateAPIKey(string userId)

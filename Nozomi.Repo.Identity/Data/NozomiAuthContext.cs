@@ -7,8 +7,10 @@ using Microsoft.EntityFrameworkCore;
 using Nozomi.Base.Core;
 using Nozomi.Base.Identity.Models;
 using Nozomi.Base.Identity.Models.Identity;
+using Nozomi.Base.Identity.Models.Subscription;
 using Nozomi.Data;
 using Nozomi.Repo.BCL.Context;
+using Nozomi.Repo.Identity.Data.Mappings;
 using Nozomi.Repo.Identity.Data.Mappings.Identity;
 
 namespace Nozomi.Repo.Identity.Data
@@ -16,6 +18,9 @@ namespace Nozomi.Repo.Identity.Data
     public class NozomiAuthContext : 
         IdentityDbContext<User, Role, long, UserClaim, UserRole, UserLogin, RoleClaim, UserToken>, IDbContext
     {
+        public DbSet<DevKey> DevKeys { get; set; }
+        public DbSet<UserSubscription> UserSubscriptions { get; set; }
+        
         public NozomiAuthContext(DbContextOptions options) : base(options)
         { }
  
@@ -30,6 +35,9 @@ namespace Nozomi.Repo.Identity.Data
             var userMap = new UserMap(builder.Entity<User>());
             var userRoleMap = new UserRoleMap(builder.Entity<UserRole>());
             var userTokenMap = new UserTokenMap(builder.Entity<UserToken>());
+
+            var devKeyMap = new DevKeyMap(builder.Entity<DevKey>());
+            
         }
 
         public int SaveChanges(long userId = 0)

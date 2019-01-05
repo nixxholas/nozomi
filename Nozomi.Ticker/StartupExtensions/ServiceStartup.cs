@@ -5,6 +5,8 @@ using Nozomi.Preprocessing.Events.Interfaces;
 using Nozomi.Service.HostedServices.RequestTypes;
 using Nozomi.Service.Identity.Events;
 using Nozomi.Service.Identity.Events.Interfaces;
+using Nozomi.Service.Identity.Services;
+using Nozomi.Service.Identity.Services.Interfaces;
 using Nozomi.Service.Identity.Stores;
 using Nozomi.Service.Identity.Stores.Interfaces;
 using Nozomi.Service.Services;
@@ -35,6 +37,7 @@ namespace Nozomi.Ticker.StartupExtensions
             services.AddScoped<ICurrencyPairTypeService, CurrencyPairTypeService>();
             services.AddScoped<IRequestPropertyTypeService, RequestPropertyTypeService>();
             services.AddScoped<IRequestTypeService, RequestTypeService>();
+            services.AddScoped<IStripeService, StripeService>();
 
             // Event Sourcing
             services.AddTransient<IEmailSender, EmailSender>();

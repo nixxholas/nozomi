@@ -24,7 +24,6 @@ namespace Nozomi.Service.Identity.Services
             StripeConfiguration.SetApiKey(options.Value.SecretKey);
         }
 
-
         public async Task<bool> CreatePlan(PlanCreateOptions options)
         {
             var planService = new PlanService();

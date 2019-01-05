@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using Nozomi.Base.Core;
 using Nozomi.Base.Identity.Models.Identity;
@@ -15,6 +16,8 @@ namespace Nozomi.Base.Identity.Models.Subscription
         
         [NotMapped]
         public Stripe.Subscription Subscription { get; set; }
+        
+        public virtual ICollection<DevKey> DevKeys { get; set; }
         
         public long UserId { get; set; }
         
