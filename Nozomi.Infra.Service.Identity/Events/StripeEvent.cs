@@ -20,7 +20,7 @@ namespace Nozomi.Service.Identity.Events
             StripeConfiguration.SetApiKey(options.Value.SecretKey);
         }
 
-        public async Task<bool> Subscribe(string stripeCustId, PlanType planType)
+        public async Task<Subscription> Subscribe(string stripeCustId, PlanType planType)
         {
             var subService = new SubscriptionService();
 
@@ -34,9 +34,7 @@ namespace Nozomi.Service.Identity.Events
                 Items = items
             };
 
-            var subscription = await subService.CreateAsync(options);
-            
-            return true;
+            return await subService.CreateAsync(options);
         }
 
         public async Task<ICollection<Plan>> Plans(PlanListOptions options)
