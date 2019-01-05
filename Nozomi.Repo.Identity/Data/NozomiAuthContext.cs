@@ -37,7 +37,7 @@ namespace Nozomi.Repo.Identity.Data
             var userTokenMap = new UserTokenMap(builder.Entity<UserToken>());
 
             var devKeyMap = new DevKeyMap(builder.Entity<DevKey>());
-            
+            var userSubscriptionMap = new UserSubscriptionMap(builder.Entity<UserSubscription>());
         }
 
         public int SaveChanges(long userId = 0)
