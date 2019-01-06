@@ -7,6 +7,8 @@ namespace Nozomi.Service.Identity.Events.Interfaces
 {
     public interface IStripeEvent
     {
+        Task<ICollection<Card>> Cards(string stripeCustId);
+        
         Task<Subscription> Subscribe(string stripeCustId, PlanType planType);
 
         Task<ICollection<Plan>> Plans(PlanListOptions options);

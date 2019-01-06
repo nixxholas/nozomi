@@ -20,6 +20,12 @@ namespace Nozomi.Service.Identity.Events
             StripeConfiguration.SetApiKey(options.Value.SecretKey);
         }
 
+        public async Task<ICollection<Card>> Cards(string stripeCustId)
+        {
+            var cardService = new CardService();
+            return (await cardService.ListAsync(stripeCustId))?.Data;
+        }
+
         public async Task<Subscription> Subscribe(string stripeCustId, PlanType planType)
         {
             var subService = new SubscriptionService();
