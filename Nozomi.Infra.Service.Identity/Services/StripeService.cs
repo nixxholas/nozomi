@@ -28,6 +28,28 @@ namespace Nozomi.Service.Identity.Services
             _options = options;
         }
 
+        public async Task<bool> AddCard(User user, string cardToken)
+        {
+            if (string.IsNullOrEmpty(user.StripeCustomerId)) return false;
+            
+            StripeConfiguration.SetApiKey(_options.Value.SecretKey);
+            
+            // Stripe-sided checks
+            var customerService = new CustomerService();
+            var customer = await customerService.GetAsync(user.StripeCustomerId);
+            if (customer == null) return false;
+            
+            // Create the card binding
+            var sourceService = new SourceService();
+            var result = await sourceService.CreateAsync(new SourceCreateOptions()
+            {
+                Token = cardToken,
+                Customer = customer.Id
+            });
+
+            return (result != null);
+        }
+
         public async Task<User> ConfigureUserForStripe(User user)
         {
             StripeConfiguration.SetApiKey(_options.Value.SecretKey);

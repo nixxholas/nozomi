@@ -8,20 +8,25 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Nozomi.Base.Identity.Models.Areas.Manage;
+using Nozomi.Base.Identity.Models.Areas.Manage.PaymentMethods;
 using Nozomi.Base.Identity.Models.Identity;
 using Nozomi.Preprocessing.Events.Interfaces;
 using Nozomi.Service.Identity.Managers;
+using Nozomi.Service.Identity.Services.Interfaces;
 
 namespace Nozomi.Ticker.Areas
 {
     public class ManageController : BaseViewController<ManageController>
     {
         private readonly ISmsSender _smsSender;
+        private readonly IStripeService _stripeService;
         
         public ManageController(ILogger<ManageController> logger, NozomiSignInManager signInManager, 
-            NozomiUserManager userManager, ISmsSender smsSender) : base(logger, signInManager, userManager)
+            NozomiUserManager userManager, ISmsSender smsSender, IStripeService stripeService) 
+            : base(logger, signInManager, userManager)
         {
             _smsSender = smsSender;
+            _stripeService = stripeService;
         }
         
         //
@@ -406,9 +411,25 @@ namespace Nozomi.Ticker.Areas
         //
         // GET: /Manage/PaymentMethods
         [HttpGet]
-        public async Task<IActionResult> PaymentMethods()
+        public IActionResult PaymentMethods() // TODO: Success obj
         {
             return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> PostNewCard([FromForm]AddNewCardViewModel vm)
+        {
+            if (!ModelState.IsValid)
+            {
+                return RedirectToAction("PaymentMethods"); // TODO: Failure obj
+            }
+
+            var user = await GetCurrentUserAsync();
+            //TODO: User and name check
+            
+            await _stripeService.AddCard(user, vm.CardToken);
+            
+            return RedirectToAction("PaymentMethods"); // TODO: Success obj
         }
 
         #region Helpers

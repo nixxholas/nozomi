@@ -6,6 +6,8 @@ namespace Nozomi.Service.Identity.Services.Interfaces
 {
     public interface IStripeService
     {
+        Task<bool> AddCard(User user, string cardToken);
+        
         Task<User> ConfigureUserForStripe(User user);
 
         Task<bool> CreateSource(User user);

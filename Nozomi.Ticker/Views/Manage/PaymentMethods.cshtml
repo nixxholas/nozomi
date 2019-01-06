@@ -292,7 +292,7 @@
       </header>
       <!-- End Header -->
 
-      <form id="addCardForm" class="js-validate">
+      <form method="post" asp-controller="Manage" asp-action="PostNewCard" id="addCardForm" class="js-validate">
         <div class="card-body p-5">
           <input id="cardTokenInput" asp-for="CardToken" class="d-none" type="text" />  
           
@@ -369,6 +369,7 @@
     // Setup the Stripe card element
     const card = elements.create('card');
     const cardEl = document.getElementById("card-element");
+    const addCardForm = document.getElementById("addCardForm");
 
     // Error checking
 //    card.addEventListener('change',
@@ -385,7 +386,7 @@
 
     card.mount(cardEl);
         
-    document.getElementById("addCardForm").addEventListener('submit',
+    addCardForm.addEventListener('submit',
       (event) => {
         event.preventDefault();
 
@@ -405,10 +406,8 @@
       // Insert the token ID into the form so it gets submitted to the server
       const $cardTokenEl = document.getElementById('cardTokenInput');
       $cardTokenEl.setAttribute('value', token.id);
-
-      return false;
-      // Submit the form
-      //form.submit();
+      
+      addCardForm.submit();
     }
   </script>
 }
