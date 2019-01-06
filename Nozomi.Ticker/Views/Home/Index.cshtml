@@ -1,6 +1,8 @@
 ﻿@using Nozomi.Data
+@using Nozomi.Service.Identity.Managers
 @using Nozomi.Service.Services.Interfaces
 @inject ITickerService TickerService
+@inject NozomiSignInManager SignInManager
 @{
   ViewData["Title"] = "Home Page";
   var ethusdTickers = TickerService.GetByAbbreviation("ETHUSD");
@@ -23,10 +25,22 @@
                 <p class="text-white-70">Nozomi is a simple and lightweight data polling service for all value-based API endpoints.</p>
               </div>
               
-              <a class="btn btn-warning transition-3d-hover" asp-controller="Account" asp-action="Login">
-                Dashboard
-                <span class="fas fa-arrow-right small ml-2"></span>
-              </a>
+              @{
+                if (SignInManager.IsSignedIn(User))
+                {
+                  <a class="btn btn-warning transition-3d-hover" asp-controller="Manage" asp-action="Index">
+                    Dashboard
+                    <span class="fas fa-arrow-right small ml-2"></span>
+                  </a>
+                }
+                else
+                {
+                  <a class="btn btn-warning transition-3d-hover" asp-controller="Account" asp-action="Login">
+                    Login
+                    <span class="fas fa-arrow-right small ml-2"></span>
+                  </a>
+                }
+              }
             </div>
             <!-- End Content -->
           </div>
