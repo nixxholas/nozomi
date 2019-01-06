@@ -40,14 +40,14 @@ namespace Nozomi.Service.Identity.Services
             if (customer == null) return false;
             
             // Create the card binding
-            var sourceService = new SourceService();
-            var result = await sourceService.CreateAsync(new SourceCreateOptions()
-            {
-                Token = cardToken,
-                Customer = customer.Id
-            });
+            var cardOptions = new CardCreateOptions {
+                SourceToken = cardToken
+            };
 
-            return (result != null);
+            var cardService = new CardService();
+            var card = cardService.Create(customer.Id, cardOptions);
+
+            return string.IsNullOrEmpty(card.Id);
         }
 
         public async Task<string> CreateStripeCustomer(User user)
