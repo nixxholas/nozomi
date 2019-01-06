@@ -21,196 +21,229 @@
         if (Model.Cards != null && Model.Cards.Count > 0)
         {
       <!-- Accordion -->
-        <div id="paymentDetails" class="accordion mb-9">
-          <!-- Card -->
-          <div class="card">
-            <div class="card-header card-collapse" id="cardHeadingOne">
-              <h5 class="mb-0">
-                <button class="btn btn-link btn-block card-btn collapsed p-3" role="button"
-                        data-toggle="collapse"
-                        data-target="#cardOne"
-                        aria-expanded="false"
-                        aria-controls="cardOne">
-                  <span class="row align-items-center">
-                    <span class="col-md-6 mb-2 mb-md-0">
-                      <span class="media align-items-center">
-                        <img class="max-width-9 mr-3" src="../../assets/img/100x60/img1.jpg" alt="Image Description">
-                        <span class="media-body">
-                          <span class="font-size-1">Visa Card ending in 9909</span>
+          <div id="paymentDetails" class="accordion mb-9">
+            @{
+              foreach (var card in Model.Cards)
+              {
+                @JsonConvert.SerializeObject(card);
+                
+                <!-- Card -->
+            <div class="card">
+              <div class="card-header card-collapse">
+                <h5 class="mb-0">
+                  <button class="btn btn-link btn-block card-btn collapsed p-3" role="button"
+                          data-toggle="collapse"
+                          data-target=@string.Concat("#" + card.Id)
+                          aria-expanded="false"
+                          aria-controls=@card.Id>
+                    <span class="row align-items-center">
+                      <span class="col-md-6 mb-2 mb-md-0">
+                        <span class="media align-items-center">
+                          <img class="max-width-9 mr-3" src="../../assets/img/100x60/img1.jpg" alt="Image Description">
+                          <span class="media-body">
+                            <span class="font-size-1">@card.Brand Card ending in 
+                              @{
+                                if (string.IsNullOrEmpty(card.DynamicLast4))
+                                {
+                                  @card.Last4
+                                }
+                                else
+                                {
+                                  @card.DynamicLast4
+                                }
+                              }
+                              </span>
+                          </span>
+                        </span>
+                      </span>
+                      <span class="col-4 col-md-2 text-md-right">
+                        <span class="btn btn-xs btn-soft-warning btn-pill">Primary</span>
+                      </span>
+                      <span class="col-6 col-md-3">
+                        <span class="d-block font-size-1">Expires: @card.ExpMonth/@card.ExpYear</span>
+                      </span>
+                      <span class="col-2 col-md-1 text-right">
+                        <span class="card-btn-arrow">
+                          <span class="fas fa-arrow-down small"></span>
                         </span>
                       </span>
                     </span>
-                    <span class="col-4 col-md-2 text-md-right">
-                      <span class="btn btn-xs btn-soft-warning btn-pill">Primary</span>
-                    </span>
-                    <span class="col-6 col-md-3">
-                      <span class="d-block font-size-1">Expires: 12/2019</span>
-                    </span>
-                    <span class="col-2 col-md-1 text-right">
-                      <span class="card-btn-arrow">
-                        <span class="fas fa-arrow-down small"></span>
-                      </span>
-                    </span>
-                  </span>
-                </button>
-              </h5>
-            </div>
-            <div id="cardOne" class="collapse" aria-labelledby="cardHeadingOne" data-parent="#paymentDetails">
-              <div class="card-body px-4">
-                <!-- Card Details -->
-                <div class="row">
-                  <div class="col-sm-7 mb-2 mb-sm-0">
-                    <h4 class="h6 mb-1">Natalie Curtis</h4>
-                    <span class="d-block font-size-1 mb-1">Bank of America</span>
-                    <p class="small">
-                      <span class="fas fa-info-circle mr-1"></span>
-                      Use this card to add funds to Your Front Balance. <a href="#">See Benefits</a>
-                    </p>
+                  </button>
+                </h5>
+              </div>
+              <div id=@card.Id class="collapse" aria-labelledby=@string.Concat("cardHeading" + card.Id) 
+                   data-parent="#paymentDetails">
+                <div class="card-body px-4">
+                  <!-- Card Details -->
+                  <div class="row">
+                    <div class="col-sm-7 mb-2 mb-sm-0">
+                      <h4 class="h6 mb-1">@card.Name</h4>
+                      @{
+                        if (!string.IsNullOrEmpty(card.Issuer))
+                        {
+                          <span class="d-block font-size-1 mb-1">@card.Issuer</span>
+                        }
+                      }
+                      @* <p class="small"> *@
+                      @*   <span class="fas fa-info-circle mr-1"></span> *@
+                      @*   Use this card to add funds to Your Front Balance. <a href="#">See Benefits</a> *@
+                      @* </p> *@
+                    </div>
+                    <div class="col-sm-5 mb-2 mb-sm-0">
+                      @{
+                        if (!string.IsNullOrEmpty(card.AddressLine1) && !string.IsNullOrEmpty(card.AddressZip))
+                        {
+                          <h5 class="h6 mb-0">Billing address</h5>
+                          <address class="font-size-1">
+                            @card.AddressLine1<br>
+                            @card.AddressLine2<br>
+                            @card.AddressCity, 
+                            @{
+                              if (!string.IsNullOrEmpty(card.AddressState))
+                              {
+                                @string.Concat(card.AddressState + ", ")
+                              }
+                            } @card.AddressZip<br>
+                            @card.AddressCountry
+                          </address>
+                        }
+                      }
+                      <button type="button" class="btn btn-xs btn-soft-secondary mr-1">Delete</button>
+                      <button type="button" class="btn btn-xs btn-primary">Edit</button>
+                    </div>
                   </div>
-                  <div class="col-sm-5 mb-2 mb-sm-0">
-                    <h5 class="h6 mb-0">Billing address</h5>
-                    <h5 class="h6">Brian Robson</h5>
-                    <address class="font-size-1">
-                      77408 Satterfield Motorway<br>
-                      Suite 469 New Antonetta, BC K3L6P6<br>
-                      New York, NY, 09122-9122<br>
-                      United States
-                    </address>
-                    <button type="button" class="btn btn-xs btn-soft-secondary mr-1">Delete</button>
-                    <button type="button" class="btn btn-xs btn-primary">Edit</button>
-                  </div>
+                  <!-- End Card Details -->
                 </div>
-                <!-- End Card Details -->
               </div>
             </div>
-          </div>
-          <!-- End Card -->
+            <!-- End Card -->
+              }
+            }
+            <!-- Card -->
+            <div class="card">
+              <div class="card-header card-collapse" id="cardHeadingTwo">
+                <h5 class="mb-0">
+                  <button class="btn btn-link btn-block card-btn collapsed p-3" role="button"
+                          data-toggle="collapse"
+                          data-target="#cardTwo"
+                          aria-expanded="false"
+                          aria-controls="cardTwo">
+                    <span class="row align-items-center">
+                      <span class="col-md-6 mb-2 mb-md-0">
+                        <span class="media align-items-center">
+                          <img class="max-width-9 mr-3" src="../../assets/img/100x60/img2.jpg" alt="Image Description">
+                          <span class="media-body">
+                            <span class="d-block font-size-1">Master Card ending in 1421</span>
+                          </span>
+                        </span>
+                      </span>
+                      <span class="col-4 col-md-2 text-md-right">
+                      </span>
+                      <span class="col-6 col-md-3">
+                        <span class="font-size-1">Expires: 06/2021</span>
+                      </span>
+                      <span class="col-2 col-md-1 text-right">
+                        <span class="card-btn-arrow">
+                          <span class="fas fa-arrow-down small"></span>
+                        </span>
+                      </span>
+                    </span>
+                  </button>
+                </h5>
+              </div>
+              <div id="cardTwo" class="collapse" aria-labelledby="cardHeadingTwo" data-parent="#paymentDetails">
+                <div class="card-body px-4">
+                  <!-- Card Details -->
+                  <div class="row">
+                    <div class="col-sm-7 mb-2 mb-sm-0">
+                      <h4 class="h6 mb-1">Natalie Curtis</h4>
+                      <span class="d-block font-size-1 mb-1">Payoneer</span>
+                      <p class="small">
+                        <span class="fas fa-info-circle mr-1"></span>
+                        Use this card to add funds to Your Front Balance. <a href="#">See Benefits</a>
+                      </p>
+                    </div>
+                    <div class="col-sm-5 mb-2 mb-sm-0">
+                      <h5 class="h6 mb-0">Billing address</h5>
+                      <h5 class="h6">Brian Robson</h5>
+                      <address class="font-size-1">
+                        9455 NE ALDERWOOD RD<br>
+                        C/O UZW-FH PORTLAND OREGON 97252<br>
+                        PORTLAND, OR, 97252-1777<br>
+                        United States
+                      </address>
+                      <button type="button" class="btn btn-xs btn-soft-secondary mr-1">Delete</button>
+                      <button type="button" class="btn btn-xs btn-primary">Edit</button>
+                    </div>
+                  </div>
+                  <!-- End Card Details -->
+                </div>
+              </div>
+            </div>
+            <!-- End Card -->
 
-          <!-- Card -->
-          <div class="card">
-            <div class="card-header card-collapse" id="cardHeadingTwo">
-              <h5 class="mb-0">
-                <button class="btn btn-link btn-block card-btn collapsed p-3" role="button"
-                        data-toggle="collapse"
-                        data-target="#cardTwo"
-                        aria-expanded="false"
-                        aria-controls="cardTwo">
-                  <span class="row align-items-center">
-                    <span class="col-md-6 mb-2 mb-md-0">
-                      <span class="media align-items-center">
-                        <img class="max-width-9 mr-3" src="../../assets/img/100x60/img2.jpg" alt="Image Description">
-                        <span class="media-body">
-                          <span class="d-block font-size-1">Master Card ending in 1421</span>
+            <!-- Card -->
+            <div class="card">
+              <div class="card-header card-collapse" id="cardHeadingThree">
+                <h5 class="mb-0">
+                  <button class="btn btn-link btn-block card-btn collapsed p-3" role="button"
+                          data-toggle="collapse"
+                          data-target="#cardThree"
+                          aria-expanded="false"
+                          aria-controls="cardThree">
+                    <span class="row align-items-center">
+                      <span class="col-md-6 mb-2 mb-md-0">
+                        <span class="media align-items-center">
+                          <img class="max-width-9 mr-3" src="../../assets/img/100x60/img3.jpg" alt="Image Description">
+                          <span class="media-body">
+                            <span class="d-block font-size-1">Discover ending in 4283</span>
+                          </span>
+                        </span>
+                      </span>
+                      <span class="col-4 col-md-2 text-md-right">
+                      </span>
+                      <span class="col-6 col-md-3">
+                        <span class="text-danger font-size-1">Expired: 03/2018</span>
+                      </span>
+                      <span class="col-2 col-md-1 text-right">
+                        <span class="card-btn-arrow">
+                          <span class="fas fa-arrow-down small"></span>
                         </span>
                       </span>
                     </span>
-                    <span class="col-4 col-md-2 text-md-right">
-                    </span>
-                    <span class="col-6 col-md-3">
-                      <span class="font-size-1">Expires: 06/2021</span>
-                    </span>
-                    <span class="col-2 col-md-1 text-right">
-                      <span class="card-btn-arrow">
-                        <span class="fas fa-arrow-down small"></span>
-                      </span>
-                    </span>
-                  </span>
-                </button>
-              </h5>
-            </div>
-            <div id="cardTwo" class="collapse" aria-labelledby="cardHeadingTwo" data-parent="#paymentDetails">
-              <div class="card-body px-4">
-                <!-- Card Details -->
-                <div class="row">
-                  <div class="col-sm-7 mb-2 mb-sm-0">
-                    <h4 class="h6 mb-1">Natalie Curtis</h4>
-                    <span class="d-block font-size-1 mb-1">Payoneer</span>
-                    <p class="small">
-                      <span class="fas fa-info-circle mr-1"></span>
-                      Use this card to add funds to Your Front Balance. <a href="#">See Benefits</a>
-                    </p>
+                  </button>
+                </h5>
+              </div>
+              <div id="cardThree" class="collapse" aria-labelledby="cardHeadingThree" data-parent="#paymentDetails">
+                <div class="card-body px-4">
+                  <!-- Card Details -->
+                  <div class="row">
+                    <div class="col-sm-7 mb-2 mb-sm-0">
+                      <h4 class="h6 mb-1">Natalie Curtis</h4>
+                      <span class="d-block font-size-1 mb-1">Discover Network</span>
+                      <p class="small">
+                        <span class="fas fa-info-circle mr-1"></span>
+                        Use this card to add funds to Your Front Balance. <a href="#">See Benefits</a>
+                      </p>
+                    </div>
+                    <div class="col-sm-5 mb-2 mb-sm-0">
+                      <h5 class="h6 mb-0">Billing address</h5>
+                      <h5 class="h6">Brian Robson</h5>
+                      <address class="font-size-1">
+                        63703 Greenfelder Center Suite<br>
+                        767 South Jennings, QC Y4E-1K9<br>
+                        United States
+                      </address>
+                      <button type="button" class="btn btn-xs btn-soft-secondary mr-1">Delete</button>
+                      <button type="button" class="btn btn-xs btn-primary">Edit</button>
+                    </div>
                   </div>
-                  <div class="col-sm-5 mb-2 mb-sm-0">
-                    <h5 class="h6 mb-0">Billing address</h5>
-                    <h5 class="h6">Brian Robson</h5>
-                    <address class="font-size-1">
-                      9455 NE ALDERWOOD RD<br>
-                      C/O UZW-FH PORTLAND OREGON 97252<br>
-                      PORTLAND, OR, 97252-1777<br>
-                      United States
-                    </address>
-                    <button type="button" class="btn btn-xs btn-soft-secondary mr-1">Delete</button>
-                    <button type="button" class="btn btn-xs btn-primary">Edit</button>
-                  </div>
+                  <!-- End Card Details -->
                 </div>
-                <!-- End Card Details -->
               </div>
             </div>
+            <!-- End Card -->
           </div>
-          <!-- End Card -->
-
-          <!-- Card -->
-          <div class="card">
-            <div class="card-header card-collapse" id="cardHeadingThree">
-              <h5 class="mb-0">
-                <button class="btn btn-link btn-block card-btn collapsed p-3" role="button"
-                        data-toggle="collapse"
-                        data-target="#cardThree"
-                        aria-expanded="false"
-                        aria-controls="cardThree">
-                  <span class="row align-items-center">
-                    <span class="col-md-6 mb-2 mb-md-0">
-                      <span class="media align-items-center">
-                        <img class="max-width-9 mr-3" src="../../assets/img/100x60/img3.jpg" alt="Image Description">
-                        <span class="media-body">
-                          <span class="d-block font-size-1">Discover ending in 4283</span>
-                        </span>
-                      </span>
-                    </span>
-                    <span class="col-4 col-md-2 text-md-right">
-                    </span>
-                    <span class="col-6 col-md-3">
-                      <span class="text-danger font-size-1">Expired: 03/2018</span>
-                    </span>
-                    <span class="col-2 col-md-1 text-right">
-                      <span class="card-btn-arrow">
-                        <span class="fas fa-arrow-down small"></span>
-                      </span>
-                    </span>
-                  </span>
-                </button>
-              </h5>
-            </div>
-            <div id="cardThree" class="collapse" aria-labelledby="cardHeadingThree" data-parent="#paymentDetails">
-              <div class="card-body px-4">
-                <!-- Card Details -->
-                <div class="row">
-                  <div class="col-sm-7 mb-2 mb-sm-0">
-                    <h4 class="h6 mb-1">Natalie Curtis</h4>
-                    <span class="d-block font-size-1 mb-1">Discover Network</span>
-                    <p class="small">
-                      <span class="fas fa-info-circle mr-1"></span>
-                      Use this card to add funds to Your Front Balance. <a href="#">See Benefits</a>
-                    </p>
-                  </div>
-                  <div class="col-sm-5 mb-2 mb-sm-0">
-                    <h5 class="h6 mb-0">Billing address</h5>
-                    <h5 class="h6">Brian Robson</h5>
-                    <address class="font-size-1">
-                      63703 Greenfelder Center Suite<br>
-                      767 South Jennings, QC Y4E-1K9<br>
-                      United States
-                    </address>
-                    <button type="button" class="btn btn-xs btn-soft-secondary mr-1">Delete</button>
-                    <button type="button" class="btn btn-xs btn-primary">Edit</button>
-                  </div>
-                </div>
-                <!-- End Card Details -->
-              </div>
-            </div>
-          </div>
-          <!-- End Card -->
-        </div>
         <!-- End Accordion -->
         }
         else
@@ -227,7 +260,7 @@
         }
       }
 
-        <h3 class="h5 mb-0">Add a new payment method</h3>
+        <h3 class="h5 mb-0 mt-4">Add a new payment method</h3>
 
         <hr class="mt-2 mb-4">
 
@@ -235,7 +268,7 @@
         <div class="row align-items-center">
           <div class="col-md-6">
             <h4 class="h6 mb-0">Credit or Debit Cards</h4>
-            <p class="mb-2">Amazon accepts all major credit and debit cards.</p>
+            <p class="mb-2">Nozomi accepts all major credit and debit cards.</p>
             <a href="#addPaymentModal"
                data-modal-target="#addPaymentModal">Add a Card</a>
           </div>
@@ -253,39 +286,33 @@
         </div>
         <!-- End Add Payment -->
 
-        <hr class="my-4">
-
-        <!-- Add Payment -->
-        <div class="row align-items-center">
-          <div class="col-md-6">
-            <h4 class="h6 mb-0">Online Payment services</h4>
-            <p class="mb-2">Use online payment services like, PayPal, Stripe and etc.</p>
-            <a href="#">One-click signin</a>
-          </div>
-          <div class="col-md-6 text-md-right">
-            <!-- Radio Checkbox Group -->
-            <div class="custom-control custom-radio custom-control-inline checkbox-outline bg-white">
-              <input type="radio" id="customRadioInline1" name="customRadioInline1" class="custom-control-input checkbox-outline__input">
-              <label class="checkbox-outline__label rounded p-1 mb-0" for="customRadioInline1">
-                <img class="max-width-9" src="../../assets/img/100x60/img5.jpg" alt="Image Description">
-              </label>
-            </div>
-            <div class="custom-control custom-radio custom-control-inline checkbox-outline bg-white">
-              <input type="radio" id="customRadioInline2" name="customRadioInline1" class="custom-control-input checkbox-outline__input">
-              <label class="checkbox-outline__label rounded p-1 mb-0" for="customRadioInline2">
-                <img class="max-width-9" src="../../assets/img/100x60/img4.jpg" alt="Image Description">
-              </label>
-            </div>
-            <div class="custom-control custom-radio custom-control-inline checkbox-outline bg-white">
-              <input type="radio" id="customRadioInline3" name="customRadioInline1" class="custom-control-input checkbox-outline__input">
-              <label class="checkbox-outline__label rounded p-1 mb-0" for="customRadioInline3">
-                <img class="max-width-9" src="../../assets/img/100x60/img6.jpg" alt="Image Description">
-              </label>
-            </div>
-            <!-- End Radio Checkbox Group -->
-          </div>
-        </div>
-        <!-- End Add Payment -->
+        @* <hr class="my-4"> *@
+        @* *@
+        @* <!-- Add Payment --> *@
+        @* <div class="row align-items-center"> *@
+        @*   <div class="col-md-6"> *@
+        @*     <h4 class="h6 mb-0">Online Payment services</h4> *@
+        @*     <p class="mb-2">Use online payment services like, PayPal, Stripe and etc.</p> *@
+        @*     <a href="#">One-click signin</a> *@
+        @*   </div> *@
+        @*   <div class="col-md-6 text-md-right"> *@
+        @*     <!-- Radio Checkbox Group --> *@
+        @*     <div class="custom-control custom-radio custom-control-inline checkbox-outline bg-white"> *@
+        @*       <input type="radio" id="customRadioInline1" name="customRadioInline1" class="custom-control-input checkbox-outline__input"> *@
+        @*       <label class="checkbox-outline__label rounded p-1 mb-0" for="customRadioInline1"> *@
+        @*         <img class="max-width-9" src="../../assets/img/100x60/img5.jpg" alt="Image Description"> *@
+        @*       </label> *@
+        @*     </div> *@
+        @*     <div class="custom-control custom-radio custom-control-inline checkbox-outline bg-white"> *@
+        @*       <input type="radio" id="customRadioInline3" name="customRadioInline1" class="custom-control-input checkbox-outline__input"> *@
+        @*       <label class="checkbox-outline__label rounded p-1 mb-0" for="customRadioInline3"> *@
+        @*         <img class="max-width-9" src="../../assets/img/100x60/img6.jpg" alt="Image Description"> *@
+        @*       </label> *@
+        @*     </div> *@
+        @*     <!-- End Radio Checkbox Group --> *@
+        @*   </div> *@
+        @* </div> *@
+        @* <!-- End Add Payment --> *@
       </div>
     </div>
 <!-- End Content Section -->
