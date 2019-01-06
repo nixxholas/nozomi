@@ -79,6 +79,13 @@ namespace Nozomi.Ticker
                     option.Configuration = "127.0.0.1:6379";
                     option.InstanceName = "nozomi-cache";
                 });
+            
+                // Stripe
+                services.Configure<StripeSettings>(ss =>
+                {
+                    ss.SecretKey = Configuration.GetConnectionString("Stripe:TestPriv");
+                    ss.PublishableKey = Configuration.GetConnectionString("Stripe:TestPub");
+                });
             }
             else
             {
@@ -102,13 +109,6 @@ namespace Nozomi.Ticker
                     option.Configuration = Configuration.GetConnectionString("RedisConfiguration");
                     option.InstanceName = "nozomi-cache";
                 });
-            
-                // Stripe
-                services.Configure<StripeSettings>(ss =>
-                    {
-                        ss.SecretKey = Configuration.GetConnectionString("Stripe:TestPriv");
-                        ss.PublishableKey = Configuration.GetConnectionString("Stripe:TestPub");
-                    });
             }
             
             services.Configure<CookiePolicyOptions>(options =>
