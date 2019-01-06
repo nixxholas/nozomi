@@ -50,7 +50,7 @@ namespace Nozomi.Service.Identity.Services
             return (result != null);
         }
 
-        public async Task<User> ConfigureUserForStripe(User user)
+        public async Task<string> CreateStripeCustomer(User user)
         {
             StripeConfiguration.SetApiKey(_options.Value.SecretKey);
             
@@ -61,19 +61,7 @@ namespace Nozomi.Service.Identity.Services
             };
 
             var customerService = new CustomerService();
-            var customer = await customerService.CreateAsync(customerOptions);
-
-            if (!string.IsNullOrEmpty(customer.Id))
-            {
-                user.StripeCustomerId = customer.Id;
-            }
-            else
-            {
-                // Failed, send it back immediately.
-                return user;
-            }
-
-            return user;
+            return (await customerService.CreateAsync(customerOptions)).Id;
         }
 
         public async Task<bool> CreateSource(User user)

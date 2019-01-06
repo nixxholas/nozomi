@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
@@ -34,10 +35,23 @@ namespace Nozomi.Service.Identity.Managers
 
         public override async Task<IdentityResult> CreateAsync(User user)
         {
-            // Stripe processing
-            user = await _stripeService.ConfigureUserForStripe(user);
+            user.StripeCustomerId = await _stripeService.CreateStripeCustomer(user);
 
             if (string.IsNullOrEmpty(user.StripeCustomerId))
+            {
+                return IdentityResult.Failed(new IdentityError
+                {
+                    Code = IdentityErrorType.CreateAccountStripeCustomerIdIssue.ToString(),
+                    Description = IdentityErrorType.CreateAccountStripeCustomerIdIssue.GetDescription()
+                });   
+            }
+
+            var createUserResult = await base.CreateAsync(user);
+            if (createUserResult.Succeeded)
+            {
+                return createUserResult;
+            }
+            else
             {
                 return IdentityResult.Failed(new IdentityError
                 {
@@ -45,8 +59,6 @@ namespace Nozomi.Service.Identity.Managers
                     Description = IdentityErrorType.CreateAccountStripeIssue.GetDescription()
                 });   
             }
-            
-            return await base.CreateAsync(user);
         }
 
         public async Task<User> FindAsync(string id, string password)

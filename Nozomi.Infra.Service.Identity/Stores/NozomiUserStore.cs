@@ -365,6 +365,23 @@ namespace Nozomi.Service.Identity.Stores
             return Task.CompletedTask;
         }
 
+        public async Task<bool> PropagateStripeCustomerId(long userId, string stripeCustomerId)
+        {
+            var user = _unitOfWork.GetRepository<User>()
+                .Get(u => u.Id.Equals(userId))
+                .SingleOrDefault();
+            
+            if (user == null)
+                throw new ArgumentNullException(nameof(user));
+
+            user.StripeCustomerId = stripeCustomerId;
+            
+            _unitOfWork.GetRepository<User>().Update(user);
+            _unitOfWork.Commit();
+
+            return true;
+        }
+
         protected override Task AddUserTokenAsync(UserToken token)
         {
             if (token == null)
@@ -502,6 +519,8 @@ namespace Nozomi.Service.Identity.Stores
             entity.PhoneNumber = user.PhoneNumber;
             entity.PhoneNumberConfirmed = user.PhoneNumberConfirmed;
             entity.SecurityStamp = user.SecurityStamp;
+            entity.StripeCustomerId = user.StripeCustomerId;
+            entity.StripeSourceId = user.StripeSourceId;
             entity.TwoFactorEnabled = user.TwoFactorEnabled;
             entity.UserName = user.UserName;
         }
@@ -532,6 +551,8 @@ namespace Nozomi.Service.Identity.Stores
             user.PhoneNumber = entity.PhoneNumber;
             user.PhoneNumberConfirmed = entity.PhoneNumberConfirmed;
             user.SecurityStamp = entity.SecurityStamp;
+            user.StripeCustomerId = entity.StripeCustomerId;
+            user.StripeSourceId = entity.StripeSourceId;
             user.TwoFactorEnabled = entity.TwoFactorEnabled;
             user.UserName = entity.UserName;
         }
