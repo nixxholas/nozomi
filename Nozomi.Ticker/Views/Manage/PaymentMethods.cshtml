@@ -17,7 +17,10 @@
         </div>
         <!-- End Title -->
 
-        <!-- Accordion -->
+      @{
+        if (Model.Cards != null && Model.Cards.Count > 0)
+        {
+      <!-- Accordion -->
         <div id="paymentDetails" class="accordion mb-9">
           <!-- Card -->
           <div class="card">
@@ -209,6 +212,20 @@
           <!-- End Card -->
         </div>
         <!-- End Accordion -->
+        }
+        else
+        {
+          <div class="text-center py-10">
+            <div class="w-md-80 w-lg-50 text-center mx-md-auto">
+              <figure id="SVGimageUpload" class="svg-preloader mb-7 ie-image-upload">
+                <img class="js-svg-injector w-50" src="../../assets/svg/illustrations/image-upload.svg" 
+                     alt="Image Description" data-parent="#SVGimageUpload">
+              </figure>
+              <h4 class="h5 font-weight-normal">No cards to see here. Why not try adding one?</h4>
+            </div>
+          </div>
+        }
+      }
 
         <h3 class="h5 mb-0">Add a new payment method</h3>
 
