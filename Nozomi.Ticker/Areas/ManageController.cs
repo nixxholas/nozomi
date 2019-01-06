@@ -11,6 +11,7 @@ using Nozomi.Base.Identity.Models.Areas.Manage;
 using Nozomi.Base.Identity.Models.Areas.Manage.PaymentMethods;
 using Nozomi.Base.Identity.Models.Identity;
 using Nozomi.Preprocessing.Events.Interfaces;
+using Nozomi.Service.Identity.Events.Interfaces;
 using Nozomi.Service.Identity.Managers;
 using Nozomi.Service.Identity.Services.Interfaces;
 
@@ -19,13 +20,15 @@ namespace Nozomi.Ticker.Areas
     public class ManageController : BaseViewController<ManageController>
     {
         private readonly ISmsSender _smsSender;
+        private readonly IStripeEvent _stripeEvent;
         private readonly IStripeService _stripeService;
         
         public ManageController(ILogger<ManageController> logger, NozomiSignInManager signInManager, 
-            NozomiUserManager userManager, ISmsSender smsSender, IStripeService stripeService) 
+            NozomiUserManager userManager, ISmsSender smsSender, IStripeService stripeService, IStripeEvent stripeEvent) 
             : base(logger, signInManager, userManager)
         {
             _smsSender = smsSender;
+            _stripeEvent = stripeEvent;
             _stripeService = stripeService;
         }
         
@@ -411,9 +414,21 @@ namespace Nozomi.Ticker.Areas
         //
         // GET: /Manage/PaymentMethods
         [HttpGet]
-        public IActionResult PaymentMethods() // TODO: Success obj
+        public async Task<IActionResult> PaymentMethods(PaymentMethodsViewModel vm) // TODO: Success obj
         {
-            return View();
+            if (vm == null) vm = new PaymentMethodsViewModel();
+
+            // Auth checks
+            var user = await GetCurrentUserAsync();
+            if (user == null)
+            {
+                await _signInManager.SignOutAsync();
+                return RedirectToAction("Index", "Home");
+            }
+
+            vm.Cards = await _stripeEvent.Cards(user.StripeCustomerId);
+            
+            return View(vm);
         }
 
         [HttpPost]
