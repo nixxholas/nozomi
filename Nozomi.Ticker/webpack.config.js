@@ -53,26 +53,26 @@ module.exports = {
                 loader: "ts-loader"
             },
             {
-                test: /\.scss$/,
-                use: [
-                    MiniCssExtractPlugin.loader,
-                    { loader: 'css-loader', options: { sourceMap: true, importLoaders: 1 } },
-                    { loader: 'sass-loader', options: { sourceMap: true } },
-                ],
-            },
-            // https://stackoverflow.com/questions/45489897/load-fonts-with-webpack-and-font-face
-            { test: /\.(png|woff|woff2|eot|ttf|svg)$/, loader: 'url-loader?limit=100000' }
-        ]
-    },
+            test: /\.scss$/,
+            use: [
+                MiniCssExtractPlugin.loader,
+                { loader: 'css-loader', options: { sourceMap: true, importLoaders: 1 } },
+                { loader: 'sass-loader', options: { sourceMap: true } },
+            ],
+        },
+        // https://stackoverflow.com/questions/45489897/load-fonts-with-webpack-and-font-face
+        { test: /\.(png|woff|woff2|eot|ttf|svg)$/, loader: 'url-loader?limit=100000' }
+    ]
+},
     plugins: [
-        new CleanWebpackPlugin(["wwwroot/*"]),
-        // https://github.com/webpack-contrib/copy-webpack-plugin
-        new CopyWebpackPlugin([
-            { from: 'ClientApp/assets', to: 'assets' }
-        ]),
-        new MiniCssExtractPlugin({
-            // Options similar to the same options in webpackOptions.output
-            // both options are optional
+    new CleanWebpackPlugin(["wwwroot/*"]),
+    // https://github.com/webpack-contrib/copy-webpack-plugin
+    new CopyWebpackPlugin([
+        { from: 'ClientApp/assets', to: 'assets' }
+    ]),
+    new MiniCssExtractPlugin({
+        // Options similar to the same options in webpackOptions.output
+        // both options are optional
             filename: "[name].css",
             chunkFilename: "[id].css"
         }),
@@ -86,7 +86,6 @@ module.exports = {
         }),
         new HtmlWebpackPlugin({
             hash: true,
-            inject: 'head',
             // Load a custom template (lodash by default)
             template: 'ClientApp/html/_WebpackScripts.cshtml',
             filename: '../Views/Shared/_WebpackScripts.cshtml'

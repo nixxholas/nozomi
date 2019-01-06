@@ -1,3 +1,13 @@
+@model Nozomi.Base.Identity.Models.Areas.Manage.PaymentMethods.AddNewCardViewModel
+@using Microsoft.Extensions.Options
+@using Newtonsoft.Json
+@using Nozomi.Base.Core.Configurations
+@inject IOptions<StripeSettings> stripeOptions
+
+@{
+  var stripePubKey = stripeOptions.Value.PublishableKey;
+}
+
 <!-- Content Section -->
     <div class="bg-light">
       <div class="container space-2">
@@ -264,13 +274,13 @@
 <!-- End Content Section -->
 
 <!-- Account Modal Window -->
-  <div id="addPaymentModal" class="js-modal-window u-modal-window" style="width: 480px;">
+  <div id="addPaymentModal" class="js-modal-window u-modal-window" style="width: 640px;">
     <div class="card border-0">
       <!-- Header -->
       <header class="card-header bg-light py-3 px-5">
         <div class="row justify-content-between align-items-center no-gutters">
           <div class="col-6">
-            <h4 class="h6 mb-0">Create a new payment</h4>
+            <h4 class="h6 mb-0">Add a new card</h4>
           </div>
 
           <div class="col-6 text-right">
@@ -282,172 +292,25 @@
       </header>
       <!-- End Header -->
 
-      <form class="js-validate">
+      <form id="addCardForm" class="js-validate">
         <div class="card-body p-5">
+          <input id="cardTokenInput" asp-for="CardToken" class="d-none" type="text" />  
+          
           <!-- Input Group -->
           <div class="form-row align-items-center mb-3">
             <div class="col-4 text-right">
-              <label class="h6 small d-block text-uppercase mb-0">
-                Currency
-              </label>
-            </div>
-            <div class="col-8">
-              <div class="js-form-message">
-                <select class="custom-select custom-select-sm">
-                  <option value="currencySelectUSD">USD - US Dollar</option>
-                  <option value="currencySelectAED">AED - United Arab Emirates Dirham</option>
-                  <option value="currencySelectAFN">AFN - Afghan Afghani</option>
-                  <option value="currencySelectALL">ALL - Albanian Lek</option>
-                  <option value="currencySelectAMD">AMD - Armenian Dram</option>
-                  <option value="currencySelectANG">ANG - Netherlands Antillean Guilder</option>
-                  <option value="currencySelectAOA">AOA - Angolan Kwanza</option>
-                  <option value="currencySelectARS">ARS - Argentine Peso</option>
-                  <option value="currencySelectAUD">AUD - Australian Dollar</option>
-                  <option value="currencySelectAWG">AWG - Aruban Florin</option>
-                  <option value="currencySelectAZN">AZN - Azerbaijani Manat</option>
-                  <option value="currencySelectBAM">BAM - Bosnia-Herzegovina Convertible Mark</option>
-                  <option value="currencySelectBBD">BBD - Barbadian Dollar</option>
-                  <option value="currencySelectBDT">BDT - Bangladeshi Taka</option>
-                  <option value="currencySelectBGN">BGN - Bulgarian Lev</option>
-                  <option value="currencySelectBIF">BIF - Burundian Franc</option>
-                  <option value="currencySelectBMD">BMD - Bermudan Dollar</option>
-                  <option value="currencySelectBND">BND - Brunei Dollar</option>
-                  <option value="currencySelectBOB">BOB - Bolivian Boliviano</option>
-                  <option value="currencySelectBRL">BRL - Brazilian Real</option>
-                  <option value="currencySelectBSD">BSD - Bahamian Dollar</option>
-                  <option value="currencySelectBWP">BWP - Botswanan Pula</option>
-                  <option value="currencySelectBZD">BZD - Belize Dollar</option>
-                  <option value="currencySelectCAD">CAD - Canadian Dollar</option>
-                  <option value="currencySelectCDF">CDF - Congolese Franc</option>
-                  <option value="currencySelectCHF">CHF - Swiss Franc</option>
-                  <option value="currencySelectCLP">CLP - Chilean Peso</option>
-                  <option value="currencySelectCNY">CNY - Chinese Yuan</option>
-                  <option value="currencySelectCOP">COP - Colombian Peso</option>
-                  <option value="currencySelectCRC">CRC - Costa Rican Colón</option>
-                  <option value="currencySelectCVE">CVE - Cape Verdean Escudo</option>
-                  <option value="currencySelectCZK">CZK - Czech Koruna</option>
-                  <option value="currencySelectDJF">DJF - Djiboutian Franc</option>
-                  <option value="currencySelectDKK">DKK - Danish Krone</option>
-                  <option value="currencySelectDOP">DOP - Dominican Peso</option>
-                  <option value="currencySelectDZD">DZD - Algerian Dinar</option>
-                  <option value="currencySelectEGP">EGP - Egyptian Pound</option>
-                  <option value="currencySelectETB">ETB - Ethiopian Birr</option>
-                  <option value="currencySelectEUR">EUR - Euro</option>
-                  <option value="currencySelectFJD">FJD - Fijian Dollar</option>
-                  <option value="currencySelectFKP">FKP - Falkland Islands Pound</option>
-                  <option value="currencySelectGBP">GBP - British Pound</option>
-                  <option value="currencySelectGEL">GEL - Georgian Lari</option>
-                  <option value="currencySelectGIP">GIP - Gibraltar Pound</option>
-                  <option value="currencySelectGMD">GMD - Gambian Dalasi</option>
-                  <option value="currencySelectGNF">GNF - Guinean Franc</option>
-                  <option value="currencySelectGTQ">GTQ - Guatemalan Quetzal</option>
-                  <option value="currencySelectGYD">GYD - Guyanaese Dollar</option>
-                  <option value="currencySelectHKD">HKD - Hong Kong Dollar</option>
-                  <option value="currencySelectHNL">HNL - Honduran Lempira</option>
-                  <option value="currencySelectHRK">HRK - Croatian Kuna</option>
-                  <option value="currencySelectHTG">HTG - Haitian Gourde</option>
-                  <option value="currencySelectHUF">HUF - Hungarian Forint</option>
-                  <option value="currencySelectIDR">IDR - Indonesian Rupiah</option>
-                  <option value="currencySelectILS">ILS - Israeli New Shekel</option>
-                  <option value="currencySelectINR">INR - Indian Rupee</option>
-                  <option value="currencySelectISK">ISK - Icelandic Króna</option>
-                  <option value="currencySelectJMD">JMD - Jamaican Dollar</option>
-                  <option value="currencySelectJPY">JPY - Japanese Yen</option>
-                  <option value="currencySelectKES">KES - Kenyan Shilling</option>
-                  <option value="currencySelectKGS">KGS - Kyrgystani Som</option>
-                  <option value="currencySelectKHR">KHR - Cambodian Riel</option>
-                  <option value="currencySelectKMF">KMF - Comorian Franc</option>
-                  <option value="currencySelectKRW">KRW - South Korean Won</option>
-                  <option value="currencySelectKYD">KYD - Cayman Islands Dollar</option>
-                  <option value="currencySelectKZT">KZT - Kazakhstani Tenge</option>
-                  <option value="currencySelectLAK">LAK - Laotian Kip</option>
-                  <option value="currencySelectLBP">LBP - Lebanese Pound</option>
-                  <option value="currencySelectLKR">LKR - Sri Lankan Rupee</option>
-                  <option value="currencySelectLRD">LRD - Liberian Dollar</option>
-                  <option value="currencySelectLSL">LSL - Lesotho Loti</option>
-                  <option value="currencySelectMAD">MAD - Moroccan Dirham</option>
-                  <option value="currencySelectMDL">MDL - Moldovan Leu</option>
-                  <option value="currencySelectMGA">MGA - Malagasy Ariary</option>
-                  <option value="currencySelectMKD">MKD - Macedonian Denar</option>
-                  <option value="currencySelectMMK">MMK - Myanmar Kyat</option>
-                  <option value="currencySelectMNT">MNT - Mongolian Tugrik</option>
-                  <option value="currencySelectMOP">MOP - Macanese Pataca</option>
-                  <option value="currencySelectMRO">MRO - Mauritanian Ouguiya</option>
-                  <option value="currencySelectMUR">MUR - Mauritian Rupee</option>
-                  <option value="currencySelectMVR">MVR - Maldivian Rufiyaa</option>
-                  <option value="currencySelectMWK">MWK - Malawian Kwacha</option>
-                  <option value="currencySelectMXN">MXN - Mexican Peso</option>
-                  <option value="currencySelectMYR">MYR - Malaysian Ringgit</option>
-                  <option value="currencySelectMZN">MZN - Mozambican Metical</option>
-                  <option value="currencySelectNAD">NAD - Namibian Dollar</option>
-                  <option value="currencySelectNGN">NGN - Nigerian Naira</option>
-                  <option value="currencySelectNIO">NIO - Nicaraguan Córdoba</option>
-                  <option value="currencySelectNOK">NOK - Norwegian Krone</option>
-                  <option value="currencySelectNPR">NPR - Nepalese Rupee</option>
-                  <option value="currencySelectNZD">NZD - New Zealand Dollar</option>
-                  <option value="currencySelectPAB">PAB - Panamanian Balboa</option>
-                  <option value="currencySelectPEN">PEN - Peruvian Sol</option>
-                  <option value="currencySelectPGK">PGK - Papua New Guinean Kina</option>
-                  <option value="currencySelectPHP">PHP - Philippine Peso</option>
-                  <option value="currencySelectPKR">PKR - Pakistani Rupee</option>
-                  <option value="currencySelectPLN">PLN - Polish Zloty</option>
-                  <option value="currencySelectPYG">PYG - Paraguayan Guarani</option>
-                  <option value="currencySelectQAR">QAR - Qatari Rial</option>
-                  <option value="currencySelectRON">RON - Romanian Leu</option>
-                  <option value="currencySelectRSD">RSD - Serbian Dinar</option>
-                  <option value="currencySelectRUB">RUB - Russian Ruble</option>
-                  <option value="currencySelectRWF">RWF - Rwandan Franc</option>
-                  <option value="currencySelectSAR">SAR - Saudi Riyal</option>
-                  <option value="currencySelectSBD">SBD - Solomon Islands Dollar</option>
-                  <option value="currencySelectSCR">SCR - Seychellois Rupee</option>
-                  <option value="currencySelectSEK">SEK - Swedish Krona</option>
-                  <option value="currencySelectSGD">SGD - Singapore Dollar</option>
-                  <option value="currencySelectSHP">SHP - St. Helena Pound</option>
-                  <option value="currencySelectSLL">SLL - Sierra Leonean Leone</option>
-                  <option value="currencySelectSOS">SOS - Somali Shilling</option>
-                  <option value="currencySelectSRD">SRD - Surinamese Dollar</option>
-                  <option value="currencySelectSTD">STD - São Tomé &amp; Príncipe Dobra</option>
-                  <option value="currencySelectSVC">SVC - Salvadoran Colón</option>
-                  <option value="currencySelectSZL">SZL - Swazi Lilangeni</option>
-                  <option value="currencySelectTHB">THB - Thai Baht</option>
-                  <option value="currencySelectTJS">TJS - Tajikistani Somoni</option>
-                  <option value="currencySelectTOP">TOP - Tongan Paʻanga</option>
-                  <option value="currencySelectTRY">TRY - Turkish Lira</option>
-                  <option value="currencySelectTTD">TTD - Trinidad &amp; Tobago Dollar</option>
-                  <option value="currencySelectTWD">TWD - New Taiwan Dollar</option>
-                  <option value="currencySelectTZS">TZS - Tanzanian Shilling</option>
-                  <option value="currencySelectUAH">UAH - Ukrainian Hryvnia</option>
-                  <option value="currencySelectUGX">UGX - Ugandan Shilling</option>
-                  <option value="currencySelectUYU">UYU - Uruguayan Peso</option>
-                  <option value="currencySelectUZS">UZS - Uzbekistani Som</option>
-                  <option value="currencySelectVND">VND - Vietnamese Dong</option>
-                  <option value="currencySelectVUV">VUV - Vanuatu Vatu</option>
-                  <option value="currencySelectWST">WST - Samoan Tala</option>
-                  <option value="currencySelectXAF">XAF - Central African CFA Franc</option>
-                  <option value="currencySelectXCD">XCD - East Caribbean Dollar</option>
-                  <option value="currencySelectXOF">XOF - West African CFA Franc</option>
-                  <option value="currencySelectXPF">XPF - CFP Franc</option>
-                  <option value="currencySelectYER">YER - Yemeni Rial</option>
-                  <option value="currencySelectZAR">ZAR - South African Rand</option>
-                  <option value="currencySelectZMW">ZMW - Zambian Kwacha</option>
-                </select>
-              </div>
-            </div>
-          </div>
-          <!-- End Input Group -->
-
-          <!-- Input Group -->
-          <div class="form-row align-items-center mb-3">
-            <div class="col-4 text-right">
-              <label id="amountLabel" class="h6 small d-block text-uppercase mb-0">
-                Amount
+              <label asp-for="CardholderName" class="h6 small d-block text-uppercase mb-0">
+                <span class="fas fa-info-circle" data-toggle="tooltip" data-placement="left"
+                      title="Make sure the name entered is on the credit/debit card."></span>
+                Cardholder name
               </label>
             </div>
             <div class="col-8">
               <div class="js-form-message">
                 <div class="input-group input-group-sm">
-                  <input class="form-control" type="text" name="amount" required placeholder="$ 0.00" aria-label="$ 0.00" aria-describedby="amountLabel"
-                         data-msg="Please enter a valid amount."
+                  <input class="form-control" type="text" name="cardholderName" required placeholder="Cardholder name"
+                         aria-label="Cardholder name" aria-describedby="cardholderNameLabel"
+                         data-msg="Please enter a valid cardholder name."
                          data-error-class="u-has-error"
                          data-success-class="u-has-success">
                 </div>
@@ -464,75 +327,18 @@
               </label>
             </div>
             <div class="col-8">
-              <div class="js-form-message">
-                <div class="input-group input-group-sm">
-                  <input class="form-control" type="number" name="cardNumber" required placeholder="Card number" aria-label="Card number" aria-describedby="cardNumberLabel"
-                         data-msg="Please enter a valid card number."
-                         data-error-class="u-has-error"
-                         data-success-class="u-has-success">
-                </div>
-              </div>
-            </div>
-          </div>
-          <!-- End Input Group -->
-
-          <!-- Input Group -->
-          <div class="form-row align-items-center mb-3">
-            <div class="col-4 text-right">
-              <label id="cardholderNameLabel" class="h6 small d-block text-uppercase mb-0">
-                Cardholder name
-              </label>
-            </div>
-            <div class="col-8">
-              <div class="js-form-message">
-                <div class="input-group input-group-sm">
-                  <input class="form-control" type="text" name="cardholderName" required placeholder="Cardholder name" aria-label="Cardholder name" aria-describedby="cardholderNameLabel"
-                         data-msg="Please enter a valid cardholder name."
-                         data-error-class="u-has-error"
-                         data-success-class="u-has-success">
-                </div>
-              </div>
-            </div>
-          </div>
-          <!-- End Input Group -->
-
-          <!-- Input Group -->
-          <div class="form-row align-items-center mb-3">
-            <div class="col-4 text-right">
-              <label id="expiresLabel" class="h6 small d-block text-uppercase mb-0">
-                Expires
-              </label>
-            </div>
-            <div class="col-8">
-              <div class="js-form-message">
-                <div class="input-group input-group-sm">
-                  <input class="form-control" type="number" name="expires" required placeholder="MM/YY" aria-label="MM/YY" aria-describedby="expiresLabel"
-                         data-msg="Please enter a valid date."
-                         data-error-class="u-has-error"
-                         data-success-class="u-has-success">
-                </div>
-              </div>
-            </div>
-          </div>
-          <!-- End Input Group -->
-
-          <!-- Input Group -->
-          <div class="form-row align-items-center mb-0">
-            <div class="col-4 text-right">
-              <label id="cvcLabel" class="h6 small d-block text-uppercase mb-0">
-                <span class="fas fa-info-circle" data-toggle="tooltip" data-placement="left" title="If you have a Visa or Mastercard branded credit or debit card, it'll be a 3 digit number located on the back of your card."></span>
-                CVC
-              </label>
-            </div>
-            <div class="col-8">
-              <div class="js-form-message">
-                <div class="input-group input-group-sm">
-                  <input class="form-control" type="number" name="cvc" required placeholder="***" aria-label="***" aria-describedby="cvcLabel"
-                         data-msg="Please enter a valid code."
-                         data-error-class="u-has-error"
-                         data-success-class="u-has-success">
-                </div>
-              </div>
+              <div id="card-element"
+                   data-msg="Please enter only valid credit/debit card information."
+                   data-error-class="u-has-error"
+                   data-success-class="u-has-success"></div>
+              @* <div class="js-form-message"> *@
+              @*   <div class="input-group input-group-sm"> *@
+              @*     <input class="form-control" type="number" name="cardNumber" required placeholder="Card number" aria-label="Card number" aria-describedby="cardNumberLabel" *@
+              @*            data-msg="Please enter a valid card number." *@
+              @*            data-error-class="u-has-error" *@
+              @*            data-success-class="u-has-success"> *@
+              @*   </div> *@
+              @* </div> *@
             </div>
           </div>
           <!-- End Input Group -->
@@ -542,11 +348,67 @@
         <div class="card-footer py-3 px-5">
           <div class="d-flex justify-content-end">
             <button type="submit" class="btn btn-sm btn-primary transition-3d-hover mr-1">Create Payment</button>
-            <button type="submit" class="btn btn-sm btn-soft-secondary transition-3d-hover" onclick="Custombox.modal.close();">Cancel</button>
+            <button type="submit" class="btn btn-sm btn-soft-secondary transition-3d-hover" 
+                    onclick="Custombox.modal.close();">Cancel</button>
           </div>
         </div>
         <!-- End Buttons -->
       </form>
     </div>
   </div>
-  <!-- End Account Modal Window -->
+<!-- End Account Modal Window -->
+
+@section Scripts
+{
+  <script src="https://js.stripe.com/v3/"></script>
+  <script>
+    // Setup stripe
+    const stripe = Stripe('@stripePubKey');
+    // Setup Stripe's elements.
+    const elements = stripe.elements();
+    // Setup the Stripe card element
+    const card = elements.create('card');
+    const cardEl = document.getElementById("card-element");
+
+    // Error checking
+//    card.addEventListener('change',
+//      ({ error }) => {
+//        const displayError = document.getElementById('card-element');
+//        if (error) {
+//          displayError.addClass('u-has-success u-has-error');
+//          displayError.addClass('u-has-error');
+//        } else {
+//          displayError.addClass('u-has-success u-has-error');
+//          displayError.addClass('u-has-success');
+//        }
+//      });
+
+    card.mount(cardEl);
+        
+    document.getElementById("addCardForm").addEventListener('submit',
+      (event) => {
+        event.preventDefault();
+
+        stripe.createToken(card).then(function(result) {
+          if (result.error) {
+            // Inform the customer that there was an error.
+            var errorElement = document.getElementById('card-errors');
+            errorElement.textContent = result.error.message;
+          } else {
+            // Send the token to your server.
+            stripeTokenHandler(result.token);
+          }
+        });
+      });
+
+    const stripeTokenHandler = (token) => {
+      // Insert the token ID into the form so it gets submitted to the server
+      const $cardTokenEl = document.getElementById('cardTokenInput');
+      $cardTokenEl.setAttribute('value', token.id);
+
+      return false;
+      // Submit the form
+      //form.submit();
+    }
+  </script>
+}
