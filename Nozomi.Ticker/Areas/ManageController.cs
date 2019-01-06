@@ -417,7 +417,7 @@ namespace Nozomi.Ticker.Areas
         }
 
         [HttpPost]
-        public async Task<IActionResult> PostNewCard([FromForm]AddNewCardViewModel vm)
+        public async Task<IActionResult> PostNewCard([FromForm]AddNewCardInputModel vm)
         {
             if (!ModelState.IsValid)
             {
@@ -425,7 +425,17 @@ namespace Nozomi.Ticker.Areas
             }
 
             var user = await GetCurrentUserAsync();
-            //TODO: User and name check
+            
+            if (user == null) 
+            {
+                return RedirectToAction("PaymentMethods", 
+                new PaymentMethodsViewModel()
+                {
+                    CardholderName = vm.CardholderName,
+                    CardToken = vm.CardToken
+                });
+                
+            }
             
             await _stripeService.AddCard(user, vm.CardToken);
             
