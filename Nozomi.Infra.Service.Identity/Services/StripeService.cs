@@ -10,7 +10,6 @@ using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Identity.Data;
 using Nozomi.Service.Identity.Services.Interfaces;
 using Stripe;
-using Plan = Nozomi.Base.Identity.Models.Subscription.Plan;
 
 namespace Nozomi.Service.Identity.Services
 {
@@ -44,7 +43,7 @@ namespace Nozomi.Service.Identity.Services
                 // DEFAULT
                 var defaultPlanOptions = new PlanCreateOptions
                 {
-                    Id = Plan.Basic.GetDescription(),
+                    Id = PlanType.Basic.GetDescription(),
                     Active = true,
                     Amount = 0, // Free.
                     Currency = "usd",
@@ -52,8 +51,8 @@ namespace Nozomi.Service.Identity.Services
                     Product = new PlanProductCreateOptions
                     {
                         Active = true,
-                        Id = Plan.Basic.GetDescription(),
-                        Name = Plan.Basic.GetDescription()
+                        Id = PlanType.Basic.GetDescription(),
+                        Name = PlanType.Basic.GetDescription()
                     }
                 };
 
@@ -61,7 +60,7 @@ namespace Nozomi.Service.Identity.Services
                 
                 var plusPlanOptions = new PlanCreateOptions
                 {
-                    Id = Plan.Plus.GetDescription(),
+                    Id = PlanType.Plus.GetDescription(),
                     Active = true,
                     Amount = 2000,
                     Currency = "usd",
@@ -69,8 +68,8 @@ namespace Nozomi.Service.Identity.Services
                     Product = new PlanProductCreateOptions
                     {
                         Active = true,
-                        Id = Plan.Plus.GetDescription(),
-                        Name = Plan.Plus.GetDescription()
+                        Id = PlanType.Plus.GetDescription(),
+                        Name = PlanType.Plus.GetDescription()
                     }
                 };
 
@@ -133,7 +132,7 @@ namespace Nozomi.Service.Identity.Services
             var customerOptions = new CustomerCreateOptions {
                 Description = "Customer for " + user.Email,
                 Email = user.Email,
-                //PlanId = PlanType.Basic.GetDescription() // TODO
+                PlanId = PlanType.Basic.GetDescription()
             };
 
             var customerService = new CustomerService();
