@@ -14,7 +14,7 @@
                     <!-- Breadcrumb -->
                     <ol class="breadcrumb breadcrumb-white breadcrumb-no-gutter mb-0">
                         <li class="breadcrumb-item">
-                            <a class="breadcrumb-link" href="../home/index.html">Home</a>
+                            <a class="breadcrumb-link" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
                         <li class="breadcrumb-item">
                             <a class="breadcrumb-link" href="dashboard.html">Account</a>
@@ -162,7 +162,8 @@
 
                                 <!-- Others -->
                                 <li class="nav-item u-header__nav-item">
-                                    <a class="nav-link u-header__nav-link" href="plans.html">Plans</a>
+                                    <a class="nav-link u-header__nav-link" asp-controller="Manage" 
+                                       asp-action="Plans">Plans</a>
                                 </li>
                                 <!-- Others -->
                             </ul>
