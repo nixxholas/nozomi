@@ -51,16 +51,16 @@ namespace Nozomi.Service.Identity.Services
             {
                 await customerService.UpdateAsync(customer.Id, new CustomerUpdateOptions()
                 {
-                    DefaultSource = cardToken
+                    DefaultSource = card.Id
                 });
             }
 
             return string.IsNullOrEmpty(card.Id);
         }
 
-        public async Task<bool> SetDefaultCard(string stripeCustomerId, string cardToken)
+        public async Task<bool> SetDefaultCard(string stripeCustomerId, string cardId)
         {
-            if (string.IsNullOrEmpty(stripeCustomerId) || string.IsNullOrEmpty(cardToken)) return false;
+            if (string.IsNullOrEmpty(stripeCustomerId) || string.IsNullOrEmpty(cardId)) return false;
             
             var customerService = new CustomerService();
             var customer = await customerService.GetAsync(stripeCustomerId);
@@ -68,12 +68,12 @@ namespace Nozomi.Service.Identity.Services
 
             var customerOptions = new CustomerUpdateOptions
             {
-                DefaultSource = cardToken
+                DefaultSource = cardId
             };
             var result = await customerService.UpdateAsync(stripeCustomerId, customerOptions);
             if (result == null) return false;
 
-            return result.DefaultSourceId.Equals(cardToken);
+            return result.DefaultSourceId.Equals(cardId);
         }
 
         public async Task<string> CreateStripeCustomer(User user)
