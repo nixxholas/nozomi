@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -168,6 +169,24 @@ namespace Nozomi.Service.Identity.Services
             }
         }
 
+        public async Task<bool> UpdateCustomerSubscription(string stripeCustomerId, string planId)
+        {
+            var subscriptionService = new SubscriptionService();
+            
+            var items = new List<SubscriptionItemOption> {
+                new SubscriptionItemOption {
+                    PlanId = planId
+                }
+            };
+            var subOptions = new SubscriptionCreateOptions
+            {
+                CustomerId = stripeCustomerId,
+                Items = items
+            };
+
+            return string.IsNullOrEmpty((await subscriptionService.CreateAsync(subOptions))?.Id);
+        }
+
         public async Task<bool> CreatePlan(PlanCreateOptions options)
         {
             var planService = new PlanService();
@@ -198,7 +217,7 @@ namespace Nozomi.Service.Identity.Services
             return false;
         }
 
-        public async Task<bool> CreateSubscription(SubscriptionCreateOptions options)
+        public async Task<bool> UpdateCustomerSubscription(SubscriptionCreateOptions options)
         {
             var subService = new SubscriptionService();
             var res = await subService.CreateAsync(options);

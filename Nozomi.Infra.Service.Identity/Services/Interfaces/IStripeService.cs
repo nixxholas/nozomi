@@ -22,6 +22,8 @@ namespace Nozomi.Service.Identity.Services.Interfaces
         Task<string> CreateStripeCustomer(User user);
 
         Task<bool> CreateSource(User user);
+
+        Task<bool> UpdateCustomerSubscription(string stripeCustomerId, string planId);
         
         /// <summary>
         /// Allows us to create a plan for the user to pick to unlock more features.
@@ -37,6 +39,6 @@ namespace Nozomi.Service.Identity.Services.Interfaces
         /// </summary>
         /// <param name="options"></param>
         /// <returns></returns>
-        Task<bool> CreateSubscription(SubscriptionCreateOptions options);
+        Task<bool> UpdateCustomerSubscription(SubscriptionCreateOptions options);
     }
 }
