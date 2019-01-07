@@ -10,6 +10,7 @@ using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Identity.Data;
 using Nozomi.Service.Identity.Services.Interfaces;
 using Stripe;
+using Plan = Nozomi.Base.Identity.Models.Subscription.Plan;
 
 namespace Nozomi.Service.Identity.Services
 {
@@ -28,6 +29,40 @@ namespace Nozomi.Service.Identity.Services
             _options = options;
             
             StripeConfiguration.SetApiKey(_options.Value.SecretKey);
+        }
+
+        public void ConfigureStripePlans()
+        {
+            var planService = new PlanService();
+            var plans = planService.List();
+
+            // If nothing is there
+            if (plans.TotalCount.Equals(0))
+            {
+                // Let's populate it
+                
+                // DEFAULT
+                var defaultPlanOptions = new PlanCreateOptions
+                {
+                    Id = Plan.Basic.GetDescription(),
+                    Active = true,
+                    Amount = 0, // Free.
+                    Currency = "usd",
+                    Interval = PlanIntervals.Month,
+                    Product = new PlanProductCreateOptions
+                    {
+                        Active = true,
+                        Id = Plan.Basic.GetDescription(),
+                        Name = Plan.Basic.GetDescription()
+                    }
+                };
+
+                planService.Create(defaultPlanOptions);
+            }
+            else
+            {
+                _logger.LogWarning("There is a plan that is populated on the Stripe account.");
+            }
         }
 
         public async Task<bool> AddCard(User user, string cardToken)

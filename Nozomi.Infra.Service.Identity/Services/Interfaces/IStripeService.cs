@@ -6,6 +6,15 @@ namespace Nozomi.Service.Identity.Services.Interfaces
 {
     public interface IStripeService
     {
+        //=============== STRIPE PRE-CONFIGURATION ==============//
+
+        /// <summary>
+        /// Propagates the default plans that are set for initial adoption. 
+        /// </summary>
+        void ConfigureStripePlans();
+        
+        //=========== END OF STRIPE PRE-CONFIGURATION ===========//
+
         Task<bool> AddCard(User user, string cardToken);
 
         Task<bool> SetDefaultCard(string stripeCustomerId, string cardId);

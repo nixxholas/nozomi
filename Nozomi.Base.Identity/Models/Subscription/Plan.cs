@@ -2,7 +2,7 @@ using System.ComponentModel;
 
 namespace Nozomi.Base.Identity.Models.Subscription
 {
-    public enum Plans
+    public enum Plan
     {
         [Description("Basic")]
         Basic = 0,
