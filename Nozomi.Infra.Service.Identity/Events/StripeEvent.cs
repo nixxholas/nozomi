@@ -6,6 +6,7 @@ using Nozomi.Base.Core.Helpers.Enumerator;
 using Nozomi.Base.Identity.Models.Subscription;
 using Nozomi.Service.Identity.Events.Interfaces;
 using Stripe;
+using Plan = Stripe.Plan;
 
 namespace Nozomi.Service.Identity.Events
 {
