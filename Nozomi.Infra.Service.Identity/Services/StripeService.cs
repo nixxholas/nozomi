@@ -57,7 +57,24 @@ namespace Nozomi.Service.Identity.Services
                     }
                 };
 
-                planService.Create(defaultPlanOptions);
+                var defaultPlan = planService.Create(defaultPlanOptions);
+                
+                var plusPlanOptions = new PlanCreateOptions
+                {
+                    Id = Plan.Plus.GetDescription(),
+                    Active = true,
+                    Amount = 2000,
+                    Currency = "usd",
+                    Interval = PlanIntervals.Month,
+                    Product = new PlanProductCreateOptions
+                    {
+                        Active = true,
+                        Id = Plan.Plus.GetDescription(),
+                        Name = Plan.Plus.GetDescription()
+                    }
+                };
+
+                var plusPlan = planService.Create(plusPlanOptions);
             }
             else
             {
