@@ -7,6 +7,8 @@ namespace Nozomi.Service.Identity.Services.Interfaces
     public interface IStripeService
     {
         Task<bool> AddCard(User user, string cardToken);
+
+        Task<bool> SetDefaultCard(string stripeCustomerId, string cardToken);
         
         Task<string> CreateStripeCustomer(User user);
 

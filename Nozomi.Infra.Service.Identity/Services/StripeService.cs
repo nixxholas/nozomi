@@ -26,13 +26,13 @@ namespace Nozomi.Service.Identity.Services
             base(logger, unitOfWork)
         {
             _options = options;
+            
+            StripeConfiguration.SetApiKey(_options.Value.SecretKey);
         }
 
         public async Task<bool> AddCard(User user, string cardToken)
         {
             if (string.IsNullOrEmpty(user.StripeCustomerId)) return false;
-            
-            StripeConfiguration.SetApiKey(_options.Value.SecretKey);
             
             // Stripe-sided checks
             var customerService = new CustomerService();
@@ -50,10 +50,26 @@ namespace Nozomi.Service.Identity.Services
             return string.IsNullOrEmpty(card.Id);
         }
 
+        public async Task<bool> SetDefaultCard(string stripeCustomerId, string cardToken)
+        {
+            if (string.IsNullOrEmpty(stripeCustomerId) || string.IsNullOrEmpty(cardToken)) return false;
+            
+            var customerService = new CustomerService();
+            var customer = await customerService.GetAsync(stripeCustomerId);
+            if (customer == null) return false;
+
+            var customerOptions = new CustomerUpdateOptions
+            {
+                DefaultSource = cardToken
+            };
+            var result = await customerService.UpdateAsync(stripeCustomerId, customerOptions);
+            if (result == null) return false;
+
+            return result.DefaultSourceId.Equals(cardToken);
+        }
+
         public async Task<string> CreateStripeCustomer(User user)
         {
-            StripeConfiguration.SetApiKey(_options.Value.SecretKey);
-            
             var customerOptions = new CustomerCreateOptions {
                 Description = "Customer for " + user.Email,
                 Email = user.Email,
@@ -95,8 +111,6 @@ namespace Nozomi.Service.Identity.Services
 
         public async Task<bool> CreatePlan(PlanCreateOptions options)
         {
-            StripeConfiguration.SetApiKey(_options.Value.SecretKey);
-            
             var planService = new PlanService();
             var res = await planService.CreateAsync(options);
 
@@ -112,8 +126,6 @@ namespace Nozomi.Service.Identity.Services
 
         public async Task<bool> CreateProduct(ProductCreateOptions options)
         {
-            StripeConfiguration.SetApiKey(_options.Value.SecretKey);
-            
             var productService = new ProductService();
             var res = await productService.CreateAsync(options);
 
@@ -129,8 +141,6 @@ namespace Nozomi.Service.Identity.Services
 
         public async Task<bool> CreateSubscription(SubscriptionCreateOptions options)
         {
-            StripeConfiguration.SetApiKey(_options.Value.SecretKey);
-            
             var subService = new SubscriptionService();
             var res = await subService.CreateAsync(options);
 
