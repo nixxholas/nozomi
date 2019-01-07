@@ -1,8 +1,11 @@
 @using Nozomi.Service.Identity.Events.Interfaces
 @using Stripe
+@using System.Globalization
 @inject IStripeEvent StripeEvent
 
 @{
+    // https://stackoverflow.com/questions/1206019/converting-string-to-title-case
+    var textInfo = new CultureInfo("en-US", false).TextInfo;
     var plans = await StripeEvent.Plans(new PlanListOptions
     {
         Limit = 10
@@ -98,158 +101,68 @@
                      "slidesToShow": 1
                    }
                  }]'>
-        <!-- Pricing -->
-        <div class="js-slide">
-            <div class="card">
-                <!-- Header -->
-                <header class="card-header bg-primary text-white text-center p-5">
-                    <span class="btn btn-xs btn-soft-white mb-3">Starter</span>
-                    <span class="d-block">
-                        <span class="display-4 font-weight-normal">
-                            <span class="align-top font-size-2">$</span>22
-                        </span>
-                        <span class="d-block text-white-50 font-size-1">per month</span>
-                    </span>
-                </header>
-                <!-- End Header -->
+        @{
+            foreach (var plan in plans.Reverse())
+            {
+                if (plan.Active)
+                {
+                <!-- Pricing -->
+                <div class="js-slide">
+                    <div class="card">
+                        <!-- Header -->
+                        <header class="card-header bg-primary text-white text-center p-5">
+                            <span class="btn btn-xs btn-soft-white mb-3">@textInfo.ToTitleCase(plan.Id)</span>
+                            <span class="d-block">
+                                <span class="display-4 font-weight-normal">
+                                    @if (plan.Amount == 0)
+                                    {
+                                        Output.WriteLine("Free");
+                                    }
+                                    else
+                                    {
+                                        decimal.TryParse((plan.Amount / 100).ToString(), out var price);
+                                        <span class="align-top font-size-2">$</span>
+                                        Output.WriteLine(price);
+                                    }
+                                </span>
+                                @if (plan.Amount > 0)
+                                {
+                                    decimal.TryParse((plan.Amount / 100).ToString(), out var pricePerMonth);
+                                    <span class="d-block text-white-50 font-size-1">@pricePerMonth per month</span>
+                                }
+                            </span>
+                        </header>
+                        <!-- End Header -->
 
-                <!-- Content -->
-                <div class="card-body p-5">
-                    <ul class="list-unstyled font-size-1 mb-4">
-                        <li class="media py-2">
-                            <span class="fas fa-info-circle text-muted mt-1 mr-2" data-toggle="tooltip" data-placement="bottom" title="Understanding the task at hand and ironing out the wrinkles is key."></span>
-                            <div class="media-body">
-                                Community support
-                            </div>
-                        </li>
-                        <li class="media py-2">
-                            <span class="fas fa-info-circle text-muted mt-1 mr-2" data-toggle="tooltip" data-placement="bottom" title="Understanding the task at hand and ironing out the wrinkles is key."></span>
-                            <div class="media-body">
-                                400+ pages
-                            </div>
-                        </li>
-                        <li class="media py-2">
-                            <span class="fas fa-info-circle text-muted mt-1 mr-2" data-toggle="tooltip" data-placement="bottom" title="Understanding the task at hand and ironing out the wrinkles is key."></span>
-                            <div class="media-body">
-                                100+ header variations
-                            </div>
-                        </li>
-                        <li class="media py-2">
-                            <span class="fas fa-info-circle text-muted mt-1 mr-2" data-toggle="tooltip" data-placement="bottom" title="Understanding the task at hand and ironing out the wrinkles is key."></span>
-                            <div class="media-body">
-                                20+ home page options
-                            </div>
-                        </li>
-                    </ul>
+                        <!-- Content -->
+                        <div class="card-body p-5">
+                            @if (plan.Metadata.Count > 0)
+                            {
+                            <ul class="list-unstyled font-size-1 mb-4">
+                                @foreach (var planMetaItem in plan.Metadata)
+                                {
+                                    <li class="media py-2">
+                                        <span class="fas fa-info-circle text-muted mt-1 mr-2" data-toggle="tooltip" 
+                                              data-placement="bottom" title="@planMetaItem.Value"></span>
+                                        <div class="media-body">
+                                            @planMetaItem.Key
+                                        </div>
+                                    </li>
+                                }
+                            </ul>
+                            }
 
-                    <button type="button" class="btn btn-sm btn-block btn-primary transition-3d-hover">Get Started</button>
+                            <button type="button" class="btn btn-sm btn-block btn-primary transition-3d-hover">
+                                Get Started
+                            </button>
+                        </div>
+                    </div>
+                    <!-- End Content -->
                 </div>
-            </div>
-            <!-- End Content -->
-        </div>
-        <!-- End Pricing -->
-
-        <!-- Pricing -->
-        <div class="js-slide">
-            <div class="card">
-                <!-- Header -->
-                <header class="card-header bg-primary text-white text-center p-5">
-                    <span class="btn btn-xs btn-soft-white mb-3">Pro</span>
-                    <span class="d-block">
-                        <span class="display-4 font-weight-normal">
-                            <span class="align-top font-size-2">$</span>44
-                        </span>
-                        <span class="d-block text-white-50 font-size-1">per month</span>
-                    </span>
-                </header>
-                <!-- End Header -->
-
-                <!-- Content -->
-                <div class="card-body p-5">
-                    <ul class="list-unstyled font-size-1 mb-4">
-                        <li class="media py-2">
-                            <span class="fas fa-info-circle text-muted mt-1 mr-2" data-toggle="tooltip" data-placement="bottom" title="Understanding the task at hand and ironing out the wrinkles is key."></span>
-                            <div class="media-body">
-                                Community support
-                            </div>
-                        </li>
-                        <li class="media py-2">
-                            <span class="fas fa-info-circle text-muted mt-1 mr-2" data-toggle="tooltip" data-placement="bottom" title="Understanding the task at hand and ironing out the wrinkles is key."></span>
-                            <div class="media-body">
-                                400+ pages
-                            </div>
-                        </li>
-                        <li class="media py-2">
-                            <span class="fas fa-info-circle text-muted mt-1 mr-2" data-toggle="tooltip" data-placement="bottom" title="Understanding the task at hand and ironing out the wrinkles is key."></span>
-                            <div class="media-body">
-                                100+ header variations
-                            </div>
-                        </li>
-                        <li class="media py-2">
-                            <span class="fas fa-info-circle text-muted mt-1 mr-2" data-toggle="tooltip" data-placement="bottom" title="Understanding the task at hand and ironing out the wrinkles is key."></span>
-                            <div class="media-body">
-                                20+ home page options
-                            </div>
-                        </li>
-                    </ul>
-
-                    <button type="button" class="btn btn-sm btn-block btn-primary transition-3d-hover">Get Started</button>
-                </div>
-            </div>
-            <!-- End Content -->
-        </div>
-        <!-- End Pricing -->
-
-        <!-- Pricing -->
-        <div class="js-slide">
-            <div class="card">
-                <!-- Header -->
-                <header class="card-header bg-primary text-white text-center p-5">
-                    <span class="btn btn-xs btn-soft-white mb-3">Enterprise</span>
-                    <span class="d-block">
-                        <span class="display-4 font-weight-normal">
-                            <span class="align-top font-size-2">$</span>69
-                        </span>
-                        <span class="d-block text-white-50 font-size-1">per month</span>
-                    </span>
-                </header>
-                <!-- End Header -->
-
-                <!-- Content -->
-                <div class="card-body p-5">
-                    <ul class="list-unstyled font-size-1 mb-4">
-                        <li class="media py-2">
-                            <span class="fas fa-info-circle text-muted mt-1 mr-2" data-toggle="tooltip" data-placement="bottom" title="Understanding the task at hand and ironing out the wrinkles is key."></span>
-                            <div class="media-body">
-                                Community support
-                            </div>
-                        </li>
-                        <li class="media py-2">
-                            <span class="fas fa-info-circle text-muted mt-1 mr-2" data-toggle="tooltip" data-placement="bottom" title="Understanding the task at hand and ironing out the wrinkles is key."></span>
-                            <div class="media-body">
-                                400+ pages
-                            </div>
-                        </li>
-                        <li class="media py-2">
-                            <span class="fas fa-info-circle text-muted mt-1 mr-2" data-toggle="tooltip" data-placement="bottom" title="Understanding the task at hand and ironing out the wrinkles is key."></span>
-                            <div class="media-body">
-                                100+ header variations
-                            </div>
-                        </li>
-                        <li class="media py-2">
-                            <span class="fas fa-info-circle text-muted mt-1 mr-2" data-toggle="tooltip" data-placement="bottom" title="Understanding the task at hand and ironing out the wrinkles is key."></span>
-                            <div class="media-body">
-                                20+ home page options
-                            </div>
-                        </li>
-                    </ul>
-
-                    <button type="button" class="btn btn-sm btn-block btn-primary transition-3d-hover">Get Started</button>
-                </div>
-            </div>
-            <!-- End Content -->
-        </div>
-        <!-- End Pricing -->
+                <!-- End Pricing -->
+                }
+            }
+        }
     </div>
 </div>
 <!-- End Pricing Carousel -->
@@ -281,158 +194,68 @@
                      "slidesToShow": 1
                    }
                  }]'>
-        <!-- Pricing -->
-        <div class="js-slide">
-            <div class="card">
-                <!-- Header -->
-                <header class="card-header bg-primary text-white text-center p-5">
-                    <span class="btn btn-xs btn-soft-white mb-3">Starter</span>
-                    <span class="d-block">
-                        <span class="display-4 font-weight-normal">
-                            <span class="align-top font-size-2">$</span>242
-                        </span>
-                        <span class="d-block text-white-50 font-size-1">per month</span>
-                    </span>
-                </header>
-                <!-- End Header -->
+        @{
+            foreach (var plan in plans.Reverse())
+            {
+                if (plan.Active)
+                {
+                <!-- Pricing -->
+                <div class="js-slide">
+                    <div class="card">
+                        <!-- Header -->
+                        <header class="card-header bg-primary text-white text-center p-5">
+                            <span class="btn btn-xs btn-soft-white mb-3">@textInfo.ToTitleCase(plan.Id)</span>
+                            <span class="d-block">
+                                <span class="display-4 font-weight-normal">
+                                    @if (plan.Amount == 0)
+                                    {
+                                        Output.WriteLine("Free");
+                                    }
+                                    else
+                                    {
+                                        decimal.TryParse((plan.Amount / 100 * 12).ToString(), out var price);
+                                        <span class="align-top font-size-2">$</span>
+                                        Output.WriteLine(price);
+                                    }
+                                </span>
+                                @if (plan.Amount > 0)
+                                {
+                                    decimal.TryParse((plan.Amount / 100).ToString(), out var pricePerMonth);
+                                    <span class="d-block text-white-50 font-size-1">@pricePerMonth per month</span>
+                                }
+                            </span>
+                        </header>
+                        <!-- End Header -->
 
-                <!-- Content -->
-                <div class="card-body p-5">
-                    <ul class="list-unstyled font-size-1 mb-4">
-                        <li class="media py-2">
-                            <span class="fas fa-info-circle text-muted mt-1 mr-2" data-toggle="tooltip" data-placement="bottom" title="Understanding the task at hand and ironing out the wrinkles is key."></span>
-                            <div class="media-body">
-                                Community support
-                            </div>
-                        </li>
-                        <li class="media py-2">
-                            <span class="fas fa-info-circle text-muted mt-1 mr-2" data-toggle="tooltip" data-placement="bottom" title="Understanding the task at hand and ironing out the wrinkles is key."></span>
-                            <div class="media-body">
-                                400+ pages
-                            </div>
-                        </li>
-                        <li class="media py-2">
-                            <span class="fas fa-info-circle text-muted mt-1 mr-2" data-toggle="tooltip" data-placement="bottom" title="Understanding the task at hand and ironing out the wrinkles is key."></span>
-                            <div class="media-body">
-                                100+ header variations
-                            </div>
-                        </li>
-                        <li class="media py-2">
-                            <span class="fas fa-info-circle text-muted mt-1 mr-2" data-toggle="tooltip" data-placement="bottom" title="Understanding the task at hand and ironing out the wrinkles is key."></span>
-                            <div class="media-body">
-                                20+ home page options
-                            </div>
-                        </li>
-                    </ul>
+                        <!-- Content -->
+                        <div class="card-body p-5">
+                            @if (plan.Metadata.Count > 0)
+                            {
+                            <ul class="list-unstyled font-size-1 mb-4">
+                                @foreach (var planMetaItem in plan.Metadata)
+                                {
+                                    <li class="media py-2">
+                                        <span class="fas fa-info-circle text-muted mt-1 mr-2" data-toggle="tooltip" 
+                                              data-placement="bottom" title="@planMetaItem.Value"></span>
+                                        <div class="media-body">
+                                            @planMetaItem.Key
+                                        </div>
+                                    </li>
+                                }
+                            </ul>
+                            }
 
-                    <button type="button" class="btn btn-sm btn-block btn-primary transition-3d-hover">Get Started</button>
+                            <button type="button" class="btn btn-sm btn-block btn-primary transition-3d-hover">
+                                Get Started
+                            </button>
+                        </div>
+                    </div>
+                    <!-- End Content -->
                 </div>
-            </div>
-            <!-- End Content -->
-        </div>
-        <!-- End Pricing -->
-
-        <!-- Pricing -->
-        <div class="js-slide">
-            <div class="card">
-                <!-- Header -->
-                <header class="card-header bg-primary text-white text-center p-5">
-                    <span class="btn btn-xs btn-soft-white mb-3">Pro</span>
-                    <span class="d-block">
-                        <span class="display-4 font-weight-normal">
-                            <span class="align-top font-size-2">$</span>442
-                        </span>
-                        <span class="d-block text-white-50 font-size-1">per month</span>
-                    </span>
-                </header>
-                <!-- End Header -->
-
-                <!-- Content -->
-                <div class="card-body p-5">
-                    <ul class="list-unstyled font-size-1 mb-4">
-                        <li class="media py-2">
-                            <span class="fas fa-info-circle text-muted mt-1 mr-2" data-toggle="tooltip" data-placement="bottom" title="Understanding the task at hand and ironing out the wrinkles is key."></span>
-                            <div class="media-body">
-                                Community support
-                            </div>
-                        </li>
-                        <li class="media py-2">
-                            <span class="fas fa-info-circle text-muted mt-1 mr-2" data-toggle="tooltip" data-placement="bottom" title="Understanding the task at hand and ironing out the wrinkles is key."></span>
-                            <div class="media-body">
-                                400+ pages
-                            </div>
-                        </li>
-                        <li class="media py-2">
-                            <span class="fas fa-info-circle text-muted mt-1 mr-2" data-toggle="tooltip" data-placement="bottom" title="Understanding the task at hand and ironing out the wrinkles is key."></span>
-                            <div class="media-body">
-                                100+ header variations
-                            </div>
-                        </li>
-                        <li class="media py-2">
-                            <span class="fas fa-info-circle text-muted mt-1 mr-2" data-toggle="tooltip" data-placement="bottom" title="Understanding the task at hand and ironing out the wrinkles is key."></span>
-                            <div class="media-body">
-                                20+ home page options
-                            </div>
-                        </li>
-                    </ul>
-
-                    <button type="button" class="btn btn-sm btn-block btn-primary transition-3d-hover">Get Started</button>
-                </div>
-            </div>
-            <!-- End Content -->
-        </div>
-        <!-- End Pricing -->
-
-        <!-- Pricing -->
-        <div class="js-slide">
-            <div class="card">
-                <!-- Header -->
-                <header class="card-header bg-primary text-white text-center p-5">
-                    <span class="btn btn-xs btn-soft-white mb-3">Enterprise</span>
-                    <span class="d-block">
-                        <span class="display-4 font-weight-normal">
-                            <span class="align-top font-size-2">$</span>1089
-                        </span>
-                        <span class="d-block text-white-50 font-size-1">per month</span>
-                    </span>
-                </header>
-                <!-- End Header -->
-
-                <!-- Content -->
-                <div class="card-body p-5">
-                    <ul class="list-unstyled font-size-1 mb-4">
-                        <li class="media py-2">
-                            <span class="fas fa-info-circle text-muted mt-1 mr-2" data-toggle="tooltip" data-placement="bottom" title="Understanding the task at hand and ironing out the wrinkles is key."></span>
-                            <div class="media-body">
-                                Community support
-                            </div>
-                        </li>
-                        <li class="media py-2">
-                            <span class="fas fa-info-circle text-muted mt-1 mr-2" data-toggle="tooltip" data-placement="bottom" title="Understanding the task at hand and ironing out the wrinkles is key."></span>
-                            <div class="media-body">
-                                400+ pages
-                            </div>
-                        </li>
-                        <li class="media py-2">
-                            <span class="fas fa-info-circle text-muted mt-1 mr-2" data-toggle="tooltip" data-placement="bottom" title="Understanding the task at hand and ironing out the wrinkles is key."></span>
-                            <div class="media-body">
-                                100+ header variations
-                            </div>
-                        </li>
-                        <li class="media py-2">
-                            <span class="fas fa-info-circle text-muted mt-1 mr-2" data-toggle="tooltip" data-placement="bottom" title="Understanding the task at hand and ironing out the wrinkles is key."></span>
-                            <div class="media-body">
-                                20+ home page options
-                            </div>
-                        </li>
-                    </ul>
-
-                    <button type="button" class="btn btn-sm btn-block btn-primary transition-3d-hover">Get Started</button>
-                </div>
-            </div>
-            <!-- End Content -->
-        </div>
-        <!-- End Pricing -->
+                <!-- End Pricing -->
+                }
+            }
+        }
     </div>
 </div>
 <!-- End Pricing Carousel -->
