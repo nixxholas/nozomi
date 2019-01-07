@@ -47,6 +47,14 @@ namespace Nozomi.Service.Identity.Services
             var cardService = new CardService();
             var card = cardService.Create(customer.Id, cardOptions);
 
+            if (string.IsNullOrEmpty(customer.DefaultSourceId))
+            {
+                await customerService.UpdateAsync(customer.Id, new CustomerUpdateOptions()
+                {
+                    DefaultSource = cardToken
+                });
+            }
+
             return string.IsNullOrEmpty(card.Id);
         }
 
