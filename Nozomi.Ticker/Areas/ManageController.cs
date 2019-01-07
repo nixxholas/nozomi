@@ -427,6 +427,7 @@ namespace Nozomi.Ticker.Areas
             }
 
             vm.Cards = await _stripeEvent.Cards(user.StripeCustomerId);
+            vm.Customer = await _stripeEvent.User(user.StripeCustomerId);
             
             return View(vm);
         }
@@ -449,7 +450,6 @@ namespace Nozomi.Ticker.Areas
                     CardholderName = vm.CardholderName,
                     CardToken = vm.CardToken
                 });
-                
             }
             
             await _stripeService.AddCard(user, vm.CardToken);
