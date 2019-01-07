@@ -411,6 +411,14 @@ namespace Nozomi.Ticker.Areas
             return RedirectToAction(nameof(ManageLogins), new { Message = message });
         }
 
+        [HttpGet]
+        public async Task<IActionResult> Plans()
+        {
+            var user = await GetCurrentUserAsync();
+            
+            return View();
+        }
+
         //
         // GET: /Manage/PaymentMethods
         [HttpGet]
