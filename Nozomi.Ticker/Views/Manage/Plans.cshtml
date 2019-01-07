@@ -27,10 +27,7 @@
             <!-- Card -->
             <div class="card-body p-5">
                 <h4 class="h6">Front project - July 2018 <span class="btn btn-xs btn-soft-success">$250 per year</span></h4>
-                <p class="font-size-1 mb-0">License purchased: <span class="text-dark font-weight-medium">1</span></p>
-                <p class="font-size-1">License assigned: <span class="text-dark font-weight-medium">1</span></p>
-                <a class="btn btn-xs btn-primary transition-3d-hover mr-1" href="#">Change plan</a>
-                <a class="btn btn-xs btn-soft-secondary transition-3d-hover" href="#">Edit/Remove License</a>
+                <a class="btn btn-xs btn-soft-secondary transition-3d-hover" href="#">Unsubscribe</a>
             </div>
             <!-- End Card -->
         </div>
@@ -42,7 +39,8 @@
                 <h5 class="font-weight-normal">$250/yearly</h5>
                 <p class="font-size-1 mb-0">Payment method: <span class="text-dark font-weight-medium">Card ending in 9050</span></p>
                 <p class="font-size-1">Will renew on: <span class="text-dark font-weight-medium">July 15, 2019</span></p>
-                <a class="btn btn-xs btn-primary transition-3d-hover mr-1" href="#">Edit Payment Details</a>
+                <a class="btn btn-xs btn-primary transition-3d-hover mr-1" asp-controller="Manage"
+                   asp-action="PaymentMethods">Edit Payment Details</a>
                 <a class="btn btn-xs btn-soft-secondary transition-3d-hover" href="#">View Invoices</a>
                 <!-- End Card -->
             </div>
