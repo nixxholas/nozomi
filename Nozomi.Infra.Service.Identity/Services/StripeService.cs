@@ -37,7 +37,7 @@ namespace Nozomi.Service.Identity.Services
             var plans = planService.List();
 
             // If nothing is there
-            if (plans.TotalCount.Equals(0))
+            if (plans.Data.Count.Equals(0))
             {
                 // Let's populate it
                 
