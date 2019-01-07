@@ -63,7 +63,9 @@
                                                         }
                                                         else
                                                         {
-                                                            <a class="btn btn-xs btn-soft-secondary btn-pill">Set as default</a>
+                                                            <a asp-controller="Manage" asp-action="SetNewDefaultCard"
+                                                               asp-route-cardId="@card.Id"
+                                                               class="btn btn-xs btn-soft-secondary btn-pill">Set as default</a>
                                                         }
                                                     }
                                                 </span>
