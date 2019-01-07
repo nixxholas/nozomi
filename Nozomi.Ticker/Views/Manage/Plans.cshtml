@@ -1,3 +1,14 @@
+@using Nozomi.Service.Identity.Events.Interfaces
+@using Stripe
+@inject IStripeEvent StripeEvent
+
+@{
+    var plans = await StripeEvent.Plans(new PlanListOptions
+    {
+        Limit = 10
+    });
+}
+
 <!-- Content Section -->
 <div class="bg-light">
 <div class="container space-2">

@@ -98,7 +98,12 @@ $(document).on('ready', function () {
     $.HSCore.components.HSStepForm.init('.js-step-form');
 
     // initialization of show animations
-    $.HSCore.components.HSShowAnimation.init('.js-animation-link');
+    $.HSCore.components.HSShowAnimation.init('.js-animation-link',
+        {
+            afterShow: function() {
+                $('.js-slick-carousel').slick('setPosition');
+            }
+        });
 
     // initialization of chart pies
     let items = $.HSCore.components.HSChartPie.init('.js-pie');
