@@ -5,9 +5,9 @@ namespace Nozomi.Base.Identity.Models.Subscription
     public enum PlanType
     {
         [Description("basic")]
-        Basic = 1,
+        Basic = 0,
         [Description("plus")]
-        Plus = 2,
+        Plus = 2000,
         // Business Basic and Business Plus in the future.
     }
 }
