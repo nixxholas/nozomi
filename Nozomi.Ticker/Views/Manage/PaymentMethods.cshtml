@@ -55,9 +55,18 @@
                                                         </span>
                                                     </span>
                                                 </span>
-                                                @* <span class="col-4 col-md-2 text-md-right"> *@
-                                                @*     <span class="btn btn-xs btn-soft-warning btn-pill">Primary</span> *@
-                                                @* </span> *@
+                                                <span class="col-4 col-md-2 text-md-right">
+                                                    @{
+                                                        if (card.Id.Equals(Model.Customer.DefaultSourceId))
+                                                        {
+                                                            <span class="btn btn-xs btn-soft-warning btn-pill">Primary</span>
+                                                        }
+                                                        else
+                                                        {
+                                                            <a class="btn btn-xs btn-soft-secondary btn-pill">Set as default</a>
+                                                        }
+                                                    }
+                                                </span>
                                                 <span class="col-6 col-md-3">
                                                     @{
                                                         var cardExp = card.ExpMonth + "-" + card.ExpYear;
