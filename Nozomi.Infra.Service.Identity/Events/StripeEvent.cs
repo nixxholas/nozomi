@@ -66,7 +66,11 @@ namespace Nozomi.Service.Identity.Events
 
             return subs.Data;
         }
-        
-        
+
+        public async Task<Customer> User(string stripeCustomerId)
+        {
+            var customerService = new CustomerService();
+            return await customerService.GetAsync(stripeCustomerId);
+        }
     }
 }

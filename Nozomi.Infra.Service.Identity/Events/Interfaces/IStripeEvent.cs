@@ -16,5 +16,7 @@ namespace Nozomi.Service.Identity.Events.Interfaces
         Task<ICollection<Product>> Products(ProductListOptions options);
 
         Task<ICollection<Subscription>> Subscriptions(SubscriptionListOptions options);
+
+        Task<Customer> User(string stripeCustomerId);
     }
 }
