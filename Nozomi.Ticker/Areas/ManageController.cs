@@ -10,6 +10,7 @@ using Newtonsoft.Json;
 using Nozomi.Base.Identity.Models.Areas.Manage;
 using Nozomi.Base.Identity.Models.Areas.Manage.PaymentMethods;
 using Nozomi.Base.Identity.Models.Identity;
+using Nozomi.Base.Identity.Models.Subscription;
 using Nozomi.Preprocessing.Events.Interfaces;
 using Nozomi.Service.Identity.Events.Interfaces;
 using Nozomi.Service.Identity.Managers;
@@ -485,6 +486,26 @@ namespace Nozomi.Ticker.Areas
             }
             
             return RedirectToAction("PaymentMethods"); // TODO: Failure obj
+        }
+
+        [HttpGet("planType")]
+        public async Task<IActionResult> Subscribe(PlanType planType)
+        {
+            var user = await GetCurrentUserAsync();
+
+            if (user == null || string.IsNullOrEmpty(user.StripeCustomerId))
+            {
+                return BadRequest("Are you logged in?");
+            }
+
+            var res = await _stripeEvent.Subscribe(user.StripeCustomerId, planType);
+
+            if (!string.IsNullOrEmpty(res.Id))
+            {
+                return Ok("Subscription successful!");
+            }
+
+            return BadRequest("Something unexpected happened with the subscription.");
         }
 
         #region Helpers
