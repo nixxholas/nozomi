@@ -36,6 +36,21 @@ namespace Nozomi.Service.Identity.Events
         public async Task<Subscription> Subscribe(string stripeCustId, PlanType planType)
         {
             var subService = new SubscriptionService();
+            
+            var subListOptions = new SubscriptionListOptions
+            {
+                CustomerId = stripeCustId,
+                Status = SubscriptionStatuses.Active,
+                PlanId = planType.GetDescription()
+            };
+            var currSub = await subService.ListAsync(subListOptions);
+
+            if (currSub != null && currSub.Data.Count > 0)
+            {
+                // An active subscription exists
+                // TODO: Handle upgrades and downgrades
+                return null;
+            }
 
             var items = new List<SubscriptionItemOption> {
                 new SubscriptionItemOption {
