@@ -77,10 +77,11 @@
                             }
                         </h5>
                         @{
-                            if (!string.IsNullOrEmpty(currentSub.DefaultSourceId))
+                            if (!string.IsNullOrEmpty(currentSub.DefaultSourceId) && customer.Sources.Data.Any())
                             {
+                                var card = await StripeEvent.Card(customer.Id, customer.DefaultSourceId);
                                 <p class="font-size-1 mb-0">Payment method: 
-                                    <span class="text-dark font-weight-medium">Card ending in 9050</span></p>
+                                    <span class="text-dark font-weight-medium">@card.Brand ending in @card.Last4</span></p>
                             }
                         }
                         <p class="font-size-1">
