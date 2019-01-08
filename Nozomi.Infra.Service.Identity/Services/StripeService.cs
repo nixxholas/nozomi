@@ -145,6 +145,22 @@ namespace Nozomi.Service.Identity.Services
             };
             var result = await customerService.UpdateAsync(stripeCustomerId, customerOptions);
             if (result == null) return false;
+            
+            var subService = new SubscriptionService();
+            var subscription = await subService.GetAsync(customer.Subscriptions
+                .FirstOrDefault(sub => sub.EndedAt == null && 
+                                       sub.CanceledAt == null)?.Id);
+
+            if (subscription != null)
+            {
+                var subUpdateOptions = new SubscriptionUpdateOptions
+                {
+                    DefaultSource = cardId
+                };
+                var res = await subService.UpdateAsync(subscription.Id, subUpdateOptions);
+
+                return string.IsNullOrEmpty(res.DefaultSourceId);
+            }
 
             return result.DefaultSourceId.Equals(cardId);
         }
