@@ -1,7 +1,10 @@
 @using Nozomi.Service.Identity.Events.Interfaces
 @using Stripe
 @using System.Globalization
+@using Newtonsoft.Json
+@using Nozomi.Service.Identity.Managers
 @inject IStripeEvent StripeEvent
+@inject NozomiUserManager userManager
 
 @{
     // https://stackoverflow.com/questions/1206019/converting-string-to-title-case
@@ -10,43 +13,95 @@
     {
         Limit = 10
     });
+    var user = await userManager.GetUserAsync(User);
+    var customer = await StripeEvent.User(user.StripeCustomerId);
+
+    var currentSub = customer.Subscriptions
+        .SingleOrDefault(sub => sub.EndedAt == null && sub.CanceledAt == null && sub.CanceledAt == null
+                                && sub.Plan != null);
+
+    var currentPlan = currentSub?.Plan;
+
+    // Price Outputs
+    var priceStr = " per year";
+
+    if (currentPlan != null && currentPlan.Amount <= 0)
+    {
+        priceStr = "Free!";
+    }
+    else if (currentPlan != null)
+    {
+        priceStr = "$" + (currentPlan.Amount / 100 * 12) + priceStr;
+    }
 }
 
 <!-- Content Section -->
 <div class="bg-light">
 <div class="container space-2">
-<div class="mb-9">
-    <!-- Title -->
-    <div class="mb-3">
-        <h2 class="h5 mb-0">Your current plan</h2>
-    </div>
-    <!-- End Title -->
-
-    <div class="card-deck d-block d-md-flex">
-        <div class="card mb-4 mb-md-0">
-            <!-- Card -->
-            <div class="card-body p-5">
-                <h4 class="h6">Front project - July 2018 <span class="btn btn-xs btn-soft-success">$250 per year</span></h4>
-                <a class="btn btn-xs btn-soft-secondary transition-3d-hover" href="#">Unsubscribe</a>
+@{
+    if (currentPlan != null)
+    {
+        <div class="mb-9">
+            <!-- Title -->
+            <div class="mb-3">
+                <h2 class="h5 mb-0">Your current plan</h2>
             </div>
-            <!-- End Card -->
-        </div>
+            <!-- End Title -->
 
-        <div class="card">
-            <!-- Card -->
-            <div class="card-body p-5">
-                <h4 class="h6">Total</h4>
-                <h5 class="font-weight-normal">$250/yearly</h5>
-                <p class="font-size-1 mb-0">Payment method: <span class="text-dark font-weight-medium">Card ending in 9050</span></p>
-                <p class="font-size-1">Will renew on: <span class="text-dark font-weight-medium">July 15, 2019</span></p>
-                <a class="btn btn-xs btn-primary transition-3d-hover mr-1" asp-controller="Manage"
-                   asp-action="PaymentMethods">Edit Payment Details</a>
-                <a class="btn btn-xs btn-soft-secondary transition-3d-hover" href="#">View Invoices</a>
-                <!-- End Card -->
+            <div class="card-deck d-block d-md-flex">
+                <div class="card mb-4 mb-md-0">
+                    <!-- Card -->
+                    <div class="card-body p-5">
+                        <h4 class="h6">
+                            @textInfo.ToTitleCase(currentPlan.Id)
+                            <span class="btn ml-2 btn-xs btn-soft-success">@priceStr</span>
+                        </h4>
+                    </div>
+                    <!-- End Card -->
+                </div>
+
+                <div class="card">
+                    <!-- Card -->
+                    <div class="card-body p-5">
+                        <h4 class="h6">Total</h4>
+                        <h5 class="font-weight-normal">
+                            @{
+                                if (currentPlan.Amount == 0)
+                                {
+                                    Output.WriteLine("Free!");
+                                }
+                                else
+                                {
+                                    Output.Write("$" + (currentPlan.Amount / 100 * 12) + "/yearly");
+                                }
+                            }
+                        </h5>
+                        @{
+                            if (!string.IsNullOrEmpty(currentSub.DefaultSourceId))
+                            {
+                                <p class="font-size-1 mb-0">Payment method: 
+                                    <span class="text-dark font-weight-medium">Card ending in 9050</span></p>
+                            }
+                        }
+                        <p class="font-size-1">
+                            Will renew on:
+                            <span class="text-dark font-weight-medium">
+                                @currentSub.CurrentPeriodEnd?.ToString("MMMM dd, yyyy")
+                            </span>
+                        </p>
+                        <a class="btn btn-xs btn-primary transition-3d-hover mr-1" asp-controller="Manage"
+                           asp-action="PaymentMethods">
+                            Edit Payment Details
+                        </a>
+                        <a class="btn btn-xs btn-soft-secondary transition-3d-hover" href="#">View Invoices</a>
+                        <a class="btn btn-xs btn-soft-danger transition-3d-hover" href="#">Unsubscribe</a>
+                        <!-- End Card -->
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-</div>
+    }
+}
 
 <!-- Title -->
 <div class="row justify-content-between align-items-center mb-3">
@@ -72,13 +127,13 @@
 <!-- End Title -->
 
 <div class="mb-9">
-<!-- Pricing Carousel -->
-<div id="pricingMonthly" data-target-group="idPricing">
-    <div class="js-slick-carousel u-slick u-slick--gutters-2 z-index-2"
-         data-slides-show="3"
-         data-slides-scroll="1"
-         data-pagi-classes="d-lg-none text-center u-slick__pagination mt-7 mb-0"
-         data-responsive='[{
+    <!-- Pricing Carousel -->
+    <div id="pricingMonthly" data-target-group="idPricing">
+        <div class="js-slick-carousel u-slick u-slick--gutters-2 z-index-2"
+             data-slides-show="3"
+             data-slides-scroll="1"
+             data-pagi-classes="d-lg-none text-center u-slick__pagination mt-7 mb-0"
+             data-responsive='[{
                    "breakpoint": 1200,
                    "settings": {
                      "slidesToShow": 3
@@ -99,79 +154,80 @@
                      "slidesToShow": 1
                    }
                  }]'>
-        @{
-            foreach (var plan in plans.Reverse())
-            {
-                if (plan.Active)
+            @{
+                foreach (var plan in plans.Reverse())
                 {
-                <!-- Pricing -->
-                <div class="js-slide">
-                    <div class="card">
-                        <!-- Header -->
-                        <header class="card-header bg-primary text-white text-center p-5">
-                            <span class="btn btn-xs btn-soft-white mb-3">@textInfo.ToTitleCase(plan.Id)</span>
-                            <span class="d-block">
-                                <span class="display-4 font-weight-normal">
-                                    @if (plan.Amount == 0)
-                                    {
-                                        Output.WriteLine("Free");
-                                    }
-                                    else
-                                    {
-                                        decimal.TryParse((plan.Amount / 100).ToString(), out var price);
-                                        <span class="align-top font-size-2">$</span>
-                                        Output.WriteLine(price);
-                                    }
-                                </span>
-                                @if (plan.Amount > 0)
-                                {
-                                    decimal.TryParse((plan.Amount / 100).ToString(), out var pricePerMonth);
-                                    <span class="d-block text-white-50 font-size-1">@pricePerMonth per month</span>
-                                }
-                            </span>
-                        </header>
-                        <!-- End Header -->
+                    if (plan.Active)
+                    {
+                        <!-- Pricing -->
+                        <div class="js-slide">
+                            <div class="card">
+                                <!-- Header -->
+                                <header class="card-header bg-primary text-white text-center p-5">
+                                    <span class="btn btn-xs btn-soft-white mb-3">@textInfo.ToTitleCase(plan.Id)</span>
+                                    <span class="d-block">
+                                        <span class="display-4 font-weight-normal">
+                                            @if (plan.Amount == 0)
+                                            {
+                                                Output.WriteLine("Free");
+                                            }
+                                            else
+                                            {
+                                                decimal.TryParse((plan.Amount / 100).ToString(), out var price);
+                                                <span class="align-top font-size-2">$</span>
+                                                Output.WriteLine(price);
+                                            }
+                                        </span>
+                                        @if (plan.Amount > 0)
+                                        {
+                                            decimal.TryParse((plan.Amount / 100).ToString(), out var pricePerMonth);
+                                            <span class="d-block text-white-50 font-size-1">@pricePerMonth per month</span>
+                                        }
+                                    </span>
+                                </header>
+                                <!-- End Header -->
 
-                        <!-- Content -->
-                        <div class="card-body p-5">
-                            @if (plan.Metadata.Count > 0)
-                            {
-                            <ul class="list-unstyled font-size-1 mb-4">
-                                @foreach (var planMetaItem in plan.Metadata)
-                                {
-                                    <li class="media py-2">
-                                        <span class="fas fa-info-circle text-muted mt-1 mr-2" data-toggle="tooltip" 
-                                              data-placement="bottom" title="@planMetaItem.Value"></span>
-                                        <div class="media-body">
-                                            @planMetaItem.Key
-                                        </div>
-                                    </li>
-                                }
-                            </ul>
-                            }
+                                <!-- Content -->
+                                <div class="card-body p-5">
+                                    @if (plan.Metadata.Count > 0)
+                                    {
+                                        <ul class="list-unstyled font-size-1 mb-4">
+                                            @foreach (var planMetaItem in plan.Metadata)
+                                            {
+                                                <li class="media py-2">
+                                                    <span class="fas fa-info-circle text-muted mt-1 mr-2" data-toggle="tooltip"
+                                                          data-placement="bottom" title="@planMetaItem.Value">
+                                                    </span>
+                                                    <div class="media-body">
+                                                        @planMetaItem.Key
+                                                    </div>
+                                                </li>
+                                            }
+                                        </ul>
+                                    }
 
-                            <button type="button" class="btn btn-sm btn-block btn-primary transition-3d-hover">
-                                Get Started
-                            </button>
+                                    <button type="button" class="btn btn-sm btn-block btn-primary transition-3d-hover">
+                                        Get Started
+                                    </button>
+                                </div>
+                            </div>
+                            <!-- End Content -->
                         </div>
-                    </div>
-                    <!-- End Content -->
-                </div>
-                <!-- End Pricing -->
+                        <!-- End Pricing -->
+                    }
                 }
             }
-        }
+        </div>
     </div>
-</div>
-<!-- End Pricing Carousel -->
+    <!-- End Pricing Carousel -->
 
-<!-- Pricing Carousel -->
-<div id="pricingYearly" style="display: none; opacity: 0;" data-target-group="idPricing">
-    <div class="js-slick-carousel u-slick u-slick--gutters-2 z-index-2"
-         data-slides-show="3"
-         data-slides-scroll="1"
-         data-pagi-classes="d-lg-none text-center u-slick__pagination mt-7 mb-0"
-         data-responsive='[{
+    <!-- Pricing Carousel -->
+    <div id="pricingYearly" style="display: none; opacity: 0;" data-target-group="idPricing">
+        <div class="js-slick-carousel u-slick u-slick--gutters-2 z-index-2"
+             data-slides-show="3"
+             data-slides-scroll="1"
+             data-pagi-classes="d-lg-none text-center u-slick__pagination mt-7 mb-0"
+             data-responsive='[{
                    "breakpoint": 1200,
                    "settings": {
                      "slidesToShow": 3
@@ -192,71 +248,72 @@
                      "slidesToShow": 1
                    }
                  }]'>
-        @{
-            foreach (var plan in plans.Reverse())
-            {
-                if (plan.Active)
+            @{
+                foreach (var plan in plans.Reverse())
                 {
-                <!-- Pricing -->
-                <div class="js-slide">
-                    <div class="card">
-                        <!-- Header -->
-                        <header class="card-header bg-primary text-white text-center p-5">
-                            <span class="btn btn-xs btn-soft-white mb-3">@textInfo.ToTitleCase(plan.Id)</span>
-                            <span class="d-block">
-                                <span class="display-4 font-weight-normal">
-                                    @if (plan.Amount == 0)
-                                    {
-                                        Output.WriteLine("Free");
-                                    }
-                                    else
-                                    {
-                                        decimal.TryParse((plan.Amount / 100 * 12).ToString(), out var price);
-                                        <span class="align-top font-size-2">$</span>
-                                        Output.WriteLine(price);
-                                    }
-                                </span>
-                                @if (plan.Amount > 0)
-                                {
-                                    decimal.TryParse((plan.Amount / 100).ToString(), out var pricePerMonth);
-                                    <span class="d-block text-white-50 font-size-1">@pricePerMonth per month</span>
-                                }
-                            </span>
-                        </header>
-                        <!-- End Header -->
+                    if (plan.Active)
+                    {
+                        <!-- Pricing -->
+                        <div class="js-slide">
+                            <div class="card">
+                                <!-- Header -->
+                                <header class="card-header bg-primary text-white text-center p-5">
+                                    <span class="btn btn-xs btn-soft-white mb-3">@textInfo.ToTitleCase(plan.Id)</span>
+                                    <span class="d-block">
+                                        <span class="display-4 font-weight-normal">
+                                            @if (plan.Amount == 0)
+                                            {
+                                                Output.WriteLine("Free");
+                                            }
+                                            else
+                                            {
+                                                decimal.TryParse((plan.Amount / 100 * 12).ToString(), out var price);
+                                                <span class="align-top font-size-2">$</span>
+                                                Output.WriteLine(price);
+                                            }
+                                        </span>
+                                        @if (plan.Amount > 0)
+                                        {
+                                            decimal.TryParse((plan.Amount / 100).ToString(), out var pricePerMonth);
+                                            <span class="d-block text-white-50 font-size-1">@pricePerMonth per month</span>
+                                        }
+                                    </span>
+                                </header>
+                                <!-- End Header -->
 
-                        <!-- Content -->
-                        <div class="card-body p-5">
-                            @if (plan.Metadata.Count > 0)
-                            {
-                            <ul class="list-unstyled font-size-1 mb-4">
-                                @foreach (var planMetaItem in plan.Metadata)
-                                {
-                                    <li class="media py-2">
-                                        <span class="fas fa-info-circle text-muted mt-1 mr-2" data-toggle="tooltip" 
-                                              data-placement="bottom" title="@planMetaItem.Value"></span>
-                                        <div class="media-body">
-                                            @planMetaItem.Key
-                                        </div>
-                                    </li>
-                                }
-                            </ul>
-                            }
+                                <!-- Content -->
+                                <div class="card-body p-5">
+                                    @if (plan.Metadata.Count > 0)
+                                    {
+                                        <ul class="list-unstyled font-size-1 mb-4">
+                                            @foreach (var planMetaItem in plan.Metadata)
+                                            {
+                                                <li class="media py-2">
+                                                    <span class="fas fa-info-circle text-muted mt-1 mr-2" data-toggle="tooltip"
+                                                          data-placement="bottom" title="@planMetaItem.Value">
+                                                    </span>
+                                                    <div class="media-body">
+                                                        @planMetaItem.Key
+                                                    </div>
+                                                </li>
+                                            }
+                                        </ul>
+                                    }
 
-                            <button type="button" class="btn btn-sm btn-block btn-primary transition-3d-hover">
-                                Get Started
-                            </button>
+                                    <button type="button" class="btn btn-sm btn-block btn-primary transition-3d-hover">
+                                        Get Started
+                                    </button>
+                                </div>
+                            </div>
+                            <!-- End Content -->
                         </div>
-                    </div>
-                    <!-- End Content -->
-                </div>
-                <!-- End Pricing -->
+                        <!-- End Pricing -->
+                    }
                 }
             }
-        }
+        </div>
     </div>
-</div>
-<!-- End Pricing Carousel -->
+    <!-- End Pricing Carousel -->
 </div>
 </div>
 </div>
