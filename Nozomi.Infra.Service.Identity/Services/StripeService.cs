@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -99,12 +100,32 @@ namespace Nozomi.Service.Identity.Services
             var cardService = new CardService();
             var card = cardService.Create(customer.Id, cardOptions);
 
+            // If it's the first card,
             if (string.IsNullOrEmpty(customer.DefaultSourceId))
             {
-                await customerService.UpdateAsync(customer.Id, new CustomerUpdateOptions()
+                // Set it as the default source alongside its subscription as well.
+                var updatedCustomer = await customerService.UpdateAsync(customer.Id, new CustomerUpdateOptions()
                 {
                     DefaultSource = card.Id
                 });
+                
+                var subService = new SubscriptionService();
+                var subscription = await subService.GetAsync(customer.Subscriptions
+                    .FirstOrDefault(sub => sub.EndedAt == null && 
+                                           sub.CanceledAt == null)?.Id);
+
+                if (subscription != null)
+                {
+                    var subUpdateOptions = new SubscriptionUpdateOptions
+                    {
+                        DefaultSource = card.Id
+                    };
+                    var res = await subService.UpdateAsync(subscription.Id, subUpdateOptions);
+
+                    return string.IsNullOrEmpty(res.DefaultSourceId);
+                }
+                
+                return string.IsNullOrEmpty(updatedCustomer.DefaultSourceId);
             }
 
             return string.IsNullOrEmpty(card.Id);
