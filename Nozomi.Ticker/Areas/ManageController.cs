@@ -498,7 +498,7 @@ namespace Nozomi.Ticker.Areas
                 return BadRequest("Are you logged in?");
             }
 
-            var res = await _stripeEvent.Subscribe(user.StripeCustomerId, planType);
+            var res = await _stripeService.Subscribe(user.StripeCustomerId, planType);
 
             if (!string.IsNullOrEmpty(res.Id))
             {
