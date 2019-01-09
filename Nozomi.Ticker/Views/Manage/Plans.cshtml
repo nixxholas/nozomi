@@ -20,7 +20,9 @@
     var customer = await StripeEvent.User(user.StripeCustomerId);
 
     var currentSub = customer.Subscriptions
-        .SingleOrDefault(sub => sub.EndedAt == null && sub.CanceledAt == null && sub.CanceledAt == null
+        // Order by price
+        .OrderByDescending(sub => EnumHelper.GetValueFromDescription<PlanType>(sub.Plan.Id))
+        .FirstOrDefault(sub => sub.EndedAt == null && sub.CanceledAt == null && sub.CanceledAt == null
                                 && sub.Plan != null);
 
     var currentPlan = currentSub?.Plan;
