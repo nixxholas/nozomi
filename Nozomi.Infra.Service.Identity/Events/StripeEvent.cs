@@ -92,7 +92,9 @@ namespace Nozomi.Service.Identity.Events
                 foreach (var sub in currSub.Data)
                 {
                     // If the subscription is active
-                    if (sub.Start < DateTime.Now && sub.EndedAt == null && sub.CanceledAt == null)
+                    if (sub.Start < DateTime.Now && sub.EndedAt == null && sub.CanceledAt == null
+                        // Make sure its not the basic plan.
+                        && !sub.Plan.Id.Equals(PlanType.Basic.GetDescription()))
                     {
                         // End it and start the new one.
                         var updateSubOptions = new SubscriptionUpdateOptions
