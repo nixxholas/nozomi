@@ -10,7 +10,6 @@ import Typed from 'typed.js';
 import 'popper.js';
 import 'bootstrap';
 import 'chartist';
-import 'custombox';
 import 'slick-carousel';
 import 'svg-injector';
 import 'malihu-custom-scrollbar-plugin';
@@ -99,7 +98,12 @@ $(document).on('ready', function () {
     $.HSCore.components.HSStepForm.init('.js-step-form');
 
     // initialization of show animations
-    $.HSCore.components.HSShowAnimation.init('.js-animation-link');
+    $.HSCore.components.HSShowAnimation.init('.js-animation-link',
+        {
+            afterShow: function() {
+                $('.js-slick-carousel').slick('setPosition');
+            }
+        });
 
     // initialization of chart pies
     let items = $.HSCore.components.HSChartPie.init('.js-pie');

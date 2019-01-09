@@ -9,15 +9,14 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Nozomi.Data;
 using Nozomi.Data.AreaModels.v1.CurrencyPairComponent;
-using Nozomi.Data.CurrencyModels;
 using Nozomi.Data.NozomiRedisModels;
 using Nozomi.Data.WebModels;
+using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Data;
-using Nozomi.Service.Services;
 using Nozomi.Service.Services.Interfaces;
 
-namespace CounterCore.Service.Services
+namespace Nozomi.Service.Services
 {
     public class CurrencyPairComponentService : BaseService<CurrencyPairComponentService, NozomiDbContext>, ICurrencyPairComponentService
     {

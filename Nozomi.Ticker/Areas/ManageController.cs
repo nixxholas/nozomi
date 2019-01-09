@@ -3,25 +3,35 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Nozomi.Base.Identity.Models.Areas.Manage;
+using Nozomi.Base.Identity.Models.Areas.Manage.PaymentMethods;
 using Nozomi.Base.Identity.Models.Identity;
+using Nozomi.Base.Identity.Models.Subscription;
 using Nozomi.Preprocessing.Events.Interfaces;
+using Nozomi.Service.Identity.Events.Interfaces;
 using Nozomi.Service.Identity.Managers;
+using Nozomi.Service.Identity.Services.Interfaces;
 
 namespace Nozomi.Ticker.Areas
 {
     public class ManageController : BaseViewController<ManageController>
     {
         private readonly ISmsSender _smsSender;
+        private readonly IStripeEvent _stripeEvent;
+        private readonly IStripeService _stripeService;
         
         public ManageController(ILogger<ManageController> logger, NozomiSignInManager signInManager, 
-            NozomiUserManager userManager, ISmsSender smsSender) : base(logger, signInManager, userManager)
+            NozomiUserManager userManager, ISmsSender smsSender, IStripeService stripeService, IStripeEvent stripeEvent) 
+            : base(logger, signInManager, userManager)
         {
             _smsSender = smsSender;
+            _stripeEvent = stripeEvent;
+            _stripeService = stripeService;
         }
         
         //
@@ -401,6 +411,141 @@ namespace Nozomi.Ticker.Areas
             var result = await _userManager.AddLoginAsync(user, info);
             var message = result.Succeeded ? ManageMessageId.AddLoginSuccess : ManageMessageId.Error;
             return RedirectToAction(nameof(ManageLogins), new { Message = message });
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Plans()
+        {
+            var user = await GetCurrentUserAsync();
+            
+            return View();
+        }
+
+        //
+        // GET: /Manage/PaymentMethods
+        [HttpGet]
+        public async Task<IActionResult> PaymentMethods(PaymentMethodsViewModel vm) // TODO: Success obj
+        {
+            if (vm == null) vm = new PaymentMethodsViewModel();
+
+            // Auth checks
+            var user = await GetCurrentUserAsync();
+            if (user == null)
+            {
+                await _signInManager.SignOutAsync();
+                return RedirectToAction("Index", "Home");
+            }
+
+            vm.Cards = await _stripeEvent.Cards(user.StripeCustomerId);
+            vm.Customer = await _stripeEvent.User(user.StripeCustomerId);
+            
+            return View(vm);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> PostNewCard([FromForm]AddNewCardInputModel vm)
+        {
+            if (!ModelState.IsValid)
+            {
+                return RedirectToAction("PaymentMethods"); // TODO: Failure obj
+            }
+
+            var user = await GetCurrentUserAsync();
+            
+            if (user == null) 
+            {
+                return RedirectToAction("PaymentMethods", 
+                new PaymentMethodsViewModel()
+                {
+                    CardholderName = vm.CardholderName,
+                    CardToken = vm.CardToken
+                });
+            }
+            
+            await _stripeService.AddCard(user, vm.CardToken);
+            
+            return RedirectToAction("PaymentMethods"); // TODO: Success obj
+        }
+
+        public async Task<IActionResult> SetNewDefaultCard(string cardId)
+        {
+            if (string.IsNullOrEmpty(cardId))
+            {
+                return RedirectToAction("PaymentMethods"); // TODO: Failure obj
+            }
+
+            var user = await GetCurrentUserAsync();
+
+            if (user == null || string.IsNullOrEmpty(user.StripeCustomerId))
+            {
+                return RedirectToAction("PaymentMethods"); // TODO: Failure obj
+            }
+
+            if (await _stripeService.SetDefaultCard(user.StripeCustomerId, cardId))
+            {
+                return RedirectToAction("PaymentMethods"); // TODO: Success obj
+            }
+            
+            return RedirectToAction("PaymentMethods"); // TODO: Failure obj
+        }
+
+        public async Task<IActionResult> RemoveCard(string cardId)
+        {
+            if (string.IsNullOrEmpty(cardId))
+            {
+                return RedirectToAction("PaymentMethods"); // TODO: Failure obj
+            }
+            
+            var user = await GetCurrentUserAsync();
+
+            if (user == null || string.IsNullOrEmpty(user.StripeCustomerId))
+            {
+                return RedirectToAction("PaymentMethods"); // TODO: Failure obj
+            }
+
+            if (await _stripeService.RemoveCard(user.StripeCustomerId, cardId))
+            {
+                return RedirectToAction("PaymentMethods"); // TODO: Success obj
+            }
+            
+            return RedirectToAction("PaymentMethods"); // TODO: Failure obj
+        }
+
+        [HttpGet("planType")]
+        public async Task<IActionResult> Subscribe(PlanType planType)
+        {
+            var user = await GetCurrentUserAsync();
+
+            if (user == null || string.IsNullOrEmpty(user.StripeCustomerId))
+            {
+                return BadRequest("Are you logged in?");
+            }
+
+            var res = await _stripeService.Subscribe(user.StripeCustomerId, planType);
+
+            if (!string.IsNullOrEmpty(res.Id))
+            {
+                return Ok("Subscription successful!");
+            }
+
+            return BadRequest("Something unexpected happened with the subscription.");
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Unsubscribe(PlanType planType)
+        {
+            var user = await GetCurrentUserAsync();
+            
+            if (user == null || string.IsNullOrEmpty(user.StripeCustomerId))
+            {
+                return BadRequest("Are you logged in?");
+            }
+
+            var res = await _stripeService.CancelSubscription(user.StripeCustomerId, planType);
+
+            if (res) return Ok();
+
+            return BadRequest();
         }
 
         #region Helpers

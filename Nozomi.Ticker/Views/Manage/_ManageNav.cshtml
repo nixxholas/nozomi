@@ -14,7 +14,7 @@
                     <!-- Breadcrumb -->
                     <ol class="breadcrumb breadcrumb-white breadcrumb-no-gutter mb-0">
                         <li class="breadcrumb-item">
-                            <a class="breadcrumb-link" href="../home/index.html">Home</a>
+                            <a class="breadcrumb-link" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
                         <li class="breadcrumb-item">
                             <a class="breadcrumb-link" href="dashboard.html">Account</a>
@@ -50,8 +50,8 @@
                         </span>
                     </div>
                     <div class="media-body">
-                        <h1 class="h3 text-white font-weight-medium mb-1">Howdy, Natalie!</h1>
-                        <span class="d-block text-white">natalie.curtis@gmail.com</span>
+                        <h1 class="h3 text-white font-weight-medium mb-1">Welcome, @User.Identity.Name</h1>
+                        @* <span class="d-block text-white">natalie.curtis@gmail.com</span> *@
                     </div>
                 </div>
                 <!-- End User Info -->
@@ -72,13 +72,16 @@
                                     data-event="hover"
                                     data-animation-in="slideInUp"
                                     data-animation-out="fadeOut">
-                                    <a id="generalDropdown" class="nav-link u-header__nav-link u-header__nav-link-toggle" href="javascript:;" aria-haspopup="true" aria-expanded="false" aria-labelledby="generalDropdownMenu">
+                                    <a id="generalDropdown" class="nav-link u-header__nav-link u-header__nav-link-toggle" 
+                                       asp-controller="Manage" asp-action="Index" aria-haspopup="true" aria-expanded="false" 
+                                       aria-labelledby="generalDropdownMenu">
                                         General
                                     </a>
 
                                     <ul id="generalDropdownMenu" class="hs-sub-menu u-header__sub-menu u-header__sub-menu--spacer" style="min-width: 230px;" aria-labelledby="generalDropdown">
                                         <li>
-                                            <a class="nav-link u-header__sub-menu-nav-link" href="dashboard.html">Dashboard</a>
+                                            <a class="nav-link u-header__sub-menu-nav-link" 
+                                               asp-controller="Manage" asp-action="Index">Dashboard</a>
                                         </li>
                                         <li>
                                             <a class="nav-link u-header__sub-menu-nav-link" href="profile.html">Profile</a>
@@ -133,7 +136,8 @@
                                             <a class="nav-link u-header__sub-menu-nav-link" href="activity.html">Activity</a>
                                         </li>
                                         <li>
-                                            <a class="nav-link u-header__sub-menu-nav-link" href="payment-methods.html">Payment methods</a>
+                                            <a class="nav-link u-header__sub-menu-nav-link" 
+                                               asp-controller="Manage" asp-action="PaymentMethods">Payment methods</a>
                                         </li>
                                     </ul>
                                 </li>
@@ -161,7 +165,8 @@
 
                                 <!-- Others -->
                                 <li class="nav-item u-header__nav-item">
-                                    <a class="nav-link u-header__nav-link" href="plans.html">Plans</a>
+                                    <a class="nav-link u-header__nav-link" asp-controller="Manage" 
+                                       asp-action="Plans">Plans</a>
                                 </li>
                                 <!-- Others -->
                             </ul>
@@ -173,11 +178,11 @@
 
             <div class="ml-lg-auto">
                 <!-- Button -->
-                <a class="btn btn-sm btn-soft-white transition-3d-hover" href="#requestPaymentModal"
-                   data-modal-target="#requestPaymentModal">
-                    <span class="fas fa-plus small mr-2"></span>
-                    Request a Payment
-                </a>
+                @* <a class="btn btn-sm btn-soft-white transition-3d-hover" href="#requestPaymentModal" *@
+                @*    data-modal-target="#requestPaymentModal"> *@
+                @*     <span class="fas fa-plus small mr-2"></span> *@
+                @*     Request a Payment *@
+                @* </a> *@
                 <!-- End Button -->
             </div>
         </div>

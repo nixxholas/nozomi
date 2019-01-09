@@ -22,8 +22,8 @@ namespace Nozomi.Repo.Identity.Data.Mappings.Identity
 
             entityTypeBuilder.ForNpgsqlUseXminAsConcurrencyToken();
 
-            entityTypeBuilder.HasMany(u => u.DevKeys).WithOne(dk => dk.User)
-                .HasForeignKey(dk => dk.UserId);
+            entityTypeBuilder.HasMany(u => u.UserSubscriptions).WithOne(us => us.User)
+                .HasForeignKey(us => us.UserId);
             entityTypeBuilder.HasMany(u => u.UserClaims).WithOne(uc => uc.User)
                 .HasForeignKey(uc => uc.UserId);
             entityTypeBuilder.HasMany(u => u.UserLogins).WithOne(ul => ul.User)

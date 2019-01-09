@@ -93,6 +93,10 @@ namespace Nozomi.Repo.Identity.Migrations
 
                     b.Property<string>("SecurityStamp");
 
+                    b.Property<string>("StripeCustomerId");
+
+                    b.Property<string>("StripeSourceId");
+
                     b.Property<bool>("TwoFactorEnabled");
 
                     b.Property<string>("UserName")
@@ -193,6 +197,43 @@ namespace Nozomi.Repo.Identity.Migrations
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasDefaultValue(new DateTime(2019, 1, 5, 21, 55, 56, 681, DateTimeKind.Utc).AddTicks(4500));
+
+                    b.Property<long>("CreatedBy");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasDefaultValue(null);
+
+                    b.Property<long>("DeletedBy");
+
+                    b.Property<bool>("IsEnabled");
+
+                    b.Property<string>("Key");
+
+                    b.Property<DateTime>("ModifiedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasDefaultValue(new DateTime(2019, 1, 5, 21, 55, 56, 681, DateTimeKind.Utc).AddTicks(7850));
+
+                    b.Property<long>("ModifiedBy");
+
+                    b.Property<long>("UserSubscriptionId");
+
+                    b.HasKey("Id")
+                        .HasName("DevKey_PK_Id");
+
+                    b.HasIndex("UserSubscriptionId");
+
+                    b.ToTable("DevKeys");
+                });
+
+            modelBuilder.Entity("Nozomi.Base.Identity.Models.Subscription.UserSubscription", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd();
+
                     b.Property<DateTime>("CreatedAt");
 
                     b.Property<long>("CreatedBy");
@@ -203,19 +244,32 @@ namespace Nozomi.Repo.Identity.Migrations
 
                     b.Property<bool>("IsEnabled");
 
-                    b.Property<string>("Key");
-
                     b.Property<DateTime>("ModifiedAt");
 
                     b.Property<long>("ModifiedBy");
 
+                    b.Property<int>("PlanType")
+                        .ValueGeneratedOnAdd()
+                        .HasDefaultValue(1);
+
+                    b.Property<string>("SubscriptionId")
+                        .ValueGeneratedOnAdd()
+                        .HasDefaultValue(null);
+
                     b.Property<long>("UserId");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("UserSubscription_PK_Id");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserId", "DeletedAt")
+                        .IsUnique()
+                        .HasName("UserSubscription_Index_UserId_DeletedAt");
 
-                    b.ToTable("DevKey");
+                    b.HasIndex("UserId", "SubscriptionId")
+                        .IsUnique()
+                        .HasName("UserSubscription_Index_UserId_SubscriptionId");
+
+                    b.ToTable("UserSubscriptions");
                 });
 
             modelBuilder.Entity("Nozomi.Base.Identity.Models.Identity.RoleClaim", b =>
@@ -265,8 +319,16 @@ namespace Nozomi.Repo.Identity.Migrations
 
             modelBuilder.Entity("Nozomi.Base.Identity.Models.Subscription.DevKey", b =>
                 {
-                    b.HasOne("Nozomi.Base.Identity.Models.Identity.User", "User")
+                    b.HasOne("Nozomi.Base.Identity.Models.Subscription.UserSubscription", "UserSubscription")
                         .WithMany("DevKeys")
+                        .HasForeignKey("UserSubscriptionId")
+                        .OnDelete(DeleteBehavior.Restrict);
+                });
+
+            modelBuilder.Entity("Nozomi.Base.Identity.Models.Subscription.UserSubscription", b =>
+                {
+                    b.HasOne("Nozomi.Base.Identity.Models.Identity.User", "User")
+                        .WithMany("UserSubscriptions")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });

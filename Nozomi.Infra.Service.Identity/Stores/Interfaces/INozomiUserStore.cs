@@ -8,5 +8,6 @@ namespace Nozomi.Service.Identity.Stores.Interfaces
     {
         Task ForceConfirmEmailAsync(long userId);
         Task ForceConfirmEmailAsync(User user);
+        Task<bool> PropagateStripeCustomerId(long userId, string stripeCustomerId);
     }
 }

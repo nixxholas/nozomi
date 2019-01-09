@@ -11,6 +11,8 @@ using Nozomi.Data.CurrencyModels;
 using Nozomi.Data.WebModels;
 using Nozomi.Repo.Data;
 using Nozomi.Repo.Identity.Data;
+using Nozomi.Service.Identity.Events.Interfaces;
+using Nozomi.Service.Identity.Services.Interfaces;
 
 namespace Nozomi.Ticker.StartupExtensions
 {
@@ -22,6 +24,9 @@ namespace Nozomi.Ticker.StartupExtensions
                 .GetRequiredService<IServiceScopeFactory>()
                 .CreateScope())
             {
+                var stripeService = serviceScope.ServiceProvider.GetService<IStripeService>();
+                stripeService.ConfigureStripePlans();
+                
                 using (var context = serviceScope.ServiceProvider.GetService<NozomiAuthContext>())
                 {
                     // Auto wipe

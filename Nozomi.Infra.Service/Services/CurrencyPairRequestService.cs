@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using Nozomi.Data.AreaModels.v1.CurrencyPairRequest;
 using Nozomi.Data.CurrencyModels;
 using Nozomi.Data.WebModels;
+using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Data;
 using Nozomi.Service.Services.Interfaces;
