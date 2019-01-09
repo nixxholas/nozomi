@@ -257,13 +257,11 @@ namespace Nozomi.Service.Identity.Services
                             CancelAtPeriodEnd = true
                         };
 
-                        var res = await subService.UpdateAsync(sub.Id, updateSubOptions);
+                        var updateRes = await subService.UpdateAsync(sub.Id, updateSubOptions);
 
-                        if (res == null || !res.CancelAtPeriodEnd) return null;
+                        if (updateRes == null || !updateRes.CancelAtPeriodEnd) return null;
                     }
                 }
-                
-                return null;
             }
 
             var items = new List<SubscriptionItemOption> {
@@ -273,7 +271,8 @@ namespace Nozomi.Service.Identity.Services
             };
             var options = new SubscriptionCreateOptions {
                 CustomerId = stripeCustId,
-                Items = items
+                Items = items,
+                Prorate = true
             };
 
             return await subService.CreateAsync(options);
