@@ -23,7 +23,7 @@
         // Order by price
         .OrderByDescending(sub => EnumHelper.GetValueFromDescription<PlanType>(sub.Plan.Id))
         .FirstOrDefault(sub => sub.EndedAt == null && sub.CanceledAt == null && sub.CanceledAt == null
-                                && sub.Plan != null);
+                               && sub.Plan != null);
 
     var currentPlan = currentSub?.Plan;
 
@@ -43,9 +43,11 @@
 <!-- Content Section -->
 <div class="bg-light">
 <div class="container space-2">
-@{ if (currentPlan != null) {
+@{
+    if (currentPlan != null)
+    {
         var planType = EnumHelper.GetValueFromDescription<PlanType>(currentPlan.Id);
-        
+
         <div class="mb-9">
             <!-- Title -->
             <div class="mb-3">
@@ -68,25 +70,29 @@
                 <div class="card">
                     <!-- Card -->
                     <div class="card-body p-5">
-                        <h4 class="h6">Total</h4>
-                        <h5 class="font-weight-normal">
-                            @{
-                                if (currentPlan.Amount == 0)
-                                {
-                                    Output.WriteLine("Free!");
-                                }
-                                else
-                                {
-                                    Output.Write("$" + (currentPlan.Amount / 100 * 12) + "/yearly");
-                                }
+                        @{
+                            if (currentPlan.Amount > 0)
+                            {
+                                <h4 class="h6">Total</h4>
+                                <h5 class="font-weight-normal">
+                                    @{
+                                        Output.Write("$" + (currentPlan.Amount / 100 * 12) + "/yearly");
+                                    }
+                                </h5>
+                            } else {
+                                <h5 class="font-weight-normal">
+                                    @{ Output.Write("Free!"); }
+                                </h5>
                             }
-                        </h5>
+                        }
                         @{
                             if (!string.IsNullOrEmpty(currentSub.DefaultSourceId) && customer.Sources.Data.Any())
                             {
                                 var card = await StripeEvent.Card(customer.Id, customer.DefaultSourceId);
-                                <p class="font-size-1 mb-0">Payment method: 
-                                    <span class="text-dark font-weight-medium">@card.Brand ending in @card.Last4</span></p>
+                                <p class="font-size-1 mb-0">
+                                    Payment method:
+                                    <span class="text-dark font-weight-medium">@card.Brand ending in @card.Last4</span>
+                                </p>
                             }
                         }
                         <p class="font-size-1">
@@ -100,9 +106,11 @@
                             Edit Payment Details
                         </a>
                         <a class="btn btn-xs btn-soft-secondary transition-3d-hover" href="#">View Invoices</a>
-                        <a class="btn btn-xs btn-soft-danger transition-3d-hover" 
-                           asp-controller="Manage" asp-action="Unsubscribe" 
-                           asp-route-planType="@planType">Unsubscribe</a>
+                        <a class="btn btn-xs btn-soft-danger transition-3d-hover"
+                           asp-controller="Manage" asp-action="Unsubscribe"
+                           asp-route-planType="@planType">
+                            Unsubscribe
+                        </a>
                         <!-- End Card -->
                     </div>
                 </div>
@@ -169,7 +177,7 @@
                     {
                         var planTxt = textInfo.ToTitleCase(plan.Id);
                         var planType = EnumHelper.GetValueFromDescription<PlanType>(plan.Id);
-                        
+
                         <!-- Pricing -->
                         <div class="js-slide">
                             <div class="card">
@@ -195,7 +203,7 @@
                                             <span class="d-block text-white-50 font-size-1">@pricePerMonth per month</span>
                                         }
                                     </span>
-                                </header>    
+                                </header>
                                 <!-- End Header -->
 
                                 <!-- Content -->
@@ -219,13 +227,13 @@
 
                                     @* If the customer does not have any subscriptions not equivalent to Basic and is 
                                     not cancelled *@
-                                    @if (planType != PlanType.Basic && 
-                                         !customer.Subscriptions.Data.Any(sub => 
+                                    @if (planType != PlanType.Basic &&
+                                         !customer.Subscriptions.Data.Any(sub =>
                                              !sub.Plan.Id.Equals(PlanType.Basic.GetDescription())
-                                        && sub.CanceledAt == null))
+                                             && sub.CanceledAt == null))
                                     {
                                         <a class="btn btn-sm btn-block btn-primary transition-3d-hover"
-                                           asp-controller="Manage" asp-action="Subscribe" 
+                                           asp-controller="Manage" asp-action="Subscribe"
                                            asp-route-planType="@planType">
                                             Subscribe
                                         </a>
@@ -324,7 +332,7 @@
                                     }
 
                                     <button type="button" class="btn btn-sm btn-block btn-primary transition-3d-hover"
-                                            asp-controller="Manage" asp-action="Subscribe" 
+                                            asp-controller="Manage" asp-action="Subscribe"
                                             asp-route-planType="@planType">
                                         Subscribe
                                     </button>
