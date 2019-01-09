@@ -1,6 +1,7 @@
 @using Nozomi.Service.Identity.Events.Interfaces
 @using Stripe
 @using System.Globalization
+@using Microsoft.EntityFrameworkCore.Internal
 @using Newtonsoft.Json
 @using Nozomi.Base.Core.Helpers.Enumerator
 @using Nozomi.Base.Identity.Models.Subscription
@@ -214,11 +215,19 @@
                                         </ul>
                                     }
 
-                                    <button type="button" class="btn btn-sm btn-block btn-primary transition-3d-hover"
-                                            asp-controller="Manage" asp-action="Subscribe" 
-                                            asp-route-planType="@planType">
-                                        Subscribe
-                                    </button>
+                                    @* If the customer does not have any subscriptions not equivalent to Basic and is 
+                                    not cancelled *@
+                                    @if (planType != PlanType.Basic && 
+                                         !customer.Subscriptions.Data.Any(sub => 
+                                             !sub.Plan.Id.Equals(PlanType.Basic.GetDescription())
+                                        && sub.CanceledAt == null))
+                                    {
+                                        <a class="btn btn-sm btn-block btn-primary transition-3d-hover"
+                                           asp-controller="Manage" asp-action="Subscribe" 
+                                           asp-route-planType="@planType">
+                                            Subscribe
+                                        </a>
+                                    }
                                 </div>
                             </div>
                             <!-- End Content -->
