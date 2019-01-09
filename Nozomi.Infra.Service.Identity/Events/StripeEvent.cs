@@ -22,6 +22,44 @@ namespace Nozomi.Service.Identity.Events
             StripeConfiguration.SetApiKey(options.Value.SecretKey);
         }
 
+        public async Task<bool> CancelSubscription(string stripeCustomerId)
+        {
+            var customerService = new CustomerService();
+            var customer = await customerService.GetAsync(stripeCustomerId);
+
+            if (customer == null) return false;
+            
+            var subService = new SubscriptionService();
+            var subListOptions = new SubscriptionListOptions
+            {
+                CustomerId = customer.Id,
+                Status = SubscriptionStatuses.Active
+            };
+            var subs = await subService.ListAsync(subListOptions);
+
+            if (subs?.Data.Count > 0)
+            {
+                foreach (var sub in subs)
+                {
+                    var subCancelOptions = new SubscriptionCancelOptions
+                    {
+                        InvoiceNow = true,
+                        Prorate = true
+                    };
+
+                    var cancelRes = await subService.CancelAsync(sub.Id, subCancelOptions);
+
+                    if (cancelRes?.CanceledAt == null) return false;
+                }
+
+                var basicSubRes = await Subscribe(stripeCustomerId, PlanType.Basic);
+
+                return basicSubRes != null && basicSubRes.CanceledAt == null;
+            }
+
+            return false;
+        }
+
         public async Task<Card> Card(string stripeCustomerId, string stripeCardId)
         {
             var cardService = new CardService();
