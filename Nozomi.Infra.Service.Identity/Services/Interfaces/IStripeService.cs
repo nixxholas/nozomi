@@ -18,6 +18,8 @@ namespace Nozomi.Service.Identity.Services.Interfaces
 
         Task<bool> AddCard(User user, string cardToken);
 
+        Task<bool> RemoveCard(string stripeCustomerId, string cardId);
+
         Task<bool> SetDefaultCard(string stripeCustomerId, string cardId);
         
         Task<string> CreateStripeCustomer(User user);

@@ -13,6 +13,7 @@ using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Identity.Data;
 using Nozomi.Service.Identity.Services.Interfaces;
 using Stripe;
+using CardUpdateOptions = Stripe.Issuing.CardUpdateOptions;
 
 namespace Nozomi.Service.Identity.Services
 {
@@ -130,6 +131,28 @@ namespace Nozomi.Service.Identity.Services
             }
 
             return string.IsNullOrEmpty(card.Id);
+        }
+
+        public async Task<bool> RemoveCard(string stripeCustomerId, string cardId)
+        {
+            if (string.IsNullOrEmpty(stripeCustomerId) || string.IsNullOrEmpty(cardId)) return false;
+
+            var customerService = new CustomerService();
+            var customer = await customerService.GetAsync(stripeCustomerId);
+
+            // Don't remove default cards.
+            if (customer == null || customer.DefaultSourceId.Equals(cardId)) return false;
+            
+            // Remove it since it's redundant
+            var cardService = new CardService();
+            var card = await cardService.GetAsync(stripeCustomerId, cardId);
+
+            // Can't delete a deleted card
+            if (card == null || card.Deleted) return false;
+
+            var res = await cardService.DeleteAsync(stripeCustomerId, cardId);
+
+            return res.Deleted;
         }
 
         public async Task<bool> SetDefaultCard(string stripeCustomerId, string cardId)
