@@ -40,10 +40,8 @@
 <!-- Content Section -->
 <div class="bg-light">
 <div class="container space-2">
-@{
-    if (currentPlan != null)
-    {
-        var planType = @EnumHelper.GetValueFromDescription<PlanType>(currentPlan.Id);
+@{ if (currentPlan != null) {
+        var planType = EnumHelper.GetValueFromDescription<PlanType>(currentPlan.Id);
         
         <div class="mb-9">
             <!-- Title -->
@@ -167,7 +165,7 @@
                     if (plan.Active)
                     {
                         var planTxt = textInfo.ToTitleCase(plan.Id);
-                        var planType = @EnumHelper.GetValueFromDescription<PlanType>(plan.Id);
+                        var planType = EnumHelper.GetValueFromDescription<PlanType>(plan.Id);
                         
                         <!-- Pricing -->
                         <div class="js-slide">
@@ -266,7 +264,7 @@
                     if (plan.Active)
                     {
                         var planTxt = textInfo.ToTitleCase(plan.Id);
-                        var planType = @EnumHelper.GetValueFromDescription<PlanType>(plan.Id);
+                        var planType = EnumHelper.GetValueFromDescription<PlanType>(plan.Id);
                         <!-- Pricing -->
                         <div class="js-slide">
                             <div class="card">
