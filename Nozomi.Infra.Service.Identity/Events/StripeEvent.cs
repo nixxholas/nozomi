@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
@@ -40,15 +41,30 @@ namespace Nozomi.Service.Identity.Events
             var subListOptions = new SubscriptionListOptions
             {
                 CustomerId = stripeCustId,
-                Status = SubscriptionStatuses.Active,
-                PlanId = planType.GetDescription()
+                Status = SubscriptionStatuses.Active
             };
             var currSub = await subService.ListAsync(subListOptions);
 
             if (currSub != null && currSub.Data.Count > 0)
             {
                 // An active subscription exists
-                // TODO: Handle upgrades and downgrades
+                foreach (var sub in currSub.Data)
+                {
+                    // If the subscription is active
+                    if (sub.Start < DateTime.Now && sub.EndedAt == null && sub.CanceledAt == null)
+                    {
+                        // End it and start the new one.
+                        var updateSubOptions = new SubscriptionUpdateOptions
+                        {
+                            CancelAtPeriodEnd = true
+                        };
+
+                        var res = await subService.UpdateAsync(sub.Id, updateSubOptions);
+
+                        if (res == null || !res.CancelAtPeriodEnd) return null;
+                    }
+                }
+                
                 return null;
             }
 
