@@ -320,6 +320,32 @@ namespace Nozomi.Service.Identity.Services
             return false;
         }
 
+        public async Task<bool> CancelSubscription(string stripeCustomerId, PlanType planType)
+        {
+            var customerService = new CustomerService();
+            var customer = await customerService.GetAsync(stripeCustomerId);
+
+            if (customer == null) return false;
+
+            var foundSub = customer.Subscriptions
+                .SingleOrDefault(sub => sub.Plan.Id.Equals(planType.GetDescription()));
+
+            if (foundSub != null && !foundSub.Plan.Id.Equals(PlanType.Basic.GetDescription()))
+            {
+                var subService = new SubscriptionService();
+                var options = new SubscriptionCancelOptions
+                {
+                    InvoiceNow = true,
+                    Prorate = true
+                };
+                var cancelRes = await subService.CancelAsync(foundSub.Id, options);
+
+                return cancelRes?.CanceledAt != null;
+            }
+
+            return false;
+        }
+
         public async Task<bool> UpdateCustomerSubscription(string stripeCustomerId, string planId)
         {
             var subscriptionService = new SubscriptionService();

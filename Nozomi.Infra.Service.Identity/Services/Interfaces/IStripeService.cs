@@ -29,6 +29,8 @@ namespace Nozomi.Service.Identity.Services.Interfaces
         Task<Subscription> Subscribe(string stripeCustId, PlanType planType);
         
         Task<bool> CancelSubscription(string stripeCustomerId);
+        
+        Task<bool> CancelSubscription(string stripeCustomerId, PlanType planType);
 
         Task<bool> UpdateCustomerSubscription(string stripeCustomerId, string planId);
         
