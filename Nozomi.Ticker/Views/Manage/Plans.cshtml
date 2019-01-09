@@ -43,6 +43,8 @@
 @{
     if (currentPlan != null)
     {
+        var planType = @EnumHelper.GetValueFromDescription<PlanType>(currentPlan.Id);
+        
         <div class="mb-9">
             <!-- Title -->
             <div class="mb-3">
@@ -97,7 +99,9 @@
                             Edit Payment Details
                         </a>
                         <a class="btn btn-xs btn-soft-secondary transition-3d-hover" href="#">View Invoices</a>
-                        <a class="btn btn-xs btn-soft-danger transition-3d-hover" href="#">Unsubscribe</a>
+                        <a class="btn btn-xs btn-soft-danger transition-3d-hover" 
+                           asp-controller="Manage" asp-action="Unsubscribe" 
+                           asp-route-planType="@planType">Unsubscribe</a>
                         <!-- End Card -->
                     </div>
                 </div>
@@ -190,7 +194,7 @@
                                             <span class="d-block text-white-50 font-size-1">@pricePerMonth per month</span>
                                         }
                                     </span>
-                                </header>
+                                </header>    
                                 <!-- End Header -->
 
                                 <!-- Content -->
