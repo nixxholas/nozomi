@@ -141,8 +141,19 @@
                                                         </address>
                                                     }
                                                 }
-                                                <button type="button" class="btn btn-xs btn-soft-secondary mr-1">Delete</button>
-                                                <button type="button" class="btn btn-xs btn-primary">Edit</button>
+                                                <button type="button" class="btn btn-xs btn-soft-secondary mr-1"
+                                                        asp-controller="Manage" asp-action="RemoveCard"
+                                                        asp-route-cardId="@card.Id">Delete</button>
+                                                @{
+                                                    if (!card.Id.Equals(Model.Customer.DefaultSourceId))
+                                                    {
+                                                        <button type="button" class="btn btn-xs btn-primary"
+                                                                asp-controller="Manage" asp-action="SetNewDefaultCard"
+                                                                asp-route-cardId="@card.Id">
+                                                            Set as default
+                                                        </button>
+                                                    }
+                                                }
                                             </div>
                                         </div>
                                         <!-- End Card Details -->
