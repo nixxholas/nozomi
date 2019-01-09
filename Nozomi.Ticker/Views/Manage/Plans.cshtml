@@ -2,6 +2,8 @@
 @using Stripe
 @using System.Globalization
 @using Newtonsoft.Json
+@using Nozomi.Base.Core.Helpers.Enumerator
+@using Nozomi.Base.Identity.Models.Subscription
 @using Nozomi.Service.Identity.Managers
 @inject IStripeEvent StripeEvent
 @inject NozomiUserManager userManager
@@ -160,12 +162,15 @@
                 {
                     if (plan.Active)
                     {
+                        var planTxt = textInfo.ToTitleCase(plan.Id);
+                        var planType = @EnumHelper.GetValueFromDescription<PlanType>(plan.Id);
+                        
                         <!-- Pricing -->
                         <div class="js-slide">
                             <div class="card">
                                 <!-- Header -->
                                 <header class="card-header bg-primary text-white text-center p-5">
-                                    <span class="btn btn-xs btn-soft-white mb-3">@textInfo.ToTitleCase(plan.Id)</span>
+                                    <span class="btn btn-xs btn-soft-white mb-3">@planTxt</span>
                                     <span class="d-block">
                                         <span class="display-4 font-weight-normal">
                                             @if (plan.Amount == 0)
@@ -207,8 +212,10 @@
                                         </ul>
                                     }
 
-                                    <button type="button" class="btn btn-sm btn-block btn-primary transition-3d-hover">
-                                        Get Started
+                                    <button type="button" class="btn btn-sm btn-block btn-primary transition-3d-hover"
+                                            asp-controller="Manage" asp-action="Subscribe" 
+                                            asp-route-planType="@planType">
+                                        Subscribe
                                     </button>
                                 </div>
                             </div>
@@ -254,12 +261,14 @@
                 {
                     if (plan.Active)
                     {
+                        var planTxt = textInfo.ToTitleCase(plan.Id);
+                        var planType = @EnumHelper.GetValueFromDescription<PlanType>(plan.Id);
                         <!-- Pricing -->
                         <div class="js-slide">
                             <div class="card">
                                 <!-- Header -->
                                 <header class="card-header bg-primary text-white text-center p-5">
-                                    <span class="btn btn-xs btn-soft-white mb-3">@textInfo.ToTitleCase(plan.Id)</span>
+                                    <span class="btn btn-xs btn-soft-white mb-3">@planTxt</span>
                                     <span class="d-block">
                                         <span class="display-4 font-weight-normal">
                                             @if (plan.Amount == 0)
@@ -301,8 +310,10 @@
                                         </ul>
                                     }
 
-                                    <button type="button" class="btn btn-sm btn-block btn-primary transition-3d-hover">
-                                        Get Started
+                                    <button type="button" class="btn btn-sm btn-block btn-primary transition-3d-hover"
+                                            asp-controller="Manage" asp-action="Subscribe" 
+                                            asp-route-planType="@planType">
+                                        Subscribe
                                     </button>
                                 </div>
                             </div>

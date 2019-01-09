@@ -33,5 +33,29 @@ namespace Nozomi.Base.Core.Helpers.Enumerator
 
             return null; // could also return string.Empty
         }
+        
+        // https://stackoverflow.com/questions/4367723/get-enum-from-description-attribute
+        public static T GetValueFromDescription<T>(string description)
+        {
+            var type = typeof(T);
+            if(!type.IsEnum) throw new InvalidOperationException();
+            foreach(var field in type.GetFields())
+            {
+                var attribute = Attribute.GetCustomAttribute(field,
+                    typeof(DescriptionAttribute)) as DescriptionAttribute;
+                if(attribute != null)
+                {
+                    if(attribute.Description == description)
+                        return (T)field.GetValue(null);
+                }
+                else
+                {
+                    if(field.Name == description)
+                        return (T)field.GetValue(null);
+                }
+            }
+            throw new ArgumentException("Not found.", "description");
+            // or return default(T);
+        }
     }
 }
