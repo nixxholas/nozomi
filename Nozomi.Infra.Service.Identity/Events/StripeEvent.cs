@@ -41,20 +41,23 @@ namespace Nozomi.Service.Identity.Events
             {
                 foreach (var sub in subs)
                 {
-                    var subCancelOptions = new SubscriptionCancelOptions
+                    // Make sure basic is never cancelled.
+                    if (!sub.Plan.Id.Equals(PlanType.Basic.GetDescription())
+                    && sub.CanceledAt != null)
                     {
-                        InvoiceNow = true,
-                        Prorate = true
-                    };
+                        var subCancelOptions = new SubscriptionCancelOptions
+                        {
+                            InvoiceNow = true,
+                            Prorate = true
+                        };
 
-                    var cancelRes = await subService.CancelAsync(sub.Id, subCancelOptions);
+                        var cancelRes = await subService.CancelAsync(sub.Id, subCancelOptions);
 
-                    if (cancelRes?.CanceledAt == null) return false;
+                        if (cancelRes?.CanceledAt == null) return false;
+                    }
                 }
 
-                var basicSubRes = await Subscribe(stripeCustomerId, PlanType.Basic);
-
-                return basicSubRes != null && basicSubRes.CanceledAt == null;
+                return true;
             }
 
             return false;
