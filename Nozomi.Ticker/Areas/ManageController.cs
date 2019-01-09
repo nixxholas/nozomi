@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -506,6 +507,23 @@ namespace Nozomi.Ticker.Areas
             }
 
             return BadRequest("Something unexpected happened with the subscription.");
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Unsubscribe(PlanType planType)
+        {
+            var user = await GetCurrentUserAsync();
+            
+            if (user == null || string.IsNullOrEmpty(user.StripeCustomerId))
+            {
+                return BadRequest("Are you logged in?");
+            }
+
+            var res = await _stripeService.CancelSubscription(user.StripeCustomerId, planType);
+
+            if (res) return Ok();
+
+            return BadRequest();
         }
 
         #region Helpers
