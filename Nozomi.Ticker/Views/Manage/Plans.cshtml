@@ -106,11 +106,16 @@
                             Edit Payment Details
                         </a>
                         <a class="btn btn-xs btn-soft-secondary transition-3d-hover" href="#">View Invoices</a>
-                        <a class="btn btn-xs btn-soft-danger transition-3d-hover"
-                           asp-controller="Manage" asp-action="Unsubscribe"
-                           asp-route-planType="@planType">
-                            Unsubscribe
-                        </a>
+                        @{
+                            if (!currentPlan.Id.Equals(PlanType.Basic.GetDescription()))
+                            {
+                                <a class="btn btn-xs btn-soft-danger transition-3d-hover"
+                                   asp-controller="Manage" asp-action="Unsubscribe"
+                                   asp-route-planType="@planType">
+                                    Unsubscribe
+                                </a>
+                            }
+                        }
                         <!-- End Card -->
                     </div>
                 </div>
