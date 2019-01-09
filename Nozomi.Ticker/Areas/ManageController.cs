@@ -489,6 +489,28 @@ namespace Nozomi.Ticker.Areas
             return RedirectToAction("PaymentMethods"); // TODO: Failure obj
         }
 
+        public async Task<IActionResult> RemoveCard(string cardId)
+        {
+            if (string.IsNullOrEmpty(cardId))
+            {
+                return RedirectToAction("PaymentMethods"); // TODO: Failure obj
+            }
+            
+            var user = await GetCurrentUserAsync();
+
+            if (user == null || string.IsNullOrEmpty(user.StripeCustomerId))
+            {
+                return RedirectToAction("PaymentMethods"); // TODO: Failure obj
+            }
+
+            if (await _stripeService.RemoveCard(user.StripeCustomerId, cardId))
+            {
+                return RedirectToAction("PaymentMethods"); // TODO: Success obj
+            }
+            
+            return RedirectToAction("PaymentMethods"); // TODO: Failure obj
+        }
+
         [HttpGet("planType")]
         public async Task<IActionResult> Subscribe(PlanType planType)
         {
