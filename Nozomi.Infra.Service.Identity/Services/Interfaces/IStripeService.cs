@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using Nozomi.Base.Identity.Models.Identity;
+using Nozomi.Base.Identity.Models.Subscription;
 using Stripe;
 
 namespace Nozomi.Service.Identity.Services.Interfaces
@@ -22,6 +23,10 @@ namespace Nozomi.Service.Identity.Services.Interfaces
         Task<string> CreateStripeCustomer(User user);
 
         Task<bool> CreateSource(User user);
+        
+        Task<Subscription> Subscribe(string stripeCustId, PlanType planType);
+        
+        Task<bool> CancelSubscription(string stripeCustomerId);
 
         Task<bool> UpdateCustomerSubscription(string stripeCustomerId, string planId);
         

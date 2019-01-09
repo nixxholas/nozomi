@@ -206,6 +206,96 @@ namespace Nozomi.Service.Identity.Services
             }
         }
 
+        public async Task<Subscription> Subscribe(string stripeCustId, PlanType planType)
+        {
+            var subService = new SubscriptionService();
+            
+            var subListOptions = new SubscriptionListOptions
+            {
+                CustomerId = stripeCustId,
+                Status = SubscriptionStatuses.Active
+            };
+            var currSub = await subService.ListAsync(subListOptions);
+
+            if (currSub != null && currSub.Data.Count > 0)
+            {
+                // An active subscription exists
+                foreach (var sub in currSub.Data)
+                {
+                    // If the subscription is active
+                    if (sub.Start < DateTime.Now && sub.EndedAt == null && sub.CanceledAt == null
+                        // Make sure its not the basic plan.
+                        && !sub.Plan.Id.Equals(PlanType.Basic.GetDescription()))
+                    {
+                        // End it and start the new one.
+                        var updateSubOptions = new SubscriptionUpdateOptions
+                        {
+                            CancelAtPeriodEnd = true
+                        };
+
+                        var res = await subService.UpdateAsync(sub.Id, updateSubOptions);
+
+                        if (res == null || !res.CancelAtPeriodEnd) return null;
+                    }
+                }
+                
+                return null;
+            }
+
+            var items = new List<SubscriptionItemOption> {
+                new SubscriptionItemOption {
+                    PlanId = planType.GetDescription()
+                }
+            };
+            var options = new SubscriptionCreateOptions {
+                CustomerId = stripeCustId,
+                Items = items
+            };
+
+            return await subService.CreateAsync(options);
+        }
+
+        public async Task<bool> CancelSubscription(string stripeCustomerId)
+        {
+            var customerService = new CustomerService();
+            var customer = await customerService.GetAsync(stripeCustomerId);
+
+            if (customer == null) return false;
+            
+            var subService = new SubscriptionService();
+            var subListOptions = new SubscriptionListOptions
+            {
+                CustomerId = customer.Id,
+                Status = SubscriptionStatuses.Active
+            };
+            var subs = await subService.ListAsync(subListOptions);
+
+            if (subs?.Data.Count > 0)
+            {
+                foreach (var sub in subs)
+                {
+                    // Make sure basic is never cancelled.
+                    if (!sub.Plan.Id.Equals(PlanType.Basic.GetDescription())
+                        && sub.CanceledAt != null)
+                    {
+                        var subCancelOptions = new SubscriptionCancelOptions
+                        {
+                            InvoiceNow = true,
+                            Prorate = true
+                        };
+
+                        var cancelRes = await subService.CancelAsync(sub.Id, subCancelOptions);
+
+                        if (cancelRes?.CanceledAt == null) return false;
+                    }
+                }
+
+                return true;
+            }
+
+            return false;
+        }
+
         public async Task<bool> UpdateCustomerSubscription(string stripeCustomerId, string planId)
         {
             var subscriptionService = new SubscriptionService();
