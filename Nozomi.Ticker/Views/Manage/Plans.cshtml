@@ -22,7 +22,7 @@
     var currentSub = customer.Subscriptions
         // Order by price
         .OrderByDescending(sub => EnumHelper.GetValueFromDescription<PlanType>(sub.Plan.Id))
-        .FirstOrDefault(sub => sub.EndedAt == null && sub.CanceledAt == null && sub.CanceledAt == null
+        .FirstOrDefault(sub => sub.EndedAt == null && (sub.CanceledAt == null || sub.CanceledAt < DateTime.Now)
                                && sub.Plan != null);
 
     var currentPlan = currentSub?.Plan;
