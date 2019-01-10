@@ -18,7 +18,6 @@ namespace Nozomi.Service.Identity.Services
 
         public Task<dynamic> GenerateTokenAsync(long userId)
         {
-            
             throw new NotImplementedException();
         }
 
@@ -29,7 +28,7 @@ namespace Nozomi.Service.Identity.Services
         
         private string GenerateAPIKey(string userId)
         {
-            var key = new byte[32];
+            var key = new byte[64];
             using (var generator = RandomNumberGenerator.Create(userId))
             {
                 generator.GetBytes(key);
@@ -37,5 +36,15 @@ namespace Nozomi.Service.Identity.Services
             return Convert.ToBase64String(key);
         }
 
+        private byte[] GenerateAPIKeyBytes(string userId)
+        {
+            var key = new byte[64];
+            using (var generator = RandomNumberGenerator.Create(userId))
+            {
+                generator.GetBytes(key);
+            }
+
+            return key;
+        }
     }
 }
