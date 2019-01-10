@@ -9,7 +9,7 @@ namespace Nozomi.Ticker.Areas.v1.Ticker
 {
     public interface ITickerController
     {
-        Task<NozomiResult<ICollection<TickerResponse>>> GetAllAsync(int index = 0);
+        Task<NozomiResult<ICollection<DistinctiveTickerResponse>>> GetAllAsync(int index = 0);
 
         NozomiResult<ICollection<DistinctiveTickerResponse>> Get(string symbol, bool includeNested = false);
     }
