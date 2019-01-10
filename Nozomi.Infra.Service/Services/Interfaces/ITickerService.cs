@@ -10,7 +10,7 @@ namespace Nozomi.Service.Services.Interfaces
     /// </summary>
     public interface ITickerService
     {
-        Task<NozomiResult<ICollection<TickerResponse>>> Get(int index);
+        Task<NozomiResult<ICollection<DistinctiveTickerResponse>>> Get(int index);
         
         Task<NozomiResult<TickerResponse>> GetById(long id);
 

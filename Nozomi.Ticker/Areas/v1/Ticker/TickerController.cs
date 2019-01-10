@@ -18,7 +18,7 @@ namespace Nozomi.Ticker.Areas.v1.Ticker
             _tickerService = tickerService;
         }
 
-        [HttpGet("all/{index}")]
+        [HttpGet("{index}")]
         public async Task<NozomiResult<ICollection<TickerResponse>>> GetAllAsync(int index = 0)
         {
             return await _tickerService.Get(index);
