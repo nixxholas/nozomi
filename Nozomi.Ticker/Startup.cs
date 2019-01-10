@@ -113,8 +113,8 @@ namespace Nozomi.Ticker
                 // Stripe
                 services.Configure<StripeSettings>(ss =>
                 {
-                    ss.SecretKey = Configuration.GetConnectionString("Stripe:TestPriv");
-                    ss.PublishableKey = Configuration.GetConnectionString("Stripe:TestPub");
+                    ss.SecretKey = Configuration.GetConnectionString("StripePrivate");
+                    ss.PublishableKey = Configuration.GetConnectionString("StripePublic");
                 });
             }
             
