@@ -24,9 +24,9 @@ namespace Nozomi.Service.Services
         {
         }
 
-        public Task<NozomiResult<ICollection<DistinctiveTickerResponse>>> Get(int index)
+        public Task<NozomiResult<ICollection<UniqueTickerResponse>>> Get(int index)
         {
-            return Task.FromResult(new NozomiResult<ICollection<DistinctiveTickerResponse>>
+            return Task.FromResult(new NozomiResult<ICollection<UniqueTickerResponse>>
             {
                 Data = _unitOfWork.GetRepository<CurrencyPair>()
                     .GetQueryable()
@@ -35,12 +35,16 @@ namespace Nozomi.Service.Services
                     .Take(20)
                     .OrderBy(cp => cp.Id)
                     .Where(cp => cp.DeletedAt == null && cp.IsEnabled)
+                    .Include(cp => cp.PartialCurrencyPairs)
+                        .ThenInclude(pcp => pcp.Currency)
                     .Include(cp => cp.CurrencySource)
                     .Include(cp => cp.CurrencyPairRequests)
                     .ThenInclude(cpr => cpr.RequestComponents)
                     .ThenInclude(rc => rc.RequestComponentDatum)
-                    .Select(cp => new DistinctiveTickerResponse
+                    .Select(cp => new UniqueTickerResponse
                     {
+                        TickerAbbreviation = cp.PartialCurrencyPairs.SingleOrDefault(pcp => pcp.IsMain).ToString()
+                        + cp.PartialCurrencyPairs.SingleOrDefault(pcp => !pcp.IsMain).ToString(),
                         Exchange = cp.CurrencySource.Name,
                         ExchangeAbbrv = cp.CurrencySource.Abbreviation,
                         LastUpdated = cp.CurrencyPairRequests.FirstOrDefault(cpr => cpr.DeletedAt == null && cpr.IsEnabled)
