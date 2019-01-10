@@ -18,6 +18,7 @@ namespace Nozomi.Repo.Identity.Data
     public class NozomiAuthContext : 
         IdentityDbContext<User, Role, long, UserClaim, UserRole, UserLogin, RoleClaim, UserToken>, IDbContext
     {
+        public DbSet<ApiToken> ApiTokens { get; set; }
         public DbSet<DevKey> DevKeys { get; set; }
         public DbSet<UserSubscription> UserSubscriptions { get; set; }
         
@@ -36,6 +37,7 @@ namespace Nozomi.Repo.Identity.Data
             var userRoleMap = new UserRoleMap(builder.Entity<UserRole>());
             var userTokenMap = new UserTokenMap(builder.Entity<UserToken>());
 
+            var apiTokenMap = new ApiTokenMap(builder.Entity<ApiToken>());
             var devKeyMap = new DevKeyMap(builder.Entity<DevKey>());
             var userSubscriptionMap = new UserSubscriptionMap(builder.Entity<UserSubscription>());
         }
