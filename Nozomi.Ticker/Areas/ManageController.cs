@@ -548,6 +548,11 @@ namespace Nozomi.Ticker.Areas
             return BadRequest();
         }
 
+        public async Task<IActionResult> ApiTokens()
+        {
+            return View();
+        }
+
         #region Helpers
 
         private void AddErrors(IdentityResult result)
