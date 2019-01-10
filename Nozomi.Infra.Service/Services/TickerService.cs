@@ -24,6 +24,37 @@ namespace Nozomi.Service.Services
         {
         }
 
+        public Task<NozomiResult<ICollection<TickerResponse>>> Get(int index)
+        {
+            return Task.FromResult(new NozomiResult<ICollection<TickerResponse>>
+            {
+                Data = _unitOfWork.GetRepository<CurrencyPair>()
+                    .GetQueryable()
+                    .AsNoTracking()
+                    .Skip(index * 20)
+                    .Take(20)
+                    .OrderBy(cp => cp.Id)
+                    .Where(cp => cp.DeletedAt == null && cp.IsEnabled)
+                    .Include(cp => cp.CurrencyPairRequests)
+                    .ThenInclude(cpr => cpr.RequestComponents)
+                    .ThenInclude(rc => rc.RequestComponentDatum)
+                    .Select(cp => new TickerResponse()
+                    {
+                        LastUpdated = cp.CurrencyPairRequests.FirstOrDefault(cpr => cpr.DeletedAt == null && cpr.IsEnabled)
+                            .RequestComponents.FirstOrDefault(rc => rc.DeletedAt == null && rc.IsEnabled)
+                            .RequestComponentDatum
+                            .CreatedAt,
+                        Properties = cp.CurrencyPairRequests.FirstOrDefault()
+                            .RequestComponents
+                            .Select(rc => new KeyValuePair<string, string>(
+                                rc.ComponentType.ToString(), 
+                                rc.RequestComponentDatum.Value))
+                            .ToList() 
+                    })
+                    .ToList()
+            });
+        }
+
         public Task<NozomiResult<TickerResponse>> GetById(long id)
         {
             return Task.FromResult(new NozomiResult<TickerResponse>()
