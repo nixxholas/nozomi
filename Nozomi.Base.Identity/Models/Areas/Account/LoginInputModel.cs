@@ -4,8 +4,6 @@ namespace Nozomi.Base.Identity.Models.Areas.Account
 {
     public class LoginInputModel
     {
-        [Required]
-        public string Username { get; set; }
         [EmailAddress]
         [Required]
         public string Email { get; set; }

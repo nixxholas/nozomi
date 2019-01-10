@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Net.Mail;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
@@ -88,7 +89,44 @@ namespace Nozomi.Service.Identity.Managers
             return principal?.Identities != null &&
                    principal.Identities.Any(i => i.AuthenticationType == IdentityConstants.ApplicationScheme);
         }
+        
+        /// <summary>
+        /// Attempts to sign in the specified <paramref name="userName"/> and <paramref name="password"/> combination
+        /// as an asynchronous operation.
+        /// </summary>
+        /// <param name="userName">The user name to sign in.</param>
+        /// <param name="password">The password to attempt to sign in with.</param>
+        /// <param name="isPersistent">Flag indicating whether the sign-in cookie should persist after the browser is closed.</param>
+        /// <param name="lockoutOnFailure">Flag indicating if the user account should be locked if the sign in fails.</param>
+        /// <returns>The task object representing the asynchronous operation containing the <see name="SignInResult"/>
+        /// for the sign-in attempt.</returns>
+        public override async Task<SignInResult> PasswordSignInAsync(string emailOrUsername, string password,
+            bool isPersistent, bool lockoutOnFailure)
+        {
+            if (IsValidEmail(emailOrUsername))
+            {
+                var user = await UserManager.FindByEmailAsync(emailOrUsername);
+            
+                if (user == null)
+                {
+                    return SignInResult.Failed;
+                }
 
+                return await PasswordSignInAsync(user, password, isPersistent, lockoutOnFailure);
+            }
+            else
+            {
+                var user = await UserManager.FindByNameAsync(emailOrUsername);
+            
+                if (user == null)
+                {
+                    return SignInResult.Failed;
+                }
+
+                return await PasswordSignInAsync(user, password, isPersistent, lockoutOnFailure);
+            }
+        }
+        
         /// <summary>
         /// Regenerates the user's application cookie, whilst preserving the existing
         /// AuthenticationProperties like rememberMe, as an asynchronous operation.
@@ -152,6 +190,20 @@ namespace Nozomi.Service.Identity.Managers
             await Context.SignOutAsync(IdentityConstants.ApplicationScheme);
             await Context.SignOutAsync(IdentityConstants.ExternalScheme);
             await Context.SignOutAsync(IdentityConstants.TwoFactorUserIdScheme);
+        }
+        
+        private bool IsValidEmail(string emailaddress)
+        {
+            try
+            {
+                var m = new MailAddress(emailaddress);
+
+                return true;
+            }
+            catch (FormatException)
+            {
+                return false;
+            }
         }
     }
 }
