@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data;
@@ -15,6 +16,12 @@ namespace Nozomi.Ticker.Areas.v1.Ticker
             ITickerService tickerService) : base(logger)
         {
             _tickerService = tickerService;
+        }
+
+        [HttpGet("all/{index}")]
+        public async Task<NozomiResult<ICollection<TickerResponse>>> GetAllAsync(int index = 0)
+        {
+            return await _tickerService.Get(index);
         }
 
         [HttpGet]
