@@ -15,8 +15,8 @@ namespace Nozomi.Repo.Identity.Data.Mappings.Identity
 
             entityTypeBuilder.Property(at => at.Label).IsRequired(false);
             entityTypeBuilder.Property(at => at.LastAccessed).HasDefaultValue(DateTime.Now);
-            entityTypeBuilder.Property(at => at.ApiKey).IsRequired();
-            entityTypeBuilder.Property(at => at.PublicKey).IsRequired();
+            entityTypeBuilder.Property(at => at.Secret).IsRequired();
+            entityTypeBuilder.Property(at => at.Key).IsRequired();
 
             entityTypeBuilder.HasOne(at => at.User).WithMany(u => u.ApiTokens)
                 .HasForeignKey(at => at.UserId).OnDelete(DeleteBehavior.Restrict);

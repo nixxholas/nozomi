@@ -18,6 +18,9 @@ namespace Nozomi.Service.Identity.Services
 
         public Task<dynamic> GenerateTokenAsync(long userId)
         {
+            var 
+            var hmac = new HMACSHA512(userId);
+            
             throw new NotImplementedException();
         }
 
