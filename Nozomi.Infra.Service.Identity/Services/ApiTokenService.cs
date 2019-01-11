@@ -2,6 +2,7 @@ using System;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using Nozomi.Base.Identity.Models.Identity;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Identity.Data;
@@ -16,12 +17,27 @@ namespace Nozomi.Service.Identity.Services
         {
         }
 
-        public Task<dynamic> GenerateTokenAsync(long userId)
+        public Task<ApiToken> GenerateTokenAsync(long userId, string label = null)
         {
-            var 
-            var hmac = new HMACSHA512(userId);
+            var key = GenerateAPIKeyBytes(userId.ToString());
             
-            throw new NotImplementedException();
+            var hmac = new HMACSHA512(key);
+            var hmacSecret = hmac.ComputeHash(GenerateAPIKeyBytes(userId.ToString()));
+            
+            var apiToken = new ApiToken
+            {
+                UserId = userId,
+                Label = label,
+                Key = Convert.ToBase64String(key),
+                Secret = Convert.ToBase64String(hmacSecret),
+                LastAccessed = DateTime.UtcNow
+            };
+            
+            _unitOfWork.GetRepository<ApiToken>()
+                .Add(apiToken);
+            _unitOfWork.Commit();
+
+            return Task.FromResult(apiToken);
         }
 
         public Task<bool> RevokeTokenAsync(Guid tokenGuid)
