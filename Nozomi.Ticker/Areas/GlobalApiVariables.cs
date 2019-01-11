@@ -4,7 +4,7 @@ namespace Nozomi.Ticker.Areas
     {
         // Versioning for v1.x
         public static long V1_MAJOR_VERSION_REVISION = 2;
-        public static string V1_MAJOR_VERSION = "v1.1";
+        public static string V1_MAJOR_VERSION = "v1.2";
 
         // This is the latest revision of the APIs.
         public static long CURRENT_API_REVISION = V1_MAJOR_VERSION_REVISION;
