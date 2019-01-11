@@ -60,7 +60,14 @@ namespace Nozomi.Service.Identity.Services
 
             return Task.FromResult(apiToken);
         }
-        
+
+        public Task<bool> IsTokenBanned(Guid tokenGuid)
+        {
+            return Task.FromResult(_unitOfWork.GetRepository<ApiToken>()
+                .GetQueryable()
+                .Any(at => at.Guid.Equals(tokenGuid) && (!at.IsEnabled || at.DeletedAt != null)));
+        }
+
         public Task<bool> RevokeTokenAsync(Guid tokenGuid, long userId = 0)
         {
             var apiToken = _unitOfWork.GetRepository<ApiToken>()

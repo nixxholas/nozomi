@@ -10,6 +10,8 @@ namespace Nozomi.Service.Identity.Services.Interfaces
         
         Task<ApiToken> GenerateTokenAsync(long userId, string label = null);
 
+        Task<bool> IsTokenBanned(Guid tokenGuid);
+
         Task<bool> RevokeTokenAsync(Guid tokenGuid, long userId = 0);
     }
 }
