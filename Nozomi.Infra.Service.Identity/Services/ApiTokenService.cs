@@ -18,6 +18,26 @@ namespace Nozomi.Service.Identity.Services
         {
         }
 
+        public Task<bool> BanToken(Guid tokenGuid, long userId = 0)
+        {
+            var apiToken = _unitOfWork.GetRepository<ApiToken>()
+                .Get(at => at.Guid.Equals(tokenGuid) && at.IsEnabled && at.DeletedAt == null)
+                .SingleOrDefault();
+
+            if (apiToken != null)
+            {
+                // BANN
+                apiToken.IsEnabled = false;
+                
+                _unitOfWork.GetRepository<ApiToken>().Update(apiToken);
+                _unitOfWork.Commit(userId);
+                
+                return Task.FromResult(true);
+            }
+
+            return Task.FromResult(false);
+        }
+
         public Task<ApiToken> GenerateTokenAsync(long userId, string label = null)
         {
             var key = GenerateAPIKeyBytes(userId.ToString());
@@ -40,8 +60,8 @@ namespace Nozomi.Service.Identity.Services
 
             return Task.FromResult(apiToken);
         }
+        
         public Task<bool> RevokeTokenAsync(Guid tokenGuid, long userId = 0)
-
         {
             var apiToken = _unitOfWork.GetRepository<ApiToken>()
                 .Get(at => at.Guid.Equals(tokenGuid) && at.DeletedAt == null)
@@ -50,7 +70,7 @@ namespace Nozomi.Service.Identity.Services
             if (apiToken != null)
             {
                 apiToken.DeletedAt = DateTime.UtcNow;
-                if (userId > 0) apiToken.DeletedBy = userId;
+                apiToken.DeletedBy = userId;
                 
                 _unitOfWork.GetRepository<ApiToken>().Update(apiToken);
                 _unitOfWork.Commit(userId);

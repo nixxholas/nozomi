@@ -6,6 +6,8 @@ namespace Nozomi.Service.Identity.Services.Interfaces
 {
     public interface IApiTokenService
     {
+        Task<bool> BanToken(Guid tokenGuid, long userId);
+        
         Task<ApiToken> GenerateTokenAsync(long userId, string label = null);
 
         Task<bool> RevokeTokenAsync(Guid tokenGuid, long userId = 0);
