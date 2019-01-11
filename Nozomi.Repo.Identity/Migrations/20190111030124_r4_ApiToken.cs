@@ -19,7 +19,7 @@ namespace Nozomi.Repo.Identity.Migrations
                 name: "ModifiedAt",
                 table: "DevKeys",
                 nullable: false,
-                defaultValue: new DateTime(2019, 1, 10, 6, 44, 50, 982, DateTimeKind.Utc).AddTicks(1410),
+                defaultValue: new DateTime(2019, 1, 11, 3, 1, 24, 586, DateTimeKind.Utc).AddTicks(2560),
                 oldClrType: typeof(DateTime),
                 oldDefaultValue: new DateTime(2019, 1, 5, 21, 55, 56, 681, DateTimeKind.Utc).AddTicks(7850));
 
@@ -27,7 +27,7 @@ namespace Nozomi.Repo.Identity.Migrations
                 name: "CreatedAt",
                 table: "DevKeys",
                 nullable: false,
-                defaultValue: new DateTime(2019, 1, 10, 6, 44, 50, 982, DateTimeKind.Utc).AddTicks(810),
+                defaultValue: new DateTime(2019, 1, 11, 3, 1, 24, 586, DateTimeKind.Utc).AddTicks(1980),
                 oldClrType: typeof(DateTime),
                 oldDefaultValue: new DateTime(2019, 1, 5, 21, 55, 56, 681, DateTimeKind.Utc).AddTicks(4500));
 
@@ -35,7 +35,7 @@ namespace Nozomi.Repo.Identity.Migrations
                 name: "ApiTokens",
                 columns: table => new
                 {
-                    Guid = table.Column<Guid>(nullable: false, defaultValue: new Guid("7bd9669c-eaf0-40dc-bb9c-74929b170dc0")),
+                    Guid = table.Column<Guid>(nullable: false, defaultValue: new Guid("347e2220-70eb-4201-9da4-f7f071d20547")),
                     IsEnabled = table.Column<bool>(nullable: false),
                     CreatedAt = table.Column<DateTime>(nullable: false),
                     ModifiedAt = table.Column<DateTime>(nullable: false),
@@ -44,9 +44,9 @@ namespace Nozomi.Repo.Identity.Migrations
                     ModifiedBy = table.Column<long>(nullable: false),
                     DeletedBy = table.Column<long>(nullable: false),
                     Label = table.Column<string>(nullable: true),
-                    LastAccessed = table.Column<DateTime>(nullable: false, defaultValue: new DateTime(2019, 1, 10, 14, 44, 50, 975, DateTimeKind.Local).AddTicks(2140)),
-                    PublicKey = table.Column<string>(nullable: false),
-                    ApiKey = table.Column<string>(nullable: false),
+                    LastAccessed = table.Column<DateTime>(nullable: false, defaultValue: new DateTime(2019, 1, 11, 11, 1, 24, 580, DateTimeKind.Local).AddTicks(2710)),
+                    Secret = table.Column<string>(nullable: false),
+                    Key = table.Column<string>(nullable: false),
                     UserId = table.Column<long>(nullable: false)
                 },
                 constraints: table =>
@@ -85,7 +85,7 @@ namespace Nozomi.Repo.Identity.Migrations
                 nullable: false,
                 defaultValue: new DateTime(2019, 1, 5, 21, 55, 56, 681, DateTimeKind.Utc).AddTicks(7850),
                 oldClrType: typeof(DateTime),
-                oldDefaultValue: new DateTime(2019, 1, 10, 6, 44, 50, 982, DateTimeKind.Utc).AddTicks(1410));
+                oldDefaultValue: new DateTime(2019, 1, 11, 3, 1, 24, 586, DateTimeKind.Utc).AddTicks(2560));
 
             migrationBuilder.AlterColumn<DateTime>(
                 name: "CreatedAt",
@@ -93,7 +93,7 @@ namespace Nozomi.Repo.Identity.Migrations
                 nullable: false,
                 defaultValue: new DateTime(2019, 1, 5, 21, 55, 56, 681, DateTimeKind.Utc).AddTicks(4500),
                 oldClrType: typeof(DateTime),
-                oldDefaultValue: new DateTime(2019, 1, 10, 6, 44, 50, 982, DateTimeKind.Utc).AddTicks(810));
+                oldDefaultValue: new DateTime(2019, 1, 11, 3, 1, 24, 586, DateTimeKind.Utc).AddTicks(1980));
         }
     }
 }

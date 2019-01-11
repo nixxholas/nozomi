@@ -10,7 +10,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Nozomi.Repo.Identity.Migrations
 {
     [DbContext(typeof(NozomiAuthContext))]
-    [Migration("20190110064451_r4_ApiToken")]
+    [Migration("20190111030124_r4_ApiToken")]
     partial class r4_ApiToken
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,10 +25,7 @@ namespace Nozomi.Repo.Identity.Migrations
                 {
                     b.Property<Guid>("Guid")
                         .ValueGeneratedOnAdd()
-                        .HasDefaultValue(new Guid("7bd9669c-eaf0-40dc-bb9c-74929b170dc0"));
-
-                    b.Property<string>("ApiKey")
-                        .IsRequired();
+                        .HasDefaultValue(new Guid("347e2220-70eb-4201-9da4-f7f071d20547"));
 
                     b.Property<DateTime>("CreatedAt");
 
@@ -40,17 +37,20 @@ namespace Nozomi.Repo.Identity.Migrations
 
                     b.Property<bool>("IsEnabled");
 
+                    b.Property<string>("Key")
+                        .IsRequired();
+
                     b.Property<string>("Label");
 
                     b.Property<DateTime>("LastAccessed")
                         .ValueGeneratedOnAdd()
-                        .HasDefaultValue(new DateTime(2019, 1, 10, 14, 44, 50, 975, DateTimeKind.Local).AddTicks(2140));
+                        .HasDefaultValue(new DateTime(2019, 1, 11, 11, 1, 24, 580, DateTimeKind.Local).AddTicks(2710));
 
                     b.Property<DateTime>("ModifiedAt");
 
                     b.Property<long>("ModifiedBy");
 
-                    b.Property<string>("PublicKey")
+                    b.Property<string>("Secret")
                         .IsRequired();
 
                     b.Property<long>("UserId");
@@ -243,7 +243,7 @@ namespace Nozomi.Repo.Identity.Migrations
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
-                        .HasDefaultValue(new DateTime(2019, 1, 10, 6, 44, 50, 982, DateTimeKind.Utc).AddTicks(810));
+                        .HasDefaultValue(new DateTime(2019, 1, 11, 3, 1, 24, 586, DateTimeKind.Utc).AddTicks(1980));
 
                     b.Property<long>("CreatedBy");
 
@@ -259,7 +259,7 @@ namespace Nozomi.Repo.Identity.Migrations
 
                     b.Property<DateTime>("ModifiedAt")
                         .ValueGeneratedOnAdd()
-                        .HasDefaultValue(new DateTime(2019, 1, 10, 6, 44, 50, 982, DateTimeKind.Utc).AddTicks(1410));
+                        .HasDefaultValue(new DateTime(2019, 1, 11, 3, 1, 24, 586, DateTimeKind.Utc).AddTicks(2560));
 
                     b.Property<long>("ModifiedBy");
 
