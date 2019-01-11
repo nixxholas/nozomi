@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
@@ -39,10 +40,25 @@ namespace Nozomi.Service.Identity.Services
 
             return Task.FromResult(apiToken);
         }
+        public Task<bool> RevokeTokenAsync(Guid tokenGuid, long userId = 0)
 
-        public Task<bool> RevokeTokenAsync(Guid tokenGuid)
         {
-            throw new NotImplementedException();
+            var apiToken = _unitOfWork.GetRepository<ApiToken>()
+                .Get(at => at.Guid.Equals(tokenGuid) && at.DeletedAt == null)
+                .SingleOrDefault();
+
+            if (apiToken != null)
+            {
+                apiToken.DeletedAt = DateTime.UtcNow;
+                if (userId > 0) apiToken.DeletedBy = userId;
+                
+                _unitOfWork.GetRepository<ApiToken>().Update(apiToken);
+                _unitOfWork.Commit(userId);
+
+                return Task.FromResult(true);
+            }
+
+            return Task.FromResult(false);
         }
         
         private string GenerateAPIKey(string userId)
