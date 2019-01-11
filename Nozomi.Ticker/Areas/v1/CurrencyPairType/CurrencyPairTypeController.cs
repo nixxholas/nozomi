@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Nozomi.Base.Core.Helpers.JSON;
 using Nozomi.Data;
+using Nozomi.Service.Identity.Managers;
 using Nozomi.Service.Services.Enumerators.Interfaces;
 using Nozomi.Service.Services.Interfaces;
 
@@ -15,8 +16,8 @@ namespace Nozomi.Ticker.Areas.v1.CurrencyPairType
     {
         private ICurrencyPairTypeService _currencyPairTypeService;
         
-        public CurrencyPairTypeController(ILogger<CurrencyPairTypeController> logger,
-            ICurrencyPairTypeService currencyPairTypeService) : base(logger)
+        public CurrencyPairTypeController(ILogger<CurrencyPairTypeController> logger, NozomiUserManager userManager,
+            ICurrencyPairTypeService currencyPairTypeService) : base(logger, userManager)
         {
             _currencyPairTypeService = currencyPairTypeService;
         }

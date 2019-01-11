@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using Nozomi.Data;
 using Nozomi.Data.AreaModels.v1.CurrencyPairComponent;
 using Nozomi.Data.WebModels;
+using Nozomi.Service.Identity.Managers;
 using Nozomi.Service.Services.Interfaces;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -15,9 +16,9 @@ namespace Nozomi.Ticker.Areas.v1.CurrencyPairComponent
     {
         private readonly ICurrencyPairComponentService _currencyPairComponentService;
         
-        public CurrencyPairComponentController(ILogger<CurrencyPairComponentController> logger,
+        public CurrencyPairComponentController(ILogger<CurrencyPairComponentController> logger, NozomiUserManager userManager,
             ICurrencyPairComponentService currencyPairComponentService) 
-            : base(logger)
+            : base(logger, userManager)
         {
             _currencyPairComponentService = currencyPairComponentService;
         }

@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data;
 using Nozomi.Data.ResponseModels;
+using Nozomi.Service.Identity.Managers;
 using Nozomi.Service.Services.Interfaces;
 
 namespace Nozomi.Ticker.Areas.v1.Ticker
@@ -12,8 +13,8 @@ namespace Nozomi.Ticker.Areas.v1.Ticker
     {
         private readonly ITickerService _tickerService;
         
-        public TickerController(ILogger<TickerController> logger,
-            ITickerService tickerService) : base(logger)
+        public TickerController(ILogger<TickerController> logger, NozomiUserManager userManager,
+            ITickerService tickerService) : base(logger, userManager)
         {
             _tickerService = tickerService;
         }

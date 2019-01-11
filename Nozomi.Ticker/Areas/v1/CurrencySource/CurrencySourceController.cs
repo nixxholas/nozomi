@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 using Nozomi.Data;
 using Nozomi.Data.AreaModels.v1.CurrencySource;
 using Nozomi.Data.CurrencyModels;
+using Nozomi.Service.Identity.Managers;
 using Nozomi.Service.Services.Interfaces;
 
 namespace Nozomi.Ticker.Areas.v1.CurrencySource
@@ -15,8 +16,8 @@ namespace Nozomi.Ticker.Areas.v1.CurrencySource
     {
         private readonly ISourceService _sourceService;
         
-        public CurrencySourceController(ILogger<CurrencySourceController> logger,
-            ISourceService sourceService) : base(logger)
+        public CurrencySourceController(ILogger<CurrencySourceController> logger, NozomiUserManager userManager,
+            ISourceService sourceService) : base(logger, userManager)
         {
             _sourceService = sourceService;
         }

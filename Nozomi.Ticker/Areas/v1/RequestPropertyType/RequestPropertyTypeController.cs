@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data;
+using Nozomi.Service.Identity.Managers;
 using Nozomi.Service.Services.Enumerators.Interfaces;
 
 namespace Nozomi.Ticker.Areas.v1.RequestPropertyType
@@ -9,8 +10,8 @@ namespace Nozomi.Ticker.Areas.v1.RequestPropertyType
     {
         private readonly IRequestPropertyTypeService _requestPropertyTypeService;
         
-        public RequestPropertyTypeController(ILogger<RequestPropertyTypeController> logger,
-            IRequestPropertyTypeService requestPropertyTypeService) : base(logger)
+        public RequestPropertyTypeController(ILogger<RequestPropertyTypeController> logger, NozomiUserManager userManager,
+            IRequestPropertyTypeService requestPropertyTypeService) : base(logger, userManager)
         {
             _requestPropertyTypeService = requestPropertyTypeService;
         }
