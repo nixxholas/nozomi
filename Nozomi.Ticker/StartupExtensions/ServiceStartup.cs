@@ -23,6 +23,7 @@ namespace Nozomi.Ticker.StartupExtensions
         public static void ConfigureServiceLayer(this IServiceCollection services)
         {
             // Service Injections
+            services.AddTransient<IApiTokenService, ApiTokenService>();
             services.AddTransient<ICurrencyService, CurrencyService>();
             services.AddTransient<ICurrencyPairService, CurrencyPairService>();
             services.AddTransient<ICurrencyPairComponentService, CurrencyPairComponentService>();
