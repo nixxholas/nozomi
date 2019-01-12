@@ -7,5 +7,7 @@ namespace Nozomi.Service.Identity.Events.Auth.Interfaces
     public interface IApiTokenEvent
     {
         Task<ICollection<ApiToken>> ApiTokensByUserId(long userId, bool onlyFunctional = false);
+
+        bool IsValid(string key);
     }
 }

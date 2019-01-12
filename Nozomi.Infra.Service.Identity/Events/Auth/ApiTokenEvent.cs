@@ -35,5 +35,10 @@ namespace Nozomi.Service.Identity.Events.Auth
             return _unitOfWork.GetRepository<ApiToken>()
                 .Get(at => at.UserId.Equals(userId)).ToList();
         }
+
+        public bool IsValid(string key)
+        {
+            return _cache.Get(key).Any();
+        }
     }
 }
