@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data;
 using Nozomi.Data.AreaModels.v1.ApiToken;
@@ -21,6 +22,7 @@ namespace Nozomi.Ticker.Areas.v1.ApiToken
             _apiTokenService = apiTokenService;
         }
 
+        [HttpGet]
         public async Task<NozomiResult<ICollection<ApiTokenResult>>> ApiTokens()
         {
             var user = await GetCurrentUserAsync();
@@ -31,6 +33,7 @@ namespace Nozomi.Ticker.Areas.v1.ApiToken
             return new NozomiResult<ICollection<ApiTokenResult>>();
         }
         
+        [HttpGet]
         public async Task<NozomiResult<ApiTokenResult>> CreateToken()
         {
             var user = await GetCurrentUserAsync();
@@ -41,6 +44,7 @@ namespace Nozomi.Ticker.Areas.v1.ApiToken
             return new NozomiResult<ApiTokenResult>();
         }
 
+        [HttpDelete]
         public Task<NozomiResult<ApiTokenRevocationResult>> RevokeToken()
         {
             throw new System.NotImplementedException();
