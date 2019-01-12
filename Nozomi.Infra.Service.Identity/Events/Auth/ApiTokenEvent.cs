@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Logging;
 using Nozomi.Base.Identity.Models.Identity;
 using Nozomi.Preprocessing.Abstracts;
@@ -14,20 +15,21 @@ namespace Nozomi.Service.Identity.Events.Auth
 {
     public class ApiTokenEvent : BaseEvent<ApiTokenEvent, NozomiAuthContext>, IApiTokenEvent
     {
-        private ICollection<ApiToken> _activeTokens;
+        private IDistributedCache _cache;
         
-        public ApiTokenEvent(ILogger<ApiTokenEvent> logger, IUnitOfWork<NozomiAuthContext> unitOfWork) 
+        public ApiTokenEvent(ILogger<ApiTokenEvent> logger, IUnitOfWork<NozomiAuthContext> unitOfWork,
+            IDistributedCache cache) 
             : base(logger, unitOfWork)
         {
-            _activeTokens = _unitOfWork.GetRepository<ApiToken>()
-                .Get(at => at.IsEnabled && at.DeletedAt == null).ToList();
+            _cache = cache;
         }
 
         public async Task<ICollection<ApiToken>> ApiTokensByUserId(long userId, bool onlyFunctional = false)
         {
             if (onlyFunctional)
             {
-                return _activeTokens;
+                return _unitOfWork.GetRepository<ApiToken>()
+                    .Get(at => at.UserId.Equals(userId) && at.IsEnabled && at.DeletedAt == null).ToList();
             }
             
             return _unitOfWork.GetRepository<ApiToken>()
