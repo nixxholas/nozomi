@@ -87,16 +87,6 @@ namespace Nozomi.Service.Identity.Services
 
             return Task.FromResult(false);
         }
-        
-        private string GenerateAPIKey(string userId)
-        {
-            var key = new byte[64];
-            using (var generator = RandomNumberGenerator.Create(userId))
-            {
-                generator.GetBytes(key);
-            }
-            return Convert.ToBase64String(key);
-        }
 
         private byte[] GenerateAPIKeyBytes(string userId)
         {
