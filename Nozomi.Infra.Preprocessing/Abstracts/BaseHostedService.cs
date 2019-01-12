@@ -5,7 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-namespace Nozomi.Service.HostedServices
+namespace Nozomi.Preprocessing.Abstracts
 {
     // Copyright (c) .NET Foundation. Licensed under the Apache License, Version 2.0.
     /// <summary>

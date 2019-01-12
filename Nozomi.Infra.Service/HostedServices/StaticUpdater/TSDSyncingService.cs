@@ -9,6 +9,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data.CurrencyModels;
 using Nozomi.Data.ResponseModels;
+using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.Data;
 
 namespace Nozomi.Service.HostedServices.StaticUpdater
