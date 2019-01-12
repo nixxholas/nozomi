@@ -16,7 +16,7 @@ namespace Nozomi.Ticker.StartupExtensions
             services.AddTransient<ISmsSender, SmsSender>();
             services.AddTransient<IStripeEvent, StripeEvent>();
 
-            services.AddSingleton<IApiTokenEvent, ApiTokenEvent>();
+            services.AddScoped<IApiTokenEvent, ApiTokenEvent>();
         }
     }
 }
