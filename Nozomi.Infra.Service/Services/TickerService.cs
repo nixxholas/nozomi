@@ -62,33 +62,36 @@ namespace Nozomi.Service.Services
             });
         }
 
-        public Task<NozomiResult<TickerResponse>> GetById(long id)
+        public Task<NozomiResult<DistinctiveTickerResponse>> GetById(long id)
         {
-            return Task.FromResult(new NozomiResult<TickerResponse>()
-            {
-                Data = _unitOfWork.GetRepository<CurrencyPair>()
-                    .GetQueryable()
-                    .AsNoTracking()
-                    .Where(cp => cp.Id.Equals(id))
-                    .Include(cp => cp.CurrencyPairRequests)
-                    .ThenInclude(cpr => cpr.RequestComponents)
-                    .ThenInclude(rc => rc.RequestComponentDatum)
-                    .Select(cp => new TickerResponse()
-                    {
-                        LastUpdated = cp.CurrencyPairRequests.FirstOrDefault(cpr => cpr.DeletedAt == null && cpr.IsEnabled)
-                            .RequestComponents.FirstOrDefault(rc => rc.DeletedAt == null && rc.IsEnabled)
-                            .RequestComponentDatum
-                            .CreatedAt,
-                        Properties = cp.CurrencyPairRequests.FirstOrDefault()
-                            .RequestComponents
-                            .Select(rc => new KeyValuePair<string, string>(
-                                rc.ComponentType.ToString(), 
-                                rc.RequestComponentDatum.Value))
-                            .ToList()
-                                    
-                    })
-                    .SingleOrDefault()
-            });
+            return Task.FromResult(new NozomiResult<DistinctiveTickerResponse>(
+                NozomiServiceConstants.CurrencyPairDictionary[id]));
+            
+//            return Task.FromResult(new NozomiResult<TickerResponse>()
+//            {
+//                Data = _unitOfWork.GetRepository<CurrencyPair>()
+//                    .GetQueryable()
+//                    .AsNoTracking()
+//                    .Where(cp => cp.Id.Equals(id))
+//                    .Include(cp => cp.CurrencyPairRequests)
+//                    .ThenInclude(cpr => cpr.RequestComponents)
+//                    .ThenInclude(rc => rc.RequestComponentDatum)
+//                    .Select(cp => new TickerResponse()
+//                    {
+//                        LastUpdated = cp.CurrencyPairRequests.FirstOrDefault(cpr => cpr.DeletedAt == null && cpr.IsEnabled)
+//                            .RequestComponents.FirstOrDefault(rc => rc.DeletedAt == null && rc.IsEnabled)
+//                            .RequestComponentDatum
+//                            .CreatedAt,
+//                        Properties = cp.CurrencyPairRequests.FirstOrDefault()
+//                            .RequestComponents
+//                            .Select(rc => new KeyValuePair<string, string>(
+//                                rc.ComponentType.ToString(), 
+//                                rc.RequestComponentDatum.Value))
+//                            .ToList()
+//                                    
+//                    })
+//                    .SingleOrDefault()
+//            });
         }
 
         public NozomiResult<ICollection<DistinctiveTickerResponse>> GetByAbbreviation(string ticker, string exchangeAbbrv = null)
