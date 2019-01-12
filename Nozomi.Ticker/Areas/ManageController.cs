@@ -9,10 +9,12 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Nozomi.Base.Identity.Models.Areas.Manage;
+using Nozomi.Base.Identity.Models.Areas.Manage.ApiTokens;
 using Nozomi.Base.Identity.Models.Areas.Manage.PaymentMethods;
 using Nozomi.Base.Identity.Models.Identity;
 using Nozomi.Base.Identity.Models.Subscription;
 using Nozomi.Preprocessing.Events.Interfaces;
+using Nozomi.Service.Identity.Events.Auth.Interfaces;
 using Nozomi.Service.Identity.Events.Interfaces;
 using Nozomi.Service.Identity.Managers;
 using Nozomi.Service.Identity.Services.Interfaces;
@@ -24,12 +26,15 @@ namespace Nozomi.Ticker.Areas
         private readonly ISmsSender _smsSender;
         private readonly IStripeEvent _stripeEvent;
         private readonly IStripeService _stripeService;
+        private readonly IApiTokenEvent _apiTokenEvent;
         
         public ManageController(ILogger<ManageController> logger, NozomiSignInManager signInManager, 
-            NozomiUserManager userManager, ISmsSender smsSender, IStripeService stripeService, IStripeEvent stripeEvent) 
+            NozomiUserManager userManager, ISmsSender smsSender, IStripeService stripeService, IStripeEvent stripeEvent,
+            IApiTokenEvent apiTokenEvent) 
             : base(logger, signInManager, userManager)
         {
             _smsSender = smsSender;
+            _apiTokenEvent = apiTokenEvent;
             _stripeEvent = stripeEvent;
             _stripeService = stripeService;
         }
@@ -550,7 +555,19 @@ namespace Nozomi.Ticker.Areas
 
         public async Task<IActionResult> ApiTokens()
         {
-            return View();
+            var user = await GetCurrentUserAsync();
+            
+            if (user == null)
+            {
+                return BadRequest("Are you logged in?");
+            }
+            
+            var model = new ApiTokensViewModel
+            {
+                ApiTokens = await _apiTokenEvent.ApiTokensByUserId(user.Id, true)
+            };
+            
+            return View(model);
         }
 
         #region Helpers
