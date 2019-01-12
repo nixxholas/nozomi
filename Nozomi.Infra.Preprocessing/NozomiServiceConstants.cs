@@ -1,9 +1,8 @@
 using System;
 using System.Collections.Generic;
-using Nozomi.Data.CurrencyModels;
 using Nozomi.Data.ResponseModels;
 
-namespace Nozomi.Service
+namespace Nozomi.Preprocessing
 {
     public class NozomiServiceConstants
     {

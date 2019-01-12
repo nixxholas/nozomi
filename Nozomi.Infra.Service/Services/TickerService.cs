@@ -11,6 +11,7 @@ using Nozomi.Data;
 using Nozomi.Data.CurrencyModels;
 using Nozomi.Data.ResponseModels;
 using Nozomi.Data.WebModels;
+using Nozomi.Preprocessing;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Data;
