@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
@@ -13,17 +14,20 @@ namespace Nozomi.Service.Identity.Events.Auth
 {
     public class ApiTokenEvent : BaseEvent<ApiTokenEvent, NozomiAuthContext>, IApiTokenEvent
     {
+        private ICollection<ApiToken> _activeTokens;
+        
         public ApiTokenEvent(ILogger<ApiTokenEvent> logger, IUnitOfWork<NozomiAuthContext> unitOfWork) 
             : base(logger, unitOfWork)
         {
+            _activeTokens = _unitOfWork.GetRepository<ApiToken>()
+                .Get(at => at.IsEnabled && at.DeletedAt == null).ToList();
         }
 
         public async Task<ICollection<ApiToken>> ApiTokensByUserId(long userId, bool onlyFunctional = false)
         {
             if (onlyFunctional)
             {
-                return _unitOfWork.GetRepository<ApiToken>()
-                    .Get(at => at.UserId.Equals(userId) && at.IsEnabled && at.DeletedAt == null).ToList();
+                return _activeTokens;
             }
             
             return _unitOfWork.GetRepository<ApiToken>()
