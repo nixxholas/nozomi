@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -9,6 +10,7 @@ using Nozomi.Data.AreaModels.v1.ApiToken;
 using Nozomi.Service.Identity.Events.Auth.Interfaces;
 using Nozomi.Service.Identity.Managers;
 using Nozomi.Service.Identity.Services.Interfaces;
+using StackExchange.Redis;
 
 namespace Nozomi.Ticker.Areas.v1.ApiToken
 {
@@ -77,9 +79,22 @@ namespace Nozomi.Ticker.Areas.v1.ApiToken
         }
 
         [HttpDelete]
-        public Task<NozomiResult<ApiTokenRevocationResult>> RevokeToken()
+        public async Task<NozomiResult<ApiTokenRevocationResult>> RevokeToken(string tokenGuid)
         {
-            throw new System.NotImplementedException();
+            if (string.IsNullOrEmpty(tokenGuid)) return new NozomiResult<ApiTokenRevocationResult>(NozomiResultType.Failed, 
+                "Invalid API token.");
+            
+            var user = await GetCurrentUserAsync();
+            
+            if (user == null) return new NozomiResult<ApiTokenRevocationResult>(NozomiResultType.Failed, 
+                "You are not authorized to perform this action.");
+
+            var res = await _apiTokenService.RevokeTokenAsync(Guid.Parse(tokenGuid), user.Id);
+            
+            return new NozomiResult<ApiTokenRevocationResult>()
+            {
+                ResultType = res ? NozomiResultType.Success : NozomiResultType.Failed
+            };
         }
     }
 }
