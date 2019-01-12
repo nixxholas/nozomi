@@ -39,11 +39,6 @@ namespace Nozomi.Ticker.StartupExtensions
             services.AddScoped<IRequestPropertyTypeService, RequestPropertyTypeService>();
             services.AddScoped<IRequestTypeService, RequestTypeService>();
             services.AddScoped<IStripeService, StripeService>();
-
-            // Event Sourcing
-            services.AddTransient<IEmailSender, EmailSender>();
-            services.AddTransient<ISmsSender, SmsSender>();
-            services.AddTransient<IStripeEvent, StripeEvent>();
             
             // Identity-related service injections
             services.AddTransient<INozomiUserStore, NozomiUserStore>();

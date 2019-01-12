@@ -150,6 +150,9 @@ namespace Nozomi.Ticker
             // Repository Layer
             services.ConfigureRepoLayer();
             
+            // Events Layer
+            services.ConfigureEvents();
+            
             // Service Layer
             services.ConfigureServiceLayer();
 
