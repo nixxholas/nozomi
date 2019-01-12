@@ -33,15 +33,29 @@ namespace Nozomi.Ticker.Areas.v1.ApiToken
             return new NozomiResult<ICollection<ApiTokenResult>>();
         }
         
-        [HttpGet]
-        public async Task<NozomiResult<ApiTokenResult>> CreateToken()
+        [HttpPost]
+        public async Task<NozomiResult<ApiTokenResult>> GenerateToken(string label = null)
         {
             var user = await GetCurrentUserAsync();
             
             if (user == null) return new NozomiResult<ApiTokenResult>(NozomiResultType.Failed, 
                 "You are not authorized to perform this action.");
+
+            var res = await _apiTokenService.GenerateTokenAsync(user.Id, label);
+
+            ApiTokenResult apiTokenRes = null;
+
+            if (res != null)
+            {
+                apiTokenRes = new ApiTokenResult
+                {
+                    Key = res.Key,
+                    Secret = res.Secret,
+                    Label = label // For the view
+                };
+            }
             
-            return new NozomiResult<ApiTokenResult>();
+            return new NozomiResult<ApiTokenResult>(apiTokenRes);
         }
 
         [HttpDelete]

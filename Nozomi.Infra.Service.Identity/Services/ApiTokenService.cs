@@ -56,7 +56,7 @@ namespace Nozomi.Service.Identity.Services
             
             _unitOfWork.GetRepository<ApiToken>()
                 .Add(apiToken);
-            _unitOfWork.Commit();
+            _unitOfWork.Commit(userId);
 
             return Task.FromResult(apiToken);
         }

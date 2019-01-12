@@ -10,7 +10,7 @@ namespace Nozomi.Ticker.Areas.v1.ApiToken
     {
         Task<NozomiResult<ICollection<ApiTokenResult>>> ApiTokens();
 
-        Task<NozomiResult<ApiTokenResult>> CreateToken();
+        Task<NozomiResult<ApiTokenResult>> GenerateToken(string label = null);
 
         Task<NozomiResult<ApiTokenRevocationResult>> RevokeToken();
     }
