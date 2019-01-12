@@ -34,7 +34,7 @@ namespace Nozomi.Ticker.Areas.v1.ApiToken
             if (user == null) return new NozomiResult<ICollection<ApiTokenResult>>(NozomiResultType.Failed, 
                 "You are not authorized to perform this action.");
 
-            var res = await _apiTokenEvent.ApiTokensByUserId(user.Id);
+            var res = await _apiTokenEvent.ApiTokensByUserId(user.Id, true);
 
             ICollection<ApiTokenResult> apiTokenResults = null;
 
