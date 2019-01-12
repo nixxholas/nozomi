@@ -20,12 +20,9 @@ namespace Nozomi.Service.Services
 {
     public class CurrencyPairComponentService : BaseService<CurrencyPairComponentService, NozomiDbContext>, ICurrencyPairComponentService
     {
-        private readonly IDistributedCache _distributedCache;
-        
         public CurrencyPairComponentService(ILogger<CurrencyPairComponentService> logger, 
             IUnitOfWork<NozomiDbContext> unitOfWork, IDistributedCache distributedCache) : base(logger, unitOfWork)
         {
-            _distributedCache = distributedCache;
         }
 
         public ICollection<RequestComponent> AllByRequestId(long requestId, bool includeNested = false)
@@ -66,9 +63,15 @@ namespace Nozomi.Service.Services
 
         public NozomiResult<RequestComponent> Get(long id, bool includeNested = false)
         {
-            var component = _distributedCache.Get(id.ToString());
-
-            return null;
+            if (includeNested)
+                return new NozomiResult<RequestComponent>(_unitOfWork.GetRepository<RequestComponent>().GetQueryable()
+                    .Include(rc => rc.Request)
+                    .Include(rc => rc.RequestComponentDatum)
+                    .SingleOrDefault(rc => rc.Id.Equals(id) && rc.IsEnabled && rc.DeletedAt == null));
+            
+            return new NozomiResult<RequestComponent>(_unitOfWork.GetRepository<RequestComponent>()
+                .Get(rc => rc.Id.Equals(id) && rc.DeletedAt == null && rc.IsEnabled)
+                .SingleOrDefault());
         }
 
         public NozomiResult<string> Create(CreateCurrencyPairComponent obj, long userId = 0)
@@ -103,16 +106,6 @@ namespace Nozomi.Service.Services
                 pairToUpd.RequestComponentDatum.HasAbnormalValue(val))
             {
                 pairToUpd.RequestComponentDatum.Value = val.ToString(CultureInfo.InvariantCulture);
-
-                Task.Run(() => {
-                    // Redis push
-                    _distributedCache.SetStringAsync(JsonConvert.SerializeObject(new RCCachedDatumKey()
-                        {
-                            ComponentType = pairToUpd.ComponentType,
-                            RequestId = pairToUpd.RequestId
-                        }), 
-                        JsonConvert.SerializeObject(pairToUpd));
-                });
                 
                 _unitOfWork.GetRepository<RequestComponent>().Update(pairToUpd);
                 _unitOfWork.GetRepository<RequestComponentDatum>().Update(pairToUpd.RequestComponentDatum);
