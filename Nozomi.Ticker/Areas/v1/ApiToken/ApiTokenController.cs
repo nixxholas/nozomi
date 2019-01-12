@@ -9,6 +9,7 @@ using Nozomi.Service.Identity.Services.Interfaces;
 
 namespace Nozomi.Ticker.Areas.v1.ApiToken
 {
+    [Authorize]
     public class ApiTokenController : BaseController<ApiTokenController>, IApiTokenController
     {
         private readonly IApiTokenService _apiTokenService;
@@ -20,7 +21,6 @@ namespace Nozomi.Ticker.Areas.v1.ApiToken
             _apiTokenService = apiTokenService;
         }
 
-        [Authorize]
         public async Task<NozomiResult<ICollection<ApiTokenResult>>> ApiTokens()
         {
             var user = await GetCurrentUserAsync();
@@ -30,10 +30,15 @@ namespace Nozomi.Ticker.Areas.v1.ApiToken
 
             return new NozomiResult<ICollection<ApiTokenResult>>();
         }
-
-        public Task<NozomiResult<ApiTokenResult>> CreateToken()
+        
+        public async Task<NozomiResult<ApiTokenResult>> CreateToken()
         {
-            throw new System.NotImplementedException();
+            var user = await GetCurrentUserAsync();
+            
+            if (user == null) return new NozomiResult<ApiTokenResult>(NozomiResultType.Failed, 
+                "You are not authorized to perform this action.");
+            
+            return new NozomiResult<ApiTokenResult>();
         }
 
         public Task<NozomiResult<ApiTokenRevocationResult>> RevokeToken()
