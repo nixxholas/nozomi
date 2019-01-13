@@ -1,5 +1,6 @@
 using System;
 using Nozomi.Base.Core;
+using Nozomi.Base.Identity.AreaModels.v1.ApiToken;
 
 namespace Nozomi.Base.Identity.ViewModels.Identity
 {
@@ -24,5 +25,18 @@ namespace Nozomi.Base.Identity.ViewModels.Identity
         public long UserId { get; set; }
         
         public User User { get; set; }
+
+        public ApiTokenResult ToApiTokenResult(bool returnSecret = false)
+        {
+            return new ApiTokenResult
+            {
+                Id = Guid.ToString(),
+                Secret = returnSecret ? Secret : null,
+                Key = Key,
+                Label = Label,
+                LastAccessed = ModifiedAt,
+                Deleted = (DeletedAt == null)
+            };
+        }
     }
 }
