@@ -14,7 +14,44 @@
         </div>
         <!-- End Info -->
 
-        <button type="submit" class="btn btn-sm btn-soft-primary transition-3d-hover">Generate a token</button>
+        <a class="btn btn-sm btn-soft-primary transition-3d-hover" href="#generateTokenModal"
+           data-modal-target="#generateTokenModal">Generate a token</a>
+        <div id="generateTokenModal" class="js-modal-window u-modal-window" style="width: 500px;"
+             data-modal-type="hashlink"
+             data-speed="500">
+            <form id="generateTokenForm">
+                <div class="card">
+                    <!-- Header -->
+                    <header class="card-header bg-light py-3 px-5">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h3 class="h6 mb-0">Generate a token</h3>
+
+                            <button type="button" class="close" aria-label="Close" onclick="Custombox.modal.close();">
+                                <span aria-hidden="true">×</span>
+                            </button>
+                        </div>
+                    </header>
+                    <!-- End Header -->
+
+                    <!-- Body -->
+                    <div class="card-body p-5">
+                        <div class="form-group">
+                            <label for="label">Label</label>
+                            <input id="label" name="label" class="form-control" placeholder="My app">
+                        </div>
+                    </div>
+                    <!-- End Body -->
+
+                    <!-- Footer -->
+                    <div class="card-footer d-flex justify-content-end">
+                        <button type="submit" class="btn btn-sm btn-primary transition-3d-hover mr-1">Generate</button>
+                        <button type="button" class="btn btn-sm btn-soft-secondary transition-3d-hover"
+                                onclick="Custombox.modal.close();">Close</button>
+                    </div>
+                    <!-- End Footer -->
+                </div>
+            </form>
+        </div>
 
         <!-- Table -->
         <div class="table-responsive-md u-datatable">
@@ -72,31 +109,42 @@
                 </tr>
                 </thead>
                 <tbody class="font-size-1">
-                <tr>
-                    <th class="font-weight-normal">Front</th>
-                    <td>7 July, 2018</td>
-                    <td>7 July, 2018</td>
-                    <td class="text-right">
-                        <a href="#">Revoke</a>
-                    </td>
-                </tr>
                 @{
-                    foreach (var token in Model.ApiTokens)
+                    if (Model.ApiTokens != null && Model.ApiTokens.Count > 0)
                     {
-                        <tr>
-                            <th scope="col" class="font-weight-bold">@token.Label</th>
-                            <th scope="col">@token.Key</th>
-                            <th scope="col">@token.LastAccessed</th>
-                            <th>
-                                <a asp-controller="ApiToken" asp-action="RevokeToken" 
-                                   asp-route-tokenGuid="">Revoke</a>
-                            </th>
-                        </tr>
+                        foreach (var token in Model.ApiTokens)
+                        {
+                            <tr>
+                                <th scope="col" class="font-weight-bold">@token.Label</th>
+                                <th scope="col">@token.Key</th>
+                                <th scope="col">@token.LastAccessed</th>
+                                <th>
+                                    <a asp-controller="ApiToken" asp-action="RevokeToken" 
+                                       asp-route-tokenGuid="">Revoke</a>
+                                </th>
+                            </tr>
+                        }
                     }
-                }
+                    }
                 </tbody>
             </table>
         </div>
         </div>
 </div>
 <!-- End Content Section -->
+
+@section Scripts
+{
+    <script>
+        $(window).on('load', function() {
+            $('#generateTokenForm')
+                .ajaxForm({
+                    url: '/api/apitoken/generatetoken', // or whatever
+                    dataType: 'json',
+                    success: function(response) {
+                        alert("The server says: " + response);
+                    }
+                });
+        });
+    </script>
+}

@@ -41,6 +41,13 @@ import '../scripts/components/hs.toggle-state.js'
 import '../scripts/components/hs.validation.js';
 import '../scripts/components/hs.chart-pie.js';
 
+declare global {
+    interface Window {
+        jquery: $;
+        $: $;
+    }
+}
+
 $(window).on('load', function () {
     // initialization of HSMegaMenu component
     $('.js-mega-menu').HSMegaMenu({
