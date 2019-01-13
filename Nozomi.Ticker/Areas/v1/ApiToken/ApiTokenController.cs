@@ -42,12 +42,7 @@ namespace Nozomi.Ticker.Areas.v1.ApiToken
 
             if (res != null)
             {
-                apiTokenResults = new List<ApiTokenResult>(res.Select(token => new ApiTokenResult
-                {
-                    Key = token.Key,
-                    Label = token.Label,
-                    Secret = token.Secret
-                }));
+                apiTokenResults = new List<ApiTokenResult>(res.Select(token => token.ToApiTokenResult()));
             }
             
             return new NozomiResult<ICollection<ApiTokenResult>>(apiTokenResults);
@@ -67,12 +62,7 @@ namespace Nozomi.Ticker.Areas.v1.ApiToken
 
             if (res != null)
             {
-                apiTokenRes = new ApiTokenResult
-                {
-                    Key = res.Key,
-                    Secret = res.Secret,
-                    Label = label // For the view
-                };
+                apiTokenRes = res.ToApiTokenResult(true);
             }
             
             return new NozomiResult<ApiTokenResult>(apiTokenRes);
