@@ -14,7 +14,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Nozomi.Base.Core.Configurations;
 using Nozomi.Base.Core.Helpers.Routing;
-using Nozomi.Base.Identity.Models.Identity;
 using Nozomi.Data.WebModels.LoggingModels;
 using Nozomi.Repo.Data;
 using Nozomi.Repo.Identity.Data;

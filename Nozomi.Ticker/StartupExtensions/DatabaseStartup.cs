@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.DependencyInjection;
-using Nozomi.Base.Identity.Models.Identity;
 using Nozomi.Data.CurrencyModels;
 using Nozomi.Data.WebModels;
 using Nozomi.Repo.Data;

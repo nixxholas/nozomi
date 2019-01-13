@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
-using Nozomi.Base.Identity.Models.Identity;
-using Nozomi.Base.Identity.Models.Subscription;
+using Nozomi.Base.Identity.ViewModels.Identity;
+using Nozomi.Base.Identity.ViewModels.Subscription;
 using Stripe;
 
 namespace Nozomi.Service.Identity.Services.Interfaces

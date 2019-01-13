@@ -13,6 +13,7 @@ import 'chartist';
 import 'slick-carousel';
 import 'svg-injector';
 import 'malihu-custom-scrollbar-plugin';
+import 'datatables';
 
 // No updated npm version yet
 import '../scripts/components/appear.js';
@@ -25,6 +26,7 @@ import '../scripts/components/hs.unfold.js';
 
 import '../scripts/components/hs.bg-video.js';
 import '../scripts/components/hs.chartist-bar-chart.js';
+import '../scripts/components/hs.datatables.js';
 import '../scripts/components/hs.focus-state.js';
 import '../scripts/components/hs.go-to.js';
 import '../scripts/components/hs.malihu-scrollbar.js';
@@ -76,6 +78,9 @@ $(document).on('ready', function () {
             $(this).find('input[type="search"]').focus();
         }
     });
+    
+    // initialization of datatables
+    $.HSCore.components.HSDatatables.init('.js-datatable');
 
     // initialization of malihu scrollbar
     $.HSCore.components.HSMalihuScrollBar.init($('.js-scrollbar'));

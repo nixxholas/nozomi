@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Nozomi.Base.Identity;
-using Nozomi.Base.Identity.Models.Identity;
+using Nozomi.Base.Identity.ViewModels.Identity;
 
 namespace Nozomi.Service.Identity.Managers
 {

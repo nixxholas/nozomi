@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
-using Nozomi.Base.Identity.Models.Identity;
+using Nozomi.Base.Identity.ViewModels.Identity;
 
 namespace Nozomi.Service.Identity.Stores.Interfaces
 {

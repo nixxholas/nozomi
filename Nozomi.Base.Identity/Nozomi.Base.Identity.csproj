@@ -12,6 +12,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <Folder Include="AreaModels\v1" />
       <Folder Include="Debugging" />
     </ItemGroup>
 

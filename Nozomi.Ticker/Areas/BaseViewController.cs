@@ -2,7 +2,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Nozomi.Base.Identity.Models.Identity;
+using Nozomi.Base.Identity.ViewModels.Identity;
 using Nozomi.Service.Identity.Managers;
 
 namespace Nozomi.Ticker.Areas

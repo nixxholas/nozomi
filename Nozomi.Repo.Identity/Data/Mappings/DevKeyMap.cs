@@ -2,7 +2,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Nozomi.Base.Core.Helpers.Mapping;
-using Nozomi.Base.Identity.Models.Subscription;
+using Nozomi.Base.Identity.ViewModels.Subscription;
 
 namespace Nozomi.Repo.Identity.Data.Mappings
 {

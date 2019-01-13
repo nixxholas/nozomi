@@ -1,8 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Nozomi.Base.Identity.AreaModels.v1.ApiToken;
 using Nozomi.Data;
-using Nozomi.Data.AreaModels.v1.ApiToken;
 
 namespace Nozomi.Ticker.Areas.v1.ApiToken
 {
