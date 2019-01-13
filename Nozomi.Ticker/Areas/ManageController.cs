@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using Nozomi.Base.Identity.AreaModels.v1.ApiToken;
 using Nozomi.Base.Identity.ViewModels.Areas.Manage;
 using Nozomi.Base.Identity.ViewModels.Areas.Manage.ApiTokens;
 using Nozomi.Base.Identity.ViewModels.Areas.Manage.PaymentMethods;
@@ -564,7 +565,8 @@ namespace Nozomi.Ticker.Areas
             
             var model = new ApiTokensViewModel
             {
-                ApiTokens = await _apiTokenEvent.ApiTokensByUserId(user.Id, true)
+                ApiTokens = (await _apiTokenEvent.ApiTokensByUserId(user.Id, true))
+                    .Select(tok => tok.ToApiTokenResult()).ToList()
             };
             
             return View(model);
