@@ -55,7 +55,7 @@ namespace Nozomi.Service.Identity.HostedServices
                     // Iterate the requests
                     foreach (var token in activeApiTokens)
                     {
-                        var cachedTokenBytes = _cache.Get(token.Guid.ToString());
+                        var cachedTokenBytes = _cache.Get(token.Secret);
                         
                         // If the item exists
                         if (cachedTokenBytes != null)
@@ -66,21 +66,21 @@ namespace Nozomi.Service.Identity.HostedServices
                             }
 
                             if (cachedApiToken != null 
-                                && (cachedApiToken.ModifiedAt < token.ModifiedAt))
+                                && cachedApiToken.ModifiedAt < token.ModifiedAt)
                             {
                                 // Update
                                 using (var stream = new MemoryStream())
                                 {
                                     new BinaryFormatter().Serialize(stream, token);
                                     var bytes = stream.ToArray();
-                                    _cache.Set(token.Guid.ToString(), bytes);
+                                    _cache.Set(token.Secret, bytes);
                                 }
                             }
                         }
                         else
                         {
                             // Delete
-                            _cache.Remove(token.Guid.ToString());
+                            _cache.Remove(token.Secret);
                         }
                     }
                 }
