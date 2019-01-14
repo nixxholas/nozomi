@@ -115,6 +115,8 @@
                     {
                         foreach (var token in Model.ApiTokens)
                         {
+                            var tokenModalElId = "revokeTokenModal" + token.Id;
+                            var tokenFormElId = "revokeTokenForm" + token.Id;
                             <tr>
                                 <th scope="col" class="font-weight-bold">@token.Label</th>
                                 <th scope="col">@token.Key</th>
@@ -124,11 +126,10 @@
                                 </th>
                             </tr>
 
-                            <div id=@("revokeTokenModal" + token.Id) class="js-modal-window u-modal-window" style="width: 500px;"
+                            <div id="@tokenModalElId" class="js-modal-window u-modal-window" style="width: 500px;"
                                  data-modal-type="hashlink"
                                  data-speed="500">
-                                <form id="revokeTokenForm" asp-controller="ApiToken" asp-action="RevokeToken" 
-                                      asp-route-tokenGuid="@token.Id">
+                                <form id="@tokenFormElId">
                                     <div class="card">
                                         <!-- Header -->
                                         <header class="card-header bg-light py-3 px-5">
@@ -145,18 +146,45 @@
                                         <!-- Body -->
                                         <div class="card-body p-5">
                                             <p class="font-weight-bold">Are you sure?</p>
+                                            <input type="hidden" name="tokenGuid" value="@token.Id"/>
                                         </div>
                                         <!-- End Body -->
 
                                         <!-- Footer -->
                                         <div class="card-footer d-flex justify-content-end">
-                                            <button type="submit" class="btn btn-sm btn-danger transition-3d-hover mr-1">Yes</button>
+                                            <button type="submit" class="btn btn-sm btn-danger transition-3d-hover mr-1">
+                                                Yes
+                                            </button>
                                             <button type="button" class="btn btn-sm btn-soft-secondary transition-3d-hover"
                                                     onclick="Custombox.modal.close();">Close</button>
                                         </div>
                                         <!-- End Footer -->
                                     </div>
                                 </form>
+                                <script>
+                                    $(document).ready(function() {
+                                        // Listen to submit event on the <form> itself!
+                                        $("#@tokenFormElId").submit(function(e) {
+                                            e.preventDefault();
+                                            // https://stackoverflow.com/questions/47652743/page-refreshes-even-after-e-preventdefault-jquery
+                                            e.stopPropagation();
+
+                                            // https://stackoverflow.com/questions/13378051/how-to-select-find-an-element-inside-an-event-currenttarget-in-jquery
+                                            let tokenGuid = this.tokenGuid.value;
+
+                                            $.ajax({
+                                                url: '/api/apitoken/revoketoken',
+                                                type: 'POST',
+                                                dataType: 'json',
+                                                data: {
+                                                    tokenGuid: tokenGuid
+                                                }
+                                            }).done(function(payload) {
+                                                location.reload();
+                                            });
+                                        });
+                                    });
+                                </script>
                             </div>
                         }
                     }
@@ -197,10 +225,6 @@
                     Custombox.modal.closeAll();
                 });
             });
-            
-            function revokeTokenConfirmation(id) {
-                
-            }
         });
     </script>
 }
