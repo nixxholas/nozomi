@@ -19,7 +19,7 @@
         <div id="generateTokenModal" class="js-modal-window u-modal-window" style="width: 500px;"
              data-modal-type="hashlink"
              data-speed="500">
-            <form id="generateTokenForm" onsubmit="submitGenerateTokenForm(this)">
+            <form id="generateTokenForm">
                 <div class="card">
                     <!-- Header -->
                     <header class="card-header bg-light py-3 px-5">
@@ -136,19 +136,25 @@
 @section Scripts
 {
     <script>
-        function submitGenerateTokenForm(formEl) {
-            $.ajax({
-                url: '/api/apitoken/generatetoken',
-                type: 'POST',
-                dataType: 'json',
-                data: {
-                    label: formEl.label.value
-                }
-            }).done(function(data) {
-                if ( console && console.log ) {
-                    console.log( "Sample of data:", data.slice( 0, 100 ) );
-                }
+        $(document).ready(function () {
+            // Listen to submit event on the <form> itself!
+            $('#generateTokenForm').submit(function (e) {
+                e.preventDefault();
+
+                // https://stackoverflow.com/questions/13378051/how-to-select-find-an-element-inside-an-event-currenttarget-in-jquery
+                let labelInput = this.label.value;
+
+                $.ajax({
+                    url: '/api/apitoken/generatetoken',
+                    type: 'POST',
+                    dataType: 'json',
+                    data: {
+                        label: labelInput
+                    }
+                }).done(function(data) {
+                    console.dir(data);
+                });
             });
-        }
+        });
     </script>
 }
