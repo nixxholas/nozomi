@@ -3,7 +3,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using Nozomi.Base.Identity.ViewModels.Identity;
+using Nozomi.Base.Identity.Models.Identity;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Identity.Data;

@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
-using Nozomi.Base.Identity.ViewModels.Identity;
+using Nozomi.Base.Identity.Models.Identity;
 
 namespace Nozomi.Ticker.Views.Manage
 {

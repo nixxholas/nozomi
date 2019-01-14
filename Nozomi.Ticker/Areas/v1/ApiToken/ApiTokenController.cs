@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Nozomi.Base.Identity.AreaModels.v1.ApiToken;
+using Nozomi.Base.Identity.ViewModels.AreaModels.v1.ApiToken;
 using Nozomi.Data;
 using Nozomi.Service.Identity.Events.Auth.Interfaces;
 using Nozomi.Service.Identity.Managers;

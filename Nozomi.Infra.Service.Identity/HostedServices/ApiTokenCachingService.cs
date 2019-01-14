@@ -10,7 +10,7 @@ using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Nozomi.Base.Identity.ViewModels.Identity;
+using Nozomi.Base.Identity.Models.Identity;
 using Nozomi.Data.ResponseModels;
 using Nozomi.Data.WebModels;
 using Nozomi.Preprocessing.Abstracts;

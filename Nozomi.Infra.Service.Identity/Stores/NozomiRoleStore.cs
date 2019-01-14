@@ -5,7 +5,7 @@ using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
-using Nozomi.Base.Identity.ViewModels.Identity;
+using Nozomi.Base.Identity.Models.Identity;
 using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Identity.Data;
 

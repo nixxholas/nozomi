@@ -1,6 +1,6 @@
 using System;
 using System.Threading.Tasks;
-using Nozomi.Base.Identity.ViewModels.Identity;
+using Nozomi.Base.Identity.Models.Identity;
 
 namespace Nozomi.Service.Identity.Services.Interfaces
 {

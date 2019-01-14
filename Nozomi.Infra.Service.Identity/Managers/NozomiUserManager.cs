@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Nozomi.Base.Core.Helpers.Enumerator;
-using Nozomi.Base.Identity.ViewModels.Identity;
+using Nozomi.Base.Identity.Models.Identity;
 using Nozomi.Service.Identity.Managers.Interfaces;
 using Nozomi.Service.Identity.Services.Interfaces;
 using Nozomi.Service.Identity.Stores;
