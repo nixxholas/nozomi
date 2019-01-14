@@ -35,7 +35,7 @@ namespace Nozomi.Base.Identity.Models.Identity
                 Key = Key,
                 Label = Label,
                 LastAccessed = ModifiedAt,
-                Deleted = (DeletedAt == null)
+                Deleted = (DeletedAt != null)
             };
         }
     }
