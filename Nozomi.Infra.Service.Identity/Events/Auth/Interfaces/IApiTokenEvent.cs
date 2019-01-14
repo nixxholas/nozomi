@@ -8,6 +8,6 @@ namespace Nozomi.Service.Identity.Events.Auth.Interfaces
     {
         Task<ICollection<ApiToken>> ApiTokensByUserId(long userId, bool onlyFunctional = false);
 
-        bool IsValid(string key);
+        bool IsValid(string secret);
     }
 }

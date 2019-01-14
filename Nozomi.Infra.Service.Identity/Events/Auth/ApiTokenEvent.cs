@@ -36,9 +36,9 @@ namespace Nozomi.Service.Identity.Events.Auth
                 .Get(at => at.UserId.Equals(userId)).ToList();
         }
 
-        public bool IsValid(string key)
+        public bool IsValid(string secret)
         {
-            return _cache.Get(key).Any();
+            return _cache.Get(secret).Any();
         }
     }
 }
