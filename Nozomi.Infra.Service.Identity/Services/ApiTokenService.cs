@@ -91,9 +91,17 @@ namespace Nozomi.Service.Identity.Services
         private byte[] GenerateAPIKeyBytes(string userId)
         {
             var key = new byte[64];
-            using (var generator = RandomNumberGenerator.Create(userId))
+            var rng = new RNGCryptoServiceProvider();
+            rng.GetBytes(key);
+            
+            // With Parity
+            // https://stackoverflow.com/questions/5349321/generate-random-bytes-for-tripledes-key-c-sharp
+            for (var i = 0; i < key.Length; ++i)
             {
-                generator.GetBytes(key);
+                int keyByte = key[i] & 0xFE;
+                var parity = 0;
+                for (var b = keyByte; b != 0; b >>= 1) parity ^= b & 1;
+                key[i] = (byte)(keyByte | (parity == 0 ? 1 : 0));
             }
 
             return key;
