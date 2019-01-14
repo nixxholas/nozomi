@@ -68,7 +68,7 @@ namespace Nozomi.Ticker.Areas.v1.ApiToken
             return new NozomiResult<ApiTokenResult>(apiTokenRes);
         }
 
-        [HttpDelete]
+        [HttpPost]
         public async Task<NozomiResult<ApiTokenRevocationResult>> RevokeToken(string tokenGuid)
         {
             if (string.IsNullOrEmpty(tokenGuid)) return new NozomiResult<ApiTokenRevocationResult>(NozomiResultType.Failed, 

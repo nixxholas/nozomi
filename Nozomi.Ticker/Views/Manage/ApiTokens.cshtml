@@ -120,10 +120,44 @@
                                 <th scope="col">@token.Key</th>
                                 <th scope="col">@token.LastAccessed</th>
                                 <th>
-                                    <a asp-controller="ApiToken" asp-action="RevokeToken" 
-                                       asp-route-tokenGuid="">Revoke</a>
+                                    <a href=@("#revokeTokenModal" + token.Id) data-modal-target=@("#revokeTokenModal" + token.Id)>Revoke</a>
                                 </th>
                             </tr>
+
+                            <div id=@("revokeTokenModal" + token.Id) class="js-modal-window u-modal-window" style="width: 500px;"
+                                 data-modal-type="hashlink"
+                                 data-speed="500">
+                                <form id="revokeTokenForm" asp-controller="ApiToken" asp-action="RevokeToken" 
+                                      asp-route-tokenGuid="@token.Id">
+                                    <div class="card">
+                                        <!-- Header -->
+                                        <header class="card-header bg-light py-3 px-5">
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <h3 class="h6 mb-0">Revoke a token</h3>
+
+                                                <button type="button" class="close" aria-label="Close" onclick="Custombox.modal.close();">
+                                                    <span aria-hidden="true">×</span>
+                                                </button>
+                                            </div>
+                                        </header>
+                                        <!-- End Header -->
+
+                                        <!-- Body -->
+                                        <div class="card-body p-5">
+                                            <p class="font-weight-bold">Are you sure?</p>
+                                        </div>
+                                        <!-- End Body -->
+
+                                        <!-- Footer -->
+                                        <div class="card-footer d-flex justify-content-end">
+                                            <button type="submit" class="btn btn-sm btn-danger transition-3d-hover mr-1">Yes</button>
+                                            <button type="button" class="btn btn-sm btn-soft-secondary transition-3d-hover"
+                                                    onclick="Custombox.modal.close();">Close</button>
+                                        </div>
+                                        <!-- End Footer -->
+                                    </div>
+                                </form>
+                            </div>
                         }
                     }
                 }
@@ -163,6 +197,10 @@
                     Custombox.modal.closeAll();
                 });
             });
+            
+            function revokeTokenConfirmation(id) {
+                
+            }
         });
     </script>
 }
