@@ -153,6 +153,11 @@
                     }
                 }).done(function(data) {
                     console.dir(data);
+                    let $newTokenHtml = '<div class="alert alert-info" role="alert">' +
+                        'Please save your secret for your newly created token! <code>' +
+                        data.secret +
+                        '</code>' +
+                        '<br> The new token will be reflected once you refresh.</div>';
                 });
             });
         });
