@@ -19,7 +19,7 @@
         <div id="generateTokenModal" class="js-modal-window u-modal-window" style="width: 500px;"
              data-modal-type="hashlink"
              data-speed="500">
-            <form id="generateTokenForm">
+            <form id="generateTokenForm" onsubmit="submitGenerateTokenForm(this)">
                 <div class="card">
                     <!-- Header -->
                     <header class="card-header bg-light py-3 px-5">
@@ -125,7 +125,7 @@
                             </tr>
                         }
                     }
-                    }
+                }
                 </tbody>
             </table>
         </div>
@@ -136,15 +136,19 @@
 @section Scripts
 {
     <script>
-        $(window).on('load', function() {
-            $('#generateTokenForm')
-                .ajaxForm({
-                    url: '/api/apitoken/generatetoken', // or whatever
-                    dataType: 'json',
-                    success: function(response) {
-                        alert("The server says: " + response);
-                    }
-                });
-        });
+        function submitGenerateTokenForm(formEl) {
+            $.ajax({
+                url: '/api/apitoken/generatetoken',
+                type: 'POST',
+                dataType: 'json',
+                data: {
+                    label: formEl.label.value
+                }
+            }).done(function(data) {
+                if ( console && console.log ) {
+                    console.log( "Sample of data:", data.slice( 0, 100 ) );
+                }
+            });
+        }
     </script>
 }
