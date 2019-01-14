@@ -6,11 +6,12 @@
         <!-- Info -->
         <div class="mb-9">
             <h2 class="h4">
-                <span class="fas fa-info-circle text-secondary" data-toggle="tooltip" data-placement="top" title="Your service would generate an API token for the application to use when requesting your service."></span>
+                <span class="fas fa-info-circle text-secondary" data-toggle="tooltip" data-placement="top" 
+                      title="Allows you to access the endpoints for your service."></span>
                 API Tokens
             </h2>
 
-            <p>A script or other process can use an API token to perform basic authentication with Front Cloud applications. You must use an API token if the Htmlstream account you authenticate with has had two-step verification enabled. You should treat API tokens as securely as any other password.</p>
+            <p id="alerts"></p>
         </div>
         <!-- End Info -->
 
@@ -140,6 +141,8 @@
             // Listen to submit event on the <form> itself!
             $('#generateTokenForm').submit(function (e) {
                 e.preventDefault();
+                // https://stackoverflow.com/questions/47652743/page-refreshes-even-after-e-preventdefault-jquery
+                e.stopPropagation();
 
                 // https://stackoverflow.com/questions/13378051/how-to-select-find-an-element-inside-an-event-currenttarget-in-jquery
                 let labelInput = this.label.value;
@@ -151,13 +154,13 @@
                     data: {
                         label: labelInput
                     }
-                }).done(function(data) {
-                    console.dir(data);
+                }).done(function(payload) {
                     let $newTokenHtml = '<div class="alert alert-info" role="alert">' +
-                        'Please save your secret for your newly created token! <code>' +
-                        data.secret +
-                        '</code>' +
-                        '<br> The new token will be reflected once you refresh.</div>';
+                        '<h4 class="alert-heading">Please save your secret for your newly created token! You will NOT see this again.</h4> ' +
+                        '<p class="alert-text"><code>' + payload.data.secret + '</code></p>' +
+                        '<br> The new token will be reflected on the table below once you refresh.</div>';
+                    $("#alerts").append($newTokenHtml);
+                    Custombox.modal.closeAll();
                 });
             });
         });
