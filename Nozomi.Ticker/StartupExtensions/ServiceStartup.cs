@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Nozomi.Preprocessing.Events;
@@ -5,6 +6,7 @@ using Nozomi.Preprocessing.Events.Interfaces;
 using Nozomi.Service.HostedServices.RequestTypes;
 using Nozomi.Service.Identity.Events;
 using Nozomi.Service.Identity.Events.Interfaces;
+using Nozomi.Service.Identity.Handlers;
 using Nozomi.Service.Identity.Services;
 using Nozomi.Service.Identity.Services.Interfaces;
 using Nozomi.Service.Identity.Stores;
@@ -22,6 +24,8 @@ namespace Nozomi.Ticker.StartupExtensions
     {
         public static void ConfigureServiceLayer(this IServiceCollection services)
         {
+            services.AddScoped<IAuthorizationHandler, ApiTokenHandler>();
+            
             // Service Injections
             services.AddTransient<IApiTokenService, ApiTokenService>();
             services.AddTransient<ICurrencyService, CurrencyService>();

@@ -4,9 +4,11 @@ using Nozomi.Data.ResponseModels;
 
 namespace Nozomi.Preprocessing
 {
-    public class NozomiServiceConstants
+    public static class NozomiServiceConstants
     {
-        public static string CurrencyPairCachePrefix = "CURRPAIR_";
+        public const string CurrencyPairCachePrefix = "CURRPAIR_";
+        public const string JwtIssuerName = "NozomiJwt";
+        public const string ApiTokenHeaderKey = "NozApiToken";
         
         /// <summary>
         /// A dictionary with a key of CurrencySourceId and the Currency pair ticker symbol to return the
