@@ -10,12 +10,6 @@ namespace Nozomi.Service.Services.Interfaces
     public interface ISourceService
     {
         NozomiResult<string> Create(CreateSource createSource);
-        
-        IEnumerable<dynamic> GetAllNested();
-
-        IEnumerable<Source> GetAllActive(bool includeNested);
-
-        IEnumerable<dynamic> GetAllActiveObsc(bool includeNested);
 
         bool Update(UpdateSource updateSource);
 
