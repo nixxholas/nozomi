@@ -12,6 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Nozomi.Base.Core.Helpers.Native.Collections;
 using Nozomi.Repo.Data;
+using SlackLogger;
 
 namespace Nozomi.Ticker
 {
@@ -38,6 +39,8 @@ namespace Nozomi.Ticker
                         .AddConsole()
                         //.AddDebug()
                         .AddGelf();
+
+                    builder.AddSlack();
                 });
             }
 
