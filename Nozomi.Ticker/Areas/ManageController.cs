@@ -292,6 +292,14 @@ namespace Nozomi.Ticker.Areas
             }
             return RedirectToAction(nameof(Index), new { Message = ManageMessageId.Error });
         }
+        
+        //
+        // GET: /Manage/Profile
+        [HttpGet]
+        public IActionResult Profile()
+        {
+            return View();
+        }
 
         //
         // GET: /Manage/ChangePassword
