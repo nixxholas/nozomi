@@ -57,7 +57,7 @@ namespace Nozomi.Service.HostedServices.StaticUpdater
 
                         var dictKey = new Tuple<long, string>(cp.CurrencySourceId, tickerSymbol);
 
-                        if (NozomiServiceConstants.CurrencySourceSymbolDictionary.ContainsKey(dictKey))
+                        if (!NozomiServiceConstants.CurrencySourceSymbolDictionary.ContainsKey(dictKey))
                         {
                             // Populate the CurrencySourceSymbolDictionary
                             NozomiServiceConstants.CurrencySourceSymbolDictionary.Add(dictKey, cp.Id);
