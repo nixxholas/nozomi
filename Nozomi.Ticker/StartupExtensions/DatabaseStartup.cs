@@ -6,11 +6,13 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.DependencyInjection;
+using Nozomi.Base.Identity.Models.Identity;
 using Nozomi.Data.CurrencyModels;
 using Nozomi.Data.WebModels;
 using Nozomi.Repo.Data;
 using Nozomi.Repo.Identity.Data;
 using Nozomi.Service.Identity.Events.Interfaces;
+using Nozomi.Service.Identity.Managers;
 using Nozomi.Service.Identity.Services.Interfaces;
 
 namespace Nozomi.Ticker.StartupExtensions
@@ -35,6 +37,29 @@ namespace Nozomi.Ticker.StartupExtensions
                     }
                     
                     context.Database.Migrate();
+
+                    using (var userManager = serviceScope.ServiceProvider.GetService<NozomiUserManager>())
+                    {
+                        // Seed big brother
+                        if (userManager.FindByEmailAsync("nixholas@outlook.com").Result == null)
+                        {
+                            var boss = new User
+                            {
+                                UserName = "nixholas",
+                                NormalizedEmail = "NIXHOLAS@OUTLOOK.COM",
+                                Email = "nixholas@outlook.com"
+                            };
+                        
+                            var res = userManager.CreateAsync(boss).Result;
+
+                            if (res.Succeeded)
+                            {
+                                boss = userManager.FindByEmailAsync("nixholas@outlook.com").Result;
+                                
+                                if (boss != null) userManager.ForceConfirmEmail(boss.Id).Wait();
+                            }
+                        }
+                    }
                 }
                 
                 using (var context = serviceScope.ServiceProvider.GetService<NozomiDbContext>())
