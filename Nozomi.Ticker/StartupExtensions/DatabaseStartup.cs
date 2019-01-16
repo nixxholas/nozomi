@@ -46,8 +46,10 @@ namespace Nozomi.Ticker.StartupExtensions
                             var boss = new User
                             {
                                 UserName = "nixholas",
+                                NormalizedUserName = "NIXHOLAS",
                                 NormalizedEmail = "NIXHOLAS@OUTLOOK.COM",
-                                Email = "nixholas@outlook.com"
+                                Email = "nixholas@outlook.com",
+                                StripeCustomerId = "cus_ELCsKKBzzjNc2I"
                             };
                         
                             var res = userManager.CreateAsync(boss, "P@ssw0rd").Result;
