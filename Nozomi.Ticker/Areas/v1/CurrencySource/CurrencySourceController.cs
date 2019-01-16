@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 using Nozomi.Data;
 using Nozomi.Data.AreaModels.v1.CurrencySource;
 using Nozomi.Data.CurrencyModels;
+using Nozomi.Service.Events.Interfaces;
 using Nozomi.Service.Identity.Managers;
 using Nozomi.Service.Services.Interfaces;
 
@@ -14,18 +15,20 @@ namespace Nozomi.Ticker.Areas.v1.CurrencySource
 {
     public class CurrencySourceController : BaseController<CurrencySourceController>, ICurrencySourceController
     {
+        private readonly ISourceEvent _sourceEvent;
         private readonly ISourceService _sourceService;
         
         public CurrencySourceController(ILogger<CurrencySourceController> logger, NozomiUserManager userManager,
-            ISourceService sourceService) : base(logger, userManager)
+            ISourceEvent sourceEvent, ISourceService sourceService) : base(logger, userManager)
         {
+            _sourceEvent = sourceEvent;
             _sourceService = sourceService;
         }
 
         [HttpGet]
         public NozomiResult<ICollection<Source>> All()
         {
-            return new NozomiResult<ICollection<Source>>(_sourceService.GetAllActive(false).ToList());
+            return new NozomiResult<ICollection<Source>>(_sourceEvent.GetAllActive(false).ToList());
         }
 
         [Authorize]

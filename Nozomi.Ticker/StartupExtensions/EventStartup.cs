@@ -1,6 +1,8 @@
 using Microsoft.Extensions.DependencyInjection;
 using Nozomi.Preprocessing.Events;
 using Nozomi.Preprocessing.Events.Interfaces;
+using Nozomi.Service.Events;
+using Nozomi.Service.Events.Interfaces;
 using Nozomi.Service.Identity.Events;
 using Nozomi.Service.Identity.Events.Auth;
 using Nozomi.Service.Identity.Events.Auth.Interfaces;
@@ -17,6 +19,8 @@ namespace Nozomi.Ticker.StartupExtensions
             services.AddTransient<IStripeEvent, StripeEvent>();
 
             services.AddScoped<IApiTokenEvent, ApiTokenEvent>();
+
+            services.AddScoped<ISourceEvent, SourceEvent>();
         }
     }
 }
