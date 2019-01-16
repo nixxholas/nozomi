@@ -50,7 +50,7 @@ namespace Nozomi.Ticker.StartupExtensions
                                 Email = "nixholas@outlook.com"
                             };
                         
-                            var res = userManager.CreateAsync(boss).Result;
+                            var res = userManager.CreateAsync(boss, "P@ssw0rd").Result;
 
                             if (res.Succeeded)
                             {
