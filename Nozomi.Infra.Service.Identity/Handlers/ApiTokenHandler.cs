@@ -7,20 +7,21 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Caching.Distributed;
 using Nozomi.Preprocessing;
+using Nozomi.Service.Identity.Events.Auth.Interfaces;
 using Nozomi.Service.Identity.Requirements;
 
 namespace Nozomi.Service.Identity.Handlers
 {
     public class ApiTokenHandler : AuthorizationHandler<ApiTokenRequirement>
     {
+        private readonly IApiTokenEvent _apiTokenEvent;
         // https://stackoverflow.com/questions/47809437/how-to-access-current-httpcontext-in-asp-net-core-2-custom-policy-based-authoriz
         private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly IDistributedCache _cache;
-        
-        public ApiTokenHandler(IHttpContextAccessor httpContextAccessor, IDistributedCache cache)
+
+        public ApiTokenHandler(IHttpContextAccessor httpContextAccessor, IApiTokenEvent apiTokenEvent)
         {
+            _apiTokenEvent = apiTokenEvent;
             _httpContextAccessor = httpContextAccessor;
-            _cache = cache;
         }
         
         protected override Task HandleRequirementAsync(AuthorizationHandlerContext context,
@@ -45,9 +46,16 @@ namespace Nozomi.Service.Identity.Handlers
                 }
             } else
             {
-                var cachedToken = _cache.GetString(apiTokenSecret).Any();
-                
-                if (cachedToken) context.Succeed(requirement);
+                try
+                {
+                    if (_apiTokenEvent.IsValid(apiTokenSecret)) context.Succeed(requirement);
+                }
+                catch (Exception ex)
+                {
+                    // LOGg!!!
+                    
+                    
+                }
             }
 
             return Task.CompletedTask;
