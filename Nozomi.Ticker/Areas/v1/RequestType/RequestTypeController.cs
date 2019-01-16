@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data;
+using Nozomi.Service.Identity.Managers;
 using Nozomi.Service.Services.Enumerators.Interfaces;
 
 namespace Nozomi.Ticker.Areas.v1.RequestType
@@ -9,8 +10,8 @@ namespace Nozomi.Ticker.Areas.v1.RequestType
     {
         private readonly IRequestTypeService _requestTypeService;
         
-        public RequestTypeController(ILogger<RequestTypeController> logger,
-            IRequestTypeService requestTypeService) : base(logger)
+        public RequestTypeController(ILogger<RequestTypeController> logger, NozomiUserManager userManager,
+            IRequestTypeService requestTypeService) : base(logger, userManager)
         {
             _requestTypeService = requestTypeService;
         }

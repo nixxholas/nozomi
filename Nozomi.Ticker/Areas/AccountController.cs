@@ -6,8 +6,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Logging;
-using Nozomi.Base.Identity.Models.Areas.Account;
 using Nozomi.Base.Identity.Models.Identity;
+using Nozomi.Base.Identity.ViewModels.Account;
 using Nozomi.Preprocessing.Events.Interfaces;
 using Nozomi.Service.Identity.Managers;
 

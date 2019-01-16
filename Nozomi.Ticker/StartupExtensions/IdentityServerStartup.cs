@@ -11,11 +11,11 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Nozomi.Base.Identity;
-using Nozomi.Base.Identity.Models;
 using Nozomi.Base.Identity.Models.Identity;
 using Nozomi.Repo.Identity.Data;
 using Nozomi.Service.Identity;
 using Nozomi.Service.Identity.Managers;
+using Nozomi.Service.Identity.Requirements;
 using Nozomi.Service.Identity.Stores;
 using Nozomi.Service.Identity.Stores.Interfaces;
 
@@ -60,7 +60,11 @@ namespace Nozomi.Ticker.StartupExtensions
             });
             
             // Configure Authorization
-            services.AddAuthorization();
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy(ApiTokenRequirement.ApiTokenRequirementName, policy 
+                => policy.AddRequirements(new ApiTokenRequirement()));
+            });
             
             services.Configure<IdentityOptions>(options =>
             {

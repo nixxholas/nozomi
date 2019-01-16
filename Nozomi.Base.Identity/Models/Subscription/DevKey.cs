@@ -1,7 +1,6 @@
 using System;
 using System.Security.Cryptography;
 using Nozomi.Base.Core;
-using Nozomi.Base.Identity.Models.Identity;
 
 namespace Nozomi.Base.Identity.Models.Subscription
 {

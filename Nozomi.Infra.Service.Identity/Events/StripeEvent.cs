@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using Nozomi.Base.Core.Configurations;
 using Nozomi.Base.Core.Helpers.Enumerator;
-using Nozomi.Base.Identity.Models.Subscription;
 using Nozomi.Service.Identity.Events.Interfaces;
 using Stripe;
 using Plan = Stripe.Plan;

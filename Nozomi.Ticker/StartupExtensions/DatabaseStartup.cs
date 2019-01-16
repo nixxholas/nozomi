@@ -12,6 +12,7 @@ using Nozomi.Data.WebModels;
 using Nozomi.Repo.Data;
 using Nozomi.Repo.Identity.Data;
 using Nozomi.Service.Identity.Events.Interfaces;
+using Nozomi.Service.Identity.Managers;
 using Nozomi.Service.Identity.Services.Interfaces;
 
 namespace Nozomi.Ticker.StartupExtensions
@@ -36,6 +37,31 @@ namespace Nozomi.Ticker.StartupExtensions
                     }
                     
                     context.Database.Migrate();
+
+                    using (var userManager = serviceScope.ServiceProvider.GetService<NozomiUserManager>())
+                    {
+                        // Seed big brother
+                        if (userManager.FindByEmailAsync("nixholas@outlook.com").Result == null)
+                        {
+                            var boss = new User
+                            {
+                                UserName = "nixholas",
+                                NormalizedUserName = "NIXHOLAS",
+                                NormalizedEmail = "NIXHOLAS@OUTLOOK.COM",
+                                Email = "nixholas@outlook.com",
+                                StripeCustomerId = "cus_ELCsKKBzzjNc2I"
+                            };
+                        
+                            var res = userManager.CreateAsync(boss, "P@ssw0rd").Result;
+
+                            if (res.Succeeded)
+                            {
+                                boss = userManager.FindByEmailAsync("nixholas@outlook.com").Result;
+                                
+                                if (boss != null) userManager.ForceConfirmEmail(boss.Id).Wait();
+                            }
+                        }
+                    }
                 }
                 
                 using (var context = serviceScope.ServiceProvider.GetService<NozomiDbContext>())

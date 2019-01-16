@@ -23,7 +23,7 @@ namespace Nozomi.Ticker.StartupExtensions
                 swaggerGenOptions.SwaggerDoc(GlobalApiVariables.CURRENT_API_VERSION, new Info
                  {
                      Version = GlobalApiVariables.CURRENT_API_VERSION,
-                     Title = "Nozomi API v1",
+                     Title = "Nozomi API",
                      Description = "Reference documentation for the usage of Nozomi.",
                      TermsOfService = "None",
                      Contact = new Contact

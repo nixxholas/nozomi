@@ -1,0 +1,247 @@
+@model Nozomi.Base.Identity.ViewModels.Manage.ApiTokens.ApiTokensViewModel
+
+<!-- Content Section -->
+<div class="bg-light">
+    <div class="container space-2">
+        <!-- Info -->
+        <div class="mb-9">
+            <h2 class="h4">
+                <span class="fas fa-info-circle text-secondary" data-toggle="tooltip" data-placement="top" 
+                      title="Allows you to access the endpoints for your service."></span>
+                API Tokens
+            </h2>
+
+            <p id="alerts"></p>
+        </div>
+        <!-- End Info -->
+
+        <a class="btn btn-sm btn-soft-primary transition-3d-hover" href="#generateTokenModal"
+           data-modal-target="#generateTokenModal">Generate a token</a>
+        <div id="generateTokenModal" class="js-modal-window u-modal-window" style="width: 500px;"
+             data-modal-type="hashlink"
+             data-speed="500">
+            <form id="generateTokenForm">
+                <div class="card">
+                    <!-- Header -->
+                    <header class="card-header bg-light py-3 px-5">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h3 class="h6 mb-0">Generate a token</h3>
+
+                            <button type="button" class="close" aria-label="Close" onclick="Custombox.modal.close();">
+                                <span aria-hidden="true">×</span>
+                            </button>
+                        </div>
+                    </header>
+                    <!-- End Header -->
+
+                    <!-- Body -->
+                    <div class="card-body p-5">
+                        <div class="form-group">
+                            <label for="label">Label</label>
+                            <input id="label" name="label" class="form-control" placeholder="My app">
+                        </div>
+                    </div>
+                    <!-- End Body -->
+
+                    <!-- Footer -->
+                    <div class="card-footer d-flex justify-content-end">
+                        <button type="submit" class="btn btn-sm btn-primary transition-3d-hover mr-1">Generate</button>
+                        <button type="button" class="btn btn-sm btn-soft-secondary transition-3d-hover"
+                                onclick="Custombox.modal.close();">Close</button>
+                    </div>
+                    <!-- End Footer -->
+                </div>
+            </form>
+        </div>
+
+        @{
+            if (Model.ApiTokens != null && Model.ApiTokens.Count > 0)
+            {
+                <!-- Table -->
+                <div class="table-responsive-md u-datatable">
+                    <table class="js-datatable table table-bordered bg-white mb-4 u-datatable__content mt-5"
+                           data-dt-info="#datatable"
+                           data-dt-page-length="4"
+                           data-dt-is-show-paging="true"
+
+                           data-dt-pagination="datatablePagination"
+                           data-dt-pagination-classes="pagination mb-0"
+                           data-dt-pagination-items-classes="page-item"
+                           data-dt-pagination-links-classes="page-link"
+
+                           data-dt-pagination-next-classes="page-item"
+                           data-dt-pagination-next-link-classes="page-link"
+                           data-dt-pagination-next-link-markup='<span aria-hidden="true">»</span>'
+
+                           data-dt-pagination-prev-classes="page-item"
+                           data-dt-pagination-prev-link-classes="page-link"
+                           data-dt-pagination-prev-link-markup='<span aria-hidden="true">«</span>'>
+                        <thead>
+                        <tr class="text-uppercase font-size-1">
+                            <th scope="col" class="font-weight-medium">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    Label
+                                    <div class="ml-2">
+                                        <span class="fas fa-angle-up u-datatable__thead-icon"></span>
+                                        <span class="fas fa-angle-down u-datatable__thead-icon"></span>
+                                    </div>
+                                </div>
+                            </th>
+                            <th scope="col" class="font-weight-medium">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    API Key
+                                    <div class="ml-2">
+                                        <span class="fas fa-angle-up u-datatable__thead-icon"></span>
+                                        <span class="fas fa-angle-down u-datatable__thead-icon"></span>
+                                    </div>
+                                </div>
+                            </th>
+                            <th scope="col" class="font-weight-medium">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    Status
+                                    <div class="ml-2">
+                                        <span class="fas fa-angle-up u-datatable__thead-icon"></span>
+                                        <span class="fas fa-angle-down u-datatable__thead-icon"></span>
+                                    </div>
+                                </div>
+                            </th>
+                            <th scope="col" class="font-weight-medium">
+                                <div class="align-items-center text-right align-items-center">
+                                    <button type="submit" class="btn btn-sm btn-soft-secondary transition-3d-hover">Revoke All</button>
+                                </div>
+                            </th>
+                        </tr>
+                        </thead>
+                        <tbody class="font-size-1">
+                        @{
+                            if (Model.ApiTokens != null && Model.ApiTokens.Count > 0)
+                            {
+                                foreach (var token in Model.ApiTokens)
+                                {
+                                    var tokenModalElId = "revokeTokenModal" + token.Id;
+                                    var tokenFormElId = "revokeTokenForm" + token.Id;
+                                    <tr>
+                                        <th scope="col" class="font-weight-bold">@token.Label</th>
+                                        <th scope="col">@token.Key</th>
+                                        <th scope="col">@token.LastAccessed</th>
+                                        <th>
+                                            <a href=@("#revokeTokenModal" + token.Id) data-modal-target=@("#revokeTokenModal" + token.Id)>Revoke</a>
+                                        </th>
+                                    </tr>
+
+                                    <div id="@tokenModalElId" class="js-modal-window u-modal-window" style="width: 500px;"
+                                         data-modal-type="hashlink"
+                                         data-speed="500">
+                                        <form id="@tokenFormElId">
+                                            <div class="card">
+                                                <!-- Header -->
+                                                <header class="card-header bg-light py-3 px-5">
+                                                    <div class="d-flex justify-content-between align-items-center">
+                                                        <h3 class="h6 mb-0">Revoke a token</h3>
+
+                                                        <button type="button" class="close" aria-label="Close" onclick="Custombox.modal.close();">
+                                                            <span aria-hidden="true">×</span>
+                                                        </button>
+                                                    </div>
+                                                </header>
+                                                <!-- End Header -->
+
+                                                <!-- Body -->
+                                                <div class="card-body p-5">
+                                                    <p class="font-weight-bold">Are you sure?</p>
+                                                    <input type="hidden" name="tokenGuid" value="@token.Id"/>
+                                                </div>
+                                                <!-- End Body -->
+
+                                                <!-- Footer -->
+                                                <div class="card-footer d-flex justify-content-end">
+                                                    <button type="submit" class="btn btn-sm btn-danger transition-3d-hover mr-1">
+                                                        Yes
+                                                    </button>
+                                                    <button type="button" class="btn btn-sm btn-soft-secondary transition-3d-hover"
+                                                            onclick="Custombox.modal.close();">Close</button>
+                                                </div>
+                                                <!-- End Footer -->
+                                            </div>
+                                        </form>
+                                        <script>
+                                            $(document).ready(function() {
+                                                // Listen to submit event on the <form> itself!
+                                                $("#@tokenFormElId").submit(function(e) {
+                                                    e.preventDefault();
+                                                    // https://stackoverflow.com/questions/47652743/page-refreshes-even-after-e-preventdefault-jquery
+                                                    e.stopPropagation();
+
+                                                    // https://stackoverflow.com/questions/13378051/how-to-select-find-an-element-inside-an-event-currenttarget-in-jquery
+                                                    let tokenGuid = this.tokenGuid.value;
+
+                                                    $.ajax({
+                                                        url: '/api/apitoken/revoketoken',
+                                                        type: 'POST',
+                                                        dataType: 'json',
+                                                        data: {
+                                                            tokenGuid: tokenGuid
+                                                        }
+                                                    }).done(function(payload) {
+                                                        location.reload();
+                                                    });
+                                                });
+                                            });
+                                        </script>
+                                    </div>
+                                }
+                            }
+                        }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="text-center py-4">
+                    <div class="w-md-80 w-lg-50 text-center mx-md-auto">
+                        <figure id="SVGdataReport" class="svg-preloader mb-7 ie-data-report">
+                            <img class="js-svg-injector w-50" src="../../assets/svg/illustrations/data-report.svg" alt="Image Description"
+                                 data-parent="#SVGdataReport">
+                        </figure>
+                        <h4 class="h5 font-weight-normal">All your generated tokens will appear here.</h4>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+</div>
+<!-- End Content Section -->
+
+@section Scripts
+{
+    <script>
+        $(document).ready(function () {
+            // Listen to submit event on the <form> itself!
+            $('#generateTokenForm').submit(function (e) {
+                e.preventDefault();
+                // https://stackoverflow.com/questions/47652743/page-refreshes-even-after-e-preventdefault-jquery
+                e.stopPropagation();
+
+                // https://stackoverflow.com/questions/13378051/how-to-select-find-an-element-inside-an-event-currenttarget-in-jquery
+                let labelInput = this.label.value;
+
+                $.ajax({
+                    url: '/api/apitoken/generatetoken',
+                    type: 'POST',
+                    dataType: 'json',
+                    data: {
+                        label: labelInput
+                    }
+                }).done(function(payload) {
+                    let $newTokenHtml = '<div class="alert alert-info" role="alert">' +
+                        '<h4 class="alert-heading">Please save your secret for your newly created token! You will NOT see this again.</h4> ' +
+                        '<p class="alert-text"><code>' + payload.data.secret + '</code></p>' +
+                        '<br> The new token will be reflected on the table below once you refresh.</div>';
+                    $("#alerts").append($newTokenHtml);
+                    Custombox.modal.closeAll();
+                });
+            });
+        });
+    </script>
+}

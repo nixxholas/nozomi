@@ -10,9 +10,9 @@ namespace Nozomi.Service.Services.Interfaces
     /// </summary>
     public interface ITickerService
     {
-        Task<NozomiResult<ICollection<DistinctiveTickerResponse>>> Get(int index);
+        Task<NozomiResult<ICollection<UniqueTickerResponse>>> Get(int index);
         
-        Task<NozomiResult<TickerResponse>> GetById(long id);
+        Task<NozomiResult<DistinctiveTickerResponse>> GetById(long id);
 
         NozomiResult<ICollection<DistinctiveTickerResponse>> GetByAbbreviation(string ticker, string exchangeAbbrv = null);
 

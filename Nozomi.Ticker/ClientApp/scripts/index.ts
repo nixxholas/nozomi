@@ -4,6 +4,9 @@
 import '../styles/index.scss';
 
 import * as $ from 'jquery';
+// https://stackoverflow.com/questions/48271232/how-to-expose-ui-jquery-ui-globally-with-webpack
+const jQuery = $;
+(<any> window).$ = (<any>window).jQuery = $;
 import 'jquery-validation';
 import 'jquery-migrate';
 import Typed from 'typed.js';
@@ -13,6 +16,7 @@ import 'chartist';
 import 'slick-carousel';
 import 'svg-injector';
 import 'malihu-custom-scrollbar-plugin';
+import 'datatables';
 
 // No updated npm version yet
 import '../scripts/components/appear.js';
@@ -25,6 +29,7 @@ import '../scripts/components/hs.unfold.js';
 
 import '../scripts/components/hs.bg-video.js';
 import '../scripts/components/hs.chartist-bar-chart.js';
+import '../scripts/components/hs.datatables.js';
 import '../scripts/components/hs.focus-state.js';
 import '../scripts/components/hs.go-to.js';
 import '../scripts/components/hs.malihu-scrollbar.js';
@@ -38,7 +43,6 @@ import '../scripts/components/hs.svg-injector.js';
 import '../scripts/components/hs.toggle-state.js'
 import '../scripts/components/hs.validation.js';
 import '../scripts/components/hs.chart-pie.js';
-
 $(window).on('load', function () {
     // initialization of HSMegaMenu component
     $('.js-mega-menu').HSMegaMenu({
@@ -76,6 +80,9 @@ $(document).on('ready', function () {
             $(this).find('input[type="search"]').focus();
         }
     });
+    
+    // initialization of datatables
+    $.HSCore.components.HSDatatables.init('.js-datatable');
 
     // initialization of malihu scrollbar
     $.HSCore.components.HSMalihuScrollBar.init($('.js-scrollbar'));

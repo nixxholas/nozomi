@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Nozomi.Base.Identity.Models.Subscription;
 using Stripe;
 using Plan = Stripe.Plan;
 

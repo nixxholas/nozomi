@@ -14,7 +14,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Nozomi.Base.Core.Configurations;
 using Nozomi.Base.Core.Helpers.Routing;
-using Nozomi.Base.Identity.Models.Identity;
 using Nozomi.Data.WebModels.LoggingModels;
 using Nozomi.Repo.Data;
 using Nozomi.Repo.Identity.Data;
@@ -150,6 +149,9 @@ namespace Nozomi.Ticker
             // Repository Layer
             services.ConfigureRepoLayer();
             
+            // Events Layer
+            services.ConfigureEvents();
+            
             // Service Layer
             services.ConfigureServiceLayer();
 
@@ -210,7 +212,7 @@ namespace Nozomi.Ticker
             {
                 // https://stackoverflow.com/questions/39116047/how-to-change-base-url-of-swagger-in-asp-net-core
                 c.RoutePrefix = "docs";
-                c.SwaggerEndpoint("/swagger/" + GlobalApiVariables.CURRENT_API_VERSION + "/swagger.json", "Nozomi API v1");
+                c.SwaggerEndpoint("/swagger/" + GlobalApiVariables.CURRENT_API_VERSION + "/swagger.json", "Nozomi API");
             });
         }
     }

@@ -10,6 +10,8 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data.ResponseModels;
 using Nozomi.Data.WebModels;
+using Nozomi.Preprocessing;
+using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.Data;
 
 namespace Nozomi.Service.HostedServices.StaticUpdater
@@ -20,7 +22,6 @@ namespace Nozomi.Service.HostedServices.StaticUpdater
     public class CPDSyncingService : BaseHostedService<CPDSyncingService>,
         IHostedService, IDisposable
     {
-        private IDistributedCache _distributedCache;
         private readonly NozomiDbContext _nozomiDbContext;
         
         private static readonly Func<NozomiDbContext, IEnumerable<DiscoverabeTickerResponse>> 
@@ -49,7 +50,6 @@ namespace Nozomi.Service.HostedServices.StaticUpdater
         
         public CPDSyncingService(IServiceProvider serviceProvider) : base(serviceProvider)
         {
-            _distributedCache = _scope.ServiceProvider.GetRequiredService<IDistributedCache>();
             _nozomiDbContext = _scope.ServiceProvider.GetService<NozomiDbContext>();
         }
 

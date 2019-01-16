@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data;
 using Nozomi.Data.AreaModels.v1.Currency;
+using Nozomi.Service.Identity.Managers;
 using Nozomi.Service.Services.Interfaces;
 
 namespace Nozomi.Ticker.Areas.v1.Currency
@@ -12,8 +13,8 @@ namespace Nozomi.Ticker.Areas.v1.Currency
     {
         private readonly ICurrencyService _currencyService;
         
-        public CurrencyController(ILogger<CurrencyController> logger,
-            ICurrencyService currencyService) : base(logger)
+        public CurrencyController(ILogger<CurrencyController> logger, NozomiUserManager userManager,
+            ICurrencyService currencyService) : base(logger, userManager)
         {
             _currencyService = currencyService;
         }

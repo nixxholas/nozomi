@@ -19,6 +19,48 @@ namespace Nozomi.Repo.Identity.Migrations
                 .HasAnnotation("ProductVersion", "2.2.0-rtm-35687")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
+            modelBuilder.Entity("Nozomi.Base.Identity.Models.Identity.ApiToken", b =>
+                {
+                    b.Property<Guid>("Guid")
+                        .ValueGeneratedOnAdd()
+                        .HasDefaultValue(new Guid("347e2220-70eb-4201-9da4-f7f071d20547"));
+
+                    b.Property<DateTime>("CreatedAt");
+
+                    b.Property<long>("CreatedBy");
+
+                    b.Property<DateTime?>("DeletedAt");
+
+                    b.Property<long>("DeletedBy");
+
+                    b.Property<bool>("IsEnabled");
+
+                    b.Property<string>("Key")
+                        .IsRequired();
+
+                    b.Property<string>("Label");
+
+                    b.Property<DateTime>("LastAccessed")
+                        .ValueGeneratedOnAdd()
+                        .HasDefaultValue(new DateTime(2019, 1, 11, 11, 1, 24, 580, DateTimeKind.Local).AddTicks(2710));
+
+                    b.Property<DateTime>("ModifiedAt");
+
+                    b.Property<long>("ModifiedBy");
+
+                    b.Property<string>("Secret")
+                        .IsRequired();
+
+                    b.Property<long>("UserId");
+
+                    b.HasKey("Guid")
+                        .HasName("ApiToken_PK_Guid");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("ApiTokens");
+                });
+
             modelBuilder.Entity("Nozomi.Base.Identity.Models.Identity.Role", b =>
                 {
                     b.Property<long>("Id")
@@ -199,7 +241,7 @@ namespace Nozomi.Repo.Identity.Migrations
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
-                        .HasDefaultValue(new DateTime(2019, 1, 5, 21, 55, 56, 681, DateTimeKind.Utc).AddTicks(4500));
+                        .HasDefaultValue(new DateTime(2019, 1, 11, 3, 1, 24, 586, DateTimeKind.Utc).AddTicks(1980));
 
                     b.Property<long>("CreatedBy");
 
@@ -215,7 +257,7 @@ namespace Nozomi.Repo.Identity.Migrations
 
                     b.Property<DateTime>("ModifiedAt")
                         .ValueGeneratedOnAdd()
-                        .HasDefaultValue(new DateTime(2019, 1, 5, 21, 55, 56, 681, DateTimeKind.Utc).AddTicks(7850));
+                        .HasDefaultValue(new DateTime(2019, 1, 11, 3, 1, 24, 586, DateTimeKind.Utc).AddTicks(2560));
 
                     b.Property<long>("ModifiedBy");
 
@@ -250,7 +292,7 @@ namespace Nozomi.Repo.Identity.Migrations
 
                     b.Property<int>("PlanType")
                         .ValueGeneratedOnAdd()
-                        .HasDefaultValue(1);
+                        .HasDefaultValue(0);
 
                     b.Property<string>("SubscriptionId")
                         .ValueGeneratedOnAdd()
@@ -270,6 +312,14 @@ namespace Nozomi.Repo.Identity.Migrations
                         .HasName("UserSubscription_Index_UserId_SubscriptionId");
 
                     b.ToTable("UserSubscriptions");
+                });
+
+            modelBuilder.Entity("Nozomi.Base.Identity.Models.Identity.ApiToken", b =>
+                {
+                    b.HasOne("Nozomi.Base.Identity.Models.Identity.User", "User")
+                        .WithMany("ApiTokens")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("Nozomi.Base.Identity.Models.Identity.RoleClaim", b =>

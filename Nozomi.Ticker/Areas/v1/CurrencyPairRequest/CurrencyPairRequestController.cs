@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using Nozomi.Data;
 using Nozomi.Data.AreaModels.v1.CurrencyPairRequest;
 using Nozomi.Data.WebModels;
+using Nozomi.Service.Identity.Managers;
 using Nozomi.Service.Services.Interfaces;
 
 namespace Nozomi.Ticker.Areas.v1.CurrencyPairRequest
@@ -14,8 +15,8 @@ namespace Nozomi.Ticker.Areas.v1.CurrencyPairRequest
     {
         private readonly ICurrencyPairRequestService _currencyPairRequestService;
         
-        public CurrencyPairRequestController(ILogger<CurrencyPairRequestController> logger,
-            ICurrencyPairRequestService currencyPairRequestService) : base(logger)
+        public CurrencyPairRequestController(ILogger<CurrencyPairRequestController> logger, NozomiUserManager userManager,
+            ICurrencyPairRequestService currencyPairRequestService) : base(logger, userManager)
         {
             _currencyPairRequestService = currencyPairRequestService;
         }
