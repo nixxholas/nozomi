@@ -53,7 +53,7 @@ namespace Nozomi.Ticker.Areas
                 : message == ManageMessageId.RemovePhoneSuccess ? "Your phone number was removed."
                 : "";
 
-            var user = await _userManager.GetUserAsync(User);
+            var user = await GetCurrentUserAsync();
             if (user == null)
             {
                 _logger.LogError("[Manage/Index] Unable to load user. \n" +
