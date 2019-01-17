@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Identity;
 using Nozomi.Base.Core;
+using Nozomi.Data.CurrencyModels;
 
 namespace Nozomi.Base.Identity.ViewModels.Manage
 {
@@ -21,5 +22,7 @@ namespace Nozomi.Base.Identity.ViewModels.Manage
         public string Email { get; set; }
 
         public bool EmailConfirmed { get; set; } = false;
+
+        public ICollection<Source> Sources { get; set; } = new List<Source>();
     }
 }
