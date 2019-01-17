@@ -57,7 +57,7 @@ namespace Nozomi.Ticker.Areas
             if (user == null)
             {
                 _logger.LogError("[Manage/Index] Unable to load user. \n" +
-                                 "Pure user object: " + User);
+                                 "Pure user object: " + JsonConvert.SerializeObject(User));
                 return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
 
