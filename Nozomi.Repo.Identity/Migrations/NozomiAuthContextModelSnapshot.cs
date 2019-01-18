@@ -23,7 +23,7 @@ namespace Nozomi.Repo.Identity.Migrations
                 {
                     b.Property<Guid>("Guid")
                         .ValueGeneratedOnAdd()
-                        .HasDefaultValue(new Guid("347e2220-70eb-4201-9da4-f7f071d20547"));
+                        .HasDefaultValue(new Guid("8a2a6ee9-c841-4aa9-ad94-2f30851ebd27"));
 
                     b.Property<DateTime>("CreatedAt");
 
@@ -42,7 +42,7 @@ namespace Nozomi.Repo.Identity.Migrations
 
                     b.Property<DateTime>("LastAccessed")
                         .ValueGeneratedOnAdd()
-                        .HasDefaultValue(new DateTime(2019, 1, 11, 11, 1, 24, 580, DateTimeKind.Local).AddTicks(2710));
+                        .HasDefaultValue(new DateTime(2019, 1, 18, 16, 17, 56, 810, DateTimeKind.Local).AddTicks(110));
 
                     b.Property<DateTime>("ModifiedAt");
 
@@ -241,7 +241,7 @@ namespace Nozomi.Repo.Identity.Migrations
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
-                        .HasDefaultValue(new DateTime(2019, 1, 11, 3, 1, 24, 586, DateTimeKind.Utc).AddTicks(1980));
+                        .HasDefaultValue(new DateTime(2019, 1, 18, 8, 17, 56, 814, DateTimeKind.Utc).AddTicks(9620));
 
                     b.Property<long>("CreatedBy");
 
@@ -257,7 +257,7 @@ namespace Nozomi.Repo.Identity.Migrations
 
                     b.Property<DateTime>("ModifiedAt")
                         .ValueGeneratedOnAdd()
-                        .HasDefaultValue(new DateTime(2019, 1, 11, 3, 1, 24, 586, DateTimeKind.Utc).AddTicks(2560));
+                        .HasDefaultValue(new DateTime(2019, 1, 18, 8, 17, 56, 815, DateTimeKind.Utc).AddTicks(70));
 
                     b.Property<long>("ModifiedBy");
 

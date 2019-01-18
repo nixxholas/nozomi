@@ -4,7 +4,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace Nozomi.Repo.Migrations
 {
-    public partial class r1_InitialMigration : Migration
+    public partial class r1_InitialMigrations : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -12,6 +12,8 @@ namespace Nozomi.Repo.Migrations
                 name: "CurrencyTypes",
                 columns: table => new
                 {
+                    Id = table.Column<long>(nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn),
                     IsEnabled = table.Column<bool>(nullable: false),
                     CreatedAt = table.Column<DateTime>(nullable: false),
                     ModifiedAt = table.Column<DateTime>(nullable: false),
@@ -19,20 +21,20 @@ namespace Nozomi.Repo.Migrations
                     CreatedBy = table.Column<long>(nullable: false),
                     ModifiedBy = table.Column<long>(nullable: false),
                     DeletedBy = table.Column<long>(nullable: false),
-                    Id = table.Column<long>(nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn),
                     TypeShortForm = table.Column<string>(maxLength: 12, nullable: false),
                     Name = table.Column<string>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_CurrencyTypes", x => x.Id);
+                    table.PrimaryKey("CurrencyType_PK_Id", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
                 name: "Sources",
                 columns: table => new
                 {
+                    Id = table.Column<long>(nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn),
                     IsEnabled = table.Column<bool>(nullable: false),
                     CreatedAt = table.Column<DateTime>(nullable: false),
                     ModifiedAt = table.Column<DateTime>(nullable: false),
@@ -40,21 +42,21 @@ namespace Nozomi.Repo.Migrations
                     CreatedBy = table.Column<long>(nullable: false),
                     ModifiedBy = table.Column<long>(nullable: false),
                     DeletedBy = table.Column<long>(nullable: false),
-                    Id = table.Column<long>(nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn),
                     Abbreviation = table.Column<string>(nullable: false),
                     Name = table.Column<string>(nullable: false),
                     APIDocsURL = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Sources", x => x.Id);
+                    table.PrimaryKey("Source_PK_Id", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
                 name: "Currencies",
                 columns: table => new
                 {
+                    Id = table.Column<long>(nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn),
                     IsEnabled = table.Column<bool>(nullable: false),
                     CreatedAt = table.Column<DateTime>(nullable: false),
                     ModifiedAt = table.Column<DateTime>(nullable: false),
@@ -62,8 +64,6 @@ namespace Nozomi.Repo.Migrations
                     CreatedBy = table.Column<long>(nullable: false),
                     ModifiedBy = table.Column<long>(nullable: false),
                     DeletedBy = table.Column<long>(nullable: false),
-                    Id = table.Column<long>(nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn),
                     CurrencyTypeId = table.Column<long>(nullable: false),
                     Abbrv = table.Column<string>(nullable: false),
                     Name = table.Column<string>(nullable: false),
@@ -72,15 +72,15 @@ namespace Nozomi.Repo.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Currencies", x => x.Id);
+                    table.PrimaryKey("Currency_PK_Id", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Currencies_Sources_CurrencySourceId",
+                        name: "Source_Currencies_Constraint",
                         column: x => x.CurrencySourceId,
                         principalTable: "Sources",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Currencies_CurrencyTypes_CurrencyTypeId",
+                        name: "CurrencyType_Currencies_Constraint",
                         column: x => x.CurrencyTypeId,
                         principalTable: "CurrencyTypes",
                         principalColumn: "Id",
@@ -91,6 +91,8 @@ namespace Nozomi.Repo.Migrations
                 name: "CurrencyPairs",
                 columns: table => new
                 {
+                    Id = table.Column<long>(nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn),
                     IsEnabled = table.Column<bool>(nullable: false),
                     CreatedAt = table.Column<DateTime>(nullable: false),
                     ModifiedAt = table.Column<DateTime>(nullable: false),
@@ -98,8 +100,6 @@ namespace Nozomi.Repo.Migrations
                     CreatedBy = table.Column<long>(nullable: false),
                     ModifiedBy = table.Column<long>(nullable: false),
                     DeletedBy = table.Column<long>(nullable: false),
-                    Id = table.Column<long>(nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn),
                     CurrencyPairType = table.Column<int>(nullable: false),
                     APIUrl = table.Column<string>(nullable: false),
                     DefaultComponent = table.Column<string>(nullable: false),
@@ -107,9 +107,9 @@ namespace Nozomi.Repo.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_CurrencyPairs", x => x.Id);
+                    table.PrimaryKey("CurrencyPair_PK_Id", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_CurrencyPairs_Sources_CurrencySourceId",
+                        name: "Source_CurrencyPairs_Constraint",
                         column: x => x.CurrencySourceId,
                         principalTable: "Sources",
                         principalColumn: "Id",
@@ -120,21 +120,21 @@ namespace Nozomi.Repo.Migrations
                 name: "PartialCurrencyPairs",
                 columns: table => new
                 {
-                    CurrencyId = table.Column<long>(nullable: false),
                     CurrencyPairId = table.Column<long>(nullable: false),
-                    IsMain = table.Column<bool>(nullable: false)
+                    IsMain = table.Column<bool>(nullable: false),
+                    CurrencyId = table.Column<long>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_PartialCurrencyPairs", x => new { x.CurrencyPairId, x.IsMain });
+                    table.PrimaryKey("PartialCurrencyPair_CK_CurrencyPairId_IsMain", x => new { x.CurrencyPairId, x.IsMain });
                     table.ForeignKey(
-                        name: "FK_PartialCurrencyPairs_Currencies_CurrencyId",
+                        name: "PartialCurrencyPairs_Currency_Constraint",
                         column: x => x.CurrencyId,
                         principalTable: "Currencies",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_PartialCurrencyPairs_CurrencyPairs_CurrencyPairId",
+                        name: "PartialCurrencyPairs_CurrencyPair_Constraint",
                         column: x => x.CurrencyPairId,
                         principalTable: "CurrencyPairs",
                         principalColumn: "Id",
@@ -145,6 +145,8 @@ namespace Nozomi.Repo.Migrations
                 name: "Requests",
                 columns: table => new
                 {
+                    Id = table.Column<long>(nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn),
                     IsEnabled = table.Column<bool>(nullable: false),
                     CreatedAt = table.Column<DateTime>(nullable: false),
                     ModifiedAt = table.Column<DateTime>(nullable: false),
@@ -152,10 +154,9 @@ namespace Nozomi.Repo.Migrations
                     CreatedBy = table.Column<long>(nullable: false),
                     ModifiedBy = table.Column<long>(nullable: false),
                     DeletedBy = table.Column<long>(nullable: false),
-                    Id = table.Column<long>(nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn),
                     Guid = table.Column<Guid>(nullable: false),
                     RequestType = table.Column<int>(nullable: false),
+                    ResponseType = table.Column<int>(nullable: false, defaultValue: 1),
                     DataPath = table.Column<string>(nullable: true),
                     Delay = table.Column<int>(nullable: false, defaultValue: 0),
                     Discriminator = table.Column<string>(nullable: false),
@@ -166,7 +167,7 @@ namespace Nozomi.Repo.Migrations
                     table.PrimaryKey("Request_PK_Id", x => x.Id);
                     table.UniqueConstraint("Request_AK_Guid", x => x.Guid);
                     table.ForeignKey(
-                        name: "FK_Requests_CurrencyPairs_CurrencyPairId",
+                        name: "CurrencyPair_CurrencyPairRequest_Constraint",
                         column: x => x.CurrencyPairId,
                         principalTable: "CurrencyPairs",
                         principalColumn: "Id",
@@ -177,6 +178,8 @@ namespace Nozomi.Repo.Migrations
                 name: "RequestComponents",
                 columns: table => new
                 {
+                    Id = table.Column<long>(nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn),
                     IsEnabled = table.Column<bool>(nullable: false),
                     CreatedAt = table.Column<DateTime>(nullable: false),
                     ModifiedAt = table.Column<DateTime>(nullable: false),
@@ -184,12 +187,9 @@ namespace Nozomi.Repo.Migrations
                     CreatedBy = table.Column<long>(nullable: false),
                     ModifiedBy = table.Column<long>(nullable: false),
                     DeletedBy = table.Column<long>(nullable: false),
-                    Id = table.Column<long>(nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn),
                     ComponentType = table.Column<int>(nullable: false),
                     QueryComponent = table.Column<string>(nullable: true),
-                    RequestId = table.Column<long>(nullable: false),
-                    RequestComponentDatumId = table.Column<long>(nullable: false)
+                    RequestId = table.Column<long>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -206,6 +206,8 @@ namespace Nozomi.Repo.Migrations
                 name: "RequestLogs",
                 columns: table => new
                 {
+                    Id = table.Column<long>(nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn),
                     IsEnabled = table.Column<bool>(nullable: false),
                     CreatedAt = table.Column<DateTime>(nullable: false),
                     ModifiedAt = table.Column<DateTime>(nullable: false),
@@ -213,8 +215,6 @@ namespace Nozomi.Repo.Migrations
                     CreatedBy = table.Column<long>(nullable: false),
                     ModifiedBy = table.Column<long>(nullable: false),
                     DeletedBy = table.Column<long>(nullable: false),
-                    Id = table.Column<long>(nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn),
                     Type = table.Column<int>(nullable: false),
                     RawPayload = table.Column<string>(nullable: true),
                     RequestId = table.Column<long>(nullable: false)
@@ -234,6 +234,8 @@ namespace Nozomi.Repo.Migrations
                 name: "RequestProperties",
                 columns: table => new
                 {
+                    Id = table.Column<long>(nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn),
                     IsEnabled = table.Column<bool>(nullable: false),
                     CreatedAt = table.Column<DateTime>(nullable: false),
                     ModifiedAt = table.Column<DateTime>(nullable: false),
@@ -241,8 +243,6 @@ namespace Nozomi.Repo.Migrations
                     CreatedBy = table.Column<long>(nullable: false),
                     ModifiedBy = table.Column<long>(nullable: false),
                     DeletedBy = table.Column<long>(nullable: false),
-                    Id = table.Column<long>(nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn),
                     RequestPropertyType = table.Column<int>(nullable: false),
                     Key = table.Column<string>(nullable: true),
                     Value = table.Column<string>(nullable: true),
@@ -263,6 +263,8 @@ namespace Nozomi.Repo.Migrations
                 name: "RequestComponentData",
                 columns: table => new
                 {
+                    Id = table.Column<long>(nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn),
                     IsEnabled = table.Column<bool>(nullable: false),
                     CreatedAt = table.Column<DateTime>(nullable: false),
                     ModifiedAt = table.Column<DateTime>(nullable: false),
@@ -270,8 +272,6 @@ namespace Nozomi.Repo.Migrations
                     CreatedBy = table.Column<long>(nullable: false),
                     ModifiedBy = table.Column<long>(nullable: false),
                     DeletedBy = table.Column<long>(nullable: false),
-                    Id = table.Column<long>(nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn),
                     RequestComponentId = table.Column<long>(nullable: false),
                     Value = table.Column<string>(nullable: true, defaultValue: "")
                 },
@@ -284,82 +284,6 @@ namespace Nozomi.Repo.Migrations
                         principalTable: "RequestComponents",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.InsertData(
-                table: "CurrencyTypes",
-                columns: new[] { "Id", "CreatedAt", "CreatedBy", "DeletedAt", "DeletedBy", "IsEnabled", "ModifiedAt", "ModifiedBy", "Name", "TypeShortForm" },
-                values: new object[,]
-                {
-                    { 1L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, null, 0L, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "FIAT Cash", "FIAT" },
-                    { 2L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, null, 0L, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "Cryptocurrency", "CRYPTO" }
-                });
-
-            migrationBuilder.InsertData(
-                table: "Sources",
-                columns: new[] { "Id", "APIDocsURL", "Abbreviation", "CreatedAt", "CreatedBy", "DeletedAt", "DeletedBy", "IsEnabled", "ModifiedAt", "ModifiedBy", "Name" },
-                values: new object[,]
-                {
-                    { 1L, "https://docs.bitfinex.com/docs/introduction", "BFX", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, null, 0L, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "Bitfinex" },
-                    { 2L, "None", "HAKO", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, null, 0L, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "Coinhako" },
-                    { 3L, "https://github.com/binance-exchange/binance-official-api-docs/blob/master/rest-api.md", "BNA", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, null, 0L, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "Binance" }
-                });
-
-            migrationBuilder.InsertData(
-                table: "Currencies",
-                columns: new[] { "Id", "Abbrv", "CreatedAt", "CreatedBy", "CurrencySourceId", "CurrencyTypeId", "DeletedAt", "DeletedBy", "IsEnabled", "ModifiedAt", "ModifiedBy", "Name", "WalletTypeId" },
-                values: new object[,]
-                {
-                    { 1L, "USD", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 1L, 1L, null, 0L, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "United States Dollar", 0L },
-                    { 2L, "ETH", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 1L, 2L, null, 0L, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "Ethereum", 1L },
-                    { 3L, "KNC", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 1L, 2L, null, 0L, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "Kyber Network Coin", 4L },
-                    { 4L, "KNC", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 3L, 2L, null, 0L, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "Kyber Network Coin", 4L },
-                    { 5L, "ETH", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 3L, 2L, null, 0L, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "Ethereum", 1L }
-                });
-
-            migrationBuilder.InsertData(
-                table: "CurrencyPairs",
-                columns: new[] { "Id", "APIUrl", "CreatedAt", "CreatedBy", "CurrencyPairType", "CurrencySourceId", "DefaultComponent", "DeletedAt", "DeletedBy", "IsEnabled", "ModifiedAt", "ModifiedBy" },
-                values: new object[,]
-                {
-                    { 1L, "https://api.ethfinex.com/v2/ticker/tETHUSD", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 1, 1L, "0", null, 0L, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L },
-                    { 2L, "https://api.ethfinex.com/v2/ticker/tKNCUSD", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 1, 1L, "0", null, 0L, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L },
-                    { 3L, "https://api.binance.com/api/v3/ticker/bookTicker?symbol=KNCETH", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 1, 3L, "askPrice", null, 0L, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L }
-                });
-
-            migrationBuilder.InsertData(
-                table: "PartialCurrencyPairs",
-                columns: new[] { "CurrencyPairId", "IsMain", "CurrencyId" },
-                values: new object[,]
-                {
-                    { 1L, false, 1L },
-                    { 1L, true, 2L },
-                    { 2L, false, 1L },
-                    { 2L, true, 3L },
-                    { 3L, true, 4L },
-                    { 3L, false, 5L }
-                });
-
-            migrationBuilder.InsertData(
-                table: "Requests",
-                columns: new[] { "Id", "CreatedAt", "CreatedBy", "DataPath", "Delay", "DeletedAt", "DeletedBy", "Discriminator", "Guid", "IsEnabled", "ModifiedAt", "ModifiedBy", "RequestType", "CurrencyPairId" },
-                values: new object[,]
-                {
-                    { 1L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "https://api.ethfinex.com/v2/ticker/tETHUSD", 5000, null, 0L, "CurrencyPairRequest", new Guid("190a36d4-7d07-4c95-9fc2-19655b7b83d4"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 1L },
-                    { 2L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "https://api.ethfinex.com/v2/ticker/tKNCUSD", 5000, null, 0L, "CurrencyPairRequest", new Guid("2d214248-b9aa-45c7-9bf1-863c01ef5689"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 2L },
-                    { 3L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "https://api.binance.com/api/v3/ticker/bookTicker?symbol=KNCETH", 5000, null, 0L, "CurrencyPairRequest", new Guid("9a40481e-3a37-45af-bdfe-0af60d923487"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 3L }
-                });
-
-            migrationBuilder.InsertData(
-                table: "RequestComponents",
-                columns: new[] { "Id", "ComponentType", "CreatedAt", "CreatedBy", "DeletedAt", "DeletedBy", "IsEnabled", "ModifiedAt", "ModifiedBy", "QueryComponent", "RequestComponentDatumId", "RequestId" },
-                values: new object[,]
-                {
-                    { 1L, 1, new DateTime(2018, 11, 17, 16, 0, 35, 907, DateTimeKind.Local), 0L, null, 0L, true, new DateTime(2018, 11, 17, 16, 0, 35, 910, DateTimeKind.Local), 0L, "1", 0L, 1L },
-                    { 2L, 2, new DateTime(2018, 11, 17, 16, 0, 35, 910, DateTimeKind.Local), 0L, null, 0L, true, new DateTime(2018, 11, 17, 16, 0, 35, 910, DateTimeKind.Local), 0L, "0", 0L, 1L },
-                    { 3L, 1, new DateTime(2018, 11, 17, 16, 0, 35, 910, DateTimeKind.Local), 0L, null, 0L, true, new DateTime(2018, 11, 17, 16, 0, 35, 910, DateTimeKind.Local), 0L, "0", 0L, 2L },
-                    { 4L, 1, new DateTime(2018, 11, 17, 16, 0, 35, 910, DateTimeKind.Local), 0L, null, 0L, true, new DateTime(2018, 11, 17, 16, 0, 35, 910, DateTimeKind.Local), 0L, "askPrice", 0L, 3L },
-                    { 5L, 2, new DateTime(2018, 11, 17, 16, 0, 35, 910, DateTimeKind.Local), 0L, null, 0L, true, new DateTime(2018, 11, 17, 16, 0, 35, 910, DateTimeKind.Local), 0L, "bidPrice", 0L, 3L }
                 });
 
             migrationBuilder.CreateIndex(
@@ -410,7 +334,7 @@ namespace Nozomi.Repo.Migrations
                 column: "CurrencyPairId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Sources_Abbreviation",
+                name: "Source_Index_Abbreviation",
                 table: "Sources",
                 column: "Abbreviation");
         }
