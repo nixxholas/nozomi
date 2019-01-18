@@ -21,8 +21,8 @@
     <_ContentIncludedByDefault Remove="Areas\Identity\Pages\_ViewImports.cshtml" />
   </ItemGroup>
   <Target Name="PrepublishScript" BeforeTargets="PrepareForPublish">
-    <Exec Command="sudo npm install yarn -g" />
-    <Exec Command="sudo yarn" />
-    <Exec Command="sudo yarn run release" />
+    <Exec Command="npm install yarn -g" />
+    <Exec Command="yarn" />
+    <Exec Command="yarn run release" />
   </Target>
 </Project>
