@@ -20,9 +20,4 @@
   <ItemGroup>
     <_ContentIncludedByDefault Remove="Areas\Identity\Pages\_ViewImports.cshtml" />
   </ItemGroup>
-  <Target Name="PrepublishScript" BeforeTargets="PrepareForPublish">
-    <Exec Command="npm install yarn -g" />
-    <Exec Command="yarn" />
-    <Exec Command="yarn run release" />
-  </Target>
 </Project>
