@@ -4,6 +4,7 @@
     <TypeScriptToolsVersion>3.1</TypeScriptToolsVersion>
     <AspNetCoreModuleName>AspNetCoreModule</AspNetCoreModuleName>
     <AspNetCoreHostingModel>OutOfProcess</AspNetCoreHostingModel>
+    <CopyRefAssembliesToPublishDirectory>false</CopyRefAssembliesToPublishDirectory>
   </PropertyGroup>
   
   <ItemGroup>
