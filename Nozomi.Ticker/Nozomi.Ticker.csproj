@@ -3,6 +3,7 @@
     <TargetFramework>netcoreapp2.2</TargetFramework>
     <TypeScriptToolsVersion>3.1</TypeScriptToolsVersion>
   </PropertyGroup>
+  
   <ItemGroup>
     <PackageReference Include="Gelf.Extensions.Logging" Version="1.5.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="3.1.0" />
@@ -19,4 +20,9 @@
   <ItemGroup>
     <_ContentIncludedByDefault Remove="Areas\Identity\Pages\_ViewImports.cshtml" />
   </ItemGroup>
+  <Target Name="PrepublishScript" BeforeTargets="PrepareForPublish">
+    <Exec Command="sudo npm install yarn -g" />
+    <Exec Command="sudo yarn" />
+    <Exec Command="sudo yarn run release" />
+  </Target>
 </Project>
