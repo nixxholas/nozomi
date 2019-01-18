@@ -283,7 +283,7 @@ namespace Nozomi.Ticker.StartupExtensions
                                             new RequestComponent
                                             {
                                                 ComponentType = ComponentType.Ask,
-                                                QueryComponent = "1",
+                                                QueryComponent = "2",
                                                 CreatedAt = DateTime.Now,
                                                 ModifiedAt = DateTime.Now,
                                                 DeletedAt = null
@@ -309,8 +309,16 @@ namespace Nozomi.Ticker.StartupExtensions
                                         {
                                             new RequestComponent
                                             {
-                                                ComponentType = ComponentType.Ask,
+                                                ComponentType = ComponentType.Bid,
                                                 QueryComponent = "0",
+                                                CreatedAt = DateTime.Now,
+                                                ModifiedAt = DateTime.Now,
+                                                DeletedAt = null
+                                            },
+                                            new RequestComponent
+                                            {
+                                                ComponentType = ComponentType.Ask,
+                                                QueryComponent = "2",
                                                 CreatedAt = DateTime.Now,
                                                 ModifiedAt = DateTime.Now,
                                                 DeletedAt = null
