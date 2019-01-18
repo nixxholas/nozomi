@@ -72,7 +72,7 @@ namespace Nozomi.Ticker.StartupExtensions
                         context.Database.EnsureDeleted();
                     }
 
-                    context.Database.EnsureCreated();
+                    context.Database.Migrate();
 
                     if (!context.Sources.Any())
                     {
