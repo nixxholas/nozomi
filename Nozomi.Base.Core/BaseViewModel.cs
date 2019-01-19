@@ -4,7 +4,6 @@ namespace Nozomi.Base.Core
 {
     public class BaseViewModel
     {
-        [TempData]
-        public string StatusMessage { get; set; }
+        [TempData] public string StatusMessage { get; set; } = null;
     }
 }
