@@ -1,11 +1,12 @@
 FROM microsoft/dotnet:2.2-sdk
 WORKDIR /app
 
-COPY . ./
-
+# Copy csproj and restore as distinct layers
+COPY *.csproj ./
 RUN dotnet restore
 
-# copy and build everything else
+# Copy everything else and build
+COPY . ./
 RUN dotnet publish -c Release -o out
 
 ENTRYPOINT [ "dotnet" , "Nozomi.Ticker.dll" ]
