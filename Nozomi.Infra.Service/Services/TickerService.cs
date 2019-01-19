@@ -25,7 +25,7 @@ namespace Nozomi.Service.Services
         {
         }
 
-        public Task<NozomiResult<ICollection<UniqueTickerResponse>>> Get(int index)
+        public Task<NozomiResult<ICollection<UniqueTickerResponse>>> GetAll(int index)
         {
             return Task.FromResult(new NozomiResult<ICollection<UniqueTickerResponse>>
             {
@@ -44,8 +44,9 @@ namespace Nozomi.Service.Services
                     .ThenInclude(rc => rc.RequestComponentDatum)
                     .Select(cp => new UniqueTickerResponse
                     {
-                        TickerAbbreviation = cp.PartialCurrencyPairs.SingleOrDefault(pcp => pcp.IsMain).ToString()
-                        + cp.PartialCurrencyPairs.SingleOrDefault(pcp => !pcp.IsMain).ToString(),
+                        TickerAbbreviation = string.Concat(
+                            cp.PartialCurrencyPairs.FirstOrDefault(pcp => pcp.IsMain).Currency.Abbrv,
+                            cp.PartialCurrencyPairs.FirstOrDefault(pcp => !pcp.IsMain).Currency.Abbrv),
                         Exchange = cp.CurrencySource.Name,
                         ExchangeAbbrv = cp.CurrencySource.Abbreviation,
                         LastUpdated = cp.CurrencyPairRequests.FirstOrDefault(cpr => cpr.DeletedAt == null && cpr.IsEnabled)

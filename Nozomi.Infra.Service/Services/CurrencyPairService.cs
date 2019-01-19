@@ -253,7 +253,7 @@ namespace Nozomi.Service.Services
                         // Find the Pair string first
                         var pairStr = pcPair.Currency.Abbrv + counterPairStr;
 
-                        // Get the currencysource
+                        // GetAll the currencysource
                         var cSource = pcPair.CurrencyPair.CurrencySource;
 
                         // Add the CurrencySource if it hasn't been added already

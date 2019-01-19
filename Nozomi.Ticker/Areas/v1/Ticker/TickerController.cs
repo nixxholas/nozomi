@@ -25,7 +25,7 @@ namespace Nozomi.Ticker.Areas.v1.Ticker
         [HttpGet("{index}")]
         public async Task<NozomiResult<ICollection<UniqueTickerResponse>>> GetAllAsync(int index = 0)
         {
-            return await _tickerService.Get(index);
+            return await _tickerService.GetAll(index);
         }
 
         [Authorize(Policy = ApiTokenRequirement.ApiTokenRequirementName)]
