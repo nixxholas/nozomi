@@ -1,7 +1,6 @@
 FROM microsoft/dotnet:2.2-sdk
 WORKDIR /app
-RUN ls
-COPY src .
+COPY * .
 
 # install System.Drawing native dependencies
 RUN apt-get update \
