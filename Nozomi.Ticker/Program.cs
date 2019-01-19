@@ -41,6 +41,15 @@ namespace Nozomi.Ticker
                         .AddGelf();
 
                     builder.AddSlack();
+//                    logging.AddSlack(options =>
+//                    {
+//                        options.WebhookUrl = "https://hooks.slack.com/services/ABC123FGH321QWERTYUICAZzDJBG3sehHH7scclYdDxj";
+//                        options.LogLevel = LogLevel.Information;
+//                        options.NotificationLevel = LogLevel.None;
+//                        options.Environment = env.EnvironmentName;
+//                        options.Channel = "#mychannel";
+//                        options.SanitizeOutputFunction = output => Regex.Replace(output, "@[^\\.@-]", "");
+//                    });
                 });
             }
 
