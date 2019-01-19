@@ -1,16 +1,5 @@
-FROM microsoft/dotnet:sdk AS build-env
+FROM microsoft/dotnet:2.1-sdk
 WORKDIR /app
+COPY src .
 
-# Copy csproj and restore as distinct layers
-COPY *.csproj ./
-RUN dotnet restore
-
-# Copy everything else and build
-COPY . ./
-RUN dotnet publish -c Release -o out
-
-# Build runtime image
-FROM microsoft/dotnet:aspnetcore-runtime
-WORKDIR /app
-COPY --from=build-env /app/out .
-ENTRYPOINT ["dotnet", "Nozomi.Ticker.dll"]
+ENTRYPOINT [ "dotnet" , "Nozomi.Ticker.dll" ]
