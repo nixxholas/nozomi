@@ -1,16 +1,14 @@
 FROM microsoft/dotnet:2.2-sdk
 WORKDIR /app
-
-# Copy csproj and restore as distinct layers
-COPY */*.csproj ./
-
-# show files
 RUN ls
+COPY src .
 
-RUN dotnet restore
-
-# Copy everything else and build
-COPY . ./
-RUN dotnet publish -c Release -o out
+# install System.Drawing native dependencies
+RUN apt-get update \
+    && apt-get install -y --allow-unauthenticated \
+        libc6-dev \
+        libgdiplus \
+        libx11-dev \
+     && rm -rf /var/lib/apt/lists/*
 
 ENTRYPOINT [ "dotnet" , "Nozomi.Ticker.dll" ]
