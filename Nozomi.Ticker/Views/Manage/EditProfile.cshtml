@@ -92,5 +92,36 @@
       </div>
     </div>
     <!-- End Content Section -->
+    
+    <div class="row">
+      <div class="col-sm-6 mb-6">
+        <label class="form-label">Download your data</label>
+
+        <!-- Input -->
+        <div class="input-group">
+          <form asp-controller="Manage" asp-action="DownloadPersonalData" method="post">
+            <button type="submit" class="btn btn-sm btn-primary transition-3d-hover">Download</button>
+          </form>
+        </div>
+        <!-- End Input -->
+      </div>
+
+      <div class="col-sm-6 mb-6">
+        <label class="form-label">Delete your data</label>
+
+        <!-- Input -->
+        <div class="input-group">
+          <form asp-controller="Manage" asp-action="DeletePersonalData" method="post">
+            <input type="password" class="form-control" placeholder="Enter your password" name="Password"
+                   aria-label="Enter your password" data-error-class="u-has-error" data-success-class="u-has-success" 
+                   required>
+            
+            <button type="submit" class="btn btn-sm btn-danger transition-3d-hover">Delete</button>
+          </form>
+        </div>
+        <!-- End Input -->
+      </div>
+    </div>
+    
   </main>
   <!-- ========== END MAIN ========== -->
