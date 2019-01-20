@@ -42,17 +42,8 @@ namespace Nozomi.Ticker.Areas
         //
         // GET: /Manage/Index
         [HttpGet]
-        public async Task<IActionResult> Index(ManageMessageId? message = null)
+        public async Task<IActionResult> Index(ManageIndexMessageId? message = null)
         {
-            ViewData["StatusMessage"] =
-                message == ManageMessageId.ChangePasswordSuccess ? "Your password has been changed."
-                : message == ManageMessageId.SetPasswordSuccess ? "Your password has been set."
-                : message == ManageMessageId.SetTwoFactorSuccess ? "Your two-factor authentication provider has been set."
-                : message == ManageMessageId.Error ? "An error has occurred."
-                : message == ManageMessageId.AddPhoneSuccess ? "Your phone number was added."
-                : message == ManageMessageId.RemovePhoneSuccess ? "Your phone number was removed."
-                : "";
-
             var user = await GetCurrentUserAsync();
             if (user == null)
             {
@@ -67,9 +58,31 @@ namespace Nozomi.Ticker.Areas
                 Logins = await _userManager.GetLoginsAsync(user),
                 BrowserRemembered = await _signInManager.IsTwoFactorClientRememberedAsync(user),
                 AuthenticatorKey = await _userManager.GetAuthenticatorKeyAsync(user),
-                EmailConfirmed = user.EmailConfirmed
+                EmailConfirmed = user.EmailConfirmed,
+                StatusMessage = message == ManageIndexMessageId.Error ? "An error has occured."
+                    : ""
             };
             return View(model);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> EditProfile(EditProfileMessageId? message = null)
+        {
+            var user = await GetCurrentUserAsync();
+            if (user == null)
+            {
+                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
+            
+            ViewData["StatusMessage"] = 
+                message == EditProfileMessageId.SetPasswordSuccess ? "Your password has been set."
+                : message == EditProfileMessageId.SetTwoFactorSuccess ? "Your two-factor authentication provider has been set."
+                : message == EditProfileMessageId.Error ? "An error has occurred."
+                : message == EditProfileMessageId.AddPhoneSuccess ? "Your phone number was added."
+                : message == EditProfileMessageId.RemovePhoneSuccess ? "Your phone number was removed."
+                : "";
+
+            return View();
         }
 
         //
@@ -78,7 +91,7 @@ namespace Nozomi.Ticker.Areas
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> RemoveLogin(RemoveLoginViewModel account)
         {
-            ManageMessageId? message = ManageMessageId.Error;
+            EditProfileMessageId? message = EditProfileMessageId.Error;
             var user = await GetCurrentUserAsync();
             if (user != null)
             {
@@ -86,7 +99,7 @@ namespace Nozomi.Ticker.Areas
                 if (result.Succeeded)
                 {
                     await _signInManager.SignInAsync(user, isPersistent: false);
-                    message = ManageMessageId.RemoveLoginSuccess;
+                    message = EditProfileMessageId.RemoveLoginSuccess;
                 }
             }
             return RedirectToAction(nameof(ManageLogins), new { Message = message });
@@ -266,7 +279,7 @@ namespace Nozomi.Ticker.Areas
                 if (result.Succeeded)
                 {
                     await _signInManager.SignInAsync(user, isPersistent: false);
-                    return RedirectToAction(nameof(Index), new { Message = ManageMessageId.AddPhoneSuccess });
+                    return RedirectToAction(nameof(Index), new { Message = EditProfileMessageId.AddPhoneSuccess });
                 }
             }
             // If we got this far, something failed, redisplay the form
@@ -287,10 +300,10 @@ namespace Nozomi.Ticker.Areas
                 if (result.Succeeded)
                 {
                     await _signInManager.SignInAsync(user, isPersistent: false);
-                    return RedirectToAction(nameof(Index), new { Message = ManageMessageId.RemovePhoneSuccess });
+                    return RedirectToAction(nameof(Index), new { Message = EditProfileMessageId.RemovePhoneSuccess });
                 }
             }
-            return RedirectToAction(nameof(Index), new { Message = ManageMessageId.Error });
+            return RedirectToAction(nameof(Index), new { Message = EditProfileMessageId.Error });
         }
         
         //
@@ -304,9 +317,15 @@ namespace Nozomi.Ticker.Areas
         //
         // GET: /Manage/ChangePassword
         [HttpGet]
-        public IActionResult ChangePassword()
+        public IActionResult ChangePassword(ChangePasswordMessageId? message = null)
         {
-            return View();
+            return View(new ChangePasswordViewModel
+            {
+                StatusMessage = 
+                    message == ChangePasswordMessageId.ChangePasswordSuccess ? "Your password has been changed." 
+                    : message == ChangePasswordMessageId.Error ? "An error has occurred"
+                    : ""
+            });
         }
 
         //
@@ -327,12 +346,13 @@ namespace Nozomi.Ticker.Areas
                 {
                     await _signInManager.SignInAsync(user, isPersistent: false);
                     _logger.LogInformation(3, "User changed their password successfully.");
-                    return RedirectToAction(nameof(Index), new { Message = ManageMessageId.ChangePasswordSuccess });
+                    return RedirectToAction(nameof(ChangePassword), new { Message = 
+                        ChangePasswordMessageId.ChangePasswordSuccess });
                 }
                 AddErrors(result);
                 return View(model);
             }
-            return RedirectToAction(nameof(Index), new { Message = ManageMessageId.Error });
+            return RedirectToAction(nameof(ChangePassword), new { Message = ChangePasswordMessageId.Error });
         }
 
         //
@@ -361,22 +381,22 @@ namespace Nozomi.Ticker.Areas
                 if (result.Succeeded)
                 {
                     await _signInManager.SignInAsync(user, isPersistent: false);
-                    return RedirectToAction(nameof(Index), new { Message = ManageMessageId.SetPasswordSuccess });
+                    return RedirectToAction(nameof(Index), new { Message = EditProfileMessageId.SetPasswordSuccess });
                 }
                 AddErrors(result);
                 return View(model);
             }
-            return RedirectToAction(nameof(Index), new { Message = ManageMessageId.Error });
+            return RedirectToAction(nameof(Index), new { Message = EditProfileMessageId.Error });
         }
 
         //GET: /Manage/ManageLogins
         [HttpGet]
-        public async Task<IActionResult> ManageLogins(ManageMessageId? message = null)
+        public async Task<IActionResult> ManageLogins(EditProfileMessageId? message = null)
         {
             ViewData["StatusMessage"] =
-                message == ManageMessageId.RemoveLoginSuccess ? "The external login was removed."
-                : message == ManageMessageId.AddLoginSuccess ? "The external login was added."
-                : message == ManageMessageId.Error ? "An error has occurred."
+                message == EditProfileMessageId.RemoveLoginSuccess ? "The external login was removed."
+                : message == EditProfileMessageId.AddLoginSuccess ? "The external login was added."
+                : message == EditProfileMessageId.Error ? "An error has occurred."
                 : "";
             var user = await GetCurrentUserAsync();
             if (user == null)
@@ -419,10 +439,10 @@ namespace Nozomi.Ticker.Areas
             var info = await _signInManager.GetExternalLoginInfoAsync(await _userManager.GetUserIdAsync(user));
             if (info == null)
             {
-                return RedirectToAction(nameof(ManageLogins), new { Message = ManageMessageId.Error });
+                return RedirectToAction(nameof(ManageLogins), new { Message = EditProfileMessageId.Error });
             }
             var result = await _userManager.AddLoginAsync(user, info);
-            var message = result.Succeeded ? ManageMessageId.AddLoginSuccess : ManageMessageId.Error;
+            var message = result.Succeeded ? EditProfileMessageId.AddLoginSuccess : EditProfileMessageId.Error;
             return RedirectToAction(nameof(ManageLogins), new { Message = message });
         }
 
@@ -589,15 +609,25 @@ namespace Nozomi.Ticker.Areas
             }
         }
 
-        public enum ManageMessageId
+        public enum ChangePasswordMessageId
+        {
+            ChangePasswordSuccess,
+            Error
+        }
+
+        public enum EditProfileMessageId
         {
             AddPhoneSuccess,
             AddLoginSuccess,
-            ChangePasswordSuccess,
             SetTwoFactorSuccess,
             SetPasswordSuccess,
             RemoveLoginSuccess,
             RemovePhoneSuccess,
+            Error
+        }
+
+        public enum ManageIndexMessageId
+        {
             Error
         }
 
