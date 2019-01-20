@@ -69,6 +69,7 @@ namespace Nozomi.Ticker.Areas
             
             var vm = new EditProfileViewModel
             {
+                Email = user.Email,
                 HasPassword = await _userManager.HasPasswordAsync(user),
                 PhoneNumber = await _userManager.GetPhoneNumberAsync(user),
                 TwoFactor = await _userManager.GetTwoFactorEnabledAsync(user),
@@ -76,6 +77,7 @@ namespace Nozomi.Ticker.Areas
                 BrowserRemembered = await _signInManager.IsTwoFactorClientRememberedAsync(user),
                 AuthenticatorKey = await _userManager.GetAuthenticatorKeyAsync(user),
                 EmailConfirmed = user.EmailConfirmed,
+                Username = user.UserName,
                 StatusMessage = 
                     message == EditProfileMessageId.SetPasswordSuccess ? "Your password has been set."
                     : message == EditProfileMessageId.SetTwoFactorSuccess ? "Your two-factor authentication provider has been set."
