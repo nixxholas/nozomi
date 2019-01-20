@@ -52,13 +52,6 @@ namespace Nozomi.Ticker.Areas
 
             var model = new IndexViewModel
             {
-                HasPassword = await _userManager.HasPasswordAsync(user),
-                PhoneNumber = await _userManager.GetPhoneNumberAsync(user),
-                TwoFactor = await _userManager.GetTwoFactorEnabledAsync(user),
-                Logins = await _userManager.GetLoginsAsync(user),
-                BrowserRemembered = await _signInManager.IsTwoFactorClientRememberedAsync(user),
-                AuthenticatorKey = await _userManager.GetAuthenticatorKeyAsync(user),
-                EmailConfirmed = user.EmailConfirmed,
                 StatusMessage = message == ManageIndexMessageId.Error ? "An error has occured."
                     : ""
             };
@@ -74,15 +67,25 @@ namespace Nozomi.Ticker.Areas
                 return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
             
-            ViewData["StatusMessage"] = 
-                message == EditProfileMessageId.SetPasswordSuccess ? "Your password has been set."
-                : message == EditProfileMessageId.SetTwoFactorSuccess ? "Your two-factor authentication provider has been set."
-                : message == EditProfileMessageId.Error ? "An error has occurred."
-                : message == EditProfileMessageId.AddPhoneSuccess ? "Your phone number was added."
-                : message == EditProfileMessageId.RemovePhoneSuccess ? "Your phone number was removed."
-                : "";
+            var vm = new EditProfileViewModel
+            {
+                HasPassword = await _userManager.HasPasswordAsync(user),
+                PhoneNumber = await _userManager.GetPhoneNumberAsync(user),
+                TwoFactor = await _userManager.GetTwoFactorEnabledAsync(user),
+                Logins = await _userManager.GetLoginsAsync(user),
+                BrowserRemembered = await _signInManager.IsTwoFactorClientRememberedAsync(user),
+                AuthenticatorKey = await _userManager.GetAuthenticatorKeyAsync(user),
+                EmailConfirmed = user.EmailConfirmed,
+                StatusMessage = 
+                    message == EditProfileMessageId.SetPasswordSuccess ? "Your password has been set."
+                    : message == EditProfileMessageId.SetTwoFactorSuccess ? "Your two-factor authentication provider has been set."
+                    : message == EditProfileMessageId.Error ? "An error has occurred."
+                    : message == EditProfileMessageId.AddPhoneSuccess ? "Your phone number was added."
+                    : message == EditProfileMessageId.RemovePhoneSuccess ? "Your phone number was removed."
+                    : ""
+            };
 
-            return View();
+            return View(vm);
         }
 
         //
