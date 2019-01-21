@@ -245,7 +245,9 @@ namespace Nozomi.Ticker.Areas
                 RecoveryCodesLeft = await _userManager.CountRecoveryCodesAsync(user),
                 StatusMessage = 
                     message == TwoFactorAuthenticationMessageId.Enable2FASuccess ? "2FA is now enabled on your account."
-                    : message == TwoFactorAuthenticationMessageId.Disable2FAError ? "There was a problem enabling 2FA on your account."
+                    : message == TwoFactorAuthenticationMessageId.Enable2FAError ? "There was a problem enabling 2FA on your account."
+                    : message == TwoFactorAuthenticationMessageId.Disable2FASuccess ? "Your 2FA configuration has been successfully disabled."    
+                    : message == TwoFactorAuthenticationMessageId.Disable2FAError ? "There was a problem disabling 2FA on your account."
                     : message == TwoFactorAuthenticationMessageId.Error ? "An unknown error has occurred. Please contact our administrator."
                     : ""
             };
@@ -265,9 +267,12 @@ namespace Nozomi.Ticker.Areas
                 await _userManager.SetTwoFactorEnabledAsync(user, true);
                 await _signInManager.SignInAsync(user, isPersistent: false);
                 _logger.LogInformation(1, "User enabled two-factor authentication.");
+                return RedirectToAction(nameof(TwoFactorAuthentication), 
+                    new { Message = TwoFactorAuthenticationMessageId.Enable2FASuccess});
             }
             
-            return RedirectToAction(nameof(TwoFactorAuthentication), "Manage");
+            return RedirectToAction(nameof(TwoFactorAuthentication), 
+                new { Message = TwoFactorAuthenticationMessageId.Enable2FAError});
         }
 
         //
@@ -282,8 +287,11 @@ namespace Nozomi.Ticker.Areas
                 await _userManager.SetTwoFactorEnabledAsync(user, false);
                 await _signInManager.SignInAsync(user, isPersistent: false);
                 _logger.LogInformation(2, "User disabled two-factor authentication.");
+                return RedirectToAction(nameof(TwoFactorAuthentication), 
+                    new { Message = TwoFactorAuthenticationMessageId.Disable2FASuccess});
             }
-            return RedirectToAction(nameof(Index), "Manage");
+            return RedirectToAction(nameof(TwoFactorAuthentication), 
+                new { Message = TwoFactorAuthenticationMessageId.Disable2FAError});
         }
 
         //
@@ -668,6 +676,8 @@ namespace Nozomi.Ticker.Areas
         public enum TwoFactorAuthenticationMessageId
         {
             Enable2FASuccess,
+            Enable2FAError,
+            Disable2FASuccess,
             Disable2FAError,
             Error
         }
