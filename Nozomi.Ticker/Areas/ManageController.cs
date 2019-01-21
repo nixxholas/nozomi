@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -28,16 +29,18 @@ namespace Nozomi.Ticker.Areas
         private readonly IStripeEvent _stripeEvent;
         private readonly IStripeService _stripeService;
         private readonly IApiTokenEvent _apiTokenEvent;
+        private readonly UrlEncoder _urlEncoder;
         
         public ManageController(ILogger<ManageController> logger, NozomiSignInManager signInManager, 
             NozomiUserManager userManager, ISmsSender smsSender, IStripeService stripeService, IStripeEvent stripeEvent,
-            IApiTokenEvent apiTokenEvent) 
+            IApiTokenEvent apiTokenEvent, UrlEncoder urlEncoder) 
             : base(logger, signInManager, userManager)
         {
             _smsSender = smsSender;
             _apiTokenEvent = apiTokenEvent;
             _stripeEvent = stripeEvent;
             _stripeService = stripeService;
+            _urlEncoder = urlEncoder;
         }
         
         //
@@ -229,7 +232,8 @@ namespace Nozomi.Ticker.Areas
         //
         // GET: /Manage/TwoFactorAuthentication
         [HttpGet]
-        public async Task<IActionResult> TwoFactorAuthentication(TwoFactorAuthenticationMessageId? message = null)
+        public async Task<IActionResult> TwoFactorAuthentication(TwoFactorAuthenticationMessageId? message = null,
+            string[] recoveryCodes = null)
         {
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
@@ -237,20 +241,47 @@ namespace Nozomi.Ticker.Areas
                 return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
 
+            var hasAuthenticator = await _userManager.GetAuthenticatorKeyAsync(user) != null;
+
             var vm = new TwoFAViewModel
             {
-                HasAuthenticator = await _userManager.GetAuthenticatorKeyAsync(user) != null,
+                HasAuthenticator = hasAuthenticator,
                 Is2faEnabled = await _userManager.GetTwoFactorEnabledAsync(user),
                 IsMachineRemembered = await _signInManager.IsTwoFactorClientRememberedAsync(user),
-                RecoveryCodesLeft = await _userManager.CountRecoveryCodesAsync(user),
                 StatusMessage = 
                     message == TwoFactorAuthenticationMessageId.Enable2FASuccess ? "2FA is now enabled on your account."
+                    : message == TwoFactorAuthenticationMessageId.Enable2FAInvalidCode ? "Invalid 2FA auth code."
                     : message == TwoFactorAuthenticationMessageId.Enable2FAError ? "There was a problem enabling 2FA on your account."
                     : message == TwoFactorAuthenticationMessageId.Disable2FASuccess ? "Your 2FA configuration has been successfully disabled."    
                     : message == TwoFactorAuthenticationMessageId.Disable2FAError ? "There was a problem disabling 2FA on your account."
                     : message == TwoFactorAuthenticationMessageId.Error ? "An unknown error has occurred. Please contact our administrator."
                     : ""
             };
+            
+            if (!hasAuthenticator)
+            {
+                // Load the authenticator key & QR code URI to display on the form
+                var unformattedKey = await _userManager.GetAuthenticatorKeyAsync(user);
+                
+                if (string.IsNullOrEmpty(unformattedKey))
+                {
+                    await _userManager.ResetAuthenticatorKeyAsync(user);
+                    unformattedKey = await _userManager.GetAuthenticatorKeyAsync(user);
+
+                    vm.SharedKey = GenerateSharedKey(unformattedKey);
+                    vm.AuthenticatorUri = GenerateAuthenticatorUri(user.Email, unformattedKey);
+                }
+            }
+
+            if (!vm.Is2faEnabled)
+            {
+                if (recoveryCodes != null)
+                {
+                    vm.RecoveryCodes = recoveryCodes;
+                }
+                
+                vm.RecoveryCodesLeft = await _userManager.CountRecoveryCodesAsync(user);
+            }
             
             return View(vm);
         }
@@ -259,21 +290,89 @@ namespace Nozomi.Ticker.Areas
         // POST: /Manage/TwoFactorAuthentication
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> TwoFactorAuthentication()
+        public async Task<IActionResult> TwoFactorAuthentication(TwoFAViewModel model)
         {
             var user = await GetCurrentUserAsync();
-            if (user != null)
+            if (user != null && ModelState.IsValid)
             {
+                // Strip spaces and hypens
+                var verificationCode = model.Code
+                    .Replace(" ", string.Empty)
+                    .Replace("-", string.Empty);
+
+                var is2faTokenValid = await _userManager.VerifyTwoFactorTokenAsync(
+                    user, _userManager.Options.Tokens.AuthenticatorTokenProvider, verificationCode);
+
+                if (!is2faTokenValid)
+                {
+                    return RedirectToAction(nameof(TwoFactorAuthentication), 
+                        new { Message = TwoFactorAuthenticationMessageId.Enable2FAInvalidCode});
+                }
+                
                 await _userManager.SetTwoFactorEnabledAsync(user, true);
                 await _signInManager.SignInAsync(user, isPersistent: false);
                 _logger.LogInformation(1, "User enabled two-factor authentication.");
-                return RedirectToAction(nameof(TwoFactorAuthentication), 
-                    new { Message = TwoFactorAuthenticationMessageId.Enable2FASuccess});
+                
+                if (await _userManager.CountRecoveryCodesAsync(user) == 0)
+                {
+                    var recoveryCodes = await _userManager.GenerateNewTwoFactorRecoveryCodesAsync(user, 10);
+                    return RedirectToAction(nameof(TwoFactorAuthentication), 
+                        new
+                        {
+                            Message = TwoFactorAuthenticationMessageId.Enable2FASuccess,
+                            RecoveryCodes = recoveryCodes
+                        });
+                }
+                else
+                {
+                    return RedirectToAction(nameof(TwoFactorAuthentication), 
+                        new { Message = TwoFactorAuthenticationMessageId.Enable2FASuccess});
+                }
             }
             
             return RedirectToAction(nameof(TwoFactorAuthentication), 
                 new { Message = TwoFactorAuthenticationMessageId.Enable2FAError});
         }
+        
+        #region 2FA Helpers
+        private const string AuthenticatorUriFormat = "otpauth://totp/{0}:{1}?secret={2}&issuer={0}&digits=6";
+        
+        private string GenerateSharedKey(string unformattedKey)
+        {
+            return FormatKey(unformattedKey);
+        }
+
+        private string GenerateAuthenticatorUri(string email, string unformattedKey)
+        {
+            return GenerateQrCodeUri(email, unformattedKey);
+        }
+
+        private string FormatKey(string unformattedKey)
+        {
+            var result = new StringBuilder();
+            int currentPosition = 0;
+            while (currentPosition + 4 < unformattedKey.Length)
+            {
+                result.Append(unformattedKey.Substring(currentPosition, 4)).Append(" ");
+                currentPosition += 4;
+            }
+            if (currentPosition < unformattedKey.Length)
+            {
+                result.Append(unformattedKey.Substring(currentPosition));
+            }
+
+            return result.ToString().ToLowerInvariant();
+        }
+
+        private string GenerateQrCodeUri(string email, string unformattedKey)
+        {
+            return string.Format(
+                AuthenticatorUriFormat,
+                _urlEncoder.Encode("Nozomi.Ticker"),
+                _urlEncoder.Encode(email),
+                unformattedKey);
+        }
+        #endregion
 
         //
         // POST: /Manage/DisableTwoFactorAuthentication
@@ -285,7 +384,8 @@ namespace Nozomi.Ticker.Areas
             if (user != null)
             {
                 await _userManager.SetTwoFactorEnabledAsync(user, false);
-                await _signInManager.SignInAsync(user, isPersistent: false);
+                await _userManager.ResetAuthenticatorKeyAsync(user);
+                await _signInManager.RefreshSignInAsync(user);
                 _logger.LogInformation(2, "User disabled two-factor authentication.");
                 return RedirectToAction(nameof(TwoFactorAuthentication), 
                     new { Message = TwoFactorAuthenticationMessageId.Disable2FASuccess});
@@ -677,6 +777,7 @@ namespace Nozomi.Ticker.Areas
         {
             Enable2FASuccess,
             Enable2FAError,
+            Enable2FAInvalidCode,
             Disable2FASuccess,
             Disable2FAError,
             Error
