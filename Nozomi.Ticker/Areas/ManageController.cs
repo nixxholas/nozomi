@@ -224,12 +224,20 @@ namespace Nozomi.Ticker.Areas
             }
             return View("Error");
         }
+        
+        //
+        // GET: /Manage/TwoFactorAuthentication
+        [HttpGet]
+        public async Task<IActionResult> TwoFactorAuthentication(TwoFactorAuthenticationMessageId? message = null)
+        {
+            return View();
+        }
 
         //
-        // POST: /Manage/EnableTwoFactorAuthentication
+        // POST: /Manage/TwoFactorAuthentication
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> EnableTwoFactorAuthentication()
+        public async Task<IActionResult> TwoFactorAuthentication()
         {
             var user = await GetCurrentUserAsync();
             if (user != null)
@@ -632,6 +640,11 @@ namespace Nozomi.Ticker.Areas
         }
 
         public enum ManageIndexMessageId
+        {
+            Error
+        }
+
+        public enum TwoFactorAuthenticationMessageId
         {
             Error
         }
