@@ -13,6 +13,7 @@ using Nozomi.Base.Identity.Models.Subscription;
 using Nozomi.Base.Identity.ViewModels.Manage;
 using Nozomi.Base.Identity.ViewModels.Manage.ApiTokens;
 using Nozomi.Base.Identity.ViewModels.Manage.PaymentMethods;
+using Nozomi.Base.Identity.ViewModels.Manage.TwoFactorAuthentication;
 using Nozomi.Preprocessing.Events.Interfaces;
 using Nozomi.Service.Identity.Events.Auth.Interfaces;
 using Nozomi.Service.Identity.Events.Interfaces;
@@ -230,7 +231,26 @@ namespace Nozomi.Ticker.Areas
         [HttpGet]
         public async Task<IActionResult> TwoFactorAuthentication(TwoFactorAuthenticationMessageId? message = null)
         {
-            return View();
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
+
+            var vm = new TwoFAViewModel
+            {
+                HasAuthenticator = await _userManager.GetAuthenticatorKeyAsync(user) != null,
+                Is2faEnabled = await _userManager.GetTwoFactorEnabledAsync(user),
+                IsMachineRemembered = await _signInManager.IsTwoFactorClientRememberedAsync(user),
+                RecoveryCodesLeft = await _userManager.CountRecoveryCodesAsync(user),
+                StatusMessage = 
+                    message == TwoFactorAuthenticationMessageId.Enable2FASuccess ? "2FA is now enabled on your account."
+                    : message == TwoFactorAuthenticationMessageId.Disable2FAError ? "There was a problem enabling 2FA on your account."
+                    : message == TwoFactorAuthenticationMessageId.Error ? "An unknown error has occurred. Please contact our administrator."
+                    : ""
+            };
+            
+            return View(vm);
         }
 
         //
@@ -246,7 +266,8 @@ namespace Nozomi.Ticker.Areas
                 await _signInManager.SignInAsync(user, isPersistent: false);
                 _logger.LogInformation(1, "User enabled two-factor authentication.");
             }
-            return RedirectToAction(nameof(Index), "Manage");
+            
+            return RedirectToAction(nameof(TwoFactorAuthentication), "Manage");
         }
 
         //
@@ -646,6 +667,8 @@ namespace Nozomi.Ticker.Areas
 
         public enum TwoFactorAuthenticationMessageId
         {
+            Enable2FASuccess,
+            Disable2FAError,
             Error
         }
 
