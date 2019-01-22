@@ -54,10 +54,13 @@
         {
             <p>Scan the QR Code or enter this key <kbd>@Model.SharedKey</kbd> into your two factor authenticator app. 
                 Spaces and casing do not matter.</p>
-            <div id="qrCode"></div>
-            <div id="qrCodeData" data-url="@Html.Raw(@Model.AuthenticatorUri)"></div>
             
             <div class="col-sm-4 mb-6">
+                <div id="qrCode"></div>
+                <div id="qrCodeData" data-url="@Html.Raw(@Model.AuthenticatorUri)"></div>
+            </div>
+                
+                <div class="col-sm-4 mb-6">
                 <form asp-controller="Manage" asp-action="TwoFactorAuthentication" method="post">
                     <div class="form-group">
                         <input type="text" asp-for="Code" class="form-control" placeholder="Code"/>
@@ -72,9 +75,12 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
-    <script>
-    $(document).ready(function() {
-        // new QRCode(document.getElementById("qrcode"), "@Model.AuthenticatorUri");
-    });
-    </script>
+    @if (!Model.Is2faEnabled) {
+        <script src="~/assets/js/qrcode.min.js"></script>
+        <script>
+            $(document).ready(function() {
+                    new QRCode(document.getElementById("qrCode"), "@Model.AuthenticatorUri");
+            });
+        </script>
+    }
 }
