@@ -257,7 +257,7 @@ namespace Nozomi.Ticker.Areas
             };
             
             // If 2fa is not enabled
-            if (!vm.HasAuthenticator)
+            if (!vm.Is2faEnabled)
             {
                 // Load the authenticator key & QR code URI to display on the form
                 var unformattedKey = await _userManager.GetAuthenticatorKeyAsync(user);
@@ -272,7 +272,7 @@ namespace Nozomi.Ticker.Areas
 
                 vm.SharedKey = GenerateSharedKey(unformattedKey);
                 vm.AuthenticatorUri = GenerateAuthenticatorUri(user.Email, unformattedKey);
-            } else 
+            } else if (vm.Is2faEnabled)
             {
                 if (recoveryCodes != null)
                 {
