@@ -116,8 +116,8 @@
             <!-- Input -->
             <div class="input-group">
               <form asp-controller="Manage" asp-action="DeletePersonalData" method="post">
-                <label for="Password">Once you delete your data, you will not be able to recover it again.</label>
-                <div class="input-group">
+                <label class="form-label" for="Password">Once you delete your data, you will not be able to recover it again.</label>
+                <div class="form-group">
                   <input type="password" class="form-control" placeholder="Enter your password" name="Password"
                          aria-label="Enter your password" data-error-class="u-has-error" data-success-class="u-has-success"
                          required>
