@@ -262,14 +262,16 @@ namespace Nozomi.Ticker.Areas
                 // Load the authenticator key & QR code URI to display on the form
                 var unformattedKey = await _userManager.GetAuthenticatorKeyAsync(user);
                 
-                if (!string.IsNullOrEmpty(unformattedKey))
+                // If there isn't any unformatted key
+                if (string.IsNullOrEmpty(unformattedKey))
                 {
+                    // Regenerate
                     await _userManager.ResetAuthenticatorKeyAsync(user);
                     unformattedKey = await _userManager.GetAuthenticatorKeyAsync(user);
-
-                    vm.SharedKey = GenerateSharedKey(unformattedKey);
-                    vm.AuthenticatorUri = GenerateAuthenticatorUri(user.Email, unformattedKey);
                 }
+
+                vm.SharedKey = GenerateSharedKey(unformattedKey);
+                vm.AuthenticatorUri = GenerateAuthenticatorUri(user.Email, unformattedKey);
             } else 
             {
                 if (recoveryCodes != null)
