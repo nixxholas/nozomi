@@ -12,7 +12,7 @@ import 'jquery-migrate';
 import Typed from 'typed.js';
 import 'popper.js';
 import 'bootstrap';
-import 'chartist';
+import * as Chartist from 'chartist';
 import 'slick-carousel';
 import 'svg-injector';
 import 'malihu-custom-scrollbar-plugin';
@@ -28,6 +28,7 @@ import '../scripts/components/hs.header.js';
 import '../scripts/components/hs.unfold.js';
 
 import '../scripts/components/hs.bg-video.js';
+import '../scripts/components/hs.chartist-area-chart.js';
 import '../scripts/components/hs.chartist-bar-chart.js';
 import '../scripts/components/hs.datatables.js';
 import '../scripts/components/hs.focus-state.js';
@@ -62,7 +63,7 @@ $(window).on('load', function () {
 
     // initialization of svg injector module
     $.HSCore.components.HSSVGIngector.init('.js-svg-injector');
-});
+}); 
 
 $(document).on('ready', function () {
     // initialization of header
@@ -125,6 +126,9 @@ $(document).on('ready', function () {
         direction: 'vertical',
         indicatorSelector: '.js-vr-progress-bar'
     });
+
+    // initialization of chartist area charts
+    $.HSCore.components.HSChartistAreaChart.init('.js-area-chart');
 
     // initialization of chartist bar chart
     $.HSCore.components.HSChartistBarChart.init('.js-bar-chart');
