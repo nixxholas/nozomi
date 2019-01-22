@@ -58,6 +58,9 @@
             <div id="qrCodeData" data-url="@Html.Raw(@Model.AuthenticatorUri)"></div>
             
             <form asp-controller="Manage" asp-action="TwoFactorAuthentication" method="post">
+                <div class="form-group">
+                    <input type="text" asp-for="Code" class="form-control"/>
+                </div>
                 <button type="submit" class="btn btn-primary">Add authenticator app</button>
             </form>
         }

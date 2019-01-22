@@ -241,11 +241,9 @@ namespace Nozomi.Ticker.Areas
                 return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
 
-            var hasAuthenticator = await _userManager.GetAuthenticatorKeyAsync(user) != null;
-
             var vm = new TwoFAViewModel
             {
-                HasAuthenticator = hasAuthenticator,
+                HasAuthenticator = await _userManager.GetAuthenticatorKeyAsync(user) != null,
                 Is2faEnabled = await _userManager.GetTwoFactorEnabledAsync(user),
                 IsMachineRemembered = await _signInManager.IsTwoFactorClientRememberedAsync(user),
                 StatusMessage = 
@@ -258,12 +256,13 @@ namespace Nozomi.Ticker.Areas
                     : ""
             };
             
-            if (!hasAuthenticator)
+            // If 2fa is not enabled
+            if (!vm.HasAuthenticator)
             {
                 // Load the authenticator key & QR code URI to display on the form
                 var unformattedKey = await _userManager.GetAuthenticatorKeyAsync(user);
                 
-                if (string.IsNullOrEmpty(unformattedKey))
+                if (!string.IsNullOrEmpty(unformattedKey))
                 {
                     await _userManager.ResetAuthenticatorKeyAsync(user);
                     unformattedKey = await _userManager.GetAuthenticatorKeyAsync(user);
@@ -271,9 +270,7 @@ namespace Nozomi.Ticker.Areas
                     vm.SharedKey = GenerateSharedKey(unformattedKey);
                     vm.AuthenticatorUri = GenerateAuthenticatorUri(user.Email, unformattedKey);
                 }
-            }
-
-            if (!vm.Is2faEnabled)
+            } else 
             {
                 if (recoveryCodes != null)
                 {
