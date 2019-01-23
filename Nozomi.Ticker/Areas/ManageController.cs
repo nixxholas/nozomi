@@ -782,12 +782,6 @@ namespace Nozomi.Ticker.Areas
             Disable2FAError,
             Error
         }
-
-        private async Task<User> GetCurrentUserAsync()
-        {
-            return await _userManager.GetUserAsync(HttpContext.User);
-        }
-
         #endregion
     }
 }
