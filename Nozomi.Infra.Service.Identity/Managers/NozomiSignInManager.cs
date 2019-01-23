@@ -121,7 +121,7 @@ namespace Nozomi.Service.Identity.Managers
                     userPrincipal,
                     authenticationProperties ?? new AuthenticationProperties());
                 // https://github.com/aspnet/Security/issues/1131#issuecomment-280896191
-                // Context.User = userPrincipal;
+                Context.User = userPrincipal;
             }
             catch (Exception ex)
             {

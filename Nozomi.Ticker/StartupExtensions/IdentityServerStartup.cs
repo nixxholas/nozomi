@@ -26,14 +26,14 @@ namespace Nozomi.Ticker.StartupExtensions
     {
         public static void ConfigureNozomiAuth(this IServiceCollection services, IConfiguration configuration)
         {
-            var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-
-            // Environment-specific configuration
-            if (!string.IsNullOrEmpty(env) && env.Equals("Production", StringComparison.InvariantCultureIgnoreCase))
-            {
-            } else
-            {
-            }
+//            var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+//
+//            // Environment-specific configuration
+//            if (!string.IsNullOrEmpty(env) && env.Equals("Production", StringComparison.InvariantCultureIgnoreCase))
+//            {
+//            } else
+//            {
+//            }
 
             services.AddIdentity<User, Role>()
                 .AddEntityFrameworkStores<NozomiAuthContext>()

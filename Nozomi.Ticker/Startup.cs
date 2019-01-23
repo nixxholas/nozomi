@@ -61,7 +61,7 @@ namespace Nozomi.Ticker
 
                 services.AddDbContext<NozomiDbContext>(options =>
                 {
-                    options.UseNpgsql(Configuration.GetConnectionString("Local:" + @Environment.MachineName));
+                    options.UseNpgsql(str);
                     options.EnableSensitiveDataLogging(false);
                     options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
                 },
@@ -122,7 +122,7 @@ namespace Nozomi.Ticker
             {
                 // This lambda determines whether user consent for non-essential cookies is needed for a given request.
                 options.CheckConsentNeeded = context => false;
-                options.MinimumSameSitePolicy = SameSiteMode.Lax;
+                options.MinimumSameSitePolicy = SameSiteMode.Strict;
                 options.Secure = CookieSecurePolicy.Always;
             });
             
