@@ -86,48 +86,6 @@ namespace Nozomi.Service.Identity.Managers
             var authenticationMethod = auth?.Principal?.FindFirstValue(ClaimTypes.AuthenticationMethod);
             await SignInAsync(user, auth?.Properties, authenticationMethod);
         }
-
-        /// <summary>
-        /// Signs in the specified <paramref name="user"/>.
-        /// </summary>
-        /// <param name="user">The user to sign-in.</param>
-        /// <param name="isPersistent">Flag indicating whether the sign-in cookie should persist after the browser is closed.</param>
-        /// <param name="authenticationMethod">Name of the method used to authenticate the user.</param>
-        /// <returns>The task object representing the asynchronous operation.</returns>
-        public override Task SignInAsync(User user, bool isPersistent, string authenticationMethod = null)
-        {
-            return SignInAsync(user, new AuthenticationProperties { IsPersistent = isPersistent }, authenticationMethod);
-        }
-
-        /// <summary>
-        /// Signs in the specified <paramref name="user"/>.
-        /// </summary>
-        /// <param name="user">The user to sign-in.</param>
-        /// <param name="authenticationProperties">Properties applied to the login and authentication cookie.</param>
-        /// <param name="authenticationMethod">Name of the method used to authenticate the user.</param>
-        /// <returns>The task object representing the asynchronous operation.</returns>
-        public override async Task SignInAsync(User user, AuthenticationProperties authenticationProperties, string authenticationMethod = null)
-        {
-            try
-            {
-                var userPrincipal = await CreateUserPrincipalAsync(user);
-                // Review: should we guard against CreateUserPrincipal returning null?
-                if (authenticationMethod != null)
-                {
-                    userPrincipal.Identities.First().AddClaim(new Claim(ClaimTypes.AuthenticationMethod, authenticationMethod));
-                }
-
-                await Context.SignInAsync(IdentityConstants.ApplicationScheme,
-                    userPrincipal,
-                    authenticationProperties ?? new AuthenticationProperties());
-                // https://github.com/aspnet/Security/issues/1131#issuecomment-280896191
-                Context.User = userPrincipal;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-            }
-        }
         
         /// <summary>
         /// Signs the current user out of the application.
