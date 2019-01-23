@@ -105,18 +105,45 @@
           </div>
           @if (User.IsInRole(RoleEnum.Administrator.GetDescription()) || isOwner)
           {
-            //var tickers = await TickerService.GetAll();
+            var tickers = await TickerService.GetAll(0);
             <div class="tab-pane fade" id="pills-tickers" 
                  role="tabpanel" aria-labelledby="pills-tickers-tab">
               <table class="table table-light force-full-width">
                 <thead>
                 <tr>
-                  <th scope="col" style="width: 8%;">#</th>
-                  <th scope="col">Name</th>
-                  <th scope="col">Abbreviation</th>
-                  <th scope="col">Supported Tickers</th>
+                  <th scope="col">Ticker</th>
+                  <th scope="col">Exchange</th>
+                  <th scope="col">Last Updated</th>
+                  <th scope="col">Polled Values</th>
                 </tr>
                 </thead>
+                <tbody>
+                @{
+                  if (tickers != null && tickers.Data != null && tickers.Data.Count > 0)
+                  {
+                    foreach (var ticker in tickers.Data)
+                    {
+                      <tr>
+                        <td>@ticker.TickerAbbreviation</td>
+                        <td>@ticker.Exchange</td>
+                        <td>@ticker.LastUpdated</td>
+                        <td>
+                          @{
+                            if (ticker.Properties != null && ticker.Properties.Count > 0)
+                            {
+                              foreach (var prop in ticker.Properties)
+                              {
+                                <small class="d-block">@prop.Value 
+                                  <span class="badge badge-light">@prop.Key</span></small>
+                              }
+                            }
+                          }
+                        </td>
+                      </tr>
+                    } 
+                  }
+                }
+                </tbody>
               </table>
             </div>
           }
@@ -728,44 +755,6 @@
 @section Scripts {
   <partial name="_ValidationScriptsPartial" />
   <script>
-    $(document).ready(function ()  
-    {  
-      $("#example").DataTable({  
-        "processing": true, // for show progress bar  
-        "serverSide": true, // for process server side  
-        "filter": true, // this is for disable filter (search box)  
-        "orderMulti": true, // for disable multiple column at once  
-        "ajax": {  
-          "url": "/DemoGrid/LoadData",  
-          "type": "POST",  
-          "datatype": "json"  
-        },  
-        "columnDefs":  
-        [{  
-          "targets": [0],  
-          "visible": false,  
-          "searchable": false  
-        }],  
-        "columns": [  
-          { "data": "CustomerID", "name": "CustomerID", "autoWidth": true },  
-          { "data": "Name", "name": "Name", "autoWidth": true },  
-          { "data": "Address", "name": "Address", "autoWidth": true },  
-          { "data": "Country", "name": "Country", "autoWidth": true },  
-          { "data": "City", "name": "City", "autoWidth": true },  
-          { "data": "Phoneno", "name": "Phoneno", "autoWidth": true },  
-          {  
-            "render": function (data, type, full, meta)  
-              { return '<a class="btn btn-info" href="/DemoGrid/Edit/' + full.CustomerID + '">Edit</a>'; }  
-          },  
-          {  
-            data: null, render: function (data, type, row)  
-            {  
-              return "<a href='#' class='btn btn-danger' onclick=DeleteData('" + row.CustomerID + "'); >Delete</a>";  
-            }  
-          },  
-        ]  
-  
-      });  
-    });
+      
   </script>
 }
