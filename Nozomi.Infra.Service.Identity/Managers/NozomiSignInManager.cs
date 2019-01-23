@@ -15,65 +15,12 @@ namespace Nozomi.Service.Identity.Managers
 {
     public class NozomiSignInManager : SignInManager<User>
     {
-        private readonly IHttpContextAccessor _contextAccessor;
-        private HttpContext _context;
-        private new readonly NozomiUserManager UserManager;
-        
         public NozomiSignInManager(NozomiUserManager userManager, IHttpContextAccessor contextAccessor, 
             IUserClaimsPrincipalFactory<User> claimsFactory, IOptions<IdentityOptions> optionsAccessor, 
             ILogger<NozomiSignInManager> logger, IAuthenticationSchemeProvider schemes) : 
             base(userManager, contextAccessor, claimsFactory, optionsAccessor, logger, schemes)
         {
-            _contextAccessor = contextAccessor;
-            UserManager = userManager;
         }
-        
-        /// <summary>
-        /// The <see cref="T:Microsoft.AspNetCore.Http.HttpContext" /> used.
-        /// </summary>
-        public new HttpContext Context
-        {
-            get
-            {
-                var httpContext = _context ?? _contextAccessor?.HttpContext;
-                if (httpContext != null)
-                    return httpContext;
-                throw new InvalidOperationException("HttpContext must not be null.");
-            }
-            set => _context = value;
-        }
-        
-        /// <summary>
-        /// Returns a flag indicating whether the specified user can sign in.
-        /// </summary>
-        /// <param name="user">The user whose sign-in status should be returned.</param>
-        /// <returns>
-        /// The task object representing the asynchronous operation, containing a flag that is true
-        /// if the specified user can sign-in, otherwise false.
-        /// </returns>
-        public override async Task<bool> CanSignInAsync(User user)
-        {
-            if (Options.SignIn.RequireConfirmedEmail && !(await UserManager.IsEmailConfirmedAsync(user)))
-            {
-                Logger.LogWarning(0, "User {userId} cannot sign in without a confirmed email.", await UserManager.GetUserIdAsync(user));
-                return false;
-            }
-            if (Options.SignIn.RequireConfirmedPhoneNumber && !(await UserManager.IsPhoneNumberConfirmedAsync(user)))
-            {
-                Logger.LogWarning(1, "User {userId} cannot sign in without a confirmed phone number.", await UserManager.GetUserIdAsync(user));
-                return false;
-            }
-
-            return true;
-        }
-        
-        /// <summary>
-        /// Creates a <see cref="ClaimsPrincipal"/> for the specified <paramref name="user"/>, as an asynchronous operation.
-        /// </summary>
-        /// <param name="user">The user to create a <see cref="ClaimsPrincipal"/> for.</param>
-        /// <returns>The task object representing the asynchronous operation, containing the ClaimsPrincipal for the specified user.</returns>
-        public override async Task<ClaimsPrincipal> CreateUserPrincipalAsync(User user) 
-            => await ClaimsFactory.CreateAsync(user);
         
         /// <summary>
         /// Returns true if the principal has an identity with the application cookie identity
@@ -112,7 +59,7 @@ namespace Nozomi.Service.Identity.Managers
                     return SignInResult.Failed;
                 }
 
-                return await PasswordSignInAsync(user, password, isPersistent, lockoutOnFailure);
+                return await base.PasswordSignInAsync(user, password, isPersistent, lockoutOnFailure);
             }
             else
             {
@@ -123,7 +70,7 @@ namespace Nozomi.Service.Identity.Managers
                     return SignInResult.Failed;
                 }
 
-                return await PasswordSignInAsync(user, password, isPersistent, lockoutOnFailure);
+                return await base.PasswordSignInAsync(user, password, isPersistent, lockoutOnFailure);
             }
         }
         
