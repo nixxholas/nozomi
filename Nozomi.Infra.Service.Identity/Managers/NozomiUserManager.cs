@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Nozomi.Base.Core.Helpers.Enumerator;
@@ -18,10 +19,9 @@ namespace Nozomi.Service.Identity.Managers
 {
     public class NozomiUserManager : UserManager<User>, INozomiUserManager
     {
-        private new readonly INozomiUserStore Store;
         private readonly IStripeService _stripeService;
         
-        public NozomiUserManager(INozomiUserStore store, IOptions<IdentityOptions> optionsAccessor, 
+        public NozomiUserManager(IUserStore<User> store, IOptions<IdentityOptions> optionsAccessor, 
             IPasswordHasher<User> passwordHasher, IEnumerable<IUserValidator<User>> userValidators,
             IEnumerable<IPasswordValidator<User>> passwordValidators, ILookupNormalizer keyNormalizer, 
             IdentityErrorDescriber errors, IServiceProvider services, ILogger<UserManager<User>> logger,
@@ -29,7 +29,6 @@ namespace Nozomi.Service.Identity.Managers
             : base(store, optionsAccessor, passwordHasher, userValidators, passwordValidators, keyNormalizer, 
                 errors, services, logger)
         {
-            Store = store;
             _stripeService = stripeService;
         }
 
@@ -71,16 +70,6 @@ namespace Nozomi.Service.Identity.Managers
             return await CheckPasswordAsync(user, password) ? user : null;
         }
 
-        public Task ForceConfirmEmail(long userId)
-        {
-            return Store.ForceConfirmEmailAsync(userId);
-        }
-
-        public Task ForceConfirmEmail(User user)
-        {
-            return Store.ForceConfirmEmailAsync(user);
-        }
-        
         /// <summary>
         /// Gets the user identifier for the specified <paramref name="user" />.
         /// </summary>

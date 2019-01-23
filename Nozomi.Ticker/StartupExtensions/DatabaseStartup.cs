@@ -49,17 +49,11 @@ namespace Nozomi.Ticker.StartupExtensions
                                 NormalizedUserName = "NIXHOLAS",
                                 NormalizedEmail = "NIXHOLAS@OUTLOOK.COM",
                                 Email = "nixholas@outlook.com",
-                                StripeCustomerId = "cus_ELCsKKBzzjNc2I"
+                                StripeCustomerId = "cus_ELCsKKBzzjNc2I",
+                                EmailConfirmed = true
                             };
                         
                             var res = userManager.CreateAsync(boss, "P@ssw0rd").Result;
-
-                            if (res.Succeeded)
-                            {
-                                boss = userManager.FindByEmailAsync("nixholas@outlook.com").Result;
-                                
-                                if (boss != null) userManager.ForceConfirmEmail(boss.Id).Wait();
-                            }
                         }
                     }
                 }

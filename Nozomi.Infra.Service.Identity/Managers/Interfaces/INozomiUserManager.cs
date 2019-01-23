@@ -5,7 +5,5 @@ namespace Nozomi.Service.Identity.Managers.Interfaces
 {
     public interface INozomiUserManager
     {
-        Task ForceConfirmEmail(long userId);
-        Task ForceConfirmEmail(User user);
     }
 }
