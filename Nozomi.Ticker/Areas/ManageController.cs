@@ -51,6 +51,7 @@ namespace Nozomi.Ticker.Areas
             var user = await GetCurrentUserAsync();
             if (user == null)
             {
+                _logger.LogWarning($"Bad session with '{User}'");
                 return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
 
