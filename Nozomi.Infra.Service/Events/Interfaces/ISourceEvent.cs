@@ -7,8 +7,8 @@ namespace Nozomi.Service.Events.Interfaces
     {
         IEnumerable<dynamic> GetAllNested();
 
-        IEnumerable<Source> GetAllActive(bool includeNested);
+        IEnumerable<Source> GetAllActive(bool countPairs = false, bool includeNested = false);
 
-        IEnumerable<dynamic> GetAllActiveObsc(bool includeNested);
+        IEnumerable<dynamic> GetAllActiveObsc(bool includeNested = false);
     }
 }
