@@ -1,14 +1,43 @@
 using System.Threading.Tasks;
+using Microsoft.Extensions.Options;
+using Nozomi.Infra.Preprocessing.Options;
 using Nozomi.Preprocessing.Events.Interfaces;
+using SendGrid;
+using SendGrid.Helpers.Mail;
 
 namespace Nozomi.Preprocessing.Events
 {
     public class EmailSender : IEmailSender
     {
-        public Task SendEmailAsync(string email, string subject, string message)
+        public SendgridOptions Options { get; }
+        
+        public EmailSender(IOptions<SendgridOptions> optionsAccessor)
         {
-            // Plug in your email service here to send an email.
-            return Task.FromResult(0);
+            Options = optionsAccessor.Value;
         }
-    }
-}
+        
+        public Task SendEmailAsync(string email, string subject, string message)
+         {
+             return Execute(subject, message, email);
+         }
+         
+         public Task Execute(string subject, string message, string email)
+         {
+             var client = new SendGridClient(Options.SendGridKey);
+             var msg = new SendGridMessage()
+             {
+                 From = new EmailAddress("noreply@nozomi.io", "Nozomi"),
+                 Subject = subject,
+                 PlainTextContent = message,
+                 HtmlContent = message
+             };
+             msg.AddTo(new EmailAddress(email));
+ 
+             // Disable click tracking.
+             // See https://sendgrid.com/docs/User_Guide/Settings/tracking.html
+             msg.SetClickTracking(false, false);
+ 
+             return client.SendEmailAsync(msg);
+         }
+     }
+ }

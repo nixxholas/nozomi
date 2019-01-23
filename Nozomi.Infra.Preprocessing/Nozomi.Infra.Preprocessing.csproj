@@ -6,6 +6,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <PackageReference Include="Sendgrid" Version="9.10.0" />
       <PackageReference Include="Swashbuckle.AspNetCore" Version="4.0.1" />
       <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="4.0.1" />
       <PackageReference Include="Swashbuckle.AspNetCore.Filters" Version="4.5.2" />

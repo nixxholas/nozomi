@@ -15,6 +15,7 @@ using Microsoft.Extensions.Hosting;
 using Nozomi.Base.Core.Configurations;
 using Nozomi.Base.Core.Helpers.Routing;
 using Nozomi.Data.WebModels.LoggingModels;
+using Nozomi.Infra.Preprocessing.Options;
 using Nozomi.Repo.Data;
 using Nozomi.Repo.Identity.Data;
 using Nozomi.Service.HostedServices;
@@ -151,6 +152,7 @@ namespace Nozomi.Ticker
             
             // Events Layer
             services.ConfigureEvents();
+            services.Configure<SendgridOptions>(Configuration);
             
             // Service Layer
             services.ConfigureServiceLayer();
