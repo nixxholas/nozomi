@@ -16,15 +16,18 @@ using Nozomi.Base.Identity.ViewModels.Manage.ApiTokens;
 using Nozomi.Base.Identity.ViewModels.Manage.PaymentMethods;
 using Nozomi.Base.Identity.ViewModels.Manage.TwoFactorAuthentication;
 using Nozomi.Preprocessing.Events.Interfaces;
+using Nozomi.Service.Events.Interfaces;
 using Nozomi.Service.Identity.Events.Auth.Interfaces;
 using Nozomi.Service.Identity.Events.Interfaces;
 using Nozomi.Service.Identity.Managers;
 using Nozomi.Service.Identity.Services.Interfaces;
+using Nozomi.Service.Services.Interfaces;
 
 namespace Nozomi.Ticker.Areas
 {
     public class ManageController : BaseViewController<ManageController>
     {
+        private readonly ISourceEvent _sourceEvent;
         private readonly ISmsSender _smsSender;
         private readonly IStripeEvent _stripeEvent;
         private readonly IStripeService _stripeService;
@@ -33,13 +36,14 @@ namespace Nozomi.Ticker.Areas
         
         public ManageController(ILogger<ManageController> logger, NozomiSignInManager signInManager, 
             NozomiUserManager userManager, ISmsSender smsSender, IStripeService stripeService, IStripeEvent stripeEvent,
-            IApiTokenEvent apiTokenEvent, UrlEncoder urlEncoder) 
+            IApiTokenEvent apiTokenEvent, ISourceEvent sourceEvent, UrlEncoder urlEncoder) 
             : base(logger, signInManager, userManager)
         {
             _smsSender = smsSender;
             _apiTokenEvent = apiTokenEvent;
             _stripeEvent = stripeEvent;
             _stripeService = stripeService;
+            _sourceEvent = sourceEvent;
             _urlEncoder = urlEncoder;
         }
         
@@ -57,8 +61,9 @@ namespace Nozomi.Ticker.Areas
 
             var model = new IndexViewModel
             {
+                Sources = _sourceEvent.GetAllActive(true).ToList(),
                 StatusMessage = message == ManageIndexMessageId.Error ? "An error has occured."
-                    : ""
+                    : "",
             };
             return View(model);
         }
