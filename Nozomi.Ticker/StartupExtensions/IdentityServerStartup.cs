@@ -3,6 +3,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -42,22 +43,36 @@ namespace Nozomi.Ticker.StartupExtensions
                 .AddRoleStore<NozomiRoleStore>()
                 .AddDefaultTokenProviders();
             
+            services.ConfigureApplicationCookie(options =>
+            {
+                options.Cookie.Name = "NozomiCookie";
+                options.Cookie.HttpOnly = false;
+                options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
+                options.LoginPath = "/account/login";
+                options.LogoutPath = "/account/logout";
+                options.AccessDeniedPath = "/account/accessDenied";
+                // ReturnUrlParameter requires 
+                //using Microsoft.AspNetCore.Authentication.Cookies;
+                options.ReturnUrlParameter = CookieAuthenticationDefaults.ReturnUrlParameter;
+                options.SlidingExpiration = true;
+            });
+            
             // Configure Authentication
             // https://github.com/aspnet/Security/issues/1414 Redundant to add in this
             //
             // Findings have shown this affects IdentityServerAuthenticationService. Removing this will 
             // default all constants to .NET Core Identity's defaults.
-            services.AddAuthentication().AddCookie(options =>
-            {
-                // Cookie settings
-                options.ExpireTimeSpan = TimeSpan.FromMinutes(5);
-
-                // TODO: finish this
-                options.LoginPath = "/account/login";
-                options.LogoutPath = "/account/logout";
-                options.AccessDeniedPath = "/account/accessdenied";
-                options.SlidingExpiration = true;
-            });
+//            services.AddAuthentication().AddCookie(options =>
+//            {
+//                // Cookie settings
+//                options.ExpireTimeSpan = TimeSpan.FromMinutes(5);
+//
+//                // TODO: finish this
+//                options.LoginPath = "/account/login";
+//                options.LogoutPath = "/account/logout";
+//                options.AccessDeniedPath = "/account/accessdenied";
+//                options.SlidingExpiration = true;
+//            });
             
             // Configure Authorization
             services.AddAuthorization(options =>
