@@ -7,12 +7,15 @@ import * as $ from 'jquery';
 // https://stackoverflow.com/questions/48271232/how-to-expose-ui-jquery-ui-globally-with-webpack
 const jQuery = $;
 (<any> window).$ = (<any>window).jQuery = $;
+import * as Chartist from 'chartist';
+import 'chartist-plugin-tooltips';
+const chartist = Chartist;
+(<any> window).Chartist = chartist;
 import 'jquery-validation';
 import 'jquery-migrate';
 import Typed from 'typed.js';
 import 'popper.js';
 import 'bootstrap';
-import * as Chartist from 'chartist';
 import 'slick-carousel';
 import 'svg-injector';
 import 'malihu-custom-scrollbar-plugin';
