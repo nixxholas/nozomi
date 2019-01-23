@@ -14419,6 +14419,9 @@ table {
 .tab-content .progress + .progress {
   margin-top: 1rem; }
 
+.force-full-width {
+  width: 100% !important; }
+
 /*------------------------------------
   Markup
 ------------------------------------*/
