@@ -4,12 +4,13 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using Nozomi.Base.Core;
 using Nozomi.Data.CurrencyModels;
 using Nozomi.Data.WebModels;
 
 namespace Nozomi.Base.Identity.ViewModels.Manage.Tickers
 {
-    public class CreateTickerInputModel
+    public class CreateTickerInputModel : BaseViewModel
     {
         public IEnumerable<CurrencyPairType> CurrencyPairTypes { get; }
             = Enum.GetValues(typeof(CurrencyPairType)).Cast<CurrencyPairType>();
