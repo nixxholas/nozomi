@@ -783,9 +783,9 @@ namespace Nozomi.Ticker.Areas
             Error
         }
 
-        private Task<User> GetCurrentUserAsync()
+        private async Task<User> GetCurrentUserAsync()
         {
-            return _userManager.GetUserAsync(HttpContext.User);
+            return await _userManager.GetUserAsync(HttpContext.User);
         }
 
         #endregion
