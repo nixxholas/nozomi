@@ -21,6 +21,7 @@ namespace Nozomi.Ticker.StartupExtensions
             services.AddScoped<IApiTokenEvent, ApiTokenEvent>();
 
             services.AddScoped<ISourceEvent, SourceEvent>();
+            services.AddScoped<ITickerEvent, TickerEvent>();
         }
     }
 }

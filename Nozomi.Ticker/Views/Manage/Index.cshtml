@@ -1,13 +1,18 @@
-@using System.Collections.Immutable
-@using Microsoft.AspNetCore.Identity
 @using Nozomi.Base.Core.Helpers.Enumerator
 @using Nozomi.Base.Identity.Models.Identity
 @using Nozomi.Service.Identity.Managers
+@using Nozomi.Service.Services.Interfaces
 @using Nozomi.Ticker.Views.Manage
 @model Nozomi.Base.Identity.ViewModels.Manage.IndexViewModel
+
+@inject ITickerService TickerService
+@inject NozomiUserManager UserManager
 @{
     ViewData["Title"] = "Profile";
     ViewData["ActivePage"] = ManageNavPages.Index;
+
+    var user = await UserManager.GetUserAsync(User);
+    var isOwner = await UserManager.IsInRoleAsync(user, RoleEnum.Owner.GetDescription());
 }
 
   <!-- Content Section -->
@@ -29,8 +34,7 @@
               Metrics <span class="badge badge-indigo">Coming soon!</span>
             </a>
           </li>
-          @if (User.IsInRole(RoleEnum.Administrator.GetDescription()) || 
-                             User.IsInRole(RoleEnum.Owner.GetDescription()))
+          @if (User.IsInRole(RoleEnum.Administrator.GetDescription()) || isOwner)
           {
           <li class="nav-item">
             <a class="nav-link" id="pills-tickers-tab"
@@ -99,12 +103,21 @@
                role="tabpanel" aria-labelledby="pills-metrics-tab">
                 
           </div>
-          @if (User.IsInRole(RoleEnum.Administrator.GetDescription()) ||
-               User.IsInRole(RoleEnum.Owner.GetDescription()))
+          @if (User.IsInRole(RoleEnum.Administrator.GetDescription()) || isOwner)
           {
+            //var tickers = await TickerService.GetAll();
             <div class="tab-pane fade" id="pills-tickers" 
                  role="tabpanel" aria-labelledby="pills-tickers-tab">
-                
+              <table class="table table-light force-full-width">
+                <thead>
+                <tr>
+                  <th scope="col" style="width: 8%;">#</th>
+                  <th scope="col">Name</th>
+                  <th scope="col">Abbreviation</th>
+                  <th scope="col">Supported Tickers</th>
+                </tr>
+                </thead>
+              </table>
             </div>
           }
         </div>
@@ -713,5 +726,46 @@
 @* </div> *@
 
 @section Scripts {
-    <partial name="_ValidationScriptsPartial" />
+  <partial name="_ValidationScriptsPartial" />
+  <script>
+    $(document).ready(function ()  
+    {  
+      $("#example").DataTable({  
+        "processing": true, // for show progress bar  
+        "serverSide": true, // for process server side  
+        "filter": true, // this is for disable filter (search box)  
+        "orderMulti": true, // for disable multiple column at once  
+        "ajax": {  
+          "url": "/DemoGrid/LoadData",  
+          "type": "POST",  
+          "datatype": "json"  
+        },  
+        "columnDefs":  
+        [{  
+          "targets": [0],  
+          "visible": false,  
+          "searchable": false  
+        }],  
+        "columns": [  
+          { "data": "CustomerID", "name": "CustomerID", "autoWidth": true },  
+          { "data": "Name", "name": "Name", "autoWidth": true },  
+          { "data": "Address", "name": "Address", "autoWidth": true },  
+          { "data": "Country", "name": "Country", "autoWidth": true },  
+          { "data": "City", "name": "City", "autoWidth": true },  
+          { "data": "Phoneno", "name": "Phoneno", "autoWidth": true },  
+          {  
+            "render": function (data, type, full, meta)  
+              { return '<a class="btn btn-info" href="/DemoGrid/Edit/' + full.CustomerID + '">Edit</a>'; }  
+          },  
+          {  
+            data: null, render: function (data, type, row)  
+            {  
+              return "<a href='#' class='btn btn-danger' onclick=DeleteData('" + row.CustomerID + "'); >Delete</a>";  
+            }  
+          },  
+        ]  
+  
+      });  
+    });
+  </script>
 }
