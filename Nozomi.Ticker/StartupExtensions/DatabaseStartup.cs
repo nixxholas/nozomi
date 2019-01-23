@@ -43,31 +43,6 @@ namespace Nozomi.Ticker.StartupExtensions
                     
                     context.Database.Migrate();
                     
-                    // Seed users
-                    using (var userManager = serviceScope.ServiceProvider.GetService<NozomiUserManager>())
-                    {
-                        // Seed big brother
-                        if (userManager.FindByEmailAsync("nixholas@outlook.com").Result == null)
-                        {
-                            var boss = new User
-                            {
-                                UserName = "nixholas",
-                                NormalizedUserName = "NIXHOLAS",
-                                NormalizedEmail = "NIXHOLAS@OUTLOOK.COM",
-                                Email = "nixholas@outlook.com",
-                                StripeCustomerId = "cus_ELCsKKBzzjNc2I",
-                                EmailConfirmed = true
-                            };
-                        
-                            var res = userManager.CreateAsync(boss, "P@ssw0rd").Result;
-
-                            if (!res.Succeeded)
-                            {
-                                logger.LogCritical($"Error seeding da boss!!!");
-                            }
-                        }
-                    }
-                    
                     // Seed roles
                     using (var roleManager = serviceScope.ServiceProvider.GetService<RoleManager<Role>>())
                     {
@@ -92,6 +67,38 @@ namespace Nozomi.Ticker.StartupExtensions
                                 {
                                     logger.LogCritical($"Error seeding role {newRole.Name}.");
                                 }
+                            }
+                        }
+                    }
+                    
+                    // Seed users
+                    using (var userManager = serviceScope.ServiceProvider.GetService<NozomiUserManager>())
+                    {
+                        // Seed big brother
+                        if (userManager.FindByEmailAsync("nixholas@outlook.com").Result == null)
+                        {
+                            var boss = new User
+                            {
+                                UserName = "nixholas",
+                                NormalizedUserName = "NIXHOLAS",
+                                NormalizedEmail = "NIXHOLAS@OUTLOOK.COM",
+                                Email = "nixholas@outlook.com",
+                                StripeCustomerId = "cus_ELCsKKBzzjNc2I",
+                                EmailConfirmed = true
+                            };
+                        
+                            var res = userManager.CreateAsync(boss, "P@ssw0rd").Result;
+
+                            if (!res.Succeeded)
+                            {
+                                logger.LogCritical($"Error seeding da boss!!!");
+                            }
+
+                            var roleRes = userManager.AddToRoleAsync(boss, RoleEnum.Owner.GetDescription()).Result;
+
+                            if (!roleRes.Succeeded)
+                            {
+                                logger.LogCritical($"Error seeding da boss role!!!");
                             }
                         }
                     }

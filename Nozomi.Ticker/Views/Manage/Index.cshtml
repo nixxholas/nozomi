@@ -1,3 +1,8 @@
+@using System.Collections.Immutable
+@using Microsoft.AspNetCore.Identity
+@using Nozomi.Base.Core.Helpers.Enumerator
+@using Nozomi.Base.Identity.Models.Identity
+@using Nozomi.Service.Identity.Managers
 @using Nozomi.Ticker.Views.Manage
 @model Nozomi.Base.Identity.ViewModels.Manage.IndexViewModel
 @{
@@ -18,12 +23,23 @@
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" id="pills-html-tab-18"
+            <a class="nav-link" id="pills-metrics-tab"
                data-toggle="pill" href="#pills-metrics" role="tab"
                aria-controls="pills-metrics" aria-selected="true">
               Metrics <span class="badge badge-indigo">Coming soon!</span>
             </a>
           </li>
+          @if (User.IsInRole(RoleEnum.Administrator.GetDescription()) || 
+                             User.IsInRole(RoleEnum.Owner.GetDescription()))
+          {
+          <li class="nav-item">
+            <a class="nav-link" id="pills-tickers-tab"
+               data-toggle="pill" href="#pills-tickers" role="tab"
+               aria-controls="pills-tickers" aria-selected="true">
+              Tickers
+            </a>
+          </li>
+          }
         </ul>
       </div>
         
@@ -80,9 +96,17 @@
             }
           </div>
           <div class="tab-pane fade" id="pills-metrics" 
-               role="tabpanel" aria-labelledby="pills-html-tab">
+               role="tabpanel" aria-labelledby="pills-metrics-tab">
                 
           </div>
+          @if (User.IsInRole(RoleEnum.Administrator.GetDescription()) ||
+               User.IsInRole(RoleEnum.Owner.GetDescription()))
+          {
+            <div class="tab-pane fade" id="pills-tickers" 
+                 role="tabpanel" aria-labelledby="pills-tickers-tab">
+                
+            </div>
+          }
         </div>
       </div>
 @*       <!-- Area Chart --> *@
