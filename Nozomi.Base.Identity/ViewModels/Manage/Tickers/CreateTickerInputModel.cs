@@ -39,7 +39,7 @@ namespace Nozomi.Base.Identity.ViewModels.Manage.Tickers
         public string DataPath { get; set; }
 
         [Required]
-        [DisplayName("Defines the polling frequency in milliseconds.")]
+        [DisplayName("Frequency (In milliseconds)")]
         public int Delay { get; set; } = 5000;
         
         [Required]
@@ -54,8 +54,7 @@ namespace Nozomi.Base.Identity.ViewModels.Manage.Tickers
         [DisplayName("The abbreviation of the main currency.")]
         public string MainCurrencyAbbrv { get; set; }
         
-        [Required]
-        [DisplayName("The name of the main currency.")]
+        [DisplayName("The name of the main currency. (Optional if a ticker from this source already has this currency)")]
         public string MainCurrencyName { get; set; }
         
         [Required]
@@ -66,8 +65,7 @@ namespace Nozomi.Base.Identity.ViewModels.Manage.Tickers
         [DisplayName("The abbreviation of the counter currency.")]
         public string CounterCurrencyAbbrv { get; set; }
         
-        [Required]
-        [DisplayName("The name of the counter currency.")]
+        [DisplayName("The name of the counter currency. (Optional if a ticker from this source already has this currency)")]
         public string CounterCurrencyName { get; set; }
         
         [Required]
