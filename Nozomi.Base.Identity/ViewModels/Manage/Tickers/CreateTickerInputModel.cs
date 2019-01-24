@@ -47,12 +47,28 @@ namespace Nozomi.Base.Identity.ViewModels.Manage.Tickers
         public long CurrencySourceId { get; set; }
         
         [Required]
-        [DisplayName("The main currency of the pair.")]
-        public long MainCurrencyId { get; set; }
+        [DisplayName("The type of the main currency.")]
+        public string MainCurrencyTypeId { get; set; }
         
         [Required]
-        [DisplayName("The sub currency of the pair.")]
-        public long CounterCurrencyId { get; set; }
+        [DisplayName("The abbreviation of the main currency.")]
+        public string MainCurrencyAbbrv { get; set; }
+        
+        [Required]
+        [DisplayName("The name of the main currency.")]
+        public string MainCurrencyName { get; set; }
+        
+        [Required]
+        [DisplayName("The type of the counter currency.")]
+        public string CounterCurrencyTypeId { get; set; }
+        
+        [Required]
+        [DisplayName("The abbreviation of the counter currency.")]
+        public string CounterCurrencyAbbrv { get; set; }
+        
+        [Required]
+        [DisplayName("The name of the counter currency.")]
+        public string CounterCurrencyName { get; set; }
         
         [Required]
         [DisplayName("The component variables that we'll be querying from the response.")]
