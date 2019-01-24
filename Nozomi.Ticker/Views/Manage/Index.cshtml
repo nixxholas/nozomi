@@ -1,10 +1,12 @@
 @using Nozomi.Base.Core.Helpers.Enumerator
 @using Nozomi.Base.Identity.Models.Identity
+@using Nozomi.Service.Events.Interfaces
 @using Nozomi.Service.Identity.Managers
 @using Nozomi.Service.Services.Interfaces
 @using Nozomi.Ticker.Views.Manage
 @model Nozomi.Base.Identity.ViewModels.Manage.IndexViewModel
 
+@inject ICurrencyEvent CurrencyEvent
 @inject ITickerService TickerService
 @inject NozomiUserManager UserManager
 @{
