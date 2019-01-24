@@ -16,6 +16,7 @@ import 'jquery-migrate';
 import Typed from 'typed.js';
 import 'popper.js';
 import 'bootstrap';
+import 'bootstrap-select';
 import 'slick-carousel';
 import 'svg-injector';
 import 'malihu-custom-scrollbar-plugin';
