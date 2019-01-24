@@ -107,8 +107,10 @@
                                                 if (isOwner || isAdmin || isStaff)
                                                 {
                                                     <li>
-                                                        <a class="nav-link u-header__sub-menu-nav-link" 
-                                                           >Seed ticker</a>
+                                                        <a class="nav-link u-header__sub-menu-nav-link"
+                                                           asp-controller="Manage" asp-action="CreateTicker">
+                                                            Seed ticker
+                                                        </a>
                                                     </li>
                                                 }
                                             }
