@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Logging;
 using Nozomi.Base.Core.Helpers.Native.Collections;
+using Nozomi.Base.Identity.ViewModels.Manage.Tickers;
 using Nozomi.Data;
 using Nozomi.Data.CurrencyModels;
 using Nozomi.Data.ResponseModels;
@@ -23,6 +24,145 @@ namespace Nozomi.Service.Services
     {
         public TickerService(ILogger<TickerService> logger, IUnitOfWork<NozomiDbContext> unitOfWork) : base(logger, unitOfWork)
         {
+        }
+
+        public NozomiResult<UniqueTickerResponse> Create(CreateTickerInputModel createTickerInputModel)
+        {
+            // Validate the source
+            if (!_unitOfWork.GetRepository<Source>().GetQueryable()
+                .Any(s => s.Id.Equals(createTickerInputModel.CurrencySourceId)
+                          && s.DeletedAt == null))
+            {
+                return new NozomiResult<UniqueTickerResponse>(NozomiResultType.Failed,
+                    "Invalid Source.");
+            }
+            
+            // Aggregate the currencies
+
+            var mainCurrency = new Currency
+            {
+                CurrencySourceId = createTickerInputModel.CurrencySourceId,
+                Abbrv = createTickerInputModel.MainCurrencyAbbrv,
+                Name = createTickerInputModel.MainCurrencyName
+            };
+            
+            // Main
+            if (_unitOfWork.GetRepository<Currency>().GetQueryable()
+                .Any(c => c.Abbrv.Equals(mainCurrency.Abbrv)
+                          && c.CurrencySourceId.Equals(createTickerInputModel.CurrencySourceId)
+                          && c.DeletedAt == null))
+            {
+                // Currency already exists
+                mainCurrency = _unitOfWork.GetRepository<Currency>()
+                    .Get(c => c.Abbrv.Equals(mainCurrency.Abbrv)
+                              && c.CurrencySourceId.Equals(createTickerInputModel.CurrencySourceId))
+                    .SingleOrDefault();
+            }
+            else
+            {
+                // Create the currency
+                _unitOfWork.GetRepository<Currency>().Add(mainCurrency);
+                _unitOfWork.Commit();
+                
+                // Retrieve it
+                mainCurrency = _unitOfWork.GetRepository<Currency>()
+                    .Get(c => c.Abbrv.Equals(mainCurrency.Abbrv)
+                              && c.CurrencySourceId.Equals(mainCurrency.CurrencySourceId))
+                    .SingleOrDefault();
+                
+                _logger.LogInformation($"Currency {mainCurrency.Name} created for " +
+                                       $"source {mainCurrency.CurrencySourceId}.");
+            }
+
+            var counterCurrency = new Currency
+            {
+                CurrencySourceId = createTickerInputModel.CurrencySourceId,
+                Abbrv = createTickerInputModel.CounterCurrencyAbbrv,
+                Name = createTickerInputModel.CounterCurrencyName
+            };
+            
+            // Counter
+            if (_unitOfWork.GetRepository<Currency>().GetQueryable()
+                .Any(c => c.Abbrv.Equals(counterCurrency.Abbrv)
+                          && c.CurrencySourceId.Equals(createTickerInputModel.CurrencySourceId)
+                          && c.DeletedAt == null))
+            {
+                // Currency already exists
+                counterCurrency = _unitOfWork.GetRepository<Currency>()
+                    .Get(c => c.Abbrv.Equals(counterCurrency.Abbrv)
+                              && c.CurrencySourceId.Equals(createTickerInputModel.CurrencySourceId))
+                    .SingleOrDefault();
+            }
+            else
+            {
+                // Create the currency
+                _unitOfWork.GetRepository<Currency>().Add(counterCurrency);
+                _unitOfWork.Commit();
+                
+                // Retrieve it
+                counterCurrency = _unitOfWork.GetRepository<Currency>()
+                    .Get(c => c.Abbrv.Equals(counterCurrency.Abbrv)
+                              && c.CurrencySourceId.Equals(counterCurrency.CurrencySourceId))
+                    .SingleOrDefault();
+                
+                _logger.LogInformation($"Currency {counterCurrency.Name} created for " +
+                                       $"source {counterCurrency.CurrencySourceId}.");
+                
+            }
+
+            if (counterCurrency == null || mainCurrency == null)
+            {
+                return new NozomiResult<UniqueTickerResponse>(NozomiResultType.Failed,
+                    "Invalid currency sub pair/s.");
+            }
+
+            var currencyPair = new CurrencyPair
+            {
+                CurrencyPairType = createTickerInputModel.CurrencyPairType,
+                CurrencySourceId = createTickerInputModel.CurrencySourceId,
+                PartialCurrencyPairs = new List<PartialCurrencyPair>
+                {
+                    new PartialCurrencyPair
+                    {
+                        IsMain = true,
+                        CurrencyId = mainCurrency.Id
+                    },
+                    new PartialCurrencyPair
+                    {
+                        IsMain = false,
+                        CurrencyId = counterCurrency.Id
+                    }
+                }
+            };
+            
+            // TODO: Aggregate Properties and RequestComponent
+            
+            var currencyPairRequest = new CurrencyPairRequest
+            {
+                CurrencyPair = currencyPair,
+                DataPath = createTickerInputModel.DataPath,
+                Delay = createTickerInputModel.Delay,
+                RequestType = createTickerInputModel.RequestType,
+                ResponseType = createTickerInputModel.ResponseType
+            };
+
+            try
+            {
+                // Create the request
+                _unitOfWork.GetRepository<CurrencyPairRequest>().Add(currencyPairRequest);
+                _unitOfWork.Commit();
+                
+                return new NozomiResult<UniqueTickerResponse>(
+                    new UniqueTickerResponse
+                    {
+                        TickerAbbreviation = mainCurrency.Abbrv + counterCurrency.Abbrv
+                    });
+            }
+            catch (Exception ex)
+            {
+                return new NozomiResult<UniqueTickerResponse>(NozomiResultType.Failed,
+                    ex.ToString());
+            }
         }
 
         public Task<NozomiResult<ICollection<UniqueTickerResponse>>> GetAll(int index)

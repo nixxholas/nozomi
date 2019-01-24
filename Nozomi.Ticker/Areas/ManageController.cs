@@ -34,12 +34,13 @@ namespace Nozomi.Ticker.Areas
         private readonly ISmsSender _smsSender;
         private readonly IStripeEvent _stripeEvent;
         private readonly IStripeService _stripeService;
+        private readonly ITickerService _tickerService;
         private readonly IApiTokenEvent _apiTokenEvent;
         private readonly UrlEncoder _urlEncoder;
         
         public ManageController(ILogger<ManageController> logger, NozomiSignInManager signInManager, 
             NozomiUserManager userManager, ISmsSender smsSender, IStripeService stripeService, IStripeEvent stripeEvent,
-            IApiTokenEvent apiTokenEvent, ISourceEvent sourceEvent, UrlEncoder urlEncoder) 
+            IApiTokenEvent apiTokenEvent, ISourceEvent sourceEvent, ITickerService tickerService, UrlEncoder urlEncoder) 
             : base(logger, signInManager, userManager)
         {
             _smsSender = smsSender;
@@ -47,6 +48,7 @@ namespace Nozomi.Ticker.Areas
             _stripeEvent = stripeEvent;
             _stripeService = stripeService;
             _sourceEvent = sourceEvent;
+            _tickerService = tickerService;
             _urlEncoder = urlEncoder;
         }
         
@@ -133,6 +135,8 @@ namespace Nozomi.Ticker.Areas
             {
                 
             }
+
+            //var res = _tickerService.Create(vm);
 
             // TODO: Implementation of error messages
             vm.StatusMessage = "There was something erroneous with your submission.";
