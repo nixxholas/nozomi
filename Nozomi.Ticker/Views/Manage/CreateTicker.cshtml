@@ -4,94 +4,144 @@
 @inject ICurrencyTypeEvent CurrencyTypeEvent
 @inject ISourceEvent SourceEvent
 
+@{
+    var currencyTypes = CurrencyTypeEvent.GetAllActive();
+}
+
 <!-- Content Section -->
 <div class="bg-light">
     <div class="container space-2">
+        <h3 class="mb-6">Create a new ticker</h3>
         <form method="post">
-            <div class="form-group">
-                <label asp-for="CurrencyPairType"></label>
-                <select class="form-control" asp-for="CurrencyPairType">
-                    @foreach (var cpt in Model.CurrencyPairTypes)
-                    {
-                        <option value="@cpt">@cpt.GetDescription()</option>
-                    }
-                </select>
+            <div class="row">
+                <div class="col-md-4 mb-3 mb-md-0">
+                    <div class="form-group">
+                        <label asp-for="CurrencyPairType"></label>
+                        <select class="js-select selectpicker dropdown-select form-control"
+                                data-style="btn-sm btn-primary" asp-for="CurrencyPairType">
+                            @foreach (var cpt in Model.CurrencyPairTypes)
+                            {
+                                <option value="@cpt">@cpt.GetDescription()</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-3 mb-md-0">
+                    <div class="form-group">
+                        <label asp-for="RequestType"></label>
+                        <select class="js-select selectpicker dropdown-select form-control"
+                                data-style="btn-sm btn-primary" asp-for="RequestType">
+                            @foreach (var rt in Model.RequestTypes)
+                            {
+                                <option value="@rt">@rt.GetDescription()</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-3 mb-md-0">
+                    <div class="form-group">
+                        <label asp-for="ResponseType"></label>
+                        <select class="js-select selectpicker dropdown-select form-control"
+                                data-style="btn-sm btn-primary" asp-for="ResponseType">
+                            @foreach (var rt in Model.ResponseTypes)
+                            {
+                                <option value="@rt">@rt.GetDescription()</option>
+                            }
+                        </select>
+                    </div>
+                </div>
             </div>
             
-            <div class="form-group">
-                <label asp-for="RequestType"></label>
-                <select class="form-control" asp-for="RequestType">
-                    @foreach (var rt in Model.RequestTypes)
-                    {
-                        <option value="@rt">@rt.GetDescription()</option>
-                    }
-                </select>
+            <div class="row">
+                <div class="col-md-9 mb-3 mb-md-0">
+                    <div class="form-group">
+                        <label asp-for="DataPath"></label>
+                        <input class="form-control" type="url" asp-for="DataPath"/>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3 mb-md-0">
+                    <div class="form-group">
+                        <label asp-for="Delay"></label>
+                        <input class="form-control" type="number" asp-for="Delay" value="@Model.Delay"/>
+                    </div>
+                </div>
             </div>
             
-            <div class="form-group">
-                <label asp-for="ResponseType"></label>
-                <select class="form-control" asp-for="ResponseType">
-                    @foreach (var rt in Model.ResponseTypes)
-                    {
-                        <option value="@rt">@rt.GetDescription()</option>
-                    }
-                </select>
-            </div>
-            
-            <div class="form-group">
-                <label asp-for="DataPath"></label>
-                <input class="form-control" type="url" asp-for="DataPath"/>
-            </div>
-            
-            <div class="form-group">
-                <label asp-for="Delay"></label>
-                <input type="number" asp-for="Delay" value="@Model.Delay"/>
-            </div>
-            
-            <div class="form-group">
-                <label asp-for="CurrencySourceId"></label>
-                <select class="form-control" asp-for="CurrencySourceId">
-                    @{
-                        var sources = SourceEvent.GetAllActive();
+            <div class="row">
+                <div class="col-md-4 mb-3 mb-md-0">
+                    <div class="form-group">
+                        <label asp-for="CurrencySourceId"></label>
+                        <select class="js-select selectpicker dropdown-select form-control"
+                                data-style="btn-sm btn-primary" asp-for="CurrencySourceId">
+                            @{
+                                var sources = SourceEvent.GetAllActive();
                         
-                        foreach (var src in sources)
-                        {
-                            <option value="@src.Id">@src.Name</option>
-                        }
-                    }
-                </select>
+                                foreach (var src in sources)
+                                {
+                                    <option value="@src.Id">@src.Name</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                </div>
             </div>
             
             <div class="row">
                 <div class="col-md-6 mb-3 mb-md-0">
-                    <div class="js-focus-state input-group mb-2">
+                    <div class="form-group mb-2">
+                        <label asp-for="MainCurrencyTypeId"></label>
+                        <select class="js-select selectpicker dropdown-select form-control"
+                                data-style="btn-sm btn-primary" asp-for="MainCurrencyTypeId">
+                            @foreach (var ct in currencyTypes)
+                            {
+                                <option value="@ct.Id">@ct.Name (@ct.TypeShortForm)</option>
+                            }
+                        </select>
+                    </div>
+                    
+                    <div class="js-focus-state form-group mb-2">
                         <label asp-for="MainCurrencyAbbrv"></label>
                         <input type="text" class="form-control" asp-for="MainCurrencyAbbrv">
                     </div>
 
-                    <div class="js-focus-state input-group mb-2">
+                    <div class="js-focus-state form-group mb-2">
                         <label asp-for="MainCurrencyName"></label>
                         <input type="text" class="form-control" asp-for="MainCurrencyName">
                     </div>
                 </div>
 
                 <div class="col-md-6 mb-3 mb-md-0">
-                    <div class="js-focus-state input-group mb-2">
+                    <div class="form-group mb-2">
+                        <label asp-for="CounterCurrencyTypeId"></label>
+                        <select class="js-select selectpicker dropdown-select form-control"
+                                data-style="btn-sm btn-primary" asp-for="CounterCurrencyTypeId">
+                            @foreach (var ct in currencyTypes)
+                            {
+                                <option value="@ct.Id">@ct.Name (@ct.TypeShortForm)</option>
+                            }
+                        </select>
+                    </div>
+                    
+                    <div class="js-focus-state form-group mb-2">
                         <label asp-for="CounterCurrencyAbbrv"></label>
-                        <input type="text" class="form-control" asp-for="MainCurrencyAbbrv">
+                        <input type="text" class="form-control" asp-for="CounterCurrencyAbbrv">
                     </div>
 
-                    <div class="js-focus-state input-group mb-2">
+                    <div class="js-focus-state form-group mb-2">
                         <label asp-for="CounterCurrencyName"></label>
-                        <input type="text" class="form-control" asp-for="MainCurrencyName">
+                        <input type="text" class="form-control" asp-for="CounterCurrencyName">
                     </div>
                 </div>
             </div>
             
-            <div class="form-group">
-                <label asp-for="QueryComponents"></label>
-                <textarea asp-for="QueryComponents"></textarea>
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <label class="input-group-text" asp-for="QueryComponents"></label>
+                </div>
+                <textarea class="form-control" asp-for="QueryComponents"></textarea>
             </div>
+            
+            <button type="submit" class="btn btn-primary">Create</button>
         </form>
     </div>
 </div>
