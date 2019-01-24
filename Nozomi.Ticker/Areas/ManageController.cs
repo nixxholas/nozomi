@@ -4,16 +4,19 @@ using System.Linq;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using Nozomi.Base.Core.Helpers.Enumerator;
 using Nozomi.Base.Identity.Models.Identity;
 using Nozomi.Base.Identity.Models.Subscription;
 using Nozomi.Base.Identity.ViewModels.Manage;
 using Nozomi.Base.Identity.ViewModels.Manage.ApiTokens;
 using Nozomi.Base.Identity.ViewModels.Manage.PaymentMethods;
+using Nozomi.Base.Identity.ViewModels.Manage.Tickers;
 using Nozomi.Base.Identity.ViewModels.Manage.TwoFactorAuthentication;
 using Nozomi.Preprocessing.Events.Interfaces;
 using Nozomi.Service.Events.Interfaces;
@@ -98,6 +101,42 @@ namespace Nozomi.Ticker.Areas
             };
 
             return View(vm);
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "Owner, Administrator, Staff")]
+        public async Task<IActionResult> CreateTicker()
+        {
+            var user = await GetCurrentUserAsync();
+            if (user == null)
+            {
+                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
+
+            var vm = new CreateTickerViewModel();
+
+            return View(vm);
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Owner, Administrator, Staff")]
+        public async Task<IActionResult> CreateTicker(CreateTickerInputModel vm)
+        {   
+            var user = await GetCurrentUserAsync();
+            if (user == null)
+            {
+                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
+
+            // If it works
+            if (!ModelState.IsValid)
+            {
+                
+            }
+
+            // TODO: Implementation of error messages
+            vm.StatusMessage = "There was something erroneous with your submission.";
+            return RedirectToAction("CreateTicker");
         }
 
         //

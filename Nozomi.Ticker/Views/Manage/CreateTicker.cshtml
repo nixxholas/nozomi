@@ -1,0 +1,78 @@
+@using Nozomi.Base.Core.Helpers.Enumerator
+@using Nozomi.Service.Events.Interfaces
+@model Nozomi.Base.Identity.ViewModels.Manage.Tickers.CreateTickerViewModel
+@inject ISourceEvent SourceEvent
+
+<!-- Content Section -->
+<div class="bg-light">
+    <div class="container space-2">
+        <form method="post">
+            <div class="form-group">
+                <label asp-for="CurrencyPairType"></label>
+                <select class="form-control" asp-for="CurrencyPairType">
+                    @foreach (var cpt in Model.CurrencyPairTypes)
+                    {
+                        <option value="@cpt">@cpt.GetDescription()</option>
+                    }
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label asp-for="RequestType"></label>
+                <select class="form-control" asp-for="RequestType">
+                    @foreach (var rt in Model.RequestTypes)
+                    {
+                        <option value="@rt">@rt.GetDescription()</option>
+                    }
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label asp-for="ResponseType"></label>
+                <select class="form-control" asp-for="ResponseType">
+                    @foreach (var rt in Model.ResponseTypes)
+                    {
+                        <option value="@rt">@rt.GetDescription()</option>
+                    }
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label asp-for="DataPath"></label>
+                <input class="form-control" type="url" asp-for="DataPath"/>
+            </div>
+            
+            <div class="form-group">
+                <label asp-for="Delay"></label>
+                <input type="number" asp-for="Delay" value="@Model.Delay"/>
+            </div>
+            
+            <div class="form-group">
+                <label asp-for="CurrencySourceId"></label>
+                <select class="form-control" asp-for="CurrencySourceId">
+                    @{
+                        var sources = SourceEvent.GetAllActive();
+                        
+                        foreach (var src in sources)
+                         {
+                             <option value="@src.Id">@src.Name</option>
+                         }
+                    }
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label asp-for="MainCurrencyId"></label>
+            </div>
+            
+            <div class="form-group">
+                <label asp-for="CounterCurrencyId"></label>
+            </div>
+            
+            <div class="form-group">
+                <label asp-for="QueryComponents"></label>
+                <textarea asp-for="QueryComponents"></textarea>
+            </div>
+        </form>
+    </div>
+</div>

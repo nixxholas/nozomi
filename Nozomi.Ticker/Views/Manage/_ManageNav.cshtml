@@ -1,4 +1,5 @@
 ﻿@using Microsoft.AspNetCore.Identity
+@using Nozomi.Base.Core.Helpers.Enumerator
 @using Nozomi.Base.Identity.Models.Identity
 @using Nozomi.Service.Identity.Managers
 @using Nozomi.Ticker.Views.Manage
@@ -6,6 +7,11 @@
 @inject NozomiUserManager UserManager
 @{
     var hasExternalLogins = (await SignInManager.GetExternalAuthenticationSchemesAsync()).Any();
+
+    var user = await UserManager.GetUserAsync(User);
+    var isStaff = await UserManager.IsInRoleAsync(user, RoleEnum.Staff.GetDescription());
+    var isAdmin = await UserManager.IsInRoleAsync(user, RoleEnum.Administrator.GetDescription());
+    var isOwner = await UserManager.IsInRoleAsync(user, RoleEnum.Owner.GetDescription());
 }
 @if (SignInManager.IsSignedIn(User))
 {
@@ -97,9 +103,15 @@
                                             <li>
                                                 <a class="nav-link u-header__sub-menu-nav-link" href="projects.html">Projects</a>
                                             </li>
-                                            <li>
-                                                <a class="nav-link u-header__sub-menu-nav-link" href="members.html">Members</a>
-                                            </li>
+                                            @{
+                                                if (isOwner || isAdmin || isStaff)
+                                                {
+                                                    <li>
+                                                        <a class="nav-link u-header__sub-menu-nav-link" 
+                                                           >Seed ticker</a>
+                                                    </li>
+                                                }
+                                            }
                                         </ul>
                                     </li>
                                     <!-- General -->
