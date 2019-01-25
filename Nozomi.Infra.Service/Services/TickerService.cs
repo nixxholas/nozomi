@@ -107,13 +107,21 @@ namespace Nozomi.Service.Services
                 
                 _logger.LogInformation($"Currency {counterCurrency.Name} created for " +
                                        $"source {counterCurrency.CurrencySourceId}.");
-                
             }
 
+            // Currency check
             if (counterCurrency == null || mainCurrency == null)
             {
                 return new NozomiResult<UniqueTickerResponse>(NozomiResultType.Failed,
                     "Invalid currency sub pair/s.");
+            }
+            
+            // Currency source check
+            if (counterCurrency.CurrencySourceId != mainCurrency.CurrencySourceId)
+            {
+                return new NozomiResult<UniqueTickerResponse>(NozomiResultType.Failed,
+                    "Unable to peg a main and counter currency that have a different" +
+                    " source.");
             }
 
             var currencyPair = new CurrencyPair
@@ -135,16 +143,99 @@ namespace Nozomi.Service.Services
                 }
             };
             
-            // TODO: Aggregate Properties and RequestComponent
-            
             var currencyPairRequest = new CurrencyPairRequest
             {
                 CurrencyPair = currencyPair,
                 DataPath = createTickerInputModel.DataPath,
                 Delay = createTickerInputModel.Delay,
                 RequestType = createTickerInputModel.RequestType,
-                ResponseType = createTickerInputModel.ResponseType
+                ResponseType = createTickerInputModel.ResponseType,
+                RequestComponents = new List<RequestComponent>(),
+                RequestProperties = new List<RequestProperty>()
             };
+            
+            // Request Property aggregation
+            if (!string.IsNullOrEmpty(createTickerInputModel.RequestProperties))
+            {
+                var requestProperties = createTickerInputModel.RequestProperties.Split(
+                    new[] { "\r\n", "\r", "\n" },
+                    StringSplitOptions.None
+                );
+
+                foreach (var reqProp in requestProperties)
+                {
+                    var reqPropEl = reqProp.Split(">");
+
+                    if (reqPropEl.Length != 3)
+                    {
+                        return new NozomiResult<UniqueTickerResponse>(NozomiResultType.Failed,
+                            $"Invalid request property format. {reqProp}");
+                    }
+                    
+                    var reqPropType = Enum.TryParse(reqPropEl[0], out RequestPropertyType reqPropElType) ? reqPropElType
+                        : RequestPropertyType.Invalid;
+
+                    if (reqPropType.Equals(RequestPropertyType.Invalid))
+                    {
+                        return new NozomiResult<UniqueTickerResponse>(NozomiResultType.Failed,
+                            $"Invalid request property type. {reqProp}");
+                    }
+                    
+                    var requestProperty = new RequestProperty
+                    {
+                        RequestPropertyType = reqPropType,
+                        Key = reqPropEl[1],
+                        Value = reqPropEl[2]
+                    };
+
+                    if (currencyPairRequest.RequestProperties
+                        .Any(rp => rp.RequestPropertyType.Equals(requestProperty.RequestPropertyType)))
+                    {
+                        return new NozomiResult<UniqueTickerResponse>(NozomiResultType.Failed,
+                            $"A duplicate property exists. {reqProp}");
+                    }
+                    
+                    currencyPairRequest.RequestProperties.Add(requestProperty);
+                }
+            }
+            
+            // Request Component aggregation
+            // https://stackoverflow.com/questions/1547476/easiest-way-to-split-a-string-on-newlines-in-net
+            var requestComponents = createTickerInputModel.QueryComponents.Split(
+                new[] { "\r\n", "\r", "\n" },
+                StringSplitOptions.None
+            );
+
+            foreach (var requestComponent in requestComponents)
+            {
+                var requestComponentEl = requestComponent.Split(">");
+                if (requestComponentEl.Length != 2)
+                {
+                    return new NozomiResult<UniqueTickerResponse>(NozomiResultType.Failed,
+                        $"Invalid request component. [{requestComponent}]");
+                }
+                
+                // https://stackoverflow.com/questions/16100/how-should-i-convert-a-string-to-an-enum-in-c
+                var componentType = Enum.TryParse(requestComponentEl[0], out ComponentType outComponentType) 
+                    ? outComponentType
+                    : ComponentType.Unknown;
+                
+                // Safety check
+                if (componentType.Equals(ComponentType.Unknown)
+                    && currencyPairRequest.RequestComponents
+                        .Any(rc => rc.ComponentType == ComponentType.Unknown))
+                {
+                    return new NozomiResult<UniqueTickerResponse>(NozomiResultType.Failed,
+                        "There already is another component with the same component type.");
+                }
+
+                currencyPairRequest.RequestComponents.Add(new RequestComponent
+                {
+                    ComponentType = componentType,
+                    QueryComponent = requestComponentEl[1],
+                    RequestComponentDatum = new RequestComponentDatum()
+                });
+            }
 
             try
             {

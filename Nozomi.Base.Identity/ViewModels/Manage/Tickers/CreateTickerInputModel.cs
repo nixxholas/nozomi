@@ -71,5 +71,8 @@ namespace Nozomi.Base.Identity.ViewModels.Manage.Tickers
         [Required]
         [DisplayName("The component variables that we'll be querying from the response.")]
         public string QueryComponents { get; set; }
+        
+        [DisplayName("The properties of the request. (Could be a header property)")]
+        public string RequestProperties { get; set; }
     }
 }

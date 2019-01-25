@@ -6,6 +6,7 @@ namespace Nozomi.Data.WebModels
 {
     public enum RequestPropertyType
     {
+        Invalid = -1,
         HttpHeader = 0,
         HttpHeader_Accept = 1,
         HttpHeader_AcceptCharset = 2,
