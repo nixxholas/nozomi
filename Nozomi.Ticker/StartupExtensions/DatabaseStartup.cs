@@ -32,7 +32,7 @@ namespace Nozomi.Ticker.StartupExtensions
                 stripeService.ConfigureStripePlans();
 
                 var logger = serviceScope.ServiceProvider.GetService<ILogger<Startup>>();
-                
+
                 using (var context = serviceScope.ServiceProvider.GetService<NozomiAuthContext>())
                 {
                     // Auto wipe
@@ -40,9 +40,9 @@ namespace Nozomi.Ticker.StartupExtensions
                     {
                         context.Database.EnsureDeleted();
                     }
-                    
+
                     context.Database.Migrate();
-                    
+
                     // Seed roles
                     using (var roleManager = serviceScope.ServiceProvider.GetService<RoleManager<Role>>())
                     {
@@ -52,8 +52,8 @@ namespace Nozomi.Ticker.StartupExtensions
 
                         foreach (var role in roles)
                         {
-                            var roleStr = role.GetDescription(); 
-                                
+                            var roleStr = role.GetDescription();
+
                             if (roleManager.FindByNameAsync(roleStr).Result == null)
                             {
                                 var newRole = new Role
@@ -70,7 +70,7 @@ namespace Nozomi.Ticker.StartupExtensions
                             }
                         }
                     }
-                    
+
                     // Seed users
                     using (var userManager = serviceScope.ServiceProvider.GetService<NozomiUserManager>())
                     {
@@ -86,7 +86,34 @@ namespace Nozomi.Ticker.StartupExtensions
                                 StripeCustomerId = "cus_ELCsKKBzzjNc2I",
                                 EmailConfirmed = true
                             };
-                        
+
+                            var res = userManager.CreateAsync(boss, "P@ssw0rd").Result;
+
+                            if (!res.Succeeded)
+                            {
+                                logger.LogCritical($"Error seeding da boss!!!");
+                            }
+
+                            var roleRes = userManager.AddToRoleAsync(boss, RoleEnum.Owner.GetDescription()).Result;
+
+                            if (!roleRes.Succeeded)
+                            {
+                                logger.LogCritical($"Error seeding da boss role!!!");
+                            }
+                        }
+
+                        if (userManager.FindByEmailAsync("nicholas@counter.network").Result == null)
+                        {
+                            var boss = new User
+                            {
+                                UserName = "nicholas",
+                                NormalizedUserName = "NICHOLAS",
+                                NormalizedEmail = "NICHOLAS@COUNTER.NETWORK",
+                                Email = "nicholas@counter.network",
+                                StripeCustomerId = "cus_ELCsKKBzzjNc2I",
+                                EmailConfirmed = true
+                            };
+
                             var res = userManager.CreateAsync(boss, "P@ssw0rd").Result;
 
                             if (!res.Succeeded)
@@ -103,7 +130,7 @@ namespace Nozomi.Ticker.StartupExtensions
                         }
                     }
                 }
-                
+
                 using (var context = serviceScope.ServiceProvider.GetService<NozomiDbContext>())
                 {
                     // Auto Wipe
@@ -425,7 +452,8 @@ namespace Nozomi.Ticker.StartupExtensions
                                             new RequestComponent()
                                             {
                                                 ComponentType = ComponentType.Ask,
-                                                QueryComponent = "['Realtime Currency Exchange Rate']/['5. Exchange Rate']",
+                                                QueryComponent =
+                                                    "['Realtime Currency Exchange Rate']/['5. Exchange Rate']",
                                                 CreatedAt = DateTime.Now,
                                                 ModifiedAt = DateTime.Now,
                                                 DeletedAt = null
