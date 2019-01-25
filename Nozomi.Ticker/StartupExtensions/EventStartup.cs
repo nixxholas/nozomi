@@ -20,7 +20,10 @@ namespace Nozomi.Ticker.StartupExtensions
 
             services.AddScoped<IApiTokenEvent, ApiTokenEvent>();
 
+            services.AddScoped<ICurrencyEvent, CurrencyEvent>();
+            services.AddScoped<ICurrencyTypeEvent, CurrencyTypeEvent>();
             services.AddScoped<ISourceEvent, SourceEvent>();
+            services.AddScoped<ITickerEvent, TickerEvent>();
         }
     }
 }

@@ -4,42 +4,51 @@ using System.Linq;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using Nozomi.Base.Core.Helpers.Enumerator;
 using Nozomi.Base.Identity.Models.Identity;
 using Nozomi.Base.Identity.Models.Subscription;
 using Nozomi.Base.Identity.ViewModels.Manage;
 using Nozomi.Base.Identity.ViewModels.Manage.ApiTokens;
 using Nozomi.Base.Identity.ViewModels.Manage.PaymentMethods;
+using Nozomi.Base.Identity.ViewModels.Manage.Tickers;
 using Nozomi.Base.Identity.ViewModels.Manage.TwoFactorAuthentication;
 using Nozomi.Preprocessing.Events.Interfaces;
+using Nozomi.Service.Events.Interfaces;
 using Nozomi.Service.Identity.Events.Auth.Interfaces;
 using Nozomi.Service.Identity.Events.Interfaces;
 using Nozomi.Service.Identity.Managers;
 using Nozomi.Service.Identity.Services.Interfaces;
+using Nozomi.Service.Services.Interfaces;
 
 namespace Nozomi.Ticker.Areas
 {
     public class ManageController : BaseViewController<ManageController>
     {
+        private readonly ISourceEvent _sourceEvent;
         private readonly ISmsSender _smsSender;
         private readonly IStripeEvent _stripeEvent;
         private readonly IStripeService _stripeService;
+        private readonly ITickerService _tickerService;
         private readonly IApiTokenEvent _apiTokenEvent;
         private readonly UrlEncoder _urlEncoder;
         
         public ManageController(ILogger<ManageController> logger, NozomiSignInManager signInManager, 
             NozomiUserManager userManager, ISmsSender smsSender, IStripeService stripeService, IStripeEvent stripeEvent,
-            IApiTokenEvent apiTokenEvent, UrlEncoder urlEncoder) 
+            IApiTokenEvent apiTokenEvent, ISourceEvent sourceEvent, ITickerService tickerService, UrlEncoder urlEncoder) 
             : base(logger, signInManager, userManager)
         {
             _smsSender = smsSender;
             _apiTokenEvent = apiTokenEvent;
             _stripeEvent = stripeEvent;
             _stripeService = stripeService;
+            _sourceEvent = sourceEvent;
+            _tickerService = tickerService;
             _urlEncoder = urlEncoder;
         }
         
@@ -57,8 +66,9 @@ namespace Nozomi.Ticker.Areas
 
             var model = new IndexViewModel
             {
+                Sources = _sourceEvent.GetAllActive(true).ToList(),
                 StatusMessage = message == ManageIndexMessageId.Error ? "An error has occured."
-                    : ""
+                    : "",
             };
             return View(model);
         }
@@ -93,6 +103,44 @@ namespace Nozomi.Ticker.Areas
             };
 
             return View(vm);
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "Owner, Administrator, Staff")]
+        public async Task<IActionResult> CreateTicker()
+        {
+            var user = await GetCurrentUserAsync();
+            if (user == null)
+            {
+                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
+
+            var vm = new CreateTickerViewModel();
+
+            return View(vm);
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Owner, Administrator, Staff")]
+        public async Task<IActionResult> CreateTicker(CreateTickerInputModel vm)
+        {   
+            var user = await GetCurrentUserAsync();
+            if (user == null)
+            {
+                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
+
+            // If it works
+            if (!ModelState.IsValid)
+            {
+                
+            }
+
+            var res = _tickerService.Create(vm);
+
+            // TODO: Implementation of error messages
+            vm.StatusMessage = "There was something erroneous with your submission.";
+            return RedirectToAction("CreateTicker");
         }
 
         //

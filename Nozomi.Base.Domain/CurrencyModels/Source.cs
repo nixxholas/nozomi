@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 using Nozomi.Base.Core;
 
@@ -17,6 +18,9 @@ namespace Nozomi.Data.CurrencyModels
         public string Name { get; set; }
 
         public string APIDocsURL { get; set; }
+        
+        [NotMapped]
+        public long PairCount { get; set; }
 
         // =========== RELATIONS ============ //
         public ICollection<Currency> Currencies { get; set; }

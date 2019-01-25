@@ -17,21 +17,36 @@ namespace Nozomi.Service.Events
         {
         }
         
-        public IEnumerable<Source> GetAllActive(bool includeNested = false)
+        public IEnumerable<Source> GetAllActive(bool countPairs = false, bool includeNested = false)
         {
-            if (includeNested) {
-                return _unitOfWork.GetRepository<Source>()
-                                  .GetQueryable()
-                                  .Where(cs => cs.DeletedAt == null)
-                                  .Where(cs => cs.IsEnabled)
-                                  .Include(cs => cs.Currencies)
-                                  .Include(cs => cs.CurrencyPairs);
-            } else {
-                return _unitOfWork.GetRepository<Source>()
-                                  .GetQueryable()
-                                  .Where(cs => cs.DeletedAt == null)
-                                  .Where(cs => cs.IsEnabled);
+            var query = _unitOfWork.GetRepository<Source>()
+                .GetQueryable()
+                .Include(cs => cs.CurrencyPairs)
+                .Where(cs => cs.DeletedAt == null)
+                .Where(cs => cs.IsEnabled);
+
+            if (includeNested)
+            {
+                query = query
+                    .Include(cs => cs.Currencies);
             }
+
+            if (countPairs)
+            {
+                query = query
+                    .Select(s => new Source
+                    {
+                        Id = s.Id,
+                        Abbreviation = s.Abbreviation, 
+                        Name = s.Name,
+                        APIDocsURL = s.APIDocsURL,
+                        PairCount = s.CurrencyPairs != null ? s.CurrencyPairs.Count : 0,
+                        CurrencyPairs = s.CurrencyPairs,
+                        Currencies = s.Currencies
+                    });
+            }
+
+            return query;
         }
 
         public IEnumerable<dynamic> GetAllActiveObsc(bool includeNested = false)

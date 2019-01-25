@@ -1,11 +1,9 @@
 ﻿@using Nozomi.Data
 @using Nozomi.Service.Identity.Managers
 @using Nozomi.Service.Services.Interfaces
-@inject ITickerService TickerService
 @inject NozomiSignInManager SignInManager
 @{
   ViewData["Title"] = "Home Page";
-  var ethusdTickers = TickerService.GetByAbbreviation("ETHUSD");
 }
 
   <main id="content" role="main">

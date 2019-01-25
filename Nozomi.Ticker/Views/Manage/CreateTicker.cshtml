@@ -1,0 +1,193 @@
+@using Nozomi.Base.Core.Helpers.Enumerator
+@using Nozomi.Service.Events.Interfaces
+@model Nozomi.Base.Identity.ViewModels.Manage.Tickers.CreateTickerViewModel
+@inject ICurrencyTypeEvent CurrencyTypeEvent
+@inject ISourceEvent SourceEvent
+
+@{
+    var currencyTypes = CurrencyTypeEvent.GetAllActive();
+}
+
+<!-- Content Section -->
+<div class="bg-light">
+    <div class="container space-2">
+        <h3 class="mb-6">Create a new ticker</h3>
+        <form method="post">
+            <div class="row">
+                <div class="col-md-4 mb-3 mb-md-0">
+                    <div class="form-group">
+                        <label asp-for="CurrencyPairType"></label>
+                        <select class="js-select selectpicker dropdown-select form-control"
+                                data-style="btn-sm btn-primary" asp-for="CurrencyPairType">
+                            @foreach (var cpt in Model.CurrencyPairTypes)
+                            {
+                                <option value="@cpt">@cpt.GetDescription()</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-3 mb-md-0">
+                    <div class="form-group">
+                        <label asp-for="RequestType"></label>
+                        <select class="js-select selectpicker dropdown-select form-control"
+                                data-style="btn-sm btn-primary" asp-for="RequestType">
+                            @foreach (var rt in Model.RequestTypes)
+                            {
+                                <option value="@rt">@rt.GetDescription()</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-3 mb-md-0">
+                    <div class="form-group">
+                        <label asp-for="ResponseType"></label>
+                        <select class="js-select selectpicker dropdown-select form-control"
+                                data-style="btn-sm btn-primary" asp-for="ResponseType">
+                            @foreach (var rt in Model.ResponseTypes)
+                            {
+                                <option value="@rt">@rt.GetDescription()</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-9 mb-3 mb-md-0">
+                    <div class="form-group">
+                        <label asp-for="DataPath"></label>
+                        <input class="form-control" type="url" asp-for="DataPath"/>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3 mb-md-0">
+                    <div class="form-group">
+                        <label asp-for="Delay"></label>
+                        <input class="form-control" type="number" asp-for="Delay" value="@Model.Delay"/>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-4 mb-3 mb-md-0">
+                    <div class="form-group">
+                        <label asp-for="CurrencySourceId"></label>
+                        <select class="js-select selectpicker dropdown-select form-control"
+                                data-style="btn-sm btn-primary" asp-for="CurrencySourceId">
+                            @{
+                                var sources = SourceEvent.GetAllActive();
+                        
+                                foreach (var src in sources)
+                                {
+                                    <option value="@src.Id">@src.Name</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row mb-5">
+                <div class="col-md-6 mb-3 mb-md-0">
+                    <div class="form-group mb-2">
+                        <label asp-for="MainCurrencyTypeId"></label>
+                        <select class="js-select selectpicker dropdown-select form-control"
+                                data-style="btn-sm btn-primary" asp-for="MainCurrencyTypeId">
+                            @foreach (var ct in currencyTypes)
+                            {
+                                <option value="@ct.Id">@ct.Name (@ct.TypeShortForm)</option>
+                            }
+                        </select>
+                    </div>
+                    
+                    <div class="js-focus-state form-group mb-2">
+                        <label asp-for="MainCurrencyAbbrv"></label>
+                        <input type="text" class="form-control" asp-for="MainCurrencyAbbrv">
+                    </div>
+
+                    <div class="js-focus-state form-group mb-2">
+                        <label asp-for="MainCurrencyName"></label>
+                        <input type="text" class="form-control" asp-for="MainCurrencyName">
+                    </div>
+                </div>
+
+                <div class="col-md-6 mb-3 mb-md-0">
+                    <div class="form-group mb-2">
+                        <label asp-for="CounterCurrencyTypeId"></label>
+                        <select class="js-select selectpicker dropdown-select form-control"
+                                data-style="btn-sm btn-primary" asp-for="CounterCurrencyTypeId">
+                            @foreach (var ct in currencyTypes)
+                            {
+                                <option value="@ct.Id">@ct.Name (@ct.TypeShortForm)</option>
+                            }
+                        </select>
+                    </div>
+                    
+                    <div class="js-focus-state form-group mb-2">
+                        <label asp-for="CounterCurrencyAbbrv"></label>
+                        <input type="text" class="form-control" asp-for="CounterCurrencyAbbrv">
+                    </div>
+
+                    <div class="js-focus-state form-group mb-2">
+                        <label asp-for="CounterCurrencyName"></label>
+                        <input type="text" class="form-control" asp-for="CounterCurrencyName">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="alert alert-info" role="alert">
+                <h4>Nozomi Request Components Syntax</h4>
+                <p>
+                    As simple as it is, you should define your component like that:
+                </p>
+                <p>
+                    <kbd>Ask>0</kbd> - This is an "Ask" component, obtaining 
+                    the 1st element of the array, assuming that the result is an array. <br />
+                    <kbd>Bid>bidPrice</kbd> - This is a "Bid" component, obtaining the 
+                    "bidPrice" property from the result, assuming that the result is an
+                    object.
+                </p>
+            </div>
+            <div class="input-group mb-6">
+                <div class="input-group-prepend">
+                    <label class="input-group-text" asp-for="QueryComponents"></label>
+                </div>
+                <textarea class="form-control" asp-for="QueryComponents"></textarea>
+                @* <small class="form-text text-muted">We'll never share your email with anyone else.</small> *@
+            </div>
+            
+            <div class="alert alert-info" role="alert">
+                <h4>Nozomi Request Properties Syntax <kbd class="mr-4">Optional!</kbd></h4>
+                <p>
+                    This is a little more complex than a request component, such that properties can
+                    be protocol specific (i.e. HTTP or Websocket) and can be defined like that:
+                </p>
+                <p>
+                    <kbd>HttpHeader_Accept>>text/xml</kbd> - This is a HTTP Accept header property that
+                    sets it to a value of "text/xml". Key is not required and would thus be left blank.<br />
+                    <kbd>HttpHeader>Key>Value</kbd> - This is a generic HTTP header property that sets the
+                    key as stated and value as provided.
+                </p>
+            </div>
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <label class="input-group-text" asp-for="RequestProperties"></label>
+                </div>
+                <textarea class="form-control" asp-for="RequestProperties"></textarea>
+            </div>
+            
+            <button type="submit" class="btn btn-primary">Create</button>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            
+        });
+        
+        function updateCurrencies() {
+            
+        }
+    </script>
+}
