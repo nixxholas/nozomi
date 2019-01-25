@@ -128,6 +128,7 @@ namespace Nozomi.Service.Services
 
             var currencyPair = new CurrencyPair
             {
+                APIUrl = createTickerInputModel.DataPath,
                 CurrencyPairType = createTickerInputModel.CurrencyPairType,
                 CurrencySourceId = createTickerInputModel.CurrencySourceId,
                 PartialCurrencyPairs = new List<PartialCurrencyPair>
@@ -208,6 +209,12 @@ namespace Nozomi.Service.Services
                 StringSplitOptions.None
             );
 
+            if (requestComponents.Length < 1)
+            {
+                return new NozomiResult<UniqueTickerResponse>(NozomiResultType.Failed,
+                    "Please enter a request component.");
+            }
+
             foreach (var requestComponent in requestComponents)
             {
                 var requestComponentEl = requestComponent.Split(">");
@@ -235,9 +242,15 @@ namespace Nozomi.Service.Services
                 {
                     ComponentType = componentType,
                     QueryComponent = requestComponentEl[1],
-                    RequestComponentDatum = new RequestComponentDatum()
+                    RequestComponentDatum = new RequestComponentDatum
+                    {
+                        Value = "0"
+                    }
                 });
             }
+
+            currencyPair.DefaultComponent = currencyPairRequest.RequestComponents
+                .FirstOrDefault()?.QueryComponent;
 
             try
             {
