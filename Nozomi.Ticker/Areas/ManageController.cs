@@ -18,6 +18,7 @@ using Nozomi.Base.Identity.ViewModels.Manage.ApiTokens;
 using Nozomi.Base.Identity.ViewModels.Manage.PaymentMethods;
 using Nozomi.Base.Identity.ViewModels.Manage.Tickers;
 using Nozomi.Base.Identity.ViewModels.Manage.TwoFactorAuthentication;
+using Nozomi.Data.AreaModels.v1.CurrencySource;
 using Nozomi.Preprocessing.Events.Interfaces;
 using Nozomi.Service.Events.Interfaces;
 using Nozomi.Service.Identity.Events.Auth.Interfaces;
@@ -30,17 +31,19 @@ namespace Nozomi.Ticker.Areas
 {
     public class ManageController : BaseViewController<ManageController>
     {
+        private readonly IApiTokenEvent _apiTokenEvent;
         private readonly ISourceEvent _sourceEvent;
-        private readonly ISmsSender _smsSender;
         private readonly IStripeEvent _stripeEvent;
+        private readonly ISourceService _sourceService;
         private readonly IStripeService _stripeService;
         private readonly ITickerService _tickerService;
-        private readonly IApiTokenEvent _apiTokenEvent;
+        private readonly ISmsSender _smsSender;
         private readonly UrlEncoder _urlEncoder;
         
         public ManageController(ILogger<ManageController> logger, NozomiSignInManager signInManager, 
             NozomiUserManager userManager, ISmsSender smsSender, IStripeService stripeService, IStripeEvent stripeEvent,
-            IApiTokenEvent apiTokenEvent, ISourceEvent sourceEvent, ITickerService tickerService, UrlEncoder urlEncoder) 
+            IApiTokenEvent apiTokenEvent, ISourceEvent sourceEvent, ITickerService tickerService, 
+            ISourceService sourceService, UrlEncoder urlEncoder) 
             : base(logger, signInManager, userManager)
         {
             _smsSender = smsSender;
@@ -49,6 +52,7 @@ namespace Nozomi.Ticker.Areas
             _stripeService = stripeService;
             _sourceEvent = sourceEvent;
             _tickerService = tickerService;
+            _sourceService = sourceService;
             _urlEncoder = urlEncoder;
         }
         
@@ -103,6 +107,40 @@ namespace Nozomi.Ticker.Areas
             };
 
             return View(vm);
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "Owner, Administrator, Staff")]
+        public async Task<IActionResult> CreateSource()
+        {
+            var user = await GetCurrentUserAsync();
+            if (user == null)
+            {
+                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
+            
+            return View();
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Owner, Administrator, Staff")]
+        public async Task<IActionResult> CreateSource(CreateSource createSource)
+        {  
+            var user = await GetCurrentUserAsync();
+            if (user == null)
+            {
+                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
+
+            // If it works
+            if (!ModelState.IsValid)
+            {
+                
+            }
+
+            var res = _sourceService.Create(createSource);
+            
+            return RedirectToAction("CreateSource");
         }
 
         [HttpGet]
