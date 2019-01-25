@@ -48,7 +48,7 @@ namespace Nozomi.Base.Identity.ViewModels.Manage.Tickers
         
         [Required]
         [DisplayName("The type of the main currency.")]
-        public string MainCurrencyTypeId { get; set; }
+        public long MainCurrencyTypeId { get; set; }
         
         [Required]
         [DisplayName("The abbreviation of the main currency.")]
@@ -59,7 +59,7 @@ namespace Nozomi.Base.Identity.ViewModels.Manage.Tickers
         
         [Required]
         [DisplayName("The type of the counter currency.")]
-        public string CounterCurrencyTypeId { get; set; }
+        public long CounterCurrencyTypeId { get; set; }
         
         [Required]
         [DisplayName("The abbreviation of the counter currency.")]

@@ -42,6 +42,7 @@ namespace Nozomi.Service.Services
             var mainCurrency = new Currency
             {
                 CurrencySourceId = createTickerInputModel.CurrencySourceId,
+                CurrencyTypeId = createTickerInputModel.MainCurrencyTypeId,
                 Abbrv = createTickerInputModel.MainCurrencyAbbrv,
                 Name = createTickerInputModel.MainCurrencyName
             };
@@ -77,6 +78,7 @@ namespace Nozomi.Service.Services
             var counterCurrency = new Currency
             {
                 CurrencySourceId = createTickerInputModel.CurrencySourceId,
+                CurrencyTypeId = createTickerInputModel.CounterCurrencyTypeId,
                 Abbrv = createTickerInputModel.CounterCurrencyAbbrv,
                 Name = createTickerInputModel.CounterCurrencyName
             };

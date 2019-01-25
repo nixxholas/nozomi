@@ -86,7 +86,7 @@
                 </div>
             </div>
             
-            <div class="row">
+            <div class="row mb-5">
                 <div class="col-md-6 mb-3 mb-md-0">
                     <div class="form-group mb-2">
                         <label asp-for="MainCurrencyTypeId"></label>
@@ -134,11 +134,45 @@
                 </div>
             </div>
             
-            <div class="input-group mb-3">
+            <div class="alert alert-info" role="alert">
+                <h4>Nozomi Request Components Syntax</h4>
+                <p>
+                    As simple as it is, you should define your component like that:
+                </p>
+                <p>
+                    <kbd>Ask>0</kbd> - This is an "Ask" component, obtaining 
+                    the 1st element of the array, assuming that the result is an array. <br />
+                    <kbd>Bid>bidPrice</kbd> - This is a "Bid" component, obtaining the 
+                    "bidPrice" property from the result, assuming that the result is an
+                    object.
+                </p>
+            </div>
+            <div class="input-group mb-6">
                 <div class="input-group-prepend">
                     <label class="input-group-text" asp-for="QueryComponents"></label>
                 </div>
                 <textarea class="form-control" asp-for="QueryComponents"></textarea>
+                @* <small class="form-text text-muted">We'll never share your email with anyone else.</small> *@
+            </div>
+            
+            <div class="alert alert-info" role="alert">
+                <h4>Nozomi Request Properties Syntax <kbd class="mr-4">Optional!</kbd></h4>
+                <p>
+                    This is a little more complex than a request component, such that properties can
+                    be protocol specific (i.e. HTTP or Websocket) and can be defined like that:
+                </p>
+                <p>
+                    <kbd>HttpHeader_Accept>>text/xml</kbd> - This is a HTTP Accept header property that
+                    sets it to a value of "text/xml". Key is not required and would thus be left blank.<br />
+                    <kbd>HttpHeader>Key>Value</kbd> - This is a generic HTTP header property that sets the
+                    key as stated and value as provided.
+                </p>
+            </div>
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <label class="input-group-text" asp-for="RequestProperties"></label>
+                </div>
+                <textarea class="form-control" asp-for="RequestProperties"></textarea>
             </div>
             
             <button type="submit" class="btn btn-primary">Create</button>

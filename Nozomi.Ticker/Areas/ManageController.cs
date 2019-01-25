@@ -136,7 +136,7 @@ namespace Nozomi.Ticker.Areas
                 
             }
 
-            //var res = _tickerService.Create(vm);
+            var res = _tickerService.Create(vm);
 
             // TODO: Implementation of error messages
             vm.StatusMessage = "There was something erroneous with your submission.";
