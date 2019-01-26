@@ -38,7 +38,6 @@ namespace Nozomi.Ticker.Areas.v1.Ticker
             return await _tickerService.GetAll(index);
         }
 
-        [Authorize(Policy = ApiTokenRequirement.ApiTokenRequirementName)]
         [HttpGet]
         public NozomiResult<ICollection<DistinctiveTickerResponse>> Get(string symbol, bool includeNested = false)
         {
