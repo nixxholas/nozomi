@@ -85,6 +85,8 @@ namespace Nozomi.Service.HostedServices.RequestTypes
 //                                            .ToList();
                     var getBasedRequests = _currencyPairRequestService.GetAllByRequestType(RequestType.HttpGet);
 
+                    // TODO: Process tickers with the same API Url.
+                    
                     // Iterate the requests
                     // NOTE: Let's not call a parallel loop since HttpClients might tend to result in memory leaks.
                     foreach (var rq in getBasedRequests)
