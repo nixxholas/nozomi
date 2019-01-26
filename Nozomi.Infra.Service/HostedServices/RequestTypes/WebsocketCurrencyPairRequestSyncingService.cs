@@ -39,7 +39,7 @@ namespace Nozomi.Service.HostedServices.RequestTypes
                 //============================= Update Sockets to keep =============================// 
                 
                 // We will need to resync the Request collection to make sure we're polling only the ones we want to poll
-                var requests = _currencyPairRequestService.GetAllByRequestType(RequestType.HttpPost);
+                var requests = _currencyPairRequestService.GetAllByRequestType(RequestType.WebSocket);
 
                 // Iterate the requests
                 foreach (var rq in requests)
