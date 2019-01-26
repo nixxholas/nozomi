@@ -304,7 +304,7 @@ namespace Nozomi.Service.Services
             foreach (var cPairReq in currencyPairRequests)
             {
                 // If the key exists,
-                if (!dict.ContainsKey(cPairReq.DataPath) && dict[cPairReq.DataPath] != null 
+                if (dict.ContainsKey(cPairReq.DataPath) && dict[cPairReq.DataPath] != null 
                                                          && dict[cPairReq.DataPath].Count > 0)
                 {
                     dict[cPairReq.DataPath].Add(cPairReq);

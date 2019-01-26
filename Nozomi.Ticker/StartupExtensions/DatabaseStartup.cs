@@ -175,6 +175,12 @@ namespace Nozomi.Ticker.StartupExtensions
                                 Abbreviation = "AVG",
                                 Name = "AlphaVantage",
                                 APIDocsURL = "https://www.alphavantage.co/documentation/"
+                            },
+                            new Source
+                            {
+                                Abbreviation = "POLO",
+                                Name = "Poloniex",
+                                APIDocsURL = "https://docs.poloniex.com/#public-http-api-methods"
                             });
                         context.SaveChanges();
                     }
@@ -202,6 +208,7 @@ namespace Nozomi.Ticker.StartupExtensions
                         var bnaSource = context.Sources.SingleOrDefault(s => s.Abbreviation.Equals("BNA"));
                         var ecbSource = context.Sources.SingleOrDefault(s => s.Abbreviation.Equals("ECB"));
                         var avgSource = context.Sources.SingleOrDefault(s => s.Abbreviation.Equals("AVG"));
+                        var poloSource = context.Sources.SingleOrDefault(s => s.Abbreviation.Equals("POLO"));
 
                         if (!context.Currencies.Any() && context.CurrencyTypes.Any())
                         {
@@ -283,6 +290,30 @@ namespace Nozomi.Ticker.StartupExtensions
                                         Name = "United States Dollar",
                                         CurrencySourceId = avgSource.Id,
                                         WalletTypeId = 0
+                                    },
+                                    new Currency()
+                                    {
+                                        CurrencyTypeId = cryptoType.Id,
+                                        Abbrv = "BTC",
+                                        Name = "Bitcoin",
+                                        CurrencySourceId = poloSource.Id,
+                                        WalletTypeId = 0
+                                    },
+                                    new Currency()
+                                    {
+                                        CurrencyTypeId = cryptoType.Id,
+                                        Abbrv = "BCN",
+                                        Name = "Bytecoin",
+                                        CurrencySourceId = poloSource.Id,
+                                        WalletTypeId = 0
+                                    },
+                                    new Currency()
+                                    {
+                                        CurrencyTypeId = cryptoType.Id,
+                                        Abbrv = "BTS",
+                                        Name = "BitShares",
+                                        CurrencySourceId = poloSource.Id,
+                                        WalletTypeId = 0
                                     }
                                 );
 
@@ -327,6 +358,20 @@ namespace Nozomi.Ticker.StartupExtensions
                                     APIUrl = "https://www.alphavantage.co/query",
                                     DefaultComponent = "Realtime Currency Exchange Rate/5. Exchange Rate",
                                     CurrencySourceId = avgSource.Id
+                                },
+                                new CurrencyPair()
+                                {
+                                    CurrencyPairType = CurrencyPairType.EXCHANGEABLE,
+                                    APIUrl = "https://poloniex.com/public?command=returnTicker",
+                                    DefaultComponent = "BTC_BCN/lowestAsk",
+                                    CurrencySourceId = poloSource.Id
+                                },
+                                new CurrencyPair()
+                                {
+                                    CurrencyPairType = CurrencyPairType.EXCHANGEABLE,
+                                    APIUrl = "https://poloniex.com/public?command=returnTicker",
+                                    DefaultComponent = "BTC_BTS/lowestAsk",
+                                    CurrencySourceId = poloSource.Id
                                 }
                             };
 
@@ -486,6 +531,62 @@ namespace Nozomi.Ticker.StartupExtensions
                                                 Value = "CNY"
                                             }
                                         }
+                                    },
+                                    new CurrencyPairRequest()
+                                    {
+                                        Guid = Guid.NewGuid(),
+                                        RequestType = RequestType.HttpGet,
+                                        ResponseType = ResponseType.Json,
+                                        DataPath = "https://poloniex.com/public?command=returnTicker",
+                                        CurrencyPairId = currencyPairs[5].Id,
+                                        Delay = 5000,
+                                        RequestComponents = new List<RequestComponent>()
+                                        {
+                                            new RequestComponent
+                                            {
+                                                ComponentType = ComponentType.Ask,
+                                                QueryComponent = "BTC_BCN/lowestAsk",
+                                                CreatedAt = DateTime.Now,
+                                                ModifiedAt = DateTime.Now,
+                                                DeletedAt = null
+                                            },
+                                            new RequestComponent
+                                            {
+                                                ComponentType = ComponentType.Bid,
+                                                QueryComponent = "BTC_BCN/highestBid",
+                                                CreatedAt = DateTime.Now,
+                                                ModifiedAt = DateTime.Now,
+                                                DeletedAt = null
+                                            }
+                                        }
+                                    },
+                                    new CurrencyPairRequest()
+                                    {
+                                        Guid = Guid.NewGuid(),
+                                        RequestType = RequestType.HttpGet,
+                                        ResponseType = ResponseType.Json,
+                                        DataPath = "https://poloniex.com/public?command=returnTicker",
+                                        CurrencyPairId = currencyPairs[6].Id,
+                                        Delay = 5000,
+                                        RequestComponents = new List<RequestComponent>()
+                                        {
+                                            new RequestComponent
+                                            {
+                                                ComponentType = ComponentType.Ask,
+                                                QueryComponent = "BTC_BTS/lowestAsk",
+                                                CreatedAt = DateTime.Now,
+                                                ModifiedAt = DateTime.Now,
+                                                DeletedAt = null
+                                            },
+                                            new RequestComponent
+                                            {
+                                                ComponentType = ComponentType.Bid,
+                                                QueryComponent = "BTC_BTS/highestBid",
+                                                CreatedAt = DateTime.Now,
+                                                ModifiedAt = DateTime.Now,
+                                                DeletedAt = null
+                                            }
+                                        }
                                     }
                                 };
 
@@ -533,6 +634,18 @@ namespace Nozomi.Ticker.StartupExtensions
                                     .SingleOrDefault(c =>
                                         c.Abbrv.Equals("USD") &&
                                         c.CurrencySource.Abbreviation.Equals(avgSource.Abbreviation));
+                                var btcPOLO = context.Currencies.Include(c => c.CurrencySource)
+                                    .SingleOrDefault(c =>
+                                        c.Abbrv.Equals("BTC") &&
+                                        c.CurrencySource.Abbreviation.Equals(poloSource.Abbreviation));
+                                var bcnPOLO = context.Currencies.Include(c => c.CurrencySource)
+                                    .SingleOrDefault(c =>
+                                        c.Abbrv.Equals("BCN") &&
+                                        c.CurrencySource.Abbreviation.Equals(poloSource.Abbreviation));
+                                var btsPOLO = context.Currencies.Include(c => c.CurrencySource)
+                                    .SingleOrDefault(c =>
+                                        c.Abbrv.Equals("BTS") &&
+                                        c.CurrencySource.Abbreviation.Equals(poloSource.Abbreviation));
 
                                 context.PartialCurrencyPairs.AddRange(
                                     new PartialCurrencyPair()
@@ -594,6 +707,30 @@ namespace Nozomi.Ticker.StartupExtensions
                                         CurrencyId = usdAVG.Id,
                                         IsMain = false,
                                         CurrencyPairId = currencyPairs[4].Id
+                                    },
+                                    new PartialCurrencyPair()
+                                    {
+                                        CurrencyId = btcPOLO.Id,
+                                        IsMain = true,
+                                        CurrencyPairId = currencyPairs[5].Id
+                                    },
+                                    new PartialCurrencyPair()
+                                    {
+                                        CurrencyId = bcnPOLO.Id,
+                                        IsMain = false,
+                                        CurrencyPairId = currencyPairs[5].Id
+                                    },
+                                    new PartialCurrencyPair()
+                                    {
+                                        CurrencyId = btcPOLO.Id,
+                                        IsMain = true,
+                                        CurrencyPairId = currencyPairs[6].Id
+                                    },
+                                    new PartialCurrencyPair()
+                                    {
+                                        CurrencyId = btsPOLO.Id,
+                                        IsMain = false,
+                                        CurrencyPairId = currencyPairs[6].Id
                                     });
 
                                 context.SaveChanges();

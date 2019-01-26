@@ -10,6 +10,6 @@ namespace Nozomi.Service.HostedServices.RequestTypes.Interfaces
     {
         Task<bool> Process(CurrencyPairRequest req);
 
-        bool Update(JToken token, ResponseType resType, IEnumerable<RequestComponent> requestComponents);
+        bool Update(JToken currToken, ResponseType resType, IEnumerable<RequestComponent> requestComponents);
     }
 }
