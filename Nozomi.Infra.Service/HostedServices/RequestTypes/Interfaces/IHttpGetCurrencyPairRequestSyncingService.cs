@@ -8,7 +8,7 @@ namespace Nozomi.Service.HostedServices.RequestTypes.Interfaces
 {
     public interface IHttpGetCurrencyPairRequestSyncingService
     {
-        Task<bool> Process(CurrencyPairRequest req);
+        Task<bool> ProcessByDataPath(ICollection<CurrencyPairRequest> requests);
 
         bool Update(JToken currToken, ResponseType resType, IEnumerable<RequestComponent> requestComponents);
     }
