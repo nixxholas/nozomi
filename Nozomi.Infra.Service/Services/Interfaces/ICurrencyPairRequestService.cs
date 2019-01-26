@@ -28,6 +28,8 @@ namespace Nozomi.Service.Services.Interfaces
 
         ICollection<CurrencyPairRequest> GetAllByRequestType(RequestType requestType);
 
+        IDictionary<string, ICollection<CurrencyPairRequest>> GetAllByRequestTypeUniqueToURL(RequestType requestType);
+
         bool ManualPoll(long id, long userId = 0);
     }
 }

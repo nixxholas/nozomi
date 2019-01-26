@@ -5,6 +5,7 @@ using System.Globalization;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
@@ -76,24 +77,19 @@ namespace Nozomi.Service.HostedServices.RequestTypes
             {
                 try
                 {
-                    // We will need to resync the Request collection to make sure we're polling only the ones we want to poll
-//                  var getBasedRequests = _currencyPairRequestService.GetAllActive(r => r.IsEnabled && r.DeletedAt == null
-//                                            && r.RequestType == RequestType.HttpGet
-//                                            && r.RequestComponents.Any(rc => !rc.RequestComponentData.Any() 
-//                                            || (DateTime.UtcNow > rc.RequestComponentData.OrderByDescending(rcd => rcd.CreatedAt)
-//                                                 .FirstOrDefault().CreatedAt.AddMilliseconds(r.Delay))), true)
-//                                            .ToList();
-                    var getBasedRequests = _currencyPairRequestService.GetAllByRequestType(RequestType.HttpGet);
-
+                    // We will need to re-synchronize the Request collection to make sure we're polling only
+                    // the ones we want to poll
+                    var dataPaths = _currencyPairRequestService
+                        .GetAllByRequestTypeUniqueToURL(RequestType.HttpGet);
+                    
                     // Iterate the requests
                     // NOTE: Let's not call a parallel loop since HttpClients might tend to result in memory leaks.
-                    foreach (var rq in getBasedRequests)
+                    foreach (var dataPath in dataPaths)
                     {
                         // Process the request
-                        if (await Process(rq))
+                        if (await ProcessByDataPath(dataPath.Value))
                         {
-                            // Since its successful, broadcast its success
-                            // await _tickerHub.Clients.All.BroadcastData(rq.ObscureToPublicJson());
+                            // TODO: Broadcasting
                         }
                     }
                 }
@@ -109,21 +105,27 @@ namespace Nozomi.Service.HostedServices.RequestTypes
             _logger.LogWarning("HttpGetCurrencyPairRequestSyncingService background task is stopping.");
         }
 
-        public async Task<bool> Process(CurrencyPairRequest req)
+        public async Task<bool> ProcessByDataPath(ICollection<CurrencyPairRequest> reqs)
         {
-            if (req != null && req.IsValidForPolling())
+            if (reqs != null && reqs.Count > 0)
             {
-                Console.WriteLine("HttpGetCurrencyPairRequestSyncingService PROCESSING: " + req.Id);
+                // Randomly obtain the first.
+                var firstRequest = reqs.FirstOrDefault();
+
+                // quit if shit
+                if (firstRequest == null) return false;
+
+                Console.WriteLine($"HttpGetCurrencyPairRequestSyncingService PROCESSING: {firstRequest.DataPath}");
 
                 // FLUSH
                 _httpClient.DefaultRequestHeaders.Clear();
-                
+
                 // Setup the url
-                var uri = new UriBuilder(req.DataPath);
+                var uri = new UriBuilder(firstRequest.DataPath);
                 var urlParams = HttpUtility.ParseQueryString(string.Empty);
 
                 // Setup the request properties
-                foreach (var reqProp in req.RequestProperties)
+                foreach (var reqProp in firstRequest.RequestProperties)
                 {
                     switch (reqProp.RequestPropertyType)
                     {
@@ -345,15 +347,17 @@ namespace Nozomi.Service.HostedServices.RequestTypes
                 var payload = await _httpClient.GetAsync(uri.ToString());
 
                 // Succcessful? and is there even any Components to update?
-                if (payload.IsSuccessStatusCode && req?.RequestComponents != null && req.RequestComponents.Count > 0)
+                if (payload.IsSuccessStatusCode && reqs.Any(r => r.RequestComponents
+                        .Any(rc => rc.DeletedAt == null && rc.IsEnabled)))
                 {
                     // Pull the content
                     var content = await payload.Content.ReadAsStringAsync();
                     var resType = ResponseType.Json;
 
                     // Pull the components wanted
-                    var requestComponents = req.RequestComponents
-                        .Where(cpc => cpc.DeletedAt == null && cpc.IsEnabled);
+                    var requestComponents = reqs
+                        .SelectMany(r => r.RequestComponents
+                            .Where(rc => rc.DeletedAt == null && rc.IsEnabled));
 
                     // Parse the content
                     if (payload.Content.Headers.ContentType.MediaType.Equals(ResponseType.Json.GetDescription()))
@@ -379,11 +383,11 @@ namespace Nozomi.Service.HostedServices.RequestTypes
                 else
                 {
                     // Log the failure
-                    if (_requestLogService.Create(new RequestLog()
+                    if (_requestLogService.Create(new RequestLog
                     {
                         Type = RequestLogType.Failure,
                         RawPayload = JsonConvert.SerializeObject(payload),
-                        RequestId = req.Id
+                        RequestId = reqs.FirstOrDefault()?.Id ?? 0
                     }) <= 0)
                     {
                         // Logging Failure!!!!
@@ -392,24 +396,22 @@ namespace Nozomi.Service.HostedServices.RequestTypes
             }
 
             // Log the failure
-            if (_requestLogService.Create(new RequestLog()
-            {
-                Type = RequestLogType.Failure,
-                RawPayload = null,
-                RequestId = req?.Id ?? 0
-            }) <= 0)
-            {
-                // Logging Failure!!!!
-            }
+            _logger.LogCritical("[HttpGetCurrencyPairRequestSyncingService] CRITICAL FAILURE!");
 
             return false;
         }
 
         public bool Update(JToken token, ResponseType resType, IEnumerable<RequestComponent> requestComponents)
         {
+            // Save it first
+            var currToken = token;
+            
             // For each component we're checking
             foreach (var component in requestComponents)
             {
+                // Always reset
+                currToken = token;
+                
                 var comArr = component.QueryComponent.Split("/"); // Split the string if its nesting
                 var last = comArr.LastOrDefault(); // get the last to identify if its the last
 
@@ -421,7 +423,7 @@ namespace Nozomi.Service.HostedServices.RequestTypes
                     {
                         // CHECK CURRENT TYPE
                         // Identify if its an array or an object
-                        if (token is JArray)
+                        if (currToken is JArray)
                         {
                             try
                             {
@@ -432,14 +434,14 @@ namespace Nozomi.Service.HostedServices.RequestTypes
                                     if (int.TryParse(comArrEl, out int index))
                                     {
                                         // Pump in the array, treat it as anonymous.
-                                        var dataList = token.ToObject<List<JObject>>();
+                                        var dataList = currToken.ToObject<List<JObject>>();
 
                                         // let's work it out
                                         // update the token
                                         if (index >= 0 && index < dataList.Count)
                                         {
                                             // Traverse the array
-                                            token = JToken.Parse(JsonConvert.SerializeObject(dataList[index]));
+                                            currToken = JToken.Parse(JsonConvert.SerializeObject(dataList[index]));
                                         }
                                     }
                                 }
@@ -452,7 +454,7 @@ namespace Nozomi.Service.HostedServices.RequestTypes
                                     if (int.TryParse(comArrElArr[0], out var index))
                                     {
                                         // Traverse first
-                                        var rawData = token.ToObject<List<JToken>>()[index];
+                                        var rawData = currToken.ToObject<List<JToken>>()[index];
 
                                         // if its 1, we assume its just an array of a primitive type
                                         if (comArrElArr.Length == 1)
@@ -519,27 +521,27 @@ namespace Nozomi.Service.HostedServices.RequestTypes
                                 Console.WriteLine(ex);
                             }
                         }
-                        else if (token is JObject)
+                        else if (currToken is JObject)
                         {
                             // Pump in the object
-                            JObject obj = token.ToObject<JObject>();
+                            JObject obj = currToken.ToObject<JObject>();
 
                             // Is it the last?
                             if (comArrEl != last)
                             {
                                 // let's work it out
                                 // update the token
-                                token = obj.SelectToken(comArrEl);
+                                currToken = obj.SelectToken(comArrEl);
                             }
                             // Yes its the last
                             else
                             {
                                 // See if theres any property we need to refer to.
                                 var comArrElArr = comArrEl.Split("=>");
-                                
+
                                 // Traverse first
                                 var rawData = (string) obj.SelectToken(comArrElArr[0]);
-                                
+
                                 if (rawData != null)
                                 {
                                     // if its 1, we assume its just an array of a primitive type
@@ -603,17 +605,17 @@ namespace Nozomi.Service.HostedServices.RequestTypes
                             }
                         }
                         // iterate JValue like a JObject
-                        else if (token is JValue)
+                        else if (currToken is JValue)
                         {
                             // Pump in the object
-                            JObject obj = token.ToObject<JObject>();
+                            JObject obj = currToken.ToObject<JObject>();
 
                             // Is it the last?
                             if (comArrEl != last)
                             {
                                 // let's work it out
                                 // update the token
-                                token = obj.SelectToken(comArrEl);
+                                currToken = obj.SelectToken(comArrEl);
                             }
                             // Yes its the last
                             else
@@ -651,7 +653,7 @@ namespace Nozomi.Service.HostedServices.RequestTypes
                 }
             }
 
-            return false;
+            return true;
         }
     }
 }
