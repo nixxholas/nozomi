@@ -447,11 +447,12 @@ namespace Nozomi.Repo.Migrations
 
             modelBuilder.Entity("Nozomi.Data.WebModels.WebsocketModels.WebsocketRequest", b =>
                 {
-                    b.HasBaseType("Nozomi.Data.WebModels.CurrencyPairRequest");
+                    b.HasBaseType("Nozomi.Data.WebModels.Request");
 
-                    b.Property<long?>("CurrencyPairId1");
+                    b.Property<long>("CurrencyPairId")
+                        .HasColumnName("WebsocketRequest_CurrencyPairId");
 
-                    b.HasIndex("CurrencyPairId1");
+                    b.HasIndex("CurrencyPairId");
 
                     b.HasDiscriminator().HasValue("WebsocketRequest");
                 });
@@ -554,9 +555,10 @@ namespace Nozomi.Repo.Migrations
 
             modelBuilder.Entity("Nozomi.Data.WebModels.WebsocketModels.WebsocketRequest", b =>
                 {
-                    b.HasOne("Nozomi.Data.CurrencyModels.CurrencyPair")
+                    b.HasOne("Nozomi.Data.CurrencyModels.CurrencyPair", "CurrencyPair")
                         .WithMany("WebsocketRequests")
-                        .HasForeignKey("CurrencyPairId1");
+                        .HasForeignKey("CurrencyPairId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 #pragma warning restore 612, 618
         }

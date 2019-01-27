@@ -9,8 +9,13 @@ namespace Nozomi.Repo.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<long>(
-                name: "CurrencyPairId1",
+                name: "WebsocketRequest_CurrencyPairId",
                 table: "Requests",
+                nullable: true);
+
+            migrationBuilder.AddColumn<string>(
+                name: "Identifier",
+                table: "RequestComponents",
                 nullable: true);
 
             migrationBuilder.CreateTable(
@@ -71,9 +76,9 @@ namespace Nozomi.Repo.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Requests_CurrencyPairId1",
+                name: "IX_Requests_WebsocketRequest_CurrencyPairId",
                 table: "Requests",
-                column: "CurrencyPairId1");
+                column: "WebsocketRequest_CurrencyPairId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_WebsocketCommandProperties_WebsocketCommandId",
@@ -86,18 +91,18 @@ namespace Nozomi.Repo.Migrations
                 column: "WebsocketRequestId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_Requests_CurrencyPairs_CurrencyPairId1",
+                name: "FK_Requests_CurrencyPairs_WebsocketRequest_CurrencyPairId",
                 table: "Requests",
-                column: "CurrencyPairId1",
+                column: "WebsocketRequest_CurrencyPairId",
                 principalTable: "CurrencyPairs",
                 principalColumn: "Id",
-                onDelete: ReferentialAction.Restrict);
+                onDelete: ReferentialAction.Cascade);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropForeignKey(
-                name: "FK_Requests_CurrencyPairs_CurrencyPairId1",
+                name: "FK_Requests_CurrencyPairs_WebsocketRequest_CurrencyPairId",
                 table: "Requests");
 
             migrationBuilder.DropTable(
@@ -107,12 +112,16 @@ namespace Nozomi.Repo.Migrations
                 name: "WebsocketCommands");
 
             migrationBuilder.DropIndex(
-                name: "IX_Requests_CurrencyPairId1",
+                name: "IX_Requests_WebsocketRequest_CurrencyPairId",
                 table: "Requests");
 
             migrationBuilder.DropColumn(
-                name: "CurrencyPairId1",
+                name: "WebsocketRequest_CurrencyPairId",
                 table: "Requests");
+
+            migrationBuilder.DropColumn(
+                name: "Identifier",
+                table: "RequestComponents");
         }
     }
 }

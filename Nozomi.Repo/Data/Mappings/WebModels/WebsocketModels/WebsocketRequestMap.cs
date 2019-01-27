@@ -12,6 +12,8 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.WebsocketModels
             entityTypeBuilder.HasKey(wsr => wsr.Id).HasName("WebsocketRequest_PK_Id");
             entityTypeBuilder.Property(wsr => wsr.Id).ValueGeneratedOnAdd();
 
+            entityTypeBuilder.HasOne(wsr => wsr.CurrencyPair)
+                .WithMany(cp => cp.WebsocketRequests).HasForeignKey(wsr => wsr.CurrencyPairId);
             entityTypeBuilder.HasMany(wsr => wsr.WebsocketCommands)
                 .WithOne(wsc => wsc.WebsocketRequest).HasForeignKey(wsc => wsc.WebsocketRequestId);
         }

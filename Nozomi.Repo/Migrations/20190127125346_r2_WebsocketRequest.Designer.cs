@@ -10,7 +10,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Nozomi.Repo.Migrations
 {
     [DbContext(typeof(NozomiDbContext))]
-    [Migration("20190127072524_r2_WebsocketRequest")]
+    [Migration("20190127125346_r2_WebsocketRequest")]
     partial class r2_WebsocketRequest
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -18,7 +18,7 @@ namespace Nozomi.Repo.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn)
-                .HasAnnotation("ProductVersion", "2.2.0-rtm-35687")
+                .HasAnnotation("ProductVersion", "2.2.1-servicing-10028")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             modelBuilder.Entity("Nozomi.Data.CurrencyModels.Currency", b =>
@@ -279,6 +279,8 @@ namespace Nozomi.Repo.Migrations
 
                     b.Property<long>("DeletedBy");
 
+                    b.Property<string>("Identifier");
+
                     b.Property<bool>("IsEnabled");
 
                     b.Property<DateTime>("ModifiedAt");
@@ -447,11 +449,12 @@ namespace Nozomi.Repo.Migrations
 
             modelBuilder.Entity("Nozomi.Data.WebModels.WebsocketModels.WebsocketRequest", b =>
                 {
-                    b.HasBaseType("Nozomi.Data.WebModels.CurrencyPairRequest");
+                    b.HasBaseType("Nozomi.Data.WebModels.Request");
 
-                    b.Property<long?>("CurrencyPairId1");
+                    b.Property<long>("CurrencyPairId")
+                        .HasColumnName("WebsocketRequest_CurrencyPairId");
 
-                    b.HasIndex("CurrencyPairId1");
+                    b.HasIndex("CurrencyPairId");
 
                     b.HasDiscriminator().HasValue("WebsocketRequest");
                 });
@@ -554,9 +557,10 @@ namespace Nozomi.Repo.Migrations
 
             modelBuilder.Entity("Nozomi.Data.WebModels.WebsocketModels.WebsocketRequest", b =>
                 {
-                    b.HasOne("Nozomi.Data.CurrencyModels.CurrencyPair")
+                    b.HasOne("Nozomi.Data.CurrencyModels.CurrencyPair", "CurrencyPair")
                         .WithMany("WebsocketRequests")
-                        .HasForeignKey("CurrencyPairId1");
+                        .HasForeignKey("CurrencyPairId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 #pragma warning restore 612, 618
         }
