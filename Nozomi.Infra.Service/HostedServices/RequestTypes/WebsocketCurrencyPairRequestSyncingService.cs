@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data.WebModels;
+using Nozomi.Data.WebModels.WebsocketModels;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Service.Events.Websocket.Interfaces;
 using Nozomi.Service.HostedServices.RequestTypes.Interfaces;
@@ -74,11 +75,26 @@ namespace Nozomi.Service.HostedServices.RequestTypes
 
                         newSocket.OnOpen += (sender, args) => { };
 
-                        newSocket.OnMessage += (sender, args) =>
+                        newSocket.OnMessage += async (sender, args) =>
                         {
                             if (args.IsPing)
                             {
                                 newSocket.Ping();
+                            }
+                            
+                            // Process the incoming data
+                            if (string.IsNullOrEmpty(args.Data))
+                            {
+                                if (await Process(rq, args.Data))
+                                {
+                                    _logger.LogInformation($"[WebsocketCurrencyPairRequestSyncingService] " +
+                                                           $"RequestId: {rq.Id} successfully updated");
+                                }
+                            }
+                            else
+                            {
+                                _logger.LogError($"[WebsocketCurrencyPairRequestSyncingService] OnMessage: " +
+                                                 $"RequestId:{rq.Id} has an empty payload incoming.");
                             }
                         };
 
@@ -101,12 +117,12 @@ namespace Nozomi.Service.HostedServices.RequestTypes
             _logger.LogWarning("WebsocketCurrencyPairRequestSyncingService background task is stopping.");
         }
 
-        public bool IsRequestNeeded(CurrencyPairRequest cpr)
+        public bool IsRequestNeeded(WebsocketRequest cpr)
         {
             throw new NotImplementedException();
         }
 
-        public Task<bool> Process(CurrencyPairRequest cpr)
+        public Task<bool> Process(WebsocketRequest wsr, string payload)
         {
             throw new NotImplementedException();
         }
