@@ -12,6 +12,7 @@ using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Service.Events.Websocket.Interfaces;
 using Nozomi.Service.HostedServices.RequestTypes.Interfaces;
 using Nozomi.Service.Services.Interfaces;
+using WebSocketSharp;
 using WebSocket = WebSocketSharp.WebSocket;
 
 namespace Nozomi.Service.HostedServices.RequestTypes
@@ -70,11 +71,17 @@ namespace Nozomi.Service.HostedServices.RequestTypes
                     if (!_wsrWebsockets.ContainsKey(rq.Id) && string.IsNullOrEmpty(rq.DataPath))
                     {
                         // Start the websockets here
-                        var newSocket = new WebSocket(rq.DataPath);
-                        newSocket.EmitOnPing = true;
+                        var newSocket = new WebSocket(rq.DataPath)
+                        {
+                            Compression = CompressionMethod.Deflate,
+                            EmitOnPing = true,
+                            EnableRedirection = false
+                        };
 
+                        // Pre-request processing
                         newSocket.OnOpen += (sender, args) => { };
 
+                        // Incoming processing
                         newSocket.OnMessage += async (sender, args) =>
                         {
                             if (args.IsPing)
@@ -98,6 +105,7 @@ namespace Nozomi.Service.HostedServices.RequestTypes
                             }
                         };
 
+                        // Error processing
                         newSocket.OnError += (sender, args) =>
                         {
                             _logger.LogError($"[WebsocketCurrencyPairRequestSyncingService] OnError:" +
