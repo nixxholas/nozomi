@@ -13,6 +13,8 @@ namespace Nozomi.Data.WebModels.WebsocketModels
         [Description("Float")]
         Float = 3,
         [Description("DateTime")]
-        DateAndTime = 4
+        DateAndTime = 4,
+        [Description("Collection")]
+        Collection = 5
     }
 }
