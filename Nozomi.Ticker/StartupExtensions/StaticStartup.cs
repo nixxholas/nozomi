@@ -43,7 +43,7 @@ namespace Nozomi.Ticker.StartupExtensions
                             
                         // Populate the CurrencySourceSymbolDictionary
                         NozomiServiceConstants.CurrencySourceSymbolDictionary.Add(
-                            new Tuple<long, string>(cp.CurrencySourceId, tickerSymbol), 
+                            new Tuple<string, string>(cp.CurrencySource.Abbreviation, tickerSymbol), 
                             cp.Id);
                         
                         // Populate the TickerSymbolDictionary
