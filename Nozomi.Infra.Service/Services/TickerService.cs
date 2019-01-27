@@ -343,7 +343,8 @@ namespace Nozomi.Service.Services
 //            });
         }
 
-        public NozomiResult<ICollection<DistinctiveTickerResponse>> GetByAbbreviation(string ticker, string exchangeAbbrv = null)
+        public NozomiResult<ICollection<DistinctiveTickerResponse>> GetByAbbreviation(string ticker, 
+            string exchangeAbbrv = null)
         {
             try
             {

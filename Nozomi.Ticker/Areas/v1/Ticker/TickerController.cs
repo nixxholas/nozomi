@@ -39,8 +39,7 @@ namespace Nozomi.Ticker.Areas.v1.Ticker
         }
 
         [HttpGet]
-        public NozomiResult<ICollection<DistinctiveTickerResponse>> Get(string symbol, string exchangeAbbrv = null,
-            bool includeNested = false)
+        public NozomiResult<ICollection<DistinctiveTickerResponse>> Get(string symbol, string exchangeAbbrv = null)
         {
             return _tickerService.GetByAbbreviation(symbol, exchangeAbbrv);
         }

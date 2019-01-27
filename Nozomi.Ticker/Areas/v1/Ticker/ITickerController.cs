@@ -15,6 +15,6 @@ namespace Nozomi.Ticker.Areas.v1.Ticker
         Task<NozomiResult<ICollection<UniqueTickerResponse>>> GetAllAsync(int index = 0);
 
         NozomiResult<ICollection<DistinctiveTickerResponse>> Get(string symbol, 
-            string exchangeAbbrv = null, bool includeNested = false);
+            string exchangeAbbrv = null);
     }
 }
