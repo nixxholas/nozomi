@@ -106,10 +106,19 @@ namespace Nozomi.Service.HostedServices.RequestTypes
                                 // Process the incoming data
                                 if (!string.IsNullOrEmpty(args.Data))
                                 {
-                                    if (await Process(dataEndpoint.Value, args.Data))
+                                    try
                                     {
-                                        _logger.LogInformation($"[WebsocketCurrencyPairRequestSyncingService] " +
-                                                               $"RequestId: {dataEndpointItem.DataPath} successfully updated");
+                                        if (await Process(dataEndpoint.Value, args.Data))
+                                        {
+                                            _logger.LogInformation($"[WebsocketCurrencyPairRequestSyncingService] " +
+                                                                   $"RequestId: {dataEndpointItem.DataPath} successfully updated");
+                                        }
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        _logger.LogCritical(
+                                            $"[WebsocketCurrencyPairRequestSyncingService] OnMessage: " + 
+                                            ex);
                                     }
                                 }
                                 else
