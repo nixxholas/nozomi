@@ -29,6 +29,7 @@ namespace Nozomi.Service.HostedServices.RequestTypes
         
         public WebsocketCurrencyPairRequestSyncingService(IServiceProvider serviceProvider) : base(serviceProvider)
         {
+            _wsrWebsockets = new Dictionary<long, WebSocket>();
             _websocketRequestEvent = _scope.ServiceProvider.GetRequiredService<IWebsocketRequestEvent>();
         }
 
@@ -68,7 +69,7 @@ namespace Nozomi.Service.HostedServices.RequestTypes
                     }
                     
                     // Add new crap
-                    if (!_wsrWebsockets.ContainsKey(rq.Id) && string.IsNullOrEmpty(rq.DataPath))
+                    if (!_wsrWebsockets.ContainsKey(rq.Id) && !string.IsNullOrEmpty(rq.DataPath))
                     {
                         // Start the websockets here
                         var newSocket = new WebSocket(rq.DataPath)
@@ -79,7 +80,23 @@ namespace Nozomi.Service.HostedServices.RequestTypes
                         };
 
                         // Pre-request processing
-                        newSocket.OnOpen += (sender, args) => { };
+                        newSocket.OnOpen += (sender, args) =>
+                        {
+                            if (rq.WebsocketCommands != null && rq.WebsocketCommands.Count > 0)
+                            {
+                                foreach (var command in rq.WebsocketCommands)
+                                {
+                                    if (command.Delay.Equals(0))
+                                    {
+                                        // One-time command
+                                    }
+                                    else
+                                    {
+                                        // Run a repeated task
+                                    }
+                                }
+                            }
+                        };
 
                         // Incoming processing
                         newSocket.OnMessage += async (sender, args) =>
@@ -90,7 +107,7 @@ namespace Nozomi.Service.HostedServices.RequestTypes
                             }
                             
                             // Process the incoming data
-                            if (string.IsNullOrEmpty(args.Data))
+                            if (!string.IsNullOrEmpty(args.Data))
                             {
                                 if (await Process(rq, args.Data))
                                 {
@@ -111,6 +128,9 @@ namespace Nozomi.Service.HostedServices.RequestTypes
                             _logger.LogError($"[WebsocketCurrencyPairRequestSyncingService] OnError:" +
                                              $" {args.Message}");
                         };
+                        
+                        newSocket.Connect();
+                        _wsrWebsockets.Add(rq.Id, newSocket);
                     }
                 }
                 
@@ -136,7 +156,7 @@ namespace Nozomi.Service.HostedServices.RequestTypes
 
         public Task<bool> Process(WebsocketRequest wsr, string payload)
         {
-            throw new NotImplementedException();
+            return Task.FromResult(true);
         }
     }
 }
