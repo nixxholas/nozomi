@@ -7,8 +7,8 @@ namespace Nozomi.Data.WebModels.WebsocketModels
     public class WebsocketCommand : BaseEntityModel
     {
         public long Id { get; set; }
-        
-        public CommandType CommandType { get; set; }
+
+        public CommandType CommandType { get; set; } = CommandType.PlainText;
         
         /// <summary>
         /// The name of the command.

@@ -10,7 +10,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Nozomi.Repo.Migrations
 {
     [DbContext(typeof(NozomiDbContext))]
-    [Migration("20190127071601_r2_WebsocketRequest")]
+    [Migration("20190127072524_r2_WebsocketRequest")]
     partial class r2_WebsocketRequest
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -399,7 +399,7 @@ namespace Nozomi.Repo.Migrations
 
                     b.HasIndex("WebsocketRequestId");
 
-                    b.ToTable("WebsocketCommand");
+                    b.ToTable("WebsocketCommands");
                 });
 
             modelBuilder.Entity("Nozomi.Data.WebModels.WebsocketModels.WebsocketCommandProperty", b =>
@@ -431,7 +431,7 @@ namespace Nozomi.Repo.Migrations
 
                     b.HasIndex("WebsocketCommandId");
 
-                    b.ToTable("WebsocketCommandProperty");
+                    b.ToTable("WebsocketCommandProperties");
                 });
 
             modelBuilder.Entity("Nozomi.Data.WebModels.CurrencyPairRequest", b =>

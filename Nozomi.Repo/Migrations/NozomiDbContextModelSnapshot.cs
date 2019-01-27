@@ -397,7 +397,7 @@ namespace Nozomi.Repo.Migrations
 
                     b.HasIndex("WebsocketRequestId");
 
-                    b.ToTable("WebsocketCommand");
+                    b.ToTable("WebsocketCommands");
                 });
 
             modelBuilder.Entity("Nozomi.Data.WebModels.WebsocketModels.WebsocketCommandProperty", b =>
@@ -429,7 +429,7 @@ namespace Nozomi.Repo.Migrations
 
                     b.HasIndex("WebsocketCommandId");
 
-                    b.ToTable("WebsocketCommandProperty");
+                    b.ToTable("WebsocketCommandProperties");
                 });
 
             modelBuilder.Entity("Nozomi.Data.WebModels.CurrencyPairRequest", b =>

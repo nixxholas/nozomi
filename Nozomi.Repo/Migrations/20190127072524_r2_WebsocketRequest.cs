@@ -14,7 +14,7 @@ namespace Nozomi.Repo.Migrations
                 nullable: true);
 
             migrationBuilder.CreateTable(
-                name: "WebsocketCommand",
+                name: "WebsocketCommands",
                 columns: table => new
                 {
                     Id = table.Column<long>(nullable: false)
@@ -33,9 +33,9 @@ namespace Nozomi.Repo.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_WebsocketCommand", x => x.Id);
+                    table.PrimaryKey("PK_WebsocketCommands", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_WebsocketCommand_Requests_WebsocketRequestId",
+                        name: "FK_WebsocketCommands_Requests_WebsocketRequestId",
                         column: x => x.WebsocketRequestId,
                         principalTable: "Requests",
                         principalColumn: "Id",
@@ -43,7 +43,7 @@ namespace Nozomi.Repo.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "WebsocketCommandProperty",
+                name: "WebsocketCommandProperties",
                 columns: table => new
                 {
                     Id = table.Column<long>(nullable: false)
@@ -61,11 +61,11 @@ namespace Nozomi.Repo.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_WebsocketCommandProperty", x => x.Id);
+                    table.PrimaryKey("PK_WebsocketCommandProperties", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_WebsocketCommandProperty_WebsocketCommand_WebsocketCommandId",
+                        name: "FK_WebsocketCommandProperties_WebsocketCommands_WebsocketComma~",
                         column: x => x.WebsocketCommandId,
-                        principalTable: "WebsocketCommand",
+                        principalTable: "WebsocketCommands",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -76,14 +76,14 @@ namespace Nozomi.Repo.Migrations
                 column: "CurrencyPairId1");
 
             migrationBuilder.CreateIndex(
-                name: "IX_WebsocketCommand_WebsocketRequestId",
-                table: "WebsocketCommand",
-                column: "WebsocketRequestId");
+                name: "IX_WebsocketCommandProperties_WebsocketCommandId",
+                table: "WebsocketCommandProperties",
+                column: "WebsocketCommandId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_WebsocketCommandProperty_WebsocketCommandId",
-                table: "WebsocketCommandProperty",
-                column: "WebsocketCommandId");
+                name: "IX_WebsocketCommands_WebsocketRequestId",
+                table: "WebsocketCommands",
+                column: "WebsocketRequestId");
 
             migrationBuilder.AddForeignKey(
                 name: "FK_Requests_CurrencyPairs_CurrencyPairId1",
@@ -101,10 +101,10 @@ namespace Nozomi.Repo.Migrations
                 table: "Requests");
 
             migrationBuilder.DropTable(
-                name: "WebsocketCommandProperty");
+                name: "WebsocketCommandProperties");
 
             migrationBuilder.DropTable(
-                name: "WebsocketCommand");
+                name: "WebsocketCommands");
 
             migrationBuilder.DropIndex(
                 name: "IX_Requests_CurrencyPairId1",

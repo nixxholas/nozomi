@@ -13,6 +13,7 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.WebsocketModels
             entityTypeBuilder.HasKey(wscp => wscp.Id).HasName("WebsocketCommandProperty_PK_Id");
             entityTypeBuilder.Property(wscp => wscp.Id).ValueGeneratedOnAdd();
 
+            entityTypeBuilder.Property(wscp => wscp.CommandPropertyType).IsRequired();
             entityTypeBuilder.Property(wscp => wscp.Value).IsRequired();
 
             entityTypeBuilder.HasOne(wscp => wscp.WebsocketCommand)

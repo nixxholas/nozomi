@@ -10,6 +10,7 @@ using Nozomi.Base.Core;
 using Nozomi.Data;
 using Nozomi.Data.WebModels;
 using Nozomi.Data.WebModels.LoggingModels;
+using Nozomi.Data.WebModels.WebsocketModels;
 using Nozomi.Repo.BCL.Context;
 using Nozomi.Repo.Data.Mappings.CurrencyModels;
 using Nozomi.Repo.Data.Mappings.WebModels;
@@ -30,6 +31,9 @@ namespace Nozomi.Repo.Data
         public DbSet<RequestLog> RequestLogs { get; set; }
         public DbSet<RequestProperty> RequestProperties { get; set; }
         public DbSet<Source> Sources { get; set; }
+        public DbSet<WebsocketRequest> WebsocketRequests { get; set; }
+        public DbSet<WebsocketCommand> WebsocketCommands { get; set; }
+        public DbSet<WebsocketCommandProperty> WebsocketCommandProperties { get; set; }
         
         public NozomiDbContext(DbContextOptions<NozomiDbContext> options) : base(options)
         {
