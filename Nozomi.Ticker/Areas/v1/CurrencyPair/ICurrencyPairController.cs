@@ -34,12 +34,5 @@ namespace Nozomi.Ticker.Areas.v1.CurrencyPair
         /// <param name="id">Unique identifier </param>
         /// <returns></returns>
         Task Ticker(long id);
-
-        /// <summary>
-        /// Returns a list of prices from various exchanges (if available) for the specific Ticker Abbreviation.
-        /// </summary>
-        /// <param name="abbreviation">The abbreviation of the ticker, i.e. ETHUSD</param>
-        /// <returns>Ticker Price Array</returns>
-        NozomiResult<ICollection<DistinctiveTickerResponse>> Ticker(string abbreviation, string exchangeAbbrv = null);
     }
 }

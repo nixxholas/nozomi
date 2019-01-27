@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
@@ -347,6 +348,17 @@ namespace Nozomi.Service.Services
             try
             {
                 if (ticker.Length != 6) return null; // Invalid ticker length
+                
+                // Exchange? Specification.
+                if (!string.IsNullOrEmpty(exchangeAbbrv))
+                {
+                    return new NozomiResult<ICollection<DistinctiveTickerResponse>>(
+                        new List<DistinctiveTickerResponse> {
+                        NozomiServiceConstants.CurrencyPairDictionary[
+                            NozomiServiceConstants.CurrencySourceSymbolDictionary
+                            [new Tuple<string, string>(ticker, exchangeAbbrv)]]
+                        });
+                }
                 
                 return new NozomiResult<ICollection<DistinctiveTickerResponse>>(
                     NozomiServiceConstants.TickerSymbolDictionary[ticker].Where(i => i > 0).Select(
