@@ -19,7 +19,8 @@ namespace Nozomi.Service.Events.Websocket
         {
         }
         
-        private static readonly Func<NozomiDbContext, RequestType, IEnumerable<WebsocketRequest>> _getWebsocketRequestByRequestType =
+        private static readonly Func<NozomiDbContext, RequestType, IEnumerable<WebsocketRequest>> 
+            GetWebsocketRequestByRequestType =
             EF.CompileQuery((NozomiDbContext context, RequestType type) =>
                 context.WebsocketRequests
                     .AsQueryable()
@@ -37,7 +38,7 @@ namespace Nozomi.Service.Events.Websocket
 
         public ICollection<WebsocketRequest> GetAllByRequestType(RequestType requestType)
         {
-            return _getWebsocketRequestByRequestType(_unitOfWork.Context, requestType).ToList();
+            return GetWebsocketRequestByRequestType(_unitOfWork.Context, requestType).ToList();
         }
     }
 }
