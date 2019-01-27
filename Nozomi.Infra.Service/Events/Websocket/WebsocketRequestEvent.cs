@@ -40,5 +40,29 @@ namespace Nozomi.Service.Events.Websocket
         {
             return GetWebsocketRequestByRequestType(_unitOfWork.Context, requestType).ToList();
         }
+
+        public IDictionary<string, ICollection<WebsocketRequest>> GetAllByRequestTypeUniqueToURL(RequestType requestType)
+        {
+            var dict = new Dictionary<string, ICollection<WebsocketRequest>>();
+            var websocketRequests = GetWebsocketRequestByRequestType(_unitOfWork.Context, requestType);
+
+            foreach (var websocketRequest in websocketRequests)
+            {
+                // If the key exists,
+                if (dict.ContainsKey(websocketRequest.DataPath) && dict[websocketRequest.DataPath] != null 
+                                                        && dict[websocketRequest.DataPath].Count > 0)
+                {
+                    dict[websocketRequest.DataPath].Add(websocketRequest);
+                }
+                // If not create it
+                else
+                {
+                    dict.Add(websocketRequest.DataPath, new List<WebsocketRequest>());
+                    dict[websocketRequest.DataPath].Add(websocketRequest);
+                }
+            }
+
+            return dict;
+        }
     }
 }

@@ -7,5 +7,7 @@ namespace Nozomi.Service.Events.Websocket.Interfaces
     public interface IWebsocketRequestEvent
     {
         ICollection<WebsocketRequest> GetAllByRequestType(RequestType requestType);
+
+        IDictionary<string, ICollection<WebsocketRequest>> GetAllByRequestTypeUniqueToURL(RequestType requestType);
     }
 }
