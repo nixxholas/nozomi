@@ -6,7 +6,7 @@ namespace Nozomi.Data.WebModels.WebsocketModels
 {
     public class WebsocketCommand : BaseEntityModel
     {
-        public long WebsocketRequestId { get; set; }
+        public long Id { get; set; }
         
         public CommandType CommandType { get; set; }
         
@@ -19,6 +19,8 @@ namespace Nozomi.Data.WebModels.WebsocketModels
         /// 0 if it doesn't have to be polled, define a number when u have to call this periodically.
         /// </summary>
         public long Delay { get; set; }
+        
+        public long WebsocketRequestId { get; set; }
         
         public WebsocketRequest WebsocketRequest { get; set; }
         
