@@ -27,20 +27,26 @@ namespace Nozomi.Ticker.Areas.v1.Ticker
         }
 
         [HttpGet]
-        public Task<DataTableResult<UniqueTickerResponse>> GetAllForDataTables(int Draw = 0)
+        public Task<DataTableResult<UniqueTickerResponse>> GetAllForDataTables(int draw = 0)
         {
-            return Task.FromResult(_tickerEvent.GetAllForDatatable(Draw));
+            return Task.FromResult(_tickerEvent.GetAllForDatatable(draw));
         }
 
         [HttpGet("{index}")]
         public async Task<NozomiResult<ICollection<UniqueTickerResponse>>> GetAllAsync(int index = 0)
         {
+            if (index < 0) return new NozomiResult<ICollection<UniqueTickerResponse>>(
+                NozomiResultType.Failed, "Please enter a proper index.");
+            
             return await _tickerService.GetAll(index);
         }
 
         [HttpGet]
         public NozomiResult<ICollection<DistinctiveTickerResponse>> Get(string symbol, string exchangeAbbrv = null)
         {
+            if (string.IsNullOrEmpty(symbol)) return new NozomiResult<ICollection<DistinctiveTickerResponse>>(
+                NozomiResultType.Failed, "Please enter a symbol.");
+            
             return _tickerService.GetByAbbreviation(symbol, exchangeAbbrv);
         }
     }
