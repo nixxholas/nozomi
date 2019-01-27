@@ -273,9 +273,9 @@ namespace Nozomi.Service.HostedServices.RequestTypes
                                         if (comArrElArr.Length == 2)
                                         {
                                             // https://stackoverflow.com/questions/7216917/json-net-has-key-method
-                                            var correctEl = (string) processingToken.Children()
-                                                .FirstOrDefault(tok => tok[comArrElArr[0]] != null
-                                                                       && (bool) tok[comArrElArr[0].Equals(comArrElArr[1])]);
+                                            var correctEl = processingToken.Children()
+                                                .FirstOrDefault(tok => tok.SelectToken(comArrElArr[0]).ToString()
+                                                    .Equals(comArrElArr[1]));
 
                                             // Null check
                                             if (correctEl == null)
