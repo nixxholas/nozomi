@@ -782,13 +782,13 @@ namespace Nozomi.Ticker.StartupExtensions
                                         new RequestComponent
                                         {
                                             ComponentType = ComponentType.Bid,
-                                            Identifier = "data/s/ETHBTC",
+                                            Identifier = "data/s=>ETHBTC",
                                             QueryComponent = "b"
                                         },
                                         new RequestComponent
                                         {
                                             ComponentType = ComponentType.Bid_Size,
-                                            Identifier = "data/s/ETHBTC",
+                                            Identifier = "data/s=>ETHBTC",
                                             QueryComponent = "B"
                                         }
                                     }
