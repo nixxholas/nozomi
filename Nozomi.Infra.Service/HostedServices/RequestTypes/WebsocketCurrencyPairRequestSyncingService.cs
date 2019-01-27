@@ -265,19 +265,54 @@ namespace Nozomi.Service.HostedServices.RequestTypes
                                     // Yes its the last
                                     else
                                     {
-                                        // Parse the identifierEl to an integer for index access
-                                        if (int.TryParse(identifierEl, out int index))
-                                        {
-                                            // Pump in the array, treat it as anonymous.
-                                            var dataList = processingToken.ToObject<List<JObject>>();
+                                        // See if there's any property we need to refer to.
+                                        var comArrElArr = identifierEl.Split("=>");
 
-                                            // let's work it out
-                                            // update the token
-                                            if (index >= 0 && index < dataList.Count)
+                                        // An array of objects. Let's find the key comArrElArr[0] where
+                                        // the value equals comArrElArr[1]
+                                        if (comArrElArr.Length == 2)
+                                        {
+                                            // https://stackoverflow.com/questions/7216917/json-net-has-key-method
+                                            var correctEl = (string) processingToken.Children()
+                                                .FirstOrDefault(tok => tok[comArrElArr[0]] != null
+                                                                       && (bool) tok[comArrElArr[0].Equals(comArrElArr[1])]);
+
+                                            // Null check
+                                            if (correctEl == null)
                                             {
-                                                // Traverse the array and move up to the parent
-                                                processingToken =
-                                                    JToken.Parse(JsonConvert.SerializeObject(dataList[index])).Parent;
+                                                _logger.LogError("[WebsocketCurrencyPairRequestSyncingService] " +
+                                                                 $"Invalid key value pair {identifierEl}");
+                                                return false;
+                                            }
+                                            else
+                                            {
+                                                // We found it
+                                                processingToken = correctEl;
+                                            }
+                                        }
+                                        // A standard array
+                                        else if (comArrElArr.Length == 1)
+                                        {
+                                            // Parse the identifierEl to an integer for index access
+                                            if (int.TryParse(identifierEl, out int index))
+                                            {
+                                                // Pump in the array, treat it as anonymous.
+                                                var dataList = processingToken.ToObject<List<JObject>>();
+
+                                                // let's work it out
+                                                // update the token
+                                                if (index >= 0 && index < dataList.Count)
+                                                {
+                                                    // Traverse the array and move up to the parent
+                                                    processingToken =
+                                                        JToken.Parse(JsonConvert.SerializeObject(dataList[index])).Parent;
+                                                }
+                                            }
+                                            else
+                                            {
+                                                _logger.LogError("[WebsocketCurrencyPairRequestSyncingService]" +
+                                                                 $" Update: Invalid array element {identifierEl}");
+                                                return false;
                                             }
                                         }
                                     }
