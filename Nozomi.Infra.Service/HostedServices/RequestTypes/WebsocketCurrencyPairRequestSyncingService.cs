@@ -4,9 +4,12 @@ using System.Linq;
 using System.Net.WebSockets;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Xml;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Nozomi.Data.WebModels;
 using Nozomi.Data.WebModels.WebsocketModels;
 using Nozomi.Preprocessing.Abstracts;
@@ -160,15 +163,47 @@ namespace Nozomi.Service.HostedServices.RequestTypes
 
             _logger.LogWarning("WebsocketCurrencyPairRequestSyncingService background task is stopping.");
         }
-
-        public bool IsRequestNeeded(WebsocketRequest cpr)
-        {
-            throw new NotImplementedException();
-        }
-
+        
         public Task<bool> Process(ICollection<WebsocketRequest> wsr, string payload)
         {
-            return Task.FromResult(true);
+            // Are we processing anything?
+            if (wsr.Count > 0 && !string.IsNullOrEmpty(payload))
+            {
+                switch (wsr.FirstOrDefault().ResponseType)
+                {
+                    case ResponseType.Json:
+                        // Do nothing
+                        break;
+                    case ResponseType.XML:
+                        var xmlDoc = new XmlDocument();
+                        xmlDoc.LoadXml(payload);
+                        payload = JsonConvert.SerializeObject(xmlDoc);
+                        break;
+                }
+
+                var payloadToken = JToken.Parse(payload);
+                
+                var wsrComponents = wsr.SelectMany(e => e.RequestComponents)
+                    .Where(rc => rc.DeletedAt == null && rc.IsEnabled);
+
+                // Are we processing anything?
+                if (wsrComponents.Any())
+                {
+                    return Task.FromResult(Update(payloadToken, wsr.FirstOrDefault().ResponseType, wsrComponents));
+                }
+                else
+                {
+                    _logger.LogWarning("[WebsocketCurrencyPairRequestSyncingService] Process: Empty " +
+                                       $"WebsocketRequestComponents in {wsr.FirstOrDefault().DataPath}.");
+                }
+            }
+            
+            return Task.FromResult(false);
+        }
+
+        public bool Update(JToken token, ResponseType resType, IEnumerable<RequestComponent> requestComponents)
+        {
+            throw new NotImplementedException();
         }
     }
 }
