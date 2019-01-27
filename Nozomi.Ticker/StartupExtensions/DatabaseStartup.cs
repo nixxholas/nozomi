@@ -12,6 +12,7 @@ using Nozomi.Base.Core.Helpers.Enumerator;
 using Nozomi.Base.Identity.Models.Identity;
 using Nozomi.Data.CurrencyModels;
 using Nozomi.Data.WebModels;
+using Nozomi.Data.WebModels.WebsocketModels;
 using Nozomi.Repo.Data;
 using Nozomi.Repo.Identity.Data;
 using Nozomi.Service.Identity.Events.Interfaces;
@@ -258,6 +259,14 @@ namespace Nozomi.Ticker.StartupExtensions
                                         Name = "Ethereum",
                                         CurrencySourceId = bnaSource.Id,
                                         WalletTypeId = 1 // As per CNWallet
+                                    },
+                                    new Currency()
+                                    {
+                                        CurrencyTypeId = cryptoType.Id,
+                                        Abbrv = "BTC",
+                                        Name = "Bitcoin",
+                                        CurrencySourceId = bnaSource.Id,
+                                        WalletTypeId = 0 // As per CNWallet
                                     },
                                     new Currency()
                                     {
@@ -618,6 +627,10 @@ namespace Nozomi.Ticker.StartupExtensions
                                     .SingleOrDefault(c =>
                                         c.Abbrv.Equals("ETH") &&
                                         c.CurrencySource.Abbreviation.Equals(bnaSource.Abbreviation));
+                                var btcBna = context.Currencies.Include(c => c.CurrencySource)
+                                    .SingleOrDefault(c =>
+                                        c.Abbrv.Equals("BTC") &&
+                                        c.CurrencySource.Abbreviation.Equals(bnaSource.Abbreviation));
                                 var eurECB = context.Currencies.Include(c => c.CurrencySource)
                                     .SingleOrDefault(c =>
                                         c.Abbrv.Equals("EUR") &&
@@ -734,6 +747,57 @@ namespace Nozomi.Ticker.StartupExtensions
                                     });
 
                                 context.SaveChanges();
+
+                            if (!context.WebsocketRequests.Any())
+                            {
+                                // Binance's Websocket-based ticker data stream
+                                var binanceWSR = new WebsocketRequest
+                                {
+                                    CurrencyPair = new CurrencyPair
+                                    {
+                                        CurrencyPairType = CurrencyPairType.EXCHANGEABLE,
+                                        APIUrl = "wss://stream.binance.com:9443/stream?streams=!ticker@arr",
+                                        DefaultComponent = "b",
+                                        CurrencySourceId = bnaSource.Id,
+                                        PartialCurrencyPairs = new List<PartialCurrencyPair>() {
+                                            new PartialCurrencyPair()
+                                            {
+                                                CurrencyId = ethBna.Id,
+                                                IsMain = true
+                                            },
+                                            new PartialCurrencyPair()
+                                            {
+                                                CurrencyId = btcBna.Id,
+                                                IsMain = false,
+                                            }}
+                                    },
+                                    Guid = Guid.NewGuid(),
+                                    RequestType = RequestType.WebSocket,
+                                    ResponseType = ResponseType.Json,
+                                    DataPath = "wss://stream.binance.com:9443/stream?streams=!ticker@arr",
+                                    Delay = 0,
+                                    WebsocketCommands = new List<WebsocketCommand>(),
+                                    RequestComponents = new List<RequestComponent>()
+                                    {
+                                        new RequestComponent
+                                        {
+                                            ComponentType = ComponentType.Bid,
+                                            Identifier = "data/s/ETHBTC",
+                                            QueryComponent = "b"
+                                        },
+                                        new RequestComponent
+                                        {
+                                            ComponentType = ComponentType.Bid_Size,
+                                            Identifier = "data/s/ETHBTC",
+                                            QueryComponent = "B"
+                                        }
+                                    }
+                                };
+
+                                context.WebsocketRequests.Add(binanceWSR);
+
+                                context.SaveChanges();
+                            }
                             }
                         }
                     }
