@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.WebSockets;
 using System.Threading;
 using System.Threading.Tasks;
@@ -24,12 +25,12 @@ namespace Nozomi.Service.HostedServices.RequestTypes
         /// 
         /// </summary>
         /// <key>The Id of the WebsocketRequest</key≥
-        private readonly Dictionary<long, WebSocket> _wsrWebsockets;
+        private readonly Dictionary<string, WebSocket> _wsrWebsockets;
         private readonly IWebsocketRequestEvent _websocketRequestEvent;
         
         public WebsocketCurrencyPairRequestSyncingService(IServiceProvider serviceProvider) : base(serviceProvider)
         {
-            _wsrWebsockets = new Dictionary<long, WebSocket>();
+            _wsrWebsockets = new Dictionary<string, WebSocket>();
             _websocketRequestEvent = _scope.ServiceProvider.GetRequiredService<IWebsocketRequestEvent>();
         }
 
@@ -44,35 +45,22 @@ namespace Nozomi.Service.HostedServices.RequestTypes
                 //============================= Update Sockets to keep =============================// 
                 
                 // We will need to resync the Request collection to make sure we're polling only the ones we want to poll
-                var requests = _websocketRequestEvent.GetAllByRequestType(RequestType.WebSocket);
+                var dataEndpoints = _websocketRequestEvent.GetAllByRequestTypeUniqueToURL(RequestType.WebSocket);
 
                 // Iterate the requests
-                foreach (var rq in requests)
+                foreach (var dataEndpoint in dataEndpoints)
                 {
-                    // Remove old crap
-                    if (_wsrWebsockets.ContainsKey(rq.Id) && (!rq.IsEnabled || rq.DeletedAt != null))
+                    var dataEndpointItem = dataEndpoint.Value.FirstOrDefault();
+
+                    if (dataEndpointItem != null && dataEndpointItem.DeletedAt == null
+                        && dataEndpointItem.IsEnabled)
                     {
-                        _logger.LogInformation("[WebsocketCurrencyPairRequestSyncingService] Removing Request: " + rq.Id);
-                        
-                        // Stop the websocket from polling
-                        _wsrWebsockets[rq.Id].Close();
-                        
-                        // Remove the websocket from the dictionary
-                        if (!_wsrWebsockets.Remove(rq.Id))
-                        {
-                            _logger.LogInformation("[WebsocketCurrencyPairRequestSyncingService] Error Removing Request: " + rq.Id);
-                        }
-                        else
-                        {
-                            _logger.LogInformation("[WebsocketCurrencyPairRequestSyncingService] Removed Request: " + rq.Id);
-                        }
-                    }
-                    
                     // Add new crap
-                    if (!_wsrWebsockets.ContainsKey(rq.Id) && !string.IsNullOrEmpty(rq.DataPath))
+                    if (!_wsrWebsockets.ContainsKey(dataEndpointItem.DataPath) 
+                        && !string.IsNullOrEmpty(dataEndpointItem.DataPath))
                     {
                         // Start the websockets here
-                        var newSocket = new WebSocket(rq.DataPath)
+                        var newSocket = new WebSocket(dataEndpointItem.DataPath)
                         {
                             Compression = CompressionMethod.Deflate,
                             EmitOnPing = true,
@@ -82,11 +70,11 @@ namespace Nozomi.Service.HostedServices.RequestTypes
                         // Pre-request processing
                         newSocket.OnOpen += (sender, args) =>
                         {
-                            if (rq.WebsocketCommands != null && rq.WebsocketCommands.Count > 0)
-                            {
-                                foreach (var command in rq.WebsocketCommands)
+                            var wsCommands = dataEndpoint.Value.SelectMany(de => de.WebsocketCommands).ToList();
+
+                                foreach (var wsCommand in wsCommands)
                                 {
-                                    if (command.Delay.Equals(0))
+                                    if (wsCommand.Delay.Equals(0))
                                     {
                                         // One-time command
                                     }
@@ -95,7 +83,6 @@ namespace Nozomi.Service.HostedServices.RequestTypes
                                         // Run a repeated task
                                     }
                                 }
-                            }
                         };
 
                         // Incoming processing
@@ -109,16 +96,16 @@ namespace Nozomi.Service.HostedServices.RequestTypes
                             // Process the incoming data
                             if (!string.IsNullOrEmpty(args.Data))
                             {
-                                if (await Process(rq, args.Data))
+                                if (await Process(dataEndpoint.Value, args.Data))
                                 {
                                     _logger.LogInformation($"[WebsocketCurrencyPairRequestSyncingService] " +
-                                                           $"RequestId: {rq.Id} successfully updated");
+                                                           $"RequestId: {dataEndpointItem.DataPath} successfully updated");
                                 }
                             }
                             else
                             {
                                 _logger.LogError($"[WebsocketCurrencyPairRequestSyncingService] OnMessage: " +
-                                                 $"RequestId:{rq.Id} has an empty payload incoming.");
+                                                 $"RequestId:{dataEndpointItem.DataPath} has an empty payload incoming.");
                             }
                         };
 
@@ -130,7 +117,32 @@ namespace Nozomi.Service.HostedServices.RequestTypes
                         };
                         
                         newSocket.Connect();
-                        _wsrWebsockets.Add(rq.Id, newSocket);
+                        _wsrWebsockets.Add(dataEndpointItem.DataPath, newSocket);
+                    }
+                    } else 
+                        // Remove old crap
+                    if (dataEndpointItem != null && (!dataEndpointItem.IsEnabled || dataEndpointItem.DeletedAt != null) 
+                        && _wsrWebsockets.ContainsKey(dataEndpointItem.DataPath))
+                    {
+                        _logger.LogInformation("[WebsocketCurrencyPairRequestSyncingService] Removing " +
+                                               "Request: " + dataEndpointItem.Id);
+                        
+                        // Stop the websocket from polling
+                        _wsrWebsockets[dataEndpointItem.DataPath].Close();
+                        
+                        // Remove the websocket from the dictionary
+                        if (!_wsrWebsockets.Remove(dataEndpointItem.DataPath))
+                        {
+                            _logger.LogInformation(
+                                "[WebsocketCurrencyPairRequestSyncingService] Error Removing Request: " 
+                                + dataEndpointItem.DataPath);
+                        }
+                        else
+                        {
+                            _logger.LogInformation(
+                                "[WebsocketCurrencyPairRequestSyncingService] Removed Request: " 
+                                + dataEndpointItem.DataPath);
+                        }
                     }
                 }
                 
@@ -143,7 +155,7 @@ namespace Nozomi.Service.HostedServices.RequestTypes
                 //============================= End of check and update new data =============================// 
                 
                 // No naps taken
-                await Task.Delay(1000, stoppingToken);
+                await Task.Delay(0, stoppingToken);
             }
 
             _logger.LogWarning("WebsocketCurrencyPairRequestSyncingService background task is stopping.");
@@ -154,7 +166,7 @@ namespace Nozomi.Service.HostedServices.RequestTypes
             throw new NotImplementedException();
         }
 
-        public Task<bool> Process(WebsocketRequest wsr, string payload)
+        public Task<bool> Process(ICollection<WebsocketRequest> wsr, string payload)
         {
             return Task.FromResult(true);
         }

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Nozomi.Data.WebModels;
 using Nozomi.Data.WebModels.WebsocketModels;
@@ -8,6 +9,6 @@ namespace Nozomi.Service.HostedServices.RequestTypes.Interfaces
     {
         bool IsRequestNeeded(WebsocketRequest cpr);
 
-        Task<bool> Process(WebsocketRequest cpr, string payload);
+        Task<bool> Process(ICollection<WebsocketRequest> cpr, string payload);
     }
 }
