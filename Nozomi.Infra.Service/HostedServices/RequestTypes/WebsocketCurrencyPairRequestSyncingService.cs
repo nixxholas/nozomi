@@ -8,8 +8,10 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data.WebModels;
 using Nozomi.Preprocessing.Abstracts;
+using Nozomi.Service.Events.Websocket.Interfaces;
 using Nozomi.Service.HostedServices.RequestTypes.Interfaces;
 using Nozomi.Service.Services.Interfaces;
+using WebSocket = WebSocketSharp.WebSocket;
 
 namespace Nozomi.Service.HostedServices.RequestTypes
 {
@@ -19,13 +21,13 @@ namespace Nozomi.Service.HostedServices.RequestTypes
         /// <summary>
         /// 
         /// </summary>
-        /// <key>The Id of the CurrencyPairRequest</key≥
-        private readonly Dictionary<long, ClientWebSocket> _cprWebsockets;
-        private readonly ICurrencyPairRequestService _currencyPairRequestService;
+        /// <key>The Id of the WebsocketRequest</key≥
+        private readonly Dictionary<long, WebSocket> _wsrWebsockets;
+        private readonly IWebsocketRequestEvent _websocketRequestEvent;
         
         public WebsocketCurrencyPairRequestSyncingService(IServiceProvider serviceProvider) : base(serviceProvider)
         {
-            _currencyPairRequestService = _scope.ServiceProvider.GetRequiredService<ICurrencyPairRequestService>();
+            _websocketRequestEvent = _scope.ServiceProvider.GetRequiredService<IWebsocketRequestEvent>();
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -39,20 +41,21 @@ namespace Nozomi.Service.HostedServices.RequestTypes
                 //============================= Update Sockets to keep =============================// 
                 
                 // We will need to resync the Request collection to make sure we're polling only the ones we want to poll
-                var requests = _currencyPairRequestService.GetAllByRequestType(RequestType.WebSocket);
+                var requests = _websocketRequestEvent.GetAllByRequestType(RequestType.WebSocket);
 
                 // Iterate the requests
                 foreach (var rq in requests)
                 {
                     // Remove old crap
-                    if (_cprWebsockets.ContainsKey(rq.Id) && (!rq.IsEnabled || rq.DeletedAt != null))
+                    if (_wsrWebsockets.ContainsKey(rq.Id) && (!rq.IsEnabled || rq.DeletedAt != null))
                     {
                         _logger.LogInformation("[WebsocketCurrencyPairRequestSyncingService] Removing Request: " + rq.Id);
                         
                         // Stop the websocket from polling
+                        _wsrWebsockets[rq.Id].Close();
                         
                         // Remove the websocket from the dictionary
-                        if (!_cprWebsockets.Remove(rq.Id))
+                        if (!_wsrWebsockets.Remove(rq.Id))
                         {
                             _logger.LogInformation("[WebsocketCurrencyPairRequestSyncingService] Error Removing Request: " + rq.Id);
                         }
@@ -63,9 +66,23 @@ namespace Nozomi.Service.HostedServices.RequestTypes
                     }
                     
                     // Add new crap
-                    if (!_cprWebsockets.ContainsKey(rq.Id))
+                    if (!_wsrWebsockets.ContainsKey(rq.Id) && string.IsNullOrEmpty(rq.DataPath))
                     {
                         // Start the websockets here
+                        var newSocket = new WebSocket(rq.DataPath);
+                        newSocket.EmitOnPing = true;
+
+                        newSocket.OnOpen += (sender, args) => { };
+
+                        newSocket.OnMessage += (sender, args) =>
+                        {
+                            if (args.IsPing)
+                            {
+                                newSocket.Ping();
+                            }
+                        };
+
+                        newSocket.OnError += (sender, args) => { };
                     }
                 }
                 
