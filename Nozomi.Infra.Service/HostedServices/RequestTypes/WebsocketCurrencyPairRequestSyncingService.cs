@@ -98,7 +98,11 @@ namespace Nozomi.Service.HostedServices.RequestTypes
                             }
                         };
 
-                        newSocket.OnError += (sender, args) => { };
+                        newSocket.OnError += (sender, args) =>
+                        {
+                            _logger.LogError($"[WebsocketCurrencyPairRequestSyncingService] OnError:" +
+                                             $" {args.Message}");
+                        };
                     }
                 }
                 
