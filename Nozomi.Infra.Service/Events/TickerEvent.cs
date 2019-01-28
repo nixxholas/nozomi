@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
@@ -16,6 +17,48 @@ namespace Nozomi.Service.Events
     {
         public TickerEvent(ILogger<TickerEvent> logger, IUnitOfWork<NozomiDbContext> unitOfWork) : base(logger, unitOfWork)
         {
+        }
+
+        private static readonly Func<NozomiDbContext, IDictionary<KeyValuePair<string, string>, DistinctiveTickerResponse>> _getTickers =
+            EF.CompileQuery((NozomiDbContext context) =>
+                context.CurrencyPairs
+                    .AsQueryable()
+                    .OrderBy(cp => cp.Id)
+                    .Where(cp => cp.DeletedAt == null && cp.IsEnabled)
+                    .Include(cp => cp.PartialCurrencyPairs)
+                    .ThenInclude(pcp => pcp.Currency)
+                    .Include(cp => cp.CurrencySource)
+                    .Include(cp => cp.CurrencyPairRequests)
+                    .ThenInclude(cpr => cpr.RequestComponents)
+                    .ThenInclude(rc => rc.RequestComponentDatum)
+                    .Select(cp => new { 
+                        Key = new KeyValuePair<string, string>(
+                            string.Concat(
+                                cp.PartialCurrencyPairs.FirstOrDefault(pcp => pcp.IsMain).Currency.Abbrv,
+                                cp.PartialCurrencyPairs.FirstOrDefault(pcp => !pcp.IsMain).Currency.Abbrv), 
+                            cp.CurrencySource.Name),
+                        Ticker = new DistinctiveTickerResponse
+                        {
+                            Exchange = cp.CurrencySource.Name,
+                            ExchangeAbbrv = cp.CurrencySource.Abbreviation,
+                            LastUpdated = cp.CurrencyPairRequests
+                                .FirstOrDefault(cpr => cpr.DeletedAt == null && cpr.IsEnabled)
+                                .RequestComponents.FirstOrDefault(rc => rc.DeletedAt == null && rc.IsEnabled)
+                                .RequestComponentDatum
+                                .CreatedAt,
+                            Properties = cp.CurrencyPairRequests.FirstOrDefault()
+                                .RequestComponents
+                                .Select(rc => new KeyValuePair<string, string>(
+                                    rc.ComponentType.ToString(),
+                                    rc.RequestComponentDatum.Value))
+                                .ToList()
+                        }})
+                    // https://stackoverflow.com/questions/953919/convert-linq-query-result-to-dictionary
+                    .ToDictionary(k => k.Key, v => v.Ticker));
+
+        public IDictionary<KeyValuePair<string, string>, DistinctiveTickerResponse> GetAll()
+        {
+            return _getTickers(_unitOfWork.Context);
         }
 
         public DataTableResult<UniqueTickerResponse> GetAllForDatatable(int index = 0)
