@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Channels;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
@@ -6,18 +7,29 @@ using Newtonsoft.Json.Linq;
 using Nozomi.Data;
 using Nozomi.Data.CurrencyModels;
 using Nozomi.Data.HubModels.Interfaces;
+using Nozomi.Data.ResponseModels;
+using Nozomi.Preprocessing;
+using Nozomi.Service.Events.Interfaces;
 using Nozomi.Service.Services.Interfaces;
 
 namespace Nozomi.Service.Hubs
 {
     public class TickerHub : Hub<ITickerHubClient>
     {
+        public const string _hubName = "NozomiTickerHub";
         private IEnumerable<CurrencyPair> _currencyPairs;
+        private readonly ITickerEvent _tickerEvent;
         private readonly ICurrencyPairService _cpService;
 
-        public TickerHub(ICurrencyPairService cpService)
+        public TickerHub(ITickerEvent tickerEvent, ICurrencyPairService cpService)
         {
+            _tickerEvent = tickerEvent;
             _cpService = cpService;
+        }
+        
+        public override async Task OnConnectedAsync()
+        {
+            await base.OnConnectedAsync();
         }
 
         /// <summary>
@@ -29,13 +41,13 @@ namespace Nozomi.Service.Hubs
         /// <param name="data"></param>
         public async void BroadcastData(JObject data)
         {
-            var channel = Channel.CreateUnbounded<NozomiResult<IEnumerable<JObject>>>();
+            var channel = Channel.CreateUnbounded<NozomiResult<IDictionary<KeyValuePair<string, string>, 
+                DistinctiveTickerResponse>>>();
 
-            await channel.Writer.WriteAsync(new NozomiResult<IEnumerable<JObject>>()
-            {
-                ResultType = NozomiResultType.Success,
-                Data = new[] { data }
-            });
+            var payload = _tickerEvent.GetAll();
+            
+            await channel.Writer.WriteAsync(new NozomiResult<IDictionary<KeyValuePair<string, string>, 
+                DistinctiveTickerResponse>>(payload));
             
             channel.Writer.Complete();
         }

@@ -90,6 +90,7 @@ namespace Nozomi.Service.HostedServices.RequestTypes
                         if (await ProcessByDataPath(dataPath.Value))
                         {
                             // TODO: Broadcasting
+                            _tickerHub.Clients.Group(TickerHub._hubName).BroadcastData();
                         }
                     }
                 }
