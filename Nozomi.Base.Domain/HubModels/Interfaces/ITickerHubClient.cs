@@ -9,6 +9,6 @@ namespace Nozomi.Data.HubModels.Interfaces
     public interface ITickerHubClient
     {
         Task SubscribeToAll();
-        Task BroadcastData(JObject data);
+        Task BroadcastTickerUpdate();
     }
 }

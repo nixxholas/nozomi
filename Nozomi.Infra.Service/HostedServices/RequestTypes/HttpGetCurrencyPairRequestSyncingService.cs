@@ -90,7 +90,7 @@ namespace Nozomi.Service.HostedServices.RequestTypes
                         if (await ProcessByDataPath(dataPath.Value))
                         {
                             // TODO: Broadcasting
-                            _tickerHub.Clients.Group(TickerHub._hubName).BroadcastData();
+                            await _tickerHub.Clients.All.BroadcastTickerUpdate();
                         }
                     }
                 }
@@ -100,7 +100,7 @@ namespace Nozomi.Service.HostedServices.RequestTypes
                 }
 
                 // No naps taken
-                await Task.Delay(1000, stoppingToken);
+                await Task.Delay(500, stoppingToken);
             }
 
             _logger.LogWarning("HttpGetCurrencyPairRequestSyncingService background task is stopping.");

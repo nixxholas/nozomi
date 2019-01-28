@@ -394,7 +394,7 @@ namespace Nozomi.Service.HostedServices.RequestTypes
                     if (await Process(rq))
                     {
                         // Since its successful, broadcast its success
-                        //await _tickerHub.Clients.All.BroadcastData(rq.ObscureToPublicJson());
+                        //await _tickerHub.Clients.All.BroadcastTickerUpdate(rq.ObscureToPublicJson());
                     }
                 }
                 

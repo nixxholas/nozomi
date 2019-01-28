@@ -39,17 +39,15 @@ namespace Nozomi.Service.Hubs
         /// https://stackoverflow.com/questions/21759577/using-generic-methods-on-signalr-hub
         /// </summary>
         /// <param name="data"></param>
-        public async void BroadcastData(JObject data)
+        public async void BroadcastData()
         {
             var channel = Channel.CreateUnbounded<NozomiResult<IDictionary<KeyValuePair<string, string>, 
                 DistinctiveTickerResponse>>>();
 
             var payload = _tickerEvent.GetAll();
-            
-            await channel.Writer.WriteAsync(new NozomiResult<IDictionary<KeyValuePair<string, string>, 
+
+            await channel.Writer.WriteAsync(new NozomiResult<IDictionary<KeyValuePair<string, string>,
                 DistinctiveTickerResponse>>(payload));
-            
-            channel.Writer.Complete();
         }
         
         public async Task<NozomiResult<IEnumerable<CurrencyPair>>> Tickers(IEnumerable<CurrencyPair> currencyPairs = null)
