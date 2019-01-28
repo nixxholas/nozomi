@@ -8,6 +8,8 @@ namespace Nozomi.Data.WebModels.WebsocketModels
 
         public CommandPropertyType CommandPropertyType { get; set; } = CommandPropertyType.Default;
         
+        public string Key { get; set; }
+        
         public string Value { get; set; }
         
         public long WebsocketCommandId { get; set; }
