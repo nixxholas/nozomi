@@ -94,22 +94,25 @@
                                                     Dashboard
                                                 </a>
                                             </li>
-                                            <li>
-                                                <a class="nav-link u-header__sub-menu-nav-link" href="profile.html">Profile</a>
-                                            </li>
-                                            <li>
-                                                <a class="nav-link u-header__sub-menu-nav-link" href="my-tasks.html">My tasks</a>
-                                            </li>
-                                            <li>
-                                                <a class="nav-link u-header__sub-menu-nav-link" href="projects.html">Projects</a>
-                                            </li>
+                                            @* <li> *@
+                                            @*     <a class="nav-link u-header__sub-menu-nav-link" href="profile.html">Profile</a> *@
+                                            @* </li> *@
+                                            @* <li> *@
+                                            @*     <a class="nav-link u-header__sub-menu-nav-link" href="my-tasks.html">My tasks</a> *@
+                                            @* </li> *@
                                             @{
                                                 if (isOwner || isAdmin || isStaff)
                                                 {
                                                     <li>
                                                         <a class="nav-link u-header__sub-menu-nav-link"
+                                                           asp-controller="Manage" asp-action="CreateSource">
+                                                            Create Source
+                                                        </a>
+                                                    </li>
+                                                    <li>
+                                                        <a class="nav-link u-header__sub-menu-nav-link"
                                                            asp-controller="Manage" asp-action="CreateTicker">
-                                                            Seed ticker
+                                                            Create ticker
                                                         </a>
                                                     </li>
                                                 }

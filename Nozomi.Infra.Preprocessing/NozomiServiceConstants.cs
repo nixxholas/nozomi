@@ -15,8 +15,8 @@ namespace Nozomi.Preprocessing
         /// currency pair id in question.
         /// </summary>
         /// <returns>ID of the CurrencyPair's Request</returns>
-        public static Dictionary<Tuple<long, string>, long> CurrencySourceSymbolDictionary = 
-            new Dictionary<Tuple<long, string>, long>();
+        public static Dictionary<Tuple<string, string>, long> CurrencySourceSymbolDictionary = 
+            new Dictionary<Tuple<string, string>, long>();
 
         /// <summary>
         /// A dictionary with a key of the ticker symbol and the value of an array of currency pairs ids

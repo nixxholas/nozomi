@@ -55,7 +55,7 @@ namespace Nozomi.Service.HostedServices.StaticUpdater
                             .OrderByDescending(pcp => pcp.IsMain)
                             .Select(pcp => pcp.Currency.Abbrv));
 
-                        var dictKey = new Tuple<long, string>(cp.CurrencySourceId, tickerSymbol);
+                        var dictKey = new Tuple<string, string>(cp.CurrencySource.Abbreviation, tickerSymbol);
 
                         if (!NozomiServiceConstants.CurrencySourceSymbolDictionary.ContainsKey(dictKey))
                         {

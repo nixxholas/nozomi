@@ -11,6 +11,16 @@ namespace Nozomi.Data.WebModels
         public long Id { get; set; }
 
         public ComponentType ComponentType { get; set; } = ComponentType.Unknown;
+        
+        /// <summary>
+        /// This is another QueryComponent, used for traversing to the object/array in question.
+        /// Once the object/array has been traversed to, the object will reverse by one tier for the
+        /// QueryComponent will take over.
+        ///
+        /// Identifier = data/s/ethbtc
+        /// i.e. data/
+        /// </summary>
+        public string Identifier { get; set; }
 
         /// <summary>
         /// Gets or sets the query component of the JSON data retrieved from the APIUrl.

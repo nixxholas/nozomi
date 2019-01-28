@@ -5,6 +5,7 @@ using System.Linq;
 using Nozomi.Base.Core;
 using Nozomi.Data.AreaModels.v1.CurrencyPair;
 using Nozomi.Data.WebModels;
+using Nozomi.Data.WebModels.WebsocketModels;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace Nozomi.Data.CurrencyModels
@@ -29,6 +30,7 @@ namespace Nozomi.Data.CurrencyModels
 
         // =========== RELATIONS ============ //
         public ICollection<CurrencyPairRequest> CurrencyPairRequests { get; set; }
+        public ICollection<WebsocketRequest> WebsocketRequests { get; set; }
         public ICollection<PartialCurrencyPair> PartialCurrencyPairs { get; set; }
 
         public bool IsValid()

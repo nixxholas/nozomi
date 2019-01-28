@@ -296,6 +296,30 @@ namespace Nozomi.Service.Services
             return _getCurrencyPairRequestByRequestType(_unitOfWork.Context, requestType).ToList();
         }
 
+        public IDictionary<string, ICollection<CurrencyPairRequest>> GetAllByRequestTypeUniqueToURL(RequestType requestType)
+        {
+            var dict = new Dictionary<string, ICollection<CurrencyPairRequest>>();
+            var currencyPairRequests = _getCurrencyPairRequestByRequestType(_unitOfWork.Context, requestType);
+
+            foreach (var cPairReq in currencyPairRequests)
+            {
+                // If the key exists,
+                if (dict.ContainsKey(cPairReq.DataPath) && dict[cPairReq.DataPath] != null 
+                                                         && dict[cPairReq.DataPath].Count > 0)
+                {
+                    dict[cPairReq.DataPath].Add(cPairReq);
+                }
+                // If not create it
+                else
+                {
+                    dict.Add(cPairReq.DataPath, new List<CurrencyPairRequest>());
+                    dict[cPairReq.DataPath].Add(cPairReq);
+                }
+            }
+
+            return dict;
+        }
+
         public bool ManualPoll(long id, long userId = 0)
         {
             return false;

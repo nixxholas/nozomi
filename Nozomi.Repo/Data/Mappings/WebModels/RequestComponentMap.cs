@@ -17,7 +17,8 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
 
             entityTypeBuilder.HasIndex(rc => new {rc.RequestId, rc.ComponentType})
                 .HasName("RequestComponent_AK_RequestId_ComponentType").IsUnique();
-            
+
+            entityTypeBuilder.Property(rc => rc.Identifier).IsRequired(false);
             entityTypeBuilder.Property(rc => rc.QueryComponent).IsRequired(false);
             
             entityTypeBuilder.HasOne(rc => rc.Request).WithMany(r => r.RequestComponents)

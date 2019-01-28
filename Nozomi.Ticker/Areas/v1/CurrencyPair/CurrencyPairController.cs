@@ -21,7 +21,7 @@ namespace Nozomi.Ticker.Areas.v1.CurrencyPair
         private readonly IHubContext<TickerHub> _tickerHubContext;
 
         public CurrencyPairController(IHubContext<TickerHub> tickerHubContext, NozomiUserManager userManager,
-            ICurrencyPairService currencyPairService, ITickerService tickerService, 
+            ICurrencyPairService currencyPairService, ITickerService tickerService,
             ILogger<CurrencyPairController> logger)
             : base(logger, userManager)
         {
@@ -32,7 +32,7 @@ namespace Nozomi.Ticker.Areas.v1.CurrencyPair
 
         [Authorize]
         [HttpPost]
-        public async Task<NozomiResult<string>> Create([FromBody]CreateCurrencyPair currencyPair)
+        public async Task<NozomiResult<string>> Create([FromBody] CreateCurrencyPair currencyPair)
         {
             if (_currencyPairService.Create(currencyPair, 0 /* 0 for now */))
             {
@@ -42,7 +42,7 @@ namespace Nozomi.Ticker.Areas.v1.CurrencyPair
                     Data = "Currency pair successfully created!"
                 };
             }
-            
+
             return new NozomiResult<string>()
             {
                 ResultType = NozomiResultType.Failed,
@@ -55,13 +55,5 @@ namespace Nozomi.Ticker.Areas.v1.CurrencyPair
         {
             return _tickerService.GetById(id);
         }
-
-        [HttpGet("{abbreviation}")]
-        public NozomiResult<ICollection<DistinctiveTickerResponse>> Ticker(string abbreviation, string exchangeAbbrv = null)
-        {
-            return _tickerService.GetByAbbreviation(abbreviation, exchangeAbbrv);
-        }
-        
-        
     }
 }

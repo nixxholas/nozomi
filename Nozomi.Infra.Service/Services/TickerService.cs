@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
@@ -342,11 +343,35 @@ namespace Nozomi.Service.Services
 //            });
         }
 
-        public NozomiResult<ICollection<DistinctiveTickerResponse>> GetByAbbreviation(string ticker, string exchangeAbbrv = null)
+        public NozomiResult<ICollection<DistinctiveTickerResponse>> GetByAbbreviation(string ticker, 
+            string exchangeAbbrv = null)
         {
             try
             {
-                if (ticker.Length != 6) return null; // Invalid ticker length
+                if (ticker.Length != 6) return new NozomiResult<ICollection<DistinctiveTickerResponse>>(
+                    NozomiResultType.Failed, "Invalid Ticker Symbol."); // Invalid ticker length
+                
+                // Exchange? Specification.
+                if (!string.IsNullOrEmpty(exchangeAbbrv))
+                {
+                    var key = new Tuple<string, string>(ticker, exchangeAbbrv);
+
+                    if (NozomiServiceConstants.CurrencySourceSymbolDictionary
+                        .ContainsKey(key))
+                    {
+                        return new NozomiResult<ICollection<DistinctiveTickerResponse>>(
+                            new List<DistinctiveTickerResponse> {
+                                NozomiServiceConstants.CurrencyPairDictionary[
+                                    NozomiServiceConstants.CurrencySourceSymbolDictionary[key]
+                                ]
+                            });
+                    }
+                    else
+                    {
+                        return new NozomiResult<ICollection<DistinctiveTickerResponse>>(
+                            NozomiResultType.Failed, "The ticker specific to the exchange stated does not exist.");
+                    }
+                }
                 
                 return new NozomiResult<ICollection<DistinctiveTickerResponse>>(
                     NozomiServiceConstants.TickerSymbolDictionary[ticker].Where(i => i > 0).Select(
