@@ -1,13 +1,13 @@
 using System.ComponentModel;
 
-namespace Nozomi.Preprocessing.Hubs.Enumerators
+namespace Nozomi.Realtime.Infra.Service.Hubs.Enumerators
 {
     public enum TickerHubGroup
     {
-        [Description("TickerHubPing")]
+        [Description("TickerHub_Ping")]
         Ping = 0,
         Subscription = 1,
-        [Description("TickerGroup")]
+        [Description("TickerHub_Ticker")]
         Ticker = 100
     }
 }

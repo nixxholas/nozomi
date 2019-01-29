@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
+using Nozomi.Realtime.Infra.Service.Hubs;
 
 namespace Nozomi.Realtime
 {
@@ -24,6 +25,11 @@ namespace Nozomi.Realtime
             {
                 app.UseDeveloperExceptionPage();
             }
+            
+            app.UseSignalR(route =>
+            {
+                route.MapHub<TickerHub>("/ticker");
+            });
 
             app.Run(async (context) => { await context.Response.WriteAsync("Hello World!"); });
         }

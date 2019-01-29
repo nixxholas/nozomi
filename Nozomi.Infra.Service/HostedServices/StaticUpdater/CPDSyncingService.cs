@@ -9,6 +9,7 @@ using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Nozomi.Base.Core.Helpers.Enumerator;
 using Nozomi.Data.ResponseModels;
 using Nozomi.Data.WebModels;
 using Nozomi.Preprocessing;
@@ -27,7 +28,6 @@ namespace Nozomi.Service.HostedServices.StaticUpdater
         IHostedService, IDisposable
     {
         private readonly NozomiDbContext _nozomiDbContext;
-        private readonly IHubContext<TickerHub, ITickerHubClient> _tickerHub;
         
         private static readonly Func<NozomiDbContext, IEnumerable<DiscoverabeTickerResponse>> 
             GetActiveDiscoverableTickerResponses =
@@ -53,11 +53,9 @@ namespace Nozomi.Service.HostedServices.StaticUpdater
                                 rc.RequestComponentDatum.Value)).ToList()
                     }));
         
-        public CPDSyncingService(IServiceProvider serviceProvider,
-            IHubContext<TickerHub, ITickerHubClient> tickerHub) : base(serviceProvider)
+        public CPDSyncingService(IServiceProvider serviceProvider) : base(serviceProvider)
         {
             _nozomiDbContext = _scope.ServiceProvider.GetService<NozomiDbContext>();
-            _tickerHub = tickerHub;
         }
 
         /// <summary>
@@ -93,8 +91,6 @@ namespace Nozomi.Service.HostedServices.StaticUpdater
                             NozomiServiceConstants.CurrencyPairDictionary.Add(dtr.CurrencyPairId, dtr);
                         }
                     }
-                    
-                    _tickerHub.Clients.All.BroadcastData(TickerHubGroup.Ticker);
                 }
                 catch (Exception ex)
                 {

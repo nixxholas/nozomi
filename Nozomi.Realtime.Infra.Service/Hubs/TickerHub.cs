@@ -1,23 +1,17 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Channels;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json.Linq;
 using Nozomi.Base.Core.Helpers.Enumerator;
-using Nozomi.Data;
 using Nozomi.Data.CurrencyModels;
 using Nozomi.Data.ResponseModels;
-using Nozomi.Preprocessing;
-using Nozomi.Preprocessing.Hubs.Enumerators;
+using Nozomi.Realtime.Infra.Service.Hubs.Enumerators;
 using Nozomi.Service.Events.Interfaces;
-using Nozomi.Service.Hubs.Interfaces;
 using Nozomi.Service.Services.Interfaces;
 
-namespace Nozomi.Service.Hubs
+namespace Nozomi.Realtime.Infra.Service.Hubs
 {
-    public class TickerHub : Hub<ITickerHubClient>
+    public class TickerHub : Hub
     {
         public const string _hubName = "NozomiTickerHub_";
         private IEnumerable<CurrencyPair> _currencyPairs;
@@ -45,25 +39,19 @@ namespace Nozomi.Service.Hubs
         /// https://stackoverflow.com/questions/21759577/using-generic-methods-on-signalr-hub
         /// </summary>
         /// <param name="data"></param>
-        public async void BroadcastData(TickerHubGroup hubGroup)
-        {
+//        public async void BroadcastData(TickerHubGroup hubGroup)
+//        {
 //            var channel = Channel.CreateUnbounded<NozomiResult<IDictionary<KeyValuePair<string, string>, 
 //                DistinctiveTickerResponse>>>();
-
+//
 //            await channel.Writer.WriteAsync(new NozomiResult<IDictionary<KeyValuePair<string, string>,
 //                DistinctiveTickerResponse>>(payload));
-
-            switch (hubGroup)
-            {
-                case TickerHubGroup.Ticker:
-                    await Clients.Group(_hubName + hubGroup.GetDescription()).Tickers();
-                    break;
-            }
-        }
+//
+//        }
         
-        public async Task<IDictionary<KeyValuePair<string, string>, DistinctiveTickerResponse>> Tickers()
+        public Task<IDictionary<KeyValuePair<string, string>, DistinctiveTickerResponse>> Tickers()
         {
-            return _tickerEvent.GetAll();
+            return Task.FromResult(_tickerEvent.GetAll());
         }
 
         // We can use this to return a payload
@@ -104,20 +92,20 @@ namespace Nozomi.Service.Hubs
 //            }
 //        }
 
-        public async void Register(TickerHubGroup hubGroup)
+        public async Task Register(TickerHubGroup hubGroup)
         {
-            _logger.LogInformation($"ConnectionId: {Context.ConnectionId} is subscribing to {_hubName}" +
+            _logger.LogInformation($"ConnectionId: {Context.ConnectionId} is subscribing to " +
                                    $"{hubGroup.GetDescription()}");
             
-            await Groups.AddToGroupAsync(Context.ConnectionId, _hubName + hubGroup.GetDescription());
+            await Groups.AddToGroupAsync(Context.ConnectionId, hubGroup.GetDescription());
         }
 
-        public async void Unregister(TickerHubGroup hubGroup)
+        public async Task Unregister(TickerHubGroup hubGroup)
         {
-            _logger.LogInformation($"ConnectionId: {Context.ConnectionId} is un-subscribing from {_hubName}" +
+            _logger.LogInformation($"ConnectionId: {Context.ConnectionId} is un-subscribing from " +
                                    $"{hubGroup.GetDescription()}");
             
-            await Groups.RemoveFromGroupAsync(Context.ConnectionId, _hubName + hubGroup.GetDescription());
+            await Groups.RemoveFromGroupAsync(Context.ConnectionId, hubGroup.GetDescription());
         }
     }
 }

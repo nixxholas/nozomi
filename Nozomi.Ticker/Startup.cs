@@ -1,37 +1,19 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Nozomi.Base.Core.Configurations;
 using Nozomi.Base.Core.Helpers.Routing;
-using Nozomi.Data.WebModels.LoggingModels;
 using Nozomi.Infra.Preprocessing.Options;
 using Nozomi.Repo.Data;
 using Nozomi.Repo.Identity.Data;
-using Nozomi.Service.HostedServices;
-using Nozomi.Service.HostedServices.RequestTypes;
-using Nozomi.Service.HostedServices.RequestTypes.Interfaces;
-using Nozomi.Service.HostedServices.StaticUpdater;
-using Nozomi.Service.Hubs;
-using Nozomi.Service.Identity.Stores;
 using Nozomi.Service.Middleware;
-using Nozomi.Service.Services;
-using Nozomi.Service.Services.Interfaces;
-using Nozomi.Service.Services.Requests;
-using Nozomi.Service.Services.Requests.Interfaces;
 using Nozomi.Ticker.Areas;
 using Nozomi.Ticker.StartupExtensions;
-using StackExchange.Redis;
 using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 
 namespace Nozomi.Ticker
@@ -186,11 +168,6 @@ namespace Nozomi.Ticker
             
             // Setup the hot collections
             app.ConfigureStatics();
-
-            app.UseSignalR(route =>
-            {
-                route.MapHub<TickerHub>("/ticker");
-            });
 
             app.UseSession();
             
