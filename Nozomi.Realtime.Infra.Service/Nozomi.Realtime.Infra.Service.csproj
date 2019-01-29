@@ -1,0 +1,12 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netcoreapp2.2</TargetFramework>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Nozomi.Infra.Service.Identity\Nozomi.Infra.Service.Identity.csproj" />
+      <ProjectReference Include="..\Nozomi.Infra.Service\Nozomi.Infra.Service.csproj" />
+    </ItemGroup>
+
+</Project>

@@ -11,7 +11,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Nozomi.Ticker\Nozomi.Ticker.csproj" />
+      <ProjectReference Include="..\Nozomi.Realtime.Infra.Service\Nozomi.Realtime.Infra.Service.csproj" />
     </ItemGroup>
 
 </Project>
