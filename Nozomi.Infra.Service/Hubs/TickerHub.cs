@@ -8,7 +8,6 @@ using Newtonsoft.Json.Linq;
 using Nozomi.Base.Core.Helpers.Enumerator;
 using Nozomi.Data;
 using Nozomi.Data.CurrencyModels;
-using Nozomi.Data.HubModels.Interfaces;
 using Nozomi.Data.ResponseModels;
 using Nozomi.Preprocessing;
 using Nozomi.Preprocessing.Hubs.Enumerators;
@@ -18,7 +17,7 @@ using Nozomi.Service.Services.Interfaces;
 
 namespace Nozomi.Service.Hubs
 {
-    public class TickerHub : Hub<ITickerHubClient>, ITickerHub
+    public class TickerHub : Hub<ITickerHubClient>
     {
         public const string _hubName = "NozomiTickerHub_";
         private IEnumerable<CurrencyPair> _currencyPairs;
@@ -46,15 +45,23 @@ namespace Nozomi.Service.Hubs
         /// https://stackoverflow.com/questions/21759577/using-generic-methods-on-signalr-hub
         /// </summary>
         /// <param name="data"></param>
-        public async void BroadcastData()
+        public async void BroadcastData(TickerHubGroup hubGroup)
         {
-            var channel = Channel.CreateUnbounded<NozomiResult<IDictionary<KeyValuePair<string, string>, 
-                DistinctiveTickerResponse>>>();
+//            var channel = Channel.CreateUnbounded<NozomiResult<IDictionary<KeyValuePair<string, string>, 
+//                DistinctiveTickerResponse>>>();
 
             var payload = _tickerEvent.GetAll();
 
-            await channel.Writer.WriteAsync(new NozomiResult<IDictionary<KeyValuePair<string, string>,
-                DistinctiveTickerResponse>>(payload));
+//            await channel.Writer.WriteAsync(new NozomiResult<IDictionary<KeyValuePair<string, string>,
+//                DistinctiveTickerResponse>>(payload));
+
+            switch (hubGroup)
+            {
+                case TickerHubGroup.Ticker:
+                    await Clients.Group(_hubName + hubGroup.GetDescription()).Tickers();
+                    break;
+            }
+
         }
         
         public async Task<NozomiResult<IEnumerable<CurrencyPair>>> Tickers(IEnumerable<CurrencyPair> currencyPairs = null)
