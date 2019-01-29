@@ -3,6 +3,8 @@
 
 import '../styles/index.scss';
 
+import * as signalR from "@aspnet/signalr";
+(<any> window).signalR = signalR;
 import * as $ from 'jquery';
 // https://stackoverflow.com/questions/48271232/how-to-expose-ui-jquery-ui-globally-with-webpack
 const jQuery = $;
