@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Channels;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
 using Nozomi.Base.Core.Helpers.Enumerator;
 using Nozomi.Data;
@@ -23,11 +24,14 @@ namespace Nozomi.Service.Hubs
         private IEnumerable<CurrencyPair> _currencyPairs;
         private readonly ITickerEvent _tickerEvent;
         private readonly ICurrencyPairService _cpService;
+        private readonly ILogger<TickerHub> _logger;
 
-        public TickerHub(ITickerEvent tickerEvent, ICurrencyPairService cpService)
+        public TickerHub(ITickerEvent tickerEvent, ICurrencyPairService cpService,
+            ILogger<TickerHub> logger)
         {
             _tickerEvent = tickerEvent;
             _cpService = cpService;
+            _logger = logger;
         }
         
         public override async Task OnConnectedAsync()
@@ -104,11 +108,17 @@ namespace Nozomi.Service.Hubs
 
         public async void Register(TickerHubGroup hubGroup)
         {
+            _logger.LogInformation($"ConnectionId: {Context.ConnectionId} is subscribing to {_hubName}" +
+                                   $"{hubGroup.GetDescription()}");
+            
             await Groups.AddToGroupAsync(Context.ConnectionId, _hubName + hubGroup.GetDescription());
         }
 
         public async void Unregister(TickerHubGroup hubGroup)
         {
+            _logger.LogInformation($"ConnectionId: {Context.ConnectionId} is un-subscribing from {_hubName}" +
+                                   $"{hubGroup.GetDescription()}");
+            
             await Groups.RemoveFromGroupAsync(Context.ConnectionId, _hubName + hubGroup.GetDescription());
         }
     }
