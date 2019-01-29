@@ -14,10 +14,7 @@ using Nozomi.Data.ResponseModels;
 using Nozomi.Data.WebModels;
 using Nozomi.Preprocessing;
 using Nozomi.Preprocessing.Abstracts;
-using Nozomi.Preprocessing.Hubs.Enumerators;
 using Nozomi.Repo.Data;
-using Nozomi.Service.Hubs;
-using Nozomi.Service.Hubs.Interfaces;
 
 namespace Nozomi.Service.HostedServices.StaticUpdater
 {
