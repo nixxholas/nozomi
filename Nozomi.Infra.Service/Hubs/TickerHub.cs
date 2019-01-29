@@ -4,19 +4,22 @@ using System.Threading.Channels;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
 using Newtonsoft.Json.Linq;
+using Nozomi.Base.Core.Helpers.Enumerator;
 using Nozomi.Data;
 using Nozomi.Data.CurrencyModels;
 using Nozomi.Data.HubModels.Interfaces;
 using Nozomi.Data.ResponseModels;
 using Nozomi.Preprocessing;
+using Nozomi.Preprocessing.Hubs.Enumerators;
 using Nozomi.Service.Events.Interfaces;
+using Nozomi.Service.Hubs.Interfaces;
 using Nozomi.Service.Services.Interfaces;
 
 namespace Nozomi.Service.Hubs
 {
-    public class TickerHub : Hub<ITickerHubClient>
+    public class TickerHub : Hub<ITickerHubClient>, ITickerHub
     {
-        public const string _hubName = "NozomiTickerHub";
+        public const string _hubName = "NozomiTickerHub_";
         private IEnumerable<CurrencyPair> _currencyPairs;
         private readonly ITickerEvent _tickerEvent;
         private readonly ICurrencyPairService _cpService;
@@ -97,6 +100,16 @@ namespace Nozomi.Service.Hubs
                 // Beep the client, telling them you're done
                 writer.Complete();
             }
+        }
+
+        public async void Register(TickerHubGroup hubGroup)
+        {
+            await Groups.AddToGroupAsync(Context.ConnectionId, _hubName + hubGroup.GetDescription());
+        }
+
+        public async void Unregister(TickerHubGroup hubGroup)
+        {
+            await Groups.RemoveFromGroupAsync(Context.ConnectionId, _hubName + hubGroup.GetDescription());
         }
     }
 }
