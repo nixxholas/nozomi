@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Nozomi.Data;
 using Nozomi.Data.CurrencyModels;
+using Nozomi.Data.ResponseModels;
 using Nozomi.Preprocessing.Hubs.Enumerators;
 
 namespace Nozomi.Service.Hubs.Interfaces
@@ -12,9 +13,7 @@ namespace Nozomi.Service.Hubs.Interfaces
 
         void Unregister(TickerHubGroup hubGroup);
         
-        Task<NozomiResult<IEnumerable<CurrencyPair>>> Tickers(IEnumerable<CurrencyPair> currencyPairs = null);
-        
-        Task SubscribeToAll();
+        Task<IDictionary<KeyValuePair<string, string>, DistinctiveTickerResponse>> Tickers();
         
         Task BroadcastTickerUpdate();
     }
