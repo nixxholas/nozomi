@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.DependencyInjection;
@@ -12,7 +13,10 @@ using Nozomi.Data.ResponseModels;
 using Nozomi.Data.WebModels;
 using Nozomi.Preprocessing;
 using Nozomi.Preprocessing.Abstracts;
+using Nozomi.Preprocessing.Hubs.Enumerators;
 using Nozomi.Repo.Data;
+using Nozomi.Service.Hubs;
+using Nozomi.Service.Hubs.Interfaces;
 
 namespace Nozomi.Service.HostedServices.StaticUpdater
 {
@@ -23,6 +27,7 @@ namespace Nozomi.Service.HostedServices.StaticUpdater
         IHostedService, IDisposable
     {
         private readonly NozomiDbContext _nozomiDbContext;
+        private readonly IHubContext<TickerHub, ITickerHubClient> _tickerHub;
         
         private static readonly Func<NozomiDbContext, IEnumerable<DiscoverabeTickerResponse>> 
             GetActiveDiscoverableTickerResponses =
@@ -48,9 +53,11 @@ namespace Nozomi.Service.HostedServices.StaticUpdater
                                 rc.RequestComponentDatum.Value)).ToList()
                     }));
         
-        public CPDSyncingService(IServiceProvider serviceProvider) : base(serviceProvider)
+        public CPDSyncingService(IServiceProvider serviceProvider,
+            IHubContext<TickerHub, ITickerHubClient> tickerHub) : base(serviceProvider)
         {
             _nozomiDbContext = _scope.ServiceProvider.GetService<NozomiDbContext>();
+            _tickerHub = tickerHub;
         }
 
         /// <summary>
@@ -86,6 +93,8 @@ namespace Nozomi.Service.HostedServices.StaticUpdater
                             NozomiServiceConstants.CurrencyPairDictionary.Add(dtr.CurrencyPairId, dtr);
                         }
                     }
+                    
+                    _tickerHub.Clients.All.BroadcastData(TickerHubGroup.Ticker);
                 }
                 catch (Exception ex)
                 {

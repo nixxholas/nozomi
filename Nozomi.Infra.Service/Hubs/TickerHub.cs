@@ -59,7 +59,6 @@ namespace Nozomi.Service.Hubs
                     await Clients.Group(_hubName + hubGroup.GetDescription()).Tickers();
                     break;
             }
-
         }
         
         public async Task<IDictionary<KeyValuePair<string, string>, DistinctiveTickerResponse>> Tickers()
