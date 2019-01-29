@@ -493,13 +493,15 @@
       connection.start().catch(err => document.write(err));
 
       connection.on("messageReceived", (username, message) => {
-        let m = document.createElement("div");
-
-        m.innerHTML =
-          `<div class="message-author">${username}</div><div>${message}</div>`;
-
-        divMessages.appendChild(m);
-        divMessages.scrollTop = divMessages.scrollHeight;
+        console.dir(username);
+        console.dir(message);
+//        let m = document.createElement("div");
+//
+//        m.innerHTML =
+//          `<div class="message-author">${username}</div><div>${message}</div>`;
+//
+//        divMessages.appendChild(m);
+//        divMessages.scrollTop = divMessages.scrollHeight;
       });
     });
   </script>
