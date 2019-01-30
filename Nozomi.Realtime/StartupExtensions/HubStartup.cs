@@ -6,7 +6,7 @@ namespace Nozomi.Realtime.StartupExtensions
 {
     public static class HubStartup
     {
-        public static void ConfigureEvents(this IServiceCollection services)
+        public static void ConfigureHubs(this IServiceCollection services)
         {
             services.AddScoped<ITickerHubServer, TickerHubServer>();
         }
