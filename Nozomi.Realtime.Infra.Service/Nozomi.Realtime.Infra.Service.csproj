@@ -9,4 +9,8 @@
       <ProjectReference Include="..\Nozomi.Infra.Service\Nozomi.Infra.Service.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="HostedServices\Interfaces" />
+    </ItemGroup>
+
 </Project>

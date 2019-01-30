@@ -1,6 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
 using Nozomi.Service.HostedServices.RequestTypes;
-using Nozomi.Service.HostedServices.StaticUpdater;
 using Nozomi.Service.Identity.HostedServices;
 
 namespace Nozomi.Ticker.StartupExtensions
@@ -16,9 +15,6 @@ namespace Nozomi.Ticker.StartupExtensions
             services.AddHostedService<HttpGetCurrencyPairRequestSyncingService>();
             services.AddHostedService<HttpPostCurrencyPairRequestSyncingService>();
             services.AddHostedService<WebsocketCurrencyPairRequestSyncingService>();
-            services.AddHostedService<CPDSyncingService>();
-            services.AddHostedService<CSSSyncingService>();
-            services.AddHostedService<TSDSyncingService>();
         }
     }
 }

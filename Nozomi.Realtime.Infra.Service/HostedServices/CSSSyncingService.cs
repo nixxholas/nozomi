@@ -8,16 +8,15 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data.CurrencyModels;
-using Nozomi.Data.ResponseModels;
 using Nozomi.Preprocessing;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.Data;
 
-namespace Nozomi.Service.HostedServices.StaticUpdater
+namespace Nozomi.Realtime.Infra.Service.HostedServices
 {
-    public class TSDSyncingService : BaseHostedService<TSDSyncingService>, IHostedService, IDisposable
+    public class CSSSyncingService : BaseHostedService<CSSSyncingService>, IHostedService, IDisposable
     {
-        private NozomiDbContext _nozomiDbContext;
+        private readonly NozomiDbContext _nozomiDbContext;
         
         private static readonly Func<NozomiDbContext, IEnumerable<CurrencyPair>> 
             GetActiveCurrencyPairs =
@@ -33,65 +32,48 @@ namespace Nozomi.Service.HostedServices.StaticUpdater
                                      && cpr.RequestComponents.Any(rc => rc.DeletedAt == null && rc.IsEnabled))
                                      && cp.PartialCurrencyPairs.Count == 2));
         
-        public TSDSyncingService(IServiceProvider serviceProvider) : base(serviceProvider)
+        public CSSSyncingService(IServiceProvider serviceProvider) : base(serviceProvider)
         {
             _nozomiDbContext = _scope.ServiceProvider.GetService<NozomiDbContext>();
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            _logger.LogInformation("TSDSyncingService is starting.");
+            _logger.LogInformation("CSSSyncingService is starting.");
 
-            stoppingToken.Register(() => _logger.LogInformation("TSDSyncingService is stopping."));
+            stoppingToken.Register(() => _logger.LogInformation("CSSSyncingService is stopping."));
 
             while (!stoppingToken.IsCancellationRequested)
             {
                 try
                 {
-                    var cPairs = GetActiveCurrencyPairs(_nozomiDbContext).ToList();
-                    
-                    // Populate a new TickerSymbolDictionary
-                    var newTsd = new Dictionary<string, LinkedList<long>>();
+                    var currencyPairs = GetActiveCurrencyPairs(_nozomiDbContext).ToList();
 
-                    foreach (var cp in cPairs)
+                    foreach (var cp in currencyPairs)
                     {
                         var tickerSymbol = string.Join("", cp.PartialCurrencyPairs
                             .OrderByDescending(pcp => pcp.IsMain)
                             .Select(pcp => pcp.Currency.Abbrv));
-                        
-                        // Check if the ticker exists in the collection
-                        if (newTsd.ContainsKey(tickerSymbol))
+
+                        var dictKey = new Tuple<string, string>(cp.CurrencySource.Abbreviation, tickerSymbol);
+
+                        if (!NozomiServiceConstants.CurrencySourceSymbolDictionary.ContainsKey(dictKey))
                         {
-                            var longList = newTsd[tickerSymbol];
-
-                            // Make sure the list already has it
-                            if (!longList.Contains(cp.Id))
-                            {
-                                longList.AddLast(cp.Id);
-                            }
+                            // Populate the CurrencySourceSymbolDictionary
+                            NozomiServiceConstants.CurrencySourceSymbolDictionary.Add(dictKey, cp.Id);
                         }
-                        else // nope, let's add it in
-                        {
-                            newTsd.Add(tickerSymbol,
-                                new LinkedList<long>());
-
-                            newTsd[tickerSymbol].AddLast(cp.Id);
-                        }
-                    }
-
-                    // Complete replace
-                    NozomiServiceConstants.TickerSymbolDictionary = newTsd;
+                    } 
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogCritical("[TSDSyncingService]: " + ex);
+                    _logger.LogCritical("[CSSSyncingService]: " + ex);
                 }
                 
                 // No naps taken
-                await Task.Delay(5000, stoppingToken);
+                await Task.Delay(10000, stoppingToken);
             }
 
-            _logger.LogWarning("TSDSyncingService background task is stopping.");
+            _logger.LogWarning("CSSSyncingService background task is stopping.");
         }
     }
 }

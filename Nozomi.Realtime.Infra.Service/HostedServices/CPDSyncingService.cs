@@ -3,20 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Nozomi.Base.Core.Helpers.Enumerator;
 using Nozomi.Data.ResponseModels;
-using Nozomi.Data.WebModels;
 using Nozomi.Preprocessing;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.Data;
 
-namespace Nozomi.Service.HostedServices.StaticUpdater
+namespace Nozomi.Realtime.Infra.Service.HostedServices
 {
     /// <summary>
     /// CurrencyPairDictionarySyncingService.
