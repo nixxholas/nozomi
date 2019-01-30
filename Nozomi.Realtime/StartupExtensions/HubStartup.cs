@@ -8,6 +8,8 @@ namespace Nozomi.Realtime.StartupExtensions
     {
         public static void ConfigureHubs(this IServiceCollection services)
         {
+            services.AddSignalR();
+            
             services.AddScoped<ITickerHubServer, TickerHubServer>();
         }
     }
