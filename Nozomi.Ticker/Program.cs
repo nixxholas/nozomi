@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Gelf.Extensions.Logging;
 using Microsoft.AspNetCore;
@@ -37,16 +38,17 @@ namespace Nozomi.Ticker
                     // Read Logging settings from appsettings.json and add providers.
                     builder.AddConfiguration(context.Configuration.GetSection("Logging"))
                         .AddConsole()
-                        //.AddDebug()
-                        .AddGelf();
-
-                    builder.AddSlack();
-//                    logging.AddSlack(options =>
+                        .AddDebug()
+                        .AddEventSourceLogger()
+                        .AddGelf()
+                        .AddSlack();
+                    
+//                    builder.AddSlack(options =>
 //                    {
-//                        options.WebhookUrl = "https://hooks.slack.com/services/ABC123FGH321QWERTYUICAZzDJBG3sehHH7scclYdDxj";
+//                        options.WebhookUrl = context.Configuration.GetSection("Logging").GetSection("Slack")["WebhookUrl"];
 //                        options.LogLevel = LogLevel.Information;
 //                        options.NotificationLevel = LogLevel.None;
-//                        options.Environment = env.EnvironmentName;
+//                        //options.Environment = env.EnvironmentName;
 //                        options.Channel = "#mychannel";
 //                        options.SanitizeOutputFunction = output => Regex.Replace(output, "@[^\\.@-]", "");
 //                    });
