@@ -6,6 +6,7 @@ using Nozomi.Base.Core.Helpers.Enumerator;
 using Nozomi.Data.CurrencyModels;
 using Nozomi.Data.ResponseModels;
 using Nozomi.Realtime.Infra.Service.Hubs.Enumerators;
+using Nozomi.Realtime.Infra.Service.Hubs.Interfaces;
 using Nozomi.Service.Events.Interfaces;
 using Nozomi.Service.Services.Interfaces;
 
@@ -14,7 +15,7 @@ namespace Nozomi.Realtime.Infra.Service.Hubs
     /// <summary>
     /// The SignalR Hub for Ticker-related endpoints. 
     /// </summary>
-    public class TickerHub : Hub
+    public class TickerHub : Hub<ITickerHubClient>
     {
         public const string _hubName = "NozomiTickerHub_";
         private IEnumerable<CurrencyPair> _currencyPairs;
@@ -52,9 +53,9 @@ namespace Nozomi.Realtime.Infra.Service.Hubs
 //
 //        }
         
-        public Task<IDictionary<KeyValuePair<string, string>, DistinctiveTickerResponse>> Tickers()
+        public void Tickers()
         {
-            return Task.FromResult(_tickerEvent.GetAll());
+            Clients.Caller.Tickers(_tickerEvent.GetAll());
         }
 
         // We can use this to return a payload
