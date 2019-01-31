@@ -7,7 +7,6 @@ using Microsoft.Extensions.Logging;
 using Nozomi.Data;
 using Nozomi.Data.AreaModels.v1.CurrencyPair;
 using Nozomi.Data.ResponseModels;
-using Nozomi.Service.Hubs;
 using Nozomi.Service.Identity.Managers;
 using Nozomi.Service.Services.Interfaces;
 
@@ -18,14 +17,12 @@ namespace Nozomi.Ticker.Areas.v1.CurrencyPair
     {
         private readonly ICurrencyPairService _currencyPairService;
         private readonly ITickerService _tickerService;
-        private readonly IHubContext<TickerHub> _tickerHubContext;
 
-        public CurrencyPairController(IHubContext<TickerHub> tickerHubContext, NozomiUserManager userManager,
+        public CurrencyPairController(NozomiUserManager userManager,
             ICurrencyPairService currencyPairService, ITickerService tickerService,
             ILogger<CurrencyPairController> logger)
             : base(logger, userManager)
         {
-            _tickerHubContext = tickerHubContext;
             _currencyPairService = currencyPairService;
             _tickerService = tickerService;
         }

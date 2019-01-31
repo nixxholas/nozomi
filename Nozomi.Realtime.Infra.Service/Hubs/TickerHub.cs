@@ -11,6 +11,9 @@ using Nozomi.Service.Services.Interfaces;
 
 namespace Nozomi.Realtime.Infra.Service.Hubs
 {
+    /// <summary>
+    /// The SignalR Hub for Ticker-related endpoints. 
+    /// </summary>
     public class TickerHub : Hub
     {
         public const string _hubName = "NozomiTickerHub_";

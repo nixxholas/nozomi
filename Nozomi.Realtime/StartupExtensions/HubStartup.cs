@@ -1,6 +1,4 @@
 using Microsoft.Extensions.DependencyInjection;
-using Nozomi.Realtime.Infra.Service.Hubs.Server;
-using Nozomi.Realtime.Infra.Service.Hubs.Server.Interfaces;
 
 namespace Nozomi.Realtime.StartupExtensions
 {
@@ -10,8 +8,6 @@ namespace Nozomi.Realtime.StartupExtensions
         {
             services.AddSignalR()
                 .AddMessagePackProtocol();
-            
-            services.AddScoped<ITickerHubServer, TickerHubServer>();
         }
     }
 }
