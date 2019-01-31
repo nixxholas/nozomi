@@ -26,6 +26,13 @@ namespace Nozomi.Ticker.Areas.v1.Ticker
             _tickerService = tickerService;
         }
 
+        [Authorize]
+        [HttpDelete]
+        public NozomiResult<string> Delete(string tickerSymbol, string exchangeAbbreviation)
+        {
+            return _tickerService.Delete(tickerSymbol, exchangeAbbreviation);
+        }
+
         [HttpGet]
         public Task<DataTableResult<UniqueTickerResponse>> GetAllForDataTables(int draw = 0)
         {

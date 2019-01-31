@@ -18,6 +18,8 @@ namespace Nozomi.Service.Services.Interfaces
         /// <param name="createTickerInputModel">Data from the view.</param>
         /// <returns></returns>
         NozomiResult<UniqueTickerResponse> Create(CreateTickerInputModel createTickerInputModel);
+
+        NozomiResult<string> Delete(string ticker, string exchangeAbbrv);
         
         Task<NozomiResult<ICollection<UniqueTickerResponse>>> GetAll(int index);
         

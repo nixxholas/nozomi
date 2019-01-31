@@ -17,6 +17,7 @@ using Nozomi.Preprocessing;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Data;
+using Nozomi.Repo.Data.Mappings.CurrencyModels;
 using Nozomi.Service.Services.Interfaces;
 
 namespace Nozomi.Service.Services
@@ -270,6 +271,38 @@ namespace Nozomi.Service.Services
                 return new NozomiResult<UniqueTickerResponse>(NozomiResultType.Failed,
                     ex.ToString());
             }
+        }
+
+        public NozomiResult<string> Delete(string ticker, string exchangeAbbrv)
+        {
+            var tickerObj = _unitOfWork.GetRepository<CurrencyPair>()
+                .GetQueryable()
+                .Where(cp => cp.DeletedAt == null && cp.IsEnabled)
+                .Include(cp => cp.PartialCurrencyPairs)
+                .ThenInclude(pcp => pcp.Currency)
+                .Include(cp => cp.CurrencySource)
+                .Include(cp => cp.CurrencyPairRequests)
+                .ThenInclude(cpr => cpr.RequestComponents)
+                .ThenInclude(rc => rc.RequestComponentDatum)
+                .SingleOrDefault(cp => string.Concat(
+                    cp.PartialCurrencyPairs.FirstOrDefault(pcp => pcp.IsMain).Currency.Abbrv,
+                    cp.PartialCurrencyPairs.FirstOrDefault(pcp => !pcp.IsMain).Currency.Abbrv)
+                    .Equals(ticker, StringComparison.InvariantCultureIgnoreCase)
+                && cp.CurrencySource.Abbreviation.Equals(exchangeAbbrv, StringComparison.InvariantCultureIgnoreCase));
+
+            if (tickerObj != null)
+            {
+                tickerObj.DeletedAt = DateTime.UtcNow;
+                
+                _unitOfWork.GetRepository<CurrencyPair>().Update(tickerObj);
+                _unitOfWork.Commit();
+                
+                return new NozomiResult<string>(NozomiResultType.Success,
+                    "Ticker successfully deleted!");
+            }
+            
+            return new NozomiResult<string>(NozomiResultType.Failed,
+                "Incorrect ticker and exchange abbreviation combination.");
         }
 
         public Task<NozomiResult<ICollection<UniqueTickerResponse>>> GetAll(int index)
