@@ -482,3 +482,16 @@
 @*     </div> *@
 @*     <!-- End Multi-Platform Accessible --> *@
   </main>
+  
+@section Scripts {
+  <script>
+    const connection = new signalR.HubConnectionBuilder()
+      .withUrl("https://localhost:5002")
+      .configureLogging(signalR.LogLevel.Information)
+      .build();
+    
+    connection.on("Tickers", (tickers) => {
+      console.dir(tickers);
+    });
+  </script>
+}
