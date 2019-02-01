@@ -486,6 +486,11 @@ namespace Nozomi.Service.HostedServices.RequestTypes
                                                     }
                                                 }
                                             }
+                                            else
+                                            {
+                                                _logger.LogError($"Component: {component.Id}" +
+                                                                 $" // Raw Value: {rawVal} | Invalid component value.");
+                                            }
                                         }
                                         // Oh no.. non-primitive...
                                         else if (comArrElArr.Length == 2)
@@ -518,6 +523,11 @@ namespace Nozomi.Service.HostedServices.RequestTypes
                                                         _logger.LogError(res.Message);
                                                     }
                                                 }
+                                            }
+                                            else
+                                            {
+                                                _logger.LogError($"Component: {component.Id}" +
+                                                                 $" // Raw Value: {rawVal} | Invalid component value.");
                                             }
                                         }
                                         else
@@ -584,6 +594,11 @@ namespace Nozomi.Service.HostedServices.RequestTypes
                                                 }
                                             }
                                         }
+                                        else
+                                        {
+                                            _logger.LogError($"Component: {component.Id}" +
+                                                             $" // Raw Value: {rawVal} | Invalid component value.");
+                                        }
                                     }
                                     // Oh no.. non-primitive...
                                     else if (comArrElArr.Length == 2)
@@ -616,6 +631,11 @@ namespace Nozomi.Service.HostedServices.RequestTypes
                                                     _logger.LogError(res.Message);
                                                 }
                                             }
+                                        }
+                                        else
+                                        {
+                                            _logger.LogError($"Component: {component.Id}" +
+                                                             $" // Raw Value: {rawVal} | Invalid component value.");
                                         }
                                     }
                                     else
@@ -667,6 +687,11 @@ namespace Nozomi.Service.HostedServices.RequestTypes
                                                 _logger.LogError(res.Message);
                                             }
                                         }
+                                    }
+                                    else
+                                    {
+                                        _logger.LogError($"Component: {component.Id}" +
+                                                         $" // Raw Value: {rawData} | Invalid component value.");
                                     }
                                 }
                             }
