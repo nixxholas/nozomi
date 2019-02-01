@@ -130,7 +130,7 @@ namespace Nozomi.Service.Services
             else
             {
                 return new NozomiResult<string>
-                    (NozomiResultType.Failed, "Invalid component datum. Please make sure that the " +
+                    (NozomiResultType.Failed, $"Invalid component datum id:{id}, val:{val}. Please make sure that the " +
                                               "RequestComponent is properly instantiated.");
             }
         }
