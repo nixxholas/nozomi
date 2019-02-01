@@ -21,6 +21,7 @@ using Newtonsoft.Json.Linq;
 using Nozomi.Base.Core.Helpers.Enumerator;
 using Nozomi.Base.Core.Helpers.Exponent;
 using Nozomi.Base.Core.Helpers.Native.Collections;
+using Nozomi.Data;
 using Nozomi.Data.HubModels.Interfaces;
 using Nozomi.Data.WebModels;
 using Nozomi.Data.WebModels.LoggingModels;
@@ -31,6 +32,7 @@ using Nozomi.Service.Services;
 using Nozomi.Service.Services.Interfaces;
 using Nozomi.Service.Services.Requests;
 using Nozomi.Service.Services.Requests.Interfaces;
+using StackExchange.Redis;
 using Swashbuckle.AspNetCore.Swagger;
 
 /*
@@ -476,7 +478,12 @@ namespace Nozomi.Service.HostedServices.RequestTypes
                                                 if (val > 0)
                                                 {
                                                     // Update it
-                                                    _currencyPairComponentService.UpdatePairValue(component.Id, val);
+                                                    var res = _currencyPairComponentService.UpdatePairValue(component.Id, val);
+
+                                                    if (res.ResultType.Equals(NozomiResultType.Failed))
+                                                    {
+                                                        _logger.LogError(res.Message);
+                                                    }
                                                 }
                                             }
                                         }
@@ -504,7 +511,12 @@ namespace Nozomi.Service.HostedServices.RequestTypes
                                                 if (val > 0)
                                                 {
                                                     // Update it
-                                                    _currencyPairComponentService.UpdatePairValue(component.Id, val);
+                                                    var res = _currencyPairComponentService.UpdatePairValue(component.Id, val);
+
+                                                    if (res.ResultType.Equals(NozomiResultType.Failed))
+                                                    {
+                                                        _logger.LogError(res.Message);
+                                                    }
                                                 }
                                             }
                                         }
@@ -564,7 +576,12 @@ namespace Nozomi.Service.HostedServices.RequestTypes
                                             if (val > 0)
                                             {
                                                 // Update it
-                                                _currencyPairComponentService.UpdatePairValue(component.Id, val);
+                                                var res = _currencyPairComponentService.UpdatePairValue(component.Id, val);
+
+                                                if (res.ResultType.Equals(NozomiResultType.Failed))
+                                                {
+                                                    _logger.LogError(res.Message);
+                                                }
                                             }
                                         }
                                     }
@@ -592,7 +609,12 @@ namespace Nozomi.Service.HostedServices.RequestTypes
                                             if (val > 0)
                                             {
                                                 // Update it
-                                                _currencyPairComponentService.UpdatePairValue(component.Id, val);
+                                                var res = _currencyPairComponentService.UpdatePairValue(component.Id, val);
+
+                                                if (res.ResultType.Equals(NozomiResultType.Failed))
+                                                {
+                                                    _logger.LogError(res.Message);
+                                                }
                                             }
                                         }
                                     }
@@ -638,7 +660,12 @@ namespace Nozomi.Service.HostedServices.RequestTypes
                                         if (val > 0)
                                         {
                                             // Update it
-                                            _currencyPairComponentService.UpdatePairValue(component.Id, val);
+                                            var res = _currencyPairComponentService.UpdatePairValue(component.Id, val);
+
+                                            if (res.ResultType.Equals(NozomiResultType.Failed))
+                                            {
+                                                _logger.LogError(res.Message);
+                                            }
                                         }
                                     }
                                 }
