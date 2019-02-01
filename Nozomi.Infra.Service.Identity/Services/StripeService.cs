@@ -148,11 +148,11 @@ namespace Nozomi.Service.Identity.Services
             var card = await cardService.GetAsync(stripeCustomerId, cardId);
 
             // Can't delete a deleted card
-            if (card == null || card.Deleted) return false;
+            if (card == null || (card.Deleted != null && (bool) card.Deleted)) return false;
 
             var res = await cardService.DeleteAsync(stripeCustomerId, cardId);
 
-            return res.Deleted;
+            return res.Deleted != null && (bool) res.Deleted;
         }
 
         public async Task<bool> SetDefaultCard(string stripeCustomerId, string cardId)

@@ -117,7 +117,7 @@ namespace Nozomi.Service.HostedServices.RequestTypes
                 // quit if shit
                 if (firstRequest == null) return false;
 
-                Console.WriteLine($"HttpGetCurrencyPairRequestSyncingService PROCESSING: {firstRequest.DataPath}");
+                _logger.LogInformation($"HttpGetCurrencyPairRequestSyncingService PROCESSING: {firstRequest.DataPath}");
 
                 // FLUSH
                 _httpClient.DefaultRequestHeaders.Clear();
