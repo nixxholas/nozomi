@@ -17,6 +17,7 @@ namespace Nozomi.Realtime.Infra.Service.Hubs
     /// </summary>
     public class TickerHub : Hub<ITickerHubClient>
     {
+        public const string _hubPath = "/ticker";
         public const string _hubName = "NozomiTickerHub_";
         private IEnumerable<CurrencyPair> _currencyPairs;
         private readonly ITickerEvent _tickerEvent;

@@ -48,7 +48,7 @@ namespace Nozomi.Realtime
             
             app.UseSignalR(route =>
             {
-                route.MapHub<TickerHub>("/ticker");
+                route.MapHub<TickerHub>(TickerHub._hubPath);
             });
 
             app.Run(async (context) => { await context.Response.WriteAsync("Hello World!"); });
