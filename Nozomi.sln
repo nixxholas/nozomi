@@ -35,6 +35,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nozomi.Realtime", "Nozomi.R
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nozomi.Realtime.Infra.Service", "Nozomi.Realtime.Infra.Service\Nozomi.Realtime.Infra.Service.csproj", "{87DC57A9-8EBC-4BD3-8B54-2446030D3BEA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nozomi.Realtime.Tests", "Nozomi.Realtime.Tests\Nozomi.Realtime.Tests.csproj", "{2AC2DAB8-CE82-4914-8979-50B435346BCE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -93,6 +95,10 @@ Global
 		{87DC57A9-8EBC-4BD3-8B54-2446030D3BEA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{87DC57A9-8EBC-4BD3-8B54-2446030D3BEA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{87DC57A9-8EBC-4BD3-8B54-2446030D3BEA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2AC2DAB8-CE82-4914-8979-50B435346BCE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2AC2DAB8-CE82-4914-8979-50B435346BCE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2AC2DAB8-CE82-4914-8979-50B435346BCE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2AC2DAB8-CE82-4914-8979-50B435346BCE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{08B57962-9841-4DFA-8DC3-E95042220750} = {AE1F223F-EF2C-4237-81CE-435DCE9DF913}
@@ -108,5 +114,6 @@ Global
 		{A9DF23FD-3E1C-47E3-834E-6F7BF96098A1} = {AE1F223F-EF2C-4237-81CE-435DCE9DF913}
 		{38069805-FB21-4EC2-BFF2-AC24978E29BA} = {67D06790-261E-455B-BA5C-1033C2EC4A09}
 		{87DC57A9-8EBC-4BD3-8B54-2446030D3BEA} = {D54DB59C-EB6F-4CBD-9FC0-EF423F88248E}
+		{2AC2DAB8-CE82-4914-8979-50B435346BCE} = {67D06790-261E-455B-BA5C-1033C2EC4A09}
 	EndGlobalSection
 EndGlobal
