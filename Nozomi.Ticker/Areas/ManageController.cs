@@ -99,6 +99,8 @@ namespace Nozomi.Ticker.Areas
                 Username = user.UserName,
                 StatusMessage = 
                     message == EditProfileMessageId.SetPasswordSuccess ? "Your password has been set."
+                    : message == EditProfileMessageId.SetPasswordInvalidUser ? "Invalid user data."
+                    : message == EditProfileMessageId.SetPasswordInvalidData ? "Please enter valid information on the form."
                     : message == EditProfileMessageId.SetTwoFactorSuccess ? "Your two-factor authentication provider has been set."
                     : message == EditProfileMessageId.Error ? "An error has occurred."
                     : message == EditProfileMessageId.AddPhoneSuccess ? "Your phone number was added."
@@ -599,7 +601,7 @@ namespace Nozomi.Ticker.Areas
         {
             if (!ModelState.IsValid)
             {
-                return RedirectToAction(nameof(Index), new { Message = EditProfileMessageId.Error });
+                return RedirectToAction(nameof(EditProfile), new { Message = EditProfileMessageId.Error });
             }
 
             var user = await GetCurrentUserAsync();
@@ -609,12 +611,12 @@ namespace Nozomi.Ticker.Areas
                 if (result.Succeeded)
                 {
                     await _signInManager.SignInAsync(user, isPersistent: false);
-                    return RedirectToAction(nameof(Index), new { Message = EditProfileMessageId.SetPasswordSuccess });
+                    return RedirectToAction(nameof(EditProfile), new { Message = EditProfileMessageId.SetPasswordSuccess });
                 }
                 AddErrors(result);
-                return RedirectToAction(nameof(Index), new { Message = EditProfileMessageId.Error });
+                return RedirectToAction(nameof(EditProfile), new { Message = EditProfileMessageId.SetPasswordInvalidData });
             }
-            return RedirectToAction(nameof(Index), new { Message = EditProfileMessageId.Error });
+            return RedirectToAction(nameof(EditProfile), new { Message = EditProfileMessageId.SetPasswordInvalidUser });
         }
 
         //GET: /Manage/ManageLogins
@@ -849,6 +851,8 @@ namespace Nozomi.Ticker.Areas
             AddLoginSuccess,
             SetTwoFactorSuccess,
             SetPasswordSuccess,
+            SetPasswordInvalidUser,
+            SetPasswordInvalidData,
             RemoveLoginSuccess,
             RemovePhoneSuccess,
             Error
