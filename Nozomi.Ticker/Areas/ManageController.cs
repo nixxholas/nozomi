@@ -267,7 +267,7 @@ namespace Nozomi.Ticker.Areas
                 if (!await _userManager.CheckPasswordAsync(user, model.Password))
                 {
                     ModelState.AddModelError(string.Empty, "Password not correct.");
-                    return View();
+                    return Redirect("~/");
                 }
             }
 
@@ -585,11 +585,11 @@ namespace Nozomi.Ticker.Areas
 
         //
         // GET: /Manage/SetPassword
-        [HttpGet]
-        public IActionResult SetPassword()
-        {
-            return View();
-        }
+//        [HttpGet]
+//        public IActionResult SetPassword()
+//        {
+//            return View();
+//        }
 
         //
         // POST: /Manage/SetPassword
@@ -599,7 +599,7 @@ namespace Nozomi.Ticker.Areas
         {
             if (!ModelState.IsValid)
             {
-                return View(model);
+                return RedirectToAction(nameof(Index), new { Message = EditProfileMessageId.Error });
             }
 
             var user = await GetCurrentUserAsync();
@@ -612,7 +612,7 @@ namespace Nozomi.Ticker.Areas
                     return RedirectToAction(nameof(Index), new { Message = EditProfileMessageId.SetPasswordSuccess });
                 }
                 AddErrors(result);
-                return View(model);
+                return RedirectToAction(nameof(Index), new { Message = EditProfileMessageId.Error });
             }
             return RedirectToAction(nameof(Index), new { Message = EditProfileMessageId.Error });
         }
