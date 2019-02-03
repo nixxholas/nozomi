@@ -332,7 +332,7 @@ namespace Nozomi.Service.Services
                         LastUpdated = cp.CurrencyPairRequests.FirstOrDefault(cpr => cpr.DeletedAt == null && cpr.IsEnabled)
                             .RequestComponents.FirstOrDefault(rc => rc.DeletedAt == null && rc.IsEnabled)
                             .RequestComponentDatum
-                            .CreatedAt,
+                            .ModifiedAt,
                         Properties = cp.CurrencyPairRequests.FirstOrDefault()
                             .RequestComponents
                             .Select(rc => new KeyValuePair<string, string>(
