@@ -8,7 +8,7 @@ using Nozomi.Infra.Websocket.Managers.Interfaces;
 
 namespace Nozomi.Infra.Websocket.Managers
 {
-    public class WebsocketConnectionManager : IWebsocketConnectionManager
+    public class WebSocketConnectionManager : IWebsocketConnectionManager
     {
         private ConcurrentDictionary<string, WebSocket> _sockets = new ConcurrentDictionary<string, WebSocket>();
 

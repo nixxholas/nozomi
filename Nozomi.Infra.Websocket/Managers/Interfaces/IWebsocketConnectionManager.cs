@@ -15,7 +15,5 @@ namespace Nozomi.Infra.Websocket.Managers.Interfaces
         void AddSocket(WebSocket socket);
 
         Task RemoveSocket(string socketId);
-
-        string CreateConnectionId();
     }
 }
