@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Net.WebSockets;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,7 +11,9 @@ namespace Nozomi.Infra.Websocket.Handlers
         public BroadcastHandler(WebSocketConnectionManager webSocketConnectionManager) : base(webSocketConnectionManager)
         {
         }
-        
+
+        public override ICollection<string> SubscribedClients { get; set; }
+
         public override async Task OnConnected(WebSocket socket)
         {
             await base.OnConnected(socket);
@@ -26,5 +29,11 @@ namespace Nozomi.Infra.Websocket.Handlers
  
              await SendMessageToAllAsync(message);
          }
-     }
+
+         public override Task SubscribeAsync(WebSocket socket, WebSocketReceiveResult result, byte[] buffer)
+         {
+             // An active handler should not have a subscription function
+             throw new System.NotImplementedException();
+         }
+    }
  }
