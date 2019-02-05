@@ -3,11 +3,11 @@ using System.Text;
 using System.Threading.Tasks;
 using Nozomi.Infra.Websocket.Managers;
 
-namespace Nozomi.Infra.Websocket.Handlers.Tickers
+namespace Nozomi.Infra.Websocket.Handlers
 {
-    public class AllTickersHandler : WebSocketHandler
+    public class BroadcastHandler : WebSocketHandler
     {
-        public AllTickersHandler(WebSocketConnectionManager webSocketConnectionManager) : base(webSocketConnectionManager)
+        public BroadcastHandler(WebSocketConnectionManager webSocketConnectionManager) : base(webSocketConnectionManager)
         {
         }
         
