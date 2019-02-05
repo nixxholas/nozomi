@@ -7,12 +7,12 @@ using Nozomi.Infra.Websocket.Handlers;
 
 namespace Nozomi.Infra.Websocket.Middlewares
 {
-    public class WebsocketManagerMiddleware
+    public class WebSocketManagerMiddleware
     {
         private readonly RequestDelegate _next;
         private WebSocketHandler _webSocketHandler { get; set; }
 
-        public WebsocketManagerMiddleware(RequestDelegate next, 
+        public WebSocketManagerMiddleware(RequestDelegate next, 
             WebSocketHandler webSocketHandler)
         {
             _next = next;
@@ -56,7 +56,7 @@ namespace Nozomi.Infra.Websocket.Middlewares
                 var result = await socket.ReceiveAsync(buffer: new ArraySegment<byte>(buffer),
                     cancellationToken: CancellationToken.None);
 
-                handleMessage(result, buffer);                
+                handleMessage(result, buffer);
             }
         }
     }
