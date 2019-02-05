@@ -64,14 +64,5 @@ namespace Nozomi.Infra.Websocket.Handlers
         /// <param name="buffer"></param>
         /// <returns></returns>
         public abstract Task ReceiveAsync(WebSocket socket, WebSocketReceiveResult result, byte[] buffer);
-        
-        /// <summary>
-        /// Enables the client to dispatch signal of subscription.
-        /// </summary>
-        /// <param name="socket"></param>
-        /// <param name="result"></param>
-        /// <param name="buffer"></param>
-        /// <returns></returns>
-        public abstract Task SubscribeAsync(WebSocket socket, WebSocketReceiveResult result, byte[] buffer);
     }
 }

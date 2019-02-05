@@ -17,12 +17,13 @@ namespace Nozomi.Infra.Websocket.Handlers.Tickers
 
         public override Task ReceiveAsync(WebSocket socket, WebSocketReceiveResult result, byte[] buffer)
         {
-            throw new NotImplementedException();
-        }
-
-        public override Task SubscribeAsync(WebSocket socket, WebSocketReceiveResult result, byte[] buffer)
-        {
             var socketId = WebSocketConnectionManager.GetId(socket);
+
+            if (SubscribedClients.Count > 0 && SubscribedClients.Contains(socketId))
+            {
+                return Task.FromResult("You're already subscribed.");
+            }
+                
             SubscribedClients.Add(socketId);
 
             return Task.CompletedTask;

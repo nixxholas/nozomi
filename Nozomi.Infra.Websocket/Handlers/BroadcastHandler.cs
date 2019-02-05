@@ -29,11 +29,5 @@ namespace Nozomi.Infra.Websocket.Handlers
  
              await SendMessageToAllAsync(message);
          }
-
-         public override Task SubscribeAsync(WebSocket socket, WebSocketReceiveResult result, byte[] buffer)
-         {
-             // An active handler should not have a subscription function
-             throw new System.NotImplementedException();
-         }
     }
  }
