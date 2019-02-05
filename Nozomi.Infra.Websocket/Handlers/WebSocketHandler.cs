@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Net.WebSockets;
 using System.Text;
 using System.Threading;
@@ -10,6 +11,8 @@ namespace Nozomi.Infra.Websocket.Handlers
     public abstract class WebSocketHandler
     {
         protected WebSocketConnectionManager WebSocketConnectionManager { get; set; }
+        
+        public abstract ICollection<string> SubscribedClients { get; set; }
 
         public WebSocketHandler(WebSocketConnectionManager webSocketConnectionManager)
         {
@@ -53,6 +56,22 @@ namespace Nozomi.Infra.Websocket.Handlers
             }
         }
 
+        /// <summary>
+        /// Enables the client to dispatch messages anytime.
+        /// </summary>
+        /// <param name="socket"></param>
+        /// <param name="result"></param>
+        /// <param name="buffer"></param>
+        /// <returns></returns>
         public abstract Task ReceiveAsync(WebSocket socket, WebSocketReceiveResult result, byte[] buffer);
+        
+        /// <summary>
+        /// Enables the client to dispatch signal of subscription.
+        /// </summary>
+        /// <param name="socket"></param>
+        /// <param name="result"></param>
+        /// <param name="buffer"></param>
+        /// <returns></returns>
+        public abstract Task SubscribeAsync(WebSocket socket, WebSocketReceiveResult result, byte[] buffer);
     }
 }
