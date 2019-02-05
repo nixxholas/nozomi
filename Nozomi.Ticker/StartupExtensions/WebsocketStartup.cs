@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Nozomi.Infra.Websocket.Extensions;
+using Nozomi.Infra.Websocket.Handlers.Tickers;
 
 namespace Nozomi.Ticker.StartupExtensions
 {
@@ -15,7 +16,7 @@ namespace Nozomi.Ticker.StartupExtensions
         {
             app.UseWebSockets();
 
-            //app.MapWebSocketManager();
+            app.MapWebSocketManager("/tickers", app.ApplicationServices.GetService<AllTickersHandler>());
         }
     }
 }
