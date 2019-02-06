@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
 using Newtonsoft.Json.Linq;
 using Nozomi.Data;
-using Nozomi.Service.Hubs.Interfaces;
+using Nozomi.Infra.Preprocessing.SignalR.Hubs.Interfaces;
 using Nozomi.Service.Services.Interfaces;
 
 namespace Nozomi.Service.Hubs
@@ -12,11 +12,11 @@ namespace Nozomi.Service.Hubs
     public class TickerHub : Hub<ITickerHubClient>
     {
         //private IEnumerable<CurrencyPair> _currencyPairs;
-        private readonly ICurrencyPairService _cpService;
+        //private readonly ICurrencyPairService _cpService;
 
         public TickerHub(ICurrencyPairService cpService)
         {
-            _cpService = cpService;
+            //_cpService = cpService;
         }
 
         /// <summary>
