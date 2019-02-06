@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Nozomi.Infra.Websocket.Handlers;
 using Nozomi.Infra.Websocket.Managers;
+using Nozomi.Infra.Websocket.Managers.Interfaces;
 using Nozomi.Infra.Websocket.Middlewares;
 
 namespace Nozomi.Infra.Websocket.Extensions
@@ -19,7 +20,7 @@ namespace Nozomi.Infra.Websocket.Extensions
         
         public static IServiceCollection AddWebSocketManager(this IServiceCollection services)
         {
-            services.AddTransient<WebSocketConnectionManager>();
+            services.AddTransient<IWebsocketConnectionManager, WebSocketConnectionManager>();
 
             foreach(var type in Assembly.GetEntryAssembly().ExportedTypes)
             {

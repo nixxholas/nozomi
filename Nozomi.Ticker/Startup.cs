@@ -16,6 +16,8 @@ using Nozomi.Base.Core.Configurations;
 using Nozomi.Base.Core.Helpers.Routing;
 using Nozomi.Data.WebModels.LoggingModels;
 using Nozomi.Infra.Preprocessing.Options;
+using Nozomi.Infra.Websocket.Extensions;
+using Nozomi.Infra.Websocket.Handlers.Tickers;
 using Nozomi.Repo.Data;
 using Nozomi.Repo.Identity.Data;
 using Nozomi.Service.HostedServices;
@@ -126,9 +128,6 @@ namespace Nozomi.Ticker
                 options.Secure = CookieSecurePolicy.Always;
             });
             
-            services.AddSignalR()
-                .AddMessagePackProtocol();
-            
             services.ConfigureCors();
 
             services.AddSession();
@@ -136,7 +135,7 @@ namespace Nozomi.Ticker
             services.AddMvc()
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
                 .AddSessionStateTempDataProvider();
-            
+
             // https://stackoverflow.com/questions/36358751/how-do-you-enforce-lowercase-routing-in-asp-net-core
             services.AddRouting(option =>
             {
@@ -187,12 +186,9 @@ namespace Nozomi.Ticker
             // Setup the hot collections
             app.ConfigureStatics();
 
-            app.UseSignalR(route =>
-            {
-                route.MapHub<TickerHub>("/ticker");
-            });
-
             app.UseSession();
+
+            app.UseWebSockets();
             
             app.UseMvc(routes =>
             {
@@ -200,7 +196,7 @@ namespace Nozomi.Ticker
                     name: "default",
                     template: "{controller=home}/{action=index}/{id?}");
             });
-            
+
             app.UseNozomiExceptionMiddleware();
 
             // Enable middleware to serve generated Swagger as a JSON endpoint.

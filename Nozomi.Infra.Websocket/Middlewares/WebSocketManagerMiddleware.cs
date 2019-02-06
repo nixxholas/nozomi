@@ -22,7 +22,7 @@ namespace Nozomi.Infra.Websocket.Middlewares
         public async Task Invoke(HttpContext context)
         {
             if(!context.WebSockets.IsWebSocketRequest)
-                return;
+                await _next.Invoke(context);
             
             var socket = await context.WebSockets.AcceptWebSocketAsync();
             await _webSocketHandler.OnConnected(socket);
@@ -42,9 +42,6 @@ namespace Nozomi.Infra.Websocket.Middlewares
                 }
 
             });
-            
-            //TODO - investigate the Kestrel exception thrown when this is the last middleware
-            //await _next.Invoke(context);
         }
 
         private async Task Receive(WebSocket socket, Action<WebSocketReceiveResult, byte[]> handleMessage)
