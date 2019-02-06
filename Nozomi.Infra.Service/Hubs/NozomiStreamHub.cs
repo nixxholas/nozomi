@@ -1,22 +1,29 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using System.Threading.Channels;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
 using Newtonsoft.Json.Linq;
+using Nozomi.Base.Core.Helpers.Enumerator;
 using Nozomi.Data;
+using Nozomi.Infra.Preprocessing.SignalR;
 using Nozomi.Infra.Preprocessing.SignalR.Hubs.Interfaces;
 using Nozomi.Service.Services.Interfaces;
 
 namespace Nozomi.Service.Hubs
 {
-    public class TickerHub : Hub<ITickerHubClient>
+    public class NozomiStreamHub : Hub<ITickerHubClient>
     {
+        public IDictionary<string, ICollection<NozomiSocketGroup>> _subscriptions;
         //private IEnumerable<CurrencyPair> _currencyPairs;
         //private readonly ICurrencyPairService _cpService;
 
-        public TickerHub(ICurrencyPairService cpService)
+        public NozomiStreamHub(ICurrencyPairService cpService)
         {
             //_cpService = cpService;
+            
+            // Initialize
+            _subscriptions = new Dictionary<string, ICollection<NozomiSocketGroup>>();
         }
 
         /// <summary>
@@ -37,6 +44,28 @@ namespace Nozomi.Service.Hubs
             });
             
             channel.Writer.Complete();
+        }
+
+        public async Task<NozomiResult<string>> Subscribe(NozomiSocketGroup group)
+        {
+            switch (group)
+            {
+                case NozomiSocketGroup.Tickers:
+                    if (_subscriptions.TryAdd(Context.ConnectionId, new List<NozomiSocketGroup>()
+                    {
+                        group // Add him in
+                    }))
+                    {
+                        return new NozomiResult<string>(NozomiResultType.Success,
+                            $"Subscribed to {group.GetDescription()}.");
+                    }
+                    
+                    return new NozomiResult<string>(NozomiResultType.Failed,
+                        "Incorrect group ID.");
+                default:
+                    return new NozomiResult<string>(NozomiResultType.Failed,
+                        "Incorrect group identifier.");
+            }
         }
         
 //        public async Task<NozomiResult<IEnumerable<CurrencyPair>>> Tickers(IEnumerable<CurrencyPair> currencyPairs = null)

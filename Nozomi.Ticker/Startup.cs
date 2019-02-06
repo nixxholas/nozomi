@@ -188,7 +188,7 @@ namespace Nozomi.Ticker
 
             app.UseSignalR(route =>
             {
-                route.MapHub<TickerHub>("/ticker");
+                route.MapHub<NozomiStreamHub>("/ticker");
             });
 
             app.UseSession();

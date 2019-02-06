@@ -32,10 +32,10 @@ namespace Nozomi.Service.HostedServices.RequestTypes
         private readonly ICurrencyPairComponentService _currencyPairComponentService;
         private readonly ICurrencyPairRequestService _currencyPairRequestService;
         private readonly IRequestLogService _requestLogService;
-        private readonly IHubContext<TickerHub, ITickerHubClient> _tickerHub;
+        private readonly IHubContext<NozomiStreamHub, ITickerHubClient> _tickerHub;
         
         public HttpPostCurrencyPairRequestSyncingService(IServiceProvider serviceProvider,
-            IHubContext<TickerHub, ITickerHubClient> tickerHub) : base(serviceProvider)
+            IHubContext<NozomiStreamHub, ITickerHubClient> tickerHub) : base(serviceProvider)
         {
             _currencyPairComponentService = _scope.ServiceProvider.GetRequiredService<ICurrencyPairComponentService>();
             _currencyPairRequestService = _scope.ServiceProvider.GetRequiredService<ICurrencyPairRequestService>();
