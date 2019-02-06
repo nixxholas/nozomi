@@ -1,4 +1,4 @@
-namespace Nozomi.Infra.Preprocessing.Options
+namespace Nozomi.Preprocessing.Options
 {
     public class SendgridOptions
     {

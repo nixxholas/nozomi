@@ -1,4 +1,4 @@
-﻿namespace Nozomi.Data.HubModels
+﻿namespace Nozomi.Infra.Preprocessing.SignalR.Hubs.Headers
 {
     public enum TickerHubHeader
     {

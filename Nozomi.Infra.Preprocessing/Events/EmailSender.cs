@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
-using Nozomi.Infra.Preprocessing.Options;
 using Nozomi.Preprocessing.Events.Interfaces;
+using Nozomi.Preprocessing.Options;
 using SendGrid;
 using SendGrid.Helpers.Mail;
 
