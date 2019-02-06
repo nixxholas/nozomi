@@ -134,8 +134,6 @@ namespace Nozomi.Ticker
             services.AddMvc()
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
                 .AddSessionStateTempDataProvider();
-
-            services.AddWebSocketManager();
             
             // https://stackoverflow.com/questions/36358751/how-do-you-enforce-lowercase-routing-in-asp-net-core
             services.AddRouting(option =>
@@ -188,9 +186,6 @@ namespace Nozomi.Ticker
             app.ConfigureStatics();
 
             app.UseSession();
-
-            app.UseWebSockets();
-            app.MapWebSocketManager();
             
             app.UseMvc(routes =>
             {
