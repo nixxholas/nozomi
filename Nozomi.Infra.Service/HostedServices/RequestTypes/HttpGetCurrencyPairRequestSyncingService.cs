@@ -22,12 +22,10 @@ using Nozomi.Base.Core.Helpers.Enumerator;
 using Nozomi.Base.Core.Helpers.Exponent;
 using Nozomi.Base.Core.Helpers.Native.Collections;
 using Nozomi.Data;
-using Nozomi.Data.HubModels.Interfaces;
 using Nozomi.Data.WebModels;
 using Nozomi.Data.WebModels.LoggingModels;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Service.HostedServices.RequestTypes.Interfaces;
-using Nozomi.Service.Hubs;
 using Nozomi.Service.Services;
 using Nozomi.Service.Services.Interfaces;
 using Nozomi.Service.Services.Requests;
@@ -56,16 +54,12 @@ namespace Nozomi.Service.HostedServices.RequestTypes
         private readonly ICurrencyPairComponentService _currencyPairComponentService;
         private readonly ICurrencyPairRequestService _currencyPairRequestService;
         private readonly IRequestLogService _requestLogService;
-        private readonly IHubContext<TickerHub, ITickerHubClient> _tickerHub;
 
-        public HttpGetCurrencyPairRequestSyncingService(IServiceProvider serviceProvider,
-            IHubContext<TickerHub, ITickerHubClient> tickerHub) : base(serviceProvider)
+        public HttpGetCurrencyPairRequestSyncingService(IServiceProvider serviceProvider) : base(serviceProvider)
         {
             _currencyPairComponentService = _scope.ServiceProvider.GetRequiredService<ICurrencyPairComponentService>();
             _currencyPairRequestService = _scope.ServiceProvider.GetRequiredService<ICurrencyPairRequestService>();
             _requestLogService = _scope.ServiceProvider.GetRequiredService<IRequestLogService>();
-
-            _tickerHub = tickerHub;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)

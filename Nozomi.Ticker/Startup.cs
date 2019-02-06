@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.WebSockets;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,14 +18,12 @@ using Nozomi.Base.Core.Helpers.Routing;
 using Nozomi.Data.WebModels.LoggingModels;
 using Nozomi.Infra.Preprocessing.Options;
 using Nozomi.Infra.Websocket.Extensions;
-using Nozomi.Infra.Websocket.Handlers.Tickers;
 using Nozomi.Repo.Data;
 using Nozomi.Repo.Identity.Data;
 using Nozomi.Service.HostedServices;
 using Nozomi.Service.HostedServices.RequestTypes;
 using Nozomi.Service.HostedServices.RequestTypes.Interfaces;
 using Nozomi.Service.HostedServices.StaticUpdater;
-using Nozomi.Service.Hubs;
 using Nozomi.Service.Identity.Stores;
 using Nozomi.Service.Middleware;
 using Nozomi.Service.Services;
@@ -136,6 +135,8 @@ namespace Nozomi.Ticker
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
                 .AddSessionStateTempDataProvider();
 
+            services.AddWebSocketManager();
+            
             // https://stackoverflow.com/questions/36358751/how-do-you-enforce-lowercase-routing-in-asp-net-core
             services.AddRouting(option =>
             {
@@ -189,6 +190,7 @@ namespace Nozomi.Ticker
             app.UseSession();
 
             app.UseWebSockets();
+            app.MapWebSocketManager();
             
             app.UseMvc(routes =>
             {
