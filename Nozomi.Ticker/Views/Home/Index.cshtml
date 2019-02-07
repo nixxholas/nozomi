@@ -482,3 +482,18 @@
 @*     </div> *@
 @*     <!-- End Multi-Platform Accessible --> *@
   </main>
+  
+@section Scripts
+{
+  <script>
+    const connection = new SignalR.HubConnectionBuilder()
+      .withUrl("/ticker")
+      .build();
+
+    connection.start().catch(err => document.write(err));
+
+    connection.on("tickers", (tickers) => {
+      console.dir(tickers);
+    });
+  </script>
+}
