@@ -1,6 +1,6 @@
 namespace Nozomi.Data.ResponseModels
 {
-    public class DiscoverabeTickerResponse : DistinctiveTickerResponse
+    public class DiscoverableTickerResponse : DistinctiveTickerResponse
     {
         public long CurrencyPairId { get; set; }
     }

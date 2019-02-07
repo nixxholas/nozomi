@@ -18,9 +18,9 @@ namespace Nozomi.Ticker.Areas.v1.CurrencyPair
     {
         private readonly ICurrencyPairService _currencyPairService;
         private readonly ITickerService _tickerService;
-        private readonly IHubContext<TickerHub> _tickerHubContext;
+        private readonly IHubContext<NozomiStreamHub> _tickerHubContext;
 
-        public CurrencyPairController(IHubContext<TickerHub> tickerHubContext, NozomiUserManager userManager,
+        public CurrencyPairController(IHubContext<NozomiStreamHub> tickerHubContext, NozomiUserManager userManager,
             ICurrencyPairService currencyPairService, ITickerService tickerService,
             ILogger<CurrencyPairController> logger)
             : base(logger, userManager)

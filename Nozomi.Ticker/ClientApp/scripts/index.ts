@@ -11,6 +11,8 @@ import * as Chartist from 'chartist';
 import 'chartist-plugin-tooltips';
 const chartist = Chartist;
 (<any> window).Chartist = chartist;
+import * as signalR from "@aspnet/signalr";
+(<any> window).SignalR = signalR;
 import 'jquery-validation';
 import 'jquery-migrate';
 import Typed from 'typed.js';

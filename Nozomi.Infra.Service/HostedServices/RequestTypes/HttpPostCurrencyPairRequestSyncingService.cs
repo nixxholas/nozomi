@@ -16,8 +16,8 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Nozomi.Base.Core.Helpers.Exponent;
-using Nozomi.Data.HubModels.Interfaces;
 using Nozomi.Data.WebModels.LoggingModels;
+using Nozomi.Infra.Preprocessing.SignalR.Hubs.Interfaces;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Service.Hubs;
 using Nozomi.Service.Services.Interfaces;
@@ -32,15 +32,12 @@ namespace Nozomi.Service.HostedServices.RequestTypes
         private readonly ICurrencyPairComponentService _currencyPairComponentService;
         private readonly ICurrencyPairRequestService _currencyPairRequestService;
         private readonly IRequestLogService _requestLogService;
-        private readonly IHubContext<TickerHub, ITickerHubClient> _tickerHub;
         
-        public HttpPostCurrencyPairRequestSyncingService(IServiceProvider serviceProvider,
-            IHubContext<TickerHub, ITickerHubClient> tickerHub) : base(serviceProvider)
+        public HttpPostCurrencyPairRequestSyncingService(IServiceProvider serviceProvider) : base(serviceProvider)
         {
             _currencyPairComponentService = _scope.ServiceProvider.GetRequiredService<ICurrencyPairComponentService>();
             _currencyPairRequestService = _scope.ServiceProvider.GetRequiredService<ICurrencyPairRequestService>();
             _requestLogService = _scope.ServiceProvider.GetRequiredService<IRequestLogService>();
-            _tickerHub = tickerHub;
         }
 
         public async Task<bool> Process(CurrencyPairRequest req)
@@ -399,7 +396,7 @@ namespace Nozomi.Service.HostedServices.RequestTypes
                 }
                 
                 // No naps taken
-                await Task.Delay(1000, stoppingToken);
+                await Task.Delay(10, stoppingToken);
             }
 
             _logger.LogWarning("HttpGetCurrencyPairRequestSyncingService background task is stopping.");

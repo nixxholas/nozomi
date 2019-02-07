@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using Nozomi.Data.ResponseModels;
 
@@ -29,5 +30,11 @@ namespace Nozomi.Preprocessing
         /// </summary>
         public static Dictionary<long, DistinctiveTickerResponse> CurrencyPairDictionary = 
             new Dictionary<long, DistinctiveTickerResponse>();
+        
+        /// <summary>
+        /// A collection containing ALL tickers unique to their source and ticker abbreviation.
+        /// </summary>
+        public static ICollection<UniqueTickerResponse> UniqueCurrencyPairs = 
+            new LinkedList<UniqueTickerResponse>();
     }
 }
