@@ -1,8 +1,10 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Channels;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
 using Nozomi.Base.Core.Helpers.Enumerator;
 using Nozomi.Data;
@@ -14,13 +16,15 @@ namespace Nozomi.Service.Hubs
 {
     public class NozomiStreamHub : Hub<ITickerHubClient>
     {
+        private readonly ILogger<NozomiStreamHub> _logger;
         public IDictionary<string, ICollection<NozomiSocketGroup>> _subscriptions;
         //private IEnumerable<CurrencyPair> _currencyPairs;
         //private readonly ICurrencyPairService _cpService;
 
-        public NozomiStreamHub(ICurrencyPairService cpService)
+        public NozomiStreamHub(ILogger<NozomiStreamHub> logger, ICurrencyPairService cpService)
         {
             //_cpService = cpService;
+            _logger = logger;
             
             // Initialize
             _subscriptions = new Dictionary<string, ICollection<NozomiSocketGroup>>();
@@ -46,6 +50,13 @@ namespace Nozomi.Service.Hubs
             channel.Writer.Complete();
         }
 
+        /// <summary>
+        /// Allows clients to subscribe to a specific group.
+        ///
+        /// Unsubscription is via .NET Core's native keep-alive rates at 10s.
+        /// </summary>
+        /// <param name="group"></param>
+        /// <returns></returns>
         public async Task<NozomiResult<string>> Subscribe(NozomiSocketGroup group)
         {
             switch (group)
@@ -66,6 +77,17 @@ namespace Nozomi.Service.Hubs
                     return new NozomiResult<string>(NozomiResultType.Failed,
                         "Incorrect group identifier.");
             }
+        }
+        
+        public override Task OnDisconnectedAsync(Exception exception)
+        {
+            if (_subscriptions.ContainsKey(Context.ConnectionId) && !_subscriptions.Remove(Context.ConnectionId))
+            {
+                _logger.LogCritical($"Failed to remove connectionId from subscriptions dictionary. " +
+                                    $"id: {Context.ConnectionId}");
+            }
+            
+            return base.OnDisconnectedAsync(exception);
         }
         
 //        public async Task<NozomiResult<IEnumerable<CurrencyPair>>> Tickers(IEnumerable<CurrencyPair> currencyPairs = null)
