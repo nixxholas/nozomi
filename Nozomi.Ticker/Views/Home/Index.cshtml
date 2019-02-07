@@ -201,7 +201,7 @@
   
   <div class="gradient-half-primary-v4">
     <div class="container">
-      <div class="row justify-content-lg-between align-items-md-center space-2">
+      <div class="row justify-content-lg-between align-items-md-center space-2" id="vueTableBody">
         <div class="col-md-6 col-lg-5 mb-5 mb-md-0">
           <h3 class="text-white font-weight-medium mb-1">Ready to get started?</h3>
           <p class="text-white-70 mb-0">Create your account and obtain the data you need.</p>
@@ -486,6 +486,14 @@
 @section Scripts
 {
   <script>
+    var vm = new Vue({
+      // options
+      el: "#vueTableBody",
+      data: {
+          tickerData: []
+      }
+    });
+    
     const connection = new SignalR.HubConnectionBuilder()
       .withUrl("/ticker")
       .build();
@@ -511,6 +519,7 @@
 
     connection.on("tickers", (tickers) => {
       console.dir(tickers);
+      vm.data = tickers;
     });
   </script>
 }

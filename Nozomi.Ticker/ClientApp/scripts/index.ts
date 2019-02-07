@@ -7,6 +7,8 @@ import * as $ from 'jquery';
 // https://stackoverflow.com/questions/48271232/how-to-expose-ui-jquery-ui-globally-with-webpack
 const jQuery = $;
 (<any> window).$ = (<any>window).jQuery = $;
+import Vue from 'vue';
+(<any> window).Vue = Vue;
 import * as Chartist from 'chartist';
 import 'chartist-plugin-tooltips';
 const chartist = Chartist;
