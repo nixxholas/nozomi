@@ -1,5 +1,7 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections;
+using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
+using Nozomi.Data.ResponseModels;
 
 namespace Nozomi.Infra.Preprocessing.SignalR.Hubs.Interfaces
 {
@@ -9,7 +11,7 @@ namespace Nozomi.Infra.Preprocessing.SignalR.Hubs.Interfaces
         /// Dispatches 
         /// </summary>
         /// <returns></returns>
-        Task Tickers();
+        Task Tickers(ICollection<UniqueTickerResponse> tickers);
         Task BroadcastData(JObject data);
     }
 }
