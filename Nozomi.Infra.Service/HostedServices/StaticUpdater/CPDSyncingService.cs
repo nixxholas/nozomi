@@ -3,16 +3,21 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Nozomi.Base.Core.Helpers.Enumerator;
 using Nozomi.Data.ResponseModels;
 using Nozomi.Data.WebModels;
+using Nozomi.Infra.Preprocessing.SignalR;
+using Nozomi.Infra.Preprocessing.SignalR.Hubs.Interfaces;
 using Nozomi.Preprocessing;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.Data;
+using Nozomi.Service.Hubs;
 
 namespace Nozomi.Service.HostedServices.StaticUpdater
 {
@@ -23,6 +28,7 @@ namespace Nozomi.Service.HostedServices.StaticUpdater
         IHostedService, IDisposable
     {
         private readonly NozomiDbContext _nozomiDbContext;
+        private readonly IHubContext<NozomiStreamHub, ITickerHubClient> _nozomiStreamHub;
         
 //        private static readonly Func<NozomiDbContext, IEnumerable<DiscoverabeTickerResponse>> 
 //            GetActiveDiscoverableTickerResponses =
@@ -75,9 +81,11 @@ namespace Nozomi.Service.HostedServices.StaticUpdater
                                     rc.RequestComponentDatum.Value)).ToList()
                         }));
         
-        public CPDSyncingService(IServiceProvider serviceProvider) : base(serviceProvider)
+        public CPDSyncingService(IServiceProvider serviceProvider,
+            IHubContext<NozomiStreamHub, ITickerHubClient> tickerHub) : base(serviceProvider)
         {
             _nozomiDbContext = _scope.ServiceProvider.GetService<NozomiDbContext>();
+            _nozomiStreamHub = tickerHub;
         }
 
         /// <summary>
@@ -101,7 +109,10 @@ namespace Nozomi.Service.HostedServices.StaticUpdater
                     var dtrList = GetActiveUniqueTickerResponses(_nozomiDbContext).ToList();
 
                     // Update UCP
-                    NozomiServiceConstants.UniqueCurrencyPairs = NozomiServiceConstants.UniqueCurrencyPairs != null ? dtrList : new List<UniqueTickerResponse>(dtrList);
+                    NozomiServiceConstants.UniqueCurrencyPairs = NozomiServiceConstants.UniqueCurrencyPairs != null 
+                        ? dtrList : new List<UniqueTickerResponse>(dtrList);
+                    // Push SignalR update
+                    await _nozomiStreamHub.Clients.Group(NozomiSocketGroup.Tickers.GetDescription()).Tickers(dtrList);
                     
                     foreach (var dtr in dtrList)
                     {
