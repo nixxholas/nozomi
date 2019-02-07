@@ -79,6 +79,13 @@ namespace Nozomi.Service.Hubs
             }
         }
         
+        public override Task OnConnectedAsync()
+        {
+            _logger.LogInformation($"Connected! ConnectionId: {Context.ConnectionId}");
+            
+            return base.OnConnectedAsync();
+        }
+        
         public override Task OnDisconnectedAsync(Exception exception)
         {
             if (_subscriptions.ContainsKey(Context.ConnectionId) && !_subscriptions.Remove(Context.ConnectionId))
