@@ -62,7 +62,24 @@ namespace Nozomi.Service.Hubs
             switch (group)
             {
                 case NozomiSocketGroup.Tickers:
-                    if (_subscriptions.TryAdd(Context.ConnectionId, new List<NozomiSocketGroup>()
+                    await Groups.AddToGroupAsync(Context.ConnectionId, group.GetDescription());
+
+                    if (_subscriptions.ContainsKey(Context.ConnectionId))
+                    {
+                        if (!_subscriptions[Context.ConnectionId].Contains(group))
+                        {
+                            _subscriptions[Context.ConnectionId].Add(group);
+                            
+                            return new NozomiResult<string>(NozomiResultType.Success,
+                                $"Subscribed to {group.GetDescription()}.");
+                        }
+                        else
+                        {
+                            // Already has been added if this is touched
+                            return new NozomiResult<string>(NozomiResultType.Failed, 
+                                "You're already subscribed.");
+                        }
+                    } else if (_subscriptions.TryAdd(Context.ConnectionId, new List<NozomiSocketGroup>()
                     {
                         group // Add him in
                     }))
