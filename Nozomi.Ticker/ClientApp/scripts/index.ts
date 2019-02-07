@@ -8,6 +8,8 @@ import * as $ from 'jquery';
 const jQuery = $;
 (<any> window).$ = (<any>window).jQuery = $;
 import Vue from 'vue';
+import BootstrapVue from 'bootstrap-vue';
+Vue.use(BootstrapVue); // Expose bootstrap-vue globally
 (<any> window).Vue = Vue;
 import * as Chartist from 'chartist';
 import 'chartist-plugin-tooltips';
