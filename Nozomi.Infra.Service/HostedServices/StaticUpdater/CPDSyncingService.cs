@@ -99,9 +99,14 @@ namespace Nozomi.Service.HostedServices.StaticUpdater
                 try
                 {
                     var dtrList = GetActiveUniqueTickerResponses(_nozomiDbContext).ToList();
+
+                    // Update UCP
+                    NozomiServiceConstants.UniqueCurrencyPairs = NozomiServiceConstants.UniqueCurrencyPairs != null ? dtrList : new List<UniqueTickerResponse>(dtrList);
                     
                     foreach (var dtr in dtrList)
                     {
+                        // Update CPD
+                        
                         // Update if it exists
                         if (NozomiServiceConstants.CurrencyPairDictionary.ContainsKey(dtr.CurrencyPairId))
                         {
