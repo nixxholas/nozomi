@@ -24,29 +24,56 @@ namespace Nozomi.Service.HostedServices.StaticUpdater
     {
         private readonly NozomiDbContext _nozomiDbContext;
         
-        private static readonly Func<NozomiDbContext, IEnumerable<DiscoverabeTickerResponse>> 
-            GetActiveDiscoverableTickerResponses =
-            EF.CompileQuery((NozomiDbContext context) =>
-                context.CurrencyPairRequests
-                    .AsQueryable()
-                    .AsNoTracking()
-                    .Where(r => r.DeletedAt == null && r.IsEnabled)
-                    .Include(r => r.RequestComponents)
-                    .ThenInclude(rc => rc.RequestComponentDatum)
-                    .Include(r => r.CurrencyPair)
-                    .ThenInclude(cp => cp.CurrencySource)
-                    .Where(r => r.RequestComponents.Any(rc => rc.IsEnabled && rc.DeletedAt == null
-                                                                           && rc.RequestComponentDatum != null))
-                    .Select(cpr => new DiscoverabeTickerResponse()
-                    {
-                        CurrencyPairId = cpr.CurrencyPairId,
-                        Exchange = cpr.CurrencyPair.CurrencySource.Name,
-                        ExchangeAbbrv = cpr.CurrencyPair.CurrencySource.Abbreviation,
-                        LastUpdated = cpr.RequestComponents.First().RequestComponentDatum.ModifiedAt,
-                        Properties = cpr.RequestComponents.Select(rc => 
-                            new KeyValuePair<string,string>(rc.ComponentType.ToString(), 
-                                rc.RequestComponentDatum.Value)).ToList()
-                    }));
+//        private static readonly Func<NozomiDbContext, IEnumerable<DiscoverabeTickerResponse>> 
+//            GetActiveDiscoverableTickerResponses =
+//            EF.CompileQuery((NozomiDbContext context) =>
+//                context.CurrencyPairRequests
+//                    .AsQueryable()
+//                    .AsNoTracking()
+//                    .Where(r => r.DeletedAt == null && r.IsEnabled)
+//                    .Include(r => r.RequestComponents)
+//                    .ThenInclude(rc => rc.RequestComponentDatum)
+//                    .Include(r => r.CurrencyPair)
+//                    .ThenInclude(cp => cp.CurrencySource)
+//                    .Where(r => r.RequestComponents.Any(rc => rc.IsEnabled && rc.DeletedAt == null
+//                                                                           && rc.RequestComponentDatum != null))
+//                    .Select(cpr => new DiscoverabeTickerResponse()
+//                    {
+//                        CurrencyPairId = cpr.CurrencyPairId,
+//                        Exchange = cpr.CurrencyPair.CurrencySource.Name,
+//                        ExchangeAbbrv = cpr.CurrencyPair.CurrencySource.Abbreviation,
+//                        LastUpdated = cpr.RequestComponents.First().RequestComponentDatum.ModifiedAt,
+//                        Properties = cpr.RequestComponents.Select(rc => 
+//                            new KeyValuePair<string,string>(rc.ComponentType.ToString(), 
+//                                rc.RequestComponentDatum.Value)).ToList()
+//                    }));
+        
+        private static readonly Func<NozomiDbContext, IEnumerable<UniqueTickerResponse>> 
+            GetActiveUniqueTickerResponses =
+                EF.CompileQuery((NozomiDbContext context) =>
+                    context.CurrencyPairRequests
+                        .AsQueryable()
+                        .AsNoTracking()
+                        .Where(r => r.DeletedAt == null && r.IsEnabled)
+                        .Include(r => r.RequestComponents)
+                        .ThenInclude(rc => rc.RequestComponentDatum)
+                        .Include(r => r.CurrencyPair)
+                        .ThenInclude(cp => cp.CurrencySource)
+                        .Where(r => r.RequestComponents.Any(rc => rc.IsEnabled && rc.DeletedAt == null
+                                                                               && rc.RequestComponentDatum != null))
+                        .Select(cpr => new UniqueTickerResponse()
+                        {
+                            CurrencyPairId = cpr.CurrencyPairId,
+                            TickerAbbreviation = cpr.CurrencyPair.PartialCurrencyPairs
+                                .FirstOrDefault(pcp => pcp.IsMain).Currency.Abbrv +
+                            cpr.CurrencyPair.PartialCurrencyPairs.FirstOrDefault(pcp => !pcp.IsMain).Currency.Abbrv,
+                            Exchange = cpr.CurrencyPair.CurrencySource.Name,
+                            ExchangeAbbrv = cpr.CurrencyPair.CurrencySource.Abbreviation,
+                            LastUpdated = cpr.RequestComponents.First().RequestComponentDatum.ModifiedAt,
+                            Properties = cpr.RequestComponents.Select(rc => 
+                                new KeyValuePair<string,string>(rc.ComponentType.ToString(), 
+                                    rc.RequestComponentDatum.Value)).ToList()
+                        }));
         
         public CPDSyncingService(IServiceProvider serviceProvider) : base(serviceProvider)
         {
@@ -71,7 +98,7 @@ namespace Nozomi.Service.HostedServices.StaticUpdater
             {
                 try
                 {
-                    var dtrList = GetActiveDiscoverableTickerResponses(_nozomiDbContext).ToList();
+                    var dtrList = GetActiveUniqueTickerResponses(_nozomiDbContext).ToList();
                     
                     foreach (var dtr in dtrList)
                     {
