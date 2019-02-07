@@ -77,7 +77,7 @@ namespace Nozomi.Ticker.StartupExtensions
                             .ThenInclude(cp => cp.CurrencySource)
                         .Where(r => r.RequestComponents.Any(rc => rc.IsEnabled && rc.DeletedAt == null
                                                                   && rc.RequestComponentDatum != null))
-                        .Select(cpr => new DiscoverabeTickerResponse()
+                        .Select(cpr => new DiscoverableTickerResponse()
                         {
                             CurrencyPairId = cpr.CurrencyPairId,
                             Exchange = cpr.CurrencyPair.CurrencySource.Name,
