@@ -136,7 +136,7 @@ namespace Nozomi.Service.HostedServices.StaticUpdater
                 }
                 
                 // No naps taken
-                await Task.Delay(100, stoppingToken);
+                await Task.Delay(10, stoppingToken);
             }
 
             _logger.LogWarning("CPDSyncingService background task is stopping.");
