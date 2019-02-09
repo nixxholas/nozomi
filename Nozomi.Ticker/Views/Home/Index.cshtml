@@ -202,6 +202,7 @@
   <div class="gradient-half-primary-v4">
     <div class="container">
       <div class="row justify-content-lg-between align-items-md-center space-2" id="vueTableBody">
+        <b-table hover :items="data"></b-table>
         <div class="col-md-6 col-lg-5 mb-5 mb-md-0">
           <h3 class="text-white font-weight-medium mb-1">Ready to get started?</h3>
           <p class="text-white-70 mb-0">Create your account and obtain the data you need.</p>
@@ -488,39 +489,40 @@
   <script>
     var vm = new Vue({
       // options
-      el: "#vueTableBody",
+      //el: "#vueTableBody",
       // Just dish any random variable in for now
       data: {
           tickerData: []
+      },
+      created: function() {
+        const connection = new SignalR.HubConnectionBuilder()
+          .withUrl("/ticker")
+          .build();
+
+        // https://github.com/aspnet/SignalR/issues/3294
+        connection.start().then(() => {
+          connection.invoke("Subscribe", 1).catch(err => console.error(err.toString()));
+        }).catch(err => document.write(err));
+
+        function start() {
+          try {
+            connection.start();
+            console.log('connected');
+          } catch (err) {
+            console.log(err);
+            setTimeout(() => start(), 5000);
+          }
+        };
+
+        connection.onclose(() => {
+          start();
+        });
+
+        connection.on("tickers", (tickers) => {
+          //console.dir(tickers);
+          this.tickerData = tickers;
+        });
       }
-    });
-    
-    const connection = new SignalR.HubConnectionBuilder()
-      .withUrl("/ticker")
-      .build();
-
-    // https://github.com/aspnet/SignalR/issues/3294
-    connection.start().then(() => {
-      connection.invoke("Subscribe", 1).catch(err => console.error(err.toString()));
-    }).catch(err => document.write(err));
-
-    function start() {
-      try {
-        connection.start();
-        console.log('connected');
-      } catch (err) {
-        console.log(err);
-        setTimeout(() => start(), 5000);
-      }
-    };
-
-    connection.onclose(() => {
-      start();
-    });
-
-    connection.on("tickers", (tickers) => {
-      console.dir(tickers);
-      vm.data = tickers;
     });
   </script>
 }
