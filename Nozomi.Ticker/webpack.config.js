@@ -89,6 +89,7 @@ module.exports = {
             jquery: 'jquery',
             'window.jQuery': 'jquery',
             SVGInjector : 'svg-injector',
+            vue: 'vue/dist/vue.common.js',
             Typed: 'typed.js'
         }),
         new HtmlWebpackPlugin({
