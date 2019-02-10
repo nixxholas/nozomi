@@ -33,6 +33,7 @@ namespace Nozomi.Ticker.StartupExtensions
             services.AddTransient<ICurrencyPairComponentService, CurrencyPairComponentService>();
             services.AddTransient<ICurrencyPairRequestService, CurrencyPairRequestService>();
             services.AddTransient<IRequestService, RequestService>();
+            services.AddTransient<IRcdHistoricItemService, RcdHistoricItemService>();
             services.AddTransient<IRequestLogService, RequestLogService>();
             services.AddTransient<ISourceService, SourceService>();
             services.AddTransient<ITickerService, TickerService>();
