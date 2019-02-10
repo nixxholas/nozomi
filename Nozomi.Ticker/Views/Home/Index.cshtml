@@ -202,14 +202,14 @@
   <div class="gradient-half-primary-v4">
     <div class="container">
       <div class="row justify-content-lg-between align-items-md-center space-2" id="vueTableBody">
-        <b-table hover :items="data"></b-table>
+        {{ tickerData }}
         <div class="col-md-6 col-lg-5 mb-5 mb-md-0">
           <h3 class="text-white font-weight-medium mb-1">Ready to get started?</h3>
           <p class="text-white-70 mb-0">Create your account and obtain the data you need.</p>
         </div>
 
         <div class="col-md-6 col-lg-5 text-md-right">
-          <a class="btn btn-success btn-wide transition-3d-hover mb-1 mb-sm-0 mr-sm-1" 
+          <a class="btn btn-success btn-wide transition-3d-hover mb-1 mb-sm-0 mr-sm-1"
              asp-controller="Account" asp-action="Register">Sign Up</a>
           <a class="btn text-primary btn-white btn-wide transition-3d-hover mb-1 mb-sm-0" href="#">Learn More</a>
         </div>
@@ -486,19 +486,20 @@
   
 @section Scripts
 {
+  @* <script src="https://cdn.jsdelivr.net/npm/vue"></script> *@
   <script>
-    var vm = new Vue({
+    const vm = new Vue({
       // options
-      //el: "#vueTableBody",
+      el: "#vueTableBody",
       // Just dish any random variable in for now
       data: {
-          tickerData: []
+        tickerData: []
       },
       created: function() {
         const connection = new SignalR.HubConnectionBuilder()
           .withUrl("/ticker")
           .build();
-
+            
         // https://github.com/aspnet/SignalR/issues/3294
         connection.start().then(() => {
           connection.invoke("Subscribe", 1).catch(err => console.error(err.toString()));
@@ -518,10 +519,11 @@
           start();
         });
 
-        connection.on("tickers", (tickers) => {
-          //console.dir(tickers);
-          this.tickerData = tickers;
-        });
+        connection.on("tickers",
+          (tickers) => {
+            //console.dir(tickers);
+            this.tickerData = tickers;
+          });
       }
     });
   </script>
