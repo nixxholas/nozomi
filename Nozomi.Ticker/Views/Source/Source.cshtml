@@ -1,0 +1,61 @@
+@using Newtonsoft.Json
+@model Nozomi.Data.ViewModels.Source.ViewSourceModel
+
+
+<div class="position-relative" id="sourceBody">
+    <div class="container">
+        <div class="row justify-content-lg-between height-lg-100vh">
+            <div class="col-lg align-self-center space-2 space-md-3 space-lg-0">
+                <h1>@Model.Source.Name</h1>
+                
+                <hr/>
+                
+                <b-card style="width: 100%" title="Currencies">
+                    <p class="card-text">
+                        <b-table responsive
+                                 :fields="currencyDataFields" :items="currencyData">
+                            <!-- A virtual composite column -->
+                            <template slot="actions" slot-scope="datum">
+                                <a class="btn btn-sm btn-primary transition-3d-hover"
+                                   :href="'/currency/' + datum.item.Id">
+                                    View tickers
+                                </a>
+                            </template>
+                        </b-table>
+                    </p>
+                </b-card>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+    <script>
+        const vm = new Vue({
+            // options
+            el: "#sourceBody",
+            // Just dish any random variable in for now
+            data: {
+                currencyDataFields: [
+                    {
+                        key: 'Name',
+                        label: 'Name',
+                        sortable: true
+                    },
+                    {
+                        key: 'CurrencyType',
+                        label: 'Type',
+                        sortable: true
+                    },
+                    {
+                        key: 'actions',
+                        label: "",
+                        sortable: false
+                    }
+                ],
+                currencyData: @Html.Raw(JsonConvert.SerializeObject(Model.Source.Currencies))
+            }
+        });
+    </script>
+}
