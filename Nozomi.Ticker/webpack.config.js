@@ -24,6 +24,9 @@ module.exports = {
         }
     },
     resolve: {
+        alias: {
+            'vue': 'vue/dist/vue.esm.js' // Use the full build
+        },
         extensions: [".js", ".ts", ".tsx", ".scss", ".css"]
     },
     module: {
@@ -89,7 +92,7 @@ module.exports = {
             jquery: 'jquery',
             'window.jQuery': 'jquery',
             SVGInjector : 'svg-injector',
-            vue: 'vue/dist/vue.common.js',
+            //Vue: 'vue/dist/vue.min.js',
             Typed: 'typed.js'
         }),
         new HtmlWebpackPlugin({
