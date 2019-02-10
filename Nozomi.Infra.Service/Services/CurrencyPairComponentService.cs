@@ -20,9 +20,13 @@ namespace Nozomi.Service.Services
 {
     public class CurrencyPairComponentService : BaseService<CurrencyPairComponentService, NozomiDbContext>, ICurrencyPairComponentService
     {
+        private IRcdHistoricItemService _rcdHistoricItemService { get; set; }
+        
         public CurrencyPairComponentService(ILogger<CurrencyPairComponentService> logger, 
+            IRcdHistoricItemService rcdHistoricItemService,
             IUnitOfWork<NozomiDbContext> unitOfWork, IDistributedCache distributedCache) : base(logger, unitOfWork)
         {
+            _rcdHistoricItemService = rcdHistoricItemService;
         }
 
         public ICollection<RequestComponent> AllByRequestId(long requestId, bool includeNested = false)
@@ -105,6 +109,9 @@ namespace Nozomi.Service.Services
             if (pairToUpd?.RequestComponentDatum != null && 
                 pairToUpd.RequestComponentDatum.HasAbnormalValue(val))
             {
+                // Save old data first
+                _rcdHistoricItemService.Push(pairToUpd.RequestComponentDatum);
+                
                 pairToUpd.RequestComponentDatum.Value = val.ToString(CultureInfo.InvariantCulture);
                 
                 _unitOfWork.GetRepository<RequestComponent>().Update(pairToUpd);
