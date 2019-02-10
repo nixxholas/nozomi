@@ -76,7 +76,8 @@ namespace Nozomi.Service.HostedServices.StaticUpdater
                             Exchange = cpr.CurrencyPair.CurrencySource.Name,
                             ExchangeAbbrv = cpr.CurrencyPair.CurrencySource.Abbreviation,
                             LastUpdated = cpr.RequestComponents.First().RequestComponentDatum.ModifiedAt,
-                            Properties = cpr.RequestComponents.Select(rc => 
+                            Properties = cpr.RequestComponents
+                                .OrderByDescending(rc => rc.ComponentType).Select(rc => 
                                 new KeyValuePair<string,string>(rc.ComponentType.ToString(), 
                                     rc.RequestComponentDatum.Value)).ToList()
                         }));
