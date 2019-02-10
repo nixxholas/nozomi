@@ -10,7 +10,5 @@ namespace Nozomi.Data.ResponseModels.Source
         public string Name { get; set; }
         
         public ICollection<CurrencyResponse> Currencies { get; set; }
-        
-        public ICollection<UniqueTickerResponse> Tickers { get; set; }
     }
 }

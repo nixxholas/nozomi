@@ -1,11 +1,13 @@
 using System.Collections.Generic;
 using Nozomi.Data.CurrencyModels;
+using Nozomi.Data.ResponseModels.Source;
 
 namespace Nozomi.Service.Events.Interfaces
 {
     public interface ISourceEvent
     {
-        
+        SourceResponse Get(long id);
+        SourceResponse Get(string abbreviation);
         
         IEnumerable<dynamic> GetAllNested();
 

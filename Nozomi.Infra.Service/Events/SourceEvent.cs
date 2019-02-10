@@ -3,6 +3,9 @@ using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data.CurrencyModels;
+using Nozomi.Data.ResponseModels;
+using Nozomi.Data.ResponseModels.Currency;
+using Nozomi.Data.ResponseModels.Source;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Data;
@@ -78,6 +81,64 @@ namespace Nozomi.Service.Events
                         name = cs.Name
                     });
             }
+        }
+
+        public SourceResponse Get(long id)
+        {
+            return _unitOfWork.GetRepository<Source>()
+                .GetQueryable()
+                .Where(s => s.DeletedAt == null && s.IsEnabled && s.Id.Equals(id))
+                .Include(s => s.Currencies)
+                    .ThenInclude(c => c.CurrencyType)
+                .Include(s => s.CurrencyPairs)
+                    .ThenInclude(cp => cp.PartialCurrencyPairs)
+                        .ThenInclude(pcp => pcp.Currency)
+                .Select(s => new SourceResponse
+                {
+                    Abbreviation = s.Abbreviation,
+                    Name = s.Name,
+                    Currencies = s.Currencies
+                        .Where(c => c.IsEnabled && c.DeletedAt == null)
+                        .Select(c => new CurrencyResponse
+                        {
+                            Id = c.Id,
+                            CurrencyTypeId = c.CurrencyTypeId,
+                            CurrencyType = c.CurrencyType.Name,
+                            Abbrv = c.Abbrv,
+                            Name = c.Name
+                        })
+                        .ToList()
+                })
+                .SingleOrDefault();
+        }
+
+        public SourceResponse Get(string abbreviation)
+        {
+            return _unitOfWork.GetRepository<Source>()
+                .GetQueryable()
+                .Where(s => s.DeletedAt == null && s.IsEnabled && s.Abbreviation.Equals(abbreviation))
+                .Include(s => s.Currencies)
+                .ThenInclude(c => c.CurrencyType)
+                .Include(s => s.CurrencyPairs)
+                .ThenInclude(cp => cp.PartialCurrencyPairs)
+                .ThenInclude(pcp => pcp.Currency)
+                .Select(s => new SourceResponse
+                {
+                    Abbreviation = s.Abbreviation,
+                    Name = s.Name,
+                    Currencies = s.Currencies
+                        .Where(c => c.IsEnabled && c.DeletedAt == null)
+                        .Select(c => new CurrencyResponse
+                        {
+                            Id = c.Id,
+                            CurrencyTypeId = c.CurrencyTypeId,
+                            CurrencyType = c.CurrencyType.Name,
+                            Abbrv = c.Abbrv,
+                            Name = c.Name
+                        })
+                        .ToList()
+                })
+                .SingleOrDefault();
         }
 
         public IEnumerable<dynamic> GetAllNested()
