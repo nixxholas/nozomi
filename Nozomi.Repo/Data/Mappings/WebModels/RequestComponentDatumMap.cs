@@ -15,8 +15,12 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
             
             entityTypeBuilder.Property(rc => rc.Value).HasDefaultValue(string.Empty);
 
-            entityTypeBuilder.HasOne(rcd => rcd.RequestComponent).WithOne(rc => rc.RequestComponentDatum)
+            entityTypeBuilder.HasOne(rcd => rcd.RequestComponent)
+                .WithOne(rc => rc.RequestComponentDatum)
                 .HasForeignKey<RequestComponentDatum>(rcd => rcd.RequestComponentId).OnDelete(DeleteBehavior.Cascade);
+            entityTypeBuilder.HasMany(rcd => rcd.RcdHistoricItems)
+                .WithOne(rcdhi => rcdhi.RequestComponentDatum)
+                .HasForeignKey(rcdhi => rcdhi.RequestComponentDatumId).OnDelete(DeleteBehavior.Cascade);
         }
     }
 }
