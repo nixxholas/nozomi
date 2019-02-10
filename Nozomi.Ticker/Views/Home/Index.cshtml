@@ -8,8 +8,18 @@
   
 <div class="position-relative">
   <div class="gradient-overlay-half-dark-v2">
-    <div class="container">
-      <div class="row justify-content-lg-between height-lg-100vh align-items-md-center space-2" id="vueTableBody">
+    <div class="container justify-content-lg-between height-lg-100vh align-items-md-center space-4">
+      <div class="row">
+        <div class="mb-0 p-3">
+          <h2 class="text-white font-weight-normal">
+            We make data<br>
+            <span class="text-warning">
+              accessible.
+            </span>
+          </h2>
+        </div>
+      </div>
+      <div class="row" id="vueTableBody">
         <b-card style="width: 100%" title="Market Data">
           <p class="card-text">
             <b-table responsive
@@ -208,6 +218,8 @@
             this.tickerData = tickers;
             this.tickerDataRows = tickers.length;
           });
+      },
+      mounted: function() {
       }
     });
   </script>
