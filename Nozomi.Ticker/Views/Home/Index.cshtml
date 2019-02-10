@@ -141,7 +141,7 @@
       <div class="row justify-content-lg-between align-items-md-center space-2" id="vueTableBody">
         <b-card style="width:100%" title="Market Data">
           <p class="card-text">
-            <b-table 
+            <b-table responsive
               :per-page="tickerDataRowsPerPage" :current-page="currentTickerDataPage"
               :fields="tickerDataFields" :items="tickerData">
               <!-- A virtual composite column -->
@@ -154,6 +154,10 @@
                 <b-badge class="mr-2" variant="dark" v-for="prop in datum.item.properties">
                   <b>{{ prop.key }}</b> {{ prop.value }}
                 </b-badge>
+              </template>
+              <!-- A virtual composite column -->
+              <template slot="actions" slot-scope="datum">
+                <b-button :variant="primary" asp-controller="Home">I am a Link</b-button>
               </template>
             </b-table>
             <b-row>
@@ -287,6 +291,11 @@
           {
             key: 'properties',
             label: "Data",
+            sortable: false
+          },
+          {
+            key: 'actions',
+            label: "",
             sortable: false
           }
         ],
