@@ -7,6 +7,7 @@ Vue.use(BootstrapVue); // Expose bootstrap-vue globally
 (<any> window).Vue = Vue;
 
 import * as moment from 'moment';
+import 'moment-timezone';
 (<any> window).moment = moment;
 
 import '../styles/index.scss';

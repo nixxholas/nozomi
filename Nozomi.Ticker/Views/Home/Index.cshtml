@@ -141,7 +141,14 @@
       <div class="row justify-content-lg-between align-items-md-center space-2" id="vueTableBody">
         <b-card style="width:100%" title="Market Data">
           <p class="card-text">
-            <b-table :fields="tickerDataFields" :items="tickerData">
+            <b-table 
+              :per-page="tickerDataRowsPerPage" :current-page="currentTickerDataPage"
+              :fields="tickerDataFields" :items="tickerData">
+              <!-- A virtual composite column -->
+              <template slot="lastUpdated" slot-scope="datum">
+                @* // https://stackoverflow.com/questions/32540667/moment-js-utc-to-local-time *@
+                {{ moment.utc(datum.item.lastUpdated).fromNow() }}
+              </template>
               <!-- A virtual composite column -->
               <template slot="properties" slot-scope="datum">
                 <b-badge class="mr-2" variant="dark" v-for="prop in datum.item.properties">
@@ -149,6 +156,12 @@
                 </b-badge>
               </template>
             </b-table>
+            <b-row>
+              <b-col md="6" class="my-1">
+                <b-pagination :total-rows="tickerDataRows" :per-page="tickerDataRowsPerPage" 
+                              v-model="currentTickerDataPage" class="my-0" />
+              </b-col>
+            </b-row>
           </p>
         </b-card>
         @* <div class="col-md-6 col-lg-5 mb-5 mb-md-0"> *@
@@ -277,7 +290,10 @@
             sortable: false
           }
         ],
-        tickerData: []
+        currentTickerDataPage: 1,
+        tickerData: [],
+        tickerDataRowsPerPage: 20,
+        tickerDataRows: 0
       },
       created: function() {
         const connection = new SignalR.HubConnectionBuilder()
@@ -307,6 +323,7 @@
           (tickers) => {
             //console.dir(tickers);
             this.tickerData = tickers;
+            this.tickerDataRows = tickers.length;
           });
       }
     });
