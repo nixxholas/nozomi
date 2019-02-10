@@ -24,6 +24,17 @@ namespace Nozomi.Service.Services
                 .OrderBy(rcdhi => rcdhi.ModifiedAt)
                 .Any())
             {
+                var latestRcdhi = _unitOfWork.GetRepository<RcdHistoricItem>()
+                    .GetQueryable()
+                    .OrderByDescending(rcdhi => rcdhi.ModifiedAt).FirstOrDefault();
+                
+                // Let's make it more efficient by checking if the price has changed
+                if (latestRcdhi != null && latestRcdhi.Value.Equals(rcd.Value))
+                {
+                    // Move on bro
+                    return true;
+                }
+                
                 // Push it
                 _unitOfWork.GetRepository<RcdHistoricItem>().Add(new RcdHistoricItem
                 {
