@@ -135,150 +135,64 @@
       <div class="col-lg-6 gradient-half-primary-v1 position-absolute top-0 left-0 min-height-600 height-lg-100vh"></div>
     </div>
     <!-- End Hero Section -->
-
-@*   @{ *@
-@*     var ethusd = ethusdTickers.Data.FirstOrDefault(); *@
-@* *@
-@*     if (ethusd != null) *@
-@*     { *@
-@*       <hr class="my-0"> *@
-@*        *@
-@*     <!-- Graphics Section --> *@
-@*     <div id="graphicsSection" class="container space-1"> *@
-@*       <div class="row align-items-lg-center"> *@
-@*         <div class="col-lg-3 mb-7 mb-lg-0"> *@
-@*           <!-- Coins Name --> *@
-@*           <div class="media align-items-center"> *@
-@*             <span class="btn btn-icon btn-soft-warning rounded-circle mr-3"> *@
-@*               <span class="fab fa-ethereum btn-icon__inner"></span> *@
-@*             </span> *@
-@*             <div class="media-body"> *@
-@*               <h3 class="h5 mb-0">Ethereum</h3> *@
-@*               <span class="d-block text-secondary text-uppercase">ETHUSD (@ethusd.Exchange)</span> *@
-@*             </div> *@
-@*           </div> *@
-@*           <!-- End Coins Name --> *@
-@*         </div> *@
-@* *@
-@*         <div class="col-lg-9"> *@
-@*           <!-- Market Capitalization List --> *@
-@*           <ul class="list-inline row justify-content-lg-end text-secondary text-uppercase mb-0"> *@
-@*             <li class="list-inline-item col-6 col-sm-4 col-md-auto u-ver-divider u-ver-divider--xs u-ver-divider--none-md px-md-7 mx-0 mb-4 mb-md-0"> *@
-@*               <small class="d-block">Market Cap</small> *@
-@*               <a class="d-block text-success" href="#"> *@
-@*                 1.3649% (Mock Data) *@
-@*                 <span class="fas fa-angle-up ml-2"></span> *@
-@*               </a> *@
-@*             </li> *@
-@*             <li class="list-inline-item col-6 col-sm-4 col-md-auto u-ver-divider u-ver-divider--xs u-ver-divider--none-md px-md-7 mx-0 mb-4 mb-md-0"> *@
-@*               <small class="d-block">Price</small> *@
-@*               <a class="d-block" href="#"> *@
-@*                 @ethusd.Properties.SingleOrDefault(kvp => kvp.Key.Equals("Bid")).Value *@
-@*               </a> *@
-@*             </li> *@
-@*             <li class="list-inline-item col-6 col-sm-4 col-md-auto u-ver-divider u-ver-divider--xs u-ver-divider--none-md px-md-7 mx-0 mb-4 mb-md-0"> *@
-@*               <small class="d-block">Volume <small>(24h)</small></small> *@
-@*               <a class="d-block text-success" href="#"> *@
-@*                 5.12% *@
-@*                 <span class="fas fa-angle-up ml-2"></span> *@
-@*               </a> *@
-@*             </li> *@
-@*             <li class="list-inline-item col-6 col-sm-4 col-md-auto pl-md-7 mx-0 mb-4 mb-md-0"> *@
-@*               <small class="d-block">Change <small>(24h)</small></small> *@
-@*               <a class="d-block text-danger" href="#"> *@
-@*                 -3.38% *@
-@*                 <span class="fas fa-angle-down ml-2"></span> *@
-@*               </a> *@
-@*             </li> *@
-@*           </ul> *@
-@*           <!-- End Market Capitalization List --> *@
-@*         </div> *@
-@*       </div> *@
-@*     </div> *@
-@*     <!-- End Graphics Section --> *@
-@*     } *@
-@*   } *@
   
   <div class="gradient-half-primary-v4">
     <div class="container">
       <div class="row justify-content-lg-between align-items-md-center space-2" id="vueTableBody">
-        {{ tickerData }}
-        <div class="col-md-6 col-lg-5 mb-5 mb-md-0">
-          <h3 class="text-white font-weight-medium mb-1">Ready to get started?</h3>
-          <p class="text-white-70 mb-0">Create your account and obtain the data you need.</p>
-        </div>
-
-        <div class="col-md-6 col-lg-5 text-md-right">
-          <a class="btn btn-success btn-wide transition-3d-hover mb-1 mb-sm-0 mr-sm-1"
-             asp-controller="Account" asp-action="Register">Sign Up</a>
-          <a class="btn text-primary btn-white btn-wide transition-3d-hover mb-1 mb-sm-0" href="#">Learn More</a>
-        </div>
+        <b-card style="width:100%" title="Market Data">
+          <p class="card-text">
+            <b-table :fields="tickerDataFields" :items="tickerData">
+              <!-- A virtual composite column -->
+              <template slot="properties" slot-scope="datum">
+                <b-badge class="mr-2" variant="dark" v-for="prop in datum.item.properties">
+                  <b>{{ prop.key }}</b> {{ prop.value }}
+                </b-badge>
+              </template>
+            </b-table>
+          </p>
+        </b-card>
+        @* <div class="col-md-6 col-lg-5 mb-5 mb-md-0"> *@
+        @*   <h3 class="text-white font-weight-medium mb-1">Ready to get started?</h3> *@
+        @*   <p class="text-white-70 mb-0">Create your account and obtain the data you need.</p> *@
+        @* </div> *@
+        @* *@
+        @* <div class="col-md-6 col-lg-5 text-md-right"> *@
+        @*   <a class="btn btn-success btn-wide transition-3d-hover mb-1 mb-sm-0 mr-sm-1" *@
+        @*      asp-controller="Account" asp-action="Register">Sign Up</a> *@
+        @*   <a class="btn text-primary btn-white btn-wide transition-3d-hover mb-1 mb-sm-0" href="#">Learn More</a> *@
+        @* </div> *@
       </div>
     </div>
   </div>
 
   <hr class="my-0">
-  
-    @* <!-- CTA --> *@
-    @* <div class="gradient-overlay-half-primary-v1 bg-img-hero" style="background-image: url(../../assets/img/1920x400/img1.jpg);"> *@
-    @*   <div class="container space-2"> *@
-    @*     <div class="row align-items-md-center"> *@
-    @*       <div class="col-md-8 mb-7 mb-md-0"> *@
-    @*         <!-- Content --> *@
-    @*         <div class="media"> *@
-    @*           <span class="btn btn-lg btn-icon btn-soft-light rounded-circle mr-4"> *@
-    @*             <span class="fab fa-bitcoin btn-icon__inner"></span> *@
-    @*           </span> *@
-    @*           <div class="media-body"> *@
-    @*             <h2 class="text-white font-weight-semi-bold">What Happened to <span class="text-warning">Bitcoin?</span></h2> *@
-    @*             <p class="text-white-70 mb-0"><strong class="text-white">The Bitcoin Core (BTC)</strong> – network is in trouble due to high fees and slow transaction times. Bitcoin Cash (BCH) is the upgrade that solves these problems.</p> *@
-    @*           </div> *@
-    @*         </div> *@
-    @*         <!-- End Content --> *@
-    @*       </div> *@
-    @* *@
-    @*       <div class="col-md-4 text-md-right"> *@
-    @*         <!-- Button Link --> *@
-    @*         <a class="btn btn-warning transition-3d-hover" href="#"> *@
-    @*           Cash with Our Guide *@
-    @*           <span class="fas fa-angle-right ml-2"></span> *@
-    @*         </a> *@
-    @*         <!-- End Button Link --> *@
-    @*       </div> *@
-    @*     </div> *@
-    @*   </div> *@
-    @* </div> *@
-    @* <!-- End CTA --> *@
 
-    <!-- Mockup Block -->
-    <div class="container space-2 space-md-3">
-      <div class="row align-items-lg-center">
-        <div class="col-lg-5 mb-7 mb-lg-0">
-          <!-- Title -->
-          <div class="pr-lg-4">
-            <span class="btn btn-icon btn-soft-primary rounded-circle mb-3">
-              <span class="small font-weight-semi-bold btn-icon__inner">01.</span>
-            </span>
-            <h2 class="h4 font-weight-semi-bold text-primary">Cost effective</h2>
-            <p class="mb-0">Our plans are technically limitless.. You don't have to pay any overcharge because
-              there isn't one!</p>
-          </div>
-          <!-- End Title -->
+  <div class="container space-2 space-md-3">
+    <div class="row align-items-lg-center">
+      <div class="col-lg-5 mb-7 mb-lg-0">
+        <!-- Title -->
+        <div class="pr-lg-4">
+          <span class="btn btn-icon btn-soft-primary rounded-circle mb-3">
+            <span class="small font-weight-semi-bold btn-icon__inner">01.</span>
+          </span>
+          <h2 class="h4 font-weight-semi-bold text-primary">Cost effective</h2>
+          <p class="mb-0">Our plans are technically limitless.. You don't have to pay any overcharge because
+            there isn't one!</p>
         </div>
+        <!-- End Title -->
+      </div>
 
-        <div id="SVGmarketingStrategy" class="col-lg-7 svg-preloader">
-          <!-- SVG Icon -->
-          <figure class="ie-marketing-strategy">
-            <img class="js-svg-injector" src="../../assets/svg/illustrations/marketing-strategy.svg" alt="Image Description"
-                 data-parent="#SVGmarketingStrategy">
-          </figure>
-          <!-- End SVG Icon -->
-        </div>
+      <div id="SVGmarketingStrategy" class="col-lg-7 svg-preloader">
+        <!-- SVG Icon -->
+        <figure class="ie-marketing-strategy">
+          <img class="js-svg-injector" src="../../assets/svg/illustrations/marketing-strategy.svg" alt="Image Description"
+               data-parent="#SVGmarketingStrategy">
+        </figure>
+        <!-- End SVG Icon -->
       </div>
     </div>
-    <!-- End Mockup Block -->
-
-    <!-- Mockup Block -->
+  </div>
+  
     <div class="container space-1">
       <div class="row align-items-lg-center">
         <div class="col-lg-5 order-lg-2 mb-7 mb-lg-0">
@@ -304,13 +218,10 @@
         </div>
       </div>
     </div>
-    <!-- End Mockup Block -->
 
-    <!-- Mockup Block -->
     <div class="container space-2 space-md-3">
       <div class="row align-items-lg-center">
         <div class="col-lg-5 mb-7 mb-lg-0">
-          <!-- Title -->
           <div class="pr-lg-4">
             <span class="btn btn-icon btn-soft-primary rounded-circle mb-3">
               <span class="small font-weight-semi-bold btn-icon__inner">03.</span>
@@ -319,180 +230,53 @@
             <p class="mb-0">Nozomi provides a handful of nifty features that will empower you to create powerful
               analytical results to help with your business based on the historical data we've obtained.</p>
           </div>
-          <!-- End Title -->
         </div>
 
         <div id="SVGbusinessAnalysis" class="col-lg-7 svg-preloader">
-          <!-- SVG Icon -->
           <figure class="ie-business-analysis">
             <img class="js-svg-injector" src="../../assets/svg/illustrations/business-analysis.svg" alt="SVG Illustration"
                  data-parent="#SVGbusinessAnalysis">
           </figure>
-          <!-- End SVG Icon -->
         </div>
       </div>
     </div>
-    <!-- End Mockup Block -->
-
-@*     <!-- Testimonials --> *@
-@*     <div class="gradient-half-primary-v1"> *@
-@*       <div class="container space-2"> *@
-@*         <!-- Avatar --> *@
-@*         <div class="media d-block d-md-flex"> *@
-@*           <div class="u-lg-avatar mr-md-7 mb-7 mb-md-0"> *@
-@*             <img class="img-fluid rounded-circle" src="../../assets/img/160x160/img2.jpg" alt="Image Description"> *@
-@*           </div> *@
-@*           <div class="media-body"> *@
-@*             <!-- SVG Quote --> *@
-@*             <figure class="mb-3"> *@
-@*               <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="40px" height="40px" *@
-@*                  viewBox="0 0 8 8" style="enable-background:new 0 0 8 8;" xml:space="preserve"> *@
-@*                 <path class="fill-warning" d="M3,1.3C2,1.7,1.2,2.7,1.2,3.6c0,0.2,0,0.4,0.1,0.5c0.2-0.2,0.5-0.3,0.9-0.3c0.8,0,1.5,0.6,1.5,1.5c0,0.9-0.7,1.5-1.5,1.5 *@
-@*                   C1.4,6.9,1,6.6,0.7,6.1C0.4,5.6,0.3,4.9,0.3,4.5c0-1.6,0.8-2.9,2.5-3.7L3,1.3z M7.1,1.3c-1,0.4-1.8,1.4-1.8,2.3 *@
-@*                   c0,0.2,0,0.4,0.1,0.5c0.2-0.2,0.5-0.3,0.9-0.3c0.8,0,1.5,0.6,1.5,1.5c0,0.9-0.7,1.5-1.5,1.5c-0.7,0-1.1-0.3-1.4-0.8 *@
-@*                   C4.4,5.6,4.4,4.9,4.4,4.5c0-1.6,0.8-2.9,2.5-3.7L7.1,1.3z"/> *@
-@*               </svg> *@
-@*             </figure> *@
-@*             <!-- End SVG Quote --> *@
-@* *@
-@*             <blockquote class="lead text-white mb-4">I love to have extra money. If I have time I invest by myself, but sometimes you want to have time for your family or friends, especially when you are on holidays. It's sooo great to come back rested, tanned etc and with extra money at your accounts. Good work, guys!</blockquote> *@
-@*             <h4 class="h5 text-white">Samantha Wilson</h4> *@
-@*             <span class="d-block text-warning pl-3">&#8212; Durbanville, South Africa</span> *@
-@*           </div> *@
-@*         </div> *@
-@*         <!-- End Avatar --> *@
-@*       </div> *@
-@*     </div> *@
-@*     <!-- End Testimonials --> *@
-
-@*     <!-- Multi-Platform Accessible --> *@
-@*     <div id="SVGcrossPlatformHero" class="svg-preloader gradient-half-primary-v1 overflow-hidden"> *@
-@*       <div class="container space-2 space-md-3"> *@
-@*         <div class="row"> *@
-@*           <div class="col-lg-5"> *@
-@*             <!-- Title --> *@
-@*             <div class="pr-md-4 mb-7"> *@
-@*               <span class="btn btn-lg btn-icon btn-white text-primary rounded-circle mb-4"> *@
-@*                 <span class="fas fa-mobile-alt btn-icon__inner"></span> *@
-@*               </span> *@
-@*               <h2 class="text-white font-weight-semi-bold">Multi-platform <span class="text-warning">accessible</span></h2> *@
-@*               <p class="text-white-70">Our solution is unique as it is accessible by iOS, Android, Windows and Mac in a cross-platform system.</p> *@
-@*             </div> *@
-@*             <!-- End Title --> *@
-@* *@
-@*             <h3 class="h6 text-white">Download for:</h3> *@
-@* *@
-@*             <!-- Download Buttons --> *@
-@*             <div class="row mx-gutters-2"> *@
-@*               <div class="col-sm-6 col-md-4 col-lg-5 mb-3"> *@
-@*                 <button type="button" class="btn btn-block btn-warning transition-3d-hover"> *@
-@*                   <span class="fab fa-apple mr-2"></span> *@
-@*                   iOS *@
-@*                 </button> *@
-@*               </div> *@
-@* *@
-@*               <div class="col-sm-6 col-md-4 col-lg-5 mb-3"> *@
-@*                 <button type="button" class="btn btn-block text-primary btn-white transition-3d-hover"> *@
-@*                   <span class="fab fa-windows mr-2"></span> *@
-@*                   Windows *@
-@*                 </button> *@
-@*               </div> *@
-@*             </div> *@
-@*             <!-- End Download Buttons --> *@
-@* *@
-@*             <!-- Download Buttons --> *@
-@*             <div class="row mx-gutters-2"> *@
-@*               <div class="col-sm-6 col-md-4 col-lg-5 mb-3"> *@
-@*                 <button type="button" class="btn btn-block text-primary btn-white transition-3d-hover"> *@
-@*                   <span class="fab fa-android mr-2"></span> *@
-@*                   Android *@
-@*                 </button> *@
-@*               </div> *@
-@* *@
-@*               <div class="col-sm-6 col-md-4 col-lg-5 mb-3"> *@
-@*                 <button type="button" class="btn btn-block text-primary btn-white transition-3d-hover"> *@
-@*                   <span class="fab fa-apple mr-2"></span> *@
-@*                   Mac *@
-@*                 </button> *@
-@*               </div> *@
-@*             </div> *@
-@*             <!-- End Download Buttons --> *@
-@*           </div> *@
-@*         </div> *@
-@* *@
-@*         <!-- Mockup Devices v4 --> *@
-@*         <div class="u-devices-v4"> *@
-@*           <div class="d-none d-lg-flex flex-lg-wrap u-devices-v4__content"> *@
-@*             <!-- SVG Horizontal Tablet Mockup --> *@
-@*             <div class="align-self-end u-devices-v4__tablet-ver mb-4"> *@
-@*               <div class="u-devices-v4__tablet-svg"> *@
-@*                 <figure class="ie-devices-v4-tablet-horizontal"> *@
-@*                   <img class="js-svg-injector" src="../../assets/svg/components/tablet-horizontal.svg" alt="Image Description" *@
-@*                        data-img-paths='[ *@
-@*                          {"targetId": "#SVGhorizontalTabletImg1", "newPath": "../../assets/img/711x533/img1.jpg"} *@
-@*                        ]' *@
-@*                        data-parent="#SVGcrossPlatformHero"> *@
-@*                 </figure> *@
-@*               </div> *@
-@*             </div> *@
-@*             <!-- End SVG Horizontal Tablet Mockup --> *@
-@* *@
-@*             <!-- SVG Vertical Tablet Mockup --> *@
-@*             <div class="u-devices-v4__tablet mb-4"> *@
-@*               <div class="u-devices-v4__tablet-svg"> *@
-@*                 <figure class="ie-devices-v4-tablet"> *@
-@*                   <img class="js-svg-injector" src="../../assets/svg/components/tablet.svg" alt="Image Description" *@
-@*                        data-img-paths='[ *@
-@*                          {"targetId": "#SVGtabletImg1", "newPath": "../../assets/img/533x711/img4.jpg"} *@
-@*                        ]' *@
-@*                        data-parent="#SVGcrossPlatformHero"> *@
-@*                 </figure> *@
-@*               </div> *@
-@*             </div> *@
-@*             <!-- End SVG Vertical Tablet Mockup --> *@
-@* *@
-@*             <!-- SVG Laptop Mockup --> *@
-@*             <div class="u-devices-v4__laptop"> *@
-@*               <figure class="ie-devices-v4-laptop"> *@
-@*                 <img class="js-svg-injector" src="../../assets/svg/components/laptop.svg" alt="Image Description" *@
-@*                      data-img-paths='[ *@
-@*                        {"targetId": "#SVGlaptopImg1", "newPath": "../../assets/img/1618x1010/img1.jpg"} *@
-@*                      ]' *@
-@*                      data-parent="#SVGcrossPlatformHero"> *@
-@*               </figure> *@
-@*             </div> *@
-@*             <!-- SVG Laptop Mockup --> *@
-@* *@
-@*             <!-- SVG Phone Mockup --> *@
-@*             <div class="align-self-start u-devices-v4__phone"> *@
-@*               <div class="u-devices-v4__phone-svg"> *@
-@*                 <figure class="ie-devices-v4-iphone"> *@
-@*                   <img class="js-svg-injector" src="../../assets/svg/components/iphone.svg" alt="Image Description" *@
-@*                        data-img-paths='[ *@
-@*                          {"targetId": "#SVGiphoneImg1", "newPath": "../../assets/img/282x500/img7.jpg"} *@
-@*                        ]' *@
-@*                        data-parent="#SVGcrossPlatformHero"> *@
-@*                 </figure> *@
-@*               </div> *@
-@*             </div> *@
-@*             <!-- End SVG Phone Mockup --> *@
-@*           </div> *@
-@*           <!-- End Mockup Devices v4 --> *@
-@*         </div> *@
-@*       </div> *@
-@*     </div> *@
-@*     <!-- End Multi-Platform Accessible --> *@
   </main>
   
 @section Scripts
 {
-  @* <script src="https://cdn.jsdelivr.net/npm/vue"></script> *@
   <script>
     const vm = new Vue({
       // options
       el: "#vueTableBody",
       // Just dish any random variable in for now
       data: {
+        tickerDataFields: [
+          {
+            key: 'currencyPairId',
+            label: '#',
+            sortable: true
+          },
+          {
+            key: 'exchange',
+            label: 'Exchange',
+            sortable: true
+          },
+          {
+            key: 'tickerAbbreviation',
+            label: 'Pair',
+            sortable: true
+          },
+          {
+            key: 'lastUpdated',
+            label: 'Last Updated',
+            sortable: false
+          },
+          {
+            key: 'properties',
+            label: "Data",
+            sortable: false
+          }
+        ],
         tickerData: []
       },
       created: function() {
