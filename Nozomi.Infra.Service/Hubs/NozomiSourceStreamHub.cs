@@ -21,7 +21,8 @@ namespace Nozomi.Service.Hubs
         private readonly ISourceEvent _sourceEvent;
         private readonly ITickerEvent _tickerEvent;
 
-        private IDictionary<string, ICollection<string>> _subscriptions;
+        public static IDictionary<string, ICollection<string>> _subscriptions = 
+            new Dictionary<string, ICollection<string>>();
         
         public NozomiSourceStreamHub(ILogger<NozomiSourceStreamHub> logger,
             ISourceEvent sourceEvent, ITickerEvent tickerEvent)
@@ -29,9 +30,6 @@ namespace Nozomi.Service.Hubs
             _logger = logger;
             _sourceEvent = sourceEvent;
             _tickerEvent = tickerEvent;
-            
-            // Initialization
-            _subscriptions = new Dictionary<string, ICollection<string>>();
         }
 
         public async Task<NozomiResult<string>> Subscribe(string sourceAbbrv)

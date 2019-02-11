@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Nozomi.Data.CurrencyModels;
 using Nozomi.Data.ResponseModels;
 
 namespace Nozomi.Preprocessing
@@ -36,5 +37,10 @@ namespace Nozomi.Preprocessing
         /// </summary>
         public static ICollection<UniqueTickerResponse> UniqueCurrencyPairs = 
             new LinkedList<UniqueTickerResponse>();
+        
+        /// <summary>
+        /// A collection containing ALL active and enabled sources.
+        /// </summary>
+        public static IEnumerable<Source> Sources { get; set; } 
     }
 }
