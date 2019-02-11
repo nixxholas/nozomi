@@ -65,7 +65,7 @@ namespace Nozomi.Service.HostedServices.StaticUpdater
                             .Tickers(source.CurrencyPairs
                                 .Select(cp => new UniqueTickerResponse
                                 {
-                                    ExchangeAbbrv = cp.PartialCurrencyPairs
+                                    TickerAbbreviation = cp.PartialCurrencyPairs
                                         .FirstOrDefault(pcp => pcp.IsMain)
                                         ?.Currency.Abbrv + 
                                                     cp.PartialCurrencyPairs
