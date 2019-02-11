@@ -1,6 +1,8 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data.CurrencyModels;
 using Nozomi.Data.ResponseModels;
@@ -81,6 +83,14 @@ namespace Nozomi.Service.Events
                         name = cs.Name
                     });
             }
+        }
+
+        public bool SourceExists(string abbrv)
+        {
+            return _unitOfWork.GetRepository<Source>()
+                .Get(s => s.DeletedAt == null &&
+                          s.Abbreviation.Equals(abbrv, StringComparison.InvariantCultureIgnoreCase))
+                .Any();
         }
 
         public SourceResponse Get(long id)

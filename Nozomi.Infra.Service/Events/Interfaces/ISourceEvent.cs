@@ -6,6 +6,8 @@ namespace Nozomi.Service.Events.Interfaces
 {
     public interface ISourceEvent
     {
+        bool SourceExists(string abbrv);
+        
         SourceResponse Get(long id);
         SourceResponse Get(string abbreviation);
         
