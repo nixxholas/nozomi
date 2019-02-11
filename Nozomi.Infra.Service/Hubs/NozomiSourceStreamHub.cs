@@ -18,17 +18,15 @@ namespace Nozomi.Service.Hubs
     {
         public const string NozomiSourceStreamHubStr = "NSSHub_"; 
         private readonly ILogger<NozomiSourceStreamHub> _logger;
-        private readonly ISourceEvent _sourceEvent;
         private readonly ITickerEvent _tickerEvent;
 
         public static IDictionary<string, ICollection<string>> _subscriptions = 
             new Dictionary<string, ICollection<string>>();
         
         public NozomiSourceStreamHub(ILogger<NozomiSourceStreamHub> logger,
-            ISourceEvent sourceEvent, ITickerEvent tickerEvent)
+            ITickerEvent tickerEvent)
         {
             _logger = logger;
-            _sourceEvent = sourceEvent;
             _tickerEvent = tickerEvent;
         }
 
