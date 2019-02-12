@@ -1,0 +1,143 @@
+@using Newtonsoft.Json
+@model Nozomi.Data.ViewModels.Source.ViewSourceModel
+
+
+<div class="position-relative" id="sourceBody">
+    <div class="container">
+        <div class="row justify-content-lg-between height-lg-100vh">
+            <div class="col-lg align-self-center space-2 space-md-3 space-lg-0">
+                <h1>@Model.Source.Name</h1>
+
+                <hr/>
+
+                <b-card style="width: 100%" title="Currencies">
+                    <p class="card-text">
+                        <b-table responsive
+                                 :per-page="tickerDataRowsPerPage" :current-page="currentTickerDataPage"
+                                 :fields="tickerDataFields" :items="tickerData">
+                            <!-- A virtual composite column -->
+                            <template slot="lastUpdated" slot-scope="datum">
+                                @* // https://stackoverflow.com/questions/32540667/moment-js-utc-to-local-time *@
+                                {{ moment.utc(datum.item.lastUpdated).fromNow() }}
+                            </template>
+                            <!-- A virtual composite column -->
+                            <template slot="properties" slot-scope="datum">
+                                <b-badge class="mr-2" variant="dark" v-for="prop in datum.item.properties">
+                                    <b>{{ prop.key }}</b> {{ prop.value }}
+                                </b-badge>
+                            </template>
+                            <!-- A virtual composite column -->
+                            <template slot="actions" slot-scope="datum">
+                            </template>
+                        </b-table>
+                        <b-row>
+                            <b-col md="6" class="my-1">
+                                <b-pagination :total-rows="tickerDataRows" :per-page="tickerDataRowsPerPage"
+                                              v-model="currentTickerDataPage" class="my-0"/>
+                            </b-col>
+                        </b-row>
+                    </p>
+                </b-card>
+
+                <b-card class="mt-4" style="width: 100%" title="Currencies">
+                    <p class="card-text">
+                        <b-table responsive
+                                 :fields="currencyDataFields" :items="currencyData">
+                            <!-- A virtual composite column -->
+                            <template slot="actions" slot-scope="datum">
+                                <a class="btn btn-sm btn-primary transition-3d-hover"
+                                   :href="'/currency/' + datum.item.Id">
+                                    View tickers
+                                </a>
+                            </template>
+                        </b-table>
+                    </p>
+                </b-card>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+    <script>
+        const vm = new Vue({
+            // options
+            el: "#sourceBody",
+            // Just dish any random variable in for now
+            data: {
+                currencyDataFields: [
+                    {
+                        key: 'Name',
+                        label: 'Name',
+                        sortable: true
+                    },
+                    {
+                        key: 'CurrencyType',
+                        label: 'Type',
+                        sortable: true
+                    },
+                    {
+                        key: 'actions',
+                        label: "",
+                        sortable: false
+                    }
+                ],
+                currencyData: @Html.Raw(JsonConvert.SerializeObject(Model.Source.Currencies)),
+                tickerDataFields: [
+                    {
+                        key: 'tickerAbbreviation',
+                        label: 'Pair',
+                        sortable: true
+                    },
+                    {
+                        key: 'properties',
+                        label: "Data",
+                        sortable: false
+                    },
+                    {
+                        key: 'actions',
+                        label: "",
+                        sortable: false
+                    }
+                ],
+                tickerData: [],
+                tickerDataRows: 0,
+                currentTickerDataPage: 1,
+                tickerDataRowsPerPage: 20
+            },
+            mounted: function() {
+                const connection = new SignalR.HubConnectionBuilder()
+                    .withUrl("/source")
+                    .build();
+
+                // https://github.com/aspnet/SignalR/issues/3294
+                connection.start().then(() => {
+                    connection.invoke("Subscribe", @Html.Raw("'" + Model.Source.Abbreviation + "'"))
+                        .catch(err => console.error(err.toString()));
+                }).catch(err => document.write(err));
+
+                function start() {
+                    try {
+                        connection.start();
+                        console.log('connected');
+                    } catch (err) {
+                        console.log(err);
+                        setTimeout(() => start(), 5000);
+                    }
+                };
+
+                connection.onclose(() => {
+                    start();
+                });
+
+                connection.on("tickers",
+                    (tickers) => {
+                        //console.dir(tickers);
+                        this.tickerData = tickers;
+                        this.tickerDataRows = tickers.length;
+                    });
+            }
+        });
+    </script>
+}

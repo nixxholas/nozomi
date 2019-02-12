@@ -67,7 +67,7 @@ namespace Nozomi.Service.HostedServices.StaticUpdater
                         .ThenInclude(cp => cp.CurrencySource)
                         .Where(r => r.RequestComponents.Any(rc => rc.IsEnabled && rc.DeletedAt == null
                                                                                && rc.RequestComponentDatum != null))
-                        .Select(cpr => new UniqueTickerResponse()
+                        .Select(cpr => new UniqueTickerResponse
                         {
                             CurrencyPairId = cpr.CurrencyPairId,
                             TickerAbbreviation = cpr.CurrencyPair.PartialCurrencyPairs
@@ -83,7 +83,8 @@ namespace Nozomi.Service.HostedServices.StaticUpdater
                         }));
         
         public CPDSyncingService(IServiceProvider serviceProvider,
-            IHubContext<NozomiStreamHub, ITickerHubClient> tickerHub) : base(serviceProvider)
+            IHubContext<NozomiStreamHub, ITickerHubClient> tickerHub, 
+            IHubContext<NozomiSourceStreamHub, ISourceHubClient> nozomiSourceStreamHub) : base(serviceProvider)
         {
             _nozomiDbContext = _scope.ServiceProvider.GetService<NozomiDbContext>();
             _nozomiStreamHub = tickerHub;
@@ -108,12 +109,6 @@ namespace Nozomi.Service.HostedServices.StaticUpdater
                 try
                 {
                     var dtrList = GetActiveUniqueTickerResponses(_nozomiDbContext).ToList();
-
-                    // Update UCP
-                    NozomiServiceConstants.UniqueCurrencyPairs = NozomiServiceConstants.UniqueCurrencyPairs != null 
-                        ? dtrList : new List<UniqueTickerResponse>(dtrList);
-                    // Push SignalR update
-                    await _nozomiStreamHub.Clients.Group(NozomiSocketGroup.Tickers.GetDescription()).Tickers(dtrList);
                     
                     foreach (var dtr in dtrList)
                     {
@@ -130,6 +125,12 @@ namespace Nozomi.Service.HostedServices.StaticUpdater
                             NozomiServiceConstants.CurrencyPairDictionary.Add(dtr.CurrencyPairId, dtr);
                         }
                     }
+
+                    // Update UCP
+                    NozomiServiceConstants.UniqueCurrencyPairs = NozomiServiceConstants.UniqueCurrencyPairs != null 
+                        ? dtrList : new List<UniqueTickerResponse>(dtrList);
+                    // Push SignalR update
+                    await _nozomiStreamHub.Clients.Group(NozomiSocketGroup.Tickers.GetDescription()).Tickers(dtrList);
                 }
                 catch (Exception ex)
                 {

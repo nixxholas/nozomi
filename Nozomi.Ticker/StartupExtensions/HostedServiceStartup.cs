@@ -18,6 +18,7 @@ namespace Nozomi.Ticker.StartupExtensions
             services.AddHostedService<WebsocketCurrencyPairRequestSyncingService>();
             services.AddHostedService<CPDSyncingService>();
             services.AddHostedService<CSSSyncingService>();
+            services.AddHostedService<SourceSyncingService>();
             services.AddHostedService<TSDSyncingService>();
         }
     }

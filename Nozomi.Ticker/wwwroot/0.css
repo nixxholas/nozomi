@@ -14743,6 +14743,24 @@ table {
 .force-full-width {
   width: 100% !important; }
 
+@media (min-width: 992px) {
+  .height-lg-200vh {
+    height: 200vh; }
+  .min-height-lg-200vh {
+    min-height: 200vh; } }
+
+@media (min-width: 992px) {
+  .height-lg-300vh {
+    height: 300vh; }
+  .min-height-lg-300vh {
+    min-height: 300vh; } }
+
+@media (min-width: 992px) {
+  .height-lg-1000vh {
+    height: 1000vh; }
+  .min-height-lg-1000vh {
+    min-height: 1000vh; } }
+
 /*------------------------------------
   Markup
 ------------------------------------*/

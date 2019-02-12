@@ -105,10 +105,23 @@ namespace Nozomi.Service.Hubs
         
         public override Task OnDisconnectedAsync(Exception exception)
         {
-            if (_subscriptions.ContainsKey(Context.ConnectionId) && !_subscriptions.Remove(Context.ConnectionId))
+            if (_subscriptions.ContainsKey(Context.ConnectionId))
             {
-                _logger.LogCritical($"Failed to remove connectionId from subscriptions dictionary. " +
-                                    $"id: {Context.ConnectionId}");
+                // Clear subs
+                foreach (var sub in _subscriptions[Context.ConnectionId])
+                {
+                    Groups.RemoveFromGroupAsync(Context.ConnectionId, sub.GetDescription())
+                        .Wait();
+                }
+                
+                // Clear connection
+                if (!_subscriptions.Remove(Context.ConnectionId))
+                {
+                    _logger.LogCritical($"Failed to remove connectionId from subscriptions dictionary. " +
+                                        $"id: {Context.ConnectionId}");
+                    return Task.FromException(new HubException("Unable to unsubscribe from your source " +
+                                                               "subscriptions."));
+                }
             }
             
             return base.OnDisconnectedAsync(exception);

@@ -24,7 +24,6 @@ import * as signalR from "@aspnet/signalr";
 (<any> window).SignalR = signalR;
 import 'jquery-validation';
 import 'jquery-migrate';
-import Typed from 'typed.js';
 import 'popper.js';
 import 'bootstrap';
 import 'bootstrap-select';
