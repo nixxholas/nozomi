@@ -75,8 +75,9 @@ namespace Nozomi.Service.HostedServices.StaticUpdater
                                     LastUpdated = cp.ModifiedAt,
                                     Properties = cp.CurrencyPairRequests
                                         .FirstOrDefault(cpr => cpr.IsEnabled && cpr.DeletedAt == null)
-                                        ?.RequestComponents
-                                        .Select(rc => new KeyValuePair<string, string>(rc.QueryComponent, 
+                                        ?.RequestComponents.OrderByDescending(rc => rc.ComponentType)
+                                        .Select(rc => 
+                                            new KeyValuePair<string, string>(rc.QueryComponent.GetDescription(), 
                                             rc.RequestComponentDatum.Value))
                                         .ToList()
                                 }).ToList());
