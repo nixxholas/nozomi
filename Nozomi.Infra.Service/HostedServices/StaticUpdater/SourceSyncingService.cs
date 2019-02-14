@@ -33,6 +33,7 @@ namespace Nozomi.Service.HostedServices.StaticUpdater
                             .ThenInclude(cp => cp.CurrencyPairRequests)
                                 .ThenInclude(cpr => cpr.RequestComponents)
                                     .ThenInclude(rc => rc.RequestComponentDatum)
+                                        .ThenInclude(rcd => rcd.RcdHistoricItems)
                         .Include(s => s.CurrencyPairs)
                             .ThenInclude(cp => cp.PartialCurrencyPairs)
                                 .ThenInclude(pcp => pcp.Currency));
