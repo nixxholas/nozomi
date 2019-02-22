@@ -9,6 +9,8 @@ using Nozomi.Service.Identity.Events;
 using Nozomi.Service.Identity.Events.Auth;
 using Nozomi.Service.Identity.Events.Auth.Interfaces;
 using Nozomi.Service.Identity.Events.Interfaces;
+using Nozomi.Service.Services.Memory;
+using Nozomi.Service.Services.Memory.Interfaces;
 
 namespace Nozomi.Ticker.StartupExtensions
 {
@@ -27,6 +29,8 @@ namespace Nozomi.Ticker.StartupExtensions
             services.AddScoped<ISourceEvent, SourceEvent>();
             services.AddScoped<ITickerEvent, TickerEvent>();
             services.AddScoped<IWebsocketRequestEvent, WebsocketRequestEvent>();
+
+            services.AddSingleton<IHistoricalDataEvent, HistoricalDataEvent>();
         }
     }
 }
