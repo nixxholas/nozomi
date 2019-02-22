@@ -10,7 +10,7 @@ namespace Nozomi.Data.ResponseModels
         
         public DateTime LastUpdated { get; set; }
         
-        public decimal Price { get; set; }
+        public decimal WeeklyAvgPrice { get; set; }
         
         public decimal DailyVolume { get; set; }
     }
