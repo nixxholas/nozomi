@@ -70,7 +70,7 @@ namespace Nozomi.Service.Services.Memory
                                 ))
                             .Sum()
                     })
-                .ToList();
+                .ToList() ?? null;
         }
     }
 }

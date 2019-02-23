@@ -5,9 +5,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data;
 using Nozomi.Data.AreaModels.v1.CurrencySource;
+using Nozomi.Data.ResponseModels;
 using Nozomi.Service.Events.Interfaces;
 using Nozomi.Service.Identity.Managers;
 using Nozomi.Service.Services.Interfaces;
+using Nozomi.Service.Services.Memory.Interfaces;
 
 namespace Nozomi.Ticker.Areas.v1.Source
 {
@@ -15,12 +17,22 @@ namespace Nozomi.Ticker.Areas.v1.Source
     {
         private readonly ISourceEvent _sourceEvent;
         private readonly ISourceService _sourceService;
+        private readonly IHistoricalDataEvent _historicalDataEvent;
         
         public SourceApiApiController(ILogger<SourceApiApiController> logger, NozomiUserManager userManager,
-            ISourceEvent sourceEvent, ISourceService sourceService) : base(logger, userManager)
+            ISourceEvent sourceEvent,IHistoricalDataEvent historicalDataEvent, ISourceService sourceService) 
+            : base(logger, userManager)
         {
             _sourceEvent = sourceEvent;
+            _historicalDataEvent = historicalDataEvent;
             _sourceService = sourceService;
+        }
+
+        [HttpGet]
+        public NozomiResult<ICollection<DistinctiveCurrencyResponse>> History(long sourceId)
+        {
+            return new NozomiResult<ICollection<DistinctiveCurrencyResponse>>(
+                _historicalDataEvent.GetSimpleCurrencyHistory(sourceId));
         }
 
         [HttpGet]
