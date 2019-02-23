@@ -24,7 +24,6 @@ namespace Nozomi.Service.HostedServices.StaticUpdater
     public class SourceSyncingService : BaseHostedService<SourceSyncingService>, IHostedService, IDisposable
     {
         private readonly NozomiDbContext _nozomiDbContext;
-        private readonly IHistoricalDataEvent _historicalDataEvent;
 
         private static readonly Func<NozomiDbContext, IEnumerable<Source>>
             GetSourceResponse =
@@ -50,11 +49,9 @@ namespace Nozomi.Service.HostedServices.StaticUpdater
         private readonly IHubContext<NozomiSourceStreamHub, ISourceHubClient> _nozomiSourceStreamHub;
         
         public SourceSyncingService(IServiceProvider serviceProvider, 
-            IHubContext<NozomiSourceStreamHub, ISourceHubClient> nozomiSourceStreamHub,
-            IHistoricalDataEvent historicalDataEvent) : base(serviceProvider)
+            IHubContext<NozomiSourceStreamHub, ISourceHubClient> nozomiSourceStreamHub) : base(serviceProvider)
         {
             _nozomiDbContext = _scope.ServiceProvider.GetService<NozomiDbContext>();
-            _historicalDataEvent = historicalDataEvent;
             _nozomiSourceStreamHub = nozomiSourceStreamHub;
         }
 
@@ -96,8 +93,6 @@ namespace Nozomi.Service.HostedServices.StaticUpdater
                                         .ToList()
                                 }).ToList());
                     }
-
-                    var res = _historicalDataEvent.GetSimpleCurrencyHistory(1);
                 }
                 catch (Exception ex)
                 {
