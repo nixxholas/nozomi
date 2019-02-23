@@ -1,18 +1,27 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.Extensions.Logging;
 using Nozomi.Data.CurrencyModels;
 using Nozomi.Data.ResponseModels;
 using Nozomi.Preprocessing;
+using Nozomi.Preprocessing.Abstracts;
+using Nozomi.Repo.BCL.Repository;
+using Nozomi.Repo.Data;
 using Nozomi.Service.Events.Memory.Interfaces;
 
 namespace Nozomi.Service.Events.Memory
 {
-    public class HistoricalDataEvent : IHistoricalDataEvent
+    public class HistoricalDataEvent : BaseEvent<HistoricalDataEvent, NozomiDbContext>, IHistoricalDataEvent
     {
+        public HistoricalDataEvent(ILogger<HistoricalDataEvent> logger, IUnitOfWork<NozomiDbContext> unitOfWork) 
+            : base(logger, unitOfWork)
+        {
+        }
+        
         public ICollection<DistinctiveCurrencyResponse> GetSimpleCurrencyHistory(long sourceId, long days = 7)
         {
-            if (!NozomiServiceConstants.Sources.Any(s => s.Id.Equals(sourceId))) 
+            if (!_unitOfWork.GetRepository<Source>().GetQueryable().Any(s => s.Id.Equals(sourceId))) 
                 return new List<DistinctiveCurrencyResponse>();
 
 //            var waprice = NozomiServiceConstants.Sources
@@ -32,7 +41,7 @@ namespace Nozomi.Service.Events.Memory
 //                .Average())
 //            ;
             
-            return NozomiServiceConstants.Sources
+            return _unitOfWork.GetRepository<Source>().GetQueryable()
                 .SingleOrDefault(s => s.Id.Equals(sourceId))
                 ?.Currencies
                 .Select(c => new DistinctiveCurrencyResponse

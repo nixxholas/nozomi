@@ -26,11 +26,11 @@ namespace Nozomi.Ticker.StartupExtensions
 
             services.AddScoped<ICurrencyEvent, CurrencyEvent>();
             services.AddScoped<ICurrencyTypeEvent, CurrencyTypeEvent>();
+            services.AddScoped<IHistoricalDataEvent, HistoricalDataEvent>();
             services.AddScoped<ISourceEvent, SourceEvent>();
             services.AddScoped<ITickerEvent, TickerEvent>();
             services.AddScoped<IWebsocketRequestEvent, WebsocketRequestEvent>();
 
-            services.AddSingleton<IHistoricalDataEvent, HistoricalDataEvent>();
         }
     }
 }

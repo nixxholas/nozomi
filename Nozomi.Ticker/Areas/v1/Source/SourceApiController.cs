@@ -29,7 +29,7 @@ namespace Nozomi.Ticker.Areas.v1.Source
         }
 
         [HttpGet]
-        public NozomiResult<ICollection<DistinctiveCurrencyResponse>> History(long sourceId)
+        public NozomiResult<ICollection<DistinctiveCurrencyResponse>> History(long sourceId, long days = 7)
         {
             return new NozomiResult<ICollection<DistinctiveCurrencyResponse>>(
                 _historicalDataEvent.GetSimpleCurrencyHistory(sourceId));
