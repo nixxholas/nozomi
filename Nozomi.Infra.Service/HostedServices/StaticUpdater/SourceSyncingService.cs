@@ -23,19 +23,27 @@ namespace Nozomi.Service.HostedServices.StaticUpdater
     public class SourceSyncingService : BaseHostedService<SourceSyncingService>, IHostedService, IDisposable
     {
         private readonly NozomiDbContext _nozomiDbContext;
-        private static readonly Func<NozomiDbContext, IEnumerable<Source>> 
+
+        private static readonly Func<NozomiDbContext, IEnumerable<Source>>
             GetSourceResponse =
                 EF.CompileQuery((NozomiDbContext context) =>
                     context.Sources
                         .AsQueryable()
                         .Where(s => s.IsEnabled && s.DeletedAt == null)
                         .Include(s => s.CurrencyPairs)
-                            .ThenInclude(cp => cp.CurrencyPairRequests)
-                                .ThenInclude(cpr => cpr.RequestComponents)
-                                    .ThenInclude(rc => rc.RequestComponentDatum)
-                        .Include(s => s.CurrencyPairs)
                             .ThenInclude(cp => cp.PartialCurrencyPairs)
-                                .ThenInclude(pcp => pcp.Currency));
+                                .ThenInclude(pcp => pcp.Currency)
+                        .Include(s => s.CurrencyPairs)
+                            .ThenInclude(cp => cp.CurrencyPairRequests)
+                        // Historical Data Inclusions
+                        .Include(s => s.Currencies)
+                        .ThenInclude(c => c.PartialCurrencyPairs)
+                        .ThenInclude(pcp => pcp.CurrencyPair)
+                        .ThenInclude(cp => cp.CurrencyPairRequests)
+                        .ThenInclude(cpr => cpr.RequestComponents)
+                        .ThenInclude(rc => rc.RequestComponentDatum)
+                        .ThenInclude(rcd => rcd.RcdHistoricItems)
+                    );
         
         private readonly IHubContext<NozomiSourceStreamHub, ISourceHubClient> _nozomiSourceStreamHub;
         
@@ -76,6 +84,8 @@ namespace Nozomi.Service.HostedServices.StaticUpdater
                                     Properties = cp.CurrencyPairRequests
                                         .FirstOrDefault(cpr => cpr.IsEnabled && cpr.DeletedAt == null)
                                         ?.RequestComponents.OrderByDescending(rc => rc.ComponentType)
+                                        .Where(rc => rc.RequestComponentDatum != null && 
+                                                     !string.IsNullOrEmpty(rc.RequestComponentDatum.Value))
                                         .Select(rc => 
                                             new KeyValuePair<string, string>(rc.QueryComponent.GetDescription(), 
                                             rc.RequestComponentDatum.Value))

@@ -2,13 +2,12 @@ using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using Nozomi.Data;
 using Nozomi.Data.AreaModels.v1.CurrencySource;
-using Nozomi.Data.CurrencyModels;
 
-namespace Nozomi.Ticker.Areas.v1.CurrencySource
+namespace Nozomi.Ticker.Areas.v1.Source
  {
-     public interface ICurrencySourceController
+     public interface ISourceApiController
      {
-         NozomiResult<ICollection<Source>> All();
+         NozomiResult<ICollection<Data.CurrencyModels.Source>> All();
 
          NozomiResult<JsonResult> Create([FromBody] CreateSource source);
 

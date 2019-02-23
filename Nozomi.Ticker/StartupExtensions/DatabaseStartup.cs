@@ -403,8 +403,24 @@ namespace Nozomi.Ticker.StartupExtensions
                                         {
                                             new RequestComponent
                                             {
+                                                ComponentType = ComponentType.VOLUME,
+                                                QueryComponent = "7",
+                                                CreatedAt = DateTime.Now,
+                                                ModifiedAt = DateTime.Now,
+                                                DeletedAt = null
+                                            },
+                                            new RequestComponent
+                                            {
                                                 ComponentType = ComponentType.Ask,
                                                 QueryComponent = "2",
+                                                CreatedAt = DateTime.Now,
+                                                ModifiedAt = DateTime.Now,
+                                                DeletedAt = null
+                                            },
+                                            new RequestComponent
+                                            {
+                                                ComponentType = ComponentType.Ask_Size,
+                                                QueryComponent = "3",
                                                 CreatedAt = DateTime.Now,
                                                 ModifiedAt = DateTime.Now,
                                                 DeletedAt = null
@@ -413,6 +429,14 @@ namespace Nozomi.Ticker.StartupExtensions
                                             {
                                                 ComponentType = ComponentType.Bid,
                                                 QueryComponent = "0",
+                                                CreatedAt = DateTime.Now,
+                                                ModifiedAt = DateTime.Now,
+                                                DeletedAt = null
+                                            },
+                                            new RequestComponent()
+                                            {
+                                                ComponentType = ComponentType.Bid_Size,
+                                                QueryComponent = "1",
                                                 CreatedAt = DateTime.Now,
                                                 ModifiedAt = DateTime.Now,
                                                 DeletedAt = null
@@ -430,8 +454,8 @@ namespace Nozomi.Ticker.StartupExtensions
                                         {
                                             new RequestComponent
                                             {
-                                                ComponentType = ComponentType.Bid,
-                                                QueryComponent = "0",
+                                                ComponentType = ComponentType.VOLUME,
+                                                QueryComponent = "7",
                                                 CreatedAt = DateTime.Now,
                                                 ModifiedAt = DateTime.Now,
                                                 DeletedAt = null
@@ -440,6 +464,30 @@ namespace Nozomi.Ticker.StartupExtensions
                                             {
                                                 ComponentType = ComponentType.Ask,
                                                 QueryComponent = "2",
+                                                CreatedAt = DateTime.Now,
+                                                ModifiedAt = DateTime.Now,
+                                                DeletedAt = null
+                                            },
+                                            new RequestComponent
+                                            {
+                                                ComponentType = ComponentType.Ask_Size,
+                                                QueryComponent = "3",
+                                                CreatedAt = DateTime.Now,
+                                                ModifiedAt = DateTime.Now,
+                                                DeletedAt = null
+                                            },
+                                            new RequestComponent()
+                                            {
+                                                ComponentType = ComponentType.Bid,
+                                                QueryComponent = "0",
+                                                CreatedAt = DateTime.Now,
+                                                ModifiedAt = DateTime.Now,
+                                                DeletedAt = null
+                                            },
+                                            new RequestComponent()
+                                            {
+                                                ComponentType = ComponentType.Bid_Size,
+                                                QueryComponent = "1",
                                                 CreatedAt = DateTime.Now,
                                                 ModifiedAt = DateTime.Now,
                                                 DeletedAt = null

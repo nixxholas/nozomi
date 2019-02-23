@@ -3,6 +3,8 @@ using Nozomi.Preprocessing.Events;
 using Nozomi.Preprocessing.Events.Interfaces;
 using Nozomi.Service.Events;
 using Nozomi.Service.Events.Interfaces;
+using Nozomi.Service.Events.Memory;
+using Nozomi.Service.Events.Memory.Interfaces;
 using Nozomi.Service.Events.Websocket;
 using Nozomi.Service.Events.Websocket.Interfaces;
 using Nozomi.Service.Identity.Events;
@@ -24,9 +26,11 @@ namespace Nozomi.Ticker.StartupExtensions
 
             services.AddScoped<ICurrencyEvent, CurrencyEvent>();
             services.AddScoped<ICurrencyTypeEvent, CurrencyTypeEvent>();
+            services.AddScoped<IHistoricalDataEvent, HistoricalDataEvent>();
             services.AddScoped<ISourceEvent, SourceEvent>();
             services.AddScoped<ITickerEvent, TickerEvent>();
             services.AddScoped<IWebsocketRequestEvent, WebsocketRequestEvent>();
+
         }
     }
 }
