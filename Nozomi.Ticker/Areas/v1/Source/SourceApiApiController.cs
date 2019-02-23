@@ -3,22 +3,20 @@ using System.Linq;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using Nozomi.Data;
 using Nozomi.Data.AreaModels.v1.CurrencySource;
-using Nozomi.Data.CurrencyModels;
 using Nozomi.Service.Events.Interfaces;
 using Nozomi.Service.Identity.Managers;
 using Nozomi.Service.Services.Interfaces;
 
-namespace Nozomi.Ticker.Areas.v1.CurrencySource
+namespace Nozomi.Ticker.Areas.v1.Source
 {
-    public class CurrencySourceController : BaseController<CurrencySourceController>, ICurrencySourceController
+    public class SourceApiApiController : BaseController<SourceApiApiController>, ISourceApiController
     {
         private readonly ISourceEvent _sourceEvent;
         private readonly ISourceService _sourceService;
         
-        public CurrencySourceController(ILogger<CurrencySourceController> logger, NozomiUserManager userManager,
+        public SourceApiApiController(ILogger<SourceApiApiController> logger, NozomiUserManager userManager,
             ISourceEvent sourceEvent, ISourceService sourceService) : base(logger, userManager)
         {
             _sourceEvent = sourceEvent;
@@ -26,9 +24,9 @@ namespace Nozomi.Ticker.Areas.v1.CurrencySource
         }
 
         [HttpGet]
-        public NozomiResult<ICollection<Source>> All()
+        public NozomiResult<ICollection<Data.CurrencyModels.Source>> All()
         {
-            return new NozomiResult<ICollection<Source>>(_sourceEvent.GetAllActive(false).ToList());
+            return new NozomiResult<ICollection<Data.CurrencyModels.Source>>(_sourceEvent.GetAllActive(false).ToList());
         }
 
         [Authorize]
