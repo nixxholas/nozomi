@@ -7,19 +7,19 @@ using Nozomi.Data;
 using Nozomi.Data.AreaModels.v1.CurrencySource;
 using Nozomi.Data.ResponseModels;
 using Nozomi.Service.Events.Interfaces;
+using Nozomi.Service.Events.Memory.Interfaces;
 using Nozomi.Service.Identity.Managers;
 using Nozomi.Service.Services.Interfaces;
-using Nozomi.Service.Services.Memory.Interfaces;
 
 namespace Nozomi.Ticker.Areas.v1.Source
 {
-    public class SourceApiApiController : BaseController<SourceApiApiController>, ISourceApiController
+    public class SourceApiController : BaseController<SourceApiController>, ISourceApiController
     {
         private readonly ISourceEvent _sourceEvent;
         private readonly ISourceService _sourceService;
         private readonly IHistoricalDataEvent _historicalDataEvent;
         
-        public SourceApiApiController(ILogger<SourceApiApiController> logger, NozomiUserManager userManager,
+        public SourceApiController(ILogger<SourceApiController> logger, NozomiUserManager userManager,
             ISourceEvent sourceEvent,IHistoricalDataEvent historicalDataEvent, ISourceService sourceService) 
             : base(logger, userManager)
         {

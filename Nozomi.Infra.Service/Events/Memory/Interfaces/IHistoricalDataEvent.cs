@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Nozomi.Data.ResponseModels;
 
-namespace Nozomi.Service.Services.Memory.Interfaces
+namespace Nozomi.Service.Events.Memory.Interfaces
 {
     public interface IHistoricalDataEvent
     {

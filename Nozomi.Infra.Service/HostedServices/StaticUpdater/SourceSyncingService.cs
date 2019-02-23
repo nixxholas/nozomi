@@ -17,7 +17,6 @@ using Nozomi.Preprocessing;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.Data;
 using Nozomi.Service.Hubs;
-using Nozomi.Service.Services.Memory.Interfaces;
 
 namespace Nozomi.Service.HostedServices.StaticUpdater
 {

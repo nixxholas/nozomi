@@ -1,13 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.EntityFrameworkCore.Internal;
 using Nozomi.Data.CurrencyModels;
 using Nozomi.Data.ResponseModels;
 using Nozomi.Preprocessing;
-using Nozomi.Service.Services.Memory.Interfaces;
+using Nozomi.Service.Events.Memory.Interfaces;
 
-namespace Nozomi.Service.Services.Memory
+namespace Nozomi.Service.Events.Memory
 {
     public class HistoricalDataEvent : IHistoricalDataEvent
     {

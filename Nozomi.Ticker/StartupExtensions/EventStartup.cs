@@ -3,14 +3,14 @@ using Nozomi.Preprocessing.Events;
 using Nozomi.Preprocessing.Events.Interfaces;
 using Nozomi.Service.Events;
 using Nozomi.Service.Events.Interfaces;
+using Nozomi.Service.Events.Memory;
+using Nozomi.Service.Events.Memory.Interfaces;
 using Nozomi.Service.Events.Websocket;
 using Nozomi.Service.Events.Websocket.Interfaces;
 using Nozomi.Service.Identity.Events;
 using Nozomi.Service.Identity.Events.Auth;
 using Nozomi.Service.Identity.Events.Auth.Interfaces;
 using Nozomi.Service.Identity.Events.Interfaces;
-using Nozomi.Service.Services.Memory;
-using Nozomi.Service.Services.Memory.Interfaces;
 
 namespace Nozomi.Ticker.StartupExtensions
 {
