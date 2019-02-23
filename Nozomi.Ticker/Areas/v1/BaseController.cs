@@ -12,7 +12,7 @@ namespace Nozomi.Ticker.Areas.v1
     public class BaseController<T> : ControllerBase where T : class
     {
         private readonly NozomiUserManager _userManager;
-        private readonly ILogger<T> _logger;
+        protected readonly ILogger<T> _logger;
         
         public BaseController(ILogger<T> logger, NozomiUserManager nozomiUserManager)
         {

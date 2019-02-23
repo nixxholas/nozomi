@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Authorization;
@@ -31,8 +32,20 @@ namespace Nozomi.Ticker.Areas.v1.Source
         [HttpGet]
         public NozomiResult<ICollection<DistinctiveCurrencyResponse>> History(long sourceId, long days = 7)
         {
-            return new NozomiResult<ICollection<DistinctiveCurrencyResponse>>(
-                _historicalDataEvent.GetSimpleCurrencyHistory(sourceId));
+            try
+            {
+                var res = _historicalDataEvent.GetSimpleCurrencyHistory(sourceId, days);
+            
+                if (res == null) throw new ArgumentNullException();
+                return new NozomiResult<ICollection<DistinctiveCurrencyResponse>>(res);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString());
+                
+                return new NozomiResult<ICollection<DistinctiveCurrencyResponse>>(NozomiResultType.Failed,
+                    "Invalid source or days input.");
+            }
         }
 
         [HttpGet]
