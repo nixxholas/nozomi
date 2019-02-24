@@ -69,19 +69,20 @@ namespace Nozomi.Service.HostedServices.Analytical
                 {
                     // Calculate the daily price change for this request
                         case AnalysedComponentType.DailyPriceChange:
-                        component.Value = component.Request.RequestComponents
-                            .Select(rc => rc.RequestComponentDatum)
-                            .SelectMany(rcd => rcd.RcdHistoricItems)
-                            .Where(rcdhi => rcdhi.CreatedAt >= DateTime.UtcNow.Subtract(TimeSpan.FromDays(1)))
-                            .Select(rcdhi => rcdhi.Value)
-                            .DefaultIfEmpty()
-                            .Average(val => decimal.Parse(val))
-                            .ToString(CultureInfo.InvariantCulture);
+                            var compute = component.Request.RequestComponents
+                                .Select(rc => rc.RequestComponentDatum)
+                                .SelectMany(rcd => rcd.RcdHistoricItems)
+                                .Where(rcdhi => rcdhi.CreatedAt >= DateTime.UtcNow.Subtract(TimeSpan.FromDays(1)))
+                                .Select(rcdhi => rcdhi.Value)
+                                .DefaultIfEmpty()
+                                .Average(val => decimal.Parse(val));
                         
-                        // Update
-                        
+                            if (!decimal.Zero.Equals(compute))
+                            {
+                                // Update
+                            }
 
-                        return !string.IsNullOrEmpty(component.Value);
+                            break;
                     default:
                         return false;
                 }
