@@ -18,6 +18,7 @@ namespace Nozomi.Ticker.StartupExtensions
             // https://github.com/mattfrear/Swashbuckle.AspNetCore.Filters/issues/56
             // services.AddSwaggerExamplesFromAssemblyOf<MyExample>();
             services.AddSwaggerExamplesFromAssemblyOf<CreateCurrencyExample>();
+            services.AddSwaggerExamplesFromAssemblyOf<UpdateCurrencyExample>();
             services.AddSwaggerExamplesFromAssemblyOf<CreateSourceExample>();
             services.AddSwaggerExamplesFromAssemblyOf<NozomiJsonResultExample>();
             services.AddSwaggerExamplesFromAssemblyOf<NozomiStringResultExample>();
