@@ -345,9 +345,9 @@ namespace Nozomi.Service.Services
             });
         }
 
-        public Task<NozomiResult<DistinctiveTickerResponse>> GetById(long id)
+        public Task<NozomiResult<TickerByExchangeResponse>> GetById(long id)
         {
-            return Task.FromResult(new NozomiResult<DistinctiveTickerResponse>(
+            return Task.FromResult(new NozomiResult<TickerByExchangeResponse>(
                 NozomiServiceConstants.CurrencyPairDictionary[id]));
             
 //            return Task.FromResult(new NozomiResult<TickerResponse>()
@@ -377,12 +377,12 @@ namespace Nozomi.Service.Services
 //            });
         }
 
-        public NozomiResult<ICollection<DistinctiveTickerResponse>> GetByAbbreviation(string ticker, 
+        public NozomiResult<ICollection<TickerByExchangeResponse>> GetByAbbreviation(string ticker, 
             string exchangeAbbrv = null)
         {
             try
             {
-                if (ticker.Length != 6) return new NozomiResult<ICollection<DistinctiveTickerResponse>>(
+                if (ticker.Length != 6) return new NozomiResult<ICollection<TickerByExchangeResponse>>(
                     NozomiResultType.Failed, "Invalid Ticker Symbol."); // Invalid ticker length
                 
                 // Exchange? Specification.
@@ -393,8 +393,8 @@ namespace Nozomi.Service.Services
                     if (NozomiServiceConstants.CurrencySourceSymbolDictionary
                         .ContainsKey(key))
                     {
-                        return new NozomiResult<ICollection<DistinctiveTickerResponse>>(
-                            new List<DistinctiveTickerResponse> {
+                        return new NozomiResult<ICollection<TickerByExchangeResponse>>(
+                            new List<TickerByExchangeResponse> {
                                 NozomiServiceConstants.CurrencyPairDictionary[
                                     NozomiServiceConstants.CurrencySourceSymbolDictionary[key]
                                 ]
@@ -402,12 +402,12 @@ namespace Nozomi.Service.Services
                     }
                     else
                     {
-                        return new NozomiResult<ICollection<DistinctiveTickerResponse>>(
+                        return new NozomiResult<ICollection<TickerByExchangeResponse>>(
                             NozomiResultType.Failed, "The ticker specific to the exchange stated does not exist.");
                     }
                 }
                 
-                return new NozomiResult<ICollection<DistinctiveTickerResponse>>(
+                return new NozomiResult<ICollection<TickerByExchangeResponse>>(
                     NozomiServiceConstants.TickerSymbolDictionary[ticker].Where(i => i > 0).Select(
                     i => NozomiServiceConstants.CurrencyPairDictionary[i]).ToList());
 
@@ -460,7 +460,7 @@ namespace Nozomi.Service.Services
             catch (Exception ex)
             {
                 Console.WriteLine(ex.ToString());
-                return new NozomiResult<ICollection<DistinctiveTickerResponse>>()
+                return new NozomiResult<ICollection<TickerByExchangeResponse>>()
                 {
                     ResultType = NozomiResultType.Failed,
                     Message = "An error has occurred.",
@@ -469,7 +469,7 @@ namespace Nozomi.Service.Services
             }
         }
 
-        public NozomiResult<ICollection<DistinctiveTickerResponse>> GetAllActive()
+        public NozomiResult<ICollection<TickerByExchangeResponse>> GetAllActive()
         {
             var query = _unitOfWork.GetRepository<CurrencyPair>()
                     .GetQueryable()
@@ -486,7 +486,7 @@ namespace Nozomi.Service.Services
                     .Where(cp => cp.CurrencyPairRequests
                         .Any(cpr => cpr.RequestComponents.Any(rc => rc.IsEnabled && rc.DeletedAt == null && 
                                                                     rc.RequestComponentDatum != null)))
-                    .Select(cp => new DistinctiveTickerResponse()
+                    .Select(cp => new TickerByExchangeResponse()
                     {
                         Exchange = cp.CurrencySource.Name,
                         ExchangeAbbrv = cp.CurrencySource.Abbreviation,
@@ -502,10 +502,10 @@ namespace Nozomi.Service.Services
                     })
                     .ToList();
             
-            return new NozomiResult<ICollection<DistinctiveTickerResponse>>()
+            return new NozomiResult<ICollection<TickerByExchangeResponse>>()
             {
                 ResultType = (query != null) ? NozomiResultType.Success : NozomiResultType.Failed,
-                Data = (query != null) ? query : new List<DistinctiveTickerResponse>()
+                Data = (query != null) ? query : new List<TickerByExchangeResponse>()
             };
         }
     }

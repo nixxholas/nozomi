@@ -24,10 +24,10 @@ namespace Nozomi.Service.Services.Interfaces
         
         Task<NozomiResult<ICollection<UniqueTickerResponse>>> GetAll(int index);
         
-        Task<NozomiResult<DistinctiveTickerResponse>> GetById(long id);
+        Task<NozomiResult<TickerByExchangeResponse>> GetById(long id);
 
-        NozomiResult<ICollection<DistinctiveTickerResponse>> GetByAbbreviation(string ticker, string exchangeAbbrv = null);
+        NozomiResult<ICollection<TickerByExchangeResponse>> GetByAbbreviation(string ticker, string exchangeAbbrv = null);
 
-        NozomiResult<ICollection<DistinctiveTickerResponse>> GetAllActive();
+        NozomiResult<ICollection<TickerByExchangeResponse>> GetAllActive();
     }
 }
