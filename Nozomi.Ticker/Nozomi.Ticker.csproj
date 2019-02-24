@@ -8,7 +8,7 @@
   
   <ItemGroup>
     <PackageReference Include="Gelf.Extensions.Logging" Version="1.5.1" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="3.1.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="3.1.2" />
     <PackageReference Include="Microsoft.AspNetCore.App" Version="2.2.1" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.1" />
     <PackageReference Include="SlackLogger" Version="2.0.5" />
