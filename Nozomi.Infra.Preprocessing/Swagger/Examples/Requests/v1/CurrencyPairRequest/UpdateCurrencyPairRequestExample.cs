@@ -8,7 +8,7 @@ using Swashbuckle.AspNetCore.Filters;
 
 namespace Nozomi.Preprocessing.Swagger.Examples.Requests.v1.CurrencyPairRequest
 {
-    public class UpdateCurrencyPairComponentExample : IExamplesProvider<UpdateCurrencyPairRequest>
+    public class UpdateCurrencyPairRequestExample : IExamplesProvider<UpdateCurrencyPairRequest>
     {
         public UpdateCurrencyPairRequest GetExamples()
         {
