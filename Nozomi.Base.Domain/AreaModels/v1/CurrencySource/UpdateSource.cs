@@ -5,21 +5,15 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Nozomi.Data.AreaModels.v1.CurrencySource
 {
-    public abstract class UpdateSource
+    public class UpdateSource : CreateSource
     {
         public long Id { get; set; }
-        
-        public string Abbreviation { get; set; }
-        
-        public string Name { get; set; }
-        
-        public string APIDocsURL { get; set; }
         
         public ICollection<UpdateSourceCurrency> UpdateSourceCurrencies { get; set; }
         
         public ICollection<UpdateCurrencyPair> UpdateCurrencyPairs { get; set; }
 
-        public abstract class UpdateSourceCurrency
+        public class UpdateSourceCurrency
         {
             [Required]
             public long Id { get; set; }
@@ -39,7 +33,7 @@ namespace Nozomi.Data.AreaModels.v1.CurrencySource
 //            public long WalletTypeId { get; set; }
         }
 
-        public abstract class UpdateCurrencyPair
+        public class UpdateCurrencyPair
         {
             [Required]
             public long Id { get; set; }

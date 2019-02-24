@@ -145,9 +145,9 @@ namespace Nozomi.Service.Services
             if (reqToUpd == null) return false;
 
             // Include RequestComponents if there are any modified objects
-            if (cpRequest.CurrencyPairComponents != null && cpRequest.CurrencyPairComponents.Count > 0)
+            if (cpRequest.RequestComponents != null && cpRequest.RequestComponents.Count > 0)
             {
-                foreach (var ucpc in cpRequest.CurrencyPairComponents)
+                foreach (var ucpc in cpRequest.RequestComponents)
                 {
                     var cpc = reqToUpd.RequestComponents.SingleOrDefault(rc => rc.Id.Equals(ucpc.Id));
  

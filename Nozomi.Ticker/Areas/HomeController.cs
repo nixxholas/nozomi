@@ -12,13 +12,10 @@ namespace Nozomi.Ticker.Areas
     [ApiExplorerSettings(IgnoreApi = true)]
     public class HomeController : BaseViewController<HomeController>
     {
-        private readonly ITickerService _tickerService;
-        
         public HomeController(ILogger<HomeController> logger, NozomiSignInManager signInManager, 
-            NozomiUserManager userManager, ITickerService tickerService) 
+            NozomiUserManager userManager) 
             : base(logger, signInManager, userManager)
         {
-            _tickerService = tickerService;
         }
         
         [Route("/")]
@@ -45,6 +42,11 @@ namespace Nozomi.Ticker.Areas
         public IActionResult Docs()
         {
             return new RedirectResult("~/docs");
+        }
+
+        public IActionResult License()
+        {
+            return View();
         }
 
         public IActionResult Pricing()

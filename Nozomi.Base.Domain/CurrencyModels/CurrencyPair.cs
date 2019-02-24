@@ -10,7 +10,6 @@ using Swashbuckle.AspNetCore.Annotations;
 
 namespace Nozomi.Data.CurrencyModels
 {
-    [SwaggerSchemaFilter(typeof(CurrencyPairSchemaFilter))]
     public class CurrencyPair : BaseEntityModel
     {
         [Key]

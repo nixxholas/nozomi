@@ -74,7 +74,7 @@ namespace Nozomi.Service.Services
                 // comply via due diligence
                 sourceToUpd.Abbreviation = updateSource.Abbreviation;
                 sourceToUpd.Name = updateSource.Name;
-                sourceToUpd.APIDocsURL = updateSource.APIDocsURL;
+                sourceToUpd.APIDocsURL = updateSource.ApiDocsUrl;
 
                 if (updateSource.UpdateSourceCurrencies != null && updateSource.UpdateSourceCurrencies.Count > 0)
                 {
