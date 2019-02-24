@@ -17,9 +17,11 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
             entityTypeBuilder.Property(ac => ac.ComponentType).HasDefaultValue(AnalysedComponentType.Unknown);
 
             entityTypeBuilder.HasOne(ac => ac.Request)
-                .WithMany(r => r.AnalysedComponents).OnDelete(DeleteBehavior.Restrict);
+                .WithMany(r => r.AnalysedComponents).HasForeignKey(ac => ac.RequestId)
+                .OnDelete(DeleteBehavior.Restrict);
             entityTypeBuilder.HasMany(ac => ac.AnalysedHistoricItems)
-                .WithOne(ahi => ahi.AnalysedComponent).OnDelete(DeleteBehavior.Restrict);
+                .WithOne(ahi => ahi.AnalysedComponent).HasForeignKey(ac => ac.AnalysedComponentId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }
