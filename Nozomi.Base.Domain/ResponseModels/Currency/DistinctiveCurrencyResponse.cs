@@ -1,6 +1,6 @@
 using System;
 
-namespace Nozomi.Data.ResponseModels
+namespace Nozomi.Data.ResponseModels.Currency
 {
     public class DistinctiveCurrencyResponse
     {

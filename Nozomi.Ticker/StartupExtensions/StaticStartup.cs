@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Nozomi.Data.ResponseModels;
+using Nozomi.Data.ResponseModels.Ticker;
 using Nozomi.Preprocessing;
 using Nozomi.Repo.Data;
 using Nozomi.Service;

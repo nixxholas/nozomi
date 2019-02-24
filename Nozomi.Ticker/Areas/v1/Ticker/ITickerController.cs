@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Nozomi.Base.Core.Helpers.UI;
 using Nozomi.Data;
 using Nozomi.Data.ResponseModels;
+using Nozomi.Data.ResponseModels.Ticker;
 
 namespace Nozomi.Ticker.Areas.v1.Ticker
 {

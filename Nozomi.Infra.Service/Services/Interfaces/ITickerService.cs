@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Nozomi.Base.Identity.ViewModels.Manage.Tickers;
 using Nozomi.Data;
 using Nozomi.Data.ResponseModels;
+using Nozomi.Data.ResponseModels.Ticker;
 
 namespace Nozomi.Service.Services.Interfaces
 {

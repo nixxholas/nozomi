@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Nozomi.Data.CurrencyModels;
 using Nozomi.Data.ResponseModels;
+using Nozomi.Data.ResponseModels.Ticker;
 
 namespace Nozomi.Preprocessing
 {

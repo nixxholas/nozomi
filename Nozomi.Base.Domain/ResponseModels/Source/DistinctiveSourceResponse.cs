@@ -1,4 +1,4 @@
-namespace Nozomi.Data.ResponseModels
+namespace Nozomi.Data.ResponseModels.Source
 {
     public class DistinctiveSourceResponse
     {

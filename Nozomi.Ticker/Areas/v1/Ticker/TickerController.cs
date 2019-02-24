@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using Nozomi.Base.Core.Helpers.UI;
 using Nozomi.Data;
 using Nozomi.Data.ResponseModels;
+using Nozomi.Data.ResponseModels.Ticker;
 using Nozomi.Preprocessing;
 using Nozomi.Service.Events.Interfaces;
 using Nozomi.Service.Identity.Managers;

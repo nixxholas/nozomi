@@ -11,6 +11,7 @@ using Microsoft.Extensions.Logging;
 using Nozomi.Base.Core.Helpers.Enumerator;
 using Nozomi.Data.CurrencyModels;
 using Nozomi.Data.ResponseModels;
+using Nozomi.Data.ResponseModels.Ticker;
 using Nozomi.Infra.Preprocessing.SignalR;
 using Nozomi.Infra.Preprocessing.SignalR.Hubs.Interfaces;
 using Nozomi.Preprocessing;

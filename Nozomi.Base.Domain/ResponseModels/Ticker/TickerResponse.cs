@@ -1,9 +1,7 @@
 using System;
 using System.Collections.Generic;
-using Nozomi.Data.CurrencyModels;
-using Nozomi.Data.WebModels;
 
-namespace Nozomi.Data.ResponseModels
+namespace Nozomi.Data.ResponseModels.Ticker
 {
     public class TickerResponse
     {

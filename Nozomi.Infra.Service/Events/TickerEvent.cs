@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using Nozomi.Base.Core.Helpers.UI;
 using Nozomi.Data.CurrencyModels;
 using Nozomi.Data.ResponseModels;
+using Nozomi.Data.ResponseModels.Ticker;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Data;

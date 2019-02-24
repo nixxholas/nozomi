@@ -12,6 +12,7 @@ using Nozomi.Base.Identity.ViewModels.Manage.Tickers;
 using Nozomi.Data;
 using Nozomi.Data.CurrencyModels;
 using Nozomi.Data.ResponseModels;
+using Nozomi.Data.ResponseModels.Ticker;
 using Nozomi.Data.WebModels;
 using Nozomi.Preprocessing;
 using Nozomi.Preprocessing.Abstracts;
