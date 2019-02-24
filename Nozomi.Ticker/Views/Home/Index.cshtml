@@ -4,60 +4,104 @@
   ViewData["Title"] = "Home Page";
 }
   
-<div class="position-relative">
-  <div class="gradient-overlay-half-dark-v2">
-    <div class="container justify-content-lg-between height-lg-1000vh align-items-md-center space-4">
-      <div class="row">
-        <div class="mb-0 p-3">
-          <h2 class="text-white font-weight-normal">
-            We make data<br>
-            <span class="text-warning">
-              accessible.
-            </span>
-          </h2>
+
+<!-- Hero Section -->
+    <div id="SVGheroSection" class="svg-preloader d-lg-flex position-relative border-bottom z-index-2">
+      <div class="container d-lg-flex align-items-lg-center flex-lg-wrap height-lg-100vh text-center space-top-2 space-top-md-4 space-top-lg-3">
+        <div class="w-100 mx-auto mb-9 mb-lg-0">
+          <div class="mb-5">
+            <h1 class="display-4 font-size-md-down-5 font-weight-semi-bold">Market data, all in one place.</h1>
+            <p>Detabox is the leading data metrics service that will support any <strong class="text-primary">endpoint</strong>.</p>
+          </div>
+        </div>
+
+        <div class="w-lg-50 mt-auto mx-lg-auto">
+          <!-- SVG Icon -->
+          <figure class="ie-subscribe-2">
+            <img class="js-svg-injector" src="../../assets/svg/flat-icons/easy-start.svg" alt="Image Description"
+                 data-parent="#SVGeasyStart">
+          </figure>
+          <!-- End SVG Icon -->
         </div>
       </div>
-      <div class="row" id="vueTableBody">
-        <b-card style="width: 100%" title="Market Data">
-          <p class="card-text">
-            <b-table responsive
-                     :per-page="tickerDataRowsPerPage" :current-page="currentTickerDataPage"
-                     :fields="tickerDataFields" :items="tickerData">
-              <!-- A virtual composite column -->
-              <template slot="exchange" slot-scope="datum">
-                <a :href="'/source/' + datum.item.exchangeAbbrv">{{ datum.item.exchange }}</a>
-              </template>
-              <!-- A virtual composite column -->
-              <template slot="lastUpdated" slot-scope="datum">
-                @* // https://stackoverflow.com/questions/32540667/moment-js-utc-to-local-time *@
-                {{ moment.utc(datum.item.lastUpdated).fromNow() }}
-              </template>
-              <!-- A virtual composite column -->
-              <template slot="properties" slot-scope="datum">
-                <b-badge class="mr-2" variant="dark" v-for="prop in datum.item.properties">
-                  <b>{{ prop.key }}</b> {{ prop.value }}
-                </b-badge>
-              </template>
-              <!-- A virtual composite column -->
-              <template slot="actions" slot-scope="datum">
-                @* <a class="btn btn-sm btn-primary transition-3d-hover" *@
-                @*    > *@
-                @*   View *@
-                @* </a> *@
-              </template>
-            </b-table>
-            <b-row>
-              <b-col md="6" class="my-1">
-                <b-pagination :total-rows="tickerDataRows" :per-page="tickerDataRowsPerPage"
-                              v-model="currentTickerDataPage" class="my-0"/>
-              </b-col>
-            </b-row>
-          </p>
-        </b-card>
+
+      <!-- SVG Component -->
+      <div class="d-none d-lg-block content-centered-y left-0 w-100 max-width-40 z-index-n1">
+        <figure class="ie-abstract-shapes-1">
+          <img class="js-svg-injector" src="../../assets/svg/components/abstract-shapes-1.svg" alt="Image Description"
+               data-parent="#SVGheroSection">
+        </figure>
       </div>
+      <!-- End SVG Component -->
+
+      <!-- SVG Component -->
+      <div class="d-none d-lg-block content-centered-y right-0 w-100 max-width-35 z-index-n1">
+        <figure class="ie-abstract-shapes-10">
+          <img class="js-svg-injector" src="../../assets/svg/components/abstract-shapes-10.svg" alt="Image Description"
+               data-parent="#SVGheroSection">
+        </figure>
+      </div>
+      <!-- End SVG Component -->
     </div>
-    </div>
+<!-- End Hero Section -->
+
+<!-- CTA Section -->
+<div id="SVGctaSection" class="svg-preloader position-relative gradient-half-primary-v1 z-index-2 overflow-hidden">
+  <div class="container space-2" id="vueTableBody">
+    <h3 class="h2 text-center text-info font-weight-semi-bold mb-3">Market Data</h3>
+    <b-card style="width: 100%">
+      <p class="card-text">
+        <b-table responsive
+                 :per-page="tickerDataRowsPerPage" :current-page="currentTickerDataPage"
+                 :fields="tickerDataFields" :items="tickerData">
+          <!-- A virtual composite column -->
+          <template slot="exchange" slot-scope="datum">
+            <a :href="'/source/' + datum.item.exchangeAbbrv">{{ datum.item.exchange }}</a>
+          </template>
+          <!-- A virtual composite column -->
+          <template slot="lastUpdated" slot-scope="datum">
+            @* // https://stackoverflow.com/questions/32540667/moment-js-utc-to-local-time *@
+            {{ moment.utc(datum.item.lastUpdated).fromNow() }}
+          </template>
+          <!-- A virtual composite column -->
+          <template slot="properties" slot-scope="datum">
+            <b-badge class="mr-2" variant="dark" v-for="prop in datum.item.properties">
+              <b>{{ prop.key }}</b> {{ prop.value }}
+            </b-badge>
+          </template>
+          <!-- A virtual composite column -->
+          <template slot="actions" slot-scope="datum">
+            @* <a class="btn btn-sm btn-primary transition-3d-hover" *@
+            @*    > *@
+            @*   View *@
+            @* </a> *@
+          </template>
+        </b-table>
+        <b-row>
+          <b-col md="6" class="my-1">
+            <b-pagination :total-rows="tickerDataRows" :per-page="tickerDataRowsPerPage"
+                          v-model="currentTickerDataPage" class="my-0"/>
+          </b-col>
+        </b-row>
+      </p>
+    </b-card>
+  </div>
+
+  <!-- SVG Component -->
+  <figure class="position-absolute top-0 left-0 w-100 max-width-27 z-index-n1">
+    <img class="js-svg-injector" src="../../assets/svg/components/abstract-shapes-8.svg" alt="Image Description"
+         data-parent="#SVGctaSection">
+  </figure>
+  <!-- End SVG Component -->
+
+  <!-- SVG Component -->
+  <figure class="position-absolute bottom-0 right-0 w-100 max-width-27 z-index-n1">
+    <img class="js-svg-injector" src="../../assets/svg/components/abstract-shapes-5.svg" alt="Image Description"
+         data-parent="#SVGctaSection">
+  </figure>
+  <!-- End SVG Component -->
 </div>
+<!-- End CTA Section -->
 
   @* <hr class="my-0"> *@
   @* *@
@@ -177,7 +221,7 @@
         ],
         currentTickerDataPage: 1,
         tickerData: [],
-        tickerDataRowsPerPage: 20,
+        tickerDataRowsPerPage: 40,
         tickerDataRows: 0
       },
       created: function() {
