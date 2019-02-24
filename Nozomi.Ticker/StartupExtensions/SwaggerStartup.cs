@@ -1,4 +1,7 @@
+using System;
+using System.ComponentModel;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.OpenApi.Models;
 using Nozomi.Preprocessing.Swagger.Examples.Requests.v1.Currency;
 using Nozomi.Preprocessing.Swagger.Examples.Requests.v1.CurrencySource;
 using Nozomi.Preprocessing.Swagger.Examples.Responses.Generic;
@@ -20,22 +23,22 @@ namespace Nozomi.Ticker.StartupExtensions
             
             services.AddSwaggerGen(swaggerGenOptions =>
             {
-                swaggerGenOptions.SwaggerDoc(GlobalApiVariables.CURRENT_API_VERSION, new Info
+                swaggerGenOptions.SwaggerDoc(GlobalApiVariables.CURRENT_API_VERSION, new OpenApiInfo()
                  {
                      Version = GlobalApiVariables.CURRENT_API_VERSION,
                      Title = "Nozomi API",
                      Description = "Reference documentation for the usage of Nozomi.",
-                     TermsOfService = "None",
-                     Contact = new Contact
+                     TermsOfService = new Uri("https://detabox.com/privacy"),
+                     Contact = new OpenApiContact
                      {
                          Name = "Nicholas Chen",
                          Email = "nicholas@counter.network",
-                         Url = "https://twitter.com/nixxholas"
+                         Url = new Uri("https://twitter.com/nixxholas")
                      },
-                     License = new License
+                     License = new OpenApiLicense
                      {
                          Name = "Copyright (C) Hayate Inc. - All Rights Reserved",
-                         Url = ""
+                         Url = new Uri("https://detabox.com/license")
                      }
                  });
                     
