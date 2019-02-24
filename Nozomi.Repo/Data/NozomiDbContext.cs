@@ -47,6 +47,7 @@ namespace Nozomi.Repo.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             var analysedComponentMap = new AnalysedComponentMap(modelBuilder.Entity<AnalysedComponent>());
+            var analysedHistoricItemMap = new AnalysedHistoricItemMap(modelBuilder.Entity<AnalysedHistoricItem>());
             var currencyMap = new CurrencyMap(modelBuilder.Entity<Currency>());
             var currencyPairMap = new CurrencyPairMap(modelBuilder.Entity<CurrencyPair>());
             var currencyPairRequestMap = new CurrencyPairRequestMap(modelBuilder.Entity<CurrencyPairRequest>());
