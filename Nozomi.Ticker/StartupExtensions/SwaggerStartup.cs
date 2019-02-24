@@ -5,11 +5,13 @@ using Microsoft.OpenApi.Models;
 using Nozomi.Preprocessing.Swagger.Examples.Requests.v1.Currency;
 using Nozomi.Preprocessing.Swagger.Examples.Requests.v1.CurrencyPair;
 using Nozomi.Preprocessing.Swagger.Examples.Requests.v1.CurrencyPairComponent;
+using Nozomi.Preprocessing.Swagger.Examples.Requests.v1.CurrencyPairRequest;
 using Nozomi.Preprocessing.Swagger.Examples.Requests.v1.CurrencySource;
 using Nozomi.Preprocessing.Swagger.Examples.Responses.Generic;
 using Nozomi.Ticker.Areas;
 using Swashbuckle.AspNetCore.Filters;
 using Swashbuckle.AspNetCore.Swagger;
+using UpdateCurrencyPairComponentExample = Nozomi.Preprocessing.Swagger.Examples.Requests.v1.CurrencyPairComponent.UpdateCurrencyPairComponentExample;
 
 namespace Nozomi.Ticker.StartupExtensions
 {
@@ -24,6 +26,7 @@ namespace Nozomi.Ticker.StartupExtensions
             services.AddSwaggerExamplesFromAssemblyOf<CreateCurrencyPairExample>();
             services.AddSwaggerExamplesFromAssemblyOf<CreateCurrencyPairComponentExample>();
             services.AddSwaggerExamplesFromAssemblyOf<UpdateCurrencyPairComponentExample>();
+            services.AddSwaggerExamplesFromAssemblyOf<CreateCurrencyPairRequestExample>();
             services.AddSwaggerExamplesFromAssemblyOf<CreateSourceExample>();
             services.AddSwaggerExamplesFromAssemblyOf<NozomiJsonResultExample>();
             services.AddSwaggerExamplesFromAssemblyOf<NozomiStringResultExample>();
