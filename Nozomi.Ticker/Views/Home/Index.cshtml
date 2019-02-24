@@ -24,6 +24,10 @@
                      :per-page="tickerDataRowsPerPage" :current-page="currentTickerDataPage"
                      :fields="tickerDataFields" :items="tickerData">
               <!-- A virtual composite column -->
+              <template slot="exchange" slot-scope="datum">
+                <a :href="'/source/' + datum.item.exchangeAbbrv">{{ datum.item.exchange }}</a>
+              </template>
+              <!-- A virtual composite column -->
               <template slot="lastUpdated" slot-scope="datum">
                 @* // https://stackoverflow.com/questions/32540667/moment-js-utc-to-local-time *@
                 {{ moment.utc(datum.item.lastUpdated).fromNow() }}
@@ -36,10 +40,10 @@
               </template>
               <!-- A virtual composite column -->
               <template slot="actions" slot-scope="datum">
-                <a class="btn btn-sm btn-primary transition-3d-hover"
-                   :href="'/source/' + datum.item.exchangeAbbrv">
-                  View
-                </a>
+                @* <a class="btn btn-sm btn-primary transition-3d-hover" *@
+                @*    > *@
+                @*   View *@
+                @* </a> *@
               </template>
             </b-table>
             <b-row>
