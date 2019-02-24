@@ -16,7 +16,6 @@
 
     <ItemGroup>
       <Folder Include="Swagger\Examples\Requests" />
-      <Folder Include="Swagger\Examples\Responses\v1" />
     </ItemGroup>
 
 </Project>
