@@ -17,13 +17,16 @@ namespace Nozomi.Service.HostedServices.Analytical
         IDisposable, IComponentAnalysisService
     {
         private readonly IAnalysedComponentEvent _analysedComponentEvent;
+        private readonly IAnalysedComponentService _analysedComponentService;
         private readonly IAnalysedHistoricItemService _analysedHistoricItemService;
 
         public ComponentAnalysisService(IServiceProvider serviceProvider,
-            IAnalysedComponentEvent analysedComponentEvent, IAnalysedHistoricItemService analysedHistoricItemService)
+            IAnalysedComponentEvent analysedComponentEvent, IAnalysedComponentService analysedComponentService, 
+            IAnalysedHistoricItemService analysedHistoricItemService)
             : base(serviceProvider)
         {
             _analysedComponentEvent = analysedComponentEvent;
+            _analysedComponentService = analysedComponentService;
             _analysedHistoricItemService = analysedHistoricItemService;
         }
 
@@ -80,6 +83,7 @@ namespace Nozomi.Service.HostedServices.Analytical
                             if (!decimal.Zero.Equals(compute))
                             {
                                 // Update
+                                return _analysedComponentService.UpdateValue(component.Id, compute.ToString());
                             }
 
                             break;
@@ -93,7 +97,8 @@ namespace Nozomi.Service.HostedServices.Analytical
 
         public bool Stash(AnalysedComponent component)
         {
-            throw new NotImplementedException();
+            // Obtain the latest historical value for cross checking
+            
         }
     }
 }
