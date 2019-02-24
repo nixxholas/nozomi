@@ -1,7 +1,9 @@
 using Microsoft.Extensions.DependencyInjection;
+using Nozomi.Data.Models.Web.Analytical;
 using Nozomi.Preprocessing.Events;
 using Nozomi.Preprocessing.Events.Interfaces;
 using Nozomi.Service.Events;
+using Nozomi.Service.Events.Analysis;
 using Nozomi.Service.Events.Interfaces;
 using Nozomi.Service.Events.Memory;
 using Nozomi.Service.Events.Memory.Interfaces;
@@ -24,13 +26,13 @@ namespace Nozomi.Ticker.StartupExtensions
 
             services.AddScoped<IApiTokenEvent, ApiTokenEvent>();
 
+            services.AddScoped<IAnalysedComponentEvent, AnalysedComponentEvent>();
             services.AddScoped<ICurrencyEvent, CurrencyEvent>();
             services.AddScoped<ICurrencyTypeEvent, CurrencyTypeEvent>();
             services.AddScoped<IHistoricalDataEvent, HistoricalDataEvent>();
             services.AddScoped<ISourceEvent, SourceEvent>();
             services.AddScoped<ITickerEvent, TickerEvent>();
             services.AddScoped<IWebsocketRequestEvent, WebsocketRequestEvent>();
-
         }
     }
 }
