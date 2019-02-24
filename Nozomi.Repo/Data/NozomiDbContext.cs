@@ -9,6 +9,7 @@ using Nozomi.Base.Core;
 using Nozomi.Data;
 using Nozomi.Data.Models.Currency;
 using Nozomi.Data.Models.Web;
+using Nozomi.Data.Models.Web.Analytical;
 using Nozomi.Data.Models.Web.Logging;
 using Nozomi.Data.Models.Web.Websocket;
 using Nozomi.Repo.BCL.Context;
@@ -20,6 +21,8 @@ namespace Nozomi.Repo.Data
 {
     public class NozomiDbContext : DbContext, IDbContext
     {
+        public DbSet<AnalysedComponent> AnalysedComponents { get; set; }
+        public DbSet<AnalysedHistoricItem> AnalysedHistoricItems { get; set; }
         public DbSet<Currency> Currencies { get; set; }
         public DbSet<CurrencyPair> CurrencyPairs { get; set; }
         public DbSet<CurrencyPairRequest> CurrencyPairRequests { get; set; }
