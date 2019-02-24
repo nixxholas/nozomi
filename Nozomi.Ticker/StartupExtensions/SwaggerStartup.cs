@@ -3,6 +3,7 @@ using System.ComponentModel;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using Nozomi.Preprocessing.Swagger.Examples.Requests.v1.Currency;
+using Nozomi.Preprocessing.Swagger.Examples.Requests.v1.CurrencyPair;
 using Nozomi.Preprocessing.Swagger.Examples.Requests.v1.CurrencySource;
 using Nozomi.Preprocessing.Swagger.Examples.Responses.Generic;
 using Nozomi.Ticker.Areas;
@@ -19,6 +20,7 @@ namespace Nozomi.Ticker.StartupExtensions
             // services.AddSwaggerExamplesFromAssemblyOf<MyExample>();
             services.AddSwaggerExamplesFromAssemblyOf<CreateCurrencyExample>();
             services.AddSwaggerExamplesFromAssemblyOf<UpdateCurrencyExample>();
+            services.AddSwaggerExamplesFromAssemblyOf<CreateCurrencyPairExample>();
             services.AddSwaggerExamplesFromAssemblyOf<CreateSourceExample>();
             services.AddSwaggerExamplesFromAssemblyOf<NozomiJsonResultExample>();
             services.AddSwaggerExamplesFromAssemblyOf<NozomiStringResultExample>();
