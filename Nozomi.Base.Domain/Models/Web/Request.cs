@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Nozomi.Base.Core;
+using Nozomi.Data.Models.Web.Analytical;
 using Nozomi.Data.Models.Web.Logging;
 
 namespace Nozomi.Data.Models.Web
@@ -25,6 +26,7 @@ namespace Nozomi.Data.Models.Web
         /// </summary>
         public int Delay { get; set; }
 
+        public ICollection<AnalysedComponent> AnalysedComponents { get; set; }
         public ICollection<RequestComponent> RequestComponents { get; set; }
         public ICollection<RequestLog> RequestLogs { get; set; }
         public ICollection<RequestProperty> RequestProperties { get; set; }
