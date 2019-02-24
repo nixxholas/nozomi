@@ -1,4 +1,6 @@
 using System;
+using System.Globalization;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
@@ -16,9 +18,9 @@ namespace Nozomi.Service.HostedServices.Analytical
     {
         private readonly IAnalysedComponentEvent _analysedComponentEvent;
         private readonly IAnalysedHistoricItemService _analysedHistoricItemService;
-        
+
         public ComponentAnalysisService(IServiceProvider serviceProvider,
-        IAnalysedComponentEvent analysedComponentEvent, IAnalysedHistoricItemService analysedHistoricItemService) 
+            IAnalysedComponentEvent analysedComponentEvent, IAnalysedHistoricItemService analysedHistoricItemService)
             : base(serviceProvider)
         {
             _analysedComponentEvent = analysedComponentEvent;
@@ -39,14 +41,18 @@ namespace Nozomi.Service.HostedServices.Analytical
 
                     foreach (var ac in items)
                     {
-                        // analyse?
+                        if (Analyse(ac))
+                        {
+                            _logger.LogInformation($"[ComponentAnalysisService] Component {ac.Id}:" +
+                                                   " Analysis successful");
+                        }
                     }
                 }
                 catch (Exception ex)
                 {
                     _logger.LogCritical("[ComponentAnalysisService]: " + ex);
                 }
-                
+
                 // No naps taken
                 await Task.Delay(10000, stoppingToken);
             }
@@ -56,7 +62,32 @@ namespace Nozomi.Service.HostedServices.Analytical
 
         public bool Analyse(AnalysedComponent component)
         {
-            throw new NotImplementedException();
+            // Always stash the value first
+            if (Stash(component))
+            {
+                switch (component.ComponentType)
+                {
+                    // Calculate the daily price change for this request
+                        case AnalysedComponentType.DailyPriceChange:
+                        component.Value = component.Request.RequestComponents
+                            .Select(rc => rc.RequestComponentDatum)
+                            .SelectMany(rcd => rcd.RcdHistoricItems)
+                            .Where(rcdhi => rcdhi.CreatedAt >= DateTime.UtcNow.Subtract(TimeSpan.FromDays(1)))
+                            .Select(rcdhi => rcdhi.Value)
+                            .DefaultIfEmpty()
+                            .Average(val => decimal.Parse(val))
+                            .ToString(CultureInfo.InvariantCulture);
+                        
+                        // Update
+                        
+
+                        return !string.IsNullOrEmpty(component.Value);
+                    default:
+                        return false;
+                }
+            }
+
+            return false; // Failed miserably while stashing
         }
 
         public bool Stash(AnalysedComponent component)
