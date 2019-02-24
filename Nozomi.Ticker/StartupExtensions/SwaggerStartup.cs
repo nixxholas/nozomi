@@ -29,6 +29,7 @@ namespace Nozomi.Ticker.StartupExtensions
             services.AddSwaggerExamplesFromAssemblyOf<CreateCurrencyPairRequestExample>();
             services.AddSwaggerExamplesFromAssemblyOf<UpdateCurrencyPairRequestExample>();
             services.AddSwaggerExamplesFromAssemblyOf<CreateSourceExample>();
+            services.AddSwaggerExamplesFromAssemblyOf<DeleteSourceExample>();
             services.AddSwaggerExamplesFromAssemblyOf<UpdateSourceExample>();
             services.AddSwaggerExamplesFromAssemblyOf<NozomiJsonResultExample>();
             services.AddSwaggerExamplesFromAssemblyOf<NozomiStringResultExample>();
