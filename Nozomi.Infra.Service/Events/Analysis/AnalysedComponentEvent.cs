@@ -20,7 +20,8 @@ namespace Nozomi.Service.Events.Analysis
         public IEnumerable<AnalysedComponent> GetAll(bool filter = false, bool track = false)
         {
             var query = _unitOfWork.GetRepository<AnalysedComponent>()
-                .GetQueryable();
+                .GetQueryable()
+                .AsNoTracking();
 
             if (filter)
             {
@@ -29,8 +30,12 @@ namespace Nozomi.Service.Events.Analysis
             
             if (track)
             {
-                query.Include(ac => ac.AnalysedHistoricItems)
-                    .Include(ac => ac.Request);
+                query
+                    .Include(ac => ac.AnalysedHistoricItems)
+                    .Include(ac => ac.Request)
+                    .ThenInclude(r => r.RequestComponents)
+                    .ThenInclude(rc => rc.RequestComponentDatum)
+                    .ThenInclude(rcd => rcd.RcdHistoricItems);
             }
 
             return query;
