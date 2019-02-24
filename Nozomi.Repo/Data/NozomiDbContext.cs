@@ -15,6 +15,7 @@ using Nozomi.Data.Models.Web.Websocket;
 using Nozomi.Repo.BCL.Context;
 using Nozomi.Repo.Data.Mappings.CurrencyModels;
 using Nozomi.Repo.Data.Mappings.WebModels;
+using Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels;
 using Nozomi.Repo.Data.Mappings.WebModels.LoggingModels;
 
 namespace Nozomi.Repo.Data
@@ -45,6 +46,7 @@ namespace Nozomi.Repo.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            var analysedComponentMap = new AnalysedComponentMap(modelBuilder.Entity<AnalysedComponent>());
             var currencyMap = new CurrencyMap(modelBuilder.Entity<Currency>());
             var currencyPairMap = new CurrencyPairMap(modelBuilder.Entity<CurrencyPair>());
             var currencyPairRequestMap = new CurrencyPairRequestMap(modelBuilder.Entity<CurrencyPairRequest>());
