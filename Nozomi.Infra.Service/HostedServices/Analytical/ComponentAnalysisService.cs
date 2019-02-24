@@ -18,15 +18,18 @@ namespace Nozomi.Service.HostedServices.Analytical
         IDisposable, IComponentAnalysisService
     {
         private readonly IAnalysedComponentEvent _analysedComponentEvent;
+        private readonly IAnalysedHistoricItemEvent _analysedHistoricItemEvent;
         private readonly IAnalysedComponentService _analysedComponentService;
         private readonly IAnalysedHistoricItemService _analysedHistoricItemService;
 
         public ComponentAnalysisService(IServiceProvider serviceProvider,
-            IAnalysedComponentEvent analysedComponentEvent, IAnalysedComponentService analysedComponentService, 
+            IAnalysedComponentEvent analysedComponentEvent, IAnalysedHistoricItemEvent analysedHistoricItemEvent,
+            IAnalysedComponentService analysedComponentService,
             IAnalysedHistoricItemService analysedHistoricItemService)
             : base(serviceProvider)
         {
             _analysedComponentEvent = analysedComponentEvent;
+            _analysedHistoricItemEvent = analysedHistoricItemEvent;
             _analysedComponentService = analysedComponentService;
             _analysedHistoricItemService = analysedHistoricItemService;
         }
@@ -72,22 +75,22 @@ namespace Nozomi.Service.HostedServices.Analytical
                 switch (component.ComponentType)
                 {
                     // Calculate the daily price change for this request
-                        case AnalysedComponentType.DailyPriceChange:
-                            var compute = component.Request.RequestComponents
-                                .Select(rc => rc.RequestComponentDatum)
-                                .SelectMany(rcd => rcd.RcdHistoricItems)
-                                .Where(rcdhi => rcdhi.CreatedAt >= DateTime.UtcNow.Subtract(TimeSpan.FromDays(1)))
-                                .Select(rcdhi => rcdhi.Value)
-                                .DefaultIfEmpty()
-                                .Average(val => decimal.Parse(val));
-                        
-                            if (!decimal.Zero.Equals(compute))
-                            {
-                                // Update
-                                return _analysedComponentService.UpdateValue(component.Id, compute.ToString());
-                            }
+                    case AnalysedComponentType.DailyPriceChange:
+                        var compute = component.Request.RequestComponents
+                            .Select(rc => rc.RequestComponentDatum)
+                            .SelectMany(rcd => rcd.RcdHistoricItems)
+                            .Where(rcdhi => rcdhi.CreatedAt >= DateTime.UtcNow.Subtract(TimeSpan.FromDays(1)))
+                            .Select(rcdhi => rcdhi.Value)
+                            .DefaultIfEmpty()
+                            .Average(val => decimal.Parse(val));
 
-                            break;
+                        if (!decimal.Zero.Equals(compute))
+                        {
+                            // Update
+                            return _analysedComponentService.UpdateValue(component.Id, compute.ToString());
+                        }
+
+                        break;
                     default:
                         return false;
                 }
@@ -99,7 +102,29 @@ namespace Nozomi.Service.HostedServices.Analytical
         public bool Stash(AnalysedComponent component)
         {
             // Obtain the latest historical value for cross checking
-            
+            var lastHistorical = _analysedHistoricItemEvent.Latest(component.Id);
+
+            if (lastHistorical != null)
+            {
+                // Is the value the same?
+                if (lastHistorical.Value.Equals(component.Value))
+                {
+                    // Don't have to save it
+                    return true; // Stashed
+                }
+
+                // Save it
+                var res = _analysedHistoricItemService.Create(new AnalysedHistoricItem
+                {
+                    AnalysedComponentId = component.Id,
+                    Value = component.Value
+                });
+
+                return res > 0;
+            }
+
+            // Always fail if defaulted
+            return false;
         }
     }
 }
