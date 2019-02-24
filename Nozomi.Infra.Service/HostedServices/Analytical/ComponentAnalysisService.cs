@@ -76,7 +76,7 @@ namespace Nozomi.Service.HostedServices.Analytical
                 {
                     // Calculate the daily price change for this request
                     case AnalysedComponentType.DailyPriceChange:
-                        var compute = component.Request.RequestComponents
+                        var dailyCompute = component.Request.RequestComponents
                             .Select(rc => rc.RequestComponentDatum)
                             .SelectMany(rcd => rcd.RcdHistoricItems)
                             .Where(rcdhi => rcdhi.CreatedAt >= DateTime.UtcNow.Subtract(TimeSpan.FromDays(1)))
@@ -84,10 +84,42 @@ namespace Nozomi.Service.HostedServices.Analytical
                             .DefaultIfEmpty()
                             .Average(val => decimal.Parse(val));
 
-                        if (!decimal.Zero.Equals(compute))
+                        if (!decimal.Zero.Equals(dailyCompute))
                         {
                             // Update
-                            return _analysedComponentService.UpdateValue(component.Id, compute.ToString());
+                            return _analysedComponentService.UpdateValue(component.Id, dailyCompute.ToString());
+                        }
+
+                        break;
+                    case AnalysedComponentType.WeeklyPriceChange:
+                        var weeklyCompute = component.Request.RequestComponents
+                            .Select(rc => rc.RequestComponentDatum)
+                            .SelectMany(rcd => rcd.RcdHistoricItems)
+                            .Where(rcdhi => rcdhi.CreatedAt >= DateTime.UtcNow.Subtract(TimeSpan.FromDays(7)))
+                            .Select(rcdhi => rcdhi.Value)
+                            .DefaultIfEmpty()
+                            .Average(val => decimal.Parse(val));
+
+                        if (!decimal.Zero.Equals(weeklyCompute))
+                        {
+                            // Update
+                            return _analysedComponentService.UpdateValue(component.Id, weeklyCompute.ToString());
+                        }
+
+                        break;
+                    case AnalysedComponentType.MonthlyPriceChange:
+                        var monthlyCompute = component.Request.RequestComponents
+                            .Select(rc => rc.RequestComponentDatum)
+                            .SelectMany(rcd => rcd.RcdHistoricItems)
+                            .Where(rcdhi => rcdhi.CreatedAt >= DateTime.UtcNow.Subtract(TimeSpan.FromDays(7)))
+                            .Select(rcdhi => rcdhi.Value)
+                            .DefaultIfEmpty()
+                            .Average(val => decimal.Parse(val));
+
+                        if (!decimal.Zero.Equals(monthlyCompute))
+                        {
+                            // Update
+                            return _analysedComponentService.UpdateValue(component.Id, monthlyCompute.ToString());
                         }
 
                         break;
