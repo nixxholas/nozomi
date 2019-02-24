@@ -27,6 +27,7 @@ namespace Nozomi.Ticker.StartupExtensions
             services.AddScoped<IAuthorizationHandler, ApiTokenHandler>();
             
             // Service Injections
+            services.AddTransient<IAnalysedHistoricItemService, AnalysedHistoricItemService>();
             services.AddTransient<IApiTokenService, ApiTokenService>();
             services.AddTransient<ICurrencyService, CurrencyService>();
             services.AddTransient<ICurrencyPairService, CurrencyPairService>();

@@ -10,7 +10,8 @@ namespace Nozomi.Service.Services
     public class AnalysedHistoricItemService : BaseService<AnalysedHistoricItemService, NozomiDbContext>, 
         IAnalysedHistoricItemService
     {
-        public AnalysedHistoricItemService(ILogger<AnalysedHistoricItemService> logger, IUnitOfWork<NozomiDbContext> unitOfWork) : base(logger, unitOfWork)
+        public AnalysedHistoricItemService(ILogger<AnalysedHistoricItemService> logger, 
+            IUnitOfWork<NozomiDbContext> unitOfWork) : base(logger, unitOfWork)
         {
         }
 
