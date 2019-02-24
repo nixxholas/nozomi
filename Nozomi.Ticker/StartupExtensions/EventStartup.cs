@@ -28,6 +28,7 @@ namespace Nozomi.Ticker.StartupExtensions
             services.AddScoped<IApiTokenEvent, ApiTokenEvent>();
 
             services.AddScoped<IAnalysedComponentEvent, AnalysedComponentEvent>();
+            services.AddScoped<IAnalysedHistoricItemEvent, AnalysedHistoricItemEvent>();
             services.AddScoped<ICurrencyEvent, CurrencyEvent>();
             services.AddScoped<ICurrencyTypeEvent, CurrencyTypeEvent>();
             services.AddScoped<IHistoricalDataEvent, HistoricalDataEvent>();
