@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Nozomi.Data.Models.Web.Analytical;
 
-namespace Nozomi.Service.Events.Interfaces
+namespace Nozomi.Service.Events.Analysis.Interfaces
 {
     public interface IAnalysedComponentEvent
     {
