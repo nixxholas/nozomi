@@ -44,6 +44,13 @@
                         <b-table responsive
                                  :fields="currencyDataFields" :items="currencyData">
                             <!-- A virtual composite column -->
+                            <template slot="Name" slot-scope="datum">
+                                <span>
+                                    <i :class="'cf cf-' + datum.item.Abbrv.toLowerCase()"></i>
+                                    {{ datum.item.Name }}
+                                </span>
+                            </template>
+                            <!-- A virtual composite column -->
                             <template slot="actions" slot-scope="datum">
                                 <a class="btn btn-sm btn-primary transition-3d-hover"
                                    :href="'/currency/' + datum.item.Id">
