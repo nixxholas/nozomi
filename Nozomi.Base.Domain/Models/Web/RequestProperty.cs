@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Nozomi.Base.Core;
+﻿using Nozomi.Base.Core;
 
-namespace Nozomi.Data.WebModels
+namespace Nozomi.Data.Models.Web
 {
     public class RequestProperty : BaseEntityModel
     {

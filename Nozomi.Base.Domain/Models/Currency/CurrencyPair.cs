@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Nozomi.Base.Core;
-using Nozomi.Data.AreaModels.v1.CurrencyPair;
-using Nozomi.Data.WebModels;
-using Nozomi.Data.WebModels.WebsocketModels;
-using Swashbuckle.AspNetCore.Annotations;
+using Nozomi.Data.Models.Web;
+using Nozomi.Data.Models.Web.Websocket;
 
-namespace Nozomi.Data.CurrencyModels
+namespace Nozomi.Data.Models.Currency
 {
     public class CurrencyPair : BaseEntityModel
     {

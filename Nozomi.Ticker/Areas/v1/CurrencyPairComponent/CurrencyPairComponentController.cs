@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data;
 using Nozomi.Data.AreaModels.v1.CurrencyPairComponent;
-using Nozomi.Data.WebModels;
+using Nozomi.Data.Models.Web;
 using Nozomi.Service.Identity.Managers;
 using Nozomi.Service.Services.Interfaces;
 using Swashbuckle.AspNetCore.Annotations;

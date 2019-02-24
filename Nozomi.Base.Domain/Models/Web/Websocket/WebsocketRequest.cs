@@ -1,7 +1,7 @@
 using System.Collections.Generic;
-using Nozomi.Data.CurrencyModels;
+using Nozomi.Data.Models.Currency;
 
-namespace Nozomi.Data.WebModels.WebsocketModels
+namespace Nozomi.Data.Models.Web.Websocket
 {
     public class WebsocketRequest : Request
     {

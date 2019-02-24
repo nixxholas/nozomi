@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Nozomi.Data.AreaModels.v1.Currency;
-using Nozomi.Data.CurrencyModels;
+using Nozomi.Data.Models.Currency;
 
 namespace Nozomi.Service.Events.Interfaces
 {

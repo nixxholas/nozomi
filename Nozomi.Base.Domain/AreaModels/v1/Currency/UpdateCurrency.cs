@@ -25,7 +25,7 @@ namespace Nozomi.Data.AreaModels.v1.Currency
         // This will have a number if it is a crypto pair to peg to proper entities
         public long WalletTypeId { get; set; } = 0;
         
-        public ICollection<CurrencyModels.PartialCurrencyPair> PartialCurrencyPairs { get; set; }
+        public ICollection<Models.Currency.PartialCurrencyPair> PartialCurrencyPairs { get; set; }
 
         public bool IsValid()
         {

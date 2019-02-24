@@ -1,7 +1,6 @@
-﻿using System;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 
-namespace Nozomi.Data.CurrencyModels
+namespace Nozomi.Data.Models.Currency
 { 
     public enum CurrencyPairType
     {

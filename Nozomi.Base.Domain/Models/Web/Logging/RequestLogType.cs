@@ -1,4 +1,4 @@
-﻿namespace Nozomi.Data.WebModels.LoggingModels
+﻿namespace Nozomi.Data.Models.Web.Logging
 {
     public enum RequestLogType
     {

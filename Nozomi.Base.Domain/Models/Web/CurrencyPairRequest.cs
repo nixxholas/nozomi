@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using Newtonsoft.Json.Linq;
 using Nozomi.Base.Core;
-using Nozomi.Base.Core.Helpers.Native.Collections;
-using Nozomi.Data.CurrencyModels;
+using Nozomi.Data.Models.Currency;
 
-namespace Nozomi.Data.WebModels
+namespace Nozomi.Data.Models.Web
 {
     public class CurrencyPairRequest : Request
     {

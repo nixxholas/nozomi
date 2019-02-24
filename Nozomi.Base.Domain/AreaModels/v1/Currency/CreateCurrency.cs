@@ -1,5 +1,4 @@
 using System.ComponentModel.DataAnnotations;
-using Nozomi.Data.CurrencyModels;
 
 namespace Nozomi.Data.AreaModels.v1.Currency
 {

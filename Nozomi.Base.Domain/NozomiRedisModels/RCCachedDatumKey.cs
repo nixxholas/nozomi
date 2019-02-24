@@ -1,5 +1,5 @@
 using System;
-using Nozomi.Data.CurrencyModels;
+using Nozomi.Data.Models.Currency;
 
 namespace Nozomi.Data.NozomiRedisModels
 {

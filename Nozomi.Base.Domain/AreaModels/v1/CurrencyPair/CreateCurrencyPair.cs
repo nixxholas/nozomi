@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Nozomi.Data.AreaModels.v1.CurrencyPairRequest;
 using Nozomi.Data.AreaModels.v1.PartialCurrencyPair;
-using Nozomi.Data.CurrencyModels;
+using Nozomi.Data.Models.Currency;
 
 namespace Nozomi.Data.AreaModels.v1.CurrencyPair
 {

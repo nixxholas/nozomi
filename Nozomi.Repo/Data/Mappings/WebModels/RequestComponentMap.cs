@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Nozomi.Base.Core.Helpers.Mapping;
-using Nozomi.Data.CurrencyModels;
-using Nozomi.Data.WebModels;
+using Nozomi.Data.Models.Web;
 
 namespace Nozomi.Repo.Data.Mappings.WebModels
 {

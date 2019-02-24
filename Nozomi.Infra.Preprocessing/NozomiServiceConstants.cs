@@ -1,7 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Nozomi.Data.CurrencyModels;
+using Nozomi.Data.Models.Currency;
 using Nozomi.Data.ResponseModels;
 using Nozomi.Data.ResponseModels.Ticker;
 

@@ -1,8 +1,7 @@
-using System.Collections;
 using System.Collections.Generic;
 using Nozomi.Base.Core;
 
-namespace Nozomi.Data.WebModels.WebsocketModels
+namespace Nozomi.Data.Models.Web.Websocket
 {
     public class WebsocketCommand : BaseEntityModel
     {

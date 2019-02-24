@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Nozomi.Data.CurrencyModels;
+using Nozomi.Data.Models.Currency;
 using Nozomi.Data.ResponseModels;
 using Nozomi.Preprocessing;
 using Nozomi.Preprocessing.Abstracts;

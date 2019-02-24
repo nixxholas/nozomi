@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Nozomi.Base.Core;
-using Nozomi.Data.CurrencyModels;
+﻿using Nozomi.Base.Core;
+using Nozomi.Data.Models.Currency;
 
-namespace Nozomi.Data.WebModels
+namespace Nozomi.Data.Models.Web
 {
     public class RequestComponent : BaseEntityModel
     {

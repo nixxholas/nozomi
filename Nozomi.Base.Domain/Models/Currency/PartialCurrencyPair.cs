@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Nozomi.Data.CurrencyModels
+﻿namespace Nozomi.Data.Models.Currency
 {
     /// <summary>
     /// Partial currency pair.

@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Nozomi.Base.Core;
 
-namespace Nozomi.Data.CurrencyModels
+namespace Nozomi.Data.Models.Currency
 {
     public class CurrencyType : BaseEntityModel
     {

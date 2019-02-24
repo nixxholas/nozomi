@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using Nozomi.Base.Core;
-using Nozomi.Data.WebModels.LoggingModels;
+using Nozomi.Data.Models.Web.Logging;
 
-namespace Nozomi.Data.WebModels
+namespace Nozomi.Data.Models.Web
 {
     public class Request : BaseEntityModel
     {

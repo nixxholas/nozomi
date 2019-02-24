@@ -1,4 +1,4 @@
-using Nozomi.Data.WebModels;
+using Nozomi.Data.Models.Web;
 
 namespace Nozomi.Service.Services.Interfaces
 {

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Nozomi.Data;
 using Nozomi.Data.AreaModels.v1.CurrencyPairComponent;
-using Nozomi.Data.WebModels;
+using Nozomi.Data.Models.Web;
 
 namespace Nozomi.Service.Services.Interfaces
 {

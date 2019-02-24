@@ -50,9 +50,9 @@ namespace Nozomi.Ticker.Areas.v1.Source
         }
 
         [HttpGet]
-        public NozomiResult<ICollection<Data.CurrencyModels.Source>> All()
+        public NozomiResult<ICollection<Data.Models.Currency.Source>> All()
         {
-            return new NozomiResult<ICollection<Data.CurrencyModels.Source>>(_sourceEvent.GetAllActive(false).ToList());
+            return new NozomiResult<ICollection<Data.Models.Currency.Source>>(_sourceEvent.GetAllActive(false).ToList());
         }
 
         [Authorize]

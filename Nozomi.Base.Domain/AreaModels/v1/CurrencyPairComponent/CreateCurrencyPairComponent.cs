@@ -1,4 +1,4 @@
-using Nozomi.Data.CurrencyModels;
+using Nozomi.Data.Models.Currency;
 
 namespace Nozomi.Data.AreaModels.v1.CurrencyPairComponent
 {

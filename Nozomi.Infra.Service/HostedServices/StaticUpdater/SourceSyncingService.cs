@@ -9,7 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Nozomi.Base.Core.Helpers.Enumerator;
-using Nozomi.Data.CurrencyModels;
+using Nozomi.Data.Models.Currency;
 using Nozomi.Data.ResponseModels;
 using Nozomi.Data.ResponseModels.Ticker;
 using Nozomi.Infra.Preprocessing.SignalR;

@@ -1,6 +1,6 @@
 ﻿using Nozomi.Base.Core;
 
-namespace Nozomi.Data.WebModels.LoggingModels
+namespace Nozomi.Data.Models.Web.Logging
 {
     public class RequestLog : BaseEntityModel
     {

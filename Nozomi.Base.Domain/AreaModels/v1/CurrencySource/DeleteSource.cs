@@ -1,6 +1,5 @@
 using System;
 using System.Linq.Expressions;
-using Nozomi.Data.CurrencyModels;
 
 namespace Nozomi.Data.AreaModels.v1.CurrencySource
 {

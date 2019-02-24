@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using Nozomi.Data.CurrencyModels;
+using Nozomi.Data.Models.Currency;
 using Nozomi.Data.ResponseModels.Source;
 
 namespace Nozomi.Service.Events.Interfaces

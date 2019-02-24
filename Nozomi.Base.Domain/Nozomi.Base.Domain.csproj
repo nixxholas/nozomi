@@ -18,4 +18,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Nozomi.Base.Core\Nozomi.Base.Core.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Models" />
+  </ItemGroup>
 </Project>

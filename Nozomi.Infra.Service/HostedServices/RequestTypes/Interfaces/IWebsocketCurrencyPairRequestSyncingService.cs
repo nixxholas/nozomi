@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
-using Nozomi.Data.WebModels;
-using Nozomi.Data.WebModels.WebsocketModels;
+using Nozomi.Data.Models.Web;
+using Nozomi.Data.Models.Web.Websocket;
 
 namespace Nozomi.Service.HostedServices.RequestTypes.Interfaces
 {

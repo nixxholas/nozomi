@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
-using Nozomi.Data.WebModels;
+using Nozomi.Data.Models.Web;
 
 namespace Nozomi.Service.HostedServices.RequestTypes.Interfaces
 {
