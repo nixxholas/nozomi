@@ -22,6 +22,29 @@ namespace Nozomi.Service.Events
 
         public DetailedCurrencyResponse GetDetailed(long currencyId, ICollection<ComponentType> componentTypes)
         {
+            var historicalData = _unitOfWork.GetRepository<Currency>()
+                .GetQueryable()
+                .AsNoTracking()
+                .Where(c => c.Id.Equals(currencyId) && c.DeletedAt == null && c.IsEnabled)
+                .Include(c => c.PartialCurrencyPairs)
+                .ThenInclude(pcp => pcp.CurrencyPair)
+                .ThenInclude(cp => cp.CurrencyPairRequests)
+                .ThenInclude(cpr => cpr.RequestComponents)
+                .ThenInclude(rc => rc.RequestComponentDatum)
+                .ThenInclude(rcd => rcd.RcdHistoricItems)
+                .SelectMany(c => c.PartialCurrencyPairs)
+                .Select(pcp => pcp.CurrencyPair)
+                .SelectMany(cp => cp.CurrencyPairRequests)
+                .SelectMany(cpr => cpr.RequestComponents)
+                .Select(rc => new { rc.ComponentType,
+                    Dict = rc.RequestComponentDatum
+                        .RcdHistoricItems
+                        .ToDictionary(rcdhi => 
+                            new KeyValuePair<DateTime, string>(
+                            rcdhi.CreatedAt,
+                            rcdhi.Value)) })
+                .ToDictionary(x => x.ComponentType, y => y.Dict);
+        
             var detailedRes = _unitOfWork.GetRepository<Currency>()
                 .GetQueryable()
                 .AsNoTracking()
