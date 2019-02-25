@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using Nozomi.Base.Core.Helpers.Enumerable;
 using Nozomi.Data.AreaModels.v1.Currency;
 using Nozomi.Data.Models.Currency;
+using Nozomi.Data.ResponseModels.Currency;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Data;
@@ -17,6 +18,36 @@ namespace Nozomi.Service.Events
     {
         public CurrencyEvent(ILogger<CurrencyEvent> logger, IUnitOfWork<NozomiDbContext> unitOfWork) : base(logger, unitOfWork)
         {
+        }
+
+        public DetailedCurrencyResponse GetDetailed(long currencyId, ICollection<ComponentType> componentTypes)
+        {
+            var detailedRes = _unitOfWork.GetRepository<Currency>()
+                .GetQueryable()
+                .AsNoTracking()
+                .Where(c => c.Id.Equals(currencyId) && c.DeletedAt == null && c.IsEnabled)
+                .Include(c => c.PartialCurrencyPairs)
+                .ThenInclude(pcp => pcp.CurrencyPair)
+                .ThenInclude(cp => cp.CurrencyPairRequests)
+                .ThenInclude(cpr => cpr.RequestComponents)
+                .ThenInclude(rc => rc.RequestComponentDatum)
+                .ThenInclude(rcd => rcd.RcdHistoricItems)
+                .Select(c => new DetailedCurrencyResponse
+                {
+                    Name = c.Name,
+                    Abbreviation = c.Abbrv,
+                    LastUpdated = c.PartialCurrencyPairs
+                        .Select(pcp => pcp.CurrencyPair)
+                        .SelectMany(cp => cp.CurrencyPairRequests)
+                        .SelectMany(cpr => cpr.RequestComponents)
+                        .OrderByDescending(rc => rc.ModifiedAt)
+                        .FirstOrDefault()
+                        .ModifiedAt,
+                    WeeklyAvgPrice = 0,
+                    DailyVolume = 0,
+                });
+            
+            throw new NotImplementedException();
         }
 
         public bool Any(CreateCurrency createCurrency)

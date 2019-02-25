@@ -2,11 +2,22 @@ using System;
 using System.Collections.Generic;
 using Nozomi.Data.AreaModels.v1.Currency;
 using Nozomi.Data.Models.Currency;
+using Nozomi.Data.ResponseModels.Currency;
 
 namespace Nozomi.Service.Events.Interfaces
 {
     public interface ICurrencyEvent
     {
+        /// <summary>
+        /// Enables to caller to obtained a detailed about regarding a currency,
+        /// including it's historical data, whichever declared/asked for.
+        /// </summary>
+        /// <param name="currencyId">The unique identifier of the currency</param>
+        /// <param name="componentTypes">The components that the caller wants to obtain historical
+        /// data about.</param>
+        /// <returns></returns>
+        DetailedCurrencyResponse GetDetailed(long currencyId, ICollection<ComponentType> componentTypes);
+         
         bool Any(CreateCurrency currency);
         
         IEnumerable<Currency> GetAllActive(bool includeNested = false);
