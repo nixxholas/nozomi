@@ -34,7 +34,7 @@ namespace Nozomi.Infra.Service.Tests.Events
                 _mockCurrencyEventLogger.Object,
                 _uow.Object);
             
-            var res = currencyEvent.GetDetailed(1,
+            var res = currencyEvent.GetDetailedById(1,
                 new List<ComponentType> {ComponentType.Ask});
             
             // Assert

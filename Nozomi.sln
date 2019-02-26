@@ -33,8 +33,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nozomi.Base.Socket", "Nozom
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nozomi.Infra.Preprocessing.SignalR", "Nozomi.Infra.Preprocessing.SignalR\Nozomi.Infra.Preprocessing.SignalR.csproj", "{E9349E75-B4FF-4622-A913-AE951FD10E52}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nozomi.Infra.Service.Tests", "Nozomi.Infra.Service.Tests\Nozomi.Infra.Service.Tests.csproj", "{CFD0A530-DD6C-4CBC-BA2F-54494FB22FFB}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -89,10 +87,6 @@ Global
 		{E9349E75-B4FF-4622-A913-AE951FD10E52}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E9349E75-B4FF-4622-A913-AE951FD10E52}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E9349E75-B4FF-4622-A913-AE951FD10E52}.Release|Any CPU.Build.0 = Release|Any CPU
-		{CFD0A530-DD6C-4CBC-BA2F-54494FB22FFB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CFD0A530-DD6C-4CBC-BA2F-54494FB22FFB}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CFD0A530-DD6C-4CBC-BA2F-54494FB22FFB}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{CFD0A530-DD6C-4CBC-BA2F-54494FB22FFB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{08B57962-9841-4DFA-8DC3-E95042220750} = {AE1F223F-EF2C-4237-81CE-435DCE9DF913}
@@ -107,6 +101,5 @@ Global
 		{D0EDBECA-0DE0-41E0-8675-70FF8D94B583} = {CD7C95FA-AEB1-4EC4-AA8C-3F6391A864A2}
 		{A9DF23FD-3E1C-47E3-834E-6F7BF96098A1} = {AE1F223F-EF2C-4237-81CE-435DCE9DF913}
 		{E9349E75-B4FF-4622-A913-AE951FD10E52} = {D54DB59C-EB6F-4CBD-9FC0-EF423F88248E}
-		{CFD0A530-DD6C-4CBC-BA2F-54494FB22FFB} = {D54DB59C-EB6F-4CBD-9FC0-EF423F88248E}
 	EndGlobalSection
 EndGlobal

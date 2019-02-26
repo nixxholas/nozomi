@@ -40,7 +40,7 @@ namespace Nozomi.Ticker.Areas.v1.Currency
             return Ok(_currencyService.Create(createCurrency));
         }
 
-        [HttpGet]
+        [HttpGet("{abbreviation}")]
         public NozomiResult<DetailedCurrencyResponse> Detailed(string abbreviation)
         {
             return new NozomiResult<DetailedCurrencyResponse>(_currencyEvent.GetDetailedByAbbreviation(abbreviation, 
