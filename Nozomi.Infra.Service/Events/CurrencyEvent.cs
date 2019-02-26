@@ -93,7 +93,7 @@ namespace Nozomi.Service.Events
 //                        .ToDictionary(rcdhi => rcdhi.CreatedAt,
 //                            rcdhi => rcdhi.Value));
 
-            var detailedRes = _unitOfWork.GetRepository<Currency>()
+            return _unitOfWork.GetRepository<Currency>()
                 .GetQueryable()
                 .AsNoTracking()
                 .Where(c => c.Id.Equals(currencyId) && c.DeletedAt == null && c.IsEnabled)
@@ -150,9 +150,8 @@ namespace Nozomi.Service.Events
                                 .RcdHistoricItems
                                 .ToDictionary(rcdhi => rcdhi.CreatedAt,
                                     rcdhi => rcdhi.Value))
-                });
-
-            throw new NotImplementedException();
+                })
+                .SingleOrDefault();
         }
 
         public bool Any(CreateCurrency createCurrency)
