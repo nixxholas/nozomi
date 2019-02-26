@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -16,7 +17,8 @@ namespace Nozomi.Service.Events
 {
     public class CurrencyEvent : BaseEvent<CurrencyEvent, NozomiDbContext>, ICurrencyEvent
     {
-        public CurrencyEvent(ILogger<CurrencyEvent> logger, IUnitOfWork<NozomiDbContext> unitOfWork) : base(logger, unitOfWork)
+        public CurrencyEvent(ILogger<CurrencyEvent> logger, IUnitOfWork<NozomiDbContext> unitOfWork) : base(logger,
+            unitOfWork)
         {
         }
 
@@ -35,7 +37,10 @@ namespace Nozomi.Service.Events
 //                .SelectMany(c => c.PartialCurrencyPairs)
 //                .Select(pcp => pcp.CurrencyPair)
 //                .SelectMany(cp => cp.CurrencyPairRequests)
-//                .SelectMany(cpr => cpr.RequestComponents)
+//                .SelectMany(cpr => cpr.RequestComponents
+//                    .Where(rc => 
+//                        rc.ComponentType.Equals(ComponentType.Ask) ||
+//                        rc.ComponentType.Equals(ComponentType.Bid)))
 //                .Select(rc => rc.RequestComponentDatum)
 //                .SelectMany(rcd => rcd.RcdHistoricItems
 //                    .Where(rcdhi => rcdhi.CreatedAt > 
@@ -43,7 +48,7 @@ namespace Nozomi.Service.Events
 //                .Select(rcdhi => decimal.Parse(rcdhi.Value))
 //                .DefaultIfEmpty()
 //                .Average();
-            
+
 //            var historicalData = _unitOfWork.GetRepository<Currency>()
 //                .GetQueryable()
 //                .AsNoTracking()
@@ -63,7 +68,7 @@ namespace Nozomi.Service.Events
 //                        .RcdHistoricItems
 //                        .ToDictionary(rcdhi => rcdhi.CreatedAt,
 //                            rcdhi => rcdhi.Value));
-        
+
             var detailedRes = _unitOfWork.GetRepository<Currency>()
                 .GetQueryable()
                 .AsNoTracking()
@@ -86,28 +91,31 @@ namespace Nozomi.Service.Events
                         .FirstOrDefault()
                         .ModifiedAt,
                     WeeklyAvgPrice = c.PartialCurrencyPairs
-                    .Select(pcp => pcp.CurrencyPair)
-                    .SelectMany(cp => cp.CurrencyPairRequests)
-                    .SelectMany(cpr => cpr.RequestComponents)
-                    .Select(rc => rc.RequestComponentDatum)
-                    .SelectMany(rcd => rcd.RcdHistoricItems
-                    .Where(rcdhi => rcdhi.CreatedAt > 
-                    DateTime.UtcNow.Subtract(TimeSpan.FromDays(7))))
-                    .Select(rcdhi => decimal.Parse(rcdhi.Value))
-                    .DefaultIfEmpty()
-                    .Average(),
+                        .Select(pcp => pcp.CurrencyPair)
+                        .SelectMany(cp => cp.CurrencyPairRequests)
+                        .SelectMany(cpr => cpr.RequestComponents
+                            .Where(rc => 
+                                rc.ComponentType.Equals(ComponentType.Ask) ||
+                                rc.ComponentType.Equals(ComponentType.Bid)))
+                        .Select(rc => rc.RequestComponentDatum)
+                        .SelectMany(rcd => rcd.RcdHistoricItems
+                            .Where(rcdhi => rcdhi.CreatedAt > 
+                                            DateTime.UtcNow.Subtract(TimeSpan.FromDays(7))))
+                        .Select(rcdhi => decimal.Parse(rcdhi.Value))
+                        .DefaultIfEmpty()
+                        .Average(),
                     DailyVolume = 0,
                     Historical = c.PartialCurrencyPairs
                         .Select(pcp => pcp.CurrencyPair)
                         .SelectMany(cp => cp.CurrencyPairRequests)
                         .SelectMany(cpr => cpr.RequestComponents)
-                        .ToDictionary(rc => rc.ComponentType, 
+                        .ToDictionary(rc => rc.ComponentType,
                             rc => rc.RequestComponentDatum
                                 .RcdHistoricItems
                                 .ToDictionary(rcdhi => rcdhi.CreatedAt,
                                     rcdhi => rcdhi.Value))
                 });
-            
+
             throw new NotImplementedException();
         }
 
@@ -162,11 +170,11 @@ namespace Nozomi.Service.Events
                         id = c.Id,
                         abbrv = c.Abbrv,
                         CurrencyType =
-                        new
-                        {
-                            name = c.CurrencyType.Name,
-                            typeShortForm = c.CurrencyType.TypeShortForm
-                        },
+                            new
+                            {
+                                name = c.CurrencyType.Name,
+                                typeShortForm = c.CurrencyType.TypeShortForm
+                            },
                         name = c.Name,
                         walletTypeId = c.WalletTypeId
                     });
@@ -210,11 +218,12 @@ namespace Nozomi.Service.Events
                     {
                         Id = c.Id,
                         Abbrv = c.Abbrv,
-                        CurrencyType = 
-                        new {
-                            name = c.CurrencyType.Name,
-                            typeShortForm = c.CurrencyType.TypeShortForm
-                        },
+                        CurrencyType =
+                            new
+                            {
+                                name = c.CurrencyType.Name,
+                                typeShortForm = c.CurrencyType.TypeShortForm
+                            },
                         Name = c.Name
                     });
             }
@@ -266,7 +275,7 @@ namespace Nozomi.Service.Events
                 // pop!
                 var currPcPair = pcPairs.First();
                 pcPairs.Remove(currPcPair);
-                
+
                 var currCurrencyId = currPcPair.CurrencyId;
 
                 // Retrieve the the counter/mainpair
@@ -338,14 +347,14 @@ namespace Nozomi.Service.Events
                 // pop!
                 var currPCPair = pcPairs.First(cpcp => cpcp.IsMain);
                 pcPairs.Remove(currPCPair);
-                
+
                 var currCurrencyId = currPCPair.CurrencyId;
 
                 // Retrieve the the counter/mainpair
                 var subPCPair = pcPairs // Not the same currency
                     .SingleOrDefault(pcp => pcp.CurrencyPairId.Equals(currPCPair.CurrencyPairId) // Same Currency pair
                                             && !pcp.IsMain);
-                
+
                 // Second layer check
                 if (subPCPair != null && !subPCPair.CurrencyId.Equals(currCurrencyId))
                 {
@@ -353,36 +362,12 @@ namespace Nozomi.Service.Events
                         _unitOfWork.GetRepository<CurrencyPair>()
                             .Get(predicate: cp => cp.Id.Equals(subPCPair.CurrencyPairId))
                             .Single().CurrencySourceId;
-                    
+
                     // Now let's see what pair this is
                     // We just need to make sure this is a semi-crypto pair because this API specifically only retrieves
                     // crypto-related pairs
-                    if (currPCPair.Currency.WalletTypeId > 0 && subPCPair.Currency.WalletTypeId > 0) // Crypto-Crypto Pair
-                    {
-                        var walletTypeId = currPCPair.Currency.WalletTypeId;
-
-                        // Remove the pair
-                        pcPairs.Remove(subPCPair);
-
-                        // Add the pair
-
-                        // If let's BTC's currencyid already exists and if it exists, the subpair hasn't existed yet
-                        if (result.ContainsKey(walletTypeId) &&
-                            !result[walletTypeId].ContainsKey(subPCPair.CurrencyId))
-                        {
-                            // Add the next pair in
-                            result[walletTypeId].Add(subPCPair.CurrencyId, currCurrencySourceId);
-                        }
-                        else
-                        {
-                            // If not, add it
-                            result.Add(walletTypeId, new Dictionary<long, long>()
-                            {
-                                // Add item on initialization
-                                {subPCPair.CurrencyId, currCurrencySourceId }
-                            });
-                        }
-                    } else if (currPCPair.Currency.WalletTypeId > 0 && subPCPair.Currency.WalletTypeId.Equals(0)) // Crypto-Fiat Pair
+                    if (currPCPair.Currency.WalletTypeId > 0 && subPCPair.Currency.WalletTypeId > 0
+                    ) // Crypto-Crypto Pair
                     {
                         var walletTypeId = currPCPair.Currency.WalletTypeId;
 
@@ -408,6 +393,34 @@ namespace Nozomi.Service.Events
                             });
                         }
                     }
+                    else if (currPCPair.Currency.WalletTypeId > 0 && subPCPair.Currency.WalletTypeId.Equals(0)
+                    ) // Crypto-Fiat Pair
+                    {
+                        var walletTypeId = currPCPair.Currency.WalletTypeId;
+
+                        // Remove the pair
+                        pcPairs.Remove(subPCPair);
+
+                        // Add the pair
+
+                        // If let's BTC's currencyid already exists and if it exists, the subpair hasn't existed yet
+                        if (result.ContainsKey(walletTypeId) &&
+                            !result[walletTypeId].ContainsKey(subPCPair.CurrencyId))
+                        {
+                            // Add the next pair in
+                            result[walletTypeId].Add(subPCPair.CurrencyId, currCurrencySourceId);
+                        }
+                        else
+                        {
+                            // If not, add it
+                            result.Add(walletTypeId, new Dictionary<long, long>()
+                            {
+                                // Add item on initialization
+                                {subPCPair.CurrencyId, currCurrencySourceId}
+                            });
+                        }
+                    }
+
                     // If you really want to implement Fiat-Crypto, do it here when you really need it
                 }
             }
