@@ -49,6 +49,30 @@ namespace Nozomi.Service.Events
 //                .DefaultIfEmpty()
 //                .Average();
 
+//            var dailyVolume = _unitOfWork.GetRepository<Currency>()
+//                .GetQueryable()
+//                .AsNoTracking()
+//                .Where(c => c.Id.Equals(currencyId) && c.DeletedAt == null && c.IsEnabled)
+//                .Include(c => c.PartialCurrencyPairs)
+//                .ThenInclude(pcp => pcp.CurrencyPair)
+//                .ThenInclude(cp => cp.CurrencyPairRequests)
+//                .ThenInclude(cpr => cpr.RequestComponents)
+//                .ThenInclude(rc => rc.RequestComponentDatum)
+//                .ThenInclude(rcd => rcd.RcdHistoricItems)
+//                .SelectMany(c => c.PartialCurrencyPairs)
+//                .Select(pcp => pcp.CurrencyPair)
+//                .SelectMany(cp => cp.CurrencyPairRequests)
+//                .SelectMany(cpr => cpr.RequestComponents
+//                    .Where(rc =>
+//                        rc.ComponentType.Equals(ComponentType.VOLUME)))
+//                .Select(rc => rc.RequestComponentDatum)
+//                .SelectMany(rcd => rcd.RcdHistoricItems
+//                    .Where(rcdhi => rcdhi.CreatedAt >
+//                                    DateTime.UtcNow.Subtract(TimeSpan.FromHours(24))))
+//                .Select(rcdhi => decimal.Parse(rcdhi.Value))
+//                .DefaultIfEmpty()
+//                .Sum();
+
 //            var historicalData = _unitOfWork.GetRepository<Currency>()
 //                .GetQueryable()
 //                .AsNoTracking()
@@ -94,17 +118,29 @@ namespace Nozomi.Service.Events
                         .Select(pcp => pcp.CurrencyPair)
                         .SelectMany(cp => cp.CurrencyPairRequests)
                         .SelectMany(cpr => cpr.RequestComponents
-                            .Where(rc => 
+                            .Where(rc =>
                                 rc.ComponentType.Equals(ComponentType.Ask) ||
                                 rc.ComponentType.Equals(ComponentType.Bid)))
                         .Select(rc => rc.RequestComponentDatum)
                         .SelectMany(rcd => rcd.RcdHistoricItems
-                            .Where(rcdhi => rcdhi.CreatedAt > 
+                            .Where(rcdhi => rcdhi.CreatedAt >
                                             DateTime.UtcNow.Subtract(TimeSpan.FromDays(7))))
                         .Select(rcdhi => decimal.Parse(rcdhi.Value))
                         .DefaultIfEmpty()
                         .Average(),
-                    DailyVolume = 0,
+                    DailyVolume = c.PartialCurrencyPairs
+                        .Select(pcp => pcp.CurrencyPair)
+                        .SelectMany(cp => cp.CurrencyPairRequests)
+                        .SelectMany(cpr => cpr.RequestComponents
+                            .Where(rc =>
+                                rc.ComponentType.Equals(ComponentType.VOLUME)))
+                        .Select(rc => rc.RequestComponentDatum)
+                        .SelectMany(rcd => rcd.RcdHistoricItems
+                            .Where(rcdhi => rcdhi.CreatedAt >
+                                            DateTime.UtcNow.Subtract(TimeSpan.FromHours(24))))
+                        .Select(rcdhi => decimal.Parse(rcdhi.Value))
+                        .DefaultIfEmpty()
+                        .Sum(),
                     Historical = c.PartialCurrencyPairs
                         .Select(pcp => pcp.CurrencyPair)
                         .SelectMany(cp => cp.CurrencyPairRequests)
