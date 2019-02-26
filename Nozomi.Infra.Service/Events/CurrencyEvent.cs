@@ -22,7 +22,27 @@ namespace Nozomi.Service.Events
 
         public DetailedCurrencyResponse GetDetailed(long currencyId, ICollection<ComponentType> componentTypes)
         {
-            var weeklyAvgPrice = _unitOfWork.GetRepository<Currency>();
+//            var weeklyAvgPrice = _unitOfWork.GetRepository<Currency>()
+//                .GetQueryable()
+//                .AsNoTracking()
+//                .Where(c => c.Id.Equals(currencyId) && c.DeletedAt == null && c.IsEnabled)
+//                .Include(c => c.PartialCurrencyPairs)
+//                .ThenInclude(pcp => pcp.CurrencyPair)
+//                .ThenInclude(cp => cp.CurrencyPairRequests)
+//                .ThenInclude(cpr => cpr.RequestComponents)
+//                .ThenInclude(rc => rc.RequestComponentDatum)
+//                .ThenInclude(rcd => rcd.RcdHistoricItems)
+//                .SelectMany(c => c.PartialCurrencyPairs)
+//                .Select(pcp => pcp.CurrencyPair)
+//                .SelectMany(cp => cp.CurrencyPairRequests)
+//                .SelectMany(cpr => cpr.RequestComponents)
+//                .Select(rc => rc.RequestComponentDatum)
+//                .SelectMany(rcd => rcd.RcdHistoricItems
+//                    .Where(rcdhi => rcdhi.CreatedAt > 
+//                                    DateTime.UtcNow.Subtract(TimeSpan.FromDays(7))))
+//                .Select(rcdhi => decimal.Parse(rcdhi.Value))
+//                .DefaultIfEmpty()
+//                .Average();
             
 //            var historicalData = _unitOfWork.GetRepository<Currency>()
 //                .GetQueryable()
@@ -65,7 +85,17 @@ namespace Nozomi.Service.Events
                         .OrderByDescending(rc => rc.ModifiedAt)
                         .FirstOrDefault()
                         .ModifiedAt,
-                    WeeklyAvgPrice = 0,
+                    WeeklyAvgPrice = c.PartialCurrencyPairs
+                    .Select(pcp => pcp.CurrencyPair)
+                    .SelectMany(cp => cp.CurrencyPairRequests)
+                    .SelectMany(cpr => cpr.RequestComponents)
+                    .Select(rc => rc.RequestComponentDatum)
+                    .SelectMany(rcd => rcd.RcdHistoricItems
+                    .Where(rcdhi => rcdhi.CreatedAt > 
+                    DateTime.UtcNow.Subtract(TimeSpan.FromDays(7))))
+                    .Select(rcdhi => decimal.Parse(rcdhi.Value))
+                    .DefaultIfEmpty()
+                    .Average(),
                     DailyVolume = 0,
                     Historical = c.PartialCurrencyPairs
                         .Select(pcp => pcp.CurrencyPair)
