@@ -6,6 +6,6 @@ namespace Nozomi.Data.ResponseModels.Currency
 {
     public class DetailedCurrencyResponse : DistinctiveCurrencyResponse
     {
-        public IDictionary<ComponentType, IDictionary<DateTime, string>> Historical { get; set; }
+        public Dictionary<ComponentType, Dictionary<DateTime, string>> Historical { get; set; }
     }
 }
