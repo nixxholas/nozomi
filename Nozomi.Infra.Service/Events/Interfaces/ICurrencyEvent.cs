@@ -16,7 +16,7 @@ namespace Nozomi.Service.Events.Interfaces
         /// <param name="componentTypes">The components that the caller wants to obtain historical
         /// data about.</param>
         /// <returns></returns>
-        DetailedCurrencyResponse GetDetailed(long currencyId, ICollection<ComponentType> componentTypes);
+        DetailedCurrencyResponse GetDetailedById(long currencyId, ICollection<ComponentType> componentTypes);
          
         bool Any(CreateCurrency currency);
         

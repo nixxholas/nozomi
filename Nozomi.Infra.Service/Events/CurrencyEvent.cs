@@ -22,7 +22,7 @@ namespace Nozomi.Service.Events
         {
         }
 
-        public DetailedCurrencyResponse GetDetailed(long currencyId, ICollection<ComponentType> componentTypes)
+        public DetailedCurrencyResponse GetDetailedById(long currencyId, ICollection<ComponentType> componentTypes)
         {
 //            var weeklyAvgPrice = _unitOfWork.GetRepository<Currency>()
 //                .GetQueryable()
