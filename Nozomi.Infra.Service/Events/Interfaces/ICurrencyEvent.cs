@@ -17,6 +17,8 @@ namespace Nozomi.Service.Events.Interfaces
         /// data about.</param>
         /// <returns></returns>
         DetailedCurrencyResponse GetDetailedById(long currencyId, ICollection<ComponentType> componentTypes);
+        
+        DetailedCurrencyResponse GetDetailedByAbbreviation(string abbreviation, ICollection<ComponentType> componentTypes);
          
         bool Any(CreateCurrency currency);
         

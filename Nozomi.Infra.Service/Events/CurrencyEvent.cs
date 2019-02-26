@@ -154,6 +154,69 @@ namespace Nozomi.Service.Events
                 .SingleOrDefault();
         }
 
+        public DetailedCurrencyResponse GetDetailedByAbbreviation(string abbreviation, ICollection<ComponentType> componentTypes)
+        {
+            return _unitOfWork.GetRepository<Currency>()
+                .GetQueryable()
+                .AsNoTracking()
+                .Where(c => c.Abbrv.Equals(abbreviation) && c.DeletedAt == null && c.IsEnabled)
+                .Include(c => c.PartialCurrencyPairs)
+                .ThenInclude(pcp => pcp.CurrencyPair)
+                .ThenInclude(cp => cp.CurrencyPairRequests)
+                .ThenInclude(cpr => cpr.RequestComponents)
+                .ThenInclude(rc => rc.RequestComponentDatum)
+                .ThenInclude(rcd => rcd.RcdHistoricItems)
+                .Select(c => new DetailedCurrencyResponse
+                {
+                    Name = c.Name,
+                    Abbreviation = c.Abbrv,
+                    LastUpdated = c.PartialCurrencyPairs
+                        .Select(pcp => pcp.CurrencyPair)
+                        .SelectMany(cp => cp.CurrencyPairRequests)
+                        .SelectMany(cpr => cpr.RequestComponents)
+                        .OrderByDescending(rc => rc.ModifiedAt)
+                        .FirstOrDefault()
+                        .ModifiedAt,
+                    WeeklyAvgPrice = c.PartialCurrencyPairs
+                        .Select(pcp => pcp.CurrencyPair)
+                        .SelectMany(cp => cp.CurrencyPairRequests)
+                        .SelectMany(cpr => cpr.RequestComponents
+                            .Where(rc =>
+                                rc.ComponentType.Equals(ComponentType.Ask) ||
+                                rc.ComponentType.Equals(ComponentType.Bid)))
+                        .Select(rc => rc.RequestComponentDatum)
+                        .SelectMany(rcd => rcd.RcdHistoricItems
+                            .Where(rcdhi => rcdhi.CreatedAt >
+                                            DateTime.UtcNow.Subtract(TimeSpan.FromDays(7))))
+                        .Select(rcdhi => decimal.Parse(rcdhi.Value))
+                        .DefaultIfEmpty()
+                        .Average(),
+                    DailyVolume = c.PartialCurrencyPairs
+                        .Select(pcp => pcp.CurrencyPair)
+                        .SelectMany(cp => cp.CurrencyPairRequests)
+                        .SelectMany(cpr => cpr.RequestComponents
+                            .Where(rc =>
+                                rc.ComponentType.Equals(ComponentType.VOLUME)))
+                        .Select(rc => rc.RequestComponentDatum)
+                        .SelectMany(rcd => rcd.RcdHistoricItems
+                            .Where(rcdhi => rcdhi.CreatedAt >
+                                            DateTime.UtcNow.Subtract(TimeSpan.FromHours(24))))
+                        .Select(rcdhi => decimal.Parse(rcdhi.Value))
+                        .DefaultIfEmpty()
+                        .Sum(),
+                    Historical = c.PartialCurrencyPairs
+                        .Select(pcp => pcp.CurrencyPair)
+                        .SelectMany(cp => cp.CurrencyPairRequests)
+                        .SelectMany(cpr => cpr.RequestComponents)
+                        .ToDictionary(rc => rc.ComponentType,
+                            rc => rc.RequestComponentDatum
+                                .RcdHistoricItems
+                                .ToDictionary(rcdhi => rcdhi.CreatedAt,
+                                    rcdhi => rcdhi.Value))
+                })
+                .SingleOrDefault();
+        }
+
         public bool Any(CreateCurrency createCurrency)
         {
             if (createCurrency != null && createCurrency.IsValid())
