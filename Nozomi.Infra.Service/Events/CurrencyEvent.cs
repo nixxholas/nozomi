@@ -208,6 +208,7 @@ namespace Nozomi.Service.Events
                         .Select(pcp => pcp.CurrencyPair)
                         .SelectMany(cp => cp.CurrencyPairRequests)
                         .SelectMany(cpr => cpr.RequestComponents)
+                        .Where(rc => componentTypes.Contains(rc.ComponentType))
                         .ToDictionary(rc => rc.ComponentType,
                             rc => rc.RequestComponentDatum
                                 .RcdHistoricItems
