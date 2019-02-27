@@ -24,75 +24,6 @@ namespace Nozomi.Service.Events
 
         public DetailedCurrencyResponse GetDetailedById(long currencyId, ICollection<ComponentType> componentTypes)
         {
-//            var weeklyAvgPrice = _unitOfWork.GetRepository<Currency>()
-//                .GetQueryable()
-//                .AsNoTracking()
-//                .Where(c => c.Id.Equals(currencyId) && c.DeletedAt == null && c.IsEnabled)
-//                .Include(c => c.PartialCurrencyPairs)
-//                .ThenInclude(pcp => pcp.CurrencyPair)
-//                .ThenInclude(cp => cp.CurrencyPairRequests)
-//                .ThenInclude(cpr => cpr.RequestComponents)
-//                .ThenInclude(rc => rc.RequestComponentDatum)
-//                .ThenInclude(rcd => rcd.RcdHistoricItems)
-//                .SelectMany(c => c.PartialCurrencyPairs)
-//                .Select(pcp => pcp.CurrencyPair)
-//                .SelectMany(cp => cp.CurrencyPairRequests)
-//                .SelectMany(cpr => cpr.RequestComponents
-//                    .Where(rc => 
-//                        rc.ComponentType.Equals(ComponentType.Ask) ||
-//                        rc.ComponentType.Equals(ComponentType.Bid)))
-//                .Select(rc => rc.RequestComponentDatum)
-//                .SelectMany(rcd => rcd.RcdHistoricItems
-//                    .Where(rcdhi => rcdhi.CreatedAt > 
-//                                    DateTime.UtcNow.Subtract(TimeSpan.FromDays(7))))
-//                .Select(rcdhi => decimal.Parse(rcdhi.Value))
-//                .DefaultIfEmpty()
-//                .Average();
-
-//            var dailyVolume = _unitOfWork.GetRepository<Currency>()
-//                .GetQueryable()
-//                .AsNoTracking()
-//                .Where(c => c.Id.Equals(currencyId) && c.DeletedAt == null && c.IsEnabled)
-//                .Include(c => c.PartialCurrencyPairs)
-//                .ThenInclude(pcp => pcp.CurrencyPair)
-//                .ThenInclude(cp => cp.CurrencyPairRequests)
-//                .ThenInclude(cpr => cpr.RequestComponents)
-//                .ThenInclude(rc => rc.RequestComponentDatum)
-//                .ThenInclude(rcd => rcd.RcdHistoricItems)
-//                .SelectMany(c => c.PartialCurrencyPairs)
-//                .Select(pcp => pcp.CurrencyPair)
-//                .SelectMany(cp => cp.CurrencyPairRequests)
-//                .SelectMany(cpr => cpr.RequestComponents
-//                    .Where(rc =>
-//                        rc.ComponentType.Equals(ComponentType.VOLUME)))
-//                .Select(rc => rc.RequestComponentDatum)
-//                .SelectMany(rcd => rcd.RcdHistoricItems
-//                    .Where(rcdhi => rcdhi.CreatedAt >
-//                                    DateTime.UtcNow.Subtract(TimeSpan.FromHours(24))))
-//                .Select(rcdhi => decimal.Parse(rcdhi.Value))
-//                .DefaultIfEmpty()
-//                .Sum();
-
-//            var historicalData = _unitOfWork.GetRepository<Currency>()
-//                .GetQueryable()
-//                .AsNoTracking()
-//                .Where(c => c.Id.Equals(currencyId) && c.DeletedAt == null && c.IsEnabled)
-//                .Include(c => c.PartialCurrencyPairs)
-//                .ThenInclude(pcp => pcp.CurrencyPair)
-//                .ThenInclude(cp => cp.CurrencyPairRequests)
-//                .ThenInclude(cpr => cpr.RequestComponents)
-//                .ThenInclude(rc => rc.RequestComponentDatum)
-//                .ThenInclude(rcd => rcd.RcdHistoricItems)
-//                .SelectMany(c => c.PartialCurrencyPairs)
-//                .Select(pcp => pcp.CurrencyPair)
-//                .SelectMany(cp => cp.CurrencyPairRequests)
-//                .SelectMany(cpr => cpr.RequestComponents)
-//                .ToDictionary(rc => rc.ComponentType, 
-//                    rc => rc.RequestComponentDatum
-//                        .RcdHistoricItems
-//                        .ToDictionary(rcdhi => rcdhi.CreatedAt,
-//                            rcdhi => rcdhi.Value));
-
             return _unitOfWork.GetRepository<Currency>()
                 .GetQueryable()
                 .AsNoTracking()
@@ -156,6 +87,96 @@ namespace Nozomi.Service.Events
 
         public DetailedCurrencyResponse GetDetailedByAbbreviation(string abbreviation, ICollection<ComponentType> componentTypes)
         {
+            #if DEBUG
+            try
+            {
+//            var weeklyAvgPrice = _unitOfWork.GetRepository<Currency>()
+//                .GetQueryable()
+//                .AsNoTracking()
+//                .Where(c => c.Abbrv.Equals(abbreviation) && c.DeletedAt == null && c.IsEnabled)
+//                .Include(c => c.PartialCurrencyPairs)
+//                .ThenInclude(pcp => pcp.CurrencyPair)
+//                .ThenInclude(cp => cp.CurrencyPairRequests)
+//                .ThenInclude(cpr => cpr.RequestComponents)
+//                .ThenInclude(rc => rc.RequestComponentDatum)
+//                .ThenInclude(rcd => rcd.RcdHistoricItems)
+//                .SelectMany(c => c.PartialCurrencyPairs)
+//                .Select(pcp => pcp.CurrencyPair)
+//                .Where(cp => cp.CurrencyPairRequests
+//                    .Any(cpr => cpr.DeletedAt == null && cpr.IsEnabled))
+//                .SelectMany(cp => cp.CurrencyPairRequests)
+//                .Where(cpr => cpr.RequestComponents
+//                    .Any(rc => rc.DeletedAt == null && rc.IsEnabled))
+//                .SelectMany(cpr => cpr.RequestComponents
+//                    .Where(rc =>
+//                        rc.ComponentType.Equals(ComponentType.Ask) ||
+//                        rc.ComponentType.Equals(ComponentType.Bid)))
+//                .Select(rc => rc.RequestComponentDatum)
+//                .SelectMany(rcd => rcd.RcdHistoricItems
+//                    .Where(rcdhi => rcdhi.CreatedAt >
+//                                    DateTime.UtcNow.Subtract(TimeSpan.FromDays(7))))
+//                .Select(rcdhi => decimal.Parse(rcdhi.Value))
+//                .DefaultIfEmpty()
+//                .Average();
+//
+//            var dailyVolume = _unitOfWork.GetRepository<Currency>()
+//                .GetQueryable()
+//                .AsNoTracking()
+//                .Where(c => c.Abbrv.Equals(abbreviation) && c.DeletedAt == null && c.IsEnabled)
+//                .Include(c => c.PartialCurrencyPairs)
+//                .ThenInclude(pcp => pcp.CurrencyPair)
+//                .ThenInclude(cp => cp.CurrencyPairRequests)
+//                .ThenInclude(cpr => cpr.RequestComponents)
+//                .ThenInclude(rc => rc.RequestComponentDatum)
+//                .ThenInclude(rcd => rcd.RcdHistoricItems)
+//                .SelectMany(c => c.PartialCurrencyPairs)
+//                .Select(pcp => pcp.CurrencyPair)
+//                .SelectMany(cp => cp.CurrencyPairRequests)
+//                .SelectMany(cpr => cpr.RequestComponents
+//                    .Where(rc =>
+//                        rc.ComponentType.Equals(ComponentType.VOLUME)))
+//                .Select(rc => rc.RequestComponentDatum)
+//                .SelectMany(rcd => rcd.RcdHistoricItems
+//                    .Where(rcdhi => rcdhi.CreatedAt >
+//                                    DateTime.UtcNow.Subtract(TimeSpan.FromHours(24))))
+//                .Select(rcdhi => decimal.Parse(rcdhi.Value))
+//                .DefaultIfEmpty()
+//                .Sum();
+
+            var historicalData = _unitOfWork.GetRepository<Currency>()
+                .GetQueryable()
+                .AsNoTracking()
+                .Where(c => c.Abbrv.Equals(abbreviation) && c.DeletedAt == null && c.IsEnabled)
+                .Include(c => c.PartialCurrencyPairs)
+                .ThenInclude(pcp => pcp.CurrencyPair)
+                .ThenInclude(cp => cp.CurrencyPairRequests)
+                .ThenInclude(cpr => cpr.RequestComponents)
+                .ThenInclude(rc => rc.RequestComponentDatum)
+                .ThenInclude(rcd => rcd.RcdHistoricItems)
+                .SelectMany(c => c.PartialCurrencyPairs)
+                .Select(pcp => pcp.CurrencyPair)
+                .SelectMany(cp => cp.CurrencyPairRequests)
+                .SelectMany(cpr => cpr.RequestComponents)
+                    .Where(rc => rc.RequestComponentDatum != null
+                                 && rc.RequestComponentDatum.RcdHistoricItems
+                                     .Any(rcdhi => rcdhi.DeletedAt == null &&
+                                                   rcdhi.IsEnabled))
+                .DefaultIfEmpty()
+                // Extremely inefficient, let's resolve this.
+                // https://stackoverflow.com/questions/52521034/why-do-i-get-a-nullreferenceexception-when-using-todictionary-on-an-entity-frame
+                .ToDictionary(rc => rc.ComponentType, 
+                    rc => rc.RequestComponentDatum
+                        .RcdHistoricItems
+                        .DefaultIfEmpty()
+                        .ToDictionary(rcdhi => rcdhi.CreatedAt,
+                            rcdhi => rcdhi.Value));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString());
+            }
+            #endif
+
             return _unitOfWork.GetRepository<Currency>()
                 .GetQueryable()
                 .AsNoTracking()
@@ -221,13 +242,15 @@ namespace Nozomi.Service.Events
                         .Where(cpr => cpr.RequestComponents
                             .Any(rc => rc.DeletedAt == null && rc.IsEnabled))
                         .SelectMany(cpr => cpr.RequestComponents)
-                        .Where(rc => componentTypes.Contains(rc.ComponentType)
-                        && rc.RequestComponentDatum.RcdHistoricItems
-                            .Any(rcdhi => rcdhi.DeletedAt == null && rcdhi.IsEnabled))
+                        .Where(rc => rc.RequestComponentDatum != null
+                                     && rc.RequestComponentDatum.RcdHistoricItems
+                                         .Any(rcdhi => rcdhi.DeletedAt == null &&
+                                                       rcdhi.IsEnabled))
                         .DefaultIfEmpty()
-                        .ToDictionary(rc => rc.ComponentType,
+                        .ToDictionary(rc => rc.ComponentType, 
                             rc => rc.RequestComponentDatum
                                 .RcdHistoricItems
+                                .DefaultIfEmpty()
                                 .ToDictionary(rcdhi => rcdhi.CreatedAt,
                                     rcdhi => rcdhi.Value))
                 })
