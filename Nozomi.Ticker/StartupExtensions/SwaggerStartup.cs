@@ -46,7 +46,8 @@ namespace Nozomi.Ticker.StartupExtensions
                 swaggerGenOptions.ExampleFilters();
                 swaggerGenOptions.OperationFilter<DescriptionOperationFilter>();
                 // Adds an Upload button to endpoints which have [AddSwaggerFileUploadButton]
-                swaggerGenOptions.OperationFilter<AddFileParamTypesOperationFilter>(); 
+                // Supported out of the box.
+                //swaggerGenOptions.OperationFilter<AddFileParamTypesOperationFilter>(); 
                 swaggerGenOptions.OperationFilter<AddHeaderOperationFilter>();
                 swaggerGenOptions.OperationFilter<AddResponseHeadersFilter>(); // [SwaggerResponseHeader]
                 swaggerGenOptions.DescribeAllEnumsAsStrings();
