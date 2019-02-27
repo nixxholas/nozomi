@@ -179,7 +179,11 @@ namespace Nozomi.Service.Events
                         .ModifiedAt,
                     WeeklyAvgPrice = c.PartialCurrencyPairs
                         .Select(pcp => pcp.CurrencyPair)
+                        .Where(cp => cp.CurrencyPairRequests
+                            .Any(cpr => cpr.DeletedAt == null && cpr.IsEnabled))
                         .SelectMany(cp => cp.CurrencyPairRequests)
+                        .Where(cpr => cpr.RequestComponents
+                            .Any(rc => rc.DeletedAt == null && rc.IsEnabled))
                         .SelectMany(cpr => cpr.RequestComponents
                             .Where(rc =>
                                 rc.ComponentType.Equals(ComponentType.Ask) ||
@@ -193,10 +197,15 @@ namespace Nozomi.Service.Events
                         .Average(),
                     DailyVolume = c.PartialCurrencyPairs
                         .Select(pcp => pcp.CurrencyPair)
+                        .Where(cp => cp.CurrencyPairRequests
+                            .Any(cpr => cpr.DeletedAt == null && cpr.IsEnabled))
                         .SelectMany(cp => cp.CurrencyPairRequests)
+                        .Where(cpr => cpr.RequestComponents
+                            .Any(rc => rc.DeletedAt == null && rc.IsEnabled))
                         .SelectMany(cpr => cpr.RequestComponents
                             .Where(rc =>
-                                rc.ComponentType.Equals(ComponentType.VOLUME)))
+                                rc.ComponentType.Equals(ComponentType.VOLUME)
+                                && rc.DeletedAt == null && rc.IsEnabled))
                         .Select(rc => rc.RequestComponentDatum)
                         .SelectMany(rcd => rcd.RcdHistoricItems
                             .Where(rcdhi => rcdhi.CreatedAt >
@@ -206,9 +215,16 @@ namespace Nozomi.Service.Events
                         .Sum(),
                     Historical = c.PartialCurrencyPairs
                         .Select(pcp => pcp.CurrencyPair)
+                        .Where(cp => cp.CurrencyPairRequests
+                            .Any(cpr => cpr.DeletedAt == null && cpr.IsEnabled))
                         .SelectMany(cp => cp.CurrencyPairRequests)
+                        .Where(cpr => cpr.RequestComponents
+                            .Any(rc => rc.DeletedAt == null && rc.IsEnabled))
                         .SelectMany(cpr => cpr.RequestComponents)
-                        .Where(rc => componentTypes.Contains(rc.ComponentType))
+                        .Where(rc => componentTypes.Contains(rc.ComponentType)
+                        && rc.RequestComponentDatum.RcdHistoricItems
+                            .Any(rcdhi => rcdhi.DeletedAt == null && rcdhi.IsEnabled))
+                        .DefaultIfEmpty()
                         .ToDictionary(rc => rc.ComponentType,
                             rc => rc.RequestComponentDatum
                                 .RcdHistoricItems
