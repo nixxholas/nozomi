@@ -71,16 +71,7 @@ namespace Nozomi.Service.Events
                                             DateTime.UtcNow.Subtract(TimeSpan.FromHours(24))))
                         .Select(rcdhi => decimal.Parse(rcdhi.Value))
                         .DefaultIfEmpty()
-                        .Sum(),
-                    Historical = c.PartialCurrencyPairs
-                        .Select(pcp => pcp.CurrencyPair)
-                        .SelectMany(cp => cp.CurrencyPairRequests)
-                        .SelectMany(cpr => cpr.RequestComponents)
-                        .ToDictionary(rc => rc.ComponentType,
-                            rc => rc.RequestComponentDatum
-                                .RcdHistoricItems
-                                .ToDictionary(rcdhi => rcdhi.CreatedAt,
-                                    rcdhi => rcdhi.Value))
+                        .Sum()
                 })
                 .SingleOrDefault();
         }
@@ -143,33 +134,49 @@ namespace Nozomi.Service.Events
 //                .DefaultIfEmpty()
 //                .Sum();
 
-            var historicalData = _unitOfWork.GetRepository<Currency>()
-                .GetQueryable()
-                .AsNoTracking()
-                .Where(c => c.Abbrv.Equals(abbreviation) && c.DeletedAt == null && c.IsEnabled)
-                .Include(c => c.PartialCurrencyPairs)
-                .ThenInclude(pcp => pcp.CurrencyPair)
-                .ThenInclude(cp => cp.CurrencyPairRequests)
-                .ThenInclude(cpr => cpr.RequestComponents)
-                .ThenInclude(rc => rc.RequestComponentDatum)
-                .ThenInclude(rcd => rcd.RcdHistoricItems)
-                .SelectMany(c => c.PartialCurrencyPairs)
-                .Select(pcp => pcp.CurrencyPair)
-                .SelectMany(cp => cp.CurrencyPairRequests)
-                .SelectMany(cpr => cpr.RequestComponents)
+                var historicalData = _unitOfWork.GetRepository<Currency>()
+                    .GetQueryable()
+                    .AsNoTracking()
+                    .Where(c => c.Abbrv.Equals(abbreviation) && c.DeletedAt == null && c.IsEnabled)
+                    .Include(c => c.PartialCurrencyPairs)
+                    .ThenInclude(pcp => pcp.CurrencyPair)
+                    .ThenInclude(cp => cp.CurrencyPairRequests)
+                    .ThenInclude(cpr => cpr.RequestComponents)
+                    .ThenInclude(rc => rc.RequestComponentDatum)
+                    .ThenInclude(rcd => rcd.RcdHistoricItems)
+                    .SelectMany(c => c.PartialCurrencyPairs)
+                    .Select(pcp => pcp.CurrencyPair)
+                    .SelectMany(cp => cp.CurrencyPairRequests)
+                    .SelectMany(cpr => cpr.RequestComponents)
                     .Where(rc => rc.RequestComponentDatum != null
                                  && rc.RequestComponentDatum.RcdHistoricItems
                                      .Any(rcdhi => rcdhi.DeletedAt == null &&
                                                    rcdhi.IsEnabled))
-                .DefaultIfEmpty()
-                // Extremely inefficient, let's resolve this.
-                // https://stackoverflow.com/questions/52521034/why-do-i-get-a-nullreferenceexception-when-using-todictionary-on-an-entity-frame
-                .ToDictionary(rc => rc.ComponentType, 
-                    rc => rc.RequestComponentDatum
-                        .RcdHistoricItems
-                        .DefaultIfEmpty()
-                        .ToDictionary(rcdhi => rcdhi.CreatedAt,
-                            rcdhi => rcdhi.Value));
+                    //.DefaultIfEmpty()
+                    // Extremely inefficient, let's resolve this.
+                    // https://stackoverflow.com/questions/52521034/why-do-i-get-a-nullreferenceexception-when-using-todictionary-on-an-entity-frame
+//                .ToDictionary(rc => rc.ComponentType, 
+//                    rc => rc.RequestComponentDatum
+//                        .RcdHistoricItems
+//                        .DefaultIfEmpty()
+//                        .ToDictionary(rcdhi => rcdhi.CreatedAt,
+//                            rcdhi => rcdhi.Value));
+                    .ToDictionary(rc => rc.ComponentType,
+                        rc => rc.RequestComponentDatum
+                            .RcdHistoricItems
+                            .DefaultIfEmpty()
+                            .Select(rcdhi => new ComponentHistoricalDatum
+                            {
+                                CreatedAt = rcdhi.CreatedAt,
+                                Value = rcdhi.Value
+                            })
+                            .ToList());
+            
+                // We'll check if any component types are requested for historical outputs.
+                if (componentTypes != null && componentTypes.Count > 0)
+                {
+                    
+                }
             }
             catch (Exception ex)
             {
@@ -233,26 +240,7 @@ namespace Nozomi.Service.Events
                                             DateTime.UtcNow.Subtract(TimeSpan.FromHours(24))))
                         .Select(rcdhi => decimal.Parse(rcdhi.Value))
                         .DefaultIfEmpty()
-                        .Sum(),
-                    Historical = c.PartialCurrencyPairs
-                        .Select(pcp => pcp.CurrencyPair)
-                        .Where(cp => cp.CurrencyPairRequests
-                            .Any(cpr => cpr.DeletedAt == null && cpr.IsEnabled))
-                        .SelectMany(cp => cp.CurrencyPairRequests)
-                        .Where(cpr => cpr.RequestComponents
-                            .Any(rc => rc.DeletedAt == null && rc.IsEnabled))
-                        .SelectMany(cpr => cpr.RequestComponents)
-                        .Where(rc => rc.RequestComponentDatum != null
-                                     && rc.RequestComponentDatum.RcdHistoricItems
-                                         .Any(rcdhi => rcdhi.DeletedAt == null &&
-                                                       rcdhi.IsEnabled))
-                        .DefaultIfEmpty()
-                        .ToDictionary(rc => rc.ComponentType, 
-                            rc => rc.RequestComponentDatum
-                                .RcdHistoricItems
-                                .DefaultIfEmpty()
-                                .ToDictionary(rcdhi => rcdhi.CreatedAt,
-                                    rcdhi => rcdhi.Value))
+                        .Sum()
                 })
                 .SingleOrDefault();
         }
