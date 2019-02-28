@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Logging;
 using Nozomi.Base.Core.Helpers.Enumerable;
 using Nozomi.Data.AreaModels.v1.Currency;
@@ -149,6 +150,8 @@ namespace Nozomi.Service.Events
                     .SelectMany(cp => cp.CurrencyPairRequests)
                     .SelectMany(cpr => cpr.RequestComponents)
                     .Where(rc => rc.RequestComponentDatum != null
+                                 && rc.RequestComponentDatum.IsEnabled 
+                                 && rc.RequestComponentDatum.DeletedAt == null
                                  && rc.RequestComponentDatum.RcdHistoricItems
                                      .Any(rcdhi => rcdhi.DeletedAt == null &&
                                                    rcdhi.IsEnabled))
@@ -164,7 +167,6 @@ namespace Nozomi.Service.Events
                     .ToDictionary(rc => rc.ComponentType,
                         rc => rc.RequestComponentDatum
                             .RcdHistoricItems
-                            .DefaultIfEmpty()
                             .Select(rcdhi => new ComponentHistoricalDatum
                             {
                                 CreatedAt = rcdhi.CreatedAt,
