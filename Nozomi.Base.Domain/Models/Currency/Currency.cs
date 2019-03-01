@@ -1,12 +1,41 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using Microsoft.EntityFrameworkCore.Internal;
 using Nozomi.Base.Core;
 
 namespace Nozomi.Data.Models.Currency
 {
     public class Currency : BaseEntityModel
     {
+        public Currency () {}
+
+        public Currency(ICollection<Currency> currencies)
+        {
+            if (currencies.Any())
+            {
+                var firstCurr = currencies.FirstOrDefault();
+
+                if (firstCurr != null)
+                {
+                    // Doesn't matter...
+                    Id = firstCurr.Id;
+                    CurrencyTypeId = firstCurr.Id;
+                    CurrencyType = firstCurr.CurrencyType;
+                    Abbrv = firstCurr.Abbrv;
+                    Name = firstCurr.Name;
+                    CurrencySourceId = firstCurr.CurrencySourceId;
+                    CurrencySource = firstCurr.CurrencySource;
+                    WalletTypeId = firstCurr.WalletTypeId;
+                    PartialCurrencyPairs = currencies
+                        .SelectMany(c => c.PartialCurrencyPairs)
+                        .DefaultIfEmpty()
+                        .ToList();
+                }
+            }
+        }
+        
         [Key]
         public long Id { get; set; }
 
