@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using Nozomi.Base.Core.Helpers.Enumerable;
 using Nozomi.Data.AreaModels.v1.Currency;
 using Nozomi.Data.Models.Currency;
+using Nozomi.Data.Models.Web;
 using Nozomi.Data.ResponseModels.Currency;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.BCL.Repository;
@@ -82,7 +83,33 @@ namespace Nozomi.Service.Events
             #if DEBUG
             try
             {
-//            var weeklyAvgPrice = _unitOfWork.GetRepository<Currency>()
+                var cprMethod = _unitOfWork.GetRepository<CurrencyPairRequest>()
+                    .GetQueryable()
+                    .AsNoTracking()
+                    .Where(cpr => cpr.DeletedAt == null && cpr.IsEnabled)
+                    .Include(cpr => cpr.CurrencyPair)
+                    .ThenInclude(cp => cp.PartialCurrencyPairs)
+                    .ThenInclude(pcp => pcp.Currency)
+                    // Use this to identify the correct abbreviation for that ticker
+                    .Where(cpr => string.Concat(
+                            cpr.CurrencyPair.PartialCurrencyPairs.FirstOrDefault(pcp => pcp.IsMain).Currency.Abbrv,
+                            cpr.CurrencyPair.PartialCurrencyPairs.FirstOrDefault(pcp => !pcp.IsMain).Currency.Abbrv)
+                        .Equals(abbreviation, StringComparison.InvariantCultureIgnoreCase))
+                    .Include(cpr => cpr.RequestComponents
+                        .Where(rc =>
+                            rc.ComponentType.Equals(ComponentType.Ask) ||
+                            rc.ComponentType.Equals(ComponentType.Bid)))
+                    .ThenInclude(rc => rc.RequestComponentDatum)
+                    .ThenInclude(rcd => rcd.RcdHistoricItems)
+                    .SelectMany(cpr => 
+                        cpr.RequestComponents
+                            .SelectMany(rc => rc.RequestComponentDatum
+                                .RcdHistoricItems)
+                            .Select(rcdhi => decimal.Parse(rcdhi.Value)))
+                    .DefaultIfEmpty()
+                    .Average();
+                
+//                var weeklyAvgPrice = _unitOfWork.GetRepository<Currency>()
 //                .GetQueryable()
 //                .AsNoTracking()
 //                .Where(c => c.Abbrv.Equals(abbreviation) && c.DeletedAt == null && c.IsEnabled)
@@ -92,24 +119,27 @@ namespace Nozomi.Service.Events
 //                .ThenInclude(cpr => cpr.RequestComponents)
 //                .ThenInclude(rc => rc.RequestComponentDatum)
 //                .ThenInclude(rcd => rcd.RcdHistoricItems)
-//                .SelectMany(c => c.PartialCurrencyPairs)
-//                .Select(pcp => pcp.CurrencyPair)
-//                .Where(cp => cp.CurrencyPairRequests
-//                    .Any(cpr => cpr.DeletedAt == null && cpr.IsEnabled))
-//                .SelectMany(cp => cp.CurrencyPairRequests)
-//                .Where(cpr => cpr.RequestComponents
-//                    .Any(rc => rc.DeletedAt == null && rc.IsEnabled))
-//                .SelectMany(cpr => cpr.RequestComponents
-//                    .Where(rc =>
-//                        rc.ComponentType.Equals(ComponentType.Ask) ||
-//                        rc.ComponentType.Equals(ComponentType.Bid)))
-//                .Select(rc => rc.RequestComponentDatum)
-//                .SelectMany(rcd => rcd.RcdHistoricItems
-//                    .Where(rcdhi => rcdhi.CreatedAt >
-//                                    DateTime.UtcNow.Subtract(TimeSpan.FromDays(7))))
+//                .SelectMany(c => c.PartialCurrencyPairs
+//                    .Select(pcp => pcp.CurrencyPair)
+//                    .Where(cp => cp.CurrencyPairRequests
+//                        .Any(cpr => cpr.DeletedAt == null && cpr.IsEnabled)))
+//                .SelectMany(cp => cp.CurrencyPairRequests
+//                    .Where(cpr => cpr.RequestComponents
+//                        .Any(rc => rc.DeletedAt == null && rc.IsEnabled))
+//                    .SelectMany(cpr => cpr.RequestComponents
+//                        .Where(rc =>
+//                            rc.ComponentType.Equals(ComponentType.Ask) ||
+//                            rc.ComponentType.Equals(ComponentType.Bid)))
+//                    .Select(rc => rc.RequestComponentDatum)
+//                    .SelectMany(rcd => rcd.RcdHistoricItems
+//                        .Where(rcdhi => rcdhi.CreatedAt >
+//                                        DateTime.UtcNow.Subtract(TimeSpan.FromDays(7)))
+//                    ))
 //                .Select(rcdhi => decimal.Parse(rcdhi.Value))
 //                .DefaultIfEmpty()
-//                .Average();
+//                .Average()
+//                .ToList()
+//                ;
 //
 //            var dailyVolume = _unitOfWork.GetRepository<Currency>()
 //                .GetQueryable()
@@ -179,21 +209,6 @@ namespace Nozomi.Service.Events
                 _logger.LogError(ex.ToString());
             }
             #endif
-            
-            var singleQ = _unitOfWork.GetRepository<Currency>()
-                .GetQueryable()
-                // Do not track the query
-                .AsNoTracking()
-                // Obtain the currency where the abbreviation equals up
-                .Where(c => c.Abbrv.Equals(abbreviation, StringComparison.InvariantCultureIgnoreCase)
-                            && c.DeletedAt == null && c.IsEnabled)
-                .Include(c => c.PartialCurrencyPairs)
-                .ThenInclude(pcp => pcp.CurrencyPair)
-                .ThenInclude(cp => cp.CurrencyPairRequests)
-                .ThenInclude(cpr => cpr.RequestComponents)
-                .ThenInclude(rc => rc.RequestComponentDatum)
-                .ThenInclude(rcd => rcd.RcdHistoricItems)
-                .SingleOrDefault();
 
             var combinedCurrency = new Currency(_unitOfWork.GetRepository<Currency>()
                 .GetQueryable()
