@@ -33,7 +33,9 @@ namespace Nozomi.Service.Events
                 .ThenInclude(pcp => pcp.Currency)
                 // Select any ticker that contains that abbreviation
                 .Where(cp => cp.PartialCurrencyPairs
-                    .Any(pcp => pcp.Currency.Id.Equals(currencyId)))
+                    .Any(pcp => pcp.Currency.Id.Equals(currencyId)
+                                // Make sure we're analyzing the main currency, not the sub.
+                                && pcp.IsMain))
                 .Include(cp => cp.CurrencyPairRequests)
                 .ThenInclude(cpr => cpr.RequestComponents)
                 .ThenInclude(rc => rc.RequestComponentDatum)
@@ -68,7 +70,9 @@ namespace Nozomi.Service.Events
                 .ThenInclude(pcp => pcp.Currency)
                 // Select any ticker that contains that abbreviation
                 .Where(cp => cp.PartialCurrencyPairs
-                    .Any(pcp => pcp.Currency.Abbrv.Equals(abbreviation, StringComparison.InvariantCultureIgnoreCase)))
+                    .Any(pcp => pcp.Currency.Abbrv.Equals(abbreviation, StringComparison.InvariantCultureIgnoreCase)
+                                // Make sure we're analyzing the main currency, not the sub.
+                                && pcp.IsMain))
                 .Include(cp => cp.CurrencyPairRequests)
                 .ThenInclude(cpr => cpr.RequestComponents)
                 .ThenInclude(rc => rc.RequestComponentDatum)
