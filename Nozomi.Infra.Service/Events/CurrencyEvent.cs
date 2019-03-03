@@ -80,35 +80,24 @@ namespace Nozomi.Service.Events
 
         public DetailedCurrencyResponse GetDetailedByAbbreviation(string abbreviation, ICollection<ComponentType> componentTypes)
         {
-            #if DEBUG
-            try
-            {
-                var cprMethod = _unitOfWork.GetRepository<CurrencyPairRequest>()
-                    .GetQueryable()
-                    .AsNoTracking()
-                    .Where(cpr => cpr.DeletedAt == null && cpr.IsEnabled)
-                    .Include(cpr => cpr.CurrencyPair)
-                    .ThenInclude(cp => cp.PartialCurrencyPairs)
-                    .ThenInclude(pcp => pcp.Currency)
-                    // Use this to identify the correct abbreviation for that ticker
-                    .Where(cpr => string.Concat(
-                            cpr.CurrencyPair.PartialCurrencyPairs.FirstOrDefault(pcp => pcp.IsMain).Currency.Abbrv,
-                            cpr.CurrencyPair.PartialCurrencyPairs.FirstOrDefault(pcp => !pcp.IsMain).Currency.Abbrv)
-                        .Equals(abbreviation, StringComparison.InvariantCultureIgnoreCase))
-                    .Include(cpr => cpr.RequestComponents
-                        .Where(rc =>
-                            rc.ComponentType.Equals(ComponentType.Ask) ||
-                            rc.ComponentType.Equals(ComponentType.Bid)))
-                    .ThenInclude(rc => rc.RequestComponentDatum)
-                    .ThenInclude(rcd => rcd.RcdHistoricItems)
-                    .SelectMany(cpr => 
-                        cpr.RequestComponents
-                            .SelectMany(rc => rc.RequestComponentDatum
-                                .RcdHistoricItems)
-                            .Select(rcdhi => decimal.Parse(rcdhi.Value)))
-                    .DefaultIfEmpty()
-                    .Average();
-                
+            var combinedCurrency = new Currency(_unitOfWork.GetRepository<Currency>()
+                .GetQueryable()
+                // Do not track the query
+                .AsNoTracking()
+                // Obtain the currency where the abbreviation equals up
+                .Where(c => c.Abbrv.Equals(abbreviation, StringComparison.InvariantCultureIgnoreCase)
+                            && c.DeletedAt == null && c.IsEnabled)
+                .Include(c => c.PartialCurrencyPairs)
+                .ThenInclude(pcp => pcp.CurrencyPair)
+                .ThenInclude(cp => cp.CurrencyPairRequests)
+                .ThenInclude(cpr => cpr.RequestComponents)
+                .ThenInclude(rc => rc.RequestComponentDatum)
+                .ThenInclude(rcd => rcd.RcdHistoricItems)
+                .ToList());
+            
+//            #if DEBUG
+//            try
+//            {
 //                var weeklyAvgPrice = _unitOfWork.GetRepository<Currency>()
 //                .GetQueryable()
 //                .AsNoTracking()
@@ -185,9 +174,9 @@ namespace Nozomi.Service.Events
 //                                 && rc.RequestComponentDatum.RcdHistoricItems
 //                                     .Any(rcdhi => rcdhi.DeletedAt == null &&
 //                                                   rcdhi.IsEnabled))
-                    //.DefaultIfEmpty()
-                    // Extremely inefficient, let's resolve this.
-                    // https://stackoverflow.com/questions/52521034/why-do-i-get-a-nullreferenceexception-when-using-todictionary-on-an-entity-frame
+                //.DefaultIfEmpty()
+                // Extremely inefficient, let's resolve this.
+                // https://stackoverflow.com/questions/52521034/why-do-i-get-a-nullreferenceexception-when-using-todictionary-on-an-entity-frame
 //                .ToDictionary(rc => rc.ComponentType, 
 //                    rc => rc.RequestComponentDatum
 //                        .RcdHistoricItems
@@ -203,27 +192,12 @@ namespace Nozomi.Service.Events
 //                                Value = rcdhi.Value
 //                            })
 //                            .ToList());
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.ToString());
-            }
-            #endif
-
-            var combinedCurrency = new Currency(_unitOfWork.GetRepository<Currency>()
-                .GetQueryable()
-                // Do not track the query
-                .AsNoTracking()
-                // Obtain the currency where the abbreviation equals up
-                .Where(c => c.Abbrv.Equals(abbreviation, StringComparison.InvariantCultureIgnoreCase)
-                            && c.DeletedAt == null && c.IsEnabled)
-                .Include(c => c.PartialCurrencyPairs)
-                .ThenInclude(pcp => pcp.CurrencyPair)
-                .ThenInclude(cp => cp.CurrencyPairRequests)
-                .ThenInclude(cpr => cpr.RequestComponents)
-                .ThenInclude(rc => rc.RequestComponentDatum)
-                .ThenInclude(rcd => rcd.RcdHistoricItems)
-                .ToList());
+//            }
+//            catch (Exception ex)
+//            {
+//                _logger.LogError(ex.ToString());
+//            }
+//            #endif
 
             return new DetailedCurrencyResponse
                 {
