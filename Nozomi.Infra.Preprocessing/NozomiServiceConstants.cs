@@ -9,7 +9,6 @@ namespace Nozomi.Preprocessing
 {
     public static class NozomiServiceConstants
     {
-        public const string GenericCounterCurrency = "USD";
         public const string CurrencyPairCachePrefix = "CURRPAIR_";
         public const string JwtIssuerName = "NozomiJwt";
         public const string ApiTokenHeaderKey = "NozApiToken";
