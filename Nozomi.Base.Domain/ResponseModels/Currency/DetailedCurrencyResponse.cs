@@ -67,20 +67,22 @@ namespace Nozomi.Data.ResponseModels.Currency
                         .DefaultIfEmpty()
                         .Sum();
 
-//                    Historical = currencyPairs
-//                        .SelectMany(cp => cp.PartialCurrencyPairs)
-//                        .Select(pcp => pcp.CurrencyPair)
-//                        .SelectMany(cp => cp.CurrencyPairRequests)
-//                        .SelectMany(cpr => cpr.RequestComponents)
-//                        .ToDictionary(rc => rc.ComponentType,
-//                            rc => rc.RequestComponentDatum
-//                                .RcdHistoricItems
-//                                .Select(rcdhi => new ComponentHistoricalDatum
-//                                {
-//                                    CreatedAt = rcdhi.CreatedAt,
-//                                    Value = rcdhi.Value
-//                                })
-//                                .ToList());
+                    // TODO: Resolve NRE
+                    Historical = currencyPairs
+                        .SelectMany(cp => cp.PartialCurrencyPairs)
+                        .Select(pcp => pcp.CurrencyPair)
+                        .SelectMany(cp => cp.CurrencyPairRequests)
+                        .SelectMany(cpr => cpr.RequestComponents)
+                        .ToDictionary(rc => rc.ComponentType,
+                            rc => rc.RequestComponentDatum
+                                .RcdHistoricItems
+                                .DefaultIfEmpty()
+                                .Select(rcdhi => new ComponentHistoricalDatum
+                                {
+                                    CreatedAt = rcdhi.CreatedAt,
+                                    Value = rcdhi.Value
+                                })
+                                .ToList());
                 }
             }
         }

@@ -79,7 +79,7 @@ namespace Nozomi.Service.Events
         }
 
         /// <summary>
-        /// TODO: Filtering via componentTypes
+        /// 
         /// </summary>
         /// <param name="abbreviation"></param>
         /// <param name="componentTypes"></param>
@@ -102,6 +102,7 @@ namespace Nozomi.Service.Events
                     .Any(cpr => cpr.IsEnabled && cpr.DeletedAt == null
                                 && cpr.RequestComponents
                                     .Any(rc => rc.DeletedAt == null && rc.IsEnabled
+                                               && componentTypes.Contains(rc.ComponentType)                                                                   
                                                && rc.RequestComponentDatum != null
                                                && rc.RequestComponentDatum.DeletedAt == null
                                                && rc.RequestComponentDatum.IsEnabled
