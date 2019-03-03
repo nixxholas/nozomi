@@ -26,56 +26,31 @@ namespace Nozomi.Service.Events
 
         public DetailedCurrencyResponse GetDetailedById(long currencyId, ICollection<ComponentType> componentTypes)
         {
-            return _unitOfWork.GetRepository<Currency>()
+            var query = _unitOfWork.GetRepository<CurrencyPair>()
                 .GetQueryable()
                 .AsNoTracking()
-                .Where(c => c.Id.Equals(currencyId) && c.DeletedAt == null && c.IsEnabled)
-                .Include(c => c.PartialCurrencyPairs)
-                .ThenInclude(pcp => pcp.CurrencyPair)
-                .ThenInclude(cp => cp.CurrencyPairRequests)
+                .Include(cp => cp.PartialCurrencyPairs)
+                .ThenInclude(pcp => pcp.Currency)
+                // Select any ticker that contains that abbreviation
+                .Where(cp => cp.PartialCurrencyPairs
+                    .Any(pcp => pcp.Currency.Id.Equals(currencyId)))
+                .Include(cp => cp.CurrencyPairRequests)
                 .ThenInclude(cpr => cpr.RequestComponents)
                 .ThenInclude(rc => rc.RequestComponentDatum)
                 .ThenInclude(rcd => rcd.RcdHistoricItems)
-                .Select(c => new DetailedCurrencyResponse
-                {
-                    Name = c.Name,
-                    Abbreviation = c.Abbrv,
-                    LastUpdated = c.PartialCurrencyPairs
-                        .Select(pcp => pcp.CurrencyPair)
-                        .SelectMany(cp => cp.CurrencyPairRequests)
-                        .SelectMany(cpr => cpr.RequestComponents)
-                        .OrderByDescending(rc => rc.ModifiedAt)
-                        .FirstOrDefault()
-                        .ModifiedAt,
-                    WeeklyAvgPrice = c.PartialCurrencyPairs
-                        .Select(pcp => pcp.CurrencyPair)
-                        .SelectMany(cp => cp.CurrencyPairRequests)
-                        .SelectMany(cpr => cpr.RequestComponents
-                            .Where(rc =>
-                                rc.ComponentType.Equals(ComponentType.Ask) ||
-                                rc.ComponentType.Equals(ComponentType.Bid)))
-                        .Select(rc => rc.RequestComponentDatum)
-                        .SelectMany(rcd => rcd.RcdHistoricItems
-                            .Where(rcdhi => rcdhi.CreatedAt >
-                                            DateTime.UtcNow.Subtract(TimeSpan.FromDays(7))))
-                        .Select(rcdhi => decimal.Parse(rcdhi.Value))
-                        .DefaultIfEmpty()
-                        .Average(),
-                    DailyVolume = c.PartialCurrencyPairs
-                        .Select(pcp => pcp.CurrencyPair)
-                        .SelectMany(cp => cp.CurrencyPairRequests)
-                        .SelectMany(cpr => cpr.RequestComponents
-                            .Where(rc =>
-                                rc.ComponentType.Equals(ComponentType.VOLUME)))
-                        .Select(rc => rc.RequestComponentDatum)
-                        .SelectMany(rcd => rcd.RcdHistoricItems
-                            .Where(rcdhi => rcdhi.CreatedAt >
-                                            DateTime.UtcNow.Subtract(TimeSpan.FromHours(24))))
-                        .Select(rcdhi => decimal.Parse(rcdhi.Value))
-                        .DefaultIfEmpty()
-                        .Sum()
-                })
-                .SingleOrDefault();
+                .Where(cp => cp.CurrencyPairRequests
+                    .Any(cpr => cpr.IsEnabled && cpr.DeletedAt == null
+                                              && cpr.RequestComponents
+                                                  .Any(rc => rc.DeletedAt == null && rc.IsEnabled
+                                                                                  && componentTypes.Contains(rc.ComponentType)                                                                   
+                                                                                  && rc.RequestComponentDatum != null
+                                                                                  && rc.RequestComponentDatum.DeletedAt == null
+                                                                                  && rc.RequestComponentDatum.IsEnabled
+                                                                                  && rc.RequestComponentDatum.RcdHistoricItems != null
+                                                                                  && rc.RequestComponentDatum.RcdHistoricItems
+                                                                                      .Any(rcdhi => rcdhi.DeletedAt == null && rcdhi.IsEnabled))));
+            
+            return new DetailedCurrencyResponse(query);
         }
 
         /// <summary>
