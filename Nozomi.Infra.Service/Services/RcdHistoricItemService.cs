@@ -1,4 +1,5 @@
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data.Models.Web;
@@ -18,29 +19,19 @@ namespace Nozomi.Service.Services
 
         public bool Push(RequestComponentDatum rcd)
         {
-            // If rcd is the latest
+            // Make sure nothing is newer
             if (!_unitOfWork.GetRepository<RcdHistoricItem>()
-                .Get(rcdhi => rcdhi.ModifiedAt >= rcd.ModifiedAt)
-                .OrderBy(rcdhi => rcdhi.ModifiedAt)
+                // include any rcdhi if it is NEWER than the current rcd
+                    .Get(rcdhi => rcdhi.RequestComponentDatumId.Equals(rcd.Id)
+                                  && rcdhi.HistoricDateTime > rcd.ModifiedAt)
                 .Any())
             {
-                var latestRcdhi = _unitOfWork.GetRepository<RcdHistoricItem>()
-                    .GetQueryable()
-                    .OrderByDescending(rcdhi => rcdhi.ModifiedAt).FirstOrDefault();
-                
-                // Let's make it more efficient by checking if the price has changed
-                if (latestRcdhi != null && latestRcdhi.Value.Equals(rcd.Value))
-                {
-                    // Move on bro
-                    return true;
-                }
-                
                 // Push it
                 _unitOfWork.GetRepository<RcdHistoricItem>().Add(new RcdHistoricItem
                 {
                     RequestComponentDatumId = rcd.Id,
                     Value = rcd.Value,
-                    CreatedAt = rcd.ModifiedAt
+                    HistoricDateTime = rcd.ModifiedAt
                 });
                 _unitOfWork.Commit(); // done
                 

@@ -20,6 +20,8 @@ namespace Nozomi.Service.Services
 {
     public class CurrencyPairComponentService : BaseService<CurrencyPairComponentService, NozomiDbContext>, ICurrencyPairComponentService
     {
+        private const string serviceName = "[CurrencyPairComponentService]";
+        
         private IRcdHistoricItemService _rcdHistoricItemService { get; set; }
         
         public CurrencyPairComponentService(ILogger<CurrencyPairComponentService> logger, 
@@ -97,48 +99,75 @@ namespace Nozomi.Service.Services
 
         public NozomiResult<string> UpdatePairValue(long id, decimal val)
         {
-            var pairToUpd = _unitOfWork
-                                     .GetRepository<RequestComponent>()
-                                     .GetQueryable()
-                                     .AsTracking()
-                                     .Where(cp => cp.Id.Equals(id))
-                                     .Include(cpc => cpc.RequestComponentDatum)
-                                     .SingleOrDefault(cp => cp.DeletedAt == null && cp.IsEnabled);
-
-            // Anomaly Detection
-            if (pairToUpd?.RequestComponentDatum != null && 
-                pairToUpd.RequestComponentDatum.HasAbnormalValue(val))
+            try
             {
-                // Save old data first
-                _rcdHistoricItemService.Push(pairToUpd.RequestComponentDatum);
-                
-                pairToUpd.RequestComponentDatum.Value = val.ToString(CultureInfo.InvariantCulture);
-                
-                _unitOfWork.GetRepository<RequestComponent>().Update(pairToUpd);
-                _unitOfWork.GetRepository<RequestComponentDatum>().Update(pairToUpd.RequestComponentDatum);
-                _unitOfWork.Commit();
+                var pairToUpd = _unitOfWork
+                    .GetRepository<RequestComponent>()
+                    .GetQueryable()
+                    .AsTracking()
+                    .Where(cp => cp.Id.Equals(id))
+                    .Include(cpc => cpc.RequestComponentDatum)
+                    .SingleOrDefault(cp => cp.DeletedAt == null && cp.IsEnabled);
 
-                return new NozomiResult<string>
-                    (NozomiResultType.Success, "Currency Pair Component successfully updated!");
-            }
-            else if (pairToUpd != null && pairToUpd.RequestComponentDatum == null)
-            {
-                // Since the RCD is null but not the RC,
-                _unitOfWork.GetRepository<RequestComponentDatum>().Add(new RequestComponentDatum()
+                // Anomaly Detection
+                if (pairToUpd?.RequestComponentDatum != null &&
+                    pairToUpd.RequestComponentDatum.HasAbnormalValue(val))
                 {
-                    RequestComponentId = pairToUpd.Id,
-                    Value = val.ToString(CultureInfo.InvariantCulture)
-                });
-                _unitOfWork.Commit();
+                    // Let's make it more efficient by checking if the price has changed
+                    if (!pairToUpd.RequestComponentDatum.Value.Equals(val.ToString(CultureInfo.InvariantCulture)))
+                    {
+                        // Save old data first
+                        if (_rcdHistoricItemService.Push(pairToUpd.RequestComponentDatum))
+                        {
+                        
+                        }
+                        // Old data failed to save. Something along the lines between the old data being new
+                        // or the old data having a similarity with the latest rcdhi.
+                        else
+                        {
+                            _logger.LogInformation($"[{serviceName}]: UpdatePairValue failed to save " +
+                                                   $"the current RCD value.");
+                        }
+                    }
 
-                return new NozomiResult<string>
-                    (NozomiResultType.Success, "Currency Pair Component successfully updated!");
+                    pairToUpd.RequestComponentDatum.Value = val.ToString(CultureInfo.InvariantCulture);
+
+                    _unitOfWork.GetRepository<RequestComponent>().Update(pairToUpd);
+                    _unitOfWork.GetRepository<RequestComponentDatum>().Update(pairToUpd.RequestComponentDatum);
+                    _unitOfWork.Commit();
+
+                    return new NozomiResult<string>
+                        (NozomiResultType.Success, "Currency Pair Component successfully updated!");
+                }
+                else if (pairToUpd != null && pairToUpd.RequestComponentDatum == null)
+                {
+                    // Since the RCD is null but not the RC,
+                    _unitOfWork.GetRepository<RequestComponentDatum>().Add(new RequestComponentDatum()
+                    {
+                        RequestComponentId = pairToUpd.Id,
+                        Value = val.ToString(CultureInfo.InvariantCulture)
+                    });
+                    _unitOfWork.Commit();
+
+                    return new NozomiResult<string>
+                        (NozomiResultType.Success, "Currency Pair Component successfully updated!");
+                }
+                else
+                {
+                    return new NozomiResult<string>
+                    (NozomiResultType.Failed,
+                        $"Invalid component datum id:{id}, val:{val}. Please make sure that the " +
+                        "RequestComponent is properly instantiated.");
+                }
             }
-            else
+            catch (Exception ex)
             {
+                _logger.LogCritical($"{serviceName} " + ex);
+                
                 return new NozomiResult<string>
-                    (NozomiResultType.Failed, $"Invalid component datum id:{id}, val:{val}. Please make sure that the " +
-                                              "RequestComponent is properly instantiated.");
+                (NozomiResultType.Failed,
+                    $"Invalid component datum id:{id}, val:{val}. Please make sure that the " +
+                    "RequestComponent is properly instantiated.");
             }
         }
 
