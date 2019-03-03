@@ -80,6 +80,19 @@ namespace Nozomi.Service.Events
 
         public DetailedCurrencyResponse GetDetailedByAbbreviation(string abbreviation, ICollection<ComponentType> componentTypes)
         {
+            var query = _unitOfWork.GetRepository<CurrencyPair>()
+                .GetQueryable()
+                .AsNoTracking()
+                .Include(cp => cp.PartialCurrencyPairs)
+                .ThenInclude(pcp => pcp.Currency)
+                .Where(cp => cp.PartialCurrencyPairs
+                    .Any(pcp => pcp.Currency.Abbrv.Equals(abbreviation, StringComparison.InvariantCultureIgnoreCase)))
+                .Include(cp => cp.CurrencyPairRequests)
+                .ThenInclude(cpr => cpr.RequestComponents)
+                .ThenInclude(rc => rc.RequestComponentDatum)
+                .ThenInclude(rcd => rcd.RcdHistoricItems)
+                .ToList();
+            
             var combinedCurrency = new Currency(_unitOfWork.GetRepository<Currency>()
                 .GetQueryable()
                 // Do not track the query
