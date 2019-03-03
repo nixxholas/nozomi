@@ -19,7 +19,7 @@ namespace Nozomi.Ticker.Areas
         }
         
         [Route("/")]
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
             return View();
         }

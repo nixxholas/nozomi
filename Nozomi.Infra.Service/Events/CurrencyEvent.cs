@@ -93,6 +93,17 @@ namespace Nozomi.Service.Events
                 .ThenInclude(cpr => cpr.RequestComponents)
                 .ThenInclude(rc => rc.RequestComponentDatum)
                 .ThenInclude(rcd => rcd.RcdHistoricItems)
+                .Where(c => c.PartialCurrencyPairs.
+                    Any(pcp => pcp.CurrencyPair.DeletedAt == null && pcp.CurrencyPair.IsEnabled
+                               && pcp.CurrencyPair.CurrencyPairRequests
+                                   .Any(cpr => cpr.DeletedAt == null && cpr.IsEnabled
+                                               && cpr.RequestComponents
+                                                   .Any(rc => rc.IsEnabled && rc.DeletedAt == null
+                                                              && rc.RequestComponentDatum != null
+                                                              && rc.RequestComponentDatum.RcdHistoricItems
+                                                                  .Any(rcdhi => rcdhi.IsEnabled 
+                                                                                && rcdhi.DeletedAt == null
+                                                                                && !string.IsNullOrEmpty(rcdhi.Value))))))
                 .ToList());
             
 //            #if DEBUG
@@ -212,11 +223,7 @@ namespace Nozomi.Service.Events
                         .ModifiedAt ?? DateTime.MinValue,
                     WeeklyAvgPrice = combinedCurrency.PartialCurrencyPairs
                         .Select(pcp => pcp.CurrencyPair)
-                        .Where(cp => cp.CurrencyPairRequests
-                            .Any(cpr => cpr.DeletedAt == null && cpr.IsEnabled))
                         .SelectMany(cp => cp.CurrencyPairRequests)
-                        .Where(cpr => cpr.RequestComponents
-                            .Any(rc => rc.DeletedAt == null && rc.IsEnabled))
                         .SelectMany(cpr => cpr.RequestComponents
                             .Where(rc =>
                                 rc.ComponentType.Equals(ComponentType.Ask) ||
@@ -230,14 +237,9 @@ namespace Nozomi.Service.Events
                         .Average(),
                     DailyVolume = combinedCurrency.PartialCurrencyPairs
                         .Select(pcp => pcp.CurrencyPair)
-                        .Where(cp => cp.CurrencyPairRequests
-                            .Any(cpr => cpr.DeletedAt == null && cpr.IsEnabled))
                         .SelectMany(cp => cp.CurrencyPairRequests)
-                        .Where(cpr => cpr.RequestComponents
-                            .Any(rc => rc.DeletedAt == null && rc.IsEnabled))
                         .SelectMany(cpr => cpr.RequestComponents
-                            .Where(rc => rc.ComponentType.Equals(ComponentType.VOLUME)
-                                         && rc.DeletedAt == null && rc.IsEnabled))
+                            .Where(rc => rc.ComponentType.Equals(ComponentType.VOLUME)))
                         .Select(rc => rc.RequestComponentDatum)
                         .SelectMany(rcd => rcd.RcdHistoricItems
                             .Where(rcdhi => rcdhi.CreatedAt >
@@ -249,15 +251,6 @@ namespace Nozomi.Service.Events
                         .Select(pcp => pcp.CurrencyPair)
                         .SelectMany(cp => cp.CurrencyPairRequests)
                         .SelectMany(cpr => cpr.RequestComponents)
-                        .Where(rc => componentTypes != null 
-                                     && componentTypes.Any()
-                                     && componentTypes.Contains(rc.ComponentType)
-                                     && rc.RequestComponentDatum != null
-                                     && rc.RequestComponentDatum.IsEnabled 
-                                     && rc.RequestComponentDatum.DeletedAt == null
-                                     && rc.RequestComponentDatum.RcdHistoricItems
-                                         .Any(rcdhi => rcdhi.DeletedAt == null &&
-                                                       rcdhi.IsEnabled))
                         .ToDictionary(rc => rc.ComponentType,
                             rc => rc.RequestComponentDatum
                                 .RcdHistoricItems

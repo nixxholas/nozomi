@@ -21,7 +21,6 @@ namespace Nozomi.Base.Socket
             try
             {
                 await ClientWebSocket.ConnectAsync(new Uri(wsUrl), CancellationToken.None);
-                
             }
             catch (WebSocketException ex)
             {

@@ -26,6 +26,8 @@ namespace Nozomi.Service.Identity.Events.Auth
 
         public async Task<ICollection<ApiToken>> ApiTokensByUserId(long userId, bool onlyFunctional = false)
         {
+            _logger.LogInformation($"[ApiTokenEvent] ApiTokenByUserId accessing userid: {userId}");
+
             if (onlyFunctional)
             {
                 return _unitOfWork.GetRepository<ApiToken>()
@@ -38,6 +40,8 @@ namespace Nozomi.Service.Identity.Events.Auth
 
         public bool IsValid(string secret)
         {
+            _logger.LogInformation($"[ApiTokenEvent] IsValid accessing {secret}");
+
             return _cache.Get(secret).Any();
         }
     }
