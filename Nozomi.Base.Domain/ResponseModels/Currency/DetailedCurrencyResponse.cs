@@ -68,21 +68,27 @@ namespace Nozomi.Data.ResponseModels.Currency
                         .Sum();
 
                     // TODO: Resolve NRE
-                    Historical = currencyPairs
+                    var hist = currencyPairs
                         .SelectMany(cp => cp.PartialCurrencyPairs)
                         .Select(pcp => pcp.CurrencyPair)
                         .SelectMany(cp => cp.CurrencyPairRequests)
-                        .SelectMany(cpr => cpr.RequestComponents)
-                        .ToDictionary(rc => rc.ComponentType,
-                            rc => rc.RequestComponentDatum
-                                .RcdHistoricItems
-                                .DefaultIfEmpty()
-                                .Select(rcdhi => new ComponentHistoricalDatum
-                                {
-                                    CreatedAt = rcdhi.CreatedAt,
-                                    Value = rcdhi.Value
-                                })
-                                .ToList());
+                        .SelectMany(cpr => cpr.RequestComponents);
+                    
+//                    Historical = currencyPairs
+//                        .SelectMany(cp => cp.PartialCurrencyPairs)
+//                        .Select(pcp => pcp.CurrencyPair)
+//                        .SelectMany(cp => cp.CurrencyPairRequests)
+//                        .SelectMany(cpr => cpr.RequestComponents)
+//                        .ToDictionary(rc => rc.ComponentType,
+//                            rc => rc.RequestComponentDatum
+//                                .RcdHistoricItems
+//                                .DefaultIfEmpty()
+//                                .Select(rcdhi => new ComponentHistoricalDatum
+//                                {
+//                                    CreatedAt = rcdhi.CreatedAt,
+//                                    Value = rcdhi.Value
+//                                })
+//                                .ToList());
                 }
             }
         }
