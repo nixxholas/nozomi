@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore.Internal;
+using Nozomi.Base.Core;
 using Nozomi.Data.Models.Currency;
+using Nozomi.Data.ResponseModels.RequestComponent;
 
 namespace Nozomi.Data.ResponseModels.Currency
 {
@@ -36,36 +38,36 @@ namespace Nozomi.Data.ResponseModels.Currency
                         .FirstOrDefault();
                     
                     // TODO: take conversion rates into account
-                    WeeklyAvgPrice = currencyPairs
-                        .SelectMany(cp => cp.PartialCurrencyPairs)
-                        .Select(pcp => pcp.CurrencyPair)
-                        .SelectMany(cp => cp.CurrencyPairRequests)
-                        .SelectMany(cpr => cpr.RequestComponents
-                            .Where(rc =>
-                                rc.ComponentType.Equals(ComponentType.Ask) ||
-                                rc.ComponentType.Equals(ComponentType.Bid)))
-                        .Select(rc => rc.RequestComponentDatum)
-                        .SelectMany(rcd => rcd.RcdHistoricItems
-                            .Where(rcdhi => rcdhi.CreatedAt >
-                                            DateTime.UtcNow.Subtract(TimeSpan.FromDays(7))))
-                        .Select(rcdhi => decimal.Parse(rcdhi.Value))
-                        .DefaultIfEmpty()
-                        .Average();
+//                    WeeklyAvgPrice = currencyPairs
+//                        .SelectMany(cp => cp.PartialCurrencyPairs)
+//                        .Select(pcp => pcp.CurrencyPair)
+//                        .SelectMany(cp => cp.CurrencyPairRequests)
+//                        .SelectMany(cpr => cpr.RequestComponents
+//                            .Where(rc =>
+//                                rc.ComponentType.Equals(ComponentType.Ask) ||
+//                                rc.ComponentType.Equals(ComponentType.Bid)))
+//                        .Select(rc => rc.RequestComponentDatum)
+//                        .SelectMany(rcd => rcd.RcdHistoricItems
+//                            .Where(rcdhi => rcdhi.CreatedAt >
+//                                            DateTime.UtcNow.Subtract(TimeSpan.FromDays(7))))
+//                        .Select(rcdhi => decimal.Parse(rcdhi.Value))
+//                        .DefaultIfEmpty()
+//                        .Average();
                     
                     // TODO: take conversion rates into account
-                    DailyVolume = currencyPairs
-                        .SelectMany(cp => cp.PartialCurrencyPairs)
-                        .Select(pcp => pcp.CurrencyPair)
-                        .SelectMany(cp => cp.CurrencyPairRequests)
-                        .SelectMany(cpr => cpr.RequestComponents
-                            .Where(rc => rc.ComponentType.Equals(ComponentType.VOLUME)))
-                        .Select(rc => rc.RequestComponentDatum)
-                        .SelectMany(rcd => rcd.RcdHistoricItems
-                            .Where(rcdhi => rcdhi.CreatedAt >
-                                            DateTime.UtcNow.Subtract(TimeSpan.FromHours(24))))
-                        .Select(rcdhi => decimal.Parse(rcdhi.Value))
-                        .DefaultIfEmpty()
-                        .Sum();
+//                    DailyVolume = currencyPairs
+//                        .SelectMany(cp => cp.PartialCurrencyPairs)
+//                        .Select(pcp => pcp.CurrencyPair)
+//                        .SelectMany(cp => cp.CurrencyPairRequests)
+//                        .SelectMany(cpr => cpr.RequestComponents
+//                            .Where(rc => rc.ComponentType.Equals(ComponentType.VOLUME)))
+//                        .Select(rc => rc.RequestComponentDatum)
+//                        .SelectMany(rcd => rcd.RcdHistoricItems
+//                            .Where(rcdhi => rcdhi.CreatedAt >
+//                                            DateTime.UtcNow.Subtract(TimeSpan.FromHours(24))))
+//                        .Select(rcdhi => decimal.Parse(rcdhi.Value))
+//                        .DefaultIfEmpty()
+//                        .Sum();
 
                     // TODO: Resolve NRE
                     var hist = currencyPairs
@@ -115,38 +117,6 @@ namespace Nozomi.Data.ResponseModels.Currency
                                 .FirstOrDefault())
                             .FirstOrDefault().ModifiedAt)
                         .FirstOrDefault();
-                    
-                    // TODO: take conversion rates into account
-                    WeeklyAvgPrice = currencyPairs
-                        .SelectMany(cp => cp.PartialCurrencyPairs)
-                        .Select(pcp => pcp.CurrencyPair)
-                        .SelectMany(cp => cp.CurrencyPairRequests)
-                        .SelectMany(cpr => cpr.RequestComponents
-                            .Where(rc =>
-                                rc.ComponentType.Equals(ComponentType.Ask) ||
-                                rc.ComponentType.Equals(ComponentType.Bid)))
-                        .Select(rc => rc.RequestComponentDatum)
-                        .SelectMany(rcd => rcd.RcdHistoricItems
-                            .Where(rcdhi => rcdhi.CreatedAt >
-                                            DateTime.UtcNow.Subtract(TimeSpan.FromDays(7))))
-                        .Select(rcdhi => decimal.Parse(rcdhi.Value))
-                        .DefaultIfEmpty()
-                        .Average();
-                    
-                    // TODO: take conversion rates into account
-                    DailyVolume = currencyPairs
-                        .SelectMany(cp => cp.PartialCurrencyPairs)
-                        .Select(pcp => pcp.CurrencyPair)
-                        .SelectMany(cp => cp.CurrencyPairRequests)
-                        .SelectMany(cpr => cpr.RequestComponents
-                            .Where(rc => rc.ComponentType.Equals(ComponentType.VOLUME)))
-                        .Select(rc => rc.RequestComponentDatum)
-                        .SelectMany(rcd => rcd.RcdHistoricItems
-                            .Where(rcdhi => rcdhi.CreatedAt >
-                                            DateTime.UtcNow.Subtract(TimeSpan.FromHours(24))))
-                        .Select(rcdhi => decimal.Parse(rcdhi.Value))
-                        .DefaultIfEmpty()
-                        .Sum();
 
                     // TODO: Resolve NRE
                     Historical = currencyPairs

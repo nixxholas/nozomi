@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using Nozomi.Data.ResponseModels.RequestComponent;
 
 namespace Nozomi.Data.ResponseModels.Currency
 {
@@ -9,9 +11,5 @@ namespace Nozomi.Data.ResponseModels.Currency
         public string Abbreviation { get; set; }
         
         public DateTime LastUpdated { get; set; }
-        
-        public decimal WeeklyAvgPrice { get; set; }
-        
-        public decimal DailyVolume { get; set; }
     }
 }

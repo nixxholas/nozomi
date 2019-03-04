@@ -41,28 +41,28 @@ namespace Nozomi.Service.Events.Memory
                            Name = c.Name,
                            Abbreviation = c.Abbrv,
                            LastUpdated = c.ModifiedAt,
-                           WeeklyAvgPrice = c.PartialCurrencyPairs
-                               .Select(pcp => pcp.CurrencyPair)
-                               .SelectMany(cp => cp.CurrencyPairRequests
-                                   .SelectMany(cpr => cpr.RequestComponents
-                                       .Where(rc =>
-                                           rc.ComponentType.Equals(ComponentType.Ask)
-                                           || rc.ComponentType.Equals(ComponentType.Bid))
-                                       .SelectMany(rc => rc.RequestComponentDatum
-                                           .RcdHistoricItems
-                                           .Where(rcdhi => rcdhi.CreatedAt >
-                                                           DateTime.UtcNow.Subtract(TimeSpan.FromDays(days)))
-                                           .Select(rcdhi => decimal.Parse(rcdhi.Value))
-                                           .DefaultIfEmpty(0))
-                                   ))
-                               .Average(),
-                           DailyVolume = c.PartialCurrencyPairs
-                               .Select(pcp => pcp.CurrencyPair)
-                               .SelectMany(cp => cp.CurrencyPairRequests
-                                   .SelectMany(cpr => cpr.RequestComponents
-                                       .Where(rc => rc.ComponentType.Equals(ComponentType.VOLUME))
-                                       .Select(rc => decimal.Parse(rc.RequestComponentDatum.Value))))
-                               .FirstOrDefault()
+//                           WeeklyAvgPrice = c.PartialCurrencyPairs
+//                               .Select(pcp => pcp.CurrencyPair)
+//                               .SelectMany(cp => cp.CurrencyPairRequests
+//                                   .SelectMany(cpr => cpr.RequestComponents
+//                                       .Where(rc =>
+//                                           rc.ComponentType.Equals(ComponentType.Ask)
+//                                           || rc.ComponentType.Equals(ComponentType.Bid))
+//                                       .SelectMany(rc => rc.RequestComponentDatum
+//                                           .RcdHistoricItems
+//                                           .Where(rcdhi => rcdhi.CreatedAt >
+//                                                           DateTime.UtcNow.Subtract(TimeSpan.FromDays(days)))
+//                                           .Select(rcdhi => decimal.Parse(rcdhi.Value))
+//                                           .DefaultIfEmpty(0))
+//                                   ))
+//                               .Average(),
+//                           DailyVolume = c.PartialCurrencyPairs
+//                               .Select(pcp => pcp.CurrencyPair)
+//                               .SelectMany(cp => cp.CurrencyPairRequests
+//                                   .SelectMany(cpr => cpr.RequestComponents
+//                                       .Where(rc => rc.ComponentType.Equals(ComponentType.VOLUME))
+//                                       .Select(rc => decimal.Parse(rc.RequestComponentDatum.Value))))
+//                               .FirstOrDefault()
                        })
                        .ToList() ?? null;
         }
