@@ -5,6 +5,7 @@ using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Logging;
+using Nozomi.Base.Core;
 using Nozomi.Base.Core.Helpers.Enumerable;
 using Nozomi.Data.AreaModels.v1.Currency;
 using Nozomi.Data.Models.Currency;
@@ -35,7 +36,11 @@ namespace Nozomi.Service.Events
                 .Where(cp => cp.PartialCurrencyPairs
                     .Any(pcp => pcp.Currency.Id.Equals(currencyId)
                                 // Make sure we're analyzing the main currency, not the sub.
-                                && pcp.IsMain))
+                                && pcp.IsMain)
+                             // Ensure that the counter currency is the generic counter currency
+                             && cp.PartialCurrencyPairs
+                                 .Any(pcp => pcp.Currency.Abbrv.Equals(CoreConstants.GenericCounterCurrency, StringComparison.InvariantCultureIgnoreCase)
+                                             && !pcp.IsMain))
                 .Include(cp => cp.CurrencyPairRequests)
                 .ThenInclude(cpr => cpr.RequestComponents)
                 .ThenInclude(rc => rc.RequestComponentDatum)
@@ -72,7 +77,11 @@ namespace Nozomi.Service.Events
                 .Where(cp => cp.PartialCurrencyPairs
                     .Any(pcp => pcp.Currency.Abbrv.Equals(abbreviation, StringComparison.InvariantCultureIgnoreCase)
                                 // Make sure we're analyzing the main currency, not the sub.
-                                && pcp.IsMain))
+                                && pcp.IsMain)
+                             // Ensure that the counter currency is the generic counter currency
+                && cp.PartialCurrencyPairs
+                    .Any(pcp => pcp.Currency.Abbrv.Equals(CoreConstants.GenericCounterCurrency, StringComparison.InvariantCultureIgnoreCase)
+                                && !pcp.IsMain))
                 .Include(cp => cp.CurrencyPairRequests)
                 .ThenInclude(cpr => cpr.RequestComponents)
                 .ThenInclude(rc => rc.RequestComponentDatum)
