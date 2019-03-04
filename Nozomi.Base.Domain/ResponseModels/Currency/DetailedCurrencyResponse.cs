@@ -14,6 +14,10 @@ namespace Nozomi.Data.ResponseModels.Currency
         {
         }
         
+        /// <summary>
+        /// These constructors rely on the same counter currency to properly operate.
+        /// </summary>
+        /// <param name="currencyPairs"></param>
         public DetailedCurrencyResponse(IQueryable<Models.Currency.CurrencyPair> currencyPairs)
         {
             if (currencyPairs != null && currencyPairs.Any())
