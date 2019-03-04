@@ -118,22 +118,29 @@ namespace Nozomi.Data.ResponseModels.Currency
                             .FirstOrDefault().ModifiedAt)
                         .FirstOrDefault();
 
-                    // TODO: Resolve NRE
-                    Historical = currencyPairs
-                        .SelectMany(cp => cp.PartialCurrencyPairs)
-                        .Select(pcp => pcp.CurrencyPair)
-                        .SelectMany(cp => cp.CurrencyPairRequests)
-                        .SelectMany(cpr => cpr.RequestComponents)
-                        .ToDictionary(rc => rc.ComponentType,
-                            rc => rc.RequestComponentDatum
-                                .RcdHistoricItems
-                                .DefaultIfEmpty()
-                                .Select(rcdhi => new ComponentHistoricalDatum
-                                {
-                                    CreatedAt = rcdhi.CreatedAt,
-                                    Value = rcdhi.Value
-                                })
-                                .ToList());
+                    try
+                    {
+                        // TODO: Resolve NRE
+                        Historical = currencyPairs
+                            .SelectMany(cp => cp.PartialCurrencyPairs
+                                .Select(pcp => pcp.CurrencyPair))
+                            .SelectMany(cp => cp.CurrencyPairRequests)
+                            .SelectMany(cpr => cpr.RequestComponents)
+                            .ToDictionary(rc => rc.ComponentType,
+                                rc => rc.RequestComponentDatum
+                                    .RcdHistoricItems
+                                    .DefaultIfEmpty()
+                                    .Select(rcdhi => new ComponentHistoricalDatum
+                                    {
+                                        CreatedAt = rcdhi.CreatedAt,
+                                        Value = rcdhi.Value
+                                    })
+                                    .ToList());
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex);
+                    }
                 }
             }
         }
