@@ -38,24 +38,24 @@ namespace Nozomi.Service.Events
                                 // Make sure we're analyzing the main currency, not the sub.
                                 && pcp.IsMain)
                              // Ensure that the counter currency is the generic counter currency
-                             && cp.PartialCurrencyPairs
-                                 .Any(pcp => pcp.Currency.Abbrv.Equals(CoreConstants.GenericCounterCurrency, StringComparison.InvariantCultureIgnoreCase)
-                                             && !pcp.IsMain))
+                && cp.PartialCurrencyPairs
+                    .Any(pcp => pcp.Currency.Abbrv.Equals(CoreConstants.GenericCounterCurrency, StringComparison.InvariantCultureIgnoreCase)
+                                && !pcp.IsMain))
                 .Include(cp => cp.CurrencyPairRequests)
                 .ThenInclude(cpr => cpr.RequestComponents)
                 .ThenInclude(rc => rc.RequestComponentDatum)
                 .ThenInclude(rcd => rcd.RcdHistoricItems)
                 .Where(cp => cp.CurrencyPairRequests
                     .Any(cpr => cpr.IsEnabled && cpr.DeletedAt == null
-                                              && cpr.RequestComponents
-                                                  .Any(rc => rc.DeletedAt == null && rc.IsEnabled
-                                                                                  && componentTypes.Contains(rc.ComponentType)                                                                   
-                                                                                  && rc.RequestComponentDatum != null
-                                                                                  && rc.RequestComponentDatum.DeletedAt == null
-                                                                                  && rc.RequestComponentDatum.IsEnabled
-                                                                                  && rc.RequestComponentDatum.RcdHistoricItems != null
-                                                                                  && rc.RequestComponentDatum.RcdHistoricItems
-                                                                                      .Any(rcdhi => rcdhi.DeletedAt == null && rcdhi.IsEnabled))));
+                                && cpr.RequestComponents
+                                    .Any(rc => rc.DeletedAt == null && rc.IsEnabled
+                                               && componentTypes.Contains(rc.ComponentType)                                                                   
+                                               && rc.RequestComponentDatum != null
+                                               && rc.RequestComponentDatum.DeletedAt == null
+                                               && rc.RequestComponentDatum.IsEnabled
+                                               && rc.RequestComponentDatum.RcdHistoricItems != null
+                                               && rc.RequestComponentDatum.RcdHistoricItems
+                                                   .Any(rcdhi => rcdhi.DeletedAt == null && rcdhi.IsEnabled))));
             
             return new DetailedCurrencyResponse(query);
         }
