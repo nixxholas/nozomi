@@ -255,6 +255,31 @@
             this.tickerDataRows = tickers.length;
           });
       },
+      methods: {
+        // This function provides the capability of updating the tickerData array.
+        // It does NOT delete deprecated rows. After all, we expect the clients to refresh once a week or so.
+        updateTickerData: function(incomingData) {
+          // Iterate all incoming datum
+          $.each(incomingData, function(incomingDatum) {
+            // Look for the ticker datum in question
+            for (let i = 0; i < this.tickerData.length; i++) {
+              // Found matching ticker
+              if (this.tickerData[i].currencyPairId === incomingDatum.currencyPairId) {
+                // Tell them its updated
+                if (this.tickerData[i].lastUpdated) {
+                  // Bring in data
+                  
+                  
+                  this.tickerData[i].lastUpdated = moment();
+                } else {
+                  // Else we don't have to update... lol
+                }
+                break;
+              }
+            }
+          });
+        }
+      },
       mounted: function() {
       }
     });
