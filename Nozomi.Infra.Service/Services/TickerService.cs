@@ -369,13 +369,11 @@ namespace Nozomi.Service.Services
                             .RequestComponents.FirstOrDefault(rc => rc.DeletedAt == null && rc.IsEnabled)
                             .RequestComponentDatum
                             .CreatedAt,
-                        Properties = cp.CurrencyPairRequests.FirstOrDefault()
-                            .RequestComponents
-                            .Select(rc => new KeyValuePair<string, string>(
-                                rc.ComponentType.ToString(), 
-                                rc.RequestComponentDatum.Value))
-                            .ToList()
-                                    
+                        Properties = cp.CurrencyPairRequests
+                            .SelectMany(cpr => cpr.RequestComponents)
+                            .OrderBy(rc => rc.ComponentType).Select(rc => 
+                                new KeyValuePair<string,string>(rc.ComponentType.ToString(), 
+                                    rc.RequestComponentDatum.Value)).ToList()
                     })
                     .SingleOrDefault()
             });
