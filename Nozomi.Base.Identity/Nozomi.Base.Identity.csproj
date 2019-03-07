@@ -9,7 +9,7 @@
       <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="2.2.0" />
       <PackageReference Include="Microsoft.AspNetCore.Authorization" Version="2.2.0" />
       <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="2.2.0" />
-      <PackageReference Include="Stripe.net" Version="24.0.2" />
+      <PackageReference Include="Stripe.net" Version="24.3.0" />
     </ItemGroup>
 
     <ItemGroup>
