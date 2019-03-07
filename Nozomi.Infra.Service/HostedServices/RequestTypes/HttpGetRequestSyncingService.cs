@@ -92,7 +92,7 @@ namespace Nozomi.Service.HostedServices.RequestTypes
                     foreach (var cpRequest in cpRequests)
                     {
                         // Process the request
-                        if (await ProcessCurrencyPairRequests(cpRequest.Value))
+                        if (await ProcessRequest(cpRequest.Value))
                         {
                             // TODO: Broadcasting
                         }
@@ -103,7 +103,7 @@ namespace Nozomi.Service.HostedServices.RequestTypes
 
                     foreach (var cRequest in cRequests)
                     {
-                        if (await ProcessCurrencyRequests(cRequest.Value))
+                        if (await ProcessRequest(cRequest.Value))
                         {
                             // TODO: Broadcasting
                         }
@@ -120,13 +120,13 @@ namespace Nozomi.Service.HostedServices.RequestTypes
 
             _logger.LogWarning("HttpGetCurrencyPairRequestSyncingService background task is stopping.");
         }
-
-        public async Task<bool> ProcessCurrencyPairRequests(ICollection<CurrencyPairRequest> reqs)
+        
+        public async Task<bool> ProcessRequest<T>(ICollection<T> requests) where T : Request
         {
-            if (reqs != null && reqs.Count > 0)
+            if (requests != null && requests.Count > 0)
             {
                 // Randomly obtain the first.
-                var firstRequest = reqs.FirstOrDefault();
+                var firstRequest = requests.FirstOrDefault();
 
                 // quit if shit
                 if (firstRequest == null) return false;
@@ -364,7 +364,7 @@ namespace Nozomi.Service.HostedServices.RequestTypes
                 var payload = await _httpClient.GetAsync(uri.ToString());
 
                 // Succcessful? and is there even any Components to update?
-                if (payload.IsSuccessStatusCode && reqs.Any(r => r.RequestComponents
+                if (payload.IsSuccessStatusCode && requests.Any(r => r.RequestComponents
                         .Any(rc => rc.DeletedAt == null && rc.IsEnabled)))
                 {
                     // Pull the content
@@ -372,7 +372,7 @@ namespace Nozomi.Service.HostedServices.RequestTypes
                     var resType = ResponseType.Json;
 
                     // Pull the components wanted
-                    var requestComponents = reqs
+                    var requestComponents = requests
                         .SelectMany(r => r.RequestComponents
                             .Where(rc => rc.DeletedAt == null && rc.IsEnabled));
 
@@ -404,7 +404,7 @@ namespace Nozomi.Service.HostedServices.RequestTypes
                     {
                         Type = RequestLogType.Failure,
                         RawPayload = JsonConvert.SerializeObject(payload),
-                        RequestId = reqs.FirstOrDefault()?.Id ?? 0
+                        RequestId = requests.FirstOrDefault()?.Id ?? 0
                     }) <= 0)
                     {
                         // Logging Failure!!!!
@@ -416,11 +416,6 @@ namespace Nozomi.Service.HostedServices.RequestTypes
             _logger.LogCritical("[HttpGetCurrencyPairRequestSyncingService] CRITICAL FAILURE!");
 
             return false;
-        }
-
-        public Task<bool> ProcessCurrencyRequests(ICollection<CurrencyRequest> requests)
-        {
-            throw new NotImplementedException();
         }
 
         public bool Update(JToken token, ResponseType resType, IEnumerable<RequestComponent> requestComponents)
