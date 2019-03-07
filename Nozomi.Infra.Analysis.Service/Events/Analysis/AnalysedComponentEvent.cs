@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
@@ -25,7 +26,9 @@ namespace Nozomi.Infra.Analysis.Service.Events.Analysis
 
             if (filter)
             {
-                query.Where(ac => ac.IsEnabled && ac.DeletedAt == null);
+                query.Where(ac => ac.IsEnabled && ac.DeletedAt == null
+                                  &&  (ac.Delay == 0 || 
+                                       DateTime.UtcNow > ac.ModifiedAt.AddMilliseconds(ac.Delay).ToUniversalTime()));
             }
             
             if (track)
