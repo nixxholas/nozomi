@@ -12,6 +12,7 @@ using System.Web;
 using System.Xml;
 using System.Xml.Linq;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -26,6 +27,8 @@ using Nozomi.Data.Models.Web;
 using Nozomi.Data.Models.Web.Logging;
 using Nozomi.Infra.Preprocessing.SignalR.Hubs.Interfaces;
 using Nozomi.Preprocessing.Abstracts;
+using Nozomi.Repo.Data;
+using Nozomi.Service.Events.Interfaces;
 using Nozomi.Service.HostedServices.RequestTypes.Interfaces;
 using Nozomi.Service.Hubs;
 using Nozomi.Service.Services;
@@ -49,16 +52,20 @@ using Swashbuckle.AspNetCore.Swagger;
  */
 namespace Nozomi.Service.HostedServices.RequestTypes
 {
-    public class HttpGetCurrencyPairRequestSyncingService : BaseHostedService<HttpGetCurrencyPairRequestSyncingService>,
-        IHttpGetCurrencyPairRequestSyncingService, IHostedService, IDisposable
+    public class HttpGetRequestSyncingService : BaseHostedService<HttpGetRequestSyncingService>,
+        IHttpGetRequestSyncingService, IHostedService, IDisposable
     {
+        private readonly NozomiDbContext _nozomiDbContext;
         private readonly HttpClient _httpClient = new HttpClient();
+        private readonly ICurrencyRequestEvent _currencyRequestEvent;
         private readonly ICurrencyPairComponentService _currencyPairComponentService;
         private readonly ICurrencyPairRequestService _currencyPairRequestService;
         private readonly IRequestLogService _requestLogService;
 
-        public HttpGetCurrencyPairRequestSyncingService(IServiceProvider serviceProvider) : base(serviceProvider)
+        public HttpGetRequestSyncingService(IServiceProvider serviceProvider) : base(serviceProvider)
         {
+            _nozomiDbContext = _scope.ServiceProvider.GetService<NozomiDbContext>();
+            _currencyRequestEvent = _scope.ServiceProvider.GetRequiredService<ICurrencyRequestEvent>();
             _currencyPairComponentService = _scope.ServiceProvider.GetRequiredService<ICurrencyPairComponentService>();
             _currencyPairRequestService = _scope.ServiceProvider.GetRequiredService<ICurrencyPairRequestService>();
             _requestLogService = _scope.ServiceProvider.GetRequiredService<IRequestLogService>();
@@ -77,15 +84,26 @@ namespace Nozomi.Service.HostedServices.RequestTypes
                 {
                     // We will need to re-synchronize the Request collection to make sure we're polling only
                     // the ones we want to poll
-                    var dataPaths = _currencyPairRequestService
+                    var cpRequests = _currencyPairRequestService
                         .GetAllByRequestTypeUniqueToURL(RequestType.HttpGet);
                     
                     // Iterate the requests
                     // NOTE: Let's not call a parallel loop since HttpClients might tend to result in memory leaks.
-                    foreach (var dataPath in dataPaths)
+                    foreach (var cpRequest in cpRequests)
                     {
                         // Process the request
-                        if (await ProcessByDataPath(dataPath.Value))
+                        if (await ProcessCurrencyPairRequests(cpRequest.Value))
+                        {
+                            // TODO: Broadcasting
+                        }
+                    }
+
+                    var cRequests = _currencyRequestEvent.GetAllByRequestTypeUniqueToUrl(_nozomiDbContext, 
+                        RequestType.HttpGet);
+
+                    foreach (var cRequest in cRequests)
+                    {
+                        if (await ProcessCurrencyRequests(cRequest.Value))
                         {
                             // TODO: Broadcasting
                         }
@@ -103,7 +121,7 @@ namespace Nozomi.Service.HostedServices.RequestTypes
             _logger.LogWarning("HttpGetCurrencyPairRequestSyncingService background task is stopping.");
         }
 
-        public async Task<bool> ProcessByDataPath(ICollection<CurrencyPairRequest> reqs)
+        public async Task<bool> ProcessCurrencyPairRequests(ICollection<CurrencyPairRequest> reqs)
         {
             if (reqs != null && reqs.Count > 0)
             {
@@ -326,6 +344,7 @@ namespace Nozomi.Service.HostedServices.RequestTypes
                             }
 
                             break;
+                        case RequestPropertyType.HttpHeader_Custom:
                         case RequestPropertyType.HttpQuery:
                             urlParams.Add(reqProp.Key, reqProp.Value);
                             break;
@@ -397,6 +416,11 @@ namespace Nozomi.Service.HostedServices.RequestTypes
             _logger.LogCritical("[HttpGetCurrencyPairRequestSyncingService] CRITICAL FAILURE!");
 
             return false;
+        }
+
+        public Task<bool> ProcessCurrencyRequests(ICollection<CurrencyRequest> requests)
+        {
+            throw new NotImplementedException();
         }
 
         public bool Update(JToken token, ResponseType resType, IEnumerable<RequestComponent> requestComponents)
