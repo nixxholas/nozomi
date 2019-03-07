@@ -13,7 +13,7 @@ namespace Nozomi.Ticker.StartupExtensions
             services.AddHostedService<ApiTokenCachingService>();
             
             // Hosted Services
-            services.AddHostedService<HttpGetCurrencyPairRequestSyncingService>();
+            services.AddHostedService<HttpGetRequestSyncingService>();
             services.AddHostedService<HttpPostCurrencyPairRequestSyncingService>();
             services.AddHostedService<WebsocketCurrencyPairRequestSyncingService>();
             //services.AddHostedService<CPDSyncingService>();

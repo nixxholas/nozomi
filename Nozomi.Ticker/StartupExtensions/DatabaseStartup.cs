@@ -796,6 +796,56 @@ namespace Nozomi.Ticker.StartupExtensions
 
                                 context.SaveChanges();
 
+                                if (!context.CurrencyRequests.Any())
+                                {
+                                    var currencyRequests = new List<CurrencyRequest>()
+                                    {
+                                        new CurrencyRequest
+                                        {
+                                            Guid = Guid.NewGuid(),
+                                            RequestType = RequestType.HttpGet,
+                                            DataPath = "https://api.etherscan.io/api",
+                                            CurrencyId = ethBfx.Id,
+                                            Delay = 10000,
+                                            RequestProperties = new List<RequestProperty>()
+                                            {
+                                                new RequestProperty
+                                                {
+                                                    RequestPropertyType = RequestPropertyType.HttpHeader_Custom,
+                                                    Key = "module",
+                                                    Value = "stats"
+                                                },
+                                                new RequestProperty
+                                                {
+                                                    RequestPropertyType = RequestPropertyType.HttpHeader_Custom,
+                                                    Key = "action",
+                                                    Value = "ethsupply"
+                                                },
+                                                new RequestProperty
+                                                {
+                                                    RequestPropertyType = RequestPropertyType.HttpHeader_Custom,
+                                                    Key = "apikey",
+                                                    Value = "TGAFGMGDKHJ8W2EKI26MJRRWGH44AV9224"
+                                                },
+                                            },
+                                            RequestComponents = new List<RequestComponent>()
+                                            {
+                                                new RequestComponent
+                                                {
+                                                    ComponentType = ComponentType.Circulating_Supply,
+                                                    QueryComponent = "result",
+                                                    CreatedAt = DateTime.Now,
+                                                    ModifiedAt = DateTime.Now,
+                                                    DeletedAt = null
+                                                }
+                                            }
+                                        }
+                                    };
+                                    
+                                    context.CurrencyRequests.AddRange(currencyRequests);
+                                    context.SaveChanges();
+                                }
+
                             if (!context.WebsocketRequests.Any())
                             {
                                 // Binance's Websocket-based ticker data stream
