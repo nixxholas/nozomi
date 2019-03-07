@@ -77,7 +77,7 @@ namespace Nozomi.Infra.Analysis.Service.Events.Analysis
                 }
             }
 
-            return res;
+            return new NozomiResult<IDictionary<string, decimal>>(res);
         }
     }
 }
