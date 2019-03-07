@@ -27,11 +27,11 @@ namespace Nozomi.Preprocessing
         public static Dictionary<string, LinkedList<long>> TickerSymbolDictionary = 
             new Dictionary<string, LinkedList<long>>();
         
-        /// <summary>
-        /// A dictionary with a key of the currencypairid and the value of the currencypair's ticker response.
-        /// </summary>
-        public static Dictionary<long, TickerByExchangeResponse> CurrencyPairDictionary = 
-            new Dictionary<long, TickerByExchangeResponse>();
+//        /// <summary>
+//        /// A dictionary with a key of the currencypairid and the value of the currencypair's ticker response.
+//        /// </summary>
+//        public static Dictionary<long, TickerByExchangeResponse> CurrencyPairDictionary = 
+//            new Dictionary<long, TickerByExchangeResponse>();
         
         /// <summary>
         /// A collection containing ALL tickers unique to their source and ticker abbreviation.
