@@ -15,6 +15,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
     public class ComponentAnalysisService : BaseHostedService<ComponentAnalysisService>, IHostedService,
         IDisposable, IComponentAnalysisService
     {
+        private const string ServiceName = "ComponentAnalysisService";
         private readonly IAnalysedComponentEvent _analysedComponentEvent;
         private readonly IAnalysedHistoricItemEvent _analysedHistoricItemEvent;
         private readonly IAnalysedComponentService _analysedComponentService;
@@ -48,8 +49,13 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                     {
                         if (Analyse(ac))
                         {
-                            _logger.LogInformation($"[ComponentAnalysisService] Component {ac.Id}:" +
+                            _logger.LogInformation($"[{ServiceName}] Component {ac.Id}:" +
                                                    " Analysis successful");
+                        }
+                        else
+                        {
+                            _logger.LogWarning($"[{ServiceName}] Component {ac.Id}:" +
+                                               " Something bad happened");
                         }
                     }
                 }
