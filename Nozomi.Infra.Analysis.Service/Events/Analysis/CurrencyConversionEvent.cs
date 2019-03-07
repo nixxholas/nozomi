@@ -26,8 +26,11 @@ namespace Nozomi.Infra.Analysis.Service.Events.Analysis
 
         public NozomiResult<IDictionary<string, decimal>> ObtainConversionRates(string abbrv)
         {
+            // Setups
             var res = new Dictionary<string, decimal>();
             var uncomputedRes = new Dictionary<string, ICollection<decimal>>();
+            
+            // Obtain all components.
             var reqComps = _unitOfWork.GetRepository<CurrencyPair>()
                 .GetQueryable()
                 .AsNoTracking()
@@ -64,7 +67,7 @@ namespace Nozomi.Infra.Analysis.Service.Events.Analysis
                 }
             }
             
-            // Average it
+            // Aggregate it
             foreach (var kvp in uncomputedRes)
             {
                 // Check
