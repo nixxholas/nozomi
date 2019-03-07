@@ -1,9 +1,12 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Nozomi.Data.Models.Currency;
 using Nozomi.Data.Models.Web.Analytical;
 using Nozomi.Infra.Analysis.Service.Events.Analysis.Interfaces;
 using Nozomi.Infra.Analysis.Service.HostedServices.Interfaces;
@@ -35,9 +38,9 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            _logger.LogInformation("ComponentAnalysisService is starting.");
+            _logger.LogInformation($"{ServiceName} is starting.");
 
-            stoppingToken.Register(() => _logger.LogInformation("ComponentAnalysisService is stopping."));
+            stoppingToken.Register(() => _logger.LogInformation($"{ServiceName} is stopping."));
 
             while (!stoppingToken.IsCancellationRequested)
             {
@@ -45,18 +48,15 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                 {
                     var items = _analysedComponentEvent.GetAll(true, true);
 
-                    foreach (var ac in items)
+                    if (Analyse(items.ToList()))
                     {
-                        if (Analyse(ac))
-                        {
-                            _logger.LogInformation($"[{ServiceName}] Component {ac.Id}:" +
-                                                   " Analysis successful");
-                        }
-                        else
-                        {
-                            _logger.LogWarning($"[{ServiceName}] Component {ac.Id}:" +
-                                               " Something bad happened");
-                        }
+                        _logger.LogInformation($"[{ServiceName}]" +
+                                               " Analysis successful");
+                    }
+                    else
+                    {
+                        _logger.LogWarning($"[{ServiceName}]" +
+                                           " Something bad happened");
                     }
                 }
                 catch (Exception ex)
@@ -71,76 +71,100 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
             _logger.LogWarning("ComponentAnalysisService background task is stopping.");
         }
 
-        public bool Analyse(AnalysedComponent component)
+        public bool Analyse(ICollection<AnalysedComponent> components)
         {
-            // Always stash the value first
-            if (Stash(component))
+            foreach (var component in components)
             {
-                switch (component.ComponentType)
+                // Always stash the value first
+                if (Stash(component))
                 {
-                    // Calculate the market cap.
-                    case AnalysedComponentType.MarketCap:
-                        break;
-                    // Calculate the current average price.
-                    case AnalysedComponentType.CurrentAveragePrice:
-                        break;
-                    // Calculate the daily price change for this request
-                    case AnalysedComponentType.DailyPriceChange:
-                        var dailyCompute = component.Request.RequestComponents
-                            .Select(rc => rc.RequestComponentDatum)
-                            .SelectMany(rcd => rcd.RcdHistoricItems)
-                            .Where(rcdhi => rcdhi.CreatedAt >= DateTime.UtcNow.Subtract(TimeSpan.FromDays(1)))
-                            .Select(rcdhi => rcdhi.Value)
-                            .DefaultIfEmpty()
-                            .Average(val => decimal.Parse(val));
+                    switch (component.ComponentType)
+                    {
+                        // Calculate the market cap.
+                        case AnalysedComponentType.MarketCap:
+                            var supplyComp = component.Request.RequestComponents
+                                .SingleOrDefault(rc => rc.ComponentType.Equals(ComponentType.Circulating_Supply));
 
-                        if (!decimal.Zero.Equals(dailyCompute))
-                        {
-                            // Update
-                            return _analysedComponentService.UpdateValue(component.Id, dailyCompute.ToString());
-                        }
+                            if (supplyComp != null && components.Any(ac =>
+                                    ac.ComponentType.Equals(AnalysedComponentType.CurrentAveragePrice)
+                                    && !string.IsNullOrEmpty(ac.Value)))
+                            {
+                                var marketCap = decimal.Parse(supplyComp.RequestComponentDatum.Value)
+                                                * decimal.Parse(components
+                                                    .DefaultIfEmpty()
+                                                    .Where(ac => ac.ComponentType.Equals(AnalysedComponentType
+                                                        .CurrentAveragePrice))
+                                                    .Select(ac => ac.Value)
+                                                    .SingleOrDefault());
 
-                        break;
-                    case AnalysedComponentType.WeeklyPriceChange:
-                        var weeklyCompute = component.Request.RequestComponents
-                            .Select(rc => rc.RequestComponentDatum)
-                            .SelectMany(rcd => rcd.RcdHistoricItems)
-                            .Where(rcdhi => rcdhi.CreatedAt >= DateTime.UtcNow.Subtract(TimeSpan.FromDays(7)))
-                            .Select(rcdhi => rcdhi.Value)
-                            .DefaultIfEmpty()
-                            .Average(val => decimal.Parse(val));
+                                if (!decimal.Zero.Equals(marketCap))
+                                {
+                                    return _analysedComponentService.UpdateValue(component.Id, marketCap.ToString());
+                                }
+                            }
 
-                        if (!decimal.Zero.Equals(weeklyCompute))
-                        {
-                            // Update
-                            return _analysedComponentService.UpdateValue(component.Id, weeklyCompute.ToString());
-                        }
+                            break;
+                        // Calculate the current average price.
+                        case AnalysedComponentType.CurrentAveragePrice:
+                            break;
+                        // Calculate the daily price change for this request
+                        case AnalysedComponentType.DailyPriceChange:
+                            var dailyCompute = component.Request.RequestComponents
+                                .Select(rc => rc.RequestComponentDatum)
+                                .SelectMany(rcd => rcd.RcdHistoricItems)
+                                .Where(rcdhi => rcdhi.CreatedAt >= DateTime.UtcNow.Subtract(TimeSpan.FromDays(1)))
+                                .Select(rcdhi => rcdhi.Value)
+                                .DefaultIfEmpty()
+                                .Average(val => decimal.Parse(val));
 
-                        break;
-                    case AnalysedComponentType.MonthlyPriceChange:
-                        var monthlyCompute = component.Request.RequestComponents
-                            .Select(rc => rc.RequestComponentDatum)
-                            .SelectMany(rcd => rcd.RcdHistoricItems)
-                            .Where(rcdhi => rcdhi.CreatedAt >= DateTime.UtcNow.Subtract(TimeSpan.FromDays(7)))
-                            .Select(rcdhi => rcdhi.Value)
-                            .DefaultIfEmpty()
-                            .Average(val => decimal.Parse(val));
+                            if (!decimal.Zero.Equals(dailyCompute))
+                            {
+                                // Update
+                                return _analysedComponentService.UpdateValue(component.Id, dailyCompute.ToString());
+                            }
 
-                        if (!decimal.Zero.Equals(monthlyCompute))
-                        {
-                            // Update
-                            return _analysedComponentService.UpdateValue(component.Id, monthlyCompute.ToString());
-                        }
+                            break;
+                        case AnalysedComponentType.WeeklyPriceChange:
+                            var weeklyCompute = component.Request.RequestComponents
+                                .Select(rc => rc.RequestComponentDatum)
+                                .SelectMany(rcd => rcd.RcdHistoricItems)
+                                .Where(rcdhi => rcdhi.CreatedAt >= DateTime.UtcNow.Subtract(TimeSpan.FromDays(7)))
+                                .Select(rcdhi => rcdhi.Value)
+                                .DefaultIfEmpty()
+                                .Average(val => decimal.Parse(val));
 
-                        break;
-                    // Calculate the daily price percentage chaneg.
-                    case AnalysedComponentType.DailyPricePctChange:
-                        break;
-                    // Calculate the daily volume.
-                    case AnalysedComponentType.DailyVolume:
-                        break;
-                    default:
-                        return false;
+                            if (!decimal.Zero.Equals(weeklyCompute))
+                            {
+                                // Update
+                                return _analysedComponentService.UpdateValue(component.Id, weeklyCompute.ToString());
+                            }
+
+                            break;
+                        case AnalysedComponentType.MonthlyPriceChange:
+                            var monthlyCompute = component.Request.RequestComponents
+                                .Select(rc => rc.RequestComponentDatum)
+                                .SelectMany(rcd => rcd.RcdHistoricItems)
+                                .Where(rcdhi => rcdhi.CreatedAt >= DateTime.UtcNow.Subtract(TimeSpan.FromDays(7)))
+                                .Select(rcdhi => rcdhi.Value)
+                                .DefaultIfEmpty()
+                                .Average(val => decimal.Parse(val));
+
+                            if (!decimal.Zero.Equals(monthlyCompute))
+                            {
+                                // Update
+                                return _analysedComponentService.UpdateValue(component.Id, monthlyCompute.ToString());
+                            }
+
+                            break;
+                        // Calculate the daily price percentage chaneg.
+                        case AnalysedComponentType.DailyPricePctChange:
+                            break;
+                        // Calculate the daily volume.
+                        case AnalysedComponentType.DailyVolume:
+                            break;
+                        default:
+                            return false;
+                    }
                 }
             }
 
