@@ -55,7 +55,7 @@ namespace Nozomi.Ticker.Areas.v1.Ticker
             if (string.IsNullOrEmpty(symbol)) return new NozomiResult<ICollection<TickerByExchangeResponse>>(
                 NozomiResultType.Failed, "Please enter a symbol.");
             
-            return _tickerService.GetByAbbreviation(symbol, exchangeAbbrv);
+            return _tickerEvent.GetByAbbreviation(symbol, exchangeAbbrv);
         }
     }
 }

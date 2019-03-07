@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using Nozomi.Data;
 using Nozomi.Data.AreaModels.v1.CurrencyPair;
 using Nozomi.Data.ResponseModels;
+using Nozomi.Service.Events.Interfaces;
 using Nozomi.Service.Hubs;
 using Nozomi.Service.Identity.Managers;
 using Nozomi.Service.Services.Interfaces;
@@ -17,17 +18,17 @@ namespace Nozomi.Ticker.Areas.v1.CurrencyPair
     public class CurrencyPairController : BaseController<CurrencyPairController>, ICurrencyPairController
     {
         private readonly ICurrencyPairService _currencyPairService;
-        private readonly ITickerService _tickerService;
+        private readonly ITickerEvent _tickerEvent;
         private readonly IHubContext<NozomiStreamHub> _tickerHubContext;
 
         public CurrencyPairController(IHubContext<NozomiStreamHub> tickerHubContext, NozomiUserManager userManager,
-            ICurrencyPairService currencyPairService, ITickerService tickerService,
+            ICurrencyPairService currencyPairService, ITickerEvent tickerEvent,
             ILogger<CurrencyPairController> logger)
             : base(logger, userManager)
         {
             _tickerHubContext = tickerHubContext;
             _currencyPairService = currencyPairService;
-            _tickerService = tickerService;
+            _tickerEvent = tickerEvent;
         }
 
         [Authorize]
@@ -53,7 +54,7 @@ namespace Nozomi.Ticker.Areas.v1.CurrencyPair
         [HttpGet("{id}")]
         public Task Ticker(long id)
         {
-            return _tickerService.GetById(id);
+            return _tickerEvent.GetById(id);
         }
     }
 }

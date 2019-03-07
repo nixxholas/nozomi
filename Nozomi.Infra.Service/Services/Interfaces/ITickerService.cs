@@ -23,10 +23,6 @@ namespace Nozomi.Service.Services.Interfaces
         NozomiResult<string> Delete(string ticker, string exchangeAbbrv);
         
         Task<NozomiResult<ICollection<UniqueTickerResponse>>> GetAll(int index);
-        
-        Task<NozomiResult<TickerByExchangeResponse>> GetById(long id);
-
-        NozomiResult<ICollection<TickerByExchangeResponse>> GetByAbbreviation(string ticker, string exchangeAbbrv = null);
 
         NozomiResult<ICollection<TickerByExchangeResponse>> GetAllActive();
     }
