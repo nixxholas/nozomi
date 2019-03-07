@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace Nozomi.Analysis.Base.Domain.Responses.Hub.Asset
 {
-    public class CurrencyAssetResponse
+    public class AssetResponse
     {
         public string Abbrv { get; set; }
         
