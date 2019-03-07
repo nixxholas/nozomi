@@ -78,6 +78,12 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
             {
                 switch (component.ComponentType)
                 {
+                    // Calculate the market cap.
+                    case AnalysedComponentType.MarketCap:
+                        break;
+                    // Calculate the current average price.
+                    case AnalysedComponentType.CurrentAveragePrice:
+                        break;
                     // Calculate the daily price change for this request
                     case AnalysedComponentType.DailyPriceChange:
                         var dailyCompute = component.Request.RequestComponents
@@ -126,6 +132,12 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                             return _analysedComponentService.UpdateValue(component.Id, monthlyCompute.ToString());
                         }
 
+                        break;
+                    // Calculate the daily price percentage chaneg.
+                    case AnalysedComponentType.DailyPricePctChange:
+                        break;
+                    // Calculate the daily volume.
+                    case AnalysedComponentType.DailyVolume:
                         break;
                     default:
                         return false;

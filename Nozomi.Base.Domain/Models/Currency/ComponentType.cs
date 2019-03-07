@@ -35,5 +35,8 @@ namespace Nozomi.Data.Models.Currency
         Order = 100,
         [Description("Price of the last successfully closed order")]
         Last_Price = 101, // float
+        
+        [Description("The current circulating supply of this asset.")]
+        Circulating_Supply = 1000
     }
 }
