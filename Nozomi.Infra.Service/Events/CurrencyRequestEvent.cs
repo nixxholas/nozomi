@@ -29,7 +29,8 @@ namespace Nozomi.Service.Events
                         .ThenInclude(rc => rc.RequestComponentDatum)
                         .Include(cr => cr.RequestProperties));
         
-        public IDictionary<string, ICollection<CurrencyRequest>> GetAllByRequestTypeUniqueToUrl(RequestType requestType)
+        public IDictionary<string, ICollection<CurrencyRequest>> GetAllByRequestTypeUniqueToUrl(
+            NozomiDbContext nozomiDbContext, RequestType requestType)
         {
             var dict = new Dictionary<string, ICollection<CurrencyRequest>>();
             var currencyRequests = GetActiveCurrencyRequests(_unitOfWork.Context, requestType);
