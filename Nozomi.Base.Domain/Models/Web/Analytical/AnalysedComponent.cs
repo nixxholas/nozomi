@@ -14,6 +14,8 @@ namespace Nozomi.Data.Models.Web.Analytical
         
         public string Value { get; set; }
         
+        public int Delay { get; set; }
+        
         public long RequestId { get; set; }
         
         public Request Request { get; set; }

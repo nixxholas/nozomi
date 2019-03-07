@@ -14,6 +14,7 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
             entityTypeBuilder.Property(ac => ac.Id).ValueGeneratedOnAdd();
 
             entityTypeBuilder.Property(ac => ac.Value).IsRequired(false);
+            entityTypeBuilder.Property(ac => ac.Delay).HasDefaultValue(86400000); // 24 hours
             entityTypeBuilder.Property(ac => ac.ComponentType).HasDefaultValue(AnalysedComponentType.Unknown);
 
             entityTypeBuilder.HasOne(ac => ac.Request)
