@@ -1,6 +1,6 @@
 using Nozomi.Data.Models.Web.Analytical;
 
-namespace Nozomi.Service.Events.Analysis.Interfaces
+namespace Nozomi.Infra.Analysis.Service.Events.Analysis.Interfaces
 {
     public interface IAnalysedHistoricItemEvent
     {

@@ -1,6 +1,6 @@
 using Nozomi.Data.Models.Web.Analytical;
 
-namespace Nozomi.Service.HostedServices.Analytical.Interfaces
+namespace Nozomi.Infra.Analysis.Service.HostedServices.Interfaces
 {
     public interface IComponentAnalysisService
     {

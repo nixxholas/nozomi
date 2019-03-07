@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Nozomi.Infra.Analysis.Service.Services;
+using Nozomi.Infra.Analysis.Service.Services.Interfaces;
 using Nozomi.Preprocessing.Events;
 using Nozomi.Preprocessing.Events.Interfaces;
 using Nozomi.Service.HostedServices.RequestTypes;

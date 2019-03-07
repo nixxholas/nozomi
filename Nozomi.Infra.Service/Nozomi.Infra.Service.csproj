@@ -16,6 +16,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Nozomi.Infra.Preprocessing.SignalR\Nozomi.Infra.Preprocessing.SignalR.csproj" />
+    <ProjectReference Include="..\Nozomi.Infra.Analysis.Service\Nozomi.Infra.Analysis.Service.csproj" />
   </ItemGroup>
 </Project>

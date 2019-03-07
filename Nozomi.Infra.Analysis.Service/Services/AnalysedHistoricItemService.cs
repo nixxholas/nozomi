@@ -1,11 +1,11 @@
 using Microsoft.Extensions.Logging;
 using Nozomi.Data.Models.Web.Analytical;
+using Nozomi.Infra.Analysis.Service.Services.Interfaces;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Data;
-using Nozomi.Service.Services.Interfaces;
 
-namespace Nozomi.Service.Services
+namespace Nozomi.Infra.Analysis.Service.Services
 {
     public class AnalysedHistoricItemService : BaseService<AnalysedHistoricItemService, NozomiDbContext>, 
         IAnalysedHistoricItemService
