@@ -23,9 +23,9 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            _logger.LogInformation("ComponentAnalysisService is starting.");
+            _logger.LogInformation($"{ServiceName} is starting.");
 
-            stoppingToken.Register(() => _logger.LogInformation("ComponentAnalysisService is stopping."));
+            stoppingToken.Register(() => _logger.LogInformation($"{ServiceName} is stopping."));
 
             while (!stoppingToken.IsCancellationRequested)
             {
@@ -35,16 +35,6 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
 
                     foreach (var ac in items)
                     {
-//                        if (Analyse(ac))
-//                        {
-//                            _logger.LogInformation($"[{ServiceName}] Component {ac.Id}:" +
-//                                                   " Analysis successful");
-//                        }
-//                        else
-//                        {
-//                            _logger.LogWarning($"[{ServiceName}] Component {ac.Id}:" +
-//                                               " Something bad happened");
-//                        }
                     }
                 }
                 catch (Exception ex)
