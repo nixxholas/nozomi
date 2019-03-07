@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Microsoft.EntityFrameworkCore.Internal;
 using Nozomi.Base.Core;
+using Nozomi.Data.Models.Web;
 
 namespace Nozomi.Data.Models.Currency
 {
@@ -51,6 +53,8 @@ namespace Nozomi.Data.Models.Currency
 
         // This will have a number if it is a crypto pair to peg to proper entities
         public long WalletTypeId { get; set; } = 0;
+        
+        public ICollection<CurrencyRequest> CurrencyRequests { get; set; }
 
         public ICollection<PartialCurrencyPair> PartialCurrencyPairs { get; set; }
 
