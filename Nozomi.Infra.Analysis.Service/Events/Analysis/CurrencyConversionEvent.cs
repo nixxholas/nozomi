@@ -1,8 +1,10 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Nozomi.Base.Core.Helpers.Enumerator;
 using Nozomi.Data;
 using Nozomi.Data.Models.Currency;
 using Nozomi.Data.Models.Web;
@@ -24,6 +26,8 @@ namespace Nozomi.Infra.Analysis.Service.Events.Analysis
 
         public NozomiResult<IDictionary<string, decimal>> ObtainConversionRates(string abbrv)
         {
+            var res = new Dictionary<string, decimal>();
+            var uncomputedRes = new Dictionary<string, ICollection<decimal>>();
             var reqComps = _unitOfWork.GetRepository<CurrencyPair>()
                 .GetQueryable()
                 .AsNoTracking()
@@ -41,8 +45,39 @@ namespace Nozomi.Infra.Analysis.Service.Events.Analysis
                 .SelectMany(cp => cp.CurrencyPairRequests)
                 .SelectMany(cpr => cpr.RequestComponents)
                 .ToList();
+
+            // Obtain the uncomputed first
+            foreach (var reqComp in reqComps)
+            {
+                var reqCompType = reqComp.ComponentType.GetDescription();
                 
-            throw new System.NotImplementedException();
+                if (res.ContainsKey(reqCompType))
+                {
+                    uncomputedRes[reqCompType].Add(decimal.Parse(reqComp.RequestComponentDatum.Value));
+                }
+                else
+                {
+                    uncomputedRes.Add(reqCompType, new List<decimal>
+                    {
+                        decimal.Parse(reqComp.RequestComponentDatum.Value)
+                    });
+                }
+            }
+            
+            // Average it
+            foreach (var kvp in uncomputedRes)
+            {
+                // Check
+                if (kvp.Value != null && kvp.Value.Count > 0)
+                {
+                    if (!res.ContainsKey(kvp.Key)) // Extra checks
+                    {
+                        res.Add(kvp.Key, kvp.Value.Average());
+                    }
+                }
+            }
+
+            return res;
         }
     }
 }
