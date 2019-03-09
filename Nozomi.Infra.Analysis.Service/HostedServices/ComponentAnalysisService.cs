@@ -71,6 +71,11 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
             _logger.LogWarning("ComponentAnalysisService background task is stopping.");
         }
 
+        /// <summary>
+        /// Analysis Method that computes every AnalysedComponentType Enumerator
+        /// </summary>
+        /// <param name="components">The list of components to compute and save.</param>
+        /// <returns>Success or failure of collection processing</returns>
         public bool Analyse(ICollection<AnalysedComponent> components)
         {
             foreach (var component in components)
