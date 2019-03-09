@@ -15,11 +15,9 @@
     <PackageReference Include="System.Xml.Linq" Version="3.5.21022.801" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Nozomi.Infra.Preprocessing\Nozomi.Infra.Preprocessing.csproj" />
-    <ProjectReference Include="..\Nozomi.Infra.Service.Identity\Nozomi.Infra.Service.Identity.csproj" />
-    <ProjectReference Include="..\Nozomi.Infra.Service\Nozomi.Infra.Service.csproj" />
+    <_ContentIncludedByDefault Remove="Areas\Identity\Pages\_ViewImports.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <_ContentIncludedByDefault Remove="Areas\Identity\Pages\_ViewImports.cshtml" />
+    <ProjectReference Include="..\Nozomi.Infra.Analysis.Service\Nozomi.Infra.Analysis.Service.csproj" />
   </ItemGroup>
 </Project>
