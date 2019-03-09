@@ -1,8 +1,10 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data;
+using Nozomi.Data.Models.Currency;
 using Nozomi.Data.Models.Web;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.BCL.Repository;
@@ -52,6 +54,26 @@ namespace Nozomi.Service.Events
                     .Skip(index * 20)
                     .Take(20)
                     .ToList();
+        }
+
+        public ICollection<RequestComponent> GetByMainCurrency(string mainCurrencyAbbrv, 
+            ICollection<ComponentType> componentTypes)
+        {
+            return _unitOfWork.GetRepository<CurrencyPair>()
+                .GetQueryable(cp => cp.DeletedAt == null && cp.IsEnabled)
+                .AsNoTracking()
+                .Include(cp => cp.PartialCurrencyPairs)
+                .ThenInclude(pcp => pcp.Currency)
+                .Where(cp => cp.PartialCurrencyPairs
+                    .FirstOrDefault(pcp => pcp.IsMain).Currency.Abbrv.Equals(mainCurrencyAbbrv,
+                        StringComparison.InvariantCultureIgnoreCase))
+                .Include(cp => cp.CurrencyPairRequests)
+                .ThenInclude(cpr => cpr.RequestComponents)
+                .ThenInclude(rc => rc.RequestComponentDatum)
+                .SelectMany(cp => cp.CurrencyPairRequests
+                    .Where(cpr => cpr.RequestComponents != null && cpr.RequestComponents.Count > 0))
+                .SelectMany(cpr => cpr.RequestComponents)
+                .ToList();
         }
 
         public NozomiResult<RequestComponent> Get(long id, bool includeNested = false)
