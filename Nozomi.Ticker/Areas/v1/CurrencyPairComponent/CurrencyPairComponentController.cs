@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using Nozomi.Data;
 using Nozomi.Data.AreaModels.v1.CurrencyPairComponent;
 using Nozomi.Data.Models.Web;
+using Nozomi.Service.Events.Interfaces;
 using Nozomi.Service.Identity.Managers;
 using Nozomi.Service.Services.Interfaces;
 using Swashbuckle.AspNetCore.Annotations;
@@ -14,12 +15,14 @@ namespace Nozomi.Ticker.Areas.v1.CurrencyPairComponent
 {
     public class CurrencyPairComponentController : BaseController<CurrencyPairComponentController>, ICurrencyPairComponentController
     {
+        private readonly IRequestComponentEvent _requestComponentEvent;
         private readonly ICurrencyPairComponentService _currencyPairComponentService;
         
         public CurrencyPairComponentController(ILogger<CurrencyPairComponentController> logger, NozomiUserManager userManager,
-            ICurrencyPairComponentService currencyPairComponentService) 
+            IRequestComponentEvent requestComponentEvent, ICurrencyPairComponentService currencyPairComponentService) 
             : base(logger, userManager)
         {
+            _requestComponentEvent = requestComponentEvent;
             _currencyPairComponentService = currencyPairComponentService;
         }
 
@@ -32,14 +35,14 @@ namespace Nozomi.Ticker.Areas.v1.CurrencyPairComponent
         public NozomiResult<ICollection<RequestComponent>> AllByRequestId(long requestId, bool includeNested = false)
         {
             return new NozomiResult<ICollection<RequestComponent>>
-                (_currencyPairComponentService.AllByRequestId(requestId, includeNested));
+                (_requestComponentEvent.AllByRequestId(requestId, includeNested));
         }
 
         [HttpGet]
         public NozomiResult<ICollection<RequestComponent>> All(int index = 0, bool includeNested = false)
         {
             return new NozomiResult<ICollection<RequestComponent>>
-                (_currencyPairComponentService.All(index, includeNested));
+                (_requestComponentEvent.All(index, includeNested));
         }
 
         [Authorize]

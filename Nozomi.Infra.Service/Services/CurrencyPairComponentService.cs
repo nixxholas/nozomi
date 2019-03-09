@@ -31,55 +31,6 @@ namespace Nozomi.Service.Services
             _rcdHistoricItemService = rcdHistoricItemService;
         }
 
-        public ICollection<RequestComponent> AllByRequestId(long requestId, bool includeNested = false)
-        {
-            if (requestId <= 0) return null;
-            
-            return includeNested ? 
-                _unitOfWork.GetRepository<RequestComponent>()
-                    .GetQueryable(rc => rc.RequestId.Equals(requestId) && rc.DeletedAt == null && rc.IsEnabled)
-                    .AsNoTracking()
-                    .Include(rc => rc.RequestComponentDatum)
-                    .Include(rc => rc.Request)
-                    .ToList() :
-                _unitOfWork.GetRepository<RequestComponent>()
-                    .GetQueryable(rc => rc.RequestId.Equals(requestId) && rc.DeletedAt == null && rc.IsEnabled)
-                    .AsNoTracking()
-                    .ToList();
-        }
-
-        public ICollection<RequestComponent> All(int index = 0, bool includeNested = false)
-        {
-            return includeNested ?
-                _unitOfWork.GetRepository<RequestComponent>()
-                    .GetQueryable(rc => rc.DeletedAt == null && rc.IsEnabled)
-                    .AsNoTracking()
-                    .Include(rc => rc.RequestComponentDatum)
-                    .Include(rc => rc.Request)
-                    .Skip(index * 20)
-                    .Take(20)
-                    .ToList() :
-                _unitOfWork.GetRepository<RequestComponent>()
-                    .GetQueryable(rc => rc.DeletedAt == null && rc.IsEnabled)
-                    .AsNoTracking()
-                    .Skip(index * 20)
-                    .Take(20)
-                    .ToList();
-        }
-
-        public NozomiResult<RequestComponent> Get(long id, bool includeNested = false)
-        {
-            if (includeNested)
-                return new NozomiResult<RequestComponent>(_unitOfWork.GetRepository<RequestComponent>().GetQueryable()
-                    .Include(rc => rc.Request)
-                    .Include(rc => rc.RequestComponentDatum)
-                    .SingleOrDefault(rc => rc.Id.Equals(id) && rc.IsEnabled && rc.DeletedAt == null));
-            
-            return new NozomiResult<RequestComponent>(_unitOfWork.GetRepository<RequestComponent>()
-                .Get(rc => rc.Id.Equals(id) && rc.DeletedAt == null && rc.IsEnabled)
-                .SingleOrDefault());
-        }
-
         public NozomiResult<string> Create(CreateCurrencyPairComponent obj, long userId = 0)
         {
             if (obj == null || userId < 0) return new NozomiResult<string>
