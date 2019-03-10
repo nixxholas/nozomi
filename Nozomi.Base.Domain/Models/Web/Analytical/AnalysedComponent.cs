@@ -20,6 +20,10 @@ namespace Nozomi.Data.Models.Web.Analytical
         
         public Request Request { get; set; }
         
+        public long CurrencyId { get; set; }
+        
+        public Currency.Currency Currency { get; set; }
+        
         public ICollection<AnalysedHistoricItem> AnalysedHistoricItems { get; set; }
     }
 }

@@ -17,6 +17,9 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
             entityTypeBuilder.Property(ac => ac.Delay).HasDefaultValue(86400000); // 24 hours
             entityTypeBuilder.Property(ac => ac.ComponentType).HasDefaultValue(AnalysedComponentType.Unknown);
 
+            entityTypeBuilder.HasOne(ac => ac.Currency)
+                .WithMany(c => c.AnalysedComponents).HasForeignKey(ac => ac.CurrencyId)
+                .OnDelete(DeleteBehavior.Restrict);
             entityTypeBuilder.HasOne(ac => ac.Request)
                 .WithMany(r => r.AnalysedComponents).HasForeignKey(ac => ac.RequestId)
                 .OnDelete(DeleteBehavior.Restrict);
