@@ -12,6 +12,7 @@ using Nozomi.Base.Core.Helpers.Enumerator;
 using Nozomi.Base.Identity.Models.Identity;
 using Nozomi.Data.Models.Currency;
 using Nozomi.Data.Models.Web;
+using Nozomi.Data.Models.Web.Analytical;
 using Nozomi.Data.Models.Web.Websocket;
 using Nozomi.Repo.Data;
 using Nozomi.Repo.Identity.Data;
@@ -220,7 +221,7 @@ namespace Nozomi.Ticker.StartupExtensions
                             if (fiatType != null && cryptoType != null && bfxSource != null && bnaSource != null
                                 && ecbSource != null && avgSource != null)
                                 context.Currencies.AddRange(
-                                    new Currency()
+                                    new Currency
                                     {
                                         CurrencyTypeId = fiatType.Id,
                                         Abbrv = "USD",
@@ -228,7 +229,7 @@ namespace Nozomi.Ticker.StartupExtensions
                                         CurrencySourceId = bfxSource.Id,
                                         WalletTypeId = 0
                                     },
-                                    new Currency()
+                                    new Currency
                                     {
                                         CurrencyTypeId = cryptoType.Id,
                                         Abbrv = "ETH",
@@ -236,7 +237,7 @@ namespace Nozomi.Ticker.StartupExtensions
                                         CurrencySourceId = bfxSource.Id,
                                         WalletTypeId = 1 // As per CNWallet
                                     },
-                                    new Currency()
+                                    new Currency
                                     {
                                         CurrencyTypeId = cryptoType.Id,
                                         Abbrv = "KNC",
@@ -244,7 +245,7 @@ namespace Nozomi.Ticker.StartupExtensions
                                         CurrencySourceId = bfxSource.Id,
                                         WalletTypeId = 4 // As per CNWallet
                                     },
-                                    new Currency()
+                                    new Currency
                                     {
                                         CurrencyTypeId = cryptoType.Id,
                                         Abbrv = "KNC",
@@ -252,7 +253,7 @@ namespace Nozomi.Ticker.StartupExtensions
                                         CurrencySourceId = bnaSource.Id,
                                         WalletTypeId = 4 // As per CNWallet
                                     },
-                                    new Currency()
+                                    new Currency
                                     {
                                         CurrencyTypeId = cryptoType.Id,
                                         Abbrv = "ETH",
@@ -260,7 +261,7 @@ namespace Nozomi.Ticker.StartupExtensions
                                         CurrencySourceId = bnaSource.Id,
                                         WalletTypeId = 1 // As per CNWallet
                                     },
-                                    new Currency()
+                                    new Currency
                                     {
                                         CurrencyTypeId = cryptoType.Id,
                                         Abbrv = "BTC",
@@ -268,7 +269,7 @@ namespace Nozomi.Ticker.StartupExtensions
                                         CurrencySourceId = bnaSource.Id,
                                         WalletTypeId = 0 // As per CNWallet
                                     },
-                                    new Currency()
+                                    new Currency
                                     {
                                         CurrencyTypeId = fiatType.Id,
                                         Abbrv = "EUR",
@@ -276,7 +277,7 @@ namespace Nozomi.Ticker.StartupExtensions
                                         CurrencySourceId = ecbSource.Id,
                                         WalletTypeId = 0
                                     },
-                                    new Currency()
+                                    new Currency
                                     {
                                         CurrencyTypeId = fiatType.Id,
                                         Abbrv = "USD",
@@ -284,7 +285,7 @@ namespace Nozomi.Ticker.StartupExtensions
                                         CurrencySourceId = ecbSource.Id,
                                         WalletTypeId = 0
                                     },
-                                    new Currency()
+                                    new Currency
                                     {
                                         CurrencyTypeId = fiatType.Id,
                                         Abbrv = "EUR",
@@ -292,7 +293,7 @@ namespace Nozomi.Ticker.StartupExtensions
                                         CurrencySourceId = avgSource.Id,
                                         WalletTypeId = 0
                                     },
-                                    new Currency()
+                                    new Currency
                                     {
                                         CurrencyTypeId = fiatType.Id,
                                         Abbrv = "USD",
@@ -300,7 +301,7 @@ namespace Nozomi.Ticker.StartupExtensions
                                         CurrencySourceId = avgSource.Id,
                                         WalletTypeId = 0
                                     },
-                                    new Currency()
+                                    new Currency
                                     {
                                         CurrencyTypeId = cryptoType.Id,
                                         Abbrv = "BTC",
@@ -308,7 +309,7 @@ namespace Nozomi.Ticker.StartupExtensions
                                         CurrencySourceId = poloSource.Id,
                                         WalletTypeId = 0
                                     },
-                                    new Currency()
+                                    new Currency
                                     {
                                         CurrencyTypeId = cryptoType.Id,
                                         Abbrv = "BCN",
@@ -316,7 +317,7 @@ namespace Nozomi.Ticker.StartupExtensions
                                         CurrencySourceId = poloSource.Id,
                                         WalletTypeId = 0
                                     },
-                                    new Currency()
+                                    new Currency
                                     {
                                         CurrencyTypeId = cryptoType.Id,
                                         Abbrv = "BTS",
@@ -399,47 +400,111 @@ namespace Nozomi.Ticker.StartupExtensions
                                         DataPath = "https://api.ethfinex.com/v2/ticker/tETHUSD",
                                         CurrencyPairId = currencyPairs[0].Id,
                                         Delay = 5000,
+                                        AnalysedComponents = new List<AnalysedComponent>()
+                                        {
+                                            // Calculates volume ONLY for this exact Currency pair on this exchange.
+                                            new AnalysedComponent
+                                            {
+                                                ComponentType = AnalysedComponentType.DailyVolume,
+                                                Delay = 1000,
+                                                CreatedAt = DateTime.UtcNow,
+                                                ModifiedAt = DateTime.UtcNow,
+                                                DeletedAt = null
+                                            }
+                                        },
                                         RequestComponents = new List<RequestComponent>()
                                         {
                                             new RequestComponent
                                             {
                                                 ComponentType = ComponentType.VOLUME,
                                                 QueryComponent = "7",
-                                                CreatedAt = DateTime.Now,
-                                                ModifiedAt = DateTime.Now,
+                                                CreatedAt = DateTime.UtcNow,
+                                                ModifiedAt = DateTime.UtcNow,
                                                 DeletedAt = null
                                             },
                                             new RequestComponent
                                             {
                                                 ComponentType = ComponentType.Ask,
                                                 QueryComponent = "2",
-                                                CreatedAt = DateTime.Now,
-                                                ModifiedAt = DateTime.Now,
+                                                CreatedAt = DateTime.UtcNow,
+                                                ModifiedAt = DateTime.UtcNow,
                                                 DeletedAt = null
                                             },
                                             new RequestComponent
                                             {
                                                 ComponentType = ComponentType.Ask_Size,
                                                 QueryComponent = "3",
-                                                CreatedAt = DateTime.Now,
-                                                ModifiedAt = DateTime.Now,
+                                                CreatedAt = DateTime.UtcNow,
+                                                ModifiedAt = DateTime.UtcNow,
                                                 DeletedAt = null
                                             },
                                             new RequestComponent()
                                             {
                                                 ComponentType = ComponentType.Bid,
                                                 QueryComponent = "0",
-                                                CreatedAt = DateTime.Now,
-                                                ModifiedAt = DateTime.Now,
+                                                CreatedAt = DateTime.UtcNow,
+                                                ModifiedAt = DateTime.UtcNow,
                                                 DeletedAt = null
                                             },
                                             new RequestComponent()
                                             {
                                                 ComponentType = ComponentType.Bid_Size,
                                                 QueryComponent = "1",
-                                                CreatedAt = DateTime.Now,
-                                                ModifiedAt = DateTime.Now,
+                                                CreatedAt = DateTime.UtcNow,
+                                                ModifiedAt = DateTime.UtcNow,
                                                 DeletedAt = null
+                                            }
+                                        }
+                                    },
+                                    new CurrencyPairRequest()
+                                    {
+                                        Guid = Guid.NewGuid(),
+                                        RequestType = RequestType.HttpGet,
+                                        DataPath = "https://api.etherscan.io/api",
+                                        CurrencyPairId = currencyPairs[0].Id,
+                                        Delay = 5000,
+                                        AnalysedComponents = new List<AnalysedComponent>()
+                                        {
+                                            // Calculates mCap ONLY for this exact Currency pair on this exchange.
+                                            new AnalysedComponent
+                                            {
+                                                ComponentType = AnalysedComponentType.MarketCap,
+                                                Delay = 1000,
+                                                CreatedAt = DateTime.UtcNow,
+                                                ModifiedAt = DateTime.UtcNow,
+                                                DeletedAt = null
+                                            }
+                                        },
+                                        RequestComponents = new List<RequestComponent>()
+                                        {
+                                            new RequestComponent
+                                            {
+                                                ComponentType = ComponentType.Circulating_Supply,
+                                                QueryComponent = "result",
+                                                CreatedAt = DateTime.UtcNow,
+                                                ModifiedAt = DateTime.UtcNow,
+                                                DeletedAt = null
+                                            }
+                                        },
+                                        RequestProperties = new List<RequestProperty>()
+                                        {
+                                            new RequestProperty
+                                            {
+                                                RequestPropertyType = RequestPropertyType.HttpHeader_Custom,
+                                                Key = "module",
+                                                Value = "stats",
+                                            },
+                                            new RequestProperty
+                                            {
+                                                RequestPropertyType = RequestPropertyType.HttpHeader_Custom,
+                                                Key = "action",
+                                                Value = "ethsupply",
+                                            },
+                                            new RequestProperty
+                                            {
+                                                RequestPropertyType = RequestPropertyType.HttpHeader_Custom,
+                                                Key = "apikey",
+                                                Value = "YourApiKeyToken",
                                             }
                                         }
                                     },
@@ -456,40 +521,40 @@ namespace Nozomi.Ticker.StartupExtensions
                                             {
                                                 ComponentType = ComponentType.VOLUME,
                                                 QueryComponent = "7",
-                                                CreatedAt = DateTime.Now,
-                                                ModifiedAt = DateTime.Now,
+                                                CreatedAt = DateTime.UtcNow,
+                                                ModifiedAt = DateTime.UtcNow,
                                                 DeletedAt = null
                                             },
                                             new RequestComponent
                                             {
                                                 ComponentType = ComponentType.Ask,
                                                 QueryComponent = "2",
-                                                CreatedAt = DateTime.Now,
-                                                ModifiedAt = DateTime.Now,
+                                                CreatedAt = DateTime.UtcNow,
+                                                ModifiedAt = DateTime.UtcNow,
                                                 DeletedAt = null
                                             },
                                             new RequestComponent
                                             {
                                                 ComponentType = ComponentType.Ask_Size,
                                                 QueryComponent = "3",
-                                                CreatedAt = DateTime.Now,
-                                                ModifiedAt = DateTime.Now,
+                                                CreatedAt = DateTime.UtcNow,
+                                                ModifiedAt = DateTime.UtcNow,
                                                 DeletedAt = null
                                             },
                                             new RequestComponent()
                                             {
                                                 ComponentType = ComponentType.Bid,
                                                 QueryComponent = "0",
-                                                CreatedAt = DateTime.Now,
-                                                ModifiedAt = DateTime.Now,
+                                                CreatedAt = DateTime.UtcNow,
+                                                ModifiedAt = DateTime.UtcNow,
                                                 DeletedAt = null
                                             },
                                             new RequestComponent()
                                             {
                                                 ComponentType = ComponentType.Bid_Size,
                                                 QueryComponent = "1",
-                                                CreatedAt = DateTime.Now,
-                                                ModifiedAt = DateTime.Now,
+                                                CreatedAt = DateTime.UtcNow,
+                                                ModifiedAt = DateTime.UtcNow,
                                                 DeletedAt = null
                                             }
                                         }
@@ -507,16 +572,16 @@ namespace Nozomi.Ticker.StartupExtensions
                                             {
                                                 ComponentType = ComponentType.Ask,
                                                 QueryComponent = "askPrice",
-                                                CreatedAt = DateTime.Now,
-                                                ModifiedAt = DateTime.Now,
+                                                CreatedAt = DateTime.UtcNow,
+                                                ModifiedAt = DateTime.UtcNow,
                                                 DeletedAt = null
                                             },
                                             new RequestComponent
                                             {
                                                 ComponentType = ComponentType.Bid,
                                                 QueryComponent = "bidPrice",
-                                                CreatedAt = DateTime.Now,
-                                                ModifiedAt = DateTime.Now,
+                                                CreatedAt = DateTime.UtcNow,
+                                                ModifiedAt = DateTime.UtcNow,
                                                 DeletedAt = null
                                             }
                                         }
@@ -535,8 +600,8 @@ namespace Nozomi.Ticker.StartupExtensions
                                             {
                                                 ComponentType = ComponentType.Ask,
                                                 QueryComponent = "gesmes:Envelope/Cube/Cube/Cube/0=>@rate",
-                                                CreatedAt = DateTime.Now,
-                                                ModifiedAt = DateTime.Now,
+                                                CreatedAt = DateTime.UtcNow,
+                                                ModifiedAt = DateTime.UtcNow,
                                                 DeletedAt = null
                                             }
                                         }
@@ -556,8 +621,8 @@ namespace Nozomi.Ticker.StartupExtensions
                                                 ComponentType = ComponentType.Ask,
                                                 QueryComponent =
                                                     "['Realtime Currency Exchange Rate']/['5. Exchange Rate']",
-                                                CreatedAt = DateTime.Now,
-                                                ModifiedAt = DateTime.Now,
+                                                CreatedAt = DateTime.UtcNow,
+                                                ModifiedAt = DateTime.UtcNow,
                                                 DeletedAt = null
                                             }
                                         },
@@ -603,16 +668,16 @@ namespace Nozomi.Ticker.StartupExtensions
                                             {
                                                 ComponentType = ComponentType.Ask,
                                                 QueryComponent = "BTC_BCN/lowestAsk",
-                                                CreatedAt = DateTime.Now,
-                                                ModifiedAt = DateTime.Now,
+                                                CreatedAt = DateTime.UtcNow,
+                                                ModifiedAt = DateTime.UtcNow,
                                                 DeletedAt = null
                                             },
                                             new RequestComponent
                                             {
                                                 ComponentType = ComponentType.Bid,
                                                 QueryComponent = "BTC_BCN/highestBid",
-                                                CreatedAt = DateTime.Now,
-                                                ModifiedAt = DateTime.Now,
+                                                CreatedAt = DateTime.UtcNow,
+                                                ModifiedAt = DateTime.UtcNow,
                                                 DeletedAt = null
                                             }
                                         }
@@ -631,16 +696,16 @@ namespace Nozomi.Ticker.StartupExtensions
                                             {
                                                 ComponentType = ComponentType.Ask,
                                                 QueryComponent = "BTC_BTS/lowestAsk",
-                                                CreatedAt = DateTime.Now,
-                                                ModifiedAt = DateTime.Now,
+                                                CreatedAt = DateTime.UtcNow,
+                                                ModifiedAt = DateTime.UtcNow,
                                                 DeletedAt = null
                                             },
                                             new RequestComponent
                                             {
                                                 ComponentType = ComponentType.Bid,
                                                 QueryComponent = "BTC_BTS/highestBid",
-                                                CreatedAt = DateTime.Now,
-                                                ModifiedAt = DateTime.Now,
+                                                CreatedAt = DateTime.UtcNow,
+                                                ModifiedAt = DateTime.UtcNow,
                                                 DeletedAt = null
                                             }
                                         }
@@ -834,8 +899,8 @@ namespace Nozomi.Ticker.StartupExtensions
                                                 {
                                                     ComponentType = ComponentType.Circulating_Supply,
                                                     QueryComponent = "result",
-                                                    CreatedAt = DateTime.Now,
-                                                    ModifiedAt = DateTime.Now,
+                                                    CreatedAt = DateTime.UtcNow,
+                                                    ModifiedAt = DateTime.UtcNow,
                                                     DeletedAt = null
                                                 }
                                             }
