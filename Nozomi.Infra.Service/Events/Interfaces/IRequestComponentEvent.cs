@@ -16,7 +16,16 @@ namespace Nozomi.Service.Events.Interfaces
 
         ICollection<RequestComponent> GetByMainCurrency(string mainCurrencyAbbrv, 
             ICollection<ComponentType> componentTypes);
-        
+
+        /// <summary>
+        /// Allows the caller to obtain all RequestComponents relevant to the currency
+        /// pair in question via the abbreviation method. (i.e. ETHUSD)
+        /// </summary>
+        /// <param name="analysedComponentId">The unique identifier of the analysed component
+        /// that is related to the ticker in question.</param>
+        /// <returns>Collection of request components related to the component</returns>
+        ICollection<RequestComponent> GetAllByCorrelation(long analysedComponentId);
+
         NozomiResult<RequestComponent> Get(long id, bool includeNested = false);
     }
 }

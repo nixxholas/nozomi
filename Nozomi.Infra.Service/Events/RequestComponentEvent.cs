@@ -120,6 +120,55 @@ namespace Nozomi.Service.Events
                 .ToList();
         }
 
+        /// <summary>
+        /// Allows the caller to obtain all RequestComponents relevant to the currency
+        /// pair in question via the abbreviation method. (i.e. ETHUSD)
+        /// </summary>
+        /// <param name="analysedComponentId">The unique identifier of the analysed component
+        /// that is related to the ticker in question.</param>
+        /// <returns>Collection of request components related to the component</returns>
+        public ICollection<RequestComponent> GetAllByCorelation(long analysedComponentId)
+        {
+            // First, obtain the correlation PCPs
+            var correlPCPs = _unitOfWork.GetRepository<CurrencyPair>()
+                .GetQueryable()
+                .AsNoTracking()
+                .Where(cp => cp.IsEnabled && cp.DeletedAt == null)
+                .Include(cp => cp.CurrencyPairRequests
+                    .Where(cpr => cpr.DeletedAt == null && cpr.IsEnabled))
+                .ThenInclude(cpr => cpr.AnalysedComponents
+                        // We can ignore disabled or deleted ACs, just using this 
+                        // to find the correlation
+                    .Where(ac => ac.Id.Equals(analysedComponentId)))
+                .Include(cp => cp.PartialCurrencyPairs)
+                .ThenInclude(pcp => pcp.Currency)
+                .SelectMany(cp => cp.PartialCurrencyPairs)
+                .ToList();
+            
+            // Then we return
+            return _unitOfWork.GetRepository<CurrencyPair>()
+                .GetQueryable()
+                .AsNoTracking()
+                .Where(cp => cp.IsEnabled && cp.DeletedAt == null)
+                .Include(cp => cp.PartialCurrencyPairs)
+                .ThenInclude(pcp => pcp.Currency)
+                .Where(cp => 
+                    // Make sure the main currencies are identical
+                    cp.PartialCurrencyPairs.FirstOrDefault(pcp => pcp.IsMain).Currency.Abbrv
+                        .Equals(correlPCPs.FirstOrDefault(pcp => pcp.IsMain).Currency.Abbrv)
+                    // Make sure the counter currencies are identical
+                    && cp.PartialCurrencyPairs.FirstOrDefault(pcp => !pcp.IsMain).Currency.Abbrv
+                        .Equals(correlPCPs.FirstOrDefault(pcp => !pcp.IsMain).Currency.Abbrv))
+                .Include(cp => cp.CurrencyPairRequests
+                    .Where(cpr => cpr.IsEnabled && cpr.DeletedAt == null))
+                .ThenInclude(cpr => cpr.RequestComponents
+                    .Where(rc => rc.IsEnabled && rc.DeletedAt == null))
+                .ThenInclude(rc => rc.RequestComponentDatum)
+                .SelectMany(cp => cp.CurrencyPairRequests
+                    .SelectMany(cpr => cpr.RequestComponents))
+                .ToList();
+        }
+
         public NozomiResult<RequestComponent> Get(long id, bool includeNested = false)
         {
             if (includeNested)
