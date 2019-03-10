@@ -12,6 +12,7 @@ using Nozomi.Infra.Analysis.Service.Events.Analysis.Interfaces;
 using Nozomi.Infra.Analysis.Service.HostedServices.Interfaces;
 using Nozomi.Infra.Analysis.Service.Services.Interfaces;
 using Nozomi.Preprocessing.Abstracts;
+using Nozomi.Service.Events.Interfaces;
 
 namespace Nozomi.Infra.Analysis.Service.HostedServices
 {
@@ -23,10 +24,11 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
         private readonly IAnalysedHistoricItemEvent _analysedHistoricItemEvent;
         private readonly IAnalysedComponentService _analysedComponentService;
         private readonly IAnalysedHistoricItemService _analysedHistoricItemService;
+        private readonly IRequestComponentEvent _requestComponentEvent;
 
         public ComponentAnalysisService(IServiceProvider serviceProvider,
             IAnalysedComponentEvent analysedComponentEvent, IAnalysedHistoricItemEvent analysedHistoricItemEvent,
-            IAnalysedComponentService analysedComponentService,
+            IRequestComponentEvent requestComponentEvent, IAnalysedComponentService analysedComponentService,
             IAnalysedHistoricItemService analysedHistoricItemService)
             : base(serviceProvider)
         {
@@ -34,6 +36,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
             _analysedHistoricItemEvent = analysedHistoricItemEvent;
             _analysedComponentService = analysedComponentService;
             _analysedHistoricItemService = analysedHistoricItemService;
+            _requestComponentEvent = requestComponentEvent;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -111,6 +114,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                             break;
                         // Calculate the current average price.
                         case AnalysedComponentType.CurrentAveragePrice:
+                            
                             break;
                         // Calculate the daily price change for this request
                         case AnalysedComponentType.DailyPriceChange:
