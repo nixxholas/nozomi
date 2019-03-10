@@ -127,7 +127,7 @@ namespace Nozomi.Service.Events
         /// <param name="analysedComponentId">The unique identifier of the analysed component
         /// that is related to the ticker in question.</param>
         /// <returns>Collection of request components related to the component</returns>
-        public ICollection<RequestComponent> GetAllByCorelation(long analysedComponentId)
+        public ICollection<RequestComponent> GetAllByCorrelation(long analysedComponentId)
         {
             // First, obtain the correlation PCPs
             var correlPCPs = _unitOfWork.GetRepository<CurrencyPair>()
