@@ -62,10 +62,41 @@ namespace Nozomi.Service.Events
             // Make sure it's comparable first
             if (EnumerableHelper.IsComparable(componentType))
             {
-                
+                switch (componentType)
+                {
+                    case ComponentType.Ask:
+                    case ComponentType.Bid:
+                    case ComponentType.Low:
+                    case ComponentType.High:
+                    case ComponentType.Daily_Change:
+                    case ComponentType.VOLUME:
+                        // Since it's comparable, lets get the exchange rate
+                        return _unitOfWork.GetRepository<CurrencyPair>()
+                            .GetQueryable()
+                            .AsNoTracking()
+                            .Where(cp => cp.IsEnabled && cp.DeletedAt == null)
+                            .Include(cp => cp.PartialCurrencyPairs)
+                            .ThenInclude(pcp => pcp.Currency)
+                            .Where(cp => cp.PartialCurrencyPairs.FirstOrDefault(pcp => pcp.IsMain).Currency.Abbrv
+                                             .Equals(baseCurrencyAbbrv, StringComparison.InvariantCultureIgnoreCase)
+                                         && cp.PartialCurrencyPairs.FirstOrDefault(pcp => !pcp.IsMain).Currency.Abbrv
+                                             .Equals(comparingCurrencyAbbrv, StringComparison.InvariantCultureIgnoreCase))
+                            .Include(cp => cp.CurrencyPairRequests
+                                .Where(cpr => cpr.IsEnabled && cpr.DeletedAt == null))
+                            .ThenInclude(cpr => cpr.RequestComponents
+                                .Where(rc => rc.ComponentType.Equals(componentType)))
+                            .ThenInclude(rc => rc.RequestComponentDatum)
+                            .SelectMany(cp => cp.CurrencyPairRequests
+                                .SelectMany(cpr => cpr.RequestComponents
+                                    .Select(rc => decimal.Parse(rc.RequestComponentDatum.Value))))
+                            .DefaultIfEmpty()
+                            .Average();
+                    default:
+                        break;
+                }
             }
-            
-            throw new NotImplementedException();
+
+            return decimal.Zero;
         }
 
         public ICollection<RequestComponent> GetByMainCurrency(string mainCurrencyAbbrv, 
