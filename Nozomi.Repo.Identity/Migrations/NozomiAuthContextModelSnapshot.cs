@@ -16,14 +16,14 @@ namespace Nozomi.Repo.Identity.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn)
-                .HasAnnotation("ProductVersion", "2.2.2-servicing-10034")
+                .HasAnnotation("ProductVersion", "2.2.0-rtm-35687")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             modelBuilder.Entity("Nozomi.Base.Identity.Models.Identity.ApiToken", b =>
                 {
                     b.Property<Guid>("Guid")
                         .ValueGeneratedOnAdd()
-                        .HasDefaultValue(new Guid("b8e9157a-564f-416a-85b7-c2081f1c14ee"));
+                        .HasDefaultValue(new Guid("8a2a6ee9-c841-4aa9-ad94-2f30851ebd27"));
 
                     b.Property<DateTime>("CreatedAt");
 
@@ -42,7 +42,7 @@ namespace Nozomi.Repo.Identity.Migrations
 
                     b.Property<DateTime>("LastAccessed")
                         .ValueGeneratedOnAdd()
-                        .HasDefaultValue(new DateTime(2019, 3, 8, 6, 32, 59, 964, DateTimeKind.Local).AddTicks(8070));
+                        .HasDefaultValue(new DateTime(2019, 1, 18, 16, 17, 56, 810, DateTimeKind.Local).AddTicks(110));
 
                     b.Property<DateTime>("ModifiedAt");
 
@@ -241,7 +241,7 @@ namespace Nozomi.Repo.Identity.Migrations
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
-                        .HasDefaultValue(new DateTime(2019, 3, 7, 22, 32, 59, 972, DateTimeKind.Utc).AddTicks(8190));
+                        .HasDefaultValue(new DateTime(2019, 1, 18, 8, 17, 56, 814, DateTimeKind.Utc).AddTicks(9620));
 
                     b.Property<long>("CreatedBy");
 
@@ -257,7 +257,7 @@ namespace Nozomi.Repo.Identity.Migrations
 
                     b.Property<DateTime>("ModifiedAt")
                         .ValueGeneratedOnAdd()
-                        .HasDefaultValue(new DateTime(2019, 3, 7, 22, 32, 59, 972, DateTimeKind.Utc).AddTicks(8810));
+                        .HasDefaultValue(new DateTime(2019, 1, 18, 8, 17, 56, 815, DateTimeKind.Utc).AddTicks(70));
 
                     b.Property<long>("ModifiedBy");
 
