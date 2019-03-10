@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Nozomi.Base.Core.Helpers.Enumerable;
 using Nozomi.Data;
 using Nozomi.Data.Models.Currency;
 using Nozomi.Data.Models.Web;
@@ -54,6 +55,17 @@ namespace Nozomi.Service.Events
                     .Skip(index * 20)
                     .Take(20)
                     .ToList();
+        }
+
+        public decimal ComputeDifference(string baseCurrencyAbbrv, string comparingCurrencyAbbrv, ComponentType componentType)
+        {
+            // Make sure it's comparable first
+            if (EnumerableHelper.IsComparable(componentType))
+            {
+                
+            }
+            
+            throw new NotImplementedException();
         }
 
         public ICollection<RequestComponent> GetByMainCurrency(string mainCurrencyAbbrv, 
