@@ -92,7 +92,8 @@ namespace Nozomi.Service.Events
                             .DefaultIfEmpty()
                             .Average();
                     default:
-                        break;
+                        // Can't compute lol.
+                        return decimal.Zero;
                 }
             }
 
