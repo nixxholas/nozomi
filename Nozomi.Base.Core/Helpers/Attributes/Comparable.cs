@@ -1,4 +1,4 @@
-namespace Nozomi.Data.Models.Attributes
+namespace Nozomi.Base.Core.Helpers.Attributes
 {
     public class Comparable : System.Attribute
     {
