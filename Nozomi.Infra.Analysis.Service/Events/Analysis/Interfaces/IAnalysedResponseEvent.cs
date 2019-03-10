@@ -3,8 +3,8 @@ using Nozomi.Analysis.Base.Domain.Responses.Hub.Asset;
 
 namespace Nozomi.Infra.Analysis.Service.Events.Analysis.Interfaces
 {
-    public interface IAnalysedRequestEvent
+    public interface IAnalysedResponseEvent
     {
-        ICollection<AssetResponse> GetAll(long index = 0, bool active = true);
+        ICollection<AssetResponse> GetAllAssetResponses(long index = 0);
     }
 }
