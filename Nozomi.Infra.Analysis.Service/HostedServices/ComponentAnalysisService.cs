@@ -118,7 +118,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                             // Obtain all of the req components that are related to this AC.
                             var correlatedReqComps = _requestComponentEvent.GetAllByCorrelation(component.Id,
                                 // Filter them as well, make sure we're not obtaining alot of junk.
-                                (exp) => exp.ComponentType.Equals(ComponentType.Ask)
+                                exp => exp.ComponentType.Equals(ComponentType.Ask)
                                                  || exp.ComponentType.Equals(ComponentType.Bid));
                             
                             // Aggregate it

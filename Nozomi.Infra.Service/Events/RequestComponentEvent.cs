@@ -172,7 +172,7 @@ namespace Nozomi.Service.Events
 
             if (predicate != null)
             {
-                finalQuery.Where().Where(predicate);
+                finalQuery.Where(predicate);
             }
 
             return finalQuery.ToList();
