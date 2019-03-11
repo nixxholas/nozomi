@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore.Internal;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data.Models.Currency;
@@ -27,17 +28,14 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
         private readonly IAnalysedHistoricItemService _analysedHistoricItemService;
         private readonly IRequestComponentEvent _requestComponentEvent;
 
-        public ComponentAnalysisService(IServiceProvider serviceProvider,
-            IAnalysedComponentEvent analysedComponentEvent, IAnalysedHistoricItemEvent analysedHistoricItemEvent,
-            IRequestComponentEvent requestComponentEvent, IAnalysedComponentService analysedComponentService,
-            IAnalysedHistoricItemService analysedHistoricItemService)
+        public ComponentAnalysisService(IServiceProvider serviceProvider)
             : base(serviceProvider)
         {
-            _analysedComponentEvent = analysedComponentEvent;
-            _analysedHistoricItemEvent = analysedHistoricItemEvent;
-            _analysedComponentService = analysedComponentService;
-            _analysedHistoricItemService = analysedHistoricItemService;
-            _requestComponentEvent = requestComponentEvent;
+            _analysedComponentEvent = _scope.ServiceProvider.GetRequiredService<IAnalysedComponentEvent>();
+            _analysedHistoricItemEvent = _scope.ServiceProvider.GetRequiredService<IAnalysedHistoricItemEvent>();
+            _analysedComponentService = _scope.ServiceProvider.GetRequiredService<IAnalysedComponentService>();
+            _analysedHistoricItemService = _scope.ServiceProvider.GetRequiredService<IAnalysedHistoricItemService>();
+            _requestComponentEvent = _scope.ServiceProvider.GetRequiredService<IRequestComponentEvent>();
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -218,9 +216,10 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
 
                 return res > 0;
             }
-
-            // Always fail if defaulted
-            return false;
+            else
+            {
+                return true; // This component does not have a historical object yet..
+            }
         }
     }
 }
