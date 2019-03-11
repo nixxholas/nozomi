@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Logging;
 using Nozomi.Base.Core.Helpers.Enumerable;
 using Nozomi.Data;
@@ -83,11 +84,12 @@ namespace Nozomi.Service.Events
                                              .Equals(baseCurrencyAbbrv, StringComparison.InvariantCultureIgnoreCase)
                                          && cp.PartialCurrencyPairs.FirstOrDefault(pcp => !pcp.IsMain).Currency.Abbrv
                                              .Equals(comparingCurrencyAbbrv, StringComparison.InvariantCultureIgnoreCase))
-                            .Include(cp => cp.CurrencyPairRequests
-                                .Where(cpr => cpr.IsEnabled && cpr.DeletedAt == null))
-                            .ThenInclude(cpr => cpr.RequestComponents
-                                .Where(rc => rc.ComponentType.Equals(componentType)))
+                            .Include(cp => cp.CurrencyPairRequests)
+                            .ThenInclude(cpr => cpr.RequestComponents)
                             .ThenInclude(rc => rc.RequestComponentDatum)
+                            .Where(cPair => cPair.CurrencyPairRequests.Any(cpr => cpr.IsEnabled && cpr.DeletedAt == null
+                                                                            && cpr.RequestComponents.Any(rc => 
+                                                                                rc.ComponentType.Equals(componentType))))
                             .SelectMany(cp => cp.CurrencyPairRequests
                                 .SelectMany(cpr => cpr.RequestComponents
                                     .Select(rc => decimal.Parse(rc.RequestComponentDatum.Value))))
@@ -137,12 +139,13 @@ namespace Nozomi.Service.Events
                 .GetQueryable()
                 .AsNoTracking()
                 .Where(cp => cp.IsEnabled && cp.DeletedAt == null)
-                .Include(cp => cp.CurrencyPairRequests
-                    .Where(cpr => cpr.DeletedAt == null && cpr.IsEnabled))
-                .ThenInclude(cpr => cpr.AnalysedComponents
-                        // We can ignore disabled or deleted ACs, just using this 
-                        // to find the correlation
-                    .Where(ac => ac.Id.Equals(analysedComponentId)))
+                .Include(cp => cp.CurrencyPairRequests)
+                .ThenInclude(cpr => cpr.AnalysedComponents)
+                .Where(cp => cp.CurrencyPairRequests
+                    .Any(cpr => cpr.DeletedAt == null && cpr.IsEnabled
+                                                      // We can ignore disabled or deleted ACs, just using this 
+                                                      // to find the correlation
+                                                      && cpr.AnalysedComponents.Any(ac => ac.Id.Equals(analysedComponentId))))
                 .Include(cp => cp.PartialCurrencyPairs)
                 .ThenInclude(pcp => pcp.Currency)
                 .SelectMany(cp => cp.PartialCurrencyPairs)
@@ -162,11 +165,13 @@ namespace Nozomi.Service.Events
                     // Make sure the counter currencies are identical
                     && cp.PartialCurrencyPairs.FirstOrDefault(pcp => !pcp.IsMain).Currency.Abbrv
                         .Equals(correlPCPs.FirstOrDefault(pcp => !pcp.IsMain).Currency.Abbrv))
-                .Include(cp => cp.CurrencyPairRequests
-                    .Where(cpr => cpr.IsEnabled && cpr.DeletedAt == null))
-                .ThenInclude(cpr => cpr.RequestComponents
-                    .Where(rc => rc.IsEnabled && rc.DeletedAt == null))
+                .Include(cp => cp.CurrencyPairRequests)
+                .ThenInclude(cpr => cpr.RequestComponents)
                 .ThenInclude(rc => rc.RequestComponentDatum)
+                .Where(cp => cp.CurrencyPairRequests.Any(cpr => cpr.IsEnabled && cpr.DeletedAt == null
+                                                                && cpr.RequestComponents
+                                                                    .Any(rc => rc.IsEnabled && rc.DeletedAt == null
+                                                                               && rc.RequestComponentDatum != null)))
                 .SelectMany(cp => cp.CurrencyPairRequests
                     .SelectMany(cpr => cpr.RequestComponents));
 

@@ -71,7 +71,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
             }
 
             _logger.LogWarning("ComponentAnalysisService background task is stopping.");
-        }
+    }    
 
         /// <summary>
         /// Analysis Method that computes every AnalysedComponentType Enumerator
