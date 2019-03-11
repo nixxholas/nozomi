@@ -29,8 +29,6 @@ namespace Nozomi.Ticker.StartupExtensions
             services.AddScoped<IAuthorizationHandler, ApiTokenHandler>();
             
             // Service Injections
-            services.AddTransient<IAnalysedComponentService, AnalysedComponentService>();
-            services.AddTransient<IAnalysedHistoricItemService, AnalysedHistoricItemService>();
             services.AddTransient<IApiTokenService, ApiTokenService>();
             services.AddTransient<ICurrencyService, CurrencyService>();
             services.AddTransient<ICurrencyPairService, CurrencyPairService>();
@@ -51,6 +49,11 @@ namespace Nozomi.Ticker.StartupExtensions
             
             // Identity-related service injections
             services.AddTransient<INozomiUserStore, NozomiUserStore>();
+            
+            // TODO: Microservice
+            // Nozomi.Analysis Service injections
+            services.AddTransient<IAnalysedComponentService, AnalysedComponentService>();
+            services.AddTransient<IAnalysedHistoricItemService, AnalysedHistoricItemService>();
         }
     }
 }

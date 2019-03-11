@@ -26,9 +26,7 @@ namespace Nozomi.Ticker.StartupExtensions
             services.AddTransient<IStripeEvent, StripeEvent>();
 
             services.AddScoped<IApiTokenEvent, ApiTokenEvent>();
-
-            services.AddScoped<IAnalysedComponentEvent, AnalysedComponentEvent>();
-            services.AddScoped<IAnalysedHistoricItemEvent, AnalysedHistoricItemEvent>();
+            
             services.AddScoped<ICurrencyEvent, CurrencyEvent>();
             services.AddScoped<ICurrencyRequestEvent, CurrencyRequestEvent>();
             services.AddScoped<ICurrencyTypeEvent, CurrencyTypeEvent>();
@@ -37,6 +35,13 @@ namespace Nozomi.Ticker.StartupExtensions
             services.AddScoped<ISourceEvent, SourceEvent>();
             services.AddScoped<ITickerEvent, TickerEvent>();
             services.AddScoped<IWebsocketRequestEvent, WebsocketRequestEvent>();
+            
+            // TODO: Microservices
+            // Nozomi.Analysis event injections
+            services.AddScoped<IAnalysedComponentEvent, AnalysedComponentEvent>();
+            services.AddScoped<IAnalysedHistoricItemEvent, AnalysedHistoricItemEvent>();
+            services.AddScoped<IAnalysedResponseEvent, AnalysedResponseEvent>();
+            services.AddScoped<ICurrencyConversionEvent, CurrencyConversionEvent>();
         }
     }
 }
