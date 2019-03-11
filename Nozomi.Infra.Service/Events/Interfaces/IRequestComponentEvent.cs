@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Nozomi.Data;
 using Nozomi.Data.Models.Currency;
@@ -24,7 +25,8 @@ namespace Nozomi.Service.Events.Interfaces
         /// <param name="analysedComponentId">The unique identifier of the analysed component
         /// that is related to the ticker in question.</param>
         /// <returns>Collection of request components related to the component</returns>
-        ICollection<RequestComponent> GetAllByCorrelation(long analysedComponentId);
+        ICollection<RequestComponent> GetAllByCorrelation(long analysedComponentId,
+            Func<RequestComponent, bool> predicate = null);
 
         NozomiResult<RequestComponent> Get(long id, bool includeNested = false);
     }

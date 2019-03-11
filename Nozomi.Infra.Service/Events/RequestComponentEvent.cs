@@ -7,6 +7,7 @@ using Nozomi.Base.Core.Helpers.Enumerable;
 using Nozomi.Data;
 using Nozomi.Data.Models.Currency;
 using Nozomi.Data.Models.Web;
+using Nozomi.Data.Models.Web.Analytical;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Data;
@@ -127,7 +128,8 @@ namespace Nozomi.Service.Events
         /// <param name="analysedComponentId">The unique identifier of the analysed component
         /// that is related to the ticker in question.</param>
         /// <returns>Collection of request components related to the component</returns>
-        public ICollection<RequestComponent> GetAllByCorrelation(long analysedComponentId)
+        public ICollection<RequestComponent> GetAllByCorrelation(long analysedComponentId,
+            Func<RequestComponent, bool> predicate = null)
         {
             // First, obtain the correlation PCPs
             var correlPCPs = _unitOfWork.GetRepository<CurrencyPair>()
@@ -146,7 +148,7 @@ namespace Nozomi.Service.Events
                 .ToList();
             
             // Then we return
-            return _unitOfWork.GetRepository<CurrencyPair>()
+            var finalQuery = _unitOfWork.GetRepository<CurrencyPair>()
                 .GetQueryable()
                 .AsNoTracking()
                 .Where(cp => cp.IsEnabled && cp.DeletedAt == null)
@@ -165,8 +167,14 @@ namespace Nozomi.Service.Events
                     .Where(rc => rc.IsEnabled && rc.DeletedAt == null))
                 .ThenInclude(rc => rc.RequestComponentDatum)
                 .SelectMany(cp => cp.CurrencyPairRequests
-                    .SelectMany(cpr => cpr.RequestComponents))
-                .ToList();
+                    .SelectMany(cpr => cpr.RequestComponents));
+
+            if (predicate != null)
+            {
+                finalQuery.Where(predicate);
+            }
+
+            return finalQuery.ToList();
         }
 
         public NozomiResult<RequestComponent> Get(long id, bool includeNested = false)
