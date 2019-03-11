@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Nozomi.Base.Core.Helpers.Enumerable;
@@ -129,7 +130,7 @@ namespace Nozomi.Service.Events
         /// that is related to the ticker in question.</param>
         /// <returns>Collection of request components related to the component</returns>
         public ICollection<RequestComponent> GetAllByCorrelation(long analysedComponentId,
-            Func<RequestComponent, bool> predicate = null)
+            Expression<Func<RequestComponent, bool>> predicate = null)
         {
             // First, obtain the correlation PCPs
             var correlPCPs = _unitOfWork.GetRepository<CurrencyPair>()
@@ -171,7 +172,7 @@ namespace Nozomi.Service.Events
 
             if (predicate != null)
             {
-                finalQuery.Where(predicate);
+                finalQuery.Where().Where(predicate);
             }
 
             return finalQuery.ToList();
