@@ -16,11 +16,11 @@ namespace Nozomi.Data.Models.Web.Analytical
         
         public int Delay { get; set; }
         
-        public long RequestId { get; set; }
+        public long? RequestId { get; set; }
         
         public Request Request { get; set; }
         
-        public long CurrencyId { get; set; }
+        public long? CurrencyId { get; set; }
         
         public Currency.Currency Currency { get; set; }
         

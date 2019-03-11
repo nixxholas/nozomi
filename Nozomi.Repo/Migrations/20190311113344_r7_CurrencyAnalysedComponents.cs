@@ -2,15 +2,20 @@
 
 namespace Nozomi.Repo.Migrations
 {
-    public partial class r7_CurrencyAnalysedComponentsAndACDelay : Migration
+    public partial class r7_CurrencyAnalysedComponents : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.AlterColumn<long>(
+                name: "RequestId",
+                table: "AnalysedComponents",
+                nullable: true,
+                oldClrType: typeof(long));
+
             migrationBuilder.AddColumn<long>(
                 name: "CurrencyId",
                 table: "AnalysedComponents",
-                nullable: false,
-                defaultValue: 0L);
+                nullable: true);
 
             migrationBuilder.AddColumn<int>(
                 name: "Delay",
@@ -49,6 +54,13 @@ namespace Nozomi.Repo.Migrations
             migrationBuilder.DropColumn(
                 name: "Delay",
                 table: "AnalysedComponents");
+
+            migrationBuilder.AlterColumn<long>(
+                name: "RequestId",
+                table: "AnalysedComponents",
+                nullable: false,
+                oldClrType: typeof(long),
+                oldNullable: true);
         }
     }
 }

@@ -10,8 +10,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Nozomi.Repo.Migrations
 {
     [DbContext(typeof(NozomiDbContext))]
-    [Migration("20190310223249_r7_CurrencyAnalysedComponentsAndACDelay")]
-    partial class r7_CurrencyAnalysedComponentsAndACDelay
+    [Migration("20190311113344_r7_CurrencyAnalysedComponents")]
+    partial class r7_CurrencyAnalysedComponents
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -196,7 +196,7 @@ namespace Nozomi.Repo.Migrations
 
                     b.Property<long>("CreatedBy");
 
-                    b.Property<long>("CurrencyId");
+                    b.Property<long?>("CurrencyId");
 
                     b.Property<int>("Delay")
                         .ValueGeneratedOnAdd()
@@ -212,7 +212,7 @@ namespace Nozomi.Repo.Migrations
 
                     b.Property<long>("ModifiedBy");
 
-                    b.Property<long>("RequestId");
+                    b.Property<long?>("RequestId");
 
                     b.Property<string>("Value");
 

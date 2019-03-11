@@ -194,7 +194,7 @@ namespace Nozomi.Repo.Migrations
 
                     b.Property<long>("CreatedBy");
 
-                    b.Property<long>("CurrencyId");
+                    b.Property<long?>("CurrencyId");
 
                     b.Property<int>("Delay")
                         .ValueGeneratedOnAdd()
@@ -210,7 +210,7 @@ namespace Nozomi.Repo.Migrations
 
                     b.Property<long>("ModifiedBy");
 
-                    b.Property<long>("RequestId");
+                    b.Property<long?>("RequestId");
 
                     b.Property<string>("Value");
 
