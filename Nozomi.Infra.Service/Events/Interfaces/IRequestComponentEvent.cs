@@ -26,8 +26,7 @@ namespace Nozomi.Service.Events.Interfaces
         /// <param name="analysedComponentId">The unique identifier of the analysed component
         /// that is related to the ticker in question.</param>
         /// <returns>Collection of request components related to the component</returns>
-        ICollection<RequestComponent> GetAllByCorrelation(long analysedComponentId,
-            Expression<Func<RequestComponent, bool>> predicate = null);
+        ICollection<RequestComponent> GetAllByCorrelation(long analysedComponentId);
 
         NozomiResult<RequestComponent> Get(long id, bool includeNested = false);
     }

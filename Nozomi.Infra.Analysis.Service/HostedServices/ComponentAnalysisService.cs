@@ -114,13 +114,12 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                         // Calculate the current average price.
                         case AnalysedComponentType.CurrentAveragePrice:
                             // Obtain all of the req components that are related to this AC.
-                            var correlatedReqComps = _requestComponentEvent.GetAllByCorrelation(component.Id,
-                                // Filter them as well, make sure we're not obtaining alot of junk.
-                                exp => exp.ComponentType.Equals(ComponentType.Ask)
-                                                 || exp.ComponentType.Equals(ComponentType.Bid));
+                            var correlatedReqComps = _requestComponentEvent.GetAllByCorrelation(component.Id);
                             
                             // Aggregate it
                             var avgPrice = correlatedReqComps
+                                .Where(rc => rc.ComponentType.Equals(ComponentType.Ask) 
+                                || rc.ComponentType.Equals(ComponentType.Bid))
                                 .DefaultIfEmpty()
                                 .Average(rc => decimal.Parse(rc.RequestComponentDatum.Value));
 

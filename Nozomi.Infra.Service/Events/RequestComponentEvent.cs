@@ -131,8 +131,7 @@ namespace Nozomi.Service.Events
         /// <param name="analysedComponentId">The unique identifier of the analysed component
         /// that is related to the ticker in question.</param>
         /// <returns>Collection of request components related to the component</returns>
-        public ICollection<RequestComponent> GetAllByCorrelation(long analysedComponentId,
-            Expression<Func<RequestComponent, bool>> predicate = null)
+        public ICollection<RequestComponent> GetAllByCorrelation(long analysedComponentId)
         {
             // First, obtain the correlation PCPs
             var correlPCPs = _unitOfWork.GetRepository<CurrencyPair>()
@@ -172,15 +171,39 @@ namespace Nozomi.Service.Events
                                                                 && cpr.RequestComponents
                                                                     .Any(rc => rc.IsEnabled && rc.DeletedAt == null
                                                                                && rc.RequestComponentDatum != null)))
-                .SelectMany(cp => cp.CurrencyPairRequests
-                    .SelectMany(cpr => cpr.RequestComponents));
+                .SelectMany(cp => cp.CurrencyPairRequests)
+                .SelectMany(cpr => cpr.RequestComponents);
 
-            if (predicate != null)
-            {
-                finalQuery.Where(predicate);
-            }
+//            if (componentTypes != null)
+//            {
+//                finalQuery.Where(rc => componentTypes.Contains(rc.ComponentType));
+//            }
 
-            return finalQuery.ToList();
+            return finalQuery
+                .Select(rc => new RequestComponent
+                {
+                    Id = rc.Id,
+                    ComponentType = rc.ComponentType,
+                    Identifier = rc.Identifier,
+                    QueryComponent = rc.QueryComponent,
+                    RequestComponentDatum = rc.RequestComponentDatum
+                })
+                .ToList();
+//            if (predicate != null)
+//            {
+//                return finalQuery
+//                    .SelectMany(cp => cp.CurrencyPairRequests
+//                        .SelectMany(cpr => cpr.RequestComponents
+//                            .Where(predicate)))
+//                    .ToList();
+//            }
+//            else
+//            {
+//                return finalQuery
+//                    .SelectMany(cp => cp.CurrencyPairRequests
+//                        .SelectMany(cpr => cpr.RequestComponents))
+//                    .ToList();
+//            }
         }
 
         public NozomiResult<RequestComponent> Get(long id, bool includeNested = false)
