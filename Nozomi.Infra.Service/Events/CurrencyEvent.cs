@@ -36,7 +36,8 @@ namespace Nozomi.Service.Events
                 .Include(c => c.AnalysedComponents)
                 .SingleOrDefault(c => c.AnalysedComponents
                     .Any(ac => ac.Id.Equals(analysedComponent.Id)));
-            
+
+            if (curr == null) return decimal.MinusOne;
             // Then, we obtain the circulating supply.
             
             // TODO: Validate with multiple sources.
