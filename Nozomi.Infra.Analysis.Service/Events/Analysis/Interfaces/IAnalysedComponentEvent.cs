@@ -6,5 +6,7 @@ namespace Nozomi.Infra.Analysis.Service.Events.Analysis.Interfaces
     public interface IAnalysedComponentEvent
     {
         IEnumerable<AnalysedComponent> GetAll(bool filter = false, bool track = false);
+
+        string GetCurrencyAbbreviation(AnalysedComponent analysedComponent);
     }
 }

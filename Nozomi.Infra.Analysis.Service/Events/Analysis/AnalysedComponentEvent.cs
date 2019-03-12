@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Nozomi.Data.Models.Currency;
 using Nozomi.Data.Models.Web.Analytical;
 using Nozomi.Infra.Analysis.Service.Events.Analysis.Interfaces;
 using Nozomi.Preprocessing.Abstracts;
@@ -42,6 +43,18 @@ namespace Nozomi.Infra.Analysis.Service.Events.Analysis
             }
 
             return query;
+        }
+
+        public string GetCurrencyAbbreviation(AnalysedComponent analysedComponent)
+        {
+            return _unitOfWork.GetRepository<Currency>()
+                .GetQueryable()
+                .AsNoTracking()
+                .Where(c => c.DeletedAt == null && c.IsEnabled)
+                .Include(c => c.AnalysedComponents)
+                .FirstOrDefault(c => c.AnalysedComponents
+                    .Any(ac => ac.Id.Equals(analysedComponent.Id)))
+                ?.Abbrv;
         }
     }
 }
