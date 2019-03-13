@@ -66,10 +66,11 @@ namespace Nozomi.Service.Events
                                               && cpr.RequestComponents
                                                   .Any(rc => rc.DeletedAt == null && rc.IsEnabled
                                                                                   && rc.RequestComponentDatum != null)))
-                .SelectMany(cp => cp.CurrencyPairRequests
-                    .SelectMany(cpr => cpr.RequestComponents))
-                .FirstOrDefault(rc => rc.ComponentType.Equals(ComponentType.Circulating_Supply))
-                ?.RequestComponentDatum
+                .SelectMany(cp => cp.CurrencyPairRequests)
+                .SelectMany(cpr => cpr.RequestComponents
+                    .Where(rc => rc.ComponentType.Equals(ComponentType.Circulating_Supply)))
+                .Select(rc => rc.RequestComponentDatum)
+                .FirstOrDefault()?
                 .Value);
         }
 
