@@ -471,18 +471,6 @@ namespace Nozomi.Ticker.StartupExtensions
                                         DataPath = "https://api.etherscan.io/api",
                                         CurrencyPairId = currencyPairs[0].Id,
                                         Delay = 5000,
-                                        AnalysedComponents = new List<AnalysedComponent>()
-                                        {
-                                            // Calculates mCap ONLY for this exact Currency pair on this exchange.
-                                            new AnalysedComponent
-                                            {
-                                                ComponentType = AnalysedComponentType.MarketCap,
-                                                Delay = 1000,
-                                                CreatedAt = DateTime.UtcNow,
-                                                ModifiedAt = DateTime.UtcNow,
-                                                DeletedAt = null
-                                            }
-                                        },
                                         RequestComponents = new List<RequestComponent>()
                                         {
                                             new RequestComponent
@@ -781,6 +769,29 @@ namespace Nozomi.Ticker.StartupExtensions
                                         c.Abbrv.Equals("BTS") &&
                                         c.CurrencySource.Abbreviation.Equals(poloSource.Abbreviation));
 
+                                context.AnalysedComponents.AddRange(
+                                    // Calculates mCap ONLY for this exact Currency pair on this exchange.
+                                    new AnalysedComponent
+                                    {
+                                        CurrencyId = ethBfx.Id,
+                                        ComponentType = AnalysedComponentType.MarketCap,
+                                        Delay = 1000,
+                                        CreatedAt = DateTime.UtcNow,
+                                        ModifiedAt = DateTime.UtcNow,
+                                        DeletedAt = null
+                                    },
+                                    // Calculates mCap ONLY for this exact Currency pair on this exchange.
+                                    new AnalysedComponent
+                                    {
+                                        CurrencyId = ethBna.Id,
+                                        ComponentType = AnalysedComponentType.MarketCap,
+                                        Delay = 1000,
+                                        CreatedAt = DateTime.UtcNow,
+                                        ModifiedAt = DateTime.UtcNow,
+                                        DeletedAt = null
+                                    }
+                                    );
+                                
                                 context.PartialCurrencyPairs.AddRange(
                                     new PartialCurrencyPair()
                                     {

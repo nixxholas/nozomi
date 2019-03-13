@@ -28,16 +28,23 @@ namespace Nozomi.Service.Events
 
         public decimal GetCirculatingSupply(AnalysedComponent analysedComponent)
         {
-            // First obtain the abbreviation in question
             var curr = _unitOfWork.GetRepository<Currency>()
                 .GetQueryable()
                 .AsNoTracking()
-                .Where(c => c.DeletedAt == null && c.IsEnabled)
-                .Include(c => c.AnalysedComponents)
-                .SingleOrDefault(c => c.AnalysedComponents
-                    .Any(ac => ac.Id.Equals(analysedComponent.Id)));
-
-            if (curr == null) return decimal.MinusOne;
+                .SingleOrDefault(c => c.Id.Equals(analysedComponent.CurrencyId)
+                                      && c.IsEnabled && c.DeletedAt == null);
+                
+            if (analysedComponent.CurrencyId <= 0 ||
+                curr == null)
+            {
+                // First obtain the abbreviation in question
+//                curr.Where(c => c.DeletedAt == null && c.IsEnabled)
+//                    .Include(c => c.AnalysedComponents)
+//                    .SingleOrDefault(c => c.AnalysedComponents
+//                        .Any(ac => ac.Id.Equals(analysedComponent.Id)));
+                return decimal.MinusOne;
+            }
+            
             // Then, we obtain the circulating supply.
             
             // TODO: Validate with multiple sources.
@@ -61,7 +68,6 @@ namespace Nozomi.Service.Events
                                                                                   && rc.RequestComponentDatum != null)))
                 .SelectMany(cp => cp.CurrencyPairRequests
                     .SelectMany(cpr => cpr.RequestComponents))
-                .DefaultIfEmpty()
                 .FirstOrDefault(rc => rc.ComponentType.Equals(ComponentType.Circulating_Supply))
                 ?.RequestComponentDatum
                 .Value);

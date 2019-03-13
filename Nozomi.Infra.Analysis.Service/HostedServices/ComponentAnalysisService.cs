@@ -26,6 +26,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
         private readonly IAnalysedHistoricItemEvent _analysedHistoricItemEvent;
         private readonly IAnalysedComponentService _analysedComponentService;
         private readonly IAnalysedHistoricItemService _analysedHistoricItemService;
+        private readonly ICurrencyEvent _currencyEvent;
         private readonly IRequestComponentEvent _requestComponentEvent;
 
         public ComponentAnalysisService(IServiceProvider serviceProvider)
@@ -35,6 +36,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
             _analysedHistoricItemEvent = _scope.ServiceProvider.GetRequiredService<IAnalysedHistoricItemEvent>();
             _analysedComponentService = _scope.ServiceProvider.GetRequiredService<IAnalysedComponentService>();
             _analysedHistoricItemService = _scope.ServiceProvider.GetRequiredService<IAnalysedHistoricItemService>();
+            _currencyEvent = _scope.ServiceProvider.GetRequiredService<ICurrencyEvent>();
             _requestComponentEvent = _scope.ServiceProvider.GetRequiredService<IRequestComponentEvent>();
         }
 
@@ -89,6 +91,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                     {
                         // Calculate the market cap.
                         case AnalysedComponentType.MarketCap:
+                            var circuSupply = _currencyEvent.GetCirculatingSupply(component);
                             var supplyComp = component.Request.RequestComponents
                                 .SingleOrDefault(rc => rc.ComponentType.Equals(ComponentType.Circulating_Supply));
 
