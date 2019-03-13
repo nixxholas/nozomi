@@ -92,14 +92,12 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                         // Calculate the market cap.
                         case AnalysedComponentType.MarketCap:
                             var circuSupply = _currencyEvent.GetCirculatingSupply(component);
-                            var supplyComp = component.Request.RequestComponents
-                                .SingleOrDefault(rc => rc.ComponentType.Equals(ComponentType.Circulating_Supply));
 
-                            if (supplyComp != null && components.Any(ac =>
+                            if (circuSupply > 0 && components.Any(ac =>
                                     ac.ComponentType.Equals(AnalysedComponentType.CurrentAveragePrice)
                                     && !string.IsNullOrEmpty(ac.Value)))
                             {
-                                var marketCap = decimal.Parse(supplyComp.RequestComponentDatum.Value)
+                                var marketCap = circuSupply
                                                 * decimal.Parse(components
                                                     .DefaultIfEmpty()
                                                     .Where(ac => ac.ComponentType.Equals(AnalysedComponentType
