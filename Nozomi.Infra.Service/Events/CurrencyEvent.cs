@@ -44,6 +44,11 @@ namespace Nozomi.Service.Events
 //                        .Any(ac => ac.Id.Equals(analysedComponent.Id)));
                 return decimal.MinusOne;
             }
+
+            if (curr.Denominations <= 0)
+            {
+                curr.Denominations = 1; // Neutraliser
+            }
             
             // Then, we obtain the circulating supply.
             
@@ -71,7 +76,7 @@ namespace Nozomi.Service.Events
                     .Where(rc => rc.ComponentType.Equals(ComponentType.Circulating_Supply)))
                 .Select(rc => rc.RequestComponentDatum)
                 .FirstOrDefault()?
-                .Value);
+                .Value) / curr.Denominations;
         }
 
         public DetailedCurrencyResponse GetDetailedById(long currencyId, ICollection<ComponentType> componentTypes)
