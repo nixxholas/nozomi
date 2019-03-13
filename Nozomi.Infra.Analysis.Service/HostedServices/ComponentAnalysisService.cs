@@ -166,7 +166,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                             var monthlyCompute = component.Request.RequestComponents
                                 .Select(rc => rc.RequestComponentDatum)
                                 .SelectMany(rcd => rcd.RcdHistoricItems)
-                                .Where(rcdhi => rcdhi.CreatedAt >= DateTime.UtcNow.Subtract(TimeSpan.FromDays(7)))
+                                .Where(rcdhi => rcdhi.CreatedAt >= DateTime.UtcNow.Subtract(TimeSpan.FromDays(31)))
                                 .Select(rcdhi => rcdhi.Value)
                                 .DefaultIfEmpty()
                                 .Average(val => decimal.Parse(val));
