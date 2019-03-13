@@ -235,7 +235,9 @@ namespace Nozomi.Ticker.StartupExtensions
                                         Abbrv = "ETH",
                                         Name = "Ethereum",
                                         CurrencySourceId = bfxSource.Id,
-                                        WalletTypeId = 1 // As per CNWallet
+                                        WalletTypeId = 1, // As per CNWallet
+                                        Denominations = 18,
+                                        DenominationName = "Wei"
                                     },
                                     new Currency
                                     {
@@ -259,7 +261,9 @@ namespace Nozomi.Ticker.StartupExtensions
                                         Abbrv = "ETH",
                                         Name = "Ethereum",
                                         CurrencySourceId = bnaSource.Id,
-                                        WalletTypeId = 1 // As per CNWallet
+                                        WalletTypeId = 1, // As per CNWallet
+                                        Denominations = 18,
+                                        DenominationName = "Wei"
                                     },
                                     new Currency
                                     {
@@ -267,7 +271,9 @@ namespace Nozomi.Ticker.StartupExtensions
                                         Abbrv = "BTC",
                                         Name = "Bitcoin",
                                         CurrencySourceId = bnaSource.Id,
-                                        WalletTypeId = 0 // As per CNWallet
+                                        WalletTypeId = 0, // As per CNWallet
+                                        Denominations = 8,
+                                        DenominationName = "Sat"
                                     },
                                     new Currency
                                     {
@@ -307,7 +313,9 @@ namespace Nozomi.Ticker.StartupExtensions
                                         Abbrv = "BTC",
                                         Name = "Bitcoin",
                                         CurrencySourceId = poloSource.Id,
-                                        WalletTypeId = 0
+                                        WalletTypeId = 0,
+                                        Denominations = 8,
+                                        DenominationName = "Sat"
                                     },
                                     new Currency
                                     {
