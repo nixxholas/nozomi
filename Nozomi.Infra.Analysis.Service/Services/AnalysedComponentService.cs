@@ -1,4 +1,5 @@
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data.Models.Web.Analytical;
 using Nozomi.Infra.Analysis.Service.Services.Interfaces;
@@ -33,9 +34,10 @@ namespace Nozomi.Infra.Analysis.Service.Services
             if (string.IsNullOrEmpty(value)) return false;
             
             var comp = _unitOfWork.GetRepository<AnalysedComponent>()
-                .Get(ac => ac.Id.Equals(analysedComponentId) &&
-                           ac.DeletedAt == null)
-                .SingleOrDefault();
+                .GetQueryable()
+                .AsTracking()
+                .SingleOrDefault(ac => ac.Id.Equals(analysedComponentId) &&
+                                       ac.DeletedAt == null);
 
             if (comp != null)
             {
