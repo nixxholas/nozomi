@@ -55,28 +55,27 @@ namespace Nozomi.Service.Events
             // TODO: Validate with multiple sources.
 
             return decimal.Parse(_unitOfWork.GetRepository<CurrencyPair>()
-                .GetQueryable()
-                .AsNoTracking()
-                .Where(cp => cp.DeletedAt == null && cp.IsEnabled)
-                .Include(cp => cp.PartialCurrencyPairs)
-                .ThenInclude(pcp => pcp.Currency)
-                .Where(cp => cp.PartialCurrencyPairs
-                    .Any(pcp => pcp.IsMain
-                                && pcp.Currency.Abbrv.Equals(curr.Abbrv, StringComparison.InvariantCultureIgnoreCase)))
-                .Include(cp => cp.CurrencyPairRequests)
-                .ThenInclude(cpr => cpr.RequestComponents)
-                .ThenInclude(rc => rc.RequestComponentDatum)
-                .Where(cp => cp.CurrencyPairRequests
-                    .Any(cpr => cpr.IsEnabled && cpr.DeletedAt == null
-                                              && cpr.RequestComponents
-                                                  .Any(rc => rc.DeletedAt == null && rc.IsEnabled
-                                                                                  && rc.RequestComponentDatum != null)))
-                .SelectMany(cp => cp.CurrencyPairRequests)
-                .SelectMany(cpr => cpr.RequestComponents
-                    .Where(rc => rc.ComponentType.Equals(ComponentType.Circulating_Supply)))
-                .Select(rc => rc.RequestComponentDatum)
-                .FirstOrDefault()?
-                .Value) / curr.Denominations;
+                       .GetQueryable()
+                       .AsNoTracking()
+                       .Where(cp => cp.DeletedAt == null && cp.IsEnabled)
+                       .Include(cp => cp.PartialCurrencyPairs)
+                       .ThenInclude(pcp => pcp.Currency)
+                       .Where(cp => cp.PartialCurrencyPairs
+                           .Any(pcp => pcp.IsMain
+                                       && pcp.Currency.Abbrv.Equals(curr.Abbrv, StringComparison.InvariantCultureIgnoreCase)))
+                       .Include(cp => cp.CurrencyPairRequests)
+                       .ThenInclude(cpr => cpr.RequestComponents)
+                       .ThenInclude(rc => rc.RequestComponentDatum)
+                       .Where(cp => cp.CurrencyPairRequests
+                           .Any(cpr => cpr.IsEnabled && cpr.DeletedAt == null
+                                                     && cpr.RequestComponents
+                                                         .Any(rc => rc.DeletedAt == null && rc.IsEnabled
+                                                                                         && rc.RequestComponentDatum != null)))
+                       .SelectMany(cp => cp.CurrencyPairRequests)
+                       .SelectMany(cpr => cpr.RequestComponents
+                           .Where(rc => rc.ComponentType.Equals(ComponentType.Circulating_Supply)))
+                       .Select(rc => rc.RequestComponentDatum)
+                       .FirstOrDefault()?.Value) / (decimal)Math.Pow(10, curr.Denominations);
         }
 
         public DetailedCurrencyResponse GetDetailedById(long currencyId, ICollection<ComponentType> componentTypes)
