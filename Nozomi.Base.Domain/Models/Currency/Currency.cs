@@ -49,6 +49,10 @@ namespace Nozomi.Data.Models.Currency
 
         public string Name { get; set; }
 
+        public int Denominations { get; set; } = 0;
+        
+        public string DenominationName { get; set; }
+
         public long CurrencySourceId { get; set; }
         public Source CurrencySource { get; set; }
 
