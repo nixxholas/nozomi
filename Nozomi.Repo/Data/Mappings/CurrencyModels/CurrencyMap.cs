@@ -16,6 +16,8 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
             entityTypeBuilder.Property(c => c.Id).ValueGeneratedOnAdd();
 
             entityTypeBuilder.Property(c => c.Abbrv).IsRequired();
+            entityTypeBuilder.Property(c => c.Denominations).HasDefaultValue(0);
+            entityTypeBuilder.Property(c => c.DenominationName).IsRequired(false);
             entityTypeBuilder.Property(c => c.Name).IsRequired();
 
             entityTypeBuilder.HasMany(c => c.AnalysedComponents).WithOne(ac => ac.Currency)
