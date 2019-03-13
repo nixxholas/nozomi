@@ -128,6 +128,9 @@ namespace Nozomi.Service.Events
         /// Allows the caller to obtain all RequestComponents relevant to the currency
         /// pair in question via the abbreviation method. (i.e. ETHUSD)
         ///
+        /// i.e. If the Currency Pair binded to the AnalysedComponent has a ticker abbreviation
+        /// of ETHUSD, we will lookup for ALL RequestComponents related to that ticker abbreviation.
+        ///
         /// TODO: Implement a predicate parameter feature to allow item filtering at the query level.
         /// </summary>
         /// <param name="analysedComponentId">The unique identifier of the analysed component
