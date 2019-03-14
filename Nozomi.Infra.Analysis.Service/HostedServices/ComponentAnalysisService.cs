@@ -114,19 +114,44 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                             break;
                         // Calculate the current average price.
                         case AnalysedComponentType.CurrentAveragePrice:
-                            // Obtain all of the req components that are related to this AC.
-                            var correlatedReqComps = _requestComponentEvent.GetAllByCorrelation(component.Id);
-                            
-                            // Aggregate it
-                            var avgPrice = correlatedReqComps
-                                .Where(rc => rc.ComponentType.Equals(ComponentType.Ask) 
-                                || rc.ComponentType.Equals(ComponentType.Bid))
-                                .DefaultIfEmpty()
-                                .Average(rc => decimal.Parse(rc.RequestComponentDatum.Value));
-
-                            if (!decimal.Zero.Equals(avgPrice))
+                            // Which case? Allow currency to precede first.
+                            if (component.CurrencyId != null && component.CurrencyId > 0)
                             {
-                                return _analysedComponentService.UpdateValue(component.Id, avgPrice.ToString());
+                                // Obtain all of the req components related to this currency where it is the base.
+                                var currencyReqComps = _requestComponentEvent.GetAllByCurrency((long) component.CurrencyId);
+
+                                // Safetynet
+                                if (currencyReqComps != null)
+                                {
+                                    // Filter
+                                    currencyReqComps = currencyReqComps
+                                        .Where(rc => rc.ComponentType.Equals(ComponentType.Ask)
+                                                     || rc.ComponentType.Equals(ComponentType.Bid))
+                                        .DefaultIfEmpty()
+                                        .ToList();
+
+                                    // Convert whatever is needed
+                                }
+                            }
+                            else
+                            {
+                                // Obtain all of the req components that are related to this AC.
+                                var correlatedReqComps = _requestComponentEvent.GetAllByCorrelation(component.Id);
+
+                                if (correlatedReqComps != null)
+                                {                                
+                                    // Aggregate it
+                                    var avgPrice = correlatedReqComps
+                                        .Where(rc => rc.ComponentType.Equals(ComponentType.Ask) 
+                                                     || rc.ComponentType.Equals(ComponentType.Bid))
+                                        .DefaultIfEmpty()
+                                        .Average(rc => decimal.Parse(rc.RequestComponentDatum.Value));
+
+                                    if (!decimal.Zero.Equals(avgPrice))
+                                    {
+                                        return _analysedComponentService.UpdateValue(component.Id, avgPrice.ToString());
+                                    }
+                                }
                             }
                             break;
                         // Calculate the daily price change for this request
