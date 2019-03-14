@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using Nozomi.Data;
@@ -28,6 +29,14 @@ namespace Nozomi.Service.Events.Interfaces
         /// <returns>Collection of request components related to the component</returns>
         ICollection<RequestComponent> GetAllByCorrelation(long analysedComponentId);
 
+        /// <summary>
+        /// Obtains all RequestComponents relevant to the currency given, utilizing it as
+        /// the base currency of the tickers to be queried. (i.e USD => USDETH, USDBTC)
+        /// </summary>
+        /// <param name="currencyId">The unique identifier of the base currency</param>
+        /// <returns>Collection of request components related to the currency</returns>
+        ICollection<Data.Models.Web.RequestComponent> GetAllByCurrency(long currencyId);
+        
         NozomiResult<RequestComponent> Get(long id, bool includeNested = false);
     }
 }

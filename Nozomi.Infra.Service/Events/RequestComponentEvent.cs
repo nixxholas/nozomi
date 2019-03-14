@@ -211,6 +211,68 @@ namespace Nozomi.Service.Events
 //            }
         }
 
+        public ICollection<RequestComponent> GetAllByCurrency(long currencyId)
+        {
+            // First, obtain the currency in question
+            var qCurrency = _unitOfWork.GetRepository<Currency>()
+                .GetQueryable()
+                .AsNoTracking()
+                .SingleOrDefault(c => c.Id.Equals(currencyId));
+
+            if (qCurrency == null) return null;
+            
+            // Obtain the correlation PCPs
+            var correlPCPs = _unitOfWork.GetRepository<CurrencyPair>()
+                .GetQueryable()
+                .AsNoTracking()
+                .Where(cp => cp.IsEnabled && cp.DeletedAt == null)
+                .Include(cp => cp.CurrencyPairRequests)
+                .ThenInclude(cpr => cpr.AnalysedComponents)
+                .Where(cp => cp.CurrencyPairRequests
+                    .Any(cpr => cpr.DeletedAt == null && cpr.IsEnabled))
+                .Include(cp => cp.PartialCurrencyPairs)
+                .ThenInclude(pcp => pcp.Currency)
+                .SelectMany(cp => cp.PartialCurrencyPairs)
+                .Where(pcp => pcp.IsMain && pcp.Currency.Abbrv.Equals(qCurrency.Abbrv,
+                                  StringComparison.InvariantCultureIgnoreCase))
+                .ToList();
+            
+            // Then we return
+            var finalQuery = _unitOfWork.GetRepository<CurrencyPair>()
+                .GetQueryable()
+                .AsNoTracking()
+                .Where(cp => cp.IsEnabled && cp.DeletedAt == null)
+                .Include(cp => cp.PartialCurrencyPairs)
+                .ThenInclude(pcp => pcp.Currency)
+                .Where(cp => 
+                    // Make sure the main currencies are identical
+                    cp.PartialCurrencyPairs.FirstOrDefault(pcp => pcp.IsMain).Currency.Abbrv
+                        .Equals(correlPCPs.FirstOrDefault(pcp => pcp.IsMain).Currency.Abbrv)
+                    // Make sure the counter currencies are identical
+                    && cp.PartialCurrencyPairs.FirstOrDefault(pcp => !pcp.IsMain).Currency.Abbrv
+                        .Equals(correlPCPs.FirstOrDefault(pcp => !pcp.IsMain).Currency.Abbrv))
+                .Include(cp => cp.CurrencyPairRequests)
+                .ThenInclude(cpr => cpr.RequestComponents)
+                .ThenInclude(rc => rc.RequestComponentDatum)
+                .Where(cp => cp.CurrencyPairRequests.Any(cpr => cpr.IsEnabled && cpr.DeletedAt == null
+                                                                              && cpr.RequestComponents
+                                                                                  .Any(rc => rc.IsEnabled && rc.DeletedAt == null
+                                                                                                          && rc.RequestComponentDatum != null)))
+                .SelectMany(cp => cp.CurrencyPairRequests)
+                .SelectMany(cpr => cpr.RequestComponents);
+            
+            return finalQuery
+                .Select(rc => new RequestComponent
+                {
+                    Id = rc.Id,
+                    ComponentType = rc.ComponentType,
+                    Identifier = rc.Identifier,
+                    QueryComponent = rc.QueryComponent,
+                    RequestComponentDatum = rc.RequestComponentDatum
+                })
+                .ToList();
+        }
+
         public NozomiResult<RequestComponent> Get(long id, bool includeNested = false)
         {
             if (includeNested)
