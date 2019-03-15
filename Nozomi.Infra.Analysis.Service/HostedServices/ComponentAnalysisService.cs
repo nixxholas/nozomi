@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -121,7 +122,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                 var currencyReqComps = _requestComponentEvent.GetAllByCurrency((long) component.CurrencyId);
 
                                 // Safetynet
-                                if (currencyReqComps != null)
+                                if (currencyReqComps != null && currencyReqComps.Count > 0)
                                 {
                                     // Filter
                                     currencyReqComps = currencyReqComps
@@ -131,6 +132,18 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                         .ToList();
 
                                     // Convert whatever is needed
+                                    _requestComponentEvent.ConvertToGenericCurrency(currencyReqComps);
+                                    
+                                    // Now we can aggregate this
+                                    var currAvgPrice = currencyReqComps
+                                        .DefaultIfEmpty()
+                                        .Average(rc => decimal.Parse(rc.RequestComponentDatum.Value));
+
+                                    if (!decimal.Zero.Equals(currAvgPrice))
+                                    {
+                                        return _analysedComponentService.UpdateValue(component.Id, 
+                                            currAvgPrice.ToString(CultureInfo.InvariantCulture));
+                                    }
                                 }
                             }
                             else
