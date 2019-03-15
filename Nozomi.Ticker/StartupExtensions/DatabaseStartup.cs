@@ -231,6 +231,25 @@ namespace Nozomi.Ticker.StartupExtensions
                                     },
                                     new Currency
                                     {
+                                        CurrencyTypeId = fiatType.Id,
+                                        Abbrv = "EUR",
+                                        Name = "Euro",
+                                        CurrencySourceId = bfxSource.Id,
+                                        WalletTypeId = 0,
+                                        AnalysedComponents = new List<AnalysedComponent>
+                                        {
+                                            new AnalysedComponent
+                                            {
+                                                ComponentType = AnalysedComponentType.CurrentAveragePrice,
+                                                Delay = 1000,
+                                                CreatedAt = DateTime.UtcNow,
+                                                ModifiedAt = DateTime.UtcNow,
+                                                DeletedAt = null
+                                            }
+                                        }
+                                    },
+                                    new Currency
+                                    {
                                         CurrencyTypeId = cryptoType.Id,
                                         Abbrv = "ETH",
                                         Name = "Ethereum",
@@ -249,6 +268,48 @@ namespace Nozomi.Ticker.StartupExtensions
                                                 ModifiedAt = DateTime.UtcNow,
                                                 DeletedAt = null
                                             }
+                                        },
+                                        CurrencyRequests = new List<CurrencyRequest>
+                                        {
+                                            new CurrencyRequest
+                                            {
+                                                Guid = Guid.NewGuid(),
+                                                RequestType = RequestType.HttpGet,
+                                                DataPath = "https://api.etherscan.io/api",
+                                                Delay = 5000,
+                                                RequestComponents = new List<RequestComponent>
+                                                {
+                                                    new RequestComponent
+                                                    {
+                                                        ComponentType = ComponentType.Circulating_Supply,
+                                                        QueryComponent = "result",
+                                                        CreatedAt = DateTime.UtcNow,
+                                                        ModifiedAt = DateTime.UtcNow,
+                                                        DeletedAt = null
+                                                    }
+                                                },
+                                                RequestProperties = new List<RequestProperty>
+                                                {
+                                                    new RequestProperty
+                                                    {
+                                                        RequestPropertyType = RequestPropertyType.HttpHeader_Custom,
+                                                        Key = "module",
+                                                        Value = "stats",
+                                                    },
+                                                    new RequestProperty
+                                                    {
+                                                        RequestPropertyType = RequestPropertyType.HttpHeader_Custom,
+                                                        Key = "action",
+                                                        Value = "ethsupply",
+                                                    },
+                                                    new RequestProperty
+                                                    {
+                                                        RequestPropertyType = RequestPropertyType.HttpHeader_Custom,
+                                                        Key = "apikey",
+                                                        Value = "TGAFGMGDKHJ8W2EKI26MJRRWGH44AV9224",
+                                                    }
+                                                }
+                                            },
                                         }
                                     },
                                     new Currency
@@ -358,6 +419,13 @@ namespace Nozomi.Ticker.StartupExtensions
                                 {
                                     CurrencyPairType = CurrencyPairType.TRADEABLE,
                                     APIUrl = "https://api.ethfinex.com/v2/ticker/tETHUSD",
+                                    DefaultComponent = "0",
+                                    CurrencySourceId = bfxSource.Id
+                                },
+                                new CurrencyPair
+                                {
+                                    CurrencyPairType = CurrencyPairType.TRADEABLE,
+                                    APIUrl = "https://api.bitfinex.com/v1/pubticker/etheur",
                                     DefaultComponent = "0",
                                     CurrencySourceId = bfxSource.Id
                                 },
@@ -481,46 +549,6 @@ namespace Nozomi.Ticker.StartupExtensions
                                                 CreatedAt = DateTime.UtcNow,
                                                 ModifiedAt = DateTime.UtcNow,
                                                 DeletedAt = null
-                                            }
-                                        }
-                                    },
-                                    new CurrencyPairRequest()
-                                    {
-                                        Guid = Guid.NewGuid(),
-                                        RequestType = RequestType.HttpGet,
-                                        DataPath = "https://api.etherscan.io/api",
-                                        CurrencyPairId = currencyPairs[0].Id,
-                                        Delay = 5000,
-                                        RequestComponents = new List<RequestComponent>()
-                                        {
-                                            new RequestComponent
-                                            {
-                                                ComponentType = ComponentType.Circulating_Supply,
-                                                QueryComponent = "result",
-                                                CreatedAt = DateTime.UtcNow,
-                                                ModifiedAt = DateTime.UtcNow,
-                                                DeletedAt = null
-                                            }
-                                        },
-                                        RequestProperties = new List<RequestProperty>()
-                                        {
-                                            new RequestProperty
-                                            {
-                                                RequestPropertyType = RequestPropertyType.HttpHeader_Custom,
-                                                Key = "module",
-                                                Value = "stats",
-                                            },
-                                            new RequestProperty
-                                            {
-                                                RequestPropertyType = RequestPropertyType.HttpHeader_Custom,
-                                                Key = "action",
-                                                Value = "ethsupply",
-                                            },
-                                            new RequestProperty
-                                            {
-                                                RequestPropertyType = RequestPropertyType.HttpHeader_Custom,
-                                                Key = "apikey",
-                                                Value = "YourApiKeyToken",
                                             }
                                         }
                                     },
@@ -788,7 +816,7 @@ namespace Nozomi.Ticker.StartupExtensions
                                     .SingleOrDefault(c =>
                                         c.Abbrv.Equals("BTS") &&
                                         c.CurrencySource.Abbreviation.Equals(poloSource.Abbreviation));
-                                
+
                                 context.PartialCurrencyPairs.AddRange(
                                     new PartialCurrencyPair()
                                     {
@@ -922,61 +950,63 @@ namespace Nozomi.Ticker.StartupExtensions
                                             }
                                         }
                                     };
-                                    
+
                                     context.CurrencyRequests.AddRange(currencyRequests);
                                     context.SaveChanges();
                                 }
 
-                            if (!context.WebsocketRequests.Any())
-                            {
-                                // Binance's Websocket-based ticker data stream
-                                var binanceWSR = new WebsocketRequest
+                                if (!context.WebsocketRequests.Any())
                                 {
-                                    CurrencyPair = new CurrencyPair
+                                    // Binance's Websocket-based ticker data stream
+                                    var binanceWSR = new WebsocketRequest
                                     {
-                                        CurrencyPairType = CurrencyPairType.EXCHANGEABLE,
-                                        APIUrl = "wss://stream.binance.com:9443/stream?streams=!ticker@arr",
-                                        DefaultComponent = "b",
-                                        CurrencySourceId = bnaSource.Id,
-                                        PartialCurrencyPairs = new List<PartialCurrencyPair>() {
-                                            new PartialCurrencyPair()
-                                            {
-                                                CurrencyId = ethBna.Id,
-                                                IsMain = true
-                                            },
-                                            new PartialCurrencyPair()
-                                            {
-                                                CurrencyId = btcBna.Id,
-                                                IsMain = false,
-                                            }}
-                                    },
-                                    Guid = Guid.NewGuid(),
-                                    RequestType = RequestType.WebSocket,
-                                    ResponseType = ResponseType.Json,
-                                    DataPath = "wss://stream.binance.com:9443/stream?streams=!ticker@arr",
-                                    Delay = 0,
-                                    WebsocketCommands = new List<WebsocketCommand>(),
-                                    RequestComponents = new List<RequestComponent>()
-                                    {
-                                        new RequestComponent
+                                        CurrencyPair = new CurrencyPair
                                         {
-                                            ComponentType = ComponentType.Bid,
-                                            Identifier = "data/s=>ETHBTC",
-                                            QueryComponent = "b"
+                                            CurrencyPairType = CurrencyPairType.EXCHANGEABLE,
+                                            APIUrl = "wss://stream.binance.com:9443/stream?streams=!ticker@arr",
+                                            DefaultComponent = "b",
+                                            CurrencySourceId = bnaSource.Id,
+                                            PartialCurrencyPairs = new List<PartialCurrencyPair>()
+                                            {
+                                                new PartialCurrencyPair()
+                                                {
+                                                    CurrencyId = ethBna.Id,
+                                                    IsMain = true
+                                                },
+                                                new PartialCurrencyPair()
+                                                {
+                                                    CurrencyId = btcBna.Id,
+                                                    IsMain = false,
+                                                }
+                                            }
                                         },
-                                        new RequestComponent
+                                        Guid = Guid.NewGuid(),
+                                        RequestType = RequestType.WebSocket,
+                                        ResponseType = ResponseType.Json,
+                                        DataPath = "wss://stream.binance.com:9443/stream?streams=!ticker@arr",
+                                        Delay = 0,
+                                        WebsocketCommands = new List<WebsocketCommand>(),
+                                        RequestComponents = new List<RequestComponent>()
                                         {
-                                            ComponentType = ComponentType.Bid_Size,
-                                            Identifier = "data/s=>ETHBTC",
-                                            QueryComponent = "B"
+                                            new RequestComponent
+                                            {
+                                                ComponentType = ComponentType.Bid,
+                                                Identifier = "data/s=>ETHBTC",
+                                                QueryComponent = "b"
+                                            },
+                                            new RequestComponent
+                                            {
+                                                ComponentType = ComponentType.Bid_Size,
+                                                Identifier = "data/s=>ETHBTC",
+                                                QueryComponent = "B"
+                                            }
                                         }
-                                    }
-                                };
+                                    };
 
-                                context.WebsocketRequests.Add(binanceWSR);
+                                    context.WebsocketRequests.Add(binanceWSR);
 
-                                context.SaveChanges();
-                            }
+                                    context.SaveChanges();
+                                }
                             }
                         }
                     }
