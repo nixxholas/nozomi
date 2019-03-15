@@ -11,6 +11,8 @@ namespace Nozomi.Infra.Analysis.Service.Events.Analysis.Interfaces
 
         ICollection<AnalysedComponent> GetAllByCurrency(long currencyId);
 
+        ICollection<AnalysedComponent> GetAllByCorrelation(long analysedComponentId);
+
         string GetCurrencyAbbreviation(AnalysedComponent analysedComponent);
     }
 }

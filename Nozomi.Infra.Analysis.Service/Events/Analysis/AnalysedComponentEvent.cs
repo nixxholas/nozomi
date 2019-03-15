@@ -161,6 +161,66 @@ namespace Nozomi.Infra.Analysis.Service.Events.Analysis
                 .ToList();
         }
 
+        public ICollection<AnalysedComponent> GetAllByCorrelation(long analysedComponentId)
+        {
+            // First, obtain the correlation PCPs
+            var correlPCPs = _unitOfWork.GetRepository<CurrencyPair>()
+                .GetQueryable()
+                .AsNoTracking()
+                .Where(cp => cp.IsEnabled && cp.DeletedAt == null)
+                .Include(cp => cp.CurrencyPairRequests)
+                .ThenInclude(cpr => cpr.AnalysedComponents)
+                .Where(cp => cp.CurrencyPairRequests
+                    .Any(cpr => cpr.DeletedAt == null && cpr.IsEnabled
+                                                      // We can ignore disabled or deleted ACs, just using this 
+                                                      // to find the correlation
+                                                      && cpr.AnalysedComponents.Any(ac =>
+                                                          ac.Id.Equals(analysedComponentId))))
+                .Include(cp => cp.PartialCurrencyPairs)
+                .ThenInclude(pcp => pcp.Currency)
+                .SelectMany(cp => cp.PartialCurrencyPairs)
+                .ToList();
+
+            // Then we return
+            var finalQuery = _unitOfWork.GetRepository<CurrencyPair>()
+                .GetQueryable()
+                .AsNoTracking()
+                .Where(cp => cp.IsEnabled && cp.DeletedAt == null)
+                .Include(cp => cp.PartialCurrencyPairs)
+                .ThenInclude(pcp => pcp.Currency)
+                .Where(cp =>
+                    // Make sure the main currencies are identical
+                    cp.PartialCurrencyPairs.FirstOrDefault(pcp => pcp.IsMain).Currency.Abbrv
+                        .Equals(correlPCPs.FirstOrDefault(pcp => pcp.IsMain).Currency.Abbrv)
+                    // Make sure the counter currencies are identical
+                    && cp.PartialCurrencyPairs.FirstOrDefault(pcp => !pcp.IsMain).Currency.Abbrv
+                        .Equals(correlPCPs.FirstOrDefault(pcp => !pcp.IsMain).Currency.Abbrv))
+                .Include(cp => cp.CurrencyPairRequests)
+                .ThenInclude(cpr => cpr.AnalysedComponents)
+                .ThenInclude(ac => ac.AnalysedHistoricItems)
+                .Where(cp => cp.CurrencyPairRequests.Any(cpr => cpr.IsEnabled && cpr.DeletedAt == null
+                                                                              && cpr.AnalysedComponents
+                                                                                  .Any(ac =>
+                                                                                      ac.IsEnabled && ac.DeletedAt ==
+                                                                                                   null
+                                                                                                   && ac.AnalysedHistoricItems !=
+                                                                                                   null)))
+                .SelectMany(cp => cp.CurrencyPairRequests)
+                .SelectMany(cpr => cpr.AnalysedComponents);
+
+            if (!finalQuery.Any()) return new List<AnalysedComponent>();
+
+            return finalQuery
+                .Where(ac => ac.AnalysedHistoricItems != null)
+                .Select(ac => new AnalysedComponent
+                {
+                    Id = ac.Id,
+                    ComponentType = ac.ComponentType,
+                    AnalysedHistoricItems = ac.AnalysedHistoricItems
+                })
+                .ToList();
+        }
+
         public string GetCurrencyAbbreviation(AnalysedComponent analysedComponent)
         {
             return _unitOfWork.GetRepository<Currency>()
