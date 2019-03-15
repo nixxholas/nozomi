@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Nozomi.Base.Core;
 using Nozomi.Data.Models.Currency;
 using Nozomi.Data.Models.Web.Analytical;
 using Nozomi.Infra.Analysis.Service.Events.Analysis.Interfaces;
@@ -17,6 +19,75 @@ namespace Nozomi.Infra.Analysis.Service.Events.Analysis
         public AnalysedComponentEvent(ILogger<AnalysedComponentEvent> logger, IUnitOfWork<NozomiDbContext> unitOfWork) 
             : base(logger, unitOfWork)
         {
+        }
+
+        public void ConvertToGenericCurrency(ICollection<AnalysedComponent> analysedComponents)
+        {
+            if (analysedComponents != null && analysedComponents.Count > 0)
+            {
+                // Iterate all of the reqcomps for conversion
+                foreach (var analysedComp in analysedComponents)
+                {
+                    // Obtain the current req com's counter currency first
+                    var counterCurr = _unitOfWork.GetRepository<Currency>()
+                        .GetQueryable()
+                        .AsNoTracking()
+                        .Include(c => c.PartialCurrencyPairs)
+                        .ThenInclude(c => c.Currency)
+                        .Include(c => c.PartialCurrencyPairs)
+                        .ThenInclude(pcp => pcp.CurrencyPair)
+                        .ThenInclude(cp => cp.CurrencyPairRequests)
+                        .ThenInclude(cpr => cpr.AnalysedComponents)
+                        .SingleOrDefault(c => c.PartialCurrencyPairs
+                                // Make sure we're not converting if we don't have to.
+                            .Where(pcp => !pcp.IsMain 
+                                          && !pcp.Currency.Abbrv.Equals(CoreConstants.GenericCounterCurrency,
+                                              StringComparison.InvariantCultureIgnoreCase))
+                            .Select(pcp => pcp.CurrencyPair)
+                            .SelectMany(cp => cp.CurrencyPairRequests)
+                            .SelectMany(cpr => cpr.AnalysedComponents)
+                            .Any(rc => rc.Id.Equals(analysedComp.Id)));
+
+                    // Null check
+                    if (counterCurr != null)
+                    {
+                        // Obtain the conversion rate
+                        var conversionRate = _unitOfWork
+                            .GetRepository<PartialCurrencyPair>()
+                            .GetQueryable()
+                            .AsNoTracking()
+                            .Where(pcp => pcp.IsMain &&
+                                          pcp.Currency.Abbrv.Equals(counterCurr.Abbrv,
+                                              StringComparison.InvariantCultureIgnoreCase))
+                            .Where(pcp => !pcp.IsMain && 
+                                          pcp.Currency.Abbrv.Equals(CoreConstants.GenericCounterCurrency,
+                                              StringComparison.InvariantCultureIgnoreCase))
+                            .Include(pcp => pcp.CurrencyPair)
+                            .ThenInclude(cp => cp.CurrencyPairRequests)
+                            .ThenInclude(cpr => cpr.AnalysedComponents)
+                            .SelectMany(pcp => pcp.CurrencyPair.CurrencyPairRequests)
+                            .SelectMany(cpr => cpr.AnalysedComponents)
+                            .FirstOrDefault(ac => ac.ComponentType.Equals(AnalysedComponentType.CurrentAveragePrice));
+
+                        if (conversionRate != null && decimal.TryParse(conversionRate.Value, out var conversionVal))
+                        {
+                            // Since we've gotten the conversion rate, let's convert.
+//                            analysedComp.RequestComponentDatum.Value = (decimal.Parse(analysedComp.RequestComponentDatum.Value)
+//                                                                  * conversionVal).ToString(CultureInfo.InvariantCulture);
+                            foreach (var analysedCompAnalysedHistoricItem in analysedComp.AnalysedHistoricItems)
+                            {
+                                analysedCompAnalysedHistoricItem.Value =
+                                    (decimal.Parse(analysedCompAnalysedHistoricItem.Value)
+                                     * conversionVal).ToString(CultureInfo.InvariantCulture);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        _logger.LogWarning($" Request Component: {analysedComp.Id} does not have a counter currency.");
+                    }
+                }
+            }
         }
 
         public IEnumerable<AnalysedComponent> GetAll(bool filter = false, bool track = false)
