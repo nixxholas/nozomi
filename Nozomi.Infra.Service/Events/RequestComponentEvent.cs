@@ -118,6 +118,7 @@ namespace Nozomi.Service.Events
         {
             if (requestComponents != null && requestComponents.Count > 0)
             {
+                // Iterate all of the reqcomps for conversion
                 foreach (var reqCom in requestComponents)
                 {
                     // Obtain the current req com's counter currency first
@@ -129,11 +130,16 @@ namespace Nozomi.Service.Events
                         .ThenInclude(cp => cp.CurrencyPairRequests)
                         .ThenInclude(cpr => cpr.RequestComponents)
                         .SingleOrDefault(c => c.PartialCurrencyPairs
+                                // Make sure we're not converting if we don't have to.
+                            .Where(pcp => !pcp.IsMain 
+                                          && !pcp.Currency.Abbrv.Equals(CoreConstants.GenericCounterCurrency,
+                                              StringComparison.InvariantCultureIgnoreCase))
                             .Select(pcp => pcp.CurrencyPair)
                             .SelectMany(cp => cp.CurrencyPairRequests)
                             .SelectMany(cpr => cpr.RequestComponents)
                             .Any(rc => rc.Id.Equals(reqCom.Id)));
 
+                    // Null check
                     if (counterCurr != null)
                     {
                         // Obtain the conversion rate
