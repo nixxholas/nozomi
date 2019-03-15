@@ -309,18 +309,18 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                     }
                                 }
                             }
-                            var dailyCompute = component.Request.RequestComponents
+                            var weeklyCompute = component.Request.RequestComponents
                                 .Select(rc => rc.RequestComponentDatum)
                                 .SelectMany(rcd => rcd.RcdHistoricItems)
-                                .Where(rcdhi => rcdhi.CreatedAt >= DateTime.UtcNow.Subtract(TimeSpan.FromDays(1)))
+                                .Where(rcdhi => rcdhi.CreatedAt >= DateTime.UtcNow.Subtract(TimeSpan.FromDays(7)))
                                 .Select(rcdhi => rcdhi.Value)
                                 .DefaultIfEmpty()
                                 .Average(val => decimal.Parse(val));
 
-                            if (!decimal.Zero.Equals(dailyCompute))
+                            if (!decimal.Zero.Equals(weeklyCompute))
                             {
                                 // Update
-                                return _analysedComponentService.UpdateValue(component.Id, dailyCompute.ToString());
+                                return _analysedComponentService.UpdateValue(component.Id, weeklyCompute.ToString());
                             }
 
                             break;
