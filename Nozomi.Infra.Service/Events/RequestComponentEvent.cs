@@ -292,19 +292,14 @@ namespace Nozomi.Service.Events
             if (qCurrency == null) return null;
 
             // Obtain the correlation PCPs
-            var correlPCPs = _unitOfWork.GetRepository<CurrencyPair>()
+            var correlPCPs = _unitOfWork.GetRepository<PartialCurrencyPair>()
                 .GetQueryable()
                 .AsNoTracking()
-                .Where(cp => cp.IsEnabled && cp.DeletedAt == null)
-                .Include(cp => cp.CurrencyPairRequests)
-                .ThenInclude(cpr => cpr.AnalysedComponents)
-                .Where(cp => cp.CurrencyPairRequests
-                    .Any(cpr => cpr.DeletedAt == null && cpr.IsEnabled))
-                .Include(cp => cp.PartialCurrencyPairs)
-                .ThenInclude(pcp => pcp.Currency)
-                .SelectMany(cp => cp.PartialCurrencyPairs)
-                .Where(pcp => pcp.IsMain && pcp.Currency.Abbrv.Equals(qCurrency.Abbrv,
-                                  StringComparison.InvariantCultureIgnoreCase))
+                .Where(pcp => pcp.IsMain 
+                              && pcp.Currency.Abbrv.Equals(qCurrency.Abbrv,
+                                  StringComparison.InvariantCultureIgnoreCase)
+                              && pcp.Currency.IsEnabled 
+                              && pcp.Currency.DeletedAt == null)
                 .ToList();
 
             // Then we return
@@ -317,10 +312,7 @@ namespace Nozomi.Service.Events
                 .Where(cp =>
                     // Make sure the main currencies are identical
                     cp.PartialCurrencyPairs.FirstOrDefault(pcp => pcp.IsMain).Currency.Abbrv
-                        .Equals(correlPCPs.FirstOrDefault(pcp => pcp.IsMain).Currency.Abbrv)
-                    // Make sure the counter currencies are identical
-                    && cp.PartialCurrencyPairs.FirstOrDefault(pcp => !pcp.IsMain).Currency.Abbrv
-                        .Equals(correlPCPs.FirstOrDefault(pcp => !pcp.IsMain).Currency.Abbrv))
+                        .Equals(qCurrency.Abbrv, StringComparison.InvariantCultureIgnoreCase))
                 .Include(cp => cp.CurrencyPairRequests)
                 .ThenInclude(cpr => cpr.RequestComponents)
                 .ThenInclude(rc => rc.RequestComponentDatum)
