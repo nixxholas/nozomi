@@ -237,7 +237,19 @@ namespace Nozomi.Ticker.StartupExtensions
                                         CurrencySourceId = bfxSource.Id,
                                         WalletTypeId = 1, // As per CNWallet
                                         Denominations = 18,
-                                        DenominationName = "Wei"
+                                        DenominationName = "Wei",
+                                        // Calculates mCap ONLY for this exact Currency pair on this exchange.
+                                        AnalysedComponents = new List<AnalysedComponent>
+                                        {
+                                            new AnalysedComponent
+                                            {
+                                                ComponentType = AnalysedComponentType.MarketCap,
+                                                Delay = 1000,
+                                                CreatedAt = DateTime.UtcNow,
+                                                ModifiedAt = DateTime.UtcNow,
+                                                DeletedAt = null
+                                            }
+                                        }
                                     },
                                     new Currency
                                     {
@@ -263,7 +275,7 @@ namespace Nozomi.Ticker.StartupExtensions
                                         CurrencySourceId = bnaSource.Id,
                                         WalletTypeId = 1, // As per CNWallet
                                         Denominations = 18,
-                                        DenominationName = "Wei"
+                                        DenominationName = "Wei",
                                     },
                                     new Currency
                                     {
@@ -776,29 +788,6 @@ namespace Nozomi.Ticker.StartupExtensions
                                     .SingleOrDefault(c =>
                                         c.Abbrv.Equals("BTS") &&
                                         c.CurrencySource.Abbreviation.Equals(poloSource.Abbreviation));
-
-                                context.AnalysedComponents.AddRange(
-                                    // Calculates mCap ONLY for this exact Currency pair on this exchange.
-                                    new AnalysedComponent
-                                    {
-                                        CurrencyId = ethBfx.Id,
-                                        ComponentType = AnalysedComponentType.MarketCap,
-                                        Delay = 1000,
-                                        CreatedAt = DateTime.UtcNow,
-                                        ModifiedAt = DateTime.UtcNow,
-                                        DeletedAt = null
-                                    },
-                                    // Calculates mCap ONLY for this exact Currency pair on this exchange.
-                                    new AnalysedComponent
-                                    {
-                                        CurrencyId = ethBna.Id,
-                                        ComponentType = AnalysedComponentType.MarketCap,
-                                        Delay = 1000,
-                                        CreatedAt = DateTime.UtcNow,
-                                        ModifiedAt = DateTime.UtcNow,
-                                        DeletedAt = null
-                                    }
-                                    );
                                 
                                 context.PartialCurrencyPairs.AddRange(
                                     new PartialCurrencyPair()
