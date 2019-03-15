@@ -301,15 +301,15 @@ namespace Nozomi.Service.Events
             if (qCurrency == null) return null;
 
             // Obtain the correlation PCPs
-            var correlPCPs = _unitOfWork.GetRepository<PartialCurrencyPair>()
-                .GetQueryable()
-                .AsNoTracking()
-                .Where(pcp => pcp.IsMain 
-                              && pcp.Currency.Abbrv.Equals(qCurrency.Abbrv,
-                                  StringComparison.InvariantCultureIgnoreCase)
-                              && pcp.Currency.IsEnabled 
-                              && pcp.Currency.DeletedAt == null)
-                .ToList();
+//            var correlPCPs = _unitOfWork.GetRepository<PartialCurrencyPair>()
+//                .GetQueryable()
+//                .AsNoTracking()
+//                .Where(pcp => pcp.IsMain 
+//                              && pcp.Currency.Abbrv.Equals(qCurrency.Abbrv,
+//                                  StringComparison.InvariantCultureIgnoreCase)
+//                              && pcp.Currency.IsEnabled 
+//                              && pcp.Currency.DeletedAt == null)
+//                .ToList();
 
             // Then we return
             var finalQuery = _unitOfWork.GetRepository<CurrencyPair>()
