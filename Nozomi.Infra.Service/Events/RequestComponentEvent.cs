@@ -260,6 +260,8 @@ namespace Nozomi.Service.Events
 //                finalQuery.Where(rc => componentTypes.Contains(rc.ComponentType));
 //            }
 
+            if (!finalQuery.Any()) return new List<RequestComponent>();
+
             return finalQuery
                 .Where(rc => rc.RequestComponentDatum != null)
                 .Select(rc => new RequestComponent
@@ -334,6 +336,8 @@ namespace Nozomi.Service.Events
                 .SelectMany(cp => cp.CurrencyPairRequests)
                 .SelectMany(cpr => cpr.RequestComponents);
 
+            if (!finalQuery.Any()) return new List<RequestComponent>();
+            
             return finalQuery
                 .Where(rc => rc.RequestComponentDatum != null)
                 .Select(rc => new RequestComponent
