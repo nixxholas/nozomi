@@ -261,6 +261,7 @@ namespace Nozomi.Service.Events
 //            }
 
             return finalQuery
+                .Where(rc => rc.RequestComponentDatum != null)
                 .Select(rc => new RequestComponent
                 {
                     Id = rc.Id,
