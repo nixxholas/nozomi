@@ -334,6 +334,7 @@ namespace Nozomi.Service.Events
                 .SelectMany(cpr => cpr.RequestComponents);
 
             return finalQuery
+                .Where(rc => rc.RequestComponentDatum != null)
                 .Select(rc => new RequestComponent
                 {
                     Id = rc.Id,
