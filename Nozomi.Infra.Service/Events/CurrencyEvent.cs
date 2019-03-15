@@ -75,7 +75,7 @@ namespace Nozomi.Service.Events
                        .SelectMany(cpr => cpr.RequestComponents
                            .Where(rc => rc.ComponentType.Equals(ComponentType.Circulating_Supply)))
                        .Select(rc => rc.RequestComponentDatum)
-                       .FirstOrDefault()?.Value) / (decimal)Math.Pow(10, curr.Denominations);
+                       .FirstOrDefault()?.Value ?? "0") / (decimal)Math.Pow(10, curr.Denominations);
         }
 
         public DetailedCurrencyResponse GetDetailedById(long currencyId, ICollection<ComponentType> componentTypes)
