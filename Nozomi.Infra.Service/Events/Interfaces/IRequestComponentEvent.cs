@@ -16,6 +16,8 @@ namespace Nozomi.Service.Events.Interfaces
 
         decimal ComputeDifference(string baseCurrencyAbbrv, string comparingCurrencyAbbrv,
             ComponentType componentType);
+        
+        void ConvertToGenericCurrency(ICollection<RequestComponent> requestComponents);
 
         ICollection<RequestComponent> GetByMainCurrency(string mainCurrencyAbbrv, 
             ICollection<ComponentType> componentTypes);
