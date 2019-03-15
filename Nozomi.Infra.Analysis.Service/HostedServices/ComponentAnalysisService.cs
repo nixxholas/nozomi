@@ -139,7 +139,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                         .DefaultIfEmpty()
                                         .Average(rc => decimal.Parse(rc.RequestComponentDatum.Value));
 
-                                    if (!decimal.Zero.Equals(currAvgPrice))
+                                    if (!(currAvgPrice <= decimal.Zero))
                                     {
                                         return _analysedComponentService.UpdateValue(component.Id, 
                                             currAvgPrice.ToString(CultureInfo.InvariantCulture));
