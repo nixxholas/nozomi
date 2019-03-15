@@ -422,13 +422,6 @@ namespace Nozomi.Ticker.StartupExtensions
                                     DefaultComponent = "0",
                                     CurrencySourceId = bfxSource.Id
                                 },
-                                new CurrencyPair
-                                {
-                                    CurrencyPairType = CurrencyPairType.TRADEABLE,
-                                    APIUrl = "https://api.bitfinex.com/v1/pubticker/etheur",
-                                    DefaultComponent = "0",
-                                    CurrencySourceId = bfxSource.Id
-                                },
                                 new CurrencyPair()
                                 {
                                     CurrencyPairType = CurrencyPairType.TRADEABLE,
@@ -470,6 +463,13 @@ namespace Nozomi.Ticker.StartupExtensions
                                     APIUrl = "https://poloniex.com/public?command=returnTicker",
                                     DefaultComponent = "BTC_BTS/lowestAsk",
                                     CurrencySourceId = poloSource.Id
+                                },
+                                new CurrencyPair
+                                {
+                                    CurrencyPairType = CurrencyPairType.TRADEABLE,
+                                    APIUrl = "https://api.bitfinex.com/v1/pubticker/etheur",
+                                    DefaultComponent = "0",
+                                    CurrencySourceId = bfxSource.Id
                                 }
                             };
 
@@ -694,7 +694,7 @@ namespace Nozomi.Ticker.StartupExtensions
                                             {
                                                 RequestPropertyType = RequestPropertyType.HttpQuery,
                                                 Key = "to_currency",
-                                                Value = "CNY"
+                                                Value = "EUR"
                                             }
                                         }
                                     },
@@ -733,6 +733,34 @@ namespace Nozomi.Ticker.StartupExtensions
                                         ResponseType = ResponseType.Json,
                                         DataPath = "https://poloniex.com/public?command=returnTicker",
                                         CurrencyPairId = currencyPairs[6].Id,
+                                        Delay = 5000,
+                                        RequestComponents = new List<RequestComponent>()
+                                        {
+                                            new RequestComponent
+                                            {
+                                                ComponentType = ComponentType.Ask,
+                                                QueryComponent = "BTC_BTS/lowestAsk",
+                                                CreatedAt = DateTime.UtcNow,
+                                                ModifiedAt = DateTime.UtcNow,
+                                                DeletedAt = null
+                                            },
+                                            new RequestComponent
+                                            {
+                                                ComponentType = ComponentType.Bid,
+                                                QueryComponent = "BTC_BTS/highestBid",
+                                                CreatedAt = DateTime.UtcNow,
+                                                ModifiedAt = DateTime.UtcNow,
+                                                DeletedAt = null
+                                            }
+                                        }
+                                    },
+                                    new CurrencyPairRequest()
+                                    {
+                                        Guid = Guid.NewGuid(),
+                                        RequestType = RequestType.HttpGet,
+                                        ResponseType = ResponseType.Json,
+                                        DataPath = "https://poloniex.com/public?command=returnTicker",
+                                        CurrencyPairId = currencyPairs[7].Id,
                                         Delay = 5000,
                                         RequestComponents = new List<RequestComponent>()
                                         {
