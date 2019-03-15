@@ -45,6 +45,51 @@ namespace Nozomi.Infra.Analysis.Service.Events.Analysis
             return query;
         }
 
+        public ICollection<AnalysedComponent> GetAllByCurrency(long currencyId)
+        {
+            // First, obtain the currency in question
+            var qCurrency = _unitOfWork.GetRepository<Currency>()
+                .GetQueryable()
+                .AsNoTracking()
+                .SingleOrDefault(c => c.Id.Equals(currencyId));
+
+            if (qCurrency == null) return null;
+
+            // Then we return
+            var finalQuery = _unitOfWork.GetRepository<CurrencyPair>()
+                .GetQueryable()
+                .AsNoTracking()
+                .Where(cp => cp.IsEnabled && cp.DeletedAt == null)
+                .Include(cp => cp.PartialCurrencyPairs)
+                .ThenInclude(pcp => pcp.Currency)
+                .Where(cp =>
+                    // Make sure the main currencies are identical
+                    cp.PartialCurrencyPairs.FirstOrDefault(pcp => pcp.IsMain).Currency.Abbrv
+                        .Equals(qCurrency.Abbrv, StringComparison.InvariantCultureIgnoreCase))
+                .Include(cp => cp.CurrencyPairRequests)
+                .ThenInclude(cpr => cpr.AnalysedComponents)
+                .ThenInclude(rc => rc.AnalysedHistoricItems)
+                .Where(cp => cp.CurrencyPairRequests.Any(cpr => cpr.IsEnabled && cpr.DeletedAt == null
+                                                                              && cpr.AnalysedComponents
+                                                                                  .Any(ac =>
+                                                                                      ac.IsEnabled && ac.DeletedAt ==
+                                                                                                   null
+                                                                                                   && ac.AnalysedHistoricItems.Count > 0)))
+                .SelectMany(cp => cp.CurrencyPairRequests)
+                .SelectMany(cpr => cpr.AnalysedComponents);
+
+            if (!finalQuery.Any()) return new List<AnalysedComponent>();
+            
+            return finalQuery
+                .Select(ac => new AnalysedComponent
+                {
+                    Id = ac.Id,
+                    ComponentType = ac.ComponentType,
+                    AnalysedHistoricItems = ac.AnalysedHistoricItems
+                })
+                .ToList();
+        }
+
         public string GetCurrencyAbbreviation(AnalysedComponent analysedComponent)
         {
             return _unitOfWork.GetRepository<Currency>()
