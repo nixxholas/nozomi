@@ -758,30 +758,57 @@ namespace Nozomi.Ticker.StartupExtensions
                                     {
                                         Guid = Guid.NewGuid(),
                                         RequestType = RequestType.HttpGet,
-                                        ResponseType = ResponseType.Json,
-                                        DataPath = "https://poloniex.com/public?command=returnTicker",
+                                        DataPath = "https://api.bitfinex.com/v1/pubticker/etheur",
                                         CurrencyPairId = currencyPairs[7].Id,
-                                        Delay = 5000,
+                                        Delay = 2000,
+                                        AnalysedComponents = new List<AnalysedComponent>
+                                        {
+                                            // Calculates volume ONLY for this exact Currency pair on this exchange.
+//                                            new AnalysedComponent
+//                                            {
+//                                                ComponentType = AnalysedComponentType.DailyVolume,
+//                                                Delay = 1000,
+//                                                CreatedAt = DateTime.UtcNow,
+//                                                ModifiedAt = DateTime.UtcNow,
+//                                                DeletedAt = null
+//                                            },
+                                            new AnalysedComponent
+                                            {
+                                                ComponentType = AnalysedComponentType.CurrentAveragePrice,
+                                                Delay = 500,
+                                                CreatedAt = DateTime.UtcNow,
+                                                ModifiedAt = DateTime.UtcNow,
+                                                DeletedAt = null
+                                            }
+                                        },
                                         RequestComponents = new List<RequestComponent>()
                                         {
                                             new RequestComponent
                                             {
-                                                ComponentType = ComponentType.Ask,
-                                                QueryComponent = "BTC_BTS/lowestAsk",
+                                                ComponentType = ComponentType.VOLUME,
+                                                QueryComponent = "volume",
                                                 CreatedAt = DateTime.UtcNow,
                                                 ModifiedAt = DateTime.UtcNow,
                                                 DeletedAt = null
                                             },
                                             new RequestComponent
                                             {
+                                                ComponentType = ComponentType.Ask,
+                                                QueryComponent = "ask",
+                                                CreatedAt = DateTime.UtcNow,
+                                                ModifiedAt = DateTime.UtcNow,
+                                                DeletedAt = null
+                                            },
+                                            new RequestComponent()
+                                            {
                                                 ComponentType = ComponentType.Bid,
-                                                QueryComponent = "BTC_BTS/highestBid",
+                                                QueryComponent = "bid",
                                                 CreatedAt = DateTime.UtcNow,
                                                 ModifiedAt = DateTime.UtcNow,
                                                 DeletedAt = null
                                             }
                                         }
-                                    }
+                                    },
                                 };
 
                                 context.CurrencyPairRequests.AddRange(currencyPairRequests);
