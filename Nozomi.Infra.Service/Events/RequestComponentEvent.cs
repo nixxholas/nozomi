@@ -226,53 +226,37 @@ namespace Nozomi.Service.Events
                 .Include(cp => cp.PartialCurrencyPairs)
                 .ThenInclude(pcp => pcp.Currency)
                 .SelectMany(cp => cp.PartialCurrencyPairs)
+                .DefaultIfEmpty()
                 .ToList();
-
-            // Then we return
-            var finalQuery = _unitOfWork.GetRepository<CurrencyPair>()
+            
+            if (correlPCPs.Any()) return new List<RequestComponent>();
+            
+            return _unitOfWork.GetRepository<CurrencyPairRequest>()
                 .GetQueryable()
                 .AsNoTracking()
-                .Where(cp => cp.IsEnabled && cp.DeletedAt == null)
-                .Include(cp => cp.PartialCurrencyPairs)
-                .ThenInclude(pcp => pcp.Currency)
-                .Where(cp =>
+                .Where(cpr => cpr.IsEnabled && cpr.DeletedAt == null)
+                .Include(cpr => cpr.CurrencyPair)
+                .ThenInclude(cp => cp.PartialCurrencyPairs)
+                .Where(cpr => cpr.CurrencyPair != null
                     // Make sure the main currencies are identical
-                    cp.PartialCurrencyPairs.FirstOrDefault(pcp => pcp.IsMain).Currency.Abbrv
+                    && cpr.CurrencyPair.PartialCurrencyPairs.FirstOrDefault(pcp => pcp.IsMain).Currency.Abbrv
                         .Equals(correlPCPs.FirstOrDefault(pcp => pcp.IsMain).Currency.Abbrv)
                     // Make sure the counter currencies are identical
-                    && cp.PartialCurrencyPairs.FirstOrDefault(pcp => !pcp.IsMain).Currency.Abbrv
+                    && cpr.CurrencyPair.PartialCurrencyPairs.FirstOrDefault(pcp => !pcp.IsMain).Currency.Abbrv
                         .Equals(correlPCPs.FirstOrDefault(pcp => !pcp.IsMain).Currency.Abbrv))
-                .Include(cp => cp.CurrencyPairRequests)
-                .ThenInclude(cpr => cpr.RequestComponents)
+                .Include(cpr => cpr.RequestComponents)
                 .ThenInclude(rc => rc.RequestComponentDatum)
-                .Where(cp => cp.CurrencyPairRequests.Any(cpr => cpr.IsEnabled && cpr.DeletedAt == null
-                                                                              && cpr.RequestComponents
-                                                                                  .Any(rc =>
-                                                                                      rc.IsEnabled && rc.DeletedAt ==
-                                                                                                   null
-                                                                                                   && rc
-                                                                                                       .RequestComponentDatum !=
-                                                                                                   null)))
-                .SelectMany(cp => cp.CurrencyPairRequests)
-                .SelectMany(cpr => cpr.RequestComponents);
-
-//            if (componentTypes != null)
-//            {
-//                finalQuery.Where(rc => componentTypes.Contains(rc.ComponentType));
-//            }
-
-            if (!finalQuery.Any()) return new List<RequestComponent>();
-
-            return finalQuery
-                .Where(rc => rc.RequestComponentDatum != null)
-                .Select(rc => new RequestComponent
-                {
-                    Id = rc.Id,
-                    ComponentType = rc.ComponentType,
-                    Identifier = rc.Identifier,
-                    QueryComponent = rc.QueryComponent,
-                    RequestComponentDatum = rc.RequestComponentDatum
-                })
+                .Where(cpr => cpr.RequestComponents.Any())
+                .SelectMany(cpr => cpr.RequestComponents
+                    .Where(rc => rc.RequestComponentDatum != null)
+                    .Select(rc => new RequestComponent
+                    {
+                        Id = rc.Id,
+                        ComponentType = rc.ComponentType,
+                        Identifier = rc.Identifier,
+                        QueryComponent = rc.QueryComponent,
+                        RequestComponentDatum = rc.RequestComponentDatum
+                    }))
                 .ToList();
 //            if (predicate != null)
 //            {
