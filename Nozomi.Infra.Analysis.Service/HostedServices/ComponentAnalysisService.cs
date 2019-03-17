@@ -99,18 +99,19 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                     // Look for the average price
                                     ac.ComponentType.Equals(AnalysedComponentType.CurrentAveragePrice)
                                     // Make sure this component matches the other
-                                    && (ac.RequestId.Equals(component.RequestId) || ac.CurrencyId.Equals(component.CurrencyId))))
+                                    && (ac.RequestId.Equals(component.RequestId) || ac.CurrencyId.Equals(component.CurrencyId)))
+                                // Parsable average?
+                                && decimal.TryParse(components
+                                    .Where(ac => ac.ComponentType.Equals(AnalysedComponentType
+                                                     .CurrentAveragePrice)
+                                                 // Make sure this component matches the other
+                                                 && (ac.RequestId.Equals(component.RequestId) 
+                                                     || ac.CurrencyId.Equals(component.CurrencyId)))
+                                    .Select(ac => ac.Value)
+                                    .SingleOrDefault(), out var mCap_avgPrice))
                             {
                                 var marketCap = circuSupply
-                                                * decimal.Parse(components
-                                                    .DefaultIfEmpty()
-                                                    .Where(ac => ac.ComponentType.Equals(AnalysedComponentType
-                                                        .CurrentAveragePrice)
-                                                                 // Make sure this component matches the other
-                                                                 && (ac.RequestId.Equals(component.RequestId) 
-                                                                     || ac.CurrencyId.Equals(component.CurrencyId)))
-                                                    .Select(ac => ac.Value)
-                                                    .SingleOrDefault());
+                                                * mCap_avgPrice;
 
                                 if (!decimal.Zero.Equals(marketCap))
                                 {
