@@ -211,25 +211,50 @@ namespace Nozomi.Service.Events
         public ICollection<RequestComponent> GetAllByCorrelation(long analysedComponentId)
         {
             // First, obtain the correlation PCPs
-            var correlPCPs = _unitOfWork.GetRepository<CurrencyPair>()
+            var correlPCPs = _unitOfWork.GetRepository<CurrencyPairRequest>()
                 .GetQueryable()
                 .AsNoTracking()
-                .Where(cp => cp.IsEnabled && cp.DeletedAt == null)
-                .Include(cp => cp.CurrencyPairRequests)
-                .ThenInclude(cpr => cpr.AnalysedComponents)
-                .Where(cp => cp.CurrencyPairRequests
-                    .Any(cpr => cpr.DeletedAt == null && cpr.IsEnabled
-                                                      // We can ignore disabled or deleted ACs, just using this 
-                                                      // to find the correlation
-                                                      && cpr.AnalysedComponents.Any(ac =>
-                                                          ac.Id.Equals(analysedComponentId))))
-                .Include(cp => cp.PartialCurrencyPairs)
-                .ThenInclude(pcp => pcp.Currency)
-                .SelectMany(cp => cp.PartialCurrencyPairs)
-                .DefaultIfEmpty()
+                .Where(cpr => cpr.DeletedAt == null && cpr.IsEnabled)
+                .Include(cpr => cpr.AnalysedComponents)
+                // Make sure the AC in question is in this CPR.
+                .Where(cpr => cpr.AnalysedComponents.Any(ac => ac.Id.Equals(analysedComponentId)))
+                .Include(cpr => cpr.CurrencyPair)
+                .ThenInclude(cp => cp.PartialCurrencyPairs)
+                .Where(cpr => cpr.CurrencyPair != null && cpr.CurrencyPair.PartialCurrencyPairs.Any())
+                .SelectMany(cpr => cpr.CurrencyPair.PartialCurrencyPairs)
                 .ToList();
             
             if (correlPCPs.Any()) return new List<RequestComponent>();
+            
+            #if DEBUG
+            var testQ = _unitOfWork.GetRepository<CurrencyPairRequest>()
+                .GetQueryable()
+                .AsNoTracking()
+                .Where(cpr => cpr.IsEnabled && cpr.DeletedAt == null)
+                .Include(cpr => cpr.CurrencyPair)
+                .ThenInclude(cp => cp.PartialCurrencyPairs)
+                .Where(cpr => cpr.CurrencyPair != null
+                              // Make sure the main currencies are identical
+                              && cpr.CurrencyPair.PartialCurrencyPairs.FirstOrDefault(pcp => pcp.IsMain).Currency.Abbrv
+                                  .Equals(correlPCPs.FirstOrDefault(pcp => pcp.IsMain).Currency.Abbrv)
+                              // Make sure the counter currencies are identical
+                              && cpr.CurrencyPair.PartialCurrencyPairs.FirstOrDefault(pcp => !pcp.IsMain).Currency.Abbrv
+                                  .Equals(correlPCPs.FirstOrDefault(pcp => !pcp.IsMain).Currency.Abbrv))
+                .Include(cpr => cpr.RequestComponents)
+                .ThenInclude(rc => rc.RequestComponentDatum)
+                .Where(cpr => cpr.RequestComponents.Any())
+                .SelectMany(cpr => cpr.RequestComponents
+                    .Where(rc => rc.RequestComponentDatum != null)
+                    .Select(rc => new RequestComponent
+                    {
+                        Id = rc.Id,
+                        ComponentType = rc.ComponentType,
+                        Identifier = rc.Identifier,
+                        QueryComponent = rc.QueryComponent,
+                        RequestComponentDatum = rc.RequestComponentDatum
+                    }))
+                .ToList();
+            #endif
             
             return _unitOfWork.GetRepository<CurrencyPairRequest>()
                 .GetQueryable()
