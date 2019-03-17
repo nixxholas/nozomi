@@ -290,6 +290,57 @@ namespace Nozomi.Service.Events
 
             if (qCurrency == null) return null;
             
+            #if DEBUG
+            var testCR = _unitOfWork.GetRepository<CurrencyRequest>()
+                .GetQueryable()
+                .AsNoTracking()
+                .Where(cr => cr.IsEnabled && cr.DeletedAt == null
+                                          // Filter via qCurrency
+                             && cr.CurrencyId.Equals(qCurrency.Id))
+                .Include(cpr => cpr.RequestComponents)
+                .ThenInclude(rc => rc.RequestComponentDatum)
+//                .Where(cpr => cpr.RequestComponents
+//                    .Any(rc => rc.DeletedAt == null
+//                               && rc.IsEnabled))
+//                .SelectMany(cpr => cpr.RequestComponents
+//                    .Where(rc => rc.RequestComponentDatum != null)
+//                    .Select(rc => new RequestComponent
+//                    {
+//                        Id = rc.Id,
+//                        ComponentType = rc.ComponentType,
+//                        Identifier = rc.Identifier,
+//                        QueryComponent = rc.QueryComponent,
+//                        RequestComponentDatum = rc.RequestComponentDatum
+//                    }))
+                .ToList();
+            
+            var testCPR = _unitOfWork.GetRepository<CurrencyPairRequest>()
+                .GetQueryable()
+                .AsNoTracking()
+                .Where(cpr => cpr.IsEnabled && cpr.DeletedAt == null)
+                .Include(cpr => cpr.CurrencyPair)
+                .ThenInclude(cp => cp.PartialCurrencyPairs)
+                // Filter via qCurrency
+                .Where(cpr => cpr.CurrencyPair.PartialCurrencyPairs
+                    .FirstOrDefault(pcp => pcp.IsMain).CurrencyId.Equals(qCurrency.Id))
+                .Include(cpr => cpr.RequestComponents)
+                .ThenInclude(rc => rc.RequestComponentDatum)
+//                .Where(cpr => cpr.RequestComponents
+//                    .Any(rc => rc.DeletedAt == null
+//                               && rc.IsEnabled))
+//                .SelectMany(cpr => cpr.RequestComponents
+//                    .Where(rc => rc.RequestComponentDatum != null)
+//                    .Select(rc => new RequestComponent
+//                    {
+//                        Id = rc.Id,
+//                        ComponentType = rc.ComponentType,
+//                        Identifier = rc.Identifier,
+//                        QueryComponent = rc.QueryComponent,
+//                        RequestComponentDatum = rc.RequestComponentDatum
+//                    }))
+                .ToList();
+            #endif
+            
             return _unitOfWork.GetRepository<CurrencyPairRequest>()
                 .GetQueryable()
                 .AsNoTracking()
@@ -301,7 +352,9 @@ namespace Nozomi.Service.Events
                     .FirstOrDefault(pcp => pcp.IsMain).CurrencyId.Equals(qCurrency.Id))
                 .Include(cpr => cpr.RequestComponents)
                 .ThenInclude(rc => rc.RequestComponentDatum)
-                .Where(cpr => cpr.RequestComponents.Any())
+                .Where(cpr => cpr.RequestComponents
+                    .Any(rc => rc.DeletedAt == null
+                               && rc.IsEnabled))
                 .SelectMany(cpr => cpr.RequestComponents
                     .Where(rc => rc.RequestComponentDatum != null)
                     .Select(rc => new RequestComponent
