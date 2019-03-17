@@ -94,9 +94,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                         case AnalysedComponentType.MarketCap:
                             var circuSupply = _currencyEvent.GetCirculatingSupply(component);
 
-                            if (circuSupply > 0 && components.Any(ac =>
-                                    ac.ComponentType.Equals(AnalysedComponentType.CurrentAveragePrice)
-                                    && !string.IsNullOrEmpty(ac.Value)))
+                            if (circuSupply > 0)
                             {
                                 var marketCap = circuSupply
                                                 * decimal.Parse(components
