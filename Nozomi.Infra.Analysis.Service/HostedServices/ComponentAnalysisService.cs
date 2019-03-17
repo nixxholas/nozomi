@@ -151,7 +151,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                 // Obtain all of the req components that are related to this AC.
                                 var correlatedReqComps = _requestComponentEvent.GetAllByCorrelation(component.Id);
 
-                                if (correlatedReqComps != null)
+                                if (correlatedReqComps != null && correlatedReqComps.Count > 0)
                                 {                                
                                     // Aggregate it
                                     var avgPrice = correlatedReqComps
