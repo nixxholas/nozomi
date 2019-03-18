@@ -159,7 +159,14 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                 var correlatedReqComps = _requestComponentEvent.GetAllByCorrelation(component.Id);
 
                                 if (correlatedReqComps != null && correlatedReqComps.Count > 0)
-                                {                                
+                                {             
+                                    #if DEBUG
+                                    var filteredCorrelatedReqComps = correlatedReqComps
+                                        .Where(rc => rc.ComponentType.Equals(ComponentType.Ask)
+                                                     || rc.ComponentType.Equals(ComponentType.Bid))
+                                        .ToList();
+                                    #endif
+                                    
                                     // Aggregate it
                                     var avgPrice = correlatedReqComps
                                         .Where(rc => rc.ComponentType.Equals(ComponentType.Ask) 
