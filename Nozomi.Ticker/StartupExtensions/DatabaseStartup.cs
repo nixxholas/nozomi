@@ -235,18 +235,7 @@ namespace Nozomi.Ticker.StartupExtensions
                                         Abbrv = "EUR",
                                         Name = "Euro",
                                         CurrencySourceId = bfxSource.Id,
-                                        WalletTypeId = 0,
-                                        AnalysedComponents = new List<AnalysedComponent>
-                                        {
-                                            new AnalysedComponent
-                                            {
-                                                ComponentType = AnalysedComponentType.CurrentAveragePrice,
-                                                Delay = 1000,
-                                                CreatedAt = DateTime.UtcNow,
-                                                ModifiedAt = DateTime.UtcNow,
-                                                DeletedAt = null
-                                            }
-                                        }
+                                        WalletTypeId = 0
                                     },
                                     new Currency
                                     {
@@ -763,15 +752,6 @@ namespace Nozomi.Ticker.StartupExtensions
                                         Delay = 2000,
                                         AnalysedComponents = new List<AnalysedComponent>
                                         {
-                                            // Calculates volume ONLY for this exact Currency pair on this exchange.
-//                                            new AnalysedComponent
-//                                            {
-//                                                ComponentType = AnalysedComponentType.DailyVolume,
-//                                                Delay = 1000,
-//                                                CreatedAt = DateTime.UtcNow,
-//                                                ModifiedAt = DateTime.UtcNow,
-//                                                DeletedAt = null
-//                                            },
                                             new AnalysedComponent
                                             {
                                                 ComponentType = AnalysedComponentType.CurrentAveragePrice,
