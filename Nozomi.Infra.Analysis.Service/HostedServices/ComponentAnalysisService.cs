@@ -51,7 +51,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
             {
                 try
                 {
-                    var items = _analysedComponentEvent.GetAll(true, true);
+                    var items = _analysedComponentEvent.GetAll(true);
 
                     if (Analyse(items.ToList()))
                     {
@@ -93,6 +93,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                         // Calculate the market cap.
                         case AnalysedComponentType.MarketCap:
                             var circuSupply = _currencyEvent.GetCirculatingSupply(component);
+                            var analysedComponents = _analysedComponentEvent.GetAllByCorrelation(component.Id);
 
                             #if DEBUG
                             var comps = components
@@ -104,33 +105,22 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                     ac.CurrencyId.Equals(component.CurrencyId)) > 0;
                             
                                 // Parsable average?
-                            var averagePrice = decimal.Parse(components
+                            var averagePrice = decimal.Parse(analysedComponents
                                 .Where(ac => ac.ComponentType.Equals(AnalysedComponentType
-                                                 .CurrentAveragePrice)
-                                             // Make sure this component matches the other
-                                             && (ac.RequestId < 1) ? 
-                                    ac.RequestId.Equals(component.RequestId) : 
-                                    ac.CurrencyId.Equals(component.CurrencyId))
+                                                 .CurrentAveragePrice))
                                 .Select(ac => ac.Value)
                                 .SingleOrDefault() ?? "0");
                             #endif
 
+                            // Parsable average?
                             if (circuSupply > 0
-                                && components
-                                    .Count(ac => ac.ComponentType.Equals(AnalysedComponentType.CurrentAveragePrice)
-                                                 // Make sure this component matches the other
-                                                 && (ac.RequestId < 1) ? ac.RequestId.Equals(component.RequestId) : 
-                                        ac.CurrencyId.Equals(component.CurrencyId)) > 0
                                 // Parsable average?
-                                && decimal.TryParse(components
-                                    .Where(ac => ac.ComponentType.Equals(AnalysedComponentType
-                                                     .CurrentAveragePrice)
-                                                 // Make sure this component matches the other
-                                                 && (ac.RequestId < 1) ? 
-                                        ac.RequestId.Equals(component.RequestId) : 
-                                        ac.CurrencyId.Equals(component.CurrencyId))
-                                    .Select(ac => ac.Value)
-                                    .SingleOrDefault(), out var mCap_avgPrice))
+                                && decimal.TryParse(analysedComponents
+                                                        .Where(ac =>
+                                                            ac.ComponentType.Equals(AnalysedComponentType
+                                                                .CurrentAveragePrice))
+                                                        .Select(ac => ac.Value)
+                                                        .SingleOrDefault() ?? "0", out var mCap_avgPrice))
                             {
                                 var marketCap = circuSupply
                                                 * mCap_avgPrice;
