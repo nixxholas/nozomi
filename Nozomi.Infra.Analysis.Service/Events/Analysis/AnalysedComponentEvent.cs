@@ -116,7 +116,7 @@ namespace Nozomi.Infra.Analysis.Service.Events.Analysis
             return query;
         }
 
-        public ICollection<AnalysedComponent> GetAllByCurrency(long currencyId)
+        public ICollection<AnalysedComponent> GetAllByCurrency(long currencyId, bool track = false)
         {
             // First, obtain the currency in question
             var qCurrency = _unitOfWork.GetRepository<Currency>()
@@ -150,18 +150,37 @@ namespace Nozomi.Infra.Analysis.Service.Events.Analysis
                 .SelectMany(cpr => cpr.AnalysedComponents);
 
             if (!finalQuery.Any()) return new List<AnalysedComponent>();
+
+            if (!track)
+            {
+                return finalQuery
+                    .Select(ac => new AnalysedComponent
+                    {
+                        Id = ac.Id,
+                        ComponentType = ac.ComponentType,
+                        Value = ac.Value,
+                        Delay = ac.Delay,
+                        RequestId = ac.RequestId,
+                        CurrencyId = ac.CurrencyId
+                    })
+                    .ToList();
+            }
             
             return finalQuery
                 .Select(ac => new AnalysedComponent
                 {
+                    AnalysedHistoricItems = ac.AnalysedHistoricItems,
                     Id = ac.Id,
                     ComponentType = ac.ComponentType,
-                    AnalysedHistoricItems = ac.AnalysedHistoricItems
+                    Value = ac.Value,
+                    Delay = ac.Delay,
+                    RequestId = ac.RequestId,
+                    CurrencyId = ac.CurrencyId
                 })
                 .ToList();
         }
 
-        public ICollection<AnalysedComponent> GetAllByCorrelation(long analysedComponentId)
+        public ICollection<AnalysedComponent> GetAllByCorrelation(long analysedComponentId, bool track = false)
         {
             // First, obtain the correlation PCPs
             var correlPCPs = _unitOfWork.GetRepository<CurrencyPair>()
@@ -195,21 +214,41 @@ namespace Nozomi.Infra.Analysis.Service.Events.Analysis
                 if (currency != null)
                 {
                     // Obtain all analysed components relevant to the generic counter currency
-                    return _unitOfWork.GetRepository<CurrencyPair>()
+                    var currencyACs = _unitOfWork.GetRepository<CurrencyPair>()
                         .GetQueryable()
                         .AsNoTracking()
                         .Where(cp => cp.DeletedAt == null && cp.IsEnabled)
                         .Include(cp => cp.PartialCurrencyPairs)
                         .ThenInclude(pcp => pcp.Currency)
-                        .Where(cp => 
+                        .Where(cp =>
                             cp.PartialCurrencyPairs.FirstOrDefault(pcp => pcp.IsMain).Currency.Abbrv
                                 .Equals(currency.Abbrv, StringComparison.InvariantCultureIgnoreCase)
                             // Counter currency is the generic counter currency
                             && cp.PartialCurrencyPairs.FirstOrDefault(pcp => !pcp.IsMain).Currency.Abbrv
-                                .Equals(CoreConstants.GenericCounterCurrency, 
+                                .Equals(CoreConstants.GenericCounterCurrency,
                                     StringComparison.InvariantCultureIgnoreCase))
                         .Include(cp => cp.CurrencyPairRequests)
-                        .ThenInclude(cpr => cpr.AnalysedComponents)
+                        .ThenInclude(cpr => cpr.AnalysedComponents);
+
+                    if (track)
+                    {
+                        return currencyACs
+                            .ThenInclude(ac => ac.AnalysedHistoricItems)
+                            .SelectMany(cp => cp.CurrencyPairRequests)
+                            .SelectMany(cpr => cpr.AnalysedComponents)
+                            .Select(ac => new AnalysedComponent
+                            {
+                                Id = ac.Id,
+                                ComponentType = ac.ComponentType,
+                                Value = ac.Value,
+                                Delay = ac.Delay,
+                                RequestId = ac.RequestId,
+                                CurrencyId = ac.CurrencyId
+                            })
+                            .ToList();
+                    }
+                    
+                    return currencyACs
                         .SelectMany(cp => cp.CurrencyPairRequests)
                         .SelectMany(cpr => cpr.AnalysedComponents)
                         .Select(ac => new AnalysedComponent
@@ -249,21 +288,38 @@ namespace Nozomi.Infra.Analysis.Service.Events.Analysis
                                                                               && cpr.AnalysedComponents
                                                                                   .Any(ac =>
                                                                                       ac.IsEnabled && ac.DeletedAt ==
-                                                                                                   null
-                                                                                                   && ac.AnalysedHistoricItems !=
                                                                                                    null)))
                 .SelectMany(cp => cp.CurrencyPairRequests)
                 .SelectMany(cpr => cpr.AnalysedComponents);
 
             if (!finalQuery.Any()) return new List<AnalysedComponent>();
 
+            if (!track)
+            {
+                return finalQuery
+                    .Select(ac => new AnalysedComponent
+                    {
+                        Id = ac.Id,
+                        ComponentType = ac.ComponentType,
+                        Value = ac.Value,
+                        Delay = ac.Delay,
+                        RequestId = ac.RequestId,
+                        CurrencyId = ac.CurrencyId
+                    })
+                    .ToList();
+            }
+
             return finalQuery
                 .Where(ac => ac.AnalysedHistoricItems != null)
                 .Select(ac => new AnalysedComponent
                 {
+                    AnalysedHistoricItems = ac.AnalysedHistoricItems,
                     Id = ac.Id,
                     ComponentType = ac.ComponentType,
-                    AnalysedHistoricItems = ac.AnalysedHistoricItems
+                    Value = ac.Value,
+                    Delay = ac.Delay,
+                    RequestId = ac.RequestId,
+                    CurrencyId = ac.CurrencyId
                 })
                 .ToList();
         }

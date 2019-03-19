@@ -9,9 +9,9 @@ namespace Nozomi.Infra.Analysis.Service.Events.Analysis.Interfaces
         
         IEnumerable<AnalysedComponent> GetAll(bool filter = false, bool track = false);
 
-        ICollection<AnalysedComponent> GetAllByCurrency(long currencyId);
+        ICollection<AnalysedComponent> GetAllByCurrency(long currencyId, bool track = false);
 
-        ICollection<AnalysedComponent> GetAllByCorrelation(long analysedComponentId);
+        ICollection<AnalysedComponent> GetAllByCorrelation(long analysedComponentId, bool track = false);
 
         string GetCurrencyAbbreviation(AnalysedComponent analysedComponent);
     }
