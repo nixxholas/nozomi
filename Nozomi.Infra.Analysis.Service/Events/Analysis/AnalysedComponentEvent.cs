@@ -238,6 +238,7 @@ namespace Nozomi.Infra.Analysis.Service.Events.Analysis
                             .SelectMany(cpr => cpr.AnalysedComponents)
                             .Select(ac => new AnalysedComponent
                             {
+                                AnalysedHistoricItems = ac.AnalysedHistoricItems,
                                 Id = ac.Id,
                                 ComponentType = ac.ComponentType,
                                 Value = ac.Value,
