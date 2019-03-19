@@ -112,7 +112,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                 .Where(ac => ac.ComponentType.Equals(AnalysedComponentType
                                                  .CurrentAveragePrice))
                                 .Select(ac => ac.Value)
-                                .SingleOrDefault() ?? "0");
+                                .FirstOrDefault() ?? "0");
                             #endif
 
                             // Parsable average?
@@ -123,7 +123,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                                             ac.ComponentType.Equals(AnalysedComponentType
                                                                 .CurrentAveragePrice))
                                                         .Select(ac => ac.Value)
-                                                        .SingleOrDefault() ?? "0", out var mCap_avgPrice))
+                                                        .FirstOrDefault() ?? "0", out var mCap_avgPrice))
                             {
                                 var marketCap = circuSupply
                                                 * mCap_avgPrice;
