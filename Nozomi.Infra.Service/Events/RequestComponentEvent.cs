@@ -235,8 +235,36 @@ namespace Nozomi.Service.Events
                     }))
                 .DefaultIfEmpty()
                 .ToList();
-            
-            if (correlPCPs.Count < 2) return new List<RequestComponent>();
+
+            if (correlPCPs.Count < 2)
+            {
+                return _unitOfWork.GetRepository<Currency>()
+                    .GetQueryable()
+                    .AsNoTracking()
+                    .Where(cp => cp.IsEnabled && cp.DeletedAt == null)
+                    .Include(c => c.CurrencyRequests)
+                    .ThenInclude(cpr => cpr.AnalysedComponents)
+                    .Where(c => c.CurrencyRequests
+                        .Any(cr => cr.DeletedAt == null && cr.IsEnabled
+                                                        // We can ignore disabled or deleted ACs, just using this 
+                                                        // to find the correlation
+                                                        && cr.AnalysedComponents.Any(ac =>
+                                                            ac.Id.Equals(analysedComponentId))))
+                    .Include(c => c.CurrencyRequests)
+                    .ThenInclude(c => c.RequestComponents)
+                    .ThenInclude(rc => rc.RequestComponentDatum)
+                    .SelectMany(c => c.CurrencyRequests)
+                    .SelectMany(cr => cr.RequestComponents)
+                    .Select(rc => new RequestComponent
+                    {
+                        Id = rc.Id,
+                        ComponentType = rc.ComponentType,
+                        Identifier = rc.Identifier,
+                        QueryComponent = rc.QueryComponent,
+                        RequestComponentDatum = rc.RequestComponentDatum
+                    })
+                    .ToList();
+            }
             
             #if DEBUG
             var testQstr = correlPCPs.FirstOrDefault(pcp => pcp.IsMain).Currency.Abbrv
