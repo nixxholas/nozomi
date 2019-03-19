@@ -804,6 +804,10 @@ namespace Nozomi.Ticker.StartupExtensions
                                     .SingleOrDefault(c =>
                                         c.Abbrv.Equals("USD") &&
                                         c.CurrencySource.Abbreviation.Equals(bfxSource.Abbreviation));
+                                var eurBfx = context.Currencies.Include(c => c.CurrencySource)
+                                    .SingleOrDefault(c =>
+                                        c.Abbrv.Equals("EUR") &&
+                                        c.CurrencySource.Abbreviation.Equals(bfxSource.Abbreviation));
                                 var ethBfx = context.Currencies.Include(c => c.CurrencySource)
                                     .SingleOrDefault(c =>
                                         c.Abbrv.Equals("ETH") &&
@@ -937,6 +941,18 @@ namespace Nozomi.Ticker.StartupExtensions
                                         CurrencyId = btsPOLO.Id,
                                         IsMain = false,
                                         CurrencyPairId = currencyPairs[6].Id
+                                    },
+                                    new PartialCurrencyPair()
+                                    {
+                                        CurrencyId = ethBfx.Id,
+                                        IsMain = true,
+                                        CurrencyPairId = currencyPairs[7].Id
+                                    },
+                                    new PartialCurrencyPair()
+                                    {
+                                        CurrencyId = eurBfx.Id,
+                                        IsMain = false,
+                                        CurrencyPairId = currencyPairs[7].Id
                                     });
 
                                 context.SaveChanges();
