@@ -181,6 +181,53 @@ namespace Nozomi.Infra.Analysis.Service.Events.Analysis
                 .SelectMany(cp => cp.PartialCurrencyPairs)
                 .ToList();
 
+            // Check if its a currency-based correlation
+            if (correlPCPs.Count < 2)
+            {
+                // Since it is currency based, let's take a look
+                var currency = _unitOfWork.GetRepository<Currency>()
+                    .GetQueryable()
+                    .AsNoTracking()
+                    .Where(c => c.DeletedAt == null && c.IsEnabled)
+                    .Include(c => c.AnalysedComponents)
+                    .FirstOrDefault(c => c.AnalysedComponents.Any(ac => ac.Id.Equals(analysedComponentId)));
+
+                if (currency != null)
+                {
+                    // Obtain all analysed components relevant to the generic counter currency
+                    return _unitOfWork.GetRepository<CurrencyPair>()
+                        .GetQueryable()
+                        .AsNoTracking()
+                        .Where(cp => cp.DeletedAt == null && cp.IsEnabled)
+                        .Include(cp => cp.PartialCurrencyPairs)
+                        .ThenInclude(pcp => pcp.Currency)
+                        .Where(cp => 
+                            cp.PartialCurrencyPairs.FirstOrDefault(pcp => pcp.IsMain).Currency.Abbrv
+                                .Equals(currency.Abbrv, StringComparison.InvariantCultureIgnoreCase)
+                            // Counter currency is the generic counter currency
+                            && cp.PartialCurrencyPairs.FirstOrDefault(pcp => !pcp.IsMain).Currency.Abbrv
+                                .Equals(CoreConstants.GenericCounterCurrency, 
+                                    StringComparison.InvariantCultureIgnoreCase))
+                        .Include(cp => cp.CurrencyPairRequests)
+                        .ThenInclude(cpr => cpr.AnalysedComponents)
+                        .SelectMany(cp => cp.CurrencyPairRequests)
+                        .SelectMany(cpr => cpr.AnalysedComponents)
+                        .Select(ac => new AnalysedComponent
+                        {
+                            Id = ac.Id,
+                            ComponentType = ac.ComponentType,
+                            Value = ac.Value,
+                            Delay = ac.Delay,
+                            RequestId = ac.RequestId,
+                            CurrencyId = ac.CurrencyId
+                        })
+                        .ToList();
+                }
+                
+                // Empty since nothing
+                return new List<AnalysedComponent>();
+            }
+
             // Then we return
             var finalQuery = _unitOfWork.GetRepository<CurrencyPair>()
                 .GetQueryable()
