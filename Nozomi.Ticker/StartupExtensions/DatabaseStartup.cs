@@ -747,6 +747,7 @@ namespace Nozomi.Ticker.StartupExtensions
                                     {
                                         Guid = Guid.NewGuid(),
                                         RequestType = RequestType.HttpGet,
+                                        ResponseType = ResponseType.Json,
                                         DataPath = "https://api.bitfinex.com/v1/pubticker/etheur",
                                         CurrencyPairId = currencyPairs[7].Id,
                                         Delay = 2000,
