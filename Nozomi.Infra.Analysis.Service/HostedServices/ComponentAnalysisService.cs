@@ -51,7 +51,8 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
             {
                 try
                 {
-                    var items = _analysedComponentEvent.GetAll(true);
+                    var items = _analysedComponentEvent.GetAll(true)
+                        .OrderBy(ac => ac.Id);
 
                     if (Analyse(items.ToList()))
                     {
@@ -83,6 +84,8 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
         /// <returns>Success or failure of collection processing</returns>
         public bool Analyse(ICollection<AnalysedComponent> components)
         {
+            if (components == null || components.Count <= 0) return false;
+            
             foreach (var component in components)
             {
                 // Always stash the value first
@@ -484,7 +487,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                 }
             }
 
-            return false; // Failed miserably while stashing
+            return true;
         }
 
         public bool Stash(AnalysedComponent component)
