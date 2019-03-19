@@ -116,20 +116,19 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                             #endif
 
                             if (circuSupply > 0
-                                && components.Any(ac =>
-                                    // Look for the average price
-                                    ac.ComponentType.Equals(AnalysedComponentType.CurrentAveragePrice)
-                                    // Make sure this component matches the other
-                                    && (ac.RequestId.Equals(component.RequestId) ||
-                                        ac.CurrencyId.Equals(component.CurrencyId))
-                                    )
+                                && components
+                                    .Count(ac => ac.ComponentType.Equals(AnalysedComponentType.CurrentAveragePrice)
+                                                 // Make sure this component matches the other
+                                                 && (ac.RequestId < 1) ? ac.RequestId.Equals(component.RequestId) : 
+                                        ac.CurrencyId.Equals(component.CurrencyId)) > 0
                                 // Parsable average?
                                 && decimal.TryParse(components
                                     .Where(ac => ac.ComponentType.Equals(AnalysedComponentType
                                                      .CurrentAveragePrice)
                                                  // Make sure this component matches the other
-                                                 && (ac.RequestId.Equals(component.RequestId)
-                                                     || ac.CurrencyId.Equals(component.CurrencyId)))
+                                                 && (ac.RequestId < 1) ? 
+                                        ac.RequestId.Equals(component.RequestId) : 
+                                        ac.CurrencyId.Equals(component.CurrencyId))
                                     .Select(ac => ac.Value)
                                     .SingleOrDefault(), out var mCap_avgPrice))
                             {
