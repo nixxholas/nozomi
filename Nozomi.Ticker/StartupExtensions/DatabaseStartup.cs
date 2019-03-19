@@ -495,6 +495,14 @@ namespace Nozomi.Ticker.StartupExtensions
                                                 CreatedAt = DateTime.UtcNow,
                                                 ModifiedAt = DateTime.UtcNow,
                                                 DeletedAt = null
+                                            },
+                                            new AnalysedComponent()
+                                            {
+                                                ComponentType = AnalysedComponentType.DailyPricePctChange,
+                                                Delay = 500,
+                                                CreatedAt = DateTime.UtcNow,
+                                                ModifiedAt = DateTime.UtcNow,
+                                                DeletedAt = null
                                             }
                                         },
                                         RequestComponents = new List<RequestComponent>()
