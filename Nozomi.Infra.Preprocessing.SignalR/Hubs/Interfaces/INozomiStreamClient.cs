@@ -7,7 +7,7 @@ using Nozomi.Data.ResponseModels.Ticker;
 
 namespace Nozomi.Infra.Preprocessing.SignalR.Hubs.Interfaces
 {
-    public interface ITickerHubClient
+    public interface INozomiStreamClient
     {
         /// <summary>
         /// Dispatches 

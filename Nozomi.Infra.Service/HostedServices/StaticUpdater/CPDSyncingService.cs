@@ -28,7 +28,7 @@
 //        IHostedService, IDisposable
 //    {
 //        private readonly NozomiDbContext _nozomiDbContext;
-//        private readonly IHubContext<NozomiStreamHub, ITickerHubClient> _nozomiStreamHub;
+//        private readonly IHubContext<NozomiStreamHub, INozomiStreamClient> _nozomiStreamHub;
 //        
 //        private static readonly Func<NozomiDbContext, IEnumerable<DiscoverabeTickerResponse>> 
 //            GetActiveDiscoverableTickerResponses =
@@ -83,7 +83,7 @@
 //                        }));
 //        
 //        public CPDSyncingService(IServiceProvider serviceProvider,
-//            IHubContext<NozomiStreamHub, ITickerHubClient> tickerHub, 
+//            IHubContext<NozomiStreamHub, INozomiStreamClient> tickerHub, 
 //            IHubContext<NozomiSourceStreamHub, ISourceHubClient> nozomiSourceStreamHub) : base(serviceProvider)
 //        {
 //            _nozomiDbContext = _scope.ServiceProvider.GetService<NozomiDbContext>();

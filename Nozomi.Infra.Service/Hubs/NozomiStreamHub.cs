@@ -14,7 +14,7 @@ using Nozomi.Service.Services.Interfaces;
 
 namespace Nozomi.Service.Hubs
 {
-    public class NozomiStreamHub : Hub<ITickerHubClient>
+    public class NozomiStreamHub : Hub<INozomiStreamClient>
     {
         private readonly ILogger<NozomiStreamHub> _logger;
         public IDictionary<string, ICollection<NozomiSocketGroup>> _subscriptions;
