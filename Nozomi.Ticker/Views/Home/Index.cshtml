@@ -220,6 +220,7 @@
           }
         ],
         currentTickerDataPage: 1,
+        currencies: [],
         tickerData: [],
         tickerDataRowsPerPage: 40,
         tickerDataRows: 0
@@ -232,6 +233,7 @@
         // https://github.com/aspnet/SignalR/issues/3294
         connection.start().then(() => {
           connection.invoke("Subscribe", 1).catch(err => console.error(err.toString()));
+          connection.invoke("Subscribe", 2).catch(err => console.error(err.toString()));
         }).catch(err => document.write(err));
 
         function start() {
@@ -253,6 +255,12 @@
             //console.dir(tickers);
             this.tickerData = tickers;
             this.tickerDataRows = tickers.length;
+          });
+        
+        connection.on("currencies",
+          (currencies) => {
+            console.dir(currencies);
+            this.currencies = currencies;
           });
       },
       methods: {
