@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore.Internal;
 using Nozomi.Base.Core;
 using Nozomi.Data.Models.Currency;
 using Nozomi.Data.Models.Web;
+using Nozomi.Data.Models.Web.Analytical;
 using Nozomi.Data.ResponseModels.RequestComponent;
 
 namespace Nozomi.Data.ResponseModels.Currency
@@ -17,6 +18,28 @@ namespace Nozomi.Data.ResponseModels.Currency
     {
         public DetailedCurrencyResponse()
         {
+        }
+
+        public DetailedCurrencyResponse(Models.Currency.Currency currency)
+        {
+            if (currency != null)
+            {
+                Name = currency.Name;
+                Abbreviation = currency.Abbrv;
+                LastUpdated = DateTime.UtcNow;
+                AveragePrice = decimal.Parse(currency.AnalysedComponents.FirstOrDefault(ac =>
+                                                     ac.DeletedAt == null && ac.IsEnabled
+                                                                          && ac.ComponentType.Equals(AnalysedComponentType.CurrentAveragePrice))
+                                                 ?.Value ?? "0");
+                DailyAvgPricePctChange = decimal.Parse(currency.AnalysedComponents.FirstOrDefault(ac =>
+                                                     ac.DeletedAt == null && ac.IsEnabled
+                                                                          && ac.ComponentType.Equals(AnalysedComponentType.DailyPricePctChange))
+                                                 ?.Value ?? "0");
+                MarketCap = decimal.Parse(currency.AnalysedComponents.FirstOrDefault(ac =>
+                                                  ac.DeletedAt == null && ac.IsEnabled
+                                                                       && ac.ComponentType.Equals(AnalysedComponentType.MarketCap))
+                                              ?.Value ?? "0");
+            }
         }
         
         /// <summary>
@@ -161,6 +184,12 @@ namespace Nozomi.Data.ResponseModels.Currency
                 }
             }
         }
+        
+        public decimal AveragePrice { get; set; }
+        
+        public decimal DailyAvgPricePctChange { get; set; }
+        
+        public decimal MarketCap { get; set; }
 
         public Dictionary<ComponentType, List<ComponentHistoricalDatum>> Historical { get; set; }
     }
