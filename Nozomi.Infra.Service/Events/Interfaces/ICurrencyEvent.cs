@@ -16,7 +16,14 @@ namespace Nozomi.Service.Events.Interfaces
         /// <param name="analysedComponent">The AnalysedComponent used to query the result.</param>
         /// <returns>Circulating supply of the currency in question.</returns>
         decimal GetCirculatingSupply(AnalysedComponent analysedComponent);
-        
+
+        /// <summary>
+        /// Provides the requestor detailed currency data
+        /// </summary>
+        /// <param name="currencyTypeId"></param>
+        /// <returns></returns>
+        ICollection<DetailedCurrencyResponse> GetAllDetailed(long currencyTypeId = 0);
+
         /// <summary>
         /// Enables to caller to obtained a detailed about regarding a currency,
         /// including it's historical data, whichever declared/asked for.

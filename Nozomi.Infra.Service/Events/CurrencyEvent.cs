@@ -160,6 +160,32 @@ namespace Nozomi.Service.Events
             }
         }
 
+        public ICollection<DetailedCurrencyResponse> GetAllDetailed(long currencyTypeId = 0)
+        {
+            var res = new List<DetailedCurrencyResponse>();
+            
+            var currencies = _unitOfWork.GetRepository<Currency>()
+                .GetQueryable()
+                .AsNoTracking()
+                .Where(c => c.DeletedAt == null && c.IsEnabled)
+                .Include(c => c.AnalysedComponents);
+
+            if (currencies != null)
+            {
+                foreach (var currency in currencies)
+                {
+                    // Do not add duplicates
+                    if (res.Any(item =>
+                        item.Abbreviation.Equals(currency.Abbrv, StringComparison.InvariantCultureIgnoreCase)))
+                    {
+                        res.Add(new DetailedCurrencyResponse(currency));
+                    }
+                }
+            }
+
+            return res;
+        }
+
         public DetailedCurrencyResponse GetDetailedById(long currencyId, ICollection<ComponentType> componentTypes)
         {
             var query = _unitOfWork.GetRepository<CurrencyPair>()
