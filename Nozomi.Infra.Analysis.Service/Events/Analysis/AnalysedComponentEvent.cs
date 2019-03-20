@@ -198,6 +198,13 @@ namespace Nozomi.Infra.Analysis.Service.Events.Analysis
                 .Include(cp => cp.PartialCurrencyPairs)
                 .ThenInclude(pcp => pcp.Currency)
                 .SelectMany(cp => cp.PartialCurrencyPairs)
+                .Select(pcp => new PartialCurrencyPair
+                {
+                    CurrencyId = pcp.CurrencyId,
+                    CurrencyPairId = pcp.CurrencyPairId,
+                    Currency = pcp.Currency,
+                    IsMain = pcp.IsMain
+                })
                 .ToList();
 
             // Check if its a currency-based correlation
