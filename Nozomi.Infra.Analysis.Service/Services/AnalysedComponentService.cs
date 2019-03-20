@@ -46,8 +46,12 @@ namespace Nozomi.Infra.Analysis.Service.Services
                     _unitOfWork.GetRepository<AnalysedHistoricItem>()
                         .Add(new AnalysedHistoricItem
                         {
+                            AnalysedComponentId = comp.Id,
+                            HistoricDateTime = comp.CreatedAt,
                             Value = comp.Value
                         });
+
+                    _unitOfWork.Commit();
                 }
                 
                 comp.Value = value;
