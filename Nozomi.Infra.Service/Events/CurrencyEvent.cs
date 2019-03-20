@@ -175,7 +175,7 @@ namespace Nozomi.Service.Events
                 foreach (var currency in currencies)
                 {
                     // Do not add duplicates
-                    if (res.Any(item =>
+                    if (!res.Any(item =>
                         item.Abbreviation.Equals(currency.Abbrv, StringComparison.InvariantCultureIgnoreCase)))
                     {
                         res.Add(new DetailedCurrencyResponse(currency));
