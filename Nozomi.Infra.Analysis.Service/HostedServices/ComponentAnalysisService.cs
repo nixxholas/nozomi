@@ -605,6 +605,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                 var res = _analysedHistoricItemService.Create(new AnalysedHistoricItem
                 {
                     AnalysedComponentId = component.Id,
+                    HistoricDateTime = component.CreatedAt,
                     Value = component.Value
                 });
 
@@ -612,7 +613,20 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
             }
             else
             {
-                return true; // This component does not have a historical object yet..
+                // This component does not have a historical object yet..
+                
+                // Failsafe
+                if (string.IsNullOrEmpty(component.Value)) return true; // Job done, don't save since its null. 
+                
+                // Save it
+                var res = _analysedHistoricItemService.Create(new AnalysedHistoricItem
+                {
+                    AnalysedComponentId = component.Id,
+                    HistoricDateTime = component.CreatedAt,
+                    Value = component.Value
+                });
+                
+                return res > 0;
             }
         }
     }
