@@ -23,7 +23,8 @@ namespace Nozomi.Infra.Analysis.Service.Events.Analysis
             return _unitOfWork.GetRepository<AnalysedHistoricItem>()
                 .GetQueryable()
                 .AsNoTracking()
-                .SingleOrDefault(ahi => ahi.AnalysedComponentId.Equals(analysedComponentId));
+                .OrderByDescending(ahi => ahi.HistoricDateTime)
+                .FirstOrDefault(ahi => ahi.AnalysedComponentId.Equals(analysedComponentId));
         }
     }
 }
