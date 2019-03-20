@@ -4,18 +4,23 @@ using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Nozomi.Base.Core.Helpers.Enumerator;
 using Nozomi.Data.Models.Currency;
 using Nozomi.Data.Models.Web;
 using Nozomi.Data.Models.Web.Analytical;
 using Nozomi.Infra.Analysis.Service.Events.Analysis.Interfaces;
 using Nozomi.Infra.Analysis.Service.HostedServices.Interfaces;
 using Nozomi.Infra.Analysis.Service.Services.Interfaces;
+using Nozomi.Infra.Preprocessing.SignalR;
+using Nozomi.Infra.Preprocessing.SignalR.Hubs.Interfaces;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Service.Events.Interfaces;
+using Nozomi.Service.Hubs;
 
 namespace Nozomi.Infra.Analysis.Service.HostedServices
 {
@@ -29,8 +34,11 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
         private readonly IAnalysedHistoricItemService _analysedHistoricItemService;
         private readonly ICurrencyEvent _currencyEvent;
         private readonly IRequestComponentEvent _requestComponentEvent;
+        
+        private readonly IHubContext<NozomiStreamHub, INozomiStreamClient> _nozomiStreamHub;
 
-        public ComponentAnalysisService(IServiceProvider serviceProvider)
+        public ComponentAnalysisService(IServiceProvider serviceProvider,
+            IHubContext<NozomiStreamHub, INozomiStreamClient> nozomiStreamHub)
             : base(serviceProvider)
         {
             _analysedComponentEvent = _scope.ServiceProvider.GetRequiredService<IAnalysedComponentEvent>();
@@ -39,6 +47,8 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
             _analysedHistoricItemService = _scope.ServiceProvider.GetRequiredService<IAnalysedHistoricItemService>();
             _currencyEvent = _scope.ServiceProvider.GetRequiredService<ICurrencyEvent>();
             _requestComponentEvent = _scope.ServiceProvider.GetRequiredService<IRequestComponentEvent>();
+
+            _nozomiStreamHub = nozomiStreamHub;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -69,9 +79,13 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                 {
                     _logger.LogCritical("[ComponentAnalysisService]: " + ex);
                 }
+                
+                // Push the updated currency data
+                await _nozomiStreamHub.Clients.Group(NozomiSocketGroup.Currencies.GetDescription())
+                    .Currencies(_currencyEvent.GetAllDetailed());
 
                 // No naps taken
-                await Task.Delay(10000, stoppingToken);
+                await Task.Delay(100, stoppingToken);
             }
 
             _logger.LogWarning("ComponentAnalysisService background task is stopping.");
