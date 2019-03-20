@@ -1,6 +1,6 @@
 ﻿namespace Nozomi.Infra.Preprocessing.SignalR.Hubs.Headers
 {
-    public enum TickerHubHeader
+    public enum StreamHubHeader
     {
         Ping = 0,
         Subscription = 1
