@@ -557,23 +557,6 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                                        "DailyPricePctChange: no historical data yet.");
                                 }
                             }
-
-//                            var dailyCompute = component.Request.RequestComponents
-//                                .Select(rc => rc.RequestComponentDatum)
-//                                .SelectMany(rcd => rcd.RcdHistoricItems)
-//                                .Where(rcdhi => rcdhi.CreatedAt >= DateTime.UtcNow.Subtract(TimeSpan.FromDays(1)))
-//                                .Select(rcdhi => rcdhi.Value)
-//                                .DefaultIfEmpty()
-//                                .Average(val => decimal.Parse(val));
-
-//                            if (!decimal.Zero.Equals(dailyCompute))
-//                            {
-//                                // Update
-//                                if (_analysedComponentService.UpdateValue(component.Id, dailyCompute.ToString()))
-//                                {
-//                                    // Updated successfully
-//                                }
-//                            }
                             break;
                         // Calculate the daily volume.
                         case AnalysedComponentType.DailyVolume:
