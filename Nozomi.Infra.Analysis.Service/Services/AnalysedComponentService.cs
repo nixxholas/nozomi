@@ -41,19 +41,6 @@ namespace Nozomi.Infra.Analysis.Service.Services
 
             if (comp != null)
             {
-                if (!string.IsNullOrEmpty(comp.Value))
-                {
-                    _unitOfWork.GetRepository<AnalysedHistoricItem>()
-                        .Add(new AnalysedHistoricItem
-                        {
-                            AnalysedComponentId = comp.Id,
-                            HistoricDateTime = comp.CreatedAt,
-                            Value = comp.Value
-                        });
-
-                    _unitOfWork.Commit();
-                }
-                
                 comp.Value = value;
                 
                 _unitOfWork.GetRepository<AnalysedComponent>().Update(comp);
