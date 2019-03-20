@@ -14,6 +14,7 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
             entityTypeBuilder.Property(ahi => ahi.Id).ValueGeneratedOnAdd();
 
             entityTypeBuilder.Property(ahi => ahi.Value).IsRequired();
+            entityTypeBuilder.Property(ahi => ahi.HistoricDateTime).IsRequired();
 
             entityTypeBuilder.HasOne(ahi => ahi.AnalysedComponent)
                 .WithMany(ac => ac.AnalysedHistoricItems).HasForeignKey(ac => ac.AnalysedComponentId)
