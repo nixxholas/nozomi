@@ -74,15 +74,15 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                         _logger.LogWarning($"[{ServiceName}]" +
                                            " Something bad happened");
                     }
+                
+                    // Push the updated currency data
+                    await _nozomiStreamHub.Clients.Group(NozomiSocketGroup.Currencies.GetDescription())
+                        .Currencies(_currencyEvent.GetAllDetailed());
                 }
                 catch (Exception ex)
                 {
                     _logger.LogCritical("[ComponentAnalysisService]: " + ex);
                 }
-                
-                // Push the updated currency data
-                await _nozomiStreamHub.Clients.Group(NozomiSocketGroup.Currencies.GetDescription())
-                    .Currencies(_currencyEvent.GetAllDetailed());
 
                 // No naps taken
                 await Task.Delay(100, stoppingToken);
