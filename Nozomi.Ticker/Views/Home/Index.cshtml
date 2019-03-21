@@ -11,7 +11,7 @@
         <div class="w-100 mx-auto mb-9 mb-lg-0">
           <div class="mb-5">
             <h1 class="display-4 font-size-md-down-5 font-weight-semi-bold">Market data, all in one place.</h1>
-            <p>Detabox is the leading data metrics service that will support any <strong class="text-primary">endpoint</strong>.</p>
+            <p>Nozomi is the leading data metrics service that will support any <strong class="text-primary">endpoint</strong>.</p>
           </div>
         </div>
 
@@ -51,36 +51,36 @@
     <h3 class="h2 text-center font-weight-semi-bold mb-3">Market Data</h3>
     <b-card style="width: 100%">
       <p class="card-text">
-        <b-table responsive
-                 :per-page="tickerDataRowsPerPage" :current-page="currentTickerDataPage"
-                 :fields="tickerDataFields" :items="tickerData">
+        <b-table responsive :busy="currencies.length = 0"
+                 :per-page="itemsPerPage" :current-page="currentCurrencyPage"
+                 :fields="currencyDataFields" :items="currencies">
           <!-- A virtual composite column -->
-          <template slot="exchange" slot-scope="datum">
-            <a :href="'/source/' + datum.item.exchangeAbbrv">{{ datum.item.exchange }}</a>
+          <template slot="name" slot-scope="datum">
+            <a :href="'/currency/' + datum.item.abbreviation">{{ datum.item.name }}</a><br>
+            {{ datum.item.abbreviation }}
           </template>
           <!-- A virtual composite column -->
-          <template slot="lastUpdated" slot-scope="datum">
-            @* // https://stackoverflow.com/questions/32540667/moment-js-utc-to-local-time *@
-            {{ moment.utc(datum.item.lastUpdated).fromNow() }}
+          <template slot="marketCap" slot-scope="datum">
+            ${{ datum.item.marketCap }}
           </template>
           <!-- A virtual composite column -->
-          <template slot="properties" slot-scope="datum">
-            <b-badge class="mr-2" variant="dark" v-for="prop in datum.item.properties">
-              <b>{{ prop.key }}</b> {{ prop.value }}
-            </b-badge>
+          <template slot="averagePrice" slot-scope="datum">
+            ${{ datum.item.averagePrice }}
           </template>
           <!-- A virtual composite column -->
-          <template slot="actions" slot-scope="datum">
-            <a class="btn btn-sm btn-primary transition-3d-hover"
-            >
-              View
-            </a>
+          <template slot="dailyAvgPricePctChange" slot-scope="datum">
+            {{ datum.item.dailyAvgPricePctChange }}%
           </template>
+          @* <!-- A virtual composite column --> *@
+          @* <template slot="lastUpdated" slot-scope="datum"> *@
+          @*   $1$ // https://stackoverflow.com/questions/32540667/moment-js-utc-to-local-time #1# *@
+          @*   {{ moment.utc(datum.item.lastUpdated).fromNow() }} *@
+          @* </template> *@
         </b-table>
         <b-row>
           <b-col md="6" class="my-1">
-            <b-pagination :total-rows="tickerDataRows" :per-page="tickerDataRowsPerPage"
-                          v-model="currentTickerDataPage" class="my-0"/>
+            <b-pagination :total-rows="currencies.length" :per-page="itemsPerPage"
+                          v-model="currentCurrencyPage" class="my-0"/>
           </b-col>
         </b-row>
       </p>
@@ -187,43 +187,36 @@
       el: "#vueTableBody",
       // Just dish any random variable in for now
       data: {
-        tickerDataFields: [
+        currencyDataFields: [
           {
-            key: 'currencyPairId',
-            label: '#',
+            key: 'name',
+            label: 'Name',
             sortable: true
           },
           {
-            key: 'exchange',
-            label: 'Source',
+            key: 'marketCap',
+            label: 'Market Cap',
             sortable: true
           },
           {
-            key: 'tickerAbbreviation',
-            label: 'Pair',
+            key: 'averagePrice',
+            label: 'Price',
             sortable: true
           },
           {
-            key: 'lastUpdated',
-            label: 'Last Updated',
-            sortable: false
+            key: 'dailyAvgPricePctChange',
+            label: 'Daily Change',
+            sortable: true
           },
-          {
-            key: 'properties',
-            label: "Data",
-            sortable: false
-          },
-          {
-            key: 'actions',
-            label: "",
-            sortable: false
-          }
+//          {
+//            key: 'lastUpdated',
+//            label: 'Last Updated',
+//            sortable: false
+//          }
         ],
-        currentTickerDataPage: 1,
+        currentCurrencyPage: 1,
         currencies: [],
-        tickerData: [],
-        tickerDataRowsPerPage: 40,
-        tickerDataRows: 0
+        itemsPerPage: 40
       },
       created: function() {
         const connection = new SignalR.HubConnectionBuilder()
@@ -232,7 +225,6 @@
             
         // https://github.com/aspnet/SignalR/issues/3294
         connection.start().then(() => {
-          connection.invoke("Subscribe", 1).catch(err => console.error(err.toString()));
           connection.invoke("Subscribe", 2).catch(err => console.error(err.toString()));
         }).catch(err => document.write(err));
 
@@ -249,13 +241,6 @@
         connection.onclose(() => {
           start();
         });
-
-        connection.on("tickers",
-          (tickers) => {
-            //console.dir(tickers);
-            this.tickerData = tickers;
-            this.tickerDataRows = tickers.length;
-          });
         
         connection.on("currencies",
           (currencies) => {
@@ -266,27 +251,27 @@
       methods: {
         // This function provides the capability of updating the tickerData array.
         // It does NOT delete deprecated rows. After all, we expect the clients to refresh once a week or so.
-        updateTickerData: function(incomingData) {
-          // Iterate all incoming datum
-          $.each(incomingData, function(incomingDatum) {
-            // Look for the ticker datum in question
-            for (let i = 0; i < this.tickerData.length; i++) {
-              // Found matching ticker
-              if (this.tickerData[i].currencyPairId === incomingDatum.currencyPairId) {
-                // Tell them its updated
-                if (this.tickerData[i].lastUpdated) {
-                  // Bring in data
-                  
-                  
-                  this.tickerData[i].lastUpdated = moment();
-                } else {
-                  // Else we don't have to update... lol
-                }
-                break;
-              }
-            }
-          });
-        }
+//        updateTickerData: function(incomingData) {
+//          // Iterate all incoming datum
+//          $.each(incomingData, function(incomingDatum) {
+//            // Look for the ticker datum in question
+//            for (let i = 0; i < this.tickerData.length; i++) {
+//              // Found matching ticker
+//              if (this.tickerData[i].currencyPairId === incomingDatum.currencyPairId) {
+//                // Tell them its updated
+//                if (this.tickerData[i].lastUpdated) {
+//                  // Bring in data
+//                  
+//                  
+//                  this.tickerData[i].lastUpdated = moment();
+//                } else {
+//                  // Else we don't have to update... lol
+//                }
+//                break;
+//              }
+//            }
+//          });
+//        }
       },
       mounted: function() {
       }
