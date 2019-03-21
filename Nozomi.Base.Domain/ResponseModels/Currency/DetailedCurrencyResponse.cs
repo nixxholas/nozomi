@@ -27,15 +27,6 @@ namespace Nozomi.Data.ResponseModels.Currency
                 Name = currency.Name;
                 Abbreviation = currency.Abbrv;
                 LastUpdated = DateTime.UtcNow;
-                AveragePrice = decimal.Parse(currency.AnalysedComponents.FirstOrDefault(ac =>
-                                                     ac.DeletedAt == null && ac.IsEnabled
-                                                                          && ac.ComponentType.Equals(AnalysedComponentType.CurrentAveragePrice))
-                                                 ?.Value ?? "0");
-                
-                DailyAvgPricePctChange = decimal.Parse(currency.AnalysedComponents.FirstOrDefault(ac =>
-                                                               ac.DeletedAt == null && ac.IsEnabled
-                                                                                    && ac.ComponentType.Equals(AnalysedComponentType.DailyPricePctChange))
-                                                           ?.Value ?? "-200");
 
                 if (currency.PartialCurrencyPairs.Count > 1)
                 {
@@ -78,8 +69,40 @@ namespace Nozomi.Data.ResponseModels.Currency
                         }
                     }
                 }
-                
+
+                if (currency.AnalysedComponents.Any(ac =>
+                    ac.DeletedAt == null && ac.IsEnabled
+                                         && ac.ComponentType.Equals(AnalysedComponentType.CurrentAveragePrice)))
+                {
+                    var currencyAP = currency.AnalysedComponents.FirstOrDefault(ac =>
+                            ac.DeletedAt == null && ac.IsEnabled
+                                                 && ac.ComponentType.Equals(AnalysedComponentType.CurrentAveragePrice))
+                        ?.Value;
+
+                    if (string.IsNullOrEmpty(currencyAP)
+                        && currencyAP.Equals("0", StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        AveragePrice = decimal.Parse(currencyAP);
+                    }
+                }
+                // Daily average percentage change via the Currency
+                if (currency.AnalysedComponents.Any(ac =>
+                    ac.DeletedAt == null && ac.IsEnabled
+                                         && ac.ComponentType.Equals(AnalysedComponentType.DailyPricePctChange))
+                {
+                    var currencyDAPPC = currency.AnalysedComponents.FirstOrDefault(ac =>
+                            ac.DeletedAt == null && ac.IsEnabled
+                                                 && ac.ComponentType.Equals(AnalysedComponentType.DailyPricePctChange))
+                        ?.Value;
+
+                    if (string.IsNullOrEmpty(currencyDAPPC)
+                        && currencyDAPPC.Equals("0", StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        DailyAvgPricePctChange = decimal.Parse(currencyDAPPC);
+                    }
+                }
                 // Market cap is usually stored with a currency-based AC.
+                // Thus we directly obtain the value like that.
                 MarketCap = decimal.Parse(currency.AnalysedComponents.FirstOrDefault(ac =>
                                                   ac.DeletedAt == null && ac.IsEnabled
                                                                        && ac.ComponentType.Equals(AnalysedComponentType.MarketCap))
