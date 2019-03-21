@@ -88,7 +88,7 @@ namespace Nozomi.Data.ResponseModels.Currency
                 // Daily average percentage change via the Currency
                 if (currency.AnalysedComponents.Any(ac =>
                     ac.DeletedAt == null && ac.IsEnabled
-                                         && ac.ComponentType.Equals(AnalysedComponentType.DailyPricePctChange))
+                                         && ac.ComponentType.Equals(AnalysedComponentType.DailyPricePctChange)))
                 {
                     var currencyDAPPC = currency.AnalysedComponents.FirstOrDefault(ac =>
                             ac.DeletedAt == null && ac.IsEnabled
