@@ -556,6 +556,34 @@ namespace Nozomi.Ticker.StartupExtensions
                                         DataPath = "https://api.ethfinex.com/v2/ticker/tKNCUSD",
                                         CurrencyPairId = currencyPairs[1].Id,
                                         Delay = 5000,
+                                        AnalysedComponents = new List<AnalysedComponent>()
+                                        {
+                                            // Calculates volume ONLY for this exact Currency pair on this exchange.
+                                            new AnalysedComponent
+                                            {
+                                                ComponentType = AnalysedComponentType.DailyVolume,
+                                                Delay = 1000,
+                                                CreatedAt = DateTime.UtcNow,
+                                                ModifiedAt = DateTime.UtcNow,
+                                                DeletedAt = null
+                                            },
+                                            new AnalysedComponent
+                                            {
+                                                ComponentType = AnalysedComponentType.CurrentAveragePrice,
+                                                Delay = 500,
+                                                CreatedAt = DateTime.UtcNow,
+                                                ModifiedAt = DateTime.UtcNow,
+                                                DeletedAt = null
+                                            },
+                                            new AnalysedComponent()
+                                            {
+                                                ComponentType = AnalysedComponentType.DailyPricePctChange,
+                                                Delay = 500,
+                                                CreatedAt = DateTime.UtcNow,
+                                                ModifiedAt = DateTime.UtcNow,
+                                                DeletedAt = null
+                                            }
+                                        },
                                         RequestComponents = new List<RequestComponent>()
                                         {
                                             new RequestComponent
@@ -607,6 +635,34 @@ namespace Nozomi.Ticker.StartupExtensions
                                         DataPath = "https://api.binance.com/api/v3/ticker/bookTicker?symbol=KNCETH",
                                         CurrencyPairId = currencyPairs[2].Id,
                                         Delay = 5000,
+                                        AnalysedComponents = new List<AnalysedComponent>()
+                                        {
+                                            // Calculates volume ONLY for this exact Currency pair on this exchange.
+                                            new AnalysedComponent
+                                            {
+                                                ComponentType = AnalysedComponentType.DailyVolume,
+                                                Delay = 1000,
+                                                CreatedAt = DateTime.UtcNow,
+                                                ModifiedAt = DateTime.UtcNow,
+                                                DeletedAt = null
+                                            },
+                                            new AnalysedComponent
+                                            {
+                                                ComponentType = AnalysedComponentType.CurrentAveragePrice,
+                                                Delay = 500,
+                                                CreatedAt = DateTime.UtcNow,
+                                                ModifiedAt = DateTime.UtcNow,
+                                                DeletedAt = null
+                                            },
+                                            new AnalysedComponent()
+                                            {
+                                                ComponentType = AnalysedComponentType.DailyPricePctChange,
+                                                Delay = 500,
+                                                CreatedAt = DateTime.UtcNow,
+                                                ModifiedAt = DateTime.UtcNow,
+                                                DeletedAt = null
+                                            }
+                                        },
                                         RequestComponents = new List<RequestComponent>()
                                         {
                                             new RequestComponent
@@ -703,6 +759,34 @@ namespace Nozomi.Ticker.StartupExtensions
                                         DataPath = "https://poloniex.com/public?command=returnTicker",
                                         CurrencyPairId = currencyPairs[5].Id,
                                         Delay = 5000,
+                                        AnalysedComponents = new List<AnalysedComponent>()
+                                        {
+                                            // Calculates volume ONLY for this exact Currency pair on this exchange.
+                                            new AnalysedComponent
+                                            {
+                                                ComponentType = AnalysedComponentType.DailyVolume,
+                                                Delay = 1000,
+                                                CreatedAt = DateTime.UtcNow,
+                                                ModifiedAt = DateTime.UtcNow,
+                                                DeletedAt = null
+                                            },
+                                            new AnalysedComponent
+                                            {
+                                                ComponentType = AnalysedComponentType.CurrentAveragePrice,
+                                                Delay = 500,
+                                                CreatedAt = DateTime.UtcNow,
+                                                ModifiedAt = DateTime.UtcNow,
+                                                DeletedAt = null
+                                            },
+                                            new AnalysedComponent()
+                                            {
+                                                ComponentType = AnalysedComponentType.DailyPricePctChange,
+                                                Delay = 500,
+                                                CreatedAt = DateTime.UtcNow,
+                                                ModifiedAt = DateTime.UtcNow,
+                                                DeletedAt = null
+                                            }
+                                        },
                                         RequestComponents = new List<RequestComponent>()
                                         {
                                             new RequestComponent
@@ -731,6 +815,34 @@ namespace Nozomi.Ticker.StartupExtensions
                                         DataPath = "https://poloniex.com/public?command=returnTicker",
                                         CurrencyPairId = currencyPairs[6].Id,
                                         Delay = 5000,
+                                        AnalysedComponents = new List<AnalysedComponent>()
+                                        {
+                                            // Calculates volume ONLY for this exact Currency pair on this exchange.
+                                            new AnalysedComponent
+                                            {
+                                                ComponentType = AnalysedComponentType.DailyVolume,
+                                                Delay = 1000,
+                                                CreatedAt = DateTime.UtcNow,
+                                                ModifiedAt = DateTime.UtcNow,
+                                                DeletedAt = null
+                                            },
+                                            new AnalysedComponent
+                                            {
+                                                ComponentType = AnalysedComponentType.CurrentAveragePrice,
+                                                Delay = 500,
+                                                CreatedAt = DateTime.UtcNow,
+                                                ModifiedAt = DateTime.UtcNow,
+                                                DeletedAt = null
+                                            },
+                                            new AnalysedComponent()
+                                            {
+                                                ComponentType = AnalysedComponentType.DailyPricePctChange,
+                                                Delay = 500,
+                                                CreatedAt = DateTime.UtcNow,
+                                                ModifiedAt = DateTime.UtcNow,
+                                                DeletedAt = null
+                                            }
+                                        },
                                         RequestComponents = new List<RequestComponent>()
                                         {
                                             new RequestComponent
@@ -759,11 +871,28 @@ namespace Nozomi.Ticker.StartupExtensions
                                         DataPath = "https://api.bitfinex.com/v1/pubticker/etheur",
                                         CurrencyPairId = currencyPairs[7].Id,
                                         Delay = 2000,
-                                        AnalysedComponents = new List<AnalysedComponent>
+                                        AnalysedComponents = new List<AnalysedComponent>()
                                         {
+                                            // Calculates volume ONLY for this exact Currency pair on this exchange.
+                                            new AnalysedComponent
+                                            {
+                                                ComponentType = AnalysedComponentType.DailyVolume,
+                                                Delay = 1000,
+                                                CreatedAt = DateTime.UtcNow,
+                                                ModifiedAt = DateTime.UtcNow,
+                                                DeletedAt = null
+                                            },
                                             new AnalysedComponent
                                             {
                                                 ComponentType = AnalysedComponentType.CurrentAveragePrice,
+                                                Delay = 500,
+                                                CreatedAt = DateTime.UtcNow,
+                                                ModifiedAt = DateTime.UtcNow,
+                                                DeletedAt = null
+                                            },
+                                            new AnalysedComponent()
+                                            {
+                                                ComponentType = AnalysedComponentType.DailyPricePctChange,
                                                 Delay = 500,
                                                 CreatedAt = DateTime.UtcNow,
                                                 ModifiedAt = DateTime.UtcNow,
