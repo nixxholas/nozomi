@@ -40,14 +40,14 @@ namespace Nozomi.Data.ResponseModels.Currency
                 if (currency.PartialCurrencyPairs.Count > 1)
                 {
                     // Obtain via the Request method
-                    // TODO: FIX
                     var query = currency.PartialCurrencyPairs
                             // Make sure all PCPs obtained have this currency as the main.
-                            .Where(pcp => !pcp.IsMain 
-                                          && pcp.Currency.Abbrv.Equals(CoreConstants.GenericCounterCurrency,
+                            .Where(pcp => pcp.IsMain // Make sure the main currency is not the generic counter currency.
+                                          && !pcp.Currency.Abbrv.Equals(CoreConstants.GenericCounterCurrency,
                                               StringComparison.InvariantCultureIgnoreCase)
-                                          // Make sure the counter currency is not this currency
-                                          && !CoreConstants.GenericCounterCurrency.Equals(currency.Abbrv))
+                                          // And that the currency is equal to the currency in qn.
+                                          && pcp.Currency.Abbrv.Equals(currency.Abbrv,
+                                              StringComparison.InvariantCultureIgnoreCase))
                             .Select(pcp => pcp.CurrencyPair)
                             .SelectMany(cpr => cpr.CurrencyPairRequests)
                             .Where(cpr => cpr.DeletedAt == null && cpr.IsEnabled)
