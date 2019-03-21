@@ -168,7 +168,13 @@ namespace Nozomi.Service.Events
                 .GetQueryable()
                 .AsNoTracking()
                 .Where(c => c.DeletedAt == null && c.IsEnabled)
-                .Include(c => c.AnalysedComponents);
+                .Include(c => c.AnalysedComponents)
+                .Include(c => c.PartialCurrencyPairs)
+                .ThenInclude(pcp => pcp.Currency)
+                .Include(c => c.PartialCurrencyPairs)
+                .ThenInclude(pcp => pcp.CurrencyPair)
+                .ThenInclude(cp => cp.CurrencyPairRequests)
+                .ThenInclude(cpr => cpr.AnalysedComponents);
 
             if (currencies != null)
             {

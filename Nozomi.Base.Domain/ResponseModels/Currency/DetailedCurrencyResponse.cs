@@ -31,10 +31,50 @@ namespace Nozomi.Data.ResponseModels.Currency
                                                      ac.DeletedAt == null && ac.IsEnabled
                                                                           && ac.ComponentType.Equals(AnalysedComponentType.CurrentAveragePrice))
                                                  ?.Value ?? "0");
+                
                 DailyAvgPricePctChange = decimal.Parse(currency.AnalysedComponents.FirstOrDefault(ac =>
-                                                     ac.DeletedAt == null && ac.IsEnabled
-                                                                          && ac.ComponentType.Equals(AnalysedComponentType.DailyPricePctChange))
-                                                 ?.Value ?? "0");
+                                                               ac.DeletedAt == null && ac.IsEnabled
+                                                                                    && ac.ComponentType.Equals(AnalysedComponentType.DailyPricePctChange))
+                                                           ?.Value ?? "-200");
+
+                if (currency.PartialCurrencyPairs.Count > 1)
+                {
+                    // Obtain via the Request method
+                    var query = currency.PartialCurrencyPairs
+                            // Make sure all PCPs obtained have this currency as the main.
+                            .Where(pcp => !pcp.IsMain 
+                                          && pcp.Currency.Abbrv.Equals(CoreConstants.GenericCounterCurrency,
+                                              StringComparison.InvariantCultureIgnoreCase))
+                            .Select(pcp => pcp.CurrencyPair)
+                            .SelectMany(cpr => cpr.CurrencyPairRequests)
+                            .Where(cpr => cpr.DeletedAt == null && cpr.IsEnabled)
+                            .SelectMany(cpr => cpr.AnalysedComponents)
+                            .ToList();
+
+                    if (query.Count > 0)
+                    {
+                        foreach (var aComp in query)
+                        {
+                            switch (aComp.ComponentType)
+                            {
+                                case AnalysedComponentType.CurrentAveragePrice:
+                                    if (AveragePrice <= 0)
+                                    {
+                                        AveragePrice = decimal.Parse(aComp.Value);
+                                    }
+                                    break;
+                                case AnalysedComponentType.DailyPricePctChange:
+                                    if (DailyAvgPricePctChange.Equals(-200))
+                                    {
+                                        DailyAvgPricePctChange = decimal.Parse(aComp.Value);
+                                    }
+                                    break;
+                            }
+                        }
+                    }
+                }
+                
+                // Market cap is usually stored with a currency-based AC.
                 MarketCap = decimal.Parse(currency.AnalysedComponents.FirstOrDefault(ac =>
                                                   ac.DeletedAt == null && ac.IsEnabled
                                                                        && ac.ComponentType.Equals(AnalysedComponentType.MarketCap))
