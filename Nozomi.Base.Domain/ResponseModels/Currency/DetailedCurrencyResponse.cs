@@ -58,15 +58,17 @@ namespace Nozomi.Data.ResponseModels.Currency
                             switch (aComp.ComponentType)
                             {
                                 case AnalysedComponentType.CurrentAveragePrice:
-                                    if (AveragePrice <= 0)
+                                    if (AveragePrice <= 0 
+                                        && decimal.TryParse(aComp.Value, out var avgPrice))
                                     {
-                                        AveragePrice = decimal.Parse(aComp.Value);
+                                        AveragePrice = avgPrice;
                                     }
                                     break;
                                 case AnalysedComponentType.DailyPricePctChange:
-                                    if (DailyAvgPricePctChange.Equals(-200))
+                                    if (DailyAvgPricePctChange.Equals(-200)
+                                    && decimal.TryParse(aComp.Value, out var dailyAvgPricePctChange))
                                     {
-                                        DailyAvgPricePctChange = decimal.Parse(aComp.Value);
+                                        DailyAvgPricePctChange = dailyAvgPricePctChange;
                                     }
                                     break;
                             }
