@@ -48,10 +48,11 @@
 <!-- CTA Section -->
 <div id="SVGctaSection" class="svg-preloader position-relative gradient-half-warning-v2 z-index-2 overflow-hidden">
   <div class="container space-2" id="vueTableBody">
+    {{ currencies }}
     <h3 class="h2 text-center font-weight-semi-bold mb-3">Market Data</h3>
     <b-card style="width: 100%">
       <p class="card-text">
-        <b-table responsive :busy="currencies.length = 0"
+        <b-table responsive :busy="currencies.length == 0"
                  :per-page="itemsPerPage" :current-page="currentCurrencyPage"
                  :fields="currencyDataFields" :items="currencies">
           <!-- A virtual composite column -->

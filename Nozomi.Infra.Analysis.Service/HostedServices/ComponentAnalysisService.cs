@@ -68,16 +68,16 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                     {
                         _logger.LogInformation($"[{ServiceName}]" +
                                                " Analysis successful");
+                
+                        // Push the updated currency data
+                        await _nozomiStreamHub.Clients.Group(NozomiSocketGroup.Currencies.GetDescription())
+                            .Currencies(_currencyEvent.GetAllDetailed());
                     }
                     else
                     {
                         _logger.LogWarning($"[{ServiceName}]" +
                                            " Something bad happened");
                     }
-                
-                    // Push the updated currency data
-                    await _nozomiStreamHub.Clients.Group(NozomiSocketGroup.Currencies.GetDescription())
-                        .Currencies(_currencyEvent.GetAllDetailed());
                 }
                 catch (Exception ex)
                 {
