@@ -335,36 +335,7 @@ namespace Nozomi.Ticker.StartupExtensions
                                         CurrencySourceId = bnaSource.Id,
                                         WalletTypeId = 0, // As per CNWallet
                                         Denominations = 8,
-                                        DenominationName = "Sat",
-                                        CurrencyRequests = new List<CurrencyRequest>
-                                        {
-                                            new CurrencyRequest
-                                            {
-                                                Guid = Guid.NewGuid(),
-                                                RequestType = RequestType.HttpGet,
-                                                DataPath = "https://insight.bitpay.com/api/status?q=getBlockCount",
-                                                Delay = 5000,
-                                                RequestComponents = new List<RequestComponent>
-                                                {
-                                                    new RequestComponent
-                                                    {
-                                                        ComponentType = ComponentType.Circulating_Supply,
-                                                        QueryComponent = "info/blocks",
-                                                        CreatedAt = DateTime.UtcNow,
-                                                        ModifiedAt = DateTime.UtcNow,
-                                                        DeletedAt = null
-                                                    },
-                                                    new RequestComponent
-                                                    {
-                                                        ComponentType = ComponentType.Difficulty,
-                                                        QueryComponent = "info/difficulty",
-                                                        CreatedAt = DateTime.UtcNow,
-                                                        ModifiedAt = DateTime.UtcNow,
-                                                        DeletedAt = null
-                                                    }
-                                                }
-                                            },
-                                        }
+                                        DenominationName = "Sat"
                                     },
                                     new Currency
                                     {
@@ -421,6 +392,14 @@ namespace Nozomi.Ticker.StartupExtensions
                                         CurrencyTypeId = cryptoType.Id,
                                         Abbrv = "BTS",
                                         Name = "BitShares",
+                                        CurrencySourceId = poloSource.Id,
+                                        WalletTypeId = 0
+                                    },
+                                    new Currency
+                                    {
+                                        CurrencyTypeId = fiatType.Id,
+                                        Abbrv = "USDT",
+                                        Name = "Tether USD",
                                         CurrencySourceId = poloSource.Id,
                                         WalletTypeId = 0
                                     }
@@ -488,6 +467,13 @@ namespace Nozomi.Ticker.StartupExtensions
                                     APIUrl = "https://api.bitfinex.com/v1/pubticker/etheur",
                                     DefaultComponent = "0",
                                     CurrencySourceId = bfxSource.Id
+                                },
+                                new CurrencyPair()
+                                {
+                                    CurrencyPairType = CurrencyPairType.EXCHANGEABLE,
+                                    APIUrl = "https://poloniex.com/public?command=returnTicker",
+                                    DefaultComponent = "USDT_BTC/lowestAsk",
+                                    CurrencySourceId = poloSource.Id
                                 }
                             };
 
@@ -956,6 +942,62 @@ namespace Nozomi.Ticker.StartupExtensions
                                             }
                                         }
                                     },
+                                    new CurrencyPairRequest()
+                                    {
+                                        Guid = Guid.NewGuid(),
+                                        RequestType = RequestType.HttpGet,
+                                        ResponseType = ResponseType.Json,
+                                        DataPath = "https://poloniex.com/public?command=returnTicker",
+                                        CurrencyPairId = currencyPairs[8].Id,
+                                        Delay = 5000,
+                                        AnalysedComponents = new List<AnalysedComponent>()
+                                        {
+                                            // Calculates volume ONLY for this exact Currency pair on this exchange.
+                                            new AnalysedComponent
+                                            {
+                                                ComponentType = AnalysedComponentType.DailyVolume,
+                                                Delay = 1000,
+                                                CreatedAt = DateTime.UtcNow,
+                                                ModifiedAt = DateTime.UtcNow,
+                                                DeletedAt = null
+                                            },
+                                            new AnalysedComponent
+                                            {
+                                                ComponentType = AnalysedComponentType.CurrentAveragePrice,
+                                                Delay = 500,
+                                                CreatedAt = DateTime.UtcNow,
+                                                ModifiedAt = DateTime.UtcNow,
+                                                DeletedAt = null
+                                            },
+                                            new AnalysedComponent()
+                                            {
+                                                ComponentType = AnalysedComponentType.DailyPricePctChange,
+                                                Delay = 500,
+                                                CreatedAt = DateTime.UtcNow,
+                                                ModifiedAt = DateTime.UtcNow,
+                                                DeletedAt = null
+                                            }
+                                        },
+                                        RequestComponents = new List<RequestComponent>()
+                                        {
+                                            new RequestComponent
+                                            {
+                                                ComponentType = ComponentType.Ask,
+                                                QueryComponent = "USDT_BTC/lowestAsk",
+                                                CreatedAt = DateTime.UtcNow,
+                                                ModifiedAt = DateTime.UtcNow,
+                                                DeletedAt = null
+                                            },
+                                            new RequestComponent
+                                            {
+                                                ComponentType = ComponentType.Bid,
+                                                QueryComponent = "USDT_BTC/highestBid",
+                                                CreatedAt = DateTime.UtcNow,
+                                                ModifiedAt = DateTime.UtcNow,
+                                                DeletedAt = null
+                                            }
+                                        }
+                                    }
                                 };
 
                                 context.CurrencyPairRequests.AddRange(currencyPairRequests);
@@ -1021,6 +1063,10 @@ namespace Nozomi.Ticker.StartupExtensions
                                 var btsPOLO = context.Currencies.Include(c => c.CurrencySource)
                                     .SingleOrDefault(c =>
                                         c.Abbrv.Equals("BTS") &&
+                                        c.CurrencySource.Abbreviation.Equals(poloSource.Abbreviation));
+                                var usdtPOLO = context.Currencies.Include(c => c.CurrencySource)
+                                    .SingleOrDefault(c =>
+                                        c.Abbrv.Equals("USDT") &&
                                         c.CurrencySource.Abbreviation.Equals(poloSource.Abbreviation));
 
                                 context.PartialCurrencyPairs.AddRange(
@@ -1119,6 +1165,18 @@ namespace Nozomi.Ticker.StartupExtensions
                                         CurrencyId = eurBfx.Id,
                                         IsMain = false,
                                         CurrencyPairId = currencyPairs[7].Id
+                                    },
+                                    new PartialCurrencyPair()
+                                    {
+                                        CurrencyId = btcPOLO.Id,
+                                        IsMain = true,
+                                        CurrencyPairId = currencyPairs[8].Id
+                                    },
+                                    new PartialCurrencyPair()
+                                    {
+                                        CurrencyId = usdtPOLO.Id,
+                                        IsMain = false,
+                                        CurrencyPairId = currencyPairs[8].Id
                                     });
 
                                 context.SaveChanges();
@@ -1127,6 +1185,33 @@ namespace Nozomi.Ticker.StartupExtensions
                                 {
                                     var currencyRequests = new List<CurrencyRequest>()
                                     {
+                                        new CurrencyRequest
+                                        {
+                                            Guid = Guid.NewGuid(),
+                                            RequestType = RequestType.HttpGet,
+                                            DataPath = "https://insight.bitpay.com/api/status?q=getBlockCount",
+                                            CurrencyId = btcPOLO.Id,
+                                            Delay = 90000,
+                                            RequestComponents = new List<RequestComponent>
+                                            {
+                                                new RequestComponent
+                                                {
+                                                    ComponentType = ComponentType.Circulating_Supply,
+                                                    QueryComponent = "info/blocks",
+                                                    CreatedAt = DateTime.UtcNow,
+                                                    ModifiedAt = DateTime.UtcNow,
+                                                    DeletedAt = null
+                                                },
+                                                new RequestComponent
+                                                {
+                                                    ComponentType = ComponentType.Difficulty,
+                                                    QueryComponent = "info/difficulty",
+                                                    CreatedAt = DateTime.UtcNow,
+                                                    ModifiedAt = DateTime.UtcNow,
+                                                    DeletedAt = null
+                                                }
+                                            }
+                                        },
                                         new CurrencyRequest
                                         {
                                             Guid = Guid.NewGuid(),
