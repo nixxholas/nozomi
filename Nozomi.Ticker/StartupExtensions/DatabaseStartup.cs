@@ -377,7 +377,36 @@ namespace Nozomi.Ticker.StartupExtensions
                                         CurrencySourceId = poloSource.Id,
                                         WalletTypeId = 0,
                                         Denominations = 8,
-                                        DenominationName = "Sat"
+                                        DenominationName = "Sat",
+                                        CurrencyRequests = new List<CurrencyRequest>()
+                                        {
+                                            new CurrencyRequest
+                                            {
+                                                Guid = Guid.NewGuid(),
+                                                RequestType = RequestType.HttpGet,
+                                                DataPath = "https://insight.bitpay.com/api/status?q=getBlockCount",
+                                                Delay = 90000,
+                                                RequestComponents = new List<RequestComponent>
+                                                {
+                                                    new RequestComponent
+                                                    {
+                                                        ComponentType = ComponentType.Circulating_Supply,
+                                                        QueryComponent = "info/blocks",
+                                                        CreatedAt = DateTime.UtcNow,
+                                                        ModifiedAt = DateTime.UtcNow,
+                                                        DeletedAt = null
+                                                    },
+                                                    new RequestComponent
+                                                    {
+                                                        ComponentType = ComponentType.Difficulty,
+                                                        QueryComponent = "info/difficulty",
+                                                        CreatedAt = DateTime.UtcNow,
+                                                        ModifiedAt = DateTime.UtcNow,
+                                                        DeletedAt = null
+                                                    }
+                                                }
+                                            }
+                                        }
                                     },
                                     new Currency
                                     {
@@ -1188,83 +1217,6 @@ namespace Nozomi.Ticker.StartupExtensions
                                     });
 
                                 context.SaveChanges();
-
-                                if (!context.CurrencyRequests.Any())
-                                {
-                                    var currencyRequests = new List<CurrencyRequest>()
-                                    {
-                                        new CurrencyRequest
-                                        {
-                                            Guid = Guid.NewGuid(),
-                                            RequestType = RequestType.HttpGet,
-                                            DataPath = "https://insight.bitpay.com/api/status?q=getBlockCount",
-                                            CurrencyId = btcPOLO.Id,
-                                            Delay = 90000,
-                                            RequestComponents = new List<RequestComponent>
-                                            {
-                                                new RequestComponent
-                                                {
-                                                    ComponentType = ComponentType.Circulating_Supply,
-                                                    QueryComponent = "info/blocks",
-                                                    CreatedAt = DateTime.UtcNow,
-                                                    ModifiedAt = DateTime.UtcNow,
-                                                    DeletedAt = null
-                                                },
-                                                new RequestComponent
-                                                {
-                                                    ComponentType = ComponentType.Difficulty,
-                                                    QueryComponent = "info/difficulty",
-                                                    CreatedAt = DateTime.UtcNow,
-                                                    ModifiedAt = DateTime.UtcNow,
-                                                    DeletedAt = null
-                                                }
-                                            }
-                                        },
-                                        new CurrencyRequest
-                                        {
-                                            Guid = Guid.NewGuid(),
-                                            RequestType = RequestType.HttpGet,
-                                            DataPath = "https://api.etherscan.io/api",
-                                            CurrencyId = ethBfx.Id,
-                                            Delay = 10000,
-                                            RequestProperties = new List<RequestProperty>()
-                                            {
-                                                new RequestProperty
-                                                {
-                                                    RequestPropertyType = RequestPropertyType.HttpHeader_Custom,
-                                                    Key = "module",
-                                                    Value = "stats"
-                                                },
-                                                new RequestProperty
-                                                {
-                                                    RequestPropertyType = RequestPropertyType.HttpHeader_Custom,
-                                                    Key = "action",
-                                                    Value = "ethsupply"
-                                                },
-                                                new RequestProperty
-                                                {
-                                                    RequestPropertyType = RequestPropertyType.HttpHeader_Custom,
-                                                    Key = "apikey",
-                                                    Value = "TGAFGMGDKHJ8W2EKI26MJRRWGH44AV9224"
-                                                },
-                                            },
-                                            RequestComponents = new List<RequestComponent>()
-                                            {
-                                                new RequestComponent
-                                                {
-                                                    ComponentType = ComponentType.Circulating_Supply,
-                                                    QueryComponent = "result",
-                                                    CreatedAt = DateTime.UtcNow,
-                                                    ModifiedAt = DateTime.UtcNow,
-                                                    DeletedAt = null
-                                                }
-                                            }
-                                        }
-                                    };
-
-                                    context.CurrencyRequests.AddRange(currencyRequests);
-                                    context.SaveChanges();
-                                }
 
                                 if (!context.WebsocketRequests.Any())
                                 {
