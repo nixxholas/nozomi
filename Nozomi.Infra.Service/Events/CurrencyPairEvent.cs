@@ -28,7 +28,7 @@ namespace Nozomi.Service.Events
                 .Include(cp => cp.PartialCurrencyPairs)
                 .ThenInclude(pcp => pcp.Currency)
                 .Where(pcp => pcp.PartialCurrencyPairs.FirstOrDefault(cpcp => !cpcp.IsMain).Currency.Abbrv
-                    .Equals(counterCurrencyAbbrv, StringComparison.InvariantCultureIgnoreCase))
+                    .Contains(counterCurrencyAbbrv, StringComparison.InvariantCultureIgnoreCase))
                 .ToList();
         }
     }
