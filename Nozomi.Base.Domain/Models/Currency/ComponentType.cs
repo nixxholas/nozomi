@@ -55,6 +55,9 @@ namespace Nozomi.Data.Models.Currency
         
         [Comparable(false)]
         [Description("The current circulating supply of this asset.")]
-        Circulating_Supply = 1000
+        Circulating_Supply = 1000,
+        [Comparable(false)]
+        [Description("The current mining difficulty of this asset.")]
+        Difficulty = 1010,
     }
 }

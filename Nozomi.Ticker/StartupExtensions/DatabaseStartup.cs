@@ -335,7 +335,36 @@ namespace Nozomi.Ticker.StartupExtensions
                                         CurrencySourceId = bnaSource.Id,
                                         WalletTypeId = 0, // As per CNWallet
                                         Denominations = 8,
-                                        DenominationName = "Sat"
+                                        DenominationName = "Sat",
+                                        CurrencyRequests = new List<CurrencyRequest>
+                                        {
+                                            new CurrencyRequest
+                                            {
+                                                Guid = Guid.NewGuid(),
+                                                RequestType = RequestType.HttpGet,
+                                                DataPath = "https://insight.bitpay.com/api/status?q=getBlockCount",
+                                                Delay = 5000,
+                                                RequestComponents = new List<RequestComponent>
+                                                {
+                                                    new RequestComponent
+                                                    {
+                                                        ComponentType = ComponentType.Circulating_Supply,
+                                                        QueryComponent = "info/blocks",
+                                                        CreatedAt = DateTime.UtcNow,
+                                                        ModifiedAt = DateTime.UtcNow,
+                                                        DeletedAt = null
+                                                    },
+                                                    new RequestComponent
+                                                    {
+                                                        ComponentType = ComponentType.Difficulty,
+                                                        QueryComponent = "info/difficulty",
+                                                        CreatedAt = DateTime.UtcNow,
+                                                        ModifiedAt = DateTime.UtcNow,
+                                                        DeletedAt = null
+                                                    }
+                                                }
+                                            },
+                                        }
                                     },
                                     new Currency
                                     {
