@@ -28,17 +28,16 @@ namespace Nozomi.Data.ResponseModels.Currency
                 Abbreviation = currency.Abbrv;
                 LastUpdated = DateTime.UtcNow;
 
-                if (currency.PartialCurrencyPairs.Count > 1)
+                if (currency.PartialCurrencyPairs != null && currency.PartialCurrencyPairs.Count > 0)
                 {
                     // Obtain via the Request method
                     var query = currency.PartialCurrencyPairs
+                        // TODO: Need to factor in the counter currency.
                             // Make sure all PCPs obtained have this currency as the main.
-                            .Where(pcp => pcp.IsMain // Make sure the main currency is not the generic counter currency.
-                                          && !pcp.Currency.Abbrv.Equals(CoreConstants.GenericCounterCurrency,
-                                              StringComparison.InvariantCultureIgnoreCase)
-                                          // And that the currency is equal to the currency in qn.
-                                          && pcp.Currency.Abbrv.Equals(currency.Abbrv,
-                                              StringComparison.InvariantCultureIgnoreCase))
+                            .Where(pcp => pcp.IsMain && pcp.Currency.Abbrv.Equals(currency.Abbrv,
+                                               StringComparison.InvariantCultureIgnoreCase)
+                                          && pcp.CurrencyPair.PartialCurrencyPairs.FirstOrDefault(spcp => !spcp.IsMain)
+                                              .Currency.Abbrv.Equals(CoreConstants.GenericCounterCurrency))
                             .Select(pcp => pcp.CurrencyPair)
                             .SelectMany(cpr => cpr.CurrencyPairRequests)
                             .Where(cpr => cpr.DeletedAt == null && cpr.IsEnabled)
