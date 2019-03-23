@@ -70,17 +70,20 @@
           </template>
           <!-- A virtual composite column -->
           <template slot="dailyAvgPricePctChange" slot-scope="datum">
-            {{ datum.item.dailyAvgPricePctChange }}%
-            <i class="fas fa-caret-up" v-if="datum.item.dailyAvgPricePctChange > 0">
-            </i>
-            <i class="fas fa-caret-down" v-if="datum.item.dailyAvgPricePctChange < 0">
-            </i>
+            <div class="text-success" v-if="datum.item.dailyAvgPricePctChange > 0">
+              {{ datum.item.dailyAvgPricePctChange }}%
+              <i class="fas fa-caret-up">
+              </i>
+            </div>
+            <div class="text-success" v-else-if="datum.item.dailyAvgPricePctChange < 0">
+              {{ datum.item.dailyAvgPricePctChange }}%
+              <i class="fas fa-caret-down">
+              </i>
+            </div>
+            <div v-else>
+              {{ datum.item.dailyAvgPricePctChange }}%
+            </div>
           </template>
-          @* <!-- A virtual composite column --> *@
-          @* <template slot="lastUpdated" slot-scope="datum"> *@
-          @*   $1$ // https://stackoverflow.com/questions/32540667/moment-js-utc-to-local-time #1# *@
-          @*   {{ moment.utc(datum.item.lastUpdated).fromNow() }} *@
-          @* </template> *@
         </b-table>
         <b-row>
           <b-col md="6" class="my-1">
