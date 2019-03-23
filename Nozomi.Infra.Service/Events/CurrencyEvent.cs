@@ -192,11 +192,76 @@ namespace Nozomi.Service.Events
                 .ThenInclude(cp => cp.CurrencyPairRequests)
                 .ThenInclude(cpr => cpr.AnalysedComponents)
                 .ThenInclude(ac => ac.AnalysedHistoricItems)
-                .Where(c => c.PartialCurrencyPairs
-                    .Any(pcp => compatibleCPairs.Any(ccp => ccp.Id.Equals(pcp.CurrencyPair.Id))));
+//                .Where(c => c.PartialCurrencyPairs
+//                    .Any(pcp => compatibleCPairs.Any(ccp => ccp.Id.Equals(pcp.CurrencyPair.Id))))
+                .Select(c => new Currency
+                {
+                    Id = c.Id,
+                    CurrencyTypeId = c.CurrencyTypeId,
+                    CurrencyType = c.CurrencyType,
+                    Abbrv = c.Abbrv,
+                    Name = c.Name,
+                    Denominations = c.Denominations,
+                    DenominationName = c.DenominationName,
+                    CurrencySourceId = c.CurrencySourceId,
+                    WalletTypeId = c.WalletTypeId,
+                    AnalysedComponents = c.AnalysedComponents
+                        .Select(ac => new AnalysedComponent
+                        {
+                            Id = ac.Id,
+                            ComponentType = ac.ComponentType,
+                            Value = ac.Value,
+                            Delay = ac.Delay,
+                            RequestId = ac.RequestId,
+                            CurrencyId = ac.CurrencyId,
+                            AnalysedHistoricItems = ac.AnalysedHistoricItems
+                        })
+                        .ToList(),
+                    PartialCurrencyPairs = c.PartialCurrencyPairs
+                        .Where(pcp => pcp.IsMain && 
+                                      compatibleCPairs.Any(ccp => ccp.Id.Equals(pcp.CurrencyPairId)))
+                        .Select(pcp => new PartialCurrencyPair
+                        {
+                            CurrencyId = pcp.CurrencyId,
+                            CurrencyPair = new CurrencyPair
+                            {
+                                Id = pcp.CurrencyPair.Id,
+                                CurrencyPairType = pcp.CurrencyPair.CurrencyPairType,
+                                APIUrl = pcp.CurrencyPair.APIUrl,
+                                DefaultComponent = pcp.CurrencyPair.DefaultComponent,
+                                CurrencySourceId = pcp.CurrencyPair.CurrencySourceId,
+                                CurrencyPairRequests = pcp.CurrencyPair.CurrencyPairRequests
+                                    .Where(cpr => cpr.DeletedAt == null && cpr.IsEnabled)
+                                    .Select(cpr => new CurrencyPairRequest
+                                    {
+                                        Id = cpr.Id,
+                                        CurrencyPairId = cpr.CurrencyPairId,
+                                        AnalysedComponents = cpr.AnalysedComponents
+                                            .Select(ac => new AnalysedComponent
+                                            {
+                                                Id = ac.Id,
+                                                ComponentType = ac.ComponentType,
+                                                Value = ac.Value,
+                                                Delay = ac.Delay,
+                                                RequestId = ac.RequestId,
+                                                CurrencyId = ac.CurrencyId,
+                                                AnalysedHistoricItems = ac.AnalysedHistoricItems
+                                            })
+                                            .ToList()
+                                    })
+                                    .ToList(),
+                            },
+                            CurrencyPairId = pcp.CurrencyPairId
+                        })
+                        .ToList()
+                });
 
             if (currencies != null)
             {
+#if DEBUG
+                var listedCurrencies = currencies.ToList();
+#endif
+                
                 foreach (var currency in currencies)
                 {
                     // Do not add duplicates

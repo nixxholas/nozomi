@@ -199,6 +199,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                     var avgPrice = correlatedReqComps
                                         .Where(rc => rc.ComponentType.Equals(ComponentType.Ask)
                                                      || rc.ComponentType.Equals(ComponentType.Bid))
+                                        .Where(rc => !string.IsNullOrEmpty(rc.RequestComponentDatum.Value))
                                         .DefaultIfEmpty()
                                         .Average(rc => decimal.Parse(rc.RequestComponentDatum.Value));
 

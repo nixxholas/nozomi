@@ -32,13 +32,8 @@ namespace Nozomi.Data.ResponseModels.Currency
                 {
                     // Obtain via the Request method
                     var query = currency.PartialCurrencyPairs
-                            .Where(pcp =>
-                                // Make sure all PCPs obtained have this currency as the main.
-                                pcp.IsMain && pcp.Currency.Abbrv.Equals(currency.Abbrv,
-                                              StringComparison.InvariantCultureIgnoreCase))
                             .Select(pcp => pcp.CurrencyPair)
                             .SelectMany(cpr => cpr.CurrencyPairRequests)
-                            .Where(cpr => cpr.DeletedAt == null && cpr.IsEnabled)
                             .SelectMany(cpr => cpr.AnalysedComponents)
                             .ToList();
 
