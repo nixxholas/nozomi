@@ -950,13 +950,21 @@ namespace Nozomi.Ticker.StartupExtensions
                                         DataPath = "https://poloniex.com/public?command=returnTicker",
                                         CurrencyPairId = currencyPairs[8].Id,
                                         Delay = 5000,
-                                        AnalysedComponents = new List<AnalysedComponent>()
+                                        AnalysedComponents = new List<AnalysedComponent>
                                         {
                                             // Calculates volume ONLY for this exact Currency pair on this exchange.
                                             new AnalysedComponent
                                             {
                                                 ComponentType = AnalysedComponentType.DailyVolume,
                                                 Delay = 1000,
+                                                CreatedAt = DateTime.UtcNow,
+                                                ModifiedAt = DateTime.UtcNow,
+                                                DeletedAt = null
+                                            },
+                                            new AnalysedComponent
+                                            {
+                                                ComponentType = AnalysedComponentType.MarketCap,
+                                                Delay = 500,
                                                 CreatedAt = DateTime.UtcNow,
                                                 ModifiedAt = DateTime.UtcNow,
                                                 DeletedAt = null
