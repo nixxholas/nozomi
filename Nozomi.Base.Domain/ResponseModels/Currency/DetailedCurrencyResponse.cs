@@ -32,13 +32,7 @@ namespace Nozomi.Data.ResponseModels.Currency
                 {
                     // Obtain via the Request method
                     var query = currency.PartialCurrencyPairs
-                            .Where(pcp => 
-                                // TODO: Filter CurrencyPairs with non generic counter currencies
-                                // Can't do this since its based off the currency object..
-//                                pcp.CurrencyPair?.PartialCurrencyPairs != null
-//                                && pcp.CurrencyPair.PartialCurrencyPairs.FirstOrDefault(spcp => !spcp.IsMain)
-//                                    .Currency.Abbrv.Equals(CoreConstants.GenericCounterCurrency)
-//                                && 
+                            .Where(pcp =>
                                 // Make sure all PCPs obtained have this currency as the main.
                                 pcp.IsMain && pcp.Currency.Abbrv.Equals(currency.Abbrv,
                                               StringComparison.InvariantCultureIgnoreCase))

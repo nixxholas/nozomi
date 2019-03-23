@@ -21,9 +21,13 @@ namespace Nozomi.Service.Events
 {
     public class CurrencyEvent : BaseEvent<CurrencyEvent, NozomiDbContext>, ICurrencyEvent
     {
-        public CurrencyEvent(ILogger<CurrencyEvent> logger, IUnitOfWork<NozomiDbContext> unitOfWork) : base(logger,
+        private readonly ICurrencyPairEvent _currencyPairEvent;
+        
+        public CurrencyEvent(ILogger<CurrencyEvent> logger, IUnitOfWork<NozomiDbContext> unitOfWork,
+            ICurrencyPairEvent currencyPairEvent) : base(logger,
             unitOfWork)
         {
+            _currencyPairEvent = currencyPairEvent;
         }
 
         public decimal GetCirculatingSupply(AnalysedComponent analysedComponent)
@@ -174,7 +178,10 @@ namespace Nozomi.Service.Events
                     .Where(c => c.CurrencyType.TypeShortForm
                         .Equals(typeShortForm, StringComparison.InvariantCultureIgnoreCase));
             }
-                
+
+            // Obtain all Currency Pairs that fall under the generic counter currency
+            var compatibleCPairs = _currencyPairEvent.GetAllByCounterCurrency();
+
             currencies = currencies.Where(c => c.DeletedAt == null && c.IsEnabled)
                 .Include(c => c.AnalysedComponents)
                 .Include(c => c.PartialCurrencyPairs)
@@ -182,7 +189,9 @@ namespace Nozomi.Service.Events
                 .Include(c => c.PartialCurrencyPairs)
                 .ThenInclude(pcp => pcp.CurrencyPair)
                 .ThenInclude(cp => cp.CurrencyPairRequests)
-                .ThenInclude(cpr => cpr.AnalysedComponents);
+                .ThenInclude(cpr => cpr.AnalysedComponents)
+                .Where(c => c.PartialCurrencyPairs
+                    .Any(pcp => compatibleCPairs.Any(ccp => ccp.Id.Equals(pcp.CurrencyPair.Id))));
 
             if (currencies != null)
             {
