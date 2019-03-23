@@ -160,14 +160,22 @@ namespace Nozomi.Service.Events
             }
         }
 
-        public ICollection<DetailedCurrencyResponse> GetAllDetailed(long currencyTypeId = 0)
+        public ICollection<DetailedCurrencyResponse> GetAllDetailed(string typeShortForm = "CRYPTO")
         {
             var res = new List<DetailedCurrencyResponse>();
-            
+
             var currencies = _unitOfWork.GetRepository<Currency>()
                 .GetQueryable()
-                .AsNoTracking()
-                .Where(c => c.DeletedAt == null && c.IsEnabled)
+                .AsNoTracking();
+
+            if (!string.IsNullOrEmpty(typeShortForm))
+            {
+                currencies = currencies.Include(c => c.CurrencyType)
+                    .Where(c => c.CurrencyType.TypeShortForm
+                        .Equals(typeShortForm, StringComparison.InvariantCultureIgnoreCase));
+            }
+                
+            currencies = currencies.Where(c => c.DeletedAt == null && c.IsEnabled)
                 .Include(c => c.AnalysedComponents)
                 .Include(c => c.PartialCurrencyPairs)
                 .ThenInclude(pcp => pcp.Currency)

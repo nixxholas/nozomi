@@ -22,7 +22,7 @@ namespace Nozomi.Service.Events.Interfaces
         /// </summary>
         /// <param name="currencyTypeId"></param>
         /// <returns></returns>
-        ICollection<DetailedCurrencyResponse> GetAllDetailed(long currencyTypeId = 0);
+        ICollection<DetailedCurrencyResponse> GetAllDetailed(string typeShortForm = "CRYPTO");
 
         /// <summary>
         /// Enables to caller to obtained a detailed about regarding a currency,
