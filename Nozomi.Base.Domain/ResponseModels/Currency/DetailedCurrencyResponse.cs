@@ -70,14 +70,22 @@ namespace Nozomi.Data.ResponseModels.Currency
                                          && ac.ComponentType.Equals(AnalysedComponentType.CurrentAveragePrice)))
                 {
                     var currencyAP = currency.AnalysedComponents.FirstOrDefault(ac =>
-                            ac.DeletedAt == null && ac.IsEnabled
-                                                 && ac.ComponentType.Equals(AnalysedComponentType.CurrentAveragePrice))
-                        ?.Value;
+                        ac.DeletedAt == null && ac.IsEnabled
+                                             && ac.ComponentType.Equals(AnalysedComponentType.CurrentAveragePrice));
+                    var currencyAPVal = currencyAP?.Value;
 
-                    if (string.IsNullOrEmpty(currencyAP)
-                        && currencyAP.Equals("0", StringComparison.InvariantCultureIgnoreCase))
+                    if (string.IsNullOrEmpty(currencyAPVal)
+                        && currencyAPVal.Equals("0", StringComparison.InvariantCultureIgnoreCase))
                     {
-                        AveragePrice = decimal.Parse(currencyAP);
+                        AveragePrice = decimal.Parse(currencyAPVal);
+
+                        if (currencyAP.AnalysedHistoricItems != null && currencyAP.AnalysedHistoricItems.Count > 0)
+                        {
+                            AveragePriceHistory = currencyAP.AnalysedHistoricItems
+                                .DefaultIfEmpty()
+                                .Select(ahi => decimal.Parse(ahi.Value))
+                                .ToList();
+                        }
                     }
                 }
                 // Daily average percentage change via the Currency
@@ -96,6 +104,7 @@ namespace Nozomi.Data.ResponseModels.Currency
                         DailyAvgPricePctChange = decimal.Parse(currencyDAPPC);
                     }
                 }
+                
                 // Market cap is usually stored with a currency-based AC.
                 // Thus we directly obtain the value like that.
                 MarketCap = decimal.Parse(currency.AnalysedComponents.FirstOrDefault(ac =>
@@ -255,5 +264,7 @@ namespace Nozomi.Data.ResponseModels.Currency
         public decimal MarketCap { get; set; }
 
         public Dictionary<ComponentType, List<ComponentHistoricalDatum>> Historical { get; set; }
+        
+        public ICollection<decimal> AveragePriceHistory { get; set; }
     }
 }

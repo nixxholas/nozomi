@@ -184,12 +184,14 @@ namespace Nozomi.Service.Events
 
             currencies = currencies.Where(c => c.DeletedAt == null && c.IsEnabled)
                 .Include(c => c.AnalysedComponents)
+                .ThenInclude(ac => ac.AnalysedHistoricItems)
                 .Include(c => c.PartialCurrencyPairs)
                 .ThenInclude(pcp => pcp.Currency)
                 .Include(c => c.PartialCurrencyPairs)
                 .ThenInclude(pcp => pcp.CurrencyPair)
                 .ThenInclude(cp => cp.CurrencyPairRequests)
                 .ThenInclude(cpr => cpr.AnalysedComponents)
+                .ThenInclude(ac => ac.AnalysedHistoricItems)
                 .Where(c => c.PartialCurrencyPairs
                     .Any(pcp => compatibleCPairs.Any(ccp => ccp.Id.Equals(pcp.CurrencyPair.Id))));
 
