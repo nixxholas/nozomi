@@ -32,7 +32,6 @@ namespace Nozomi.Data.ResponseModels.Currency
                 {
                     // Obtain via the Request method
                     var query = currency.PartialCurrencyPairs
-                        // TODO: Need to factor in the counter currency.
                             // Make sure all PCPs obtained have this currency as the main.
                             .Where(pcp => pcp.IsMain && pcp.Currency.Abbrv.Equals(currency.Abbrv,
                                                StringComparison.InvariantCultureIgnoreCase)
@@ -51,15 +50,13 @@ namespace Nozomi.Data.ResponseModels.Currency
                             switch (aComp.ComponentType)
                             {
                                 case AnalysedComponentType.CurrentAveragePrice:
-                                    if (AveragePrice <= 0 
-                                        && decimal.TryParse(aComp.Value, out var avgPrice))
+                                    if (decimal.TryParse(aComp.Value, out var avgPrice))
                                     {
                                         AveragePrice = avgPrice;
                                     }
                                     break;
                                 case AnalysedComponentType.DailyPricePctChange:
-                                    if (DailyAvgPricePctChange.Equals(-200)
-                                    && decimal.TryParse(aComp.Value, out var dailyAvgPricePctChange))
+                                    if (decimal.TryParse(aComp.Value, out var dailyAvgPricePctChange))
                                     {
                                         DailyAvgPricePctChange = dailyAvgPricePctChange;
                                     }
