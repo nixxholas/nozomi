@@ -307,15 +307,72 @@ namespace Nozomi.Ticker.StartupExtensions
                                     {
                                         CurrencyTypeId = cryptoType.Id,
                                         Abbrv = "KNC",
-                                        Name = "Kyber Network Coin",
+                                        Name = "Kyber Network Crystal",
                                         CurrencySourceId = bfxSource.Id,
-                                        WalletTypeId = 4 // As per CNWallet
+                                        Denominations = 18,
+                                        WalletTypeId = 4, // As per CNWallet
+                                        // Calculates mCap ONLY for this exact Currency pair on this exchange.
+                                        AnalysedComponents = new List<AnalysedComponent>
+                                        {
+                                            new AnalysedComponent
+                                            {
+                                                ComponentType = AnalysedComponentType.MarketCap,
+                                                Delay = 1000,
+                                                CreatedAt = DateTime.UtcNow,
+                                                ModifiedAt = DateTime.UtcNow,
+                                                IsDenominated = true,
+                                                DeletedAt = null
+                                            }
+                                        },
+                                        CurrencyRequests = new List<CurrencyRequest>
+                                        {
+                                            new CurrencyRequest
+                                            {
+                                                Guid = Guid.NewGuid(),
+                                                RequestType = RequestType.HttpGet,
+                                                DataPath = "https://api.etherscan.io/api",
+                                                Delay = 5000,
+                                                RequestComponents = new List<RequestComponent>
+                                                {
+                                                    new RequestComponent
+                                                    {
+                                                        ComponentType = ComponentType.Circulating_Supply,
+                                                        IsDenominated = true,
+                                                        QueryComponent = "result",
+                                                        CreatedAt = DateTime.UtcNow,
+                                                        ModifiedAt = DateTime.UtcNow,
+                                                        DeletedAt = null
+                                                    }
+                                                },
+                                                RequestProperties = new List<RequestProperty>
+                                                {
+                                                    new RequestProperty
+                                                    {
+                                                        RequestPropertyType = RequestPropertyType.HttpHeader_Custom,
+                                                        Key = "module",
+                                                        Value = "stats",
+                                                    },
+                                                    new RequestProperty
+                                                    {
+                                                        RequestPropertyType = RequestPropertyType.HttpHeader_Custom,
+                                                        Key = "action",
+                                                        Value = "tokensupply",
+                                                    },
+                                                    new RequestProperty
+                                                    {
+                                                        RequestPropertyType = RequestPropertyType.HttpHeader_Custom,
+                                                        Key = "apikey",
+                                                        Value = "TGAFGMGDKHJ8W2EKI26MJRRWGH44AV9224",
+                                                    }
+                                                }
+                                            },
+                                        }
                                     },
                                     new Currency
                                     {
                                         CurrencyTypeId = cryptoType.Id,
                                         Abbrv = "KNC",
-                                        Name = "Kyber Network Coin",
+                                        Name = "Kyber Network Crystal",
                                         CurrencySourceId = bnaSource.Id,
                                         WalletTypeId = 4 // As per CNWallet
                                     },
@@ -403,7 +460,7 @@ namespace Nozomi.Ticker.StartupExtensions
                                                 {
                                                     new RequestComponent
                                                     {
-                                                        ComponentType = ComponentType.Circulating_Supply,
+                                                        ComponentType = ComponentType.BlockCount,
                                                         QueryComponent = "info/blocks",
                                                         CreatedAt = DateTime.UtcNow,
                                                         ModifiedAt = DateTime.UtcNow,
@@ -413,6 +470,24 @@ namespace Nozomi.Ticker.StartupExtensions
                                                     {
                                                         ComponentType = ComponentType.Difficulty,
                                                         QueryComponent = "info/difficulty",
+                                                        CreatedAt = DateTime.UtcNow,
+                                                        ModifiedAt = DateTime.UtcNow,
+                                                        DeletedAt = null
+                                                    }
+                                                }
+                                            },
+                                            new CurrencyRequest
+                                            {
+                                                Guid = Guid.NewGuid(),
+                                                RequestType = RequestType.HttpGet,
+                                                DataPath = "https://api.coinranking.com/v1/public/coin/1?base=USD",
+                                                Delay = 90000,
+                                                RequestComponents = new List<RequestComponent>
+                                                {
+                                                    new RequestComponent
+                                                    {
+                                                        ComponentType = ComponentType.Circulating_Supply,
+                                                        QueryComponent = "data/coin/circulatingSupply",
                                                         CreatedAt = DateTime.UtcNow,
                                                         ModifiedAt = DateTime.UtcNow,
                                                         DeletedAt = null

@@ -57,6 +57,9 @@ namespace Nozomi.Data.Models.Currency
         [Description("The current circulating supply of this asset.")]
         Circulating_Supply = 1000,
         [Comparable(false)]
+        [Description("The current block count of this crypto.")]
+        BlockCount = 1005,
+        [Comparable(false)]
         [Description("The current mining difficulty of this asset.")]
         Difficulty = 1010,
     }
