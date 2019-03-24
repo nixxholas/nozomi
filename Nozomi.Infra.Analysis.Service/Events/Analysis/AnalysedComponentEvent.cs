@@ -231,7 +231,7 @@ namespace Nozomi.Infra.Analysis.Service.Events.Analysis
                                 .Equals(currency.Abbrv, StringComparison.InvariantCultureIgnoreCase)
                             // Counter currency is the generic counter currency
                             && cp.PartialCurrencyPairs.FirstOrDefault(pcp => !pcp.IsMain).Currency.Abbrv
-                                .Equals(CoreConstants.GenericCounterCurrency,
+                                .Contains(CoreConstants.GenericCounterCurrency,
                                     StringComparison.InvariantCultureIgnoreCase))
                         .Include(cp => cp.CurrencyPairRequests)
                         .ThenInclude(cpr => cpr.AnalysedComponents);
