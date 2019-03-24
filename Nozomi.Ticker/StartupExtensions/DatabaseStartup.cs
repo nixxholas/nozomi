@@ -272,6 +272,7 @@ namespace Nozomi.Ticker.StartupExtensions
                                                     new RequestComponent
                                                     {
                                                         ComponentType = ComponentType.Circulating_Supply,
+                                                        IsDenominated = true,
                                                         QueryComponent = "result",
                                                         CreatedAt = DateTime.UtcNow,
                                                         ModifiedAt = DateTime.UtcNow,
