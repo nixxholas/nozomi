@@ -60,10 +60,10 @@ namespace Nozomi.Service.Services
                     .SingleOrDefault(cp => cp.DeletedAt == null && cp.IsEnabled);
 
                 // Anomaly Detection
+                // Let's make it more efficient by checking if the price has changed
                 if (pairToUpd.HasAbnormalValue(val))
                 {
-                    // Let's make it more efficient by checking if the price has changed
-                    if (!pairToUpd.Value.Equals(val.ToString(CultureInfo.InvariantCulture)))
+                    if (!string.IsNullOrEmpty(pairToUpd.Value))
                     {
                         // Save old data first
                         if (_rcdHistoricItemService.Push(pairToUpd))
@@ -82,6 +82,7 @@ namespace Nozomi.Service.Services
                     pairToUpd.Value = val.ToString(CultureInfo.InvariantCulture);
 
                     _unitOfWork.GetRepository<RequestComponent>().Update(pairToUpd);
+                    _unitOfWork.Commit();
 
                     return new NozomiResult<string>
                         (NozomiResultType.Success, "Currency Pair Component successfully updated!");
