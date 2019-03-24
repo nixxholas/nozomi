@@ -315,6 +315,14 @@ namespace Nozomi.Service.Events
                     {
                         res.Add(new DetailedCurrencyResponse(currency));
                     }
+                    // Since there already is a duplicate
+                    else
+                    {
+                        // Populate it further
+                        res.SingleOrDefault(item => item.Abbreviation.Equals(currency.Abbrv, 
+                                StringComparison.InvariantCultureIgnoreCase))
+                            ?.Populate(currency);
+                    }
                 }
             }
 

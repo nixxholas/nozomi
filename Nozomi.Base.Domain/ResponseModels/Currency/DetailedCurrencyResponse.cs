@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
@@ -77,6 +78,7 @@ namespace Nozomi.Data.ResponseModels.Currency
                         if (currencyAP.AnalysedHistoricItems != null && currencyAP.AnalysedHistoricItems.Count > 0)
                         {
                             AveragePriceHistory = currencyAP.AnalysedHistoricItems
+                                .OrderByDescending(ahi => ahi.HistoricDateTime)
                                 .DefaultIfEmpty()
                                 .Select(ahi => decimal.Parse(ahi.Value))
                                 .ToList();
@@ -260,5 +262,125 @@ namespace Nozomi.Data.ResponseModels.Currency
         public Dictionary<ComponentType, List<ComponentHistoricalDatum>> Historical { get; set; }
         
         public ICollection<decimal> AveragePriceHistory { get; set; }
+
+        /// <summary>
+        /// Allows multiple currency objects that are identical to merge its history.
+        /// </summary>
+        /// <param name="currency"></param>
+        public void Populate(Models.Currency.Currency currency)
+        {
+            if (currency != null)
+            {
+                if (currency.PartialCurrencyPairs != null && currency.PartialCurrencyPairs.Count > 0)
+                {
+                    // Obtain via the Request method
+                    var query = currency.PartialCurrencyPairs
+                            .Select(pcp => pcp.CurrencyPair)
+                            .SelectMany(cpr => cpr.CurrencyPairRequests)
+                            .SelectMany(cpr => cpr.AnalysedComponents)
+                            .ToList();
+
+                    if (query.Count > 0)
+                    {
+                        foreach (var aComp in query)
+                        {
+                            switch (aComp.ComponentType)
+                            {
+                                case AnalysedComponentType.CurrentAveragePrice:
+                                    if (decimal.TryParse(aComp.Value, out var avgPrice))
+                                    {
+                                        if (AveragePrice > 0)
+                                            AveragePrice = (AveragePrice + avgPrice) / 2;
+                                        else
+                                            AveragePrice = avgPrice;
+                                    }
+                                    break;
+                                case AnalysedComponentType.DailyPricePctChange:
+                                    if (decimal.TryParse(aComp.Value, out var dailyAvgPricePctChange))
+                                    {
+                                        if (DailyAvgPricePctChange != 0)
+                                            DailyAvgPricePctChange =
+                                                (DailyAvgPricePctChange + dailyAvgPricePctChange) / 2;
+                                        else
+                                            DailyAvgPricePctChange = dailyAvgPricePctChange;
+                                    }
+                                    break;
+                            }
+                        }
+                    }
+                }
+
+                if (currency.AnalysedComponents.Any(ac =>
+                    ac.DeletedAt == null && ac.IsEnabled
+                                         && ac.ComponentType.Equals(AnalysedComponentType.CurrentAveragePrice)))
+                {
+                    var currencyAP = currency.AnalysedComponents.FirstOrDefault(ac =>
+                        ac.DeletedAt == null && ac.IsEnabled
+                                             && ac.ComponentType.Equals(AnalysedComponentType.CurrentAveragePrice));
+                    var currencyAPVal = currencyAP?.Value;
+
+                    if (string.IsNullOrEmpty(currencyAPVal)
+                        && currencyAPVal.Equals("0", StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        if (AveragePrice > 0)
+                            AveragePrice = (AveragePrice + decimal.Parse(currencyAPVal)) / 2;
+                        else
+                            AveragePrice = decimal.Parse(currencyAPVal);
+
+                        // TODO: Granulate AveragePriceHistory
+//                        if (currencyAP.AnalysedHistoricItems != null && currencyAP.AnalysedHistoricItems.Count > 0)
+//                        {
+//                            AveragePriceHistory = currencyAP.AnalysedHistoricItems
+//                                .OrderByDescending(ahi => ahi.HistoricDateTime)
+//                                .DefaultIfEmpty()
+//                                .Select(ahi => decimal.Parse(ahi.Value))
+//                                .ToList();
+//                        }
+                    }
+                }
+                // Daily average percentage change via the Currency
+                if (currency.AnalysedComponents.Any(ac =>
+                    ac.DeletedAt == null && ac.IsEnabled
+                                         && ac.ComponentType.Equals(AnalysedComponentType.DailyPricePctChange)))
+                {
+                    var currencyDAPPC = currency.AnalysedComponents.FirstOrDefault(ac =>
+                            ac.DeletedAt == null && ac.IsEnabled
+                                                 && ac.ComponentType.Equals(AnalysedComponentType.DailyPricePctChange))
+                        ?.Value;
+
+                    if (string.IsNullOrEmpty(currencyDAPPC)
+                        && currencyDAPPC.Equals("0", StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        if (DailyAvgPricePctChange != decimal.Zero)
+                            DailyAvgPricePctChange = (DailyAvgPricePctChange + decimal.Parse(currencyDAPPC)) / 2;
+                        else
+                            DailyAvgPricePctChange = decimal.Parse(currencyDAPPC);
+                    }
+                }
+                
+                // Market cap is usually stored with a currency-based AC.
+                // Thus we directly obtain the value like that.
+                if (currency.AnalysedComponents.Any(ac =>
+                    ac.DeletedAt == null && ac.IsEnabled
+                                         && ac.ComponentType.Equals(AnalysedComponentType.MarketCap)))
+                {
+                    if (MarketCap <= decimal.Zero)
+                        MarketCap = decimal.Parse(currency.AnalysedComponents.FirstOrDefault(ac =>
+                                                          ac.DeletedAt == null && ac.IsEnabled
+                                                                               && ac.ComponentType.Equals(
+                                                                                   AnalysedComponentType.MarketCap))
+                                                      ?.Value ?? MarketCap.ToString(CultureInfo.InvariantCulture));
+                    else
+                        MarketCap = (MarketCap + decimal.Parse(currency.AnalysedComponents.FirstOrDefault(ac =>
+                                                                       ac.DeletedAt == null && ac.IsEnabled
+                                                                                            && ac.ComponentType.Equals(
+                                                                                                AnalysedComponentType
+                                                                                                    .MarketCap))
+                                                                   ?.Value ?? MarketCap.ToString(CultureInfo
+                                                                   .InvariantCulture)))
+                                    / 2;
+                }
+            }
+        }
     }
 }
