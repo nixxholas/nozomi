@@ -378,6 +378,17 @@ namespace Nozomi.Ticker.StartupExtensions
                                         WalletTypeId = 0,
                                         Denominations = 8,
                                         DenominationName = "Sat",
+                                        AnalysedComponents = new List<AnalysedComponent>()
+                                        {
+                                            new AnalysedComponent
+                                            {
+                                                ComponentType = AnalysedComponentType.MarketCap,
+                                                Delay = 500,
+                                                CreatedAt = DateTime.UtcNow,
+                                                ModifiedAt = DateTime.UtcNow,
+                                                DeletedAt = null
+                                            }
+                                        },
                                         CurrencyRequests = new List<CurrencyRequest>()
                                         {
                                             new CurrencyRequest
@@ -986,14 +997,6 @@ namespace Nozomi.Ticker.StartupExtensions
                                             {
                                                 ComponentType = AnalysedComponentType.DailyVolume,
                                                 Delay = 1000,
-                                                CreatedAt = DateTime.UtcNow,
-                                                ModifiedAt = DateTime.UtcNow,
-                                                DeletedAt = null
-                                            },
-                                            new AnalysedComponent
-                                            {
-                                                ComponentType = AnalysedComponentType.MarketCap,
-                                                Delay = 500,
                                                 CreatedAt = DateTime.UtcNow,
                                                 ModifiedAt = DateTime.UtcNow,
                                                 DeletedAt = null
