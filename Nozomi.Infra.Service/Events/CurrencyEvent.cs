@@ -68,17 +68,14 @@ namespace Nozomi.Service.Events
                     // Where the partial currency pair's main currency is equal to the currency that is required
                     .Where(cr => cr.Currency.Abbrv.Equals(curr.Abbrv, StringComparison.InvariantCultureIgnoreCase))
                     .Include(cpr => cpr.RequestComponents)
-                    .ThenInclude(rc => rc.RequestComponentDatum)
                     // Null checks
                     .Where(cpr => cpr.IsEnabled && cpr.DeletedAt == null
                                                 && cpr.RequestComponents
                                                     .Any(rc => rc.DeletedAt == null && rc.IsEnabled
-                                                                                    && rc.RequestComponentDatum !=
-                                                                                    null))
+                                                                                    && !string.IsNullOrEmpty(rc.Value)))
                     // Obtain only the circulating supply
                     .SelectMany(cpr => cpr.RequestComponents
                         .Where(rc => rc.ComponentType.Equals(ComponentType.Circulating_Supply)))
-                    .Select(rc => rc.RequestComponentDatum)
                     .FirstOrDefault();
 #endif
 
@@ -91,20 +88,16 @@ namespace Nozomi.Service.Events
                                              .Where(cr => cr.Currency.Abbrv.Equals(curr.Abbrv,
                                                  StringComparison.InvariantCultureIgnoreCase))
                                              .Include(cpr => cpr.RequestComponents)
-                                             .ThenInclude(rc => rc.RequestComponentDatum)
                                              // Null checks
                                              .Where(cpr => cpr.IsEnabled && cpr.DeletedAt == null
                                                                          && cpr.RequestComponents
                                                                              .Any(rc =>
                                                                                  rc.DeletedAt == null && rc.IsEnabled
-                                                                                                      && rc
-                                                                                                          .RequestComponentDatum !=
-                                                                                                      null))
+                                                                                                      && !string.IsNullOrEmpty(rc.Value)))
                                              // Obtain only the circulating supply
                                              .SelectMany(cpr => cpr.RequestComponents
                                                  .Where(rc =>
                                                      rc.ComponentType.Equals(ComponentType.Circulating_Supply)))
-                                             .Select(rc => rc.RequestComponentDatum)
                                              .FirstOrDefault()?.Value ?? "0") /
                            (decimal) Math.Pow(10, curr.Denominations);
             }
@@ -148,20 +141,16 @@ namespace Nozomi.Service.Events
                                                              && pcp.Currency.Abbrv.Equals(currencyCPR.Abbrv,
                                                                  StringComparison.InvariantCultureIgnoreCase)))
                                              .Include(cpr => cpr.RequestComponents)
-                                             .ThenInclude(rc => rc.RequestComponentDatum)
                                              // Null checks
                                              .Where(cpr => cpr.IsEnabled && cpr.DeletedAt == null
                                                                          && cpr.RequestComponents
                                                                              .Any(rc =>
                                                                                  rc.DeletedAt == null && rc.IsEnabled
-                                                                                                      && rc
-                                                                                                          .RequestComponentDatum !=
-                                                                                                      null))
+                                                                                                      && !string.IsNullOrEmpty(rc.Value)))
                                              // Obtain only the circulating supply
                                              .SelectMany(cpr => cpr.RequestComponents
                                                  .Where(rc =>
                                                      rc.ComponentType.Equals(ComponentType.Circulating_Supply)))
-                                             .Select(rc => rc.RequestComponentDatum)
                                              .FirstOrDefault()?.Value ?? "0") /
                            (decimal) Math.Pow(10, currencyCPR.Denominations);
                 }
@@ -194,20 +183,16 @@ namespace Nozomi.Service.Events
                                                              && pcp.Currency.Abbrv.Equals(currencyWsr.Abbrv,
                                                                  StringComparison.InvariantCultureIgnoreCase)))
                                              .Include(cpr => cpr.RequestComponents)
-                                             .ThenInclude(rc => rc.RequestComponentDatum)
                                              // Null checks
                                              .Where(cpr => cpr.IsEnabled && cpr.DeletedAt == null
                                                                          && cpr.RequestComponents
                                                                              .Any(rc =>
                                                                                  rc.DeletedAt == null && rc.IsEnabled
-                                                                                                      && rc
-                                                                                                          .RequestComponentDatum !=
-                                                                                                      null))
+                                                                                                      && !string.IsNullOrEmpty(rc.Value)))
                                              // Obtain only the circulating supply
                                              .SelectMany(cpr => cpr.RequestComponents
                                                  .Where(rc =>
                                                      rc.ComponentType.Equals(ComponentType.Circulating_Supply)))
-                                             .Select(rc => rc.RequestComponentDatum)
                                              .FirstOrDefault()?.Value ?? "0") /
                            (decimal) Math.Pow(10, currencyWsr.Denominations);
                 }
@@ -347,7 +332,6 @@ namespace Nozomi.Service.Events
                                              && !pcp.IsMain))
                 .Include(cp => cp.CurrencyPairRequests)
                 .ThenInclude(cpr => cpr.RequestComponents)
-                .ThenInclude(rc => rc.RequestComponentDatum)
                 .ThenInclude(rcd => rcd.RcdHistoricItems)
                 .Where(cp => cp.CurrencyPairRequests
                     .Any(cpr => cpr.IsEnabled && cpr.DeletedAt == null
@@ -355,14 +339,9 @@ namespace Nozomi.Service.Events
                                                   .Any(rc => rc.DeletedAt == null && rc.IsEnabled
                                                                                   && componentTypes.Contains(
                                                                                       rc.ComponentType)
-                                                                                  && rc.RequestComponentDatum != null
-                                                                                  && rc.RequestComponentDatum
-                                                                                      .DeletedAt == null
-                                                                                  && rc.RequestComponentDatum.IsEnabled
-                                                                                  && rc.RequestComponentDatum
-                                                                                      .RcdHistoricItems != null
-                                                                                  && rc.RequestComponentDatum
-                                                                                      .RcdHistoricItems
+                                                                                  && !string.IsNullOrEmpty(rc.Value)
+                                                                                  && rc.RcdHistoricItems != null
+                                                                                  && rc.RcdHistoricItems
                                                                                       .Any(rcdhi =>
                                                                                           rcdhi.DeletedAt == null &&
                                                                                           rcdhi.IsEnabled))));
@@ -397,7 +376,6 @@ namespace Nozomi.Service.Events
                                              && !pcp.IsMain))
                 .Include(cp => cp.CurrencyPairRequests)
                 .ThenInclude(cpr => cpr.RequestComponents)
-                .ThenInclude(rc => rc.RequestComponentDatum)
                 .ThenInclude(rcd => rcd.RcdHistoricItems)
                 .Where(cp => cp.CurrencyPairRequests
                     .Any(cpr => cpr.IsEnabled && cpr.DeletedAt == null
@@ -405,14 +383,9 @@ namespace Nozomi.Service.Events
                                                   .Any(rc => rc.DeletedAt == null && rc.IsEnabled
                                                                                   && componentTypes.Contains(
                                                                                       rc.ComponentType)
-                                                                                  && rc.RequestComponentDatum != null
-                                                                                  && rc.RequestComponentDatum
-                                                                                      .DeletedAt == null
-                                                                                  && rc.RequestComponentDatum.IsEnabled
-                                                                                  && rc.RequestComponentDatum
-                                                                                      .RcdHistoricItems != null
-                                                                                  && rc.RequestComponentDatum
-                                                                                      .RcdHistoricItems
+                                                                                  && !string.IsNullOrEmpty(rc.Value)
+                                                                                  && rc.RcdHistoricItems != null
+                                                                                  && rc.RcdHistoricItems
                                                                                       .Any(rcdhi =>
                                                                                           rcdhi.DeletedAt == null &&
                                                                                           rcdhi.IsEnabled))));

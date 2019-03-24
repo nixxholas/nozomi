@@ -22,8 +22,8 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
             
             entityTypeBuilder.HasOne(rc => rc.Request).WithMany(r => r.RequestComponents)
                 .HasForeignKey(rc => rc.RequestId);
-            entityTypeBuilder.HasOne(rc => rc.RequestComponentDatum).WithOne(rcd => rcd.RequestComponent)
-                .HasForeignKey<RequestComponentDatum>(rcd => rcd.RequestComponentId);
+            entityTypeBuilder.HasMany(rc => rc.RcdHistoricItems).WithOne(rcd => rcd.RequestComponent)
+                .HasForeignKey(rcd => rcd.RequestComponentId);
         }
     }
 }

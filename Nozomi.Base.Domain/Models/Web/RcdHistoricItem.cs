@@ -11,7 +11,7 @@ namespace Nozomi.Data.Models.Web
 
         public string Value { get; set; }
         
-        public long RequestComponentDatumId { get; set; }
-        public RequestComponentDatum RequestComponentDatum { get; set; }
+        public long RequestComponentId { get; set; }
+        public RequestComponent RequestComponent { get; set; }
     }
 }

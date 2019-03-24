@@ -109,7 +109,6 @@ namespace Nozomi.Infra.Analysis.Service.Events.Analysis
                     .Include(ac => ac.AnalysedHistoricItems)
                     .Include(ac => ac.Request)
                     .ThenInclude(r => r.RequestComponents)
-                    .ThenInclude(rc => rc.RequestComponentDatum)
                     .ThenInclude(rcd => rcd.RcdHistoricItems);
             }
 

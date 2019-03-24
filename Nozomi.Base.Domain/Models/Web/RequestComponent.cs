@@ -1,4 +1,5 @@
-﻿using Nozomi.Base.Core;
+﻿using System.Collections.Generic;
+using Nozomi.Base.Core;
 using Nozomi.Data.Models.Currency;
 
 namespace Nozomi.Data.Models.Web
@@ -33,9 +34,25 @@ namespace Nozomi.Data.Models.Web
 
         public bool IsDenominated { get; set; } = false;
 
+        public string Value { get; set; }
+
         public long RequestId { get; set; }
         public Request Request { get; set; }
         
-        public RequestComponentDatum RequestComponentDatum { get; set; }
+        public ICollection<RcdHistoricItem> RcdHistoricItems { get; set; }
+        
+        public bool HasAbnormalValue(decimal val)
+        {
+            if (decimal.TryParse(Value, out var currVal))
+            {
+                // Always return true if the value has not been propagated yet.
+                if (currVal.Equals(0)) return true;
+                
+                // If the difference is > 50% or if the difference is less than -50%
+                return !((val / (currVal / 100)) - 100 > 50) || !((val / (currVal / 100)) - 100 < -50);
+            }
+
+            return false;
+        }
     }
 }

@@ -36,7 +36,6 @@ namespace Nozomi.Service.Events
                 .Include(cp => cp.CurrencySource)
                 .Include(cp => cp.CurrencyPairRequests)
                 .ThenInclude(cpr => cpr.RequestComponents)
-                .ThenInclude(rc => rc.RequestComponentDatum)
                 .Select(cp => new UniqueTickerResponse
                 {
                     TickerAbbreviation = string.Concat(
@@ -46,13 +45,12 @@ namespace Nozomi.Service.Events
                     ExchangeAbbrv = cp.CurrencySource.Abbreviation,
                     LastUpdated = cp.CurrencyPairRequests.FirstOrDefault(cpr => cpr.DeletedAt == null && cpr.IsEnabled)
                         .RequestComponents.FirstOrDefault(rc => rc.DeletedAt == null && rc.IsEnabled)
-                        .RequestComponentDatum
                         .ModifiedAt,
                     Properties = cp.CurrencyPairRequests.FirstOrDefault()
                         .RequestComponents
                         .Select(rc => new KeyValuePair<string, string>(
                             rc.ComponentType.ToString(),
-                            rc.RequestComponentDatum.Value))
+                            rc.Value))
                         .ToList()
                 })
                 .ToList();
@@ -82,20 +80,18 @@ namespace Nozomi.Service.Events
                     .Where(cp => cp.CurrencySource.IsEnabled && cp.CurrencySource.DeletedAt == null)
                     .Include(cp => cp.CurrencyPairRequests)
                     .ThenInclude(cpr => cpr.RequestComponents)
-                    .ThenInclude(rc => rc.RequestComponentDatum)
                     .Select(cp => new TickerByExchangeResponse()
                     {
                         Exchange = cp.CurrencySource.Name,
                         ExchangeAbbrv = cp.CurrencySource.Abbreviation,
                         LastUpdated = cp.CurrencyPairRequests.FirstOrDefault(cpr => cpr.DeletedAt == null && cpr.IsEnabled)
                             .RequestComponents.FirstOrDefault(rc => rc.DeletedAt == null && rc.IsEnabled)
-                            .RequestComponentDatum
                             .CreatedAt,
                         Properties = cp.CurrencyPairRequests
                             .SelectMany(cpr => cpr.RequestComponents)
                             .OrderBy(rc => rc.ComponentType).Select(rc => 
                                 new KeyValuePair<string,string>(rc.ComponentType.ToString(), 
-                                    rc.RequestComponentDatum.Value)).ToList()
+                                    rc.Value)).ToList()
                     })
                     .SingleOrDefault()
             });
@@ -126,7 +122,6 @@ namespace Nozomi.Service.Events
                         .Include(cp => cp.CurrencySource)
                         .Include(cp => cp.CurrencyPairRequests)
                         .ThenInclude(cpr => cpr.RequestComponents)
-                        .ThenInclude(rc => rc.RequestComponentDatum)
                         .Where(cp => cp.CurrencySource.Abbreviation.Equals(exchangeAbbrv, 
                             StringComparison.InvariantCultureIgnoreCase))
                         .Select(cp => new TickerByExchangeResponse
@@ -141,7 +136,7 @@ namespace Nozomi.Service.Events
                                 .SelectMany(cpr => cpr.RequestComponents)
                                 .OrderBy(rc => rc.ComponentType).Select(rc => 
                                     new KeyValuePair<string,string>(rc.ComponentType.ToString(), 
-                                        rc.RequestComponentDatum.Value)).ToList()
+                                        rc.Value)).ToList()
                         })
                         .ToList());
                     
@@ -182,7 +177,6 @@ namespace Nozomi.Service.Events
                         .Include(cp => cp.CurrencySource)
                         .Include(cp => cp.CurrencyPairRequests)
                         .ThenInclude(cpr => cpr.RequestComponents)
-                        .ThenInclude(rc => rc.RequestComponentDatum)
                         .Select(cp => new TickerByExchangeResponse
                         {
                             Exchange = cp.CurrencySource.Name,
@@ -195,7 +189,7 @@ namespace Nozomi.Service.Events
                                 .SelectMany(cpr => cpr.RequestComponents)
                                 .OrderBy(rc => rc.ComponentType).Select(rc => 
                                     new KeyValuePair<string,string>(rc.ComponentType.ToString(), 
-                                        rc.RequestComponentDatum.Value)).ToList()
+                                        rc.Value)).ToList()
                         })
                         .ToList());
             }

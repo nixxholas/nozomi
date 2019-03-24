@@ -42,7 +42,6 @@ namespace Nozomi.Service.HostedServices.StaticUpdater
                         .ThenInclude(pcp => pcp.CurrencyPair)
                         .ThenInclude(cp => cp.CurrencyPairRequests)
                         .ThenInclude(cpr => cpr.RequestComponents)
-                        .ThenInclude(rc => rc.RequestComponentDatum)
                         .ThenInclude(rcd => rcd.RcdHistoricItems)
                     );
         
@@ -85,11 +84,10 @@ namespace Nozomi.Service.HostedServices.StaticUpdater
                                     Properties = cp.CurrencyPairRequests
                                         .FirstOrDefault(cpr => cpr.IsEnabled && cpr.DeletedAt == null)
                                         ?.RequestComponents.OrderByDescending(rc => rc.ComponentType)
-                                        .Where(rc => rc.RequestComponentDatum != null && 
-                                                     !string.IsNullOrEmpty(rc.RequestComponentDatum.Value))
+                                        .Where(rc => !string.IsNullOrEmpty(rc.Value))
                                         .Select(rc => 
                                             new KeyValuePair<string, string>(rc.QueryComponent.GetDescription(), 
-                                            rc.RequestComponentDatum.Value))
+                                            rc.Value))
                                         .ToList()
                                 }).ToList());
                     }

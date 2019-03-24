@@ -25,16 +25,13 @@ namespace Nozomi.Service.Events.Websocket
                 context.WebsocketRequests
                     .AsQueryable()
                     .Include(cpr => cpr.RequestComponents)
-                    .ThenInclude(rc => rc.RequestComponentDatum)
                     .Include(r => r.CurrencyPair)
                     .Include(r => r.RequestProperties)
                     .Include(r => r.WebsocketCommands)
                     .ThenInclude(wsc => wsc.WebsocketCommandProperties)
                     .Where(r => r.IsEnabled && r.DeletedAt == null
                                             && r.RequestType == type
-                                            && r.RequestComponents.Any(rc => rc.RequestComponentDatum == null
-                                                                             || (DateTime.UtcNow > (rc.RequestComponentDatum
-                                                                                     .CreatedAt.Add(TimeSpan.FromMilliseconds(r.Delay)))))));
+                                            && r.RequestComponents.Any(rc => (DateTime.UtcNow > (rc.ModifiedAt.Add(TimeSpan.FromMilliseconds(r.Delay)))))));
 
         public ICollection<WebsocketRequest> GetAllByRequestType(RequestType requestType)
         {

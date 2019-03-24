@@ -44,7 +44,6 @@ namespace Nozomi.Infra.Analysis.Service.Events.Analysis
                     .Where(cpr => cpr.IsEnabled && cpr.DeletedAt == null))
                 .ThenInclude(cpr => cpr.RequestComponents
                     .Where(rc => rc.IsEnabled && rc.DeletedAt == null))
-                .ThenInclude(rc => rc.RequestComponentDatum)
                 .SelectMany(cp => cp.CurrencyPairRequests)
                 .SelectMany(cpr => cpr.RequestComponents)
                 .ToList();
@@ -56,13 +55,13 @@ namespace Nozomi.Infra.Analysis.Service.Events.Analysis
                 
                 if (res.ContainsKey(reqCompType))
                 {
-                    uncomputedRes[reqCompType].Add(decimal.Parse(reqComp.RequestComponentDatum.Value));
+                    uncomputedRes[reqCompType].Add(decimal.Parse(reqComp.Value));
                 }
                 else
                 {
                     uncomputedRes.Add(reqCompType, new List<decimal>
                     {
-                        decimal.Parse(reqComp.RequestComponentDatum.Value)
+                        decimal.Parse(reqComp.Value)
                     });
                 }
             }

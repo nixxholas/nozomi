@@ -32,7 +32,6 @@ namespace Nozomi.Service.Events.Memory
                        .ThenInclude(pcp => pcp.CurrencyPair)
                        .ThenInclude(cp => cp.CurrencyPairRequests)
                        .ThenInclude(cpr => cpr.RequestComponents)
-                       .ThenInclude(rc => rc.RequestComponentDatum)
                        .ThenInclude(rcd => rcd.RcdHistoricItems)
                        .SingleOrDefault(s => s.Id.Equals(sourceId))
                        ?.Currencies

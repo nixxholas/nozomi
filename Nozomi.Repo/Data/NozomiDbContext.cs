@@ -32,7 +32,6 @@ namespace Nozomi.Repo.Data
         public DbSet<PartialCurrencyPair> PartialCurrencyPairs { get; set; }
         public DbSet<Request> Requests { get; set; }
         public DbSet<RequestComponent> RequestComponents { get; set; }
-        public DbSet<RequestComponentDatum> RequestComponentData { get; set; }
         public DbSet<RcdHistoricItem> RcdHistoricItems { get; set; }
         public DbSet<RequestLog> RequestLogs { get; set; }
         public DbSet<RequestProperty> RequestProperties { get; set; }
@@ -57,7 +56,6 @@ namespace Nozomi.Repo.Data
             var partialCurrencyPairMap = new PartialCurrencyPairMap(modelBuilder.Entity<PartialCurrencyPair>());
             var requestMap = new RequestMap(modelBuilder.Entity<Request>());
             var requestComponentMap = new RequestComponentMap(modelBuilder.Entity<RequestComponent>());
-            var requestComponentDatumMap = new RequestComponentDatumMap(modelBuilder.Entity<RequestComponentDatum>());
             var rcdHistoricItemMap = new RcdHistoricItemMap(modelBuilder.Entity<RcdHistoricItem>());
             var requestLogMap = new RequestLogMap(modelBuilder.Entity<RequestLog>());
             var requestPropertyMap = new RequestPropertyMap(modelBuilder.Entity<RequestProperty>());

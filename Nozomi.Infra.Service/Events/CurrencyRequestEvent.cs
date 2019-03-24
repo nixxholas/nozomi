@@ -26,7 +26,6 @@ namespace Nozomi.Service.Events
                         .Where(cr => cr.DeletedAt == null && cr.IsEnabled && 
                                      cr.RequestType.Equals(requestType))
                         .Include(cr => cr.RequestComponents)
-                        .ThenInclude(rc => rc.RequestComponentDatum)
                         .Include(cr => cr.RequestProperties));
         
         public IDictionary<string, ICollection<CurrencyRequest>> GetAllByRequestTypeUniqueToUrl(

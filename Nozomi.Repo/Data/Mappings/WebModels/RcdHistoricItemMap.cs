@@ -16,9 +16,9 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
             entityTypeBuilder.Property(rcdhi => rcdhi.Value).HasDefaultValue(string.Empty);
             entityTypeBuilder.Property(rcdhi => rcdhi.HistoricDateTime).IsRequired();
 
-            entityTypeBuilder.HasOne(rcdhi => rcdhi.RequestComponentDatum)
-                .WithMany(rcd => rcd.RcdHistoricItems)
-                .HasForeignKey(rcdhi => rcdhi.RequestComponentDatumId).OnDelete(DeleteBehavior.Cascade);
+            entityTypeBuilder.HasOne(rcdhi => rcdhi.RequestComponent)
+                .WithMany(rc => rc.RcdHistoricItems)
+                .HasForeignKey(rcdhi => rcdhi.RequestComponentId).OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

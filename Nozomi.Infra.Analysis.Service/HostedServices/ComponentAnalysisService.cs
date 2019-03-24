@@ -169,7 +169,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                     // Now we can aggregate this
                                     var currAvgPrice = currencyReqComps
                                         .DefaultIfEmpty()
-                                        .Average(rc => decimal.Parse(rc.RequestComponentDatum.Value));
+                                        .Average(rc => decimal.Parse(rc.Value));
 
                                     if (!(currAvgPrice <= decimal.Zero))
                                     {
@@ -199,9 +199,9 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                     var avgPrice = correlatedReqComps
                                         .Where(rc => rc.ComponentType.Equals(ComponentType.Ask)
                                                      || rc.ComponentType.Equals(ComponentType.Bid))
-                                        .Where(rc => !string.IsNullOrEmpty(rc.RequestComponentDatum.Value))
+                                        .Where(rc => !string.IsNullOrEmpty(rc.Value))
                                         .DefaultIfEmpty()
-                                        .Average(rc => decimal.Parse(rc.RequestComponentDatum.Value));
+                                        .Average(rc => decimal.Parse(rc.Value));
 
                                     if (!decimal.Zero.Equals(avgPrice))
                                     {
@@ -287,7 +287,6 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                             }
 
                             var dailyCompute = component.Request.RequestComponents
-                                .Select(rc => rc.RequestComponentDatum)
                                 .SelectMany(rcd => rcd.RcdHistoricItems)
                                 .Where(rcdhi => rcdhi.CreatedAt >= DateTime.UtcNow.Subtract(TimeSpan.FromDays(1)))
                                 .Select(rcdhi => rcdhi.Value)
@@ -376,7 +375,6 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                             }
 
                             var weeklyCompute = component.Request.RequestComponents
-                                .Select(rc => rc.RequestComponentDatum)
                                 .SelectMany(rcd => rcd.RcdHistoricItems)
                                 .Where(rcdhi => rcdhi.CreatedAt >= DateTime.UtcNow.Subtract(TimeSpan.FromDays(7)))
                                 .Select(rcdhi => rcdhi.Value)
@@ -465,7 +463,6 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                             }
 
                             var monthlyCompute = component.Request.RequestComponents
-                                .Select(rc => rc.RequestComponentDatum)
                                 .SelectMany(rcd => rcd.RcdHistoricItems)
                                 .Where(rcdhi => rcdhi.CreatedAt >= DateTime.UtcNow.Subtract(TimeSpan.FromDays(30)))
                                 .Select(rcdhi => rcdhi.Value)

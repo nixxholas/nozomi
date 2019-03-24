@@ -17,21 +17,21 @@ namespace Nozomi.Service.Services
         {
         }
 
-        public bool Push(RequestComponentDatum rcd)
+        public bool Push(RequestComponent rc)
         {
             // Make sure nothing is newer
             if (!_unitOfWork.GetRepository<RcdHistoricItem>()
                 // include any rcdhi if it is NEWER than the current rcd
-                    .Get(rcdhi => rcdhi.RequestComponentDatumId.Equals(rcd.Id)
-                                  && rcdhi.HistoricDateTime > rcd.ModifiedAt)
+                    .Get(rcdhi => rcdhi.RequestComponentId.Equals(rc.Id)
+                                  && rcdhi.HistoricDateTime > rc.ModifiedAt)
                 .Any())
             {
                 // Push it
                 _unitOfWork.GetRepository<RcdHistoricItem>().Add(new RcdHistoricItem
                 {
-                    RequestComponentDatumId = rcd.Id,
-                    Value = rcd.Value,
-                    HistoricDateTime = rcd.ModifiedAt
+                    RequestComponentId = rc.Id,
+                    Value = rc.Value,
+                    HistoricDateTime = rc.ModifiedAt
                 });
                 _unitOfWork.Commit(); // done
                 

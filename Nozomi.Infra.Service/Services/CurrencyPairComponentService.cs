@@ -57,18 +57,16 @@ namespace Nozomi.Service.Services
                     .GetQueryable()
                     .AsTracking()
                     .Where(cp => cp.Id.Equals(id))
-                    .Include(cpc => cpc.RequestComponentDatum)
                     .SingleOrDefault(cp => cp.DeletedAt == null && cp.IsEnabled);
 
                 // Anomaly Detection
-                if (pairToUpd?.RequestComponentDatum != null &&
-                    pairToUpd.RequestComponentDatum.HasAbnormalValue(val))
+                if (pairToUpd.HasAbnormalValue(val))
                 {
                     // Let's make it more efficient by checking if the price has changed
-                    if (!pairToUpd.RequestComponentDatum.Value.Equals(val.ToString(CultureInfo.InvariantCulture)))
+                    if (!pairToUpd.Value.Equals(val.ToString(CultureInfo.InvariantCulture)))
                     {
                         // Save old data first
-                        if (_rcdHistoricItemService.Push(pairToUpd.RequestComponentDatum))
+                        if (_rcdHistoricItemService.Push(pairToUpd))
                         {
                         
                         }
@@ -81,24 +79,9 @@ namespace Nozomi.Service.Services
                         }
                     }
 
-                    pairToUpd.RequestComponentDatum.Value = val.ToString(CultureInfo.InvariantCulture);
+                    pairToUpd.Value = val.ToString(CultureInfo.InvariantCulture);
 
                     _unitOfWork.GetRepository<RequestComponent>().Update(pairToUpd);
-                    _unitOfWork.GetRepository<RequestComponentDatum>().Update(pairToUpd.RequestComponentDatum);
-                    _unitOfWork.Commit();
-
-                    return new NozomiResult<string>
-                        (NozomiResultType.Success, "Currency Pair Component successfully updated!");
-                }
-                else if (pairToUpd != null && pairToUpd.RequestComponentDatum == null)
-                {
-                    // Since the RCD is null but not the RC,
-                    _unitOfWork.GetRepository<RequestComponentDatum>().Add(new RequestComponentDatum()
-                    {
-                        RequestComponentId = pairToUpd.Id,
-                        Value = val.ToString(CultureInfo.InvariantCulture)
-                    });
-                    _unitOfWork.Commit();
 
                     return new NozomiResult<string>
                         (NozomiResultType.Success, "Currency Pair Component successfully updated!");

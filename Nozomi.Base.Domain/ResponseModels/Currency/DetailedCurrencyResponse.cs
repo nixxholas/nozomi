@@ -227,11 +227,10 @@ namespace Nozomi.Data.ResponseModels.Currency
                 .SelectMany(cp => cp.CurrencyPairRequests
                     .SelectMany(cpr => cpr.RequestComponents)))
             {
-                if (reqComp.RequestComponentDatum != null &&
-                    reqComp.RequestComponentDatum.RcdHistoricItems != null &&
-                    reqComp.RequestComponentDatum.RcdHistoricItems.Count > 0)
+                if (reqComp.RcdHistoricItems != null &&
+                    reqComp.RcdHistoricItems.Count > 0)
                 {
-                    var rcdhiList = reqComp.RequestComponentDatum.RcdHistoricItems;
+                    var rcdhiList = reqComp.RcdHistoricItems;
 
                     foreach (var rcdhi in rcdhiList)
                     {

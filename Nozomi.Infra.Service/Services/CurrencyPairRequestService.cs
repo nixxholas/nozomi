@@ -53,7 +53,6 @@ namespace Nozomi.Service.Services
                 .AsNoTracking()
                 .Where(cpr => cpr.DeletedAt == null && cpr.IsEnabled)
                 .Include(r => r.RequestComponents)
-                    .ThenInclude(rc => rc.RequestComponentDatum)
                 .Include(r => r.RequestProperties)
                 .Include(r => r.RequestLogs)
                 .Where(predicate)
@@ -69,7 +68,7 @@ namespace Nozomi.Service.Services
                             id = rc.Id,
                             componentType = rc.ComponentType,
                             queryComponent = rc.QueryComponent,
-                            value = rc.RequestComponentDatum,
+                            value = rc.Value,
                             isEnabled = rc.IsEnabled,
                             createdAt = rc.CreatedAt,
                             createdBy = rc.CreatedBy,
@@ -248,7 +247,6 @@ namespace Nozomi.Service.Services
                 .AsNoTracking()
                 .Where(r => r.DeletedAt == null && r.IsEnabled)
                 .Include(cpr => cpr.RequestComponents)
-                    .ThenInclude(rc => rc.RequestComponentDatum)
                 .Include(r => r.CurrencyPair)
                 .Include(r => r.RequestProperties);
         }
@@ -269,7 +267,6 @@ namespace Nozomi.Service.Services
                 .AsNoTracking()
                 .Where(cpr => cpr.DeletedAt == null && cpr.IsEnabled)
                 .Include(cpr => cpr.RequestComponents)
-                    .ThenInclude(rc => rc.RequestComponentDatum)
                 .Include(r => r.CurrencyPair)
                 .Include(r => r.RequestProperties)
                 .Where(predicate);
@@ -281,14 +278,12 @@ namespace Nozomi.Service.Services
                 context.CurrencyPairRequests
                     .AsQueryable()
                     .Include(cpr => cpr.RequestComponents)
-                    .ThenInclude(rc => rc.RequestComponentDatum)
                     .Include(r => r.CurrencyPair)
                     .Include(r => r.RequestProperties)
                     .Where(r => r.IsEnabled && r.DeletedAt == null
                                             && r.RequestType == type
-                                            && r.RequestComponents.Any(rc => rc.RequestComponentDatum == null
-                                                                             || (DateTime.UtcNow > (rc.RequestComponentDatum
-                                                                             .CreatedAt.Add(TimeSpan.FromMilliseconds(r.Delay)))))));
+                                            && r.RequestComponents.Any(rc => (DateTime.UtcNow > (rc
+                                                                             .ModifiedAt.Add(TimeSpan.FromMilliseconds(r.Delay)))))));
 
         public ICollection<CurrencyPairRequest> GetAllByRequestType(RequestType requestType)
         {

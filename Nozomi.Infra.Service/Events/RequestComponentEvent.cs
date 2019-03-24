@@ -36,7 +36,6 @@ namespace Nozomi.Service.Events
                 ? _unitOfWork.GetRepository<RequestComponent>()
                     .GetQueryable(rc => rc.RequestId.Equals(requestId) && rc.DeletedAt == null && rc.IsEnabled)
                     .AsNoTracking()
-                    .Include(rc => rc.RequestComponentDatum)
                     .Include(rc => rc.Request)
                     .ToList()
                 : _unitOfWork.GetRepository<RequestComponent>()
@@ -51,7 +50,6 @@ namespace Nozomi.Service.Events
                 ? _unitOfWork.GetRepository<RequestComponent>()
                     .GetQueryable(rc => rc.DeletedAt == null && rc.IsEnabled)
                     .AsNoTracking()
-                    .Include(rc => rc.RequestComponentDatum)
                     .Include(rc => rc.Request)
                     .Skip(index * 20)
                     .Take(20)
@@ -92,7 +90,6 @@ namespace Nozomi.Service.Events
                                                  StringComparison.InvariantCultureIgnoreCase))
                             .Include(cp => cp.CurrencyPairRequests)
                             .ThenInclude(cpr => cpr.RequestComponents)
-                            .ThenInclude(rc => rc.RequestComponentDatum)
                             .Where(cPair => cPair.CurrencyPairRequests.Any(cpr => cpr.IsEnabled && cpr.DeletedAt == null
                                                                                                 && cpr.RequestComponents
                                                                                                     .Any(rc =>
@@ -101,7 +98,7 @@ namespace Nozomi.Service.Events
                                                                                                                 componentType))))
                             .SelectMany(cp => cp.CurrencyPairRequests
                                 .SelectMany(cpr => cpr.RequestComponents
-                                    .Select(rc => decimal.Parse(rc.RequestComponentDatum.Value))))
+                                    .Select(rc => decimal.Parse(rc.Value))))
                             .DefaultIfEmpty()
                             .Average();
                     default:
@@ -164,8 +161,7 @@ namespace Nozomi.Service.Events
                         if (conversionRate != null && decimal.TryParse(conversionRate.Value, out var conversionVal))
                         {
                             // Since we've gotten the conversion rate, let's convert.
-                            reqCom.RequestComponentDatum.Value = (decimal.Parse(reqCom.RequestComponentDatum.Value)
-                                                                  * conversionVal).ToString(CultureInfo.InvariantCulture);
+                            reqCom.Value = (decimal.Parse(reqCom.Value) * conversionVal).ToString(CultureInfo.InvariantCulture);
                         }
                     }
                     else
@@ -189,7 +185,6 @@ namespace Nozomi.Service.Events
                         StringComparison.InvariantCultureIgnoreCase))
                 .Include(cp => cp.CurrencyPairRequests)
                 .ThenInclude(cpr => cpr.RequestComponents)
-                .ThenInclude(rc => rc.RequestComponentDatum)
                 .SelectMany(cp => cp.CurrencyPairRequests
                     .Where(cpr => cpr.RequestComponents != null && cpr.RequestComponents.Count > 0))
                 .SelectMany(cpr => cpr.RequestComponents)
@@ -252,7 +247,6 @@ namespace Nozomi.Service.Events
                                                             ac.Id.Equals(analysedComponentId))))
                     .Include(c => c.CurrencyRequests)
                     .ThenInclude(c => c.RequestComponents)
-                    .ThenInclude(rc => rc.RequestComponentDatum)
                     .SelectMany(c => c.CurrencyRequests)
                     .SelectMany(cr => cr.RequestComponents)
                     .Select(rc => new RequestComponent
@@ -260,8 +254,9 @@ namespace Nozomi.Service.Events
                         Id = rc.Id,
                         ComponentType = rc.ComponentType,
                         Identifier = rc.Identifier,
+                        IsDenominated = rc.IsDenominated,
                         QueryComponent = rc.QueryComponent,
-                        RequestComponentDatum = rc.RequestComponentDatum
+                        Value = rc.Value
                     })
                     .ToList();
             }
@@ -290,7 +285,6 @@ namespace Nozomi.Service.Events
                     )
                 .Include(cp => cp.CurrencyPairRequests)
                 .ThenInclude(cpr => cpr.RequestComponents)
-                .ThenInclude(rc => rc.RequestComponentDatum)
                 .SelectMany(cp => cp.CurrencyPairRequests)
                 .SelectMany(cpr => cpr.RequestComponents)
                     .Select(rc => new RequestComponent
@@ -298,8 +292,9 @@ namespace Nozomi.Service.Events
                         Id = rc.Id,
                         ComponentType = rc.ComponentType,
                         Identifier = rc.Identifier,
+                        IsDenominated = rc.IsDenominated,
                         QueryComponent = rc.QueryComponent,
-                        RequestComponentDatum = rc.RequestComponentDatum
+                        Value = rc.Value
                     })
                 .ToList();
             #endif
@@ -327,7 +322,6 @@ namespace Nozomi.Service.Events
                     )
                 .Include(cp => cp.CurrencyPairRequests)
                 .ThenInclude(cpr => cpr.RequestComponents)
-                .ThenInclude(rc => rc.RequestComponentDatum)
                 .SelectMany(cp => cp.CurrencyPairRequests)
                 .SelectMany(cpr => cpr.RequestComponents)
                     .Select(rc => new RequestComponent
@@ -335,8 +329,9 @@ namespace Nozomi.Service.Events
                         Id = rc.Id,
                         ComponentType = rc.ComponentType,
                         Identifier = rc.Identifier,
+                        IsDenominated = rc.IsDenominated,
                         QueryComponent = rc.QueryComponent,
-                        RequestComponentDatum = rc.RequestComponentDatum
+                        Value = rc.Value
                     })
                 .ToList();
 //            if (predicate != null)
@@ -379,7 +374,6 @@ namespace Nozomi.Service.Events
                                           // Filter via qCurrency
                              && cr.CurrencyId.Equals(qCurrency.Id))
                 .Include(cpr => cpr.RequestComponents)
-                .ThenInclude(rc => rc.RequestComponentDatum)
 //                .Where(cpr => cpr.RequestComponents
 //                    .Any(rc => rc.DeletedAt == null
 //                               && rc.IsEnabled))
@@ -405,7 +399,6 @@ namespace Nozomi.Service.Events
                 .Where(cpr => cpr.CurrencyPair.PartialCurrencyPairs
                     .FirstOrDefault(pcp => pcp.IsMain).CurrencyId.Equals(qCurrency.Id))
                 .Include(cpr => cpr.RequestComponents)
-                .ThenInclude(rc => rc.RequestComponentDatum)
 //                .Where(cpr => cpr.RequestComponents
 //                    .Any(rc => rc.DeletedAt == null
 //                               && rc.IsEnabled))
@@ -432,19 +425,18 @@ namespace Nozomi.Service.Events
                 .Where(cpr => cpr.CurrencyPair.PartialCurrencyPairs
                     .FirstOrDefault(pcp => pcp.IsMain).CurrencyId.Equals(qCurrency.Id))
                 .Include(cpr => cpr.RequestComponents)
-                .ThenInclude(rc => rc.RequestComponentDatum)
                 .Where(cpr => cpr.RequestComponents
                     .Any(rc => rc.DeletedAt == null
                                && rc.IsEnabled))
                 .SelectMany(cpr => cpr.RequestComponents
-                    .Where(rc => rc.RequestComponentDatum != null)
                     .Select(rc => new RequestComponent
                     {
                         Id = rc.Id,
                         ComponentType = rc.ComponentType,
                         Identifier = rc.Identifier,
+                        IsDenominated = rc.IsDenominated,
                         QueryComponent = rc.QueryComponent,
-                        RequestComponentDatum = rc.RequestComponentDatum
+                        Value = rc.Value
                     }))
                 .ToList();
         }
@@ -454,7 +446,6 @@ namespace Nozomi.Service.Events
             if (includeNested)
                 return new NozomiResult<RequestComponent>(_unitOfWork.GetRepository<RequestComponent>().GetQueryable()
                     .Include(rc => rc.Request)
-                    .Include(rc => rc.RequestComponentDatum)
                     .SingleOrDefault(rc => rc.Id.Equals(id) && rc.IsEnabled && rc.DeletedAt == null));
 
             return new NozomiResult<RequestComponent>(_unitOfWork.GetRepository<RequestComponent>()
