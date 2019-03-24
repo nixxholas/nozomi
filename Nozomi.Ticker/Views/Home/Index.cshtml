@@ -12,8 +12,6 @@
           <div class="mb-5">
             <h1 class="display-4 font-size-md-down-5 font-weight-semi-bold">Market data, all in one place.</h1>
             <p>Nozomi is the leading data metrics service that will support any <strong class="text-primary">endpoint</strong>.</p>
-          </div>
-        </div>
 
         <div class="w-lg-50 mt-auto mx-lg-auto">
           <!-- SVG Icon -->
@@ -83,6 +81,42 @@
             <div v-else>
               {{ datum.item.dailyAvgPricePctChange }}%
             </div>
+          </template>
+          <template slot="averagePriceHistory" slot-scope="datum">
+            <!-- Area Chart -->
+            <div class="js-area-chart u-area-chart"
+                 data-height="16rem"
+                 data-mobile-height="16rem"
+                 data-offset-x="30"
+                 data-offset-y="0"
+                 data-postfix="m"
+                 data-is-show-area="true"
+                 data-is-show-line="false"
+                 data-is-show-point="true"
+                 data-is-full-width="true"
+
+                 data-is-stack-bars="true"
+                 data-is-show-axis-x="false"
+                 data-is-show-axis-y="true"
+                 data-is-show-tooltips="true"
+                 data-tooltip-description-position="center"
+                 data-tooltip-custom-class="u-area-chart__tooltip"
+
+                 data-align-text-axis-x="center"
+                 data-fill-opacity=".8"
+                 data-fill-colors='["#ffc107", "#377dff"]'
+                 data-stroke-width=".0625rem"
+                 data-stroke-color="#f0f4f7"
+                 data-stroke-dash-array="0"
+                 data-text-size-x=".75rem"
+                 data-text-color-x="#77838f"
+                 data-text-offset-top-x="10"
+
+                 data-text-size-y=".75rem"
+                 data-text-color-y="#77838f"
+                 data-points-colors='["#ffc107", "#377dff"]'
+                 :data-series=datum.item.averagePriceHistory
+                 v-if="datum.item.averagePriceHistory && datum.item.averagePriceHistory.length > 0"></div>
           </template>
         </b-table>
         <b-row>
@@ -221,6 +255,11 @@
 //            label: 'Last Updated',
 //            sortable: false
 //          }
+          {
+            key: 'averagePriceHistory',
+            label: 'Price',
+            sortable: false
+          }
         ],
         currentCurrencyPage: 1,
         currencies: [],
