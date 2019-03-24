@@ -36,6 +36,16 @@ namespace Nozomi.Data.ResponseModels.Currency
                             .Select(pcp => pcp.CurrencyPair)
                             .SelectMany(cpr => cpr.CurrencyPairRequests)
                             .SelectMany(cpr => cpr.AnalysedComponents)
+                            .Select(ac => new AnalysedComponent
+                            {
+                                Id = ac.Id,
+                                ComponentType = ac.ComponentType,
+                                Value = ac.Value,
+                                Delay = ac.Delay,
+                                RequestId = ac.RequestId,
+                                CurrencyId = ac.CurrencyId,
+                                AnalysedHistoricItems = ac.AnalysedHistoricItems
+                            })
                             .ToList();
 
                     if (query.Count > 0)
@@ -48,6 +58,15 @@ namespace Nozomi.Data.ResponseModels.Currency
                                     if (decimal.TryParse(aComp.Value, out var avgPrice))
                                     {
                                         AveragePrice = avgPrice;
+
+                                        if (aComp.AnalysedHistoricItems.Count > 0)
+                                        {
+                                            AveragePriceHistory = aComp.AnalysedHistoricItems
+                                                .Where(ahi => ahi.DeletedAt == null && ahi.IsEnabled
+                                                              && !string.IsNullOrEmpty(ahi.Value))
+                                                .Select(ahi => decimal.Parse(ahi.Value))
+                                                .ToList();
+                                        }
                                     }
                                     break;
                                 case AnalysedComponentType.DailyPricePctChange:
@@ -77,6 +96,12 @@ namespace Nozomi.Data.ResponseModels.Currency
 
                         if (currencyAP.AnalysedHistoricItems != null && currencyAP.AnalysedHistoricItems.Count > 0)
                         {
+                            #if DEBUG
+                            var testAPH = currencyAP.AnalysedHistoricItems
+                                .OrderByDescending(ahi => ahi.HistoricDateTime)
+                                .ToList();
+                            #endif
+                            
                             AveragePriceHistory = currencyAP.AnalysedHistoricItems
                                 .OrderByDescending(ahi => ahi.HistoricDateTime)
                                 .DefaultIfEmpty()
