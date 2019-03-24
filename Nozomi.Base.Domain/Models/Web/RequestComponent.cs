@@ -31,6 +31,8 @@ namespace Nozomi.Data.Models.Web
         /// to distinguish if we're offloading data from an array or object.
         public string QueryComponent { get; set; }
 
+        public bool IsDenominated { get; set; } = false;
+
         public long RequestId { get; set; }
         public Request Request { get; set; }
         

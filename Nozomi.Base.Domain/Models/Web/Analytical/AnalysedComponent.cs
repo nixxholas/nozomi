@@ -13,6 +13,8 @@ namespace Nozomi.Data.Models.Web.Analytical
         public AnalysedComponentType ComponentType { get; set; }
         
         public string Value { get; set; }
+
+        public bool IsDenominated { get; set; } = false;
         
         public int Delay { get; set; }
         
