@@ -255,6 +255,7 @@ namespace Nozomi.Ticker.StartupExtensions
                                                 Delay = 1000,
                                                 CreatedAt = DateTime.UtcNow,
                                                 ModifiedAt = DateTime.UtcNow,
+                                                IsDenominated = true,
                                                 DeletedAt = null
                                             }
                                         },
