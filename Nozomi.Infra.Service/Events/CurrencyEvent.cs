@@ -78,28 +78,30 @@ namespace Nozomi.Service.Events
                         .Where(rc => rc.ComponentType.Equals(ComponentType.Circulating_Supply)))
                     .FirstOrDefault();
 #endif
+                var reqComp = _unitOfWork.GetRepository<CurrencyRequest>()
+                    .GetQueryable()
+                    .AsNoTracking()
+                    .Where(cp => cp.DeletedAt == null && cp.IsEnabled)
+                    .Include(cp => cp.Currency)
+                    // Where the partial currency pair's main currency is equal to the currency that is required
+                    .Where(cr => cr.Currency.Abbrv.Equals(curr.Abbrv,
+                        StringComparison.InvariantCultureIgnoreCase))
+                    .Include(cpr => cpr.RequestComponents)
+                    // Null checks
+                    .Where(cpr => cpr.IsEnabled && cpr.DeletedAt == null
+                                                && cpr.RequestComponents
+                                                    .Any(rc =>
+                                                        rc.DeletedAt == null && rc.IsEnabled
+                                                                             && !string.IsNullOrEmpty(rc.Value)))
+                    // Obtain only the circulating supply
+                    .SelectMany(cpr => cpr.RequestComponents
+                        .Where(rc =>
+                            rc.ComponentType.Equals(ComponentType.Circulating_Supply)))
+                    .FirstOrDefault();
 
-                    return decimal.Parse(_unitOfWork.GetRepository<CurrencyRequest>()
-                                             .GetQueryable()
-                                             .AsNoTracking()
-                                             .Where(cp => cp.DeletedAt == null && cp.IsEnabled)
-                                             .Include(cp => cp.Currency)
-                                             // Where the partial currency pair's main currency is equal to the currency that is required
-                                             .Where(cr => cr.Currency.Abbrv.Equals(curr.Abbrv,
-                                                 StringComparison.InvariantCultureIgnoreCase))
-                                             .Include(cpr => cpr.RequestComponents)
-                                             // Null checks
-                                             .Where(cpr => cpr.IsEnabled && cpr.DeletedAt == null
-                                                                         && cpr.RequestComponents
-                                                                             .Any(rc =>
-                                                                                 rc.DeletedAt == null && rc.IsEnabled
-                                                                                                      && !string.IsNullOrEmpty(rc.Value)))
-                                             // Obtain only the circulating supply
-                                             .SelectMany(cpr => cpr.RequestComponents
-                                                 .Where(rc =>
-                                                     rc.ComponentType.Equals(ComponentType.Circulating_Supply)))
-                                             .FirstOrDefault()?.Value ?? "0") /
-                           (decimal) Math.Pow(10, curr.Denominations);
+                    return reqComp != null ? decimal.Parse(reqComp.Value ?? "0") /
+                                               (reqComp.IsDenominated ? (decimal) Math.Pow(10, curr.Denominations) : decimal.One) :
+                        decimal.Zero;
             }
             else
             // It means that this request 
