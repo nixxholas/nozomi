@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
@@ -168,8 +169,10 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
 
                                     // Now we can aggregate this
                                     var currAvgPrice = currencyReqComps
-                                        .DefaultIfEmpty()
-                                        .Average(rc => decimal.Parse(rc.Value));
+                                        .Where(rc => rc.ComponentType.Equals(ComponentType.Ask)
+                                                     || rc.ComponentType.Equals(ComponentType.Bid))
+                                        .Average(rc => decimal.Parse(string.IsNullOrEmpty(rc.Value)
+                                            ? "0" : rc.Value));
 
                                     if (!(currAvgPrice <= decimal.Zero))
                                     {
@@ -199,9 +202,8 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                     var avgPrice = correlatedReqComps
                                         .Where(rc => rc.ComponentType.Equals(ComponentType.Ask)
                                                      || rc.ComponentType.Equals(ComponentType.Bid))
-                                        .Where(rc => !string.IsNullOrEmpty(rc.Value))
-                                        .DefaultIfEmpty()
-                                        .Average(rc => decimal.Parse(rc.Value));
+                                        .Average(rc => decimal.Parse(string.IsNullOrEmpty(rc.Value)
+                                        ? "0" : rc.Value));
 
                                     if (!decimal.Zero.Equals(avgPrice))
                                     {
