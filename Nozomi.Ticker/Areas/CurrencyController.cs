@@ -16,7 +16,7 @@ namespace Nozomi.Ticker.Areas
             _currencyEvent = currencyEvent;
         }
 
-        [Route("/{abbrv}")]
+        [Route("{controller}/{abbrv}")]
         public IActionResult View(string abbrv)
         {
             // First obtain all 'ABBRV' objects first, 
