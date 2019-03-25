@@ -31,9 +31,24 @@ namespace Nozomi.Service.Events
             _currencyPairEvent = currencyPairEvent;
         }
 
-        public Currency Get(string abbreviation, bool track = false)
+        public ICollection<Currency> Get(string abbreviation, bool track = false)
         {
-            throw new NotImplementedException();
+            var query = _unitOfWork.GetRepository<Currency>()
+                .GetQueryable()
+                .AsNoTracking()
+                .Where(c => c.Abbrv.Equals(abbreviation, StringComparison.InvariantCultureIgnoreCase));
+
+            if (track)
+            {
+                query.Include(c => c.AnalysedComponents)
+                    .Include(c => c.CurrencySource)
+                    .Include(c => c.PartialCurrencyPairs)
+                    .ThenInclude(pcp => pcp.Currency)
+                    .Include(c => c.CurrencyRequests)
+                    .ThenInclude(cr => cr.RequestComponents);
+            }
+
+            return query.ToList();
         }
 
         public Currency Get(long id, bool track = false)
@@ -46,12 +61,14 @@ namespace Nozomi.Service.Events
             {
                 query.Include(c => c.AnalysedComponents)
                     .Include(c => c.CurrencySource)
+                    .Include(c => c.PartialCurrencyPairs)
+                    .ThenInclude(pcp => pcp.Currency)
                     .Include(c => c.CurrencyRequests)
                     .ThenInclude(cr => cr.RequestComponents);
             }
 
             return query
-                .SingleOrDefault(c => c.Id.Equals(id));
+                .SingleOrDefault(c => c.Id.Equals(id) && c.DeletedAt == null && c.IsEnabled);
         }
 
         public decimal GetCirculatingSupply(AnalysedComponent analysedComponent)

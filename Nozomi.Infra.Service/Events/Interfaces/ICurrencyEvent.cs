@@ -9,7 +9,7 @@ namespace Nozomi.Service.Events.Interfaces
 {
     public interface ICurrencyEvent
     {
-        Currency Get(string abbreviation, bool track = false);
+        ICollection<Currency> Get(string abbreviation, bool track = false);
         
         Currency Get(long id, bool track = false);
         
