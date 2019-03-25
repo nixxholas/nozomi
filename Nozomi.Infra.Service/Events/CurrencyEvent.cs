@@ -31,6 +31,29 @@ namespace Nozomi.Service.Events
             _currencyPairEvent = currencyPairEvent;
         }
 
+        public Currency Get(string abbreviation, bool track = false)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Currency Get(long id, bool track = false)
+        {
+            var query = _unitOfWork.GetRepository<Currency>()
+                .GetQueryable()
+                .AsNoTracking();
+            
+            if (track)
+            {
+                query.Include(c => c.AnalysedComponents)
+                    .Include(c => c.CurrencySource)
+                    .Include(c => c.CurrencyRequests)
+                    .ThenInclude(cr => cr.RequestComponents);
+            }
+
+            return query
+                .SingleOrDefault(c => c.Id.Equals(id));
+        }
+
         public decimal GetCirculatingSupply(AnalysedComponent analysedComponent)
         {
             // If its a currency-based ac

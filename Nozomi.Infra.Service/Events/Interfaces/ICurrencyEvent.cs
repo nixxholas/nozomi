@@ -9,6 +9,10 @@ namespace Nozomi.Service.Events.Interfaces
 {
     public interface ICurrencyEvent
     {
+        Currency Get(string abbreviation, bool track = false);
+        
+        Currency Get(long id, bool track = false);
+        
         /// <summary>
         /// Provides the caller the total amount of currency currently circulating
         /// in the market.
