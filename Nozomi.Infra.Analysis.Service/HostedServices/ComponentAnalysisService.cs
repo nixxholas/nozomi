@@ -592,7 +592,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
             if (lastHistorical != null)
             {
                 // Is the value the same?
-                if (lastHistorical.Value.Equals(component.Value))
+                if (lastHistorical.Value.Equals(component.Value, StringComparison.InvariantCultureIgnoreCase))
                 {
                     // Don't have to save it
                     return true; // Stashed
