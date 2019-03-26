@@ -1,7 +1,9 @@
 using System.Collections.Generic;
+using System.Linq;
 using Nozomi.Data.Models.Currency;
 using Nozomi.Data.Models.Web;
 using Nozomi.Data.Models.Web.Analytical;
+using Nozomi.Data.ResponseModels.PartialCurrencyPair;
 
 namespace Nozomi.Data.ResponseModels.Currency
 {
@@ -24,7 +26,6 @@ namespace Nozomi.Data.ResponseModels.Currency
             };
             AnalysedComponents = currency.AnalysedComponents;
             CurrencyRequests = currency.CurrencyRequests;
-            PartialCurrencyPairs = currency.PartialCurrencyPairs;
         }
         
         public CurrencyType CurrencyType { get; set; }
@@ -41,6 +42,6 @@ namespace Nozomi.Data.ResponseModels.Currency
         
         public ICollection<CurrencyRequest> CurrencyRequests { get; set; }
 
-        public ICollection<Models.Currency.PartialCurrencyPair> PartialCurrencyPairs { get; set; }
+        public ICollection<CondensedTickerPair> TickerPairs { get; set; } = new List<CondensedTickerPair>();
     }
 }
