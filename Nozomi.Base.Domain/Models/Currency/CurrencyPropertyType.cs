@@ -4,6 +4,7 @@ namespace Nozomi.Data.Models.Currency
 {
     public enum CurrencyPropertyType
     {
+        Generic = 0,
         [Description("Website")]
         Website = 1,
         [Description("Twitter")]
