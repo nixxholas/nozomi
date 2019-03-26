@@ -59,6 +59,11 @@ namespace Nozomi.Ticker.Areas
                             result.PartialCurrencyPairs.Add(pCPair);
                         }
                     }
+
+                    if (!result.CurrencySources.Any(cs => cs.Id.Equals(similarCurr.CurrencySourceId)))
+                    {
+                        result.CurrencySources.Add(similarCurr.CurrencySource);
+                    }
                 }
 
                 return View(result);

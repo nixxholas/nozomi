@@ -15,6 +15,7 @@ namespace Nozomi.Data.ResponseModels.Currency
             Name = currency.Name;
             LastUpdated = currency.ModifiedAt;
             CurrencyType = currency.CurrencyType;
+            Description = currency.Description;
             Denominations = currency.Denominations;
             DenominationName = currency.DenominationName;
             CurrencySources = new List<Models.Currency.Source>
@@ -27,6 +28,8 @@ namespace Nozomi.Data.ResponseModels.Currency
         }
         
         public CurrencyType CurrencyType { get; set; }
+        
+        public string Description { get; set; }
 
         public int Denominations { get; set; } = 0;
         
