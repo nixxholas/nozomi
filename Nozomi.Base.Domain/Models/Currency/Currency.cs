@@ -48,6 +48,8 @@ namespace Nozomi.Data.Models.Currency
         public string Abbrv { get; set; } // USD? MYR? IND?
 
         public string Name { get; set; }
+        
+        public string Description { get; set; }
 
         public int Denominations { get; set; } = 0;
         
@@ -60,6 +62,8 @@ namespace Nozomi.Data.Models.Currency
         public long WalletTypeId { get; set; } = 0;
         
         public ICollection<AnalysedComponent> AnalysedComponents { get; set; }
+        
+        public ICollection<CurrencyProperty> CurrencyProperties { get; set; }
         
         public ICollection<CurrencyRequest> CurrencyRequests { get; set; }
 
