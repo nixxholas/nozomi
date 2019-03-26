@@ -17,7 +17,10 @@ namespace Nozomi.Data.ResponseModels.Currency
             CurrencyType = currency.CurrencyType;
             Denominations = currency.Denominations;
             DenominationName = currency.DenominationName;
-            CurrencySource = currency.CurrencySource;
+            CurrencySource = new List<Models.Currency.Source>
+            {
+                currency.CurrencySource
+            };
             AnalysedComponents = currency.AnalysedComponents;
             CurrencyRequests = currency.CurrencyRequests;
             PartialCurrencyPairs = currency.PartialCurrencyPairs;
@@ -29,7 +32,7 @@ namespace Nozomi.Data.ResponseModels.Currency
         
         public string DenominationName { get; set; }
 
-        public Models.Currency.Source CurrencySource { get; set; }
+        public ICollection<Models.Currency.Source> CurrencySource { get; set; }
         
         public ICollection<AnalysedComponent> AnalysedComponents { get; set; }
         
