@@ -38,6 +38,6 @@ namespace Nozomi.Data.ResponseModels.Currency
         
         public ICollection<CurrencyRequest> CurrencyRequests { get; set; }
 
-        public ICollection<PartialCurrencyPair> PartialCurrencyPairs { get; set; }
+        public ICollection<Models.Currency.PartialCurrencyPair> PartialCurrencyPairs { get; set; }
     }
 }
