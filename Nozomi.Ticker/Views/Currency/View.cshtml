@@ -1,9 +1,10 @@
+@using Newtonsoft.Json
 @model Nozomi.Data.ResponseModels.Currency.AbbrvUniqueCurrencyResponse
 
-<!-- ========== MAIN ========== -->
-  <main id="content" role="main">
     <!-- Description Section -->
-    <div class="container space-2 space-top-md-4 space-bottom-md-3">
+    <div id="partialView" class="container space-2 space-top-md-4 space-bottom-md-3">
+      @if (Model != null)
+      {
       <div class="row">
         <div class="col-lg-7 mb-7 mb-lg-0">
           <!-- Cubeportfolio -->
@@ -30,22 +31,6 @@
               </div>
             </div>
             <!-- End Item -->
-
-            <!-- Item -->
-            <div class="cbp-item">
-              <div class="cbp-caption">
-                <img class="rounded" src="../../assets/img/600x600/img3.jpg" alt="Image Description">
-              </div>
-            </div>
-            <!-- End Item -->
-
-            <!-- Item -->
-            <div class="cbp-item">
-              <div class="cbp-caption">
-                <img class="rounded" src="../../assets/img/600x600/img4.jpg" alt="Image Description">
-              </div>
-            </div>
-            <!-- End Item -->
           </div>
           <!-- End Cubeportfolio -->
         </div>
@@ -60,7 +45,7 @@
                data-offset-top="80"
                data-offset-bottom="130">
             <div class="mb-6">
-              <h1 class="h4 text-primary font-weight-semi-bold">Google Pixel 2 XL</h1>
+              <h1 class="h4 text-primary font-weight-semi-bold">{{ currency.Name }}</h1>
               <p class="mb-0">Displaying this large amount of content in a smooth and seamless way was quite a challenge. By loading assets in the background, playing and stopping audio on the fly, parallaxing hotspots, and use of large images we succeeded in giving the user a smooth experience.</p>
             </div>
 
@@ -68,6 +53,28 @@
 
             <!-- List -->
             <ul class="list-unstyled mb-0">
+              <li class="media mb-1">
+                <div class="d-flex w-40 w-sm-30">
+                  <h3 class="h6">Abbreviation</h3>
+                </div>
+                <div class="media-body">
+                  <small class="text-muted">
+                    {{ currency.Abbreviation }}
+                  </small>
+                </div>
+              </li>
+
+              <li class="media mb-1">
+                <div class="d-flex w-40 w-sm-30">
+                  <h3 class="h6">Client</h3>
+                </div>
+                <div class="media-body">
+                  <small class="text-muted">
+                    Htmlstream
+                  </small>
+                </div>
+              </li>
+
               <li class="media mb-1">
                 <div class="d-flex w-40 w-sm-30">
                   <h3 class="h6">Client</h3>
@@ -93,25 +100,25 @@
                 </div>
               </li>
 
-              <li class="media mb-1">
+              <li class="media">
                 <div class="d-flex w-40 w-sm-30">
-                  <h4 class="h6">Partners</h4>
+                  <h4 class="h6">Sources</h4>
                 </div>
                 <div class="media-body">
-                  <small class="text-muted">
-                    Pixeel
+                  <small class="d-block text-muted" v-for="source in currency.CurrencySources">
+                    {{ source.Name }}
+                  </small>
+                  <small class="d-block text-muted mb-1" v-else>
+                    {{ source.Name }}
                   </small>
                 </div>
               </li>
 
               <li class="media">
                 <div class="d-flex w-40 w-sm-30">
-                  <h4 class="h6">Awards</h4>
+                  <h4 class="h6">Ticker Pairs</h4>
                 </div>
                 <div class="media-body">
-                  <small class="d-block text-muted mb-1">
-                    FWA Site of the Day
-                  </small>
                   <small class="d-block text-muted mb-1">
                     Awwwards Site of the Day
                   </small>
@@ -163,7 +170,29 @@
           <!-- End Sticky Block -->
         </div>
       </div>
+      }
     </div>
     <!-- End Description Section -->
-  </main>
-  <!-- ========== END MAIN ========== -->
+  
+  @section Scripts
+{
+  <script>
+    const vm = new Vue({
+      // options
+      el: "#partialView",
+      // Just dish any random variable in for now
+      data: {
+        currency: @Html.Raw(Json.Serialize(Model, new JsonSerializerSettings
+                  {
+                   ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                  }))
+      },
+      created: function() {
+      },
+      methods: {
+      },
+      mounted: function() {
+      }
+    });
+  </script>
+}

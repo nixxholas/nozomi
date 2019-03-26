@@ -64,7 +64,7 @@ namespace Nozomi.Ticker.Areas
                 return View(result);
             }
             
-            return View();
+            return RedirectToAction("Index", "Home");
         }
     }
 }

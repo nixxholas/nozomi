@@ -40,7 +40,7 @@ namespace Nozomi.Service.Events
 
             if (track)
             {
-                query.Include(c => c.AnalysedComponents)
+                query = query.Include(c => c.AnalysedComponents)
                     .Include(c => c.CurrencySource)
                     .Include(c => c.PartialCurrencyPairs)
                     .ThenInclude(pcp => pcp.Currency)
@@ -59,7 +59,7 @@ namespace Nozomi.Service.Events
             
             if (track)
             {
-                query.Include(c => c.AnalysedComponents)
+                query = query.Include(c => c.AnalysedComponents)
                     .Include(c => c.CurrencySource)
                     .Include(c => c.PartialCurrencyPairs)
                     .ThenInclude(pcp => pcp.Currency)

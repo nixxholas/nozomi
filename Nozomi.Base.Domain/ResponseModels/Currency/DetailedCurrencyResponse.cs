@@ -61,11 +61,11 @@ namespace Nozomi.Data.ResponseModels.Currency
 
                                         if (aComp.AnalysedHistoricItems.Count > 0)
                                         {
-                                            AveragePriceHistory = aComp.AnalysedHistoricItems
+                                            AveragePriceHistory[0] = aComp.AnalysedHistoricItems
                                                 .Where(ahi => ahi.DeletedAt == null && ahi.IsEnabled
                                                               && !string.IsNullOrEmpty(ahi.Value))
                                                 .Select(ahi => decimal.Parse(ahi.Value))
-                                                .ToList();
+                                                .ToArray();
                                         }
                                     }
                                     break;
@@ -102,11 +102,11 @@ namespace Nozomi.Data.ResponseModels.Currency
                                 .ToList();
                             #endif
                             
-                            AveragePriceHistory = currencyAP.AnalysedHistoricItems
+                            AveragePriceHistory[0] = currencyAP.AnalysedHistoricItems
                                 .OrderByDescending(ahi => ahi.HistoricDateTime)
                                 .DefaultIfEmpty()
                                 .Select(ahi => decimal.Parse(ahi.Value))
-                                .ToList();
+                                .ToArray();
                         }
                     }
                 }
@@ -285,8 +285,8 @@ namespace Nozomi.Data.ResponseModels.Currency
         public decimal MarketCap { get; set; }
 
         public Dictionary<ComponentType, List<ComponentHistoricalDatum>> Historical { get; set; }
-        
-        public ICollection<decimal> AveragePriceHistory { get; set; }
+
+        public decimal[][] AveragePriceHistory { get; set; } = new decimal[1][];
 
         /// <summary>
         /// Allows multiple currency objects that are identical to merge its history.
