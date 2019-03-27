@@ -1,38 +1,20 @@
 @using Newtonsoft.Json
+@using Nozomi.Preprocessing
 @model Nozomi.Data.ResponseModels.Currency.AbbrvUniqueCurrencyResponse
 
-    <!-- Description Section -->
+<!-- Description Section -->
     <div id="partialView" class="container space-2 space-top-md-4 space-bottom-md-3">
       @if (Model != null)
       {
       <div class="row">
         <div class="col-lg-7 mb-7 mb-lg-0">
-          <!-- Cubeportfolio -->
-          <div class="cbp"
-               data-layout="grid"
-               data-animation="quicksand"
-               data-x-gap="32"
-               data-y-gap="32"
-               data-media-queries='[
-                {"width": 300, "cols": 1}
-              ]'>
-            <!-- Item -->
-            <div class="cbp-item">
-              <div class="cbp-caption">
-                <img class="rounded" src="../../assets/img/600x600/img1.jpg" alt="Image Description">
+          <div class="card card-frame" v-if="acTypes != null">
+            <div class="card-body">
+              <div v-for="aComp in currency.AnalysedComponents">
+                {{ getAnalysedCompStr(aComp.ComponentType) }} - {{ aComp.Value }}
               </div>
             </div>
-            <!-- End Item -->
-
-            <!-- Item -->
-            <div class="cbp-item">
-              <div class="cbp-caption">
-                <img class="rounded" src="../../assets/img/600x600/img2.jpg" alt="Image Description">
-              </div>
-            </div>
-            <!-- End Item -->
           </div>
-          <!-- End Cubeportfolio -->
         </div>
 
         <div id="stickyBlockStartPoint" class="col-lg-5">
@@ -140,6 +122,14 @@
       el: "#partialView",
       // Just dish any random variable in for now
       data: {
+        acTypes: @Html.Raw(Json.Serialize(NozomiServiceConstants.analysedComponentTypes, new JsonSerializerSettings
+                 {
+                   ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                 })),
+        reqCompTypes: @Html.Raw(Json.Serialize(NozomiServiceConstants.requestComponentTypes, new JsonSerializerSettings
+                 {
+                   ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                 })),
         currency: @Html.Raw(Json.Serialize(Model, new JsonSerializerSettings
                   {
                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore
@@ -148,6 +138,17 @@
       created: function() {
       },
       methods: {
+        getAnalysedCompStr(val) {
+          if (this.acTypes != null) {
+            for (i = 0; i < this.acTypes.length; i++) {
+              if (this.acTypes[i].Value == val) {
+                return this.acTypes[i].Key;
+              }
+            }
+          }
+          
+          return null;
+        }
       },
       mounted: function() {
       }
