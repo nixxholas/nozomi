@@ -44,6 +44,7 @@ namespace Nozomi.Service.Events
                     .Include(c => c.CurrencySource)
                     .Include(c => c.PartialCurrencyPairs)
                     .ThenInclude(pcp => pcp.Currency)
+                    .ThenInclude(c => c.CurrencySource)
                     .Include(c => c.CurrencyRequests)
                     .ThenInclude(cr => cr.RequestComponents);
             }

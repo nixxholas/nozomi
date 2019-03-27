@@ -66,49 +66,10 @@
 
               <li class="media mb-1">
                 <div class="d-flex w-40 w-sm-30">
-                  <h3 class="h6">Client</h3>
-                </div>
-                <div class="media-body">
-                  <small class="text-muted">
-                    Htmlstream
-                  </small>
-                </div>
-              </li>
-
-              <li class="media mb-1">
-                <div class="d-flex w-40 w-sm-30">
-                  <h3 class="h6">Client</h3>
-                </div>
-                <div class="media-body">
-                  <small class="text-muted">
-                    Htmlstream
-                  </small>
-                </div>
-              </li>
-
-              <li class="media mb-1">
-                <div class="d-flex w-40 w-sm-30">
-                  <h4 class="h6">Designers</h4>
-                </div>
-                <div class="media-body">
-                  <small class="text-muted">
-                    Maria Muszynska,
-                  </small>
-                  <small class="text-muted">
-                    Jack Wayley
-                  </small>
-                </div>
-              </li>
-
-              <li class="media">
-                <div class="d-flex w-40 w-sm-30">
                   <h4 class="h6">Sources</h4>
                 </div>
                 <div class="media-body">
                   <small class="d-block text-muted" v-for="source in currency.CurrencySources">
-                    {{ source.Name }}
-                  </small>
-                  <small class="d-block text-muted mb-1" v-else>
                     {{ source.Name }}
                   </small>
                 </div>
@@ -119,14 +80,11 @@
                   <h4 class="h6">Ticker Pairs</h4>
                 </div>
                 <div class="media-body">
-                  <small class="d-block text-muted mb-1">
-                    Awwwards Site of the Day
-                  </small>
-                  <small class="d-block text-muted mb-1">
-                    CSSAwards Site of the Day
-                  </small>
-                  <small class="d-block text-muted">
-                    Bronze ADCN Lamp (Digital Craft)
+                  <small class="d-block text-muted" v-for="tp in currency.TickerPairs">
+                    {{ tp.PairAbbreviation }}
+                    <span class="badge badge-pill badge-primary" v-for="source in tp.Sources">
+                      {{ source.Name }}
+                    </span>
                   </small>
                 </div>
               </li>
