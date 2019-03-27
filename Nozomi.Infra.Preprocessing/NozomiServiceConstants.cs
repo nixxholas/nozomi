@@ -1,7 +1,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Nozomi.Base.Core.Helpers.Enumerator;
 using Nozomi.Data.Models.Currency;
+using Nozomi.Data.Models.Web;
+using Nozomi.Data.Models.Web.Analytical;
 using Nozomi.Data.ResponseModels;
 using Nozomi.Data.ResponseModels.Ticker;
 
@@ -42,6 +45,11 @@ namespace Nozomi.Preprocessing
         /// <summary>
         /// A collection containing ALL active and enabled sources.
         /// </summary>
-        public static IEnumerable<Source> Sources { get; set; } 
+        public static IEnumerable<Source> Sources { get; set; }
+
+        public static List<KeyValuePair<string, int>> analysedComponentTypes =
+            EnumHelper.GetEnumValuesAndDescriptions<AnalysedComponentType>();
+        public static List<KeyValuePair<string, int>> requestComponentTypes = 
+            EnumHelper.GetEnumValuesAndDescriptions<ComponentType>();
     }
 }
