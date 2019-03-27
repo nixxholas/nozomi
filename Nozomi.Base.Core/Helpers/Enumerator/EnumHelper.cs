@@ -59,7 +59,7 @@ namespace Nozomi.Base.Core.Helpers.Enumerator
             // or return default(T);
         }
         
-        public static List<KeyValuePair<string, int>> GetEnumValuesAndDescriptions<T>()
+        public static List<KeyValuePair<string, int>> GetEnumValuesAndDescriptions<T>() where T : Enum
         {
             Type enumType = typeof (T);
 
