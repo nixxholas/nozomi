@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
-using Nozomi.Data.WebModels.LoggingModels;
+using Nozomi.Data.Models.Web.Logging;
 
 namespace Nozomi.Service.Services.Requests.Interfaces
 {

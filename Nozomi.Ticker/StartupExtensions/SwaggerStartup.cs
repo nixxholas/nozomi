@@ -46,8 +46,13 @@ namespace Nozomi.Ticker.StartupExtensions
                 swaggerGenOptions.ExampleFilters();
                 swaggerGenOptions.OperationFilter<DescriptionOperationFilter>();
                 // Adds an Upload button to endpoints which have [AddSwaggerFileUploadButton]
-                swaggerGenOptions.OperationFilter<AddFileParamTypesOperationFilter>(); 
-                swaggerGenOptions.OperationFilter<AddHeaderOperationFilter>();
+                // Supported out of the box.
+                //swaggerGenOptions.OperationFilter<AddFileParamTypesOperationFilter>(); 
+                
+                // adds any string you like to the request headers - in this case, a correlation id
+                // We don't need this yet
+                //swaggerGenOptions.OperationFilter<AddHeaderOperationFilter>("correlationId", "Correlation Id for the request", false);
+                
                 swaggerGenOptions.OperationFilter<AddResponseHeadersFilter>(); // [SwaggerResponseHeader]
                 swaggerGenOptions.DescribeAllEnumsAsStrings();
                 // Adds "(Auth)" to the summary so that you can see which endpoints have Authorization

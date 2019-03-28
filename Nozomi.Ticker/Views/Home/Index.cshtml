@@ -6,14 +6,45 @@
   
 
 <!-- Hero Section -->
-    <div id="SVGheroSection" class="svg-preloader d-lg-flex position-relative border-bottom z-index-2">
-      <div class="container d-lg-flex align-items-lg-center flex-lg-wrap height-lg-100vh text-center space-top-2 space-top-md-4 space-top-lg-3">
-        <div class="w-100 mx-auto mb-9 mb-lg-0">
-          <div class="mb-5">
-            <h1 class="display-4 font-size-md-down-5 font-weight-semi-bold">Market data, all in one place.</h1>
-            <p>Detabox is the leading data metrics service that will support any <strong class="text-primary">endpoint</strong>.</p>
-          </div>
-        </div>
+<div id="SVGheroSection" class="svg-preloader d-lg-flex position-relative border-bottom z-index-2">
+  <div class="container d-lg-flex align-items-lg-center flex-lg-wrap height-lg-100vh text-center space-top-2 space-top-md-4 space-top-lg-3">
+    <div class="w-100 mx-auto mb-9 mb-lg-0">
+      <div class="mb-5">
+        <h1 class="display-4 font-size-md-down-5 font-weight-semi-bold">Market data, all in one place.</h1>
+        <p>Nozomi is the leading data metrics service that will support any <strong class="text-primary">endpoint</strong>.</p>
+        <!-- Area Chart -->
+        <div class="js-area-chart u-area-chart"
+             data-height="16rem"
+             data-mobile-height="16rem"
+             data-offset-x="30"
+             data-offset-y="0"
+             data-postfix="m"
+             data-is-show-area="true"
+             data-is-show-line="false"
+             data-is-show-point="false"
+             data-is-full-width="true"
+
+             data-is-stack-bars="true"
+             data-is-show-axis-x="false"
+             data-is-show-axis-y="false"
+             data-is-show-tooltips="true"
+             data-tooltip-description-position="center"
+             data-tooltip-custom-class="u-area-chart__tooltip"
+
+             data-align-text-axis-x="center"
+             data-fill-opacity=".8"
+             data-fill-colors='["#377dff"]'
+             data-stroke-width=".0625rem"
+             data-stroke-color="#f0f4f7"
+             data-stroke-dash-array="0"
+             data-text-size-x=".75rem"
+             data-text-color-x="#77838f"
+             data-text-offset-top-x="10"
+
+             data-text-size-y=".75rem"
+             data-text-color-y="#77838f"
+             data-points-colors='["#377dff"]'
+             data-series='[[10,40,39]]'></div>
 
         <div class="w-lg-50 mt-auto mx-lg-auto">
           <!-- SVG Icon -->
@@ -43,62 +74,104 @@
       </div>
       <!-- End SVG Component -->
     </div>
-<!-- End Hero Section -->
+    <!-- End Hero Section -->
+  </div>
+</div>
 
 <!-- CTA Section -->
-<div id="SVGctaSection" class="svg-preloader position-relative gradient-half-primary-v1 z-index-2 overflow-hidden">
+<div id="SVGctaSection" class="svg-preloader position-relative gradient-half-warning-v2 z-index-2 overflow-hidden">
   <div class="container space-2" id="vueTableBody">
-    <h3 class="h2 text-center text-info font-weight-semi-bold mb-3">Market Data</h3>
+    {{ currencies }}
+    <h3 class="h2 text-center font-weight-semi-bold mb-3">Market Data</h3>
     <b-card style="width: 100%">
       <p class="card-text">
-        <b-table responsive
-                 :per-page="tickerDataRowsPerPage" :current-page="currentTickerDataPage"
-                 :fields="tickerDataFields" :items="tickerData">
+        <b-table responsive :busy="currencies.length == 0"
+                 :per-page="itemsPerPage" :current-page="currentCurrencyPage"
+                 :fields="currencyDataFields" :items="currencies">
           <!-- A virtual composite column -->
-          <template slot="exchange" slot-scope="datum">
-            <a :href="'/source/' + datum.item.exchangeAbbrv">{{ datum.item.exchange }}</a>
+          <template slot="name" slot-scope="datum">
+            <a :href="'/currency/' + datum.item.abbreviation">{{ datum.item.name }}</a><br>
+            {{ datum.item.abbreviation }}
           </template>
           <!-- A virtual composite column -->
-          <template slot="lastUpdated" slot-scope="datum">
-            @* // https://stackoverflow.com/questions/32540667/moment-js-utc-to-local-time *@
-            {{ moment.utc(datum.item.lastUpdated).fromNow() }}
+          <template slot="marketCap" slot-scope="datum">
+            ${{ datum.item.marketCap }}
           </template>
           <!-- A virtual composite column -->
-          <template slot="properties" slot-scope="datum">
-            <b-badge class="mr-2" variant="dark" v-for="prop in datum.item.properties">
-              <b>{{ prop.key }}</b> {{ prop.value }}
-            </b-badge>
+          <template slot="averagePrice" slot-scope="datum">
+            ${{ datum.item.averagePrice }}
           </template>
           <!-- A virtual composite column -->
-          <template slot="actions" slot-scope="datum">
-            @* <a class="btn btn-sm btn-primary transition-3d-hover" *@
-            @*    > *@
-            @*   View *@
-            @* </a> *@
+          <template slot="dailyAvgPricePctChange" slot-scope="datum">
+            <div class="text-success" v-if="datum.item.dailyAvgPricePctChange > 0">
+              {{ datum.item.dailyAvgPricePctChange }}%
+              <i class="fas fa-caret-up">
+              </i>
+            </div>
+            <div class="text-success" v-else-if="datum.item.dailyAvgPricePctChange < 0">
+              {{ datum.item.dailyAvgPricePctChange }}%
+              <i class="fas fa-caret-down">
+              </i>
+            </div>
+            <div v-else>
+              {{ datum.item.dailyAvgPricePctChange }}%
+            </div>
+          </template>
+          <template slot="averagePriceHistory" slot-scope="datum">
+            <!-- Area Chart -->
+            <!-- Area Chart -->
+            <div class="js-area-chart u-area-chart"
+                 data-postfix="m"
+                 data-is-show-area="true"
+                 data-is-show-line="false"
+                 data-is-show-point="false"
+                 data-is-full-width="true"
+
+                 data-is-stack-bars="true"
+                 data-is-show-axis-x="false"
+                 data-is-show-axis-y="false"
+                 data-is-show-tooltips="true"
+                 data-tooltip-description-position="center"
+                 data-tooltip-custom-class="u-area-chart__tooltip"
+
+                 data-align-text-axis-x="center"
+                 data-fill-opacity=".8"
+                 data-fill-colors='["#377dff"]'
+                 data-stroke-width=".0625rem"
+                 data-stroke-color="#f0f4f7"
+                 data-stroke-dash-array="0"
+                 data-text-size-x=".75rem"
+                 data-text-color-x="#77838f"
+                 data-text-offset-top-x="10"
+
+                 data-text-size-y=".75rem"
+                 data-text-color-y="#77838f"
+                 data-points-colors='["#377dff"]'
+                 :data-series="datum.item.averagePriceHistory"></div>
           </template>
         </b-table>
         <b-row>
           <b-col md="6" class="my-1">
-            <b-pagination :total-rows="tickerDataRows" :per-page="tickerDataRowsPerPage"
-                          v-model="currentTickerDataPage" class="my-0"/>
+            <b-pagination :total-rows="currencies.length" :per-page="itemsPerPage"
+                          v-model="currentCurrencyPage" class="my-0"/>
           </b-col>
         </b-row>
       </p>
     </b-card>
   </div>
+  
+  <!-- SVG Component -->	
+  <figure class="position-absolute top-0 left-0 w-100 max-width-27 z-index-n1">	
+    <img class="js-svg-injector" src="../../assets/svg/components/abstract-shapes-8.svg" alt="Image Description"	
+         data-parent="#SVGctaSection">	
+  </figure>	
+  <!-- End SVG Component -->	
 
-  <!-- SVG Component -->
-  <figure class="position-absolute top-0 left-0 w-100 max-width-27 z-index-n1">
-    <img class="js-svg-injector" src="../../assets/svg/components/abstract-shapes-8.svg" alt="Image Description"
-         data-parent="#SVGctaSection">
-  </figure>
-  <!-- End SVG Component -->
-
-  <!-- SVG Component -->
-  <figure class="position-absolute bottom-0 right-0 w-100 max-width-27 z-index-n1">
-    <img class="js-svg-injector" src="../../assets/svg/components/abstract-shapes-5.svg" alt="Image Description"
-         data-parent="#SVGctaSection">
-  </figure>
+  <!-- SVG Component -->	
+  <figure class="position-absolute bottom-0 right-0 w-100 max-width-27 z-index-n1">	
+    <img class="js-svg-injector" src="../../assets/svg/components/abstract-shapes-5.svg" alt="Image Description"	
+         data-parent="#SVGctaSection">	
+  </figure>	
   <!-- End SVG Component -->
 </div>
 <!-- End CTA Section -->
@@ -187,42 +260,42 @@
       el: "#vueTableBody",
       // Just dish any random variable in for now
       data: {
-        tickerDataFields: [
+        currencyDataFields: [
           {
-            key: 'currencyPairId',
-            label: '#',
+            key: 'name',
+            label: 'Name',
             sortable: true
           },
           {
-            key: 'exchange',
-            label: 'Source',
+            key: 'marketCap',
+            label: 'Market Cap',
             sortable: true
           },
           {
-            key: 'tickerAbbreviation',
-            label: 'Pair',
+            key: 'averagePrice',
+            label: 'Price',
             sortable: true
           },
           {
-            key: 'lastUpdated',
-            label: 'Last Updated',
-            sortable: false
+            key: 'dailyAvgPricePctChange',
+            label: 'Daily Change',
+            sortable: true
           },
+//          {
+//            key: 'lastUpdated',
+//            label: 'Last Updated',
+//            sortable: false
+//          }
           {
-            key: 'properties',
-            label: "Data",
-            sortable: false
-          },
-          {
-            key: 'actions',
-            label: "",
+            key: 'averagePriceHistory',
+            label: 'Price',
             sortable: false
           }
         ],
-        currentTickerDataPage: 1,
-        tickerData: [],
-        tickerDataRowsPerPage: 40,
-        tickerDataRows: 0
+        currentCurrencyPage: 1,
+        currencies: [],
+        itemsPerPage: 40,
+        testCurrencies: [ { "averagePrice": 137.675, "dailyAvgPricePctChange": -0.014524855659246886, "marketCap": 14507353704.477655, "historical": null, "averagePriceHistory": [ 137.695, 137.675, 137.675, 137.675, 137.675, 137.675, 137.675, 137.675, 137.675, 137.675, 137.675, 137.675, 137.675, 137.675, 137.675, 137.675, 137.675, 137.675, 137.675, 137.675, 137.675, 137.675, 137.675, 137.675, 137.675, 137.675, 137.675, 137.675, 137.675, 137.675, 137.675, 137.675, 137.675, 137.675 ], "name": "Ethereum", "abbreviation": "ETH", "lastUpdated": "2019-03-24T22:15:05.246764Z" }, { "averagePrice": 0.26909, "dailyAvgPricePctChange": 0.057634744454979826, "marketCap": 28338733.746240772, "historical": null, "averagePriceHistory": [ 0.268935, 0.26909, 0.26909, 0.26909, 0.26909, 0.26909, 0.26909, 0.26909, 0.26909, 0.26909, 0.26909, 0.26909, 0.26909, 0.26909, 0.26909, 0.26909, 0.26909, 0.26909, 0.26909, 0.26909, 0.26909, 0.26909, 0.26909, 0.26909, 0.26909, 0.26909, 0.26909, 0.26909, 0.26909, 0.26909, 0.26909, 0.26909 ], "name": "Kyber Network Crystal", "abbreviation": "KNC", "lastUpdated": "2019-03-24T22:15:05.542046Z" }, { "averagePrice": 3986.3764832, "dailyAvgPricePctChange": -0.0006139827692106448, "marketCap": 70185487772.09404, "historical": null, "averagePriceHistory": null, "name": "Bitcoin", "abbreviation": "BTC", "lastUpdated": "2019-03-24T22:15:05.643578Z" }, { "averagePrice": 0, "dailyAvgPricePctChange": 0, "marketCap": 0, "historical": null, "averagePriceHistory": null, "name": "Bytecoin", "abbreviation": "BCN", "lastUpdated": "2019-03-24T22:15:05.759445Z" }, { "averagePrice": 0, "dailyAvgPricePctChange": 0, "marketCap": 0, "historical": null, "averagePriceHistory": null, "name": "BitShares", "abbreviation": "BTS", "lastUpdated": "2019-03-24T22:15:05.786368Z" } ]
       },
       created: function() {
         const connection = new SignalR.HubConnectionBuilder()
@@ -231,7 +304,7 @@
             
         // https://github.com/aspnet/SignalR/issues/3294
         connection.start().then(() => {
-          connection.invoke("Subscribe", 1).catch(err => console.error(err.toString()));
+          connection.invoke("Subscribe", 2).catch(err => console.error(err.toString()));
         }).catch(err => document.write(err));
 
         function start() {
@@ -247,13 +320,37 @@
         connection.onclose(() => {
           start();
         });
-
-        connection.on("tickers",
-          (tickers) => {
-            //console.dir(tickers);
-            this.tickerData = tickers;
-            this.tickerDataRows = tickers.length;
+        
+        connection.on("currencies",
+          (currencies) => {
+            console.dir(currencies);
+            this.currencies = currencies;
           });
+      },
+      methods: {
+        // This function provides the capability of updating the tickerData array.
+        // It does NOT delete deprecated rows. After all, we expect the clients to refresh once a week or so.
+//        updateTickerData: function(incomingData) {
+//          // Iterate all incoming datum
+//          $.each(incomingData, function(incomingDatum) {
+//            // Look for the ticker datum in question
+//            for (let i = 0; i < this.tickerData.length; i++) {
+//              // Found matching ticker
+//              if (this.tickerData[i].currencyPairId === incomingDatum.currencyPairId) {
+//                // Tell them its updated
+//                if (this.tickerData[i].lastUpdated) {
+//                  // Bring in data
+//                  
+//                  
+//                  this.tickerData[i].lastUpdated = moment();
+//                } else {
+//                  // Else we don't have to update... lol
+//                }
+//                break;
+//              }
+//            }
+//          });
+//        }
       },
       mounted: function() {
       }

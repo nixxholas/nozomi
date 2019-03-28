@@ -34,6 +34,7 @@ import 'datatables';
 
 // No updated npm version yet
 import '../scripts/components/appear.js';
+import '../assets/vendor/cubeportfolio/js/jquery.cubeportfolio.min.js';
 
 import '../assets/vendor/hs-megamenu/src/hs.megamenu';
 
@@ -44,6 +45,7 @@ import '../scripts/components/hs.unfold.js';
 import '../scripts/components/hs.bg-video.js';
 import '../scripts/components/hs.chartist-area-chart.js';
 import '../scripts/components/hs.chartist-bar-chart.js';
+import '../scripts/components/hs.cubeportfolio.js';
 import '../scripts/components/hs.datatables.js';
 import '../scripts/components/hs.focus-state.js';
 import '../scripts/components/hs.go-to.js';
@@ -93,6 +95,9 @@ $(document).on('ready', function () {
     
     // initialization of header
     $.HSCore.components.HSHeader.init($('#header'));
+    
+    // initialization of cubeportfolio
+    $.HSCore.components.HSCubeportfolio.init('.cbp');
 
     // initialization of svg injector module
     $.HSCore.components.HSSVGIngector.init('.js-svg-injector');

@@ -1,7 +1,8 @@
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Logging;
-using Nozomi.Data.WebModels;
+using Nozomi.Data.Models.Web;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Data;
@@ -16,31 +17,21 @@ namespace Nozomi.Service.Services
         {
         }
 
-        public bool Push(RequestComponentDatum rcd)
+        public bool Push(RequestComponent rc)
         {
-            // If rcd is the latest
+            // Make sure nothing is newer
             if (!_unitOfWork.GetRepository<RcdHistoricItem>()
-                .Get(rcdhi => rcdhi.ModifiedAt >= rcd.ModifiedAt)
-                .OrderBy(rcdhi => rcdhi.ModifiedAt)
+                // include any rcdhi if it is NEWER than the current rcd
+                    .Get(rcdhi => rcdhi.RequestComponentId.Equals(rc.Id)
+                                  && rcdhi.HistoricDateTime > rc.ModifiedAt)
                 .Any())
             {
-                var latestRcdhi = _unitOfWork.GetRepository<RcdHistoricItem>()
-                    .GetQueryable()
-                    .OrderByDescending(rcdhi => rcdhi.ModifiedAt).FirstOrDefault();
-                
-                // Let's make it more efficient by checking if the price has changed
-                if (latestRcdhi != null && latestRcdhi.Value.Equals(rcd.Value))
-                {
-                    // Move on bro
-                    return true;
-                }
-                
                 // Push it
                 _unitOfWork.GetRepository<RcdHistoricItem>().Add(new RcdHistoricItem
                 {
-                    RequestComponentDatumId = rcd.Id,
-                    Value = rcd.Value,
-                    CreatedAt = rcd.ModifiedAt
+                    RequestComponentId = rc.Id,
+                    Value = rc.Value,
+                    HistoricDateTime = rc.ModifiedAt
                 });
                 _unitOfWork.Commit(); // done
                 

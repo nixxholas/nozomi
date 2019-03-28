@@ -10,7 +10,7 @@ using Microsoft.Extensions.Logging;
 using Nozomi.Base.Core.Helpers.Enumerable;
 using Nozomi.Data;
 using Nozomi.Data.AreaModels.v1.Currency;
-using Nozomi.Data.CurrencyModels;
+using Nozomi.Data.Models.Currency;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Data;

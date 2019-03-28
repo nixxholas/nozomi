@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using Nozomi.Data;
 using Nozomi.Data.AreaModels.v1.CurrencySource;
 using Nozomi.Data.ResponseModels;
+using Nozomi.Data.ResponseModels.Currency;
 using Nozomi.Service.Events.Interfaces;
 using Nozomi.Service.Events.Memory.Interfaces;
 using Nozomi.Service.Identity.Managers;
@@ -49,9 +50,9 @@ namespace Nozomi.Ticker.Areas.v1.Source
         }
 
         [HttpGet]
-        public NozomiResult<ICollection<Data.CurrencyModels.Source>> All()
+        public NozomiResult<ICollection<Data.Models.Currency.Source>> All()
         {
-            return new NozomiResult<ICollection<Data.CurrencyModels.Source>>(_sourceEvent.GetAllActive(false).ToList());
+            return new NozomiResult<ICollection<Data.Models.Currency.Source>>(_sourceEvent.GetAllActive(false).ToList());
         }
 
         [Authorize]

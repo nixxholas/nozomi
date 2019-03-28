@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Nozomi.Base.Core.Helpers.Mapping;
-using Nozomi.Data.WebModels;
+using Nozomi.Data.Models.Web;
 
 namespace Nozomi.Repo.Data.Mappings.WebModels
 {
@@ -14,10 +14,11 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
             entityTypeBuilder.Property(rcdhi => rcdhi.Id).ValueGeneratedOnAdd();
             
             entityTypeBuilder.Property(rcdhi => rcdhi.Value).HasDefaultValue(string.Empty);
+            entityTypeBuilder.Property(rcdhi => rcdhi.HistoricDateTime).IsRequired();
 
-            entityTypeBuilder.HasOne(rcdhi => rcdhi.RequestComponentDatum)
-                .WithMany(rcd => rcd.RcdHistoricItems)
-                .HasForeignKey(rcdhi => rcdhi.RequestComponentDatumId).OnDelete(DeleteBehavior.Cascade);
+            entityTypeBuilder.HasOne(rcdhi => rcdhi.RequestComponent)
+                .WithMany(rc => rc.RcdHistoricItems)
+                .HasForeignKey(rcdhi => rcdhi.RequestComponentId).OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

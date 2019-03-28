@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using Nozomi.Data.AreaModels.v1.CurrencyPairRequest;
-using Nozomi.Data.CurrencyModels;
-using Nozomi.Data.WebModels;
+using Nozomi.Data.Models.Web;
 
 namespace Nozomi.Service.Services.Interfaces
 {

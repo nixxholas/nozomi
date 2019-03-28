@@ -4,22 +4,21 @@
     <TypeScriptToolsVersion>3.1</TypeScriptToolsVersion>
     <AspNetCoreHostingModel>OutOfProcess</AspNetCoreHostingModel>
     <CopyRefAssembliesToPublishDirectory>false</CopyRefAssembliesToPublishDirectory>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
   
   <ItemGroup>
     <PackageReference Include="Gelf.Extensions.Logging" Version="1.5.1" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="3.1.2" />
-    <PackageReference Include="Microsoft.AspNetCore.App" Version="2.2.1" />
-    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.1" />
+    <PackageReference Include="Microsoft.AspNetCore.App" Version="2.2.3" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.3" />
     <PackageReference Include="SlackLogger" Version="2.0.5" />
     <PackageReference Include="System.Xml.Linq" Version="3.5.21022.801" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Nozomi.Infra.Preprocessing\Nozomi.Infra.Preprocessing.csproj" />
-    <ProjectReference Include="..\Nozomi.Infra.Service.Identity\Nozomi.Infra.Service.Identity.csproj" />
-    <ProjectReference Include="..\Nozomi.Infra.Service\Nozomi.Infra.Service.csproj" />
+    <_ContentIncludedByDefault Remove="Areas\Identity\Pages\_ViewImports.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <_ContentIncludedByDefault Remove="Areas\Identity\Pages\_ViewImports.cshtml" />
+    <ProjectReference Include="..\Nozomi.Infra.Analysis.Service\Nozomi.Infra.Analysis.Service.csproj" />
   </ItemGroup>
 </Project>

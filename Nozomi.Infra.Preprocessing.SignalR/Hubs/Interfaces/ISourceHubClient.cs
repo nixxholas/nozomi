@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Nozomi.Data.ResponseModels;
+using Nozomi.Data.ResponseModels.Ticker;
 
 namespace Nozomi.Infra.Preprocessing.SignalR.Hubs.Interfaces
 {

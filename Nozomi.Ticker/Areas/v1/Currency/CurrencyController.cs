@@ -1,8 +1,10 @@
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data;
 using Nozomi.Data.AreaModels.v1.Currency;
+using Nozomi.Data.ResponseModels.Currency;
 using Nozomi.Service.Events.Interfaces;
 using Nozomi.Service.Identity.Managers;
 using Nozomi.Service.Services.Interfaces;
@@ -36,6 +38,16 @@ namespace Nozomi.Ticker.Areas.v1.Currency
             }
             
             return Ok(_currencyService.Create(createCurrency));
+        }
+
+        [HttpGet("{abbreviation}")]
+        public NozomiResult<DetailedCurrencyResponse> Detailed(string abbreviation)
+        {
+            return new NozomiResult<DetailedCurrencyResponse>(_currencyEvent.GetDetailedByAbbreviation(abbreviation, 
+                new List<Data.Models.Currency.ComponentType>()
+                {
+                    Data.Models.Currency.ComponentType.Ask
+                }));
         }
 
         [Authorize]

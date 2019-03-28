@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Nozomi.Infra.Analysis.Service.Services;
+using Nozomi.Infra.Analysis.Service.Services.Interfaces;
 using Nozomi.Preprocessing.Events;
 using Nozomi.Preprocessing.Events.Interfaces;
 using Nozomi.Service.HostedServices.RequestTypes;
@@ -47,6 +49,11 @@ namespace Nozomi.Ticker.StartupExtensions
             
             // Identity-related service injections
             services.AddTransient<INozomiUserStore, NozomiUserStore>();
+            
+            // TODO: Microservice
+            // Nozomi.Analysis Service injections
+            services.AddTransient<IAnalysedComponentService, AnalysedComponentService>();
+            services.AddTransient<IAnalysedHistoricItemService, AnalysedHistoricItemService>();
         }
     }
 }

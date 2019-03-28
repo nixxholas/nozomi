@@ -12,7 +12,6 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Nozomi.Base.Identity.Models.Identity;
 using Nozomi.Data.ResponseModels;
-using Nozomi.Data.WebModels;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.Identity.Data;
 using Nozomi.Service.Identity.HostedServices.Interfaces;

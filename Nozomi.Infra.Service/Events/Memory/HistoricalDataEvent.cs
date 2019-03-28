@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Nozomi.Data.CurrencyModels;
+using Nozomi.Data.Models.Currency;
 using Nozomi.Data.ResponseModels;
+using Nozomi.Data.ResponseModels.Currency;
 using Nozomi.Preprocessing;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.BCL.Repository;
@@ -31,7 +32,6 @@ namespace Nozomi.Service.Events.Memory
                        .ThenInclude(pcp => pcp.CurrencyPair)
                        .ThenInclude(cp => cp.CurrencyPairRequests)
                        .ThenInclude(cpr => cpr.RequestComponents)
-                       .ThenInclude(rc => rc.RequestComponentDatum)
                        .ThenInclude(rcd => rcd.RcdHistoricItems)
                        .SingleOrDefault(s => s.Id.Equals(sourceId))
                        ?.Currencies
@@ -40,28 +40,28 @@ namespace Nozomi.Service.Events.Memory
                            Name = c.Name,
                            Abbreviation = c.Abbrv,
                            LastUpdated = c.ModifiedAt,
-                           WeeklyAvgPrice = c.PartialCurrencyPairs
-                               .Select(pcp => pcp.CurrencyPair)
-                               .SelectMany(cp => cp.CurrencyPairRequests
-                                   .SelectMany(cpr => cpr.RequestComponents
-                                       .Where(rc =>
-                                           rc.ComponentType.Equals(ComponentType.Ask)
-                                           || rc.ComponentType.Equals(ComponentType.Bid))
-                                       .SelectMany(rc => rc.RequestComponentDatum
-                                           .RcdHistoricItems
-                                           .Where(rcdhi => rcdhi.CreatedAt >
-                                                           DateTime.UtcNow.Subtract(TimeSpan.FromDays(days)))
-                                           .Select(rcdhi => decimal.Parse(rcdhi.Value))
-                                           .DefaultIfEmpty(0))
-                                   ))
-                               .Average(),
-                           DailyVolume = c.PartialCurrencyPairs
-                               .Select(pcp => pcp.CurrencyPair)
-                               .SelectMany(cp => cp.CurrencyPairRequests
-                                   .SelectMany(cpr => cpr.RequestComponents
-                                       .Where(rc => rc.ComponentType.Equals(ComponentType.VOLUME))
-                                       .Select(rc => decimal.Parse(rc.RequestComponentDatum.Value))))
-                               .FirstOrDefault()
+//                           WeeklyAvgPrice = c.PartialCurrencyPairs
+//                               .Select(pcp => pcp.CurrencyPair)
+//                               .SelectMany(cp => cp.CurrencyPairRequests
+//                                   .SelectMany(cpr => cpr.RequestComponents
+//                                       .Where(rc =>
+//                                           rc.ComponentType.Equals(ComponentType.Ask)
+//                                           || rc.ComponentType.Equals(ComponentType.Bid))
+//                                       .SelectMany(rc => rc.RequestComponentDatum
+//                                           .RcdHistoricItems
+//                                           .Where(rcdhi => rcdhi.CreatedAt >
+//                                                           DateTime.UtcNow.Subtract(TimeSpan.FromDays(days)))
+//                                           .Select(rcdhi => decimal.Parse(rcdhi.Value))
+//                                           .DefaultIfEmpty(0))
+//                                   ))
+//                               .Average(),
+//                           DailyVolume = c.PartialCurrencyPairs
+//                               .Select(pcp => pcp.CurrencyPair)
+//                               .SelectMany(cp => cp.CurrencyPairRequests
+//                                   .SelectMany(cpr => cpr.RequestComponents
+//                                       .Where(rc => rc.ComponentType.Equals(ComponentType.VOLUME))
+//                                       .Select(rc => decimal.Parse(rc.RequestComponentDatum.Value))))
+//                               .FirstOrDefault()
                        })
                        .ToList() ?? null;
         }

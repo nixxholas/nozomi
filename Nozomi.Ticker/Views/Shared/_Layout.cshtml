@@ -25,8 +25,8 @@
 
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Dētabox - @ViewData["Title"]</title>
-    <meta name="description" content="Dētabox is a High speed informatics app that stores 
+    <title>Nozomi - @ViewData["Title"]</title>
+    <meta name="description" content="Nozomi is a High speed informatics app that stores 
 ticker data from any market, anywhere.">
 
     <link href="//fonts.googleapis.com/css?family=Poppins:300,400,500,600,700" rel="stylesheet">
@@ -47,14 +47,15 @@ ticker data from any market, anywhere.">
     @* </environment> *@
 </head>
 <body>
-<header id="header" class="u-header u-header--bg-transparent u-header--abs-top pt-3">
+<header id="header" class="u-header u-header--white-bg-on-scroll u-header--sticky-top-md u-header--bg-transparent"
+        data-header-fix-moment="500" data-header-fix-effect="slide">
     <div class="u-header__section">
         <div id="logoAndNav" class="container">
             <!-- Nav -->
             <nav class="navbar navbar-expand u-header__navbar">
                 <a class="navbar-brand u-header__navbar-brand u-header__navbar-brand-center u-header__navbar-brand-text-white"
-                   asp-controller="Home" asp-action="Index" aria-label="Dētabox">
-                    <span class="u-header__navbar-brand-text text-dark">Dētabox</span>
+                   asp-controller="Home" asp-action="Index" aria-label="Nozomi">
+                    <span class="u-header__navbar-brand-text text-dark">Nozomi</span>
                 </a>
 
                 <partial name="_LoginPartial"/>
@@ -81,7 +82,7 @@ ticker data from any market, anywhere.">
             <!-- End Logo -->
 
             <!-- Copyright -->
-            <p class="small text-muted">&copy; Hayate BVI. All rights reserved.</p>
+            <p class="small text-muted">&copy; 2017-@DateTime.UtcNow.Year.ToString() Hayate BVI. All rights reserved.</p>
             <!-- End Copyright -->
         </div>
 

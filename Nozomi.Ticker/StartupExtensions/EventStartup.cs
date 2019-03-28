@@ -1,4 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
+using Nozomi.Data.Models.Web.Analytical;
+using Nozomi.Infra.Analysis.Service.Events.Analysis;
+using Nozomi.Infra.Analysis.Service.Events.Analysis.Interfaces;
 using Nozomi.Preprocessing.Events;
 using Nozomi.Preprocessing.Events.Interfaces;
 using Nozomi.Service.Events;
@@ -23,14 +26,24 @@ namespace Nozomi.Ticker.StartupExtensions
             services.AddTransient<IStripeEvent, StripeEvent>();
 
             services.AddScoped<IApiTokenEvent, ApiTokenEvent>();
-
+            
             services.AddScoped<ICurrencyEvent, CurrencyEvent>();
+            services.AddScoped<ICurrencyPairEvent, CurrencyPairEvent>();
+            services.AddScoped<ICurrencyRequestEvent, CurrencyRequestEvent>();
             services.AddScoped<ICurrencyTypeEvent, CurrencyTypeEvent>();
             services.AddScoped<IHistoricalDataEvent, HistoricalDataEvent>();
+            services.AddScoped<IPartialCurrencyPairEvent, PartialCurrencyPairEvent>();
+            services.AddScoped<IRequestComponentEvent, RequestComponentEvent>();
             services.AddScoped<ISourceEvent, SourceEvent>();
             services.AddScoped<ITickerEvent, TickerEvent>();
             services.AddScoped<IWebsocketRequestEvent, WebsocketRequestEvent>();
-
+            
+            // TODO: Microservices
+            // Nozomi.Analysis event injections
+            services.AddScoped<IAnalysedComponentEvent, AnalysedComponentEvent>();
+            services.AddScoped<IAnalysedHistoricItemEvent, AnalysedHistoricItemEvent>();
+            services.AddScoped<IAnalysedResponseEvent, AnalysedResponseEvent>();
+            services.AddScoped<ICurrencyConversionEvent, CurrencyConversionEvent>();
         }
     }
 }

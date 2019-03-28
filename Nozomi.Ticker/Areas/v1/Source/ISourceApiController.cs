@@ -7,7 +7,7 @@ namespace Nozomi.Ticker.Areas.v1.Source
  {
      public interface ISourceApiController
      {
-         NozomiResult<ICollection<Data.CurrencyModels.Source>> All();
+         NozomiResult<ICollection<Data.Models.Currency.Source>> All();
 
          NozomiResult<JsonResult> Create([FromBody] CreateSource source);
 

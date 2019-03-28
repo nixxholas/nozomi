@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using Nozomi.Base.Core.Helpers.UI;
 using Nozomi.Data;
 using Nozomi.Data.ResponseModels;
+using Nozomi.Data.ResponseModels.Ticker;
 using Nozomi.Preprocessing;
 using Nozomi.Service.Events.Interfaces;
 using Nozomi.Service.Identity.Managers;
@@ -49,12 +50,12 @@ namespace Nozomi.Ticker.Areas.v1.Ticker
         }
 
         [HttpGet]
-        public NozomiResult<ICollection<DistinctiveTickerResponse>> Get(string symbol, string exchangeAbbrv = null)
+        public NozomiResult<ICollection<TickerByExchangeResponse>> Get(string symbol, string exchangeAbbrv = null)
         {
-            if (string.IsNullOrEmpty(symbol)) return new NozomiResult<ICollection<DistinctiveTickerResponse>>(
+            if (string.IsNullOrEmpty(symbol)) return new NozomiResult<ICollection<TickerByExchangeResponse>>(
                 NozomiResultType.Failed, "Please enter a symbol.");
             
-            return _tickerService.GetByAbbreviation(symbol, exchangeAbbrv);
+            return _tickerEvent.GetByAbbreviation(symbol, exchangeAbbrv);
         }
     }
 }

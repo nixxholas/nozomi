@@ -1,6 +1,6 @@
 using System.Collections.Generic;
-using Nozomi.Data.WebModels;
-using Nozomi.Data.WebModels.WebsocketModels;
+using Nozomi.Data.Models.Web;
+using Nozomi.Data.Models.Web.Websocket;
 
 namespace Nozomi.Service.Events.Websocket.Interfaces
 {

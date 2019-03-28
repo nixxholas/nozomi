@@ -1,10 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Nozomi.Data.CurrencyModels;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using Nozomi.Base.Core.Helpers.Mapping;
+using Nozomi.Data.Models.Currency;
 
 namespace Nozomi.Repo.Data.Mappings.CurrencyModels
 {
@@ -16,14 +16,23 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
             entityTypeBuilder.Property(c => c.Id).ValueGeneratedOnAdd();
 
             entityTypeBuilder.Property(c => c.Abbrv).IsRequired();
+            entityTypeBuilder.Property(c => c.Denominations).HasDefaultValue(0);
+            entityTypeBuilder.Property(c => c.DenominationName).IsRequired(false);
             entityTypeBuilder.Property(c => c.Name).IsRequired();
 
+            entityTypeBuilder.HasMany(c => c.AnalysedComponents).WithOne(ac => ac.Currency)
+                .HasForeignKey(c => c.CurrencyId).OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("Currency_AnalysedComponents_Constraint")
+                .IsRequired(false);
             entityTypeBuilder.HasOne(c => c.CurrencyType).WithMany(ct => ct.Currencies)
                 .HasForeignKey(c => c.CurrencyTypeId).OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("Currencies_CurrencyType_Constraint");
             entityTypeBuilder.HasOne(c => c.CurrencySource).WithMany(cs => cs.Currencies)
                 .HasForeignKey(c => c.CurrencySourceId).OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("Currencies_CurrencySource_Constraint");
+            entityTypeBuilder.HasMany(c => c.CurrencyRequests).WithOne(cr => cr.Currency)
+                .HasForeignKey(cr => cr.CurrencyId).OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("Currencies_CurrencyRequests_Constraint");
             entityTypeBuilder.HasMany(c => c.PartialCurrencyPairs).WithOne(pcp => pcp.Currency)
                 .HasForeignKey(pcp => pcp.CurrencyId)
                 .HasConstraintName("Currency_PartialCurrencyPairs_Constraint");

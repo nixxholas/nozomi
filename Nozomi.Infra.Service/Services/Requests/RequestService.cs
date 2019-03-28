@@ -4,7 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Nozomi.Data.WebModels;
+using Nozomi.Data.Models.Web;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Data;
@@ -121,7 +121,6 @@ namespace Nozomi.Service.Services.Requests
                 .AsNoTracking()
                 .Where(r => r.DeletedAt == null && r.IsEnabled)
                 .Include(r => r.RequestComponents)
-                    .ThenInclude(rc => rc.RequestComponentDatum)
                 .Include(r => r.RequestProperties)
                 .Where(r => r.RequestComponents
                     .Any(rc => rc.DeletedAt == null && rc.IsEnabled))
@@ -142,7 +141,7 @@ namespace Nozomi.Service.Services.Requests
                         {
                             id = rc.Id,
                             queryComponent = rc.QueryComponent,
-                            value = rc.RequestComponentDatum,
+                            value = rc.Value,
                             isEnabled = rc.IsEnabled,
                             createdAt = rc.CreatedAt,
                             createdBy = rc.CreatedBy,
@@ -225,7 +224,6 @@ namespace Nozomi.Service.Services.Requests
                 .GetQueryable()
                 .AsNoTracking()
                 .Include(r => r.RequestComponents)
-                    .ThenInclude(rc => rc.RequestComponentDatum)
                 .Include(r => r.RequestProperties)
                 .Select(r => new
                 {
@@ -245,7 +243,7 @@ namespace Nozomi.Service.Services.Requests
                         {
                             id = rc.Id,
                             queryComponent = rc.QueryComponent,
-                            value = rc.RequestComponentDatum,
+                            value = rc.Value,
                             isEnabled = rc.IsEnabled,
                             createdAt = rc.CreatedAt,
                             createdBy = rc.CreatedBy,

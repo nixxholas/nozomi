@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Nozomi.Base.Identity.ViewModels.Manage.Tickers;
 using Nozomi.Data;
 using Nozomi.Data.ResponseModels;
+using Nozomi.Data.ResponseModels.Ticker;
 
 namespace Nozomi.Service.Services.Interfaces
 {
@@ -22,11 +23,7 @@ namespace Nozomi.Service.Services.Interfaces
         NozomiResult<string> Delete(string ticker, string exchangeAbbrv);
         
         Task<NozomiResult<ICollection<UniqueTickerResponse>>> GetAll(int index);
-        
-        Task<NozomiResult<DistinctiveTickerResponse>> GetById(long id);
 
-        NozomiResult<ICollection<DistinctiveTickerResponse>> GetByAbbreviation(string ticker, string exchangeAbbrv = null);
-
-        NozomiResult<ICollection<DistinctiveTickerResponse>> GetAllActive();
+        NozomiResult<ICollection<TickerByExchangeResponse>> GetAllActive();
     }
 }

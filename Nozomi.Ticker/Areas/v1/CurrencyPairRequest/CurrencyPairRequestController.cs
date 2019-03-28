@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data;
 using Nozomi.Data.AreaModels.v1.CurrencyPairRequest;
-using Nozomi.Data.WebModels;
+using Nozomi.Data.Models.Web;
 using Nozomi.Service.Identity.Managers;
 using Nozomi.Service.Services.Interfaces;
 
@@ -38,7 +38,7 @@ namespace Nozomi.Ticker.Areas.v1.CurrencyPairRequest
         [HttpPost("{userId}")]
         public NozomiResult<JsonResult> Create([FromBody]CreateCurrencyPairRequest obj, long userId = 0)
         {
-            var res = _currencyPairRequestService.Create(new Data.WebModels.CurrencyPairRequest()
+            var res = _currencyPairRequestService.Create(new Data.Models.Web.CurrencyPairRequest()
             {
                 CurrencyPairId = obj.CurrencyPairId,
                 RequestType = obj.RequestType,

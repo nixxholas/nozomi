@@ -5,8 +5,8 @@ using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data.AreaModels.v1.CurrencyPair;
-using Nozomi.Data.CurrencyModels;
-using Nozomi.Data.WebModels;
+using Nozomi.Data.Models.Currency;
+using Nozomi.Data.Models.Web;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Data;
@@ -105,7 +105,6 @@ namespace Nozomi.Service.Services
                 //.Include(cp => cp.CurrencyPairAdvertTypes)
                 .Include(cp => cp.CurrencyPairRequests)
                     .ThenInclude(cpr => cpr.RequestComponents)
-                        .ThenInclude(rc => rc.RequestComponentDatum)
                 .Include(cp => cp.CurrencySource)
                 .Include(cp => cp.PartialCurrencyPairs)
                 .Select(cp => new
@@ -128,7 +127,7 @@ namespace Nozomi.Service.Services
                         id = cpc.Id,
                         componentType = cpc.ComponentType,
                         queryComponent = cpc.QueryComponent,
-                        value = cpc.RequestComponentDatum
+                        value = cpc.Value
                     }),
                     partialCurrencyPairs = cp.PartialCurrencyPairs.Select(pcp => new
                     {
@@ -167,7 +166,6 @@ namespace Nozomi.Service.Services
                 //.Include(cp => cp.CurrencyPairAdvertTypes)
                 .Include(cp => cp.CurrencyPairRequests)
                     .ThenInclude(cpr => cpr.RequestComponents)
-                        .ThenInclude(rc => rc.RequestComponentDatum)
                 .Include(cp => cp.CurrencySource)
                 .Include(cp => cp.PartialCurrencyPairs)
                 .Select(cp => new
@@ -190,7 +188,7 @@ namespace Nozomi.Service.Services
                         id = cpc.Id,
                         componentType = cpc.ComponentType,
                         queryComponent = cpc.QueryComponent,
-                        value = cpc.RequestComponentDatum
+                        value = cpc.Value
                     }),
                     partialCurrencyPairs = cp.PartialCurrencyPairs.Select(pcp => new
                     {
@@ -212,7 +210,6 @@ namespace Nozomi.Service.Services
                 .GetQueryable()
                 .Include(cp => cp.CurrencyPairRequests)
                     .ThenInclude(cpr => cpr.RequestComponents)
-                        .ThenInclude(rc => rc.RequestComponentDatum)
                 .Where(cp => cp.DeletedAt == null && cp.IsEnabled)
                 .Skip(index * 20)
                 .Take(20) :
@@ -336,7 +333,6 @@ namespace Nozomi.Service.Services
                     .Include(cp => cp.PartialCurrencyPairs)
                     .Include(cp => cp.CurrencyPairRequests)
                         .ThenInclude(cpr => cpr.RequestComponents)
-                            .ThenInclude(rc => rc.RequestComponentDatum)
                     .Select(cp => new
                     {
                         id = cp.Id,
@@ -348,7 +344,7 @@ namespace Nozomi.Service.Services
                             {
                                 id = cpc.Id,
                                 componentType = cpc.ComponentType,
-                                value = cpc.RequestComponentDatum,
+                                value = cpc.Value,
                                 isEnabled = cpc.IsEnabled
                             }),
                         partialCurrencyPairs = cp.PartialCurrencyPairs

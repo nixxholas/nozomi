@@ -1,5 +1,4 @@
-﻿using Nozomi.Data.WebModels;
-using Nozomi.Service.HostedServices.RequestTypes.Interfaces;
+﻿using Nozomi.Service.HostedServices.RequestTypes.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -16,7 +15,8 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Nozomi.Base.Core.Helpers.Exponent;
-using Nozomi.Data.WebModels.LoggingModels;
+using Nozomi.Data.Models.Web;
+using Nozomi.Data.Models.Web.Logging;
 using Nozomi.Infra.Preprocessing.SignalR.Hubs.Interfaces;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Service.Hubs;

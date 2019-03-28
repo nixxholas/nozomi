@@ -8,6 +8,8 @@ namespace Nozomi.Infra.Preprocessing.SignalR
     public enum NozomiSocketGroup
     {
         [Description("Ticker Stream")]
-        Tickers = 1
+        Tickers = 1,
+        [Description("Currency Stream")]
+        Currencies = 2
     }
 }

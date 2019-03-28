@@ -1,8 +1,12 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Nozomi.Data.CurrencyModels;
+using Nozomi.Base.Core.Helpers.Enumerator;
+using Nozomi.Data.Models.Currency;
+using Nozomi.Data.Models.Web;
+using Nozomi.Data.Models.Web.Analytical;
 using Nozomi.Data.ResponseModels;
+using Nozomi.Data.ResponseModels.Ticker;
 
 namespace Nozomi.Preprocessing
 {
@@ -26,11 +30,11 @@ namespace Nozomi.Preprocessing
         public static Dictionary<string, LinkedList<long>> TickerSymbolDictionary = 
             new Dictionary<string, LinkedList<long>>();
         
-        /// <summary>
-        /// A dictionary with a key of the currencypairid and the value of the currencypair's ticker response.
-        /// </summary>
-        public static Dictionary<long, DistinctiveTickerResponse> CurrencyPairDictionary = 
-            new Dictionary<long, DistinctiveTickerResponse>();
+//        /// <summary>
+//        /// A dictionary with a key of the currencypairid and the value of the currencypair's ticker response.
+//        /// </summary>
+//        public static Dictionary<long, TickerByExchangeResponse> CurrencyPairDictionary = 
+//            new Dictionary<long, TickerByExchangeResponse>();
         
         /// <summary>
         /// A collection containing ALL tickers unique to their source and ticker abbreviation.
@@ -41,6 +45,11 @@ namespace Nozomi.Preprocessing
         /// <summary>
         /// A collection containing ALL active and enabled sources.
         /// </summary>
-        public static IEnumerable<Source> Sources { get; set; } 
+        public static IEnumerable<Source> Sources { get; set; }
+
+        public static List<KeyValuePair<string, int>> analysedComponentTypes =
+            EnumHelper.GetEnumValuesAndDescriptions<AnalysedComponentType>();
+        public static List<KeyValuePair<string, int>> requestComponentTypes = 
+            EnumHelper.GetEnumValuesAndDescriptions<ComponentType>();
     }
 }
