@@ -73,11 +73,11 @@ namespace Nozomi.Ticker
                 });
             
                 // Redis
-                services.AddDistributedRedisCache(option =>
-                {
-                    option.Configuration = "127.0.0.1:6379";
-                    option.InstanceName = "nozomi-cache";
-                });
+//                services.AddDistributedRedisCache(option =>
+//                {
+//                    option.Configuration = "127.0.0.1:6379";
+//                    option.InstanceName = "nozomi-cache";
+//                });
             
                 // Stripe
                 services.Configure<StripeSettings>(ss =>
@@ -103,11 +103,11 @@ namespace Nozomi.Ticker
                 });
             
                 // Redis
-                services.AddDistributedRedisCache(option =>
-                {
-                    option.Configuration = Configuration.GetConnectionString("RedisConfiguration");
-                    option.InstanceName = "nozomi-cache";
-                });
+//                services.AddDistributedRedisCache(option =>
+//                {
+//                    option.Configuration = Configuration.GetConnectionString("RedisConfiguration");
+//                    option.InstanceName = "nozomi-cache";
+//                });
             
                 // Stripe
                 services.Configure<StripeSettings>(ss =>

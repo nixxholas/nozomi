@@ -65,6 +65,9 @@ namespace Nozomi.Ticker.Areas.v1.ApiToken
                 apiTokenRes = res.ToApiTokenResult(true);
             }
             
+            // TODO: RE-ENABLE THIS
+            return new NozomiResult<ApiTokenResult>(null);
+            
             return new NozomiResult<ApiTokenResult>(apiTokenRes);
         }
 
