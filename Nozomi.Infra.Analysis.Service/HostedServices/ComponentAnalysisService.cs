@@ -597,16 +597,28 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                     // Don't have to save it
                     return true; // Stashed
                 }
-
-                // Save it
-                var res = _analysedHistoricItemService.Create(new AnalysedHistoricItem
+                
+                // Precise check
+                if (decimal.TryParse(lastHistorical.Value, out var lastVal) 
+                && decimal.TryParse(component.Value, out var valToStash)
+                && !lastVal.Equals(valToStash))
                 {
-                    AnalysedComponentId = component.Id,
-                    HistoricDateTime = component.CreatedAt,
-                    Value = component.Value
-                });
 
-                return res > 0;
+                    // Save it
+                    var res = _analysedHistoricItemService.Create(new AnalysedHistoricItem
+                    {
+                        AnalysedComponentId = component.Id,
+                        HistoricDateTime = component.CreatedAt,
+                        Value = component.Value
+                    });
+
+                    return res > 0;
+                }
+                else
+                {
+                    // Illegal value, duped
+                    return true;
+                }
             }
             else
             {
