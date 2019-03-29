@@ -52,7 +52,7 @@ namespace Nozomi.Service.Services
         {
             try
             {
-                var pairToUpd = _unitOfWork
+                var lastCompVal = _unitOfWork
                     .GetRepository<RequestComponent>()
                     .GetQueryable()
                     .AsTracking()
@@ -61,12 +61,12 @@ namespace Nozomi.Service.Services
 
                 // Anomaly Detection
                 // Let's make it more efficient by checking if the price has changed
-                if (pairToUpd.HasAbnormalValue(val))
+                if (lastCompVal != null && lastCompVal.HasAbnormalValue(val))
                 {
-                    if (!string.IsNullOrEmpty(pairToUpd.Value))
+                    if (!string.IsNullOrEmpty(lastCompVal.Value))
                     {
                         // Save old data first
-                        if (_rcdHistoricItemService.Push(pairToUpd))
+                        if (_rcdHistoricItemService.Push(lastCompVal))
                         {
                         
                         }
@@ -79,9 +79,9 @@ namespace Nozomi.Service.Services
                         }
                     }
 
-                    pairToUpd.Value = val.ToString(CultureInfo.InvariantCulture);
+                    lastCompVal.Value = val.ToString(CultureInfo.InvariantCulture);
 
-                    _unitOfWork.GetRepository<RequestComponent>().Update(pairToUpd);
+                    _unitOfWork.GetRepository<RequestComponent>().Update(lastCompVal);
                     _unitOfWork.Commit();
 
                     return new NozomiResult<string>

@@ -50,7 +50,7 @@ namespace Nozomi.Data.Models.Web
                 
                 // If the difference is > 50% or if the difference is less than -50%
                 // and if there is a difference
-                return !((val / (currVal / 100)) - 100 > 50) || !((val / (currVal / 100)) - 100 < -50)
+                return (!((val / (currVal / 100)) - 100 > 50) || !((val / (currVal / 100)) - 100 < -50))
                     && !currVal.Equals(val);
             }
 
