@@ -34,6 +34,8 @@ namespace Nozomi.Data.Models.Web
 
         public bool IsDenominated { get; set; } = false;
 
+        public bool AnomalyIgnorance { get; set; } = false;
+
         public string Value { get; set; }
 
         public long RequestId { get; set; }
@@ -41,9 +43,16 @@ namespace Nozomi.Data.Models.Web
         
         public ICollection<RcdHistoricItem> RcdHistoricItems { get; set; }
         
+        /// <summary>
+        /// Does it carry an abnormal value?
+        /// </summary>
+        /// <param name="val"></param>
+        /// <returns>true if the value is abnormal, false if not.</returns>
         public bool HasAbnormalValue(decimal val)
         {
-            if (decimal.TryParse(Value, out var currVal))
+            // Make sure the current value in the db is parse-able
+            // and that anomaly ignorance is disabled.
+            if (decimal.TryParse(Value, out var currVal) && !AnomalyIgnorance)
             {
                 // Always return true if the value has not been propagated yet.
                 if (currVal.Equals(0)) return true;
