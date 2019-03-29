@@ -26,6 +26,13 @@ namespace Nozomi.Service.Services
                                   && rcdhi.HistoricDateTime > rc.ModifiedAt)
                 .Any())
             {
+                var lastHistoric = _unitOfWork.GetRepository<RcdHistoricItem>()
+                    .Get(rcdhi => rcdhi.RequestComponentId.Equals(rc.Id))
+                    .OrderByDescending(rcdhi => rcdhi.HistoricDateTime)
+                    .FirstOrDefault();
+
+                if (lastHistoric == null || !lastHistoric.Value.Equals(rc.Value))
+                {
                 // Push it
                 _unitOfWork.GetRepository<RcdHistoricItem>().Add(new RcdHistoricItem
                 {
@@ -34,7 +41,9 @@ namespace Nozomi.Service.Services
                     HistoricDateTime = rc.ModifiedAt
                 });
                 _unitOfWork.Commit(); // done
+                }
                 
+                // Return true anyway since the value is a dupe
                 return true;
             }
 
