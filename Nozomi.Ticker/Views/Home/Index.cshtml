@@ -81,7 +81,6 @@
 <!-- CTA Section -->
 <div id="SVGctaSection" class="svg-preloader position-relative gradient-half-warning-v2 z-index-2 overflow-hidden">
   <div class="container space-2" id="vueTableBody">
-    {{ currencies }}
     <h3 class="h2 text-center font-weight-semi-bold mb-3">Market Data</h3>
     <b-card style="width: 100%">
       <p class="card-text">
@@ -323,7 +322,6 @@
         
         connection.on("currencies",
           (currencies) => {
-            console.dir(currencies);
             this.currencies = currencies;
           });
       },
