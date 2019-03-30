@@ -1,6 +1,6 @@
 namespace Nozomi.Data.ResponseModels.Ticker
 {
-    public class UniqueTickerResponse : TickerByCurrencyPairResponse
+    public class UniqueTickerResponse : TickerByExchangeResponse
     {   
         public string MainTickerAbbreviation { get; set; }
         
