@@ -13,7 +13,7 @@ namespace Nozomi.Ticker.Areas.v1.Ticker
     {
         NozomiResult<string> Delete(string tickerSymbol, string exchangeAbbreviation);
         
-        Task<DataTableResult<UniqueTickerResponse>> GetAllForDataTables(int Draw = 0);
+        //Task<DataTableResult<UniqueTickerResponse>> GetAllForDataTables(int Draw = 0);
         
         Task<NozomiResult<ICollection<UniqueTickerResponse>>> GetAllAsync(int index = 0);
 
