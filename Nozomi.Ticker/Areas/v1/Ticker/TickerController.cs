@@ -7,6 +7,7 @@ using Nozomi.Base.Core.Helpers.UI;
 using Nozomi.Data;
 using Nozomi.Data.ResponseModels;
 using Nozomi.Data.ResponseModels.Ticker;
+using Nozomi.Data.ResponseModels.TickerPair;
 using Nozomi.Preprocessing;
 using Nozomi.Service.Events.Interfaces;
 using Nozomi.Service.Identity.Managers;
@@ -32,6 +33,12 @@ namespace Nozomi.Ticker.Areas.v1.Ticker
         public NozomiResult<string> Delete(string tickerSymbol, string exchangeAbbreviation)
         {
             return _tickerService.Delete(tickerSymbol, exchangeAbbreviation);
+        }
+
+        [HttpGet]
+        public NozomiResult<ICollection<TickerPairResponse>> GetTickerPairSources()
+        {
+            return new NozomiResult<ICollection<TickerPairResponse>>(_tickerEvent.GetAllTickerPairSources());
         }
 
 //        [HttpGet]

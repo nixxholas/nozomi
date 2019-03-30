@@ -6,6 +6,7 @@ using Nozomi.Base.Core.Helpers.UI;
 using Nozomi.Data;
 using Nozomi.Data.ResponseModels;
 using Nozomi.Data.ResponseModels.Ticker;
+using Nozomi.Data.ResponseModels.TickerPair;
 
 namespace Nozomi.Ticker.Areas.v1.Ticker
 {
@@ -14,7 +15,9 @@ namespace Nozomi.Ticker.Areas.v1.Ticker
         NozomiResult<string> Delete(string tickerSymbol, string exchangeAbbreviation);
         
         //Task<DataTableResult<UniqueTickerResponse>> GetAllForDataTables(int Draw = 0);
-        
+
+        NozomiResult<ICollection<TickerPairResponse>> GetTickerPairSources();
+
         Task<NozomiResult<ICollection<UniqueTickerResponse>>> GetAllAsync(int index = 0);
 
         NozomiResult<ICollection<TickerByExchangeResponse>> Get(string symbol, 
