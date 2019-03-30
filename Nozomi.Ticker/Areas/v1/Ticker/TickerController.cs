@@ -34,11 +34,11 @@ namespace Nozomi.Ticker.Areas.v1.Ticker
             return _tickerService.Delete(tickerSymbol, exchangeAbbreviation);
         }
 
-        [HttpGet]
-        public Task<DataTableResult<UniqueTickerResponse>> GetAllForDataTables(int draw = 0)
-        {
-            return Task.FromResult(_tickerEvent.GetAllForDatatable(draw));
-        }
+//        [HttpGet]
+//        public Task<DataTableResult<UniqueTickerResponse>> GetAllForDataTables(int draw = 0)
+//        {
+//            return Task.FromResult(_tickerEvent.GetAllForDatatable(draw));
+//        }
 
         [HttpGet("{index}")]
         public async Task<NozomiResult<ICollection<UniqueTickerResponse>>> GetAllAsync(int index = 0)
