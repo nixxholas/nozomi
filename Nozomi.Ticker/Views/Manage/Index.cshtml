@@ -126,7 +126,7 @@
                     foreach (var ticker in tickers.Data)
                     {
                       <tr>
-                        <td>@ticker.TickerAbbreviation</td>
+                        <td>@(ticker.MainTickerAbbreviation + ticker.CounterTickerAbbreviation)</td>
                         <td>@ticker.Exchange</td>
                         <td>@ticker.LastUpdated</td>
                         <td>

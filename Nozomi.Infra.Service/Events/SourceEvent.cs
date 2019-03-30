@@ -93,7 +93,7 @@ namespace Nozomi.Service.Events
                 .Any();
         }
 
-        public SourceResponse Get(long id)
+        public XSourceResponse Get(long id)
         {
             return _unitOfWork.GetRepository<Source>()
                 .GetQueryable()
@@ -103,7 +103,7 @@ namespace Nozomi.Service.Events
                 .Include(s => s.CurrencyPairs)
                     .ThenInclude(cp => cp.PartialCurrencyPairs)
                         .ThenInclude(pcp => pcp.Currency)
-                .Select(s => new SourceResponse
+                .Select(s => new XSourceResponse
                 {
                     Abbreviation = s.Abbreviation,
                     Name = s.Name,
@@ -122,7 +122,7 @@ namespace Nozomi.Service.Events
                 .SingleOrDefault();
         }
 
-        public SourceResponse Get(string abbreviation)
+        public XSourceResponse Get(string abbreviation)
         {
             return _unitOfWork.GetRepository<Source>()
                 .GetQueryable()
@@ -132,7 +132,7 @@ namespace Nozomi.Service.Events
                 .Include(s => s.CurrencyPairs)
                 .ThenInclude(cp => cp.PartialCurrencyPairs)
                 .ThenInclude(pcp => pcp.Currency)
-                .Select(s => new SourceResponse
+                .Select(s => new XSourceResponse
                 {
                     Abbreviation = s.Abbreviation,
                     Name = s.Name,

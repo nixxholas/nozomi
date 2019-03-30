@@ -7,6 +7,7 @@ using Nozomi.Base.Core.Helpers.UI;
 using Nozomi.Data;
 using Nozomi.Data.ResponseModels;
 using Nozomi.Data.ResponseModels.Ticker;
+using Nozomi.Data.ResponseModels.TickerPair;
 using Nozomi.Preprocessing;
 using Nozomi.Service.Events.Interfaces;
 using Nozomi.Service.Identity.Managers;
@@ -35,10 +36,16 @@ namespace Nozomi.Ticker.Areas.v1.Ticker
         }
 
         [HttpGet]
-        public Task<DataTableResult<UniqueTickerResponse>> GetAllForDataTables(int draw = 0)
+        public NozomiResult<ICollection<TickerPairResponse>> GetTickerPairSources()
         {
-            return Task.FromResult(_tickerEvent.GetAllForDatatable(draw));
+            return new NozomiResult<ICollection<TickerPairResponse>>(_tickerEvent.GetAllTickerPairSources());
         }
+
+//        [HttpGet]
+//        public Task<DataTableResult<UniqueTickerResponse>> GetAllForDataTables(int draw = 0)
+//        {
+//            return Task.FromResult(_tickerEvent.GetAllForDatatable(draw));
+//        }
 
         [HttpGet("{index}")]
         public async Task<NozomiResult<ICollection<UniqueTickerResponse>>> GetAllAsync(int index = 0)

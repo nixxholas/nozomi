@@ -261,7 +261,14 @@ namespace Nozomi.Service.Services
                 return new NozomiResult<UniqueTickerResponse>(
                     new UniqueTickerResponse
                     {
-                        TickerAbbreviation = mainCurrency.Abbrv + counterCurrency.Abbrv
+                        MainTickerAbbreviation = 
+                            mainCurrency.Abbrv,
+                        MainTickerName = 
+                            mainCurrency.Name,
+                        CounterTickerAbbreviation = 
+                            counterCurrency.Abbrv,
+                        CounterTickerName = 
+                            counterCurrency.Name,
                     });
             }
             catch (Exception ex)
@@ -304,38 +311,151 @@ namespace Nozomi.Service.Services
 
         public Task<NozomiResult<ICollection<UniqueTickerResponse>>> GetAll(int index)
         {
-            return Task.FromResult(new NozomiResult<ICollection<UniqueTickerResponse>>
+            #if DEBUG
+            try
             {
-                Data = _unitOfWork.GetRepository<CurrencyPair>()
+                var dataRes = _unitOfWork.GetRepository<CurrencyPair>()
                     .GetQueryable()
                     .AsNoTracking()
-                    .Skip(index * 20)
-                    .Take(20)
-                    .OrderBy(cp => cp.Id)
                     .Where(cp => cp.DeletedAt == null && cp.IsEnabled)
                     .Include(cp => cp.PartialCurrencyPairs)
-                        .ThenInclude(pcp => pcp.Currency)
+                    .ThenInclude(pcp => pcp.Currency)
                     .Include(cp => cp.CurrencySource)
                     .Include(cp => cp.CurrencyPairRequests)
                     .ThenInclude(cpr => cpr.RequestComponents)
+                    .Skip(index * 20)
+                    .Take(20)
+                    .OrderBy(cp => cp.Id)
+                    .DefaultIfEmpty()
                     .Select(cp => new UniqueTickerResponse
                     {
-                        TickerAbbreviation = string.Concat(
+                        MainTickerAbbreviation =
                             cp.PartialCurrencyPairs.FirstOrDefault(pcp => pcp.IsMain).Currency.Abbrv,
-                            cp.PartialCurrencyPairs.FirstOrDefault(pcp => !pcp.IsMain).Currency.Abbrv),
+                        MainTickerName =
+                            cp.PartialCurrencyPairs.FirstOrDefault(pcp => pcp.IsMain).Currency.Name,
+                        CounterTickerAbbreviation =
+                            cp.PartialCurrencyPairs.FirstOrDefault(pcp => !pcp.IsMain).Currency.Abbrv,
+                        CounterTickerName =
+                            cp.PartialCurrencyPairs.FirstOrDefault(pcp => !pcp.IsMain).Currency.Name,
                         Exchange = cp.CurrencySource.Name,
                         ExchangeAbbrv = cp.CurrencySource.Abbreviation,
-                        LastUpdated = cp.CurrencyPairRequests.FirstOrDefault(cpr => cpr.DeletedAt == null && cpr.IsEnabled)
-                            .RequestComponents.FirstOrDefault(rc => rc.DeletedAt == null && rc.IsEnabled)
-                            .ModifiedAt,
-                        Properties = cp.CurrencyPairRequests.FirstOrDefault()
-                            .RequestComponents
+                        LastUpdated = cp.CurrencyPairRequests
+                            .SelectMany(cpr => cpr.RequestComponents)
+                            .Any(rc => rc.DeletedAt == null && rc.IsEnabled) ?
+                        cp.CurrencyPairRequests
+                        .SelectMany(cpr => cpr.RequestComponents)
+                        .FirstOrDefault(rc => rc.DeletedAt == null && rc.IsEnabled)
+                            .ModifiedAt : DateTime.Now,
+                        Properties = cp.CurrencyPairRequests
+                            .SelectMany(cpr => cpr.RequestComponents)
+                            .Where(rc => rc.IsEnabled && rc.DeletedAt == null
+                                                      && !string.IsNullOrEmpty(rc.Value))
                             .Select(rc => new KeyValuePair<string, string>(
-                                rc.ComponentType.ToString(), 
+                                rc.ComponentType.ToString(),
                                 rc.Value))
-                            .ToList() 
+                            .DefaultIfEmpty()
+                            .ToList()
                     })
-                    .ToList()
+                    .ToList();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogInformation(ex.ToString());
+            }
+            #endif
+
+            var utrByCpr = _unitOfWork.GetRepository<CurrencyPair>()
+                .GetQueryable()
+                .AsNoTracking()
+                .Where(cp => cp.DeletedAt == null && cp.IsEnabled)
+                .Include(cp => cp.PartialCurrencyPairs)
+                .ThenInclude(pcp => pcp.Currency)
+                .Include(cp => cp.CurrencySource)
+                .Include(cp => cp.CurrencyPairRequests)
+                .ThenInclude(cpr => cpr.RequestComponents)
+                .Skip(index * 20)
+                .Take(20)
+                .OrderBy(cp => cp.Id)
+                .DefaultIfEmpty()
+                .Select(cp => new UniqueTickerResponse
+                {
+                    MainTickerAbbreviation =
+                        cp.PartialCurrencyPairs.FirstOrDefault(pcp => pcp.IsMain).Currency.Abbrv,
+                    MainTickerName =
+                        cp.PartialCurrencyPairs.FirstOrDefault(pcp => pcp.IsMain).Currency.Name,
+                    CounterTickerAbbreviation =
+                        cp.PartialCurrencyPairs.FirstOrDefault(pcp => !pcp.IsMain).Currency.Abbrv,
+                    CounterTickerName =
+                        cp.PartialCurrencyPairs.FirstOrDefault(pcp => !pcp.IsMain).Currency.Name,
+                    Exchange = cp.CurrencySource.Name,
+                    ExchangeAbbrv = cp.CurrencySource.Abbreviation,
+                    LastUpdated = cp.CurrencyPairRequests
+                        .SelectMany(cpr => cpr.RequestComponents)
+                        .Any(rc => rc.DeletedAt == null && rc.IsEnabled)
+                        ? cp.CurrencyPairRequests
+                            .SelectMany(cpr => cpr.RequestComponents)
+                            .FirstOrDefault(rc => rc.DeletedAt == null && rc.IsEnabled)
+                            .ModifiedAt
+                        : DateTime.Now,
+                    Properties = cp.CurrencyPairRequests
+                        .SelectMany(cpr => cpr.RequestComponents)
+                        .Where(rc => rc.IsEnabled && rc.DeletedAt == null
+                                                  && !string.IsNullOrEmpty(rc.Value))
+                        .Select(rc => new KeyValuePair<string, string>(
+                            rc.ComponentType.ToString(),
+                            rc.Value))
+                        .DefaultIfEmpty()
+                        .ToList()
+                })
+                .ToList();
+
+            utrByCpr.AddRange(_unitOfWork.GetRepository<CurrencyPair>()
+                .GetQueryable()
+                .AsNoTracking()
+                .Where(cp => cp.DeletedAt == null && cp.IsEnabled)
+                .Include(cp => cp.PartialCurrencyPairs)
+                .ThenInclude(pcp => pcp.Currency)
+                .Include(cp => cp.CurrencySource)
+                .Include(cp => cp.WebsocketRequests)
+                .ThenInclude(cpr => cpr.RequestComponents)
+                .Skip(index * 20)
+                .Take(20)
+                .OrderBy(cp => cp.Id)
+                .DefaultIfEmpty()
+                .Select(cp => new UniqueTickerResponse
+                {
+                    MainTickerAbbreviation =
+                        cp.PartialCurrencyPairs.FirstOrDefault(pcp => pcp.IsMain).Currency.Abbrv,
+                    MainTickerName =
+                        cp.PartialCurrencyPairs.FirstOrDefault(pcp => pcp.IsMain).Currency.Name,
+                    CounterTickerAbbreviation =
+                        cp.PartialCurrencyPairs.FirstOrDefault(pcp => !pcp.IsMain).Currency.Abbrv,
+                    CounterTickerName =
+                        cp.PartialCurrencyPairs.FirstOrDefault(pcp => !pcp.IsMain).Currency.Name,
+                    Exchange = cp.CurrencySource.Name,
+                    ExchangeAbbrv = cp.CurrencySource.Abbreviation,
+                    LastUpdated = cp.CurrencyPairRequests
+                        .SelectMany(cpr => cpr.RequestComponents)
+                        .Any(rc => rc.DeletedAt == null && rc.IsEnabled)
+                        ? cp.CurrencyPairRequests
+                            .SelectMany(cpr => cpr.RequestComponents)
+                            .FirstOrDefault(rc => rc.DeletedAt == null && rc.IsEnabled)
+                            .ModifiedAt
+                        : DateTime.Now,
+                    Properties = cp.CurrencyPairRequests
+                        .SelectMany(cpr => cpr.RequestComponents)
+                        .Where(rc => rc.IsEnabled && rc.DeletedAt == null
+                                                  && !string.IsNullOrEmpty(rc.Value))
+                        .Select(rc => new KeyValuePair<string, string>(
+                            rc.ComponentType.ToString(),
+                            rc.Value))
+                        .DefaultIfEmpty()
+                        .ToList()
+                }));
+            
+            return Task.FromResult(new NozomiResult<ICollection<UniqueTickerResponse>>
+            {
+                Data = utrByCpr
             });
         }
 
