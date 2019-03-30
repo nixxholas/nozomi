@@ -73,12 +73,14 @@ namespace Nozomi.Service.HostedServices.StaticUpdater
                             .Tickers(source.CurrencyPairs
                                 .Select(cp => new UniqueTickerResponse
                                 {
-                                    TickerAbbreviation = cp.PartialCurrencyPairs
-                                        .FirstOrDefault(pcp => pcp.IsMain)
-                                        ?.Currency.Abbrv + 
-                                                    cp.PartialCurrencyPairs
-                                                        .FirstOrDefault(pcp => !pcp.IsMain)
-                                                        ?.Currency.Abbrv,
+                                    MainTickerAbbreviation = 
+                                        cp.PartialCurrencyPairs.FirstOrDefault(pcp => pcp.IsMain)?.Currency.Abbrv,
+                                    MainTickerName = 
+                                        cp.PartialCurrencyPairs.FirstOrDefault(pcp => pcp.IsMain)?.Currency.Name,
+                                    CounterTickerAbbreviation = 
+                                        cp.PartialCurrencyPairs.FirstOrDefault(pcp => !pcp.IsMain)?.Currency.Abbrv,
+                                    CounterTickerName = 
+                                        cp.PartialCurrencyPairs.FirstOrDefault(pcp => !pcp.IsMain)?.Currency.Name,
                                     CurrencyPairId = cp.Id,
                                     LastUpdated = cp.ModifiedAt,
                                     Properties = cp.CurrencyPairRequests

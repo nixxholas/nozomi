@@ -38,9 +38,14 @@ namespace Nozomi.Service.Events
                 .ThenInclude(cpr => cpr.RequestComponents)
                 .Select(cp => new UniqueTickerResponse
                 {
-                    TickerAbbreviation = string.Concat(
+                    MainTickerAbbreviation = 
                         cp.PartialCurrencyPairs.FirstOrDefault(pcp => pcp.IsMain).Currency.Abbrv,
-                        cp.PartialCurrencyPairs.FirstOrDefault(pcp => !pcp.IsMain).Currency.Abbrv),
+                    MainTickerName = 
+                        cp.PartialCurrencyPairs.FirstOrDefault(pcp => pcp.IsMain).Currency.Name,
+                    CounterTickerAbbreviation = 
+                        cp.PartialCurrencyPairs.FirstOrDefault(pcp => !pcp.IsMain).Currency.Abbrv,
+                    CounterTickerName = 
+                        cp.PartialCurrencyPairs.FirstOrDefault(pcp => !pcp.IsMain).Currency.Name,
                     Exchange = cp.CurrencySource.Name,
                     ExchangeAbbrv = cp.CurrencySource.Abbreviation,
                     LastUpdated = cp.CurrencyPairRequests.FirstOrDefault(cpr => cpr.DeletedAt == null && cpr.IsEnabled)
