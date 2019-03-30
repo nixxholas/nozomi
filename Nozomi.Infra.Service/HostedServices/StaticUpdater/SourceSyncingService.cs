@@ -81,7 +81,6 @@ namespace Nozomi.Service.HostedServices.StaticUpdater
                                         cp.PartialCurrencyPairs.FirstOrDefault(pcp => !pcp.IsMain)?.Currency.Abbrv,
                                     CounterTickerName = 
                                         cp.PartialCurrencyPairs.FirstOrDefault(pcp => !pcp.IsMain)?.Currency.Name,
-                                    CurrencyPairId = cp.Id,
                                     LastUpdated = cp.ModifiedAt,
                                     Properties = cp.CurrencyPairRequests
                                         .FirstOrDefault(cpr => cpr.IsEnabled && cpr.DeletedAt == null)
