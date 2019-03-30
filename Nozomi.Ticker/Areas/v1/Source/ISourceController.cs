@@ -5,7 +5,7 @@ using Nozomi.Data.AreaModels.v1.CurrencySource;
 
 namespace Nozomi.Ticker.Areas.v1.Source
  {
-     public interface ISourceApiController
+     public interface ISourceController
      {
          NozomiResult<ICollection<Data.Models.Currency.Source>> All();
 

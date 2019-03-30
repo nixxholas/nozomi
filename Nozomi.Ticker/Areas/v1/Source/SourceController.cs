@@ -15,13 +15,13 @@ using Nozomi.Service.Services.Interfaces;
 
 namespace Nozomi.Ticker.Areas.v1.Source
 {
-    public class SourceApiController : BaseController<SourceApiController>, ISourceApiController
+    public class SourceController : BaseController<SourceController>, ISourceController
     {
         private readonly ISourceEvent _sourceEvent;
         private readonly ISourceService _sourceService;
         private readonly IHistoricalDataEvent _historicalDataEvent;
         
-        public SourceApiController(ILogger<SourceApiController> logger, NozomiUserManager userManager,
+        public SourceController(ILogger<SourceController> logger, NozomiUserManager userManager,
             ISourceEvent sourceEvent,IHistoricalDataEvent historicalDataEvent, ISourceService sourceService) 
             : base(logger, userManager)
         {
@@ -52,7 +52,7 @@ namespace Nozomi.Ticker.Areas.v1.Source
         [HttpGet]
         public NozomiResult<ICollection<Data.Models.Currency.Source>> All()
         {
-            return new NozomiResult<ICollection<Data.Models.Currency.Source>>(_sourceEvent.GetAllActive(false).ToList());
+            return new NozomiResult<ICollection<Data.Models.Currency.Source>>(_sourceEvent.GetAllActive(true).ToList());
         }
 
         [Authorize]
