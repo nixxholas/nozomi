@@ -8,7 +8,9 @@ using Nozomi.Base.Core.Helpers.UI;
 using Nozomi.Data;
 using Nozomi.Data.Models.Currency;
 using Nozomi.Data.ResponseModels;
+using Nozomi.Data.ResponseModels.Source;
 using Nozomi.Data.ResponseModels.Ticker;
+using Nozomi.Data.ResponseModels.TickerPair;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Data;
@@ -100,6 +102,59 @@ namespace Nozomi.Service.Events
                     })
                     .SingleOrDefault()
             });
+        }
+
+        public ICollection<TickerPairResponse> GetAllTickerPairSources()
+        {
+            var cPairs = _unitOfWork.GetRepository<CurrencyPair>()
+                .GetQueryable()
+                .AsNoTracking()
+                .Where(cp => cp.DeletedAt == null && cp.IsEnabled)
+                .Include(cp => cp.CurrencySource)
+                .Where(cp => cp.CurrencySource.DeletedAt == null && cp.CurrencySource.IsEnabled)
+                .Include(cp => cp.PartialCurrencyPairs)
+                .ThenInclude(pcp => pcp.Currency)
+                .Where(cp => cp.PartialCurrencyPairs.FirstOrDefault(pcp => pcp.IsMain) != null
+                             && cp.PartialCurrencyPairs.FirstOrDefault(pcp => !pcp.IsMain) != null);
+
+            var res = new List<TickerPairResponse>();
+
+            foreach (var cPair in cPairs)
+            {
+                var tickerPairStr = cPair.PartialCurrencyPairs.FirstOrDefault(pcp => pcp.IsMain)?.Currency.Abbrv +
+                                    cPair.PartialCurrencyPairs.FirstOrDefault(pcp => !pcp.IsMain)?.Currency.Abbrv;
+                
+                var tPair = res.FirstOrDefault(tpair => tpair.Key.Equals(tickerPairStr,
+                    StringComparison.InvariantCultureIgnoreCase));
+                
+                // if the ticker pair already exists in res
+                if (tPair != null)
+                {
+                    tPair.Sources.Add(new SourceResponse
+                    {
+                        Abbreviation = cPair.CurrencySource.Abbreviation,
+                        Name = cPair.CurrencySource.Name
+                    });
+                }
+                else
+                {
+                    // Create it
+                    res.Add(new TickerPairResponse
+                    {
+                        Key = tickerPairStr,
+                        Sources = new List<SourceResponse>
+                        {
+                            new SourceResponse
+                            {
+                                Abbreviation = cPair.CurrencySource.Abbreviation,
+                                Name = cPair.CurrencySource.Name
+                            }
+                        }
+                    });
+                }
+            }
+
+            return res;
         }
 
         public NozomiResult<ICollection<TickerByExchangeResponse>> GetByAbbreviation(string ticker, 
