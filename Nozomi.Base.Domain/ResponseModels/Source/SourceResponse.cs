@@ -8,7 +8,5 @@ namespace Nozomi.Data.ResponseModels.Source
         public string Abbreviation { get; set; }
         
         public string Name { get; set; }
-        
-        public ICollection<CurrencyResponse> Currencies { get; set; }
     }
 }

@@ -8,8 +8,8 @@ namespace Nozomi.Service.Events.Interfaces
     {
         bool SourceExists(string abbrv);
         
-        SourceResponse Get(long id);
-        SourceResponse Get(string abbreviation);
+        XSourceResponse Get(long id);
+        XSourceResponse Get(string abbreviation);
         
         IEnumerable<dynamic> GetAllNested();
 
