@@ -4,7 +4,10 @@
 import Vue from 'vue';
 import BootstrapVue from 'bootstrap-vue/dist/bootstrap-vue.esm';
 Vue.use(BootstrapVue); // Expose bootstrap-vue globally
+import SparklineComponent from '../scripts/components/sparkline-component.vue';
+Vue.use(SparklineComponent);
 (<any> window).Vue = Vue;
+
 
 import * as moment from 'moment';
 import 'moment-timezone';
