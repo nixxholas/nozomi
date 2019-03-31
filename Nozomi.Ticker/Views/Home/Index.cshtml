@@ -90,7 +90,7 @@
               :gradient="['#6fa8dc', '#42b983', '#2c3e50']"
               auto-draw
               smooth 
-              v-if="datum.item.averagePriceHistory.length > 0">
+              v-if="datum.item.averagePriceHistory != null && datum.item.averagePriceHistory.length > 0">
             </trend>
           </template>
         </b-table>
