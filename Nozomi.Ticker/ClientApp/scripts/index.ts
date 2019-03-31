@@ -4,7 +4,10 @@
 import Vue from 'vue';
 import BootstrapVue from 'bootstrap-vue/dist/bootstrap-vue.esm';
 Vue.use(BootstrapVue); // Expose bootstrap-vue globally
+import Trend from 'vuetrend';
+Vue.use(Trend);
 (<any> window).Vue = Vue;
+
 
 import * as moment from 'moment';
 import 'moment-timezone';
@@ -60,6 +63,7 @@ import '../scripts/components/hs.svg-injector.js';
 import '../scripts/components/hs.toggle-state.js'
 import '../scripts/components/hs.validation.js';
 import '../scripts/components/hs.chart-pie.js';
+
 $(window).on('load', function () {
     // initialization of HSMegaMenu component
     $('.js-mega-menu').HSMegaMenu({

@@ -51,6 +51,8 @@
     "typescript": "^3.2.1",
     "url-loader": "^1.1.2",
     "vue": "^2.6.3",
+    "vue-loader": "^15.7.0",
+    "vuetrend": "^0.3.2",
     "webpack": "^4.26.1",
     "webpack-cli": "^3.1.2"
   },
