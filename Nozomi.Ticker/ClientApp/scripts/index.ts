@@ -4,8 +4,8 @@
 import Vue from 'vue';
 import BootstrapVue from 'bootstrap-vue/dist/bootstrap-vue.esm';
 Vue.use(BootstrapVue); // Expose bootstrap-vue globally
-import SparklineComponent from '../scripts/components/sparkline-component.vue';
-Vue.use(SparklineComponent);
+import Trend from 'vuetrend';
+Vue.use(Trend);
 (<any> window).Vue = Vue;
 
 
@@ -34,8 +34,6 @@ import 'slick-carousel';
 import 'svg-injector';
 import 'malihu-custom-scrollbar-plugin';
 import 'datatables';
-import sparkline from "@fnando/sparkline";
-(<any> window).sparkline = sparkline;
 
 // No updated npm version yet
 import '../scripts/components/appear.js';

@@ -118,9 +118,12 @@
           </template>
           <template slot="averagePriceHistory" slot-scope="datum">
             <!-- Area Chart -->
-            <!-- width, height and stroke-width attributes must be defined on the target SVG -->
-            <svg class="sparkline" width="50" height="15" stroke-width="2"></svg>
-            {{ }}
+            <trend
+              :data="'[' + datum.item.averagePriceHistory + ']'"
+              :gradient="['#6fa8dc', '#42b983', '#2c3e50']"1
+              auto-draw
+              smooth>
+            </trend>
           </template>
         </b-table>
         <b-row>
