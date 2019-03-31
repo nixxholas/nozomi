@@ -31,6 +31,8 @@ import 'slick-carousel';
 import 'svg-injector';
 import 'malihu-custom-scrollbar-plugin';
 import 'datatables';
+import sparkline from "@fnando/sparkline";
+(<any> window).sparkline = sparkline;
 
 // No updated npm version yet
 import '../scripts/components/appear.js';
@@ -60,6 +62,7 @@ import '../scripts/components/hs.svg-injector.js';
 import '../scripts/components/hs.toggle-state.js'
 import '../scripts/components/hs.validation.js';
 import '../scripts/components/hs.chart-pie.js';
+
 $(window).on('load', function () {
     // initialization of HSMegaMenu component
     $('.js-mega-menu').HSMegaMenu({
