@@ -61,7 +61,7 @@ namespace Nozomi.Data.ResponseModels.Currency
 
                                         if (aComp.AnalysedHistoricItems.Count > 0)
                                         {
-                                            AveragePriceHistory[0] = aComp.AnalysedHistoricItems
+                                            AveragePriceHistory = aComp.AnalysedHistoricItems
                                                 .Where(ahi => ahi.DeletedAt == null && ahi.IsEnabled
                                                               && !string.IsNullOrEmpty(ahi.Value))
                                                 .Select(ahi => decimal.Parse(ahi.Value))
@@ -102,7 +102,7 @@ namespace Nozomi.Data.ResponseModels.Currency
                                 .ToList();
                             #endif
                             
-                            AveragePriceHistory[0] = currencyAP.AnalysedHistoricItems
+                            AveragePriceHistory = currencyAP.AnalysedHistoricItems
                                 .OrderByDescending(ahi => ahi.HistoricDateTime)
                                 .DefaultIfEmpty()
                                 .Select(ahi => decimal.Parse(ahi.Value))
@@ -286,7 +286,7 @@ namespace Nozomi.Data.ResponseModels.Currency
 
         public Dictionary<ComponentType, List<ComponentHistoricalDatum>> Historical { get; set; }
 
-        public decimal[][] AveragePriceHistory { get; set; } = new decimal[1][];
+        public decimal[] AveragePriceHistory { get; set; }
 
         /// <summary>
         /// Allows multiple currency objects that are identical to merge its history.
