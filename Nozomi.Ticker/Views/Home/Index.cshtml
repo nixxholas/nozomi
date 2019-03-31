@@ -119,8 +119,8 @@
           <template slot="averagePriceHistory" slot-scope="datum">
             <!-- Area Chart -->
             <trend
-              :data="'[' + datum.item.averagePriceHistory + ']'"
-              :gradient="['#6fa8dc', '#42b983', '#2c3e50']"1
+              :data="datum.item.averagePriceHistory"
+              :gradient="['#6fa8dc', '#42b983', '#2c3e50']"
               auto-draw
               smooth>
             </trend>
@@ -264,7 +264,7 @@
 //          }
           {
             key: 'averagePriceHistory',
-            label: 'Price',
+            label: 'Price Chart',
             sortable: false
           }
         ],
