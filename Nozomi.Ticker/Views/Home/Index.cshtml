@@ -118,35 +118,9 @@
           </template>
           <template slot="averagePriceHistory" slot-scope="datum">
             <!-- Area Chart -->
-            <!-- Area Chart -->
-            <div class="js-area-chart u-area-chart"
-                 data-postfix="m"
-                 data-is-show-area="true"
-                 data-is-show-line="false"
-                 data-is-show-point="false"
-                 data-is-full-width="true"
-
-                 data-is-stack-bars="true"
-                 data-is-show-axis-x="false"
-                 data-is-show-axis-y="false"
-                 data-is-show-tooltips="true"
-                 data-tooltip-description-position="center"
-                 data-tooltip-custom-class="u-area-chart__tooltip"
-
-                 data-align-text-axis-x="center"
-                 data-fill-opacity=".8"
-                 data-fill-colors='["#377dff"]'
-                 data-stroke-width=".0625rem"
-                 data-stroke-color="#f0f4f7"
-                 data-stroke-dash-array="0"
-                 data-text-size-x=".75rem"
-                 data-text-color-x="#77838f"
-                 data-text-offset-top-x="10"
-
-                 data-text-size-y=".75rem"
-                 data-text-color-y="#77838f"
-                 data-points-colors='["#377dff"]'
-                 :data-series="datum.item.averagePriceHistory"></div>
+            <!-- width, height and stroke-width attributes must be defined on the target SVG -->
+            <svg class="sparkline" width="50" height="15" stroke-width="2"></svg>
+            {{ }}
           </template>
         </b-table>
         <b-row>

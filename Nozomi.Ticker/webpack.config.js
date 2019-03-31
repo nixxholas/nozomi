@@ -4,6 +4,7 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 const CleanWebpackPlugin = require("clean-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+const { VueLoaderPlugin } = require('vue-loader');
 
 module.exports = {
     entry: {
@@ -63,6 +64,12 @@ module.exports = {
                 ]
             },
             {
+                test: /\.vue$/,
+                use: [
+                    'vue-loader'
+                ]
+            },
+            {
             test: /\.scss$/,
             use: [
                 MiniCssExtractPlugin.loader,
@@ -80,6 +87,7 @@ module.exports = {
     new CopyWebpackPlugin([
         { from: 'ClientApp/assets', to: 'assets' }
     ]),
+        new VueLoaderPlugin(),
     new MiniCssExtractPlugin({
         // Options similar to the same options in webpackOptions.output
         // both options are optional
