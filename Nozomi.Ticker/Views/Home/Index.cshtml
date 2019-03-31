@@ -12,48 +12,15 @@
       <div class="mb-5">
         <h1 class="display-4 font-size-md-down-5 font-weight-semi-bold">Market data, all in one place.</h1>
         <p>Nozomi is the leading data metrics service that will support any <strong class="text-primary">endpoint</strong>.</p>
-        @* <!-- Area Chart --> *@
-        @* <div class="js-area-chart u-area-chart" *@
-        @*      data-height="16rem" *@
-        @*      data-mobile-height="16rem" *@
-        @*      data-offset-x="30" *@
-        @*      data-offset-y="0" *@
-        @*      data-postfix="m" *@
-        @*      data-is-show-area="true" *@
-        @*      data-is-show-line="false" *@
-        @*      data-is-show-point="false" *@
-        @*      data-is-full-width="true" *@
-        @* *@
-        @*      data-is-stack-bars="true" *@
-        @*      data-is-show-axis-x="false" *@
-        @*      data-is-show-axis-y="false" *@
-        @*      data-is-show-tooltips="true" *@
-        @*      data-tooltip-description-position="center" *@
-        @*      data-tooltip-custom-class="u-area-chart__tooltip" *@
-        @* *@
-        @*      data-align-text-axis-x="center" *@
-        @*      data-fill-opacity=".8" *@
-        @*      data-fill-colors='["#377dff"]' *@
-        @*      data-stroke-width=".0625rem" *@
-        @*      data-stroke-color="#f0f4f7" *@
-        @*      data-stroke-dash-array="0" *@
-        @*      data-text-size-x=".75rem" *@
-        @*      data-text-color-x="#77838f" *@
-        @*      data-text-offset-top-x="10" *@
-        @* *@
-        @*      data-text-size-y=".75rem" *@
-        @*      data-text-color-y="#77838f" *@
-        @*      data-points-colors='["#377dff"]' *@
-        @*      data-series='[[10,40,39]]'></div> *@
 
-        <div class="w-lg-50 mt-auto mx-lg-auto">
-          <!-- SVG Icon -->
-          <figure class="ie-subscribe-2">
-            <img class="js-svg-injector" src="../../assets/svg/flat-icons/easy-start.svg" alt="Image Description"
-                 data-parent="#SVGeasyStart">
-          </figure>
-          <!-- End SVG Icon -->
-        </div>
+        @* <div class="w-lg-50 mt-auto mx-lg-auto"> *@
+        @*   <!-- SVG Icon --> *@
+        @*   <figure class="ie-subscribe-2"> *@
+        @*     <img class="js-svg-injector" src="../../assets/svg/flat-icons/easy-start.svg" alt="Image Description" *@
+        @*          data-parent="#SVGeasyStart"> *@
+        @*   </figure> *@
+        @*   <!-- End SVG Icon --> *@
+        @* </div> *@
       </div>
 
       <!-- SVG Component -->
@@ -122,7 +89,8 @@
               :data="datum.item.averagePriceHistory"
               :gradient="['#6fa8dc', '#42b983', '#2c3e50']"
               auto-draw
-              smooth>
+              smooth 
+              v-if="datum.item.averagePriceHistory.length > 0">
             </trend>
           </template>
         </b-table>
@@ -257,11 +225,6 @@
             label: 'Daily Change',
             sortable: true
           },
-//          {
-//            key: 'lastUpdated',
-//            label: 'Last Updated',
-//            sortable: false
-//          }
           {
             key: 'averagePriceHistory',
             label: 'Price Chart',
@@ -270,8 +233,7 @@
         ],
         currentCurrencyPage: 1,
         currencies: [],
-        itemsPerPage: 40,
-        testCurrencies: [ { "averagePrice": 137.675, "dailyAvgPricePctChange": -0.014524855659246886, "marketCap": 14507353704.477655, "historical": null, "averagePriceHistory": [ 137.695, 137.675, 137.675, 137.675, 137.675, 137.675, 137.675, 137.675, 137.675, 137.675, 137.675, 137.675, 137.675, 137.675, 137.675, 137.675, 137.675, 137.675, 137.675, 137.675, 137.675, 137.675, 137.675, 137.675, 137.675, 137.675, 137.675, 137.675, 137.675, 137.675, 137.675, 137.675, 137.675, 137.675 ], "name": "Ethereum", "abbreviation": "ETH", "lastUpdated": "2019-03-24T22:15:05.246764Z" }, { "averagePrice": 0.26909, "dailyAvgPricePctChange": 0.057634744454979826, "marketCap": 28338733.746240772, "historical": null, "averagePriceHistory": [ 0.268935, 0.26909, 0.26909, 0.26909, 0.26909, 0.26909, 0.26909, 0.26909, 0.26909, 0.26909, 0.26909, 0.26909, 0.26909, 0.26909, 0.26909, 0.26909, 0.26909, 0.26909, 0.26909, 0.26909, 0.26909, 0.26909, 0.26909, 0.26909, 0.26909, 0.26909, 0.26909, 0.26909, 0.26909, 0.26909, 0.26909, 0.26909 ], "name": "Kyber Network Crystal", "abbreviation": "KNC", "lastUpdated": "2019-03-24T22:15:05.542046Z" }, { "averagePrice": 3986.3764832, "dailyAvgPricePctChange": -0.0006139827692106448, "marketCap": 70185487772.09404, "historical": null, "averagePriceHistory": null, "name": "Bitcoin", "abbreviation": "BTC", "lastUpdated": "2019-03-24T22:15:05.643578Z" }, { "averagePrice": 0, "dailyAvgPricePctChange": 0, "marketCap": 0, "historical": null, "averagePriceHistory": null, "name": "Bytecoin", "abbreviation": "BCN", "lastUpdated": "2019-03-24T22:15:05.759445Z" }, { "averagePrice": 0, "dailyAvgPricePctChange": 0, "marketCap": 0, "historical": null, "averagePriceHistory": null, "name": "BitShares", "abbreviation": "BTS", "lastUpdated": "2019-03-24T22:15:05.786368Z" } ]
+        itemsPerPage: 40
       },
       created: function() {
         const connection = new SignalR.HubConnectionBuilder()
