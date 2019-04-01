@@ -21,4 +21,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Nozomi.Infra.Analysis.Service\Nozomi.Infra.Analysis.Service.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="ClientApp\scripts\libs" />
+  </ItemGroup>
 </Project>
