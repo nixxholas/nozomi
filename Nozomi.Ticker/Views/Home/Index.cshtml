@@ -208,14 +208,14 @@
       </figure>
       <!-- End SVG Background Element -->
     </div>
-
-<!-- CTA Section -->
-<div id="SVGctaSection" class="svg-preloader position-relative space-md-3 z-index-2 overflow-hidden">
-  <div class="container space-2" id="vueTableBody">
-    <h3 class="h2 text-center font-weight-semi-bold mb-3">Market Data</h3>
-    <b-card style="width: 100%">
-      <p class="card-text">
-        <b-table responsive :busy="currencies.length == 0"
+    
+     <!-- CTA Section -->
+        <div id="vueBody" class="container space-bottom-2 space-bottom-md-3">
+          <div class="bg-primary text-white shadow-primary-lg rounded p-5 p-md-9">
+            <div class="row justify-content-lg-between align-items-md-center">
+              <div class="col">
+                <b-table :dark="true"
+                  show-empty stacked="md" :busy="currencies.length == 0"
                  :per-page="itemsPerPage" :current-page="currentCurrencyPage"
                  :fields="currencyDataFields" :items="currencies">
           <!-- A virtual composite column -->
@@ -253,7 +253,7 @@
               :data="datum.item.averagePriceHistory"
               :gradient="['#6fa8dc', '#42b983', '#2c3e50']"
               auto-draw
-              smooth 
+              smooth
               v-if="datum.item.averagePriceHistory != null && datum.item.averagePriceHistory.length > 0">
             </trend>
           </template>
@@ -264,12 +264,11 @@
                           v-model="currentCurrencyPage" class="my-0"/>
           </b-col>
         </b-row>
-      </p>
-    </b-card>
-  </div>
-</div>
-<!-- End CTA Section -->
-
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- End CTA Section -->
   @* <hr class="my-0"> *@
   @* *@
   @* <div class="container space-2 space-md-3"> *@
@@ -351,7 +350,7 @@
   <script>
     const vm = new Vue({
       // options
-      el: "#vueTableBody",
+      el: "#vueBody",
       // Just dish any random variable in for now
       data: {
         currencyDataFields: [
