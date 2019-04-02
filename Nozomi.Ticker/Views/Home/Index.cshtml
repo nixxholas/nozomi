@@ -3,12 +3,6 @@
 @{
   ViewData["Title"] = "Home Page";
 }
-<div class="alert alert-warning alert-dismissible fade show" role="alert">
-  <strong>Holy guacamole!</strong> APIs are in beta. UI's still in pre-alpha, hang in there!
-  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-    <span aria-hidden="true">×</span>
-  </button>
-</div>
 <!-- Hero Section -->
 <div id="SVGheroBottomShape" class="position-relative gradient-half-primary-v5 z-index-2 overflow-hidden" style="">
       <div class="container space-top-2 space-top-md-5 space-top-lg-4">
@@ -20,34 +14,33 @@
         <!-- End Title -->
 
         <!-- Slick Carousel -->
-        <div class="js-slick-carousel u-slick u-slick--gutters-3 z-index-2 slick-initialized slick-slider slick-dotted" 
-             data-slides-show="5" data-slides-scroll="1" data-pagi-classes="d-lg-none text-center u-slick__pagination mt-7 mb-0" 
-             data-responsive="[{
-               &quot;breakpoint&quot;: 1200,
-               &quot;settings&quot;: {
-                 &quot;slidesToShow&quot;: 4
+        <div class="js-slick-carousel u-slick u-slick--gutters-3 z-index-2"
+             data-slides-show="5"
+             data-infinite="true"
+             data-autoplay="true"
+             data-speed="5000"
+             data-responsive='[{
+               "breakpoint": 1200,
+               "settings": {
+                 "slidesToShow": 4
                }
              }, {
-               &quot;breakpoint&quot;: 992,
-               &quot;settings&quot;: {
-                 &quot;slidesToShow&quot;: 3
+               "breakpoint": 992,
+               "settings": {
+                 "slidesToShow": 3
                }
              }, {
-               &quot;breakpoint&quot;: 768,
-               &quot;settings&quot;: {
-                 &quot;slidesToShow&quot;: 2
+               "breakpoint": 768,
+               "settings": {
+                 "slidesToShow": 2
                }
              }, {
-               &quot;breakpoint&quot;: 480,
-               &quot;settings&quot;: {
-                 &quot;slidesToShow&quot;: 1
+               "breakpoint": 480,
+               "settings": {
+                 "slidesToShow": 1
                }
-             }]">
-          
-        <div class="slick-list draggable">
-          <div class="slick-track" style="opacity: 1; width: 1140px; transform: translate3d(0px, 0px, 0px);">
-            <div class="js-slide mt-1 slick-slide slick-current slick-active" style="width: 198px;" tabindex="0" 
-                 role="tabpanel" id="slick-slide00" aria-describedby="slick-slide-control00" data-slick-index="0" aria-hidden="false">
+             }]'>
+          <div class="js-slide mt-1">
             <!-- Icon Block -->
             <article class="card border-0 shadow-sm transition-3d-hover mb-3">
               <div class="card-body bg-primary rounded-top p-5">
@@ -60,11 +53,13 @@
                   <h2 class="h6 mb-0">Atlassian</h2>
                   <small class="d-block text-secondary">Developer tools</small>
                 </div>
-                <a class="btn btn-sm btn-block btn-primary" href="#" tabindex="0">Install</a>
+                <a class="btn btn-sm btn-block btn-primary" href="#">Install</a>
               </div>
             </article>
             <!-- End Icon Block -->
-          </div><div class="js-slide mt-1 slick-slide slick-active" style="width: 198px;" tabindex="0" role="tabpanel" id="slick-slide01" aria-describedby="slick-slide-control01" data-slick-index="1" aria-hidden="false">
+          </div>
+
+          <div class="js-slide mt-1">
             <!-- Icon Block -->
             <article class="card border-0 shadow-sm transition-3d-hover mb-3">
               <div class="card-body bg-danger rounded-top p-5">
@@ -77,11 +72,13 @@
                   <h2 class="h6 mb-0">Asana</h2>
                   <small class="d-block text-secondary">Productivity</small>
                 </div>
-                <a class="btn btn-sm btn-block btn-primary" href="#" tabindex="0">Install</a>
+                <a class="btn btn-sm btn-block btn-primary" href="#">Install</a>
               </div>
             </article>
             <!-- End Icon Block -->
-          </div><div class="js-slide mt-1 slick-slide slick-active" style="width: 198px;" tabindex="0" role="tabpanel" id="slick-slide02" aria-describedby="slick-slide-control02" data-slick-index="2" aria-hidden="false">
+          </div>
+
+          <div class="js-slide mt-1">
             <!-- Icon Block -->
             <article class="card border-0 shadow-sm transition-3d-hover mb-3">
               <div class="card-body bg-warning rounded-top p-5">
@@ -94,11 +91,13 @@
                   <h2 class="h6 mb-0">Slack</h2>
                   <small class="d-block text-secondary">Collaboration tool</small>
                 </div>
-                <a class="btn btn-sm btn-block btn-primary" href="#" tabindex="0">Install</a>
+                <a class="btn btn-sm btn-block btn-primary" href="#">Install</a>
               </div>
             </article>
             <!-- End Icon Block -->
-          </div><div class="js-slide mt-1 slick-slide slick-active" style="width: 198px;" tabindex="0" role="tabpanel" id="slick-slide03" aria-describedby="slick-slide-control03" data-slick-index="3" aria-hidden="false">
+          </div>
+
+          <div class="js-slide mt-1">
             <!-- Icon Block -->
             <article class="card border-0 shadow-sm transition-3d-hover mb-3">
               <div class="card-body bg-success rounded-top p-5">
@@ -111,11 +110,13 @@
                   <h2 class="h6 mb-0">Spotify</h2>
                   <small class="d-block text-secondary">Streaming service</small>
                 </div>
-                <a class="btn btn-sm btn-block btn-primary" href="#" tabindex="0">Install</a>
+                <a class="btn btn-sm btn-block btn-primary" href="#">Install</a>
               </div>
             </article>
             <!-- End Icon Block -->
-          </div><div class="js-slide mt-1 slick-slide slick-active" style="width: 198px;" tabindex="0" role="tabpanel" id="slick-slide04" aria-describedby="slick-slide-control04" data-slick-index="4" aria-hidden="false">
+          </div>
+
+          <div class="js-slide mt-1">
             <!-- Icon Block -->
             <article class="card border-0 shadow-sm transition-3d-hover mb-3">
               <div class="card-body bg-primary rounded-top p-5">
@@ -128,11 +129,31 @@
                   <h2 class="h6 mb-0">DigitalOcean</h2>
                   <small class="d-block text-secondary">Cloud infrastructure</small>
                 </div>
-                <a class="btn btn-sm btn-block btn-primary" href="#" tabindex="0">Install</a>
+                <a class="btn btn-sm btn-block btn-primary" href="#">Install</a>
               </div>
             </article>
             <!-- End Icon Block -->
-          </div></div></div><ul class="js-pagination d-lg-none text-center u-slick__pagination mt-7 mb-0" role="tablist"><li class="slick-active slick-current" role="presentation"><span></span></li></ul></div>
+          </div>
+
+          <div class="js-slide mt-1">
+            <!-- Icon Block -->
+            <article class="card border-0 shadow-sm transition-3d-hover mb-3">
+              <div class="card-body bg-primary rounded-top p-5">
+                <div class="u-avatar bg-white rounded p-2 mx-auto">
+                  <img class="img-fluid" src="../../assets/img/160x160/img16.png" alt="Image Description">
+                </div>
+              </div>
+              <div class="card-body p-4">
+                <div class="mb-3">
+                  <h2 class="h6 mb-0">DigitalOcean</h2>
+                  <small class="d-block text-secondary">Cloud infrastructure</small>
+                </div>
+                <a class="btn btn-sm btn-block btn-primary" href="#">Install</a>
+              </div>
+            </article>
+            <!-- End Icon Block -->
+          </div>
+        </div>
         <!-- End Slick Carousel -->
       </div>
 
