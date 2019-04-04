@@ -116,11 +116,15 @@
         <div id="vueBody" class="container space-bottom-2 space-bottom-md-3 shadow-lg p-3 mb-5 bg-white rounded">
             <div class="row justify-content-lg-between align-items-md-center">
               <div class="col">
-                <b-table show-empty stacked="md" busy="currencies.length == 0"
+                <b-table show-empty stacked="md" busy="currencies.length == 0" striped
                          tbody-class="font-weight-medium" thead-class="text-uppercase font-size-1"
                          :per-page="itemsPerPage" :current-page="currentCurrencyPage"
                          class="table-borderless u-datatable__content"
                  :fields="currencyDataFields" :items="currencies">
+      <div slot="table-busy" class="text-center text-danger my-2">
+        <b-spinner class="align-middle"></b-spinner>
+        <strong>Loading...</strong>
+      </div>
           <!-- A virtual composite column -->
           <template slot="name" slot-scope="datum">
             <a :href="'/currency/' + datum.item.abbreviation">{{ datum.item.name }}</a><br>
@@ -128,7 +132,7 @@
           </template>
           <!-- A virtual composite column -->
           <template slot="marketCap" slot-scope="datum">
-            ${{ datum.item.marketCap }}
+            ${{ numeral(datum.item.marketCap).format('0 a') }}
           </template>
           <!-- A virtual composite column -->
           <template slot="averagePrice" slot-scope="datum">
@@ -136,23 +140,25 @@
           </template>
           <!-- A virtual composite column -->
           <template slot="dailyAvgPricePctChange" slot-scope="datum">
-            <div class="text-success" v-if="datum.item.dailyAvgPricePctChange > 0">
-              {{ datum.item.dailyAvgPricePctChange }}%
+            <div v-if="datum.item.dailyAvgPricePctChange < 0.1 && datum.item.dailyAvgPricePctChange > -0.1">
+              {{ numeral(datum.item.dailyAvgPricePctChange).format('0[.]0') }}%
               <i class="fas fa-caret-up">
               </i>
             </div>
-            <div class="text-success" v-else-if="datum.item.dailyAvgPricePctChange < 0">
-              {{ datum.item.dailyAvgPricePctChange }}%
-              <i class="fas fa-caret-down">
+            <div class="text-success" v-else-if="datum.item.dailyAvgPricePctChange >= 0.1">
+              {{ numeral(datum.item.dailyAvgPricePctChange).format('0[.]0') }}%
+              <i class="fas fa-caret-up">
               </i>
             </div>
-            <div v-else>
-              {{ datum.item.dailyAvgPricePctChange }}%
+            <div class="text-danger" v-else-if="datum.item.dailyAvgPricePctChange <= -0.1">
+              {{ numeral(datum.item.dailyAvgPricePctChange).format('0[.]0') }}%
+              <i class="fas fa-caret-down">
+              </i>
             </div>
           </template>
           <!-- A virtual composite column -->
           <template slot="dailyVolume" slot-scope="datum">
-            {{ datum.item.dailyVolume }} {{ datum.item.abbreviation }}
+            {{ numeral(datum.item.dailyVolume).format('0 a') }} {{ datum.item.abbreviation }}
           </template>
           <template slot="averagePriceHistory" slot-scope="datum">
             <!-- Area Chart -->
