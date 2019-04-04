@@ -31,6 +31,12 @@ namespace Nozomi.Infra.Analysis.Service.Services
         {
             if (analysedComponent != null)
             {
+                // Value is null, its a new component
+                if (string.IsNullOrEmpty(analysedComponent.Value))
+                {
+                    return true;
+                }
+                
                 var lastHistoric = _unitOfWork.GetRepository<AnalysedHistoricItem>()
                     .Get(ahi => ahi.AnalysedComponentId.Equals(analysedComponent.Id))
                     .OrderByDescending(ahi => ahi.CreatedAt)
