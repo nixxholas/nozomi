@@ -861,6 +861,14 @@ namespace Nozomi.Ticker.StartupExtensions
                                         {
                                             new RequestComponent
                                             {
+                                                ComponentType = ComponentType.VOLUME,
+                                                QueryComponent = "BTC_BCN/baseVolume",
+                                                CreatedAt = DateTime.UtcNow,
+                                                ModifiedAt = DateTime.UtcNow,
+                                                DeletedAt = null
+                                            },
+                                            new RequestComponent
+                                            {
                                                 ComponentType = ComponentType.Ask,
                                                 QueryComponent = "BTC_BCN/lowestAsk",
                                                 CreatedAt = DateTime.UtcNow,
@@ -915,6 +923,14 @@ namespace Nozomi.Ticker.StartupExtensions
                                         },
                                         RequestComponents = new List<RequestComponent>()
                                         {
+                                            new RequestComponent
+                                            {
+                                                ComponentType = ComponentType.VOLUME,
+                                                QueryComponent = "BTC_BTS/baseVolume",
+                                                CreatedAt = DateTime.UtcNow,
+                                                ModifiedAt = DateTime.UtcNow,
+                                                DeletedAt = null
+                                            },
                                             new RequestComponent
                                             {
                                                 ComponentType = ComponentType.Ask,
