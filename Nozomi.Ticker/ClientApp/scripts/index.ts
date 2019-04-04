@@ -25,6 +25,8 @@ const chartist = Chartist;
 (<any> window).Chartist = chartist;
 import * as signalR from "@aspnet/signalr";
 (<any> window).SignalR = signalR;
+import * as numeral from "numeral";
+(<any> window).numeral = numeral;
 import 'jquery-validation';
 import 'jquery-migrate';
 import 'popper.js';
