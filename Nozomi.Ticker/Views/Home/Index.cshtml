@@ -119,7 +119,7 @@
                 <b-table show-empty stacked="md" busy="currencies.length == 0" striped
                          tbody-class="font-weight-medium" thead-class="text-uppercase font-size-1"
                          :per-page="itemsPerPage" :current-page="currentCurrencyPage"
-                         class="table-borderless u-datatable__content"
+                         class="table-borderless"
                  :fields="currencyDataFields" :items="currencies">
       <div slot="table-busy" class="text-center text-danger my-2">
         <b-spinner class="align-middle"></b-spinner>
@@ -136,7 +136,7 @@
           </template>
           <!-- A virtual composite column -->
           <template slot="averagePrice" slot-scope="datum">
-            ${{ datum.item.averagePrice }}
+            ${{ numeral(datum.item.averagePrice).format('0[.]00') }}
           </template>
           <!-- A virtual composite column -->
           <template slot="dailyAvgPricePctChange" slot-scope="datum">
@@ -163,10 +163,8 @@
           <template slot="averagePriceHistory" slot-scope="datum">
             <!-- Area Chart -->
             <trend
-              :data="datum.item.averagePriceHistory"
-              :gradient="['#6fa8dc', '#42b983', '#2c3e50']"
-              auto-draw
-              smooth
+              :data="datum.item.averagePriceHistory" radius="16"
+              :gradient="['#6fa8dc', '#42b983', '#2c3e50']" auto-draw smooth
               v-if="datum.item.averagePriceHistory != null && datum.item.averagePriceHistory.length > 0">
             </trend>
           </template>
