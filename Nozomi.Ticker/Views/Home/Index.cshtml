@@ -210,13 +210,13 @@
     </div>
     
      <!-- CTA Section -->
-        <div id="vueBody" class="container space-bottom-2 space-bottom-md-3">
-          <div class="bg-primary text-white shadow-primary-lg rounded p-5 p-md-9">
+        <div id="vueBody" class="container space-bottom-2 space-bottom-md-3 shadow-lg p-3 mb-5 bg-white rounded">
             <div class="row justify-content-lg-between align-items-md-center">
               <div class="col">
-                <b-table :dark="true"
-                  show-empty stacked="md" :busy="currencies.length == 0"
-                 :per-page="itemsPerPage" :current-page="currentCurrencyPage"
+                <b-table show-empty stacked="md" :busy="currencies.length == 0"
+                         tbody-class="font-weight-medium" thead-class="text-uppercase font-size-1"
+                         :per-page="itemsPerPage" :current-page="currentCurrencyPage"
+                         class="table-borderless u-datatable__content"
                  :fields="currencyDataFields" :items="currencies">
           <!-- A virtual composite column -->
           <template slot="name" slot-scope="datum">
@@ -266,7 +266,6 @@
         </b-row>
               </div>
             </div>
-          </div>
         </div>
         <!-- End CTA Section -->
   @* <hr class="my-0"> *@
