@@ -12,8 +12,13 @@ namespace Nozomi.Infra.Analysis.Service.Services
     public class AnalysedComponentService : BaseService<AnalysedComponentService, NozomiDbContext>, 
         IAnalysedComponentService
     {
-        public AnalysedComponentService(ILogger<AnalysedComponentService> logger, IUnitOfWork<NozomiDbContext> unitOfWork) : base(logger, unitOfWork)
+        private readonly IAnalysedHistoricItemService _analysedHistoricItemService;
+        
+        public AnalysedComponentService(ILogger<AnalysedComponentService> logger, 
+            IAnalysedHistoricItemService analysedHistoricItemService, IUnitOfWork<NozomiDbContext> unitOfWork) 
+            : base(logger, unitOfWork)
         {
+            _analysedHistoricItemService = analysedHistoricItemService;
         }
 
         public long Create(AnalysedComponent analysedComponent, long userId = 0)
@@ -36,17 +41,21 @@ namespace Nozomi.Infra.Analysis.Service.Services
             var comp = _unitOfWork.GetRepository<AnalysedComponent>()
                 .GetQueryable()
                 .AsTracking()
+                .Include(ac => ac.AnalysedHistoricItems)
                 .SingleOrDefault(ac => ac.Id.Equals(analysedComponentId) &&
                                        ac.DeletedAt == null);
 
             if (comp != null)
             {
-                comp.Value = value;
+                if (_analysedHistoricItemService.Push(comp))
+                {
+                    comp.Value = value;
                 
-                _unitOfWork.GetRepository<AnalysedComponent>().Update(comp);
-                _unitOfWork.Commit(userId);
+                    _unitOfWork.GetRepository<AnalysedComponent>().Update(comp);
+                    _unitOfWork.Commit(userId);
 
-                return true;
+                    return true;
+                }
             }
 
             return false;

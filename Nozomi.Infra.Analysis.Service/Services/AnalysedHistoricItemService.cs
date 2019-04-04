@@ -1,3 +1,4 @@
+using System.Linq;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data.Models.Web.Analytical;
 using Nozomi.Infra.Analysis.Service.Services.Interfaces;
@@ -24,6 +25,58 @@ namespace Nozomi.Infra.Analysis.Service.Services
             }
 
             return -1; // Failed..
+        }
+
+        public bool Push(AnalysedComponent analysedComponent, long userId = 0)
+        {
+            if (analysedComponent != null)
+            {
+                // Value is null, its a new component
+                if (string.IsNullOrEmpty(analysedComponent.Value))
+                {
+                    return true;
+                }
+                
+                var lastHistoric = _unitOfWork.GetRepository<AnalysedHistoricItem>()
+                    .Get(ahi => ahi.AnalysedComponentId.Equals(analysedComponent.Id))
+                    .OrderByDescending(ahi => ahi.CreatedAt)
+                    .FirstOrDefault();
+
+                if (lastHistoric != null)
+                {
+                    var lastHistoricVal = decimal.Parse(lastHistoric.Value);
+                    var existingVal = decimal.Parse(analysedComponent.Value);
+
+                    if (lastHistoricVal != existingVal)
+                    {
+                        // Push it
+                        _unitOfWork.GetRepository<AnalysedHistoricItem>().Add(new AnalysedHistoricItem
+                        {
+                            AnalysedComponentId = analysedComponent.Id,
+                            Value = analysedComponent.Value,
+                            HistoricDateTime = analysedComponent.ModifiedAt
+                        });
+                        _unitOfWork.Commit(userId); // done
+                    }
+
+                    return true;
+                }
+                else
+                {
+                    // Push it
+                    _unitOfWork.GetRepository<AnalysedHistoricItem>().Add(new AnalysedHistoricItem
+                    {
+                        AnalysedComponentId = analysedComponent.Id,
+                        Value = analysedComponent.Value,
+                        HistoricDateTime = analysedComponent.ModifiedAt
+                    });
+                    _unitOfWork.Commit(userId); // done
+
+                    return true;
+                }
+            }
+            
+            return false;
         }
     }
 }
