@@ -104,8 +104,6 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
             foreach (var component in components)
             {
                 // Always stash the value first
-                if (Stash(component))
-                {
                     switch (component.ComponentType)
                     {
                         // Calculate the market cap.
@@ -650,7 +648,6 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                         default:
                             return false;
                     }
-                }
             }
 
             return true;
