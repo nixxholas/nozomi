@@ -546,13 +546,6 @@ namespace Nozomi.Ticker.StartupExtensions
                                 new CurrencyPair()
                                 {
                                     CurrencyPairType = CurrencyPairType.TRADEABLE,
-                                    APIUrl = "https://api.binance.com/api/v3/ticker/bookTicker?symbol=KNCETH",
-                                    DefaultComponent = "askPrice",
-                                    CurrencySourceId = bnaSource.Id
-                                },
-                                new CurrencyPair()
-                                {
-                                    CurrencyPairType = CurrencyPairType.TRADEABLE,
                                     APIUrl = "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml",
                                     DefaultComponent = "Cube",
                                     CurrencySourceId = ecbSource.Id
@@ -764,64 +757,9 @@ namespace Nozomi.Ticker.StartupExtensions
                                     {
                                         Guid = Guid.NewGuid(),
                                         RequestType = RequestType.HttpGet,
-                                        DataPath = "https://api.binance.com/api/v3/ticker/bookTicker?symbol=KNCETH",
-                                        CurrencyPairId = currencyPairs[2].Id,
-                                        Delay = 5000,
-                                        AnalysedComponents = new List<AnalysedComponent>()
-                                        {
-                                            // Calculates volume ONLY for this exact Currency pair on this exchange.
-                                            new AnalysedComponent
-                                            {
-                                                ComponentType = AnalysedComponentType.DailyVolume,
-                                                Delay = 1000,
-                                                CreatedAt = DateTime.UtcNow,
-                                                ModifiedAt = DateTime.UtcNow,
-                                                DeletedAt = null
-                                            },
-                                            new AnalysedComponent
-                                            {
-                                                ComponentType = AnalysedComponentType.CurrentAveragePrice,
-                                                Delay = 500,
-                                                CreatedAt = DateTime.UtcNow,
-                                                ModifiedAt = DateTime.UtcNow,
-                                                DeletedAt = null
-                                            },
-                                            new AnalysedComponent()
-                                            {
-                                                ComponentType = AnalysedComponentType.DailyPricePctChange,
-                                                Delay = 500,
-                                                CreatedAt = DateTime.UtcNow,
-                                                ModifiedAt = DateTime.UtcNow,
-                                                DeletedAt = null
-                                            }
-                                        },
-                                        RequestComponents = new List<RequestComponent>()
-                                        {
-                                            new RequestComponent
-                                            {
-                                                ComponentType = ComponentType.Ask,
-                                                QueryComponent = "askPrice",
-                                                CreatedAt = DateTime.UtcNow,
-                                                ModifiedAt = DateTime.UtcNow,
-                                                DeletedAt = null
-                                            },
-                                            new RequestComponent
-                                            {
-                                                ComponentType = ComponentType.Bid,
-                                                QueryComponent = "bidPrice",
-                                                CreatedAt = DateTime.UtcNow,
-                                                ModifiedAt = DateTime.UtcNow,
-                                                DeletedAt = null
-                                            }
-                                        }
-                                    },
-                                    new CurrencyPairRequest()
-                                    {
-                                        Guid = Guid.NewGuid(),
-                                        RequestType = RequestType.HttpGet,
                                         ResponseType = ResponseType.XML,
                                         DataPath = "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml",
-                                        CurrencyPairId = currencyPairs[3].Id,
+                                        CurrencyPairId = currencyPairs[2].Id,
                                         Delay = 86400000,
                                         RequestComponents = new List<RequestComponent>()
                                         {
@@ -841,7 +779,7 @@ namespace Nozomi.Ticker.StartupExtensions
                                         RequestType = RequestType.HttpGet,
                                         ResponseType = ResponseType.Json,
                                         DataPath = "https://www.alphavantage.co/query",
-                                        CurrencyPairId = currencyPairs[4].Id,
+                                        CurrencyPairId = currencyPairs[3].Id,
                                         Delay = 5000,
                                         RequestComponents = new List<RequestComponent>()
                                         {
@@ -889,7 +827,7 @@ namespace Nozomi.Ticker.StartupExtensions
                                         RequestType = RequestType.HttpGet,
                                         ResponseType = ResponseType.Json,
                                         DataPath = "https://poloniex.com/public?command=returnTicker",
-                                        CurrencyPairId = currencyPairs[5].Id,
+                                        CurrencyPairId = currencyPairs[4].Id,
                                         Delay = 5000,
                                         AnalysedComponents = new List<AnalysedComponent>()
                                         {
@@ -945,7 +883,7 @@ namespace Nozomi.Ticker.StartupExtensions
                                         RequestType = RequestType.HttpGet,
                                         ResponseType = ResponseType.Json,
                                         DataPath = "https://poloniex.com/public?command=returnTicker",
-                                        CurrencyPairId = currencyPairs[6].Id,
+                                        CurrencyPairId = currencyPairs[5].Id,
                                         Delay = 5000,
                                         AnalysedComponents = new List<AnalysedComponent>()
                                         {
@@ -1001,7 +939,7 @@ namespace Nozomi.Ticker.StartupExtensions
                                         RequestType = RequestType.HttpGet,
                                         ResponseType = ResponseType.Json,
                                         DataPath = "https://api.bitfinex.com/v1/pubticker/etheur",
-                                        CurrencyPairId = currencyPairs[7].Id,
+                                        CurrencyPairId = currencyPairs[6].Id,
                                         Delay = 2000,
                                         AnalysedComponents = new List<AnalysedComponent>()
                                         {
@@ -1065,7 +1003,7 @@ namespace Nozomi.Ticker.StartupExtensions
                                         RequestType = RequestType.HttpGet,
                                         ResponseType = ResponseType.Json,
                                         DataPath = "https://poloniex.com/public?command=returnTicker",
-                                        CurrencyPairId = currencyPairs[8].Id,
+                                        CurrencyPairId = currencyPairs[7].Id,
                                         Delay = 5000,
                                         AnalysedComponents = new List<AnalysedComponent>
                                         {
@@ -1213,38 +1151,38 @@ namespace Nozomi.Ticker.StartupExtensions
                                     },
                                     new PartialCurrencyPair()
                                     {
-                                        CurrencyId = kncBna.Id,
-                                        IsMain = true,
-                                        CurrencyPairId = currencyPairs[2].Id
-                                    },
-                                    new PartialCurrencyPair()
-                                    {
-                                        CurrencyId = ethBna.Id,
-                                        IsMain = false,
-                                        CurrencyPairId = currencyPairs[2].Id
-                                    },
-                                    new PartialCurrencyPair()
-                                    {
                                         CurrencyId = eurECB.Id,
                                         IsMain = true,
-                                        CurrencyPairId = currencyPairs[3].Id
+                                        CurrencyPairId = currencyPairs[2].Id
                                     },
                                     new PartialCurrencyPair()
                                     {
                                         CurrencyId = usdECB.Id,
                                         IsMain = false,
-                                        CurrencyPairId = currencyPairs[3].Id
+                                        CurrencyPairId = currencyPairs[2].Id
                                     },
                                     new PartialCurrencyPair()
                                     {
                                         CurrencyId = eurAVG.Id,
                                         IsMain = true,
-                                        CurrencyPairId = currencyPairs[4].Id
+                                        CurrencyPairId = currencyPairs[3].Id
                                     },
                                     new PartialCurrencyPair()
                                     {
                                         CurrencyId = usdAVG.Id,
                                         IsMain = false,
+                                        CurrencyPairId = currencyPairs[3].Id
+                                    },
+                                    new PartialCurrencyPair()
+                                    {
+                                        CurrencyId = btcPOLO.Id,
+                                        IsMain = true,
+                                        CurrencyPairId = currencyPairs[4].Id
+                                    },
+                                    new PartialCurrencyPair()
+                                    {
+                                        CurrencyId = bcnPOLO.Id,
+                                        IsMain = false,
                                         CurrencyPairId = currencyPairs[4].Id
                                     },
                                     new PartialCurrencyPair()
@@ -1255,45 +1193,33 @@ namespace Nozomi.Ticker.StartupExtensions
                                     },
                                     new PartialCurrencyPair()
                                     {
-                                        CurrencyId = bcnPOLO.Id,
+                                        CurrencyId = btsPOLO.Id,
                                         IsMain = false,
                                         CurrencyPairId = currencyPairs[5].Id
                                     },
                                     new PartialCurrencyPair()
                                     {
-                                        CurrencyId = btcPOLO.Id,
-                                        IsMain = true,
-                                        CurrencyPairId = currencyPairs[6].Id
-                                    },
-                                    new PartialCurrencyPair()
-                                    {
-                                        CurrencyId = btsPOLO.Id,
-                                        IsMain = false,
-                                        CurrencyPairId = currencyPairs[6].Id
-                                    },
-                                    new PartialCurrencyPair()
-                                    {
                                         CurrencyId = ethBfx.Id,
                                         IsMain = true,
-                                        CurrencyPairId = currencyPairs[7].Id
+                                        CurrencyPairId = currencyPairs[6].Id
                                     },
                                     new PartialCurrencyPair()
                                     {
                                         CurrencyId = eurBfx.Id,
                                         IsMain = false,
-                                        CurrencyPairId = currencyPairs[7].Id
+                                        CurrencyPairId = currencyPairs[6].Id
                                     },
                                     new PartialCurrencyPair()
                                     {
                                         CurrencyId = btcPOLO.Id,
                                         IsMain = true,
-                                        CurrencyPairId = currencyPairs[8].Id
+                                        CurrencyPairId = currencyPairs[7].Id
                                     },
                                     new PartialCurrencyPair()
                                     {
                                         CurrencyId = usdtPOLO.Id,
                                         IsMain = false,
-                                        CurrencyPairId = currencyPairs[8].Id
+                                        CurrencyPairId = currencyPairs[7].Id
                                     });
 
                                 context.SaveChanges();
@@ -1301,7 +1227,7 @@ namespace Nozomi.Ticker.StartupExtensions
                                 if (!context.WebsocketRequests.Any())
                                 {
                                     // Binance's Websocket-based ticker data stream
-                                    var binanceWSR = new WebsocketRequest
+                                    var binanceETHBTCWSR = new WebsocketRequest
                                     {
                                         CurrencyPair = new CurrencyPair
                                         {
@@ -1333,6 +1259,24 @@ namespace Nozomi.Ticker.StartupExtensions
                                         {
                                             new RequestComponent
                                             {
+                                                ComponentType = ComponentType.VOLUME,
+                                                Identifier = "data/s=>ETHBTC",
+                                                QueryComponent = "v"
+                                            },
+                                            new RequestComponent
+                                            {
+                                                ComponentType = ComponentType.Ask,
+                                                Identifier = "data/s=>ETHBTC",
+                                                QueryComponent = "a"
+                                            },
+                                            new RequestComponent
+                                            {
+                                                ComponentType = ComponentType.Ask_Size,
+                                                Identifier = "data/s=>ETHBTC",
+                                                QueryComponent = "A"
+                                            },
+                                            new RequestComponent
+                                            {
                                                 ComponentType = ComponentType.Bid,
                                                 Identifier = "data/s=>ETHBTC",
                                                 QueryComponent = "b"
@@ -1346,8 +1290,74 @@ namespace Nozomi.Ticker.StartupExtensions
                                         }
                                     };
 
-                                    context.WebsocketRequests.Add(binanceWSR);
+                                    context.WebsocketRequests.Add(binanceETHBTCWSR);
 
+                                    // Binance's Websocket-based ticker data stream
+                                    var binanceKNCETHWSR = new WebsocketRequest
+                                    {
+                                        CurrencyPair = new CurrencyPair
+                                        {
+                                            CurrencyPairType = CurrencyPairType.EXCHANGEABLE,
+                                            APIUrl = "wss://stream.binance.com:9443/stream?streams=!ticker@arr",
+                                            DefaultComponent = "b",
+                                            CurrencySourceId = bnaSource.Id,
+                                            PartialCurrencyPairs = new List<PartialCurrencyPair>()
+                                            {
+                                                new PartialCurrencyPair()
+                                                {
+                                                    CurrencyId = kncBna.Id,
+                                                    IsMain = true
+                                                },
+                                                new PartialCurrencyPair()
+                                                {
+                                                    CurrencyId = ethBna.Id,
+                                                    IsMain = false,
+                                                }
+                                            }
+                                        },
+                                        Guid = Guid.NewGuid(),
+                                        RequestType = RequestType.WebSocket,
+                                        ResponseType = ResponseType.Json,
+                                        DataPath = "wss://stream.binance.com:9443/stream?streams=!ticker@arr",
+                                        Delay = 0,
+                                        WebsocketCommands = new List<WebsocketCommand>(),
+                                        RequestComponents = new List<RequestComponent>()
+                                        {
+                                            new RequestComponent
+                                            {
+                                                ComponentType = ComponentType.VOLUME,
+                                                Identifier = "data/s=>KNCETH",
+                                                QueryComponent = "v"
+                                            },
+                                            new RequestComponent
+                                            {
+                                                ComponentType = ComponentType.Ask,
+                                                Identifier = "data/s=>KNCETH",
+                                                QueryComponent = "a"
+                                            },
+                                            new RequestComponent
+                                            {
+                                                ComponentType = ComponentType.Ask_Size,
+                                                Identifier = "data/s=>KNCETH",
+                                                QueryComponent = "A"
+                                            },
+                                            new RequestComponent
+                                            {
+                                                ComponentType = ComponentType.Bid,
+                                                Identifier = "data/s=>KNCETH",
+                                                QueryComponent = "b"
+                                            },
+                                            new RequestComponent
+                                            {
+                                                ComponentType = ComponentType.Bid_Size,
+                                                Identifier = "data/s=>KNCETH",
+                                                QueryComponent = "B"
+                                            }
+                                        }
+                                    };
+
+                                    context.WebsocketRequests.Add(binanceKNCETHWSR);
+                                    
                                     context.SaveChanges();
                                 }
                             }

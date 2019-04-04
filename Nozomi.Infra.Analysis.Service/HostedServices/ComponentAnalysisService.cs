@@ -574,6 +574,78 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                             break;
                         // Calculate the daily volume.
                         case AnalysedComponentType.DailyVolume:
+                            // CURRENCY-BASED VOLUME
+                            // If its a currency-based AnalaysedComponent, we have to aggregate an
+                            if (component.CurrencyId != null && component.CurrencyId > 0)
+                            {
+                                // Obtain all Average price ACs that relate to this currency
+                                var currencyAnalysedComps =
+                                    _analysedComponentEvent.GetAllByCurrency((long) component.CurrencyId);
+
+                                // Safetynet
+                                if (currencyAnalysedComps != null && currencyAnalysedComps.Count > 0)
+                                {
+                                    // Filter
+                                    currencyAnalysedComps = currencyAnalysedComps
+                                        .Where(ac => ac.ComponentType.Equals(AnalysedComponentType.DailyVolume))
+                                        .DefaultIfEmpty()
+                                        .ToList();
+
+                                    // Convert whatever is needed
+                                    _analysedComponentEvent.ConvertToGenericCurrency(currencyAnalysedComps);
+
+                                    // Now we can aggregate this
+                                    var currAvgVol = currencyAnalysedComps
+                                        .DefaultIfEmpty()
+                                        .Average(rc => rc.AnalysedHistoricItems
+                                            .Where(ahi => ahi.CreatedAt >
+                                                          DateTime.UtcNow.Subtract(TimeSpan.FromDays(1)))
+                                            .DefaultIfEmpty()
+                                            .Average(ahi => decimal.Parse(ahi.Value)));
+
+                                    if (!(currAvgVol <= decimal.Zero))
+                                    {
+                                        if (_analysedComponentService.UpdateValue(component.Id,
+                                            currAvgVol.ToString(CultureInfo.InvariantCulture)))
+                                        {
+                                            // Updated successfully
+                                        }
+                                    }
+                                }
+                            }
+                            else
+                            // CURRENCYPAIR-BASED VOLUME
+                            {
+                                // Since it's not currency-based, its currencypair-based.
+
+                                // Obtain all of the analysed components that are related to this AC.
+                                var correlatedReqComps = _requestComponentEvent.GetAllByCorrelation(component.Id, true);
+
+                                if (correlatedReqComps != null && correlatedReqComps
+                                        .Any(rc => rc.ComponentType.Equals(ComponentType.VOLUME)
+                                                   && rc.RcdHistoricItems != null 
+                                                   && rc.RcdHistoricItems.Count > 0))
+                                {
+                                    // Aggregate it
+                                    var avgVol = correlatedReqComps
+                                        .Where(rc => rc.ComponentType.Equals(ComponentType.VOLUME))
+                                        .DefaultIfEmpty()
+                                        .Average(rc => rc.RcdHistoricItems
+                                            .Where(rcdhi => rcdhi.CreatedAt >
+                                                          DateTime.UtcNow.Subtract(TimeSpan.FromDays(1)))
+                                            .DefaultIfEmpty()
+                                            .Average(rcdhi => decimal.Parse(rcdhi.Value)));
+
+                                    if (!decimal.Zero.Equals(avgVol))
+                                    {
+                                        if (_analysedComponentService.UpdateValue(component.Id, avgVol
+                                            .ToString(CultureInfo.InvariantCulture)))
+                                        {
+                                            // Updated successfully
+                                        }
+                                    }
+                                }
+                            }
                             break;
                         default:
                             return false;

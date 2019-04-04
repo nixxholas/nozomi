@@ -75,6 +75,15 @@ namespace Nozomi.Data.ResponseModels.Currency
                                         DailyAvgPricePctChange = dailyAvgPricePctChange;
                                     }
                                     break;
+                                case AnalysedComponentType.DailyVolume:
+                                    if (decimal.TryParse(aComp.Value, out var dailyVol))
+                                    {
+                                        if (DailyVolume > 0)
+                                            DailyVolume = (AveragePrice + dailyVol) / 2;
+                                        else
+                                            DailyVolume = dailyVol;
+                                    }
+                                    break;
                             }
                         }
                     }
@@ -282,6 +291,8 @@ namespace Nozomi.Data.ResponseModels.Currency
         
         public decimal DailyAvgPricePctChange { get; set; }
         
+        public decimal DailyVolume { get; set; }
+        
         public decimal MarketCap { get; set; }
 
         public Dictionary<ComponentType, List<ComponentHistoricalDatum>> Historical { get; set; }
@@ -328,6 +339,15 @@ namespace Nozomi.Data.ResponseModels.Currency
                                                 (DailyAvgPricePctChange + dailyAvgPricePctChange) / 2;
                                         else
                                             DailyAvgPricePctChange = dailyAvgPricePctChange;
+                                    }
+                                    break;
+                                case AnalysedComponentType.DailyVolume:
+                                    if (decimal.TryParse(aComp.Value, out var dailyVol))
+                                    {
+                                        if (DailyVolume > 0)
+                                            DailyVolume = (AveragePrice + dailyVol) / 2;
+                                        else
+                                            DailyVolume = dailyVol;
                                     }
                                     break;
                             }

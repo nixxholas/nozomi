@@ -203,7 +203,7 @@ namespace Nozomi.Service.Events
         /// <param name="analysedComponentId">The unique identifier of the analysed component
         /// that is related to the ticker in question.</param>
         /// <returns>Collection of request components related to the component</returns>
-        public ICollection<RequestComponent> GetAllByCorrelation(long analysedComponentId)
+        public ICollection<RequestComponent> GetAllByCorrelation(long analysedComponentId, bool track = false)
         {
             // First, obtain the correlation PCPs
             var correlPCPs = _unitOfWork.GetRepository<CurrencyPair>()
@@ -233,7 +233,7 @@ namespace Nozomi.Service.Events
 
             if (correlPCPs.Count < 2)
             {
-                return _unitOfWork.GetRepository<Currency>()
+                var query = _unitOfWork.GetRepository<Currency>()
                     .GetQueryable()
                     .AsNoTracking()
                     .Where(cp => cp.IsEnabled && cp.DeletedAt == null)
@@ -246,7 +246,14 @@ namespace Nozomi.Service.Events
                                                         && cr.AnalysedComponents.Any(ac =>
                                                             ac.Id.Equals(analysedComponentId))))
                     .Include(c => c.CurrencyRequests)
-                    .ThenInclude(c => c.RequestComponents)
+                    .ThenInclude(c => c.RequestComponents);
+                
+                if (track)
+                {
+                    query.ThenInclude(rc => rc.RcdHistoricItems);
+                }
+                
+                return query
                     .SelectMany(c => c.CurrencyRequests)
                     .SelectMany(cr => cr.RequestComponents)
                     .Select(rc => new RequestComponent
@@ -256,7 +263,8 @@ namespace Nozomi.Service.Events
                         Identifier = rc.Identifier,
                         IsDenominated = rc.IsDenominated,
                         QueryComponent = rc.QueryComponent,
-                        Value = rc.Value
+                        Value = rc.Value,
+                        RcdHistoricItems = rc.RcdHistoricItems
                     })
                     .ToList();
             }
@@ -301,16 +309,16 @@ namespace Nozomi.Service.Events
             
             var tickerPairStr = correlPCPs.FirstOrDefault(pcp => pcp.IsMain).Currency.Abbrv
                            + correlPCPs.FirstOrDefault(pcp => !pcp.IsMain).Currency.Abbrv;
-            
-            return _unitOfWork.GetRepository<CurrencyPair>()
+
+            var queryRes = _unitOfWork.GetRepository<CurrencyPair>()
                 .GetQueryable()
                 .AsNoTracking()
                 .Include(cp => cp.PartialCurrencyPairs)
                 .ThenInclude(pcp => pcp.Currency)
                 .Where(cp =>
-                    (cp.PartialCurrencyPairs.FirstOrDefault(pcp => pcp.IsMain).Currency.Abbrv
-                            + cp.PartialCurrencyPairs.FirstOrDefault(pcp => !pcp.IsMain).Currency.Abbrv)
-                    .Equals(tickerPairStr, StringComparison.InvariantCultureIgnoreCase)
+                        (cp.PartialCurrencyPairs.FirstOrDefault(pcp => pcp.IsMain).Currency.Abbrv
+                         + cp.PartialCurrencyPairs.FirstOrDefault(pcp => !pcp.IsMain).Currency.Abbrv)
+                        .Equals(tickerPairStr, StringComparison.InvariantCultureIgnoreCase)
 //                    // Make sure the main currencies are identical
 //                    cp.PartialCurrencyPairs.FirstOrDefault(pcp => pcp.IsMain).Currency.Abbrv
 //                        .Equals(correlPCPs.FirstOrDefault(cpcp => cpcp.IsMain).Currency.Abbrv, 
@@ -319,9 +327,16 @@ namespace Nozomi.Service.Events
 //                    && cp.PartialCurrencyPairs.FirstOrDefault(pcp => !pcp.IsMain).Currency.Abbrv
 //                        .Equals(correlPCPs.FirstOrDefault(cpcp => !cpcp.IsMain).Currency.Abbrv,
 //                            StringComparison.InvariantCultureIgnoreCase)
-                    )
+                )
                 .Include(cp => cp.CurrencyPairRequests)
-                .ThenInclude(cpr => cpr.RequestComponents)
+                .ThenInclude(cpr => cpr.RequestComponents);
+
+            if (track)
+            {
+                queryRes.ThenInclude(rc => rc.RcdHistoricItems);
+            }
+            
+            return queryRes
                 .SelectMany(cp => cp.CurrencyPairRequests)
                 .SelectMany(cpr => cpr.RequestComponents)
                     .Select(rc => new RequestComponent
@@ -331,7 +346,8 @@ namespace Nozomi.Service.Events
                         Identifier = rc.Identifier,
                         IsDenominated = rc.IsDenominated,
                         QueryComponent = rc.QueryComponent,
-                        Value = rc.Value
+                        Value = rc.Value,
+                        RcdHistoricItems = rc.RcdHistoricItems
                     })
                 .ToList();
 //            if (predicate != null)
