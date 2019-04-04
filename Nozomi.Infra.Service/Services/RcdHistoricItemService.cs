@@ -1,7 +1,9 @@
+using System;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Logging;
+using Nozomi.Data.Models.Currency;
 using Nozomi.Data.Models.Web;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.BCL.Repository;
@@ -19,28 +21,42 @@ namespace Nozomi.Service.Services
 
         public bool Push(RequestComponent rc)
         {
-            // Make sure nothing is newer
-            if (!_unitOfWork.GetRepository<RcdHistoricItem>()
-                // include any rcdhi if it is NEWER than the current rcd
-                    .Get(rcdhi => rcdhi.RequestComponentId.Equals(rc.Id)
-                                  && rcdhi.HistoricDateTime > rc.ModifiedAt)
-                .Any())
+            if (!string.IsNullOrEmpty(rc.Value))
             {
                 var lastHistoric = _unitOfWork.GetRepository<RcdHistoricItem>()
                     .Get(rcdhi => rcdhi.RequestComponentId.Equals(rc.Id))
-                    .OrderByDescending(rcdhi => rcdhi.HistoricDateTime)
+                    .OrderByDescending(rcdhi => rcdhi.CreatedAt)
                     .FirstOrDefault();
 
-                if (lastHistoric == null || !lastHistoric.Value.Equals(rc.Value))
+                if (lastHistoric != null)
                 {
-                // Push it
-                _unitOfWork.GetRepository<RcdHistoricItem>().Add(new RcdHistoricItem
+                    var lastHistoricVal = decimal.Parse(lastHistoric.Value);
+                    var existingVal = decimal.Parse(rc.Value);
+
+                    if (lastHistoricVal != existingVal)
+                    {
+                        // Push it
+                        _unitOfWork.GetRepository<RcdHistoricItem>().Add(new RcdHistoricItem
+                        {
+                            RequestComponentId = rc.Id,
+                            Value = rc.Value,
+                            HistoricDateTime = rc.ModifiedAt
+                        });
+                        _unitOfWork.Commit(); // done
+                    }
+
+                    return true;
+                }
+                else
                 {
-                    RequestComponentId = rc.Id,
-                    Value = rc.Value,
-                    HistoricDateTime = rc.ModifiedAt
-                });
-                _unitOfWork.Commit(); // done
+                    // Push it
+                    _unitOfWork.GetRepository<RcdHistoricItem>().Add(new RcdHistoricItem
+                    {
+                        RequestComponentId = rc.Id,
+                        Value = rc.Value,
+                        HistoricDateTime = rc.ModifiedAt
+                    });
+                    _unitOfWork.Commit(); // done
                 }
                 
                 // Return true anyway since the value is a dupe
