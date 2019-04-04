@@ -38,6 +38,7 @@
     "moment": "^2.24.0",
     "moment-timezone": "^0.5.23",
     "node-sass": "^4.10.0",
+    "numeral": "^2.0.6",
     "popper.js": "^1.14.6",
     "postcss-loader": "^3.0.0",
     "precss": "^4.0.0",
