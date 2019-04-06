@@ -91,14 +91,14 @@ namespace Nozomi.Ticker
                 // Database
                 services.AddDbContext<NozomiDbContext>(options =>
                 {
-                    options.UseNpgsql(Configuration.GetConnectionString("NozomiDb"));
+                    options.UseNpgsql(Configuration["NozomiDb"]);
                     options.EnableSensitiveDataLogging(false);
                     options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
                 }, ServiceLifetime.Transient);
 
                 services.AddDbContext<NozomiAuthContext>(options =>
                 {
-                    options.UseNpgsql(Configuration.GetConnectionString("NozomiAuthDb"));
+                    options.UseNpgsql(Configuration["NozomiAuthDb"]);
                     options.EnableSensitiveDataLogging(false);
                 });
             
@@ -112,8 +112,8 @@ namespace Nozomi.Ticker
                 // Stripe
                 services.Configure<StripeSettings>(ss =>
                 {
-                    ss.SecretKey = Configuration.GetConnectionString("StripePrivate");
-                    ss.PublishableKey = Configuration.GetConnectionString("StripePublic");
+                    ss.SecretKey = Configuration["StripePrivate"];
+                    ss.PublishableKey = Configuration["StripePublic"];
                 });
             }
             
