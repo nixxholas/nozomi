@@ -167,6 +167,8 @@ namespace Nozomi.Service.Events
                     else
                     {
                         _logger.LogWarning($" Request Component: {reqCom.Id} does not have a counter currency.");
+
+                        requestComponents.Remove(reqCom);
                     }
                 }
             }
