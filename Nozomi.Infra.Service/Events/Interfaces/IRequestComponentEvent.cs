@@ -19,9 +19,6 @@ namespace Nozomi.Service.Events.Interfaces
         
         void ConvertToGenericCurrency(ICollection<RequestComponent> requestComponents);
 
-        ICollection<RequestComponent> GetByMainCurrency(string mainCurrencyAbbrv, 
-            ICollection<ComponentType> componentTypes);
-
         /// <summary>
         /// Allows the caller to obtain all RequestComponents relevant to the currency
         /// pair in question via the abbreviation method. (i.e. ETHUSD)
@@ -37,7 +34,10 @@ namespace Nozomi.Service.Events.Interfaces
         /// </summary>
         /// <param name="currencyId">The unique identifier of the base currency</param>
         /// <returns>Collection of request components related to the currency</returns>
-        ICollection<Data.Models.Web.RequestComponent> GetAllByCurrency(long currencyId);
+        ICollection<Data.Models.Web.RequestComponent> GetAllByCurrency(long currencyId, bool track = false);
+
+        ICollection<RequestComponent> GetByMainCurrency(string mainCurrencyAbbrv, 
+            ICollection<ComponentType> componentTypes);
         
         NozomiResult<RequestComponent> Get(long id, bool includeNested = false);
     }
