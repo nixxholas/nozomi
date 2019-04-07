@@ -16,6 +16,7 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
             entityTypeBuilder.Property(r => r.Guid).ValueGeneratedOnAdd();
 
             entityTypeBuilder.Property(r => r.Delay).HasDefaultValue(0).IsRequired();
+            entityTypeBuilder.Property(r => r.FailureDelay).HasDefaultValue(3600000).IsRequired();
             
             // We need this to determine the type of request to execute with
             entityTypeBuilder.Property(r => r.RequestType).IsRequired();
