@@ -12,10 +12,6 @@ body {
   margin-bottom: 72px;
 }
 
-body.pure {
-  margin: 0;
-}
-
 .u-sticky-footer {
   position: absolute;
   bottom: 0;

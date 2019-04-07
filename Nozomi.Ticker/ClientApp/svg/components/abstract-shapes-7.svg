@@ -19,64 +19,64 @@
 	</g>
 	<g>
 		<defs>
-			<path id="SVGID_1_" d="M92.9,373c20.7,21.4,41.2,42.3,71.8,50c22.1,5.6,45.9,3,66.5-6.9c26.9-13,49.7-41.1,81.5-41.5
+			<path id="AbstractShapes7ID1" d="M92.9,373c20.7,21.4,41.2,42.3,71.8,50c22.1,5.6,45.9,3,66.5-6.9c26.9-13,49.7-41.1,81.5-41.5
 				c17-0.2,32.9,7.7,43,21.5c26.1,35.8,3.4,73.8-23.4,101.2c-31.4,32.2-71.6,59.6-71.4,109.5c0.1,29.5,18.2,61.3,8.2,90.9
 				c-14.6,43.4-71.1,29.6-102.5,16.1c-28.4-12.3-55.7-25.3-81.4-42.7c-13.4-9-25.9-20.1-33-34.6c-17.5-35.6,15.1-59.7,24.9-91.3
 				c5.2-16.8,3.9-34.4-3-50.6c-12.4-29.4-35.6-53-56.2-76.8c-19.7-22.7-28.4-66.2,7.5-79.7c16.4-6.2,32.7,1.6,45,12.6
 				C78.1,357.7,85.5,365.4,92.9,373z"/>
 		</defs>
-		<clipPath id="SVGID_2_">
-			<use xlink:href="#SVGID_1_"  style="overflow:visible;"/>
+		<clipPath id="AbstractShapes7ID2">
+			<use xlink:href="#AbstractShapes7ID1"  style="overflow:visible;"/>
 		</clipPath>
-		<path class="abstract-shapes-7-1 fill-none stroke-white" stroke-width="6" stroke-miterlimit="10" clip-path="url(#SVGID_2_)" d="M57.2,549.2c0,0,6,53,103,65s117.6,109.4,117.6,109.4"/>
+		<path class="abstract-shapes-7-1 fill-none stroke-white" stroke-width="6" stroke-miterlimit="10" clip-path="url(#AbstractShapes7ID2)" d="M57.2,549.2c0,0,6,53,103,65s117.6,109.4,117.6,109.4"/>
 	</g>
 	<g>
 		<defs>
-			<path id="SVGID_3_" d="M92.9,373c20.7,21.4,41.2,42.3,71.8,50c22.1,5.6,45.9,3,66.5-6.9c26.9-13,49.7-41.1,81.5-41.5
+			<path id="AbstractShapes7ID3" d="M92.9,373c20.7,21.4,41.2,42.3,71.8,50c22.1,5.6,45.9,3,66.5-6.9c26.9-13,49.7-41.1,81.5-41.5
 				c17-0.2,32.9,7.7,43,21.5c26.1,35.8,3.4,73.8-23.4,101.2c-31.4,32.2-71.6,59.6-71.4,109.5c0.1,29.5,18.2,61.3,8.2,90.9
 				c-14.6,43.4-71.1,29.6-102.5,16.1c-28.4-12.3-55.7-25.3-81.4-42.7c-13.4-9-25.9-20.1-33-34.6c-17.5-35.6,15.1-59.7,24.9-91.3
 				c5.2-16.8,3.9-34.4-3-50.6c-12.4-29.4-35.6-53-56.2-76.8c-19.7-22.7-28.4-66.2,7.5-79.7c16.4-6.2,32.7,1.6,45,12.6
 				C78.1,357.7,85.5,365.4,92.9,373z"/>
 		</defs>
-		<clipPath id="SVGID_4_">
-			<use xlink:href="#SVGID_3_"  style="overflow:visible;"/>
+		<clipPath id="AbstractShapes7ID4">
+			<use xlink:href="#AbstractShapes7ID3"  style="overflow:visible;"/>
 		</clipPath>
-		<path class="abstract-shapes-7-1 fill-none stroke-white" stroke-width="6" stroke-miterlimit="10" clip-path="url(#SVGID_4_)" d="M66.2,504.2c0,0,6,53,103,65s117.6,109.4,117.6,109.4"/>
+		<path class="abstract-shapes-7-1 fill-none stroke-white" stroke-width="6" stroke-miterlimit="10" clip-path="url(#AbstractShapes7ID4)" d="M66.2,504.2c0,0,6,53,103,65s117.6,109.4,117.6,109.4"/>
 	</g>
 	<g>
 		<defs>
-			<path id="SVGID_5_" d="M92.9,373c20.7,21.4,41.2,42.3,71.8,50c22.1,5.6,45.9,3,66.5-6.9c26.9-13,49.7-41.1,81.5-41.5
+			<path id="AbstractShapes7ID5" d="M92.9,373c20.7,21.4,41.2,42.3,71.8,50c22.1,5.6,45.9,3,66.5-6.9c26.9-13,49.7-41.1,81.5-41.5
 				c17-0.2,32.9,7.7,43,21.5c26.1,35.8,3.4,73.8-23.4,101.2c-31.4,32.2-71.6,59.6-71.4,109.5c0.1,29.5,18.2,61.3,8.2,90.9
 				c-14.6,43.4-71.1,29.6-102.5,16.1c-28.4-12.3-55.7-25.3-81.4-42.7c-13.4-9-25.9-20.1-33-34.6c-17.5-35.6,15.1-59.7,24.9-91.3
 				c5.2-16.8,3.9-34.4-3-50.6c-12.4-29.4-35.6-53-56.2-76.8c-19.7-22.7-28.4-66.2,7.5-79.7c16.4-6.2,32.7,1.6,45,12.6
 				C78.1,357.7,85.5,365.4,92.9,373z"/>
 		</defs>
-		<clipPath id="SVGID_6_">
-			<use xlink:href="#SVGID_5_"  style="overflow:visible;"/>
+		<clipPath id="AbstractShapes7ID6">
+			<use xlink:href="#AbstractShapes7ID5"  style="overflow:visible;"/>
 		</clipPath>
-		<path class="abstract-shapes-7-1 fill-none stroke-white" stroke-width="6" stroke-miterlimit="10" clip-path="url(#SVGID_6_)" d="M3.5,402.6c0,0,7.5,64.7,128.1,79.4c120.7,14.7,146.2,133.6,146.2,133.6"/>
+		<path class="abstract-shapes-7-1 fill-none stroke-white" stroke-width="6" stroke-miterlimit="10" clip-path="url(#AbstractShapes7ID6)" d="M3.5,402.6c0,0,7.5,64.7,128.1,79.4c120.7,14.7,146.2,133.6,146.2,133.6"/>
 	</g>
 	<g>
 		<defs>
-			<path id="SVGID_7_" d="M92.9,373c20.7,21.4,41.2,42.3,71.8,50c22.1,5.6,45.9,3,66.5-6.9c26.9-13,49.7-41.1,81.5-41.5
+			<path id="AbstractShapes7ID7" d="M92.9,373c20.7,21.4,41.2,42.3,71.8,50c22.1,5.6,45.9,3,66.5-6.9c26.9-13,49.7-41.1,81.5-41.5
 				c17-0.2,32.9,7.7,43,21.5c26.1,35.8,3.4,73.8-23.4,101.2c-31.4,32.2-71.6,59.6-71.4,109.5c0.1,29.5,18.2,61.3,8.2,90.9
 				c-14.6,43.4-71.1,29.6-102.5,16.1c-28.4-12.3-55.7-25.3-81.4-42.7c-13.4-9-25.9-20.1-33-34.6c-17.5-35.6,15.1-59.7,24.9-91.3
 				c5.2-16.8,3.9-34.4-3-50.6c-12.4-29.4-35.6-53-56.2-76.8c-19.7-22.7-28.4-66.2,7.5-79.7c16.4-6.2,32.7,1.6,45,12.6
 				C78.1,357.7,85.5,365.4,92.9,373z"/>
 		</defs>
-		<clipPath id="SVGID_8_">
-			<use xlink:href="#SVGID_7_"  style="overflow:visible;"/>
+		<clipPath id="AbstractShapes7ID8">
+			<use xlink:href="#AbstractShapes7ID7"  style="overflow:visible;"/>
 		</clipPath>
-		<path class="abstract-shapes-7-1 fill-none stroke-white" stroke-width="6" stroke-miterlimit="10" clip-path="url(#SVGID_8_)" d="M46.8,330.1c0,0,7.5,64.7,128.1,79.4C295.5,424.2,321,543.1,321,543.1"/>
+		<path class="abstract-shapes-7-1 fill-none stroke-white" stroke-width="6" stroke-miterlimit="10" clip-path="url(#AbstractShapes7ID8)" d="M46.8,330.1c0,0,7.5,64.7,128.1,79.4C295.5,424.2,321,543.1,321,543.1"/>
 	</g>
 </g>
 <circle class="abstract-shapes-7-2 fill-none stroke-primary" stroke-width="3" stroke-miterlimit="10" cx="44" cy="730.9" r="9.1"/>
 <circle class="abstract-shapes-7-2 fill-none stroke-primary" stroke-width="2.5" stroke-miterlimit="10" cx="71" cy="703.9" r="5.1"/>
-<linearGradient id="SVGID_9_" gradientUnits="userSpaceOnUse" x1="290.7506" y1="-17.1342" x2="831.3101" y2="264.3964" gradientTransform="matrix(0.6089 0.7932 -0.7932 0.6089 291.5959 -229.6968)">
+<linearGradient id="AbstractShapes7ID9" gradientUnits="userSpaceOnUse" x1="290.7506" y1="-17.1342" x2="831.3101" y2="264.3964" gradientTransform="matrix(0.6089 0.7932 -0.7932 0.6089 291.5959 -229.6968)">
 	<stop class="abstract-shapes-7-op-color-indigo" offset="0" style="stop-color:#2D1582"/>
 	<stop class="abstract-shapes-7-op-color-primary" offset="1" style="stop-color:#377DFF"/>
 </linearGradient>
-<path fill="url(#SVGID_9_)" d="M805.7,380.7c-14.7-73.5-31.3-154.9-83.3-212.2C657.1,96.5,560.5,34.8,468,5.3c-47-15-86,2.5-110.9,44.3
+<path fill="url(#AbstractShapes7ID9)" d="M805.7,380.7c-14.7-73.5-31.3-154.9-83.3-212.2C657.1,96.5,560.5,34.8,468,5.3c-47-15-86,2.5-110.9,44.3
 	c-16,27-22.7,58.9-40.6,84.6c-15.9,22.8-39.2,42.2-46.9,69.9c-8.5,30.5,9.6,62.6,30.7,83.4c17.8,17.6,39.5,29.4,64.9,30.3
 	c8.4,0.3,17.5-0.9,27-2.6c42-7.5,90.3-24.9,102.6,33.2c5,23.8-6.2,42.3-17.3,62.5c-13.7,24.7-22.3,55.9-14.8,83.9
 	c7.5,28.2,36.2,56.4,66.7,40.8c35.1-18,43.6-64.2,82.1-79.3c24.1-9.4,45.7,1.1,63,18.9c11,11.4,19.3,25.2,26.5,39.4
