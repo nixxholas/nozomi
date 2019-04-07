@@ -112,7 +112,7 @@
                 <template slot="averagePriceHistory" slot-scope="datum">
                     <!-- Area Chart -->
                     <trend
-                        :data="datum.item.averagePriceHistory" radius="16"
+                        :data="datum.item.averagePriceHistory" radius="24"
                         :gradient="['#6fa8dc', '#42b983', '#2c3e50']" auto-draw smooth
                         v-if="datum.item.averagePriceHistory != null && datum.item.averagePriceHistory.length > 0">
                     </trend>
@@ -127,81 +127,6 @@
         </div>
     </div>
 </div>
-@* <hr class="my-0"> *@
-@* *@
-@* <div class="container space-2 space-md-3"> *@
-@*   <div class="row align-items-lg-center"> *@
-@*     <div class="col-lg-5 mb-7 mb-lg-0"> *@
-@*       <!-- Title --> *@
-@*       <div class="pr-lg-4"> *@
-@*         <span class="btn btn-icon btn-soft-primary rounded-circle mb-3"> *@
-@*           <span class="small font-weight-semi-bold btn-icon__inner">01.</span> *@
-@*         </span> *@
-@*         <h2 class="h4 font-weight-semi-bold text-primary">Cost effective</h2> *@
-@*         <p class="mb-0">Our plans are technically limitless.. You don't have to pay any overcharge because *@
-@*           there isn't one!</p> *@
-@*       </div> *@
-@*       <!-- End Title --> *@
-@*     </div> *@
-@* *@
-@*     <div id="SVGmarketingStrategy" class="col-lg-7 svg-preloader"> *@
-@*       <!-- SVG Icon --> *@
-@*       <figure class="ie-marketing-strategy"> *@
-@*         <img class="js-svg-injector" src="../../assets/svg/illustrations/marketing-strategy.svg" alt="Image Description" *@
-@*              data-parent="#SVGmarketingStrategy"> *@
-@*       </figure> *@
-@*       <!-- End SVG Icon --> *@
-@*     </div> *@
-@*   </div> *@
-@* </div> *@
-@* *@
-@*   <div class="container space-1"> *@
-@*     <div class="row align-items-lg-center"> *@
-@*       <div class="col-lg-5 order-lg-2 mb-7 mb-lg-0"> *@
-@*         <!-- Title --> *@
-@*         <div class="pl-lg-4"> *@
-@*           <span class="btn btn-icon btn-soft-primary rounded-circle mb-3"> *@
-@*             <span class="small font-weight-semi-bold btn-icon__inner">02.</span> *@
-@*           </span> *@
-@*           <h2 class="h4 font-weight-semi-bold text-primary">Safe. Stable. Secure.</h2> *@
-@*           <p class="mb-0">Advanced distributed system architecture built to protect against DDoS and other potential  *@
-@*             threats. Security protocols are fully aligned and compliant with industry best practices.</p> *@
-@*         </div> *@
-@*         <!-- End Title --> *@
-@*       </div> *@
-@* *@
-@*       <div id="SVGappDevelopment" class="col-lg-7 order-lg-1 svg-preloader"> *@
-@*         <!-- SVG Icon --> *@
-@*         <figure class="ie-app-development"> *@
-@*           <img class="js-svg-injector" src="../../assets/svg/illustrations/app-development.svg" alt="SVG Illustration" *@
-@*                data-parent="#SVGappDevelopment"> *@
-@*         </figure> *@
-@*         <!-- End SVG Icon --> *@
-@*       </div> *@
-@*     </div> *@
-@*   </div> *@
-@* *@
-@*   <div class="container space-2 space-md-3"> *@
-@*     <div class="row align-items-lg-center"> *@
-@*       <div class="col-lg-5 mb-7 mb-lg-0"> *@
-@*         <div class="pr-lg-4"> *@
-@*           <span class="btn btn-icon btn-soft-primary rounded-circle mb-3"> *@
-@*             <span class="small font-weight-semi-bold btn-icon__inner">03.</span> *@
-@*           </span> *@
-@*           <h2 class="h4 font-weight-semi-bold text-primary">Analyse the history.</h2> *@
-@*           <p class="mb-0">Nozomi provides a handful of nifty features that will empower you to create powerful *@
-@*             analytical results to help with your business based on the historical data we've obtained.</p> *@
-@*         </div> *@
-@*       </div> *@
-@* *@
-@*       <div id="SVGbusinessAnalysis" class="col-lg-7 svg-preloader"> *@
-@*         <figure class="ie-business-analysis"> *@
-@*           <img class="js-svg-injector" src="../../assets/svg/illustrations/business-analysis.svg" alt="SVG Illustration" *@
-@*                data-parent="#SVGbusinessAnalysis"> *@
-@*         </figure> *@
-@*       </div> *@
-@*     </div> *@
-@*   </div> *@
 
 @section Scripts
 {
