@@ -1,290 +1,288 @@
 ﻿@using Nozomi.Service.Identity.Managers
 @inject NozomiSignInManager SignInManager
 @{
-  ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Home Page";
 }
 <!-- Hero Section -->
 <div id="SVGheroBottomShape" class="position-relative gradient-half-primary-v5 z-index-2 overflow-hidden space-top-2">
-      <div class="container space-top-2 space-top-md-5 space-top-lg-3 space-bottom-md-5">
-      <div class="row align-items-lg-center">
-          <div class="col-lg-5 mb-11 mb-lg-0">
-            <!-- Info -->
-            <div class="mb-6">
-              <h1 class="text-white font-weight-semi-bold mb-3">
-                Crypto is
-                <span class="text-indigo">
-                  <strong class="u-text-animation u-text-animation--typing"></strong>
-                </span>
-                <br>
-                big right now.
-              </h1>
-              @* <p class="text-white-70"></p> *@
-            </div>
-
-            @* <a class="btn btn-white btn-wide btn-pill text-primary shadow-soft transition-3d-hover mb-2 mb-sm-0 mr-4"  *@
-            @*    href="#">Contact Sales</a> *@
-            <a class="btn btn-indigo btn-wide btn-pill transition-3d-hover mb-2 mb-sm-0" asp-controller="Account"
-               asp-action="Register">Get Started</a>
-            <!-- End Info -->
-          </div>
-
-          <div class="col-lg-7">
-            <div class="position-relative">
-
-              <div class="js-slick-carousel u-slick u-slick--gutters-3 z-index-2"
-                   data-slides-show="1"
-                   data-infinite="true"
-                   data-autoplay="true"
-                   data-speed="5000">
-                <div class="js-slide mt-1">
-                  <!-- Icon Block -->
-                  <article class="card border-0 shadow-sm transition-3d-hover mb-3">
-                    <div class="card-body bg-primary rounded-top p-5">
-                      <div class="u-avatar bg-white rounded p-2 mx-auto">
-                        <img class="img-fluid" src="../../assets/img/160x160/img12.png" alt="Image Description">
-                      </div>
-                    </div>
-                    <div class="card-body p-4">
-                      <div class="mb-3">
-                        <h2 class="h6 mb-0">Atlassian</h2>
-                        <small class="d-block text-secondary">Developer tools</small>
-                      </div>
-                      <a class="btn btn-sm btn-block btn-primary" href="#">Install</a>
-                    </div>
-                  </article>
-                  <!-- End Icon Block -->
+    <div class="container space-top-2 space-top-md-5 space-top-lg-3 space-bottom-md-5">
+        <div class="row align-items-lg-center">
+            <div class="col-lg-5 mb-11 mb-lg-0">
+                <!-- Info -->
+                <div class="mb-6">
+                    <h1 class="text-white font-weight-semi-bold mb-3">
+                        Crypto is
+                        <span class="text-indigo">
+                            <strong class="u-text-animation u-text-animation--typing"></strong>
+                        </span>
+                        <br>
+                        big right now.
+                    </h1>
+                    @* <p class="text-white-70"></p> *@
                 </div>
-              </div>
-            </div>
-          </div>
-        </div>
-       </div>
 
-      <!-- SVG Background -->
-      <figure class="position-absolute right-0 bottom-0 left-0">
+                @* <a class="btn btn-white btn-wide btn-pill text-primary shadow-soft transition-3d-hover mb-2 mb-sm-0 mr-4"  *@
+                @*    href="#">Contact Sales</a> *@
+                <a class="btn btn-indigo btn-wide btn-pill transition-3d-hover mb-2 mb-sm-0" asp-controller="Account"
+                   asp-action="Register">
+                    Get Started
+                </a>
+                <!-- End Info -->
+            </div>
+
+            <div class="col-lg-7">
+                <div class="position-relative">
+
+                    <div class="js-slick-carousel u-slick u-slick--gutters-3 z-index-2"
+                         data-slides-show="1"
+                         data-infinite="true"
+                         data-autoplay="true"
+                         data-speed="5000">
+                        <div class="js-slide mt-1">
+                            <!-- Icon Block -->
+                            <article class="card border-0 shadow-sm transition-3d-hover mb-3">
+                                <div class="card-body bg-primary rounded-top p-5">
+                                    <div class="u-avatar bg-white rounded p-2 mx-auto">
+                                        <img class="img-fluid" src="../../assets/img/160x160/img12.png" alt="Image Description">
+                                    </div>
+                                </div>
+                                <div class="card-body p-4">
+                                    <div class="mb-3">
+                                        <h2 class="h6 mb-0">Atlassian</h2>
+                                        <small class="d-block text-secondary">Developer tools</small>
+                                    </div>
+                                    <a class="btn btn-sm btn-block btn-primary" href="#">Install</a>
+                                </div>
+                            </article>
+                            <!-- End Icon Block -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SVG Background -->
+    <figure class="position-absolute right-0 bottom-0 left-0">
         <img class="js-svg-injector" src="../../assets/svg/components/wave-1-bottom-sm.svg" alt="Image Description"
              data-parent="#SVGwave1BottomSM">
-      </figure>
-      <!-- End SVG Background Section -->
-    </div>
-    
-        <div id="vueBody" class="container space-bottom-2 space-bottom-md-3 shadow-lg p-3 mt-5 mb-5 bg-white rounded">
-            <div class="row justify-content-lg-between align-items-md-center">
-              <div class="col">
-                <b-table show-empty stacked="md" busy="currencies.length == 0" striped
-                         tbody-class="font-weight-medium" thead-class="text-uppercase font-size-1"
-                         :per-page="itemsPerPage" :current-page="currentCurrencyPage"
-                         class="table-borderless"
-                 :fields="currencyDataFields" :items="currencies">
-      <div slot="table-busy" class="text-center text-danger my-2">
-        <b-spinner class="align-middle"></b-spinner>
-        <strong>Loading...</strong>
-      </div>
-          <!-- A virtual composite column -->
-          <template slot="name" slot-scope="datum">
-            <a :href="'/currency/' + datum.item.abbreviation">{{ datum.item.name }}</a><br>
-            {{ datum.item.abbreviation }}
-          </template>
-          <!-- A virtual composite column -->
-          <template slot="marketCap" slot-scope="datum">
-            ${{ numeral(datum.item.marketCap).format('0 a') }}
-          </template>
-          <!-- A virtual composite column -->
-          <template slot="averagePrice" slot-scope="datum">
-            ${{ numeral(datum.item.averagePrice).format('0[.]00') }}
-          </template>
-          <!-- A virtual composite column -->
-          <template slot="dailyAvgPricePctChange" slot-scope="datum">
-            <div v-if="datum.item.dailyAvgPricePctChange < 0.1 && datum.item.dailyAvgPricePctChange > -0.1">
-              {{ numeral(datum.item.dailyAvgPricePctChange).format('0[.]0') }}%
-              <i class="fas fa-caret-up">
-              </i>
-            </div>
-            <div class="text-success" v-else-if="datum.item.dailyAvgPricePctChange >= 0.1">
-              {{ numeral(datum.item.dailyAvgPricePctChange).format('0[.]0') }}%
-              <i class="fas fa-caret-up">
-              </i>
-            </div>
-            <div class="text-danger" v-else-if="datum.item.dailyAvgPricePctChange <= -0.1">
-              {{ numeral(datum.item.dailyAvgPricePctChange).format('0[.]0') }}%
-              <i class="fas fa-caret-down">
-              </i>
-            </div>
-          </template>
-          <!-- A virtual composite column -->
-          <template slot="dailyVolume" slot-scope="datum">
-            {{ numeral(datum.item.dailyVolume).format('0 a') }} {{ datum.item.abbreviation }}
-          </template>
-          <template slot="averagePriceHistory" slot-scope="datum">
-            <!-- Area Chart -->
-            <trend
-              :data="datum.item.averagePriceHistory" radius="16"
-              :gradient="['#6fa8dc', '#42b983', '#2c3e50']" auto-draw smooth
-              v-if="datum.item.averagePriceHistory != null && datum.item.averagePriceHistory.length > 0">
-            </trend>
-          </template>
-        </b-table>
-        <b-row>
-          <b-col md="6" class="my-1">
-            <b-pagination :total-rows="currencies.length" :per-page="itemsPerPage"
-                          v-model="currentCurrencyPage" class="my-0"/>
-          </b-col>
-        </b-row>
-              </div>
-            </div>
+    </figure>
+    <!-- End SVG Background Section -->
+</div>
+
+<div id="vueBody" class="container space-bottom-2 space-bottom-md-3 shadow-lg p-3 mt-5 mb-5 bg-white rounded">
+    <div class="row justify-content-lg-between align-items-md-center">
+        <div class="col">
+            <b-table stacked="md" striped
+                     tbody-class="font-weight-medium" thead-class="text-uppercase font-size-1"
+                     :per-page="itemsPerPage" :current-page="currentCurrencyPage"
+                     class="table-borderless"
+                     :fields="currencyDataFields" :items="currencies">
+                <!-- A virtual composite column -->
+                <template slot="name" slot-scope="datum">
+                    <a :href="'/currency/' + datum.item.abbreviation">{{ datum.item.name }}</a><br>
+                    {{ datum.item.abbreviation }}
+                </template>
+                <!-- A virtual composite column -->
+                <template slot="marketCap" slot-scope="datum">
+                    ${{ numeral(datum.item.marketCap).format('0 a') }}
+                </template>
+                <!-- A virtual composite column -->
+                <template slot="averagePrice" slot-scope="datum">
+                    ${{ numeral(datum.item.averagePrice).format('0[.]00') }}
+                </template>
+                <!-- A virtual composite column -->
+                <template slot="dailyAvgPricePctChange" slot-scope="datum">
+                    <div v-if="datum.item.dailyAvgPricePctChange < 0.1 && datum.item.dailyAvgPricePctChange > -0.1">
+                        {{ numeral(datum.item.dailyAvgPricePctChange).format('0[.]0') }}%
+                        <i class="fas fa-caret-up">
+                        </i>
+                    </div>
+                    <div class="text-success" v-else-if="datum.item.dailyAvgPricePctChange >= 0.1">
+                        {{ numeral(datum.item.dailyAvgPricePctChange).format('0[.]0') }}%
+                        <i class="fas fa-caret-up">
+                        </i>
+                    </div>
+                    <div class="text-danger" v-else-if="datum.item.dailyAvgPricePctChange <= -0.1">
+                        {{ numeral(datum.item.dailyAvgPricePctChange).format('0[.]0') }}%
+                        <i class="fas fa-caret-down">
+                        </i>
+                    </div>
+                </template>
+                <!-- A virtual composite column -->
+                <template slot="dailyVolume" slot-scope="datum">
+                    {{ numeral(datum.item.dailyVolume).format('0 a') }} {{ datum.item.abbreviation }}
+                </template>
+                <template slot="averagePriceHistory" slot-scope="datum">
+                    <!-- Area Chart -->
+                    <trend
+                        :data="datum.item.averagePriceHistory" radius="16"
+                        :gradient="['#6fa8dc', '#42b983', '#2c3e50']" auto-draw smooth
+                        v-if="datum.item.averagePriceHistory != null && datum.item.averagePriceHistory.length > 0">
+                    </trend>
+                </template>
+            </b-table>
+            <b-row>
+                <b-col md="6" class="my-1">
+                    <b-pagination :total-rows="currencies.length" :per-page="itemsPerPage"
+                                  v-model="currentCurrencyPage" class="my-0"/>
+                </b-col>
+            </b-row>
         </div>
-  @* <hr class="my-0"> *@
-  @* *@
-  @* <div class="container space-2 space-md-3"> *@
-  @*   <div class="row align-items-lg-center"> *@
-  @*     <div class="col-lg-5 mb-7 mb-lg-0"> *@
-  @*       <!-- Title --> *@
-  @*       <div class="pr-lg-4"> *@
-  @*         <span class="btn btn-icon btn-soft-primary rounded-circle mb-3"> *@
-  @*           <span class="small font-weight-semi-bold btn-icon__inner">01.</span> *@
-  @*         </span> *@
-  @*         <h2 class="h4 font-weight-semi-bold text-primary">Cost effective</h2> *@
-  @*         <p class="mb-0">Our plans are technically limitless.. You don't have to pay any overcharge because *@
-  @*           there isn't one!</p> *@
-  @*       </div> *@
-  @*       <!-- End Title --> *@
-  @*     </div> *@
-  @* *@
-  @*     <div id="SVGmarketingStrategy" class="col-lg-7 svg-preloader"> *@
-  @*       <!-- SVG Icon --> *@
-  @*       <figure class="ie-marketing-strategy"> *@
-  @*         <img class="js-svg-injector" src="../../assets/svg/illustrations/marketing-strategy.svg" alt="Image Description" *@
-  @*              data-parent="#SVGmarketingStrategy"> *@
-  @*       </figure> *@
-  @*       <!-- End SVG Icon --> *@
-  @*     </div> *@
-  @*   </div> *@
-  @* </div> *@
-  @* *@
-  @*   <div class="container space-1"> *@
-  @*     <div class="row align-items-lg-center"> *@
-  @*       <div class="col-lg-5 order-lg-2 mb-7 mb-lg-0"> *@
-  @*         <!-- Title --> *@
-  @*         <div class="pl-lg-4"> *@
-  @*           <span class="btn btn-icon btn-soft-primary rounded-circle mb-3"> *@
-  @*             <span class="small font-weight-semi-bold btn-icon__inner">02.</span> *@
-  @*           </span> *@
-  @*           <h2 class="h4 font-weight-semi-bold text-primary">Safe. Stable. Secure.</h2> *@
-  @*           <p class="mb-0">Advanced distributed system architecture built to protect against DDoS and other potential  *@
-  @*             threats. Security protocols are fully aligned and compliant with industry best practices.</p> *@
-  @*         </div> *@
-  @*         <!-- End Title --> *@
-  @*       </div> *@
-  @* *@
-  @*       <div id="SVGappDevelopment" class="col-lg-7 order-lg-1 svg-preloader"> *@
-  @*         <!-- SVG Icon --> *@
-  @*         <figure class="ie-app-development"> *@
-  @*           <img class="js-svg-injector" src="../../assets/svg/illustrations/app-development.svg" alt="SVG Illustration" *@
-  @*                data-parent="#SVGappDevelopment"> *@
-  @*         </figure> *@
-  @*         <!-- End SVG Icon --> *@
-  @*       </div> *@
-  @*     </div> *@
-  @*   </div> *@
-  @* *@
-  @*   <div class="container space-2 space-md-3"> *@
-  @*     <div class="row align-items-lg-center"> *@
-  @*       <div class="col-lg-5 mb-7 mb-lg-0"> *@
-  @*         <div class="pr-lg-4"> *@
-  @*           <span class="btn btn-icon btn-soft-primary rounded-circle mb-3"> *@
-  @*             <span class="small font-weight-semi-bold btn-icon__inner">03.</span> *@
-  @*           </span> *@
-  @*           <h2 class="h4 font-weight-semi-bold text-primary">Analyse the history.</h2> *@
-  @*           <p class="mb-0">Nozomi provides a handful of nifty features that will empower you to create powerful *@
-  @*             analytical results to help with your business based on the historical data we've obtained.</p> *@
-  @*         </div> *@
-  @*       </div> *@
-  @* *@
-  @*       <div id="SVGbusinessAnalysis" class="col-lg-7 svg-preloader"> *@
-  @*         <figure class="ie-business-analysis"> *@
-  @*           <img class="js-svg-injector" src="../../assets/svg/illustrations/business-analysis.svg" alt="SVG Illustration" *@
-  @*                data-parent="#SVGbusinessAnalysis"> *@
-  @*         </figure> *@
-  @*       </div> *@
-  @*     </div> *@
-  @*   </div> *@
-  
+    </div>
+</div>
+@* <hr class="my-0"> *@
+@* *@
+@* <div class="container space-2 space-md-3"> *@
+@*   <div class="row align-items-lg-center"> *@
+@*     <div class="col-lg-5 mb-7 mb-lg-0"> *@
+@*       <!-- Title --> *@
+@*       <div class="pr-lg-4"> *@
+@*         <span class="btn btn-icon btn-soft-primary rounded-circle mb-3"> *@
+@*           <span class="small font-weight-semi-bold btn-icon__inner">01.</span> *@
+@*         </span> *@
+@*         <h2 class="h4 font-weight-semi-bold text-primary">Cost effective</h2> *@
+@*         <p class="mb-0">Our plans are technically limitless.. You don't have to pay any overcharge because *@
+@*           there isn't one!</p> *@
+@*       </div> *@
+@*       <!-- End Title --> *@
+@*     </div> *@
+@* *@
+@*     <div id="SVGmarketingStrategy" class="col-lg-7 svg-preloader"> *@
+@*       <!-- SVG Icon --> *@
+@*       <figure class="ie-marketing-strategy"> *@
+@*         <img class="js-svg-injector" src="../../assets/svg/illustrations/marketing-strategy.svg" alt="Image Description" *@
+@*              data-parent="#SVGmarketingStrategy"> *@
+@*       </figure> *@
+@*       <!-- End SVG Icon --> *@
+@*     </div> *@
+@*   </div> *@
+@* </div> *@
+@* *@
+@*   <div class="container space-1"> *@
+@*     <div class="row align-items-lg-center"> *@
+@*       <div class="col-lg-5 order-lg-2 mb-7 mb-lg-0"> *@
+@*         <!-- Title --> *@
+@*         <div class="pl-lg-4"> *@
+@*           <span class="btn btn-icon btn-soft-primary rounded-circle mb-3"> *@
+@*             <span class="small font-weight-semi-bold btn-icon__inner">02.</span> *@
+@*           </span> *@
+@*           <h2 class="h4 font-weight-semi-bold text-primary">Safe. Stable. Secure.</h2> *@
+@*           <p class="mb-0">Advanced distributed system architecture built to protect against DDoS and other potential  *@
+@*             threats. Security protocols are fully aligned and compliant with industry best practices.</p> *@
+@*         </div> *@
+@*         <!-- End Title --> *@
+@*       </div> *@
+@* *@
+@*       <div id="SVGappDevelopment" class="col-lg-7 order-lg-1 svg-preloader"> *@
+@*         <!-- SVG Icon --> *@
+@*         <figure class="ie-app-development"> *@
+@*           <img class="js-svg-injector" src="../../assets/svg/illustrations/app-development.svg" alt="SVG Illustration" *@
+@*                data-parent="#SVGappDevelopment"> *@
+@*         </figure> *@
+@*         <!-- End SVG Icon --> *@
+@*       </div> *@
+@*     </div> *@
+@*   </div> *@
+@* *@
+@*   <div class="container space-2 space-md-3"> *@
+@*     <div class="row align-items-lg-center"> *@
+@*       <div class="col-lg-5 mb-7 mb-lg-0"> *@
+@*         <div class="pr-lg-4"> *@
+@*           <span class="btn btn-icon btn-soft-primary rounded-circle mb-3"> *@
+@*             <span class="small font-weight-semi-bold btn-icon__inner">03.</span> *@
+@*           </span> *@
+@*           <h2 class="h4 font-weight-semi-bold text-primary">Analyse the history.</h2> *@
+@*           <p class="mb-0">Nozomi provides a handful of nifty features that will empower you to create powerful *@
+@*             analytical results to help with your business based on the historical data we've obtained.</p> *@
+@*         </div> *@
+@*       </div> *@
+@* *@
+@*       <div id="SVGbusinessAnalysis" class="col-lg-7 svg-preloader"> *@
+@*         <figure class="ie-business-analysis"> *@
+@*           <img class="js-svg-injector" src="../../assets/svg/illustrations/business-analysis.svg" alt="SVG Illustration" *@
+@*                data-parent="#SVGbusinessAnalysis"> *@
+@*         </figure> *@
+@*       </div> *@
+@*     </div> *@
+@*   </div> *@
+
 @section Scripts
 {
-  <script>
-    const vm = new Vue({
-      // options
-      el: "#vueBody",
-      // Just dish any random variable in for now
-      data: {
-        currencyDataFields: [
-          {
-            key: 'name',
-            label: 'Name',
-            sortable: true
-          },
-          {
-            key: 'marketCap',
-            label: 'Market Cap',
-            sortable: true
-          },
-          {
-            key: 'averagePrice',
-            label: 'Price',
-            sortable: true
-          },
-          {
-            key: 'dailyAvgPricePctChange',
-            label: 'Daily Change',
-            sortable: true
-          },
-          {
-            key: 'dailyVolume',
-            label: 'Volume',
-            sortable: true
-          },
-          {
-            key: 'averagePriceHistory',
-            label: 'Price Chart',
-            sortable: false
-          }
-        ],
-        currentCurrencyPage: 1,
-        currencies: [],
-        itemsPerPage: 40
-      },
-      created: function() {
-        const connection = new SignalR.HubConnectionBuilder()
-          .withUrl("/ticker")
-          .build();
-            
-        // https://github.com/aspnet/SignalR/issues/3294
-        connection.start().then(() => {
-          connection.invoke("Subscribe", 2).catch(err => console.error(err.toString()));
-        }).catch(err => document.write(err));
+    <script>
+        const vm = new Vue({
+            // options
+            el: "#vueBody",
+            // Just dish any random variable in for now
+            data: {
+                currencyDataFields: [
+                    {
+                        key: 'name',
+                        label: 'Name',
+                        sortable: true
+                    },
+                    {
+                        key: 'marketCap',
+                        label: 'Market Cap',
+                        sortable: true
+                    },
+                    {
+                        key: 'averagePrice',
+                        label: 'Price',
+                        sortable: true
+                    },
+                    {
+                        key: 'dailyAvgPricePctChange',
+                        label: 'Daily Change',
+                        sortable: true
+                    },
+                    {
+                        key: 'dailyVolume',
+                        label: 'Volume',
+                        sortable: true
+                    },
+                    {
+                        key: 'averagePriceHistory',
+                        label: 'Price Chart',
+                        sortable: false
+                    }
+                ],
+                currentCurrencyPage: 1,
+                currencies: [],
+                itemsPerPage: 40
+            },
+            created: function() {
+                const connection = new SignalR.HubConnectionBuilder()
+                    .withUrl("/ticker")
+                    .build();
 
-        function start() {
-          try {
-            connection.start();
-            console.log('connected');
-          } catch (err) {
-            console.log(err);
-            setTimeout(() => start(), 5000);
-          }
-        };
+                // https://github.com/aspnet/SignalR/issues/3294
+                connection.start().then(() => {
+                    connection.invoke("Subscribe", 2).catch(err => console.error(err.toString()));
+                }).catch(err => document.write(err));
 
-        connection.onclose(() => {
-          start();
-        });
-        
-        connection.on("currencies",
-          (currencies) => {
-            this.currencies = currencies;
-          });
-      },
-      methods: {
-        // This function provides the capability of updating the tickerData array.
-        // It does NOT delete deprecated rows. After all, we expect the clients to refresh once a week or so.
+                function start() {
+                    try {
+                        connection.start();
+                        console.log('connected');
+                    } catch (err) {
+                        console.log(err);
+                        setTimeout(() => start(), 5000);
+                    }
+                };
+
+                connection.onclose(() => {
+                    start();
+                });
+
+                connection.on("currencies",
+                    (currencies) => {
+                        this.currencies = currencies;
+                    });
+            },
+            methods: {
+                // This function provides the capability of updating the tickerData array.
+                // It does NOT delete deprecated rows. After all, we expect the clients to refresh once a week or so.
 //        updateTickerData: function(incomingData) {
 //          // Iterate all incoming datum
 //          $.each(incomingData, function(incomingDatum) {
@@ -306,9 +304,10 @@
 //            }
 //          });
 //        }
-      },
-      mounted: function() {
-      }
-    });
-  </script>
+      
+            },
+            mounted: function() {
+            }
+        });
+    </script>
 }
