@@ -4,7 +4,7 @@
     ViewData["Title"] = "Home Page";
 }
 <!-- Hero Section -->
-<div id="SVGheroBottomShape" class="position-relative gradient-half-primary-v5 z-index-2 overflow-hidden space-top-2">
+<div class="position-relative gradient-half-primary-v5 z-index-2 overflow-hidden space-top-2">
     <div class="container space-top-2 space-top-md-5 space-top-lg-3 space-bottom-md-5">
         <div class="row align-items-lg-center">
             <div class="col-lg-5 mb-11 mb-lg-0">
@@ -32,7 +32,6 @@
 
             <div class="col-lg-7">
                 <div class="position-relative">
-
                     <div class="js-slick-carousel u-slick u-slick--gutters-3 z-index-2"
                          data-slides-show="1"
                          data-infinite="true"
@@ -41,17 +40,14 @@
                         <div class="js-slide mt-1">
                             <!-- Icon Block -->
                             <article class="card border-0 shadow-sm transition-3d-hover mb-3">
-                                <div class="card-body bg-primary rounded-top p-5">
-                                    <div class="u-avatar bg-white rounded p-2 mx-auto">
-                                        <img class="img-fluid" src="../../assets/img/160x160/img12.png" alt="Image Description">
-                                    </div>
+                                <div class="mb-3 p-5">
+                                    <h1 class="h4 mb-0">Total Market Volume (Test)</h1>
                                 </div>
-                                <div class="card-body p-4">
-                                    <div class="mb-3">
-                                        <h2 class="h6 mb-0">Atlassian</h2>
-                                        <small class="d-block text-secondary">Developer tools</small>
-                                    </div>
-                                    <a class="btn btn-sm btn-block btn-primary" href="#">Install</a>
+                                <div class="card-body bg-white rounded-top p-5">
+                                    <trend
+                                        :data="[1,5,10]" radius="16"
+                                        :gradient="['#6fa8dc', '#42b983', '#2c3e50']" auto-draw smooth>
+                                    </trend>
                                 </div>
                             </article>
                             <!-- End Icon Block -->
@@ -70,7 +66,7 @@
     <!-- End SVG Background Section -->
 </div>
 
-<div id="vueBody" class="container space-bottom-2 space-bottom-md-3 shadow-lg p-3 mt-5 mb-5 bg-white rounded">
+<div class="container space-bottom-2 space-bottom-md-3 shadow-lg p-3 mt-5 mb-5 bg-white rounded">
     <div class="row justify-content-lg-between align-items-md-center">
         <div class="col">
             <b-table stacked="md" striped
@@ -212,7 +208,7 @@
     <script>
         const vm = new Vue({
             // options
-            el: "#vueBody",
+            el: "#content",
             // Just dish any random variable in for now
             data: {
                 currencyDataFields: [
