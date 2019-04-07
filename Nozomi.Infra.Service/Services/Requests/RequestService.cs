@@ -33,6 +33,28 @@ namespace Nozomi.Service.Services.Requests
             return -1;
         }
 
+        public bool Delay(Request request, TimeSpan duration)
+        {
+            var req = _unitOfWork.GetRepository<Request>()
+                .GetQueryable()
+                .AsNoTracking()
+                .SingleOrDefault(r => r.Id.Equals(request.Id)
+                                      && r.DeletedAt == null
+                                      && r.IsEnabled);
+
+            if (req != null)
+            {
+                req.ModifiedAt = req.ModifiedAt.Add(duration);
+                
+                _unitOfWork.GetRepository<Request>().Update(req);
+                _unitOfWork.Commit();
+
+                return true;
+            }
+
+            return false;
+        }
+
         public bool Update(Request req, long userId = 0)
         {
             // Safetynet

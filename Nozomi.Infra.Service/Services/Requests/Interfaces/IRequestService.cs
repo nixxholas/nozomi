@@ -8,6 +8,8 @@ namespace Nozomi.Service.Services.Requests.Interfaces
     public interface IRequestService
     {
         long Create(Request req, long userId = 0);
+        
+        bool Delay(Request request, TimeSpan duration);
 
         bool Update(Request req, long userId = 0);
 
