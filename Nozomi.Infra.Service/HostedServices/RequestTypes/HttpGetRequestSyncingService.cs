@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Globalization;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Security.Cryptography;
@@ -60,6 +61,7 @@ namespace Nozomi.Service.HostedServices.RequestTypes
         private readonly ICurrencyRequestEvent _currencyRequestEvent;
         private readonly ICurrencyPairComponentService _currencyPairComponentService;
         private readonly ICurrencyPairRequestService _currencyPairRequestService;
+        private readonly IRequestService _requestService;
         private readonly IRequestLogService _requestLogService;
 
         public HttpGetRequestSyncingService(IServiceProvider serviceProvider) : base(serviceProvider)
@@ -68,6 +70,7 @@ namespace Nozomi.Service.HostedServices.RequestTypes
             _currencyRequestEvent = _scope.ServiceProvider.GetRequiredService<ICurrencyRequestEvent>();
             _currencyPairComponentService = _scope.ServiceProvider.GetRequiredService<ICurrencyPairComponentService>();
             _currencyPairRequestService = _scope.ServiceProvider.GetRequiredService<ICurrencyPairRequestService>();
+            _requestService = _scope.ServiceProvider.GetRequiredService<IRequestService>();
             _requestLogService = _scope.ServiceProvider.GetRequiredService<IRequestLogService>();
         }
 
@@ -396,6 +399,11 @@ namespace Nozomi.Service.HostedServices.RequestTypes
                     if (Update(contentToken, resType, requestComponents)) return true;
 
                     // Else error
+                }
+                else if (payload.StatusCode.Equals(HttpStatusCode.TooManyRequests))
+                {
+                    // Rate limited. Push back update timings
+                    return _requestService.Delay(firstRequest, TimeSpan.FromMilliseconds(firstRequest.FailureDelay));
                 }
                 else
                 {
