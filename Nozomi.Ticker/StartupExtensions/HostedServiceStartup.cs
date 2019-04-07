@@ -17,10 +17,7 @@ namespace Nozomi.Ticker.StartupExtensions
             services.AddHostedService<HttpGetRequestSyncingService>();
             services.AddHostedService<HttpPostCurrencyPairRequestSyncingService>();
             services.AddHostedService<WebsocketCurrencyPairRequestSyncingService>();
-            //services.AddHostedService<CPDSyncingService>();
-            services.AddHostedService<CSSSyncingService>();
             services.AddHostedService<SourceSyncingService>();
-            //services.AddHostedService<TSDSyncingService>();
             
             // TODO: Microservice.
             // Nozomi.Analysis Hosted Services

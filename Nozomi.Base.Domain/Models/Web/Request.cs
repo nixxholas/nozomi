@@ -25,6 +25,8 @@ namespace Nozomi.Data.Models.Web
         /// Defines the delay of repeating in milliseconds.
         /// </summary>
         public int Delay { get; set; }
+        
+        public long FailureDelay { get; set; }
 
         public ICollection<AnalysedComponent> AnalysedComponents { get; set; }
         public ICollection<RequestComponent> RequestComponents { get; set; }
