@@ -162,6 +162,15 @@ namespace Nozomi.Service.Events
                         {
                             // Since we've gotten the conversion rate, let's convert.
                             reqCom.Value = (decimal.Parse(reqCom.Value) * conversionVal).ToString(CultureInfo.InvariantCulture);
+
+                            if (reqCom.RcdHistoricItems != null && reqCom.RcdHistoricItems.Count > 0)
+                            {
+                                foreach (var rcdhi in reqCom.RcdHistoricItems)
+                                {
+                                    rcdhi.Value = (decimal.Parse(rcdhi.Value) * conversionVal)
+                                        .ToString(CultureInfo.InvariantCulture);
+                                }
+                            }
                         }
                     }
                     else
