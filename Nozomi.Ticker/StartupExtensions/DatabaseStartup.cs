@@ -627,7 +627,25 @@ namespace Nozomi.Ticker.StartupExtensions
                                                 Delay = 10000,
                                                 CreatedAt = DateTime.UtcNow,
                                                 ModifiedAt = DateTime.UtcNow,
-                                                DeletedAt = null
+                                                DeletedAt = null,
+                                                AnalysedHistoricItems = new List<AnalysedHistoricItem>()
+                                                {
+                                                    new AnalysedHistoricItem
+                                                    {
+                                                        HistoricDateTime = DateTime.UtcNow,
+                                                        Value = "180.5"
+                                                    },
+                                                    new AnalysedHistoricItem
+                                                    {
+                                                        HistoricDateTime = DateTime.UtcNow.Subtract(TimeSpan.FromHours(1)),
+                                                        Value = "180.3"
+                                                    },
+                                                    new AnalysedHistoricItem
+                                                    {
+                                                        HistoricDateTime = DateTime.UtcNow.Subtract(TimeSpan.FromHours(2)),
+                                                        Value = "180.2"
+                                                    }
+                                                }
                                             },
                                             new AnalysedComponent()
                                             {
