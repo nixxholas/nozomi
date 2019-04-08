@@ -29,6 +29,7 @@ namespace Nozomi.Data.ResponseModels.Currency
                 Abbreviation = currency.Abbrv;
                 LastUpdated = DateTime.UtcNow;
 
+                // Obtain analysed component data from partial currency pairs.
                 if (currency.PartialCurrencyPairs != null && currency.PartialCurrencyPairs.Count > 0)
                 {
                     // Obtain via the Request method
@@ -58,15 +59,16 @@ namespace Nozomi.Data.ResponseModels.Currency
                                     if (decimal.TryParse(aComp.Value, out var avgPrice))
                                     {
                                         AveragePrice = avgPrice;
-
-                                        if (aComp.AnalysedHistoricItems.Count > 0)
-                                        {
-                                            AveragePriceHistory = aComp.AnalysedHistoricItems
-                                                .Where(ahi => ahi.DeletedAt == null && ahi.IsEnabled
-                                                              && !string.IsNullOrEmpty(ahi.Value))
-                                                .Select(ahi => decimal.Parse(ahi.Value))
-                                                .ToArray();
-                                        }
+                                    }
+                                    break;
+                                case AnalysedComponentType.HourlyAveragePrice:
+                                    if (aComp.AnalysedHistoricItems.Count > 0)
+                                    {
+                                        AveragePriceHistory = aComp.AnalysedHistoricItems
+                                            .Where(ahi => ahi.DeletedAt == null && ahi.IsEnabled
+                                                                                && !string.IsNullOrEmpty(ahi.Value))
+                                            .Select(ahi => decimal.Parse(ahi.Value))
+                                            .ToArray();
                                     }
                                     break;
                                 case AnalysedComponentType.DailyPricePctChange:
@@ -89,36 +91,49 @@ namespace Nozomi.Data.ResponseModels.Currency
                     }
                 }
 
-                if (currency.AnalysedComponents.Any(ac =>
+                // If the average price is still not computed,
+                if (AveragePrice <= 0 && 
+                    currency.AnalysedComponents.Any(ac =>
                     ac.DeletedAt == null && ac.IsEnabled
                                          && ac.ComponentType.Equals(AnalysedComponentType.CurrentAveragePrice)))
                 {
+                    // Compute the average price directly with a currency-binded analysed component.
                     var currencyAP = currency.AnalysedComponents.FirstOrDefault(ac =>
                         ac.DeletedAt == null && ac.IsEnabled
                                              && ac.ComponentType.Equals(AnalysedComponentType.CurrentAveragePrice));
                     var currencyAPVal = currencyAP?.Value;
 
-                    if (string.IsNullOrEmpty(currencyAPVal)
-                        && currencyAPVal.Equals("0", StringComparison.InvariantCultureIgnoreCase))
+                    if (!string.IsNullOrEmpty(currencyAPVal))
                     {
                         AveragePrice = decimal.Parse(currencyAPVal);
+                    }
+                }
+                
+                // If the historical price is still not computed,
+                if ((AveragePriceHistory == null || AveragePriceHistory.Length == 0) 
+                    && currency.AnalysedComponents.Any(ac => ac.DeletedAt == null && ac.IsEnabled
+                                                             && ac.ComponentType.Equals(AnalysedComponentType.HourlyAveragePrice)))
+                {
+                    // Compute the hourly average prices directly with a currency-binded analysed component.
+                    var currencyHAP = currency.AnalysedComponents
+                        .FirstOrDefault(ac => ac.DeletedAt == null && ac.IsEnabled
+                                                                   && ac.ComponentType.Equals(AnalysedComponentType
+                                                                       .HourlyAveragePrice));
 
-                        if (currencyAP.AnalysedHistoricItems != null && currencyAP.AnalysedHistoricItems.Count > 0)
-                        {
-                            #if DEBUG
-                            var testAPH = currencyAP.AnalysedHistoricItems
-                                .OrderByDescending(ahi => ahi.HistoricDateTime)
-                                .ToList();
-                            #endif
-                            
-                            AveragePriceHistory = currencyAP.AnalysedHistoricItems
+                    // Make sure there is actually data
+                    if (currencyHAP?.AnalysedHistoricItems != null 
+                        && currencyHAP.AnalysedHistoricItems
+                            .Any(ahi => ahi.HistoricDateTime >= DateTime.UtcNow.Subtract(TimeSpan.FromDays(1))))
+                    {
+                            AveragePriceHistory = currencyHAP.AnalysedHistoricItems
+                                .Where(ahi => ahi.HistoricDateTime >= DateTime.UtcNow.Subtract(TimeSpan.FromDays(1)))
                                 .OrderByDescending(ahi => ahi.HistoricDateTime)
                                 .DefaultIfEmpty()
                                 .Select(ahi => decimal.Parse(ahi.Value))
                                 .ToArray();
-                        }
                     }
                 }
+                
                 // Daily average percentage change via the Currency
                 if (currency.AnalysedComponents.Any(ac =>
                     ac.DeletedAt == null && ac.IsEnabled

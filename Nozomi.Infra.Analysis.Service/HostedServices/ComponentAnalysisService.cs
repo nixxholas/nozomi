@@ -35,7 +35,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
         private readonly IAnalysedHistoricItemService _analysedHistoricItemService;
         private readonly ICurrencyEvent _currencyEvent;
         private readonly IRequestComponentEvent _requestComponentEvent;
-        
+
         private readonly IHubContext<NozomiStreamHub, INozomiStreamClient> _nozomiStreamHub;
 
         public ComponentAnalysisService(IServiceProvider serviceProvider,
@@ -69,7 +69,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                     {
                         _logger.LogInformation($"[{ServiceName}]" +
                                                " Analysis successful");
-                
+
                         // Push the updated currency data
                         await _nozomiStreamHub.Clients.Group(NozomiSocketGroup.Currencies.GetDescription())
                             .Currencies(_currencyEvent.GetAllDetailed());
@@ -100,57 +100,138 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
         public bool Analyse(ICollection<AnalysedComponent> components)
         {
             if (components == null || components.Count <= 0) return false;
-            
+
             foreach (var component in components)
             {
                 // Always stash the value first
-                    switch (component.ComponentType)
-                    {
-                        // Calculate the market cap.
-                        case AnalysedComponentType.MarketCap:
-                            var circuSupply = _currencyEvent.GetCirculatingSupply(component);
-                            var analysedComponents = _analysedComponentEvent.GetAllByCorrelation(component.Id);
+                switch (component.ComponentType)
+                {
+                    // Calculate the market cap.
+                    case AnalysedComponentType.MarketCap:
+                        var circuSupply = _currencyEvent.GetCirculatingSupply(component);
+                        var analysedComponents = _analysedComponentEvent.GetAllByCorrelation(component.Id);
 
-                            #if DEBUG
-                            // Parsable average?
-                            var averagePrice = decimal.Parse(analysedComponents
-                                .Where(ac => ac.ComponentType.Equals(AnalysedComponentType
-                                                 .CurrentAveragePrice))
-                                .Select(ac => ac.Value)
-                                .FirstOrDefault() ?? "0");
-                            #endif
+#if DEBUG
+                        // Parsable average?
+                        var averagePrice = decimal.Parse(analysedComponents
+                                                             .Where(ac => ac.ComponentType.Equals(AnalysedComponentType
+                                                                 .CurrentAveragePrice))
+                                                             .Select(ac => ac.Value)
+                                                             .FirstOrDefault() ?? "0");
+#endif
 
+                        // Parsable average?
+                        if (circuSupply > 0
                             // Parsable average?
-                            if (circuSupply > 0
-                                // Parsable average?
-                                && decimal.TryParse(analysedComponents
-                                                        .Where(ac =>
-                                                            ac.ComponentType.Equals(AnalysedComponentType
-                                                                .CurrentAveragePrice))
-                                                        .Select(ac => ac.Value)
-                                                        .FirstOrDefault() ?? "0", out var mCap_avgPrice))
+                            && decimal.TryParse(analysedComponents
+                                                    .Where(ac =>
+                                                        ac.ComponentType.Equals(AnalysedComponentType
+                                                            .CurrentAveragePrice))
+                                                    .Select(ac => ac.Value)
+                                                    .FirstOrDefault() ?? "0", out var mCap_avgPrice))
+                        {
+                            var marketCap = circuSupply
+                                            * mCap_avgPrice;
+
+                            if (!decimal.Zero.Equals(marketCap))
                             {
-                                var marketCap = circuSupply
-                                                * mCap_avgPrice;
-
-                                if (!decimal.Zero.Equals(marketCap))
+                                if (_analysedComponentService.UpdateValue(component.Id, marketCap.ToString()))
                                 {
-                                    if (_analysedComponentService.UpdateValue(component.Id, marketCap.ToString()))
+                                    // Updated successfully
+                                }
+                            }
+                        }
+
+                        break;
+                    // Calculate the current average price.
+                    case AnalysedComponentType.CurrentAveragePrice:
+                        // Which case? Allow currency to precede first.
+                        if (component.CurrencyId != null && component.CurrencyId > 0)
+                        {
+                            // Obtain all of the req components related to this currency where it is the base.
+                            var currencyReqComps =
+                                _requestComponentEvent.GetAllByCurrency((long) component.CurrencyId);
+
+                            // Safetynet
+                            if (currencyReqComps != null && currencyReqComps.Count > 0)
+                            {
+                                // Filter
+                                currencyReqComps = currencyReqComps
+                                    .Where(rc => rc.ComponentType.Equals(ComponentType.Ask)
+                                                 || rc.ComponentType.Equals(ComponentType.Bid))
+                                    .DefaultIfEmpty()
+                                    .ToList();
+
+                                // Convert whatever is needed
+                                _requestComponentEvent.ConvertToGenericCurrency(currencyReqComps);
+
+                                // Now we can aggregate this
+                                var currAvgPrice = currencyReqComps
+                                    .Where(rc => rc.ComponentType.Equals(ComponentType.Ask)
+                                                 || rc.ComponentType.Equals(ComponentType.Bid))
+                                    .Average(rc => decimal.Parse(string.IsNullOrEmpty(rc.Value)
+                                        ? "0"
+                                        : rc.Value));
+
+                                if (!(currAvgPrice <= decimal.Zero))
+                                {
+                                    if (_analysedComponentService.UpdateValue(component.Id,
+                                        currAvgPrice.ToString(CultureInfo.InvariantCulture)))
                                     {
                                         // Updated successfully
                                     }
                                 }
                             }
+                        }
+                        else
+                        {
+                            // Obtain all of the req components that are related to this AC.
+                            var correlatedReqComps = _requestComponentEvent.GetAllByCorrelation(component.Id);
 
-                            break;
-                        // Calculate the current average price.
-                        case AnalysedComponentType.CurrentAveragePrice:
+                            if (correlatedReqComps != null && correlatedReqComps.Count > 0)
+                            {
+#if DEBUG
+                                var filteredCorrelatedReqComps = correlatedReqComps
+                                    .Where(rc => rc.ComponentType.Equals(ComponentType.Ask)
+                                                 || rc.ComponentType.Equals(ComponentType.Bid))
+                                    .ToList();
+#endif
+
+                                // Aggregate it
+                                var avgPrice = correlatedReqComps
+                                    .Where(rc => rc.ComponentType.Equals(ComponentType.Ask)
+                                                 || rc.ComponentType.Equals(ComponentType.Bid))
+                                    .Average(rc => decimal.Parse(string.IsNullOrEmpty(rc.Value)
+                                        ? "0"
+                                        : rc.Value));
+
+                                if (!decimal.Zero.Equals(avgPrice))
+                                {
+                                    if (_analysedComponentService.UpdateValue(component.Id, avgPrice.ToString()))
+                                    {
+                                        // Updated successfully
+                                    }
+                                }
+                            }
+                        }
+
+                        break;
+                    // Calculate the current average price.
+                    case AnalysedComponentType.HourlyAveragePrice:
+                        // If it hasn't been updated for an hour or if the value is not computed yet
+                        if (component.ModifiedAt.AddHours(1) < DateTime.UtcNow || string.IsNullOrEmpty(component.Value))
+                        {
                             // Which case? Allow currency to precede first.
                             if (component.CurrencyId != null && component.CurrencyId > 0)
                             {
                                 // Obtain all of the req components related to this currency where it is the base.
                                 var currencyReqComps =
-                                    _requestComponentEvent.GetAllByCurrency((long) component.CurrencyId);
+                                    _requestComponentEvent.GetAllByCurrency((long) component.CurrencyId, true)
+                                        .Where(rc => rc.RcdHistoricItems != null &&
+                                                     rc.RcdHistoricItems
+                                                         .Any(rcdhi => rcdhi.HistoricDateTime >
+                                                                       DateTime.UtcNow.Subtract(TimeSpan.FromHours(1))))
+                                        .ToList();
 
                                 // Safetynet
                                 if (currencyReqComps != null && currencyReqComps.Count > 0)
@@ -169,8 +250,10 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                     var currAvgPrice = currencyReqComps
                                         .Where(rc => rc.ComponentType.Equals(ComponentType.Ask)
                                                      || rc.ComponentType.Equals(ComponentType.Bid))
-                                        .Average(rc => decimal.Parse(string.IsNullOrEmpty(rc.Value)
-                                            ? "0" : rc.Value));
+                                        .SelectMany(rc => rc.RcdHistoricItems)
+                                        .Average(rcdhi => decimal.Parse(string.IsNullOrEmpty(rcdhi.Value)
+                                            ? "0"
+                                            : rcdhi.Value));
 
                                     if (!(currAvgPrice <= decimal.Zero))
                                     {
@@ -185,23 +268,25 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                             else
                             {
                                 // Obtain all of the req components that are related to this AC.
-                                var correlatedReqComps = _requestComponentEvent.GetAllByCorrelation(component.Id);
+                                var correlatedReqComps = _requestComponentEvent.GetAllByCorrelation(component.Id, true)
+                                    .Where(rc => (rc.ComponentType.Equals(ComponentType.Ask)
+                                                 || rc.ComponentType.Equals(ComponentType.Bid))
+                                                 && rc.RcdHistoricItems != null 
+                                                 && rc.RcdHistoricItems
+                                                     .Any(rcdhi => rcdhi.HistoricDateTime >
+                                                                   DateTime.UtcNow.Subtract(TimeSpan.FromHours(1))))
+                                    .ToList();
 
                                 if (correlatedReqComps != null && correlatedReqComps.Count > 0)
                                 {
-#if DEBUG
-                                    var filteredCorrelatedReqComps = correlatedReqComps
-                                        .Where(rc => rc.ComponentType.Equals(ComponentType.Ask)
-                                                     || rc.ComponentType.Equals(ComponentType.Bid))
-                                        .ToList();
-#endif
-
                                     // Aggregate it
                                     var avgPrice = correlatedReqComps
                                         .Where(rc => rc.ComponentType.Equals(ComponentType.Ask)
                                                      || rc.ComponentType.Equals(ComponentType.Bid))
-                                        .Average(rc => decimal.Parse(string.IsNullOrEmpty(rc.Value)
-                                        ? "0" : rc.Value));
+                                        .SelectMany(rc => rc.RcdHistoricItems)
+                                        .Average(rcdhi => decimal.Parse(string.IsNullOrEmpty(rcdhi.Value)
+                                            ? "0"
+                                            : rcdhi.Value));
 
                                     if (!decimal.Zero.Equals(avgPrice))
                                     {
@@ -212,442 +297,445 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                     }
                                 }
                             }
+                        }
 
-                            break;
-                        // Calculate the daily price change for this request
-                        case AnalysedComponentType.DailyPriceChange:
-                            // If its a currency-based AnalaysedComponent, we have to aggregate an
-                            if (component.CurrencyId != null && component.CurrencyId > 0)
+                        break;
+                    // Calculate the daily price change for this request
+                    case AnalysedComponentType.DailyPriceChange:
+                        // If its a currency-based AnalaysedComponent, we have to aggregate an
+                        if (component.CurrencyId != null && component.CurrencyId > 0)
+                        {
+                            // Obtain all Average price ACs that relate to this currency
+                            var currencyAnalysedComps =
+                                _analysedComponentEvent.GetAllByCurrency((long) component.CurrencyId);
+
+                            // Safetynet
+                            if (currencyAnalysedComps != null && currencyAnalysedComps.Count > 0)
                             {
-                                // Obtain all Average price ACs that relate to this currency
-                                var currencyAnalysedComps =
-                                    _analysedComponentEvent.GetAllByCurrency((long) component.CurrencyId);
+                                // Filter
+                                currencyAnalysedComps = currencyAnalysedComps
+                                    .Where(rc => rc.ComponentType.Equals(ComponentType.Ask)
+                                                 || rc.ComponentType.Equals(ComponentType.Bid))
+                                    .DefaultIfEmpty()
+                                    .ToList();
 
-                                // Safetynet
-                                if (currencyAnalysedComps != null && currencyAnalysedComps.Count > 0)
-                                {
-                                    // Filter
-                                    currencyAnalysedComps = currencyAnalysedComps
-                                        .Where(rc => rc.ComponentType.Equals(ComponentType.Ask)
-                                                     || rc.ComponentType.Equals(ComponentType.Bid))
+                                // Convert whatever is needed
+                                _analysedComponentEvent.ConvertToGenericCurrency(currencyAnalysedComps);
+
+                                // Now we can aggregate this
+                                var currAvgPrice = currencyAnalysedComps
+                                    .DefaultIfEmpty()
+                                    .Average(rc => rc.AnalysedHistoricItems
+                                        .Where(ahi => ahi.CreatedAt >
+                                                      DateTime.UtcNow.Subtract(TimeSpan.FromHours(24)))
                                         .DefaultIfEmpty()
-                                        .ToList();
+                                        .Average(ahi => decimal.Parse(ahi.Value)));
 
-                                    // Convert whatever is needed
-                                    _analysedComponentEvent.ConvertToGenericCurrency(currencyAnalysedComps);
+                                if (!(currAvgPrice <= decimal.Zero))
+                                {
+                                    if (_analysedComponentService.UpdateValue(component.Id,
+                                        currAvgPrice.ToString(CultureInfo.InvariantCulture)))
+                                    {
+                                        // Updated successfully
+                                    }
+                                }
+                            }
+                        }
+                        else
+                        {
+                            // Since it's not currency-based, its currencypair-based.
+
+                            // Obtain all of the analysed components that are related to this AC.
+                            var correlatedAnaComps = _analysedComponentEvent.GetAllByCorrelation(component.Id);
+
+                            if (correlatedAnaComps != null)
+                            {
+                                // Aggregate it
+                                var avgPrice = correlatedAnaComps
+                                    .Where(ac => ac.ComponentType.Equals(ComponentType.Ask)
+                                                 || ac.ComponentType.Equals(ComponentType.Bid))
+                                    .DefaultIfEmpty()
+                                    .Average(ac => ac.AnalysedHistoricItems
+                                        .Where(ahi => ahi.CreatedAt >
+                                                      DateTime.UtcNow.Subtract(TimeSpan.FromHours(24)))
+                                        .DefaultIfEmpty()
+                                        .Average(ahi => decimal.Parse(ahi.Value)));
+
+                                if (!decimal.Zero.Equals(avgPrice))
+                                {
+                                    if (_analysedComponentService.UpdateValue(component.Id, avgPrice
+                                        .ToString(CultureInfo.InvariantCulture)))
+                                    {
+                                        // Updated successfully
+                                    }
+                                }
+                            }
+                        }
+
+                        var dailyCompute = component.Request.RequestComponents
+                            .SelectMany(rcd => rcd.RcdHistoricItems)
+                            .Where(rcdhi => rcdhi.CreatedAt >= DateTime.UtcNow.Subtract(TimeSpan.FromDays(1)))
+                            .Select(rcdhi => rcdhi.Value)
+                            .DefaultIfEmpty()
+                            .Average(val => decimal.Parse(val));
+
+                        if (!decimal.Zero.Equals(dailyCompute))
+                        {
+                            // Update
+                            if (_analysedComponentService.UpdateValue(component.Id, dailyCompute.ToString()))
+                            {
+                                // Updated successfully
+                            }
+                        }
+
+                        break;
+                    case AnalysedComponentType.WeeklyPriceChange:
+                        // If its a currency-based AnalaysedComponent, we have to aggregate an
+                        if (component.CurrencyId != null && component.CurrencyId > 0)
+                        {
+                            // Obtain all Average price ACs that relate to this currency
+                            var currencyAnalysedComps =
+                                _analysedComponentEvent.GetAllByCurrency((long) component.CurrencyId);
+
+                            // Safetynet
+                            if (currencyAnalysedComps != null && currencyAnalysedComps.Count > 0)
+                            {
+                                // Filter
+                                currencyAnalysedComps = currencyAnalysedComps
+                                    .Where(rc => rc.ComponentType.Equals(ComponentType.Ask)
+                                                 || rc.ComponentType.Equals(ComponentType.Bid))
+                                    .DefaultIfEmpty()
+                                    .ToList();
+
+                                // Convert whatever is needed
+                                _analysedComponentEvent.ConvertToGenericCurrency(currencyAnalysedComps);
+
+                                // Now we can aggregate this
+                                var currAvgPrice = currencyAnalysedComps
+                                    .DefaultIfEmpty()
+                                    .Average(rc => rc.AnalysedHistoricItems
+                                        .Where(ahi => ahi.CreatedAt >
+                                                      DateTime.UtcNow.Subtract(TimeSpan.FromDays(7)))
+                                        .DefaultIfEmpty()
+                                        .Average(ahi => decimal.Parse(ahi.Value)));
+
+                                if (!(currAvgPrice <= decimal.Zero))
+                                {
+                                    if (_analysedComponentService.UpdateValue(component.Id,
+                                        currAvgPrice.ToString(CultureInfo.InvariantCulture)))
+                                    {
+                                        // Updated successfully
+                                    }
+                                }
+                            }
+                        }
+                        else
+                        {
+                            // Since it's not currency-based, its currencypair-based.
+
+                            // Obtain all of the analysed components that are related to this AC.
+                            var correlatedAnaComps = _analysedComponentEvent.GetAllByCorrelation(component.Id);
+
+                            if (correlatedAnaComps != null)
+                            {
+                                // Aggregate it
+                                var avgPrice = correlatedAnaComps
+                                    .Where(ac => ac.ComponentType.Equals(ComponentType.Ask)
+                                                 || ac.ComponentType.Equals(ComponentType.Bid))
+                                    .DefaultIfEmpty()
+                                    .Average(ac => ac.AnalysedHistoricItems
+                                        .Where(ahi => ahi.CreatedAt >
+                                                      DateTime.UtcNow.Subtract(TimeSpan.FromDays(7)))
+                                        .DefaultIfEmpty()
+                                        .Average(ahi => decimal.Parse(ahi.Value)));
+
+                                if (!decimal.Zero.Equals(avgPrice))
+                                {
+                                    if (_analysedComponentService.UpdateValue(component.Id, avgPrice
+                                        .ToString(CultureInfo.InvariantCulture)))
+                                    {
+                                        // Updated successfully
+                                    }
+                                }
+                            }
+                        }
+
+                        var weeklyCompute = component.Request.RequestComponents
+                            .SelectMany(rcd => rcd.RcdHistoricItems)
+                            .Where(rcdhi => rcdhi.CreatedAt >= DateTime.UtcNow.Subtract(TimeSpan.FromDays(7)))
+                            .Select(rcdhi => rcdhi.Value)
+                            .DefaultIfEmpty()
+                            .Average(val => decimal.Parse(val));
+
+                        if (!decimal.Zero.Equals(weeklyCompute))
+                        {
+                            // Update
+                            if (_analysedComponentService.UpdateValue(component.Id, weeklyCompute.ToString()))
+                            {
+                                // Updated successfully
+                            }
+                        }
+
+                        break;
+                    case AnalysedComponentType.MonthlyPriceChange:
+                        // If its a currency-based AnalaysedComponent, we have to aggregate an
+                        if (component.CurrencyId != null && component.CurrencyId > 0)
+                        {
+                            // Obtain all Average price ACs that relate to this currency
+                            var currencyAnalysedComps =
+                                _analysedComponentEvent.GetAllByCurrency((long) component.CurrencyId);
+
+                            // Safetynet
+                            if (currencyAnalysedComps != null && currencyAnalysedComps.Count > 0)
+                            {
+                                // Filter
+                                currencyAnalysedComps = currencyAnalysedComps
+                                    .Where(rc => rc.ComponentType.Equals(ComponentType.Ask)
+                                                 || rc.ComponentType.Equals(ComponentType.Bid))
+                                    .DefaultIfEmpty()
+                                    .ToList();
+
+                                // Convert whatever is needed
+                                _analysedComponentEvent.ConvertToGenericCurrency(currencyAnalysedComps);
+
+                                // Now we can aggregate this
+                                var currAvgPrice = currencyAnalysedComps
+                                    .DefaultIfEmpty()
+                                    .Average(rc => rc.AnalysedHistoricItems
+                                        .Where(ahi => ahi.CreatedAt >
+                                                      DateTime.UtcNow.Subtract(TimeSpan.FromDays(30)))
+                                        .DefaultIfEmpty()
+                                        .Average(ahi => decimal.Parse(ahi.Value)));
+
+                                if (!(currAvgPrice <= decimal.Zero))
+                                {
+                                    if (_analysedComponentService.UpdateValue(component.Id,
+                                        currAvgPrice.ToString(CultureInfo.InvariantCulture)))
+                                    {
+                                        // Updated successfully
+                                    }
+                                }
+                            }
+                        }
+                        else
+                        {
+                            // Since it's not currency-based, its currencypair-based.
+
+                            // Obtain all of the analysed components that are related to this AC.
+                            var correlatedAnaComps = _analysedComponentEvent.GetAllByCorrelation(component.Id);
+
+                            if (correlatedAnaComps != null)
+                            {
+                                // Aggregate it
+                                var avgPrice = correlatedAnaComps
+                                    .Where(ac => ac.ComponentType.Equals(ComponentType.Ask)
+                                                 || ac.ComponentType.Equals(ComponentType.Bid))
+                                    .DefaultIfEmpty()
+                                    .Average(ac => ac.AnalysedHistoricItems
+                                        .Where(ahi => ahi.CreatedAt >
+                                                      DateTime.UtcNow.Subtract(TimeSpan.FromDays(30)))
+                                        .DefaultIfEmpty()
+                                        .Average(ahi => decimal.Parse(ahi.Value)));
+
+                                if (!decimal.Zero.Equals(avgPrice))
+                                {
+                                    if (_analysedComponentService.UpdateValue(component.Id, avgPrice
+                                        .ToString(CultureInfo.InvariantCulture)))
+                                    {
+                                        // Updated successfully
+                                    }
+                                }
+                            }
+                        }
+
+                        var monthlyCompute = component.Request.RequestComponents
+                            .SelectMany(rcd => rcd.RcdHistoricItems)
+                            .Where(rcdhi => rcdhi.CreatedAt >= DateTime.UtcNow.Subtract(TimeSpan.FromDays(30)))
+                            .Select(rcdhi => rcdhi.Value)
+                            .DefaultIfEmpty()
+                            .Average(val => decimal.Parse(val));
+
+                        if (!decimal.Zero.Equals(monthlyCompute))
+                        {
+                            // Update
+                            if (_analysedComponentService.UpdateValue(component.Id, monthlyCompute.ToString()))
+                            {
+                                // Updated successfully
+                            }
+                        }
+
+                        break;
+                    // Calculate the daily price percentage change.
+                    // TODO: % increase = Increase ÷ Original Number × 100.
+                    case AnalysedComponentType.DailyPricePctChange:
+                        // If its a currency-based AnalaysedComponent, we have to aggregate an
+                        if (component.CurrencyId != null && component.CurrencyId > 0)
+                        {
+                            // Obtain all Average price ACs that relate to this currency
+                            var currencyAnalysedComps =
+                                _analysedComponentEvent.GetAllByCurrency((long) component.CurrencyId, true);
+
+                            // Safetynet
+                            if (currencyAnalysedComps != null && currencyAnalysedComps.Count > 0)
+                            {
+                                // Filter
+                                var historicItems = currencyAnalysedComps
+                                    .Where(ac => ac.ComponentType.Equals(AnalysedComponentType.CurrentAveragePrice)
+                                                 && ac.AnalysedHistoricItems.Count > 0)
+                                    .SelectMany(ac => ac.AnalysedHistoricItems)
+                                    .Where(ahi => ahi.CreatedAt > DateTime.UtcNow.Subtract(TimeSpan.FromDays(1)))
+                                    // Make sure the latest is at the top, oldest at the bottom
+                                    .OrderByDescending(ahi => ahi.CreatedAt)
+                                    .ToList();
+
+                                if (historicItems.Count > 0)
+                                {
+                                    var latestValue = decimal.Parse(historicItems.First().Value
+                                                                    ?? "0");
+                                    var oldestValue = decimal.Parse(historicItems.Last().Value ?? "0");
+
+                                    // Calculate the increase
+                                    var increase = (latestValue - oldestValue) / oldestValue * 100;
 
                                     // Now we can aggregate this
-                                    var currAvgPrice = currencyAnalysedComps
-                                        .DefaultIfEmpty()
-                                        .Average(rc => rc.AnalysedHistoricItems
-                                            .Where(ahi => ahi.CreatedAt >
-                                                          DateTime.UtcNow.Subtract(TimeSpan.FromHours(24)))
-                                            .DefaultIfEmpty()
-                                            .Average(ahi => decimal.Parse(ahi.Value)));
-
-                                    if (!(currAvgPrice <= decimal.Zero))
+                                    if (increase != decimal.Zero)
                                     {
                                         if (_analysedComponentService.UpdateValue(component.Id,
-                                            currAvgPrice.ToString(CultureInfo.InvariantCulture)))
+                                            increase.ToString(CultureInfo.InvariantCulture)))
                                         {
                                             // Updated successfully
                                         }
                                     }
                                 }
+
+                                _logger.LogWarning($"{ServiceName}: Analyse({component.Id}): " +
+                                                   "DailyPricePctChange: no historical data yet.");
                             }
-                            else
+                        }
+                        else
+                        {
+                            // Since it's not currency-based, its currencypair-based.
+
+                            // Obtain all of the analysed components that are related to this AC.
+                            var correlatedAnaComps = _analysedComponentEvent.GetAllByCorrelation(component.Id, true);
+
+                            if (correlatedAnaComps != null)
                             {
-                                // Since it's not currency-based, its currencypair-based.
+                                // Filter
+                                var historicItems = correlatedAnaComps
+                                    .Where(ac => ac.ComponentType.Equals(AnalysedComponentType.CurrentAveragePrice)
+                                                 && ac.AnalysedHistoricItems.Count > 0)
+                                    .SelectMany(ac => ac.AnalysedHistoricItems)
+                                    .Where(ahi => ahi.CreatedAt > DateTime.UtcNow.Subtract(TimeSpan.FromDays(1)))
+                                    // Make sure the latest is at the top, oldest at the bottom
+                                    .OrderByDescending(ahi => ahi.CreatedAt)
+                                    .ToList();
 
-                                // Obtain all of the analysed components that are related to this AC.
-                                var correlatedAnaComps = _analysedComponentEvent.GetAllByCorrelation(component.Id);
-
-                                if (correlatedAnaComps != null)
+                                if (historicItems.Count > 0)
                                 {
-                                    // Aggregate it
-                                    var avgPrice = correlatedAnaComps
-                                        .Where(ac => ac.ComponentType.Equals(ComponentType.Ask)
-                                                     || ac.ComponentType.Equals(ComponentType.Bid))
-                                        .DefaultIfEmpty()
-                                        .Average(ac => ac.AnalysedHistoricItems
-                                            .Where(ahi => ahi.CreatedAt >
-                                                          DateTime.UtcNow.Subtract(TimeSpan.FromHours(24)))
-                                            .DefaultIfEmpty()
-                                            .Average(ahi => decimal.Parse(ahi.Value)));
+                                    var latestValue = decimal.Parse(historicItems.First().Value
+                                                                    ?? "0");
+                                    var oldestValue = decimal.Parse(historicItems.Last().Value ?? "0");
 
-                                    if (!decimal.Zero.Equals(avgPrice))
-                                    {
-                                        if (_analysedComponentService.UpdateValue(component.Id, avgPrice
-                                            .ToString(CultureInfo.InvariantCulture)))
-                                        {
-                                            // Updated successfully
-                                        }
-                                    }
-                                }
-                            }
-
-                            var dailyCompute = component.Request.RequestComponents
-                                .SelectMany(rcd => rcd.RcdHistoricItems)
-                                .Where(rcdhi => rcdhi.CreatedAt >= DateTime.UtcNow.Subtract(TimeSpan.FromDays(1)))
-                                .Select(rcdhi => rcdhi.Value)
-                                .DefaultIfEmpty()
-                                .Average(val => decimal.Parse(val));
-
-                            if (!decimal.Zero.Equals(dailyCompute))
-                            {
-                                // Update
-                                if (_analysedComponentService.UpdateValue(component.Id, dailyCompute.ToString()))
-                                {
-                                    // Updated successfully
-                                }
-                            }
-
-                            break;
-                        case AnalysedComponentType.WeeklyPriceChange:
-                            // If its a currency-based AnalaysedComponent, we have to aggregate an
-                            if (component.CurrencyId != null && component.CurrencyId > 0)
-                            {
-                                // Obtain all Average price ACs that relate to this currency
-                                var currencyAnalysedComps =
-                                    _analysedComponentEvent.GetAllByCurrency((long) component.CurrencyId);
-
-                                // Safetynet
-                                if (currencyAnalysedComps != null && currencyAnalysedComps.Count > 0)
-                                {
-                                    // Filter
-                                    currencyAnalysedComps = currencyAnalysedComps
-                                        .Where(rc => rc.ComponentType.Equals(ComponentType.Ask)
-                                                     || rc.ComponentType.Equals(ComponentType.Bid))
-                                        .DefaultIfEmpty()
-                                        .ToList();
-
-                                    // Convert whatever is needed
-                                    _analysedComponentEvent.ConvertToGenericCurrency(currencyAnalysedComps);
+                                    // Calculate the increase
+                                    var increase = (latestValue - oldestValue) / oldestValue * 100;
 
                                     // Now we can aggregate this
-                                    var currAvgPrice = currencyAnalysedComps
-                                        .DefaultIfEmpty()
-                                        .Average(rc => rc.AnalysedHistoricItems
-                                            .Where(ahi => ahi.CreatedAt >
-                                                          DateTime.UtcNow.Subtract(TimeSpan.FromDays(7)))
-                                            .DefaultIfEmpty()
-                                            .Average(ahi => decimal.Parse(ahi.Value)));
-
-                                    if (!(currAvgPrice <= decimal.Zero))
+                                    if (increase != decimal.Zero)
                                     {
                                         if (_analysedComponentService.UpdateValue(component.Id,
-                                            currAvgPrice.ToString(CultureInfo.InvariantCulture)))
+                                            increase.ToString(CultureInfo.InvariantCulture)))
                                         {
                                             // Updated successfully
                                         }
                                     }
                                 }
+
+                                _logger.LogWarning($"{ServiceName}: Analyse({component.Id}): " +
+                                                   "DailyPricePctChange: no historical data yet.");
                             }
-                            else
+                        }
+
+                        break;
+                    // Calculate the daily volume.
+                    case AnalysedComponentType.DailyVolume:
+                        // CURRENCY-BASED VOLUME
+                        // If its a currency-based AnalaysedComponent, we have to aggregate an
+                        if (component.CurrencyId != null && component.CurrencyId > 0)
+                        {
+                            // Obtain all Average price ACs that relate to this currency
+                            var currencyAnalysedComps =
+                                _analysedComponentEvent.GetAllByCurrency((long) component.CurrencyId);
+
+                            // Safetynet
+                            if (currencyAnalysedComps != null && currencyAnalysedComps.Count > 0)
                             {
-                                // Since it's not currency-based, its currencypair-based.
+                                // Filter
+                                currencyAnalysedComps = currencyAnalysedComps
+                                    .Where(ac => ac.ComponentType.Equals(AnalysedComponentType.DailyVolume))
+                                    .DefaultIfEmpty()
+                                    .ToList();
 
-                                // Obtain all of the analysed components that are related to this AC.
-                                var correlatedAnaComps = _analysedComponentEvent.GetAllByCorrelation(component.Id);
+                                // Convert whatever is needed
+                                _analysedComponentEvent.ConvertToGenericCurrency(currencyAnalysedComps);
 
-                                if (correlatedAnaComps != null)
-                                {
-                                    // Aggregate it
-                                    var avgPrice = correlatedAnaComps
-                                        .Where(ac => ac.ComponentType.Equals(ComponentType.Ask)
-                                                     || ac.ComponentType.Equals(ComponentType.Bid))
+                                // Now we can aggregate this
+                                var currAvgVol = currencyAnalysedComps
+                                    .DefaultIfEmpty()
+                                    .Average(rc => rc.AnalysedHistoricItems
+                                        .Where(ahi => ahi.CreatedAt >
+                                                      DateTime.UtcNow.Subtract(TimeSpan.FromDays(1)))
                                         .DefaultIfEmpty()
-                                        .Average(ac => ac.AnalysedHistoricItems
-                                            .Where(ahi => ahi.CreatedAt >
-                                                          DateTime.UtcNow.Subtract(TimeSpan.FromDays(7)))
-                                            .DefaultIfEmpty()
-                                            .Average(ahi => decimal.Parse(ahi.Value)));
+                                        .Average(ahi => decimal.Parse(ahi.Value)));
 
-                                    if (!decimal.Zero.Equals(avgPrice))
+                                if (!(currAvgVol <= decimal.Zero))
+                                {
+                                    if (_analysedComponentService.UpdateValue(component.Id,
+                                        currAvgVol.ToString(CultureInfo.InvariantCulture)))
                                     {
-                                        if (_analysedComponentService.UpdateValue(component.Id, avgPrice
-                                            .ToString(CultureInfo.InvariantCulture)))
-                                        {
-                                            // Updated successfully
-                                        }
+                                        // Updated successfully
                                     }
                                 }
                             }
-
-                            var weeklyCompute = component.Request.RequestComponents
-                                .SelectMany(rcd => rcd.RcdHistoricItems)
-                                .Where(rcdhi => rcdhi.CreatedAt >= DateTime.UtcNow.Subtract(TimeSpan.FromDays(7)))
-                                .Select(rcdhi => rcdhi.Value)
-                                .DefaultIfEmpty()
-                                .Average(val => decimal.Parse(val));
-
-                            if (!decimal.Zero.Equals(weeklyCompute))
-                            {
-                                // Update
-                                if (_analysedComponentService.UpdateValue(component.Id, weeklyCompute.ToString()))
-                                {
-                                    // Updated successfully
-                                }
-                            }
-
-                            break;
-                        case AnalysedComponentType.MonthlyPriceChange:
-                            // If its a currency-based AnalaysedComponent, we have to aggregate an
-                            if (component.CurrencyId != null && component.CurrencyId > 0)
-                            {
-                                // Obtain all Average price ACs that relate to this currency
-                                var currencyAnalysedComps =
-                                    _analysedComponentEvent.GetAllByCurrency((long) component.CurrencyId);
-
-                                // Safetynet
-                                if (currencyAnalysedComps != null && currencyAnalysedComps.Count > 0)
-                                {
-                                    // Filter
-                                    currencyAnalysedComps = currencyAnalysedComps
-                                        .Where(rc => rc.ComponentType.Equals(ComponentType.Ask)
-                                                     || rc.ComponentType.Equals(ComponentType.Bid))
-                                        .DefaultIfEmpty()
-                                        .ToList();
-
-                                    // Convert whatever is needed
-                                    _analysedComponentEvent.ConvertToGenericCurrency(currencyAnalysedComps);
-
-                                    // Now we can aggregate this
-                                    var currAvgPrice = currencyAnalysedComps
-                                        .DefaultIfEmpty()
-                                        .Average(rc => rc.AnalysedHistoricItems
-                                            .Where(ahi => ahi.CreatedAt >
-                                                          DateTime.UtcNow.Subtract(TimeSpan.FromDays(30)))
-                                            .DefaultIfEmpty()
-                                            .Average(ahi => decimal.Parse(ahi.Value)));
-
-                                    if (!(currAvgPrice <= decimal.Zero))
-                                    {
-                                        if (_analysedComponentService.UpdateValue(component.Id,
-                                            currAvgPrice.ToString(CultureInfo.InvariantCulture)))
-                                        {
-                                            // Updated successfully
-                                        }
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                // Since it's not currency-based, its currencypair-based.
-
-                                // Obtain all of the analysed components that are related to this AC.
-                                var correlatedAnaComps = _analysedComponentEvent.GetAllByCorrelation(component.Id);
-
-                                if (correlatedAnaComps != null)
-                                {
-                                    // Aggregate it
-                                    var avgPrice = correlatedAnaComps
-                                        .Where(ac => ac.ComponentType.Equals(ComponentType.Ask)
-                                                     || ac.ComponentType.Equals(ComponentType.Bid))
-                                        .DefaultIfEmpty()
-                                        .Average(ac => ac.AnalysedHistoricItems
-                                            .Where(ahi => ahi.CreatedAt >
-                                                          DateTime.UtcNow.Subtract(TimeSpan.FromDays(30)))
-                                            .DefaultIfEmpty()
-                                            .Average(ahi => decimal.Parse(ahi.Value)));
-
-                                    if (!decimal.Zero.Equals(avgPrice))
-                                    {
-                                        if (_analysedComponentService.UpdateValue(component.Id, avgPrice
-                                            .ToString(CultureInfo.InvariantCulture)))
-                                        {
-                                            // Updated successfully
-                                        }
-                                    }
-                                }
-                            }
-
-                            var monthlyCompute = component.Request.RequestComponents
-                                .SelectMany(rcd => rcd.RcdHistoricItems)
-                                .Where(rcdhi => rcdhi.CreatedAt >= DateTime.UtcNow.Subtract(TimeSpan.FromDays(30)))
-                                .Select(rcdhi => rcdhi.Value)
-                                .DefaultIfEmpty()
-                                .Average(val => decimal.Parse(val));
-
-                            if (!decimal.Zero.Equals(monthlyCompute))
-                            {
-                                // Update
-                                if (_analysedComponentService.UpdateValue(component.Id, monthlyCompute.ToString()))
-                                {
-                                    // Updated successfully
-                                }
-                            }
-
-                            break;
-                        // Calculate the daily price percentage change.
-                        // TODO: % increase = Increase ÷ Original Number × 100.
-                        case AnalysedComponentType.DailyPricePctChange:
-                            // If its a currency-based AnalaysedComponent, we have to aggregate an
-                            if (component.CurrencyId != null && component.CurrencyId > 0)
-                            {
-                                // Obtain all Average price ACs that relate to this currency
-                                var currencyAnalysedComps =
-                                    _analysedComponentEvent.GetAllByCurrency((long) component.CurrencyId, true);
-
-                                // Safetynet
-                                if (currencyAnalysedComps != null && currencyAnalysedComps.Count > 0)
-                                {
-                                    // Filter
-                                    var historicItems = currencyAnalysedComps
-                                        .Where(ac => ac.ComponentType.Equals(AnalysedComponentType.CurrentAveragePrice)
-                                        && ac.AnalysedHistoricItems.Count > 0)
-                                        .SelectMany(ac => ac.AnalysedHistoricItems)
-                                        .Where(ahi => ahi.CreatedAt > DateTime.UtcNow.Subtract(TimeSpan.FromDays(1)))
-                                        // Make sure the latest is at the top, oldest at the bottom
-                                        .OrderByDescending(ahi => ahi.CreatedAt)
-                                        .ToList();
-
-                                    if (historicItems.Count > 0)
-                                    {
-                                        var latestValue = decimal.Parse(historicItems.First().Value
-                                                                        ?? "0");
-                                        var oldestValue = decimal.Parse(historicItems.Last().Value ?? "0");
-                                    
-                                        // Calculate the increase
-                                        var increase = (latestValue - oldestValue) / oldestValue * 100;
-                                    
-                                        // Now we can aggregate this
-                                        if (increase != decimal.Zero)
-                                        {
-                                            if (_analysedComponentService.UpdateValue(component.Id,
-                                                increase.ToString(CultureInfo.InvariantCulture)))
-                                            {
-                                                // Updated successfully
-                                            }
-                                        }
-                                    }
-                                    
-                                    _logger.LogWarning($"{ServiceName}: Analyse({component.Id}): " +
-                                                       "DailyPricePctChange: no historical data yet.");
-                                }
-                            }
-                            else
-                            {
-                                // Since it's not currency-based, its currencypair-based.
-
-                                // Obtain all of the analysed components that are related to this AC.
-                                var correlatedAnaComps = _analysedComponentEvent.GetAllByCorrelation(component.Id, true);
-
-                                if (correlatedAnaComps != null)
-                                {
-                                    // Filter
-                                    var historicItems = correlatedAnaComps
-                                        .Where(ac => ac.ComponentType.Equals(AnalysedComponentType.CurrentAveragePrice)
-                                        && ac.AnalysedHistoricItems.Count > 0)
-                                        .SelectMany(ac => ac.AnalysedHistoricItems)
-                                        .Where(ahi => ahi.CreatedAt > DateTime.UtcNow.Subtract(TimeSpan.FromDays(1)))
-                                        // Make sure the latest is at the top, oldest at the bottom
-                                        .OrderByDescending(ahi => ahi.CreatedAt)
-                                        .ToList();
-
-                                    if (historicItems.Count > 0)
-                                    {
-                                        var latestValue = decimal.Parse(historicItems.First().Value
-                                                                        ?? "0");
-                                        var oldestValue = decimal.Parse(historicItems.Last().Value ?? "0");
-                                    
-                                        // Calculate the increase
-                                        var increase = (latestValue - oldestValue) / oldestValue * 100;
-                                    
-                                        // Now we can aggregate this
-                                        if (increase != decimal.Zero)
-                                        {
-                                            if (_analysedComponentService.UpdateValue(component.Id,
-                                                increase.ToString(CultureInfo.InvariantCulture)))
-                                            {
-                                                // Updated successfully
-                                            }
-                                        }
-                                    }
-                                    
-                                    _logger.LogWarning($"{ServiceName}: Analyse({component.Id}): " +
-                                                       "DailyPricePctChange: no historical data yet.");
-                                }
-                            }
-                            break;
-                        // Calculate the daily volume.
-                        case AnalysedComponentType.DailyVolume:
-                            // CURRENCY-BASED VOLUME
-                            // If its a currency-based AnalaysedComponent, we have to aggregate an
-                            if (component.CurrencyId != null && component.CurrencyId > 0)
-                            {
-                                // Obtain all Average price ACs that relate to this currency
-                                var currencyAnalysedComps =
-                                    _analysedComponentEvent.GetAllByCurrency((long) component.CurrencyId);
-
-                                // Safetynet
-                                if (currencyAnalysedComps != null && currencyAnalysedComps.Count > 0)
-                                {
-                                    // Filter
-                                    currencyAnalysedComps = currencyAnalysedComps
-                                        .Where(ac => ac.ComponentType.Equals(AnalysedComponentType.DailyVolume))
-                                        .DefaultIfEmpty()
-                                        .ToList();
-
-                                    // Convert whatever is needed
-                                    _analysedComponentEvent.ConvertToGenericCurrency(currencyAnalysedComps);
-
-                                    // Now we can aggregate this
-                                    var currAvgVol = currencyAnalysedComps
-                                        .DefaultIfEmpty()
-                                        .Average(rc => rc.AnalysedHistoricItems
-                                            .Where(ahi => ahi.CreatedAt >
-                                                          DateTime.UtcNow.Subtract(TimeSpan.FromDays(1)))
-                                            .DefaultIfEmpty()
-                                            .Average(ahi => decimal.Parse(ahi.Value)));
-
-                                    if (!(currAvgVol <= decimal.Zero))
-                                    {
-                                        if (_analysedComponentService.UpdateValue(component.Id,
-                                            currAvgVol.ToString(CultureInfo.InvariantCulture)))
-                                        {
-                                            // Updated successfully
-                                        }
-                                    }
-                                }
-                            }
-                            else
+                        }
+                        else
                             // CURRENCYPAIR-BASED VOLUME
+                        {
+                            // Since it's not currency-based, its currencypair-based.
+
+                            // Obtain all of the analysed components that are related to this AC.
+                            var correlatedReqComps = _requestComponentEvent.GetAllByCorrelation(component.Id, true);
+
+                            if (correlatedReqComps != null && correlatedReqComps
+                                    .Any(rc => rc.ComponentType.Equals(ComponentType.VOLUME)
+                                               && rc.RcdHistoricItems != null
+                                               && rc.RcdHistoricItems.Count > 0))
                             {
-                                // Since it's not currency-based, its currencypair-based.
-
-                                // Obtain all of the analysed components that are related to this AC.
-                                var correlatedReqComps = _requestComponentEvent.GetAllByCorrelation(component.Id, true);
-
-                                if (correlatedReqComps != null && correlatedReqComps
-                                        .Any(rc => rc.ComponentType.Equals(ComponentType.VOLUME)
-                                                   && rc.RcdHistoricItems != null 
-                                                   && rc.RcdHistoricItems.Count > 0))
-                                {
-                                    // Aggregate it
-                                    var avgVol = correlatedReqComps
-                                        .Where(rc => rc.ComponentType.Equals(ComponentType.VOLUME))
+                                // Aggregate it
+                                var avgVol = correlatedReqComps
+                                    .Where(rc => rc.ComponentType.Equals(ComponentType.VOLUME))
+                                    .DefaultIfEmpty()
+                                    .Average(rc => rc.RcdHistoricItems
+                                        .Where(rcdhi => rcdhi.CreatedAt >
+                                                        DateTime.UtcNow.Subtract(TimeSpan.FromDays(1)))
                                         .DefaultIfEmpty()
-                                        .Average(rc => rc.RcdHistoricItems
-                                            .Where(rcdhi => rcdhi.CreatedAt >
-                                                          DateTime.UtcNow.Subtract(TimeSpan.FromDays(1)))
-                                            .DefaultIfEmpty()
-                                            .Average(rcdhi => decimal.Parse(rcdhi.Value)));
+                                        .Average(rcdhi => decimal.Parse(rcdhi.Value)));
 
-                                    if (!decimal.Zero.Equals(avgVol))
+                                if (!decimal.Zero.Equals(avgVol))
+                                {
+                                    if (_analysedComponentService.UpdateValue(component.Id, avgVol
+                                        .ToString(CultureInfo.InvariantCulture)))
                                     {
-                                        if (_analysedComponentService.UpdateValue(component.Id, avgVol
-                                            .ToString(CultureInfo.InvariantCulture)))
-                                        {
-                                            // Updated successfully
-                                        }
+                                        // Updated successfully
                                     }
                                 }
                             }
-                            break;
-                        default:
-                            return false;
-                    }
+                        }
+
+                        break;
+                    default:
+                        return false;
+                }
             }
 
             return true;
@@ -666,13 +754,12 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                     // Don't have to save it
                     return true; // Stashed
                 }
-                
-                // Precise check
-                if (decimal.TryParse(lastHistorical.Value, out var lastVal) 
-                && decimal.TryParse(component.Value, out var valToStash)
-                && !lastVal.Equals(valToStash))
-                {
 
+                // Precise check
+                if (decimal.TryParse(lastHistorical.Value, out var lastVal)
+                    && decimal.TryParse(component.Value, out var valToStash)
+                    && !lastVal.Equals(valToStash))
+                {
                     // Save it
                     var res = _analysedHistoricItemService.Create(new AnalysedHistoricItem
                     {
@@ -692,10 +779,10 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
             else
             {
                 // This component does not have a historical object yet..
-                
+
                 // Failsafe
                 if (string.IsNullOrEmpty(component.Value)) return true; // Job done, don't save since its null. 
-                
+
                 // Save it
                 var res = _analysedHistoricItemService.Create(new AnalysedHistoricItem
                 {
@@ -703,7 +790,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                     HistoricDateTime = component.CreatedAt,
                     Value = component.Value
                 });
-                
+
                 return res > 0;
             }
         }
