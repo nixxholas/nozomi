@@ -218,8 +218,8 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                         break;
                     // Calculate the current average price.
                     case AnalysedComponentType.HourlyAveragePrice:
-                        // If it hasn't been updated for an hour
-                        if (component.ModifiedAt.AddHours(1) < DateTime.UtcNow)
+                        // If it hasn't been updated for an hour or if the value is not computed yet
+                        if (component.ModifiedAt.AddHours(1) < DateTime.UtcNow || string.IsNullOrEmpty(component.Value))
                         {
                             // Which case? Allow currency to precede first.
                             if (component.CurrencyId != null && component.CurrencyId > 0)
