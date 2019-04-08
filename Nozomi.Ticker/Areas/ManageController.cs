@@ -109,6 +109,7 @@ namespace Nozomi.Ticker.Areas
             return View(vm);
         }
 
+        #region Source APIs
         [HttpGet]
         [Authorize(Roles = "Owner, Administrator, Staff")]
         public async Task<IActionResult> CreateSource()
@@ -142,7 +143,9 @@ namespace Nozomi.Ticker.Areas
             
             return RedirectToAction("CreateSource");
         }
+        #endregion
 
+        #region Ticker APIs
         [HttpGet]
         [Authorize(Roles = "Owner, Administrator, Staff")]
         public async Task<IActionResult> CreateTicker()
@@ -180,6 +183,7 @@ namespace Nozomi.Ticker.Areas
             vm.StatusMessage = "There was something erroneous with your submission.";
             return RedirectToAction("CreateTicker");
         }
+        #endregion
 
         //
         // POST: /Manage/RemoveLogin
