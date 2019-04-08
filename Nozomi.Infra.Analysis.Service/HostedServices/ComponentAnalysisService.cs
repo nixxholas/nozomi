@@ -269,8 +269,10 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                             {
                                 // Obtain all of the req components that are related to this AC.
                                 var correlatedReqComps = _requestComponentEvent.GetAllByCorrelation(component.Id, true)
-                                    .Where(rc => rc.RcdHistoricItems != null &&
-                                                 rc.RcdHistoricItems
+                                    .Where(rc => (rc.ComponentType.Equals(ComponentType.Ask)
+                                                 || rc.ComponentType.Equals(ComponentType.Bid))
+                                                 && rc.RcdHistoricItems != null 
+                                                 && rc.RcdHistoricItems
                                                      .Any(rcdhi => rcdhi.HistoricDateTime >
                                                                    DateTime.UtcNow.Subtract(TimeSpan.FromHours(1))))
                                     .ToList();
