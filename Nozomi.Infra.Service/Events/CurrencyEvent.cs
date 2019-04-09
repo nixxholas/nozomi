@@ -344,10 +344,6 @@ namespace Nozomi.Service.Events
 
             if (currencies != null)
             {
-#if DEBUG
-                var listedCurrencies = currencies.ToList();
-#endif
-
                 foreach (var currency in currencies)
                 {
                     // Do not add duplicates
@@ -365,6 +361,10 @@ namespace Nozomi.Service.Events
                             ?.Populate(currency);
                     }
                 }
+
+                res = res
+                    .OrderByDescending(c => c.MarketCap)
+                    .ToList();
             }
 
             return res;
