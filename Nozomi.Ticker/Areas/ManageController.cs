@@ -108,6 +108,21 @@ namespace Nozomi.Ticker.Areas
 
             return View(vm);
         }
+        
+        #region Currency APIs
+        [HttpGet]
+        [Authorize(Roles="Owner, Administrator, Staff")]
+        public async Task<IActionResult> CreateCurrency()
+        {
+            var user = await GetCurrentUserAsync();
+            if (user == null)
+            {
+                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
+            
+            return View();
+        }
+        #endregion
 
         #region Source APIs
         [HttpGet]
@@ -271,7 +286,8 @@ namespace Nozomi.Ticker.Areas
                 if (!await _userManager.CheckPasswordAsync(user, model.Password))
                 {
                     ModelState.AddModelError(string.Empty, "Password not correct.");
-                    return View();
+                    
+                    return Redirect("~/");
                 }
             }
 
@@ -587,39 +603,39 @@ namespace Nozomi.Ticker.Areas
             return RedirectToAction(nameof(ChangePassword), new { Message = ChangePasswordMessageId.Error });
         }
 
-        //
-        // GET: /Manage/SetPassword
-        [HttpGet]
-        public IActionResult SetPassword()
-        {
-            return View();
-        }
-
-        //
-        // POST: /Manage/SetPassword
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> SetPassword(SetPasswordViewModel model)
-        {
-            if (!ModelState.IsValid)
-            {
-                return View(model);
-            }
-
-            var user = await GetCurrentUserAsync();
-            if (user != null)
-            {
-                var result = await _userManager.AddPasswordAsync(user, model.NewPassword);
-                if (result.Succeeded)
-                {
-                    await _signInManager.SignInAsync(user, isPersistent: false);
-                    return RedirectToAction(nameof(Index), new { Message = EditProfileMessageId.SetPasswordSuccess });
-                }
-                AddErrors(result);
-                return View(model);
-            }
-            return RedirectToAction(nameof(Index), new { Message = EditProfileMessageId.Error });
-        }
+//        //
+//        // GET: /Manage/SetPassword
+//        [HttpGet]
+//        public IActionResult SetPassword()
+//        {
+//            return View();
+//        }
+//
+//        //
+//        // POST: /Manage/SetPassword
+//        [HttpPost]
+//        [ValidateAntiForgeryToken]
+//        public async Task<IActionResult> SetPassword(SetPasswordViewModel model)
+//        {
+//            if (!ModelState.IsValid)
+//            {
+//                return View(model);
+//            }
+//
+//            var user = await GetCurrentUserAsync();
+//            if (user != null)
+//            {
+//                var result = await _userManager.AddPasswordAsync(user, model.NewPassword);
+//                if (result.Succeeded)
+//                {
+//                    await _signInManager.SignInAsync(user, isPersistent: false);
+//                    return RedirectToAction(nameof(Index), new { Message = EditProfileMessageId.SetPasswordSuccess });
+//                }
+//                AddErrors(result);
+//                return View(model);
+//            }
+//            return RedirectToAction(nameof(Index), new { Message = EditProfileMessageId.Error });
+//        }
 
         //GET: /Manage/ManageLogins
         [HttpGet]
