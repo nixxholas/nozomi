@@ -124,6 +124,22 @@ namespace Nozomi.Ticker.Areas
         }
         #endregion
 
+        #region Request Component APIs
+
+        [HttpGet]
+        [Authorize(Roles = "Owner, Administrator, Staff")]
+        public async Task<IActionResult> CreateRequestComponent()
+        {
+            var user = await GetCurrentUserAsync();
+            if (user == null)
+            {
+                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
+            
+            return View();
+        }
+        #endregion
+
         #region Source APIs
         [HttpGet]
         [Authorize(Roles = "Owner, Administrator, Staff")]
