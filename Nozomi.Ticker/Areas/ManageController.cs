@@ -126,9 +126,14 @@ namespace Nozomi.Ticker.Areas
 
         #region Request Component APIs
 
-        [HttpGet]
+        /// <summary>
+        /// Allows you to create a request component relative to the request.
+        /// </summary>
+        /// <param name="id">Request Id</param>
+        /// <returns></returns>
+        [HttpGet("{id}")]
         [Authorize(Roles = "Owner, Administrator, Staff")]
-        public async Task<IActionResult> CreateRequestComponent()
+        public async Task<IActionResult> CreateRequestComponent(long id)
         {
             var user = await GetCurrentUserAsync();
             if (user == null)
@@ -138,6 +143,7 @@ namespace Nozomi.Ticker.Areas
             
             return View();
         }
+        
         #endregion
 
         #region Source APIs
