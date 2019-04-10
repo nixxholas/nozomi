@@ -90,7 +90,7 @@ namespace Nozomi.Infra.Analysis.Service.Events.Analysis
             }
         }
 
-        public IEnumerable<AnalysedComponent> GetAll(bool filter = false, bool track = false)
+        public IEnumerable<AnalysedComponent> GetAll(int index = 0, bool filter = false, bool track = false)
         {
             var query = _unitOfWork.GetRepository<AnalysedComponent>()
                 .GetQueryable()
@@ -112,7 +112,9 @@ namespace Nozomi.Infra.Analysis.Service.Events.Analysis
                     .ThenInclude(rcd => rcd.RcdHistoricItems);
             }
 
-            return query;
+            return query
+                .Skip(index * 50)
+                .Take(50);
         }
 
         public ICollection<AnalysedComponent> GetAllByCurrency(long currencyId, bool track = false)

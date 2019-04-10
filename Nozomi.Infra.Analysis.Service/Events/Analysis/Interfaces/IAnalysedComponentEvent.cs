@@ -7,7 +7,7 @@ namespace Nozomi.Infra.Analysis.Service.Events.Analysis.Interfaces
     {
         void ConvertToGenericCurrency(ICollection<AnalysedComponent> analysedComponents);
         
-        IEnumerable<AnalysedComponent> GetAll(bool filter = false, bool track = false);
+        IEnumerable<AnalysedComponent> GetAll(int index = 0, bool filter = false, bool track = false);
 
         ICollection<AnalysedComponent> GetAllByCurrency(long currencyId, bool track = false);
 
