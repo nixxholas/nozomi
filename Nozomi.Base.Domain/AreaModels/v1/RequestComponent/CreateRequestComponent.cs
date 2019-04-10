@@ -4,7 +4,7 @@ namespace Nozomi.Data.AreaModels.v1.RequestComponent
 {
     public class CreateRequestComponent
     {
-        public long RequestComponentId { get; set; }
+        public long RequestId { get; set; }
 
         public ComponentType ComponentType { get; set; } = ComponentType.Unknown;
         
