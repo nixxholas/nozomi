@@ -19,6 +19,7 @@ using Nozomi.Base.Identity.ViewModels.Manage.PaymentMethods;
 using Nozomi.Base.Identity.ViewModels.Manage.Tickers;
 using Nozomi.Base.Identity.ViewModels.Manage.TwoFactorAuthentication;
 using Nozomi.Data.AreaModels.v1.CurrencySource;
+using Nozomi.Data.AreaModels.v1.RequestComponent;
 using Nozomi.Preprocessing.Events.Interfaces;
 using Nozomi.Service.Events.Interfaces;
 using Nozomi.Service.Identity.Events.Auth.Interfaces;
@@ -32,6 +33,7 @@ namespace Nozomi.Ticker.Areas
     public class ManageController : BaseViewController<ManageController>
     {
         private readonly IApiTokenEvent _apiTokenEvent;
+        private readonly IRequestEvent _requestEvent;
         private readonly ISourceEvent _sourceEvent;
         private readonly IStripeEvent _stripeEvent;
         private readonly ISourceService _sourceService;
@@ -41,13 +43,14 @@ namespace Nozomi.Ticker.Areas
         private readonly UrlEncoder _urlEncoder;
         
         public ManageController(ILogger<ManageController> logger, NozomiSignInManager signInManager, 
-            NozomiUserManager userManager, ISmsSender smsSender, IStripeService stripeService, IStripeEvent stripeEvent,
-            IApiTokenEvent apiTokenEvent, ISourceEvent sourceEvent, ITickerService tickerService, 
-            ISourceService sourceService, UrlEncoder urlEncoder) 
+            NozomiUserManager userManager, ISmsSender smsSender, IRequestEvent requestEvent, 
+            IStripeService stripeService, IStripeEvent stripeEvent, IApiTokenEvent apiTokenEvent, 
+            ISourceEvent sourceEvent, ITickerService tickerService, ISourceService sourceService, UrlEncoder urlEncoder) 
             : base(logger, signInManager, userManager)
         {
             _smsSender = smsSender;
             _apiTokenEvent = apiTokenEvent;
+            _requestEvent = requestEvent;
             _stripeEvent = stripeEvent;
             _stripeService = stripeService;
             _sourceEvent = sourceEvent;
@@ -140,8 +143,16 @@ namespace Nozomi.Ticker.Areas
             {
                 return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
+
+            var req = _requestEvent.GetActive(id);
             
-            return View();
+            if (req == null)
+                ModelState.AddModelError("InvalidRequestException", "Invalid Request.");
+
+            return View(new CreateRequestComponent
+            {
+                RequestId = req.Id
+            });
         }
         
         #endregion
