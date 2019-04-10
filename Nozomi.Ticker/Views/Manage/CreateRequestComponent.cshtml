@@ -42,6 +42,21 @@
                     </div>
                 </div>
             </div>
+            
+            <div class="row">
+                <div class="col-md-3 mb-3 mb-md-0">
+                    <div class="form-group">
+                        <label asp-for="IsDenominated"></label>
+                        <input class="form-control" type="checkbox" asp-for="IsDenominated"/>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3 mb-md-0">
+                    <div class="form-group">
+                        <label asp-for="AnomalyIgnorance"></label>
+                        <input class="form-control" type="checkbox" asp-for="AnomalyIgnorance"/>
+                    </div>
+                </div>
+            </div>
 
             <button type="submit" class="btn btn-primary">Create</button>
         </form>
