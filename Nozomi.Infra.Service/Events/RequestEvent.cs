@@ -1,6 +1,8 @@
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Nozomi.Data.AreaModels.v1.Requests;
 using Nozomi.Data.Models.Web;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.BCL.Repository;
@@ -36,6 +38,26 @@ namespace Nozomi.Service.Events
             return query?
                 .SingleOrDefault(r => r.Id.Equals(id) && r.DeletedAt == null
                                                       && r.IsEnabled);
+        }
+
+        public ICollection<RequestDTO> GetAllDTO(int index)
+        {
+            return _unitOfWork.GetRepository<Request>()
+                .GetQueryable()
+                .AsNoTracking()
+                .Where(r => r.DeletedAt == null && r.IsEnabled)
+                .Skip(index * 50)
+                .Take(50)
+                .Select(r => new RequestDTO
+                {
+                    Guid = r.Guid,
+                    RequestType = r.RequestType,
+                    ResponseType = r.ResponseType,
+                    DataPath = r.DataPath,
+                    Delay = r.Delay,
+                    FailureDelay = r.FailureDelay
+                })
+                .ToList();
         }
     }
 }
