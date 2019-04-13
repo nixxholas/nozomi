@@ -15,11 +15,11 @@
         
         <b-table :items="requests">
             <template slot="RequestType" slot-scope="datum">
-                {{  }}
+                {{ getRequestTypeStr(datum.item.RequestType) }}
             </template>
-            <template slot="actions" slot-scope="datum">
-                <b-button :href='/manage/request/' + datum.item.Guid>View</b-button>
-            </template>
+            @* <template slot="actions" slot-scope="datum"> *@
+            @*     <b-button :href='/manage/request/' + datum.item.Guid>View</b-button> *@
+            @* </template> *@
         </b-table>
     </div>
 </div>
