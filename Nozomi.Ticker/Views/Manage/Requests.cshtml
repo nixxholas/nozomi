@@ -1,4 +1,5 @@
 @using Newtonsoft.Json
+@using Nozomi.Preprocessing
 @using Nozomi.Service.Events.Interfaces
 @inject IRequestEvent _requestEvent
 
@@ -12,7 +13,11 @@
     <div class="container space-2">
         <h3 class="mb-6">Requests</h3>
         
-        <b-table :items="requests"></b-table>
+        <b-table :items="requests">
+            <template slot="actions" slot-scope="datum">
+                <b-button :href='/manage/request/' + datum.item.Guid>View</b-button>
+            </template>
+        </b-table>
     </div>
 </div>
 
@@ -23,6 +28,14 @@
             el: "#content",
             // Just dish any random variable in for now
             data: {
+                requestTypes: @Html.Raw(Json.Serialize(NozomiServiceConstants.requestTypes, new JsonSerializerSettings
+                 {
+                   ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                 })),
+                responseTypes: @Html.Raw(Json.Serialize(NozomiServiceConstants.responseTypes, new JsonSerializerSettings
+                 {
+                   ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                 })),
                 requests: @Html.Raw(JsonConvert.SerializeObject(requests))
             },
             created: function() {

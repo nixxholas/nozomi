@@ -25,5 +25,9 @@ namespace Nozomi.Preprocessing
             EnumHelper.GetEnumValuesAndDescriptions<AnalysedComponentType>();
         public static List<KeyValuePair<string, int>> requestComponentTypes = 
             EnumHelper.GetEnumValuesAndDescriptions<ComponentType>();
+        public static List<KeyValuePair<string, int>> requestTypes =
+            EnumHelper.GetEnumValuesAndDescriptions<RequestType>();
+        public static List<KeyValuePair<string, int>> responseTypes =
+            EnumHelper.GetEnumValuesAndDescriptions<ResponseType>();
     }
 }
