@@ -1,0 +1,32 @@
+@using Newtonsoft.Json
+@using Nozomi.Service.Events.Interfaces
+@inject IRequestEvent _requestEvent
+
+@{
+    var requests = _requestEvent.GetAllDTO(0);
+}
+
+
+<!-- Content Section -->
+<div class="bg-light">
+    <div class="container space-2">
+        <h3 class="mb-6">Requests</h3>
+        
+        <b-table :items="requests"></b-table>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        const vm = new Vue({
+            // options
+            el: "#content",
+            // Just dish any random variable in for now
+            data: {
+                requests: @Html.Raw(JsonConvert.SerializeObject(requests))
+            },
+            created: function() {
+            }
+        });
+    </script>
+}
