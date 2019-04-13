@@ -14,6 +14,9 @@
         <h3 class="mb-6">Requests</h3>
         
         <b-table :items="requests">
+            <template slot="RequestType" slot-scope="datum">
+                {{  }}
+            </template>
             <template slot="actions" slot-scope="datum">
                 <b-button :href='/manage/request/' + datum.item.Guid>View</b-button>
             </template>
@@ -37,6 +40,30 @@
                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore
                  })),
                 requests: @Html.Raw(JsonConvert.SerializeObject(requests))
+            },
+            methods: {
+                getRequestTypeStr(val) {
+                    if (this.requestTypes != null) {
+                        for (i = 0; i < this.requestTypes.length; i++) {
+                            if (this.requestTypes[i].Value == val) {
+                                return this.requestTypes[i].Key;
+                            }
+                        }
+                    }
+          
+                    return null;
+                },
+                getResponseTypeStr(val) {
+                    if (this.responseTypes != null) {
+                        for (i = 0; i < this.responseTypes.length; i++) {
+                            if (this.responseTypes[i].Value == val) {
+                                return this.responseTypes[i].Key;
+                            }
+                        }
+                    }
+          
+                    return null;
+                }
             },
             created: function() {
             }
