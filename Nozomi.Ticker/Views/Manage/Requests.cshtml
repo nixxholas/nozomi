@@ -23,8 +23,12 @@
             <template slot="DataPath" slot-scope="datum">
                 <a :href="datum.item.DataPath">{{ datum.item.DataPath }}</a>
             </template>
+            <!-- Seems like momentjs can't support what we want lol https://github.com/moment/moment/issues/348 -->
             <template slot="Delay" slot-scope="datum">
-                {{ moment.duration(datum.item.Delay) }}
+                {{ moment.duration(datum.item.Delay, 'SSS').humanize() }}
+            </template>
+            <template slot="FailureDelay" slot-scope="datum">
+                {{ moment.duration(datum.item.FailureDelay, 'SSS').humanize() }}
             </template>
             <template slot="actions" slot-scope="datum">
                 <b-button variant="primary" :href="'request/' + datum.item.Guid">View</b-button>
