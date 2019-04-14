@@ -566,7 +566,6 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
 
                         break;
                     // Calculate the daily price percentage change.
-                    // TODO: % increase = Increase ÷ Original Number × 100.
                     case AnalysedComponentType.DailyPricePctChange:
                         // If its a currency-based AnalaysedComponent, we have to aggregate an
                         if (component.CurrencyId != null && component.CurrencyId > 0)
@@ -627,6 +626,96 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                                  && ac.AnalysedHistoricItems.Count > 0)
                                     .SelectMany(ac => ac.AnalysedHistoricItems)
                                     .Where(ahi => ahi.CreatedAt > DateTime.UtcNow.Subtract(TimeSpan.FromDays(1)))
+                                    // Make sure the latest is at the top, oldest at the bottom
+                                    .OrderByDescending(ahi => ahi.CreatedAt)
+                                    .ToList();
+
+                                if (historicItems.Count > 0)
+                                {
+                                    var latestValue = decimal.Parse(historicItems.First().Value
+                                                                    ?? "0");
+                                    var oldestValue = decimal.Parse(historicItems.Last().Value ?? "0");
+
+                                    // Calculate the increase
+                                    var increase = (latestValue - oldestValue) / oldestValue * 100;
+
+                                    // Now we can aggregate this
+                                    if (increase != decimal.Zero)
+                                    {
+                                        if (_analysedComponentService.UpdateValue(component.Id,
+                                            increase.ToString(CultureInfo.InvariantCulture)))
+                                        {
+                                            // Updated successfully
+                                        }
+                                    }
+                                }
+
+                                _logger.LogWarning($"{ServiceName}: Analyse({component.Id}): " +
+                                                   "DailyPricePctChange: no historical data yet.");
+                            }
+                        }
+
+                        break;
+                    case AnalysedComponentType.HourlyPricePctChange:
+                        // If its a currency-based AnalaysedComponent, we have to aggregate an
+                        if (component.CurrencyId != null && component.CurrencyId > 0)
+                        {
+                            // Obtain all Average price ACs that relate to this currency
+                            var currencyAnalysedComps =
+                                _analysedComponentEvent.GetAllByCurrency((long) component.CurrencyId, true);
+
+                            // Safetynet
+                            if (currencyAnalysedComps != null && currencyAnalysedComps.Count > 0)
+                            {
+                                // Filter
+                                var historicItems = currencyAnalysedComps
+                                    .Where(ac => ac.ComponentType.Equals(AnalysedComponentType.CurrentAveragePrice)
+                                                 && ac.AnalysedHistoricItems.Count > 0)
+                                    .SelectMany(ac => ac.AnalysedHistoricItems)
+                                    .Where(ahi => ahi.CreatedAt > DateTime.UtcNow.Subtract(TimeSpan.FromHours(1)))
+                                    // Make sure the latest is at the top, oldest at the bottom
+                                    .OrderByDescending(ahi => ahi.CreatedAt)
+                                    .ToList();
+
+                                if (historicItems.Count > 0)
+                                {
+                                    var latestValue = decimal.Parse(historicItems.First().Value
+                                                                    ?? "0");
+                                    var oldestValue = decimal.Parse(historicItems.Last().Value ?? "0");
+
+                                    // Calculate the increase
+                                    var increase = (latestValue - oldestValue) / oldestValue * 100;
+
+                                    // Now we can aggregate this
+                                    if (increase != decimal.Zero)
+                                    {
+                                        if (_analysedComponentService.UpdateValue(component.Id,
+                                            increase.ToString(CultureInfo.InvariantCulture)))
+                                        {
+                                            // Updated successfully
+                                        }
+                                    }
+                                }
+
+                                _logger.LogWarning($"{ServiceName}: Analyse({component.Id}): " +
+                                                   "DailyPricePctChange: no historical data yet.");
+                            }
+                        }
+                        else
+                        {
+                            // Since it's not currency-based, its currencypair-based.
+
+                            // Obtain all of the analysed components that are related to this AC.
+                            var correlatedAnaComps = _analysedComponentEvent.GetAllByCorrelation(component.Id, true);
+
+                            if (correlatedAnaComps != null)
+                            {
+                                // Filter
+                                var historicItems = correlatedAnaComps
+                                    .Where(ac => ac.ComponentType.Equals(AnalysedComponentType.CurrentAveragePrice)
+                                                 && ac.AnalysedHistoricItems.Count > 0)
+                                    .SelectMany(ac => ac.AnalysedHistoricItems)
+                                    .Where(ahi => ahi.CreatedAt > DateTime.UtcNow.Subtract(TimeSpan.FromHours(1)))
                                     // Make sure the latest is at the top, oldest at the bottom
                                     .OrderByDescending(ahi => ahi.CreatedAt)
                                     .ToList();
