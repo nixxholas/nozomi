@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Xml;
 using System.Xml.Linq;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
@@ -366,57 +367,49 @@ namespace Nozomi.Service.HostedServices.RequestTypes
                 // Pull in the payload
                 var payload = await _httpClient.GetAsync(uri.ToString());
 
-                // Succcessful? and is there even any Components to update?
-                if (payload.IsSuccessStatusCode && requests.Any(r => r.RequestComponents
-                        .Any(rc => rc.DeletedAt == null && rc.IsEnabled)))
+                switch (payload.StatusCode)
                 {
-                    // Pull the content
-                    var content = await payload.Content.ReadAsStringAsync();
-                    var resType = ResponseType.Json;
+                    case HttpStatusCode.OK:
+                        if (requests.Any(r => r.RequestComponents
+                            .Any(rc => rc.DeletedAt == null && rc.IsEnabled)))
+                        {
+                            // Pull the content
+                            var content = await payload.Content.ReadAsStringAsync();
+                            var resType = ResponseType.Json;
 
-                    // Pull the components wanted
-                    var requestComponents = requests
-                        .SelectMany(r => r.RequestComponents
-                            .Where(rc => rc.DeletedAt == null && rc.IsEnabled));
+                            // Pull the components wanted
+                            var requestComponents = requests
+                                .SelectMany(r => r.RequestComponents
+                                    .Where(rc => rc.DeletedAt == null && rc.IsEnabled));
 
-                    // Parse the content
-                    if (payload.Content.Headers.ContentType.MediaType.Equals(ResponseType.Json.GetDescription()))
-                    {
-                        // No action needed
-                    }
-                    else if (payload.Content.Headers.ContentType.MediaType.Equals(ResponseType.XML.GetDescription()))
-                    {
-                        // Load the XML
-                        //var xmlElement = XElement.Parse(content);
-                        resType = ResponseType.XML;
-                        var xmlDoc = new XmlDocument();
-                        xmlDoc.LoadXml(content);
-                        content = JsonConvert.SerializeObject(xmlDoc);
-                    }
+                            // Parse the content
+                            if (payload.Content.Headers.ContentType.MediaType.Equals(ResponseType.Json.GetDescription()))
+                            {
+                                // No action needed
+                            }
+                            else if (payload.Content.Headers.ContentType.MediaType.Equals(ResponseType.XML.GetDescription()))
+                            {
+                                // Load the XML
+                                //var xmlElement = XElement.Parse(content);
+                                resType = ResponseType.XML;
+                                var xmlDoc = new XmlDocument();
+                                xmlDoc.LoadXml(content);
+                                content = JsonConvert.SerializeObject(xmlDoc);
+                            }
 
-                    var contentToken = JToken.Parse(content);
+                            var contentToken = JToken.Parse(content);
 
-                    if (Update(contentToken, resType, requestComponents)) return true;
-
-                    // Else error
-                }
-                else if (payload.StatusCode.Equals(HttpStatusCode.TooManyRequests))
-                {
-                    // Rate limited. Push back update timings
-                    return _requestService.Delay(firstRequest, TimeSpan.FromMilliseconds(firstRequest.FailureDelay));
-                }
-                else
-                {
-                    // Log the failure
-                    if (_requestLogService.Create(new RequestLog
-                    {
-                        Type = RequestLogType.Failure,
-                        RawPayload = JsonConvert.SerializeObject(payload),
-                        RequestId = requests.FirstOrDefault()?.Id ?? 0
-                    }) <= 0)
-                    {
-                        // Logging Failure!!!!
-                    }
+                            if (Update(contentToken, resType, requestComponents)) return true;
+                        }
+                        
+                        // Else error
+                        return false;
+                    case HttpStatusCode.TooManyRequests:
+                        // Rate limited. Push back update timings
+                        return _requestService.Delay(firstRequest, TimeSpan.FromMilliseconds(firstRequest.FailureDelay));
+                    default:
+                        // ded
+                        return false;
                 }
             }
 
