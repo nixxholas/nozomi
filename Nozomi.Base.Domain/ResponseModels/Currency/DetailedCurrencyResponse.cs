@@ -74,7 +74,7 @@ namespace Nozomi.Data.ResponseModels.Currency
                                 case AnalysedComponentType.DailyPricePctChange:
                                     if (decimal.TryParse(aComp.Value, out var dailyAvgPricePctChange))
                                     {
-                                        DailyAvgPricePctChange = dailyAvgPricePctChange;
+                                        DailyAvgPricePctChange = Math.Round(dailyAvgPricePctChange, 1);
                                     }
                                     break;
                                 case AnalysedComponentType.DailyVolume:
@@ -147,7 +147,7 @@ namespace Nozomi.Data.ResponseModels.Currency
                     if (string.IsNullOrEmpty(currencyDAPPC)
                         && currencyDAPPC.Equals("0", StringComparison.InvariantCultureIgnoreCase))
                     {
-                        DailyAvgPricePctChange = decimal.Parse(currencyDAPPC);
+                        DailyAvgPricePctChange = Math.Round(decimal.Parse(currencyDAPPC), 1);
                     }
                 }
                 
@@ -412,9 +412,9 @@ namespace Nozomi.Data.ResponseModels.Currency
                         && currencyDAPPC.Equals("0", StringComparison.InvariantCultureIgnoreCase))
                     {
                         if (DailyAvgPricePctChange != decimal.Zero)
-                            DailyAvgPricePctChange = (DailyAvgPricePctChange + decimal.Parse(currencyDAPPC)) / 2;
+                            DailyAvgPricePctChange = Math.Round(DailyAvgPricePctChange + decimal.Parse(currencyDAPPC) / 2, 1);
                         else
-                            DailyAvgPricePctChange = decimal.Parse(currencyDAPPC);
+                            DailyAvgPricePctChange = Math.Round(decimal.Parse(currencyDAPPC), 1);
                     }
                 }
                 
