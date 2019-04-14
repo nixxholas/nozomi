@@ -13,13 +13,22 @@
     <div class="container space-2">
         <h3 class="mb-6">Requests</h3>
         
-        <b-table :items="requests">
+        <b-table :items="requests" :fields="dataFields">
             <template slot="RequestType" slot-scope="datum">
                 {{ getRequestTypeStr(datum.item.RequestType) }}
             </template>
-            @* <template slot="actions" slot-scope="datum"> *@
-            @*     <b-button :href='/manage/request/' + datum.item.Guid>View</b-button> *@
-            @* </template> *@
+            <template slot="ResponseType" slot-scope="datum">
+                {{ getResponseTypeStr(datum.item.ResponseType) }}
+            </template>
+            <template slot="DataPath" slot-scope="datum">
+                <a :href="datum.item.DataPath">{{ datum.item.DataPath }}</a>
+            </template>
+            <template slot="Delay" slot-scope="datum">
+                {{ moment.duration(datum.item.Delay) }}
+            </template>
+            <template slot="actions" slot-scope="datum">
+                <b-button variant="primary" :href="'request/' + datum.item.Guid">View</b-button>
+            </template>
         </b-table>
     </div>
 </div>
@@ -31,6 +40,38 @@
             el: "#content",
             // Just dish any random variable in for now
             data: {
+                dataFields: [
+                    {
+                        key: 'RequestType',
+                        label: 'Request Type',
+                        sortable: true
+                    },
+                    {
+                        key: 'ResponseType',
+                        label: 'Response Type',
+                        sortable: true
+                    },
+                    {
+                        key: 'DataPath',
+                        label: 'Data Path',
+                        sortable: false
+                    },
+                    {
+                        key: 'Delay',
+                        label: 'Delay',
+                        sortable: true
+                    },
+                    {
+                        key: 'FailureDelay',
+                        label: 'Post-failure Delay',
+                        sortable: true
+                    },
+                    {
+                        key: 'actions',
+                        label: '',
+                        sortable: false
+                    }
+                ],
                 requestTypes: @Html.Raw(Json.Serialize(NozomiServiceConstants.requestTypes, new JsonSerializerSettings
                  {
                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore
