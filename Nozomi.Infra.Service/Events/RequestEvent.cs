@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
@@ -16,6 +17,23 @@ namespace Nozomi.Service.Events
         public RequestEvent(ILogger<RequestEvent> logger, IUnitOfWork<NozomiDbContext> unitOfWork) 
             : base(logger, unitOfWork)
         {
+        }
+
+        public Request GetByGuid(Guid guid, bool track = false)
+        {
+            var query = _unitOfWork.GetRepository<Request>()
+                .GetQueryable()
+                .AsNoTracking();
+
+            if (track)
+            {
+                query.Include(r => r.RequestComponents)
+                    .Include(r => r.RequestLogs)
+                    .Include(r => r.RequestProperties)
+                    .Include(r => r.AnalysedComponents);
+            }
+            
+            return query.FirstOrDefault(r => r.Guid.Equals(guid));
         }
 
         public Request GetActive(long id, bool track = false)
