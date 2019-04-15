@@ -20,6 +20,7 @@ using Nozomi.Base.Identity.ViewModels.Manage.Tickers;
 using Nozomi.Base.Identity.ViewModels.Manage.TwoFactorAuthentication;
 using Nozomi.Data.AreaModels.v1.CurrencySource;
 using Nozomi.Data.AreaModels.v1.RequestComponent;
+using Nozomi.Data.ViewModels.Manage;
 using Nozomi.Preprocessing.Events.Interfaces;
 using Nozomi.Service.Events.Interfaces;
 using Nozomi.Service.Identity.Events.Auth.Interfaces;
@@ -140,6 +141,24 @@ namespace Nozomi.Ticker.Areas
             }
             
             return View();
+        }
+
+        [HttpGet("{guid}")]
+        [Authorize(Roles = "Owner, Administrator, Staff")]
+        public async Task<IActionResult> Request(Guid guid)
+        {
+            var user = await GetCurrentUserAsync();
+            if (user == null)
+            {
+                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
+
+            var req = _requestEvent.GetByGuid(guid, true);
+            
+            return View(new RequestViewModel
+            {
+                Request = req.ToDTO()
+            });
         }
         
         #endregion
