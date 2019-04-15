@@ -145,7 +145,7 @@ namespace Nozomi.Ticker.Areas
 
         [HttpGet("{guid}")]
         [Authorize(Roles = "Owner, Administrator, Staff")]
-        public async Task<IActionResult> Request(Guid guid)
+        public async Task<IActionResult> Request([FromRoute]Guid guid)
         {
             var user = await GetCurrentUserAsync();
             if (user == null)
