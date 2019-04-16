@@ -21,6 +21,23 @@ namespace Nozomi.Infra.Analysis.Service.Events.Analysis
         {
         }
 
+        public AnalysedComponent Get(long id, bool track = false)
+        {
+            var query = _unitOfWork.GetRepository<AnalysedComponent>()
+                .GetQueryable()
+                .AsNoTracking()
+                .Where(ac => ac.Id.Equals(id));
+            
+            if (track)
+            {
+                query.Include(ac => ac.Request)
+                    .Include(ac => ac.Currency)
+                    .Include(ac => ac.AnalysedHistoricItems);
+            }
+
+            return query.SingleOrDefault();
+        }
+
         public void ConvertToGenericCurrency(ICollection<AnalysedComponent> analysedComponents)
         {
             if (analysedComponents != null && analysedComponents.Count > 0)

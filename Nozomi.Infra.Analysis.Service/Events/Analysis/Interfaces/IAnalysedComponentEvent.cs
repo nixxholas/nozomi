@@ -5,6 +5,8 @@ namespace Nozomi.Infra.Analysis.Service.Events.Analysis.Interfaces
 {
     public interface IAnalysedComponentEvent
     {
+        AnalysedComponent Get(long id, bool track = false);
+    
         void ConvertToGenericCurrency(ICollection<AnalysedComponent> analysedComponents);
         
         /// <summary>
