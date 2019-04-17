@@ -29,5 +29,7 @@ namespace Nozomi.Preprocessing
             EnumHelper.GetEnumValuesAndDescriptions<RequestType>();
         public static List<KeyValuePair<string, int>> responseTypes =
             EnumHelper.GetEnumValuesAndDescriptions<ResponseType>();
+        public static List<KeyValuePair<string, int>> requestPropertyTypes =
+            EnumHelper.GetEnumValuesAndDescriptions<RequestPropertyType>();
     }
 }
