@@ -19,6 +19,8 @@ namespace Nozomi.Service.Events
         {
         }
 
+        // Elvis 4/17/2019
+        // TODO: Fix the query so that it returns it's related data
         public Request GetByGuid(Guid guid, bool track = false)
         {
             var query = _unitOfWork.GetRepository<Request>()

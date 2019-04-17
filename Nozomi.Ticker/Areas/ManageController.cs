@@ -143,7 +143,7 @@ namespace Nozomi.Ticker.Areas
             return View();
         }
 
-        [HttpGet("{guid}")]
+        [HttpGet("[controller]/[action]/{guid}")]
         [Authorize(Roles = "Owner, Administrator, Staff")]
         public async Task<IActionResult> Request([FromRoute]Guid guid)
         {
