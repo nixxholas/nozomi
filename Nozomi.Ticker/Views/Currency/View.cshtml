@@ -64,7 +64,14 @@
           <div class="tab-pane fade pt-9" id="pills-two" role="tabpanel" aria-labelledby="pills-two-tab">
             <!-- Mockup Block -->
             <div class="row justify-content-lg-between align-items-lg-center">
-              <b-table :items="currency.TickerPairs"></b-table>
+              <div class="col">
+                <b-table :fields="tickerPairTableFields"
+                         :items="currency.TickerPairs">
+                  <template slot="PairAbbreviation" slot-scope="datum">
+                    <small v-for="source in datum.item">{{ source.Name }}</small>
+                  </template>
+                </b-table>
+              </div>
             </div>
             <!-- End Mockup Block -->
           </div>
@@ -163,19 +170,19 @@
                 </div>
               </li>
 
-              <li class="media">
-                <div class="d-flex w-40 w-sm-30">
-                  <h4 class="h6">Ticker Pairs</h4>
-                </div>
-                <div class="media-body">
-                  <small class="d-block text-muted" v-for="tp in currency.TickerPairs">
-                    {{ tp.PairAbbreviation }}
-                    <span class="badge badge-pill badge-primary" v-for="source in tp.Sources">
-                      {{ source.Name }}
-                    </span>
-                  </small>
-                </div>
-              </li>
+              @* <li class="media"> *@
+              @*   <div class="d-flex w-40 w-sm-30"> *@
+              @*     <h4 class="h6">Ticker Pairs</h4> *@
+              @*   </div> *@
+              @*   <div class="media-body"> *@
+              @*     <small class="d-block text-muted" v-for="tp in currency.TickerPairs"> *@
+              @*       {{ tp.PairAbbreviation }} *@
+              @*       <span class="badge badge-pill badge-primary" v-for="source in tp.Sources"> *@
+              @*         {{ source.Name }} *@
+              @*       </span> *@
+              @*     </small> *@
+              @*   </div> *@
+              @* </li> *@
             </ul>
             <!-- End List -->
 
@@ -239,7 +246,18 @@
         currency: @Html.Raw(Json.Serialize(Model, new JsonSerializerSettings
                   {
                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore
-                  }))
+                  })),
+        tickerPairTableFields: [
+          {
+            key: 'PairAbbreviation',
+            label: 'Pair',
+            sortable: true
+          },
+          {
+            key: 'Sources',
+            label: 'Exchanges',
+            sortable: false
+          }]
       },
       created: function() {
       },
