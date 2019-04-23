@@ -247,7 +247,7 @@ namespace Nozomi.Ticker.Areas
             return View(vm);
         }
         
-        [HttpGet("{abbreviation}")]
+        [HttpGet("[controller]/[action]/{abbreviation}")]
         [Authorize(Roles = "Owner, Administrator, Staff")]
         public async Task<IActionResult> Source([FromRoute]string abbreviation)
         {
