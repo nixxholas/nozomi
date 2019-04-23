@@ -47,6 +47,8 @@ namespace Nozomi.Ticker.Areas
                 return View(currency);
             }
             
+            ViewData["Error"] = "Invalid currency.";
+            
             return RedirectToAction("Index", "Home");
         }
     }
