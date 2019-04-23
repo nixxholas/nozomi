@@ -31,7 +31,7 @@ namespace Nozomi.Ticker.Areas
         [Route("{controller}/{abbrv}")]
         public IActionResult View(string abbrv)
         {
-            var currency = _currencyEvent.Get(abbrv);
+            var currency = _currencyEvent.GetCurrencyByAbbreviation(abbrv);
 
             if (currency != null)
             {
