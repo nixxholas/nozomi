@@ -1,0 +1,51 @@
+@using Newtonsoft.Json
+@model Nozomi.Base.Identity.ViewModels.Manage.IndexViewModel
+
+<!-- Content Section -->
+<div class="bg-light">
+    <div class="container space-2">
+        <h3 class="mb-6">Sources</h3>
+
+        <b-table :items="sources" :fields="dataFields">
+            <template slot="Name" slot-scope="datum">
+                {{ datum.item.Name }}
+            </template>
+            <template slot="Abbreviation" slot-scope="datum">
+                {{ datum.item.Abbreviation }}
+            </template>
+            <template slot="APIDocsURL" slot-scope="datum">
+                {{ datum.item.APIDocsURL }}
+            </template>
+        </b-table>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        const vm = new Vue({
+            // options
+            el: "#content",
+            // Just dish any random variable in for now
+            data: {
+                dataFields: [
+                    {
+                        key: 'Name',
+                        label: 'Name',
+                        sortable: true
+                    },
+                    {
+                        key: 'Abbreviation',
+                        label: 'Abbreviation',
+                        sortable: true
+                    },
+                    {
+                        key: 'APIDocsURL',
+                        label: 'API Docs URL',
+                        sortable: true
+                    },
+                ],
+                sources: @Html.Raw(JsonConvert.SerializeObject(@Model.Sources)),
+            },
+        });
+    </script>
+}
