@@ -35,6 +35,15 @@ namespace Nozomi.Ticker.Areas
 
             if (currency != null)
             {
+                if (currency.AnalysedComponents.Any(ac =>
+                    ac.ComponentType.Equals(AnalysedComponentType.HourlyAveragePrice)))
+                {
+                    var aComp = currency.AnalysedComponents
+                        .SingleOrDefault(ac => ac.ComponentType.Equals(AnalysedComponentType.HourlyAveragePrice));
+
+                    aComp.AnalysedHistoricItems = _analysedHistoricItemEvent.GetAll(aComp.Id, TimeSpan.FromHours(72));
+                }
+                
                 return View(currency);
             }
             
