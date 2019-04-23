@@ -87,6 +87,11 @@ namespace Nozomi.Service.Services
                     return new NozomiResult<string>
                         (NozomiResultType.Success, "Currency Pair Component successfully updated!");
                 }
+                else if (val.Equals(lastCompVal.Value))
+                {
+                    return new NozomiResult<string>
+                    (NozomiResultType.Success, "Value is the same!");
+                }
                 else
                 {
                     return new NozomiResult<string>
