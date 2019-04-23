@@ -245,7 +245,25 @@ namespace Nozomi.Ticker.Areas
             };
 
             return View(vm);
+        }
+        
+        [HttpGet("{abbreviation}")]
+        [Authorize(Roles = "Owner, Administrator, Staff")]
+        public async Task<IActionResult> Source([FromRoute]string abbreviation)
+        {
+            var user = await GetCurrentUserAsync();
+            if (user == null)
+            {
+                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
 
+            // Will be using IndexViewModel for now because it does the same thing
+            var vm = new SourceViewModel
+            {
+                Source = _sourceEvent.Get(abbreviation)
+            };
+
+            return View(vm);
         }
         
         #endregion
