@@ -35,7 +35,7 @@ namespace Nozomi.Service.Events
             _partialCurrencyPairEvent = partialCurrencyPairEvent;
         }
 
-        public AbbrvUniqueCurrencyResponse Get(string abbreviation)
+        public AbbrvUniqueCurrencyResponse GetCurrencyByAbbreviation(string abbreviation)
         {
             // First obtain all 'ABBRV' objects first, 
             var currency = _unitOfWork.GetRepository<Currency>()
@@ -47,8 +47,24 @@ namespace Nozomi.Service.Events
                 .Include(c => c.CurrencySource)
                 .Include(c => c.PartialCurrencyPairs)
                     .ThenInclude(pcp => pcp.Currency)
+                .Include(c => c.PartialCurrencyPairs)
+                    .ThenInclude(pcp => pcp.CurrencyPair)
+                        .ThenInclude(cp => cp.CurrencyPairRequests)
+                            .ThenInclude(cpr => cpr.AnalysedComponents)
+                .Include(c => c.PartialCurrencyPairs)
+                    .ThenInclude(pcp => pcp.CurrencyPair)
+                        .ThenInclude(cp => cp.CurrencyPairRequests)
+                            .ThenInclude(cpr => cpr.RequestComponents)
                 .Include(c => c.CurrencyRequests)
                     .ThenInclude(cr => cr.RequestComponents)
+                .ToList();
+
+            var cpACs = currency
+                .SelectMany(c => c.PartialCurrencyPairs)
+                .Select(pcp => pcp.CurrencyPair)
+                .SelectMany(cp => cp.CurrencyPairRequests)
+                .SelectMany(cpr => cpr.AnalysedComponents
+                    .Where(ac => ac.DeletedAt == null && ac.IsEnabled))
                 .ToList();
 
             if (currency.Count > 0)
@@ -58,12 +74,23 @@ namespace Nozomi.Service.Events
                 // DTO this sitch
                 foreach (var similarCurr in currency)
                 {
+                    // Currency-based ACs
                     foreach (var aComp in similarCurr.AnalysedComponents)
                     {
                         if (!result.AnalysedComponents
                             .Any(ac => ac.Id.Equals(aComp.Id)))
                         {
                             result.AnalysedComponents.Add(aComp);
+                        }
+                    }
+                    
+                    // Currency Pair-based ACs
+                    foreach (var cpAComp in cpACs)
+                    {
+                        if (!result.AnalysedComponents
+                            .Any(ac => ac.Id.Equals(cpAComp.Id)))
+                        {
+                            result.AnalysedComponents.Add(cpAComp);
                         }
                     }
 
@@ -195,7 +222,7 @@ namespace Nozomi.Service.Events
             return null;
         }
 
-        public ICollection<Currency> Get(string abbreviation, bool track = false)
+        public ICollection<Currency> GetCurrencyByAbbreviation(string abbreviation, bool track = false)
         {
             var query = _unitOfWork.GetRepository<Currency>()
                 .GetQueryable()
@@ -216,7 +243,7 @@ namespace Nozomi.Service.Events
             return query.ToList();
         }
 
-        public Currency Get(long id, bool track = false)
+        public Currency GetCurrencyByAbbreviation(long id, bool track = false)
         {
             var query = _unitOfWork.GetRepository<Currency>()
                 .GetQueryable()
