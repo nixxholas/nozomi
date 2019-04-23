@@ -4,9 +4,11 @@ using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Logging;
+using Nozomi.Data.Models.Web.Analytical;
 using Nozomi.Data.ResponseModels.Currency;
 using Nozomi.Data.ResponseModels.PartialCurrencyPair;
 using Nozomi.Data.ResponseModels.Source;
+using Nozomi.Infra.Analysis.Service.Events.Analysis.Interfaces;
 using Nozomi.Service.Events.Interfaces;
 using Nozomi.Service.Identity.Managers;
 
@@ -14,14 +16,16 @@ namespace Nozomi.Ticker.Areas
 {
     public class CurrencyController : BaseViewController<CurrencyController>
     {
-        private ICurrencyEvent _currencyEvent { get; set; }
-        private IPartialCurrencyPairEvent _partialCurrencyPairEvent { get; set; }
+        private IAnalysedHistoricItemEvent _analysedHistoricItemEvent;
+        private ICurrencyEvent _currencyEvent;
+        private IPartialCurrencyPairEvent _partialCurrencyPairEvent;
         
         public CurrencyController(ILogger<CurrencyController> logger, NozomiSignInManager signInManager, 
-            NozomiUserManager userManager, ICurrencyEvent currencyEvent, 
-            IPartialCurrencyPairEvent partialCurrencyPairEvent) 
+            NozomiUserManager userManager, IAnalysedHistoricItemEvent analysedHistoricItemEvent, 
+            ICurrencyEvent currencyEvent, IPartialCurrencyPairEvent partialCurrencyPairEvent) 
             : base(logger, signInManager, userManager)
         {
+            _analysedHistoricItemEvent = analysedHistoricItemEvent;
             _currencyEvent = currencyEvent;
             _partialCurrencyPairEvent = partialCurrencyPairEvent;
         }
@@ -44,6 +48,11 @@ namespace Nozomi.Ticker.Areas
                         if (!result.AnalysedComponents
                             .Any(ac => ac.Id.Equals(aComp.Id)))
                         {
+                            if (aComp.ComponentType.Equals(AnalysedComponentType.HourlyAveragePrice))
+                            {
+                                _analysedHistoricItemEvent.GetAll(aComp.Id, TimeSpan.FromDays(3));
+                            }
+                            
                             result.AnalysedComponents.Add(aComp);
                         }
                     }
