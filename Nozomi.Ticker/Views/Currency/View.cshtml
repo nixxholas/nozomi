@@ -68,7 +68,10 @@
                 <b-table :fields="tickerPairTableFields"
                          :items="currency.TickerPairs">
                   <template slot="PairAbbreviation" slot-scope="datum">
-                    <small v-for="source in datum.item">{{ source.Name }}</small>
+                    {{ datum.item.PairAbbreviation }}
+                  </template>
+                  <template slot="Sources" slot-scope="datum">
+                    <small v-for="source in datum.item.Sources">{{ source.Name }}</small>
                   </template>
                 </b-table>
               </div>
