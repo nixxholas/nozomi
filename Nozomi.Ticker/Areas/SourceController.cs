@@ -19,20 +19,6 @@ namespace Nozomi.Ticker.Areas
             _sourceEvent = sourceEvent;
         }
         
-        // GET All Sources
-        [HttpGet]
-        [Authorize(Roles = "Owner, Administrator, Staff")]
-        public async Task<IActionResult> Sources()
-        {
-            var vm = new SourcesViewModel
-            {
-                Sources = _sourceEvent.GetAllActive(true).ToList());
-            };
-
-            return View(vm);
-
-        }
-        
         // GET Source by abbreviation
         [HttpGet("{controller}/{abbrv}")]
         public IActionResult Source([FromRoute]string abbrv)
