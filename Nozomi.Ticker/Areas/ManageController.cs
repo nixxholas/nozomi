@@ -227,6 +227,27 @@ namespace Nozomi.Ticker.Areas
             
             return RedirectToAction("CreateSource");
         }
+
+        [HttpGet]
+        [Authorize(Roles = "Owner, Administrator, Staff")]
+        public async Task<IActionResult> Sources()
+        {
+            var user = await GetCurrentUserAsync();
+            if (user == null)
+            {
+                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
+
+            // Will be using IndexViewModel for now because it does the same thing
+            var vm = new IndexViewModel
+            {
+                Sources = _sourceEvent.GetAllActive(true).ToList()
+            };
+
+            return View(vm);
+
+        }
+        
         #endregion
 
         #region Ticker APIs
