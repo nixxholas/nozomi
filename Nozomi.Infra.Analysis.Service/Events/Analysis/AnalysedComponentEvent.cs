@@ -49,17 +49,20 @@ namespace Nozomi.Infra.Analysis.Service.Events.Analysis
                     var counterCurr = _unitOfWork.GetRepository<Currency>()
                         .GetQueryable()
                         .AsNoTracking()
-                        .Include(c => c.PartialCurrencyPairs)
+                        .Include(c => c.CurrencyCurrencyPairs)
                         .ThenInclude(c => c.Currency)
-                        .Include(c => c.PartialCurrencyPairs)
+                        .Include(c => c.CurrencyCurrencyPairs)
                         .ThenInclude(pcp => pcp.CurrencyPair)
                         .ThenInclude(cp => cp.CurrencyPairRequests)
                         .ThenInclude(cpr => cpr.AnalysedComponents)
-                        .SingleOrDefault(c => c.PartialCurrencyPairs
+                        .SingleOrDefault(c => c.CurrencyCurrencyPairs
                                 // Make sure we're not converting if we don't have to.
-                            .Where(pcp => !pcp.IsMain 
-                                          && !pcp.Currency.Abbrv.Equals(CoreConstants.GenericCounterCurrency,
-                                              StringComparison.InvariantCultureIgnoreCase))
+                                // Make sure this is the counter currency
+                                .Where(ccp => ccp.Currency.Abbrv.Equals(ccp.CurrencyPair.CounterCurrency, 
+                                                  StringComparison.InvariantCultureIgnoreCase)
+                                              // Make sure the counter curr is not equal.
+                                              && !ccp.Currency.Abbrv.Equals(CoreConstants.GenericCounterCurrency,
+                                                  StringComparison.InvariantCultureIgnoreCase))
                             .Select(pcp => pcp.CurrencyPair)
                             .SelectMany(cp => cp.CurrencyPairRequests)
                             .SelectMany(cpr => cpr.AnalysedComponents)
@@ -70,14 +73,17 @@ namespace Nozomi.Infra.Analysis.Service.Events.Analysis
                     {
                         // Obtain the conversion rate
                         var conversionRate = _unitOfWork
-                            .GetRepository<PartialCurrencyPair>()
+                            .GetRepository<CurrencyCurrencyPair>()
                             .GetQueryable()
                             .AsNoTracking()
-                            .Where(pcp => pcp.IsMain &&
-                                          pcp.Currency.Abbrv.Equals(counterCurr.Abbrv,
+                            .Where(ccp => ccp.Currency.Abbrv.Equals(ccp.CurrencyPair.MainCurrency, 
+                                              StringComparison.InvariantCultureIgnoreCase) 
+                                          &&
+                                          ccp.Currency.Abbrv.Equals(counterCurr.Abbrv,
                                               StringComparison.InvariantCultureIgnoreCase))
-                            .Where(pcp => !pcp.IsMain && 
-                                          pcp.Currency.Abbrv.Equals(CoreConstants.GenericCounterCurrency,
+                            .Where(ccp => ccp.Currency.Abbrv.Equals(ccp.CurrencyPair.CounterCurrency, 
+                                              StringComparison.InvariantCultureIgnoreCase) 
+                                          && ccp.Currency.Abbrv.Equals(CoreConstants.GenericCounterCurrency,
                                               StringComparison.InvariantCultureIgnoreCase))
                             .Include(pcp => pcp.CurrencyPair)
                             .ThenInclude(cp => cp.CurrencyPairRequests)
@@ -174,11 +180,12 @@ namespace Nozomi.Infra.Analysis.Service.Events.Analysis
                 .GetQueryable()
                 .AsNoTracking()
                 .Where(cp => cp.IsEnabled && cp.DeletedAt == null)
-                .Include(cp => cp.PartialCurrencyPairs)
+                .Include(cp => cp.CurrencyPairCurrencies)
                 .ThenInclude(pcp => pcp.Currency)
                 .Where(cp =>
                     // Make sure the main currencies are identical
-                    cp.PartialCurrencyPairs.FirstOrDefault(pcp => pcp.IsMain).Currency.Abbrv
+                    cp.CurrencyPairCurrencies.FirstOrDefault(ccp => ccp.CurrencyPair.MainCurrency
+                            .Equals(ccp.Currency.Abbrv)).Currency.Abbrv
                         .Equals(qCurrency.Abbrv, StringComparison.InvariantCultureIgnoreCase))
                 .Include(cp => cp.CurrencyPairRequests)
                 .ThenInclude(cpr => cpr.AnalysedComponents)
@@ -238,15 +245,15 @@ namespace Nozomi.Infra.Analysis.Service.Events.Analysis
                                                       // to find the correlation
                                                       && cpr.AnalysedComponents.Any(ac =>
                                                           ac.Id.Equals(analysedComponentId))))
-                .Include(cp => cp.PartialCurrencyPairs)
+                .Include(cp => cp.CurrencyPairCurrencies)
                 .ThenInclude(pcp => pcp.Currency)
-                .SelectMany(cp => cp.PartialCurrencyPairs)
-                .Select(pcp => new PartialCurrencyPair
+                .SelectMany(cp => cp.CurrencyPairCurrencies)
+                .Select(pcp => new CurrencyCurrencyPair
                 {
                     CurrencyId = pcp.CurrencyId,
                     CurrencyPairId = pcp.CurrencyPairId,
                     Currency = pcp.Currency,
-                    IsMain = pcp.IsMain
+                    CurrencyPair = pcp.CurrencyPair
                 })
                 .ToList();
 
@@ -268,13 +275,17 @@ namespace Nozomi.Infra.Analysis.Service.Events.Analysis
                         .GetQueryable()
                         .AsNoTracking()
                         .Where(cp => cp.DeletedAt == null && cp.IsEnabled)
-                        .Include(cp => cp.PartialCurrencyPairs)
+                        .Include(cp => cp.CurrencyPairCurrencies)
                         .ThenInclude(pcp => pcp.Currency)
                         .Where(cp =>
-                            cp.PartialCurrencyPairs.FirstOrDefault(pcp => pcp.IsMain).Currency.Abbrv
+                            cp.CurrencyPairCurrencies.FirstOrDefault(ccp => ccp.Currency.Abbrv
+                                    .Equals(ccp.CurrencyPair.MainCurrency, StringComparison.InvariantCultureIgnoreCase))
+                                .Currency.Abbrv
                                 .Equals(currency.Abbrv, StringComparison.InvariantCultureIgnoreCase)
                             // Counter currency is the generic counter currency
-                            && cp.PartialCurrencyPairs.FirstOrDefault(pcp => !pcp.IsMain).Currency.Abbrv
+                            && cp.CurrencyPairCurrencies.FirstOrDefault(ccp => ccp.Currency.Abbrv
+                                    .Equals(ccp.CurrencyPair.CounterCurrency, StringComparison.InvariantCultureIgnoreCase))
+                                .Currency.Abbrv
                                 .Contains(CoreConstants.GenericCounterCurrency,
                                     StringComparison.InvariantCultureIgnoreCase))
                         .Include(cp => cp.CurrencyPairRequests)
@@ -323,15 +334,21 @@ namespace Nozomi.Infra.Analysis.Service.Events.Analysis
                 .GetQueryable()
                 .AsNoTracking()
                 .Where(cp => cp.IsEnabled && cp.DeletedAt == null)
-                .Include(cp => cp.PartialCurrencyPairs)
+                .Include(cp => cp.CurrencyPairCurrencies)
                 .ThenInclude(pcp => pcp.Currency)
                 .Where(cp =>
                     // Make sure the main currencies are identical
-                    cp.PartialCurrencyPairs.FirstOrDefault(pcp => pcp.IsMain).Currency.Abbrv
-                        .Equals(correlPCPs.FirstOrDefault(pcp => pcp.IsMain).Currency.Abbrv)
+                    cp.CurrencyPairCurrencies.FirstOrDefault(ccp => ccp.Currency.Abbrv
+                            .Equals(ccp.CurrencyPair.MainCurrency, StringComparison.InvariantCultureIgnoreCase))
+                        .Currency.Abbrv
+                        .Equals(correlPCPs.FirstOrDefault(ccp => ccp.Currency.Abbrv
+                            .Equals(ccp.CurrencyPair.MainCurrency, StringComparison.InvariantCultureIgnoreCase))
+                            .Currency.Abbrv)
                     // Make sure the counter currencies are identical
-                    && cp.PartialCurrencyPairs.FirstOrDefault(pcp => !pcp.IsMain).Currency.Abbrv
-                        .Equals(correlPCPs.FirstOrDefault(pcp => !pcp.IsMain).Currency.Abbrv))
+                    && cp.CurrencyPairCurrencies.FirstOrDefault(ccp => ccp.Currency.Abbrv
+                            .Equals(ccp.CurrencyPair.CounterCurrency, StringComparison.InvariantCultureIgnoreCase)).Currency.Abbrv
+                        .Equals(correlPCPs.FirstOrDefault(ccp => ccp.Currency.Abbrv
+                            .Equals(ccp.CurrencyPair.CounterCurrency, StringComparison.InvariantCultureIgnoreCase)).Currency.Abbrv))
                 .Include(cp => cp.CurrencyPairRequests)
                 .ThenInclude(cpr => cpr.AnalysedComponents)
                 .ThenInclude(ac => ac.AnalysedHistoricItems)

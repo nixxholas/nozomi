@@ -134,16 +134,16 @@ namespace Nozomi.Service.Services
                 APIUrl = createTickerInputModel.DataPath,
                 CurrencyPairType = createTickerInputModel.CurrencyPairType,
                 CurrencySourceId = createTickerInputModel.CurrencySourceId,
-                PartialCurrencyPairs = new List<PartialCurrencyPair>
+                MainCurrency = mainCurrency.Abbrv,
+                CounterCurrency = counterCurrency.Abbrv,
+                CurrencyPairCurrencies = new List<CurrencyCurrencyPair>
                 {
-                    new PartialCurrencyPair
+                    new CurrencyCurrencyPair
                     {
-                        IsMain = true,
                         CurrencyId = mainCurrency.Id
                     },
-                    new PartialCurrencyPair
+                    new CurrencyCurrencyPair
                     {
-                        IsMain = false,
                         CurrencyId = counterCurrency.Id
                     }
                 }
@@ -283,14 +283,16 @@ namespace Nozomi.Service.Services
             var tickerObj = _unitOfWork.GetRepository<CurrencyPair>()
                 .GetQueryable()
                 .Where(cp => cp.DeletedAt == null && cp.IsEnabled)
-                .Include(cp => cp.PartialCurrencyPairs)
+                .Include(cp => cp.CurrencyPairCurrencies)
                 .ThenInclude(pcp => pcp.Currency)
                 .Include(cp => cp.CurrencySource)
                 .Include(cp => cp.CurrencyPairRequests)
                 .ThenInclude(cpr => cpr.RequestComponents)
                 .SingleOrDefault(cp => string.Concat(
-                    cp.PartialCurrencyPairs.FirstOrDefault(pcp => pcp.IsMain).Currency.Abbrv,
-                    cp.PartialCurrencyPairs.FirstOrDefault(pcp => !pcp.IsMain).Currency.Abbrv)
+                    cp.CurrencyPairCurrencies.FirstOrDefault(ccp => ccp.Currency.Abbrv
+                        .Equals(ccp.CurrencyPair.MainCurrency, StringComparison.InvariantCultureIgnoreCase)).Currency.Abbrv,
+                    cp.CurrencyPairCurrencies.FirstOrDefault(ccp => ccp.Currency.Abbrv
+                        .Equals(ccp.CurrencyPair.CounterCurrency, StringComparison.InvariantCultureIgnoreCase)).Currency.Abbrv)
                     .Equals(ticker, StringComparison.InvariantCultureIgnoreCase)
                 && cp.CurrencySource.Abbreviation.Equals(exchangeAbbrv, StringComparison.InvariantCultureIgnoreCase));
 
@@ -318,7 +320,7 @@ namespace Nozomi.Service.Services
                     .GetQueryable()
                     .AsNoTracking()
                     .Where(cp => cp.DeletedAt == null && cp.IsEnabled)
-                    .Include(cp => cp.PartialCurrencyPairs)
+                    .Include(cp => cp.CurrencyPairCurrencies)
                     .ThenInclude(pcp => pcp.Currency)
                     .Include(cp => cp.CurrencySource)
                     .Include(cp => cp.CurrencyPairRequests)
@@ -330,13 +332,17 @@ namespace Nozomi.Service.Services
                     .Select(cp => new UniqueTickerResponse
                     {
                         MainTickerAbbreviation =
-                            cp.PartialCurrencyPairs.FirstOrDefault(pcp => pcp.IsMain).Currency.Abbrv,
+                            cp.CurrencyPairCurrencies.FirstOrDefault(ccp => ccp.Currency.Abbrv
+                                .Equals(ccp.CurrencyPair.MainCurrency, StringComparison.InvariantCultureIgnoreCase)).Currency.Abbrv,
                         MainTickerName =
-                            cp.PartialCurrencyPairs.FirstOrDefault(pcp => pcp.IsMain).Currency.Name,
+                            cp.CurrencyPairCurrencies.FirstOrDefault(ccp => ccp.Currency.Abbrv
+                                .Equals(ccp.CurrencyPair.MainCurrency, StringComparison.InvariantCultureIgnoreCase)).Currency.Name,
                         CounterTickerAbbreviation =
-                            cp.PartialCurrencyPairs.FirstOrDefault(pcp => !pcp.IsMain).Currency.Abbrv,
+                            cp.CurrencyPairCurrencies.FirstOrDefault(ccp => ccp.Currency.Abbrv
+                                .Equals(ccp.CurrencyPair.CounterCurrency, StringComparison.InvariantCultureIgnoreCase)).Currency.Abbrv,
                         CounterTickerName =
-                            cp.PartialCurrencyPairs.FirstOrDefault(pcp => !pcp.IsMain).Currency.Name,
+                            cp.CurrencyPairCurrencies.FirstOrDefault(ccp => ccp.Currency.Abbrv
+                                .Equals(ccp.CurrencyPair.CounterCurrency, StringComparison.InvariantCultureIgnoreCase)).Currency.Name,
                         Exchange = cp.CurrencySource.Name,
                         ExchangeAbbrv = cp.CurrencySource.Abbreviation,
                         LastUpdated = cp.CurrencyPairRequests
@@ -368,7 +374,7 @@ namespace Nozomi.Service.Services
                 .GetQueryable()
                 .AsNoTracking()
                 .Where(cp => cp.DeletedAt == null && cp.IsEnabled)
-                .Include(cp => cp.PartialCurrencyPairs)
+                .Include(cp => cp.CurrencyPairCurrencies)
                 .ThenInclude(pcp => pcp.Currency)
                 .Include(cp => cp.CurrencySource)
                 .Include(cp => cp.CurrencyPairRequests)
@@ -380,13 +386,17 @@ namespace Nozomi.Service.Services
                 .Select(cp => new UniqueTickerResponse
                 {
                     MainTickerAbbreviation =
-                        cp.PartialCurrencyPairs.FirstOrDefault(pcp => pcp.IsMain).Currency.Abbrv,
+                        cp.CurrencyPairCurrencies.FirstOrDefault(ccp => ccp.Currency.Abbrv
+                            .Equals(ccp.CurrencyPair.MainCurrency, StringComparison.InvariantCultureIgnoreCase)).Currency.Abbrv,
                     MainTickerName =
-                        cp.PartialCurrencyPairs.FirstOrDefault(pcp => pcp.IsMain).Currency.Name,
+                        cp.CurrencyPairCurrencies.FirstOrDefault(ccp => ccp.Currency.Abbrv
+                            .Equals(ccp.CurrencyPair.MainCurrency, StringComparison.InvariantCultureIgnoreCase)).Currency.Name,
                     CounterTickerAbbreviation =
-                        cp.PartialCurrencyPairs.FirstOrDefault(pcp => !pcp.IsMain).Currency.Abbrv,
+                        cp.CurrencyPairCurrencies.FirstOrDefault(ccp => ccp.Currency.Abbrv
+                            .Equals(ccp.CurrencyPair.CounterCurrency, StringComparison.InvariantCultureIgnoreCase)).Currency.Abbrv,
                     CounterTickerName =
-                        cp.PartialCurrencyPairs.FirstOrDefault(pcp => !pcp.IsMain).Currency.Name,
+                        cp.CurrencyPairCurrencies.FirstOrDefault(ccp => ccp.Currency.Abbrv
+                            .Equals(ccp.CurrencyPair.CounterCurrency, StringComparison.InvariantCultureIgnoreCase)).Currency.Name,
                     Exchange = cp.CurrencySource.Name,
                     ExchangeAbbrv = cp.CurrencySource.Abbreviation,
                     LastUpdated = cp.CurrencyPairRequests
@@ -413,7 +423,7 @@ namespace Nozomi.Service.Services
                 .GetQueryable()
                 .AsNoTracking()
                 .Where(cp => cp.DeletedAt == null && cp.IsEnabled)
-                .Include(cp => cp.PartialCurrencyPairs)
+                .Include(cp => cp.CurrencyPairCurrencies)
                 .ThenInclude(pcp => pcp.Currency)
                 .Include(cp => cp.CurrencySource)
                 .Include(cp => cp.WebsocketRequests)
@@ -425,13 +435,17 @@ namespace Nozomi.Service.Services
                 .Select(cp => new UniqueTickerResponse
                 {
                     MainTickerAbbreviation =
-                        cp.PartialCurrencyPairs.FirstOrDefault(pcp => pcp.IsMain).Currency.Abbrv,
+                        cp.CurrencyPairCurrencies.FirstOrDefault(ccp => ccp.Currency.Abbrv
+                            .Equals(ccp.CurrencyPair.MainCurrency, StringComparison.InvariantCultureIgnoreCase)).Currency.Abbrv,
                     MainTickerName =
-                        cp.PartialCurrencyPairs.FirstOrDefault(pcp => pcp.IsMain).Currency.Name,
+                        cp.CurrencyPairCurrencies.FirstOrDefault(ccp => ccp.Currency.Abbrv
+                            .Equals(ccp.CurrencyPair.MainCurrency, StringComparison.InvariantCultureIgnoreCase)).Currency.Name,
                     CounterTickerAbbreviation =
-                        cp.PartialCurrencyPairs.FirstOrDefault(pcp => !pcp.IsMain).Currency.Abbrv,
+                        cp.CurrencyPairCurrencies.FirstOrDefault(ccp => ccp.Currency.Abbrv
+                            .Equals(ccp.CurrencyPair.CounterCurrency, StringComparison.InvariantCultureIgnoreCase)).Currency.Abbrv,
                     CounterTickerName =
-                        cp.PartialCurrencyPairs.FirstOrDefault(pcp => !pcp.IsMain).Currency.Name,
+                        cp.CurrencyPairCurrencies.FirstOrDefault(ccp => ccp.Currency.Abbrv
+                            .Equals(ccp.CurrencyPair.CounterCurrency, StringComparison.InvariantCultureIgnoreCase)).Currency.Name,
                     Exchange = cp.CurrencySource.Name,
                     ExchangeAbbrv = cp.CurrencySource.Abbreviation,
                     LastUpdated = cp.CurrencyPairRequests
@@ -465,7 +479,7 @@ namespace Nozomi.Service.Services
                     .GetQueryable()
                     .AsNoTracking()
                     .Where(cp => cp.DeletedAt == null && cp.IsEnabled)
-                    .Include(cp => cp.PartialCurrencyPairs)
+                    .Include(cp => cp.CurrencyPairCurrencies)
                     .ThenInclude(pcp => pcp.Currency)
                     .Include(cp => cp.CurrencySource)
                     .Where(cp => cp.CurrencySource != null) // Make sure we have a source
