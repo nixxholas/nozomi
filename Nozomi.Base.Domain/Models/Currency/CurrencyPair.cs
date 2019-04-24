@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Nozomi.Base.Core;
@@ -27,19 +28,27 @@ namespace Nozomi.Data.Models.Currency
         // =========== RELATIONS ============ //
         public ICollection<CurrencyPairRequest> CurrencyPairRequests { get; set; }
         public ICollection<WebsocketRequest> WebsocketRequests { get; set; }
-        public ICollection<PartialCurrencyPair> PartialCurrencyPairs { get; set; }
+        
+        public string MainCurrency { get; set; }
+        
+        public string CounterCurrency { get; set; }
+        
+        public ICollection<CurrencyCurrencyPair> CurrencyPairCurrencies{ get; set; }
 
         public bool IsValid()
         {
-            var firstPair = PartialCurrencyPairs.First();
-            var lastPair = PartialCurrencyPairs.Last();
-            
-            return (CurrencyPairType > 0) && (!string.IsNullOrEmpty(APIUrl)) 
+            var firstPair = CurrencyPairCurrencies.FirstOrDefault(cp => cp.Currency.Abbrv.Equals(MainCurrency, 
+                StringComparison.InvariantCultureIgnoreCase) 
+            && cp.Currency.CurrencySourceId.Equals(CurrencySourceId));
+            var lastPair = CurrencyPairCurrencies.SingleOrDefault(cp => cp.Currency.Abbrv.Equals(CounterCurrency, 
+                                                               StringComparison.InvariantCultureIgnoreCase) 
+                                                           && cp.Currency.CurrencySourceId.Equals(CurrencySourceId));
+
+            return (CurrencyPairType > 0) && (!string.IsNullOrEmpty(APIUrl))
                                           && (!string.IsNullOrEmpty(DefaultComponent))
                                           && (CurrencySourceId > 0)
-                                          && (PartialCurrencyPairs.Count == 2)
-                                          && (firstPair.CurrencyId != lastPair.CurrencyId)
-                                          && (!firstPair.IsMain == lastPair.IsMain);
+                                          && (CurrencyPairCurrencies.Count == 2)
+                                          && (firstPair.CurrencyId != lastPair.CurrencyId);
         }
     }
 }
