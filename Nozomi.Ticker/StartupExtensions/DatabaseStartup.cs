@@ -895,6 +895,14 @@ namespace Nozomi.Ticker.StartupExtensions
                                                     ModifiedAt = DateTime.UtcNow,
                                                     DeletedAt = null
                                                 },
+                                                new AnalysedComponent
+                                                {
+                                                    ComponentType = AnalysedComponentType.HourlyAveragePrice,
+                                                    Delay = 500,
+                                                    CreatedAt = DateTime.UtcNow,
+                                                    ModifiedAt = DateTime.UtcNow,
+                                                    DeletedAt = null
+                                                },
                                                 new AnalysedComponent()
                                                 {
                                                     ComponentType = AnalysedComponentType.DailyPricePctChange,
@@ -1235,7 +1243,15 @@ namespace Nozomi.Ticker.StartupExtensions
                                                     ModifiedAt = DateTime.UtcNow,
                                                     DeletedAt = null
                                                 },
-                                                new AnalysedComponent()
+                                                new AnalysedComponent
+                                                {
+                                                    ComponentType = AnalysedComponentType.HourlyAveragePrice,
+                                                    Delay = 500,
+                                                    CreatedAt = DateTime.UtcNow,
+                                                    ModifiedAt = DateTime.UtcNow,
+                                                    DeletedAt = null
+                                                },
+                                                new AnalysedComponent
                                                 {
                                                     ComponentType = AnalysedComponentType.DailyPricePctChange,
                                                     Delay = 500,
@@ -1244,7 +1260,7 @@ namespace Nozomi.Ticker.StartupExtensions
                                                     DeletedAt = null
                                                 }
                                             },
-                                            RequestComponents = new List<RequestComponent>()
+                                            RequestComponents = new List<RequestComponent>
                                             {
                                                 new RequestComponent
                                                 {
