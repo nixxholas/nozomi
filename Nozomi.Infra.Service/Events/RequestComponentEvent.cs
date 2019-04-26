@@ -232,7 +232,15 @@ namespace Nozomi.Service.Events
                 .Where(cp => cp.IsEnabled && cp.DeletedAt == null)
                 .Include(cp => cp.CurrencyPairRequests)
                 .ThenInclude(cpr => cpr.AnalysedComponents)
+                .Include(cp => cp.WebsocketRequests)
+                    .ThenInclude(wsr => wsr.AnalysedComponents)
                 .Where(cp => cp.CurrencyPairRequests
+                    .Any(cpr => cpr.DeletedAt == null && cpr.IsEnabled
+                                                      // We can ignore disabled or deleted ACs, just using this 
+                                                      // to find the correlation
+                                                      && cpr.AnalysedComponents.Any(ac =>
+                                                          ac.Id.Equals(analysedComponentId)))
+                || cp.WebsocketRequests
                     .Any(cpr => cpr.DeletedAt == null && cpr.IsEnabled
                                                       // We can ignore disabled or deleted ACs, just using this 
                                                       // to find the correlation
@@ -251,7 +259,9 @@ namespace Nozomi.Service.Events
                 .DefaultIfEmpty()
                 .ToList();
 
-            if (correlPCPs.Count < 2)
+            var firstCcp = correlPCPs.FirstOrDefault();
+            
+            if (correlPCPs.Count < 2 || firstCcp == null)
             {
                 var query = _unitOfWork.GetRepository<Currency>()
                     .GetQueryable()
@@ -288,66 +298,15 @@ namespace Nozomi.Service.Events
                     })
                     .ToList();
             }
-            
-            #if DEBUG
-            var testQstr = correlPCPs.FirstOrDefault(ccp => ccp.Currency.Abbrv
-                               .Equals(ccp.CurrencyPair.MainCurrency, StringComparison.InvariantCultureIgnoreCase))
-                               .Currency.Abbrv
-                           + correlPCPs.FirstOrDefault(ccp => ccp.Currency.Abbrv
-                               .Equals(ccp.CurrencyPair.CounterCurrency, StringComparison.InvariantCultureIgnoreCase))
-                               .Currency.Abbrv;
-            
-            var testQ = _unitOfWork.GetRepository<CurrencyPair>()
-                .GetQueryable()
-                .AsNoTracking()
-                .Include(cp => cp.CurrencyPairCurrencies)
-                .ThenInclude(pcp => pcp.Currency)
-                .Where(cp =>
-                    (cp.CurrencyPairCurrencies.FirstOrDefault(ccp => ccp.Currency.Abbrv
-                         .Equals(ccp.CurrencyPair.MainCurrency, StringComparison.InvariantCultureIgnoreCase)).Currency.Abbrv
-                            + cp.CurrencyPairCurrencies.FirstOrDefault(ccp => ccp.Currency.Abbrv
-                                .Equals(ccp.CurrencyPair.CounterCurrency, StringComparison.InvariantCultureIgnoreCase)).Currency.Abbrv)
-                    .Equals(testQstr, StringComparison.InvariantCultureIgnoreCase)
-//                    // Make sure the main currencies are identical
-//                    cp.PartialCurrencyPairs.FirstOrDefault(pcp => pcp.IsMain).Currency.Abbrv
-//                        .Equals(correlPCPs.FirstOrDefault(cpcp => cpcp.IsMain).Currency.Abbrv, 
-//                            StringComparison.InvariantCultureIgnoreCase)
-//                    // Make sure the counter currencies are identical
-//                    && cp.PartialCurrencyPairs.FirstOrDefault(pcp => !pcp.IsMain).Currency.Abbrv
-//                        .Equals(correlPCPs.FirstOrDefault(cpcp => !cpcp.IsMain).Currency.Abbrv,
-//                            StringComparison.InvariantCultureIgnoreCase)
-                    )
-                .Include(cp => cp.CurrencyPairRequests)
-                .ThenInclude(cpr => cpr.RequestComponents)
-                .SelectMany(cp => cp.CurrencyPairRequests)
-                .SelectMany(cpr => cpr.RequestComponents)
-                    .Select(rc => new RequestComponent
-                    {
-                        Id = rc.Id,
-                        ComponentType = rc.ComponentType,
-                        Identifier = rc.Identifier,
-                        IsDenominated = rc.IsDenominated,
-                        QueryComponent = rc.QueryComponent,
-                        Value = rc.Value
-                    })
-                .ToList();
-            #endif
-            
-            var tickerPairStr = correlPCPs.FirstOrDefault(ccp => ccp.Currency.Abbrv
-                                    .Equals(ccp.CurrencyPair.MainCurrency, StringComparison.InvariantCultureIgnoreCase)).Currency.Abbrv
-                           + correlPCPs.FirstOrDefault(ccp => ccp.Currency.Abbrv
-                               .Equals(ccp.CurrencyPair.CounterCurrency, StringComparison.InvariantCultureIgnoreCase)).Currency.Abbrv;
+
+            var tickerPairStr = string.Concat(firstCcp.CurrencyPair.MainCurrency, firstCcp.CurrencyPair.CounterCurrency);
 
             var queryRes = _unitOfWork.GetRepository<CurrencyPair>()
                 .GetQueryable()
                 .AsNoTracking()
                 .Include(cp => cp.CurrencyPairCurrencies)
                 .ThenInclude(pcp => pcp.Currency)
-                .Where(cp =>
-                        (cp.CurrencyPairCurrencies.FirstOrDefault(ccp => ccp.Currency.Abbrv
-                             .Equals(ccp.CurrencyPair.MainCurrency, StringComparison.InvariantCultureIgnoreCase)).Currency.Abbrv
-                         + cp.CurrencyPairCurrencies.FirstOrDefault(ccp => ccp.Currency.Abbrv
-                             .Equals(ccp.CurrencyPair.CounterCurrency, StringComparison.InvariantCultureIgnoreCase)).Currency.Abbrv)
+                .Where(cp => string.Concat(cp.MainCurrency, cp.CounterCurrency)
                         .Equals(tickerPairStr, StringComparison.InvariantCultureIgnoreCase)
 //                    // Make sure the main currencies are identical
 //                    cp.PartialCurrencyPairs.FirstOrDefault(pcp => pcp.IsMain).Currency.Abbrv
@@ -359,16 +318,34 @@ namespace Nozomi.Service.Events
 //                            StringComparison.InvariantCultureIgnoreCase)
                 )
                 .Include(cp => cp.CurrencyPairRequests)
-                .ThenInclude(cpr => cpr.RequestComponents);
+                    .ThenInclude(cpr => cpr.RequestComponents)
+                .Include(cp => cp.WebsocketRequests)
+                    .ThenInclude(wsr => wsr.RequestComponents);
 
             if (track)
             {
                 queryRes.ThenInclude(rc => rc.RcdHistoricItems);
             }
             
+            // Also slot in the web socket request components as well
+            
+            
             return queryRes
                 .SelectMany(cp => cp.CurrencyPairRequests)
                 .SelectMany(cpr => cpr.RequestComponents)
+                .Select(rc => new RequestComponent
+                {
+                    Id = rc.Id,
+                    ComponentType = rc.ComponentType,
+                    Identifier = rc.Identifier,
+                    IsDenominated = rc.IsDenominated,
+                    QueryComponent = rc.QueryComponent,
+                    Value = rc.Value,
+                    RcdHistoricItems = rc.RcdHistoricItems
+                })
+                .Concat(queryRes
+                    .SelectMany(cp => cp.WebsocketRequests)
+                    .SelectMany(cpr => cpr.RequestComponents)
                     .Select(rc => new RequestComponent
                     {
                         Id = rc.Id,
@@ -379,6 +356,7 @@ namespace Nozomi.Service.Events
                         Value = rc.Value,
                         RcdHistoricItems = rc.RcdHistoricItems
                     })
+                )
                 .ToList();
 //            if (predicate != null)
 //            {
