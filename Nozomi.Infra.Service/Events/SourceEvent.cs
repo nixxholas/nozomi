@@ -53,6 +53,39 @@ namespace Nozomi.Service.Events
 
             return query;
         }
+        
+        // Get all including disabled sources.
+        public IEnumerable<Source> GetAll(bool countPairs = false, bool includeNested = false)
+        {
+            var query = _unitOfWork.GetRepository<Source>()
+                .GetQueryable()
+                .Include(cs => cs.CurrencyPairs)
+                .Where(cs => cs.DeletedAt == null);
+
+            if (includeNested)
+            {
+                query = query
+                    .Include(cs => cs.Currencies);
+            }
+
+            if (countPairs)
+            {
+                query = query
+                    .Select(s => new Source
+                    {
+                        Id = s.Id,
+                        Abbreviation = s.Abbreviation, 
+                        Name = s.Name,
+                        APIDocsURL = s.APIDocsURL,
+                        PairCount = s.CurrencyPairs != null ? s.CurrencyPairs.Count : 0,
+                        CurrencyPairs = s.CurrencyPairs,
+                        Currencies = s.Currencies,
+                        IsEnabled = s.IsEnabled
+                    });
+            }
+
+            return query;
+        }
 
         public IEnumerable<dynamic> GetAllActiveObsc(bool includeNested = false)
         {
@@ -136,6 +169,7 @@ namespace Nozomi.Service.Events
                 {
                     Abbreviation = s.Abbreviation,
                     Name = s.Name,
+                    APIDocsURL = s.APIDocsURL,
                     Currencies = s.Currencies
                         .Where(c => c.IsEnabled && c.DeletedAt == null)
                         .Select(c => new CurrencyResponse
