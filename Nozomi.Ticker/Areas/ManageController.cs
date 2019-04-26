@@ -241,7 +241,7 @@ namespace Nozomi.Ticker.Areas
             // Will be using IndexViewModel for now because it does the same thing
             var vm = new IndexViewModel
             {
-                Sources = _sourceEvent.GetAllActive(true).ToList()
+                Sources = _sourceEvent.GetAll(true).ToList()
             };
 
             return View(vm);
@@ -249,7 +249,7 @@ namespace Nozomi.Ticker.Areas
         
         [HttpGet("[controller]/[action]/{abbreviation}")]
         [Authorize(Roles = "Owner, Administrator, Staff")]
-        public async Task<IActionResult> Source([FromRoute]string abbreviation)
+        public async Task<IActionResult> EditSource([FromRoute]string abbreviation)
         {
             var user = await GetCurrentUserAsync();
             if (user == null)
@@ -263,9 +263,9 @@ namespace Nozomi.Ticker.Areas
                 Source = _sourceEvent.Get(abbreviation)
             };
 
-            return View(vm);
+            return Ok(vm);
         }
-        
+
         #endregion
 
         #region Ticker APIs
