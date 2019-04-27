@@ -308,27 +308,80 @@ namespace Nozomi.Service.Events
                 .ThenInclude(pcp => pcp.Currency)
                 .Where(cp => string.Concat(cp.MainCurrency, cp.CounterCurrency)
                         .Equals(tickerPairStr, StringComparison.InvariantCultureIgnoreCase)
-//                    // Make sure the main currencies are identical
-//                    cp.PartialCurrencyPairs.FirstOrDefault(pcp => pcp.IsMain).Currency.Abbrv
-//                        .Equals(correlPCPs.FirstOrDefault(cpcp => cpcp.IsMain).Currency.Abbrv, 
-//                            StringComparison.InvariantCultureIgnoreCase)
-//                    // Make sure the counter currencies are identical
-//                    && cp.PartialCurrencyPairs.FirstOrDefault(pcp => !pcp.IsMain).Currency.Abbrv
-//                        .Equals(correlPCPs.FirstOrDefault(cpcp => !cpcp.IsMain).Currency.Abbrv,
-//                            StringComparison.InvariantCultureIgnoreCase)
                 )
                 .Include(cp => cp.CurrencyPairRequests)
                     .ThenInclude(cpr => cpr.RequestComponents)
+                        .ThenInclude(rc => rc.RcdHistoricItems)
                 .Include(cp => cp.WebsocketRequests)
-                    .ThenInclude(wsr => wsr.RequestComponents);
-
-            if (track)
+                    .ThenInclude(wsr => wsr.RequestComponents)
+                        .ThenInclude(rc => rc.RcdHistoricItems);
+            
+            #if DEBUG
+            var testReqComps = queryRes
+                .SelectMany(cp => cp.CurrencyPairRequests)
+                .SelectMany(cpr => cpr.RequestComponents)
+                .Select(rc => new RequestComponent
+                {
+                    Id = rc.Id,
+                    ComponentType = rc.ComponentType,
+                    Identifier = rc.Identifier,
+                    IsDenominated = rc.IsDenominated,
+                    QueryComponent = rc.QueryComponent,
+                    Value = rc.Value,
+                    RcdHistoricItems = rc.RcdHistoricItems.Where(rcdhi => rcdhi.CreatedAt < 
+                                                                          DateTime.UtcNow.Subtract(TimeSpan.FromDays(7)))
+                        .ToList()
+                })
+                .ToList();
+            
+            if (analysedComponentId == 12 || analysedComponentId == 18 || analysedComponentId == 21)
             {
-                queryRes.ThenInclude(rc => rc.RcdHistoricItems);
+                var cprReqCompsTest = queryRes
+                    .SelectMany(cp => cp.CurrencyPairRequests)
+                    .SelectMany(cpr => cpr.RequestComponents)
+                    .Select(rc => new RequestComponent
+                    {
+                        Id = rc.Id,
+                        ComponentType = rc.ComponentType,
+                        Identifier = rc.Identifier,
+                        IsDenominated = rc.IsDenominated,
+                        QueryComponent = rc.QueryComponent,
+                        Value = rc.Value,
+                        RcdHistoricItems = rc.RcdHistoricItems
+                    }).ToList();
+                
+                var res = queryRes
+                    .SelectMany(cp => cp.CurrencyPairRequests)
+                    .SelectMany(cpr => cpr.RequestComponents)
+                    .Select(rc => new RequestComponent
+                    {
+                        Id = rc.Id,
+                        ComponentType = rc.ComponentType,
+                        Identifier = rc.Identifier,
+                        IsDenominated = rc.IsDenominated,
+                        QueryComponent = rc.QueryComponent,
+                        Value = rc.Value,
+                        RcdHistoricItems = rc.RcdHistoricItems
+                    })
+                    .Concat(queryRes
+                        .SelectMany(cp => cp.WebsocketRequests)
+                        .SelectMany(cpr => cpr.RequestComponents)
+                        .Select(rc => new RequestComponent
+                        {
+                            Id = rc.Id,
+                            ComponentType = rc.ComponentType,
+                            Identifier = rc.Identifier,
+                            IsDenominated = rc.IsDenominated,
+                            QueryComponent = rc.QueryComponent,
+                            Value = rc.Value,
+                            RcdHistoricItems = rc.RcdHistoricItems
+                        })
+                    )
+                    .ToList();
+
+                var testReqCom = res.FirstOrDefault();
             }
-            
-            // Also slot in the web socket request components as well
-            
+#endif
             
             return queryRes
                 .SelectMany(cp => cp.CurrencyPairRequests)
@@ -358,21 +411,6 @@ namespace Nozomi.Service.Events
                     })
                 )
                 .ToList();
-//            if (predicate != null)
-//            {
-//                return finalQuery
-//                    .SelectMany(cp => cp.CurrencyPairRequests
-//                        .SelectMany(cpr => cpr.RequestComponents
-//                            .Where(predicate)))
-//                    .ToList();
-//            }
-//            else
-//            {
-//                return finalQuery
-//                    .SelectMany(cp => cp.CurrencyPairRequests
-//                        .SelectMany(cpr => cpr.RequestComponents))
-//                    .ToList();
-//            }
         }
 
         /// <summary>
