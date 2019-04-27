@@ -60,7 +60,7 @@ namespace Nozomi.Service.HostedServices.RequestTypes
         private readonly NozomiDbContext _nozomiDbContext;
         private readonly HttpClient _httpClient = new HttpClient();
         private readonly ICurrencyRequestEvent _currencyRequestEvent;
-        private readonly ICurrencyPairComponentService _currencyPairComponentService;
+        private readonly IRequestComponentService _requestComponentService;
         private readonly ICurrencyPairRequestService _currencyPairRequestService;
         private readonly IRequestService _requestService;
         private readonly IRequestLogService _requestLogService;
@@ -69,7 +69,7 @@ namespace Nozomi.Service.HostedServices.RequestTypes
         {
             _nozomiDbContext = _scope.ServiceProvider.GetService<NozomiDbContext>();
             _currencyRequestEvent = _scope.ServiceProvider.GetRequiredService<ICurrencyRequestEvent>();
-            _currencyPairComponentService = _scope.ServiceProvider.GetRequiredService<ICurrencyPairComponentService>();
+            _requestComponentService = _scope.ServiceProvider.GetRequiredService<IRequestComponentService>();
             _currencyPairRequestService = _scope.ServiceProvider.GetRequiredService<ICurrencyPairRequestService>();
             _requestService = _scope.ServiceProvider.GetRequiredService<IRequestService>();
             _requestLogService = _scope.ServiceProvider.GetRequiredService<IRequestLogService>();
@@ -503,7 +503,7 @@ namespace Nozomi.Service.HostedServices.RequestTypes
                                                 if (val > 0)
                                                 {
                                                     // Update it
-                                                    var res = _currencyPairComponentService.UpdatePairValue(component.Id, val);
+                                                    var res = _requestComponentService.UpdatePairValue(component.Id, val);
 
                                                     if (res.ResultType.Equals(NozomiResultType.Failed))
                                                     {
@@ -541,7 +541,7 @@ namespace Nozomi.Service.HostedServices.RequestTypes
                                                 if (val > 0)
                                                 {
                                                     // Update it
-                                                    var res = _currencyPairComponentService.UpdatePairValue(component.Id, val);
+                                                    var res = _requestComponentService.UpdatePairValue(component.Id, val);
 
                                                     if (res.ResultType.Equals(NozomiResultType.Failed))
                                                     {
@@ -611,7 +611,7 @@ namespace Nozomi.Service.HostedServices.RequestTypes
                                             if (val > 0)
                                             {
                                                 // Update it
-                                                var res = _currencyPairComponentService.UpdatePairValue(component.Id, val);
+                                                var res = _requestComponentService.UpdatePairValue(component.Id, val);
 
                                                 if (res.ResultType.Equals(NozomiResultType.Failed))
                                                 {
@@ -649,7 +649,7 @@ namespace Nozomi.Service.HostedServices.RequestTypes
                                             if (val > 0)
                                             {
                                                 // Update it
-                                                var res = _currencyPairComponentService.UpdatePairValue(component.Id, val);
+                                                var res = _requestComponentService.UpdatePairValue(component.Id, val);
 
                                                 if (res.ResultType.Equals(NozomiResultType.Failed))
                                                 {
@@ -705,7 +705,7 @@ namespace Nozomi.Service.HostedServices.RequestTypes
                                         if (val > 0)
                                         {
                                             // Update it
-                                            var res = _currencyPairComponentService.UpdatePairValue(component.Id, val);
+                                            var res = _requestComponentService.UpdatePairValue(component.Id, val);
 
                                             if (res.ResultType.Equals(NozomiResultType.Failed))
                                             {

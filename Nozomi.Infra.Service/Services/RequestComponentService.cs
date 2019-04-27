@@ -18,13 +18,13 @@ using Nozomi.Service.Services.Interfaces;
 
 namespace Nozomi.Service.Services
 {
-    public class CurrencyPairComponentService : BaseService<CurrencyPairComponentService, NozomiDbContext>, ICurrencyPairComponentService
+    public class RequestComponentService : BaseService<RequestComponentService, NozomiDbContext>, IRequestComponentService
     {
         private const string serviceName = "[CurrencyPairComponentService]";
         
         private IRcdHistoricItemService _rcdHistoricItemService { get; set; }
         
-        public CurrencyPairComponentService(ILogger<CurrencyPairComponentService> logger, 
+        public RequestComponentService(ILogger<RequestComponentService> logger, 
             IRcdHistoricItemService rcdHistoricItemService,
             IUnitOfWork<NozomiDbContext> unitOfWork, IDistributedCache distributedCache) : base(logger, unitOfWork)
         {
