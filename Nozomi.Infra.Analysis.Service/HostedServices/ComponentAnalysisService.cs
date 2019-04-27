@@ -268,14 +268,19 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                             else
                             {
                                 #if DEBUG
-                                var correlatedReqCompsTest = _requestComponentEvent.GetAllByCorrelation(component.Id, true)
-                                    .Where(rc => (rc.ComponentType.Equals(ComponentType.Ask)
-                                                  || rc.ComponentType.Equals(ComponentType.Bid))
-                                                 && rc.RcdHistoricItems != null 
-                                                 && rc.RcdHistoricItems
-                                                     .Any(rcdhi => rcdhi.HistoricDateTime >
-                                                                   DateTime.UtcNow.Subtract(TimeSpan.FromHours(1))))
-                                    .ToList();
+                                if (component.Id.Equals(12) || component.Id.Equals(18))
+                                {
+                                    var correlatedReqCompsTest = _requestComponentEvent.GetAllByCorrelation(component.Id, true)
+                                        .Where(rc => (rc.ComponentType.Equals(ComponentType.Ask)
+                                                      || rc.ComponentType.Equals(ComponentType.Bid))
+                                                     && rc.RcdHistoricItems != null)
+                                        .ToList();
+
+                                    if (correlatedReqCompsTest.FirstOrDefault().RcdHistoricItems.Count > 0)
+                                    {
+                                        Console.WriteLine("This hits!!!");
+                                    }
+                                }
                                 #endif
                                 
                                 // Obtain all of the req components that are related to this AC.
