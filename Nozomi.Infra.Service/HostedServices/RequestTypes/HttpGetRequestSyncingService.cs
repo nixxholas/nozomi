@@ -125,6 +125,15 @@ namespace Nozomi.Service.HostedServices.RequestTypes
             _logger.LogWarning("HttpGetCurrencyPairRequestSyncingService background task is stopping.");
         }
         
+        /// <summary>
+        /// Every URL path may have multiple requests attempting to update separate entities.
+        /// This method introduces a way of handling the collection of requests bundled together according to
+        /// their endpoint paths, allowing us to optimise data polling at a granular level by completely removing
+        /// multiple API requests.
+        /// </summary>
+        /// <param name="requests"></param>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
         public async Task<bool> ProcessRequest<T>(ICollection<T> requests) where T : Request
         {
             if (requests != null && requests.Count > 0)
