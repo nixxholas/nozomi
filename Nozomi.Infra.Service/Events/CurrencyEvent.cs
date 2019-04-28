@@ -59,9 +59,12 @@ namespace Nozomi.Service.Events
                     .ThenInclude(cr => cr.RequestComponents)
                 .ToList();
 
+            // Filter it
             var cpACs = currency
                 .SelectMany(c => c.CurrencyCurrencyPairs)
                 .Select(pcp => pcp.CurrencyPair)
+                .Where(cp => cp.CounterCurrency.Equals(CoreConstants.GenericCounterCurrency, 
+                    StringComparison.InvariantCultureIgnoreCase))
                 .SelectMany(cp => cp.CurrencyPairRequests)
                 .SelectMany(cpr => cpr.AnalysedComponents
                     .Where(ac => ac.DeletedAt == null && ac.IsEnabled))
