@@ -36,10 +36,11 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
         private readonly ICurrencyEvent _currencyEvent;
         private readonly IRequestComponentEvent _requestComponentEvent;
 
-        private readonly IHubContext<NozomiStreamHub, INozomiStreamClient> _nozomiStreamHub;
+//        private readonly IHubContext<NozomiStreamHub, INozomiStreamClient> _nozomiStreamHub;
 
         public ComponentAnalysisService(IServiceProvider serviceProvider,
-            IHubContext<NozomiStreamHub, INozomiStreamClient> nozomiStreamHub)
+            //IHubContext<NozomiStreamHub, INozomiStreamClient> nozomiStreamHub
+            )
             : base(serviceProvider)
         {
             _analysedComponentEvent = _scope.ServiceProvider.GetRequiredService<IAnalysedComponentEvent>();
@@ -49,7 +50,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
             _currencyEvent = _scope.ServiceProvider.GetRequiredService<ICurrencyEvent>();
             _requestComponentEvent = _scope.ServiceProvider.GetRequiredService<IRequestComponentEvent>();
 
-            _nozomiStreamHub = nozomiStreamHub;
+//            _nozomiStreamHub = nozomiStreamHub;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -71,8 +72,8 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                                " Analysis successful");
 
                         // Push the updated currency data
-                        await _nozomiStreamHub.Clients.Group(NozomiSocketGroup.Currencies.GetDescription())
-                            .Currencies(_currencyEvent.GetAllDetailed());
+//                        await _nozomiStreamHub.Clients.Group(NozomiSocketGroup.Currencies.GetDescription())
+//                            .Currencies(_currencyEvent.GetAllDetailed());
                     }
                     else
                     {

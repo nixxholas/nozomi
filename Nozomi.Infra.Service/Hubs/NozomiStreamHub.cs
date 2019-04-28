@@ -63,6 +63,7 @@ namespace Nozomi.Service.Hubs
             {
                 case NozomiSocketGroup.Tickers:
                     return await PropagateSubscription(group);
+                // TODO: Dedicated server to handle this. Too performance intensive.
                 case NozomiSocketGroup.Currencies:
                     return await PropagateSubscription(group);
                 default:
