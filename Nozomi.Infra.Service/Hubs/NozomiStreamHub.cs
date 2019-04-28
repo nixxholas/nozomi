@@ -37,18 +37,18 @@ namespace Nozomi.Service.Hubs
         /// https://stackoverflow.com/questions/21759577/using-generic-methods-on-signalr-hub
         /// </summary>
         /// <param name="data"></param>
-        public async void BroadcastData(JObject data)
-        {
-            var channel = Channel.CreateUnbounded<NozomiResult<IEnumerable<JObject>>>();
-
-            await channel.Writer.WriteAsync(new NozomiResult<IEnumerable<JObject>>()
-            {
-                ResultType = NozomiResultType.Success,
-                Data = new[] { data }
-            });
-            
-            channel.Writer.Complete();
-        }
+//        public async void BroadcastData(JObject data)
+//        {
+//            var channel = Channel.CreateUnbounded<NozomiResult<IEnumerable<JObject>>>();
+//
+//            await channel.Writer.WriteAsync(new NozomiResult<IEnumerable<JObject>>()
+//            {
+//                ResultType = NozomiResultType.Success,
+//                Data = new[] { data }
+//            });
+//            
+//            channel.Writer.Complete();
+//        }
 
         /// <summary>
         /// Allows clients to subscribe to a specific group.
