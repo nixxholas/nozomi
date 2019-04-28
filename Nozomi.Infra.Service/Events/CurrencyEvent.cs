@@ -477,8 +477,6 @@ namespace Nozomi.Service.Events
                 .ThenInclude(cp => cp.CurrencyPairRequests)
                 .ThenInclude(cpr => cpr.AnalysedComponents)
                 .ThenInclude(ac => ac.AnalysedHistoricItems)
-//                .Where(c => c.PartialCurrencyPairs
-//                    .Any(pcp => compatibleCPairs.Any(ccp => ccp.Id.Equals(pcp.CurrencyPair.Id))))
                 .Select(c => new Currency
                 {
                     Id = c.Id,
@@ -500,6 +498,9 @@ namespace Nozomi.Service.Events
                             RequestId = ac.RequestId,
                             CurrencyId = ac.CurrencyId,
                             AnalysedHistoricItems = ac.AnalysedHistoricItems
+                                .OrderByDescending(ahi => ahi.HistoricDateTime)
+                                .Take(50)
+                                .ToList()
                         })
                         .ToList(),
                     CurrencyCurrencyPairs = c.CurrencyCurrencyPairs
@@ -531,6 +532,9 @@ namespace Nozomi.Service.Events
                                                 RequestId = ac.RequestId,
                                                 CurrencyId = ac.CurrencyId,
                                                 AnalysedHistoricItems = ac.AnalysedHistoricItems
+                                                    .OrderByDescending(ahi => ahi.HistoricDateTime)
+                                                    .Take(50)
+                                                    .ToList()
                                             })
                                             .ToList()
                                     })
