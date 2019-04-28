@@ -12,6 +12,8 @@ namespace Nozomi.Service.Services.Interfaces
 
         bool Update(UpdateSource updateSource);
 
+        bool StaffSourceUpdate(UpdateSource updateSource);
+
         bool Delete(long id, bool hardDelete = false, long userId = 0);
     }
 }
