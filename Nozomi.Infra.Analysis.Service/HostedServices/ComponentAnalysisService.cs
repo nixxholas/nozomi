@@ -38,7 +38,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
 
 //        private readonly IHubContext<NozomiStreamHub, INozomiStreamClient> _nozomiStreamHub;
 
-        public ComponentAnalysisService(IServiceProvider serviceProvider,
+        public ComponentAnalysisService(IServiceProvider serviceProvider
             //IHubContext<NozomiStreamHub, INozomiStreamClient> nozomiStreamHub
             )
             : base(serviceProvider)
