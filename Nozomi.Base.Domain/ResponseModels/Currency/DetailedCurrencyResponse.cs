@@ -30,10 +30,10 @@ namespace Nozomi.Data.ResponseModels.Currency
                 LastUpdated = DateTime.UtcNow;
 
                 // Obtain analysed component data from partial currency pairs.
-                if (currency.PartialCurrencyPairs != null && currency.PartialCurrencyPairs.Count > 0)
+                if (currency.CurrencyCurrencyPairs != null && currency.CurrencyCurrencyPairs.Count > 0)
                 {
                     // Obtain via the Request method
-                    var query = currency.PartialCurrencyPairs
+                    var query = currency.CurrencyCurrencyPairs
                             .Select(pcp => pcp.CurrencyPair)
                             .SelectMany(cpr => cpr.CurrencyPairRequests)
                             .SelectMany(cpr => cpr.AnalysedComponents)
@@ -74,7 +74,7 @@ namespace Nozomi.Data.ResponseModels.Currency
                                 case AnalysedComponentType.DailyPricePctChange:
                                     if (decimal.TryParse(aComp.Value, out var dailyAvgPricePctChange))
                                     {
-                                        DailyAvgPricePctChange = dailyAvgPricePctChange;
+                                        DailyAvgPricePctChange = Math.Round(dailyAvgPricePctChange, 1);
                                     }
                                     break;
                                 case AnalysedComponentType.DailyVolume:
@@ -147,7 +147,7 @@ namespace Nozomi.Data.ResponseModels.Currency
                     if (string.IsNullOrEmpty(currencyDAPPC)
                         && currencyDAPPC.Equals("0", StringComparison.InvariantCultureIgnoreCase))
                     {
-                        DailyAvgPricePctChange = decimal.Parse(currencyDAPPC);
+                        DailyAvgPricePctChange = Math.Round(decimal.Parse(currencyDAPPC), 1);
                     }
                 }
                 
@@ -169,7 +169,7 @@ namespace Nozomi.Data.ResponseModels.Currency
             if (currencyPairs != null && currencyPairs.Any())
             {
                 var curr = currencyPairs
-                    .Select(cp => cp.PartialCurrencyPairs
+                    .Select(cp => cp.CurrencyPairCurrencies
                         .Select(pcp => pcp.Currency)
                         .FirstOrDefault())
                     .FirstOrDefault();
@@ -248,7 +248,7 @@ namespace Nozomi.Data.ResponseModels.Currency
                 #endif
                 
                 var curr = currencyPairs
-                    .Select(cp => cp.PartialCurrencyPairs
+                    .Select(cp => cp.CurrencyPairCurrencies
                         .Select(pcp => pcp.Currency)
                         .FirstOrDefault(c => c.Abbrv.Equals(abbrv, StringComparison.InvariantCultureIgnoreCase)))
                     .FirstOrDefault();
@@ -322,10 +322,10 @@ namespace Nozomi.Data.ResponseModels.Currency
         {
             if (currency != null)
             {
-                if (currency.PartialCurrencyPairs != null && currency.PartialCurrencyPairs.Count > 0)
+                if (currency.CurrencyCurrencyPairs != null && currency.CurrencyCurrencyPairs.Count > 0)
                 {
                     // Obtain via the Request method
-                    var query = currency.PartialCurrencyPairs
+                    var query = currency.CurrencyCurrencyPairs
                             .Select(pcp => pcp.CurrencyPair)
                             .SelectMany(cpr => cpr.CurrencyPairRequests)
                             .SelectMany(cpr => cpr.AnalysedComponents)
@@ -412,9 +412,9 @@ namespace Nozomi.Data.ResponseModels.Currency
                         && currencyDAPPC.Equals("0", StringComparison.InvariantCultureIgnoreCase))
                     {
                         if (DailyAvgPricePctChange != decimal.Zero)
-                            DailyAvgPricePctChange = (DailyAvgPricePctChange + decimal.Parse(currencyDAPPC)) / 2;
+                            DailyAvgPricePctChange = Math.Round(DailyAvgPricePctChange + decimal.Parse(currencyDAPPC) / 2, 1);
                         else
-                            DailyAvgPricePctChange = decimal.Parse(currencyDAPPC);
+                            DailyAvgPricePctChange = Math.Round(decimal.Parse(currencyDAPPC), 1);
                     }
                 }
                 

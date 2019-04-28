@@ -6,7 +6,7 @@ using Nozomi.Data.Models.Web;
 
 namespace Nozomi.Service.Services.Interfaces
 {
-    public interface ICurrencyPairComponentService
+    public interface IRequestComponentService
     {
         NozomiResult<string> Create(CreateCurrencyPairComponent obj, long userId = 0);
         

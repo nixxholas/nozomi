@@ -65,7 +65,39 @@ namespace Nozomi.Repo.Migrations
 
                     b.HasIndex("CurrencyTypeId");
 
+                    b.HasIndex("Abbrv", "CurrencySourceId")
+                        .IsUnique()
+                        .HasName("Currency_Index_Abbrv_CurrencySourceId");
+
                     b.ToTable("Currencies");
+                });
+
+            modelBuilder.Entity("Nozomi.Data.Models.Currency.CurrencyCurrencyPair", b =>
+                {
+                    b.Property<long>("CurrencyPairId");
+
+                    b.Property<long>("CurrencyId");
+
+                    b.Property<DateTime>("CreatedAt");
+
+                    b.Property<long>("CreatedBy");
+
+                    b.Property<DateTime?>("DeletedAt");
+
+                    b.Property<long>("DeletedBy");
+
+                    b.Property<bool>("IsEnabled");
+
+                    b.Property<DateTime>("ModifiedAt");
+
+                    b.Property<long>("ModifiedBy");
+
+                    b.HasKey("CurrencyPairId", "CurrencyId")
+                        .HasName("CurrencyCurrencyPair_CK_CurrencyPairId_CurrencyId");
+
+                    b.HasIndex("CurrencyId");
+
+                    b.ToTable("CurrencyCurrencyPairs");
                 });
 
             modelBuilder.Entity("Nozomi.Data.Models.Currency.CurrencyPair", b =>
@@ -75,6 +107,8 @@ namespace Nozomi.Repo.Migrations
 
                     b.Property<string>("APIUrl")
                         .IsRequired();
+
+                    b.Property<string>("CounterCurrency");
 
                     b.Property<DateTime>("CreatedAt");
 
@@ -92,6 +126,8 @@ namespace Nozomi.Repo.Migrations
                     b.Property<long>("DeletedBy");
 
                     b.Property<bool>("IsEnabled");
+
+                    b.Property<string>("MainCurrency");
 
                     b.Property<DateTime>("ModifiedAt");
 
@@ -167,22 +203,6 @@ namespace Nozomi.Repo.Migrations
                         .HasName("CurrencyType_PK_Id");
 
                     b.ToTable("CurrencyTypes");
-                });
-
-            modelBuilder.Entity("Nozomi.Data.Models.Currency.PartialCurrencyPair", b =>
-                {
-                    b.Property<long>("CurrencyPairId");
-
-                    b.Property<bool>("IsMain");
-
-                    b.Property<long>("CurrencyId");
-
-                    b.HasKey("CurrencyPairId", "IsMain")
-                        .HasName("PartialCurrencyPair_CK_CurrencyPairId_IsMain");
-
-                    b.HasIndex("CurrencyId");
-
-                    b.ToTable("PartialCurrencyPairs");
                 });
 
             modelBuilder.Entity("Nozomi.Data.Models.Currency.Source", b =>
@@ -619,6 +639,21 @@ namespace Nozomi.Repo.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
+            modelBuilder.Entity("Nozomi.Data.Models.Currency.CurrencyCurrencyPair", b =>
+                {
+                    b.HasOne("Nozomi.Data.Models.Currency.Currency", "Currency")
+                        .WithMany("CurrencyCurrencyPairs")
+                        .HasForeignKey("CurrencyId")
+                        .HasConstraintName("CurrencyCurrencyPairs_Currency_Constraint")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("Nozomi.Data.Models.Currency.CurrencyPair", "CurrencyPair")
+                        .WithMany("CurrencyPairCurrencies")
+                        .HasForeignKey("CurrencyPairId")
+                        .HasConstraintName("PartialCurrencyPairs_CurrencyPair_Constraint")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
             modelBuilder.Entity("Nozomi.Data.Models.Currency.CurrencyPair", b =>
                 {
                     b.HasOne("Nozomi.Data.Models.Currency.Source", "CurrencySource")
@@ -633,21 +668,6 @@ namespace Nozomi.Repo.Migrations
                     b.HasOne("Nozomi.Data.Models.Currency.Currency", "Currency")
                         .WithMany("CurrencyProperties")
                         .HasForeignKey("CurrencyId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("Nozomi.Data.Models.Currency.PartialCurrencyPair", b =>
-                {
-                    b.HasOne("Nozomi.Data.Models.Currency.Currency", "Currency")
-                        .WithMany("PartialCurrencyPairs")
-                        .HasForeignKey("CurrencyId")
-                        .HasConstraintName("PartialCurrencyPairs_Currency_Constraint")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("Nozomi.Data.Models.Currency.CurrencyPair", "CurrencyPair")
-                        .WithMany("PartialCurrencyPairs")
-                        .HasForeignKey("CurrencyPairId")
-                        .HasConstraintName("PartialCurrencyPairs_CurrencyPair_Constraint")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 

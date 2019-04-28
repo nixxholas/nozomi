@@ -29,13 +29,13 @@ namespace Nozomi.Service.HostedServices.RequestTypes
         IHttpPostCurrencyPairRequestSyncingService, IHostedService, IDisposable
     {
         private readonly HttpClient _httpClient = new HttpClient();
-        private readonly ICurrencyPairComponentService _currencyPairComponentService;
+        private readonly IRequestComponentService _requestComponentService;
         private readonly ICurrencyPairRequestService _currencyPairRequestService;
         private readonly IRequestLogService _requestLogService;
         
         public HttpPostCurrencyPairRequestSyncingService(IServiceProvider serviceProvider) : base(serviceProvider)
         {
-            _currencyPairComponentService = _scope.ServiceProvider.GetRequiredService<ICurrencyPairComponentService>();
+            _requestComponentService = _scope.ServiceProvider.GetRequiredService<IRequestComponentService>();
             _currencyPairRequestService = _scope.ServiceProvider.GetRequiredService<ICurrencyPairRequestService>();
             _requestLogService = _scope.ServiceProvider.GetRequiredService<IRequestLogService>();
         }
@@ -299,7 +299,7 @@ namespace Nozomi.Service.HostedServices.RequestTypes
                                     if (decimal.TryParse(dataList[index], out decimal val))
                                     {
                                         // Update it
-                                        _currencyPairComponentService.UpdatePairValue(component.Id, val);
+                                        _requestComponentService.UpdatePairValue(component.Id, val);
                                     }
                                 }
                             }
@@ -333,7 +333,7 @@ namespace Nozomi.Service.HostedServices.RequestTypes
                                         if (val > 0)
                                         {
                                             // Update it
-                                            _currencyPairComponentService.UpdatePairValue(component.Id, val);
+                                            _requestComponentService.UpdatePairValue(component.Id, val);
                                         }
                                     }
                                 }

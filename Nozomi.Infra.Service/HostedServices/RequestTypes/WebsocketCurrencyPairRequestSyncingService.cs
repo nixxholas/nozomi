@@ -34,12 +34,12 @@ namespace Nozomi.Service.HostedServices.RequestTypes
         private readonly Dictionary<string, WebSocket> _wsrWebsockets;
 
         private readonly IWebsocketRequestEvent _websocketRequestEvent;
-        private readonly ICurrencyPairComponentService _currencyPairComponentService;
+        private readonly IRequestComponentService _requestComponentService;
 
         public WebsocketCurrencyPairRequestSyncingService(IServiceProvider serviceProvider) : base(serviceProvider)
         {
             _wsrWebsockets = new Dictionary<string, WebSocket>();
-            _currencyPairComponentService = _scope.ServiceProvider.GetRequiredService<ICurrencyPairComponentService>();
+            _requestComponentService = _scope.ServiceProvider.GetRequiredService<IRequestComponentService>();
             _websocketRequestEvent = _scope.ServiceProvider.GetRequiredService<IWebsocketRequestEvent>();
         }
 
@@ -436,7 +436,7 @@ namespace Nozomi.Service.HostedServices.RequestTypes
                                                 if (val > 0)
                                                 {
                                                     // Update it
-                                                    _currencyPairComponentService.UpdatePairValue(component.Id, val);
+                                                    _requestComponentService.UpdatePairValue(component.Id, val);
                                                 }
                                             }
                                         }
@@ -464,7 +464,7 @@ namespace Nozomi.Service.HostedServices.RequestTypes
                                                 if (val > 0)
                                                 {
                                                     // Update it
-                                                    _currencyPairComponentService.UpdatePairValue(component.Id, val);
+                                                    _requestComponentService.UpdatePairValue(component.Id, val);
                                                 }
                                             }
                                         }
@@ -524,7 +524,7 @@ namespace Nozomi.Service.HostedServices.RequestTypes
                                             if (val > 0)
                                             {
                                                 // Update it
-                                                _currencyPairComponentService.UpdatePairValue(component.Id, val);
+                                                _requestComponentService.UpdatePairValue(component.Id, val);
                                             }
                                         }
                                     }
@@ -552,7 +552,7 @@ namespace Nozomi.Service.HostedServices.RequestTypes
                                             if (val > 0)
                                             {
                                                 // Update it
-                                                _currencyPairComponentService.UpdatePairValue(component.Id, val);
+                                                _requestComponentService.UpdatePairValue(component.Id, val);
                                             }
                                         }
                                     }
@@ -598,7 +598,7 @@ namespace Nozomi.Service.HostedServices.RequestTypes
                                         if (val > 0)
                                         {
                                             // Update it
-                                            _currencyPairComponentService.UpdatePairValue(component.Id, val);
+                                            _requestComponentService.UpdatePairValue(component.Id, val);
                                         }
                                     }
                                 }

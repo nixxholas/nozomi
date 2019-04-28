@@ -31,10 +31,7 @@ namespace Nozomi.Data.Models.Currency
                     CurrencySourceId = firstCurr.CurrencySourceId;
                     CurrencySource = firstCurr.CurrencySource;
                     WalletTypeId = firstCurr.WalletTypeId;
-                    PartialCurrencyPairs = currencies
-                        .SelectMany(c => c.PartialCurrencyPairs)
-                        .DefaultIfEmpty()
-                        .ToList();
+                    CurrencyCurrencyPairs = CurrencyCurrencyPairs;
                 }
             }
         }
@@ -66,8 +63,8 @@ namespace Nozomi.Data.Models.Currency
         public ICollection<CurrencyProperty> CurrencyProperties { get; set; }
         
         public ICollection<CurrencyRequest> CurrencyRequests { get; set; }
-
-        public ICollection<PartialCurrencyPair> PartialCurrencyPairs { get; set; }
+        
+        public ICollection<CurrencyCurrencyPair> CurrencyCurrencyPairs { get; set; }
 
         public bool IsValid()
         {

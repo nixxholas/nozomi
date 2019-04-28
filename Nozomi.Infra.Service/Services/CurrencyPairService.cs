@@ -32,11 +32,10 @@ namespace Nozomi.Service.Services
                 APIUrl = createCurrencyPair.ApiUrl,
                 DefaultComponent = createCurrencyPair.DefaultComponent,
                 CurrencySourceId = createCurrencyPair.CurrencySourceId,
-                PartialCurrencyPairs = createCurrencyPair.PartialCurrencyPairs
-                    .Select(pcp => new PartialCurrencyPair()
+                CurrencyPairCurrencies = createCurrencyPair.PartialCurrencyPairs
+                    .Select(pcp => new CurrencyCurrencyPair
                     {
-                        CurrencyId = pcp.CurrencyId,
-                        IsMain = pcp.IsMain
+                        CurrencyId = pcp.CurrencyId
                     })
                     .ToList(),
                 CurrencyPairRequests = createCurrencyPair.CurrencyPairRequests
@@ -106,7 +105,7 @@ namespace Nozomi.Service.Services
                 .Include(cp => cp.CurrencyPairRequests)
                     .ThenInclude(cpr => cpr.RequestComponents)
                 .Include(cp => cp.CurrencySource)
-                .Include(cp => cp.PartialCurrencyPairs)
+                .Include(cp => cp.CurrencyPairCurrencies)
                 .Select(cp => new
                 {
                     id = cp.Id,
@@ -129,9 +128,8 @@ namespace Nozomi.Service.Services
                         queryComponent = cpc.QueryComponent,
                         value = cpc.Value
                     }),
-                    partialCurrencyPairs = cp.PartialCurrencyPairs.Select(pcp => new
+                    partialCurrencyPairs = cp.CurrencyPairCurrencies.Select(pcp => new
                     {
-                        isMain = pcp.IsMain,
                         currencyId = pcp.CurrencyId,
                         currency = new
                         {
@@ -167,7 +165,7 @@ namespace Nozomi.Service.Services
                 .Include(cp => cp.CurrencyPairRequests)
                     .ThenInclude(cpr => cpr.RequestComponents)
                 .Include(cp => cp.CurrencySource)
-                .Include(cp => cp.PartialCurrencyPairs)
+                .Include(cp => cp.CurrencyPairCurrencies)
                 .Select(cp => new
                 {
                     id = cp.Id,
@@ -190,9 +188,8 @@ namespace Nozomi.Service.Services
                         queryComponent = cpc.QueryComponent,
                         value = cpc.Value
                     }),
-                    partialCurrencyPairs = cp.PartialCurrencyPairs.Select(pcp => new
+                    partialCurrencyPairs = cp.CurrencyPairCurrencies.Select(pcp => new
                     {
-                        isMain = pcp.IsMain,
                         currencyId = pcp.CurrencyId,
                         currency = new
                         {
@@ -226,23 +223,23 @@ namespace Nozomi.Service.Services
             // BTCUSDT => CurrencySources => CurrencyId of USDT
             IDictionary<string, IDictionary<long, long>> result = new Dictionary<string, IDictionary<long, long>>();
 
-            var pcPairs = _unitOfWork.GetRepository<PartialCurrencyPair>()
+            var pcPairs = _unitOfWork.GetRepository<CurrencyCurrencyPair>()
                 .GetQueryable()
                 .Include(pcp => pcp.CurrencyPair)
                 .Include(pcp => pcp.Currency)
                 .Include(pcp => pcp.CurrencyPair.CurrencySource)
-                .Include(pcp => pcp.CurrencyPair.PartialCurrencyPairs)
+                .Include(pcp => pcp.CurrencyPair.CurrencyPairCurrencies)
                 .ToList();
 
             // Foreach partialcurrencypair in pcps
             foreach (var pcPair in pcPairs)
             {
                 // Make sure this partial pair is the main unit
-                if (pcPair.IsMain)
+                if (pcPair.Currency.Abbrv.Equals(pcPair.CurrencyPair.MainCurrency))
                 {
                     var counterPair = pcPairs.FirstOrDefault(pcp =>
                         pcp.CurrencyPairId.Equals(pcPair.CurrencyPairId) &&
-                        !pcp.IsMain);
+                        pcp.Currency.Abbrv.Equals(pcp.CurrencyPair.CounterCurrency, StringComparison.InvariantCultureIgnoreCase));
                     var counterPairStr = counterPair?.Currency.Abbrv;
 
                     if (!string.IsNullOrEmpty(counterPairStr))
@@ -298,10 +295,11 @@ namespace Nozomi.Service.Services
                 .GetQueryable()
                 .AsNoTracking()
                 .Where(cp => cp.CurrencySourceId.Equals(currencySourceId))
-                .FirstOrDefault(cp => cp.PartialCurrencyPairs // CurrencyId is the counterpair
+                .FirstOrDefault(cp => cp.CurrencyPairCurrencies // CurrencyId is the counterpair
                                           .Any(pcp => pcp.CurrencyId.Equals(currencyId) &&
-                                                      !pcp.IsMain) &&
-                                      cp.PartialCurrencyPairs.Any(pcp =>
+                                                      pcp.Currency.Abbrv.Equals(pcp.CurrencyPair.CounterCurrency,
+                                                          StringComparison.InvariantCultureIgnoreCase)) &&
+                                      cp.CurrencyPairCurrencies.Any(pcp =>
                                           pcp.Currency.WalletTypeId.Equals(walletTypeId) &&
                                           pcp.CurrencyPair.CurrencySourceId.Equals(currencySourceId)));
 
@@ -330,7 +328,7 @@ namespace Nozomi.Service.Services
             {
                 return query
                     .Where(wExpression)
-                    .Include(cp => cp.PartialCurrencyPairs)
+                    .Include(cp => cp.CurrencyPairCurrencies)
                     .Include(cp => cp.CurrencyPairRequests)
                         .ThenInclude(cpr => cpr.RequestComponents)
                     .Select(cp => new
@@ -347,7 +345,7 @@ namespace Nozomi.Service.Services
                                 value = cpc.Value,
                                 isEnabled = cpc.IsEnabled
                             }),
-                        partialCurrencyPairs = cp.PartialCurrencyPairs
+                        partialCurrencyPairs = cp.CurrencyPairCurrencies
                             .Select(pcp => new
                             {
                                 currencyId = pcp.CurrencyId,
@@ -357,8 +355,7 @@ namespace Nozomi.Service.Services
                                     name = pcp.Currency.Name,
                                     walletTypeId = pcp.Currency.WalletTypeId,
                                     isEnabled = pcp.Currency.IsEnabled
-                                },
-                                isMain = pcp.IsMain
+                                }
                             }),
                         defaultComponent = cp.DefaultComponent
                     })

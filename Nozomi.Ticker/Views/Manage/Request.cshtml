@@ -1,0 +1,211 @@
+@using Newtonsoft.Json
+@using Nozomi.Preprocessing
+@model Nozomi.Data.ViewModels.Manage.RequestViewModel
+
+<!-- Content Section -->
+<div class="bg-light">
+    <div class="container space-2">
+        @* Change the naming of heading later*@
+        <h3 class="mb-6">Request</h3>
+
+        <h3 class="mb-6">Analysed Component</h3>
+        @* Table for analysedComponent *@
+        <b-table :items="request.AnalysedComponents" :fields="dataFields">
+            <template slot="AnalysedComponentType" slot-scope="datum">
+                {{ getAnalysedComponentTypeStr(datum.item.ComponentType) }}
+            </template>
+            <template slot="Delay" slot-scope="datum">
+                {{ datum.item.Delay }}
+            </template>
+            <template slot="IsDenominated" slot-scope="datum">
+                {{ datum.item.IsDenominated }}
+            </template>
+            <template slot="AnalysedComponentValue" slot-scope="datum">
+                {{ datum.item.Value }}
+            </template>
+        </b-table>
+
+        <h3 class="mb-6">Request Components</h3>
+        @* Table for requestComponent *@
+        <b-table :items="request.RequestComponents" :fields="requestComponentsDataFields">
+            <template slot="RequestComponentType" slot-scope="datum">
+                {{ getRequestComponentTypeStr(datum.item.ComponentType) }}
+            </template>
+            <template slot="Identifier" slot-scope="datum">
+                {{ datum.item.Identifier }}
+            </template>
+            <template slot="QueryComponent" slot-scope="datum">
+                {{ datum.item.QueryComponent }}
+            </template>
+            <template slot="RequestComponentValue" slot-scope="datum">
+                {{ datum.item.Value }}
+            </template>
+        </b-table>
+
+        <h3 class="mb-6">Request Properties</h3>
+        @* Table for requestProperties *@
+        <b-table :items="request.RequestProperties" :fields="requestPropertiesDataFields">
+            <template slot="RequestPropertyType" slot-scope="datum">
+                {{ getRequestPropertyTypeStr(datum.item.RequestPropertyType) }}
+            </template>
+            <template slot="RequestPropertyKey" slot-scope="datum">
+                {{ datum.item.Key }}
+            </template>
+            <template slot="RequestPropertyValue" slot-scope="datum">
+                {{ datum.item.Value }}
+            </template>
+        </b-table>
+
+    </div>
+</div>
+
+@section Scripts
+{
+    <script>
+        const vm = new Vue({
+            el: '#content',
+            data: {
+                analysedComponentsDataFields: [
+                    {
+                        key: 'AnalysedComponentType',
+                        label: 'Component Type',
+                        sortable: true,
+                    },
+                    {
+                        key: 'Delay',
+                        label: 'Delay',
+                        sortable: true,
+                    },
+                    {
+                        key: 'IsDenominated',
+                        label: 'Denominated',
+                        sortable: true,
+                    },
+                    {
+                        key: 'AnalysedComponentValue',
+                        label: 'Value',
+                        sortable: true,
+                    }
+                ],
+                requestComponentsDataFields: [
+                    //Request Components
+                    {
+                        key: 'RequestComponentType',
+                        label: 'Component Type',
+                        sortable: true,
+                    },
+                    {
+                        key: 'Identifier',
+                        label: 'Identifier',
+                        sortable: true,
+                    },
+                    {
+                        key: 'QueryComponent',
+                        label: 'Query Component',
+                        sortable: true,
+                    },
+                    {
+                        key: 'RequestComponentValue',
+                        label: 'Value',
+                        sortable: true,
+                    }
+                ],
+                requestPropertiesDataFields: [
+                    {
+                        key: 'RequestPropertyType',
+                        label: 'Property Type',
+                        sortable: true,
+                    },
+                    {
+                        key: 'RequestPropertyKey',
+                        label: 'Key',
+                        sortable: true,
+                    },
+                    {
+                        key: 'RequestPropertyValue',
+                        label: 'Value',
+                        sortable: true,
+                    }
+                ],
+                // The data from the dto
+                request: @Html.Raw(JsonConvert.SerializeObject(@Model.Request)),
+                // Grab the types so we can check with the enum into readable data for user
+                requestTypes: @Html.Raw(Json.Serialize(NozomiServiceConstants.requestTypes, new JsonSerializerSettings
+                              {
+                                  ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                              })),
+                responseTypes: @Html.Raw(Json.Serialize(NozomiServiceConstants.responseTypes, new JsonSerializerSettings
+                               {
+                                   ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                               })),
+                analysedComponentTypes:
+                    @Html.Raw(Json.Serialize(NozomiServiceConstants.analysedComponentTypes, new JsonSerializerSettings
+                    {
+                        ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                    })),
+                requestComponentTypes:
+                    @Html.Raw(Json.Serialize(NozomiServiceConstants.requestComponentTypes, new JsonSerializerSettings
+                    {
+                        ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                    })),
+                requestPropertyTypes:
+                    @Html.Raw(Json.Serialize(NozomiServiceConstants.requestPropertyTypes, new JsonSerializerSettings
+                    {
+                        ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                    })),
+            },
+            methods: {
+                getRequestTypeStr(val) {
+                    if (this.requestTypes != null) {
+                        for (let i = 0; i < this.requestTypes.length; i++) {
+                            if (this.requestTypes[i].Value == val) {
+                                return this.requestTypes[i].Key;
+                            }
+                        }
+                    }
+                    return null;
+                },
+                getResponseTypeStr(val) {
+                    if (this.responseTypes != null) {
+                        for (let i = 0; i < this.responseTypes.length; i++) {
+                            if (this.responseTypes[i].Value == val) {
+                                return this.responseTypes[i].Key;
+                            }
+                        }
+                    }
+                    return null;
+                },
+                getAnalysedComponentTypeStr(val) {
+                    if (this.analysedComponentTypes != null) {
+                        for (let i = 0; i < this.analysedComponentTypes.length; i++) {
+                            if (this.analysedComponentTypes[i].Value === val) {
+                                return this.analysedComponentTypes[i].Key;
+                            }
+                        }
+                    }
+                    return null;
+                },
+                getRequestComponentTypeStr(val) {
+                    if (this.requestComponentTypes != null) {
+                        for (let i = 0; i < this.requestComponentTypes.length; i++) {
+                            if (this.requestComponentTypes[i].Value === val) {
+                                return this.requestComponentTypes[i].Key;
+                            }
+                        }
+                    }
+                    return null;
+                },
+                getRequestPropertyTypeStr(val) {
+                    if (this.requestPropertyTypes != null) {
+                        for (let i = 0; i < this.requestPropertyTypes.length; i++) {
+                            if (this.requestPropertyTypes[i].Value === val) {
+                                return this.requestPropertyTypes[i].Key;
+                            }
+                        }
+                    }
+                    return null;
+                }
+            }
+        })
+    </script>
+}

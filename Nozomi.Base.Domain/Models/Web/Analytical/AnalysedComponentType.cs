@@ -15,13 +15,15 @@ namespace Nozomi.Data.Models.Web.Analytical
         
         [Description("Change")]
         DailyPriceChange = 50,
-        [Description("Weekly % Change")]
+        [Description("Weekly Change")]
         WeeklyPriceChange = 51,
         [Description("Monthly % Change")]
         MonthlyPriceChange = 52,
         
         [Description("% Change")]
         DailyPricePctChange = 70,
+        [Description("Hourly % Change")]
+        HourlyPricePctChange = 71,
         
         [Description("Volume")]
         DailyVolume = 80

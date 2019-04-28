@@ -53,6 +53,39 @@ namespace Nozomi.Service.Events
 
             return query;
         }
+        
+        // Get all including disabled sources.
+        public IEnumerable<Source> GetAll(bool countPairs = false, bool includeNested = false)
+        {
+            var query = _unitOfWork.GetRepository<Source>()
+                .GetQueryable()
+                .Include(cs => cs.CurrencyPairs)
+                .Where(cs => cs.DeletedAt == null);
+
+            if (includeNested)
+            {
+                query = query
+                    .Include(cs => cs.Currencies);
+            }
+
+            if (countPairs)
+            {
+                query = query
+                    .Select(s => new Source
+                    {
+                        Id = s.Id,
+                        Abbreviation = s.Abbreviation, 
+                        Name = s.Name,
+                        APIDocsURL = s.APIDocsURL,
+                        PairCount = s.CurrencyPairs != null ? s.CurrencyPairs.Count : 0,
+                        CurrencyPairs = s.CurrencyPairs,
+                        Currencies = s.Currencies,
+                        IsEnabled = s.IsEnabled
+                    });
+            }
+
+            return query;
+        }
 
         public IEnumerable<dynamic> GetAllActiveObsc(bool includeNested = false)
         {
@@ -101,7 +134,7 @@ namespace Nozomi.Service.Events
                 .Include(s => s.Currencies)
                     .ThenInclude(c => c.CurrencyType)
                 .Include(s => s.CurrencyPairs)
-                    .ThenInclude(cp => cp.PartialCurrencyPairs)
+                    .ThenInclude(cp => cp.CurrencyPairCurrencies)
                         .ThenInclude(pcp => pcp.Currency)
                 .Select(s => new XSourceResponse
                 {
@@ -130,12 +163,13 @@ namespace Nozomi.Service.Events
                 .Include(s => s.Currencies)
                 .ThenInclude(c => c.CurrencyType)
                 .Include(s => s.CurrencyPairs)
-                .ThenInclude(cp => cp.PartialCurrencyPairs)
+                .ThenInclude(cp => cp.CurrencyPairCurrencies)
                 .ThenInclude(pcp => pcp.Currency)
                 .Select(s => new XSourceResponse
                 {
                     Abbreviation = s.Abbreviation,
                     Name = s.Name,
+                    APIDocsURL = s.APIDocsURL,
                     Currencies = s.Currencies
                         .Where(c => c.IsEnabled && c.DeletedAt == null)
                         .Select(c => new CurrencyResponse
@@ -159,7 +193,7 @@ namespace Nozomi.Service.Events
                 // Make sure all currency sources are not disabled or deleted
                 .Where(cs => cs.IsEnabled && cs.DeletedAt == null)
                 .Include(cs => cs.CurrencyPairs)
-                    .ThenInclude(cp => cp.PartialCurrencyPairs)
+                    .ThenInclude(cp => cp.CurrencyPairCurrencies)
                         .ThenInclude(pcp => pcp.Currency)
                             .ThenInclude(c => c.CurrencyType)
                 .Where(cs => cs.CurrencyPairs
@@ -167,7 +201,7 @@ namespace Nozomi.Service.Events
                     .Any(cp => cp.IsEnabled && cp.DeletedAt == null
                     &&
                     // Make sure none of the currency pair's partial currency pair is not disabled or deleted
-                    cp.PartialCurrencyPairs
+                    cp.CurrencyPairCurrencies
                     .Any(pcp => pcp.Currency.IsEnabled && pcp.Currency.DeletedAt == null)))
                 .Select(cs => new {
                     id = cs.Id,
@@ -177,7 +211,7 @@ namespace Nozomi.Service.Events
                         .Select(cp => new
                         {
                             id = cp.Id,
-                            partialCurrencyPairs = cp.PartialCurrencyPairs
+                            partialCurrencyPairs = cp.CurrencyPairCurrencies
                                 .Select(pcp => new
                                 {
                                     currencyId = pcp.CurrencyId,
@@ -191,8 +225,7 @@ namespace Nozomi.Service.Events
                                         },
                                         name = pcp.Currency.Name,
                                         walletTypeId = pcp.Currency.WalletTypeId
-                                    },
-                                    isMain = pcp.IsMain
+                                    }
                                 })
                         })
                 });

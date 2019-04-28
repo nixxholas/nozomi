@@ -28,7 +28,7 @@ namespace Nozomi.Service.Events.Memory
 
             return _unitOfWork.GetRepository<Source>().GetQueryable()
                        .Include(s => s.Currencies)
-                       .ThenInclude(c => c.PartialCurrencyPairs)
+                       .ThenInclude(c => c.CurrencyCurrencyPairs)
                        .ThenInclude(pcp => pcp.CurrencyPair)
                        .ThenInclude(cp => cp.CurrencyPairRequests)
                        .ThenInclude(cpr => cpr.RequestComponents)

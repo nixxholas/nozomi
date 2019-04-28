@@ -525,746 +525,767 @@ namespace Nozomi.Ticker.StartupExtensions
                             context.SaveChanges();
                         }
 
-                        if (!context.CurrencyPairs.Any())
+                        if (context.Currencies.Any())
                         {
-                            var currencyPairs = new List<CurrencyPair>()
+                            var usdBfx = context.Currencies.Include(c => c.CurrencySource)
+                                .SingleOrDefault(c =>
+                                    c.Abbrv.Equals("USD") &&
+                                    c.CurrencySource.Abbreviation.Equals(bfxSource.Abbreviation));
+                            var eurBfx = context.Currencies.Include(c => c.CurrencySource)
+                                .SingleOrDefault(c =>
+                                    c.Abbrv.Equals("EUR") &&
+                                    c.CurrencySource.Abbreviation.Equals(bfxSource.Abbreviation));
+                            var ethBfx = context.Currencies.Include(c => c.CurrencySource)
+                                .SingleOrDefault(c =>
+                                    c.Abbrv.Equals("ETH") &&
+                                    c.CurrencySource.Abbreviation.Equals(bfxSource.Abbreviation));
+                            var kncBfx = context.Currencies.Include(c => c.CurrencySource)
+                                .SingleOrDefault(c =>
+                                    c.Abbrv.Equals("KNC") &&
+                                    c.CurrencySource.Abbreviation.Equals(bfxSource.Abbreviation));
+                            var kncBna = context.Currencies.Include(c => c.CurrencySource)
+                                .SingleOrDefault(c =>
+                                    c.Abbrv.Equals("KNC") &&
+                                    c.CurrencySource.Abbreviation.Equals(bnaSource.Abbreviation));
+                            var ethBna = context.Currencies.Include(c => c.CurrencySource)
+                                .SingleOrDefault(c =>
+                                    c.Abbrv.Equals("ETH") &&
+                                    c.CurrencySource.Abbreviation.Equals(bnaSource.Abbreviation));
+                            var btcBna = context.Currencies.Include(c => c.CurrencySource)
+                                .SingleOrDefault(c =>
+                                    c.Abbrv.Equals("BTC") &&
+                                    c.CurrencySource.Abbreviation.Equals(bnaSource.Abbreviation));
+                            var eurECB = context.Currencies.Include(c => c.CurrencySource)
+                                .SingleOrDefault(c =>
+                                    c.Abbrv.Equals("EUR") &&
+                                    c.CurrencySource.Abbreviation.Equals(ecbSource.Abbreviation));
+                            var usdECB = context.Currencies.Include(c => c.CurrencySource)
+                                .SingleOrDefault(c =>
+                                    c.Abbrv.Equals("USD") &&
+                                    c.CurrencySource.Abbreviation.Equals(ecbSource.Abbreviation));
+                            var eurAVG = context.Currencies.Include(c => c.CurrencySource)
+                                .SingleOrDefault(c =>
+                                    c.Abbrv.Equals("EUR") &&
+                                    c.CurrencySource.Abbreviation.Equals(avgSource.Abbreviation));
+                            var usdAVG = context.Currencies.Include(c => c.CurrencySource)
+                                .SingleOrDefault(c =>
+                                    c.Abbrv.Equals("USD") &&
+                                    c.CurrencySource.Abbreviation.Equals(avgSource.Abbreviation));
+                            var btcPOLO = context.Currencies.Include(c => c.CurrencySource)
+                                .SingleOrDefault(c =>
+                                    c.Abbrv.Equals("BTC") &&
+                                    c.CurrencySource.Abbreviation.Equals(poloSource.Abbreviation));
+                            var bcnPOLO = context.Currencies.Include(c => c.CurrencySource)
+                                .SingleOrDefault(c =>
+                                    c.Abbrv.Equals("BCN") &&
+                                    c.CurrencySource.Abbreviation.Equals(poloSource.Abbreviation));
+                            var btsPOLO = context.Currencies.Include(c => c.CurrencySource)
+                                .SingleOrDefault(c =>
+                                    c.Abbrv.Equals("BTS") &&
+                                    c.CurrencySource.Abbreviation.Equals(poloSource.Abbreviation));
+                            var usdtPOLO = context.Currencies.Include(c => c.CurrencySource)
+                                .SingleOrDefault(c =>
+                                    c.Abbrv.Equals("USDT") &&
+                                    c.CurrencySource.Abbreviation.Equals(poloSource.Abbreviation));
+
+                            if (!context.CurrencyPairs.Any())
                             {
-                                new CurrencyPair()
+                                var currencyPairs = new List<CurrencyPair>()
                                 {
-                                    CurrencyPairType = CurrencyPairType.TRADEABLE,
-                                    APIUrl = "https://api.ethfinex.com/v2/ticker/tETHUSD",
-                                    DefaultComponent = "0",
-                                    CurrencySourceId = bfxSource.Id
-                                },
-                                new CurrencyPair()
-                                {
-                                    CurrencyPairType = CurrencyPairType.TRADEABLE,
-                                    APIUrl = "https://api.ethfinex.com/v2/ticker/tKNCUSD",
-                                    DefaultComponent = "0",
-                                    CurrencySourceId = bfxSource.Id
-                                },
-                                new CurrencyPair()
-                                {
-                                    CurrencyPairType = CurrencyPairType.TRADEABLE,
-                                    APIUrl = "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml",
-                                    DefaultComponent = "Cube",
-                                    CurrencySourceId = ecbSource.Id
-                                },
-                                new CurrencyPair()
-                                {
-                                    CurrencyPairType = CurrencyPairType.TRADEABLE,
-                                    APIUrl = "https://www.alphavantage.co/query",
-                                    DefaultComponent = "Realtime Currency Exchange Rate/5. Exchange Rate",
-                                    CurrencySourceId = avgSource.Id
-                                },
-                                new CurrencyPair()
-                                {
-                                    CurrencyPairType = CurrencyPairType.EXCHANGEABLE,
-                                    APIUrl = "https://poloniex.com/public?command=returnTicker",
-                                    DefaultComponent = "BTC_BCN/lowestAsk",
-                                    CurrencySourceId = poloSource.Id
-                                },
-                                new CurrencyPair()
-                                {
-                                    CurrencyPairType = CurrencyPairType.EXCHANGEABLE,
-                                    APIUrl = "https://poloniex.com/public?command=returnTicker",
-                                    DefaultComponent = "BTC_BTS/lowestAsk",
-                                    CurrencySourceId = poloSource.Id
-                                },
-                                new CurrencyPair
-                                {
-                                    CurrencyPairType = CurrencyPairType.TRADEABLE,
-                                    APIUrl = "https://api.bitfinex.com/v1/pubticker/etheur",
-                                    DefaultComponent = "0",
-                                    CurrencySourceId = bfxSource.Id
-                                },
-                                new CurrencyPair()
-                                {
-                                    CurrencyPairType = CurrencyPairType.EXCHANGEABLE,
-                                    APIUrl = "https://poloniex.com/public?command=returnTicker",
-                                    DefaultComponent = "USDT_BTC/lowestAsk",
-                                    CurrencySourceId = poloSource.Id
-                                }
-                            };
-
-                            context.CurrencyPairs.AddRange(currencyPairs);
-
-                            context.SaveChanges();
-
-                            if (!context.CurrencyPairRequests.Any() && context.CurrencyPairs.Any())
-                            {
-                                var currencyPairRequests = new List<CurrencyPairRequest>()
-                                {
-                                    new CurrencyPairRequest()
+                                    new CurrencyPair()
                                     {
-                                        Guid = Guid.NewGuid(),
-                                        RequestType = RequestType.HttpGet,
-                                        DataPath = "https://api.ethfinex.com/v2/ticker/tETHUSD",
-                                        CurrencyPairId = currencyPairs[0].Id,
-                                        Delay = 5000,
-                                        AnalysedComponents = new List<AnalysedComponent>()
+                                        CurrencyPairType = CurrencyPairType.TRADEABLE,
+                                        APIUrl = "https://api.ethfinex.com/v2/ticker/tETHUSD",
+                                        DefaultComponent = "0",
+                                        CurrencySourceId = bfxSource.Id,
+                                        MainCurrency = ethBfx.Abbrv,
+                                        CounterCurrency = usdBfx.Abbrv,
+                                        CurrencyPairCurrencies = new List<CurrencyCurrencyPair>
                                         {
-                                            // Calculates volume ONLY for this exact Currency pair on this exchange.
-                                            new AnalysedComponent
+                                            new CurrencyCurrencyPair
                                             {
-                                                ComponentType = AnalysedComponentType.DailyVolume,
-                                                Delay = 1000,
-                                                CreatedAt = DateTime.UtcNow,
-                                                ModifiedAt = DateTime.UtcNow,
-                                                DeletedAt = null
+                                                CurrencyId = ethBfx.Id
                                             },
-                                            new AnalysedComponent
+                                            new CurrencyCurrencyPair
                                             {
-                                                ComponentType = AnalysedComponentType.CurrentAveragePrice,
-                                                Delay = 500,
-                                                CreatedAt = DateTime.UtcNow,
-                                                ModifiedAt = DateTime.UtcNow,
-                                                DeletedAt = null
-                                            },
-                                            new AnalysedComponent
-                                            {
-                                                ComponentType = AnalysedComponentType.HourlyAveragePrice,
-                                                Delay = 10000,
-                                                CreatedAt = DateTime.UtcNow,
-                                                ModifiedAt = DateTime.UtcNow,
-                                                DeletedAt = null,
-                                                AnalysedHistoricItems = new List<AnalysedHistoricItem>()
-                                                {
-                                                    new AnalysedHistoricItem
-                                                    {
-                                                        HistoricDateTime = DateTime.UtcNow,
-                                                        Value = "180.5"
-                                                    },
-                                                    new AnalysedHistoricItem
-                                                    {
-                                                        HistoricDateTime = DateTime.UtcNow.Subtract(TimeSpan.FromHours(1)),
-                                                        Value = "180.3"
-                                                    },
-                                                    new AnalysedHistoricItem
-                                                    {
-                                                        HistoricDateTime = DateTime.UtcNow.Subtract(TimeSpan.FromHours(2)),
-                                                        Value = "180.2"
-                                                    }
-                                                }
-                                            },
-                                            new AnalysedComponent()
-                                            {
-                                                ComponentType = AnalysedComponentType.DailyPricePctChange,
-                                                Delay = 500,
-                                                CreatedAt = DateTime.UtcNow,
-                                                ModifiedAt = DateTime.UtcNow,
-                                                DeletedAt = null
-                                            }
-                                        },
-                                        RequestComponents = new List<RequestComponent>()
-                                        {
-                                            new RequestComponent
-                                            {
-                                                ComponentType = ComponentType.VOLUME,
-                                                QueryComponent = "7",
-                                                CreatedAt = DateTime.UtcNow,
-                                                ModifiedAt = DateTime.UtcNow,
-                                                DeletedAt = null
-                                            },
-                                            new RequestComponent
-                                            {
-                                                ComponentType = ComponentType.Ask,
-                                                QueryComponent = "2",
-                                                CreatedAt = DateTime.UtcNow,
-                                                ModifiedAt = DateTime.UtcNow,
-                                                DeletedAt = null
-                                            },
-                                            new RequestComponent
-                                            {
-                                                ComponentType = ComponentType.Ask_Size,
-                                                QueryComponent = "3",
-                                                CreatedAt = DateTime.UtcNow,
-                                                ModifiedAt = DateTime.UtcNow,
-                                                DeletedAt = null
-                                            },
-                                            new RequestComponent()
-                                            {
-                                                ComponentType = ComponentType.Bid,
-                                                QueryComponent = "0",
-                                                CreatedAt = DateTime.UtcNow,
-                                                ModifiedAt = DateTime.UtcNow,
-                                                DeletedAt = null
-                                            },
-                                            new RequestComponent()
-                                            {
-                                                ComponentType = ComponentType.Bid_Size,
-                                                QueryComponent = "1",
-                                                CreatedAt = DateTime.UtcNow,
-                                                ModifiedAt = DateTime.UtcNow,
-                                                DeletedAt = null
+                                                CurrencyId = usdBfx.Id
                                             }
                                         }
                                     },
-                                    new CurrencyPairRequest()
+                                    new CurrencyPair
                                     {
-                                        Guid = Guid.NewGuid(),
-                                        RequestType = RequestType.HttpGet,
-                                        DataPath = "https://api.ethfinex.com/v2/ticker/tKNCUSD",
-                                        CurrencyPairId = currencyPairs[1].Id,
-                                        Delay = 5000,
-                                        AnalysedComponents = new List<AnalysedComponent>()
+                                        CurrencyPairType = CurrencyPairType.TRADEABLE,
+                                        APIUrl = "https://api.ethfinex.com/v2/ticker/tKNCUSD",
+                                        DefaultComponent = "0",
+                                        CurrencySourceId = bfxSource.Id,
+                                        MainCurrency = kncBfx.Abbrv,
+                                        CounterCurrency = usdBfx.Abbrv,
+                                        CurrencyPairCurrencies = new List<CurrencyCurrencyPair>
                                         {
-                                            // Calculates volume ONLY for this exact Currency pair on this exchange.
-                                            new AnalysedComponent
+                                            new CurrencyCurrencyPair
                                             {
-                                                ComponentType = AnalysedComponentType.DailyVolume,
-                                                Delay = 1000,
-                                                CreatedAt = DateTime.UtcNow,
-                                                ModifiedAt = DateTime.UtcNow,
-                                                DeletedAt = null
+                                                CurrencyId = kncBfx.Id
                                             },
-                                            new AnalysedComponent
+                                            new CurrencyCurrencyPair
                                             {
-                                                ComponentType = AnalysedComponentType.CurrentAveragePrice,
-                                                Delay = 500,
-                                                CreatedAt = DateTime.UtcNow,
-                                                ModifiedAt = DateTime.UtcNow,
-                                                DeletedAt = null
-                                            },
-                                            new AnalysedComponent()
-                                            {
-                                                ComponentType = AnalysedComponentType.DailyPricePctChange,
-                                                Delay = 500,
-                                                CreatedAt = DateTime.UtcNow,
-                                                ModifiedAt = DateTime.UtcNow,
-                                                DeletedAt = null
-                                            }
-                                        },
-                                        RequestComponents = new List<RequestComponent>()
-                                        {
-                                            new RequestComponent
-                                            {
-                                                ComponentType = ComponentType.VOLUME,
-                                                QueryComponent = "7",
-                                                CreatedAt = DateTime.UtcNow,
-                                                ModifiedAt = DateTime.UtcNow,
-                                                DeletedAt = null
-                                            },
-                                            new RequestComponent
-                                            {
-                                                ComponentType = ComponentType.Ask,
-                                                QueryComponent = "2",
-                                                CreatedAt = DateTime.UtcNow,
-                                                ModifiedAt = DateTime.UtcNow,
-                                                DeletedAt = null
-                                            },
-                                            new RequestComponent
-                                            {
-                                                ComponentType = ComponentType.Ask_Size,
-                                                QueryComponent = "3",
-                                                CreatedAt = DateTime.UtcNow,
-                                                ModifiedAt = DateTime.UtcNow,
-                                                DeletedAt = null
-                                            },
-                                            new RequestComponent()
-                                            {
-                                                ComponentType = ComponentType.Bid,
-                                                QueryComponent = "0",
-                                                CreatedAt = DateTime.UtcNow,
-                                                ModifiedAt = DateTime.UtcNow,
-                                                DeletedAt = null
-                                            },
-                                            new RequestComponent()
-                                            {
-                                                ComponentType = ComponentType.Bid_Size,
-                                                QueryComponent = "1",
-                                                CreatedAt = DateTime.UtcNow,
-                                                ModifiedAt = DateTime.UtcNow,
-                                                DeletedAt = null
+                                                CurrencyId = usdBfx.Id
                                             }
                                         }
                                     },
-                                    new CurrencyPairRequest()
+                                    new CurrencyPair()
                                     {
-                                        Guid = Guid.NewGuid(),
-                                        RequestType = RequestType.HttpGet,
-                                        ResponseType = ResponseType.XML,
-                                        DataPath = "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml",
-                                        CurrencyPairId = currencyPairs[2].Id,
-                                        Delay = 86400000,
-                                        RequestComponents = new List<RequestComponent>()
+                                        CurrencyPairType = CurrencyPairType.TRADEABLE,
+                                        APIUrl = "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml",
+                                        DefaultComponent = "Cube",
+                                        CurrencySourceId = ecbSource.Id,
+                                        MainCurrency = eurECB.Abbrv,
+                                        CounterCurrency = usdECB.Abbrv,
+                                        CurrencyPairCurrencies = new List<CurrencyCurrencyPair>
                                         {
-                                            new RequestComponent()
+                                            new CurrencyCurrencyPair
                                             {
-                                                ComponentType = ComponentType.Ask,
-                                                QueryComponent = "gesmes:Envelope/Cube/Cube/Cube/0=>@rate",
-                                                CreatedAt = DateTime.UtcNow,
-                                                ModifiedAt = DateTime.UtcNow,
-                                                DeletedAt = null
+                                                CurrencyId = eurECB.Id
+                                            },
+                                            new CurrencyCurrencyPair
+                                            {
+                                                CurrencyId = usdECB.Id
                                             }
                                         }
                                     },
-                                    new CurrencyPairRequest()
+                                    new CurrencyPair
                                     {
-                                        Guid = Guid.NewGuid(),
-                                        RequestType = RequestType.HttpGet,
-                                        ResponseType = ResponseType.Json,
-                                        DataPath = "https://www.alphavantage.co/query",
-                                        CurrencyPairId = currencyPairs[3].Id,
-                                        Delay = 5000,
-                                        RequestComponents = new List<RequestComponent>()
+                                        CurrencyPairType = CurrencyPairType.TRADEABLE,
+                                        APIUrl = "https://www.alphavantage.co/query",
+                                        DefaultComponent = "Realtime Currency Exchange Rate/5. Exchange Rate",
+                                        CurrencySourceId = avgSource.Id,
+                                        MainCurrency = eurAVG.Abbrv,
+                                        CounterCurrency = usdAVG.Abbrv,
+                                        CurrencyPairCurrencies = new List<CurrencyCurrencyPair>
                                         {
-                                            new RequestComponent()
+                                            new CurrencyCurrencyPair
                                             {
-                                                ComponentType = ComponentType.Ask,
-                                                QueryComponent =
-                                                    "['Realtime Currency Exchange Rate']/['5. Exchange Rate']",
-                                                CreatedAt = DateTime.UtcNow,
-                                                ModifiedAt = DateTime.UtcNow,
-                                                DeletedAt = null
-                                            }
-                                        },
-                                        RequestProperties = new List<RequestProperty>()
-                                        {
-                                            new RequestProperty()
-                                            {
-                                                RequestPropertyType = RequestPropertyType.HttpQuery,
-                                                Key = "apikey",
-                                                Value = "TV5HJJHNP8094BRO"
+                                                CurrencyId = eurAVG.Id
                                             },
-                                            new RequestProperty()
+                                            new CurrencyCurrencyPair
                                             {
-                                                RequestPropertyType = RequestPropertyType.HttpQuery,
-                                                Key = "function",
-                                                Value = "CURRENCY_EXCHANGE_RATE"
-                                            },
-                                            new RequestProperty()
-                                            {
-                                                RequestPropertyType = RequestPropertyType.HttpQuery,
-                                                Key = "from_currency",
-                                                Value = "USD"
-                                            },
-                                            new RequestProperty()
-                                            {
-                                                RequestPropertyType = RequestPropertyType.HttpQuery,
-                                                Key = "to_currency",
-                                                Value = "EUR"
+                                                CurrencyId = usdAVG.Id
                                             }
                                         }
                                     },
-                                    new CurrencyPairRequest()
+                                    new CurrencyPair
                                     {
-                                        Guid = Guid.NewGuid(),
-                                        RequestType = RequestType.HttpGet,
-                                        ResponseType = ResponseType.Json,
-                                        DataPath = "https://poloniex.com/public?command=returnTicker",
-                                        CurrencyPairId = currencyPairs[4].Id,
-                                        Delay = 5000,
-                                        AnalysedComponents = new List<AnalysedComponent>()
+                                        CurrencyPairType = CurrencyPairType.EXCHANGEABLE,
+                                        APIUrl = "https://poloniex.com/public?command=returnTicker",
+                                        DefaultComponent = "BTC_BCN/lowestAsk",
+                                        CurrencySourceId = poloSource.Id,
+                                        MainCurrency = btcPOLO.Abbrv,
+                                        CounterCurrency = bcnPOLO.Abbrv,
+                                        CurrencyPairCurrencies = new List<CurrencyCurrencyPair>
                                         {
-                                            // Calculates volume ONLY for this exact Currency pair on this exchange.
-                                            new AnalysedComponent
+                                            new CurrencyCurrencyPair
                                             {
-                                                ComponentType = AnalysedComponentType.DailyVolume,
-                                                Delay = 1000,
-                                                CreatedAt = DateTime.UtcNow,
-                                                ModifiedAt = DateTime.UtcNow,
-                                                DeletedAt = null
+                                                CurrencyId = btcPOLO.Id
                                             },
-                                            new AnalysedComponent
+                                            new CurrencyCurrencyPair
                                             {
-                                                ComponentType = AnalysedComponentType.CurrentAveragePrice,
-                                                Delay = 500,
-                                                CreatedAt = DateTime.UtcNow,
-                                                ModifiedAt = DateTime.UtcNow,
-                                                DeletedAt = null
-                                            },
-                                            new AnalysedComponent()
-                                            {
-                                                ComponentType = AnalysedComponentType.DailyPricePctChange,
-                                                Delay = 500,
-                                                CreatedAt = DateTime.UtcNow,
-                                                ModifiedAt = DateTime.UtcNow,
-                                                DeletedAt = null
-                                            }
-                                        },
-                                        RequestComponents = new List<RequestComponent>()
-                                        {
-                                            new RequestComponent
-                                            {
-                                                ComponentType = ComponentType.VOLUME,
-                                                QueryComponent = "BTC_BCN/baseVolume",
-                                                CreatedAt = DateTime.UtcNow,
-                                                ModifiedAt = DateTime.UtcNow,
-                                                DeletedAt = null
-                                            },
-                                            new RequestComponent
-                                            {
-                                                ComponentType = ComponentType.Ask,
-                                                QueryComponent = "BTC_BCN/lowestAsk",
-                                                CreatedAt = DateTime.UtcNow,
-                                                ModifiedAt = DateTime.UtcNow,
-                                                DeletedAt = null
-                                            },
-                                            new RequestComponent
-                                            {
-                                                ComponentType = ComponentType.Bid,
-                                                QueryComponent = "BTC_BCN/highestBid",
-                                                CreatedAt = DateTime.UtcNow,
-                                                ModifiedAt = DateTime.UtcNow,
-                                                DeletedAt = null
+                                                CurrencyId = bcnPOLO.Id
                                             }
                                         }
                                     },
-                                    new CurrencyPairRequest()
+                                    new CurrencyPair
                                     {
-                                        Guid = Guid.NewGuid(),
-                                        RequestType = RequestType.HttpGet,
-                                        ResponseType = ResponseType.Json,
-                                        DataPath = "https://poloniex.com/public?command=returnTicker",
-                                        CurrencyPairId = currencyPairs[5].Id,
-                                        Delay = 5000,
-                                        AnalysedComponents = new List<AnalysedComponent>()
+                                        CurrencyPairType = CurrencyPairType.EXCHANGEABLE,
+                                        APIUrl = "https://poloniex.com/public?command=returnTicker",
+                                        DefaultComponent = "BTC_BTS/lowestAsk",
+                                        CurrencySourceId = poloSource.Id,
+                                        MainCurrency = btcPOLO.Abbrv,
+                                        CounterCurrency = btsPOLO.Abbrv,
+                                        CurrencyPairCurrencies = new List<CurrencyCurrencyPair>
                                         {
-                                            // Calculates volume ONLY for this exact Currency pair on this exchange.
-                                            new AnalysedComponent
+                                            new CurrencyCurrencyPair
                                             {
-                                                ComponentType = AnalysedComponentType.DailyVolume,
-                                                Delay = 1000,
-                                                CreatedAt = DateTime.UtcNow,
-                                                ModifiedAt = DateTime.UtcNow,
-                                                DeletedAt = null
+                                                CurrencyId = btcPOLO.Id
                                             },
-                                            new AnalysedComponent
+                                            new CurrencyCurrencyPair
                                             {
-                                                ComponentType = AnalysedComponentType.CurrentAveragePrice,
-                                                Delay = 500,
-                                                CreatedAt = DateTime.UtcNow,
-                                                ModifiedAt = DateTime.UtcNow,
-                                                DeletedAt = null
-                                            },
-                                            new AnalysedComponent()
-                                            {
-                                                ComponentType = AnalysedComponentType.DailyPricePctChange,
-                                                Delay = 500,
-                                                CreatedAt = DateTime.UtcNow,
-                                                ModifiedAt = DateTime.UtcNow,
-                                                DeletedAt = null
-                                            }
-                                        },
-                                        RequestComponents = new List<RequestComponent>()
-                                        {
-                                            new RequestComponent
-                                            {
-                                                ComponentType = ComponentType.VOLUME,
-                                                QueryComponent = "BTC_BTS/baseVolume",
-                                                CreatedAt = DateTime.UtcNow,
-                                                ModifiedAt = DateTime.UtcNow,
-                                                DeletedAt = null
-                                            },
-                                            new RequestComponent
-                                            {
-                                                ComponentType = ComponentType.Ask,
-                                                QueryComponent = "BTC_BTS/lowestAsk",
-                                                CreatedAt = DateTime.UtcNow,
-                                                ModifiedAt = DateTime.UtcNow,
-                                                DeletedAt = null
-                                            },
-                                            new RequestComponent
-                                            {
-                                                ComponentType = ComponentType.Bid,
-                                                QueryComponent = "BTC_BTS/highestBid",
-                                                CreatedAt = DateTime.UtcNow,
-                                                ModifiedAt = DateTime.UtcNow,
-                                                DeletedAt = null
+                                                CurrencyId = btsPOLO.Id
                                             }
                                         }
                                     },
-                                    new CurrencyPairRequest()
+                                    new CurrencyPair
                                     {
-                                        Guid = Guid.NewGuid(),
-                                        RequestType = RequestType.HttpGet,
-                                        ResponseType = ResponseType.Json,
-                                        DataPath = "https://api.bitfinex.com/v1/pubticker/etheur",
-                                        CurrencyPairId = currencyPairs[6].Id,
-                                        Delay = 2000,
-                                        AnalysedComponents = new List<AnalysedComponent>()
+                                        CurrencyPairType = CurrencyPairType.TRADEABLE,
+                                        APIUrl = "https://api.bitfinex.com/v1/pubticker/etheur",
+                                        DefaultComponent = "0",
+                                        CurrencySourceId = bfxSource.Id,
+                                        MainCurrency = ethBfx.Abbrv,
+                                        CounterCurrency = eurBfx.Abbrv,
+                                        CurrencyPairCurrencies = new List<CurrencyCurrencyPair>
                                         {
-                                            // Calculates volume ONLY for this exact Currency pair on this exchange.
-                                            new AnalysedComponent
+                                            new CurrencyCurrencyPair
                                             {
-                                                ComponentType = AnalysedComponentType.DailyVolume,
-                                                Delay = 1000,
-                                                CreatedAt = DateTime.UtcNow,
-                                                ModifiedAt = DateTime.UtcNow,
-                                                DeletedAt = null
+                                                CurrencyId = ethBfx.Id
                                             },
-                                            new AnalysedComponent
+                                            new CurrencyCurrencyPair
                                             {
-                                                ComponentType = AnalysedComponentType.CurrentAveragePrice,
-                                                Delay = 500,
-                                                CreatedAt = DateTime.UtcNow,
-                                                ModifiedAt = DateTime.UtcNow,
-                                                DeletedAt = null
-                                            },
-                                            new AnalysedComponent()
-                                            {
-                                                ComponentType = AnalysedComponentType.DailyPricePctChange,
-                                                Delay = 500,
-                                                CreatedAt = DateTime.UtcNow,
-                                                ModifiedAt = DateTime.UtcNow,
-                                                DeletedAt = null
-                                            }
-                                        },
-                                        RequestComponents = new List<RequestComponent>()
-                                        {
-                                            new RequestComponent
-                                            {
-                                                ComponentType = ComponentType.VOLUME,
-                                                QueryComponent = "volume",
-                                                CreatedAt = DateTime.UtcNow,
-                                                ModifiedAt = DateTime.UtcNow,
-                                                DeletedAt = null
-                                            },
-                                            new RequestComponent
-                                            {
-                                                ComponentType = ComponentType.Ask,
-                                                QueryComponent = "ask",
-                                                CreatedAt = DateTime.UtcNow,
-                                                ModifiedAt = DateTime.UtcNow,
-                                                DeletedAt = null
-                                            },
-                                            new RequestComponent()
-                                            {
-                                                ComponentType = ComponentType.Bid,
-                                                QueryComponent = "bid",
-                                                CreatedAt = DateTime.UtcNow,
-                                                ModifiedAt = DateTime.UtcNow,
-                                                DeletedAt = null
+                                                CurrencyId = eurBfx.Id
                                             }
                                         }
                                     },
-                                    new CurrencyPairRequest()
+                                    new CurrencyPair()
                                     {
-                                        Guid = Guid.NewGuid(),
-                                        RequestType = RequestType.HttpGet,
-                                        ResponseType = ResponseType.Json,
-                                        DataPath = "https://poloniex.com/public?command=returnTicker",
-                                        CurrencyPairId = currencyPairs[7].Id,
-                                        Delay = 5000,
-                                        AnalysedComponents = new List<AnalysedComponent>
+                                        CurrencyPairType = CurrencyPairType.EXCHANGEABLE,
+                                        APIUrl = "https://poloniex.com/public?command=returnTicker",
+                                        DefaultComponent = "USDT_BTC/lowestAsk",
+                                        CurrencySourceId = poloSource.Id,
+                                        MainCurrency = btcPOLO.Abbrv,
+                                        CounterCurrency = usdtPOLO.Abbrv,
+                                        CurrencyPairCurrencies = new List<CurrencyCurrencyPair>
                                         {
-                                            // Calculates volume ONLY for this exact Currency pair on this exchange.
-                                            new AnalysedComponent
+                                            new CurrencyCurrencyPair
                                             {
-                                                ComponentType = AnalysedComponentType.DailyVolume,
-                                                Delay = 1000,
-                                                CreatedAt = DateTime.UtcNow,
-                                                ModifiedAt = DateTime.UtcNow,
-                                                DeletedAt = null
+                                                CurrencyId = btcPOLO.Id
                                             },
-                                            new AnalysedComponent
+                                            new CurrencyCurrencyPair
                                             {
-                                                ComponentType = AnalysedComponentType.CurrentAveragePrice,
-                                                Delay = 500,
-                                                CreatedAt = DateTime.UtcNow,
-                                                ModifiedAt = DateTime.UtcNow,
-                                                DeletedAt = null
-                                            },
-                                            new AnalysedComponent()
-                                            {
-                                                ComponentType = AnalysedComponentType.DailyPricePctChange,
-                                                Delay = 500,
-                                                CreatedAt = DateTime.UtcNow,
-                                                ModifiedAt = DateTime.UtcNow,
-                                                DeletedAt = null
-                                            }
-                                        },
-                                        RequestComponents = new List<RequestComponent>()
-                                        {
-                                            new RequestComponent
-                                            {
-                                                ComponentType = ComponentType.Ask,
-                                                QueryComponent = "USDT_BTC/lowestAsk",
-                                                CreatedAt = DateTime.UtcNow,
-                                                ModifiedAt = DateTime.UtcNow,
-                                                DeletedAt = null
-                                            },
-                                            new RequestComponent
-                                            {
-                                                ComponentType = ComponentType.Bid,
-                                                QueryComponent = "USDT_BTC/highestBid",
-                                                CreatedAt = DateTime.UtcNow,
-                                                ModifiedAt = DateTime.UtcNow,
-                                                DeletedAt = null
+                                                CurrencyId = usdtPOLO.Id
                                             }
                                         }
                                     }
                                 };
 
-                                context.CurrencyPairRequests.AddRange(currencyPairRequests);
+                                context.CurrencyPairs.AddRange(currencyPairs);
 
                                 context.SaveChanges();
-                            }
 
-                            if (!context.PartialCurrencyPairs.Any() && context.CurrencyPairs.Any() &&
-                                context.Currencies.Any())
-                            {
-                                var usdBfx = context.Currencies.Include(c => c.CurrencySource)
-                                    .SingleOrDefault(c =>
-                                        c.Abbrv.Equals("USD") &&
-                                        c.CurrencySource.Abbreviation.Equals(bfxSource.Abbreviation));
-                                var eurBfx = context.Currencies.Include(c => c.CurrencySource)
-                                    .SingleOrDefault(c =>
-                                        c.Abbrv.Equals("EUR") &&
-                                        c.CurrencySource.Abbreviation.Equals(bfxSource.Abbreviation));
-                                var ethBfx = context.Currencies.Include(c => c.CurrencySource)
-                                    .SingleOrDefault(c =>
-                                        c.Abbrv.Equals("ETH") &&
-                                        c.CurrencySource.Abbreviation.Equals(bfxSource.Abbreviation));
-                                var kncBfx = context.Currencies.Include(c => c.CurrencySource)
-                                    .SingleOrDefault(c =>
-                                        c.Abbrv.Equals("KNC") &&
-                                        c.CurrencySource.Abbreviation.Equals(bfxSource.Abbreviation));
-                                var kncBna = context.Currencies.Include(c => c.CurrencySource)
-                                    .SingleOrDefault(c =>
-                                        c.Abbrv.Equals("KNC") &&
-                                        c.CurrencySource.Abbreviation.Equals(bnaSource.Abbreviation));
-                                var ethBna = context.Currencies.Include(c => c.CurrencySource)
-                                    .SingleOrDefault(c =>
-                                        c.Abbrv.Equals("ETH") &&
-                                        c.CurrencySource.Abbreviation.Equals(bnaSource.Abbreviation));
-                                var btcBna = context.Currencies.Include(c => c.CurrencySource)
-                                    .SingleOrDefault(c =>
-                                        c.Abbrv.Equals("BTC") &&
-                                        c.CurrencySource.Abbreviation.Equals(bnaSource.Abbreviation));
-                                var eurECB = context.Currencies.Include(c => c.CurrencySource)
-                                    .SingleOrDefault(c =>
-                                        c.Abbrv.Equals("EUR") &&
-                                        c.CurrencySource.Abbreviation.Equals(ecbSource.Abbreviation));
-                                var usdECB = context.Currencies.Include(c => c.CurrencySource)
-                                    .SingleOrDefault(c =>
-                                        c.Abbrv.Equals("USD") &&
-                                        c.CurrencySource.Abbreviation.Equals(ecbSource.Abbreviation));
-                                var eurAVG = context.Currencies.Include(c => c.CurrencySource)
-                                    .SingleOrDefault(c =>
-                                        c.Abbrv.Equals("EUR") &&
-                                        c.CurrencySource.Abbreviation.Equals(avgSource.Abbreviation));
-                                var usdAVG = context.Currencies.Include(c => c.CurrencySource)
-                                    .SingleOrDefault(c =>
-                                        c.Abbrv.Equals("USD") &&
-                                        c.CurrencySource.Abbreviation.Equals(avgSource.Abbreviation));
-                                var btcPOLO = context.Currencies.Include(c => c.CurrencySource)
-                                    .SingleOrDefault(c =>
-                                        c.Abbrv.Equals("BTC") &&
-                                        c.CurrencySource.Abbreviation.Equals(poloSource.Abbreviation));
-                                var bcnPOLO = context.Currencies.Include(c => c.CurrencySource)
-                                    .SingleOrDefault(c =>
-                                        c.Abbrv.Equals("BCN") &&
-                                        c.CurrencySource.Abbreviation.Equals(poloSource.Abbreviation));
-                                var btsPOLO = context.Currencies.Include(c => c.CurrencySource)
-                                    .SingleOrDefault(c =>
-                                        c.Abbrv.Equals("BTS") &&
-                                        c.CurrencySource.Abbreviation.Equals(poloSource.Abbreviation));
-                                var usdtPOLO = context.Currencies.Include(c => c.CurrencySource)
-                                    .SingleOrDefault(c =>
-                                        c.Abbrv.Equals("USDT") &&
-                                        c.CurrencySource.Abbreviation.Equals(poloSource.Abbreviation));
+                                if (!context.CurrencyPairRequests.Any() && context.CurrencyPairs.Any())
+                                {
+                                    var currencyPairRequests = new List<CurrencyPairRequest>()
+                                    {
+                                        new CurrencyPairRequest()
+                                        {
+                                            Guid = Guid.NewGuid(),
+                                            RequestType = RequestType.HttpGet,
+                                            DataPath = "https://api.ethfinex.com/v2/ticker/tETHUSD",
+                                            CurrencyPairId = currencyPairs[0].Id,
+                                            Delay = 5000,
+                                            AnalysedComponents = new List<AnalysedComponent>()
+                                            {
+                                                // Calculates volume ONLY for this exact Currency pair on this exchange.
+                                                new AnalysedComponent
+                                                {
+                                                    ComponentType = AnalysedComponentType.DailyVolume,
+                                                    Delay = 1000,
+                                                    CreatedAt = DateTime.UtcNow,
+                                                    ModifiedAt = DateTime.UtcNow,
+                                                    DeletedAt = null
+                                                },
+                                                new AnalysedComponent
+                                                {
+                                                    ComponentType = AnalysedComponentType.CurrentAveragePrice,
+                                                    Delay = 500,
+                                                    CreatedAt = DateTime.UtcNow,
+                                                    ModifiedAt = DateTime.UtcNow,
+                                                    DeletedAt = null
+                                                },
+                                                new AnalysedComponent
+                                                {
+                                                    ComponentType = AnalysedComponentType.HourlyAveragePrice,
+                                                    Delay = 10000,
+                                                    CreatedAt = DateTime.UtcNow,
+                                                    ModifiedAt = DateTime.UtcNow,
+                                                    DeletedAt = null,
+                                                    AnalysedHistoricItems = new List<AnalysedHistoricItem>()
+                                                    {
+                                                        new AnalysedHistoricItem
+                                                        {
+                                                            HistoricDateTime = DateTime.UtcNow,
+                                                            Value = "180.5"
+                                                        },
+                                                        new AnalysedHistoricItem
+                                                        {
+                                                            HistoricDateTime =
+                                                                DateTime.UtcNow.Subtract(TimeSpan.FromHours(1)),
+                                                            Value = "180.3"
+                                                        },
+                                                        new AnalysedHistoricItem
+                                                        {
+                                                            HistoricDateTime =
+                                                                DateTime.UtcNow.Subtract(TimeSpan.FromHours(2)),
+                                                            Value = "180.2"
+                                                        }
+                                                    }
+                                                },
+                                                new AnalysedComponent()
+                                                {
+                                                    ComponentType = AnalysedComponentType.DailyPricePctChange,
+                                                    Delay = 500,
+                                                    CreatedAt = DateTime.UtcNow,
+                                                    ModifiedAt = DateTime.UtcNow,
+                                                    DeletedAt = null
+                                                }
+                                            },
+                                            RequestComponents = new List<RequestComponent>()
+                                            {
+                                                new RequestComponent
+                                                {
+                                                    ComponentType = ComponentType.VOLUME,
+                                                    QueryComponent = "7",
+                                                    CreatedAt = DateTime.UtcNow,
+                                                    ModifiedAt = DateTime.UtcNow,
+                                                    DeletedAt = null
+                                                },
+                                                new RequestComponent
+                                                {
+                                                    ComponentType = ComponentType.Ask,
+                                                    QueryComponent = "2",
+                                                    CreatedAt = DateTime.UtcNow,
+                                                    ModifiedAt = DateTime.UtcNow,
+                                                    DeletedAt = null
+                                                },
+                                                new RequestComponent
+                                                {
+                                                    ComponentType = ComponentType.Ask_Size,
+                                                    QueryComponent = "3",
+                                                    CreatedAt = DateTime.UtcNow,
+                                                    ModifiedAt = DateTime.UtcNow,
+                                                    DeletedAt = null
+                                                },
+                                                new RequestComponent()
+                                                {
+                                                    ComponentType = ComponentType.Bid,
+                                                    QueryComponent = "0",
+                                                    CreatedAt = DateTime.UtcNow,
+                                                    ModifiedAt = DateTime.UtcNow,
+                                                    DeletedAt = null
+                                                },
+                                                new RequestComponent()
+                                                {
+                                                    ComponentType = ComponentType.Bid_Size,
+                                                    QueryComponent = "1",
+                                                    CreatedAt = DateTime.UtcNow,
+                                                    ModifiedAt = DateTime.UtcNow,
+                                                    DeletedAt = null
+                                                }
+                                            }
+                                        },
+                                        new CurrencyPairRequest()
+                                        {
+                                            Guid = Guid.NewGuid(),
+                                            RequestType = RequestType.HttpGet,
+                                            DataPath = "https://api.ethfinex.com/v2/ticker/tKNCUSD",
+                                            CurrencyPairId = currencyPairs[1].Id,
+                                            Delay = 5000,
+                                            AnalysedComponents = new List<AnalysedComponent>()
+                                            {
+                                                // Calculates volume ONLY for this exact Currency pair on this exchange.
+                                                new AnalysedComponent
+                                                {
+                                                    ComponentType = AnalysedComponentType.DailyVolume,
+                                                    Delay = 1000,
+                                                    CreatedAt = DateTime.UtcNow,
+                                                    ModifiedAt = DateTime.UtcNow,
+                                                    DeletedAt = null
+                                                },
+                                                new AnalysedComponent
+                                                {
+                                                    ComponentType = AnalysedComponentType.CurrentAveragePrice,
+                                                    Delay = 500,
+                                                    CreatedAt = DateTime.UtcNow,
+                                                    ModifiedAt = DateTime.UtcNow,
+                                                    DeletedAt = null
+                                                },
+                                                new AnalysedComponent
+                                                {
+                                                    ComponentType = AnalysedComponentType.HourlyAveragePrice,
+                                                    Delay = 500,
+                                                    CreatedAt = DateTime.UtcNow,
+                                                    ModifiedAt = DateTime.UtcNow,
+                                                    DeletedAt = null
+                                                },
+                                                new AnalysedComponent()
+                                                {
+                                                    ComponentType = AnalysedComponentType.DailyPricePctChange,
+                                                    Delay = 500,
+                                                    CreatedAt = DateTime.UtcNow,
+                                                    ModifiedAt = DateTime.UtcNow,
+                                                    DeletedAt = null
+                                                }
+                                            },
+                                            RequestComponents = new List<RequestComponent>()
+                                            {
+                                                new RequestComponent
+                                                {
+                                                    ComponentType = ComponentType.VOLUME,
+                                                    QueryComponent = "7",
+                                                    CreatedAt = DateTime.UtcNow,
+                                                    ModifiedAt = DateTime.UtcNow,
+                                                    DeletedAt = null
+                                                },
+                                                new RequestComponent
+                                                {
+                                                    ComponentType = ComponentType.Ask,
+                                                    QueryComponent = "2",
+                                                    CreatedAt = DateTime.UtcNow,
+                                                    ModifiedAt = DateTime.UtcNow,
+                                                    DeletedAt = null
+                                                },
+                                                new RequestComponent
+                                                {
+                                                    ComponentType = ComponentType.Ask_Size,
+                                                    QueryComponent = "3",
+                                                    CreatedAt = DateTime.UtcNow,
+                                                    ModifiedAt = DateTime.UtcNow,
+                                                    DeletedAt = null
+                                                },
+                                                new RequestComponent()
+                                                {
+                                                    ComponentType = ComponentType.Bid,
+                                                    QueryComponent = "0",
+                                                    CreatedAt = DateTime.UtcNow,
+                                                    ModifiedAt = DateTime.UtcNow,
+                                                    DeletedAt = null
+                                                },
+                                                new RequestComponent()
+                                                {
+                                                    ComponentType = ComponentType.Bid_Size,
+                                                    QueryComponent = "1",
+                                                    CreatedAt = DateTime.UtcNow,
+                                                    ModifiedAt = DateTime.UtcNow,
+                                                    DeletedAt = null
+                                                }
+                                            }
+                                        },
+                                        new CurrencyPairRequest()
+                                        {
+                                            Guid = Guid.NewGuid(),
+                                            RequestType = RequestType.HttpGet,
+                                            ResponseType = ResponseType.XML,
+                                            DataPath = "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml",
+                                            CurrencyPairId = currencyPairs[2].Id,
+                                            Delay = 86400000,
+                                            RequestComponents = new List<RequestComponent>()
+                                            {
+                                                new RequestComponent()
+                                                {
+                                                    ComponentType = ComponentType.Ask,
+                                                    QueryComponent = "gesmes:Envelope/Cube/Cube/Cube/0=>@rate",
+                                                    CreatedAt = DateTime.UtcNow,
+                                                    ModifiedAt = DateTime.UtcNow,
+                                                    DeletedAt = null
+                                                }
+                                            }
+                                        },
+                                        new CurrencyPairRequest()
+                                        {
+                                            Guid = Guid.NewGuid(),
+                                            RequestType = RequestType.HttpGet,
+                                            ResponseType = ResponseType.Json,
+                                            DataPath = "https://www.alphavantage.co/query",
+                                            CurrencyPairId = currencyPairs[3].Id,
+                                            Delay = 5000,
+                                            RequestComponents = new List<RequestComponent>()
+                                            {
+                                                new RequestComponent()
+                                                {
+                                                    ComponentType = ComponentType.Ask,
+                                                    QueryComponent =
+                                                        "['Realtime Currency Exchange Rate']/['5. Exchange Rate']",
+                                                    CreatedAt = DateTime.UtcNow,
+                                                    ModifiedAt = DateTime.UtcNow,
+                                                    DeletedAt = null
+                                                }
+                                            },
+                                            RequestProperties = new List<RequestProperty>()
+                                            {
+                                                new RequestProperty()
+                                                {
+                                                    RequestPropertyType = RequestPropertyType.HttpQuery,
+                                                    Key = "apikey",
+                                                    Value = "TV5HJJHNP8094BRO"
+                                                },
+                                                new RequestProperty()
+                                                {
+                                                    RequestPropertyType = RequestPropertyType.HttpQuery,
+                                                    Key = "function",
+                                                    Value = "CURRENCY_EXCHANGE_RATE"
+                                                },
+                                                new RequestProperty()
+                                                {
+                                                    RequestPropertyType = RequestPropertyType.HttpQuery,
+                                                    Key = "from_currency",
+                                                    Value = "USD"
+                                                },
+                                                new RequestProperty()
+                                                {
+                                                    RequestPropertyType = RequestPropertyType.HttpQuery,
+                                                    Key = "to_currency",
+                                                    Value = "EUR"
+                                                }
+                                            }
+                                        },
+                                        new CurrencyPairRequest()
+                                        {
+                                            Guid = Guid.NewGuid(),
+                                            RequestType = RequestType.HttpGet,
+                                            ResponseType = ResponseType.Json,
+                                            DataPath = "https://poloniex.com/public?command=returnTicker",
+                                            CurrencyPairId = currencyPairs[4].Id,
+                                            Delay = 5000,
+                                            AnalysedComponents = new List<AnalysedComponent>()
+                                            {
+                                                // Calculates volume ONLY for this exact Currency pair on this exchange.
+                                                new AnalysedComponent
+                                                {
+                                                    ComponentType = AnalysedComponentType.DailyVolume,
+                                                    Delay = 1000,
+                                                    CreatedAt = DateTime.UtcNow,
+                                                    ModifiedAt = DateTime.UtcNow,
+                                                    DeletedAt = null
+                                                },
+                                                new AnalysedComponent
+                                                {
+                                                    ComponentType = AnalysedComponentType.CurrentAveragePrice,
+                                                    Delay = 500,
+                                                    CreatedAt = DateTime.UtcNow,
+                                                    ModifiedAt = DateTime.UtcNow,
+                                                    DeletedAt = null
+                                                },
+                                                new AnalysedComponent()
+                                                {
+                                                    ComponentType = AnalysedComponentType.DailyPricePctChange,
+                                                    Delay = 500,
+                                                    CreatedAt = DateTime.UtcNow,
+                                                    ModifiedAt = DateTime.UtcNow,
+                                                    DeletedAt = null
+                                                }
+                                            },
+                                            RequestComponents = new List<RequestComponent>()
+                                            {
+                                                new RequestComponent
+                                                {
+                                                    ComponentType = ComponentType.VOLUME,
+                                                    QueryComponent = "BTC_BCN/baseVolume",
+                                                    CreatedAt = DateTime.UtcNow,
+                                                    ModifiedAt = DateTime.UtcNow,
+                                                    DeletedAt = null
+                                                },
+                                                new RequestComponent
+                                                {
+                                                    ComponentType = ComponentType.Ask,
+                                                    QueryComponent = "BTC_BCN/lowestAsk",
+                                                    CreatedAt = DateTime.UtcNow,
+                                                    ModifiedAt = DateTime.UtcNow,
+                                                    DeletedAt = null
+                                                },
+                                                new RequestComponent
+                                                {
+                                                    ComponentType = ComponentType.Bid,
+                                                    QueryComponent = "BTC_BCN/highestBid",
+                                                    CreatedAt = DateTime.UtcNow,
+                                                    ModifiedAt = DateTime.UtcNow,
+                                                    DeletedAt = null
+                                                }
+                                            }
+                                        },
+                                        new CurrencyPairRequest()
+                                        {
+                                            Guid = Guid.NewGuid(),
+                                            RequestType = RequestType.HttpGet,
+                                            ResponseType = ResponseType.Json,
+                                            DataPath = "https://poloniex.com/public?command=returnTicker",
+                                            CurrencyPairId = currencyPairs[5].Id,
+                                            Delay = 5000,
+                                            AnalysedComponents = new List<AnalysedComponent>()
+                                            {
+                                                // Calculates volume ONLY for this exact Currency pair on this exchange.
+                                                new AnalysedComponent
+                                                {
+                                                    ComponentType = AnalysedComponentType.DailyVolume,
+                                                    Delay = 1000,
+                                                    CreatedAt = DateTime.UtcNow,
+                                                    ModifiedAt = DateTime.UtcNow,
+                                                    DeletedAt = null
+                                                },
+                                                new AnalysedComponent
+                                                {
+                                                    ComponentType = AnalysedComponentType.CurrentAveragePrice,
+                                                    Delay = 500,
+                                                    CreatedAt = DateTime.UtcNow,
+                                                    ModifiedAt = DateTime.UtcNow,
+                                                    DeletedAt = null
+                                                },
+                                                new AnalysedComponent()
+                                                {
+                                                    ComponentType = AnalysedComponentType.DailyPricePctChange,
+                                                    Delay = 500,
+                                                    CreatedAt = DateTime.UtcNow,
+                                                    ModifiedAt = DateTime.UtcNow,
+                                                    DeletedAt = null
+                                                }
+                                            },
+                                            RequestComponents = new List<RequestComponent>()
+                                            {
+                                                new RequestComponent
+                                                {
+                                                    ComponentType = ComponentType.VOLUME,
+                                                    QueryComponent = "BTC_BTS/baseVolume",
+                                                    CreatedAt = DateTime.UtcNow,
+                                                    ModifiedAt = DateTime.UtcNow,
+                                                    DeletedAt = null
+                                                },
+                                                new RequestComponent
+                                                {
+                                                    ComponentType = ComponentType.Ask,
+                                                    QueryComponent = "BTC_BTS/lowestAsk",
+                                                    CreatedAt = DateTime.UtcNow,
+                                                    ModifiedAt = DateTime.UtcNow,
+                                                    DeletedAt = null
+                                                },
+                                                new RequestComponent
+                                                {
+                                                    ComponentType = ComponentType.Bid,
+                                                    QueryComponent = "BTC_BTS/highestBid",
+                                                    CreatedAt = DateTime.UtcNow,
+                                                    ModifiedAt = DateTime.UtcNow,
+                                                    DeletedAt = null
+                                                }
+                                            }
+                                        },
+                                        new CurrencyPairRequest()
+                                        {
+                                            Guid = Guid.NewGuid(),
+                                            RequestType = RequestType.HttpGet,
+                                            ResponseType = ResponseType.Json,
+                                            DataPath = "https://api.bitfinex.com/v1/pubticker/etheur",
+                                            CurrencyPairId = currencyPairs[6].Id,
+                                            Delay = 2000,
+                                            AnalysedComponents = new List<AnalysedComponent>()
+                                            {
+                                                // Calculates volume ONLY for this exact Currency pair on this exchange.
+                                                new AnalysedComponent
+                                                {
+                                                    ComponentType = AnalysedComponentType.DailyVolume,
+                                                    Delay = 1000,
+                                                    CreatedAt = DateTime.UtcNow,
+                                                    ModifiedAt = DateTime.UtcNow,
+                                                    DeletedAt = null
+                                                },
+                                                new AnalysedComponent
+                                                {
+                                                    ComponentType = AnalysedComponentType.CurrentAveragePrice,
+                                                    Delay = 500,
+                                                    CreatedAt = DateTime.UtcNow,
+                                                    ModifiedAt = DateTime.UtcNow,
+                                                    DeletedAt = null
+                                                },
+                                                new AnalysedComponent()
+                                                {
+                                                    ComponentType = AnalysedComponentType.DailyPricePctChange,
+                                                    Delay = 500,
+                                                    CreatedAt = DateTime.UtcNow,
+                                                    ModifiedAt = DateTime.UtcNow,
+                                                    DeletedAt = null
+                                                }
+                                            },
+                                            RequestComponents = new List<RequestComponent>()
+                                            {
+                                                new RequestComponent
+                                                {
+                                                    ComponentType = ComponentType.VOLUME,
+                                                    QueryComponent = "volume",
+                                                    CreatedAt = DateTime.UtcNow,
+                                                    ModifiedAt = DateTime.UtcNow,
+                                                    DeletedAt = null
+                                                },
+                                                new RequestComponent
+                                                {
+                                                    ComponentType = ComponentType.Ask,
+                                                    QueryComponent = "ask",
+                                                    CreatedAt = DateTime.UtcNow,
+                                                    ModifiedAt = DateTime.UtcNow,
+                                                    DeletedAt = null
+                                                },
+                                                new RequestComponent()
+                                                {
+                                                    ComponentType = ComponentType.Bid,
+                                                    QueryComponent = "bid",
+                                                    CreatedAt = DateTime.UtcNow,
+                                                    ModifiedAt = DateTime.UtcNow,
+                                                    DeletedAt = null
+                                                }
+                                            }
+                                        },
+                                        new CurrencyPairRequest()
+                                        {
+                                            Guid = Guid.NewGuid(),
+                                            RequestType = RequestType.HttpGet,
+                                            ResponseType = ResponseType.Json,
+                                            DataPath = "https://poloniex.com/public?command=returnTicker",
+                                            CurrencyPairId = currencyPairs[7].Id,
+                                            Delay = 5000,
+                                            AnalysedComponents = new List<AnalysedComponent>
+                                            {
+                                                // Calculates volume ONLY for this exact Currency pair on this exchange.
+                                                new AnalysedComponent
+                                                {
+                                                    ComponentType = AnalysedComponentType.DailyVolume,
+                                                    Delay = 1000,
+                                                    CreatedAt = DateTime.UtcNow,
+                                                    ModifiedAt = DateTime.UtcNow,
+                                                    DeletedAt = null
+                                                },
+                                                new AnalysedComponent
+                                                {
+                                                    ComponentType = AnalysedComponentType.CurrentAveragePrice,
+                                                    Delay = 500,
+                                                    CreatedAt = DateTime.UtcNow,
+                                                    ModifiedAt = DateTime.UtcNow,
+                                                    DeletedAt = null
+                                                },
+                                                new AnalysedComponent
+                                                {
+                                                    ComponentType = AnalysedComponentType.HourlyAveragePrice,
+                                                    Delay = 500,
+                                                    CreatedAt = DateTime.UtcNow,
+                                                    ModifiedAt = DateTime.UtcNow,
+                                                    DeletedAt = null
+                                                },
+                                                new AnalysedComponent
+                                                {
+                                                    ComponentType = AnalysedComponentType.DailyPricePctChange,
+                                                    Delay = 500,
+                                                    CreatedAt = DateTime.UtcNow,
+                                                    ModifiedAt = DateTime.UtcNow,
+                                                    DeletedAt = null
+                                                }
+                                            },
+                                            RequestComponents = new List<RequestComponent>
+                                            {
+                                                new RequestComponent
+                                                {
+                                                    ComponentType = ComponentType.Ask,
+                                                    QueryComponent = "USDT_BTC/lowestAsk",
+                                                    CreatedAt = DateTime.UtcNow,
+                                                    ModifiedAt = DateTime.UtcNow,
+                                                    DeletedAt = null
+                                                },
+                                                new RequestComponent
+                                                {
+                                                    ComponentType = ComponentType.Bid,
+                                                    QueryComponent = "USDT_BTC/highestBid",
+                                                    CreatedAt = DateTime.UtcNow,
+                                                    ModifiedAt = DateTime.UtcNow,
+                                                    DeletedAt = null
+                                                }
+                                            }
+                                        }
+                                    };
 
-                                context.PartialCurrencyPairs.AddRange(
-                                    new PartialCurrencyPair()
-                                    {
-                                        CurrencyId = usdBfx.Id,
-                                        IsMain = false,
-                                        CurrencyPairId = currencyPairs[0].Id
-                                    },
-                                    new PartialCurrencyPair()
-                                    {
-                                        CurrencyId = ethBfx.Id,
-                                        IsMain = true,
-                                        CurrencyPairId = currencyPairs[0].Id
-                                    },
-                                    new PartialCurrencyPair()
-                                    {
-                                        CurrencyId = usdBfx.Id,
-                                        IsMain = false,
-                                        CurrencyPairId = currencyPairs[1].Id
-                                    },
-                                    new PartialCurrencyPair()
-                                    {
-                                        CurrencyId = kncBfx.Id,
-                                        IsMain = true,
-                                        CurrencyPairId = currencyPairs[1].Id
-                                    },
-                                    new PartialCurrencyPair()
-                                    {
-                                        CurrencyId = eurECB.Id,
-                                        IsMain = true,
-                                        CurrencyPairId = currencyPairs[2].Id
-                                    },
-                                    new PartialCurrencyPair()
-                                    {
-                                        CurrencyId = usdECB.Id,
-                                        IsMain = false,
-                                        CurrencyPairId = currencyPairs[2].Id
-                                    },
-                                    new PartialCurrencyPair()
-                                    {
-                                        CurrencyId = eurAVG.Id,
-                                        IsMain = true,
-                                        CurrencyPairId = currencyPairs[3].Id
-                                    },
-                                    new PartialCurrencyPair()
-                                    {
-                                        CurrencyId = usdAVG.Id,
-                                        IsMain = false,
-                                        CurrencyPairId = currencyPairs[3].Id
-                                    },
-                                    new PartialCurrencyPair()
-                                    {
-                                        CurrencyId = btcPOLO.Id,
-                                        IsMain = true,
-                                        CurrencyPairId = currencyPairs[4].Id
-                                    },
-                                    new PartialCurrencyPair()
-                                    {
-                                        CurrencyId = bcnPOLO.Id,
-                                        IsMain = false,
-                                        CurrencyPairId = currencyPairs[4].Id
-                                    },
-                                    new PartialCurrencyPair()
-                                    {
-                                        CurrencyId = btcPOLO.Id,
-                                        IsMain = true,
-                                        CurrencyPairId = currencyPairs[5].Id
-                                    },
-                                    new PartialCurrencyPair()
-                                    {
-                                        CurrencyId = btsPOLO.Id,
-                                        IsMain = false,
-                                        CurrencyPairId = currencyPairs[5].Id
-                                    },
-                                    new PartialCurrencyPair()
-                                    {
-                                        CurrencyId = ethBfx.Id,
-                                        IsMain = true,
-                                        CurrencyPairId = currencyPairs[6].Id
-                                    },
-                                    new PartialCurrencyPair()
-                                    {
-                                        CurrencyId = eurBfx.Id,
-                                        IsMain = false,
-                                        CurrencyPairId = currencyPairs[6].Id
-                                    },
-                                    new PartialCurrencyPair()
-                                    {
-                                        CurrencyId = btcPOLO.Id,
-                                        IsMain = true,
-                                        CurrencyPairId = currencyPairs[7].Id
-                                    },
-                                    new PartialCurrencyPair()
-                                    {
-                                        CurrencyId = usdtPOLO.Id,
-                                        IsMain = false,
-                                        CurrencyPairId = currencyPairs[7].Id
-                                    });
+                                    context.CurrencyPairRequests.AddRange(currencyPairRequests);
 
-                                context.SaveChanges();
+                                    context.SaveChanges();
+                                }
 
                                 if (!context.WebsocketRequests.Any())
                                 {
@@ -1277,19 +1298,19 @@ namespace Nozomi.Ticker.StartupExtensions
                                             APIUrl = "wss://stream.binance.com:9443/stream?streams=!ticker@arr",
                                             DefaultComponent = "b",
                                             CurrencySourceId = bnaSource.Id,
-                                            PartialCurrencyPairs = new List<PartialCurrencyPair>()
+                                            CurrencyPairCurrencies = new List<CurrencyCurrencyPair>
                                             {
-                                                new PartialCurrencyPair()
+                                                new CurrencyCurrencyPair
                                                 {
-                                                    CurrencyId = ethBna.Id,
-                                                    IsMain = true
+                                                    CurrencyId = ethBna.Id
                                                 },
-                                                new PartialCurrencyPair()
+                                                new CurrencyCurrencyPair
                                                 {
-                                                    CurrencyId = btcBna.Id,
-                                                    IsMain = false,
+                                                    CurrencyId = btcBna.Id
                                                 }
-                                            }
+                                            },
+                                            MainCurrency = ethBna.Abbrv,
+                                            CounterCurrency = btcBna.Abbrv
                                         },
                                         Guid = Guid.NewGuid(),
                                         RequestType = RequestType.WebSocket,
@@ -1343,19 +1364,19 @@ namespace Nozomi.Ticker.StartupExtensions
                                             APIUrl = "wss://stream.binance.com:9443/stream?streams=!ticker@arr",
                                             DefaultComponent = "b",
                                             CurrencySourceId = bnaSource.Id,
-                                            PartialCurrencyPairs = new List<PartialCurrencyPair>()
+                                            CurrencyPairCurrencies = new List<CurrencyCurrencyPair>
                                             {
-                                                new PartialCurrencyPair()
+                                                new CurrencyCurrencyPair
                                                 {
-                                                    CurrencyId = kncBna.Id,
-                                                    IsMain = true
+                                                    CurrencyId = kncBna.Id
                                                 },
-                                                new PartialCurrencyPair()
+                                                new CurrencyCurrencyPair
                                                 {
-                                                    CurrencyId = ethBna.Id,
-                                                    IsMain = false,
+                                                    CurrencyId = ethBna.Id
                                                 }
-                                            }
+                                            },
+                                            MainCurrency = kncBna.Abbrv,
+                                            CounterCurrency = ethBna.Abbrv
                                         },
                                         Guid = Guid.NewGuid(),
                                         RequestType = RequestType.WebSocket,
@@ -1399,7 +1420,7 @@ namespace Nozomi.Ticker.StartupExtensions
                                     };
 
                                     context.WebsocketRequests.Add(binanceKNCETHWSR);
-                                    
+
                                     context.SaveChanges();
                                 }
                             }

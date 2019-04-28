@@ -1,0 +1,117 @@
+@using Newtonsoft.Json
+@using Nozomi.Preprocessing
+@using Nozomi.Service.Events.Interfaces
+@inject IRequestEvent _requestEvent
+
+@{
+    var requests = _requestEvent.GetAllDTO(0);
+}
+
+
+<!-- Content Section -->
+<div class="bg-light">
+    <div class="container space-2">
+        <h3 class="mb-6">Requests</h3>
+        
+        <b-table :items="requests" :fields="dataFields">
+            <template slot="RequestType" slot-scope="datum">
+                {{ getRequestTypeStr(datum.item.RequestType) }}
+            </template>
+            <template slot="ResponseType" slot-scope="datum">
+                {{ getResponseTypeStr(datum.item.ResponseType) }}
+            </template>
+            <template slot="DataPath" slot-scope="datum">
+                <a :href="datum.item.DataPath">{{ datum.item.DataPath }}</a>
+            </template>
+            <!-- Seems like momentjs can't support what we want lol https://github.com/moment/moment/issues/348 -->
+            <template slot="Delay" slot-scope="datum">
+                {{ moment.duration(datum.item.Delay, 'SSS').humanize() }}
+            </template>
+            <template slot="FailureDelay" slot-scope="datum">
+                {{ moment.duration(datum.item.FailureDelay, 'SSS').humanize() }}
+            </template>
+            <template slot="actions" slot-scope="datum">
+                <b-button variant="primary" :href="'request/' + datum.item.Guid">View</b-button>
+            </template>
+        </b-table>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        const vm = new Vue({
+            // options
+            el: "#content",
+            // Just dish any random variable in for now
+            data: {
+                dataFields: [
+                    {
+                        key: 'RequestType',
+                        label: 'Request Type',
+                        sortable: true
+                    },
+                    {
+                        key: 'ResponseType',
+                        label: 'Response Type',
+                        sortable: true
+                    },
+                    {
+                        key: 'DataPath',
+                        label: 'Data Path',
+                        sortable: false
+                    },
+                    {
+                        key: 'Delay',
+                        label: 'Delay',
+                        sortable: true
+                    },
+                    {
+                        key: 'FailureDelay',
+                        label: 'Post-failure Delay',
+                        sortable: true
+                    },
+                    {
+                        key: 'actions',
+                        label: '',
+                        sortable: false
+                    }
+                ],
+                requestTypes: @Html.Raw(Json.Serialize(NozomiServiceConstants.requestTypes, new JsonSerializerSettings
+                 {
+                   ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                 })),
+                responseTypes: @Html.Raw(Json.Serialize(NozomiServiceConstants.responseTypes, new JsonSerializerSettings
+                 {
+                   ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                 })),
+                requests: @Html.Raw(JsonConvert.SerializeObject(requests))
+            },
+            methods: {
+                getRequestTypeStr(val) {
+                    if (this.requestTypes != null) {
+                        for (i = 0; i < this.requestTypes.length; i++) {
+                            if (this.requestTypes[i].Value == val) {
+                                return this.requestTypes[i].Key;
+                            }
+                        }
+                    }
+          
+                    return null;
+                },
+                getResponseTypeStr(val) {
+                    if (this.responseTypes != null) {
+                        for (i = 0; i < this.responseTypes.length; i++) {
+                            if (this.responseTypes[i].Value == val) {
+                                return this.responseTypes[i].Key;
+                            }
+                        }
+                    }
+          
+                    return null;
+                }
+            },
+            created: function() {
+            }
+        });
+    </script>
+}

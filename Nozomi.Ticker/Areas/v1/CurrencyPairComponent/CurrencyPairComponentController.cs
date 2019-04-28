@@ -16,14 +16,14 @@ namespace Nozomi.Ticker.Areas.v1.CurrencyPairComponent
     public class CurrencyPairComponentController : BaseController<CurrencyPairComponentController>, ICurrencyPairComponentController
     {
         private readonly IRequestComponentEvent _requestComponentEvent;
-        private readonly ICurrencyPairComponentService _currencyPairComponentService;
+        private readonly IRequestComponentService _requestComponentService;
         
         public CurrencyPairComponentController(ILogger<CurrencyPairComponentController> logger, NozomiUserManager userManager,
-            IRequestComponentEvent requestComponentEvent, ICurrencyPairComponentService currencyPairComponentService) 
+            IRequestComponentEvent requestComponentEvent, IRequestComponentService requestComponentService) 
             : base(logger, userManager)
         {
             _requestComponentEvent = requestComponentEvent;
-            _currencyPairComponentService = currencyPairComponentService;
+            _requestComponentService = requestComponentService;
         }
 
         [HttpGet]
@@ -49,21 +49,21 @@ namespace Nozomi.Ticker.Areas.v1.CurrencyPairComponent
         [HttpPost]
         public NozomiResult<string> Create(CreateCurrencyPairComponent createCurrencyPairComponent)
         {
-            return _currencyPairComponentService.Create(createCurrencyPairComponent);
+            return _requestComponentService.Create(createCurrencyPairComponent);
         }
 
         [Authorize]
         [HttpPost]
         public NozomiResult<string> Update(UpdateCurrencyPairComponent updateCurrencyPairComponent)
         {
-            return _currencyPairComponentService.Update(updateCurrencyPairComponent);
+            return _requestComponentService.Update(updateCurrencyPairComponent);
         }
 
         [Authorize]
         [HttpDelete]
         public NozomiResult<string> Delete(long id, long userId = 0, bool hardDelete = false)
         {
-            return _currencyPairComponentService.Delete(id, userId, hardDelete);
+            return _requestComponentService.Delete(id, userId, hardDelete);
         }
     }
 }

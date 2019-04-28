@@ -1,3 +1,6 @@
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data.ViewModels.Source;
@@ -16,13 +19,13 @@ namespace Nozomi.Ticker.Areas
             _sourceEvent = sourceEvent;
         }
         
-        // GET
+        // GET Source by abbreviation
         [HttpGet("{controller}/{abbrv}")]
         public IActionResult Source([FromRoute]string abbrv)
         {
             var vm = new ViewSourceModel
             {
-                Source = _sourceEvent.Get(abbrv)
+                Source = _sourceEvent.Get(abbrv.ToUpper())
             };
             
             return View(vm);

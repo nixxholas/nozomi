@@ -36,9 +36,9 @@ namespace Nozomi.Infra.Analysis.Service.Events.Analysis
                     .Where(ac => ac.DeletedAt == null && ac.IsEnabled))
                 .Where(cp => cp.CurrencyPairRequests.Any() 
                              && cp.CurrencyPairRequests.Any(cpr => cpr.AnalysedComponents.Any()))
-                .Include(cp => cp.PartialCurrencyPairs)
+                .Include(cp => cp.CurrencyPairCurrencies)
                 .ThenInclude(pcp => pcp.Currency)
-                .Where(cp => cp.PartialCurrencyPairs.All(pcp => 
+                .Where(cp => cp.CurrencyPairCurrencies.All(pcp => 
                     pcp.Currency.IsEnabled && pcp.Currency.DeletedAt == null));
             
             // TODO: OPTIMIZE.
@@ -47,8 +47,9 @@ namespace Nozomi.Infra.Analysis.Service.Events.Analysis
                 // Iterate the pairs, because some pairs are identical.
                 foreach (var cPair in cPairs)
                 {
-                    var mainCurrency = cPair.PartialCurrencyPairs
-                        .FirstOrDefault(pcp => pcp.IsMain)?.Currency;
+                    var mainCurrency = cPair.CurrencyPairCurrencies
+                        .FirstOrDefault(ccp => ccp.Currency.Abbrv
+                            .Equals(ccp.CurrencyPair.MainCurrency, StringComparison.InvariantCultureIgnoreCase))?.Currency;
 
                     // Null checks
                     if (mainCurrency != null)

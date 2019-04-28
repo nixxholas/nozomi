@@ -35,10 +35,12 @@ namespace Nozomi.Infra.Analysis.Service.Events.Analysis
                 .GetQueryable()
                 .AsNoTracking()
                 .Where(cp => cp.IsEnabled && cp.DeletedAt == null)
-                .Include(cp => cp.PartialCurrencyPairs)
+                .Include(cp => cp.CurrencyPairCurrencies)
                 .ThenInclude(pcp => pcp.Currency)
-                .Where(cp => cp.PartialCurrencyPairs
-                    .Any(pcp => !pcp.IsMain && pcp.Currency.Abbrv.Equals(abbrv,
+                .Where(cp => cp.CurrencyPairCurrencies
+                    .Any(ccp => ccp.Currency.Abbrv
+                                           .Equals(ccp.CurrencyPair.CounterCurrency, StringComparison.InvariantCultureIgnoreCase)
+                                       && ccp.Currency.Abbrv.Equals(abbrv,
                                     StringComparison.InvariantCultureIgnoreCase)))
                 .Include(cp => cp.CurrencyPairRequests
                     .Where(cpr => cpr.IsEnabled && cpr.DeletedAt == null))

@@ -19,6 +19,8 @@ using Nozomi.Base.Identity.ViewModels.Manage.PaymentMethods;
 using Nozomi.Base.Identity.ViewModels.Manage.Tickers;
 using Nozomi.Base.Identity.ViewModels.Manage.TwoFactorAuthentication;
 using Nozomi.Data.AreaModels.v1.CurrencySource;
+using Nozomi.Data.AreaModels.v1.RequestComponent;
+using Nozomi.Data.ViewModels.Manage;
 using Nozomi.Preprocessing.Events.Interfaces;
 using Nozomi.Service.Events.Interfaces;
 using Nozomi.Service.Identity.Events.Auth.Interfaces;
@@ -32,6 +34,7 @@ namespace Nozomi.Ticker.Areas
     public class ManageController : BaseViewController<ManageController>
     {
         private readonly IApiTokenEvent _apiTokenEvent;
+        private readonly IRequestEvent _requestEvent;
         private readonly ISourceEvent _sourceEvent;
         private readonly IStripeEvent _stripeEvent;
         private readonly ISourceService _sourceService;
@@ -41,13 +44,14 @@ namespace Nozomi.Ticker.Areas
         private readonly UrlEncoder _urlEncoder;
         
         public ManageController(ILogger<ManageController> logger, NozomiSignInManager signInManager, 
-            NozomiUserManager userManager, ISmsSender smsSender, IStripeService stripeService, IStripeEvent stripeEvent,
-            IApiTokenEvent apiTokenEvent, ISourceEvent sourceEvent, ITickerService tickerService, 
-            ISourceService sourceService, UrlEncoder urlEncoder) 
+            NozomiUserManager userManager, ISmsSender smsSender, IRequestEvent requestEvent, 
+            IStripeService stripeService, IStripeEvent stripeEvent, IApiTokenEvent apiTokenEvent, 
+            ISourceEvent sourceEvent, ITickerService tickerService, ISourceService sourceService, UrlEncoder urlEncoder) 
             : base(logger, signInManager, userManager)
         {
             _smsSender = smsSender;
             _apiTokenEvent = apiTokenEvent;
+            _requestEvent = requestEvent;
             _stripeEvent = stripeEvent;
             _stripeService = stripeService;
             _sourceEvent = sourceEvent;
@@ -108,7 +112,88 @@ namespace Nozomi.Ticker.Areas
 
             return View(vm);
         }
+        
+        #region Currency APIs
+        [HttpGet]
+        [Authorize(Roles="Owner, Administrator, Staff")]
+        public async Task<IActionResult> CreateCurrency()
+        {
+            var user = await GetCurrentUserAsync();
+            if (user == null)
+            {
+                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
+            
+            return View();
+        }
+        #endregion
+        
+        #region Request APIs
 
+        [HttpGet]
+        [Authorize(Roles = "Owner, Administrator, Staff")]
+        public async Task<IActionResult> Requests()
+        {
+            var user = await GetCurrentUserAsync();
+            if (user == null)
+            {
+                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
+            
+            return View();
+        }
+
+        [HttpGet("[controller]/[action]/{guid}")]
+        [Authorize(Roles = "Owner, Administrator, Staff")]
+        public async Task<IActionResult> Request([FromRoute]Guid guid)
+        {
+            var user = await GetCurrentUserAsync();
+            if (user == null)
+            {
+                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
+
+            var req = _requestEvent.GetByGuid(guid, true);
+            
+            return View(new RequestViewModel
+            {
+                Request = req.ToDTO()
+            });
+        }
+        
+        #endregion
+
+        #region Request Component APIs
+
+        /// <summary>
+        /// Allows you to create a request component relative to the request.
+        /// </summary>
+        /// <param name="id">Request Id</param>
+        /// <returns></returns>
+        [HttpGet("{id}")]
+        [Authorize(Roles = "Owner, Administrator, Staff")]
+        public async Task<IActionResult> CreateRequestComponent(long id)
+        {
+            var user = await GetCurrentUserAsync();
+            if (user == null)
+            {
+                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
+
+            var req = _requestEvent.GetActive(id);
+            
+            if (req == null)
+                ModelState.AddModelError("InvalidRequestException", "Invalid Request.");
+
+            return View(new CreateRequestComponent
+            {
+                RequestId = req.Id
+            });
+        }
+        
+        #endregion
+
+        #region Source APIs
         [HttpGet]
         [Authorize(Roles = "Owner, Administrator, Staff")]
         public async Task<IActionResult> CreateSource()
@@ -143,6 +228,47 @@ namespace Nozomi.Ticker.Areas
             return RedirectToAction("CreateSource");
         }
 
+        [HttpGet]
+        [Authorize(Roles = "Owner, Administrator, Staff")]
+        public async Task<IActionResult> Sources()
+        {
+            var user = await GetCurrentUserAsync();
+            if (user == null)
+            {
+                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
+
+            // Will be using IndexViewModel for now because it does the same thing
+            var vm = new IndexViewModel
+            {
+                Sources = _sourceEvent.GetAll(true).ToList()
+            };
+
+            return View(vm);
+        }
+        
+        [HttpGet("[controller]/[action]/{abbreviation}")]
+        [Authorize(Roles = "Owner, Administrator, Staff")]
+        public async Task<IActionResult> EditSource([FromRoute]string abbreviation)
+        {
+            var user = await GetCurrentUserAsync();
+            if (user == null)
+            {
+                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
+
+            // Will be using IndexViewModel for now because it does the same thing
+            var vm = new SourceViewModel
+            {
+                Source = _sourceEvent.Get(abbreviation)
+            };
+
+            return Ok(vm);
+        }
+
+        #endregion
+
+        #region Ticker APIs
         [HttpGet]
         [Authorize(Roles = "Owner, Administrator, Staff")]
         public async Task<IActionResult> CreateTicker()
@@ -180,6 +306,7 @@ namespace Nozomi.Ticker.Areas
             vm.StatusMessage = "There was something erroneous with your submission.";
             return RedirectToAction("CreateTicker");
         }
+        #endregion
 
         //
         // POST: /Manage/RemoveLogin
@@ -267,7 +394,8 @@ namespace Nozomi.Ticker.Areas
                 if (!await _userManager.CheckPasswordAsync(user, model.Password))
                 {
                     ModelState.AddModelError(string.Empty, "Password not correct.");
-                    return View();
+                    
+                    return Redirect("~/");
                 }
             }
 
@@ -583,39 +711,39 @@ namespace Nozomi.Ticker.Areas
             return RedirectToAction(nameof(ChangePassword), new { Message = ChangePasswordMessageId.Error });
         }
 
-        //
-        // GET: /Manage/SetPassword
-        [HttpGet]
-        public IActionResult SetPassword()
-        {
-            return View();
-        }
-
-        //
-        // POST: /Manage/SetPassword
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> SetPassword(SetPasswordViewModel model)
-        {
-            if (!ModelState.IsValid)
-            {
-                return View(model);
-            }
-
-            var user = await GetCurrentUserAsync();
-            if (user != null)
-            {
-                var result = await _userManager.AddPasswordAsync(user, model.NewPassword);
-                if (result.Succeeded)
-                {
-                    await _signInManager.SignInAsync(user, isPersistent: false);
-                    return RedirectToAction(nameof(Index), new { Message = EditProfileMessageId.SetPasswordSuccess });
-                }
-                AddErrors(result);
-                return View(model);
-            }
-            return RedirectToAction(nameof(Index), new { Message = EditProfileMessageId.Error });
-        }
+//        //
+//        // GET: /Manage/SetPassword
+//        [HttpGet]
+//        public IActionResult SetPassword()
+//        {
+//            return View();
+//        }
+//
+//        //
+//        // POST: /Manage/SetPassword
+//        [HttpPost]
+//        [ValidateAntiForgeryToken]
+//        public async Task<IActionResult> SetPassword(SetPasswordViewModel model)
+//        {
+//            if (!ModelState.IsValid)
+//            {
+//                return View(model);
+//            }
+//
+//            var user = await GetCurrentUserAsync();
+//            if (user != null)
+//            {
+//                var result = await _userManager.AddPasswordAsync(user, model.NewPassword);
+//                if (result.Succeeded)
+//                {
+//                    await _signInManager.SignInAsync(user, isPersistent: false);
+//                    return RedirectToAction(nameof(Index), new { Message = EditProfileMessageId.SetPasswordSuccess });
+//                }
+//                AddErrors(result);
+//                return View(model);
+//            }
+//            return RedirectToAction(nameof(Index), new { Message = EditProfileMessageId.Error });
+//        }
 
         //GET: /Manage/ManageLogins
         [HttpGet]

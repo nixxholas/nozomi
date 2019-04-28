@@ -9,9 +9,11 @@ namespace Nozomi.Service.Events.Interfaces
 {
     public interface ICurrencyEvent
     {
-        ICollection<Currency> Get(string abbreviation, bool track = false);
+        AbbrvUniqueCurrencyResponse GetCurrencyByAbbreviation(string abbreviation);
         
-        Currency Get(long id, bool track = false);
+        ICollection<Currency> GetCurrencyByAbbreviation(string abbreviation, bool track = false);
+        
+        Currency GetCurrencyByAbbreviation(long id, bool track = false);
         
         /// <summary>
         /// Provides the caller the total amount of currency currently circulating

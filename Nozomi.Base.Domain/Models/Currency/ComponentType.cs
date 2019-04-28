@@ -30,10 +30,10 @@ namespace Nozomi.Data.Models.Currency
         [Description("Flash Return Rate")]
         FRR = 3,	// float - average of all fixed rate funding over the last hour
         [Comparable(true)]
-        [Description("Amount that the last price has changed since yesterday")]
+        [Description("Daily price change")]
         Daily_Change = 9, // float
         [Comparable(true)]
-        [Description("Amount that the price has changed expressed in percentage terms")]
+        [Description("Daily price change expressed in percentage terms")]
         Daily_Change_Perc = 10, // float
         [Comparable(true)]
         [Description("Daily volume")]

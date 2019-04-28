@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Xml;
 using System.Xml.Linq;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
@@ -59,7 +60,7 @@ namespace Nozomi.Service.HostedServices.RequestTypes
         private readonly NozomiDbContext _nozomiDbContext;
         private readonly HttpClient _httpClient = new HttpClient();
         private readonly ICurrencyRequestEvent _currencyRequestEvent;
-        private readonly ICurrencyPairComponentService _currencyPairComponentService;
+        private readonly IRequestComponentService _requestComponentService;
         private readonly ICurrencyPairRequestService _currencyPairRequestService;
         private readonly IRequestService _requestService;
         private readonly IRequestLogService _requestLogService;
@@ -68,7 +69,7 @@ namespace Nozomi.Service.HostedServices.RequestTypes
         {
             _nozomiDbContext = _scope.ServiceProvider.GetService<NozomiDbContext>();
             _currencyRequestEvent = _scope.ServiceProvider.GetRequiredService<ICurrencyRequestEvent>();
-            _currencyPairComponentService = _scope.ServiceProvider.GetRequiredService<ICurrencyPairComponentService>();
+            _requestComponentService = _scope.ServiceProvider.GetRequiredService<IRequestComponentService>();
             _currencyPairRequestService = _scope.ServiceProvider.GetRequiredService<ICurrencyPairRequestService>();
             _requestService = _scope.ServiceProvider.GetRequiredService<IRequestService>();
             _requestLogService = _scope.ServiceProvider.GetRequiredService<IRequestLogService>();
@@ -124,6 +125,15 @@ namespace Nozomi.Service.HostedServices.RequestTypes
             _logger.LogWarning("HttpGetCurrencyPairRequestSyncingService background task is stopping.");
         }
         
+        /// <summary>
+        /// Every URL path may have multiple requests attempting to update separate entities.
+        /// This method introduces a way of handling the collection of requests bundled together according to
+        /// their endpoint paths, allowing us to optimise data polling at a granular level by completely removing
+        /// multiple API requests.
+        /// </summary>
+        /// <param name="requests"></param>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
         public async Task<bool> ProcessRequest<T>(ICollection<T> requests) where T : Request
         {
             if (requests != null && requests.Count > 0)
@@ -366,57 +376,49 @@ namespace Nozomi.Service.HostedServices.RequestTypes
                 // Pull in the payload
                 var payload = await _httpClient.GetAsync(uri.ToString());
 
-                // Succcessful? and is there even any Components to update?
-                if (payload.IsSuccessStatusCode && requests.Any(r => r.RequestComponents
-                        .Any(rc => rc.DeletedAt == null && rc.IsEnabled)))
+                switch (payload.StatusCode)
                 {
-                    // Pull the content
-                    var content = await payload.Content.ReadAsStringAsync();
-                    var resType = ResponseType.Json;
+                    case HttpStatusCode.OK:
+                        if (requests.Any(r => r.RequestComponents
+                            .Any(rc => rc.DeletedAt == null && rc.IsEnabled)))
+                        {
+                            // Pull the content
+                            var content = await payload.Content.ReadAsStringAsync();
+                            var resType = ResponseType.Json;
 
-                    // Pull the components wanted
-                    var requestComponents = requests
-                        .SelectMany(r => r.RequestComponents
-                            .Where(rc => rc.DeletedAt == null && rc.IsEnabled));
+                            // Pull the components wanted
+                            var requestComponents = requests
+                                .SelectMany(r => r.RequestComponents
+                                    .Where(rc => rc.DeletedAt == null && rc.IsEnabled));
 
-                    // Parse the content
-                    if (payload.Content.Headers.ContentType.MediaType.Equals(ResponseType.Json.GetDescription()))
-                    {
-                        // No action needed
-                    }
-                    else if (payload.Content.Headers.ContentType.MediaType.Equals(ResponseType.XML.GetDescription()))
-                    {
-                        // Load the XML
-                        //var xmlElement = XElement.Parse(content);
-                        resType = ResponseType.XML;
-                        var xmlDoc = new XmlDocument();
-                        xmlDoc.LoadXml(content);
-                        content = JsonConvert.SerializeObject(xmlDoc);
-                    }
+                            // Parse the content
+                            if (payload.Content.Headers.ContentType.MediaType.Equals(ResponseType.Json.GetDescription()))
+                            {
+                                // No action needed
+                            }
+                            else if (payload.Content.Headers.ContentType.MediaType.Equals(ResponseType.XML.GetDescription()))
+                            {
+                                // Load the XML
+                                //var xmlElement = XElement.Parse(content);
+                                resType = ResponseType.XML;
+                                var xmlDoc = new XmlDocument();
+                                xmlDoc.LoadXml(content);
+                                content = JsonConvert.SerializeObject(xmlDoc);
+                            }
 
-                    var contentToken = JToken.Parse(content);
+                            var contentToken = JToken.Parse(content);
 
-                    if (Update(contentToken, resType, requestComponents)) return true;
-
-                    // Else error
-                }
-                else if (payload.StatusCode.Equals(HttpStatusCode.TooManyRequests))
-                {
-                    // Rate limited. Push back update timings
-                    return _requestService.Delay(firstRequest, TimeSpan.FromMilliseconds(firstRequest.FailureDelay));
-                }
-                else
-                {
-                    // Log the failure
-                    if (_requestLogService.Create(new RequestLog
-                    {
-                        Type = RequestLogType.Failure,
-                        RawPayload = JsonConvert.SerializeObject(payload),
-                        RequestId = requests.FirstOrDefault()?.Id ?? 0
-                    }) <= 0)
-                    {
-                        // Logging Failure!!!!
-                    }
+                            if (Update(contentToken, resType, requestComponents)) return true;
+                        }
+                        
+                        // Else error
+                        return false;
+                    case HttpStatusCode.TooManyRequests:
+                        // Rate limited. Push back update timings
+                        return _requestService.Delay(firstRequest, TimeSpan.FromMilliseconds(firstRequest.FailureDelay));
+                    default:
+                        // ded
+                        return false;
                 }
             }
 
@@ -501,7 +503,7 @@ namespace Nozomi.Service.HostedServices.RequestTypes
                                                 if (val > 0)
                                                 {
                                                     // Update it
-                                                    var res = _currencyPairComponentService.UpdatePairValue(component.Id, val);
+                                                    var res = _requestComponentService.UpdatePairValue(component.Id, val);
 
                                                     if (res.ResultType.Equals(NozomiResultType.Failed))
                                                     {
@@ -539,7 +541,7 @@ namespace Nozomi.Service.HostedServices.RequestTypes
                                                 if (val > 0)
                                                 {
                                                     // Update it
-                                                    var res = _currencyPairComponentService.UpdatePairValue(component.Id, val);
+                                                    var res = _requestComponentService.UpdatePairValue(component.Id, val);
 
                                                     if (res.ResultType.Equals(NozomiResultType.Failed))
                                                     {
@@ -609,7 +611,7 @@ namespace Nozomi.Service.HostedServices.RequestTypes
                                             if (val > 0)
                                             {
                                                 // Update it
-                                                var res = _currencyPairComponentService.UpdatePairValue(component.Id, val);
+                                                var res = _requestComponentService.UpdatePairValue(component.Id, val);
 
                                                 if (res.ResultType.Equals(NozomiResultType.Failed))
                                                 {
@@ -647,7 +649,7 @@ namespace Nozomi.Service.HostedServices.RequestTypes
                                             if (val > 0)
                                             {
                                                 // Update it
-                                                var res = _currencyPairComponentService.UpdatePairValue(component.Id, val);
+                                                var res = _requestComponentService.UpdatePairValue(component.Id, val);
 
                                                 if (res.ResultType.Equals(NozomiResultType.Failed))
                                                 {
@@ -703,7 +705,7 @@ namespace Nozomi.Service.HostedServices.RequestTypes
                                         if (val > 0)
                                         {
                                             // Update it
-                                            var res = _currencyPairComponentService.UpdatePairValue(component.Id, val);
+                                            var res = _requestComponentService.UpdatePairValue(component.Id, val);
 
                                             if (res.ResultType.Equals(NozomiResultType.Failed))
                                             {
