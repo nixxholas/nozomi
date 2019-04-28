@@ -499,7 +499,7 @@ namespace Nozomi.Service.Events
                             CurrencyId = ac.CurrencyId,
                             AnalysedHistoricItems = ac.AnalysedHistoricItems
                                 .OrderByDescending(ahi => ahi.HistoricDateTime)
-                                .Take(50)
+                                .Where(ahi => ahi.HistoricDateTime < DateTime.UtcNow.Subtract(TimeSpan.FromDays(7)))
                                 .ToList()
                         })
                         .ToList(),
@@ -533,7 +533,8 @@ namespace Nozomi.Service.Events
                                                 CurrencyId = ac.CurrencyId,
                                                 AnalysedHistoricItems = ac.AnalysedHistoricItems
                                                     .OrderByDescending(ahi => ahi.HistoricDateTime)
-                                                    .Take(50)
+                                                    .Where(ahi => ahi.HistoricDateTime < 
+                                                                  DateTime.UtcNow.Subtract(TimeSpan.FromDays(7)))
                                                     .ToList()
                                             })
                                             .ToList()
