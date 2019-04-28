@@ -15,6 +15,7 @@ using Nozomi.Data.Models.Web.Websocket;
 using Nozomi.Data.ResponseModels.Currency;
 using Nozomi.Data.ResponseModels.PartialCurrencyPair;
 using Nozomi.Data.ResponseModels.Source;
+using Nozomi.Preprocessing;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Data;
@@ -489,6 +490,8 @@ namespace Nozomi.Service.Events
                     CurrencySourceId = c.CurrencySourceId,
                     WalletTypeId = c.WalletTypeId,
                     AnalysedComponents = c.AnalysedComponents
+                        .Where(ac => AnalysisConstants.CompactAnalysedComponentTypes.Contains(ac.ComponentType)
+                        || AnalysisConstants.LiveAnalysedComponentTypes.Contains(ac.ComponentType))
                         .Select(ac => new AnalysedComponent
                         {
                             Id = ac.Id,
@@ -500,6 +503,7 @@ namespace Nozomi.Service.Events
                             AnalysedHistoricItems = ac.AnalysedHistoricItems
                                 .OrderByDescending(ahi => ahi.HistoricDateTime)
                                 .Where(ahi => ahi.HistoricDateTime < DateTime.UtcNow.Subtract(TimeSpan.FromDays(7)))
+                                .Take(200)
                                 .ToList()
                         })
                         .ToList(),
@@ -523,6 +527,8 @@ namespace Nozomi.Service.Events
                                         Id = cpr.Id,
                                         CurrencyPairId = cpr.CurrencyPairId,
                                         AnalysedComponents = cpr.AnalysedComponents
+                                            .Where(ac => AnalysisConstants.CompactAnalysedComponentTypes.Contains(ac.ComponentType)
+                                                         || AnalysisConstants.LiveAnalysedComponentTypes.Contains(ac.ComponentType))
                                             .Select(ac => new AnalysedComponent
                                             {
                                                 Id = ac.Id,
@@ -535,6 +541,7 @@ namespace Nozomi.Service.Events
                                                     .OrderByDescending(ahi => ahi.HistoricDateTime)
                                                     .Where(ahi => ahi.HistoricDateTime < 
                                                                   DateTime.UtcNow.Subtract(TimeSpan.FromDays(7)))
+                                                    .Take(200)
                                                     .ToList()
                                             })
                                             .ToList()
