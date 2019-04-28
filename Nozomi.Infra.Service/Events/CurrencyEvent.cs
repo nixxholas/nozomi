@@ -467,9 +467,6 @@ namespace Nozomi.Service.Events
                         .Equals(typeShortForm, StringComparison.InvariantCultureIgnoreCase));
             }
 
-            // Obtain all Currency Pairs that fall under the generic counter currency
-            var compatibleCPairs = _currencyPairEvent.GetAllByCounterCurrency();
-
             currencies = currencies.Where(c => c.DeletedAt == null && c.IsEnabled)
                 .Include(c => c.AnalysedComponents)
                 .ThenInclude(ac => ac.AnalysedHistoricItems)
@@ -507,8 +504,8 @@ namespace Nozomi.Service.Events
                         })
                         .ToList(),
                     CurrencyCurrencyPairs = c.CurrencyCurrencyPairs
-                        .Where(pcp => pcp.Currency.Abbrv.Equals(pcp.CurrencyPair.MainCurrency) &&
-                                      compatibleCPairs.Any(ccp => ccp.Id.Equals(pcp.CurrencyPairId)))
+                        .Where(ccp => ccp.CurrencyPair.MainCurrency.Equals(c.Abbrv, StringComparison.InvariantCultureIgnoreCase)
+                                      && ccp.CurrencyPair.CounterCurrency.Equals(CoreConstants.GenericCounterCurrency))
                         .Select(pcp => new CurrencyCurrencyPair
                         {
                             CurrencyId = pcp.CurrencyId,
@@ -547,7 +544,8 @@ namespace Nozomi.Service.Events
                             CurrencyPairId = pcp.CurrencyPairId
                         })
                         .ToList()
-                });
+                })
+                .Take(50);
 
             if (currencies != null)
             {
