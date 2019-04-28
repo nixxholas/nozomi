@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Nozomi.Data.Models.Web.Analytical;
 
-namespace Nozomi.Infra.Analysis.Service
+namespace Nozomi.Preprocessing
 {
     public static class AnalysisConstants
     {
@@ -22,5 +22,10 @@ namespace Nozomi.Infra.Analysis.Service
                 AnalysedComponentType.DailyPricePctChange,
                 AnalysedComponentType.HourlyPricePctChange
             };
+        
+        public static ICollection<AnalysedComponentType> LiveAnalysedComponentTypes = new List<AnalysedComponentType>()
+        {
+            AnalysedComponentType.CurrentAveragePrice
+        };
     }
 }
