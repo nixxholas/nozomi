@@ -21,11 +21,14 @@
             <template slot="isEnabled" slot-scope="datum">
                 <b-form-checkbox v-model="datum.item.IsEnabled" disabled/>
             </template>
-            <template slot="actions" slot-scope="datum">
+            <template slot="Edit" slot-scope="datum">
                 <b-button variant="primary" b-modal.modal-xl
                           v-on:click="showEditModal(datum.item.Id, datum.item.Name, datum.item.Abbreviation, datum.item.APIDocsURL, datum.item.IsEnabled)">
                     Edit
                 </b-button>
+            </template>
+            <template slot="Delete" slot-scope="datum">
+                <b-button variant="danger" v-on:click="showDeleteModal(datum.item.Id, datum.item.Name)">Delete</b-button>
             </template>
         </b-table>
     </div>
@@ -33,7 +36,7 @@
 
 
 <!-- EditModal -->
-<b-modal ref="edit-modal" id="modal-xl" size="xl" title="Edit Source" ok-title="Save changes" v-on:ok="handleOk">
+<b-modal ref="edit-modal" size="xl" title="Edit Source" ok-title="Save changes" v-on:ok="handleEditOk">
     <b-form v-on:submit.stop.prevent="onEditSubmit">
         <b-form-group
             id="sourceName-input-group"
@@ -71,12 +74,13 @@
         <b-form-group id="isEnabled-input-group">
             <b-form-checkbox v-model="editForm.isEnabled" switch>Is Enabled</b-form-checkbox>
         </b-form-group>
-
-        @* <b-button type="submit" variant="primary" class="float-right">Submit</b-button> *@
-        @* <b-button v-on:click="hideEditModal" variant="secondary" class="float-right">Close</b-button> *@
     </b-form>
 </b-modal>
 
+<!-- DeleteModal -->
+<b-modal ref="delete-modal" title="Confirm Delete" ok-title="Yes" ok-variant="danger" cancel-title="No" v-on:ok="handleDeleteOk" centered>
+    <p>Are you sure that you want to delete {{ deleteModal.name }} source?</p>
+</b-modal>
 
 @section Scripts {
     <script>
@@ -107,7 +111,12 @@
                         sortable: true
                     },
                     {
-                        key: 'actions',
+                        key: 'Edit',
+                        label: '',
+                        sortable: false
+                    },
+                    {
+                        key: 'Delete',
                         label: '',
                         sortable: false
                     }
@@ -121,6 +130,10 @@
                     abbreviation: '',
                     apiDocsURL: '',
                     isEnabled: Boolean
+                },
+                deleteModal: {
+                    id: Number,
+                    name: ''
                 }
             },
             methods: {
@@ -133,10 +146,7 @@
 
                     this.$refs['edit-modal'].show();
                 },
-                hideEditModal() {
-                    this.$refs['edit-modal'].hide();
-                },
-                handleOk(bvModalEvt) {
+                handleEditOk(bvModalEvt) {
                     // Prevent modal from closing
                     bvModalEvt.preventDefault();
                     // Trigger submit handler
@@ -156,8 +166,6 @@
                             body: formData
                         });
 
-                    console.log(response);
-
                     if (response.status === 200) {
                         // Update the data table
                         this.sources.find((element, index) => {
@@ -170,12 +178,36 @@
                         });
                         // Hide the modal manually
                         this.$refs['edit-modal'].hide();
-                        alert("Source updated");
+                        I
+                        // Put alert for now, change the ui later.
+                        alert(response.message);
                     } else {
                         alert("Update failed");
                     }
-                }
+                },
+                showDeleteModal(id, sourceName) {
+                    this.deleteModal.id = id;
+                    this.deleteModal.name = sourceName;
 
+                    this.$refs['delete-modal'].show();
+                },
+                async handleDeleteOk(bvModalEvt) {
+                    bvModalEvt.preventDefault();
+                    
+                    const response = await fetch(`/Manage/DeleteSource/${this.deleteModal.id}`,
+                        {
+                            method: 'DELETE'
+                        });
+
+                    console.log(response);
+                    if (response.status === 200) {
+                        alert(response.message);
+                    } else {
+                        alert("Delete failed");
+                    }
+                    
+                    this.$refs['delete-modal'].hide();
+                }
             }
         });
     </script>
