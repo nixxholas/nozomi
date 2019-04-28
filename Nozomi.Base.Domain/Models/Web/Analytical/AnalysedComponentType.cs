@@ -7,11 +7,17 @@ namespace Nozomi.Data.Models.Web.Analytical
         Unknown = 0,
         [Description("Market Cap")]
         MarketCap = 1,
+        [Description("Market Cap")]
+        HourlyMarketCap = 2,
+        [Description("Market Cap")]
+        DailyMarketCap = 3,
         
         [Description("Price")]
         CurrentAveragePrice = 10,
         [Description("Hourly Average Price")]
         HourlyAveragePrice = 11,
+        [Description("Daily Average Price")]
+        DailyAveragePrice = 12,
         
         [Description("Change")]
         DailyPriceChange = 50,
