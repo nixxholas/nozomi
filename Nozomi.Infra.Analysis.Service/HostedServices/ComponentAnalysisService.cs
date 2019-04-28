@@ -227,10 +227,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                 // Obtain all of the req components related to this currency where it is the base.
                                 var currencyReqComps =
                                     _requestComponentEvent.GetAllByCurrency((long) component.CurrencyId, true)
-                                        .Where(rc => rc.RcdHistoricItems != null &&
-                                                     rc.RcdHistoricItems
-                                                         .Any(rcdhi => rcdhi.HistoricDateTime >
-                                                                       DateTime.UtcNow.Subtract(TimeSpan.FromHours(1))))
+                                        .Where(rc => rc.RcdHistoricItems != null)
                                         .ToList();
 
                                 // Safetynet
@@ -251,6 +248,8 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                         .Where(rc => rc.ComponentType.Equals(ComponentType.Ask)
                                                      || rc.ComponentType.Equals(ComponentType.Bid))
                                         .SelectMany(rc => rc.RcdHistoricItems)
+                                        .Where(rcdhi => rcdhi.HistoricDateTime >
+                                                        DateTime.UtcNow.Subtract(TimeSpan.FromHours(1)))
                                         .Average(rcdhi => decimal.Parse(string.IsNullOrEmpty(rcdhi.Value)
                                             ? "0"
                                             : rcdhi.Value));
@@ -266,31 +265,12 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                 }
                             }
                             else
-                            {
-                                #if DEBUG
-                                if (component.Id.Equals(12) || component.Id.Equals(18))
-                                {
-                                    var correlatedReqCompsTest = _requestComponentEvent.GetAllByCorrelation(component.Id, true)
-                                        .Where(rc => (rc.ComponentType.Equals(ComponentType.Ask)
-                                                      || rc.ComponentType.Equals(ComponentType.Bid))
-                                                     && rc.RcdHistoricItems != null)
-                                        .ToList();
-
-                                    if (correlatedReqCompsTest.FirstOrDefault().RcdHistoricItems.Count > 0)
-                                    {
-                                        Console.WriteLine("This hits!!!");
-                                    }
-                                }
-                                #endif
-                                
+                            {                                
                                 // Obtain all of the req components that are related to this AC.
                                 var correlatedReqComps = _requestComponentEvent.GetAllByCorrelation(component.Id, true)
                                     .Where(rc => (rc.ComponentType.Equals(ComponentType.Ask)
-                                                 || rc.ComponentType.Equals(ComponentType.Bid))
-                                                 && rc.RcdHistoricItems != null 
-                                                 && rc.RcdHistoricItems
-                                                     .Any(rcdhi => rcdhi.HistoricDateTime >
-                                                                   DateTime.UtcNow.Subtract(TimeSpan.FromHours(1))))
+                                                  || rc.ComponentType.Equals(ComponentType.Bid))
+                                                 && rc.RcdHistoricItems != null)
                                     .ToList();
 
                                 if (correlatedReqComps != null && correlatedReqComps.Count > 0)
@@ -300,11 +280,13 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                         .Where(rc => rc.ComponentType.Equals(ComponentType.Ask)
                                                      || rc.ComponentType.Equals(ComponentType.Bid))
                                         .SelectMany(rc => rc.RcdHistoricItems)
+                                        .Where(rcdhi => rcdhi.HistoricDateTime >
+                                                        DateTime.UtcNow.Subtract(TimeSpan.FromHours(1)))
                                         .Average(rcdhi => decimal.Parse(string.IsNullOrEmpty(rcdhi.Value)
                                             ? "0"
                                             : rcdhi.Value));
 
-                                    if (!decimal.Zero.Equals(avgPrice))
+                                    if (!(avgPrice <= decimal.Zero))
                                     {
                                         if (_analysedComponentService.UpdateValue(component.Id, avgPrice.ToString()))
                                         {
