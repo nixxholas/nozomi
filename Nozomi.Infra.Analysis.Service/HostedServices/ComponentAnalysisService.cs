@@ -36,10 +36,10 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
         private readonly ICurrencyEvent _currencyEvent;
         private readonly IRequestComponentEvent _requestComponentEvent;
 
-//        private readonly IHubContext<NozomiStreamHub, INozomiStreamClient> _nozomiStreamHub;
+        private readonly IHubContext<NozomiStreamHub, INozomiStreamClient> _nozomiStreamHub;
 
-        public ComponentAnalysisService(IServiceProvider serviceProvider
-            //IHubContext<NozomiStreamHub, INozomiStreamClient> nozomiStreamHub
+        public ComponentAnalysisService(IServiceProvider serviceProvider,
+            IHubContext<NozomiStreamHub, INozomiStreamClient> nozomiStreamHub
             )
             : base(serviceProvider)
         {
@@ -50,7 +50,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
             _currencyEvent = _scope.ServiceProvider.GetRequiredService<ICurrencyEvent>();
             _requestComponentEvent = _scope.ServiceProvider.GetRequiredService<IRequestComponentEvent>();
 
-//            _nozomiStreamHub = nozomiStreamHub;
+            _nozomiStreamHub = nozomiStreamHub;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -72,8 +72,8 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                                " Analysis successful");
 
                         // Push the updated currency data
-//                        await _nozomiStreamHub.Clients.Group(NozomiSocketGroup.Currencies.GetDescription())
-//                            .Currencies(_currencyEvent.GetAllDetailed());
+                        await _nozomiStreamHub.Clients.Group(NozomiSocketGroup.Currencies.GetDescription())
+                            .Currencies(_currencyEvent.GetAllDetailed());
                     }
                     else
                     {
@@ -228,7 +228,9 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                 // Obtain all of the req components related to this currency where it is the base.
                                 var currencyReqComps =
                                     _requestComponentEvent.GetAllByCurrency((long) component.CurrencyId, true)
-                                        .Where(rc => rc.RcdHistoricItems != null)
+                                        .Where(rc => rc.RcdHistoricItems != null && 
+                                                     rc.ComponentType.Equals(ComponentType.Ask)
+                                                     || rc.ComponentType.Equals(ComponentType.Bid))
                                         .ToList();
 
                                 // Safetynet
@@ -236,8 +238,6 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                 {
                                     // Filter
                                     currencyReqComps = currencyReqComps
-                                        .Where(rc => rc.ComponentType.Equals(ComponentType.Ask)
-                                                     || rc.ComponentType.Equals(ComponentType.Bid))
                                         .DefaultIfEmpty()
                                         .ToList();
 
@@ -246,8 +246,6 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
 
                                     // Now we can aggregate this
                                     var currAvgPrice = currencyReqComps
-                                        .Where(rc => rc.ComponentType.Equals(ComponentType.Ask)
-                                                     || rc.ComponentType.Equals(ComponentType.Bid))
                                         .SelectMany(rc => rc.RcdHistoricItems)
                                         .Where(rcdhi => rcdhi.HistoricDateTime >
                                                         DateTime.UtcNow.Subtract(TimeSpan.FromHours(1)))
@@ -274,7 +272,12 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                                  && rc.RcdHistoricItems != null)
                                     .ToList();
 
-                                if (correlatedReqComps != null && correlatedReqComps.Count > 0)
+                                if (correlatedReqComps != null && 
+                                    correlatedReqComps // Make sure there's some historic items.
+                                        .Where(rc => rc.RcdHistoricItems
+                                            .Any(rcdhi => rcdhi.HistoricDateTime > 
+                                                          DateTime.UtcNow.Subtract(TimeSpan.FromHours(1))))
+                                        .SelectMany(rc => rc.RcdHistoricItems).Any())
                                 {
                                     // Aggregate it
                                     var avgPrice = correlatedReqComps
