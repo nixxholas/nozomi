@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
@@ -263,12 +264,28 @@ namespace Nozomi.Ticker.Areas
                 return BadRequest();
             }
 
-            if(_sourceService.StaffSourceUpdate(updateSource)) return Ok();
+            if (_sourceService.StaffSourceUpdate(updateSource)) return Ok();
 
             // Update failed.
             return NotFound();
-
         }
+        
+        [HttpDelete("[controller]/[action]/{id}")]
+        [Authorize(Roles = "Owner, Administrator, Staff")]
+        public async Task<IActionResult> DeleteSource(long id)
+        {
+            var user = await GetCurrentUserAsync();
+            if (user == null)
+            {
+                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
+
+            if(_sourceService.Delete(id)) return Ok();
+
+            // Update failed.
+            return NotFound();
+        }
+        
 
         #endregion
 
