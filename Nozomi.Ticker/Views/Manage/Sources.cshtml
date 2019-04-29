@@ -137,6 +137,7 @@
                 }
             },
             methods: {
+                // Methods for edit modal
                 showEditModal(id, sourceName, abbreviation, apiDocsURL, isEnabled) {
                     this.editForm.id = id;
                     this.editForm.sourceName = sourceName;
@@ -176,15 +177,17 @@
                                 this.sources[index].IsEnabled = this.editForm.isEnabled;
                             }
                         });
-                        // Hide the modal manually
-                        this.$refs['edit-modal'].hide();
-                        I
+
                         // Put alert for now, change the ui later.
-                        alert(response.message);
+                        alert("Successfully updated source");
                     } else {
                         alert("Update failed");
                     }
+                    
+                    // Hide the modal manually
+                    this.$refs['edit-modal'].hide();
                 },
+                // Methods for delete modal
                 showDeleteModal(id, sourceName) {
                     this.deleteModal.id = id;
                     this.deleteModal.name = sourceName;
@@ -193,19 +196,22 @@
                 },
                 async handleDeleteOk(bvModalEvt) {
                     bvModalEvt.preventDefault();
-                    
+
                     const response = await fetch(`/Manage/DeleteSource/${this.deleteModal.id}`,
                         {
                             method: 'DELETE'
                         });
 
-                    console.log(response);
                     if (response.status === 200) {
-                        alert(response.message);
+                        // Update the datatable
+                        const index = this.sources.findIndex(element => element.Id === this.deleteModal.id);
+                        this.sources.splice(index, 1);
+
+                        alert(`Successfully deleted ${this.deleteModal.name}`);
                     } else {
                         alert("Delete failed");
                     }
-                    
+
                     this.$refs['delete-modal'].hide();
                 }
             }
