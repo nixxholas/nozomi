@@ -9,6 +9,8 @@ namespace Nozomi.Data.AreaModels.v1.CurrencySource
     {
         public long Id { get; set; }
         
+        public bool IsEnabled { get; set; }
+        
         public ICollection<UpdateSourceCurrency> UpdateSourceCurrencies { get; set; }
         
         public ICollection<UpdateCurrencyPair> UpdateCurrencyPairs { get; set; }
