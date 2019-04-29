@@ -455,20 +455,28 @@ namespace Nozomi.Service.Events
 
         public ICollection<DetailedCurrencyResponse> GetAllDetailed(string typeShortForm = "CRYPTO")
         {
+            // Resultant collection
             var res = new List<DetailedCurrencyResponse>();
 
+            // Initial query
             var currencies = _unitOfWork.GetRepository<Currency>()
                 .GetQueryable()
-                .AsNoTracking();
+                .AsNoTracking()
+                .Include(c => c.CurrencyType)
+                .Where(c => c.IsEnabled && c.DeletedAt == null);
 
             if (!string.IsNullOrEmpty(typeShortForm))
             {
-                currencies = currencies.Include(c => c.CurrencyType)
-                    .Where(c => c.CurrencyType.TypeShortForm
+                currencies = currencies.Where(c => c.CurrencyType.TypeShortForm
                         .Equals(typeShortForm, StringComparison.InvariantCultureIgnoreCase));
+            } else
+            {
+                // Default to crypto
+                currencies = currencies.Where(c => c.CurrencyType.TypeShortForm
+                        .Equals("CRYPTO", StringComparison.InvariantCultureIgnoreCase));
             }
 
-            currencies = currencies.Where(c => c.DeletedAt == null && c.IsEnabled)
+            currencies = currencies
                 .Include(c => c.AnalysedComponents)
                 .ThenInclude(ac => ac.AnalysedHistoricItems)
                 .Include(c => c.CurrencyCurrencyPairs)
@@ -503,7 +511,7 @@ namespace Nozomi.Service.Events
                             AnalysedHistoricItems = ac.AnalysedHistoricItems
                                 .OrderByDescending(ahi => ahi.HistoricDateTime)
                                 .Where(ahi => ahi.HistoricDateTime < DateTime.UtcNow.Subtract(TimeSpan.FromDays(7)))
-                                .Take(200)
+                                .Take(200) // Always limit the payload
                                 .ToList()
                         })
                         .ToList(),
@@ -541,7 +549,7 @@ namespace Nozomi.Service.Events
                                                     .OrderByDescending(ahi => ahi.HistoricDateTime)
                                                     .Where(ahi => ahi.HistoricDateTime < 
                                                                   DateTime.UtcNow.Subtract(TimeSpan.FromDays(7)))
-                                                    .Take(200)
+                                                    .Take(200) // Always limit the payload
                                                     .ToList()
                                             })
                                             .ToList()
@@ -551,8 +559,7 @@ namespace Nozomi.Service.Events
                             CurrencyPairId = pcp.CurrencyPairId
                         })
                         .ToList()
-                })
-                .Take(50);
+                });
 
             if (currencies != null)
             {
