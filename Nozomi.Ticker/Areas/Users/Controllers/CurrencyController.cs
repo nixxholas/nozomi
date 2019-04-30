@@ -1,19 +1,17 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data.Models.Web.Analytical;
-using Nozomi.Data.ResponseModels.Currency;
-using Nozomi.Data.ResponseModels.PartialCurrencyPair;
-using Nozomi.Data.ResponseModels.Source;
 using Nozomi.Infra.Analysis.Service.Events.Analysis.Interfaces;
 using Nozomi.Service.Events.Interfaces;
 using Nozomi.Service.Identity.Managers;
+using Nozomi.Ticker.Controllers;
 
-namespace Nozomi.Ticker.Areas
+namespace Nozomi.Ticker.Areas.Users.Controllers
 {
+    [Area("Users")]
+    [Route("[controller]/[action]")]
     public class CurrencyController : BaseViewController<CurrencyController>
     {
         private IAnalysedHistoricItemEvent _analysedHistoricItemEvent;

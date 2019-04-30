@@ -8,7 +8,7 @@ using Nozomi.Data.Models.Web;
 using Nozomi.Service.Identity.Managers;
 using Nozomi.Service.Services.Interfaces;
 
-namespace Nozomi.Ticker.Areas.v1.CurrencyPairRequest
+namespace Nozomi.Ticker.Controllers.APIs.v1.CurrencyPairRequest
 {
     [ApiController]
     public class CurrencyPairRequestController : BaseController<CurrencyPairRequestController>, ICurrencyPairRequestController

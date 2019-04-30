@@ -4,8 +4,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Nozomi.Base.Identity.Models.Identity;
 using Nozomi.Service.Identity.Managers;
+using Nozomi.Ticker.Areas.Users.Controllers;
 
-namespace Nozomi.Ticker.Areas
+namespace Nozomi.Ticker.Controllers
 {
     [ApiExplorerSettings(IgnoreApi = true)]
     public class BaseViewController<TController> : Controller where TController : class

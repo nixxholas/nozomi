@@ -1,11 +1,10 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Nozomi.Base.Core.Helpers.Enumerator;
 using Nozomi.Base.Identity.Models.Identity;
 using Nozomi.Service.Identity.Managers;
 
-namespace Nozomi.Ticker.Areas.v1
+namespace Nozomi.Ticker.Controllers.APIs.v1
 {
     [Route("/api/[controller]/[action]")]
     [ApiVersion(GlobalApiVariables.V1_MAJOR_VERSION, Deprecated = false)]

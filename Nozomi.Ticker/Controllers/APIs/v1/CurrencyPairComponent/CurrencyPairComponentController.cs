@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -11,7 +10,7 @@ using Nozomi.Service.Identity.Managers;
 using Nozomi.Service.Services.Interfaces;
 using Swashbuckle.AspNetCore.Annotations;
 
-namespace Nozomi.Ticker.Areas.v1.CurrencyPairComponent
+namespace Nozomi.Ticker.Controllers.APIs.v1.CurrencyPairComponent
 {
     public class CurrencyPairComponentController : BaseController<CurrencyPairComponentController>, ICurrencyPairComponentController
     {

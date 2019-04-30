@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Nozomi.Data;
 
-namespace Nozomi.Ticker.Areas.v1.RequestPropertyType
+namespace Nozomi.Ticker.Controllers.APIs.v1.RequestPropertyType
 {
     public interface IRequestPropertyTypeController
     {

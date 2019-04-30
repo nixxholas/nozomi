@@ -1,10 +1,8 @@
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Nozomi.Data;
 using Nozomi.Data.AreaModels.v1.CurrencyPair;
-using Nozomi.Data.ResponseModels;
 
-namespace Nozomi.Ticker.Areas.v1.CurrencyPair
+namespace Nozomi.Ticker.Controllers.APIs.v1.CurrencyPair
 {
     public interface ICurrencyPairController
     {

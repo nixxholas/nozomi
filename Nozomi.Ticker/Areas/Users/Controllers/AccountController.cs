@@ -2,7 +2,6 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Logging;
@@ -10,9 +9,12 @@ using Nozomi.Base.Identity.Models.Identity;
 using Nozomi.Base.Identity.ViewModels.Account;
 using Nozomi.Preprocessing.Events.Interfaces;
 using Nozomi.Service.Identity.Managers;
+using Nozomi.Ticker.Controllers;
 
-namespace Nozomi.Ticker.Areas
+namespace Nozomi.Ticker.Areas.Users.Controllers
 {
+    [Area("Users")]
+    [Route("[controller]/[action]")]
     [Authorize]
     public class AccountController : BaseViewController<AccountController>
     {

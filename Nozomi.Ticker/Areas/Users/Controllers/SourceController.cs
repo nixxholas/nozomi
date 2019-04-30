@@ -1,14 +1,14 @@
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data.ViewModels.Source;
 using Nozomi.Service.Events.Interfaces;
 using Nozomi.Service.Identity.Managers;
+using Nozomi.Ticker.Controllers;
 
-namespace Nozomi.Ticker.Areas
+namespace Nozomi.Ticker.Areas.Users.Controllers
 {
+    [Area("Users")]
+    [Route("[controller]/[action]")]
     public class SourceController : BaseViewController<SourceController>
     {
         private ISourceEvent _sourceEvent { get; set; }

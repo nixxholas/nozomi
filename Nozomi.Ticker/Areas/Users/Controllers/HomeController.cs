@@ -1,14 +1,14 @@
 ﻿using System.Diagnostics;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Nozomi.Service.Identity.Managers;
-using Nozomi.Service.Services.Interfaces;
+using Nozomi.Ticker.Controllers;
 using Nozomi.Ticker.Models;
 
-namespace Nozomi.Ticker.Areas
+namespace Nozomi.Ticker.Areas.Users.Controllers
 {
+    [Area("Users")]
+    [Route("[controller]/[action]")]
     [ApiExplorerSettings(IgnoreApi = true)]
     public class HomeController : BaseViewController<HomeController>
     {

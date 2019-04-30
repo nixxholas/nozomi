@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Nozomi.Data;
 using Nozomi.Data.AreaModels.v1.CurrencySource;
 
-namespace Nozomi.Ticker.Areas.v1.Source
+namespace Nozomi.Ticker.Controllers.APIs.v1.Source
  {
      public interface ISourceController
      {

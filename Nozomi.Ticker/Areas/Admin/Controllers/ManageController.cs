@@ -1,17 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using Nozomi.Base.Core.Helpers.Enumerator;
 using Nozomi.Base.Identity.Models.Identity;
 using Nozomi.Base.Identity.Models.Subscription;
 using Nozomi.Base.Identity.ViewModels.Manage;
@@ -21,7 +18,6 @@ using Nozomi.Base.Identity.ViewModels.Manage.Tickers;
 using Nozomi.Base.Identity.ViewModels.Manage.TwoFactorAuthentication;
 using Nozomi.Data.AreaModels.v1.CurrencySource;
 using Nozomi.Data.AreaModels.v1.RequestComponent;
-using Nozomi.Data.Models.Currency;
 using Nozomi.Data.ViewModels.Manage;
 using Nozomi.Preprocessing.Events.Interfaces;
 using Nozomi.Service.Events.Interfaces;
@@ -30,9 +26,12 @@ using Nozomi.Service.Identity.Events.Interfaces;
 using Nozomi.Service.Identity.Managers;
 using Nozomi.Service.Identity.Services.Interfaces;
 using Nozomi.Service.Services.Interfaces;
+using Nozomi.Ticker.Controllers;
 
-namespace Nozomi.Ticker.Areas
+namespace Nozomi.Ticker.Areas.Admin.Controllers
 {
+    [Area("Admin")]
+    [Route("[controller]/[action]")]
     public class ManageController : BaseViewController<ManageController>
     {
         private readonly IApiTokenEvent _apiTokenEvent;
@@ -249,7 +248,7 @@ namespace Nozomi.Ticker.Areas
             return View(vm);
         }
         
-        [HttpPut("[controller]/[action]/{id}")]
+        [HttpPut("{id}")]
         [Authorize(Roles = "Owner, Administrator, Staff")]
         public async Task<IActionResult> EditSource(long id, UpdateSource updateSource)
         {
@@ -270,7 +269,7 @@ namespace Nozomi.Ticker.Areas
             return NotFound();
         }
         
-        [HttpDelete("[controller]/[action]/{id}")]
+        [HttpDelete("{id}")]
         [Authorize(Roles = "Owner, Administrator, Staff")]
         public async Task<IActionResult> DeleteSource(long id)
         {

@@ -4,7 +4,7 @@ using Nozomi.Data;
 using Nozomi.Service.Identity.Managers;
 using Nozomi.Service.Services.Enumerators.Interfaces;
 
-namespace Nozomi.Ticker.Areas.v1.ComponentType
+namespace Nozomi.Ticker.Controllers.APIs.v1.ComponentType
 {
     public class ComponentTypeController : BaseController<ComponentTypeController>, IComponentTypeController
     {

@@ -10,9 +10,8 @@ using Nozomi.Data;
 using Nozomi.Service.Identity.Events.Auth.Interfaces;
 using Nozomi.Service.Identity.Managers;
 using Nozomi.Service.Identity.Services.Interfaces;
-using StackExchange.Redis;
 
-namespace Nozomi.Ticker.Areas.v1.ApiToken
+namespace Nozomi.Ticker.Controllers.APIs.v1.ApiToken
 {
     [Authorize]
     public class ApiTokenController : BaseController<ApiTokenController>, IApiTokenController

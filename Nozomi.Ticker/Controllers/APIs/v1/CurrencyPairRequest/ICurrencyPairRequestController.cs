@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Nozomi.Data;
 using Nozomi.Data.AreaModels.v1.CurrencyPairRequest;
 
-namespace Nozomi.Ticker.Areas.v1.CurrencyPairRequest
+namespace Nozomi.Ticker.Controllers.APIs.v1.CurrencyPairRequest
 {
     public interface ICurrencyPairRequestController
     {

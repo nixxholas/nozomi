@@ -9,7 +9,7 @@ using Nozomi.Service.Events.Interfaces;
 using Nozomi.Service.Identity.Managers;
 using Nozomi.Service.Services.Interfaces;
 
-namespace Nozomi.Ticker.Areas.v1.Currency
+namespace Nozomi.Ticker.Controllers.APIs.v1.Currency
 {
     [ApiController]
     public class CurrencyController : BaseController<CurrencyController>, ICurrencyController
