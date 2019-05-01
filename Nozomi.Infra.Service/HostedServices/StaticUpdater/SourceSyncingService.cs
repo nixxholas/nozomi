@@ -21,7 +21,7 @@ using Nozomi.Service.Hubs;
 
 namespace Nozomi.Service.HostedServices.StaticUpdater
 {
-    public class SourceSyncingService : BaseHostedService<SourceSyncingService>, IHostedService, IDisposable
+    public class SourceSyncingService : BaseHostedService<SourceSyncingService>
     {
         private readonly NozomiDbContext _nozomiDbContext;
 

@@ -25,8 +25,7 @@ using Nozomi.Service.Hubs;
 
 namespace Nozomi.Infra.Analysis.Service.HostedServices
 {
-    public class ComponentAnalysisService : BaseHostedService<ComponentAnalysisService>, IHostedService,
-        IDisposable, IComponentAnalysisService
+    public class ComponentAnalysisService : BaseHostedService<ComponentAnalysisService>, IComponentAnalysisService
     {
         private const string ServiceName = "ComponentAnalysisService";
         private readonly IAnalysedComponentEvent _analysedComponentEvent;

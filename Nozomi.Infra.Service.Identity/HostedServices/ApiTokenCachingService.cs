@@ -19,7 +19,7 @@ using Nozomi.Service.Identity.HostedServices.Interfaces;
 namespace Nozomi.Service.Identity.HostedServices
 {
     public class ApiTokenCachingService : BaseHostedService<ApiTokenCachingService>,
-        IApiTokenCachingService, IHostedService, IDisposable
+        IApiTokenCachingService
     {
         private readonly NozomiAuthContext _context;
         private IDistributedCache _cache;
