@@ -67,7 +67,6 @@
     <ProjectReference Include="..\Nozomi.Infra.Analysis.Service\Nozomi.Infra.Analysis.Service.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Areas\Admin\Views" />
     <Folder Include="ClientApp\scripts\libs" />
     <Folder Include="Controllers\APIs" />
   </ItemGroup>
