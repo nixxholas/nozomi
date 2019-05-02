@@ -9,7 +9,7 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
 {
     [Area("Admin")]
     [Route("[controller]/manage/[action]")]
-    [Authorize]
+    [Authorize(Roles = "Owner, Administrator, Staff")]
     public class CurrencyController : BaseViewController<CurrencyController>
     {
         public CurrencyController(ILogger<CurrencyController> logger, NozomiSignInManager signInManager,
@@ -19,7 +19,6 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "Owner, Administrator, Staff")]
         public async Task<IActionResult> CreateCurrency()
         {
             var user = await GetCurrentUserAsync();
