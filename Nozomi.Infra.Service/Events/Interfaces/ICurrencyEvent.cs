@@ -23,6 +23,8 @@ namespace Nozomi.Service.Events.Interfaces
         /// <returns>Circulating supply of the currency in question.</returns>
         decimal GetCirculatingSupply(AnalysedComponent analysedComponent);
 
+        ICollection<Currency> GetAll(bool includeNested = false);
+
         /// <summary>
         /// Provides the requestor detailed currency data
         /// </summary>
