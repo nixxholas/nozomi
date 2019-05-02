@@ -36,6 +36,27 @@ namespace Nozomi.Service.Events
             _currencyCurrencyPairEvent = currencyCurrencyPairEvent;
         }
 
+        public Currency Get(long id, bool track = false)
+        {
+            var query = _unitOfWork.GetRepository<Currency>()
+                .GetQueryable()
+                .AsNoTracking();
+
+            if (track)
+            {
+                query = query
+                    .Include(c => c.AnalysedComponents)
+                    .Include(c => c.CurrencySource)
+                    .Include(c => c.CurrencyCurrencyPairs)
+                    .ThenInclude(pcp => pcp.Currency)
+                    .Include(c => c.CurrencyRequests)
+                    .ThenInclude(cr => cr.RequestComponents);
+            }
+
+            return query
+                .SingleOrDefault(c => c.Id.Equals(id));
+        }
+
         public AbbrvUniqueCurrencyResponse GetCurrencyByAbbreviation(string abbreviation)
         {
             // First obtain all 'ABBRV' objects first, 
