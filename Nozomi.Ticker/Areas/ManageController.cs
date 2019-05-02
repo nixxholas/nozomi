@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
@@ -20,6 +21,7 @@ using Nozomi.Base.Identity.ViewModels.Manage.Tickers;
 using Nozomi.Base.Identity.ViewModels.Manage.TwoFactorAuthentication;
 using Nozomi.Data.AreaModels.v1.CurrencySource;
 using Nozomi.Data.AreaModels.v1.RequestComponent;
+using Nozomi.Data.Models.Currency;
 using Nozomi.Data.ViewModels.Manage;
 using Nozomi.Preprocessing.Events.Interfaces;
 using Nozomi.Service.Events.Interfaces;
@@ -247,9 +249,9 @@ namespace Nozomi.Ticker.Areas
             return View(vm);
         }
         
-        [HttpGet("[controller]/[action]/{abbreviation}")]
+        [HttpPut("[controller]/[action]/{id}")]
         [Authorize(Roles = "Owner, Administrator, Staff")]
-        public async Task<IActionResult> EditSource([FromRoute]string abbreviation)
+        public async Task<IActionResult> EditSource(long id, UpdateSource updateSource)
         {
             var user = await GetCurrentUserAsync();
             if (user == null)
@@ -257,14 +259,33 @@ namespace Nozomi.Ticker.Areas
                 return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
 
-            // Will be using IndexViewModel for now because it does the same thing
-            var vm = new SourceViewModel
+            if (id != updateSource.Id)
             {
-                Source = _sourceEvent.Get(abbreviation)
-            };
+                return BadRequest();
+            }
 
-            return Ok(vm);
+            if (_sourceService.StaffSourceUpdate(updateSource)) return Ok();
+
+            // Update failed.
+            return NotFound();
         }
+        
+        [HttpDelete("[controller]/[action]/{id}")]
+        [Authorize(Roles = "Owner, Administrator, Staff")]
+        public async Task<IActionResult> DeleteSource(long id)
+        {
+            var user = await GetCurrentUserAsync();
+            if (user == null)
+            {
+                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
+
+            if(_sourceService.Delete(id)) return Ok();
+
+            // Update failed.
+            return NotFound();
+        }
+        
 
         #endregion
 
