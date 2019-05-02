@@ -114,21 +114,6 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
             return View(vm);
         }
         
-        #region Currency APIs
-        [HttpGet]
-        [Authorize(Roles="Owner, Administrator, Staff")]
-        public async Task<IActionResult> CreateCurrency()
-        {
-            var user = await GetCurrentUserAsync();
-            if (user == null)
-            {
-                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
-            }
-            
-            return View();
-        }
-        #endregion
-        
         #region Request APIs
 
         [HttpGet]
