@@ -15,6 +15,7 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
 {
     [Area("Admin")]
     [Route("[controller]/manage/[action]")]
+    [Authorize]
     public class SourceController : BaseViewController<SourceController>
     {
         private readonly ISourceEvent _sourceEvent;
