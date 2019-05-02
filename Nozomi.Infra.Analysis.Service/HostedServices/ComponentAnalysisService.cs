@@ -25,8 +25,7 @@ using Nozomi.Service.Hubs;
 
 namespace Nozomi.Infra.Analysis.Service.HostedServices
 {
-    public class ComponentAnalysisService : BaseHostedService<ComponentAnalysisService>, IHostedService,
-        IDisposable, IComponentAnalysisService
+    public class ComponentAnalysisService : BaseHostedService<ComponentAnalysisService>, IComponentAnalysisService
     {
         private const string ServiceName = "ComponentAnalysisService";
         private readonly IAnalysedComponentEvent _analysedComponentEvent;
@@ -39,7 +38,8 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
         private readonly IHubContext<NozomiStreamHub, INozomiStreamClient> _nozomiStreamHub;
 
         public ComponentAnalysisService(IServiceProvider serviceProvider,
-            IHubContext<NozomiStreamHub, INozomiStreamClient> nozomiStreamHub)
+            IHubContext<NozomiStreamHub, INozomiStreamClient> nozomiStreamHub
+            )
             : base(serviceProvider)
         {
             _analysedComponentEvent = _scope.ServiceProvider.GetRequiredService<IAnalysedComponentEvent>();
@@ -227,7 +227,9 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                 // Obtain all of the req components related to this currency where it is the base.
                                 var currencyReqComps =
                                     _requestComponentEvent.GetAllByCurrency((long) component.CurrencyId, true)
-                                        .Where(rc => rc.RcdHistoricItems != null)
+                                        .Where(rc => rc.RcdHistoricItems != null && 
+                                                     rc.ComponentType.Equals(ComponentType.Ask)
+                                                     || rc.ComponentType.Equals(ComponentType.Bid))
                                         .ToList();
 
                                 // Safetynet
@@ -235,8 +237,6 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                 {
                                     // Filter
                                     currencyReqComps = currencyReqComps
-                                        .Where(rc => rc.ComponentType.Equals(ComponentType.Ask)
-                                                     || rc.ComponentType.Equals(ComponentType.Bid))
                                         .DefaultIfEmpty()
                                         .ToList();
 
@@ -245,8 +245,6 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
 
                                     // Now we can aggregate this
                                     var currAvgPrice = currencyReqComps
-                                        .Where(rc => rc.ComponentType.Equals(ComponentType.Ask)
-                                                     || rc.ComponentType.Equals(ComponentType.Bid))
                                         .SelectMany(rc => rc.RcdHistoricItems)
                                         .Where(rcdhi => rcdhi.HistoricDateTime >
                                                         DateTime.UtcNow.Subtract(TimeSpan.FromHours(1)))
@@ -273,7 +271,12 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                                  && rc.RcdHistoricItems != null)
                                     .ToList();
 
-                                if (correlatedReqComps != null && correlatedReqComps.Count > 0)
+                                if (correlatedReqComps != null && 
+                                    correlatedReqComps // Make sure there's some historic items.
+                                        .Where(rc => rc.RcdHistoricItems
+                                            .Any(rcdhi => rcdhi.HistoricDateTime > 
+                                                          DateTime.UtcNow.Subtract(TimeSpan.FromHours(1))))
+                                        .SelectMany(rc => rc.RcdHistoricItems).Any())
                                 {
                                     // Aggregate it
                                     var avgPrice = correlatedReqComps

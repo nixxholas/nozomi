@@ -25,7 +25,7 @@ namespace Nozomi.Service.HostedServices.RequestTypes
 {
     public class WebsocketCurrencyPairRequestSyncingService :
         BaseHostedService<WebsocketCurrencyPairRequestSyncingService>,
-        IWebsocketCurrencyPairRequestSyncingService, IHostedService, IDisposable
+        IWebsocketCurrencyPairRequestSyncingService
     {
         /// <summary>
         /// 

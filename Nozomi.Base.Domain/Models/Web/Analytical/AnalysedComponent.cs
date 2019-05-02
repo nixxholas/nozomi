@@ -17,6 +17,17 @@ namespace Nozomi.Data.Models.Web.Analytical
         public bool IsDenominated { get; set; } = false;
         
         public int Delay { get; set; }
+
+        /// <summary>
+        /// Defines the formatting for frontend libs.
+        /// 
+        /// i.e. for Numeral.js - '(0,0.0000)' to display (10,000.0000)
+        /// 
+        /// We shouldn't peg this to an AnalysedComponentType because there
+        /// may be different variation on the same type
+        /// </summary>
+        /// <value>The UIF ormatting.</value>
+        public string UIFormatting { get; set; }
         
         public long? RequestId { get; set; }
         

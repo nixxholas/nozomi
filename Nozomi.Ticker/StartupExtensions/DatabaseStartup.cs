@@ -253,6 +253,7 @@ namespace Nozomi.Ticker.StartupExtensions
                                             {
                                                 ComponentType = AnalysedComponentType.MarketCap,
                                                 Delay = 1000,
+                                                UIFormatting = "$ 0 a",
                                                 CreatedAt = DateTime.UtcNow,
                                                 ModifiedAt = DateTime.UtcNow,
                                                 IsDenominated = true,
@@ -443,6 +444,7 @@ namespace Nozomi.Ticker.StartupExtensions
                                             {
                                                 ComponentType = AnalysedComponentType.MarketCap,
                                                 Delay = 500,
+                                                UIFormatting = "$ 0 a",
                                                 CreatedAt = DateTime.UtcNow,
                                                 ModifiedAt = DateTime.UtcNow,
                                                 DeletedAt = null
@@ -776,6 +778,7 @@ namespace Nozomi.Ticker.StartupExtensions
                                                 {
                                                     ComponentType = AnalysedComponentType.DailyVolume,
                                                     Delay = 1000,
+                                                    UIFormatting = "$ 0 a",
                                                     CreatedAt = DateTime.UtcNow,
                                                     ModifiedAt = DateTime.UtcNow,
                                                     DeletedAt = null
@@ -784,6 +787,7 @@ namespace Nozomi.Ticker.StartupExtensions
                                                 {
                                                     ComponentType = AnalysedComponentType.CurrentAveragePrice,
                                                     Delay = 500,
+                                                    UIFormatting = "$ 0[.]00",
                                                     CreatedAt = DateTime.UtcNow,
                                                     ModifiedAt = DateTime.UtcNow,
                                                     DeletedAt = null
@@ -792,34 +796,16 @@ namespace Nozomi.Ticker.StartupExtensions
                                                 {
                                                     ComponentType = AnalysedComponentType.HourlyAveragePrice,
                                                     Delay = 10000,
+                                                    UIFormatting = "$ 0[.]00",
                                                     CreatedAt = DateTime.UtcNow,
                                                     ModifiedAt = DateTime.UtcNow,
-                                                    DeletedAt = null,
-                                                    AnalysedHistoricItems = new List<AnalysedHistoricItem>()
-                                                    {
-                                                        new AnalysedHistoricItem
-                                                        {
-                                                            HistoricDateTime = DateTime.UtcNow,
-                                                            Value = "180.5"
-                                                        },
-                                                        new AnalysedHistoricItem
-                                                        {
-                                                            HistoricDateTime =
-                                                                DateTime.UtcNow.Subtract(TimeSpan.FromHours(1)),
-                                                            Value = "180.3"
-                                                        },
-                                                        new AnalysedHistoricItem
-                                                        {
-                                                            HistoricDateTime =
-                                                                DateTime.UtcNow.Subtract(TimeSpan.FromHours(2)),
-                                                            Value = "180.2"
-                                                        }
-                                                    }
+                                                    DeletedAt = null
                                                 },
                                                 new AnalysedComponent()
                                                 {
                                                     ComponentType = AnalysedComponentType.DailyPricePctChange,
                                                     Delay = 500,
+                                                    UIFormatting = "0[.]0",
                                                     CreatedAt = DateTime.UtcNow,
                                                     ModifiedAt = DateTime.UtcNow,
                                                     DeletedAt = null
@@ -883,6 +869,7 @@ namespace Nozomi.Ticker.StartupExtensions
                                                 {
                                                     ComponentType = AnalysedComponentType.DailyVolume,
                                                     Delay = 1000,
+                                                    UIFormatting = "0 a",
                                                     CreatedAt = DateTime.UtcNow,
                                                     ModifiedAt = DateTime.UtcNow,
                                                     DeletedAt = null
@@ -891,6 +878,7 @@ namespace Nozomi.Ticker.StartupExtensions
                                                 {
                                                     ComponentType = AnalysedComponentType.CurrentAveragePrice,
                                                     Delay = 500,
+                                                    UIFormatting = "$ 0[.]00",
                                                     CreatedAt = DateTime.UtcNow,
                                                     ModifiedAt = DateTime.UtcNow,
                                                     DeletedAt = null
@@ -898,7 +886,8 @@ namespace Nozomi.Ticker.StartupExtensions
                                                 new AnalysedComponent
                                                 {
                                                     ComponentType = AnalysedComponentType.HourlyAveragePrice,
-                                                    Delay = 500,
+                                                    Delay = 10000,
+                                                    UIFormatting = "$ 0[.]00",
                                                     CreatedAt = DateTime.UtcNow,
                                                     ModifiedAt = DateTime.UtcNow,
                                                     DeletedAt = null
@@ -907,6 +896,7 @@ namespace Nozomi.Ticker.StartupExtensions
                                                 {
                                                     ComponentType = AnalysedComponentType.DailyPricePctChange,
                                                     Delay = 500,
+                                                    UIFormatting = "0[.]0",
                                                     CreatedAt = DateTime.UtcNow,
                                                     ModifiedAt = DateTime.UtcNow,
                                                     DeletedAt = null
@@ -1039,6 +1029,7 @@ namespace Nozomi.Ticker.StartupExtensions
                                                 {
                                                     ComponentType = AnalysedComponentType.DailyVolume,
                                                     Delay = 1000,
+                                                    UIFormatting = "0 a",
                                                     CreatedAt = DateTime.UtcNow,
                                                     ModifiedAt = DateTime.UtcNow,
                                                     DeletedAt = null
@@ -1047,6 +1038,16 @@ namespace Nozomi.Ticker.StartupExtensions
                                                 {
                                                     ComponentType = AnalysedComponentType.CurrentAveragePrice,
                                                     Delay = 500,
+                                                    UIFormatting = "0[.]00",
+                                                    CreatedAt = DateTime.UtcNow,
+                                                    ModifiedAt = DateTime.UtcNow,
+                                                    DeletedAt = null
+                                                },
+                                                new AnalysedComponent
+                                                {
+                                                    ComponentType = AnalysedComponentType.HourlyAveragePrice,
+                                                    Delay = 10000,
+                                                    UIFormatting = "0[.]00",
                                                     CreatedAt = DateTime.UtcNow,
                                                     ModifiedAt = DateTime.UtcNow,
                                                     DeletedAt = null
@@ -1055,6 +1056,7 @@ namespace Nozomi.Ticker.StartupExtensions
                                                 {
                                                     ComponentType = AnalysedComponentType.DailyPricePctChange,
                                                     Delay = 500,
+                                                    UIFormatting = "0[.]0",
                                                     CreatedAt = DateTime.UtcNow,
                                                     ModifiedAt = DateTime.UtcNow,
                                                     DeletedAt = null
@@ -1103,6 +1105,7 @@ namespace Nozomi.Ticker.StartupExtensions
                                                 {
                                                     ComponentType = AnalysedComponentType.DailyVolume,
                                                     Delay = 1000,
+                                                    UIFormatting = "0 a",
                                                     CreatedAt = DateTime.UtcNow,
                                                     ModifiedAt = DateTime.UtcNow,
                                                     DeletedAt = null
@@ -1111,6 +1114,16 @@ namespace Nozomi.Ticker.StartupExtensions
                                                 {
                                                     ComponentType = AnalysedComponentType.CurrentAveragePrice,
                                                     Delay = 500,
+                                                    UIFormatting = "0[.]00",
+                                                    CreatedAt = DateTime.UtcNow,
+                                                    ModifiedAt = DateTime.UtcNow,
+                                                    DeletedAt = null
+                                                },
+                                                new AnalysedComponent
+                                                {
+                                                    ComponentType = AnalysedComponentType.HourlyAveragePrice,
+                                                    Delay = 10000,
+                                                    UIFormatting = "0[.]00",
                                                     CreatedAt = DateTime.UtcNow,
                                                     ModifiedAt = DateTime.UtcNow,
                                                     DeletedAt = null
@@ -1119,6 +1132,7 @@ namespace Nozomi.Ticker.StartupExtensions
                                                 {
                                                     ComponentType = AnalysedComponentType.DailyPricePctChange,
                                                     Delay = 500,
+                                                    UIFormatting = "0[.]0",
                                                     CreatedAt = DateTime.UtcNow,
                                                     ModifiedAt = DateTime.UtcNow,
                                                     DeletedAt = null
@@ -1167,6 +1181,7 @@ namespace Nozomi.Ticker.StartupExtensions
                                                 {
                                                     ComponentType = AnalysedComponentType.DailyVolume,
                                                     Delay = 1000,
+                                                    UIFormatting = "0 a",
                                                     CreatedAt = DateTime.UtcNow,
                                                     ModifiedAt = DateTime.UtcNow,
                                                     DeletedAt = null
@@ -1175,6 +1190,16 @@ namespace Nozomi.Ticker.StartupExtensions
                                                 {
                                                     ComponentType = AnalysedComponentType.CurrentAveragePrice,
                                                     Delay = 500,
+                                                    UIFormatting = "0[.]00",
+                                                    CreatedAt = DateTime.UtcNow,
+                                                    ModifiedAt = DateTime.UtcNow,
+                                                    DeletedAt = null
+                                                },
+                                                new AnalysedComponent
+                                                {
+                                                    ComponentType = AnalysedComponentType.HourlyAveragePrice,
+                                                    Delay = 10000,
+                                                    UIFormatting = "0[.]00",
                                                     CreatedAt = DateTime.UtcNow,
                                                     ModifiedAt = DateTime.UtcNow,
                                                     DeletedAt = null
@@ -1183,6 +1208,7 @@ namespace Nozomi.Ticker.StartupExtensions
                                                 {
                                                     ComponentType = AnalysedComponentType.DailyPricePctChange,
                                                     Delay = 500,
+                                                    UIFormatting = "0[.]0",
                                                     CreatedAt = DateTime.UtcNow,
                                                     ModifiedAt = DateTime.UtcNow,
                                                     DeletedAt = null
@@ -1231,6 +1257,7 @@ namespace Nozomi.Ticker.StartupExtensions
                                                 {
                                                     ComponentType = AnalysedComponentType.DailyVolume,
                                                     Delay = 1000,
+                                                    UIFormatting = "0 a",
                                                     CreatedAt = DateTime.UtcNow,
                                                     ModifiedAt = DateTime.UtcNow,
                                                     DeletedAt = null
@@ -1239,6 +1266,7 @@ namespace Nozomi.Ticker.StartupExtensions
                                                 {
                                                     ComponentType = AnalysedComponentType.CurrentAveragePrice,
                                                     Delay = 500,
+                                                    UIFormatting = "$ 0[.]00",
                                                     CreatedAt = DateTime.UtcNow,
                                                     ModifiedAt = DateTime.UtcNow,
                                                     DeletedAt = null
@@ -1246,15 +1274,17 @@ namespace Nozomi.Ticker.StartupExtensions
                                                 new AnalysedComponent
                                                 {
                                                     ComponentType = AnalysedComponentType.HourlyAveragePrice,
-                                                    Delay = 500,
+                                                    Delay = 10000,
+                                                    UIFormatting = "$ 0[.]00",
                                                     CreatedAt = DateTime.UtcNow,
                                                     ModifiedAt = DateTime.UtcNow,
                                                     DeletedAt = null
                                                 },
-                                                new AnalysedComponent
+                                                new AnalysedComponent()
                                                 {
                                                     ComponentType = AnalysedComponentType.DailyPricePctChange,
                                                     Delay = 500,
+                                                    UIFormatting = "0[.]0",
                                                     CreatedAt = DateTime.UtcNow,
                                                     ModifiedAt = DateTime.UtcNow,
                                                     DeletedAt = null
