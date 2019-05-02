@@ -18,11 +18,70 @@
   </ItemGroup>
   <ItemGroup>
     <_ContentIncludedByDefault Remove="Areas\Identity\Pages\_ViewImports.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Manage\AddPhoneNumber.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Manage\ApiTokens.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Manage\ChangePassword.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Manage\CreateCurrency.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Manage\CreateRequestComponent.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Manage\CreateSource.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Manage\CreateTicker.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Manage\DisplayRecoveryCodes.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Manage\DownloadPersonalData.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Manage\EditProfile.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Manage\ExternalLogins.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Manage\Index.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Manage\ManageLogins.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Manage\PaymentMethods.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Manage\Plans.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Manage\Profile.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Manage\Request.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Manage\Requests.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Manage\Sources.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Manage\TwoFactorAuthentication.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Manage\VerifyPhoneNumber.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Manage\_Layout.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Manage\_ManageNav.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Manage\_StatusMessage.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Manage\_ViewStart.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Account\ConfirmEmail.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Account\ExternalLoginConfirmation.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Account\ExternalLoginFailure.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Account\ForgotPassword.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Account\ForgotPasswordConfirmation.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Account\Lockout.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Account\Login.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Account\Register.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Account\ResetPassword.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Account\ResetPasswordConfirmation.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Account\SendCode.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Account\UseRecoveryCode.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Account\VerifyAuthenticatorCode.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Account\VerifyCode.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Account\_AccountNav.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Account\_Layout.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Account\_ViewStart.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Currency\View.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Source\Source.cshtml" />
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\Manage\AddPhoneNumber.cshtml" />
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\Manage\ApiTokens.cshtml" />
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\Manage\ChangePassword.cshtml" />
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\Manage\DisplayRecoveryCodes.cshtml" />
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\Manage\DownloadPersonalData.cshtml" />
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\Manage\EditProfile.cshtml" />
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\Manage\ExternalLogins.cshtml" />
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\Manage\Index.cshtml" />
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\Manage\ManageLogins.cshtml" />
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\Manage\PaymentMethods.cshtml" />
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\Manage\Plans.cshtml" />
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\Manage\Profile.cshtml" />
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\Manage\TwoFactorAuthentication.cshtml" />
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\Manage\VerifyPhoneNumber.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Nozomi.Infra.Analysis.Service\Nozomi.Infra.Analysis.Service.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="ClientApp\scripts\libs" />
+    <Folder Include="Controllers\APIs" />
   </ItemGroup>
 </Project>

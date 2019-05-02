@@ -10,6 +10,7 @@ using Nozomi.Preprocessing.Swagger.Examples.Requests.v1.PartialCurrencyPair;
 using Nozomi.Preprocessing.Swagger.Examples.Requests.v1.RequestProperty;
 using Nozomi.Preprocessing.Swagger.Examples.Responses.Generic;
 using Nozomi.Ticker.Areas;
+using Nozomi.Ticker.Controllers;
 using Swashbuckle.AspNetCore.Filters;
 using Swashbuckle.AspNetCore.Swagger;
 using License = Swashbuckle.AspNetCore.Swagger.License;

@@ -29,6 +29,7 @@ using Nozomi.Service.Services.Interfaces;
 using Nozomi.Service.Services.Requests;
 using Nozomi.Service.Services.Requests.Interfaces;
 using Nozomi.Ticker.Areas;
+using Nozomi.Ticker.Controllers;
 using Nozomi.Ticker.StartupExtensions;
 using StackExchange.Redis;
 using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
@@ -199,6 +200,10 @@ namespace Nozomi.Ticker
                 routes.MapRoute(
                     name: "default",
                     template: "{controller=home}/{action=index}/{id?}");
+                
+                routes.MapRoute(
+                      name: "Areas",
+                      template: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
             });
             
             app.UseNozomiExceptionMiddleware();
