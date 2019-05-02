@@ -130,7 +130,8 @@
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link font-weight-medium" id="pills-three-tab" data-toggle="pill" href="#pills-three" role="tab" aria-controls="pills-three" aria-selected="false">
+              <a class="nav-link font-weight-medium" id="pills-three-tab" data-toggle="pill" href="#pills-three" 
+                 role="tab" aria-controls="pills-three" aria-selected="false">
                 <div class="d-md-flex justify-content-md-center align-items-md-center">
                   <figure class="ie-height-40 d-none d-md-block w-100 max-width-6 mr-3">
                     <img class="js-svg-injector" src="../../assets/svg/icons/icon-5.svg" alt="SVG"
@@ -178,7 +179,15 @@
             <!-- Mockup Block -->
             <div class="row justify-content-lg-between align-items-lg-center">
               <div class="col">
-                <b-table :items="currencyHistoricPrice"></b-table>
+                <b-table :items="getHistoricalPriceData().AnalysedHistoricItems"
+                         :fields="currencyHistoricPriceFields">
+                  <template slot="HistoricDateTime" slot-scope="datum">
+                    {{ moment(datum.item.HistoricDateTime).format('LLL') }}
+                  </template>
+                  <template slot="Value" slot-scope="datum">
+                    {{ numeral(datum.item.Value).format('$ 0[.]00') }}
+                  </template>
+                </b-table>
               </div>
             </div>
             <!-- End Mockup Block -->
@@ -213,6 +222,17 @@
                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore
                   })),
         currencyHistoricPrice: [],
+        currencyHistoricPriceFields: [
+          {
+            key: 'HistoricDateTime',
+            label: 'Date & time',
+            sortable: true
+          },
+          {
+            key: 'Value',
+            label: 'Price',
+            sortable: true
+          }],
         tickerPairTableFields: [
           {
             key: 'PairAbbreviation',
@@ -263,14 +283,18 @@
             return aComp.Value;
           }
         },
-        loadHistoricalPriceData() {
-          for (let i = 0; i < this.currency.AnalysedComponents.length; i++) {
-            const currentAc = this.currency.AnalysedComponents[i];
+        getHistoricalPriceData() {
+          if (this.currency != null && this.currency.AnalysedComponents != null) {
+            for (let i = 0; i < this.currency.AnalysedComponents.length; i++) {
+              const currentAc = this.currency.AnalysedComponents[i];
             
-            if (currentAc.ComponentType === @((int)AnalysedComponentType.HourlyAveragePrice)) {
-              this.currencyHistoricPrice = currentAc;
+              if (currentAc.ComponentType === @((int)AnalysedComponentType.HourlyAveragePrice)) {
+                return currentAc;
+              }
             }
           }
+          
+          return [];
         }
       },
       mounted: function() {
