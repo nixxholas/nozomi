@@ -15,7 +15,7 @@ namespace Nozomi.Service.Events.Interfaces
         
         ICollection<Currency> GetCurrencyByAbbreviation(string abbreviation, bool track = false);
         
-        Currency GetCurrencyByAbbreviation(long id, bool track = false);
+        Currency GetCurrencyByAbbreviation(string abbreviation, long currencySourceId, bool track = false);
         
         /// <summary>
         /// Provides the caller the total amount of currency currently circulating

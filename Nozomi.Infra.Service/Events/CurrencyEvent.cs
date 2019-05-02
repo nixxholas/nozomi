@@ -278,7 +278,7 @@ namespace Nozomi.Service.Events
             return query.ToList();
         }
 
-        public Currency GetCurrencyByAbbreviation(long id, bool track = false)
+        public Currency GetCurrencyByAbbreviation(string abbreviation, long currencySourceId, bool track = false)
         {
             var query = _unitOfWork.GetRepository<Currency>()
                 .GetQueryable()
@@ -295,7 +295,9 @@ namespace Nozomi.Service.Events
             }
 
             return query
-                .SingleOrDefault(c => c.Id.Equals(id) && c.DeletedAt == null && c.IsEnabled);
+                .SingleOrDefault(c => c.Abbrv.Equals(abbreviation, StringComparison.InvariantCultureIgnoreCase)
+                                      && c.CurrencySourceId.Equals(currencySourceId)
+                                      && c.DeletedAt == null && c.IsEnabled);
         }
 
         public decimal GetCirculatingSupply(AnalysedComponent analysedComponent)
