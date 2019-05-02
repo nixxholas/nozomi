@@ -66,6 +66,9 @@ namespace Nozomi.Service.Services
                 {
                     currToUpd.Abbrv = currency.Abbrv;
                     currToUpd.CurrencyTypeId = currency.CurrencyTypeId;
+                    currToUpd.Description = currency.Description;
+                    currToUpd.Denominations = currency.Denominations;
+                    currToUpd.DenominationName = currency.DenomationName;
                     currToUpd.Name = currency.Name;
                     currToUpd.WalletTypeId = currency.WalletTypeId;
                     currToUpd.IsEnabled = currency.IsEnabled;

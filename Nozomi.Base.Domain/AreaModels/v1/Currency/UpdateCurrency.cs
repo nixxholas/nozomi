@@ -13,6 +13,13 @@ namespace Nozomi.Data.AreaModels.v1.Currency
 
         [Required]
         public string Abbrv { get; set; } // USD? MYR? IND?
+        
+        public string Description { get; set; }
+
+        [Required] 
+        public int Denominations { get; set; } = 0;
+        
+        public string DenomationName { get; set; }
 
         [Required]
         public string Name { get; set; }
