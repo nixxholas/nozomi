@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Nozomi.Base.Identity.ViewModels.Manage;
 using Nozomi.Data.AreaModels.v1.CurrencySource;
-using Nozomi.Data.Models.Currency;
 using Nozomi.Service.Events.Interfaces;
 using Nozomi.Service.Identity.Managers;
 using Nozomi.Service.Services.Interfaces;
@@ -15,7 +14,7 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
 {
     [Area("Admin")]
     [Route("[controller]/manage/[action]")]
-    [Authorize]
+    [Authorize(Roles = "Owner, Administrator, Staff")]
     public class SourceController : BaseViewController<SourceController>
     {
         private readonly ISourceEvent _sourceEvent;
@@ -29,9 +28,9 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
             _sourceService = sourceService;
         }
 
-        #region Source APIs
+        #region Get CreateSource
+        
         [HttpGet]
-        [Authorize(Roles = "Owner, Administrator, Staff")]
         public async Task<IActionResult> CreateSource()
         {
             var user = await GetCurrentUserAsync();
@@ -42,9 +41,34 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
             
             return View();
         }
+        
+        #endregion
+        
+        #region Get Sources
+        
+        [HttpGet]
+        public async Task<IActionResult> Sources()
+        {
+            var user = await GetCurrentUserAsync();
+            if (user == null)
+            {
+                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
 
+            // Will be using IndexViewModel for now because it does the same thing
+            var vm = new IndexViewModel
+            {
+                Sources = _sourceEvent.GetAll(true).ToList()
+            };
+
+            return View(vm);
+        }
+        
+        #endregion
+
+        #region Post CreateSource
+        
         [HttpPost]
-        [Authorize(Roles = "Owner, Administrator, Staff")]
         public async Task<IActionResult> CreateSource(CreateSource createSource)
         {  
             var user = await GetCurrentUserAsync();
@@ -63,28 +87,12 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
             
             return RedirectToAction("CreateSource");
         }
+        
+        #endregion
 
-        [HttpGet]
-        [Authorize(Roles = "Owner, Administrator, Staff")]
-        public async Task<IActionResult> Sources()
-        {
-            var user = await GetCurrentUserAsync();
-            if (user == null)
-            {
-                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
-            }
-
-            // Will be using IndexViewModel for now because it does the same thing
-            var vm = new IndexViewModel
-            {
-                Sources = _sourceEvent.GetAll(true).ToList()
-            };
-
-            return View(vm);
-        }
+        #region Put EditSource
         
         [HttpPut("{id}")]
-        [Authorize(Roles = "Owner, Administrator, Staff")]
         public async Task<IActionResult> EditSource(long id, UpdateSource updateSource)
         {
             var user = await GetCurrentUserAsync();
@@ -103,9 +111,12 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
             // Update failed.
             return NotFound();
         }
+            
+        #endregion
+        
+        #region Delete DeleteSource
         
         [HttpDelete("{id}")]
-        [Authorize(Roles = "Owner, Administrator, Staff")]
         public async Task<IActionResult> DeleteSource(long id)
         {
             var user = await GetCurrentUserAsync();
@@ -120,7 +131,6 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
             return NotFound();
         }
         
-
         #endregion
     }
 }
