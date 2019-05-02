@@ -177,49 +177,8 @@
           <div class="tab-pane fade pt-9" id="pills-three" role="tabpanel" aria-labelledby="pills-three-tab">
             <!-- Mockup Block -->
             <div class="row justify-content-lg-between align-items-lg-center">
-              <div class="col-lg-4 mb-9 mb-lg-0">
-                <!-- Info -->
-                <div class="mb-5">
-                  <h3 class="h4 font-weight-semi-bold">Review performance and improve strategy</h3>
-                  <p>The time has come to bring those ideas and plans to life.</p>
-                </div>
-
-                <ul class="list-unstyled text-secondary font-size-1">
-                  <li class="media my-3">
-                    <span class="fas fa-check text-primary mt-1 mr-3"></span>
-                    <span class="media-body">
-                      Whether through commerce or just an experience
-                    </span>
-                  </li>
-                  <li class="media my-3">
-                    <span class="fas fa-check text-primary mt-1 mr-3"></span>
-                    <span class="media-body">
-                      Now that your brand is all dressed up
-                    </span>
-                  </li>
-                  <li class="media my-3">
-                    <span class="fas fa-check text-primary mt-1 mr-3"></span>
-                    <span class="media-body">
-                      This part is really crucial in keeping the project
-                    </span>
-                  </li>
-                </ul>
-                <!-- End Info -->
-              </div>
-
-              <div class="col-lg-7 position-relative">
-                <div class="pl-md-9">
-                  <img class="img-fluid shadow-sm rounded" src="../../assets/img/700x525/img3.jpg" alt="Image Description">
-                </div>
-
-                <!-- SVG Component -->
-                <div class="position-absolute bottom-0 left-0 w-75 z-index-n1">
-                  <figure class="ie-abstract-shapes-3">
-                    <img class="js-svg-injector" src="../../assets/svg/components/abstract-shapes-3.svg" alt="Image Description"
-                         data-parent="#SVGmockupBg">
-                  </figure>
-                </div>
-                <!-- End SVG Component -->
+              <div class="col">
+                <b-table :items="currencyHistoricPrice"></b-table>
               </div>
             </div>
             <!-- End Mockup Block -->
@@ -253,6 +212,7 @@
                   {
                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore
                   })),
+        currencyHistoricPrice: [],
         tickerPairTableFields: [
           {
             key: 'PairAbbreviation',
@@ -301,6 +261,15 @@
             }
           } else {
             return aComp.Value;
+          }
+        },
+        loadHistoricalPriceData() {
+          for (let i = 0; i < this.currency.AnalysedComponents.length; i++) {
+            const currentAc = this.currency.AnalysedComponents[i];
+            
+            if (currentAc.ComponentType === @((int)AnalysedComponentType.HourlyAveragePrice)) {
+              this.currencyHistoricPrice = currentAc;
+            }
           }
         }
       },
