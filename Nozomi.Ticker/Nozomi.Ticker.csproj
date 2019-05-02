@@ -62,6 +62,20 @@
     <_ContentIncludedByDefault Remove="Views\Account\_ViewStart.cshtml" />
     <_ContentIncludedByDefault Remove="Views\Currency\View.cshtml" />
     <_ContentIncludedByDefault Remove="Views\Source\Source.cshtml" />
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\Manage\AddPhoneNumber.cshtml" />
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\Manage\ApiTokens.cshtml" />
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\Manage\ChangePassword.cshtml" />
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\Manage\DisplayRecoveryCodes.cshtml" />
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\Manage\DownloadPersonalData.cshtml" />
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\Manage\EditProfile.cshtml" />
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\Manage\ExternalLogins.cshtml" />
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\Manage\Index.cshtml" />
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\Manage\ManageLogins.cshtml" />
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\Manage\PaymentMethods.cshtml" />
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\Manage\Plans.cshtml" />
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\Manage\Profile.cshtml" />
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\Manage\TwoFactorAuthentication.cshtml" />
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\Manage\VerifyPhoneNumber.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Nozomi.Infra.Analysis.Service\Nozomi.Infra.Analysis.Service.csproj" />
