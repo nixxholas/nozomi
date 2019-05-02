@@ -9,11 +9,13 @@ namespace Nozomi.Service.Events.Interfaces
 {
     public interface ICurrencyEvent
     {
+        Currency Get(long id, bool track = false);
+        
         AbbrvUniqueCurrencyResponse GetCurrencyByAbbreviation(string abbreviation);
         
         ICollection<Currency> GetCurrencyByAbbreviation(string abbreviation, bool track = false);
         
-        Currency GetCurrencyByAbbreviation(long id, bool track = false);
+        Currency GetCurrencyByAbbreviation(string abbreviation, long currencySourceId, bool track = false);
         
         /// <summary>
         /// Provides the caller the total amount of currency currently circulating
@@ -22,6 +24,8 @@ namespace Nozomi.Service.Events.Interfaces
         /// <param name="analysedComponent">The AnalysedComponent used to query the result.</param>
         /// <returns>Circulating supply of the currency in question.</returns>
         decimal GetCirculatingSupply(AnalysedComponent analysedComponent);
+
+        ICollection<Currency> GetAll(bool includeNested = false);
 
         /// <summary>
         /// Provides the requestor detailed currency data

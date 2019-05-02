@@ -370,6 +370,9 @@ namespace Nozomi.Data.ResponseModels.Currency
                     }
                 }
 
+                // Obtain via the currency method
+                // These values are more consistent throughout the entire currency as they provide the total average
+                // that factors non generic counter currencies pairs.
                 if (currency.AnalysedComponents.Any(ac =>
                     ac.DeletedAt == null && ac.IsEnabled
                                          && ac.ComponentType.Equals(AnalysedComponentType.CurrentAveragePrice)))
@@ -398,6 +401,7 @@ namespace Nozomi.Data.ResponseModels.Currency
 //                        }
                     }
                 }
+                
                 // Daily average percentage change via the Currency
                 if (currency.AnalysedComponents.Any(ac =>
                     ac.DeletedAt == null && ac.IsEnabled

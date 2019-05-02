@@ -26,7 +26,7 @@ using Nozomi.Service.Services.Requests.Interfaces;
 namespace Nozomi.Service.HostedServices.RequestTypes
 {
     public class HttpPostCurrencyPairRequestSyncingService : BaseHostedService<HttpPostCurrencyPairRequestSyncingService>, 
-        IHttpPostCurrencyPairRequestSyncingService, IHostedService, IDisposable
+        IHttpPostCurrencyPairRequestSyncingService
     {
         private readonly HttpClient _httpClient = new HttpClient();
         private readonly IRequestComponentService _requestComponentService;

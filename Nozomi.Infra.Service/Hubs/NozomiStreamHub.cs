@@ -8,8 +8,10 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
 using Nozomi.Base.Core.Helpers.Enumerator;
 using Nozomi.Data;
+using Nozomi.Data.ResponseModels.Currency;
 using Nozomi.Infra.Preprocessing.SignalR;
 using Nozomi.Infra.Preprocessing.SignalR.Hubs.Interfaces;
+using Nozomi.Service.Events.Interfaces;
 using Nozomi.Service.Services.Interfaces;
 
 namespace Nozomi.Service.Hubs
@@ -17,14 +19,13 @@ namespace Nozomi.Service.Hubs
     public class NozomiStreamHub : Hub<INozomiStreamClient>
     {
         private readonly ILogger<NozomiStreamHub> _logger;
+        private readonly ICurrencyEvent _currencyEvent;
         public IDictionary<string, ICollection<NozomiSocketGroup>> _subscriptions;
-        //private IEnumerable<CurrencyPair> _currencyPairs;
-        //private readonly ICurrencyPairService _cpService;
 
-        public NozomiStreamHub(ILogger<NozomiStreamHub> logger, ICurrencyPairService cpService)
+        public NozomiStreamHub(ILogger<NozomiStreamHub> logger, ICurrencyEvent currencyEvent)
         {
-            //_cpService = cpService;
             _logger = logger;
+            _currencyEvent = currencyEvent;
             
             // Initialize
             _subscriptions = new Dictionary<string, ICollection<NozomiSocketGroup>>();
@@ -37,17 +38,22 @@ namespace Nozomi.Service.Hubs
         /// https://stackoverflow.com/questions/21759577/using-generic-methods-on-signalr-hub
         /// </summary>
         /// <param name="data"></param>
-        public async void BroadcastData(JObject data)
-        {
-            var channel = Channel.CreateUnbounded<NozomiResult<IEnumerable<JObject>>>();
+//        public async void BroadcastData(JObject data)
+//        {
+//            var channel = Channel.CreateUnbounded<NozomiResult<IEnumerable<JObject>>>();
+//
+//            await channel.Writer.WriteAsync(new NozomiResult<IEnumerable<JObject>>()
+//            {
+//                ResultType = NozomiResultType.Success,
+//                Data = new[] { data }
+//            });
+//            
+//            channel.Writer.Complete();
+//        }
 
-            await channel.Writer.WriteAsync(new NozomiResult<IEnumerable<JObject>>()
-            {
-                ResultType = NozomiResultType.Success,
-                Data = new[] { data }
-            });
-            
-            channel.Writer.Complete();
+        public async Task<NozomiResult<ICollection<DetailedCurrencyResponse>>> Currencies(string currencyType = "CRYPTO")
+        {
+            return new NozomiResult<ICollection<DetailedCurrencyResponse>>(_currencyEvent.GetAllDetailed(currencyType));
         }
 
         /// <summary>
@@ -63,6 +69,7 @@ namespace Nozomi.Service.Hubs
             {
                 case NozomiSocketGroup.Tickers:
                     return await PropagateSubscription(group);
+                // TODO: Dedicated server to handle this. Too performance intensive.
                 case NozomiSocketGroup.Currencies:
                     return await PropagateSubscription(group);
                 default:
