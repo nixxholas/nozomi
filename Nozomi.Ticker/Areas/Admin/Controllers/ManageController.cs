@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -14,11 +13,7 @@ using Nozomi.Base.Identity.Models.Subscription;
 using Nozomi.Base.Identity.ViewModels.Manage;
 using Nozomi.Base.Identity.ViewModels.Manage.ApiTokens;
 using Nozomi.Base.Identity.ViewModels.Manage.PaymentMethods;
-using Nozomi.Base.Identity.ViewModels.Manage.Tickers;
 using Nozomi.Base.Identity.ViewModels.Manage.TwoFactorAuthentication;
-using Nozomi.Data.AreaModels.v1.CurrencySource;
-using Nozomi.Data.AreaModels.v1.RequestComponent;
-using Nozomi.Data.ViewModels.Manage;
 using Nozomi.Preprocessing.Events.Interfaces;
 using Nozomi.Service.Events.Interfaces;
 using Nozomi.Service.Identity.Events.Auth.Interfaces;
@@ -35,29 +30,23 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
     public class ManageController : BaseViewController<ManageController>
     {
         private readonly IApiTokenEvent _apiTokenEvent;
-        private readonly IRequestEvent _requestEvent;
         private readonly ISourceEvent _sourceEvent;
         private readonly IStripeEvent _stripeEvent;
-        private readonly ISourceService _sourceService;
         private readonly IStripeService _stripeService;
-        private readonly ITickerService _tickerService;
         private readonly ISmsSender _smsSender;
         private readonly UrlEncoder _urlEncoder;
         
         public ManageController(ILogger<ManageController> logger, NozomiSignInManager signInManager, 
-            NozomiUserManager userManager, ISmsSender smsSender, IRequestEvent requestEvent, 
+            NozomiUserManager userManager, ISmsSender smsSender, 
             IStripeService stripeService, IStripeEvent stripeEvent, IApiTokenEvent apiTokenEvent, 
-            ISourceEvent sourceEvent, ITickerService tickerService, ISourceService sourceService, UrlEncoder urlEncoder) 
+            ISourceEvent sourceEvent, ISourceService sourceService, UrlEncoder urlEncoder) 
             : base(logger, signInManager, userManager)
         {
             _smsSender = smsSender;
             _apiTokenEvent = apiTokenEvent;
-            _requestEvent = requestEvent;
             _stripeEvent = stripeEvent;
             _stripeService = stripeService;
             _sourceEvent = sourceEvent;
-            _tickerService = tickerService;
-            _sourceService = sourceService;
             _urlEncoder = urlEncoder;
         }
         
@@ -114,111 +103,6 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
             return View(vm);
         }
         
-        #region Request APIs
-
-        [HttpGet]
-        [Authorize(Roles = "Owner, Administrator, Staff")]
-        public async Task<IActionResult> Requests()
-        {
-            var user = await GetCurrentUserAsync();
-            if (user == null)
-            {
-                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
-            }
-            
-            return View();
-        }
-
-        [HttpGet("[controller]/[action]/{guid}")]
-        [Authorize(Roles = "Owner, Administrator, Staff")]
-        public async Task<IActionResult> Request([FromRoute]Guid guid)
-        {
-            var user = await GetCurrentUserAsync();
-            if (user == null)
-            {
-                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
-            }
-
-            var req = _requestEvent.GetByGuid(guid, true);
-            
-            return View(new RequestViewModel
-            {
-                Request = req.ToDTO()
-            });
-        }
-        
-        #endregion
-
-        #region Request Component APIs
-
-        /// <summary>
-        /// Allows you to create a request component relative to the request.
-        /// </summary>
-        /// <param name="id">Request Id</param>
-        /// <returns></returns>
-        [HttpGet("{id}")]
-        [Authorize(Roles = "Owner, Administrator, Staff")]
-        public async Task<IActionResult> CreateRequestComponent(long id)
-        {
-            var user = await GetCurrentUserAsync();
-            if (user == null)
-            {
-                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
-            }
-
-            var req = _requestEvent.GetActive(id);
-            
-            if (req == null)
-                ModelState.AddModelError("InvalidRequestException", "Invalid Request.");
-
-            return View(new CreateRequestComponent
-            {
-                RequestId = req.Id
-            });
-        }
-        
-        #endregion
-
-        #region Ticker APIs
-        [HttpGet]
-        [Authorize(Roles = "Owner, Administrator, Staff")]
-        public async Task<IActionResult> CreateTicker()
-        {
-            var user = await GetCurrentUserAsync();
-            if (user == null)
-            {
-                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
-            }
-
-            var vm = new CreateTickerViewModel();
-
-            return View(vm);
-        }
-
-        [HttpPost]
-        [Authorize(Roles = "Owner, Administrator, Staff")]
-        public async Task<IActionResult> CreateTicker(CreateTickerInputModel vm)
-        {   
-            var user = await GetCurrentUserAsync();
-            if (user == null)
-            {
-                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
-            }
-
-            // If it works
-            if (!ModelState.IsValid)
-            {
-                
-            }
-
-            var res = _tickerService.Create(vm);
-
-            // TODO: Implementation of error messages
-            vm.StatusMessage = "There was something erroneous with your submission.";
-            return RedirectToAction("CreateTicker");
-        }
-        #endregion
-
         //
         // POST: /Manage/RemoveLogin
         [HttpPost]
