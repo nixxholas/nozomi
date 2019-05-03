@@ -53,6 +53,8 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
         //
         // GET: /Manage/Index
         [HttpGet]
+        [Route("")]
+        [Route("/Manage")]
         public async Task<IActionResult> Index(ManageIndexMessageId? message = null)
         {
             var user = await GetCurrentUserAsync();

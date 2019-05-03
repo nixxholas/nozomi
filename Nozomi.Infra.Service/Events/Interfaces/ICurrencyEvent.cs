@@ -26,6 +26,7 @@ namespace Nozomi.Service.Events.Interfaces
         decimal GetCirculatingSupply(AnalysedComponent analysedComponent);
 
         ICollection<Currency> GetAll(bool includeNested = false);
+        ICollection<Currency> GetAllNonDeleted(bool includeNested = false);
 
         /// <summary>
         /// Provides the requestor detailed currency data
