@@ -29,7 +29,7 @@ namespace Nozomi.Ticker.StartupExtensions
                     Version = GlobalApiVariables.CURRENT_API_VERSION,
                     Title = "Nozomi API",
                     Description = "Reference documentation for the usage of Nozomi.",
-                    TermsOfService = new Uri("https://detabox.com/privacy").ToString(),
+                    TermsOfService = new Uri("https://nozomi.one/privacy").ToString(),
                     Contact = new Contact
                     {
                         Name = "Nicholas Chen",
@@ -39,7 +39,7 @@ namespace Nozomi.Ticker.StartupExtensions
                     License = new License
                     {
                         Name = "Copyright (C) Hayate Inc. - All Rights Reserved",
-                        Url = new Uri("https://detabox.com/license").ToString()
+                        Url = new Uri("https://nozomi.one/license").ToString()
                     }
                 });
 
