@@ -166,7 +166,7 @@ namespace Nozomi.Infra.Analysis.Service.Events.Analysis
                 .Take(50);
         }
 
-        public ICollection<AnalysedComponent> GetAllByCurrency(long currencyId, bool track = false)
+        public ICollection<AnalysedComponent> GetAllByCurrency(long currencyId, bool ensureValid = false, bool track = false)
         {
             // First, obtain the currency in question
             var qCurrency = _unitOfWork.GetRepository<Currency>()
@@ -179,8 +179,15 @@ namespace Nozomi.Infra.Analysis.Service.Events.Analysis
             // Then we return
             var finalQuery = _unitOfWork.GetRepository<CurrencyPair>()
                 .GetQueryable()
-                .AsNoTracking()
-                .Where(cp => cp.IsEnabled && cp.DeletedAt == null)
+                .AsNoTracking();
+
+            if (ensureValid)
+            {
+                finalQuery
+                    .Where(cp => cp.IsEnabled && cp.DeletedAt == null);
+            }
+
+            var analysedComponents = finalQuery
                 .Include(cp => cp.CurrencyPairCurrencies)
                 .ThenInclude(pcp => pcp.Currency)
                 .Where(cp =>
@@ -204,7 +211,7 @@ namespace Nozomi.Infra.Analysis.Service.Events.Analysis
 
             if (!track)
             {
-                return finalQuery
+                return analysedComponents
                     .Select(ac => new AnalysedComponent
                     {
                         Id = ac.Id,
@@ -217,7 +224,7 @@ namespace Nozomi.Infra.Analysis.Service.Events.Analysis
                     .ToList();
             }
             
-            return finalQuery
+            return analysedComponents
                 .Select(ac => new AnalysedComponent
                 {
                     AnalysedHistoricItems = ac.AnalysedHistoricItems,
