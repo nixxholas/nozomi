@@ -308,7 +308,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                         {
                             // Obtain all Average price ACs that relate to this currency
                             var currencyAnalysedComps =
-                                _analysedComponentEvent.GetAllByCurrency((long) component.CurrencyId);
+                                _analysedComponentEvent.GetAllByCurrency((long) component.CurrencyId, ensureValid: true);
 
                             // Safetynet
                             if (currencyAnalysedComps != null && currencyAnalysedComps.Count > 0)
@@ -396,7 +396,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                         {
                             // Obtain all Average price ACs that relate to this currency
                             var currencyAnalysedComps =
-                                _analysedComponentEvent.GetAllByCurrency((long) component.CurrencyId);
+                                _analysedComponentEvent.GetAllByCurrency((long) component.CurrencyId, ensureValid: true);
 
                             // Safetynet
                             if (currencyAnalysedComps != null && currencyAnalysedComps.Count > 0)
@@ -484,7 +484,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                         {
                             // Obtain all Average price ACs that relate to this currency
                             var currencyAnalysedComps =
-                                _analysedComponentEvent.GetAllByCurrency((long) component.CurrencyId);
+                                _analysedComponentEvent.GetAllByCurrency((long) component.CurrencyId, ensureValid: true);
 
                             // Safetynet
                             if (currencyAnalysedComps != null && currencyAnalysedComps.Count > 0)
@@ -755,7 +755,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                         {
                             // Obtain all Average price ACs that relate to this currency
                             var currencyAnalysedComps =
-                                _analysedComponentEvent.GetAllByCurrency((long) component.CurrencyId);
+                                _analysedComponentEvent.GetAllByCurrency((long) component.CurrencyId, ensureValid: true);
 
                             // Safetynet
                             if (currencyAnalysedComps != null && currencyAnalysedComps.Count > 0)
