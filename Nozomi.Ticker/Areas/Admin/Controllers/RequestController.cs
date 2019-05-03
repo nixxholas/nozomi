@@ -12,7 +12,7 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
 {
     [Area("Admin")]
     [Authorize(Roles = "Owner, Administrator, Staff")]
-    public class RequestController : BaseViewController<RequestController>
+    public class RequestController : AreaBaseViewController<RequestController>
     {
         private readonly IRequestEvent _requestEvent;
         

@@ -8,7 +8,7 @@ using Nozomi.Ticker.Models;
 namespace Nozomi.Ticker.Areas.Users.Controllers
 {
     [Area("Users")]
-    [Route("[controller]/[action]")]
+    [Route("[action]")]
     [ApiExplorerSettings(IgnoreApi = true)]
     public class HomeController : BaseViewController<HomeController>
     {

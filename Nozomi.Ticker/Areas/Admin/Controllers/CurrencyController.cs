@@ -14,7 +14,7 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
 {
     [Area("Admin")]
     [Authorize(Roles = "Owner, Administrator, Staff")]
-    public class CurrencyController : BaseViewController<CurrencyController>
+    public class CurrencyController : AreaBaseViewController<CurrencyController>
     {
         private readonly ICurrencyEvent _currencyEvent;
         private readonly ICurrencyService _currencyService;

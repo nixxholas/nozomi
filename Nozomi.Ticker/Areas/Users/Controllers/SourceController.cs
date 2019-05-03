@@ -8,7 +8,6 @@ using Nozomi.Ticker.Controllers;
 namespace Nozomi.Ticker.Areas.Users.Controllers
 {
     [Area("Users")]
-    [Route("[controller]/[action]")]
     public class SourceController : BaseViewController<SourceController>
     {
         private ISourceEvent _sourceEvent { get; set; }
@@ -20,7 +19,7 @@ namespace Nozomi.Ticker.Areas.Users.Controllers
         }
         
         // GET Source by abbreviation
-        [HttpGet("{controller}/{abbrv}")]
+        [HttpGet("/[controller]/{abbrv}")]
         public IActionResult Source([FromRoute]string abbrv)
         {
             var vm = new ViewSourceModel

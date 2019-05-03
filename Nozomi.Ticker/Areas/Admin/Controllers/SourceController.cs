@@ -14,7 +14,7 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
 {
     [Area("Admin")]
     [Authorize(Roles = "Owner, Administrator, Staff")]
-    public class SourceController : BaseViewController<SourceController>
+    public class SourceController : AreaBaseViewController<SourceController>
     {
         private readonly ISourceEvent _sourceEvent;
         private readonly ISourceService _sourceService;

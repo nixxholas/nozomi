@@ -82,6 +82,5 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="ClientApp\scripts\libs" />
-    <Folder Include="Controllers\APIs" />
   </ItemGroup>
 </Project>
