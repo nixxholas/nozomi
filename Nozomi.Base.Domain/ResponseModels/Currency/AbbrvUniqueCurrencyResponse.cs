@@ -139,11 +139,11 @@ namespace Nozomi.Data.ResponseModels.Currency
         
         public string DenominationName { get; set; }
 
-        public ICollection<Models.Currency.Source> CurrencySources { get; set; }
+        public ICollection<Models.Currency.Source> CurrencySources { get; set; } = new List<Models.Currency.Source>();
         
-        public ICollection<AnalysedComponent> AnalysedComponents { get; set; }
+        public ICollection<AnalysedComponent> AnalysedComponents { get; set; } = new List<AnalysedComponent>();
         
-        public ICollection<CurrencyRequest> CurrencyRequests { get; set; }
+        public ICollection<CurrencyRequest> CurrencyRequests { get; set; } = new List<CurrencyRequest>();
 
         public ICollection<CondensedTickerPair> TickerPairs { get; set; } = new List<CondensedTickerPair>();
     }
