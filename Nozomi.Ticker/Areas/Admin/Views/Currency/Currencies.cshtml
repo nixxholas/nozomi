@@ -264,7 +264,7 @@
                     formData.append('CurrencySourceId', this.createForm.currencySourceId);
                     formData.append('IsEnabled', this.createForm.isEnabled);
 
-                    const response = await fetch('/Currency/Manage/CreateCurrency',
+                    const response = await fetch('/Admin/Currency/CreateCurrency',
                         {
                             method: 'POST',
                             body: formData
@@ -317,7 +317,7 @@
                     formData.append('CurrencySourceId', this.editForm.currencySourceId);
                     formData.append('IsEnabled', this.editForm.isEnabled);
 
-                    const response = await fetch(`/Currency/Manage/EditCurrency/${this.editForm.id}`,
+                    const response = await fetch(`/Admin/Currency/EditCurrency/${this.editForm.id}`,
                         {
                             method: 'PUT',
                             body: formData
@@ -355,7 +355,7 @@
                 async handleDeleteOk(bvModalEvt) {
                     bvModalEvt.preventDefault();
 
-                    const response = await fetch(`/Currency/Manage/DeleteCurrency/${this.deleteModal.id}`,
+                    const response = await fetch(`/Admin/Currency/DeleteCurrency/${this.deleteModal.id}`,
                         {
                             method: 'DELETE'
                         });

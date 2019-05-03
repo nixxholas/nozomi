@@ -10,7 +10,6 @@ using Nozomi.Ticker.Controllers;
 namespace Nozomi.Ticker.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    [Route("[controller]/manage/[action]")]
     [Authorize(Roles = "Owner, Administrator, Staff")]
     public class RequestComponentController : BaseViewController<RequestComponentController>
     {
