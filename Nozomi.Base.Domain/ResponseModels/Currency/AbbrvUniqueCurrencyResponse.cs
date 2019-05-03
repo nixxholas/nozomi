@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Nozomi.Base.Core;
 using Nozomi.Data.Models.Currency;
 using Nozomi.Data.Models.Web;
 using Nozomi.Data.Models.Web.Analytical;
@@ -118,6 +119,15 @@ namespace Nozomi.Data.ResponseModels.Currency
                         CurrencySources.Add(similarCurr.CurrencySource);
                     }
                 }
+
+                AnalysedComponents = currencies
+                    .SelectMany(c => c.CurrencyCurrencyPairs)
+                    .Select(pcp => pcp.CurrencyPair)
+                    .Where(cp => cp.CounterCurrency.Equals(CoreConstants.GenericCounterCurrency,
+                        StringComparison.InvariantCultureIgnoreCase))
+                    .SelectMany(cp => cp.CurrencyPairRequests)
+                    .SelectMany(cpr => cpr.AnalysedComponents)
+                    .ToList();
             }
         }
         
