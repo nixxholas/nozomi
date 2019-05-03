@@ -1,9 +1,11 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Nozomi.Data.Models.Currency;
 using Nozomi.Data.Models.Web;
 using Nozomi.Data.Models.Web.Analytical;
 using Nozomi.Data.ResponseModels.PartialCurrencyPair;
+using Nozomi.Data.ResponseModels.Source;
 
 namespace Nozomi.Data.ResponseModels.Currency
 {
@@ -26,6 +28,97 @@ namespace Nozomi.Data.ResponseModels.Currency
             };
             AnalysedComponents = currency.AnalysedComponents;
             CurrencyRequests = currency.CurrencyRequests;
+        }
+
+        public AbbrvUniqueCurrencyResponse(ICollection<Models.Currency.Currency> currencies)
+        {
+            var currency = currencies.FirstOrDefault();
+
+            if (currency != null)
+            {
+                Abbreviation = currency.Abbrv;
+                Name = currency.Name;
+                LastUpdated = currency.ModifiedAt;
+                CurrencyType = currency.CurrencyType;
+                Description = currency.Description;
+                Denominations = currency.Denominations;
+                DenominationName = currency.DenominationName;
+
+                // DTO this sitch
+                foreach (var similarCurr in currencies)
+                {
+                    // Populate the Currency Requests into this object
+                    foreach (var cReq in similarCurr.CurrencyRequests)
+                    {
+                        if (!CurrencyRequests.Any(cr => cr.Id.Equals(cReq.Id)))
+                        {
+                            CurrencyRequests.Add(cReq);
+                        }
+                    }
+
+                    foreach (var currencyCurrencyPair in similarCurr.CurrencyCurrencyPairs)
+                    {
+                        // Form the TickerPair abbreviation first
+                        var tickerPairStr = string.Concat(currencyCurrencyPair.CurrencyPair.MainCurrency,
+                            currencyCurrencyPair.CurrencyPair.CounterCurrency);
+
+                        // Safetynet
+                        if (!string.IsNullOrEmpty(tickerPairStr))
+                        {
+                            // Make sure this is a main currency and that the TickerPairs collection
+                            // does not contain this TickerPair yet.
+                            if (!TickerPairs.Any(tp => tp.PairAbbreviation.Equals(tickerPairStr,
+                                StringComparison.InvariantCultureIgnoreCase)))
+                            {
+                                // Since all is good, let's toss it in
+                                TickerPairs.Add(new CondensedTickerPair
+                                {
+                                    PairAbbreviation = tickerPairStr,
+                                    Sources = new List<SourceResponse>
+                                    {
+                                        new SourceResponse
+                                        {
+                                            Abbreviation = similarCurr.CurrencySource.Abbreviation,
+                                            Name = similarCurr.CurrencySource.Name
+                                        }
+                                    }
+                                });
+                            }
+                            // Since the TickerPair already exists,
+                            else
+                            {
+                                // Pull the TickerPair
+                                var tickerPair = TickerPairs.SingleOrDefault(tp =>
+                                    tp.PairAbbreviation.Equals(tickerPairStr,
+                                        StringComparison.InvariantCultureIgnoreCase));
+
+                                // Check if the source exists first
+                                if (tickerPair.Sources.Any(s => s.Abbreviation
+                                    .Equals(similarCurr.CurrencySource.Abbreviation,
+                                        StringComparison.InvariantCultureIgnoreCase)))
+                                {
+                                    // It does, so let's ignore.
+                                    // If it reaches here it means that we have a duplicate.
+                                }
+                                else
+                                {
+                                    // Does not, add it in.
+                                    tickerPair.Sources.Add(new SourceResponse
+                                    {
+                                        Abbreviation = similarCurr.Abbrv,
+                                        Name = similarCurr.Name
+                                    });
+                                }
+                            }
+                        }
+                    }
+
+                    if (!CurrencySources.Any(cs => cs.Id.Equals(similarCurr.CurrencySourceId)))
+                    {
+                        CurrencySources.Add(similarCurr.CurrencySource);
+                    }
+                }
+            }
         }
         
         public CurrencyType CurrencyType { get; set; }
