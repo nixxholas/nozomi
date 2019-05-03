@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Nozomi.Base.Core;
 using Nozomi.Data.Models.Currency;
+using Nozomi.Data.Models.Web;
 using Nozomi.Data.Models.Web.Analytical;
 using Nozomi.Infra.Analysis.Service.Events.Analysis.Interfaces;
 using Nozomi.Preprocessing.Abstracts;
@@ -390,6 +391,22 @@ namespace Nozomi.Infra.Analysis.Service.Events.Analysis
                     CurrencyId = ac.CurrencyId
                 })
                 .ToList();
+        }
+
+        public ICollection<AnalysedComponent> GetAllByRequest(long requestId, bool track = false)
+        {
+            var query = _unitOfWork.GetRepository<Request>()
+                .GetQueryable()
+                .AsNoTracking()
+                .Where(r => r.Id.Equals(requestId))
+                .Include(r => r.AnalysedComponents);
+
+            if (track)
+            {
+                 query.ThenInclude(ac => ac.AnalysedHistoricItems);
+            }
+
+            return query.SelectMany(r => r.AnalysedComponents).ToList();
         }
 
         public string GetCurrencyAbbreviation(AnalysedComponent analysedComponent)

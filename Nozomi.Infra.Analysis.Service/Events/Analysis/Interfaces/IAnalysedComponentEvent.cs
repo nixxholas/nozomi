@@ -23,6 +23,8 @@ namespace Nozomi.Infra.Analysis.Service.Events.Analysis.Interfaces
 
         ICollection<AnalysedComponent> GetAllByCorrelation(long analysedComponentId, bool track = false);
 
+        ICollection<AnalysedComponent> GetAllByRequest(long requestId, bool track = false);
+
         string GetCurrencyAbbreviation(AnalysedComponent analysedComponent);
     }
 }
