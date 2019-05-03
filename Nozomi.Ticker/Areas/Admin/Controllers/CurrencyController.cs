@@ -19,13 +19,18 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
     {
         private readonly ICurrencyEvent _currencyEvent;
         private readonly ICurrencyService _currencyService;
-        
+        private readonly ICurrencyTypeEvent _currencyTypeEvent;
+        private readonly ISourceEvent _sourceEvent;
+
         public CurrencyController(ILogger<CurrencyController> logger, NozomiSignInManager signInManager,
-            NozomiUserManager userManager, ICurrencyEvent currencyEvent, ICurrencyService currencyService)
+            NozomiUserManager userManager, ICurrencyEvent currencyEvent, ICurrencyService currencyService,
+            ICurrencyTypeEvent currencyTypeEvent, ISourceEvent sourceEvent)
             : base(logger, signInManager, userManager)
         {
             _currencyEvent = currencyEvent;
             _currencyService = currencyService;
+            _currencyTypeEvent = currencyTypeEvent;
+            _sourceEvent = sourceEvent;
         }
 
         #region Get Currencies
@@ -41,7 +46,9 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
 
             var vm = new CurrenciesViewModel
             {
-                Currencies = _currencyEvent.GetAll(true)
+                Currencies = _currencyEvent.GetAllNonDeleted(true),
+                CurrencyTypes = _currencyTypeEvent.GetAllActive(),
+                CurrencySources = _sourceEvent.GetAllActive()
             };
             
             return View(vm);
@@ -49,7 +56,7 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
         
         #endregion
 
-        #region POST EditCurrency
+        #region PUT EditCurrency
 
         [HttpPut("{id}")]
         public async Task<IActionResult> EditCurrency(long id, UpdateCurrency updateCurrency)
