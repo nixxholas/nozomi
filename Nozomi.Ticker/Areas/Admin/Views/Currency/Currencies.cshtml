@@ -6,6 +6,8 @@
     <div class="container space-2">
         <h3 class="mb-6">Currencies</h3>
 
+        <b-button variant="primary" class="mb-3" v-on:click="showCreateModal">Create</b-button>
+
         <b-table
             :per-page="currencyDataRowsPerPage" :current-page="currentCurrencyDataPage"
             :items="currencies" :fields="dataFields">
@@ -42,9 +44,49 @@
     </div>
 </div>
 
+<!-- CreateModal -->
+<b-modal ref="create-modal" size="xl" title="Create Currency" ok-title="Save changes" v-on:ok="handleCreateOk">
+    <b-form v-on:submit.stop.prevent="onCreateSubmit">
+        <b-form-group
+            label="Name"
+            label-for="currencyName-input">
+            <b-form-input
+                v-model="createForm.currencyName"
+                required
+                placeholder="Enter currency name">
+            </b-form-input>
+        </b-form-group>
+
+        <b-form-group
+            label="Abbreviation"
+            label-for="abbreviation-input">
+            <b-form-input
+                v-model="createForm.abbreviation"
+                required
+                placeholder="Enter source abbreviation">
+            </b-form-input>
+        </b-form-group>
+
+        <b-form-group label="Currency Type" label-for="currencyType-input">
+            <b-form-select v-model="createForm.currencyTypeId" :options="currencyTypes"></b-form-select>
+        </b-form-group>
+
+        <b-form-group label="Currency source">
+            <b-form-select v-model="createForm.currencySourceId" :options="currencySources"></b-form-select>
+        </b-form-group>
+
+        <b-form-group label="Description">
+            <b-form-textarea v-model="editForm.description" rows="3"></b-form-textarea>
+        </b-form-group>
+
+        <b-form-group>
+            <b-form-checkbox v-model="editForm.isEnabled">Is Enabled</b-form-checkbox>
+        </b-form-group>
+    </b-form>
+</b-modal>
 
 <!-- EditModal -->
-<b-modal ref="edit-modal" size="xl" title="Edit Source" ok-title="Save changes" v-on:ok="handleEditOk">
+<b-modal ref="edit-modal" size="xl" title="Edit Currency" ok-title="Save changes" v-on:ok="handleEditOk">
     <b-form v-on:submit.stop.prevent="onEditSubmit">
         <b-form-group
             id="currencyName-input-group"
@@ -151,6 +193,15 @@
                     {
                         ReferenceLoopHandling = ReferenceLoopHandling.Ignore
                     })),
+                createForm: {
+                    id: Number,
+                    currencyTypeId: Number,
+                    abbreviation: '',
+                    description: '',
+                    currencyName: '',
+                    currencySourceId: '',
+                    isEnabled: Boolean,
+                },
                 editForm: {
                     id: Number,
                     currencyTypeId: Number,
@@ -194,8 +245,49 @@
                     }
                     this.currencySources = currencySourcesArr;
                 },
+                showCreateModal() {
+                    this.$refs['create-modal'].show();
+                },
+                handleCreateOk(bvModalEvt) {
+                    // Prevent modal from closing
+                    bvModalEvt.preventDefault();
+                    // Trigger submit handler
+                    this.onCreateSubmit();
+                },
+                async onCreateSubmit() {
+                    var formData = new FormData();
+                    formData.append('Id', this.createForm.id);
+                    formData.append('CurrencyTypeId', this.createForm.currencyTypeId);
+                    formData.append('Abbrv', this.createForm.abbreviation);
+                    formData.append('Description', this.createForm.description);
+                    formData.append('Name', this.createForm.currencyName);
+                    formData.append('CurrencySourceId', this.createForm.currencySourceId);
+                    formData.append('IsEnabled', this.createForm.isEnabled);
+
+                    const response = await fetch('/Currency/Manage/CreateCurrency',
+                        {
+                            method: 'POST',
+                            body: formData
+                        });
+
+                    if (response.status === 200) {
+                        // Put alert for now, change the ui later.
+                        alert("Successfully created source");
+
+                    } else {
+                        alert("Create failed");
+                    }
+
+                    // Hide the modal manually
+                    this.$refs['create-modal'].hide();
+
+                    // Reload for now. Controller to return the currency object then push into table.
+                    location.reload(this);
+
+                },
                 // Methods for edit modal
-                showEditModal(id, currencyTypeId, abbrv, description, name, currencySourceId, isEnabled, currencyType, currencySource) {
+                showEditModal(id, currencyTypeId, abbrv, description, name, currencySourceId, isEnabled, currencyType,
+                currencySource) {
                     this.editForm.id = id;
                     this.editForm.currencyTypeId = currencyTypeId;
                     this.editForm.abbreviation = abbrv;

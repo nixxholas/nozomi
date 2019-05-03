@@ -80,6 +80,25 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
         
 
         #endregion
+        
+        #region POST CreateCurrency
+        
+        [HttpPost]
+        public async Task<IActionResult> CreateCurrency(CreateCurrency createCurrency)
+        {
+            var user = await GetCurrentUserAsync();
+            if (user == null)
+            {
+                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
+
+            if (_currencyService.Create(createCurrency).ResultType.Equals(NozomiResultType.Success)) return Ok();
+
+            // Create failed
+            return NotFound();
+        }
+        
+        #endregion
 
         #region Delete DeleteCurrency
         
@@ -100,16 +119,5 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
 
         #endregion
 
-        [HttpGet]
-        public async Task<IActionResult> CreateCurrency()
-        {
-            var user = await GetCurrentUserAsync();
-            if (user == null)
-            {
-                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
-            }
-
-            return View();
-        }
     }
 }
