@@ -1,0 +1,7 @@
+@using Newtonsoft.Json
+@model Nozomi.Data.ViewModels.Admin.Currency.CurrencyViewModel
+
+@Html.Raw(JsonConvert.SerializeObject(Model, new JsonSerializerSettings()
+{
+    ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+}));
