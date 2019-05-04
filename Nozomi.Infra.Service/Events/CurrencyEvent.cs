@@ -506,6 +506,27 @@ namespace Nozomi.Service.Events
 
             return query.ToList();
         }
+        
+        public ICollection<Currency> GetAllNonDeleted(bool includeNested = false)
+        {
+            var query = _unitOfWork.GetRepository<Currency>()
+                .GetQueryable()
+                .AsNoTracking()
+                .Where(c => c.DeletedAt == null);
+
+            if (includeNested)
+            {
+                query = query
+                    .Include(c => c.AnalysedComponents)
+                    .Include(c => c.CurrencyCurrencyPairs)
+                    .Include(c => c.CurrencyType)
+                    .Include(c => c.CurrencySource)
+                    .Include(c => c.CurrencyRequests)
+                    .Include(c => c.CurrencyProperties);
+            }
+
+            return query.ToList();
+        }
 
         public ICollection<DetailedCurrencyResponse> GetAllDetailed(string typeShortForm = "CRYPTO")
         {

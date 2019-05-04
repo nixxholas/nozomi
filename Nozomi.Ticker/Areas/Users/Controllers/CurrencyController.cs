@@ -11,7 +11,6 @@ using Nozomi.Ticker.Controllers;
 namespace Nozomi.Ticker.Areas.Users.Controllers
 {
     [Area("Users")]
-    [Route("[controller]/[action]")]
     public class CurrencyController : BaseViewController<CurrencyController>
     {
         private IAnalysedHistoricItemEvent _analysedHistoricItemEvent;
@@ -26,7 +25,7 @@ namespace Nozomi.Ticker.Areas.Users.Controllers
             _currencyEvent = currencyEvent;
         }
 
-        [Route("{controller}/{abbrv}")]
+        [HttpGet("/[controller]/{abbrv}")]
         public IActionResult View(string abbrv)
         {
             var currency = _currencyEvent.GetCurrencyByAbbreviation(abbrv);

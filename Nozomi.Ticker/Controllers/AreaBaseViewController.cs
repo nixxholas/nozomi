@@ -1,4 +1,6 @@
+using System.Security.Policy;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -8,22 +10,22 @@ using Nozomi.Ticker.Areas.Users.Controllers;
 
 namespace Nozomi.Ticker.Controllers
 {
-    [Route("[controller]/[action]")]
+    [Route("[area]/[controller]/[action]")]
     [ApiExplorerSettings(IgnoreApi = true)]
-    public class BaseViewController<TController> : Controller where TController : class
+    public class AreaBaseViewController<TController>: Controller where TController: class
     {
         public readonly ILogger<TController> _logger;
         public readonly NozomiSignInManager _signInManager;
         public readonly NozomiUserManager _userManager;
-        
-        public BaseViewController(ILogger<TController> logger,
+
+        public AreaBaseViewController(ILogger<TController> logger,
             NozomiSignInManager signInManager, NozomiUserManager userManager)
         {
             _logger = logger;
             _signInManager = signInManager;
             _userManager = userManager;
         }
-        
+
         #region Helpers
 
         protected void AddErrors(IdentityResult result)

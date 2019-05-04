@@ -26,7 +26,6 @@ using Nozomi.Ticker.Controllers;
 namespace Nozomi.Ticker.Areas.Admin.Controllers
 {
     [Area("Users")]
-    [Route("[controller]/[action]")]
     public class ManageController : BaseViewController<ManageController>
     {
         private readonly IApiTokenEvent _apiTokenEvent;
@@ -53,6 +52,8 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
         //
         // GET: /Manage/Index
         [HttpGet]
+        [Route("")]
+        [Route("/[controller]")]
         public async Task<IActionResult> Index(ManageIndexMessageId? message = null)
         {
             var user = await GetCurrentUserAsync();
