@@ -70,7 +70,8 @@
           isSelectable = Boolean($this.data('dt-is-selectable')),
           isColumnsSearch = Boolean($this.data('dt-is-columns-search')),
           isColumnsSearchTheadAfter = Boolean($this.data('dt-is-columns-search-thead-after')),
-          isShowPaging = Boolean($this.data('dt-is-show-paging')),
+          isShowPaging = $this.data('dt-is-show-paging'),
+          isShowInfo = $this.data('dt-is-show-info'),
           scrollHeight = $this.data('dt-scroll-height'),
 
           paginationClasses = $this.data('dt-pagination-classes'),
@@ -84,25 +85,59 @@
           paginationPrevLinkMarkup = $this.data('dt-pagination-prev-link-markup'),
 
           selectAllControl = $this.data('dt-select-all-control'),
-
+          
           table = $this.DataTable({
             pageLength: pageLength,
             responsive: isResponsive,
             scrollY: scrollHeight ? scrollHeight : '',
             scrollCollapse: scrollHeight ? true : false,
-            paging: isShowPaging ? isShowPaging : config.paging,
+            paging: toString(isShowPaging) ? Boolean(isShowPaging) : config.paging,
+            info: toString(isShowInfo) ? Boolean(isShowInfo) : config.paging,
             drawCallback: function (settings) {
               var api = this.api(),
-                info = api.page.info();
+                info = api.page.info(),
+                $initPagination = $('#' + api.context[0].nTable.id + '_paginate'),
+                $initPaginationLinksContainer = $initPagination.find('> span'),
+                $initPaginationPrev = $initPagination.find('.paginate_button.previous'),
+                $initPaginationNext = $initPagination.find('.paginate_button.next'),
+                $initPaginationLink = $initPagination.find('.paginate_button:not(.previous):not(.next), .ellipsis');
+
+              $initPagination.addClass(paginationClasses);
+              $initPaginationPrev.wrap('<span class="' + paginationItemsClasses + '"></span>');
+              $initPaginationPrev.addClass(paginationPrevLinkClasses)
+                .html(paginationPrevLinkMarkup);
+              $initPaginationNext.wrap('<span class="' + paginationItemsClasses + '"></span>');
+              $initPaginationNext.addClass(paginationNextLinkClasses)
+                .html(paginationNextLinkMarkup);
+              $initPaginationLinksContainer.css('display', 'flex');
+              $initPaginationLink.each(function() {
+                if($(this).hasClass('current')) {
+                  $(this).wrap('<span class="' + paginationItemsClasses + ' active' + '"></span>');
+                } else {
+                  $(this).wrap('<span class="' + paginationItemsClasses + '"></span>');
+                }
+              });
+              $initPaginationLink.addClass(paginationLinksClasses);
+
+              if(info.pages <= 1) {
+
+                $('#' + $pagination).hide();
+
+              }  else {
+
+                $('#' + $pagination).show();
+
+              }
 
               $($info).html(
-                'Showing ' + (info.start + 1) + ' to ' + info.end + ' of ' + info.recordsTotal + ' Entries'
+                'Showing ' + (info.start + 1) + ' to ' + info.end + ' of ' + info.recordsDisplay + ' Entries'
               );
             }
           }),
 
-          info = table.page.info(),
-          paginationMarkup = '';
+          info = table.page.info();
+
+        $('#' + $pagination).append($('#' + table.context[0].nTable.id + '_paginate'));
 
         if (scrollHeight) {
           $(table.context[0].nScrollBody).mCustomScrollbar({
@@ -114,11 +149,11 @@
           table.search(this.value).draw();
         });
 
-        if (isColumnsSearch == true) {
+        if (isColumnsSearch === true) {
           table.columns().every(function () {
             var that = this;
 
-            if (isColumnsSearchTheadAfter == true) {
+            if (isColumnsSearchTheadAfter === true) {
               $('.dataTables_scrollFoot').insertAfter('.dataTables_scrollHead');
             }
 
@@ -144,22 +179,12 @@
           var val = $(this).val();
 
           table.page.len(val).draw();
-
-          // Pagination
-          if (isShowPaging == true) {
-            $self.pagination($pagination, table, paginationClasses, paginationItemsClasses, paginationLinksClasses, paginationNextClasses, paginationNextLinkClasses, paginationNextLinkMarkup, paginationPrevClasses, paginationPrevLinkClasses, paginationPrevLinkMarkup, val);
-          }
         });
 
-        if (isSelectable == true) {
+        if (isSelectable === true) {
           $($this).on('change', 'input', function () {
             $(this).parents('tr').toggleClass('checked');
           })
-        }
-
-        // Pagination
-        if (isShowPaging == true) {
-          $self.pagination($pagination, table, paginationClasses, paginationItemsClasses, paginationLinksClasses, paginationNextClasses, paginationNextLinkClasses, paginationNextLinkMarkup, paginationPrevClasses, paginationPrevLinkClasses, paginationPrevLinkMarkup, info.pages);
         }
 
         // Details
@@ -172,64 +197,6 @@
 
         //Actions
         collection = collection.add($this);
-      });
-    },
-
-    pagination: function (target, table, pagiclasses, pagiitemclasses, pagilinksclasses, paginextclasses, paginextlinkclasses, paginextlinkmarkup, pagiprevclasses, pagiprevlinkclasses, pagiprevlinkmarkup, pages) {
-      var info = table.page.info(),
-        paginationMarkup = '';
-
-      for (var i = 0; i < info.recordsTotal; i++) {
-        if (i % info.length == 0) {
-          paginationMarkup += i / info.length == 0 ? '<li class="' + pagiitemclasses + ' active"><a id="datatablePaginationPage' + (i / info.length) + '" class="' + pagilinksclasses + '" href="javascript:;" data-dt-page-to="' + (i / info.length) + '">' + ((i / info.length) + 1) + '</a></li>' : '<li class="' + pagiitemclasses + '"><a id="' + target + (i / info.length) + '" class="' + pagilinksclasses + '" href="javascript:;" data-dt-page-to="' + (i / info.length) + '">' + ((i / info.length) + 1) + '</a></li>';
-        }
-      }
-
-      $('#' + target).html(
-        '<ul class="' + pagiclasses + '">\
-				<li class="' + pagiprevclasses + '">\
-				  <a id="' + target + 'Prev" class="' + pagiprevlinkclasses + '" href="javascript:;" aria-label="Previous">' + pagiprevlinkmarkup + '</a>\
-				</li>' +
-        paginationMarkup +
-        '<li class="' + paginextclasses + '">\
-				  <a id="' + target + 'Next" class="' + paginextlinkclasses + '" href="javascript:;" aria-label="Next">' + paginextlinkmarkup + '</a>\
-				</li>\
-				</ul>'
-      );
-
-      $('#' + target + ' [data-dt-page-to]').on('click', function () {
-        var $page = $(this).data('dt-page-to'),
-          info = table.page.info();
-
-        $('#' + target + ' [data-dt-page-to]').parent().removeClass('active');
-        $(this).parent().addClass('active');
-        table.page($page).draw('page');
-      });
-
-      $('#' + target + 'Next').on('click', function () {
-        var $currentPage = $('#' + target + '').find('.active [data-dt-page-to]').parent();
-
-        table.page('next').draw('page');
-
-        if ($currentPage.next().find('[data-dt-page-to]').length) {
-          $('#' + target + ' [data-dt-page-to]').parent().removeClass('active');
-          $currentPage.next().find('[data-dt-page-to]').parent().addClass('active');
-        } else {
-          return false;
-        }
-      });
-
-      $('#' + target + 'Prev').on('click', function () {
-        var $currentPage = $('#' + target + '').find('.active [data-dt-page-to]').parent();
-
-        table.page('previous').draw('page');
-
-        if ($currentPage.prev().find('[data-dt-page-to]').length) {
-          $('#' + target + ' [data-dt-page-to]').parent().removeClass('active');
-          $currentPage.prev().find('[data-dt-page-to]').parent().addClass('active');
-        } else {
-          return false;
-        }
       });
     },
 

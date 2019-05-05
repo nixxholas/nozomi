@@ -69,7 +69,7 @@
                 targetId = array[i].targetId;
                 newPath = array[i].newPath;
 
-                $(targetId).attr('xlink:href', newPath);
+                $(svg).find(targetId).attr('xlink:href', newPath);
               }
             }
 

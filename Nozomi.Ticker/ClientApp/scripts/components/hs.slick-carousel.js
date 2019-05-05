@@ -81,7 +81,7 @@
           setAnimation = $this.data('animation'),
           setEasing = $this.data('easing'),
           setFade = $this.data('fade'),
-          setSpeed = $this.data('speed'),
+          setSpeed = $this.data('autoplay-speed'),
           setSlidesRows = $this.data('rows'),
           setCenterMode = $this.data('center-mode'),
           setCenterPadding = $this.data('center-padding'),
@@ -213,6 +213,7 @@
           dots: pagiClasses ? true : false,
           dotsClass: 'js-pagination ' + pagiClasses,
           adaptiveHeight: !!isAdaptiveHeight,
+
           customPaging: function (slider, i) {
             var title = $(slider.$slides[i]).data('title');
 

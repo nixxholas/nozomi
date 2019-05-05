@@ -26,6 +26,7 @@
       unfoldHideOnBlur: false,
       unfoldDelay: 350,
       unfoldOpenedElement: 'init',
+      unfoldOverlay: false,
       afterOpen: function (invoker) {},
       beforeClose: function (invoker) {},
       afterClose: function (invoker) {}
@@ -103,9 +104,9 @@
 
       $(document).on('click touchstart', 'body', function (e) {
 
-        if(e.target.id == self._baseConfig.unfoldOpenedElement) return;
+        if (e.target.id === self._baseConfig.unfoldOpenedElement) return;
 
-        if($(e.target).closest('#' + self._baseConfig.unfoldOpenedElement).length) return;
+        if ($(e.target).closest('#' + self._baseConfig.unfoldOpenedElement).length) return;
 
         self._pageCollection.each(function (i, el) {
 
@@ -119,6 +120,16 @@
           } else if (optIsMobileOnly && windW < 769) {
 
             $(el).data('HSUnfold').hide();
+
+          }
+
+          if ($(el).data('HSUnfold').config.unfoldOverlay) {
+
+            $(el).data('HSUnfold').config.unfoldDelay = setTimeout(function() {
+
+              $('.' + $(el).data('HSUnfold').config.unfoldOverlay.className).fadeOut($(el).data('HSUnfold').config.unfoldOverlay.animationSpeed ? $(el).data('HSUnfold').config.unfoldOverlay.animationSpeed : 200);
+
+            }, $(el).data('HSUnfold').config.unfoldDelay)
 
           }
 
@@ -248,8 +259,7 @@
             });
         }
 
-      }
-      else {
+      } else {
 
         $invoker.on('click.HSUnfold', function (e) {
 
@@ -287,6 +297,19 @@
 
         });
 
+        if (Boolean($invoker.data('unfold-target-is-menu'))) {
+
+          var $target = $($invoker.data('unfold-target')),
+            $targetItems = $target.children();
+
+          $targetItems.on('click', function () {
+
+            $invoker.data('HSUnfold').toggle();
+
+          });
+
+        }
+
       }
 
     }
@@ -305,26 +328,60 @@
    */
   function AbstractUnfold(element, config) {
 
+    var $self = this;
+
     if (!element.length) return false;
 
-    this.element = element;
-    this.config = config;
+    $self.element = element;
+    $self.config = config;
 
-    this.target = $(this.element.data('unfold-target'));
+    $self.target = $($self.element.data('unfold-target'));
 
-    this.allInvokers = $('[data-unfold-target="' + this.element.data('unfold-target') + '"]');
+    $self.allInvokers = $('[data-unfold-target="' + $self.element.data('unfold-target') + '"]');
 
-    this.toggle = function () {
-      if (!this.target.length) return this;
+    $self.toggle = function () {
+      if (!$self.target.length) return $self;
 
-      if (this.defaultState) {
-        this.show();
+      var dataset = $self.element[0].dataset,
+        overlay = dataset.unfoldOverlay ? JSON.parse(dataset.unfoldOverlay) : false;
+
+      if ($self.defaultState) {
+
+        if (dataset.unfoldOverlay) {
+
+          if (!$('.' + overlay.className).length) {
+
+            $('<div class="' + overlay.className + '" style="background-color: ' + overlay.background + '"></div>').prependTo('body');
+
+          }
+
+          if ($('.' + overlay.className).length) {
+
+            $('.' + overlay.className).fadeIn(overlay.animationSpeed ? overlay.animationSpeed : 200);
+
+          }
+
+        }
+
+        $self.show();
+
+      } else {
+
+        if ($('.' + overlay.className).length) {
+
+          $self.config.unfoldTimeOut = setTimeout(function () {
+
+            $('.' + overlay.className).fadeOut(overlay.animationSpeed ? overlay.animationSpeed : 200);
+
+          }, $self.config.unfoldDelay)
+
+        }
+
+        $self.hide();
+
       }
-      else {
-        this.hide();
-      }
 
-      return this;
+      return $self;
     };
 
     this.smartPosition = function (target) {
@@ -360,8 +417,7 @@
 
         }
 
-      }
-      else {
+      } else {
 
         if (!target.data('baseDirection')) target.data('baseDirection', {
           direction: 'left',
@@ -418,46 +474,6 @@
   }
 
   /**
-   * Shows Unfold.
-   *
-   * @public
-   * @return {UnfoldSimple}
-   */
-  UnfoldSimple.prototype.show = function () {
-
-    var activeEls = $(this)[0].config.unfoldTarget;
-
-    $('[data-unfold-target="' + activeEls + '"]').addClass('active');
-
-    this.smartPosition(this.target);
-
-    this.target.removeClass('u-unfold--hidden');
-    if (this.allInvokers.length) this.allInvokers.attr('aria-expanded', 'true');
-    this.config.afterOpen.call(this.target, this.element);
-
-    return this;
-  };
-
-  /**
-   * Hides Unfold.
-   *
-   * @public
-   * @return {UnfoldSimple}
-   */
-  UnfoldSimple.prototype.hide = function () {
-
-    var activeEls = $(this)[0].config.unfoldTarget;
-
-    $('[data-unfold-target="' + activeEls + '"]').removeClass('active');
-
-    this.target.addClass('u-unfold--hidden');
-    if (this.allInvokers.length) this.allInvokers.attr('aria-expanded', 'false');
-    this.config.afterClose.call(this.target, this.element);
-
-    return this;
-  };
-
-  /**
    * UnfoldCSSAnimation constructor.
    *
    * @param {jQuery} element
@@ -509,12 +525,31 @@
   }
 
   /**
+   * UnfoldSlide constructor.
+   *
+   * @param {jQuery} element
+   * @param {Object} config
+   * @constructor
+   */
+  function UnfoldJSlide(element, config) {
+    if (!AbstractUnfold.call(this, element, config)) return;
+
+    this.target.addClass('u-unfold--jquery-slide u-unfold--hidden').hide();
+
+    Object.defineProperty(this, 'defaultState', {
+      get: function () {
+        return this.target.hasClass('u-unfold--hidden');
+      }
+    });
+  }
+
+  /**
    * Shows Unfold.
    *
    * @public
-   * @return {UnfoldCSSAnimation}
+   * @return {UnfoldSimple}
    */
-  UnfoldCSSAnimation.prototype.show = function () {
+  UnfoldSimple.prototype.show = function () {
 
     var activeEls = $(this)[0].config.unfoldTarget;
 
@@ -522,9 +557,65 @@
 
     this.smartPosition(this.target);
 
-    this.target.removeClass('u-unfold--hidden')
-      .removeClass(this.config.unfoldAnimationOut)
-      .addClass(this.config.unfoldAnimationIn);
+    this.target.removeClass('u-unfold--hidden');
+    if (this.allInvokers.length) this.allInvokers.attr('aria-expanded', 'true');
+    this.config.afterOpen.call(this.target, this.element);
+
+    return this;
+  };
+
+  /**
+   * Hides Unfold.
+   *
+   * @public
+   * @return {UnfoldSimple}
+   */
+  UnfoldSimple.prototype.hide = function () {
+
+    var activeEls = $(this)[0].config.unfoldTarget;
+
+    $('[data-unfold-target="' + activeEls + '"]').removeClass('active');
+
+    this.target.addClass('u-unfold--hidden');
+    if (this.allInvokers.length) this.allInvokers.attr('aria-expanded', 'false');
+    this.config.afterClose.call(this.target, this.element);
+
+    return this;
+  };
+
+  /**
+   * Shows Unfold.
+   *
+   * @public
+   * @return {UnfoldCSSAnimation}
+   */
+  UnfoldCSSAnimation.prototype.show = function () {
+
+    var self = this,
+      activeEls = $(self)[0].config.unfoldTarget;
+
+    $('[data-unfold-target="' + activeEls + '"]').addClass('active');
+
+    self.smartPosition(self.target);
+
+    self.target.removeClass('u-unfold--hidden')
+      .removeClass(self.config.unfoldAnimationOut);
+
+    if(!self.config.unfoldOverlay) {
+
+      self.target.addClass(self.config.unfoldAnimationIn);
+
+    } else {
+
+      setTimeout(function () {
+
+        self.target.addClass(self.config.unfoldAnimationIn);
+
+      });
+
+    }
+
+    self.config.afterOpen.call(self.target, self.element);
 
   };
 
@@ -544,25 +635,6 @@
       .addClass(this.config.unfoldAnimationOut);
 
   };
-
-  /**
-   * UnfoldSlide constructor.
-   *
-   * @param {jQuery} element
-   * @param {Object} config
-   * @constructor
-   */
-  function UnfoldJSlide(element, config) {
-    if (!AbstractUnfold.call(this, element, config)) return;
-
-    this.target.addClass('u-unfold--jquery-slide u-unfold--hidden').hide();
-
-    Object.defineProperty(this, 'defaultState', {
-      get: function () {
-        return this.target.hasClass('u-unfold--hidden');
-      }
-    });
-  }
 
   /**
    * Shows Unfold.
