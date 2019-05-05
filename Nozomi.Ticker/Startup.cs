@@ -92,7 +92,7 @@ namespace Nozomi.Ticker
                 // Database
                 services.AddDbContext<NozomiDbContext>(options =>
                 {
-                    options.UseNpgsql(Configuration.GetConnectionString("NozomiDb");
+                    options.UseNpgsql(Configuration.GetConnectionString("NozomiDb"));
                     options.EnableSensitiveDataLogging(false);
                     options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
                 }, ServiceLifetime.Transient);
