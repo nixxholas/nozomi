@@ -15,10 +15,7 @@
      *
      * @var Object _baseConfig
      */
-    _baseConfig: {
-      oneClick: function () {
-      }
-    },
+    _baseConfig: {},
 
     /**
      *
@@ -55,7 +52,6 @@
     videoPlayerInit: function () {
       //Variables
       var $self = this,
-        config = $self.config,
         collection = $self.pageCollection;
 
       //Actions
@@ -64,14 +60,15 @@
         var $this = $(el),
           parent = $this.data('parent'),
           target = $this.data('target'),
-          SRC = $('#' + target).attr('src'),
+          SRC = $this.data('video-id'),
           videoType = $this.data('video-type'),
-          classes = $this.data('classes');
+          classes = $this.data('classes'),
+          isAutoPlay = Boolean($this.data('is-autoplay'));
 
         if (videoType !== 'vimeo') {
-          $('#' + target).attr('src', SRC + '?enablejsapi=1');
 
           $self.youTubeAPIReady();
+
         }
 
         $this.on('click', function (e) {
@@ -80,9 +77,13 @@
           $('#' + parent).toggleClass(classes);
 
           if (videoType === 'vimeo') {
-            $self.vimeoPlayer(target);
+
+            $self.vimeoPlayer(target, SRC, isAutoPlay);
+
           } else {
-            $self.youTubePlayer(target);
+
+            $self.youTubePlayer(target, SRC, isAutoPlay);
+
           }
         });
 
@@ -101,23 +102,22 @@
         .insertBefore(YTScriptTag, DOMfirstScriptTag);
     },
 
-    youTubePlayer: function (target) {
+    youTubePlayer: function (target, src, autoplay) {
       var YTPlayer = new YT.Player(target, {
-        events: {
-          onReady: onPlayerReady
+        videoId: src,
+        playerVars: {
+          origin: window.location.origin,
+          autoplay: autoplay === true ? 1 : 0
         }
       });
-
-      function onPlayerReady(event) {
-        YTPlayer.playVideo();
-      }
     },
 
-    vimeoPlayer: function (target) {
+    vimeoPlayer: function (target, src, autoplay) {
       var vimeoIframe = document.getElementById(target),
-        vimeoPlayer = new Vimeo.Player(vimeoIframe);
-
-      vimeoPlayer.play();
+        vimeoPlayer = new Vimeo.Player(vimeoIframe, {
+          id: src,
+          autoplay: autoplay === true ? 1 : 0
+        });
     }
   }
 

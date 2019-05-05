@@ -1,3 +1,6 @@
+@using System.IO
+@using System.Reflection
+@using Nozomi.Base.Core
 @using Nozomi.Service.Identity.Managers
 @inject NozomiSignInManager SignInManager
 <!DOCTYPE html>
@@ -89,6 +92,7 @@ u-header--sub-menu-dark-bg-md u-header--abs-top u-scrolled"
             <!-- Copyright -->
             <p class="small text-muted">&copy; 2017-@DateTime.UtcNow.Year.ToString() Hayate BVI. All rights reserved.</p>
             <!-- End Copyright -->
+            <p class="small text-primary">Nozomi Alpha Build @CoreConstants.BuildDateTime</p>
         </div>
 
         <div class="col-6 col-lg-3 mb-7 mb-lg-0">

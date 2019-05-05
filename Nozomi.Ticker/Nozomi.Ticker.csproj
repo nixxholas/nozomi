@@ -78,6 +78,7 @@
     <_ContentIncludedByDefault Remove="Areas\Admin\Views\Manage\VerifyPhoneNumber.cshtml" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Nozomi.Infra.Admin.Service\Nozomi.Infra.Admin.Service.csproj" />
     <ProjectReference Include="..\Nozomi.Infra.Analysis.Service\Nozomi.Infra.Analysis.Service.csproj" />
   </ItemGroup>
   <ItemGroup>

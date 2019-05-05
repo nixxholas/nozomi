@@ -61,13 +61,33 @@
           var $searchbox = $this.siblings('.dropdown-menu ').find('.bs-searchbox'),
             searchBoxClasses = $this.data('searchbox-classes');
 
-          if(!searchBoxClasses) return;
+          if (!searchBoxClasses) return;
 
           $searchbox.addClass(searchBoxClasses);
         });
 
         //Actions
         collection = collection.add($this);
+      });
+    },
+
+    method: function () {
+      //Variables
+      var $self = this,
+        newArguments = [];
+
+      for (var i = 1; i < arguments.length; i++) {
+
+        newArguments.push(arguments[i]);
+
+      }
+
+      //Actions
+      $self.collection.each(function (i, el) {
+        //Variables
+        var $this = $(el);
+
+        $this.selectpicker.apply($this, newArguments);
       });
     }
   };

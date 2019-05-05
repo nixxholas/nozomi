@@ -227,14 +227,8 @@ var isEmpty = function isEmpty(f) {
 
         $(window).on('resize', function () {
           $(graphForegroundTarget + '> *').css({
-            width: ''
+            width: $(graphForegroundTarget).parent().width()
           });
-
-          setTimeout(function () {
-            $(graphForegroundTarget + '> *').css({
-              width: $(graphForegroundTarget).parent().width()
-            });
-          }, 800);
         });
 
         //Actions

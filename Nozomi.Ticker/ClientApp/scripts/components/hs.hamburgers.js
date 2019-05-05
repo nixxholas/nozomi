@@ -3,7 +3,6 @@
  *
  * @author Htmlstream
  * @version 1.0
- * @requires hamburgers.min.css
  *
  */
 ;(function ($) {
@@ -16,10 +15,8 @@
      * @var Object _baseConfig
      */
     _baseConfig: {
-      afterOpen: function () {
-      },
-      afterClose: function () {
-      }
+      afterOpen: function () {},
+      afterClose: function () {}
     },
 
     /**
@@ -62,42 +59,38 @@
 
       //Actions
       this.collection.each(function (i, el) {
-
         var $this = $(el),
           button = $this.parents('button, a'),
-          clickCounter = 0;
+          isActive = false;
 
         // if(button.length) {
-          $(button).on('click', function() {
-            if($(this).attr('aria-expanded', false)) {
-              clickCounter = 1;
-            } else {
-              clickCounter = 0;
-            }
+        $(button).on('click', function () {
 
-            if(clickCounter === 0) {
-              $this.addClass('is-active');
-            } else {
-              $this.removeClass('is-active');
-            }
-          });
-        // } else {
-        //   $this.on('click', function() {
-        //     if(clickCounter === 0) {
-        //       $this.addClass('is-active');
-        //
-        //       clickCounter = 1;
-        //     } else {
-        //       $this.removeClass('is-active');
-        //
-        //       clickCounter = 0;
-        //     }
-        //   });
-        // }
+          if (isActive === false) {
+
+            $this.addClass('is-active');
+
+            isActive = true;
+
+            config.afterOpen();
+
+          } else {
+
+            $this.removeClass('is-active');
+
+            isActive = false;
+
+            config.afterClose();
+
+          }
+
+        });
 
         $(document).on('keyup.HSHeaderSide', function (e) {
 
           if (e.keyCode && e.keyCode === 27) {
+
+            isActive = false;
 
             config.afterClose();
 

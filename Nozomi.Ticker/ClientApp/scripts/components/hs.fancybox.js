@@ -27,26 +27,26 @@
       thumbs: true,
       closeBtn: true,
       baseTpl: '<div class="fancybox-container" role="dialog" tabindex="-1">' +
-      '<div class="fancybox-content">' +
-      '<div class="fancybox-bg"></div>' +
-      '<div class="fancybox-controls" style="position: relative; z-index: 99999;">' +
-      '<div class="fancybox-infobar">' +
-      '<div class="fancybox-infobar__body">' +
-      '<span data-fancybox-index></span>&nbsp;/&nbsp;<span data-fancybox-count></span>' +
-      '</div>' +
-      '</div>' +
-      '<div class="fancybox-toolbar">{{BUTTONS}}</div>' +
-      '</div>' +
-      '<div class="fancybox-slider-wrap">' +
-      '<button data-fancybox-prev class="fancybox-arrow fancybox-arrow--left" title="Previous"></button>' +
-      '<button data-fancybox-next class="fancybox-arrow fancybox-arrow--right" title="Next"></button>' +
-      '<div class="fancybox-stage"></div>' +
-      '</div>' +
-      '<div class="fancybox-caption-wrap">' +
-      '<div class="fancybox-caption"></div>' +
-      '</div>' +
-      '</div>' +
-      '</div>',
+        '<div class="fancybox-content">' +
+        '<div class="fancybox-bg"></div>' +
+        '<div class="fancybox-controls" style="position: relative; z-index: 99999;">' +
+        '<div class="fancybox-infobar">' +
+        '<div class="fancybox-infobar__body">' +
+        '<span data-fancybox-index></span>&nbsp;/&nbsp;<span data-fancybox-count></span>' +
+        '</div>' +
+        '</div>' +
+        '<div class="fancybox-toolbar">{{BUTTONS}}</div>' +
+        '</div>' +
+        '<div class="fancybox-slider-wrap">' +
+        '<button data-fancybox-prev class="fancybox-arrow fancybox-arrow--left" title="Previous"></button>' +
+        '<button data-fancybox-next class="fancybox-arrow fancybox-arrow--right" title="Next"></button>' +
+        '<div class="fancybox-stage"></div>' +
+        '</div>' +
+        '<div class="fancybox-caption-wrap">' +
+        '<div class="fancybox-caption"></div>' +
+        '</div>' +
+        '</div>' +
+        '</div>',
       animationEffect: 'fade'
     },
 
@@ -86,12 +86,19 @@
           animationDuration = $this.data('speed'),
           isGroup = $this.data('fancybox'),
           isInfinite = Boolean($this.data('is-infinite')),
+          isSlideShowAutoStart = Boolean($this.data('is-slideshow-auto-start')),
           slideShowSpeed = $this.data('slideshow-speed');
 
         $.fancybox.defaults.animationDuration = animationDuration;
 
-        if (isInfinite == true) {
+        if (isInfinite === true) {
           $.fancybox.defaults.loop = true;
+        }
+
+        if (isSlideShowAutoStart === true) {
+          $.fancybox.defaults.slideShow.autoStart = true;
+        } else {
+          $.fancybox.defaults.slideShow.autoStart = false;
         }
 
         if (isGroup) {

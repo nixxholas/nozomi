@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Nozomi.Infra.Admin.Service.Events;
+using Nozomi.Infra.Admin.Service.Events.Interfaces;
 using Nozomi.Infra.Analysis.Service.Services;
 using Nozomi.Infra.Analysis.Service.Services.Interfaces;
 using Nozomi.Preprocessing.Events;
@@ -46,6 +48,10 @@ namespace Nozomi.Ticker.StartupExtensions
             services.AddScoped<IRequestPropertyTypeService, RequestPropertyTypeService>();
             services.AddScoped<IRequestTypeService, RequestTypeService>();
             services.AddScoped<IStripeService, StripeService>();
+            
+            // Admin Service Injections
+            services.AddScoped<ICurrencyAdminEvent, CurrencyAdminEvent>();
+            services.AddScoped<ICurrencyCurrencyPairAdminEvent, CurrencyCurrencyPairAdminEvent>();
             
             // Identity-related service injections
             services.AddTransient<INozomiUserStore, NozomiUserStore>();

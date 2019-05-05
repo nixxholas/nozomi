@@ -57,6 +57,11 @@ namespace Nozomi.Service.Events
                 .SingleOrDefault(c => c.Id.Equals(id));
         }
 
+        /// <summary>
+        /// Public API for obtaining data specific to a currency with its abbreviation.
+        /// </summary>
+        /// <param name="abbreviation"></param>
+        /// <returns></returns>
         public AbbrvUniqueCurrencyResponse GetCurrencyByAbbreviation(string abbreviation)
         {
             // First obtain all 'ABBRV' objects first, 
