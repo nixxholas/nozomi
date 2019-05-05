@@ -14,7 +14,6 @@ using Nozomi.Ticker.Controllers;
 namespace Nozomi.Ticker.Areas.Users.Controllers
 {
     [Area("Users")]
-    [Route("[controller]/[action]")]
     [Authorize]
     public class AccountController : BaseViewController<AccountController>
     {

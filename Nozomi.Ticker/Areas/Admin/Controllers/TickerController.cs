@@ -11,9 +11,8 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
 {
     
     [Area("Admin")]
-    [Route("[controller]/manage/[action]")]
     [Authorize(Roles = "Owner, Administrator, Staff")]
-    public class TickerController : BaseViewController<TickerController>
+    public class TickerController : AreaBaseViewController<TickerController>
     {
         private readonly ITickerService _tickerService;
         

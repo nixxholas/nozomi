@@ -161,7 +161,7 @@
                     formData.append('ApiDocsURL', this.editForm.apiDocsURL);
                     formData.append('IsEnabled', this.editForm.isEnabled);
 
-                    const response = await fetch(`/Source/Manage/EditSource/${this.editForm.id}`,
+                    const response = await fetch(`/Admin/Source/EditSource/${this.editForm.id}`,
                         {
                             method: 'PUT',
                             body: formData
@@ -197,7 +197,7 @@
                 async handleDeleteOk(bvModalEvt) {
                     bvModalEvt.preventDefault();
 
-                    const response = await fetch(`/Source/Manage/DeleteSource/${this.deleteModal.id}`,
+                    const response = await fetch(`/Admin/Source/DeleteSource/${this.deleteModal.id}`,
                         {
                             method: 'DELETE'
                         });
