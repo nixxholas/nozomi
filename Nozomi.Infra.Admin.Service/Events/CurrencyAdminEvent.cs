@@ -34,6 +34,7 @@ namespace Nozomi.Infra.Admin.Service.Events
                 .GetQueryable()
                 .AsNoTracking()
                 .Where(c => c.Abbrv.Equals(abbreviation, StringComparison.InvariantCultureIgnoreCase))
+                .Include(c => c.CurrencyType)
                 .Include(c => c.AnalysedComponents)
                 .Include(c => c.CurrencySource)
                 .Include(c => c.CurrencyCurrencyPairs)
