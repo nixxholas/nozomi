@@ -1,7 +1,385 @@
 @using Newtonsoft.Json
+@using Nozomi.Data.Models.Web.Analytical
+@using Nozomi.Preprocessing
 @model Nozomi.Data.ViewModels.Admin.Currency.CurrencyViewModel
 
-@Html.Raw(JsonConvert.SerializeObject(Model, new JsonSerializerSettings()
+<!-- Hero Section -->
+<div class="container">
+    <div class="border-bottom space-top-2">
+        <div class="media mb-5">
+            <!-- Avatar 
+            TODO: Implement Logo loading-->
+            @* <div class="u-lg-avatar mr-4"> *@
+            @*   <img class="img-fluid rounded-circle" src="../../assets/img/160x160/img3.jpg" alt="Image Description"> *@
+            @* </div> *@
+            <!-- End Avatar -->
+
+            <div class="media-body">
+                <div class="row">
+                    <div class="col-lg-6 mb-3 mb-lg-0">
+                        <h1 class="h4 mb-1">{{ currency.Name }}</h1>
+
+                        <span class="font-weight-semi-bold">{{ currency.Abbreviation }}</span>
+                        <small class="text-muted">(Updated {{ moment(currency.LastUpdated).startOf('hour').fromNow() }})</small>
+                        <!-- End Review -->
+                    </div>
+
+                    <div class="col-lg-6 text-lg-right">
+                        <div class="d-flex justify-content-md-end align-items-center">
+                            <a class="btn btn-sm btn-soft-primary transition-3d-hover" href="#">Modify</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Viewed Info -->
+        <div class="space-bottom-1">
+            <div class="small text-right text-secondary">
+                <span class="fas fa-eye mr-1"></span>
+                Viewed 3,910 times
+            </div>
+        </div>
+        <!-- End Viewed Info -->
+    </div>
+</div>
+<!-- End Hero Section -->
+
+<!-- Jobs Description Section -->
+<div class="container">
+<div class="border-bottom space-2">
+<div class="row">
+<div class="col-lg-8 mb-9 mb-lg-0">
+    <div class="mb-4" v-if="currency.Description !== null">
+        <h2 class="h5">Description</h2>
+        @* <p class="text-muted font-size-1"></p> *@
+    </div>
+
+    <div class="mb-7" v-if="currency.Description !== null">
+        {{ currency.Description }}
+    </div>
+
+    <!-- Title -->
+    <div class="mb-4" v-if="currency.CurrencySources !== null && currency.CurrencySources.length > 0">
+        <h3 class="h5">Sources</h3>
+    </div>
+    <!-- End Title -->
+
+    <!-- Skills -->
+    <ul class="list-inline mb-7" v-if="currency.CurrencySources !== null && currency.CurrencySources.length > 0">
+        <li class="list-inline-item pb-3" v-for="source in currency.CurrencySources">
+            <a class="btn btn-xs btn-gray btn-pill" href="#">{{ source.Name }}</a>
+        </li>
+    </ul>
+    <!-- End Skills -->
+
+    <!-- Title -->
+    <div class="mb-4" v-if="currency.TickerPairs !== null && currency.TickerPairs.length > 0">
+        <h3 class="h5">Ticker Pairs</h3>
+    </div>
+    <!-- End Title -->
+
+    <!-- Skills -->
+    <ul class="list-inline mb-7" v-if="currency.TickerPairs !== null && currency.TickerPairs.length > 0">
+        <li class="list-inline-item pb-3" v-for="tickerPair in currency.TickerPairs">
+            <a class="btn card bg-primary text-white text-center p-3 mb-3" href="#">
+                <blockquote class="blockquote mb-0">
+                    {{ tickerPair.PairAbbreviation }}
+                    <footer class="blockquote-footer text-light">
+                        <span class="badge badge-pill badge-light" v-for="source in tickerPair.Sources">
+                            {{ source.Name }}
+                        </span>
+                    </footer>
+                </blockquote>
+            </a>
+        </li>
+    </ul>
+    <!-- End Skills -->
+
+    <!-- Title -->
+    <div class="mb-4" v-if="currency.CurrencyRequests !== null && currency.CurrencyRequests.length > 0"
+         class="mb-2">
+        <h3 class="h5">Requests</h3>
+    </div>
+    <!-- End Title -->
+
+    <!-- List -->
+    <ul class="list-unstyled mb-7" v-if="currency.CurrencyRequests !== null && currency.CurrencyRequests.length > 0">
+        <li class="py-3" v-for="request in currency.CurrencyRequests">
+            <div class="card bg-primary text-white mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Card title</h5>
+                    <p class="card-text">
+                        <ul class="list-inline">
+                            <li class="list-inline-item">
+                            </li>
+                        </ul>
+                    </p>
+                    <p class="card-text">
+                        <a :href="request.DataPath"></a><small class="text-muted">{{ request.DataPath }}</small>
+                    </p>
+                </div>
+            </div>
+        </li>
+    </ul>
+    <!-- End List -->
+
+    <!-- Title -->
+    <div class="mb-4" v-if="currency.AnalysedComponents !== null && currency.AnalysedComponents.length > 0"
+         class="mb-2">
+        <h3 class="h5">Analysed Components</h3>
+    </div>
+    <!-- End Title -->
+
+    <!-- List -->
+    <ul class="list-unstyled mb-7" v-if="currency.AnalysedComponents !== null && currency.AnalysedComponents.length > 0">
+        <li class="py-3" v-for="aComp in currency.AnalysedComponents">
+            <div class="media">
+                <span class="btn btn-xs btn-icon btn-soft-primary rounded-circle mr-3">
+                    <span class="fas fa-arrow-right btn-icon__inner"></span>
+                </span>
+                <div class="media-body text-secondary">
+                    <b>{{ getAnalysedCompTypeStr(aComp.ComponentType) }}</b> - {{ getAnalysedCompStr(aComp) }}
+                </div>
+            </div>
+        </li>
+    </ul>
+    <!-- End List -->
+
+    <!-- Title -->
+    <div class="mb-4">
+        <h3 class="h5">Share:</h3>
+    </div>
+    <!-- End Title -->
+
+    <!-- Social Networks -->
+    <ul class="list-inline mb-0">
+        <li class="list-inline-item">
+            <a class="btn btn-icon btn-soft-secondary btn-bg-transparent" href="#">
+                <span class="fab fa-facebook-f btn-icon__inner"></span>
+            </a>
+        </li>
+        <li class="list-inline-item">
+            <a class="btn btn-icon btn-soft-secondary btn-bg-transparent" href="#">
+                <span class="fab fa-google btn-icon__inner"></span>
+            </a>
+        </li>
+        <li class="list-inline-item">
+            <a class="btn btn-icon btn-soft-secondary btn-bg-transparent" href="#">
+                <span class="fab fa-twitter btn-icon__inner"></span>
+            </a>
+        </li>
+        <li class="list-inline-item">
+            <a class="btn btn-icon btn-soft-secondary btn-bg-transparent" href="#">
+                <span class="fab fa-pinterest btn-icon__inner"></span>
+            </a>
+        </li>
+        <li class="list-inline-item">
+            <a class="btn btn-icon btn-soft-secondary btn-bg-transparent" href="#">
+                <span class="fab fa-get-pocket btn-icon__inner"></span>
+            </a>
+        </li>
+        <li class="list-inline-item">
+            <a class="btn btn-icon btn-soft-secondary btn-bg-transparent" href="#">
+                <span class="fab fa-telegram-plane btn-icon__inner"></span>
+            </a>
+        </li>
+        <li class="list-inline-item">
+            <a class="btn btn-icon btn-soft-secondary btn-bg-transparent" href="#">
+                <span class="fab fa-slack-hash btn-icon__inner"></span>
+            </a>
+        </li>
+    </ul>
+    <!-- End Social Networks -->
+</div>
+
+<div class="col-lg-4">
+    <div class="pl-lg-4">
+        <!-- Sidebar Info -->
+        <div class="card border-0 shadow-sm mb-3">
+            <!-- Header -->
+            <header id="SVGwave1BottomShapeID1" class="svg-preloader card-header border-bottom-0 bg-primary text-white p-0">
+                <div class="pt-5 px-5">
+                    <h3 class="h5">Information</h3>
+                </div>
+
+                <figure class="ie-wave-1-bottom mt-n5">
+                    <img class="js-svg-injector" src="/assets/svg/components/wave-1-bottom.svg" alt="Image Description"
+                         data-parent="#SVGwave1BottomShapeID1">
+                </figure>
+            </header>
+            <!-- End Header -->
+
+            <!-- Content -->
+            <div class="card-body pt-1 px-5 pb-5">
+                <!-- Icon Block -->
+                <div class="media mb-3" v-if="currency.CurrencyType !== null">
+                    <div class="min-width-4 text-center text-primary mt-1 mr-3">
+                        <span class="fas fa-money-bill-alt"></span>
+                    </div>
+                    <div class="media-body">
+                        <span class="d-block font-weight-medium">{{ currency.CurrencyType.Name }}</span>
+                        <small class="d-block text-secondary">Currency type</small>
+                    </div>
+                </div>
+                <!-- End Icon Block -->
+
+                <!-- Icon Block -->
+                <div class="media mb-3">
+                    <div class="min-width-4 text-center text-primary mt-1 mr-3">
+                        <span class="fas fa-certificate"></span>
+                    </div>
+                    <div class="media-body">
+                        <span class="d-block font-weight-medium">{{ currency.DenominationName }}</span>
+                        <small class="d-block text-secondary">Denominated Name</small>
+                    </div>
+                </div>
+                <!-- End Icon Block -->
+
+                <!-- Icon Block -->
+                <div class="media mb-3">
+                    <div class="min-width-4 text-center text-primary mt-1 mr-3">
+                        <span class="fas fa-globe"></span>
+                    </div>
+                    <div class="media-body">
+                        <span class="d-block font-weight-medium">{{ currency.Denominations }}</span>
+                        <small class="d-block text-secondary">Denominations</small>
+                    </div>
+                </div>
+                <!-- End Icon Block -->
+            </div>
+            <!-- End Content -->
+        </div>
+        <!-- End Sidebar Info -->
+
+        @* <!-- Company About --> *@
+        @* <div class="mb-4"> *@
+        @*   <img class="u-clients mb-4" src="/assets/svg/clients-logo/slack-original.svg" alt="Airbnb"> *@
+        @*   <h4 class="h6">About</h4> *@
+        @*   <p class="font-size-1 mb-0">Our Mission is to deliver a high quality, technology-based education that provides the skills and knowledge students need for success.</p> *@
+        @*   <a class="font-size-1" href="#">View company profile</a> *@
+        @* </div> *@
+        @* <!-- End Company About --> *@
+        @* *@
+        @* <!-- Company Contacts --> *@
+        @* <div class="mb-7"> *@
+        @*   <h4 class="h6">Contacts</h4> *@
+        @*   <address class="text-secondary font-size-1"> *@
+        @*     <span class="d-block mb-2">44-46 Morningside Road <br> Edinburgh Scotland EH10 4BF</span> *@
+        @*     <span class="d-block mb-2">Email: <a href="mailto:careers@airbnb.com">careers@airbnb.com</a></span> *@
+        @*     <span class="d-block">Phone: <a class="text-dark" href="tel:1-855-424-7262">1-855-424-7262</a></span> *@
+        @*   </address> *@
+        @* </div> *@
+        @* <!-- End Company Contacts --> *@
+
+    </div>
+</div>
+</div>
+
+<!-- Sticky Block End Point -->
+<div id="stickyBlockEndPoint"></div>
+</div>
+</div>
+<!-- End Jobs Description Section -->
+
+@section Scripts
 {
-    ReferenceLoopHandling = ReferenceLoopHandling.Ignore
-}));
+    <script>
+    const vm = new Vue({
+      // options
+      el: "#content",
+      // Just dish any random variable in for now
+      data: {
+        acTypes: @Html.Raw(Json.Serialize(NozomiServiceConstants.analysedComponentTypes, new JsonSerializerSettings
+                 {
+                     ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                 })),
+        reqCompTypes: @Html.Raw(Json.Serialize(NozomiServiceConstants.requestComponentTypes, new JsonSerializerSettings
+                      {
+                          ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                      })),
+        currency: @Html.Raw(Json.Serialize(Model.Currency, new JsonSerializerSettings
+                  {
+                      ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                  })),
+        currencyHistoricPrice: [],
+        currencyHistoricPriceFields: [
+          {
+            key: 'HistoricDateTime',
+            label: 'Date & time',
+            sortable: true
+          },
+          {
+            key: 'Value',
+            label: 'Price',
+            sortable: true
+          }],
+        tickerPairTableFields: [
+          {
+            key: 'PairAbbreviation',
+            label: 'Pair',
+            sortable: true
+          },
+          {
+            key: 'Sources',
+            label: 'Exchanges',
+            sortable: false
+          }]
+      },
+      created: function() {
+      },
+      methods: {
+        getAnalysedCompTypeStr(val) {
+          if (this.acTypes != null) {
+            for (i = 0; i < this.acTypes.length; i++) {
+              if (this.acTypes[i].Value == val) {
+                return this.acTypes[i].Key;
+              }
+            }
+          }
+          
+          return null;
+        },
+        getAnalysedCompStr(aComp) {
+          if (aComp.UIFormatting != null) {
+            switch (aComp.ComponentType) {
+            // TODO: Make sure this is not repeated, create a vue component for this.
+            case @((int) AnalysedComponentType.MarketCap):
+            case @((int) AnalysedComponentType.HourlyMarketCap):
+            case @((int) AnalysedComponentType.DailyMarketCap): 
+            case @((int) AnalysedComponentType.CurrentAveragePrice):
+            case @((int) AnalysedComponentType.HourlyAveragePrice): 
+            case @((int) AnalysedComponentType.DailyAveragePrice):
+            case @((int) AnalysedComponentType.DailyPriceChange): 
+            case @((int) AnalysedComponentType.WeeklyPriceChange):
+            case @((int) AnalysedComponentType.MonthlyPriceChange): 
+            case @((int) AnalysedComponentType.DailyPricePctChange):
+            case @((int) AnalysedComponentType.HourlyPricePctChange): 
+            case @((int) AnalysedComponentType.DailyVolume):
+                return numeral(aComp.Value).format(aComp.UIFormatting).toString();
+              default:
+                return aComp.Value;
+            }
+          } else {
+            return aComp.Value;
+          }
+        },
+        getHistoricalPriceData() {
+          if (this.currency != null && this.currency.AnalysedComponents != null) {
+            for (let i = 0; i < this.currency.AnalysedComponents.length; i++) {
+              const currentAc = this.currency.AnalysedComponents[i];
+            
+              if (currentAc.ComponentType === @((int) AnalysedComponentType.HourlyAveragePrice)) {
+                return currentAc;
+              }
+            }
+          }
+          
+          return [];
+        }
+      },
+      mounted: function() {
+      }
+    });
+  </script>
+}
