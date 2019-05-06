@@ -62,6 +62,11 @@ namespace Nozomi.Ticker
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
+                .ConfigureAppConfiguration((hostingContext, config) =>
+                {
+                    config.SetBasePath(Directory.GetCurrentDirectory());
+                    config.AddCommandLine(args);
+                })
 //                .ConfigureAppConfiguration((context, config) =>
 //                {
 //                    var root = config.Build();
