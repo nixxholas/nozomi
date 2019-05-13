@@ -21,11 +21,14 @@ namespace Nozomi.Service.Hubs
         private readonly ILogger<NozomiStreamHub> _logger;
         private readonly ICurrencyEvent _currencyEvent;
         public IDictionary<string, ICollection<NozomiSocketGroup>> _subscriptions;
+        private readonly IHubContext<NozomiStreamHub, INozomiStreamClient> _nozomiStreamHub;
 
-        public NozomiStreamHub(ILogger<NozomiStreamHub> logger, ICurrencyEvent currencyEvent)
+        public NozomiStreamHub(ILogger<NozomiStreamHub> logger, ICurrencyEvent currencyEvent,
+        IHubContext<NozomiStreamHub, INozomiStreamClient> nozomiStreamHub)
         {
             _logger = logger;
             _currencyEvent = currencyEvent;
+            _nozomiStreamHub = nozomiStreamHub;
             
             // Initialize
             _subscriptions = new Dictionary<string, ICollection<NozomiSocketGroup>>();
@@ -81,6 +84,13 @@ namespace Nozomi.Service.Hubs
         private async Task<NozomiResult<string>> PropagateSubscription(NozomiSocketGroup group)
         {
             await Groups.AddToGroupAsync(Context.ConnectionId, group.GetDescription());
+
+            switch (group)
+            {
+                case NozomiSocketGroup.Currencies:
+                    await _nozomiStreamHub.Clients.Client(Context.ConnectionId).Currencies(_currencyEvent.GetAllDetailed());
+                    break;
+            }
 
             if (_subscriptions.ContainsKey(Context.ConnectionId))
             {
