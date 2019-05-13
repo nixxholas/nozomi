@@ -51,6 +51,7 @@ namespace Nozomi.Data.Models.Web
                 && (RequestComponents != null) && RequestComponents.Count > 0; 
         }
 
+        // Commenting out ac, rc and rp to test the view
         public RequestDTO ToDTO()
         {
             return new RequestDTO
@@ -61,37 +62,37 @@ namespace Nozomi.Data.Models.Web
                 DataPath = DataPath,
                 Delay = Delay,
                 FailureDelay = FailureDelay,
-                AnalysedComponents = AnalysedComponents
-                    .Select(ac => new AnalysedComponentDTO
-                    {
-                        ComponentType = ac.ComponentType,
-                        Delay = ac.Delay,
-                        Id = ac.Id,
-                        IsDenominated = ac.IsDenominated,
-                        Value = ac.Value
-                    })
-                    .ToList(),
-                RequestComponents = RequestComponents
-                    .Select(rc => new RequestComponentDTO
-                    {
-                        AnomalyIgnorance = rc.AnomalyIgnorance,
-                        ComponentType = rc.ComponentType,
-                        Id = rc.Id,
-                        Identifier = rc.Identifier,
-                        IsDenominated = rc.IsDenominated,
-                        QueryComponent = rc.QueryComponent,
-                        Value = rc.Value
-                    })
-                    .ToList(),
-                RequestProperties = RequestProperties
-                    .Select(rp => new RequestPropertyDTO
-                    {
-                        Id = rp.Id,
-                        Key = rp.Key,
-                        RequestPropertyType = rp.RequestPropertyType,
-                        Value = rp.Value
-                    })
-                    .ToList()
+//                AnalysedComponents = AnalysedComponents
+//                    .Select(ac => new AnalysedComponentDTO
+//                    {
+//                        ComponentType = ac.ComponentType,
+//                        Delay = ac.Delay,
+//                        Id = ac.Id,
+//                        IsDenominated = ac.IsDenominated,
+//                        Value = ac.Value
+//                    })
+//                    .ToList(),
+//                RequestComponents = RequestComponents
+//                    .Select(rc => new RequestComponentDTO
+//                    {
+//                        AnomalyIgnorance = rc.AnomalyIgnorance,
+//                        ComponentType = rc.ComponentType,
+//                        Id = rc.Id,
+//                        Identifier = rc.Identifier,
+//                        IsDenominated = rc.IsDenominated,
+//                        QueryComponent = rc.QueryComponent,
+//                        Value = rc.Value
+//                    })
+//                    .ToList(),
+//                RequestProperties = RequestProperties
+//                    .Select(rp => new RequestPropertyDTO
+//                    {
+//                        Id = rp.Id,
+//                        Key = rp.Key,
+//                        RequestPropertyType = rp.RequestPropertyType,
+//                        Value = rp.Value
+//                    })
+//                    .ToList()
             };
         }
     }

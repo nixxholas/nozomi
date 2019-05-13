@@ -1,6 +1,7 @@
+using System.Collections.Generic;
 using Nozomi.Data.AreaModels.v1.Requests;
 
-namespace Nozomi.Data.ViewModels.Manage
+namespace Nozomi.Base.Identity.ViewModels.Manage.Request
 {
     public class RequestViewModel
     {

@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Nozomi.Data.ViewModels.Manage;
+using Nozomi.Base.Identity.ViewModels.Manage.Request;
 using Nozomi.Service.Events.Interfaces;
 using Nozomi.Service.Identity.Managers;
 using Nozomi.Ticker.Controllers;
@@ -34,7 +34,7 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
             
             return View();
         }
-
+        
         [HttpGet("{guid}")]
         public async Task<IActionResult> Request([FromRoute]Guid guid)
         {
@@ -48,7 +48,7 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
             
             return View(new RequestViewModel
             {
-                Request = req.ToDTO()
+                Request = _requestEvent.GetByGuid(guid, true).ToDTO()
             });
         }
     }
