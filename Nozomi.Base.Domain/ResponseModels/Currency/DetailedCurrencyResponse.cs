@@ -36,6 +36,7 @@ namespace Nozomi.Data.ResponseModels.Currency
         {
         }
 
+        // Generic Counter Currency-assumed objects.
         public DetailedCurrencyResponse(ICollection<Models.Currency.Currency> currencies)
         {
             if (currencies != null && currencies.Count > 0)
@@ -56,7 +57,7 @@ namespace Nozomi.Data.ResponseModels.Currency
                         {
                             // Make sure the value is parse-able
                             if (!string.IsNullOrEmpty(currAc.Value) &&
-                                decimal.TryParse(currAc.Value, out var val))
+                                decimal.TryParse(currAc.Value, out var val) && val != decimal.Zero)
                             {
                                 switch (currAc.ComponentType)
                                 {
