@@ -20,12 +20,14 @@ namespace Nozomi.Preprocessing
                 AnalysedComponentType.WeeklyPriceChange,
                 AnalysedComponentType.MonthlyPriceChange,
                 AnalysedComponentType.DailyPricePctChange,
-                AnalysedComponentType.HourlyPricePctChange
+                AnalysedComponentType.HourlyPricePctChange,
+                AnalysedComponentType.DailyVolume
             };
         
         public static ICollection<AnalysedComponentType> LiveAnalysedComponentTypes = new List<AnalysedComponentType>()
         {
-            AnalysedComponentType.CurrentAveragePrice
+            AnalysedComponentType.CurrentAveragePrice,
+            AnalysedComponentType.MarketCap,
         };
     }
 }
