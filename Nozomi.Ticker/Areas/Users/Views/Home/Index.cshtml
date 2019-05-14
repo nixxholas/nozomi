@@ -92,19 +92,19 @@
                     ${{ numeral(datum.item.averagePrice).format('0[.]00') }}
                 </template>
                 <!-- A virtual composite column -->
-                <template slot="dailyAvgPricePctChange" slot-scope="datum">
-                    <div v-if="datum.item.dailyAvgPricePctChange < 0.1 && datum.item.dailyAvgPricePctChange > -0.1">
-                        {{ numeral(datum.item.dailyAvgPricePctChange).format('0[.]0') }}%
+                <template slot="dailyAvgPctChange" slot-scope="datum">
+                    <div v-if="datum.item.dailyAvgPctChange < 0.1 && datum.item.dailyAvgPctChange > -0.1">
+                        {{ numeral(datum.item.dailyAvgPctChange).format('0[.]0') }}%
+                        <i class="fas fa-minus">
+                        </i>
+                    </div>
+                    <div class="text-success" v-else-if="datum.item.dailyAvgPctChange >= 0.1">
+                        {{ numeral(datum.item.dailyAvgPctChange).format('0[.]0') }}%
                         <i class="fas fa-caret-up">
                         </i>
                     </div>
-                    <div class="text-success" v-else-if="datum.item.dailyAvgPricePctChange >= 0.1">
-                        {{ numeral(datum.item.dailyAvgPricePctChange).format('0[.]0') }}%
-                        <i class="fas fa-caret-up">
-                        </i>
-                    </div>
-                    <div class="text-danger" v-else-if="datum.item.dailyAvgPricePctChange <= -0.1">
-                        {{ numeral(datum.item.dailyAvgPricePctChange).format('0[.]0') }}%
+                    <div class="text-danger" v-else-if="datum.item.dailyAvgPctChange <= -0.1">
+                        {{ numeral(datum.item.dailyAvgPctChange).format('0[.]0') }}%
                         <i class="fas fa-caret-down">
                         </i>
                     </div>
@@ -157,7 +157,7 @@
                         sortable: true
                     },
                     {
-                        key: 'dailyAvgPricePctChange',
+                        key: 'dailyAvgPctChange',
                         label: 'Daily Change',
                         sortable: true
                     },
