@@ -69,11 +69,15 @@
 <div class="container space-bottom-2 space-bottom-md-3 shadow-lg p-3 mt-5 mb-5 bg-white rounded">
     <div class="row justify-content-lg-between align-items-md-center">
         <div class="col">
-            <b-table stacked="md" striped
+            <b-table stacked="md" :busy="currencies.length === 0"
                      tbody-class="font-weight-medium" thead-class="text-uppercase font-size-1"
                      :per-page="itemsPerPage" :current-page="currentCurrencyPage"
                      class="table-borderless"
                      :fields="currencyDataFields" :items="currencies">
+                  <div slot="table-busy" class="text-center text-danger my-2">
+                    <b-spinner class="align-middle"></b-spinner>
+                    <strong>Loading</strong>
+                  </div>
                 <!-- A virtual composite column -->
                 <template slot="name" slot-scope="datum">
                     <a :href="'/currency/' + datum.item.abbreviation">{{ datum.item.name }}</a><br>

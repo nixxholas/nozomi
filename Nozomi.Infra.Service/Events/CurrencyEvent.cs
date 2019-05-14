@@ -533,7 +533,8 @@ namespace Nozomi.Service.Events
             return query.ToList();
         }
 
-        public ICollection<DetailedCurrencyResponse> GetAllDetailed(string typeShortForm = "CRYPTO")
+        public ICollection<DetailedCurrencyResponse> GetAllDetailed(string typeShortForm = "CRYPTO",
+            int daysOfData = 1)
         {
             // Resultant collection
             var res = new List<DetailedCurrencyResponse>();
@@ -591,7 +592,7 @@ namespace Nozomi.Service.Events
                             RequestId = ac.RequestId,
                             AnalysedHistoricItems = ac.AnalysedHistoricItems
                                 .OrderByDescending(ahi => ahi.HistoricDateTime)
-                                .Where(ahi => ahi.HistoricDateTime < DateTime.UtcNow.Subtract(TimeSpan.FromDays(7)))
+                                .Where(ahi => ahi.HistoricDateTime < DateTime.UtcNow.Subtract(TimeSpan.FromDays(daysOfData)))
                                 .Take(200) // Always limit the payload
                                 .ToList()
                         })
@@ -599,7 +600,7 @@ namespace Nozomi.Service.Events
                     CurrencyCurrencyPairs = c.CurrencyCurrencyPairs
                         .Where(ccp =>
                             ccp.CurrencyPair.MainCurrency.Equals(c.Abbrv, StringComparison.InvariantCultureIgnoreCase)
-                            && ccp.CurrencyPair.CounterCurrency.Equals(CoreConstants.GenericCounterCurrency))
+                            && ccp.CurrencyPair.CounterCurrency.Contains(CoreConstants.GenericCounterCurrency))
                         .Select(pcp => new CurrencyCurrencyPair
                         {
                             CurrencyId = pcp.CurrencyId,
@@ -634,7 +635,7 @@ namespace Nozomi.Service.Events
                                                 AnalysedHistoricItems = ac.AnalysedHistoricItems
                                                     .OrderByDescending(ahi => ahi.HistoricDateTime)
                                                     .Where(ahi => ahi.HistoricDateTime <
-                                                                  DateTime.UtcNow.Subtract(TimeSpan.FromDays(7)))
+                                                                  DateTime.UtcNow.Subtract(TimeSpan.FromDays(daysOfData)))
                                                     .Take(200) // Always limit the payload
                                                     .ToList()
                                             })
@@ -646,6 +647,10 @@ namespace Nozomi.Service.Events
                         })
                         .ToList()
                 });
+            
+            #if DEBUG
+            var currenciesColl = currencies.ToList();
+            #endif
 
             foreach (var currency in currencies)
             {
