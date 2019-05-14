@@ -116,12 +116,10 @@ namespace Nozomi.Data.ResponseModels.Currency
                                     case AnalysedComponentType.HourlyAveragePrice:
                                         if (AveragePriceHistory == null || AveragePriceHistory.Count == 0)
                                         {
-                                            AveragePriceHistory = new List<decimal>()
-                                            {
-                                                decimal.Parse(currAc.Value)
-                                            };
+                                            AveragePriceHistory = new List<decimal>();
 
-                                            AveragePriceHistory.AddRange(currAc.AnalysedHistoricItems.Select(ahi =>
+                                            AveragePriceHistory.AddRange(currAc.AnalysedHistoricItems
+                                                .OrderBy(ahi => ahi.HistoricDateTime).Select(ahi =>
                                                 decimal.Parse(ahi.Value)));
                                         }
 
@@ -201,13 +199,10 @@ namespace Nozomi.Data.ResponseModels.Currency
                                                 case AnalysedComponentType.HourlyAveragePrice:
                                                     if (AveragePriceHistory == null || AveragePriceHistory.Count == 0)
                                                     {
-                                                        AveragePriceHistory = new List<decimal>()
-                                                        {
-                                                            decimal.Parse(cprAc.Value)
-                                                        };
+                                                        AveragePriceHistory = new List<decimal>();
 
-                                                        AveragePriceHistory.AddRange(cprAc.AnalysedHistoricItems.Select(
-                                                            ahi =>
+                                                        AveragePriceHistory.AddRange(cprAc.AnalysedHistoricItems
+                                                            .OrderBy(ahi => ahi.HistoricDateTime).Select(ahi =>
                                                                 decimal.Parse(ahi.Value)));
                                                     }
 
@@ -285,13 +280,11 @@ namespace Nozomi.Data.ResponseModels.Currency
                                                 case AnalysedComponentType.HourlyAveragePrice:
                                                     if (AveragePriceHistory == null || AveragePriceHistory.Count == 0)
                                                     {
-                                                        AveragePriceHistory = new List<decimal>()
-                                                        {
-                                                            decimal.Parse(wsrAc.Value)
-                                                        };
+                                                        AveragePriceHistory = new List<decimal>();
 
                                                         AveragePriceHistory.AddRange(wsrAc.AnalysedHistoricItems
-                                                            .Select(ahi => decimal.Parse(ahi.Value)));
+                                                            .OrderBy(ahi => ahi.HistoricDateTime).Select(ahi =>
+                                                                decimal.Parse(ahi.Value)));
                                                     }
 
                                                     break;
