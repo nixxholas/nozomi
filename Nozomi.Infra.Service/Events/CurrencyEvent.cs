@@ -652,23 +652,31 @@ namespace Nozomi.Service.Events
             var currenciesColl = currencies.ToList();
             #endif
 
-            foreach (var currency in currencies)
+            var abbreviations = currencies.Select(c => c.Abbrv).Distinct().ToList();
+            foreach (var uniqueCurr in abbreviations)
             {
-                // Do not add duplicates
-                if (!res.Any(item =>
-                    item.Abbreviation.Equals(currency.Abbrv, StringComparison.InvariantCultureIgnoreCase)))
-                {
-                    res.Add(new DetailedCurrencyResponse(currency));
-                }
-                // Since there already is a duplicate
-                else
-                {
-                    // Populate it further
-                    res.SingleOrDefault(item => item.Abbreviation.Equals(currency.Abbrv,
-                            StringComparison.InvariantCultureIgnoreCase))
-                        ?.Populate(currency);
-                }
+                res.Add(new DetailedCurrencyResponse(currencies.Where(c => c.Abbrv
+                    .Equals(uniqueCurr, StringComparison.InvariantCultureIgnoreCase))
+                    .ToList()));
             }
+
+//            foreach (var currency in currencies)
+//            {
+//                // Do not add duplicates
+//                if (!res.Any(item =>
+//                    item.Abbreviation.Equals(currency.Abbrv, StringComparison.InvariantCultureIgnoreCase)))
+//                {
+//                    res.Add(new DetailedCurrencyResponse(currency));
+//                }
+//                // Since there already is a duplicate
+//                else
+//                {
+//                    // Populate it further
+//                    res.SingleOrDefault(item => item.Abbreviation.Equals(currency.Abbrv,
+//                            StringComparison.InvariantCultureIgnoreCase))
+//                        ?.Populate(currency);
+//                }
+//            }
 
             res = res
                 .OrderByDescending(c => c.MarketCap)
