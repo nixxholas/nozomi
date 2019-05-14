@@ -600,7 +600,7 @@ namespace Nozomi.Service.Events
                     CurrencyCurrencyPairs = c.CurrencyCurrencyPairs
                         .Where(ccp =>
                             ccp.CurrencyPair.MainCurrency.Equals(c.Abbrv, StringComparison.InvariantCultureIgnoreCase)
-                            && ccp.CurrencyPair.CounterCurrency.Equals(CoreConstants.GenericCounterCurrency))
+                            && ccp.CurrencyPair.CounterCurrency.Contains(CoreConstants.GenericCounterCurrency))
                         .Select(pcp => new CurrencyCurrencyPair
                         {
                             CurrencyId = pcp.CurrencyId,
