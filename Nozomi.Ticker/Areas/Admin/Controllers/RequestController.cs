@@ -1,9 +1,12 @@
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Nozomi.Base.Identity.ViewModels.Manage.Request;
+using Nozomi.Data.Models.Web;
+using Nozomi.Preprocessing;
 using Nozomi.Service.Events.Interfaces;
 using Nozomi.Service.Identity.Managers;
 using Nozomi.Ticker.Controllers;
@@ -41,14 +44,14 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
             var user = await GetCurrentUserAsync();
             if (user == null)
             {
-                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+                return NotFound($"Unable to load user withID '{_userManager.GetUserId(User)}'.");
             }
 
-            var req = _requestEvent.GetByGuid(guid, true);
-            
             return View(new RequestViewModel
             {
-                Request = _requestEvent.GetByGuid(guid, true).ToDTO()
+                Request = _requestEvent.GetByGuid(guid, true).ToDTO(),
+                RequestTypes = NozomiServiceConstants.requestTypes,
+                ResponseTypes = NozomiServiceConstants.responseTypes
             });
         }
     }
