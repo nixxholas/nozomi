@@ -219,27 +219,27 @@
                 }
             },
             mounted() {
-                this.convertCurrencyTypesOption(this.currencyTypes);
-                this.convertCurrencySourcesOption(this.currencySources);
+                this.convertCurrencyTypesOption();
+                this.convertCurrencySourcesOption();
             },
             methods: {
-                convertCurrencyTypesOption(currencyTypes) {
+                convertCurrencyTypesOption() {
                     var currencyTypesArr = [];
-                    for (var i = 0; i < currencyTypes.length; i++) {
+                    for (var i = 0; i < this.currencyTypes.length; i++) {
                         var currencyType = {
-                            value: currencyTypes[i].Id,
-                            text: currencyTypes[i].Name
+                            value: this.currencyTypes[i].Id,
+                            text: this.currencyTypes[i].Name
                         };
                         currencyTypesArr.push(currencyType);
                     }
                     this.currencyTypes = currencyTypesArr;
                 },
-                convertCurrencySourcesOption(currencySources) {
+                convertCurrencySourcesOption() {
                     var currencySourcesArr = [];
-                    for (var i = 0; i < currencySources.length; i++) {
+                    for (var i = 0; i < this.currencySources.length; i++) {
                         var currencySource = {
-                            value: currencySources[i].Id,
-                            text: currencySources[i].Name
+                            value: this.currencySources[i].Id,
+                            text: this.currencySources[i].Name
                         };
                         currencySourcesArr.push(currencySource);
                     }
