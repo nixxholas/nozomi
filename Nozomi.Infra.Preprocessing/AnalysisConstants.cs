@@ -25,7 +25,8 @@ namespace Nozomi.Preprocessing
         
         public static ICollection<AnalysedComponentType> LiveAnalysedComponentTypes = new List<AnalysedComponentType>()
         {
-            AnalysedComponentType.CurrentAveragePrice
+            AnalysedComponentType.CurrentAveragePrice,
+            AnalysedComponentType.MarketCap
         };
     }
 }
