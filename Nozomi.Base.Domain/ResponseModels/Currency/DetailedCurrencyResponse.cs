@@ -21,11 +21,11 @@ namespace Nozomi.Data.ResponseModels.Currency
         /// Obtain the live average price, averaged across ALL sources.
         /// </summary>
         public decimal AveragePrice { get; set; }
-        
+
         public decimal DailyAvgPctChange { get; set; }
-        
+
         public decimal DailyVolume { get; set; }
-        
+
         public decimal MarketCap { get; set; }
 
         public Dictionary<ComponentType, List<ComponentHistoricalDatum>> Historical { get; set; }
@@ -63,7 +63,7 @@ namespace Nozomi.Data.ResponseModels.Currency
                                 {
                                     case AnalysedComponentType.CurrentAveragePrice:
                                         // Is the AveragePrice used yet? 
-                                        if (AveragePrice <= decimal.Zero)
+                                        if (AveragePrice > decimal.Zero)
                                         {
                                             AveragePrice = (AveragePrice + val) / 2;
                                         }
@@ -85,10 +85,11 @@ namespace Nozomi.Data.ResponseModels.Currency
                                         {
                                             DailyAvgPctChange = val;
                                         }
+
                                         break;
                                     case AnalysedComponentType.DailyVolume:
                                         // Is the DailyVolume used yet?
-                                        if (DailyVolume <= decimal.Zero)
+                                        if (DailyVolume > decimal.Zero)
                                         {
                                             DailyVolume = (DailyVolume + val) / 2;
                                         }
@@ -97,10 +98,11 @@ namespace Nozomi.Data.ResponseModels.Currency
                                         {
                                             DailyVolume = val;
                                         }
+
                                         break;
                                     case AnalysedComponentType.MarketCap:
                                         // Is the MarketCap used yet?
-                                        if (MarketCap <= decimal.Zero)
+                                        if (MarketCap > decimal.Zero)
                                         {
                                             MarketCap = (MarketCap + val) / 2;
                                         }
@@ -109,6 +111,7 @@ namespace Nozomi.Data.ResponseModels.Currency
                                         {
                                             MarketCap = val;
                                         }
+
                                         break;
                                     case AnalysedComponentType.HourlyAveragePrice:
                                         if (AveragePriceHistory == null || AveragePriceHistory.Count == 0)
@@ -117,11 +120,184 @@ namespace Nozomi.Data.ResponseModels.Currency
                                             {
                                                 decimal.Parse(currAc.Value)
                                             };
-                                            
-                                            AveragePriceHistory.AddRange(currAc.AnalysedHistoricItems.Select(ahi => 
-                                                    decimal.Parse(ahi.Value)));
+
+                                            AveragePriceHistory.AddRange(currAc.AnalysedHistoricItems.Select(ahi =>
+                                                decimal.Parse(ahi.Value)));
                                         }
+
                                         break;
+                                }
+                            }
+                        }
+
+                        // Non-direct AnalysedComponents
+                        foreach (var ccp in exchangeUniqueCurr.CurrencyCurrencyPairs
+                            .Where(ccp => ccp.CurrencyPair != null))
+                        {
+                            if (ccp.CurrencyPair.CurrencyPairRequests != null)
+                            {
+                                foreach (var cpReq in ccp.CurrencyPair.CurrencyPairRequests)
+                                {
+                                    foreach (var cprAc in cpReq.AnalysedComponents)
+                                    {
+                                        // Make sure the value is parse-able
+                                        if (!string.IsNullOrEmpty(cprAc.Value) &&
+                                            decimal.TryParse(cprAc.Value, out var val) && val != decimal.Zero)
+                                        {
+                                            switch (cprAc.ComponentType)
+                                            {
+                                                case AnalysedComponentType.CurrentAveragePrice:
+                                                    // Is the AveragePrice used yet? 
+                                                    if (AveragePrice > decimal.Zero)
+                                                    {
+                                                        AveragePrice = (AveragePrice + val) / 2;
+                                                    }
+                                                    // Nope
+                                                    else
+                                                    {
+                                                        AveragePrice = val;
+                                                    }
+
+                                                    break;
+                                                case AnalysedComponentType.DailyPricePctChange:
+                                                    // Is the DailyAvgPctChange used yet? 
+                                                    if (DailyAvgPctChange != decimal.Zero)
+                                                    {
+                                                        DailyAvgPctChange = (DailyAvgPctChange + val) / 2;
+                                                    }
+                                                    // Nope
+                                                    else
+                                                    {
+                                                        DailyAvgPctChange = val;
+                                                    }
+
+                                                    break;
+                                                case AnalysedComponentType.DailyVolume:
+                                                    // Is the DailyVolume used yet?
+                                                    if (DailyVolume > decimal.Zero)
+                                                    {
+                                                        DailyVolume = (DailyVolume + val) / 2;
+                                                    }
+                                                    // Nope
+                                                    else
+                                                    {
+                                                        DailyVolume = val;
+                                                    }
+
+                                                    break;
+                                                case AnalysedComponentType.MarketCap:
+                                                    // Is the MarketCap used yet?
+                                                    if (MarketCap > decimal.Zero)
+                                                    {
+                                                        MarketCap = (MarketCap + val) / 2;
+                                                    }
+                                                    // Nope
+                                                    else
+                                                    {
+                                                        MarketCap = val;
+                                                    }
+
+                                                    break;
+                                                case AnalysedComponentType.HourlyAveragePrice:
+                                                    if (AveragePriceHistory == null || AveragePriceHistory.Count == 0)
+                                                    {
+                                                        AveragePriceHistory = new List<decimal>()
+                                                        {
+                                                            decimal.Parse(cprAc.Value)
+                                                        };
+
+                                                        AveragePriceHistory.AddRange(cprAc.AnalysedHistoricItems.Select(
+                                                            ahi =>
+                                                                decimal.Parse(ahi.Value)));
+                                                    }
+
+                                                    break;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
+                            if (ccp.CurrencyPair.WebsocketRequests != null)
+                            {
+                                foreach (var wsReq in ccp.CurrencyPair.WebsocketRequests)
+                                {
+                                    foreach (var wsrAc in wsReq.AnalysedComponents)
+                                    {
+                                        // Make sure the value is parse-able
+                                        if (!string.IsNullOrEmpty(wsrAc.Value) &&
+                                            decimal.TryParse(wsrAc.Value, out var val) && val != decimal.Zero)
+                                        {
+                                            switch (wsrAc.ComponentType)
+                                            {
+                                                case AnalysedComponentType.CurrentAveragePrice:
+                                                    // Is the AveragePrice used yet? 
+                                                    if (AveragePrice > decimal.Zero)
+                                                    {
+                                                        AveragePrice = (AveragePrice + val) / 2;
+                                                    }
+                                                    // Nope
+                                                    else
+                                                    {
+                                                        AveragePrice = val;
+                                                    }
+
+                                                    break;
+                                                case AnalysedComponentType.DailyPricePctChange:
+                                                    // Is the DailyAvgPctChange used yet? 
+                                                    if (DailyAvgPctChange != decimal.Zero)
+                                                    {
+                                                        DailyAvgPctChange = (DailyAvgPctChange + val) / 2;
+                                                    }
+                                                    // Nope
+                                                    else
+                                                    {
+                                                        DailyAvgPctChange = val;
+                                                    }
+
+                                                    break;
+                                                case AnalysedComponentType.DailyVolume:
+                                                    // Is the DailyVolume used yet?
+                                                    if (DailyVolume > decimal.Zero)
+                                                    {
+                                                        DailyVolume = (DailyVolume + val) / 2;
+                                                    }
+                                                    // Nope
+                                                    else
+                                                    {
+                                                        DailyVolume = val;
+                                                    }
+
+                                                    break;
+                                                case AnalysedComponentType.MarketCap:
+                                                    // Is the MarketCap used yet?
+                                                    if (MarketCap > decimal.Zero)
+                                                    {
+                                                        MarketCap = (MarketCap + val) / 2;
+                                                    }
+                                                    // Nope
+                                                    else
+                                                    {
+                                                        MarketCap = val;
+                                                    }
+
+                                                    break;
+                                                case AnalysedComponentType.HourlyAveragePrice:
+                                                    if (AveragePriceHistory == null || AveragePriceHistory.Count == 0)
+                                                    {
+                                                        AveragePriceHistory = new List<decimal>()
+                                                        {
+                                                            decimal.Parse(wsrAc.Value)
+                                                        };
+
+                                                        AveragePriceHistory.AddRange(wsrAc.AnalysedHistoricItems
+                                                            .Select(ahi => decimal.Parse(ahi.Value)));
+                                                    }
+
+                                                    break;
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -143,20 +319,20 @@ namespace Nozomi.Data.ResponseModels.Currency
                 {
                     // Obtain via the Request method
                     var query = currency.CurrencyCurrencyPairs
-                            .Select(pcp => pcp.CurrencyPair)
-                            .SelectMany(cpr => cpr.CurrencyPairRequests)
-                            .SelectMany(cpr => cpr.AnalysedComponents)
-                            .Select(ac => new AnalysedComponent
-                            {
-                                Id = ac.Id,
-                                ComponentType = ac.ComponentType,
-                                Value = ac.Value,
-                                Delay = ac.Delay,
-                                RequestId = ac.RequestId,
-                                CurrencyId = ac.CurrencyId,
-                                AnalysedHistoricItems = ac.AnalysedHistoricItems
-                            })
-                            .ToList();
+                        .Select(pcp => pcp.CurrencyPair)
+                        .SelectMany(cpr => cpr.CurrencyPairRequests)
+                        .SelectMany(cpr => cpr.AnalysedComponents)
+                        .Select(ac => new AnalysedComponent
+                        {
+                            Id = ac.Id,
+                            ComponentType = ac.ComponentType,
+                            Value = ac.Value,
+                            Delay = ac.Delay,
+                            RequestId = ac.RequestId,
+                            CurrencyId = ac.CurrencyId,
+                            AnalysedHistoricItems = ac.AnalysedHistoricItems
+                        })
+                        .ToList();
 
                     if (query.Count > 0)
                     {
@@ -169,6 +345,7 @@ namespace Nozomi.Data.ResponseModels.Currency
                                     {
                                         AveragePrice = avgPrice;
                                     }
+
                                     break;
                                 case AnalysedComponentType.HourlyAveragePrice:
                                     if (aComp.AnalysedHistoricItems.Count > 0)
@@ -179,12 +356,14 @@ namespace Nozomi.Data.ResponseModels.Currency
                                             .Select(ahi => decimal.Parse(ahi.Value))
                                             .ToList();
                                     }
+
                                     break;
                                 case AnalysedComponentType.DailyPricePctChange:
                                     if (decimal.TryParse(aComp.Value, out var dailyAvgPricePctChange))
                                     {
                                         DailyAvgPctChange = Math.Round(dailyAvgPricePctChange, 1);
                                     }
+
                                     break;
                                 case AnalysedComponentType.DailyVolume:
                                     if (decimal.TryParse(aComp.Value, out var dailyVol))
@@ -194,6 +373,7 @@ namespace Nozomi.Data.ResponseModels.Currency
                                         else
                                             DailyVolume = dailyVol;
                                     }
+
                                     break;
                             }
                         }
@@ -201,10 +381,10 @@ namespace Nozomi.Data.ResponseModels.Currency
                 }
 
                 // If the average price is still not computed,
-                if (AveragePrice <= 0 && 
+                if (AveragePrice <= 0 &&
                     currency.AnalysedComponents.Any(ac =>
-                    ac.DeletedAt == null && ac.IsEnabled
-                                         && ac.ComponentType.Equals(AnalysedComponentType.CurrentAveragePrice)))
+                        ac.DeletedAt == null && ac.IsEnabled
+                                             && ac.ComponentType.Equals(AnalysedComponentType.CurrentAveragePrice)))
                 {
                     // Compute the average price directly with a currency-binded analysed component.
                     var currencyAP = currency.AnalysedComponents.FirstOrDefault(ac =>
@@ -217,11 +397,13 @@ namespace Nozomi.Data.ResponseModels.Currency
                         AveragePrice = decimal.Parse(currencyAPVal);
                     }
                 }
-                
+
                 // If the historical price is still not computed,
-                if ((AveragePriceHistory == null || AveragePriceHistory.Count == 0) 
+                if ((AveragePriceHistory == null || AveragePriceHistory.Count == 0)
                     && currency.AnalysedComponents.Any(ac => ac.DeletedAt == null && ac.IsEnabled
-                                                             && ac.ComponentType.Equals(AnalysedComponentType.HourlyAveragePrice)))
+                                                                                  && ac.ComponentType.Equals(
+                                                                                      AnalysedComponentType
+                                                                                          .HourlyAveragePrice)))
                 {
                     // Compute the hourly average prices directly with a currency-binded analysed component.
                     var currencyHAP = currency.AnalysedComponents
@@ -230,19 +412,19 @@ namespace Nozomi.Data.ResponseModels.Currency
                                                                        .HourlyAveragePrice));
 
                     // Make sure there is actually data
-                    if (currencyHAP?.AnalysedHistoricItems != null 
+                    if (currencyHAP?.AnalysedHistoricItems != null
                         && currencyHAP.AnalysedHistoricItems
                             .Any(ahi => ahi.HistoricDateTime >= DateTime.UtcNow.Subtract(TimeSpan.FromDays(1))))
                     {
-                            AveragePriceHistory = currencyHAP.AnalysedHistoricItems
-                                .Where(ahi => ahi.HistoricDateTime >= DateTime.UtcNow.Subtract(TimeSpan.FromDays(1)))
-                                .OrderByDescending(ahi => ahi.HistoricDateTime)
-                                .DefaultIfEmpty()
-                                .Select(ahi => decimal.Parse(ahi.Value))
-                                .ToList();
+                        AveragePriceHistory = currencyHAP.AnalysedHistoricItems
+                            .Where(ahi => ahi.HistoricDateTime >= DateTime.UtcNow.Subtract(TimeSpan.FromDays(1)))
+                            .OrderByDescending(ahi => ahi.HistoricDateTime)
+                            .DefaultIfEmpty()
+                            .Select(ahi => decimal.Parse(ahi.Value))
+                            .ToList();
                     }
                 }
-                
+
                 // Daily average percentage change via the Currency
                 if (currency.AnalysedComponents.Any(ac =>
                     ac.DeletedAt == null && ac.IsEnabled
@@ -259,16 +441,17 @@ namespace Nozomi.Data.ResponseModels.Currency
                         DailyAvgPctChange = Math.Round(decimal.Parse(currencyDAPPC), 1);
                     }
                 }
-                
+
                 // Market cap is usually stored with a currency-based AC.
                 // Thus we directly obtain the value like that.
                 MarketCap = decimal.Parse(currency.AnalysedComponents.FirstOrDefault(ac =>
                                                   ac.DeletedAt == null && ac.IsEnabled
-                                                                       && ac.ComponentType.Equals(AnalysedComponentType.MarketCap))
+                                                                       && ac.ComponentType.Equals(AnalysedComponentType
+                                                                           .MarketCap))
                                               ?.Value ?? "0");
             }
         }
-        
+
         /// <summary>
         /// These constructors rely on the same counter currency to properly operate.
         /// </summary>
@@ -352,10 +535,10 @@ namespace Nozomi.Data.ResponseModels.Currency
         {
             if (currencyPairs != null && currencyPairs.Any())
             {
-                #if DEBUG
+#if DEBUG
                 var cPairs = currencyPairs.ToList();
-                #endif
-                
+#endif
+
                 var curr = currencyPairs
                     .Select(cp => cp.CurrencyPairCurrencies
                         .Select(pcp => pcp.Currency)
@@ -382,7 +565,7 @@ namespace Nozomi.Data.ResponseModels.Currency
         private void ConfigureHistoricals(List<Models.Currency.CurrencyPair> currencyPairs)
         {
             Historical = new Dictionary<ComponentType, List<ComponentHistoricalDatum>>();
-            
+
             foreach (var reqComp in currencyPairs
                 .SelectMany(cp => cp.CurrencyPairRequests
                     .SelectMany(cpr => cpr.RequestComponents)))
@@ -423,10 +606,10 @@ namespace Nozomi.Data.ResponseModels.Currency
                 {
                     // Obtain via the Request method
                     var query = currency.CurrencyCurrencyPairs
-                            .Select(pcp => pcp.CurrencyPair)
-                            .SelectMany(cpr => cpr.CurrencyPairRequests)
-                            .SelectMany(cpr => cpr.AnalysedComponents)
-                            .ToList();
+                        .Select(pcp => pcp.CurrencyPair)
+                        .SelectMany(cpr => cpr.CurrencyPairRequests)
+                        .SelectMany(cpr => cpr.AnalysedComponents)
+                        .ToList();
 
                     if (query.Count > 0)
                     {
@@ -442,9 +625,10 @@ namespace Nozomi.Data.ResponseModels.Currency
                                         else
                                             AveragePrice = avgPrice;
                                     }
+
                                     break;
                                 case AnalysedComponentType.DailyPricePctChange:
-                                    if (decimal.TryParse(aComp.Value, out var dailyAvgPricePctChange) && 
+                                    if (decimal.TryParse(aComp.Value, out var dailyAvgPricePctChange) &&
                                         aComp.ModifiedAt >= DateTime.UtcNow.Subtract(TimeSpan.FromDays(1)))
                                     {
                                         if (DailyAvgPctChange != 0)
@@ -453,9 +637,10 @@ namespace Nozomi.Data.ResponseModels.Currency
                                         else
                                             DailyAvgPctChange = dailyAvgPricePctChange;
                                     }
+
                                     break;
                                 case AnalysedComponentType.DailyVolume:
-                                    if (decimal.TryParse(aComp.Value, out var dailyVol) && 
+                                    if (decimal.TryParse(aComp.Value, out var dailyVol) &&
                                         aComp.ModifiedAt >= DateTime.UtcNow.Subtract(TimeSpan.FromDays(1)))
                                     {
                                         if (DailyVolume > 0)
@@ -463,6 +648,7 @@ namespace Nozomi.Data.ResponseModels.Currency
                                         else
                                             DailyVolume = dailyVol;
                                     }
+
                                     break;
                             }
                         }
@@ -500,7 +686,7 @@ namespace Nozomi.Data.ResponseModels.Currency
 //                        }
                     }
                 }
-                
+
                 // Daily average percentage change via the Currency
                 if (currency.AnalysedComponents.Any(ac =>
                     ac.DeletedAt == null && ac.IsEnabled
@@ -520,7 +706,7 @@ namespace Nozomi.Data.ResponseModels.Currency
                             DailyAvgPctChange = Math.Round(decimal.Parse(currencyDAPPC), 1);
                     }
                 }
-                
+
                 // Market cap is usually stored with a currency-based AC.
                 // Thus we directly obtain the value like that.
                 if (currency.AnalysedComponents.Any(ac =>
