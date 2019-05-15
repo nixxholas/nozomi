@@ -1,4 +1,5 @@
 @using Newtonsoft.Json
+@using Newtonsoft.Json.Serialization
 @model Nozomi.Base.Identity.ViewModels.Manage.Currency.CurrenciesViewModel
 
 <!-- Content Section -->
@@ -12,33 +13,33 @@
             :per-page="currencyDataRowsPerPage" :current-page="currentCurrencyDataPage"
             :items="currencies" :fields="dataFields">
             <template slot="Name" slot-scope="datum">
-                {{ datum.item.Name }}
+                {{ datum.item.name }}
             </template>
             <template slot="Abbreviation" slot-scope="datum">
-                {{ datum.item.Abbrv }}
+                {{ datum.item.abbrv }}
             </template>
             <template slot="CurrencyType" slot-scope="datum">
-                {{ datum.item.CurrencyType.Name }}
+                {{ datum.item.currencyType.name }}
             </template>
             <template slot="CurrencySource" slot-scope="datum">
-                {{ datum.item.CurrencySource.Name }}
+                {{ datum.item.currencySource.name }}
             </template>
             <template slot="Description" slot-scope="datum">
-                {{ datum.item.Description }}
+                {{ datum.item.description }}
             </template>
             <template slot="isEnabled" slot-scope="datum">
-                <b-form-checkbox v-model="datum.item.IsEnabled" disabled/>
+                <b-form-checkbox v-model="datum.item.isEnabled" disabled/>
             </template>
             <template slot="Edit" slot-scope="datum">
                 <b-button variant="primary" b-modal.modal-xl
-                          v-on:click="showEditModal(datum.item.Id, datum.item.CurrencyTypeId, datum.item.Abbrv, 
-                                datum.item.Description, datum.item.Name, datum.item.CurrencySourceId, 
-                                datum.item.IsEnabled, datum.item.CurrencyType, datum.item.CurrencySource)">
+                          v-on:click="showEditModal(datum.item.id, datum.item.currencyTypeId, datum.item.abbrv, 
+                                datum.item.description, datum.item.name, datum.item.currencySourceId, 
+                                datum.item.isEnabled, datum.item.currencyType, datum.item.currencySource)">
                     Edit
                 </b-button>
             </template>
             <template slot="Delete" slot-scope="datum">
-                <b-button variant="danger" v-on:click="showDeleteModal(datum.item.Id, datum.item.Name)">Delete</b-button>
+                <b-button variant="danger" v-on:click="showDeleteModal(datum.item.id, datum.item.name)">Delete</b-button>
             </template>
         </b-table>
     </div>
@@ -76,11 +77,11 @@
         </b-form-group>
 
         <b-form-group label="Description">
-            <b-form-textarea v-model="editForm.description" rows="3"></b-form-textarea>
+            <b-form-textarea v-model="createForm.description" rows="3"></b-form-textarea>
         </b-form-group>
 
         <b-form-group>
-            <b-form-checkbox v-model="editForm.isEnabled">Is Enabled</b-form-checkbox>
+            <b-form-checkbox v-model="createForm.isEnabled">Is Enabled</b-form-checkbox>
         </b-form-group>
     </b-form>
 </b-modal>
@@ -185,13 +186,19 @@
                 currencies:
                     @Html.Raw(JsonConvert.SerializeObject(@Model.Currencies, Formatting.Indented, new JsonSerializerSettings
                     {
-                        ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                        ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+                        // Converts data to camelCase
+                        ContractResolver = new CamelCasePropertyNamesContractResolver() 
                     })),
-                currencyTypes: @Html.Raw(JsonConvert.SerializeObject(@Model.CurrencyTypes)),
+                currencyTypes: @Html.Raw(JsonConvert.SerializeObject(@Model.CurrencyTypes, Formatting.Indented, new JsonSerializerSettings
+                               {
+                                   ContractResolver = new CamelCasePropertyNamesContractResolver() 
+                               })),
                 currencySources:
                     @Html.Raw(JsonConvert.SerializeObject(@Model.CurrencySources, Formatting.Indented, new JsonSerializerSettings
                     {
-                        ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                        ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+                        ContractResolver = new CamelCasePropertyNamesContractResolver() 
                     })),
                 createForm: {
                     currencyTypeId: Number,
@@ -215,7 +222,7 @@
                 deleteModal: {
                     id: Number,
                     name: ''
-                }
+                },
             },
             mounted() {
                 this.convertCurrencyTypesOption();
@@ -226,8 +233,8 @@
                     var currencyTypesArr = [];
                     for (var i = 0; i < this.currencyTypes.length; i++) {
                         var currencyType = {
-                            value: this.currencyTypes[i].Id,
-                            text: this.currencyTypes[i].Name
+                            value: this.currencyTypes[i].id,
+                            text: this.currencyTypes[i].name
                         };
                         currencyTypesArr.push(currencyType);
                     }
@@ -237,8 +244,8 @@
                     var currencySourcesArr = [];
                     for (var i = 0; i < this.currencySources.length; i++) {
                         var currencySource = {
-                            value: this.currencySources[i].Id,
-                            text: this.currencySources[i].Name
+                            value: this.currencySources[i].id,
+                            text: this.currencySources[i].name
                         };
                         currencySourcesArr.push(currencySource);
                     }
@@ -270,19 +277,27 @@
                         });
 
                     if (response.status === 200) {
+                        const data = await response.json();
+                        
+                        const newCurrency = data.item;
+                        
+                        // Insert the currencyType and source here manually instead of calling api again
+                        newCurrency.currencyType = {
+                            name: this.getCurrencyTypeName(this.createForm.currencyTypeId)
+                        }
+                        newCurrency.currencySource =
+                        {
+                             name: this.getCurrencySourceName(this.createForm.currencySourceId)
+                        }
+                        
+                        this.currencies.push(newCurrency);
                         // Put alert for now, change the ui later.
-                        alert("Successfully created source");
-
+                        alert(data.message);
                     } else {
                         alert("Create failed");
                     }
-
                     // Hide the modal manually
                     this.$refs['create-modal'].hide();
-
-                    // Reload for now. Controller to return the currency object then push into table.
-                    location.reload(this);
-
                 },
                 // Methods for edit modal
                 showEditModal(id, currencyTypeId, abbrv, description, name, currencySourceId, isEnabled, currencyType,
@@ -369,6 +384,18 @@
                     }
 
                     this.$refs['delete-modal'].hide();
+                },
+                getCurrencyTypeName(id) {
+                    for (let i = 0; i < this.currencyTypes.length; i++){
+                        if(this.currencyTypes.value === id)
+                            return this.currencyTypes.text;
+                        }
+                },
+                getCurrencySourceName(id){
+                    for (let i = 0; i < this.currencySources.length; i++){
+                        if(this.currencySources.value === id)
+                            return this.currencySources.text;
+                        }
                 }
             }
         });
