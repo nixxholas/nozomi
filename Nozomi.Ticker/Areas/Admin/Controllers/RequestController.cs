@@ -5,10 +5,13 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Nozomi.Base.Identity.ViewModels.Manage.Request;
+using Nozomi.Data;
+using Nozomi.Data.AreaModels.v1.Requests;
 using Nozomi.Data.Models.Web;
 using Nozomi.Preprocessing;
 using Nozomi.Service.Events.Interfaces;
 using Nozomi.Service.Identity.Managers;
+using Nozomi.Service.Services.Requests.Interfaces;
 using Nozomi.Ticker.Controllers;
 
 namespace Nozomi.Ticker.Areas.Admin.Controllers
@@ -18,14 +21,18 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
     public class RequestController : AreaBaseViewController<RequestController>
     {
         private readonly IRequestEvent _requestEvent;
+        private readonly IRequestService _requestService;
 
         public RequestController(ILogger<RequestController> logger, NozomiSignInManager signInManager,
-            NozomiUserManager userManager, IRequestEvent requestEvent)
+            NozomiUserManager userManager, IRequestEvent requestEvent, IRequestService requestService)
             : base(logger, signInManager, userManager)
         {
             _requestEvent = requestEvent;
+            _requestService = requestService;
         }
 
+        #region GET Requests
+        
         [HttpGet]
         public async Task<IActionResult> Requests()
         {
@@ -43,7 +50,11 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
                 }
             );
         }
+        
+        #endregion
 
+        #region GET Request by GUID
+        
         [HttpGet("{guid}")]
         public async Task<IActionResult> Request([FromRoute] Guid guid)
         {
@@ -60,5 +71,27 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
                 ResponseTypes = NozomiServiceConstants.responseTypes
             });
         }
+        
+        #endregion
+        
+        #region POST Request
+
+        [HttpPost]
+        public async Task<IActionResult> CreateRequest(CreateRequest createRequest)
+        {
+            var user = await GetCurrentUserAsync();
+            if (user == null)
+            {
+                return NotFound($"Unable to load user withID '{_userManager.GetUserId(User)}'.");
+            }
+
+            var result = _requestService.Create(createRequest);
+            
+            if (result.ResultType.Equals(NozomiResultType.Success)) return Ok(result.Item);
+
+            return NotFound();
+        }
+        
+        #endregion
     }
 }
