@@ -16,29 +16,37 @@ namespace Nozomi.Service.Services.Requests
 {
     public class RequestService : BaseService<RequestService, NozomiDbContext>, IRequestService
     {
-        public RequestService(ILogger<RequestService> logger, IUnitOfWork<NozomiDbContext> unitOfWork) 
+        public RequestService(ILogger<RequestService> logger, IUnitOfWork<NozomiDbContext> unitOfWork)
             : base(logger, unitOfWork)
         {
         }
 
         public NozomiResult<string> Create(CreateRequest createRequest, long userId = 0)
         {
-            if (createRequest == null || !createRequest.IsValid())
-                return new NozomiResult<string>(NozomiResultType.Failed, "Failed to create request. Please make sure " +
-                                                                         "that your request object is proper");
-            var request = new Request()
+            try
             {
-                DataPath = createRequest.DataPath,
-                Delay = createRequest.Delay,
-                RequestType = createRequest.RequestType,
-                ResponseType = createRequest.ResponseType
-            };
-                
-            _unitOfWork.GetRepository<Request>().Add(request);
-            _unitOfWork.Commit(userId);
+                if (createRequest == null || !createRequest.IsValid())
+                    return new NozomiResult<string>(NozomiResultType.Failed,
+                        "Failed to create request. Please make sure " +
+                        "that your request object is proper");
+                var request = new Request()
+                {
+                    DataPath = createRequest.DataPath,
+                    Delay = createRequest.Delay,
+                    RequestType = createRequest.RequestType,
+                    ResponseType = createRequest.ResponseType
+                };
 
-            return new NozomiResult<string>(NozomiResultType.Success, "Request successfully created!", request);
+                _unitOfWork.GetRepository<Request>().Add(request);
+                _unitOfWork.Commit(userId);
 
+                return new NozomiResult<string>(NozomiResultType.Success, "Request successfully created!", request);
+            }
+
+            catch (Exception ex)
+            {
+                return new NozomiResult<string>(NozomiResultType.Failed, ex.ToString());
+            }
         }
 
         public bool Delay(Request request, TimeSpan duration)
@@ -53,7 +61,7 @@ namespace Nozomi.Service.Services.Requests
             if (req != null)
             {
                 req.ModifiedAt = req.ModifiedAt.Add(duration);
-                
+
                 _unitOfWork.GetRepository<Request>().Update(req);
                 _unitOfWork.Commit();
 
@@ -67,7 +75,7 @@ namespace Nozomi.Service.Services.Requests
         {
             // Safetynet
             if (req == null || !req.IsValid()) return false;
-            
+
             var reqToUpd = _unitOfWork.GetRepository<Request>()
                 .Get(r => r.Id.Equals(req.Id) && r.DeletedAt == null)
                 .SingleOrDefault();
@@ -77,7 +85,7 @@ namespace Nozomi.Service.Services.Requests
             reqToUpd.DataPath = req.DataPath;
             reqToUpd.RequestType = req.RequestType;
             reqToUpd.IsEnabled = req.IsEnabled;
-                
+
             _unitOfWork.GetRepository<Request>().Update(reqToUpd);
             _unitOfWork.Commit(userId);
 
