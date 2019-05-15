@@ -45,7 +45,7 @@
 </div>
 
 <!-- CreateModal -->
-<b-modal ref="create-modal" size="xl" title="Create Currency" ok-title="Save changes" v-on:ok="handleCreateOk">
+<b-modal ref="create-modal" size="xl" title="Create Currency" ok-title="Create" v-on:ok="handleCreateOk">
     <b-form v-on:submit.stop.prevent="onCreateSubmit">
         <b-form-group
             label="Name"
@@ -194,7 +194,6 @@
                         ReferenceLoopHandling = ReferenceLoopHandling.Ignore
                     })),
                 createForm: {
-                    id: Number,
                     currencyTypeId: Number,
                     abbreviation: '',
                     description: '',
@@ -309,7 +308,6 @@
                 },
                 async onEditSubmit() {
                     var formData = new FormData();
-                    formData.append('Id', this.editForm.id);
                     formData.append('CurrencyTypeId', this.editForm.currencyTypeId);
                     formData.append('Abbrv', this.editForm.abbreviation);
                     formData.append('Description', this.editForm.description);
