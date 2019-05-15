@@ -15,14 +15,5 @@ namespace Nozomi.Service.Services.Requests.Interfaces
 
         bool SoftDelete(long reqId, long userId = 0);
 
-        IEnumerable<Request> GetAllActive(bool track = false);
-
-        IEnumerable<dynamic> GetAllActiveObsc(bool track = false);
-
-        IEnumerable<Request> GetAll(bool track = false);
-
-        IEnumerable<Request> GetAll(Expression<Func<Request, bool>> predicate, bool track = false);
-
-        IEnumerable<dynamic> GetAllObsc(bool track = false);
     } 
 }
