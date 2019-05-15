@@ -37,7 +37,9 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
 
             return View(new RequestsViewModel
                 {
-                    Requests = _requestEvent.GetAllDTO(0)
+                    Requests = _requestEvent.GetAllDTO(0),
+                    RequestTypes = NozomiServiceConstants.requestTypes,
+                    ResponseTypes = NozomiServiceConstants.responseTypes
                 }
             );
         }
