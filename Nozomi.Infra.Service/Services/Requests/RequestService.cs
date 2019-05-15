@@ -4,6 +4,8 @@ using System.Linq;
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Nozomi.Data;
+using Nozomi.Data.AreaModels.v1.Requests;
 using Nozomi.Data.Models.Web;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.BCL.Repository;
@@ -19,18 +21,24 @@ namespace Nozomi.Service.Services.Requests
         {
         }
 
-        public long Create(Request req, long userId = 0)
+        public NozomiResult<string> Create(CreateRequest createRequest, long userId = 0)
         {
-            // Safetynet
-            if (req != null && req.IsValid())
+            if (createRequest == null || !createRequest.IsValid())
+                return new NozomiResult<string>(NozomiResultType.Failed, "Failed to create request. Please make sure " +
+                                                                         "that your request object is proper");
+            var request = new Request()
             {
-                _unitOfWork.GetRepository<Request>().Add(req);
-                _unitOfWork.Commit(userId);
+                DataPath = createRequest.DataPath,
+                Delay = createRequest.Delay,
+                RequestType = createRequest.RequestType,
+                ResponseType = createRequest.ResponseType
+            };
+                
+            _unitOfWork.GetRepository<Request>().Add(request);
+            _unitOfWork.Commit(userId);
 
-                return req.Id;
-            }
+            return new NozomiResult<string>(NozomiResultType.Success, "Request successfully created!", request);
 
-            return -1;
         }
 
         public bool Delay(Request request, TimeSpan duration)
