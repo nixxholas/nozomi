@@ -1,18 +1,13 @@
 @using Newtonsoft.Json
 @using Nozomi.Preprocessing
 @using Nozomi.Service.Events.Interfaces
-@inject IRequestEvent _requestEvent
-
-@{
-    var requests = _requestEvent.GetAllDTO(0);
-}
-
+@model Nozomi.Base.Identity.ViewModels.Manage.Request.RequestsViewModel
 
 <!-- Content Section -->
 <div class="bg-light">
     <div class="container space-2">
         <h3 class="mb-6">Requests</h3>
-        
+
         <b-table :items="requests" :fields="dataFields">
             <template slot="RequestType" slot-scope="datum">
                 {{ getRequestTypeStr(datum.item.RequestType) }}
@@ -77,14 +72,14 @@
                     }
                 ],
                 requestTypes: @Html.Raw(Json.Serialize(NozomiServiceConstants.requestTypes, new JsonSerializerSettings
-                 {
-                   ReferenceLoopHandling = ReferenceLoopHandling.Ignore
-                 })),
+                              {
+                                  ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                              })),
                 responseTypes: @Html.Raw(Json.Serialize(NozomiServiceConstants.responseTypes, new JsonSerializerSettings
-                 {
-                   ReferenceLoopHandling = ReferenceLoopHandling.Ignore
-                 })),
-                requests: @Html.Raw(JsonConvert.SerializeObject(requests))
+                               {
+                                   ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                               })),
+                requests: @Html.Raw(JsonConvert.SerializeObject(@Model.Requests))
             },
             methods: {
                 getRequestTypeStr(val) {
@@ -95,7 +90,7 @@
                             }
                         }
                     }
-          
+
                     return null;
                 },
                 getResponseTypeStr(val) {
@@ -106,7 +101,7 @@
                             }
                         }
                     }
-          
+
                     return null;
                 }
             },

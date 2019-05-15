@@ -18,14 +18,14 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
     public class RequestController : AreaBaseViewController<RequestController>
     {
         private readonly IRequestEvent _requestEvent;
-        
+
         public RequestController(ILogger<RequestController> logger, NozomiSignInManager signInManager,
             NozomiUserManager userManager, IRequestEvent requestEvent)
             : base(logger, signInManager, userManager)
         {
             _requestEvent = requestEvent;
         }
-        
+
         [HttpGet]
         public async Task<IActionResult> Requests()
         {
@@ -34,12 +34,16 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
             {
                 return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
-            
-            return View();
+
+            return View(new RequestsViewModel
+                {
+                    Requests = _requestEvent.GetAllDTO(0)
+                }
+            );
         }
-        
+
         [HttpGet("{guid}")]
-        public async Task<IActionResult> Request([FromRoute]Guid guid)
+        public async Task<IActionResult> Request([FromRoute] Guid guid)
         {
             var user = await GetCurrentUserAsync();
             if (user == null)
