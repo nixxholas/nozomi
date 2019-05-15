@@ -30,23 +30,25 @@ namespace Nozomi.Service.Services
         {
             try
             {
-                if (createCurrency != null && createCurrency.IsValid())
+                if (createCurrency == null || !createCurrency.IsValid())
+                    return new NozomiResult<string>(NozomiResultType.Failed,
+                        "Failed to create currency. Please make sure " +
+                        "that your currency object is proper.");
+                
+                var currency = new Currency
                 {
-                    _unitOfWork.GetRepository<Currency>().Add(new Currency()
-                    {
-                        Abbrv = createCurrency.Abbrv,
-                        Name = createCurrency.Name,
-                        CurrencyTypeId = createCurrency.CurrencyTypeId,
-                        CurrencySourceId = createCurrency.CurrencySourceId,
-                        WalletTypeId = createCurrency.WalletTypeId
-                    });
-                    _unitOfWork.Commit(userId);
+                    Abbrv = createCurrency.Abbrv,
+                    Name = createCurrency.Name,
+                    Description = createCurrency.Description,
+                    CurrencyTypeId = createCurrency.CurrencyTypeId,
+                    CurrencySourceId = createCurrency.CurrencySourceId,
+                    WalletTypeId = createCurrency.WalletTypeId,
+                    IsEnabled = createCurrency.IsEnabled
+                };
+                _unitOfWork.GetRepository<Currency>().Add(currency);
+                _unitOfWork.Commit(userId);
 
-                    return new NozomiResult<string>(NozomiResultType.Success, "Currency successfully created!");
-                }
-
-                return new NozomiResult<string>(NozomiResultType.Failed, "Failed to create currency. Please make sure " +
-                                                                         "that your currency object is proper.");
+                return new NozomiResult<string>(NozomiResultType.Success, "Currency successfully created!", currency);
             }
             catch (Exception ex)
             {
