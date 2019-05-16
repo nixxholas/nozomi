@@ -1,5 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using Nozomi.Infra.Analysis.Service.HostedServices;
+using Nozomi.Service.HostedServices;
 using Nozomi.Service.HostedServices.RequestTypes;
 using Nozomi.Service.HostedServices.StaticUpdater;
 using Nozomi.Service.Identity.HostedServices;
@@ -16,6 +17,7 @@ namespace Nozomi.Ticker.StartupExtensions
             // Hosted Services
             services.AddHostedService<HttpGetRequestSyncingService>();
             services.AddHostedService<HttpPostCurrencyPairRequestSyncingService>();
+            services.AddHostedService<NozomiStreamHubHostedService>();
             services.AddHostedService<WebsocketCurrencyPairRequestSyncingService>();
             services.AddHostedService<SourceSyncingService>();
             
