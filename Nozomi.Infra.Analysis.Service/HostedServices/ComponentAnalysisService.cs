@@ -35,21 +35,16 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
         private readonly ICurrencyEvent _currencyEvent;
         private readonly IRequestComponentEvent _requestComponentEvent;
 
-        private readonly IHubContext<NozomiStreamHub, INozomiStreamClient> _nozomiStreamHub;
-
-        public ComponentAnalysisService(IServiceProvider serviceProvider,
-            IHubContext<NozomiStreamHub, INozomiStreamClient> nozomiStreamHub
+        public ComponentAnalysisService(IServiceProvider serviceProvider
             )
             : base(serviceProvider)
         {
             _analysedComponentEvent = _scope.ServiceProvider.GetRequiredService<IAnalysedComponentEvent>();
             _analysedHistoricItemEvent = _scope.ServiceProvider.GetRequiredService<IAnalysedHistoricItemEvent>();
             _analysedComponentService = _scope.ServiceProvider.GetRequiredService<IAnalysedComponentService>();
-            _analysedHistoricItemService = _scope.ServiceProvider.GetRequiredService<IAnalysedHistoricItemService>();
+            _analysedHistoricItemService = _scope.ServiceProvider.GetRequiredService<IAnalysedHistoricItemService>(); 
             _currencyEvent = _scope.ServiceProvider.GetRequiredService<ICurrencyEvent>();
             _requestComponentEvent = _scope.ServiceProvider.GetRequiredService<IRequestComponentEvent>();
-
-            _nozomiStreamHub = nozomiStreamHub;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -69,10 +64,6 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                     {
                         _logger.LogInformation($"[{ServiceName}]" +
                                                " Analysis successful");
-
-                        // Push the updated currency data
-                        await _nozomiStreamHub.Clients.Group(NozomiSocketGroup.Currencies.GetDescription())
-                            .Currencies(_currencyEvent.GetAllDetailed());
                     }
                     else
                     {
