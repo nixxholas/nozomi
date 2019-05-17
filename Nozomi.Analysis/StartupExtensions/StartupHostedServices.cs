@@ -1,6 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Nozomi.Infra.Analysis.Service.HostedServices;
 using Nozomi.Service.HostedServices;
+using Nozomi.Service.HostedServices.RequestTypes;
 
 namespace Nozomi.Analysis.StartupExtensions
 {
@@ -8,6 +9,11 @@ namespace Nozomi.Analysis.StartupExtensions
     {
         public static void ConfigureHostedServices(this IServiceCollection services)
         {
+            // RequestComponent Asyncs
+            services.AddHostedService<HttpGetRequestSyncingService>();
+            services.AddHostedService<HttpPostCurrencyPairRequestSyncingService>();
+            services.AddHostedService<WebsocketCurrencyPairRequestSyncingService>();
+            
             services.AddHostedService<ComponentAnalysisService>();
         }
     }
