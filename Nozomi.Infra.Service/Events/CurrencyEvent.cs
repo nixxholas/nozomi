@@ -534,7 +534,7 @@ namespace Nozomi.Service.Events
         }
 
         public ICollection<DetailedCurrencyResponse> GetAllDetailed(string typeShortForm = "CRYPTO",
-            int daysOfData = 1)
+            int index = 0, int daysOfData = 1)
         {
             // Resultant collection
             var res = new List<DetailedCurrencyResponse>();
@@ -569,6 +569,8 @@ namespace Nozomi.Service.Events
                 .ThenInclude(cp => cp.CurrencyPairRequests)
                 .ThenInclude(cpr => cpr.AnalysedComponents)
                 .ThenInclude(ac => ac.AnalysedHistoricItems)
+                .Skip(20 * index)
+                .Take(20)
                 .Select(c => new Currency
                 {
                     Id = c.Id,
