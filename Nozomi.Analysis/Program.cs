@@ -13,7 +13,7 @@ namespace Nozomi.Analysis
 {
     public class Program
     {
-        public static async Task Main(string[] args)
+        public static void Main(string[] args)
         {
             var webHost = CreateWebHostBuilder(args).Build();
             
@@ -22,7 +22,7 @@ namespace Nozomi.Analysis
 //            {
 //            }
             
-            await webHost.RunAsync();
+            webHost.Run();
         }
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
