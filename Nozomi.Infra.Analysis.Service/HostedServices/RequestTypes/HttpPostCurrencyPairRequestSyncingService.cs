@@ -1,5 +1,4 @@
-﻿using Nozomi.Service.HostedServices.RequestTypes.Interfaces;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -8,22 +7,19 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Nozomi.Base.Core.Helpers.Exponent;
 using Nozomi.Data.Models.Web;
 using Nozomi.Data.Models.Web.Logging;
-using Nozomi.Infra.Preprocessing.SignalR.Hubs.Interfaces;
+using Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes.Interfaces;
 using Nozomi.Preprocessing.Abstracts;
-using Nozomi.Service.Hubs;
 using Nozomi.Service.Services.Interfaces;
 using Nozomi.Service.Services.Requests.Interfaces;
 
-namespace Nozomi.Service.HostedServices.RequestTypes
+namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
 {
     public class HttpPostCurrencyPairRequestSyncingService : BaseHostedService<HttpPostCurrencyPairRequestSyncingService>, 
         IHttpPostCurrencyPairRequestSyncingService

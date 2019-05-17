@@ -1,21 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 using System.Xml;
-using System.Xml.Linq;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.SignalR;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -23,22 +16,14 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Nozomi.Base.Core.Helpers.Enumerator;
 using Nozomi.Base.Core.Helpers.Exponent;
-using Nozomi.Base.Core.Helpers.Native.Collections;
 using Nozomi.Data;
 using Nozomi.Data.Models.Web;
-using Nozomi.Data.Models.Web.Logging;
-using Nozomi.Infra.Preprocessing.SignalR.Hubs.Interfaces;
+using Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes.Interfaces;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.Data;
 using Nozomi.Service.Events.Interfaces;
-using Nozomi.Service.HostedServices.RequestTypes.Interfaces;
-using Nozomi.Service.Hubs;
-using Nozomi.Service.Services;
 using Nozomi.Service.Services.Interfaces;
-using Nozomi.Service.Services.Requests;
 using Nozomi.Service.Services.Requests.Interfaces;
-using StackExchange.Redis;
-using Swashbuckle.AspNetCore.Swagger;
 
 /*
  * HttpGetCurrencyPairRequestSyncingService
@@ -52,7 +37,7 @@ using Swashbuckle.AspNetCore.Swagger;
  *
  * Further development of writing a feature to prevent this limitless API calling will be done.
  */
-namespace Nozomi.Service.HostedServices.RequestTypes
+namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
 {
     public class HttpGetRequestSyncingService : BaseHostedService<HttpGetRequestSyncingService>,
         IHttpGetRequestSyncingService, IHostedService, IDisposable
