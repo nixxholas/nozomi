@@ -4,7 +4,7 @@ using Newtonsoft.Json.Linq;
 using Nozomi.Data.Models.Web;
 using Nozomi.Data.Models.Web.Websocket;
 
-namespace Nozomi.Service.HostedServices.RequestTypes.Interfaces
+namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes.Interfaces
 {
     public interface IWebsocketCurrencyPairRequestSyncingService
     {

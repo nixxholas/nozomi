@@ -2,26 +2,24 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Net.WebSockets;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Nozomi.Base.Core.Helpers.Exponent;
 using Nozomi.Data.Models.Web;
 using Nozomi.Data.Models.Web.Websocket;
+using Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes.Interfaces;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Service.Events.Websocket.Interfaces;
-using Nozomi.Service.HostedServices.RequestTypes.Interfaces;
 using Nozomi.Service.Services.Interfaces;
 using WebSocketSharp;
 using WebSocket = WebSocketSharp.WebSocket;
 
-namespace Nozomi.Service.HostedServices.RequestTypes
+namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
 {
     public class WebsocketCurrencyPairRequestSyncingService :
         BaseHostedService<WebsocketCurrencyPairRequestSyncingService>,

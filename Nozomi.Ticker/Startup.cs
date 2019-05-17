@@ -18,8 +18,6 @@ using Nozomi.Preprocessing.Options;
 using Nozomi.Repo.Data;
 using Nozomi.Repo.Identity.Data;
 using Nozomi.Service.HostedServices;
-using Nozomi.Service.HostedServices.RequestTypes;
-using Nozomi.Service.HostedServices.RequestTypes.Interfaces;
 using Nozomi.Service.HostedServices.StaticUpdater;
 using Nozomi.Service.Hubs;
 using Nozomi.Service.Identity.Stores;
