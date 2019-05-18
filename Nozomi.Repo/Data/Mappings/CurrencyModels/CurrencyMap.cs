@@ -38,6 +38,308 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
             entityTypeBuilder.HasMany(c => c.CurrencyCurrencyPairs).WithOne(pcp => pcp.Currency)
                 .HasForeignKey(pcp => pcp.CurrencyId)
                 .HasConstraintName("Currency_PartialCurrencyPairs_Constraint");
+
+            entityTypeBuilder.HasData(new Currency
+                {
+                    CurrencyTypeId = 1,
+                    Abbrv = "USD",
+                    Name = "United States Dollar",
+                    CurrencySourceId = 1,
+                    WalletTypeId = 0
+                },
+                new Currency
+                {
+                    CurrencyTypeId = 1,
+                    Abbrv = "EUR",
+                    Name = "Euro",
+                    CurrencySourceId = 1,
+                    WalletTypeId = 0
+                },
+                new Currency
+                {
+                    CurrencyTypeId = 2,
+                    Abbrv = "ETH",
+                    Name = "Ethereum",
+                    CurrencySourceId = 1,
+                    WalletTypeId = 1, // As per CNWallet
+                    Denominations = 18,
+                    DenominationName = "Wei",
+//                                        // Calculates mCap ONLY for this exact Currency pair on this exchange.
+//                                        AnalysedComponents = new List<AnalysedComponent>
+//                                        {
+//                                            new AnalysedComponent
+//                                            {
+//                                                ComponentType = AnalysedComponentType.MarketCap,
+//                                                Delay = 1000,
+//                                                UIFormatting = "$ 0 a",
+//                                                CreatedAt = DateTime.UtcNow,
+//                                                ModifiedAt = DateTime.UtcNow,
+//                                                IsDenominated = true,
+//                                                DeletedAt = null
+//                                            }
+//                                        },
+//                                        CurrencyRequests = new List<CurrencyRequest>
+//                                        {
+//                                            new CurrencyRequest
+//                                            {
+//                                                Guid = Guid.NewGuid(),
+//                                                RequestType = RequestType.HttpGet,
+//                                                DataPath = "https://api.etherscan.io/api",
+//                                                Delay = 5000,
+//                                                RequestComponents = new List<RequestComponent>
+//                                                {
+//                                                    new RequestComponent
+//                                                    {
+//                                                        ComponentType = ComponentType.Circulating_Supply,
+//                                                        IsDenominated = true,
+//                                                        QueryComponent = "result",
+//                                                        CreatedAt = DateTime.UtcNow,
+//                                                        ModifiedAt = DateTime.UtcNow,
+//                                                        DeletedAt = null
+//                                                    }
+//                                                },
+//                                                RequestProperties = new List<RequestProperty>
+//                                                {
+//                                                    new RequestProperty
+//                                                    {
+//                                                        RequestPropertyType = RequestPropertyType.HttpHeader_Custom,
+//                                                        Key = "module",
+//                                                        Value = "stats",
+//                                                    },
+//                                                    new RequestProperty
+//                                                    {
+//                                                        RequestPropertyType = RequestPropertyType.HttpHeader_Custom,
+//                                                        Key = "action",
+//                                                        Value = "ethsupply",
+//                                                    },
+//                                                    new RequestProperty
+//                                                    {
+//                                                        RequestPropertyType = RequestPropertyType.HttpHeader_Custom,
+//                                                        Key = "apikey",
+//                                                        Value = "TGAFGMGDKHJ8W2EKI26MJRRWGH44AV9224",
+//                                                    }
+//                                                }
+//                                            }
+//                                        }
+                },
+                new Currency
+                {
+                    CurrencyTypeId = 2,
+                    Abbrv = "KNC",
+                    Name = "Kyber Network Crystal",
+                    CurrencySourceId = 1,
+                    Denominations = 18,
+                    WalletTypeId = 4, // As per CNWallet
+//                                        // Calculates mCap ONLY for this exact Currency pair on this exchange.
+//                                        AnalysedComponents = new List<AnalysedComponent>
+//                                        {
+//                                            new AnalysedComponent
+//                                            {
+//                                                ComponentType = AnalysedComponentType.MarketCap,
+//                                                Delay = 1000,
+//                                                CreatedAt = DateTime.UtcNow,
+//                                                ModifiedAt = DateTime.UtcNow,
+//                                                IsDenominated = true,
+//                                                DeletedAt = null
+//                                            }
+//                                        },
+//                                        CurrencyRequests = new List<CurrencyRequest>
+//                                        {
+//                                            new CurrencyRequest
+//                                            {
+//                                                Guid = Guid.NewGuid(),
+//                                                RequestType = RequestType.HttpGet,
+//                                                DataPath = "https://api.etherscan.io/api",
+//                                                Delay = 5000,
+//                                                RequestComponents = new List<RequestComponent>
+//                                                {
+//                                                    new RequestComponent
+//                                                    {
+//                                                        ComponentType = ComponentType.Circulating_Supply,
+//                                                        IsDenominated = true,
+//                                                        QueryComponent = "result",
+//                                                        CreatedAt = DateTime.UtcNow,
+//                                                        ModifiedAt = DateTime.UtcNow,
+//                                                        DeletedAt = null
+//                                                    }
+//                                                },
+//                                                RequestProperties = new List<RequestProperty>
+//                                                {
+//                                                    new RequestProperty
+//                                                    {
+//                                                        RequestPropertyType = RequestPropertyType.HttpHeader_Custom,
+//                                                        Key = "module",
+//                                                        Value = "stats",
+//                                                    },
+//                                                    new RequestProperty
+//                                                    {
+//                                                        RequestPropertyType = RequestPropertyType.HttpHeader_Custom,
+//                                                        Key = "action",
+//                                                        Value = "tokensupply",
+//                                                    },
+//                                                    new RequestProperty
+//                                                    {
+//                                                        RequestPropertyType = RequestPropertyType.HttpHeader_Custom,
+//                                                        Key = "apikey",
+//                                                        Value = "TGAFGMGDKHJ8W2EKI26MJRRWGH44AV9224",
+//                                                    }
+//                                                }
+//                                            },
+//                                        }
+                },
+                new Currency
+                {
+                    CurrencyTypeId = 2,
+                    Abbrv = "KNC",
+                    Name = "Kyber Network Crystal",
+                    CurrencySourceId = 3,
+                    WalletTypeId = 4 // As per CNWallet
+                },
+                new Currency
+                {
+                    CurrencyTypeId = 2,
+                    Abbrv = "ETH",
+                    Name = "Ethereum",
+                    CurrencySourceId = 3,
+                    WalletTypeId = 1, // As per CNWallet
+                    Denominations = 18,
+                    DenominationName = "Wei",
+                },
+                new Currency
+                {
+                    CurrencyTypeId = 2,
+                    Abbrv = "BTC",
+                    Name = "Bitcoin",
+                    CurrencySourceId = 3,
+                    WalletTypeId = 0, // As per CNWallet
+                    Denominations = 8,
+                    DenominationName = "Sat"
+                },
+                new Currency
+                {
+                    CurrencyTypeId = 1,
+                    Abbrv = "EUR",
+                    Name = "Euro",
+                    CurrencySourceId = 4,
+                    WalletTypeId = 0
+                },
+                new Currency
+                {
+                    CurrencyTypeId = 1,
+                    Abbrv = "USD",
+                    Name = "United States Dollar",
+                    CurrencySourceId = 4,
+                    WalletTypeId = 0
+                },
+                new Currency
+                {
+                    CurrencyTypeId = 1,
+                    Abbrv = "EUR",
+                    Name = "Euro",
+                    CurrencySourceId = 5,
+                    WalletTypeId = 0
+                },
+                new Currency
+                {
+                    CurrencyTypeId = 1,
+                    Abbrv = "USD",
+                    Name = "United States Dollar",
+                    CurrencySourceId = 5,
+                    WalletTypeId = 0
+                },
+                new Currency
+                {
+                    CurrencyTypeId = 2,
+                    Abbrv = "BTC",
+                    Name = "Bitcoin",
+                    CurrencySourceId = 6,
+                    WalletTypeId = 0,
+                    Denominations = 8,
+                    DenominationName = "Sat",
+//                    AnalysedComponents = new List<AnalysedComponent>()
+//                    {
+//                        new AnalysedComponent
+//                        {
+//                            ComponentType = AnalysedComponentType.MarketCap,
+//                            Delay = 500,
+//                            UIFormatting = "$ 0 a",
+//                            CreatedAt = DateTime.UtcNow,
+//                            ModifiedAt = DateTime.UtcNow,
+//                            DeletedAt = null
+//                        }
+//                    },
+//                    CurrencyRequests = new List<CurrencyRequest>()
+//                    {
+//                        new CurrencyRequest
+//                        {
+//                            Guid = Guid.NewGuid(),
+//                            RequestType = RequestType.HttpGet,
+//                            DataPath = "https://insight.bitpay.com/api/status?q=getBlockCount",
+//                            Delay = 90000,
+//                            RequestComponents = new List<RequestComponent>
+//                            {
+//                                new RequestComponent
+//                                {
+//                                    ComponentType = ComponentType.BlockCount,
+//                                    QueryComponent = "info/blocks",
+//                                    CreatedAt = DateTime.UtcNow,
+//                                    ModifiedAt = DateTime.UtcNow,
+//                                    DeletedAt = null
+//                                },
+//                                new RequestComponent
+//                                {
+//                                    ComponentType = ComponentType.Difficulty,
+//                                    QueryComponent = "info/difficulty",
+//                                    CreatedAt = DateTime.UtcNow,
+//                                    ModifiedAt = DateTime.UtcNow,
+//                                    DeletedAt = null
+//                                }
+//                            }
+//                        },
+//                        new CurrencyRequest
+//                        {
+//                            Guid = Guid.NewGuid(),
+//                            RequestType = RequestType.HttpGet,
+//                            DataPath = "https://api.coinranking.com/v1/public/coin/1?base=USD",
+//                            Delay = 90000,
+//                            RequestComponents = new List<RequestComponent>
+//                            {
+//                                new RequestComponent
+//                                {
+//                                    ComponentType = ComponentType.Circulating_Supply,
+//                                    QueryComponent = "data/coin/circulatingSupply",
+//                                    CreatedAt = DateTime.UtcNow,
+//                                    ModifiedAt = DateTime.UtcNow,
+//                                    DeletedAt = null
+//                                }
+//                            }
+//                        }
+//                    }
+                },
+                new Currency
+                {
+                    CurrencyTypeId = 2,
+                    Abbrv = "BCN",
+                    Name = "Bytecoin",
+                    CurrencySourceId = 6,
+                    WalletTypeId = 0
+                },
+                new Currency
+                {
+                    CurrencyTypeId = 2,
+                    Abbrv = "BTS",
+                    Name = "BitShares",
+                    CurrencySourceId = 6,
+                    WalletTypeId = 0
+                },
+                new Currency
+                {
+                    CurrencyTypeId = 1,
+                    Abbrv = "USDT",
+                    Name = "Tether USD",
+                    CurrencySourceId = 6,
+                    WalletTypeId = 0
+                });
         }
     }
 }

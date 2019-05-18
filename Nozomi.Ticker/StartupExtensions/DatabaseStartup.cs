@@ -151,321 +151,6 @@ namespace Nozomi.Ticker.StartupExtensions
                         var avgSource = context.Sources.SingleOrDefault(s => s.Abbreviation.Equals("AVG"));
                         var poloSource = context.Sources.SingleOrDefault(s => s.Abbreviation.Equals("POLO"));
 
-                        if (!context.Currencies.Any() && context.CurrencyTypes.Any())
-                        {
-                            var fiatType = context.CurrencyTypes.SingleOrDefault(ct => ct.TypeShortForm.Equals("FIAT"));
-                            var cryptoType =
-                                context.CurrencyTypes.SingleOrDefault(ct => ct.TypeShortForm.Equals("CRYPTO"));
-
-                            if (fiatType != null && cryptoType != null && bfxSource != null && bnaSource != null
-                                && ecbSource != null && avgSource != null)
-                                context.Currencies.AddRange(
-                                    new Currency
-                                    {
-                                        CurrencyTypeId = fiatType.Id,
-                                        Abbrv = "USD",
-                                        Name = "United States Dollar",
-                                        CurrencySourceId = bfxSource.Id,
-                                        WalletTypeId = 0
-                                    },
-                                    new Currency
-                                    {
-                                        CurrencyTypeId = fiatType.Id,
-                                        Abbrv = "EUR",
-                                        Name = "Euro",
-                                        CurrencySourceId = bfxSource.Id,
-                                        WalletTypeId = 0
-                                    },
-                                    new Currency
-                                    {
-                                        CurrencyTypeId = cryptoType.Id,
-                                        Abbrv = "ETH",
-                                        Name = "Ethereum",
-                                        CurrencySourceId = bfxSource.Id,
-                                        WalletTypeId = 1, // As per CNWallet
-                                        Denominations = 18,
-                                        DenominationName = "Wei",
-                                        // Calculates mCap ONLY for this exact Currency pair on this exchange.
-                                        AnalysedComponents = new List<AnalysedComponent>
-                                        {
-                                            new AnalysedComponent
-                                            {
-                                                ComponentType = AnalysedComponentType.MarketCap,
-                                                Delay = 1000,
-                                                UIFormatting = "$ 0 a",
-                                                CreatedAt = DateTime.UtcNow,
-                                                ModifiedAt = DateTime.UtcNow,
-                                                IsDenominated = true,
-                                                DeletedAt = null
-                                            }
-                                        },
-                                        CurrencyRequests = new List<CurrencyRequest>
-                                        {
-                                            new CurrencyRequest
-                                            {
-                                                Guid = Guid.NewGuid(),
-                                                RequestType = RequestType.HttpGet,
-                                                DataPath = "https://api.etherscan.io/api",
-                                                Delay = 5000,
-                                                RequestComponents = new List<RequestComponent>
-                                                {
-                                                    new RequestComponent
-                                                    {
-                                                        ComponentType = ComponentType.Circulating_Supply,
-                                                        IsDenominated = true,
-                                                        QueryComponent = "result",
-                                                        CreatedAt = DateTime.UtcNow,
-                                                        ModifiedAt = DateTime.UtcNow,
-                                                        DeletedAt = null
-                                                    }
-                                                },
-                                                RequestProperties = new List<RequestProperty>
-                                                {
-                                                    new RequestProperty
-                                                    {
-                                                        RequestPropertyType = RequestPropertyType.HttpHeader_Custom,
-                                                        Key = "module",
-                                                        Value = "stats",
-                                                    },
-                                                    new RequestProperty
-                                                    {
-                                                        RequestPropertyType = RequestPropertyType.HttpHeader_Custom,
-                                                        Key = "action",
-                                                        Value = "ethsupply",
-                                                    },
-                                                    new RequestProperty
-                                                    {
-                                                        RequestPropertyType = RequestPropertyType.HttpHeader_Custom,
-                                                        Key = "apikey",
-                                                        Value = "TGAFGMGDKHJ8W2EKI26MJRRWGH44AV9224",
-                                                    }
-                                                }
-                                            },
-                                        }
-                                    },
-                                    new Currency
-                                    {
-                                        CurrencyTypeId = cryptoType.Id,
-                                        Abbrv = "KNC",
-                                        Name = "Kyber Network Crystal",
-                                        CurrencySourceId = bfxSource.Id,
-                                        Denominations = 18,
-                                        WalletTypeId = 4, // As per CNWallet
-                                        // Calculates mCap ONLY for this exact Currency pair on this exchange.
-                                        AnalysedComponents = new List<AnalysedComponent>
-                                        {
-                                            new AnalysedComponent
-                                            {
-                                                ComponentType = AnalysedComponentType.MarketCap,
-                                                Delay = 1000,
-                                                CreatedAt = DateTime.UtcNow,
-                                                ModifiedAt = DateTime.UtcNow,
-                                                IsDenominated = true,
-                                                DeletedAt = null
-                                            }
-                                        },
-                                        CurrencyRequests = new List<CurrencyRequest>
-                                        {
-                                            new CurrencyRequest
-                                            {
-                                                Guid = Guid.NewGuid(),
-                                                RequestType = RequestType.HttpGet,
-                                                DataPath = "https://api.etherscan.io/api",
-                                                Delay = 5000,
-                                                RequestComponents = new List<RequestComponent>
-                                                {
-                                                    new RequestComponent
-                                                    {
-                                                        ComponentType = ComponentType.Circulating_Supply,
-                                                        IsDenominated = true,
-                                                        QueryComponent = "result",
-                                                        CreatedAt = DateTime.UtcNow,
-                                                        ModifiedAt = DateTime.UtcNow,
-                                                        DeletedAt = null
-                                                    }
-                                                },
-                                                RequestProperties = new List<RequestProperty>
-                                                {
-                                                    new RequestProperty
-                                                    {
-                                                        RequestPropertyType = RequestPropertyType.HttpHeader_Custom,
-                                                        Key = "module",
-                                                        Value = "stats",
-                                                    },
-                                                    new RequestProperty
-                                                    {
-                                                        RequestPropertyType = RequestPropertyType.HttpHeader_Custom,
-                                                        Key = "action",
-                                                        Value = "tokensupply",
-                                                    },
-                                                    new RequestProperty
-                                                    {
-                                                        RequestPropertyType = RequestPropertyType.HttpHeader_Custom,
-                                                        Key = "apikey",
-                                                        Value = "TGAFGMGDKHJ8W2EKI26MJRRWGH44AV9224",
-                                                    }
-                                                }
-                                            },
-                                        }
-                                    },
-                                    new Currency
-                                    {
-                                        CurrencyTypeId = cryptoType.Id,
-                                        Abbrv = "KNC",
-                                        Name = "Kyber Network Crystal",
-                                        CurrencySourceId = bnaSource.Id,
-                                        WalletTypeId = 4 // As per CNWallet
-                                    },
-                                    new Currency
-                                    {
-                                        CurrencyTypeId = cryptoType.Id,
-                                        Abbrv = "ETH",
-                                        Name = "Ethereum",
-                                        CurrencySourceId = bnaSource.Id,
-                                        WalletTypeId = 1, // As per CNWallet
-                                        Denominations = 18,
-                                        DenominationName = "Wei",
-                                    },
-                                    new Currency
-                                    {
-                                        CurrencyTypeId = cryptoType.Id,
-                                        Abbrv = "BTC",
-                                        Name = "Bitcoin",
-                                        CurrencySourceId = bnaSource.Id,
-                                        WalletTypeId = 0, // As per CNWallet
-                                        Denominations = 8,
-                                        DenominationName = "Sat"
-                                    },
-                                    new Currency
-                                    {
-                                        CurrencyTypeId = fiatType.Id,
-                                        Abbrv = "EUR",
-                                        Name = "Euro",
-                                        CurrencySourceId = ecbSource.Id,
-                                        WalletTypeId = 0
-                                    },
-                                    new Currency
-                                    {
-                                        CurrencyTypeId = fiatType.Id,
-                                        Abbrv = "USD",
-                                        Name = "United States Dollar",
-                                        CurrencySourceId = ecbSource.Id,
-                                        WalletTypeId = 0
-                                    },
-                                    new Currency
-                                    {
-                                        CurrencyTypeId = fiatType.Id,
-                                        Abbrv = "EUR",
-                                        Name = "Euro",
-                                        CurrencySourceId = avgSource.Id,
-                                        WalletTypeId = 0
-                                    },
-                                    new Currency
-                                    {
-                                        CurrencyTypeId = fiatType.Id,
-                                        Abbrv = "USD",
-                                        Name = "United States Dollar",
-                                        CurrencySourceId = avgSource.Id,
-                                        WalletTypeId = 0
-                                    },
-                                    new Currency
-                                    {
-                                        CurrencyTypeId = cryptoType.Id,
-                                        Abbrv = "BTC",
-                                        Name = "Bitcoin",
-                                        CurrencySourceId = poloSource.Id,
-                                        WalletTypeId = 0,
-                                        Denominations = 8,
-                                        DenominationName = "Sat",
-                                        AnalysedComponents = new List<AnalysedComponent>()
-                                        {
-                                            new AnalysedComponent
-                                            {
-                                                ComponentType = AnalysedComponentType.MarketCap,
-                                                Delay = 500,
-                                                UIFormatting = "$ 0 a",
-                                                CreatedAt = DateTime.UtcNow,
-                                                ModifiedAt = DateTime.UtcNow,
-                                                DeletedAt = null
-                                            }
-                                        },
-                                        CurrencyRequests = new List<CurrencyRequest>()
-                                        {
-                                            new CurrencyRequest
-                                            {
-                                                Guid = Guid.NewGuid(),
-                                                RequestType = RequestType.HttpGet,
-                                                DataPath = "https://insight.bitpay.com/api/status?q=getBlockCount",
-                                                Delay = 90000,
-                                                RequestComponents = new List<RequestComponent>
-                                                {
-                                                    new RequestComponent
-                                                    {
-                                                        ComponentType = ComponentType.BlockCount,
-                                                        QueryComponent = "info/blocks",
-                                                        CreatedAt = DateTime.UtcNow,
-                                                        ModifiedAt = DateTime.UtcNow,
-                                                        DeletedAt = null
-                                                    },
-                                                    new RequestComponent
-                                                    {
-                                                        ComponentType = ComponentType.Difficulty,
-                                                        QueryComponent = "info/difficulty",
-                                                        CreatedAt = DateTime.UtcNow,
-                                                        ModifiedAt = DateTime.UtcNow,
-                                                        DeletedAt = null
-                                                    }
-                                                }
-                                            },
-                                            new CurrencyRequest
-                                            {
-                                                Guid = Guid.NewGuid(),
-                                                RequestType = RequestType.HttpGet,
-                                                DataPath = "https://api.coinranking.com/v1/public/coin/1?base=USD",
-                                                Delay = 90000,
-                                                RequestComponents = new List<RequestComponent>
-                                                {
-                                                    new RequestComponent
-                                                    {
-                                                        ComponentType = ComponentType.Circulating_Supply,
-                                                        QueryComponent = "data/coin/circulatingSupply",
-                                                        CreatedAt = DateTime.UtcNow,
-                                                        ModifiedAt = DateTime.UtcNow,
-                                                        DeletedAt = null
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    },
-                                    new Currency
-                                    {
-                                        CurrencyTypeId = cryptoType.Id,
-                                        Abbrv = "BCN",
-                                        Name = "Bytecoin",
-                                        CurrencySourceId = poloSource.Id,
-                                        WalletTypeId = 0
-                                    },
-                                    new Currency
-                                    {
-                                        CurrencyTypeId = cryptoType.Id,
-                                        Abbrv = "BTS",
-                                        Name = "BitShares",
-                                        CurrencySourceId = poloSource.Id,
-                                        WalletTypeId = 0
-                                    },
-                                    new Currency
-                                    {
-                                        CurrencyTypeId = fiatType.Id,
-                                        Abbrv = "USDT",
-                                        Name = "Tether USD",
-                                        CurrencySourceId = poloSource.Id,
-                                        WalletTypeId = 0
-                                    }
-                                );
-
-                            context.SaveChanges();
-                        }
-
                         if (context.Currencies.Any())
                         {
                             var usdBfx = context.Currencies.Include(c => c.CurrencySource)
@@ -538,7 +223,7 @@ namespace Nozomi.Ticker.StartupExtensions
                                         CurrencyPairType = CurrencyPairType.TRADEABLE,
                                         APIUrl = "https://api.ethfinex.com/v2/ticker/tETHUSD",
                                         DefaultComponent = "0",
-                                        CurrencySourceId = bfxSource.Id,
+                                        CurrencySourceId = 1,
                                         MainCurrency = ethBfx.Abbrv,
                                         CounterCurrency = usdBfx.Abbrv,
                                         CurrencyPairCurrencies = new List<CurrencyCurrencyPair>
@@ -558,7 +243,7 @@ namespace Nozomi.Ticker.StartupExtensions
                                         CurrencyPairType = CurrencyPairType.TRADEABLE,
                                         APIUrl = "https://api.ethfinex.com/v2/ticker/tKNCUSD",
                                         DefaultComponent = "0",
-                                        CurrencySourceId = bfxSource.Id,
+                                        CurrencySourceId = 1,
                                         MainCurrency = kncBfx.Abbrv,
                                         CounterCurrency = usdBfx.Abbrv,
                                         CurrencyPairCurrencies = new List<CurrencyCurrencyPair>
@@ -578,7 +263,7 @@ namespace Nozomi.Ticker.StartupExtensions
                                         CurrencyPairType = CurrencyPairType.TRADEABLE,
                                         APIUrl = "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml",
                                         DefaultComponent = "Cube",
-                                        CurrencySourceId = ecbSource.Id,
+                                        CurrencySourceId = 4,
                                         MainCurrency = eurECB.Abbrv,
                                         CounterCurrency = usdECB.Abbrv,
                                         CurrencyPairCurrencies = new List<CurrencyCurrencyPair>
@@ -598,7 +283,7 @@ namespace Nozomi.Ticker.StartupExtensions
                                         CurrencyPairType = CurrencyPairType.TRADEABLE,
                                         APIUrl = "https://www.alphavantage.co/query",
                                         DefaultComponent = "Realtime Currency Exchange Rate/5. Exchange Rate",
-                                        CurrencySourceId = avgSource.Id,
+                                        CurrencySourceId = 5,
                                         MainCurrency = eurAVG.Abbrv,
                                         CounterCurrency = usdAVG.Abbrv,
                                         CurrencyPairCurrencies = new List<CurrencyCurrencyPair>
@@ -618,7 +303,7 @@ namespace Nozomi.Ticker.StartupExtensions
                                         CurrencyPairType = CurrencyPairType.EXCHANGEABLE,
                                         APIUrl = "https://poloniex.com/public?command=returnTicker",
                                         DefaultComponent = "BTC_BCN/lowestAsk",
-                                        CurrencySourceId = poloSource.Id,
+                                        CurrencySourceId = 6,
                                         MainCurrency = btcPOLO.Abbrv,
                                         CounterCurrency = bcnPOLO.Abbrv,
                                         CurrencyPairCurrencies = new List<CurrencyCurrencyPair>
@@ -638,7 +323,7 @@ namespace Nozomi.Ticker.StartupExtensions
                                         CurrencyPairType = CurrencyPairType.EXCHANGEABLE,
                                         APIUrl = "https://poloniex.com/public?command=returnTicker",
                                         DefaultComponent = "BTC_BTS/lowestAsk",
-                                        CurrencySourceId = poloSource.Id,
+                                        CurrencySourceId = 6,
                                         MainCurrency = btcPOLO.Abbrv,
                                         CounterCurrency = btsPOLO.Abbrv,
                                         CurrencyPairCurrencies = new List<CurrencyCurrencyPair>
@@ -658,7 +343,7 @@ namespace Nozomi.Ticker.StartupExtensions
                                         CurrencyPairType = CurrencyPairType.TRADEABLE,
                                         APIUrl = "https://api.bitfinex.com/v1/pubticker/etheur",
                                         DefaultComponent = "0",
-                                        CurrencySourceId = bfxSource.Id,
+                                        CurrencySourceId = 1,
                                         MainCurrency = ethBfx.Abbrv,
                                         CounterCurrency = eurBfx.Abbrv,
                                         CurrencyPairCurrencies = new List<CurrencyCurrencyPair>
@@ -678,7 +363,7 @@ namespace Nozomi.Ticker.StartupExtensions
                                         CurrencyPairType = CurrencyPairType.EXCHANGEABLE,
                                         APIUrl = "https://poloniex.com/public?command=returnTicker",
                                         DefaultComponent = "USDT_BTC/lowestAsk",
-                                        CurrencySourceId = poloSource.Id,
+                                        CurrencySourceId = 6,
                                         MainCurrency = btcPOLO.Abbrv,
                                         CounterCurrency = usdtPOLO.Abbrv,
                                         CurrencyPairCurrencies = new List<CurrencyCurrencyPair>
@@ -1266,7 +951,7 @@ namespace Nozomi.Ticker.StartupExtensions
                                             CurrencyPairType = CurrencyPairType.EXCHANGEABLE,
                                             APIUrl = "wss://stream.binance.com:9443/stream?streams=!ticker@arr",
                                             DefaultComponent = "b",
-                                            CurrencySourceId = bnaSource.Id,
+                                            CurrencySourceId = 3,
                                             CurrencyPairCurrencies = new List<CurrencyCurrencyPair>
                                             {
                                                 new CurrencyCurrencyPair
@@ -1332,7 +1017,7 @@ namespace Nozomi.Ticker.StartupExtensions
                                             CurrencyPairType = CurrencyPairType.EXCHANGEABLE,
                                             APIUrl = "wss://stream.binance.com:9443/stream?streams=!ticker@arr",
                                             DefaultComponent = "b",
-                                            CurrencySourceId = bnaSource.Id,
+                                            CurrencySourceId = 3,
                                             CurrencyPairCurrencies = new List<CurrencyCurrencyPair>
                                             {
                                                 new CurrencyCurrencyPair
