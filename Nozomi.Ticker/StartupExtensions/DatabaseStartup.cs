@@ -143,50 +143,6 @@ namespace Nozomi.Ticker.StartupExtensions
 
                     context.Database.Migrate();
 
-                    if (!context.Sources.Any())
-                    {
-                        context.AddRange(
-                            new Source()
-                            {
-                                Abbreviation = "BFX",
-                                Name = "Bitfinex",
-                                APIDocsURL = "https://docs.bitfinex.com/docs/introduction"
-                            },
-                            new Source()
-                            {
-                                Abbreviation = "HAKO",
-                                Name = "Coinhako",
-                                APIDocsURL = "None"
-                            },
-                            new Source()
-                            {
-                                Abbreviation = "BNA",
-                                Name = "Binance",
-                                APIDocsURL =
-                                    "https://github.com/binance-exchange/binance-official-api-docs/blob/master/rest-api.md"
-                            },
-                            new Source()
-                            {
-                                Abbreviation = "ECB",
-                                Name = "European Central Bank",
-                                APIDocsURL =
-                                    "https://www.ecb.europa.eu/stats/policy_and_exchange_rates/euro_reference_exchange_rates/html/index.en.html"
-                            },
-                            new Source()
-                            {
-                                Abbreviation = "AVG",
-                                Name = "AlphaVantage",
-                                APIDocsURL = "https://www.alphavantage.co/documentation/"
-                            },
-                            new Source
-                            {
-                                Abbreviation = "POLO",
-                                Name = "Poloniex",
-                                APIDocsURL = "https://docs.poloniex.com/#public-http-api-methods"
-                            });
-                        context.SaveChanges();
-                    }
-
                     if (context.Sources.Any())
                     {
                         var bfxSource = context.Sources.SingleOrDefault(s => s.Abbreviation.Equals("BFX"));
