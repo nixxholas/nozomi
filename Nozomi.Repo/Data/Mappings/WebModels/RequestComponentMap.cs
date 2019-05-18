@@ -316,6 +316,86 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
                     ModifiedAt = DateTime.UtcNow,
                     DeletedAt = null,
                     RequestId = 12
+                },
+                new RequestComponent
+                {
+                    Id = 29,
+                    ComponentType = ComponentType.VOLUME,
+                    Identifier = "data/s=>ETHBTC",
+                    QueryComponent = "v",
+                    RequestId = 13
+                },
+                new RequestComponent
+                {
+                    Id = 30,
+                    ComponentType = ComponentType.Ask,
+                    Identifier = "data/s=>ETHBTC",
+                    QueryComponent = "a",
+                    RequestId = 13
+                },
+                new RequestComponent
+                {
+                    Id = 31,
+                    ComponentType = ComponentType.Ask_Size,
+                    Identifier = "data/s=>ETHBTC",
+                    QueryComponent = "A",
+                    RequestId = 13
+                },
+                new RequestComponent
+                {
+                    Id = 32,
+                    ComponentType = ComponentType.Bid,
+                    Identifier = "data/s=>ETHBTC",
+                    QueryComponent = "b",
+                    RequestId = 13
+                },
+                new RequestComponent
+                {
+                    Id = 33,
+                    ComponentType = ComponentType.Bid_Size,
+                    Identifier = "data/s=>ETHBTC",
+                    QueryComponent = "B",
+                    RequestId = 13
+                },
+                new RequestComponent
+                {
+                    Id = 34,
+                    ComponentType = ComponentType.VOLUME,
+                    Identifier = "data/s=>KNCETH",
+                    QueryComponent = "v",
+                    RequestId = 14
+                },
+                new RequestComponent
+                {
+                    Id = 35,
+                    ComponentType = ComponentType.Ask,
+                    Identifier = "data/s=>KNCETH",
+                    QueryComponent = "a",
+                    RequestId = 14
+                },
+                new RequestComponent
+                {
+                    Id = 36,
+                    ComponentType = ComponentType.Ask_Size,
+                    Identifier = "data/s=>KNCETH",
+                    QueryComponent = "A",
+                    RequestId = 14
+                },
+                new RequestComponent
+                {
+                    Id = 37,
+                    ComponentType = ComponentType.Bid,
+                    Identifier = "data/s=>KNCETH",
+                    QueryComponent = "b",
+                    RequestId = 14
+                },
+                new RequestComponent
+                {
+                    Id = 38,
+                    ComponentType = ComponentType.Bid_Size,
+                    Identifier = "data/s=>KNCETH",
+                    QueryComponent = "B",
+                    RequestId = 14
                 }
             );
         }

@@ -28,40 +28,7 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.WebsocketModels
                     RequestType = RequestType.WebSocket,
                     ResponseType = ResponseType.Json,
                     DataPath = "wss://stream.binance.com:9443/stream?streams=!ticker@arr",
-                    Delay = 0,
-                    RequestComponents = new List<RequestComponent>()
-                    {
-                        new RequestComponent
-                        {
-                            ComponentType = ComponentType.VOLUME,
-                            Identifier = "data/s=>ETHBTC",
-                            QueryComponent = "v"
-                        },
-                        new RequestComponent
-                        {
-                            ComponentType = ComponentType.Ask,
-                            Identifier = "data/s=>ETHBTC",
-                            QueryComponent = "a"
-                        },
-                        new RequestComponent
-                        {
-                            ComponentType = ComponentType.Ask_Size,
-                            Identifier = "data/s=>ETHBTC",
-                            QueryComponent = "A"
-                        },
-                        new RequestComponent
-                        {
-                            ComponentType = ComponentType.Bid,
-                            Identifier = "data/s=>ETHBTC",
-                            QueryComponent = "b"
-                        },
-                        new RequestComponent
-                        {
-                            ComponentType = ComponentType.Bid_Size,
-                            Identifier = "data/s=>ETHBTC",
-                            QueryComponent = "B"
-                        }
-                    }
+                    Delay = 0
                 },
                 new WebsocketRequest
                 {
@@ -72,40 +39,7 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.WebsocketModels
                     ResponseType = ResponseType.Json,
                     DataPath = "wss://stream.binance.com:9443/stream?streams=!ticker@arr",
                     Delay = 0,
-                    WebsocketCommands = new List<WebsocketCommand>(),
-                    RequestComponents = new List<RequestComponent>()
-                    {
-                        new RequestComponent
-                        {
-                            ComponentType = ComponentType.VOLUME,
-                            Identifier = "data/s=>KNCETH",
-                            QueryComponent = "v"
-                        },
-                        new RequestComponent
-                        {
-                            ComponentType = ComponentType.Ask,
-                            Identifier = "data/s=>KNCETH",
-                            QueryComponent = "a"
-                        },
-                        new RequestComponent
-                        {
-                            ComponentType = ComponentType.Ask_Size,
-                            Identifier = "data/s=>KNCETH",
-                            QueryComponent = "A"
-                        },
-                        new RequestComponent
-                        {
-                            ComponentType = ComponentType.Bid,
-                            Identifier = "data/s=>KNCETH",
-                            QueryComponent = "b"
-                        },
-                        new RequestComponent
-                        {
-                            ComponentType = ComponentType.Bid_Size,
-                            Identifier = "data/s=>KNCETH",
-                            QueryComponent = "B"
-                        }
-                    }
+                    WebsocketCommands = new List<WebsocketCommand>()
                 }
             );
         }
