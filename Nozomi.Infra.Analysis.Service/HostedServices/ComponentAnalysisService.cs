@@ -681,16 +681,19 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                                                     ?? "0");
                                     var oldestValue = decimal.Parse(historicItems.Last().Value ?? "0");
 
-                                    // Calculate the increase
-                                    var increase = (latestValue - oldestValue) / oldestValue * 100;
-
-                                    // Now we can aggregate this
-                                    if (increase != decimal.Zero)
+                                    if (latestValue > decimal.Zero && oldestValue > decimal.Zero)
                                     {
-                                        if (_analysedComponentService.UpdateValue(component.Id,
-                                            increase.ToString(CultureInfo.InvariantCulture)))
+                                        // Calculate the increase
+                                        var increase = (latestValue - oldestValue) / oldestValue * 100;
+
+                                        // Now we can aggregate this
+                                        if (increase != decimal.Zero)
                                         {
-                                            // Updated successfully
+                                            if (_analysedComponentService.UpdateValue(component.Id,
+                                                increase.ToString(CultureInfo.InvariantCulture)))
+                                            {
+                                                // Updated successfully
+                                            }
                                         }
                                     }
                                 }
@@ -724,16 +727,19 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                                                     ?? "0");
                                     var oldestValue = decimal.Parse(historicItems.Last().Value ?? "0");
 
-                                    // Calculate the increase
-                                    var increase = (latestValue - oldestValue) / oldestValue * 100;
-
-                                    // Now we can aggregate this
-                                    if (increase != decimal.Zero)
+                                    if (latestValue > decimal.Zero && oldestValue > decimal.Zero)
                                     {
-                                        if (_analysedComponentService.UpdateValue(component.Id,
-                                            increase.ToString(CultureInfo.InvariantCulture)))
+                                        // Calculate the increase
+                                        var increase = (latestValue - oldestValue) / oldestValue * 100;
+
+                                        // Now we can aggregate this
+                                        if (increase != decimal.Zero)
                                         {
-                                            // Updated successfully
+                                            if (_analysedComponentService.UpdateValue(component.Id,
+                                                increase.ToString(CultureInfo.InvariantCulture)))
+                                            {
+                                                // Updated successfully
+                                            }
                                         }
                                     }
                                 }
