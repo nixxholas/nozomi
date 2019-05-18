@@ -238,6 +238,28 @@ namespace Nozomi.Infra.Analysis.Service.Events.Analysis
                 .ToList();
         }
 
+        public ICollection<AnalysedComponent> GetAllByCurrencyType(long currencyTypeId, bool track = false)
+        {
+            if (currencyTypeId > 0)
+            {
+                var components = _unitOfWork.GetRepository<AnalysedComponent>()
+                    .GetQueryable()
+                    .Where(ac => ac.CurrencyTypeId.Equals(currencyTypeId));
+
+                if (track)
+                {
+                    components.Include(ac => ac.CurrencyType)
+                        .ThenInclude(ct => ct.Currencies)
+                        .ThenInclude(c => c.AnalysedComponents)
+                        .Include(ac => ac.AnalysedHistoricItems);
+                }
+
+                return components.ToList();
+            }
+
+            return null;
+        }
+
         public ICollection<AnalysedComponent> GetAllByCorrelation(long analysedComponentId, bool track = false)
         {
             // First, obtain the correlation PCPs
