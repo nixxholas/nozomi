@@ -139,9 +139,13 @@ namespace Nozomi.Ticker.StartupExtensions
                     if (env.IsDevelopment())
                     {
                         context.Database.EnsureDeleted();
-                    }
 
-                    context.Database.Migrate();
+                        context.Database.EnsureCreated();
+                    }
+                    else
+                    {
+                        context.Database.Migrate();
+                    }
                 }
             }
         }
