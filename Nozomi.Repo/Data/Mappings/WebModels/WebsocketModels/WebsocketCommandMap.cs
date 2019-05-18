@@ -14,7 +14,7 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.WebsocketModels
 
             entityTypeBuilder.Property(wsc => wsc.CommandType).IsRequired();
             entityTypeBuilder.Property(wsc => wsc.Name).IsRequired(false);
-            entityTypeBuilder.Property(wsc => wsc.Delay).HasDefaultValue(0).IsRequired(false);
+            entityTypeBuilder.Property(wsc => wsc.Delay).HasDefaultValue(0);
 
             entityTypeBuilder.HasOne(wsc => wsc.WebsocketRequest)
                 .WithMany(wsr => wsr.WebsocketCommands).HasForeignKey(wsc => wsc.WebsocketRequestId);

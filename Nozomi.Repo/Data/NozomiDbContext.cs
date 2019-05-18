@@ -17,6 +17,7 @@ using Nozomi.Repo.Data.Mappings.CurrencyModels;
 using Nozomi.Repo.Data.Mappings.WebModels;
 using Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels;
 using Nozomi.Repo.Data.Mappings.WebModels.LoggingModels;
+using Nozomi.Repo.Data.Mappings.WebModels.WebsocketModels;
 
 namespace Nozomi.Repo.Data
 {
@@ -55,6 +56,9 @@ namespace Nozomi.Repo.Data
             var currencyTypeMap = new CurrencyTypeMap(modelBuilder.Entity<CurrencyType>());
             var currencyCurrencyPairMap = new CurrencyCurrencyPairMap(modelBuilder.Entity<CurrencyCurrencyPair>());
             var requestMap = new RequestMap(modelBuilder.Entity<Request>());
+            var webSocketRequestMap = new WebsocketRequestMap(modelBuilder.Entity<WebsocketRequest>());
+            var webSocketCommandMap = new WebsocketCommandMap(modelBuilder.Entity<WebsocketCommand>());
+            var webSocketCommandPropertyMap = new WebsocketCommandPropertyMap(modelBuilder.Entity<WebsocketCommandProperty>());
             var requestComponentMap = new RequestComponentMap(modelBuilder.Entity<RequestComponent>());
             var rcdHistoricItemMap = new RcdHistoricItemMap(modelBuilder.Entity<RcdHistoricItem>());
             var requestLogMap = new RequestLogMap(modelBuilder.Entity<RequestLog>());
