@@ -25,29 +25,9 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
                     Guid = Guid.NewGuid(),
                     RequestType = RequestType.HttpGet,
                     DataPath = "https://api.etherscan.io/api",
-                    Delay = 5000,
-                    RequestProperties = new List<RequestProperty>
-                    {
-                        new RequestProperty
-                        {
-                            RequestPropertyType = RequestPropertyType.HttpHeader_Custom,
-                            Key = "module",
-                            Value = "stats",
-                        },
-                        new RequestProperty
-                        {
-                            RequestPropertyType = RequestPropertyType.HttpHeader_Custom,
-                            Key = "action",
-                            Value = "ethsupply",
-                        },
-                        new RequestProperty
-                        {
-                            RequestPropertyType = RequestPropertyType.HttpHeader_Custom,
-                            Key = "apikey",
-                            Value = "TGAFGMGDKHJ8W2EKI26MJRRWGH44AV9224",
-                        }
-                    }
+                    Delay = 5000
                 },
+                // KNC BFX Etherscan Request
                 new CurrencyRequest
                 {
                     Id = 2,
@@ -55,35 +35,9 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
                     Guid = Guid.NewGuid(),
                     RequestType = RequestType.HttpGet,
                     DataPath = "https://api.etherscan.io/api",
-                    Delay = 5000,
-                    RequestProperties = new List<RequestProperty>
-                    {
-                        new RequestProperty
-                        {
-                            RequestPropertyType = RequestPropertyType.HttpHeader_Custom,
-                            Key = "module",
-                            Value = "stats",
-                        },
-                        new RequestProperty
-                        {
-                            RequestPropertyType = RequestPropertyType.HttpHeader_Custom,
-                            Key = "action",
-                            Value = "tokensupply",
-                        },
-                        new RequestProperty
-                        {
-                            RequestPropertyType = RequestPropertyType.HttpHeader_Custom,
-                            Key = "contractaddress",
-                            Value = "0xdd974d5c2e2928dea5f71b9825b8b646686bd200",
-                        },
-                        new RequestProperty
-                        {
-                            RequestPropertyType = RequestPropertyType.HttpHeader_Custom,
-                            Key = "apikey",
-                            Value = "TGAFGMGDKHJ8W2EKI26MJRRWGH44AV9224",
-                        }
-                    }
+                    Delay = 5000
                 },
+                // BTC POLO Bitpay Insight Request
                 new CurrencyRequest
                 {
                     Id = 3,
@@ -93,6 +47,7 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
                     DataPath = "https://insight.bitpay.com/api/status?q=getBlockCount",
                     Delay = 90000
                 },
+                // BTC POLO Coinranking Request
                 new CurrencyRequest
                 {
                     Id = 4,
