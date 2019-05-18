@@ -187,23 +187,6 @@ namespace Nozomi.Ticker.StartupExtensions
                         context.SaveChanges();
                     }
 
-                    if (!context.CurrencyTypes.Any())
-                    {
-                        context.CurrencyTypes.AddRange(
-                            new CurrencyType()
-                            {
-                                TypeShortForm = "FIAT",
-                                Name = "FIAT Cash"
-                            },
-                            new CurrencyType()
-                            {
-                                TypeShortForm = "CRYPTO",
-                                Name = "Cryptocurrency"
-                            });
-
-                        context.SaveChanges();
-                    }
-
                     if (context.Sources.Any())
                     {
                         var bfxSource = context.Sources.SingleOrDefault(s => s.Abbreviation.Equals("BFX"));
