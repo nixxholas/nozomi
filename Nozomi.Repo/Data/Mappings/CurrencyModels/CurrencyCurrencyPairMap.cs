@@ -132,6 +132,72 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                 {
                     CurrencyPairId = 10,
                     CurrencyId = 6
+                },
+                // Coinhako BTCSGD
+                new CurrencyCurrencyPair
+                {
+                    CurrencyPairId = 11,
+                    CurrencyId = 16
+                },
+                new CurrencyCurrencyPair
+                {
+                    CurrencyPairId = 11,
+                    CurrencyId = 17
+                },
+                // Coinhako BTCUSD
+                new CurrencyCurrencyPair
+                {
+                    CurrencyPairId = 12,
+                    CurrencyId = 16
+                },
+                new CurrencyCurrencyPair
+                {
+                    CurrencyPairId = 12,
+                    CurrencyId = 19
+                },
+                // Coinhako ETHSGD
+                new CurrencyCurrencyPair
+                {
+                    CurrencyPairId = 13,
+                    CurrencyId = 18
+                },
+                new CurrencyCurrencyPair
+                {
+                    CurrencyPairId = 13,
+                    CurrencyId = 17
+                },
+                // Coinhako ETHUSD
+                new CurrencyCurrencyPair
+                {
+                    CurrencyPairId = 14,
+                    CurrencyId = 18
+                },
+                new CurrencyCurrencyPair
+                {
+                    CurrencyPairId = 14,
+                    CurrencyId = 19
+                },
+                // Coinhako LTCSGD
+                new CurrencyCurrencyPair
+                {
+                    CurrencyPairId = 15,
+                    CurrencyId = 20
+                },
+                new CurrencyCurrencyPair
+                {
+                    CurrencyPairId = 15,
+                    CurrencyId = 17
+                },
+                // Coinhako LTCUSD
+                new CurrencyCurrencyPair
+                {
+                    CurrencyPairId = 16,
+                    CurrencyId = 20
+                },
+                new CurrencyCurrencyPair
+                {
+                    CurrencyPairId = 16,
+                    CurrencyId = 19
                 }
             );
         }

@@ -100,6 +100,72 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
                     DataPath = "https://poloniex.com/public?command=returnTicker",
                     CurrencyPairId = 8,
                     Delay = 5000
+                },
+                // Coinhako BTCSGD
+                new CurrencyPairRequest()
+                {
+                    Id = 15,
+                    Guid = Guid.NewGuid(),
+                    RequestType = RequestType.HttpGet,
+                    ResponseType = ResponseType.Json,
+                    DataPath = "https://www.coinhako.com/api/v1/price/currency/BTCSGD",
+                    CurrencyPairId = 11,
+                    Delay = 10000
+                },
+                // Coinhako BTCUSD
+                new CurrencyPairRequest()
+                {
+                    Id = 16,
+                    Guid = Guid.NewGuid(),
+                    RequestType = RequestType.HttpGet,
+                    ResponseType = ResponseType.Json,
+                    DataPath = "https://www.coinhako.com/api/v1/price/currency/BTCUSD",
+                    CurrencyPairId = 12,
+                    Delay = 10000
+                },
+                // Coinhako ETHSGD
+                new CurrencyPairRequest()
+                {
+                    Id = 17,
+                    Guid = Guid.NewGuid(),
+                    RequestType = RequestType.HttpGet,
+                    ResponseType = ResponseType.Json,
+                    DataPath = "https://www.coinhako.com/api/v1/price/currency/ETHSGD",
+                    CurrencyPairId = 13,
+                    Delay = 10000
+                },
+                // Coinhako ETHUSD
+                new CurrencyPairRequest()
+                {
+                    Id = 18,
+                    Guid = Guid.NewGuid(),
+                    RequestType = RequestType.HttpGet,
+                    ResponseType = ResponseType.Json,
+                    DataPath = "https://www.coinhako.com/api/v1/price/currency/ETHUSD",
+                    CurrencyPairId = 14,
+                    Delay = 10000
+                },
+                // Coinhako LTCSGD
+                new CurrencyPairRequest()
+                {
+                    Id = 19,
+                    Guid = Guid.NewGuid(),
+                    RequestType = RequestType.HttpGet,
+                    ResponseType = ResponseType.Json,
+                    DataPath = "https://www.coinhako.com/api/v1/price/currency/LTCSGD",
+                    CurrencyPairId = 15,
+                    Delay = 10000
+                },
+                // Coinhako LTCUSD
+                new CurrencyPairRequest()
+                {
+                    Id = 20,
+                    Guid = Guid.NewGuid(),
+                    RequestType = RequestType.HttpGet,
+                    ResponseType = ResponseType.Json,
+                    DataPath = "https://www.coinhako.com/api/v1/price/currency/LTCUSD",
+                    CurrencyPairId = 16,
+                    Delay = 10000
                 }
             );
         }

@@ -127,6 +127,66 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                     CurrencySourceId = 3,
                     MainCurrency = "KNC",
                     CounterCurrency = "ETH"
+                },
+                new CurrencyPair
+                {
+                    Id = 11,
+                    CurrencyPairType = CurrencyPairType.EXCHANGEABLE,
+                    APIUrl = "https://www.coinhako.com/api/v1/price/currency/BTCSGD",
+                    DefaultComponent = "data/buy_price",
+                    CurrencySourceId = 3,
+                    MainCurrency = "BTC",
+                    CounterCurrency = "SGD"
+                },
+                new CurrencyPair
+                {
+                    Id = 12,
+                    CurrencyPairType = CurrencyPairType.EXCHANGEABLE,
+                    APIUrl = "https://www.coinhako.com/api/v1/price/currency/BTCUSD",
+                    DefaultComponent = "data/buy_price",
+                    CurrencySourceId = 3,
+                    MainCurrency = "BTC",
+                    CounterCurrency = "USD"
+                },
+                new CurrencyPair
+                {
+                    Id = 13,
+                    CurrencyPairType = CurrencyPairType.EXCHANGEABLE,
+                    APIUrl = "https://www.coinhako.com/api/v1/price/currency/ETHSGD",
+                    DefaultComponent = "data/buy_price",
+                    CurrencySourceId = 3,
+                    MainCurrency = "ETH",
+                    CounterCurrency = "SGD"
+                },
+                new CurrencyPair
+                {
+                    Id = 14,
+                    CurrencyPairType = CurrencyPairType.EXCHANGEABLE,
+                    APIUrl = "https://www.coinhako.com/api/v1/price/currency/ETHUSD",
+                    DefaultComponent = "data/buy_price",
+                    CurrencySourceId = 3,
+                    MainCurrency = "ETH",
+                    CounterCurrency = "USD"
+                },
+                new CurrencyPair
+                {
+                    Id = 15,
+                    CurrencyPairType = CurrencyPairType.EXCHANGEABLE,
+                    APIUrl = "https://www.coinhako.com/api/v1/price/currency/LTCSGD",
+                    DefaultComponent = "data/buy_price",
+                    CurrencySourceId = 3,
+                    MainCurrency = "LTC",
+                    CounterCurrency = "SGD"
+                },
+                new CurrencyPair
+                {
+                    Id = 16,
+                    CurrencyPairType = CurrencyPairType.EXCHANGEABLE,
+                    APIUrl = "https://www.coinhako.com/api/v1/price/currency/LTCUSD",
+                    DefaultComponent = "data/buy_price",
+                    CurrencySourceId = 3,
+                    MainCurrency = "LTC",
+                    CounterCurrency = "USD"
                 }
             );
         }

@@ -453,6 +453,144 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
                     ModifiedAt = DateTime.UtcNow,
                     DeletedAt = null,
                     RequestId = 14
+                },
+                // Coinhako BTCSGD
+                new RequestComponent
+                {
+                    Id = 39,
+                    ComponentType = ComponentType.Bid,
+                    Identifier = null,
+                    QueryComponent = "data/buy_price",
+                    CreatedAt = DateTime.UtcNow,
+                    ModifiedAt = DateTime.UtcNow,
+                    DeletedAt = null,
+                    RequestId = 15
+                },
+                new RequestComponent
+                {
+                    Id = 40,
+                    ComponentType = ComponentType.Ask,
+                    Identifier = null,
+                    QueryComponent = "data/sell_price",
+                    CreatedAt = DateTime.UtcNow,
+                    ModifiedAt = DateTime.UtcNow,
+                    DeletedAt = null,
+                    RequestId = 15
+                },
+                // Coinhako BTCUSD
+                new RequestComponent
+                {
+                    Id = 41,
+                    ComponentType = ComponentType.Bid,
+                    Identifier = null,
+                    QueryComponent = "data/buy_price",
+                    CreatedAt = DateTime.UtcNow,
+                    ModifiedAt = DateTime.UtcNow,
+                    DeletedAt = null,
+                    RequestId = 16
+                },
+                new RequestComponent
+                {
+                    Id = 42,
+                    ComponentType = ComponentType.Ask,
+                    Identifier = null,
+                    QueryComponent = "data/sell_price",
+                    CreatedAt = DateTime.UtcNow,
+                    ModifiedAt = DateTime.UtcNow,
+                    DeletedAt = null,
+                    RequestId = 16
+                },
+                // Coinhako ETHSGD
+                new RequestComponent
+                {
+                    Id = 43,
+                    ComponentType = ComponentType.Bid,
+                    Identifier = null,
+                    QueryComponent = "data/buy_price",
+                    CreatedAt = DateTime.UtcNow,
+                    ModifiedAt = DateTime.UtcNow,
+                    DeletedAt = null,
+                    RequestId = 17
+                },
+                new RequestComponent
+                {
+                    Id = 44,
+                    ComponentType = ComponentType.Ask,
+                    Identifier = null,
+                    QueryComponent = "data/sell_price",
+                    CreatedAt = DateTime.UtcNow,
+                    ModifiedAt = DateTime.UtcNow,
+                    DeletedAt = null,
+                    RequestId = 17
+                },
+                // Coinhako ETHUSD
+                new RequestComponent
+                {
+                    Id = 45,
+                    ComponentType = ComponentType.Bid,
+                    Identifier = null,
+                    QueryComponent = "data/buy_price",
+                    CreatedAt = DateTime.UtcNow,
+                    ModifiedAt = DateTime.UtcNow,
+                    DeletedAt = null,
+                    RequestId = 18
+                },
+                new RequestComponent
+                {
+                    Id = 46,
+                    ComponentType = ComponentType.Ask,
+                    Identifier = null,
+                    QueryComponent = "data/sell_price",
+                    CreatedAt = DateTime.UtcNow,
+                    ModifiedAt = DateTime.UtcNow,
+                    DeletedAt = null,
+                    RequestId = 18
+                },
+                // Coinhako LTCSGD
+                new RequestComponent
+                {
+                    Id = 45,
+                    ComponentType = ComponentType.Bid,
+                    Identifier = null,
+                    QueryComponent = "data/buy_price",
+                    CreatedAt = DateTime.UtcNow,
+                    ModifiedAt = DateTime.UtcNow,
+                    DeletedAt = null,
+                    RequestId = 19
+                },
+                new RequestComponent
+                {
+                    Id = 46,
+                    ComponentType = ComponentType.Ask,
+                    Identifier = null,
+                    QueryComponent = "data/sell_price",
+                    CreatedAt = DateTime.UtcNow,
+                    ModifiedAt = DateTime.UtcNow,
+                    DeletedAt = null,
+                    RequestId = 19
+                },
+                // Coinhako LTCUSD
+                new RequestComponent
+                {
+                    Id = 47,
+                    ComponentType = ComponentType.Bid,
+                    Identifier = null,
+                    QueryComponent = "data/buy_price",
+                    CreatedAt = DateTime.UtcNow,
+                    ModifiedAt = DateTime.UtcNow,
+                    DeletedAt = null,
+                    RequestId = 20
+                },
+                new RequestComponent
+                {
+                    Id = 48,
+                    ComponentType = ComponentType.Ask,
+                    Identifier = null,
+                    QueryComponent = "data/sell_price",
+                    CreatedAt = DateTime.UtcNow,
+                    ModifiedAt = DateTime.UtcNow,
+                    DeletedAt = null,
+                    RequestId = 20
                 }
             );
         }

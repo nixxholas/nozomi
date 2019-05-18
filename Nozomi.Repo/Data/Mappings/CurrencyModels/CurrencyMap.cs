@@ -182,6 +182,51 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                     Name = "Tether USD",
                     CurrencySourceId = 6,
                     WalletTypeId = 0
+                },
+                new Currency
+                {
+                    Id = 16,
+                    CurrencyTypeId = 2,
+                    Abbrv = "BTC",
+                    Name = "Bitcoin",
+                    CurrencySourceId = 2,
+                    WalletTypeId = 0
+                },
+                new Currency
+                {
+                    Id = 17,
+                    CurrencyTypeId = 1,
+                    Abbrv = "SGD",
+                    Name = "Singapore Dollar",
+                    CurrencySourceId = 2,
+                    WalletTypeId = 0
+                },
+                new Currency
+                {
+                    Id = 18,
+                    CurrencyTypeId = 2,
+                    Abbrv = "ETH",
+                    Name = "Ethereum",
+                    CurrencySourceId = 2,
+                    WalletTypeId = 0
+                },
+                new Currency
+                {
+                    Id = 19,
+                    CurrencyTypeId = 1,
+                    Abbrv = "USD",
+                    Name = "United States Dollar",
+                    CurrencySourceId = 2,
+                    WalletTypeId = 0
+                },
+                new Currency
+                {
+                    Id = 20,
+                    CurrencyTypeId = 2,
+                    Abbrv = "LTC",
+                    Name = "Litecoin",
+                    CurrencySourceId = 2,
+                    WalletTypeId = 0
                 });
         }
     }
