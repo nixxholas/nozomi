@@ -22,6 +22,10 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                 .WithMany(c => c.AnalysedComponents).HasForeignKey(ac => ac.CurrencyId)
                 .OnDelete(DeleteBehavior.Restrict)
                 .IsRequired(false);
+            entityTypeBuilder.HasOne(ac => ac.CurrencyType)
+                .WithMany(ct => ct.AnalysedComponents).HasForeignKey(ac => ac.CurrencyTypeId)
+                .OnDelete(DeleteBehavior.Restrict)
+                .IsRequired(false);
             entityTypeBuilder.HasOne(ac => ac.Request)
                 .WithMany(r => r.AnalysedComponents).HasForeignKey(ac => ac.RequestId)
                 .OnDelete(DeleteBehavior.Restrict)
