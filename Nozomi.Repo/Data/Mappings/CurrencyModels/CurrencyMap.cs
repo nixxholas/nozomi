@@ -41,6 +41,7 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
 
             entityTypeBuilder.HasData(new Currency
                 {
+                    Id = 1,
                     CurrencyTypeId = 1,
                     Abbrv = "USD",
                     Name = "United States Dollar",
@@ -49,6 +50,7 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                 },
                 new Currency
                 {
+                    Id = 2,
                     CurrencyTypeId = 1,
                     Abbrv = "EUR",
                     Name = "Euro",
@@ -57,6 +59,7 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                 },
                 new Currency
                 {
+                    Id = 3,
                     CurrencyTypeId = 2,
                     Abbrv = "ETH",
                     Name = "Ethereum",
@@ -124,6 +127,7 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                 },
                 new Currency
                 {
+                    Id = 4,
                     CurrencyTypeId = 2,
                     Abbrv = "KNC",
                     Name = "Kyber Network Crystal",
@@ -189,6 +193,7 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                 },
                 new Currency
                 {
+                    Id = 5,
                     CurrencyTypeId = 2,
                     Abbrv = "KNC",
                     Name = "Kyber Network Crystal",
@@ -197,6 +202,7 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                 },
                 new Currency
                 {
+                    Id = 6,
                     CurrencyTypeId = 2,
                     Abbrv = "ETH",
                     Name = "Ethereum",
@@ -207,6 +213,7 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                 },
                 new Currency
                 {
+                    Id = 7,
                     CurrencyTypeId = 2,
                     Abbrv = "BTC",
                     Name = "Bitcoin",
@@ -217,6 +224,7 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                 },
                 new Currency
                 {
+                    Id = 8,
                     CurrencyTypeId = 1,
                     Abbrv = "EUR",
                     Name = "Euro",
@@ -225,6 +233,7 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                 },
                 new Currency
                 {
+                    Id = 9,
                     CurrencyTypeId = 1,
                     Abbrv = "USD",
                     Name = "United States Dollar",
@@ -233,6 +242,7 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                 },
                 new Currency
                 {
+                    Id = 10,
                     CurrencyTypeId = 1,
                     Abbrv = "EUR",
                     Name = "Euro",
@@ -241,6 +251,7 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                 },
                 new Currency
                 {
+                    Id = 11,
                     CurrencyTypeId = 1,
                     Abbrv = "USD",
                     Name = "United States Dollar",
@@ -249,6 +260,7 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                 },
                 new Currency
                 {
+                    Id = 12,
                     CurrencyTypeId = 2,
                     Abbrv = "BTC",
                     Name = "Bitcoin",
@@ -256,18 +268,6 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                     WalletTypeId = 0,
                     Denominations = 8,
                     DenominationName = "Sat",
-//                    AnalysedComponents = new List<AnalysedComponent>()
-//                    {
-//                        new AnalysedComponent
-//                        {
-//                            ComponentType = AnalysedComponentType.MarketCap,
-//                            Delay = 500,
-//                            UIFormatting = "$ 0 a",
-//                            CreatedAt = DateTime.UtcNow,
-//                            ModifiedAt = DateTime.UtcNow,
-//                            DeletedAt = null
-//                        }
-//                    },
 //                    CurrencyRequests = new List<CurrencyRequest>()
 //                    {
 //                        new CurrencyRequest
@@ -318,6 +318,7 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                 },
                 new Currency
                 {
+                    Id = 13,
                     CurrencyTypeId = 2,
                     Abbrv = "BCN",
                     Name = "Bytecoin",
@@ -326,6 +327,7 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                 },
                 new Currency
                 {
+                    Id = 14,
                     CurrencyTypeId = 2,
                     Abbrv = "BTS",
                     Name = "BitShares",
@@ -334,6 +336,7 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                 },
                 new Currency
                 {
+                    Id = 15,
                     CurrencyTypeId = 1,
                     Abbrv = "USDT",
                     Name = "Tether USD",
