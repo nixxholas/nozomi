@@ -55,34 +55,7 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
                     ResponseType = ResponseType.Json,
                     DataPath = "https://www.alphavantage.co/query",
                     CurrencyPairId = 4,
-                    Delay = 5000,
-                    RequestProperties = new List<RequestProperty>()
-                    {
-                        new RequestProperty()
-                        {
-                            RequestPropertyType = RequestPropertyType.HttpQuery,
-                            Key = "apikey",
-                            Value = "TV5HJJHNP8094BRO"
-                        },
-                        new RequestProperty()
-                        {
-                            RequestPropertyType = RequestPropertyType.HttpQuery,
-                            Key = "function",
-                            Value = "CURRENCY_EXCHANGE_RATE"
-                        },
-                        new RequestProperty()
-                        {
-                            RequestPropertyType = RequestPropertyType.HttpQuery,
-                            Key = "from_currency",
-                            Value = "EUR"
-                        },
-                        new RequestProperty()
-                        {
-                            RequestPropertyType = RequestPropertyType.HttpQuery,
-                            Key = "to_currency",
-                            Value = "USD"
-                        }
-                    }
+                    Delay = 5000
                 },
                 // POLO BTCBCN
                 new CurrencyPairRequest()

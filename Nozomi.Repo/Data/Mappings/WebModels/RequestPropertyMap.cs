@@ -79,6 +79,38 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
                     Key = "apikey",
                     Value = "TGAFGMGDKHJ8W2EKI26MJRRWGH44AV9224",
                     RequestId = 2
+                },
+                new RequestProperty()
+                {
+                    Id = 8,
+                    RequestPropertyType = RequestPropertyType.HttpQuery,
+                    Key = "apikey",
+                    Value = "TV5HJJHNP8094BRO",
+                    RequestId = 8
+                },
+                new RequestProperty()
+                {
+                    Id = 9,
+                    RequestPropertyType = RequestPropertyType.HttpQuery,
+                    Key = "function",
+                    Value = "CURRENCY_EXCHANGE_RATE",
+                    RequestId = 8
+                },
+                new RequestProperty()
+                {
+                    Id = 10,
+                    RequestPropertyType = RequestPropertyType.HttpQuery,
+                    Key = "from_currency",
+                    Value = "EUR",
+                    RequestId = 8
+                },
+                new RequestProperty()
+                {
+                    Id = 11,
+                    RequestPropertyType = RequestPropertyType.HttpQuery,
+                    Key = "to_currency",
+                    Value = "USD",
+                    RequestId = 8
                 }
             );
         }
