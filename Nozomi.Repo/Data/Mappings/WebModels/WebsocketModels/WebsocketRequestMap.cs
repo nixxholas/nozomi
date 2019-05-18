@@ -1,7 +1,9 @@
 using System;
+using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Nozomi.Base.Core.Helpers.Mapping;
+using Nozomi.Data.Models.Web;
 using Nozomi.Data.Models.Web.Websocket;
 
 namespace Nozomi.Repo.Data.Mappings.WebModels.WebsocketModels
@@ -38,8 +40,7 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.WebsocketModels
                     RequestType = RequestType.WebSocket,
                     ResponseType = ResponseType.Json,
                     DataPath = "wss://stream.binance.com:9443/stream?streams=!ticker@arr",
-                    Delay = 0,
-                    WebsocketCommands = new List<WebsocketCommand>()
+                    Delay = 0
                 }
             );
         }
