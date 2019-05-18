@@ -110,6 +110,28 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                 {
                     CurrencyPairId = 8,
                     CurrencyId = 15
+                },
+                // Binance ETHBTC
+                new CurrencyCurrencyPair
+                {
+                    CurrencyPairId = 9,
+                    CurrencyId = 6
+                },
+                new CurrencyCurrencyPair
+                {
+                    CurrencyPairId = 9,
+                    CurrencyId = 7
+                },
+                // Binance KNCETH
+                new CurrencyCurrencyPair
+                {
+                    CurrencyPairId = 10,
+                    CurrencyId = 5
+                },
+                new CurrencyCurrencyPair
+                {
+                    CurrencyPairId = 10,
+                    CurrencyId = 6
                 }
             );
         }
