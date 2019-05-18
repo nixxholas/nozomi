@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Nozomi.Base.Core;
+using Nozomi.Data.Models.Currency;
 
 namespace Nozomi.Data.Models.Web.Analytical
 {
@@ -36,6 +37,10 @@ namespace Nozomi.Data.Models.Web.Analytical
         public long? CurrencyId { get; set; }
         
         public Currency.Currency Currency { get; set; }
+        
+        public long? CurrencyTypeId { get; set; }
+        
+        public CurrencyType CurrencyType { get; set; }
         
         public ICollection<AnalysedHistoricItem> AnalysedHistoricItems { get; set; }
     }
