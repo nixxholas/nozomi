@@ -55,6 +55,7 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                     Id = 2,
                     ComponentType = AnalysedComponentType.MarketCap,
                     Delay = 1000,
+                    UIFormatting = "$ 0 a",
                     CreatedAt = DateTime.UtcNow,
                     ModifiedAt = DateTime.UtcNow,
                     IsDenominated = true,
@@ -72,6 +73,276 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                     ModifiedAt = DateTime.UtcNow,
                     DeletedAt = null,
                     CurrencyId = 12
+                },
+                // Calculates volume ONLY for this exact Currency pair on this exchange.
+                new AnalysedComponent
+                {
+                    Id = 4,
+                    ComponentType = AnalysedComponentType.DailyVolume,
+                    Delay = 1000,
+                    UIFormatting = "$ 0 a",
+                    CreatedAt = DateTime.UtcNow,
+                    ModifiedAt = DateTime.UtcNow,
+                    DeletedAt = null,
+                    RequestId = 5
+                },
+                new AnalysedComponent
+                {
+                    Id = 5,
+                    ComponentType = AnalysedComponentType.CurrentAveragePrice,
+                    Delay = 500,
+                    UIFormatting = "$ 0[.]00",
+                    CreatedAt = DateTime.UtcNow,
+                    ModifiedAt = DateTime.UtcNow,
+                    DeletedAt = null,
+                    RequestId = 5
+                },
+                new AnalysedComponent
+                {
+                    Id = 6,
+                    ComponentType = AnalysedComponentType.HourlyAveragePrice,
+                    Delay = 10000,
+                    UIFormatting = "$ 0[.]00",
+                    CreatedAt = DateTime.UtcNow,
+                    ModifiedAt = DateTime.UtcNow,
+                    DeletedAt = null,
+                    RequestId = 5
+                },
+                new AnalysedComponent()
+                {
+                    Id = 7,
+                    ComponentType = AnalysedComponentType.DailyPricePctChange,
+                    Delay = 500,
+                    UIFormatting = "0[.]0",
+                    CreatedAt = DateTime.UtcNow,
+                    ModifiedAt = DateTime.UtcNow,
+                    DeletedAt = null,
+                    RequestId = 5
+                },
+                // Calculates volume ONLY for this exact Currency pair on this exchange.
+                new AnalysedComponent
+                {
+                    Id = 8,
+                    ComponentType = AnalysedComponentType.DailyVolume,
+                    Delay = 1000,
+                    UIFormatting = "0 a",
+                    CreatedAt = DateTime.UtcNow,
+                    ModifiedAt = DateTime.UtcNow,
+                    DeletedAt = null,
+                    RequestId = 6
+                },
+                new AnalysedComponent
+                {
+                    Id = 9,
+                    ComponentType = AnalysedComponentType.CurrentAveragePrice,
+                    Delay = 500,
+                    UIFormatting = "$ 0[.]00",
+                    CreatedAt = DateTime.UtcNow,
+                    ModifiedAt = DateTime.UtcNow,
+                    DeletedAt = null,
+                    RequestId = 6
+                },
+                new AnalysedComponent
+                {
+                    Id = 10,
+                    ComponentType = AnalysedComponentType.HourlyAveragePrice,
+                    Delay = 10000,
+                    UIFormatting = "$ 0[.]00",
+                    CreatedAt = DateTime.UtcNow,
+                    ModifiedAt = DateTime.UtcNow,
+                    DeletedAt = null,
+                    RequestId = 6
+                },
+                new AnalysedComponent()
+                {
+                    Id = 11,
+                    ComponentType = AnalysedComponentType.DailyPricePctChange,
+                    Delay = 500,
+                    UIFormatting = "0[.]0",
+                    CreatedAt = DateTime.UtcNow,
+                    ModifiedAt = DateTime.UtcNow,
+                    DeletedAt = null,
+                    RequestId = 6
+                },
+                // Calculates volume ONLY for this exact Currency pair on this exchange.
+                new AnalysedComponent
+                {
+                    Id = 12,
+                    ComponentType = AnalysedComponentType.DailyVolume,
+                    Delay = 1000,
+                    UIFormatting = "0 a",
+                    CreatedAt = DateTime.UtcNow,
+                    ModifiedAt = DateTime.UtcNow,
+                    DeletedAt = null,
+                    RequestId = 9
+                },
+                new AnalysedComponent
+                {
+                    Id = 13,
+                    ComponentType = AnalysedComponentType.CurrentAveragePrice,
+                    Delay = 500,
+                    UIFormatting = "0[.]00",
+                    CreatedAt = DateTime.UtcNow,
+                    ModifiedAt = DateTime.UtcNow,
+                    DeletedAt = null,
+                    RequestId = 9
+                },
+                new AnalysedComponent
+                {
+                    Id = 14,
+                    ComponentType = AnalysedComponentType.HourlyAveragePrice,
+                    Delay = 10000,
+                    UIFormatting = "0[.]00",
+                    CreatedAt = DateTime.UtcNow,
+                    ModifiedAt = DateTime.UtcNow,
+                    DeletedAt = null,
+                    RequestId = 9
+                },
+                new AnalysedComponent()
+                {
+                    Id = 15,
+                    ComponentType = AnalysedComponentType.DailyPricePctChange,
+                    Delay = 500,
+                    UIFormatting = "0[.]0",
+                    CreatedAt = DateTime.UtcNow,
+                    ModifiedAt = DateTime.UtcNow,
+                    DeletedAt = null,
+                    RequestId = 9
+                },
+                // Calculates volume ONLY for this exact Currency pair on this exchange.
+                new AnalysedComponent
+                {
+                    Id = 16,
+                    ComponentType = AnalysedComponentType.DailyVolume,
+                    Delay = 1000,
+                    UIFormatting = "0 a",
+                    CreatedAt = DateTime.UtcNow,
+                    ModifiedAt = DateTime.UtcNow,
+                    DeletedAt = null,
+                    RequestId = 10
+                },
+                new AnalysedComponent
+                {
+                    Id = 17,
+                    ComponentType = AnalysedComponentType.CurrentAveragePrice,
+                    Delay = 500,
+                    UIFormatting = "0[.]00",
+                    CreatedAt = DateTime.UtcNow,
+                    ModifiedAt = DateTime.UtcNow,
+                    DeletedAt = null,
+                    RequestId = 10
+                },
+                new AnalysedComponent
+                {
+                    Id = 18,
+                    ComponentType = AnalysedComponentType.HourlyAveragePrice,
+                    Delay = 10000,
+                    UIFormatting = "0[.]00",
+                    CreatedAt = DateTime.UtcNow,
+                    ModifiedAt = DateTime.UtcNow,
+                    DeletedAt = null,
+                    RequestId = 10
+                },
+                new AnalysedComponent()
+                {
+                    Id = 19,
+                    ComponentType = AnalysedComponentType.DailyPricePctChange,
+                    Delay = 500,
+                    UIFormatting = "0[.]0",
+                    CreatedAt = DateTime.UtcNow,
+                    ModifiedAt = DateTime.UtcNow,
+                    DeletedAt = null,
+                    RequestId = 10
+                },
+                // Calculates volume ONLY for this exact Currency pair on this exchange.
+                new AnalysedComponent
+                {
+                    Id = 20,
+                    ComponentType = AnalysedComponentType.DailyVolume,
+                    Delay = 1000,
+                    UIFormatting = "0 a",
+                    CreatedAt = DateTime.UtcNow,
+                    ModifiedAt = DateTime.UtcNow,
+                    DeletedAt = null,
+                    RequestId = 11
+                },
+                new AnalysedComponent
+                {
+                    Id = 21,
+                    ComponentType = AnalysedComponentType.CurrentAveragePrice,
+                    Delay = 500,
+                    UIFormatting = "0[.]00",
+                    CreatedAt = DateTime.UtcNow,
+                    ModifiedAt = DateTime.UtcNow,
+                    DeletedAt = null,
+                    RequestId = 11
+                },
+                new AnalysedComponent
+                {
+                    Id = 22,
+                    ComponentType = AnalysedComponentType.HourlyAveragePrice,
+                    Delay = 10000,
+                    UIFormatting = "0[.]00",
+                    CreatedAt = DateTime.UtcNow,
+                    ModifiedAt = DateTime.UtcNow,
+                    DeletedAt = null,
+                    RequestId = 11
+                },
+                new AnalysedComponent()
+                {
+                    Id = 23,
+                    ComponentType = AnalysedComponentType.DailyPricePctChange,
+                    Delay = 500,
+                    UIFormatting = "0[.]0",
+                    CreatedAt = DateTime.UtcNow,
+                    ModifiedAt = DateTime.UtcNow,
+                    DeletedAt = null,
+                    RequestId = 11
+                },
+                // Calculates volume ONLY for this exact Currency pair on this exchange.
+                new AnalysedComponent
+                {
+                    Id = 24,
+                    ComponentType = AnalysedComponentType.DailyVolume,
+                    Delay = 1000,
+                    UIFormatting = "0 a",
+                    CreatedAt = DateTime.UtcNow,
+                    ModifiedAt = DateTime.UtcNow,
+                    DeletedAt = null,
+                    RequestId = 12
+                },
+                new AnalysedComponent
+                {
+                    Id = 25,
+                    ComponentType = AnalysedComponentType.CurrentAveragePrice,
+                    Delay = 500,
+                    UIFormatting = "$ 0[.]00",
+                    CreatedAt = DateTime.UtcNow,
+                    ModifiedAt = DateTime.UtcNow,
+                    DeletedAt = null,
+                    RequestId = 12
+                },
+                new AnalysedComponent
+                {
+                    Id = 26,
+                    ComponentType = AnalysedComponentType.HourlyAveragePrice,
+                    Delay = 10000,
+                    UIFormatting = "$ 0[.]00",
+                    CreatedAt = DateTime.UtcNow,
+                    ModifiedAt = DateTime.UtcNow,
+                    DeletedAt = null,
+                    RequestId = 12
+                },
+                new AnalysedComponent()
+                {
+                    Id = 27,
+                    ComponentType = AnalysedComponentType.DailyPricePctChange,
+                    Delay = 500,
+                    UIFormatting = "0[.]0",
+                    CreatedAt = DateTime.UtcNow,
+                    ModifiedAt = DateTime.UtcNow,
+                    DeletedAt = null,
+                    RequestId = 12
                 }
             );
         }
