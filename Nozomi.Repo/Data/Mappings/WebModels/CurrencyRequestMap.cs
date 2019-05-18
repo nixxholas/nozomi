@@ -17,6 +17,7 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
                 .HasConstraintName("CurrencyRequest_Currency_Constraint");
 
             entityTypeBuilder.HasData(
+                // ETH BFX Etherscan Request
                 new CurrencyRequest
                 {
                     Id = 1,
@@ -25,18 +26,6 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
                     RequestType = RequestType.HttpGet,
                     DataPath = "https://api.etherscan.io/api",
                     Delay = 5000,
-                    RequestComponents = new List<RequestComponent>
-                    {
-                        new RequestComponent
-                        {
-                            ComponentType = ComponentType.Circulating_Supply,
-                            IsDenominated = true,
-                            QueryComponent = "result",
-                            CreatedAt = DateTime.UtcNow,
-                            ModifiedAt = DateTime.UtcNow,
-                            DeletedAt = null
-                        }
-                    },
                     RequestProperties = new List<RequestProperty>
                     {
                         new RequestProperty
@@ -67,18 +56,6 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
                     RequestType = RequestType.HttpGet,
                     DataPath = "https://api.etherscan.io/api",
                     Delay = 5000,
-                    RequestComponents = new List<RequestComponent>
-                    {
-                        new RequestComponent
-                        {
-                            ComponentType = ComponentType.Circulating_Supply,
-                            IsDenominated = true,
-                            QueryComponent = "result",
-                            CreatedAt = DateTime.UtcNow,
-                            ModifiedAt = DateTime.UtcNow,
-                            DeletedAt = null
-                        }
-                    },
                     RequestProperties = new List<RequestProperty>
                     {
                         new RequestProperty
@@ -96,6 +73,12 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
                         new RequestProperty
                         {
                             RequestPropertyType = RequestPropertyType.HttpHeader_Custom,
+                            Key = "contractaddress",
+                            Value = "0xdd974d5c2e2928dea5f71b9825b8b646686bd200",
+                        },
+                        new RequestProperty
+                        {
+                            RequestPropertyType = RequestPropertyType.HttpHeader_Custom,
                             Key = "apikey",
                             Value = "TGAFGMGDKHJ8W2EKI26MJRRWGH44AV9224",
                         }
@@ -108,26 +91,7 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
                     Guid = Guid.NewGuid(),
                     RequestType = RequestType.HttpGet,
                     DataPath = "https://insight.bitpay.com/api/status?q=getBlockCount",
-                    Delay = 90000,
-                    RequestComponents = new List<RequestComponent>
-                    {
-                        new RequestComponent
-                        {
-                            ComponentType = ComponentType.BlockCount,
-                            QueryComponent = "info/blocks",
-                            CreatedAt = DateTime.UtcNow,
-                            ModifiedAt = DateTime.UtcNow,
-                            DeletedAt = null
-                        },
-                        new RequestComponent
-                        {
-                            ComponentType = ComponentType.Difficulty,
-                            QueryComponent = "info/difficulty",
-                            CreatedAt = DateTime.UtcNow,
-                            ModifiedAt = DateTime.UtcNow,
-                            DeletedAt = null
-                        }
-                    }
+                    Delay = 90000
                 },
                 new CurrencyRequest
                 {
@@ -136,18 +100,7 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
                     Guid = Guid.NewGuid(),
                     RequestType = RequestType.HttpGet,
                     DataPath = "https://api.coinranking.com/v1/public/coin/1?base=USD",
-                    Delay = 90000,
-                    RequestComponents = new List<RequestComponent>
-                    {
-                        new RequestComponent
-                        {
-                            ComponentType = ComponentType.Circulating_Supply,
-                            QueryComponent = "data/coin/circulatingSupply",
-                            CreatedAt = DateTime.UtcNow,
-                            ModifiedAt = DateTime.UtcNow,
-                            DeletedAt = null
-                        }
-                    }
+                    Delay = 90000
                 }
             );
         }
