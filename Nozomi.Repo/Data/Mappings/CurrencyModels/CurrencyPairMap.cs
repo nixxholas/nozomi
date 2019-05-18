@@ -36,18 +36,7 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                     DefaultComponent = "0",
                     CurrencySourceId = 1,
                     MainCurrency = "ETH",
-                    CounterCurrency = "USD",
-                    CurrencyPairCurrencies = new List<CurrencyCurrencyPair>
-                    {
-                        new CurrencyCurrencyPair
-                        {
-                            CurrencyId = ethBfx.Id
-                        },
-                        new CurrencyCurrencyPair
-                        {
-                            CurrencyId = usdBfx.Id
-                        }
-                    }
+                    CounterCurrency = "USD"
                 },
                 new CurrencyPair
                 {
@@ -57,18 +46,7 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                     DefaultComponent = "0",
                     CurrencySourceId = 1,
                     MainCurrency = "KNC",
-                    CounterCurrency = "USD",
-                    CurrencyPairCurrencies = new List<CurrencyCurrencyPair>
-                    {
-                        new CurrencyCurrencyPair
-                        {
-                            CurrencyId = kncBfx.Id
-                        },
-                        new CurrencyCurrencyPair
-                        {
-                            CurrencyId = usdBfx.Id
-                        }
-                    }
+                    CounterCurrency = "USD"
                 },
                 new CurrencyPair()
                 {
@@ -78,18 +56,7 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                     DefaultComponent = "Cube",
                     CurrencySourceId = 4,
                     MainCurrency = "EUR",
-                    CounterCurrency = "USD",
-                    CurrencyPairCurrencies = new List<CurrencyCurrencyPair>
-                    {
-                        new CurrencyCurrencyPair
-                        {
-                            CurrencyId = eurECB.Id
-                        },
-                        new CurrencyCurrencyPair
-                        {
-                            CurrencyId = usdECB.Id
-                        }
-                    }
+                    CounterCurrency = "USD"
                 },
                 new CurrencyPair
                 {
@@ -99,18 +66,7 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                     DefaultComponent = "Realtime Currency Exchange Rate/5. Exchange Rate",
                     CurrencySourceId = 5,
                     MainCurrency = "EUR",
-                    CounterCurrency = "USD",
-                    CurrencyPairCurrencies = new List<CurrencyCurrencyPair>
-                    {
-                        new CurrencyCurrencyPair
-                        {
-                            CurrencyId = eurAVG.Id
-                        },
-                        new CurrencyCurrencyPair
-                        {
-                            CurrencyId = usdAVG.Id
-                        }
-                    }
+                    CounterCurrency = "USD"
                 },
                 new CurrencyPair
                 {
@@ -120,18 +76,7 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                     DefaultComponent = "BTC_BCN/lowestAsk",
                     CurrencySourceId = 6,
                     MainCurrency = "BTC",
-                    CounterCurrency = "BCN",
-                    CurrencyPairCurrencies = new List<CurrencyCurrencyPair>
-                    {
-                        new CurrencyCurrencyPair
-                        {
-                            CurrencyId = btcPOLO.Id
-                        },
-                        new CurrencyCurrencyPair
-                        {
-                            CurrencyId = bcnPOLO.Id
-                        }
-                    }
+                    CounterCurrency = "BCN"
                 },
                 new CurrencyPair
                 {
@@ -141,18 +86,7 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                     DefaultComponent = "BTC_BTS/lowestAsk",
                     CurrencySourceId = 6,
                     MainCurrency = "BTC",
-                    CounterCurrency = "BTS",
-                    CurrencyPairCurrencies = new List<CurrencyCurrencyPair>
-                    {
-                        new CurrencyCurrencyPair
-                        {
-                            CurrencyId = btcPOLO.Id
-                        },
-                        new CurrencyCurrencyPair
-                        {
-                            CurrencyId = btsPOLO.Id
-                        }
-                    }
+                    CounterCurrency = "BTS"
                 },
                 new CurrencyPair
                 {
@@ -162,18 +96,7 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                     DefaultComponent = "0",
                     CurrencySourceId = 1,
                     MainCurrency = "ETH",
-                    CounterCurrency = "EUR",
-                    CurrencyPairCurrencies = new List<CurrencyCurrencyPair>
-                    {
-                        new CurrencyCurrencyPair
-                        {
-                            CurrencyId = ethBfx.Id
-                        },
-                        new CurrencyCurrencyPair
-                        {
-                            CurrencyId = eurBfx.Id
-                        }
-                    }
+                    CounterCurrency = "EUR"
                 },
                 new CurrencyPair()
                 {
@@ -183,18 +106,7 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                     DefaultComponent = "USDT_BTC/lowestAsk",
                     CurrencySourceId = 6,
                     MainCurrency = "BTC",
-                    CounterCurrency = "USDT",
-                    CurrencyPairCurrencies = new List<CurrencyCurrencyPair>
-                    {
-                        new CurrencyCurrencyPair
-                        {
-                            CurrencyId = btcPOLO.Id
-                        },
-                        new CurrencyCurrencyPair
-                        {
-                            CurrencyId = usdtPOLO.Id
-                        }
-                    }
+                    CounterCurrency = "USDT"
                 }
             );
         }
