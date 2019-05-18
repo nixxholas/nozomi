@@ -1,3 +1,4 @@
+using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Nozomi.Base.Core.Helpers.Mapping;
@@ -33,6 +34,46 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
             entityTypeBuilder.HasMany(ac => ac.AnalysedHistoricItems)
                 .WithOne(ahi => ahi.AnalysedComponent).HasForeignKey(ac => ac.AnalysedComponentId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            entityTypeBuilder.HasData(
+                // ETH Bitfinex Market Cap
+                new AnalysedComponent
+                {
+                    Id = 1,
+                    ComponentType = AnalysedComponentType.MarketCap,
+                    Delay = 1000,
+                    UIFormatting = "$ 0 a",
+                    CreatedAt = DateTime.UtcNow,
+                    ModifiedAt = DateTime.UtcNow,
+                    IsDenominated = true,
+                    DeletedAt = null,
+                    CurrencyId = 3
+                },
+                // KNC Bitfinex Market Cap
+                new AnalysedComponent
+                {
+                    Id = 2,
+                    ComponentType = AnalysedComponentType.MarketCap,
+                    Delay = 1000,
+                    CreatedAt = DateTime.UtcNow,
+                    ModifiedAt = DateTime.UtcNow,
+                    IsDenominated = true,
+                    DeletedAt = null,
+                    CurrencyId = 4
+                },
+                // BTC POLO Market Cap
+                new AnalysedComponent
+                {
+                    Id = 3,
+                    ComponentType = AnalysedComponentType.MarketCap,
+                    Delay = 500,
+                    UIFormatting = "$ 0 a",
+                    CreatedAt = DateTime.UtcNow,
+                    ModifiedAt = DateTime.UtcNow,
+                    DeletedAt = null,
+                    CurrencyId = 12
+                }
+            );
         }
     }
 }

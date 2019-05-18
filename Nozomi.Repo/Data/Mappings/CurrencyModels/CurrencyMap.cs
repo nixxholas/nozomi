@@ -67,20 +67,6 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                     WalletTypeId = 1, // As per CNWallet
                     Denominations = 18,
                     DenominationName = "Wei",
-//                                        // Calculates mCap ONLY for this exact Currency pair on this exchange.
-//                                        AnalysedComponents = new List<AnalysedComponent>
-//                                        {
-//                                            new AnalysedComponent
-//                                            {
-//                                                ComponentType = AnalysedComponentType.MarketCap,
-//                                                Delay = 1000,
-//                                                UIFormatting = "$ 0 a",
-//                                                CreatedAt = DateTime.UtcNow,
-//                                                ModifiedAt = DateTime.UtcNow,
-//                                                IsDenominated = true,
-//                                                DeletedAt = null
-//                                            }
-//                                        },
 //                                        CurrencyRequests = new List<CurrencyRequest>
 //                                        {
 //                                            new CurrencyRequest
@@ -134,19 +120,6 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                     CurrencySourceId = 1,
                     Denominations = 18,
                     WalletTypeId = 4, // As per CNWallet
-//                                        // Calculates mCap ONLY for this exact Currency pair on this exchange.
-//                                        AnalysedComponents = new List<AnalysedComponent>
-//                                        {
-//                                            new AnalysedComponent
-//                                            {
-//                                                ComponentType = AnalysedComponentType.MarketCap,
-//                                                Delay = 1000,
-//                                                CreatedAt = DateTime.UtcNow,
-//                                                ModifiedAt = DateTime.UtcNow,
-//                                                IsDenominated = true,
-//                                                DeletedAt = null
-//                                            }
-//                                        },
 //                                        CurrencyRequests = new List<CurrencyRequest>
 //                                        {
 //                                            new CurrencyRequest
