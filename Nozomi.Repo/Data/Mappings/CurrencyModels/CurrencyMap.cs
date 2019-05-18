@@ -66,50 +66,7 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                     CurrencySourceId = 1,
                     WalletTypeId = 1, // As per CNWallet
                     Denominations = 18,
-                    DenominationName = "Wei",
-//                                        CurrencyRequests = new List<CurrencyRequest>
-//                                        {
-//                                            new CurrencyRequest
-//                                            {
-//                                                Guid = Guid.NewGuid(),
-//                                                RequestType = RequestType.HttpGet,
-//                                                DataPath = "https://api.etherscan.io/api",
-//                                                Delay = 5000,
-//                                                RequestComponents = new List<RequestComponent>
-//                                                {
-//                                                    new RequestComponent
-//                                                    {
-//                                                        ComponentType = ComponentType.Circulating_Supply,
-//                                                        IsDenominated = true,
-//                                                        QueryComponent = "result",
-//                                                        CreatedAt = DateTime.UtcNow,
-//                                                        ModifiedAt = DateTime.UtcNow,
-//                                                        DeletedAt = null
-//                                                    }
-//                                                },
-//                                                RequestProperties = new List<RequestProperty>
-//                                                {
-//                                                    new RequestProperty
-//                                                    {
-//                                                        RequestPropertyType = RequestPropertyType.HttpHeader_Custom,
-//                                                        Key = "module",
-//                                                        Value = "stats",
-//                                                    },
-//                                                    new RequestProperty
-//                                                    {
-//                                                        RequestPropertyType = RequestPropertyType.HttpHeader_Custom,
-//                                                        Key = "action",
-//                                                        Value = "ethsupply",
-//                                                    },
-//                                                    new RequestProperty
-//                                                    {
-//                                                        RequestPropertyType = RequestPropertyType.HttpHeader_Custom,
-//                                                        Key = "apikey",
-//                                                        Value = "TGAFGMGDKHJ8W2EKI26MJRRWGH44AV9224",
-//                                                    }
-//                                                }
-//                                            }
-//                                        }
+                    DenominationName = "Wei"
                 },
                 new Currency
                 {
@@ -120,49 +77,6 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                     CurrencySourceId = 1,
                     Denominations = 18,
                     WalletTypeId = 4, // As per CNWallet
-//                                        CurrencyRequests = new List<CurrencyRequest>
-//                                        {
-//                                            new CurrencyRequest
-//                                            {
-//                                                Guid = Guid.NewGuid(),
-//                                                RequestType = RequestType.HttpGet,
-//                                                DataPath = "https://api.etherscan.io/api",
-//                                                Delay = 5000,
-//                                                RequestComponents = new List<RequestComponent>
-//                                                {
-//                                                    new RequestComponent
-//                                                    {
-//                                                        ComponentType = ComponentType.Circulating_Supply,
-//                                                        IsDenominated = true,
-//                                                        QueryComponent = "result",
-//                                                        CreatedAt = DateTime.UtcNow,
-//                                                        ModifiedAt = DateTime.UtcNow,
-//                                                        DeletedAt = null
-//                                                    }
-//                                                },
-//                                                RequestProperties = new List<RequestProperty>
-//                                                {
-//                                                    new RequestProperty
-//                                                    {
-//                                                        RequestPropertyType = RequestPropertyType.HttpHeader_Custom,
-//                                                        Key = "module",
-//                                                        Value = "stats",
-//                                                    },
-//                                                    new RequestProperty
-//                                                    {
-//                                                        RequestPropertyType = RequestPropertyType.HttpHeader_Custom,
-//                                                        Key = "action",
-//                                                        Value = "tokensupply",
-//                                                    },
-//                                                    new RequestProperty
-//                                                    {
-//                                                        RequestPropertyType = RequestPropertyType.HttpHeader_Custom,
-//                                                        Key = "apikey",
-//                                                        Value = "TGAFGMGDKHJ8W2EKI26MJRRWGH44AV9224",
-//                                                    }
-//                                                }
-//                                            },
-//                                        }
                 },
                 new Currency
                 {
@@ -240,54 +154,7 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                     CurrencySourceId = 6,
                     WalletTypeId = 0,
                     Denominations = 8,
-                    DenominationName = "Sat",
-//                    CurrencyRequests = new List<CurrencyRequest>()
-//                    {
-//                        new CurrencyRequest
-//                        {
-//                            Guid = Guid.NewGuid(),
-//                            RequestType = RequestType.HttpGet,
-//                            DataPath = "https://insight.bitpay.com/api/status?q=getBlockCount",
-//                            Delay = 90000,
-//                            RequestComponents = new List<RequestComponent>
-//                            {
-//                                new RequestComponent
-//                                {
-//                                    ComponentType = ComponentType.BlockCount,
-//                                    QueryComponent = "info/blocks",
-//                                    CreatedAt = DateTime.UtcNow,
-//                                    ModifiedAt = DateTime.UtcNow,
-//                                    DeletedAt = null
-//                                },
-//                                new RequestComponent
-//                                {
-//                                    ComponentType = ComponentType.Difficulty,
-//                                    QueryComponent = "info/difficulty",
-//                                    CreatedAt = DateTime.UtcNow,
-//                                    ModifiedAt = DateTime.UtcNow,
-//                                    DeletedAt = null
-//                                }
-//                            }
-//                        },
-//                        new CurrencyRequest
-//                        {
-//                            Guid = Guid.NewGuid(),
-//                            RequestType = RequestType.HttpGet,
-//                            DataPath = "https://api.coinranking.com/v1/public/coin/1?base=USD",
-//                            Delay = 90000,
-//                            RequestComponents = new List<RequestComponent>
-//                            {
-//                                new RequestComponent
-//                                {
-//                                    ComponentType = ComponentType.Circulating_Supply,
-//                                    QueryComponent = "data/coin/circulatingSupply",
-//                                    CreatedAt = DateTime.UtcNow,
-//                                    ModifiedAt = DateTime.UtcNow,
-//                                    DeletedAt = null
-//                                }
-//                            }
-//                        }
-//                    }
+                    DenominationName = "Sat"
                 },
                 new Currency
                 {
