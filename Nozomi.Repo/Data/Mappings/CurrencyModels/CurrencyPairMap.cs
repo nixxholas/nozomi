@@ -107,6 +107,48 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                     CurrencySourceId = 6,
                     MainCurrency = "BTC",
                     CounterCurrency = "USDT"
+                },
+                new CurrencyPair
+                {
+                    Id = 9,
+                    CurrencyPairType = CurrencyPairType.EXCHANGEABLE,
+                    APIUrl = "wss://stream.binance.com:9443/stream?streams=!ticker@arr",
+                    DefaultComponent = "b",
+                    CurrencySourceId = 3,
+                    CurrencyPairCurrencies = new List<CurrencyCurrencyPair>
+                    {
+                        new CurrencyCurrencyPair
+                        {
+                            CurrencyId = ethBna.Id
+                        },
+                        new CurrencyCurrencyPair
+                        {
+                            CurrencyId = btcBna.Id
+                        }
+                    },
+                    MainCurrency = "ETH",
+                    CounterCurrency = "BTC"
+                },
+                new CurrencyPair
+                {
+                    Id = 10,
+                    CurrencyPairType = CurrencyPairType.EXCHANGEABLE,
+                    APIUrl = "wss://stream.binance.com:9443/stream?streams=!ticker@arr",
+                    DefaultComponent = "b",
+                    CurrencySourceId = 3,
+                    CurrencyPairCurrencies = new List<CurrencyCurrencyPair>
+                    {
+                        new CurrencyCurrencyPair
+                        {
+                            CurrencyId = kncBna.Id
+                        },
+                        new CurrencyCurrencyPair
+                        {
+                            CurrencyId = ethBna.Id
+                        }
+                    },
+                    MainCurrency = "KNC",
+                    CounterCurrency = "ETH"
                 }
             );
         }

@@ -23,32 +23,12 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.WebsocketModels
                 new WebsocketRequest
                 {
                     Id = 13,
-                    CurrencyPair = new CurrencyPair
-                    {
-                        CurrencyPairType = CurrencyPairType.EXCHANGEABLE,
-                        APIUrl = "wss://stream.binance.com:9443/stream?streams=!ticker@arr",
-                        DefaultComponent = "b",
-                        CurrencySourceId = 3,
-                        CurrencyPairCurrencies = new List<CurrencyCurrencyPair>
-                        {
-                            new CurrencyCurrencyPair
-                            {
-                                CurrencyId = ethBna.Id
-                            },
-                            new CurrencyCurrencyPair
-                            {
-                                CurrencyId = btcBna.Id
-                            }
-                        },
-                        MainCurrency = ethBna.Abbrv,
-                        CounterCurrency = btcBna.Abbrv
-                    },
+                    CurrencyPairId = 9,
                     Guid = Guid.NewGuid(),
                     RequestType = RequestType.WebSocket,
                     ResponseType = ResponseType.Json,
                     DataPath = "wss://stream.binance.com:9443/stream?streams=!ticker@arr",
                     Delay = 0,
-                    WebsocketCommands = new List<WebsocketCommand>(),
                     RequestComponents = new List<RequestComponent>()
                     {
                         new RequestComponent
@@ -86,26 +66,7 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.WebsocketModels
                 new WebsocketRequest
                 {
                     Id = 14,
-                    CurrencyPair = new CurrencyPair
-                    {
-                        CurrencyPairType = CurrencyPairType.EXCHANGEABLE,
-                        APIUrl = "wss://stream.binance.com:9443/stream?streams=!ticker@arr",
-                        DefaultComponent = "b",
-                        CurrencySourceId = 3,
-                        CurrencyPairCurrencies = new List<CurrencyCurrencyPair>
-                        {
-                            new CurrencyCurrencyPair
-                            {
-                                CurrencyId = kncBna.Id
-                            },
-                            new CurrencyCurrencyPair
-                            {
-                                CurrencyId = ethBna.Id
-                            }
-                        },
-                        MainCurrency = kncBna.Abbrv,
-                        CounterCurrency = ethBna.Abbrv
-                    },
+                    CurrencyPairId = 10,
                     Guid = Guid.NewGuid(),
                     RequestType = RequestType.WebSocket,
                     ResponseType = ResponseType.Json,
