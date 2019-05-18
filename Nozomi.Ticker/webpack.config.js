@@ -10,6 +10,7 @@ module.exports = {
     entry: {
         core: "./ClientApp/scripts/index.ts",
         //stream: path.resolve(__dirname, './ClientApp/scripts/stream/global.js')
+        'font-awesome': 'font-awesome/scss/font-awesome.scss'
     },
     output: {
         path: path.resolve(__dirname, "wwwroot"),
@@ -61,6 +62,13 @@ module.exports = {
                 use: [
                     'style-loader',
                     'css-loader'
+                ]
+            },
+            {
+                test: /font-awesome\.config\.js/,
+                use: [
+                    { loader: 'style-loader' },
+                    { loader: 'font-awesome-loader' }
                 ]
             },
             {
