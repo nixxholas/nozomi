@@ -100,6 +100,7 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                     CurrencyPairId = 7,
                     CurrencyId = 2
                 },
+                // POLO BTCUSDT
                 new CurrencyCurrencyPair
                 {
                     CurrencyPairId = 8,
