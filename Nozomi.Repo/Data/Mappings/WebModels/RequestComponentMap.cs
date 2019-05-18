@@ -549,7 +549,7 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
                 // Coinhako LTCSGD
                 new RequestComponent
                 {
-                    Id = 45,
+                    Id = 47,
                     ComponentType = ComponentType.Bid,
                     Identifier = null,
                     QueryComponent = "data/buy_price",
@@ -560,7 +560,7 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
                 },
                 new RequestComponent
                 {
-                    Id = 46,
+                    Id = 48,
                     ComponentType = ComponentType.Ask,
                     Identifier = null,
                     QueryComponent = "data/sell_price",
@@ -572,7 +572,7 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
                 // Coinhako LTCUSD
                 new RequestComponent
                 {
-                    Id = 47,
+                    Id = 49,
                     ComponentType = ComponentType.Bid,
                     Identifier = null,
                     QueryComponent = "data/buy_price",
@@ -583,7 +583,7 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
                 },
                 new RequestComponent
                 {
-                    Id = 48,
+                    Id = 50,
                     ComponentType = ComponentType.Ask,
                     Identifier = null,
                     QueryComponent = "data/sell_price",
