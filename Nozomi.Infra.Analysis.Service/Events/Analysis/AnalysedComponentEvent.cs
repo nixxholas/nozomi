@@ -166,6 +166,13 @@ namespace Nozomi.Infra.Analysis.Service.Events.Analysis
                 .Take(50);
         }
 
+        /// <summary>
+        /// Obtains all Analysed Components relevant to the currency in question based on the generic counter currency.
+        /// </summary>
+        /// <param name="currencyId"></param>
+        /// <param name="ensureValid"></param>
+        /// <param name="track"></param>
+        /// <returns></returns>
         public ICollection<AnalysedComponent> GetAllByCurrency(long currencyId, bool ensureValid = false, bool track = false)
         {
             // First, obtain the currency in question

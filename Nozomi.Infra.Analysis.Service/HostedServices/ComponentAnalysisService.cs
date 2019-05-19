@@ -157,8 +157,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                         {
                             // obtain all related entities first
                             var analysedComponents = _analysedComponentEvent.GetAllByCurrency((long)component.CurrencyId,
-                                    // TODO: Factor in non-generic counter currency components.
-                                true, true, CoreConstants.GenericCounterCurrency)
+                                true, true)
                                 .Where(ac => ac.ComponentType.Equals(AnalysedComponentType.CurrentAveragePrice)
                                 && !string.IsNullOrEmpty(ac.Value))
                                 .ToList();
