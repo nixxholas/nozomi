@@ -58,12 +58,5 @@ namespace Nozomi.Service.Events.Interfaces
         /// </summary>
         /// <returns>The all pairs with currency rs.</returns>
         IDictionary<long, IDictionary<long, Tuple<string, string>>> GetAllCurrencyPairings();
-
-        /// <summary>
-        /// Gets all pairs with currency relationship in conjunction with wallettypes
-        /// 
-        /// </summary>
-        /// <returns>The all pairs with currency rs.</returns>
-        IDictionary<long, IDictionary<long, long>> GetAllWalletTypeCurrencyPairings();
     }
 }
