@@ -22,10 +22,10 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
             entityTypeBuilder.HasMany(cp => cp.CurrencyPairRequests).WithOne(cpr => cpr.CurrencyPair)
                 .HasForeignKey(cpr => cpr.CurrencyPairId)
                 .HasConstraintName("CurrencyPair_CurrencyPairRequest_Constraint");
-            entityTypeBuilder.HasMany(cp => cp.CurrencyPairCurrencies)
+            entityTypeBuilder.HasMany(cp => cp.CurrencyPairSourceCurrencies)
                 .WithOne(pcp => pcp.CurrencyPair)
                 .HasForeignKey(pcp => pcp.CurrencyPairId)
-                .HasConstraintName("CurrencyPair_PartialCurrencyPairs_Constraint");
+                .HasConstraintName("CurrencyPair_CurrencyPairSourceCurrencies_Constraint");
 
             entityTypeBuilder.HasData(
                 new CurrencyPair()
