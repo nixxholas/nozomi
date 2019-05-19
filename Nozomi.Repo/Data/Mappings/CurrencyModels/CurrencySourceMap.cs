@@ -25,104 +25,124 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                 .HasConstraintName("CurrencySource_Source_Constraint");
 
             entityTypeBuilder.HasData(
+                // Bitfinex USD
                 new CurrencySource
                 {
                     CurrencyId = 1,
                     SourceId = 1
                 },
+                // Bitfinex EUR
                 new CurrencySource
                 {
                     CurrencyId = 2,
                     SourceId = 1
                 },
+                // Bitfinex ETH
                 new CurrencySource
                 {
                     CurrencyId = 3,
                     SourceId = 1
                 },
+                // Bitfinex KNC
                 new CurrencySource
                 {
                     CurrencyId = 4,
                     SourceId = 1
                 },
+                // Binance KNC
                 new CurrencySource
                 {
                     CurrencyId = 5,
                     SourceId = 3
                 },
+                // Binance ETH
                 new CurrencySource
                 {
                     CurrencyId = 6,
                     SourceId = 3
                 },
+                // Binance BTC
                 new CurrencySource
                 {
                     CurrencyId = 7,
                     SourceId = 3
                 },
+                // European Central Bank EUR
+                new CurrencySource
+                {
+                    CurrencyId = 2,
+                    SourceId = 4
+                },
+                // European Central Bank USD
+                new CurrencySource
+                {
+                    CurrencyId = 1,
+                    SourceId = 4
+                },
+                // AlphaVantage EUR
+                new CurrencySource
+                {
+                    CurrencyId = 2,
+                    SourceId = 5
+                },
+                // AlphaVantage USD
+                new CurrencySource
+                {
+                    CurrencyId = 1,
+                    SourceId = 5
+                },
+                // Poloniex BTC
+                new CurrencySource
+                {
+                    CurrencyId = 7,
+                    SourceId = 6
+                },
+                // Poloniex BCN
                 new CurrencySource
                 {
                     CurrencyId = 8,
-                    SourceId = 4
+                    SourceId = 6
                 },
+                // Poloniex BTS
                 new CurrencySource
                 {
                     CurrencyId = 9,
-                    SourceId = 4
+                    SourceId = 6
                 },
+                // Poloniex USDT
                 new CurrencySource
                 {
                     CurrencyId = 10,
-                    SourceId = 5
+                    SourceId = 6
                 },
+                // Coinhako BTC
+                new CurrencySource
+                {
+                    CurrencyId = 7,
+                    SourceId = 2
+                },
+                // Coinhako SGD
                 new CurrencySource
                 {
                     CurrencyId = 11,
-                    SourceId = 5
+                    SourceId = 2
                 },
+                // Coinhako ETH
+                new CurrencySource
+                {
+                    CurrencyId = 6,
+                    SourceId = 2
+                },
+                // Coinhako USD
+                new CurrencySource
+                {
+                    CurrencyId = 1,
+                    SourceId = 2
+                },
+                // Coinhako LTC
                 new CurrencySource
                 {
                     CurrencyId = 12,
-                    SourceId = 6
-                },
-                new CurrencySource
-                {
-                    CurrencyId = 13,
-                    SourceId = 6
-                },
-                new CurrencySource
-                {
-                    CurrencyId = 14,
-                    SourceId = 6
-                },
-                new CurrencySource
-                {
-                    CurrencyId = 15,
-                    SourceId = 6
-                },
-                new CurrencySource
-                {
-                    CurrencyId = 16,
-                    SourceId = 2
-                },
-                new CurrencySource
-                {
-                    CurrencyId = 17,
-                    SourceId = 2
-                },
-                new CurrencySource
-                {
-                    CurrencyId = 18,
-                    SourceId = 2
-                },
-                new CurrencySource
-                {
-                    CurrencyId = 19,
-                    SourceId = 2
-                },
-                new CurrencySource
-                {
-                    CurrencyId = 20,
                     SourceId = 2
                 }
             );

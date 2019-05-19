@@ -73,24 +73,6 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                 },
                 new Currency
                 {
-                    Id = 5,
-                    CurrencyTypeId = 2,
-                    Abbreviation = "KNC",
-                    Name = "Kyber Network Crystal",
-                    WalletTypeId = 4 // As per CNWallet
-                },
-                new Currency
-                {
-                    Id = 6,
-                    CurrencyTypeId = 2,
-                    Abbreviation = "ETH",
-                    Name = "Ethereum",
-                    WalletTypeId = 1, // As per CNWallet
-                    Denominations = 18,
-                    DenominationName = "Wei",
-                },
-                new Currency
-                {
                     Id = 7,
                     CurrencyTypeId = 2,
                     Abbreviation = "BTC",
@@ -102,48 +84,6 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                 new Currency
                 {
                     Id = 8,
-                    CurrencyTypeId = 1,
-                    Abbreviation = "EUR",
-                    Name = "Euro",
-                    WalletTypeId = 0
-                },
-                new Currency
-                {
-                    Id = 9,
-                    CurrencyTypeId = 1,
-                    Abbreviation = "USD",
-                    Name = "United States Dollar",
-                    WalletTypeId = 0
-                },
-                new Currency
-                {
-                    Id = 10,
-                    CurrencyTypeId = 1,
-                    Abbreviation = "EUR",
-                    Name = "Euro",
-                    WalletTypeId = 0
-                },
-                new Currency
-                {
-                    Id = 11,
-                    CurrencyTypeId = 1,
-                    Abbreviation = "USD",
-                    Name = "United States Dollar",
-                    WalletTypeId = 0
-                },
-                new Currency
-                {
-                    Id = 12,
-                    CurrencyTypeId = 2,
-                    Abbreviation = "BTC",
-                    Name = "Bitcoin",
-                    WalletTypeId = 0,
-                    Denominations = 8,
-                    DenominationName = "Sat"
-                },
-                new Currency
-                {
-                    Id = 13,
                     CurrencyTypeId = 2,
                     Abbreviation = "BCN",
                     Name = "Bytecoin",
@@ -151,7 +91,7 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                 },
                 new Currency
                 {
-                    Id = 14,
+                    Id = 9,
                     CurrencyTypeId = 2,
                     Abbreviation = "BTS",
                     Name = "BitShares",
@@ -159,7 +99,7 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                 },
                 new Currency
                 {
-                    Id = 15,
+                    Id = 10,
                     CurrencyTypeId = 1,
                     Abbreviation = "USDT",
                     Name = "Tether USD",
@@ -167,15 +107,7 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                 },
                 new Currency
                 {
-                    Id = 16,
-                    CurrencyTypeId = 2,
-                    Abbreviation = "BTC",
-                    Name = "Bitcoin",
-                    WalletTypeId = 0
-                },
-                new Currency
-                {
-                    Id = 17,
+                    Id = 11,
                     CurrencyTypeId = 1,
                     Abbreviation = "SGD",
                     Name = "Singapore Dollar",
@@ -183,23 +115,7 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                 },
                 new Currency
                 {
-                    Id = 18,
-                    CurrencyTypeId = 2,
-                    Abbreviation = "ETH",
-                    Name = "Ethereum",
-                    WalletTypeId = 0
-                },
-                new Currency
-                {
-                    Id = 19,
-                    CurrencyTypeId = 1,
-                    Abbreviation = "USD",
-                    Name = "United States Dollar",
-                    WalletTypeId = 0
-                },
-                new Currency
-                {
-                    Id = 20,
+                    Id = 12,
                     CurrencyTypeId = 2,
                     Abbreviation = "LTC",
                     Name = "Litecoin",
