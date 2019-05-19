@@ -427,6 +427,8 @@ namespace Nozomi.Service.Events
                 .SingleOrDefault(c => c.Id.Equals(currencyId));
 
             if (qCurrency == null) return null;
+            
+            // Now that we know what Currency it is, we make full use of its Abbreviation
 
             var query = _unitOfWork.GetRepository<CurrencyPairRequest>()
                 .GetQueryable()
