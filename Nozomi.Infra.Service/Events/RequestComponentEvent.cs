@@ -62,58 +62,6 @@ namespace Nozomi.Service.Events
                     .ToList();
         }
 
-        public decimal ComputeDifference(string baseCurrencyAbbrv, string comparingCurrencyAbbrv,
-            ComponentType componentType)
-        {
-            // Make sure it's comparable first
-            if (EnumerableHelper.IsComparable(componentType))
-            {
-                switch (componentType)
-                {
-                    case ComponentType.Ask:
-                    case ComponentType.Bid:
-                    case ComponentType.Low:
-                    case ComponentType.High:
-                    case ComponentType.Daily_Change:
-                    case ComponentType.VOLUME:
-                        // Since it's comparable, lets get the exchange rate
-                        return _unitOfWork.GetRepository<CurrencyPair>()
-                            .GetQueryable()
-                            .AsNoTracking()
-                            .Where(cp => cp.IsEnabled && cp.DeletedAt == null)
-                            .Include(cp => cp.CurrencyPairCurrencies)
-                            .ThenInclude(pcp => pcp.Currency)
-                            .Where(cp => cp.CurrencyPairCurrencies.FirstOrDefault(ccp => ccp.Currency.Abbreviation
-                                                 .Equals(ccp.CurrencyPair.MainCurrency, StringComparison.InvariantCultureIgnoreCase))
-                                             .Currency.Abbreviation
-                                             .Equals(baseCurrencyAbbrv, StringComparison.InvariantCultureIgnoreCase)
-                                         && cp.CurrencyPairCurrencies.FirstOrDefault(ccp => ccp.Currency.Abbreviation
-                                                 .Equals(ccp.CurrencyPair.CounterCurrency, StringComparison.InvariantCultureIgnoreCase))
-                                             .Currency.Abbreviation
-                                             .Equals(comparingCurrencyAbbrv,
-                                                 StringComparison.InvariantCultureIgnoreCase))
-                            .Include(cp => cp.CurrencyPairRequests)
-                            .ThenInclude(cpr => cpr.RequestComponents)
-                            .Where(cPair => cPair.CurrencyPairRequests.Any(cpr => cpr.IsEnabled && cpr.DeletedAt == null
-                                                                                                && cpr.RequestComponents
-                                                                                                    .Any(rc =>
-                                                                                                        rc.ComponentType
-                                                                                                            .Equals(
-                                                                                                                componentType))))
-                            .SelectMany(cp => cp.CurrencyPairRequests
-                                .SelectMany(cpr => cpr.RequestComponents
-                                    .Select(rc => decimal.Parse(rc.Value))))
-                            .DefaultIfEmpty()
-                            .Average();
-                    default:
-                        // Can't compute lol.
-                        return decimal.Zero;
-                }
-            }
-
-            return decimal.Zero;
-        }
-
         // TODO: Ask .NET Core devs for advice to optimise this...
         // TODO: 100% sure this is 100x un-optimised... fuck this query
         public void ConvertToGenericCurrency(ICollection<RequestComponent> requestComponents)

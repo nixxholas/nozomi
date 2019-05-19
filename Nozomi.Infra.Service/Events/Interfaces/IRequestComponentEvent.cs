@@ -12,9 +12,6 @@ namespace Nozomi.Service.Events.Interfaces
     {
         ICollection<RequestComponent> All(int index = 0, bool includeNested = false);
 
-        decimal ComputeDifference(string baseCurrencyAbbrv, string comparingCurrencyAbbrv,
-            ComponentType componentType);
-        
         void ConvertToGenericCurrency(ICollection<RequestComponent> requestComponents);
 
         /// <summary>
