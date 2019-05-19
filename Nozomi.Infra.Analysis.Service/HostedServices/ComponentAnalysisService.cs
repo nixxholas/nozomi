@@ -152,6 +152,42 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                 }
                             }
                         }
+                        // Currency-based Market Cap
+                        else if (component.CurrencyId != null && component.CurrencyId > 0)
+                        {
+                            // obtain all related entities first
+                            var analysedComponents = _analysedComponentEvent.GetAllByCurrency((long)component.CurrencyId,
+                                    // TODO: Factor in non-generic counter currency components.
+                                true, true, CoreConstants.GenericCounterCurrency)
+                                .Where(ac => ac.ComponentType.Equals(AnalysedComponentType.CurrentAveragePrice))
+                                .ToList();
+
+                            if (analysedComponents.Count > 0)
+                            {
+                                // Obtain the circulating supply
+                                var circuSupply = _currencyEvent.GetCirculatingSupply(component);
+
+                                // Average everything
+                                var averagePrice = analysedComponents
+                                    .Select(ac => decimal.Parse(ac.Value))
+                                    .Average();
+
+                                // Parsable average?
+                                if (circuSupply > 0 && averagePrice > decimal.Zero)
+                                {
+                                    var marketCap = circuSupply
+                                                    * averagePrice;
+
+                                    if (!decimal.Zero.Equals(marketCap))
+                                    {
+                                        if (_analysedComponentService.UpdateValue(component.Id, marketCap.ToString()))
+                                        {
+                                            // Updated successfully
+                                        }
+                                    }
+                                }
+                            }
+                        }
                         else
                         {
                             var circuSupply = _currencyEvent.GetCirculatingSupply(component);
