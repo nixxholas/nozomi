@@ -85,6 +85,32 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                     DeletedAt = null,
                     CurrencyId = 3
                 },
+                // ETH Hourly Average Price
+                new AnalysedComponent
+                {
+                    Id = 56,
+                    ComponentType = AnalysedComponentType.HourlyAveragePrice,
+                    Delay = 3000,
+                    UIFormatting = "$ 0[.]00",
+                    CreatedAt = DateTime.UtcNow,
+                    ModifiedAt = DateTime.UtcNow,
+                    IsDenominated = true,
+                    DeletedAt = null,
+                    CurrencyId = 3
+                },
+                // ETH Hourly Average Price
+                new AnalysedComponent
+                {
+                    Id = 57,
+                    ComponentType = AnalysedComponentType.HourlyAveragePrice,
+                    Delay = 3000,
+                    UIFormatting = "$ 0[.]00",
+                    CreatedAt = DateTime.UtcNow,
+                    ModifiedAt = DateTime.UtcNow,
+                    IsDenominated = true,
+                    DeletedAt = null,
+                    CurrencyId = 3
+                },
                 // KNC Bitfinex Market Cap
                 new AnalysedComponent
                 {
