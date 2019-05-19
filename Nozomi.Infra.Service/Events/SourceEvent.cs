@@ -33,7 +33,7 @@ namespace Nozomi.Service.Events
             if (includeNested)
             {
                 query = query
-                    .Include(cs => cs.Currencies);
+                    .Include(cs => cs.SourceCurrencies);
             }
 
             if (countPairs)
@@ -47,7 +47,7 @@ namespace Nozomi.Service.Events
                         APIDocsURL = s.APIDocsURL,
                         PairCount = s.CurrencyPairs != null ? s.CurrencyPairs.Count : 0,
                         CurrencyPairs = s.CurrencyPairs,
-                        Currencies = s.Currencies
+                        SourceCurrencies = s.SourceCurrencies
                     });
             }
 
@@ -65,7 +65,7 @@ namespace Nozomi.Service.Events
             if (includeNested)
             {
                 query = query
-                    .Include(cs => cs.Currencies);
+                    .Include(cs => cs.SourceCurrencies);
             }
 
             if (countPairs)
@@ -79,7 +79,7 @@ namespace Nozomi.Service.Events
                         APIDocsURL = s.APIDocsURL,
                         PairCount = s.CurrencyPairs != null ? s.CurrencyPairs.Count : 0,
                         CurrencyPairs = s.CurrencyPairs,
-                        Currencies = s.Currencies,
+                        SourceCurrencies = s.SourceCurrencies,
                         IsEnabled = s.IsEnabled
                     });
             }
@@ -94,14 +94,14 @@ namespace Nozomi.Service.Events
                     .GetQueryable()
                     .Where(cs => cs.DeletedAt == null)
                     .Where(cs => cs.IsEnabled)
-                    .Include(cs => cs.Currencies)
+                    .Include(cs => cs.SourceCurrencies)
                     .Include(cs => cs.CurrencyPairs)
                     .Select(cs => new
                     {
                         id = cs.Id, 
                         abbrv = cs.Abbreviation,
                         name = cs.Name,
-                        currencies = cs.Currencies,
+                        currencies = cs.SourceCurrencies,
                         currencyPairs = cs.CurrencyPairs
                     });
             } else {
@@ -131,7 +131,7 @@ namespace Nozomi.Service.Events
             return _unitOfWork.GetRepository<Source>()
                 .GetQueryable()
                 .Where(s => s.DeletedAt == null && s.IsEnabled && s.Id.Equals(id))
-                .Include(s => s.Currencies)
+                .Include(s => s.SourceCurrencies)
                     .ThenInclude(c => c.CurrencyType)
                 .Include(s => s.CurrencyPairs)
                     .ThenInclude(cp => cp.CurrencyPairCurrencies)
@@ -140,7 +140,7 @@ namespace Nozomi.Service.Events
                 {
                     Abbreviation = s.Abbreviation,
                     Name = s.Name,
-                    Currencies = s.Currencies
+                    Currencies = s.SourceCurrencies
                         .Where(c => c.IsEnabled && c.DeletedAt == null)
                         .Select(c => new CurrencyResponse
                         {
@@ -160,7 +160,7 @@ namespace Nozomi.Service.Events
             return _unitOfWork.GetRepository<Source>()
                 .GetQueryable()
                 .Where(s => s.DeletedAt == null && s.IsEnabled && s.Abbreviation.Equals(abbreviation))
-                .Include(s => s.Currencies)
+                .Include(s => s.SourceCurrencies)
                 .ThenInclude(c => c.CurrencyType)
                 .Include(s => s.CurrencyPairs)
                 .ThenInclude(cp => cp.CurrencyPairCurrencies)
@@ -170,7 +170,7 @@ namespace Nozomi.Service.Events
                     Abbreviation = s.Abbreviation,
                     Name = s.Name,
                     APIDocsURL = s.APIDocsURL,
-                    Currencies = s.Currencies
+                    Currencies = s.SourceCurrencies
                         .Where(c => c.IsEnabled && c.DeletedAt == null)
                         .Select(c => new CurrencyResponse
                         {

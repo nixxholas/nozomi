@@ -57,9 +57,11 @@ namespace Nozomi.Data.Models.Currency
         
         public ICollection<CurrencyProperty> CurrencyProperties { get; set; }
         
+        public ICollection<CurrencyCurrencyPair> CurrencyCurrencyPairs { get; set; }
+        
         public ICollection<CurrencyRequest> CurrencyRequests { get; set; }
         
-        public ICollection<CurrencyCurrencyPair> CurrencyCurrencyPairs { get; set; }
+        public ICollection<CurrencySource> CurrencySources { get; set; }
 
         public bool IsValid()
         {

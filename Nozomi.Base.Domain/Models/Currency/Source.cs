@@ -21,7 +21,7 @@ namespace Nozomi.Data.Models.Currency
         public long PairCount { get; set; }
 
         // =========== RELATIONS ============ //
-        public ICollection<Currency> Currencies { get; set; }
+        public ICollection<CurrencySource> SourceCurrencies { get; set; }
         public ICollection<CurrencyPair> CurrencyPairs { get; set; }
 
         public bool IsValid()

@@ -37,7 +37,7 @@ namespace Nozomi.Service.HostedServices.StaticUpdater
                         .Include(s => s.CurrencyPairs)
                             .ThenInclude(cp => cp.CurrencyPairRequests)
                         // Historical Data Inclusions
-                        .Include(s => s.Currencies)
+                        .Include(s => s.SourceCurrencies)
                         .ThenInclude(c => c.CurrencyCurrencyPairs)
                         .ThenInclude(pcp => pcp.CurrencyPair)
                         .ThenInclude(cp => cp.CurrencyPairRequests)

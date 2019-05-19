@@ -27,14 +27,14 @@ namespace Nozomi.Service.Events.Memory
                 return new List<DistinctiveCurrencyResponse>();
 
             return _unitOfWork.GetRepository<Source>().GetQueryable()
-                       .Include(s => s.Currencies)
+                       .Include(s => s.SourceCurrencies)
                        .ThenInclude(c => c.CurrencyCurrencyPairs)
                        .ThenInclude(pcp => pcp.CurrencyPair)
                        .ThenInclude(cp => cp.CurrencyPairRequests)
                        .ThenInclude(cpr => cpr.RequestComponents)
                        .ThenInclude(rcd => rcd.RcdHistoricItems)
                        .SingleOrDefault(s => s.Id.Equals(sourceId))
-                       ?.Currencies
+                       ?.SourceCurrencies
                        .Select(c => new DistinctiveCurrencyResponse
                        {
                            Name = c.Name,
