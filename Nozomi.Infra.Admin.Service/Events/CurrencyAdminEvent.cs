@@ -27,38 +27,39 @@ namespace Nozomi.Infra.Admin.Service.Events
             _currencyCurrencyPairAdminEvent = currencyCurrencyPairAdminEvent;
         }
 
-        public AbbrvUniqueCurrencyResponse GetCurrencyByAbbreviation(string abbreviation)
-        {
-            // First obtain all 'ABBRV' objects first, 
-            var currency = _unitOfWork.GetRepository<Currency>()
+        public Currency GetCurrencyByAbbreviation(string abbreviation)
+        { 
+            return _unitOfWork.GetRepository<Currency>()
                 .GetQueryable()
                 .AsNoTracking()
                 .Where(c => c.Abbreviation.Equals(abbreviation, StringComparison.InvariantCultureIgnoreCase))
                 .Include(c => c.CurrencyType)
                 .Include(c => c.AnalysedComponents)
-                .Include(c => c.CurrencySource)
+                .Include(c => c.CurrencySources)
+                .ThenInclude(cs => cs.Source)
+                // Currency Pair Source Currencies
                 .Include(c => c.CurrencyPairSourceCurrencies)
-                .ThenInclude(pcp => pcp.Currency)
-                .Include(c => c.CurrencyCurrencyPairs)
                 .ThenInclude(pcp => pcp.CurrencyPair)
                 .ThenInclude(cp => cp.CurrencyPairRequests)
                 .ThenInclude(cpr => cpr.AnalysedComponents)
-                .Include(c => c.CurrencyCurrencyPairs)
+                .Include(c => c.CurrencyPairSourceCurrencies)
                 .ThenInclude(pcp => pcp.CurrencyPair)
                 .ThenInclude(cp => cp.CurrencyPairRequests)
                 .ThenInclude(cpr => cpr.RequestComponents)
+                .Include(c => c.CurrencyPairSourceCurrencies)
+                .ThenInclude(cpsc => cpsc.CurrencyPair)
+                .ThenInclude(cp => cp.WebsocketRequests)
+                .ThenInclude(wsr => wsr.AnalysedComponents)
+                .Include(c => c.CurrencyPairSourceCurrencies)
+                .ThenInclude(cpsc => cpsc.CurrencyPair)
+                .ThenInclude(cp => cp.WebsocketRequests)
+                .ThenInclude(wsr => wsr.RequestComponents)
+                // Currency Requests
                 .Include(c => c.CurrencyRequests)
                 .ThenInclude(cr => cr.RequestComponents)
-                .ToList();
-
-            if (currency.Count > 0)
-            {
-                var result = new AbbrvUniqueCurrencyResponse(currency);
-                
-                return result;
-            }
-
-            return null;
+                .Include(c => c.CurrencyRequests)
+                .ThenInclude(cr => cr.AnalysedComponents)
+                .SingleOrDefault();
         }
     }
 }
