@@ -75,7 +75,7 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                 },
                 new AnalysedComponent
                 {
-                    Id = 47,
+                    Id = 48,
                     ComponentType = AnalysedComponentType.MarketCapHourlyPctChange,
                     Delay = 1000,
                     UIFormatting = "$ 0 a",
@@ -100,7 +100,7 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                 },
                 new AnalysedComponent
                 {
-                    Id = 48,
+                    Id = 49,
                     ComponentType = AnalysedComponentType.MarketCapChange,
                     Delay = 1000,
                     UIFormatting = "$ 0 a",
@@ -112,7 +112,7 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                 },
                 new AnalysedComponent
                 {
-                    Id = 49,
+                    Id = 50,
                     ComponentType = AnalysedComponentType.MarketCapPctChange,
                     Delay = 1000,
                     UIFormatting = "$ 0 a",
@@ -124,7 +124,7 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                 },
                 new AnalysedComponent
                 {
-                    Id = 50,
+                    Id = 51,
                     ComponentType = AnalysedComponentType.MarketCapHourlyPctChange,
                     Delay = 1000,
                     UIFormatting = "$ 0 a",
@@ -148,7 +148,7 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                 },
                 new AnalysedComponent
                 {
-                    Id = 51,
+                    Id = 52,
                     ComponentType = AnalysedComponentType.MarketCapChange,
                     Delay = 1000,
                     UIFormatting = "$ 0 a",
@@ -160,7 +160,7 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                 },
                 new AnalysedComponent
                 {
-                    Id = 52,
+                    Id = 53,
                     ComponentType = AnalysedComponentType.MarketCapPctChange,
                     Delay = 1000,
                     UIFormatting = "$ 0 a",
@@ -172,7 +172,7 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                 },
                 new AnalysedComponent
                 {
-                    Id = 53,
+                    Id = 54,
                     ComponentType = AnalysedComponentType.MarketCapHourlyPctChange,
                     Delay = 1000,
                     UIFormatting = "$ 0 a",
@@ -671,7 +671,7 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                 // Crypto Market Cap
                 new AnalysedComponent
                 {
-                    Id = 54,
+                    Id = 55,
                     ComponentType = AnalysedComponentType.MarketCap,
                     Delay = 3000,
                     UIFormatting = "$ 0 a",
