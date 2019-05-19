@@ -33,7 +33,7 @@ namespace Nozomi.Service.Services
                 DefaultComponent = createCurrencyPair.DefaultComponent,
                 CurrencySourceId = createCurrencyPair.CurrencySourceId,
                 CurrencyPairCurrencies = createCurrencyPair.PartialCurrencyPairs
-                    .Select(pcp => new CurrencyCurrencyPair
+                    .Select(pcp => new CurrencyPairSourceCurrency
                     {
                         CurrencyId = pcp.CurrencyId
                     })
@@ -223,7 +223,7 @@ namespace Nozomi.Service.Services
             // BTCUSDT => CurrencySources => CurrencyId of USDT
             IDictionary<string, IDictionary<long, long>> result = new Dictionary<string, IDictionary<long, long>>();
 
-            var pcPairs = _unitOfWork.GetRepository<CurrencyCurrencyPair>()
+            var pcPairs = _unitOfWork.GetRepository<CurrencyPairSourceCurrency>()
                 .GetQueryable()
                 .Include(pcp => pcp.CurrencyPair)
                 .Include(pcp => pcp.Currency)

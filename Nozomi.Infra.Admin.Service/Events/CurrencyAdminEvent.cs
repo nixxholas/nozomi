@@ -37,7 +37,7 @@ namespace Nozomi.Infra.Admin.Service.Events
                 .Include(c => c.CurrencyType)
                 .Include(c => c.AnalysedComponents)
                 .Include(c => c.CurrencySource)
-                .Include(c => c.CurrencyCurrencyPairs)
+                .Include(c => c.CurrencyPairSourceCurrencies)
                 .ThenInclude(pcp => pcp.Currency)
                 .Include(c => c.CurrencyCurrencyPairs)
                 .ThenInclude(pcp => pcp.CurrencyPair)

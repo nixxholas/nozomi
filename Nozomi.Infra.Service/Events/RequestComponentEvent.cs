@@ -127,11 +127,11 @@ namespace Nozomi.Service.Events
                     var counterCurr = _unitOfWork.GetRepository<Currency>()
                         .GetQueryable()
                         .AsNoTracking()
-                        .Include(c => c.CurrencyCurrencyPairs)
+                        .Include(c => c.CurrencyPairSourceCurrencies)
                         .ThenInclude(pcp => pcp.CurrencyPair)
                         .ThenInclude(cp => cp.CurrencyPairRequests)
                         .ThenInclude(cpr => cpr.RequestComponents)
-                        .SingleOrDefault(c => c.CurrencyCurrencyPairs
+                        .SingleOrDefault(c => c.CurrencyPairSourceCurrencies
                                 // Make sure we're not converting if we don't have to.
                             .Where(ccp => ccp.Currency.Abbreviation
                                               .Equals(ccp.CurrencyPair.CounterCurrency, StringComparison.InvariantCultureIgnoreCase)
@@ -147,7 +147,7 @@ namespace Nozomi.Service.Events
                     {
                         // Obtain the conversion rate
                         var conversionRate = _unitOfWork
-                            .GetRepository<CurrencyCurrencyPair>()
+                            .GetRepository<CurrencyPairSourceCurrency>()
                             .GetQueryable()
                             .AsNoTracking()
                             .Where(ccp => ccp.Currency.Abbreviation
@@ -249,7 +249,7 @@ namespace Nozomi.Service.Events
                 .Include(cp => cp.CurrencyPairCurrencies)
                 .ThenInclude(pcp => pcp.Currency)
                 .SelectMany(cp => cp.CurrencyPairCurrencies
-                    .Select(pcp => new CurrencyCurrencyPair
+                    .Select(pcp => new CurrencyPairSourceCurrency
                     {
                         Currency = pcp.Currency,
                         CurrencyPair = pcp.CurrencyPair,

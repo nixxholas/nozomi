@@ -47,7 +47,7 @@ namespace Nozomi.Service.Events
                 query = query
                     .Include(c => c.AnalysedComponents)
                     .Include(c => c.CurrencySource)
-                    .Include(c => c.CurrencyCurrencyPairs)
+                    .Include(c => c.CurrencyPairSourceCurrencies)
                     .ThenInclude(pcp => pcp.Currency)
                     .Include(c => c.CurrencyRequests)
                     .ThenInclude(cr => cr.RequestComponents);
@@ -72,7 +72,7 @@ namespace Nozomi.Service.Events
                             && c.DeletedAt == null && c.IsEnabled)
                 .Include(c => c.AnalysedComponents)
                 .Include(c => c.CurrencySource)
-                .Include(c => c.CurrencyCurrencyPairs)
+                .Include(c => c.CurrencyPairSourceCurrencies)
                 .ThenInclude(pcp => pcp.Currency)
                 .Include(c => c.CurrencyCurrencyPairs)
                 .ThenInclude(pcp => pcp.CurrencyPair)
@@ -273,7 +273,7 @@ namespace Nozomi.Service.Events
             {
                 query = query.Include(c => c.AnalysedComponents)
                     .Include(c => c.CurrencySource)
-                    .Include(c => c.CurrencyCurrencyPairs)
+                    .Include(c => c.CurrencyPairSourceCurrencies)
                     .ThenInclude(pcp => pcp.Currency)
                     .ThenInclude(c => c.CurrencySource)
                     .Include(c => c.CurrencyRequests)
@@ -293,7 +293,7 @@ namespace Nozomi.Service.Events
             {
                 query = query.Include(c => c.AnalysedComponents)
                     .Include(c => c.CurrencySource)
-                    .Include(c => c.CurrencyCurrencyPairs)
+                    .Include(c => c.CurrencyPairSourceCurrencies)
                     .ThenInclude(pcp => pcp.Currency)
                     .Include(c => c.CurrencyRequests)
                     .ThenInclude(cr => cr.RequestComponents);
@@ -502,7 +502,7 @@ namespace Nozomi.Service.Events
             {
                 query = query
                     .Include(c => c.AnalysedComponents)
-                    .Include(c => c.CurrencyCurrencyPairs)
+                    .Include(c => c.CurrencyPairSourceCurrencies)
                     .Include(c => c.CurrencyType)
                     .Include(c => c.CurrencySource)
                     .Include(c => c.CurrencyRequests)
@@ -523,7 +523,7 @@ namespace Nozomi.Service.Events
             {
                 query = query
                     .Include(c => c.AnalysedComponents)
-                    .Include(c => c.CurrencyCurrencyPairs)
+                    .Include(c => c.CurrencyPairSourceCurrencies)
                     .Include(c => c.CurrencyType)
                     .Include(c => c.CurrencySource)
                     .Include(c => c.CurrencyRequests)
@@ -562,10 +562,10 @@ namespace Nozomi.Service.Events
             currencies = currencies
                 .Include(c => c.AnalysedComponents)
                 .ThenInclude(ac => ac.AnalysedHistoricItems)
-                .Include(c => c.CurrencyCurrencyPairs)
+                .Include(c => c.CurrencyPairSourceCurrencies)
                 .ThenInclude(ccp => ccp.CurrencyPair)
                 // TODO: Exclude this rule
-                .Where(c => c.CurrencyCurrencyPairs.Any(ccp => ccp.CurrencyPair.CounterCurrency
+                .Where(c => c.CurrencyPairSourceCurrencies.Any(ccp => ccp.CurrencyPair.CounterCurrency
                     .Equals(CoreConstants.GenericCounterCurrency, StringComparison.InvariantCultureIgnoreCase)))
 //                .ThenInclude(pcp => pcp.Currency)
 //                .Include(c => c.CurrencyCurrencyPairs)
@@ -793,7 +793,7 @@ namespace Nozomi.Service.Events
                     .AsNoTracking()
                     .Where(c => c.DeletedAt == null)
                     .Where(c => c.IsEnabled)
-                    .Include(c => c.CurrencyCurrencyPairs);
+                    .Include(c => c.CurrencyPairSourceCurrencies);
             }
             else
             {
@@ -916,7 +916,7 @@ namespace Nozomi.Service.Events
             // Deque (Thought of using this because c++)
             // A double-ended queue, which provides O(1) indexed access, 
             // O(1) removals, insertions to the front and back, O(N) to everywhere else
-            var pcPairs = new List<CurrencyCurrencyPair>(_unitOfWork.GetRepository<CurrencyCurrencyPair>()
+            var pcPairs = new List<CurrencyPairSourceCurrency>(_unitOfWork.GetRepository<CurrencyPairSourceCurrency>()
                 .GetQueryable()
                 .AsNoTracking()
                 .Include(cp => cp.Currency));
@@ -986,7 +986,7 @@ namespace Nozomi.Service.Events
             // Prep the result
             IDictionary<long, IDictionary<long, long>> result = new Dictionary<long, IDictionary<long, long>>();
 
-            var pcPairs = _unitOfWork.GetRepository<CurrencyCurrencyPair>()
+            var pcPairs = _unitOfWork.GetRepository<CurrencyPairSourceCurrency>()
                 .GetQueryable()
                 .AsNoTracking()
                 .Include(cp => cp.Currency)

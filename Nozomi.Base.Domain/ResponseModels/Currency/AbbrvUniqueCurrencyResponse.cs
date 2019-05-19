@@ -57,7 +57,7 @@ namespace Nozomi.Data.ResponseModels.Currency
                         }
                     }
 
-                    foreach (var currencyCurrencyPair in similarCurr.CurrencyCurrencyPairs)
+                    foreach (var currencyCurrencyPair in similarCurr.CurrencyPairSourceCurrencies)
                     {
                         // Form the TickerPair abbreviation first
                         var tickerPairStr = string.Concat(currencyCurrencyPair.CurrencyPair.MainCurrency,
@@ -121,7 +121,7 @@ namespace Nozomi.Data.ResponseModels.Currency
                 }
 
                 AnalysedComponents = currencies
-                    .SelectMany(c => c.CurrencyCurrencyPairs)
+                    .SelectMany(c => c.CurrencyPairSourceCurrencies)
                     .Select(pcp => pcp.CurrencyPair)
                     .Where(cp => cp.CounterCurrency.Equals(CoreConstants.GenericCounterCurrency,
                         StringComparison.InvariantCultureIgnoreCase))

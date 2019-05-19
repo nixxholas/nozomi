@@ -108,7 +108,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                 (long)component.CurrencyTypeId)
                                 .Where(ac => ac.ComponentType.Equals(AnalysedComponentType.MarketCap)
                                 && ac.CurrencyType.Currencies.Any(c => 
-                                    c.CurrencyCurrencyPairs.Any(ccp => 
+                                    c.CurrencyPairSourceCurrencies.Any(ccp => 
                                         ccp.CurrencyPair.CounterCurrency.Contains(CoreConstants.GenericCounterCurrency,
                                             StringComparison.InvariantCultureIgnoreCase))))
                                 .ToList();

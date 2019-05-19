@@ -50,7 +50,7 @@ namespace Nozomi.Infra.Analysis.Service.Events.Analysis
                     var counterCurr = _unitOfWork.GetRepository<Currency>()
                         .GetQueryable()
                         .AsNoTracking()
-                        .Include(c => c.CurrencyCurrencyPairs)
+                        .Include(c => c.CurrencyPairSourceCurrencies)
                         .ThenInclude(c => c.Currency)
                         .Include(c => c.CurrencyCurrencyPairs)
                         .ThenInclude(pcp => pcp.CurrencyPair)
@@ -74,7 +74,7 @@ namespace Nozomi.Infra.Analysis.Service.Events.Analysis
                     {
                         // Obtain the conversion rate
                         var conversionRate = _unitOfWork
-                            .GetRepository<CurrencyCurrencyPair>()
+                            .GetRepository<CurrencyPairSourceCurrency>()
                             .GetQueryable()
                             .AsNoTracking()
                             .Where(ccp => ccp.Currency.Abbreviation.Equals(ccp.CurrencyPair.MainCurrency, 
@@ -278,7 +278,7 @@ namespace Nozomi.Infra.Analysis.Service.Events.Analysis
                         .ThenInclude(c => c.AnalysedComponents)
                         .Include(ac => ac.CurrencyType)
                         .ThenInclude(ct => ct.Currencies)
-                        .ThenInclude(c => c.CurrencyCurrencyPairs)
+                        .ThenInclude(c => c.CurrencyPairSourceCurrencies)
                         .ThenInclude(ccp => ccp.CurrencyPair)
                         .Include(ac => ac.AnalysedHistoricItems);
                 }
@@ -307,7 +307,7 @@ namespace Nozomi.Infra.Analysis.Service.Events.Analysis
                 .Include(cp => cp.CurrencyPairCurrencies)
                 .ThenInclude(pcp => pcp.Currency)
                 .SelectMany(cp => cp.CurrencyPairCurrencies)
-                .Select(pcp => new CurrencyCurrencyPair
+                .Select(pcp => new CurrencyPairSourceCurrency
                 {
                     CurrencyId = pcp.CurrencyId,
                     CurrencyPairId = pcp.CurrencyPairId,

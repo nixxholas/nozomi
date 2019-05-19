@@ -2,11 +2,11 @@ using Nozomi.Base.Core;
 
 namespace Nozomi.Data.Models.Currency
 {
-    public class CurrencyCurrencyPair : BaseEntityModel
+    public class CurrencyPairSourceCurrency : BaseEntityModel
     {
-        public long CurrencyId { get; set; }
+        public long CurrencySourceId { get; set; }
         
-        public Currency Currency { get; set; }
+        public CurrencySource CurrencySource { get; set; }
         
         public long CurrencyPairId { get; set; }
         

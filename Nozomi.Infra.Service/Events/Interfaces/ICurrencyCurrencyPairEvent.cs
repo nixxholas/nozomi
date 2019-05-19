@@ -6,6 +6,6 @@ namespace Nozomi.Service.Events.Interfaces
 {
     public interface ICurrencyCurrencyPairEvent
     {
-        ICollection<CurrencyCurrencyPair> ObtainCounterCurrencyPairs(ICollection<CurrencyCurrencyPair> mainCCPs);
+        ICollection<CurrencyPairSourceCurrency> ObtainCounterCurrencyPairs(ICollection<CurrencyPairSourceCurrency> mainCCPs);
     }
 }

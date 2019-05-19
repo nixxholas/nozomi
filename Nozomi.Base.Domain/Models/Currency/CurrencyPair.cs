@@ -33,11 +33,13 @@ namespace Nozomi.Data.Models.Currency
         
         public string CounterCurrency { get; set; }
         
-        public ICollection<CurrencyCurrencyPair> CurrencyPairCurrencies{ get; set; }
+        public ICollection<CurrencyPairSourceCurrency> CurrencyPairSourceCurrencies { get; set; }
 
         public bool IsValid()
         {
-            var firstPair = CurrencyPairCurrencies.FirstOrDefault(cp => cp.Currency.Abbreviation.Equals(MainCurrency, 
+            if (CurrencyPairSourceCurrencies != null && CurrencyPairSourceCurrencies.Count == 2)
+                
+            var firstPair = CurrencyPairSourceCurrencies.FirstOrDefault(cp => cp.Currency.Abbreviation.Equals(MainCurrency, 
                 StringComparison.InvariantCultureIgnoreCase) 
             && cp.Currency.CurrencySourceId.Equals(CurrencySourceId));
             var lastPair = CurrencyPairCurrencies.SingleOrDefault(cp => cp.Currency.Abbreviation.Equals(CounterCurrency, 

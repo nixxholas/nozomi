@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Nozomi.Base.Core;
 
 namespace Nozomi.Data.Models.Currency
@@ -16,5 +17,7 @@ namespace Nozomi.Data.Models.Currency
         public long SourceId { get; set; }
         
         public Source Source { get; set; }
+        
+        public ICollection<CurrencyPairSourceCurrency> CurrencyPairSourceCurrencies { get; set; }
     }
 }

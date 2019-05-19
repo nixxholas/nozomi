@@ -29,7 +29,7 @@ namespace Nozomi.Data.Models.Currency
                     Abbreviation = firstCurr.Abbreviation;
                     Name = firstCurr.Name;
                     WalletTypeId = firstCurr.WalletTypeId;
-                    CurrencyCurrencyPairs = CurrencyCurrencyPairs;
+                    CurrencyPairSourceCurrencies = CurrencyPairSourceCurrencies;
                 }
             }
         }
@@ -57,7 +57,7 @@ namespace Nozomi.Data.Models.Currency
         
         public ICollection<CurrencyProperty> CurrencyProperties { get; set; }
         
-        public ICollection<CurrencyCurrencyPair> CurrencyCurrencyPairs { get; set; }
+        public ICollection<CurrencyPairSourceCurrency> CurrencyPairSourceCurrencies { get; set; }
         
         public ICollection<CurrencyRequest> CurrencyRequests { get; set; }
         

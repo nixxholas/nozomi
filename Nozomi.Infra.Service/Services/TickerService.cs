@@ -136,13 +136,13 @@ namespace Nozomi.Service.Services
                 CurrencySourceId = createTickerInputModel.CurrencySourceId,
                 MainCurrency = mainCurrency.Abbreviation,
                 CounterCurrency = counterCurrency.Abbreviation,
-                CurrencyPairCurrencies = new List<CurrencyCurrencyPair>
+                CurrencyPairCurrencies = new List<CurrencyPairSourceCurrency>
                 {
-                    new CurrencyCurrencyPair
+                    new CurrencyPairSourceCurrency
                     {
                         CurrencyId = mainCurrency.Id
                     },
-                    new CurrencyCurrencyPair
+                    new CurrencyPairSourceCurrency
                     {
                         CurrencyId = counterCurrency.Id
                     }

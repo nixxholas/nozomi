@@ -18,11 +18,11 @@ namespace Nozomi.Service.Events
         {
         }
 
-        public ICollection<CurrencyCurrencyPair> ObtainCounterCurrencyPairs(ICollection<CurrencyCurrencyPair> mainCCPs)
+        public ICollection<CurrencyPairSourceCurrency> ObtainCounterCurrencyPairs(ICollection<CurrencyPairSourceCurrency> mainCCPs)
         {
             if (mainCCPs != null && mainCCPs.Count > 0)
             {
-                return _unitOfWork.GetRepository<CurrencyCurrencyPair>()
+                return _unitOfWork.GetRepository<CurrencyPairSourceCurrency>()
                     .GetQueryable()
                     .AsNoTracking()
                     .Include(ccp => ccp.Currency)

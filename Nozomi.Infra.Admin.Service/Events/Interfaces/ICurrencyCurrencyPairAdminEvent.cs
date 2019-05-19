@@ -6,6 +6,6 @@ namespace Nozomi.Infra.Admin.Service.Events.Interfaces
 {
     public interface ICurrencyCurrencyPairAdminEvent
     {
-        ICollection<CurrencyCurrencyPair> GetCounterCurrenciesByAbbreviation(string mainAbbreviation);
+        ICollection<CurrencyPairSourceCurrency> GetCounterCurrenciesByAbbreviation(string mainAbbreviation);
     }
 }

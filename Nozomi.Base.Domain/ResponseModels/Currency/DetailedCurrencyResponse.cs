@@ -129,9 +129,9 @@ namespace Nozomi.Data.ResponseModels.Currency
                         }
 
                         // Non-direct AnalysedComponents
-                        if (exchangeUniqueCurr.CurrencyCurrencyPairs != null)
+                        if (exchangeUniqueCurr.CurrencyPairSourceCurrencies != null)
                         {
-                            foreach (var ccp in exchangeUniqueCurr.CurrencyCurrencyPairs
+                            foreach (var ccp in exchangeUniqueCurr.CurrencyPairSourceCurrencies
                                 .Where(ccp => ccp.CurrencyPair != null))
                             {
                                 if (ccp.CurrencyPair.CurrencyPairRequests != null)
@@ -313,10 +313,10 @@ namespace Nozomi.Data.ResponseModels.Currency
                 LastUpdated = DateTime.UtcNow;
 
                 // Obtain analysed component data from partial currency pairs.
-                if (currency.CurrencyCurrencyPairs != null && currency.CurrencyCurrencyPairs.Count > 0)
+                if (currency.CurrencyPairSourceCurrencies != null && currency.CurrencyPairSourceCurrencies.Count > 0)
                 {
                     // Obtain via the Request method
-                    var query = currency.CurrencyCurrencyPairs
+                    var query = currency.CurrencyPairSourceCurrencies
                         .Select(pcp => pcp.CurrencyPair)
                         .SelectMany(cpr => cpr.CurrencyPairRequests)
                         .SelectMany(cpr => cpr.AnalysedComponents)
@@ -600,10 +600,10 @@ namespace Nozomi.Data.ResponseModels.Currency
         {
             if (currency != null)
             {
-                if (currency.CurrencyCurrencyPairs != null && currency.CurrencyCurrencyPairs.Count > 0)
+                if (currency.CurrencyPairSourceCurrencies != null && currency.CurrencyPairSourceCurrencies.Count > 0)
                 {
                     // Obtain via the Request method
-                    var query = currency.CurrencyCurrencyPairs
+                    var query = currency.CurrencyPairSourceCurrencies
                         .Select(pcp => pcp.CurrencyPair)
                         .SelectMany(cpr => cpr.CurrencyPairRequests)
                         .SelectMany(cpr => cpr.AnalysedComponents)

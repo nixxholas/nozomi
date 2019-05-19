@@ -18,9 +18,9 @@ namespace Nozomi.Infra.Admin.Service.Events
         {
         }
 
-        public ICollection<CurrencyCurrencyPair> GetCounterCurrenciesByAbbreviation(string mainAbbreviation)
+        public ICollection<CurrencyPairSourceCurrency> GetCounterCurrenciesByAbbreviation(string mainAbbreviation)
         {
-            return _unitOfWork.GetRepository<CurrencyCurrencyPair>()
+            return _unitOfWork.GetRepository<CurrencyPairSourceCurrency>()
                 .GetQueryable()
                 .AsNoTracking()
                 .Include(ccp => ccp.Currency)
