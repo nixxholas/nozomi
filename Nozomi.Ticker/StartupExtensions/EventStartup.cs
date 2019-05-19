@@ -40,7 +40,6 @@ namespace Nozomi.Ticker.StartupExtensions
             // Nozomi.Analysis event injections
             services.AddScoped<IAnalysedComponentEvent, AnalysedComponentEvent>();
             services.AddScoped<IAnalysedHistoricItemEvent, AnalysedHistoricItemEvent>();
-            services.AddScoped<IAnalysedResponseEvent, AnalysedResponseEvent>();
             services.AddScoped<ICurrencyConversionEvent, CurrencyConversionEvent>();
         }
     }
