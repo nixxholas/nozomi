@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
@@ -23,9 +24,12 @@ namespace Nozomi.Infra.Admin.Service.Events
             return _unitOfWork.GetRepository<CurrencyPairSourceCurrency>()
                 .GetQueryable()
                 .AsNoTracking()
-                .Include(ccp => ccp.Currency)
+                .Include(cpsc => cpsc.CurrencySource)
+                .ThenInclude(cs => cs.Currency)
                 .Include(ccp => ccp.CurrencyPair)
-                .Where(ccp => ccp.CurrencyPair.MainCurrency.Equals(mainAbbreviation))
+                .Where(ccp => ccp.CurrencyPair.MainCurrency.Equals(mainAbbreviation)
+                && !ccp.CurrencySource.Currency.Abbreviation.Equals(mainAbbreviation, 
+                    StringComparison.InvariantCultureIgnoreCase))
                 .ToList();
         }
     }
