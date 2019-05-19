@@ -18,13 +18,13 @@ namespace Nozomi.Infra.Admin.Service.Events
 {
     public class CurrencyAdminEvent : BaseEvent<CurrencyEvent, NozomiDbContext>, ICurrencyAdminEvent
     {
-        private readonly ICurrencyCurrencyPairAdminEvent _currencyCurrencyPairAdminEvent;
+        private readonly Interfaces.CurrencyPairSourceCurrencyAdminEvent _currencyPairSourceCurrencyAdminEvent;
         
         public CurrencyAdminEvent(ILogger<CurrencyEvent> logger, IUnitOfWork<NozomiDbContext> unitOfWork,
-            ICurrencyCurrencyPairAdminEvent currencyCurrencyPairAdminEvent) 
+            Interfaces.CurrencyPairSourceCurrencyAdminEvent currencyPairSourceCurrencyAdminEvent) 
             : base(logger, unitOfWork)
         {
-            _currencyCurrencyPairAdminEvent = currencyCurrencyPairAdminEvent;
+            _currencyPairSourceCurrencyAdminEvent = currencyPairSourceCurrencyAdminEvent;
         }
 
         public Currency GetCurrencyByAbbreviation(string abbreviation)

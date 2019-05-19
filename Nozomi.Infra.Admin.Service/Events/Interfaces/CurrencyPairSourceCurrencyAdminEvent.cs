@@ -4,7 +4,7 @@ using Nozomi.Data.Models.Currency;
 
 namespace Nozomi.Infra.Admin.Service.Events.Interfaces
 {
-    public interface ICurrencyCurrencyPairAdminEvent
+    public interface CurrencyPairSourceCurrencyAdminEvent
     {
         ICollection<CurrencyPairSourceCurrency> GetCounterCurrenciesByAbbreviation(string mainAbbreviation);
     }

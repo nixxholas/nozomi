@@ -20,6 +20,7 @@ using Nozomi.Service.Services.Enumerators.Interfaces;
 using Nozomi.Service.Services.Interfaces;
 using Nozomi.Service.Services.Requests;
 using Nozomi.Service.Services.Requests.Interfaces;
+using CurrencyPairSourceCurrencyAdminEvent = Nozomi.Infra.Admin.Service.Events.Interfaces.CurrencyPairSourceCurrencyAdminEvent;
 
 namespace Nozomi.Ticker.StartupExtensions
 {
@@ -50,7 +51,7 @@ namespace Nozomi.Ticker.StartupExtensions
             
             // Admin Service Injections
             services.AddScoped<ICurrencyAdminEvent, CurrencyAdminEvent>();
-            services.AddScoped<ICurrencyCurrencyPairAdminEvent, CurrencyCurrencyPairAdminEvent>();
+            services.AddScoped<CurrencyPairSourceCurrencyAdminEvent, Infra.Admin.Service.Events.CurrencyPairSourceCurrencyAdminEvent>();
             
             // Identity-related service injections
             services.AddTransient<INozomiUserStore, NozomiUserStore>();

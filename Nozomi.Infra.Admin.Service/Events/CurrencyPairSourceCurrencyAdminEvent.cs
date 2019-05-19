@@ -12,9 +12,9 @@ using Nozomi.Service.Events;
 
 namespace Nozomi.Infra.Admin.Service.Events
 {
-    public class CurrencyCurrencyPairAdminEvent : BaseEvent<CurrencyEvent, NozomiDbContext>, ICurrencyCurrencyPairAdminEvent
+    public class CurrencyPairSourceCurrencyAdminEvent : BaseEvent<CurrencyEvent, NozomiDbContext>, Interfaces.CurrencyPairSourceCurrencyAdminEvent
     {
-        public CurrencyCurrencyPairAdminEvent(ILogger<CurrencyEvent> logger, IUnitOfWork<NozomiDbContext> unitOfWork) 
+        public CurrencyPairSourceCurrencyAdminEvent(ILogger<CurrencyEvent> logger, IUnitOfWork<NozomiDbContext> unitOfWork) 
             : base(logger, unitOfWork)
         {
         }
