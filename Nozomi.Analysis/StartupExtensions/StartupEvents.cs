@@ -3,8 +3,6 @@ using Nozomi.Infra.Analysis.Service.Events.Analysis;
 using Nozomi.Infra.Analysis.Service.Events.Analysis.Interfaces;
 using Nozomi.Service.Events;
 using Nozomi.Service.Events.Interfaces;
-using Nozomi.Service.Events.Memory;
-using Nozomi.Service.Events.Memory.Interfaces;
 using Nozomi.Service.Events.Websocket;
 using Nozomi.Service.Events.Websocket.Interfaces;
 
@@ -18,7 +16,6 @@ namespace Nozomi.Analysis.StartupExtensions
             services.AddScoped<ICurrencyPairEvent, CurrencyPairEvent>();
             services.AddScoped<ICurrencyRequestEvent, CurrencyRequestEvent>();
             services.AddScoped<ICurrencyTypeEvent, CurrencyTypeEvent>();
-            services.AddScoped<IHistoricalDataEvent, HistoricalDataEvent>();
             services.AddScoped<ICurrencyCurrencyPairEvent, CurrencyCurrencyPairEvent>();
             services.AddScoped<IRequestEvent, RequestEvent>();
             services.AddScoped<IRequestComponentEvent, RequestComponentEvent>();
