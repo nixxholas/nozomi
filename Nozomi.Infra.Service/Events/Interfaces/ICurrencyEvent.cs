@@ -48,15 +48,5 @@ namespace Nozomi.Service.Events.Interfaces
         IEnumerable<Currency> GetAllActive(bool includeNested = false);
         IEnumerable<dynamic> GetAllActiveObsc(bool includeNested = false);
         IEnumerable<dynamic> GetAllActiveDistinctObsc(bool includeNested = false);
-
-        /// <summary>
-        /// Gets all pairs with currency relationship.
-        /// 
-        /// The key of the dictionary is what the user chooses for his main option.
-        /// We'll then use the currencypair object to match for counter currencies that pair
-        /// up with his option.
-        /// </summary>
-        /// <returns>The all pairs with currency rs.</returns>
-        IDictionary<long, IDictionary<long, Tuple<string, string>>> GetAllCurrencyPairings();
     }
 }
