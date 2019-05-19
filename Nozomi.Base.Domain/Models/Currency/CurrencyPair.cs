@@ -38,19 +38,24 @@ namespace Nozomi.Data.Models.Currency
         public bool IsValid()
         {
             if (CurrencyPairSourceCurrencies != null && CurrencyPairSourceCurrencies.Count == 2)
+            {
+                var mainCurr = CurrencyPairSourceCurrencies.FirstOrDefault(cpsc =>
+                    cpsc.CurrencySource.Currency.Abbreviation.Equals(MainCurrency,
+                        StringComparison.InvariantCultureIgnoreCase));
+                var counterCurr = CurrencyPairSourceCurrencies.FirstOrDefault(cpsc =>
+                    cpsc.CurrencySource.Currency.Abbreviation.Equals(CounterCurrency,
+                        StringComparison.InvariantCultureIgnoreCase));
                 
-            var firstPair = CurrencyPairSourceCurrencies.FirstOrDefault(cp => cp.Currency.Abbreviation.Equals(MainCurrency, 
-                StringComparison.InvariantCultureIgnoreCase) 
-            && cp.Currency.CurrencySourceId.Equals(CurrencySourceId));
-            var lastPair = CurrencyPairCurrencies.SingleOrDefault(cp => cp.Currency.Abbreviation.Equals(CounterCurrency, 
-                                                               StringComparison.InvariantCultureIgnoreCase) 
-                                                           && cp.Currency.CurrencySourceId.Equals(CurrencySourceId));
-
-            return (CurrencyPairType > 0) && (!string.IsNullOrEmpty(APIUrl))
-                                          && (!string.IsNullOrEmpty(DefaultComponent))
-                                          && (CurrencySourceId > 0)
-                                          && (CurrencyPairCurrencies.Count == 2)
-                                          && (firstPair.CurrencyId != lastPair.CurrencyId);
+                return (CurrencyPairType > 0) && (!string.IsNullOrEmpty(APIUrl))
+                                              && (!string.IsNullOrEmpty(DefaultComponent))
+                                              && (CurrencySourceId > 0)
+                                              && mainCurr != null && counterCurr != null 
+                                              && !mainCurr.CurrencySourceId.Equals(counterCurr.CurrencySourceId)
+                                              && mainCurr.CurrencySource.SourceId
+                                                  .Equals(counterCurr.CurrencySource.SourceId);
+            }
+            
+            return false;
         }
     }
 }
