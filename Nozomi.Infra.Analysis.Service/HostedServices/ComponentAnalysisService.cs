@@ -125,16 +125,16 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                     if (decimal.TryParse(ac.Value, out var val) && val > decimal.Zero)
                                     {
                                         // Does this ticker exist on the list of market caps yet?
-                                        if (marketCapByCurrencies.ContainsKey(ac.Currency.Abbrv))
+                                        if (marketCapByCurrencies.ContainsKey(ac.Currency.Abbreviation))
                                         {
                                             // Since yes, let's work on averaging it
-                                            marketCapByCurrencies[ac.Currency.Abbrv] = 
-                                                (marketCapByCurrencies[ac.Currency.Abbrv] + val) / 2;
+                                            marketCapByCurrencies[ac.Currency.Abbreviation] = 
+                                                (marketCapByCurrencies[ac.Currency.Abbreviation] + val) / 2;
                                         }
                                         else
                                         {
                                             // Since no, let's set it
-                                            marketCapByCurrencies.Add(ac.Currency.Abbrv, val);
+                                            marketCapByCurrencies.Add(ac.Currency.Abbreviation, val);
                                         }
                                     }
                                 }
@@ -224,31 +224,14 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                         // CurrencyType-based Live Average Price
                         if (component.CurrencyTypeId != null && component.CurrencyTypeId > 0)
                         {
-                            // Obtain all sub components (Components in the currencies)
-                            var analysedComponents = _analysedComponentEvent.GetAllByCurrencyType(
-                                    (long)component.CurrencyTypeId)
-                                .Where(ac => ac.ComponentType.Equals(AnalysedComponentType.CurrentAveragePrice)
-                                             && ac.CurrencyType.Currencies.Any(c => 
-                                                 c.CurrencyCurrencyPairs.Any(ccp => 
-                                                     ccp.CurrencyPair.CounterCurrency.Contains(CoreConstants.GenericCounterCurrency,
-                                                         StringComparison.InvariantCultureIgnoreCase))))
-                                .ToList();
-
-                            if (analysedComponents != null && analysedComponents.Count > 0)
-                            {
-                                var averagePrice = analysedComponents
-                                    .Where(ac => !string.IsNullOrEmpty(ac.Value))
-                                    .Select(ac => decimal.Parse(ac.Value))
-                                    .Average();
-                                
-                                if (averagePrice > 0 && _analysedComponentService.UpdateValue(component.Id, 
-                                    averagePrice.ToString(CultureInfo.InvariantCulture)))
-                                {
-                                    // Updated successfully
-                                }
-                            }
+                            _logger.LogCritical($"[{ServiceName} / ID: {component.Id}] " +
+                                                $"Analyse/CurrentAveragePrice: A CurrencyType-" +
+                                                $"based component is attempting to compute its CurrentAveragePrice.");
                         }
-                        // Which case? Allow currency to precede first.
+                        // Currency-based Live Average Price
+                        // 1. Multiple Currency Pairs with Different Counter Currencies
+                        // 2. Just one pair that has the generic counter currency
+                        // 3. Just one pair that doesn't have the generic counter currency
                         else if (component.CurrencyId != null && component.CurrencyId > 0)
                         {
                             // Obtain all of the req components related to this currency where it is the base.
@@ -286,6 +269,9 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                 }
                             }
                         }
+                        // Request-based Live Average Price
+                        // 1. This came from a CurrencyPair
+                        // 2. This came from a non-currency request
                         else
                         {
                             // Obtain all of the req components that are related to this AC.
