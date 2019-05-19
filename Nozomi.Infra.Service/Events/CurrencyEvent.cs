@@ -478,7 +478,7 @@ namespace Nozomi.Service.Events
                     .Include(c => c.AnalysedComponents)
                     .Include(c => c.CurrencyPairSourceCurrencies)
                     .Include(c => c.CurrencyType)
-                    .Include(c => c.CurrencySource)
+                    .Include(c => c.CurrencySources)
                     .Include(c => c.CurrencyRequests)
                     .Include(c => c.CurrencyProperties);
             }
