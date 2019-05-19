@@ -147,7 +147,7 @@ namespace Nozomi.Service.Events
                             Id = c.Id,
                             CurrencyTypeId = c.CurrencyTypeId,
                             CurrencyType = c.CurrencyType.Name,
-                            Abbrv = c.Abbrv,
+                            Abbrv = c.Abbreviation,
                             Name = c.Name
                         })
                         .ToList()
@@ -177,7 +177,7 @@ namespace Nozomi.Service.Events
                             Id = c.Id,
                             CurrencyTypeId = c.CurrencyTypeId,
                             CurrencyType = c.CurrencyType.Name,
-                            Abbrv = c.Abbrv,
+                            Abbrv = c.Abbreviation,
                             Name = c.Name
                         })
                         .ToList()
@@ -217,7 +217,7 @@ namespace Nozomi.Service.Events
                                     currencyId = pcp.CurrencyId,
                                     currency = new
                                     {
-                                        abbrv = pcp.Currency.Abbrv,
+                                        abbrv = pcp.Currency.Abbreviation,
                                         currencyTypeId = pcp.Currency.CurrencyTypeId,
                                         currencyType = new {
                                             typeShortForm = pcp.Currency.CurrencyType.TypeShortForm,

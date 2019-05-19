@@ -74,16 +74,16 @@ namespace Nozomi.Service.HostedServices.StaticUpdater
                                 .Select(cp => new UniqueTickerResponse
                                 {
                                     MainTickerAbbreviation = 
-                                        cp.CurrencyPairCurrencies.FirstOrDefault(ccp => ccp.Currency.Abbrv
-                                            .Equals(ccp.CurrencyPair.MainCurrency, StringComparison.InvariantCultureIgnoreCase))?.Currency.Abbrv,
+                                        cp.CurrencyPairCurrencies.FirstOrDefault(ccp => ccp.Currency.Abbreviation
+                                            .Equals(ccp.CurrencyPair.MainCurrency, StringComparison.InvariantCultureIgnoreCase))?.Currency.Abbreviation,
                                     MainTickerName = 
-                                        cp.CurrencyPairCurrencies.FirstOrDefault(ccp => ccp.Currency.Abbrv
+                                        cp.CurrencyPairCurrencies.FirstOrDefault(ccp => ccp.Currency.Abbreviation
                                             .Equals(ccp.CurrencyPair.MainCurrency, StringComparison.InvariantCultureIgnoreCase))?.Currency.Name,
                                     CounterTickerAbbreviation = 
-                                        cp.CurrencyPairCurrencies.FirstOrDefault(ccp => ccp.Currency.Abbrv
-                                            .Equals(ccp.CurrencyPair.CounterCurrency, StringComparison.InvariantCultureIgnoreCase))?.Currency.Abbrv,
+                                        cp.CurrencyPairCurrencies.FirstOrDefault(ccp => ccp.Currency.Abbreviation
+                                            .Equals(ccp.CurrencyPair.CounterCurrency, StringComparison.InvariantCultureIgnoreCase))?.Currency.Abbreviation,
                                     CounterTickerName = 
-                                        cp.CurrencyPairCurrencies.FirstOrDefault(ccp => ccp.Currency.Abbrv
+                                        cp.CurrencyPairCurrencies.FirstOrDefault(ccp => ccp.Currency.Abbreviation
                                             .Equals(ccp.CurrencyPair.CounterCurrency, StringComparison.InvariantCultureIgnoreCase))?.Currency.Name,
                                     LastUpdated = cp.ModifiedAt,
                                     Properties = cp.CurrencyPairRequests

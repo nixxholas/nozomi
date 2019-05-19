@@ -41,16 +41,16 @@ namespace Nozomi.Service.Events
                 .Select(cp => new UniqueTickerResponse
                 {
                     MainTickerAbbreviation = 
-                        cp.CurrencyPairCurrencies.FirstOrDefault(ccp => ccp.Currency.Abbrv
-                            .Equals(ccp.CurrencyPair.MainCurrency, StringComparison.InvariantCultureIgnoreCase)).Currency.Abbrv,
+                        cp.CurrencyPairCurrencies.FirstOrDefault(ccp => ccp.Currency.Abbreviation
+                            .Equals(ccp.CurrencyPair.MainCurrency, StringComparison.InvariantCultureIgnoreCase)).Currency.Abbreviation,
                     MainTickerName = 
-                        cp.CurrencyPairCurrencies.FirstOrDefault(ccp => ccp.Currency.Abbrv
+                        cp.CurrencyPairCurrencies.FirstOrDefault(ccp => ccp.Currency.Abbreviation
                             .Equals(ccp.CurrencyPair.MainCurrency, StringComparison.InvariantCultureIgnoreCase)).Currency.Name,
                     CounterTickerAbbreviation = 
-                        cp.CurrencyPairCurrencies.FirstOrDefault(ccp => ccp.Currency.Abbrv
-                            .Equals(ccp.CurrencyPair.CounterCurrency, StringComparison.InvariantCultureIgnoreCase)).Currency.Abbrv,
+                        cp.CurrencyPairCurrencies.FirstOrDefault(ccp => ccp.Currency.Abbreviation
+                            .Equals(ccp.CurrencyPair.CounterCurrency, StringComparison.InvariantCultureIgnoreCase)).Currency.Abbreviation,
                     CounterTickerName = 
-                        cp.CurrencyPairCurrencies.FirstOrDefault(ccp => ccp.Currency.Abbrv
+                        cp.CurrencyPairCurrencies.FirstOrDefault(ccp => ccp.Currency.Abbreviation
                             .Equals(ccp.CurrencyPair.CounterCurrency, StringComparison.InvariantCultureIgnoreCase)).Currency.Name,
                     Exchange = cp.CurrencySource.Name,
                     ExchangeAbbrv = cp.CurrencySource.Abbreviation,
@@ -118,21 +118,21 @@ namespace Nozomi.Service.Events
                 .Where(cp => cp.CurrencySource.DeletedAt == null && cp.CurrencySource.IsEnabled)
                 .Include(cp => cp.CurrencyPairCurrencies)
                 .ThenInclude(pcp => pcp.Currency)
-                .Where(cp => cp.CurrencyPairCurrencies.FirstOrDefault(ccp => ccp.Currency.Abbrv
+                .Where(cp => cp.CurrencyPairCurrencies.FirstOrDefault(ccp => ccp.Currency.Abbreviation
                                  .Equals(ccp.CurrencyPair.MainCurrency, StringComparison.InvariantCultureIgnoreCase)) != null
-                             && cp.CurrencyPairCurrencies.FirstOrDefault(ccp => ccp.Currency.Abbrv
+                             && cp.CurrencyPairCurrencies.FirstOrDefault(ccp => ccp.Currency.Abbreviation
                                  .Equals(ccp.CurrencyPair.CounterCurrency, StringComparison.InvariantCultureIgnoreCase)) != null);
 
             var res = new List<TickerPairResponse>();
 
             foreach (var cPair in cPairs)
             {
-                var tickerPairStr = cPair.CurrencyPairCurrencies.FirstOrDefault(ccp => ccp.Currency.Abbrv
+                var tickerPairStr = cPair.CurrencyPairCurrencies.FirstOrDefault(ccp => ccp.Currency.Abbreviation
                                         .Equals(ccp.CurrencyPair.MainCurrency, StringComparison.InvariantCultureIgnoreCase))?
-                                        .Currency.Abbrv +
-                                    cPair.CurrencyPairCurrencies.FirstOrDefault(ccp => ccp.Currency.Abbrv
+                                        .Currency.Abbreviation +
+                                    cPair.CurrencyPairCurrencies.FirstOrDefault(ccp => ccp.Currency.Abbreviation
                                         .Equals(ccp.CurrencyPair.CounterCurrency, StringComparison.InvariantCultureIgnoreCase))?
-                                        .Currency.Abbrv;
+                                        .Currency.Abbreviation;
                 
                 var tPair = res.FirstOrDefault(tpair => tpair.Key.Equals(tickerPairStr,
                     StringComparison.InvariantCultureIgnoreCase));
@@ -184,14 +184,14 @@ namespace Nozomi.Service.Events
                         .Include(cp => cp.CurrencyPairCurrencies)
                         .ThenInclude(pcp => pcp.Currency)
                         .Where(cp => cp.IsEnabled && cp.DeletedAt == null
-                                                  && (cp.CurrencyPairCurrencies.FirstOrDefault(ccp => ccp.Currency.Abbrv
+                                                  && (cp.CurrencyPairCurrencies.FirstOrDefault(ccp => ccp.Currency.Abbreviation
                                                               .Equals(ccp.CurrencyPair.MainCurrency, 
                                                                   StringComparison.InvariantCultureIgnoreCase))
-                                                          .Currency.Abbrv + cp.CurrencyPairCurrencies
-                                                          .FirstOrDefault(ccp => ccp.Currency.Abbrv
+                                                          .Currency.Abbreviation + cp.CurrencyPairCurrencies
+                                                          .FirstOrDefault(ccp => ccp.Currency.Abbreviation
                                                               .Equals(ccp.CurrencyPair.CounterCurrency, 
                                                                   StringComparison.InvariantCultureIgnoreCase))
-                                                          .Currency.Abbrv).Equals(ticker,
+                                                          .Currency.Abbreviation).Equals(ticker,
                                                       StringComparison.InvariantCultureIgnoreCase))
                         .Include(cp => cp.CurrencySource)
                         .Include(cp => cp.CurrencyPairRequests)
@@ -243,14 +243,14 @@ namespace Nozomi.Service.Events
                         .Include(cp => cp.CurrencyPairCurrencies)
                         .ThenInclude(pcp => pcp.Currency)
                         .Where(cp => cp.IsEnabled && cp.DeletedAt == null
-                                                  && (cp.CurrencyPairCurrencies.FirstOrDefault(ccp => ccp.Currency.Abbrv
+                                                  && (cp.CurrencyPairCurrencies.FirstOrDefault(ccp => ccp.Currency.Abbreviation
                                                               .Equals(ccp.CurrencyPair.MainCurrency, 
                                                                   StringComparison.InvariantCultureIgnoreCase))
-                                                          .Currency.Abbrv + cp.CurrencyPairCurrencies
-                                                          .FirstOrDefault(ccp => ccp.Currency.Abbrv
+                                                          .Currency.Abbreviation + cp.CurrencyPairCurrencies
+                                                          .FirstOrDefault(ccp => ccp.Currency.Abbreviation
                                                               .Equals(ccp.CurrencyPair.CounterCurrency, 
                                                                   StringComparison.InvariantCultureIgnoreCase))
-                                                          .Currency.Abbrv).Equals(ticker,
+                                                          .Currency.Abbreviation).Equals(ticker,
                                                       StringComparison.InvariantCultureIgnoreCase))
                         .Include(cp => cp.CurrencySource)
                         .Include(cp => cp.CurrencyPairRequests)

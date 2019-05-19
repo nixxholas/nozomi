@@ -38,9 +38,9 @@ namespace Nozomi.Infra.Analysis.Service.Events.Analysis
                 .Include(cp => cp.CurrencyPairCurrencies)
                 .ThenInclude(pcp => pcp.Currency)
                 .Where(cp => cp.CurrencyPairCurrencies
-                    .Any(ccp => ccp.Currency.Abbrv
+                    .Any(ccp => ccp.Currency.Abbreviation
                                            .Equals(ccp.CurrencyPair.CounterCurrency, StringComparison.InvariantCultureIgnoreCase)
-                                       && ccp.Currency.Abbrv.Equals(abbrv,
+                                       && ccp.Currency.Abbreviation.Equals(abbrv,
                                     StringComparison.InvariantCultureIgnoreCase)))
                 .Include(cp => cp.CurrencyPairRequests
                     .Where(cpr => cpr.IsEnabled && cpr.DeletedAt == null))

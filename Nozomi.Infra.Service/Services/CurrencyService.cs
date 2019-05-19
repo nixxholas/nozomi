@@ -34,7 +34,7 @@ namespace Nozomi.Service.Services
                 {
                     _unitOfWork.GetRepository<Currency>().Add(new Currency()
                     {
-                        Abbrv = createCurrency.Abbrv,
+                        Abbreviation = createCurrency.Abbrv,
                         Name = createCurrency.Name,
                         CurrencyTypeId = createCurrency.CurrencyTypeId,
                         CurrencySourceId = createCurrency.CurrencySourceId,
@@ -64,7 +64,7 @@ namespace Nozomi.Service.Services
 
                 if (currToUpd != null)
                 {
-                    currToUpd.Abbrv = currency.Abbrv;
+                    currToUpd.Abbreviation = currency.Abbrv;
                     currToUpd.CurrencyTypeId = currency.CurrencyTypeId;
                     currToUpd.Description = currency.Description;
                     currToUpd.Denominations = currency.Denominations;

@@ -133,7 +133,7 @@ namespace Nozomi.Service.Services
                         currencyId = pcp.CurrencyId,
                         currency = new
                         {
-                            abbrv = pcp.Currency.Abbrv,
+                            abbrv = pcp.Currency.Abbreviation,
                             name = pcp.Currency.Name,
                             walletTypeId = pcp.Currency.WalletTypeId
                         }
@@ -193,7 +193,7 @@ namespace Nozomi.Service.Services
                         currencyId = pcp.CurrencyId,
                         currency = new
                         {
-                            abbrv = pcp.Currency.Abbrv,
+                            abbrv = pcp.Currency.Abbreviation,
                             name = pcp.Currency.Name,
                             walletTypeId = pcp.Currency.WalletTypeId
                         }
@@ -235,17 +235,17 @@ namespace Nozomi.Service.Services
             foreach (var pcPair in pcPairs)
             {
                 // Make sure this partial pair is the main unit
-                if (pcPair.Currency.Abbrv.Equals(pcPair.CurrencyPair.MainCurrency))
+                if (pcPair.Currency.Abbreviation.Equals(pcPair.CurrencyPair.MainCurrency))
                 {
                     var counterPair = pcPairs.FirstOrDefault(pcp =>
                         pcp.CurrencyPairId.Equals(pcPair.CurrencyPairId) &&
-                        pcp.Currency.Abbrv.Equals(pcp.CurrencyPair.CounterCurrency, StringComparison.InvariantCultureIgnoreCase));
-                    var counterPairStr = counterPair?.Currency.Abbrv;
+                        pcp.Currency.Abbreviation.Equals(pcp.CurrencyPair.CounterCurrency, StringComparison.InvariantCultureIgnoreCase));
+                    var counterPairStr = counterPair?.Currency.Abbreviation;
 
                     if (!string.IsNullOrEmpty(counterPairStr))
                     {
                         // Find the Pair string first
-                        var pairStr = pcPair.Currency.Abbrv + counterPairStr;
+                        var pairStr = pcPair.Currency.Abbreviation + counterPairStr;
 
                         // GetAll the currencysource
                         var cSource = pcPair.CurrencyPair.CurrencySource;
@@ -297,7 +297,7 @@ namespace Nozomi.Service.Services
                 .Where(cp => cp.CurrencySourceId.Equals(currencySourceId))
                 .FirstOrDefault(cp => cp.CurrencyPairCurrencies // CurrencyId is the counterpair
                                           .Any(pcp => pcp.CurrencyId.Equals(currencyId) &&
-                                                      pcp.Currency.Abbrv.Equals(pcp.CurrencyPair.CounterCurrency,
+                                                      pcp.Currency.Abbreviation.Equals(pcp.CurrencyPair.CounterCurrency,
                                                           StringComparison.InvariantCultureIgnoreCase)) &&
                                       cp.CurrencyPairCurrencies.Any(pcp =>
                                           pcp.Currency.WalletTypeId.Equals(walletTypeId) &&
@@ -351,7 +351,7 @@ namespace Nozomi.Service.Services
                                 currencyId = pcp.CurrencyId,
                                 currency = new
                                 {
-                                    abbrv = pcp.Currency.Abbrv,
+                                    abbrv = pcp.Currency.Abbreviation,
                                     name = pcp.Currency.Name,
                                     walletTypeId = pcp.Currency.WalletTypeId,
                                     isEnabled = pcp.Currency.IsEnabled

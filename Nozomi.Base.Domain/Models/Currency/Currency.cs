@@ -26,10 +26,8 @@ namespace Nozomi.Data.Models.Currency
                     Id = firstCurr.Id;
                     CurrencyTypeId = firstCurr.Id;
                     CurrencyType = firstCurr.CurrencyType;
-                    Abbrv = firstCurr.Abbrv;
+                    Abbreviation = firstCurr.Abbreviation;
                     Name = firstCurr.Name;
-                    CurrencySourceId = firstCurr.CurrencySourceId;
-                    CurrencySource = firstCurr.CurrencySource;
                     WalletTypeId = firstCurr.WalletTypeId;
                     CurrencyCurrencyPairs = CurrencyCurrencyPairs;
                 }
@@ -42,7 +40,7 @@ namespace Nozomi.Data.Models.Currency
         public long CurrencyTypeId { get; set; }
         public CurrencyType CurrencyType { get; set; }
 
-        public string Abbrv { get; set; } // USD? MYR? IND?
+        public string Abbreviation { get; set; } // USD? MYR? IND?
 
         public string Name { get; set; }
         
@@ -51,9 +49,6 @@ namespace Nozomi.Data.Models.Currency
         public int Denominations { get; set; } = 0;
         
         public string DenominationName { get; set; }
-
-        public long CurrencySourceId { get; set; }
-        public Source CurrencySource { get; set; }
 
         // This will have a number if it is a crypto pair to peg to proper entities
         public long WalletTypeId { get; set; } = 0;
@@ -68,7 +63,7 @@ namespace Nozomi.Data.Models.Currency
 
         public bool IsValid()
         {
-            return !String.IsNullOrEmpty(Abbrv) && !String.IsNullOrEmpty(Name) && CurrencyTypeId > 0 && CurrencySourceId > 0;
+            return !String.IsNullOrEmpty(Abbreviation) && !String.IsNullOrEmpty(Name) && CurrencyTypeId > 0;
         }
     }
 }

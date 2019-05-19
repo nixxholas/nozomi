@@ -37,10 +37,10 @@ namespace Nozomi.Data.Models.Currency
 
         public bool IsValid()
         {
-            var firstPair = CurrencyPairCurrencies.FirstOrDefault(cp => cp.Currency.Abbrv.Equals(MainCurrency, 
+            var firstPair = CurrencyPairCurrencies.FirstOrDefault(cp => cp.Currency.Abbreviation.Equals(MainCurrency, 
                 StringComparison.InvariantCultureIgnoreCase) 
             && cp.Currency.CurrencySourceId.Equals(CurrencySourceId));
-            var lastPair = CurrencyPairCurrencies.SingleOrDefault(cp => cp.Currency.Abbrv.Equals(CounterCurrency, 
+            var lastPair = CurrencyPairCurrencies.SingleOrDefault(cp => cp.Currency.Abbreviation.Equals(CounterCurrency, 
                                                                StringComparison.InvariantCultureIgnoreCase) 
                                                            && cp.Currency.CurrencySourceId.Equals(CurrencySourceId));
 

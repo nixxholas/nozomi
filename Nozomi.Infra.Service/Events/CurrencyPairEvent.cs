@@ -27,8 +27,8 @@ namespace Nozomi.Service.Events
                 .Where(cp => cp.DeletedAt == null && cp.IsEnabled)
                 .Include(cp => cp.CurrencyPairCurrencies)
                 .ThenInclude(pcp => pcp.Currency)
-                .Where(pcp => pcp.CurrencyPairCurrencies.FirstOrDefault(ccp => ccp.Currency.Abbrv
-                        .Equals(ccp.CurrencyPair.CounterCurrency, StringComparison.InvariantCultureIgnoreCase)).Currency.Abbrv
+                .Where(pcp => pcp.CurrencyPairCurrencies.FirstOrDefault(ccp => ccp.Currency.Abbreviation
+                        .Equals(ccp.CurrencyPair.CounterCurrency, StringComparison.InvariantCultureIgnoreCase)).Currency.Abbreviation
                     .Contains(counterCurrencyAbbrv, StringComparison.InvariantCultureIgnoreCase))
                 .ToList();
         }

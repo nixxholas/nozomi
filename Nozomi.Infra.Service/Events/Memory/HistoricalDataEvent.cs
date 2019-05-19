@@ -38,7 +38,7 @@ namespace Nozomi.Service.Events.Memory
                        .Select(c => new DistinctiveCurrencyResponse
                        {
                            Name = c.Name,
-                           Abbreviation = c.Abbrv,
+                           Abbreviation = c.Abbreviation,
                            LastUpdated = c.ModifiedAt,
 //                           WeeklyAvgPrice = c.PartialCurrencyPairs
 //                               .Select(pcp => pcp.CurrencyPair)

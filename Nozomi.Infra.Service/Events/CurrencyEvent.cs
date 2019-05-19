@@ -68,7 +68,7 @@ namespace Nozomi.Service.Events
             var currency = _unitOfWork.GetRepository<Currency>()
                 .GetQueryable()
                 .AsNoTracking()
-                .Where(c => c.Abbrv.Equals(abbreviation, StringComparison.InvariantCultureIgnoreCase)
+                .Where(c => c.Abbreviation.Equals(abbreviation, StringComparison.InvariantCultureIgnoreCase)
                             && c.DeletedAt == null && c.IsEnabled)
                 .Include(c => c.AnalysedComponents)
                 .Include(c => c.CurrencySource)
@@ -133,22 +133,22 @@ namespace Nozomi.Service.Events
                     }
 
                     foreach (var pCPair in similarCurr.CurrencyCurrencyPairs
-                        .Where(ccp => ccp.Currency.Abbrv
+                        .Where(ccp => ccp.Currency.Abbreviation
                             .Equals(ccp.CurrencyPair.MainCurrency, StringComparison.InvariantCultureIgnoreCase)))
                     {
                         // Form the TickerPair abbreviation first
-                        var tickerPairStr = pCPair.Currency.Abbrv +
+                        var tickerPairStr = pCPair.Currency.Abbreviation +
                                             similarCurr.CurrencyCurrencyPairs
-                                                .SingleOrDefault(ccp => ccp.Currency.Abbrv
+                                                .SingleOrDefault(ccp => ccp.Currency.Abbreviation
                                                                             .Equals(ccp.CurrencyPair.CounterCurrency,
                                                                                 StringComparison
                                                                                     .InvariantCultureIgnoreCase)
                                                                         && ccp.CurrencyPairId.Equals(
                                                                             pCPair.CurrencyPairId))
-                                                ?.Currency.Abbrv;
+                                                ?.Currency.Abbreviation;
 
                         // Make sure tickerPairStr is not a solo piece of shit
-                        if (!tickerPairStr.Equals(pCPair.Currency.Abbrv,
+                        if (!tickerPairStr.Equals(pCPair.Currency.Abbreviation,
                             StringComparison.InvariantCultureIgnoreCase))
                         {
                             // Make sure this is a main currency and that the TickerPairs collection
@@ -191,7 +191,7 @@ namespace Nozomi.Service.Events
                                     // Does not, add it in.
                                     tickerPair.Sources.Add(new SourceResponse
                                     {
-                                        Abbreviation = similarCurr.Abbrv,
+                                        Abbreviation = similarCurr.Abbreviation,
                                         Name = similarCurr.Name
                                     });
                                 }
@@ -206,11 +206,11 @@ namespace Nozomi.Service.Events
                     {
                         foreach (var pCPair in similarCurr.CurrencyCurrencyPairs)
                         {
-                            var tickerPairStr = pCPair.Currency.Abbrv +
+                            var tickerPairStr = pCPair.Currency.Abbreviation +
                                                 counterPCPs
                                                     .SingleOrDefault(pcp =>
                                                         pcp.CurrencyPairId.Equals(pCPair.CurrencyPairId))
-                                                    ?.Currency.Abbrv;
+                                                    ?.Currency.Abbreviation;
 
                             if (!result.TickerPairs.Any(tp => tp.PairAbbreviation
                                 .Equals(tickerPairStr, StringComparison.InvariantCultureIgnoreCase)))
@@ -267,7 +267,7 @@ namespace Nozomi.Service.Events
             var query = _unitOfWork.GetRepository<Currency>()
                 .GetQueryable()
                 .AsNoTracking()
-                .Where(c => c.Abbrv.Equals(abbreviation, StringComparison.InvariantCultureIgnoreCase));
+                .Where(c => c.Abbreviation.Equals(abbreviation, StringComparison.InvariantCultureIgnoreCase));
 
             if (track)
             {
@@ -300,7 +300,7 @@ namespace Nozomi.Service.Events
             }
 
             return query
-                .SingleOrDefault(c => c.Abbrv.Equals(abbreviation, StringComparison.InvariantCultureIgnoreCase)
+                .SingleOrDefault(c => c.Abbreviation.Equals(abbreviation, StringComparison.InvariantCultureIgnoreCase)
                                       && c.CurrencySourceId.Equals(currencySourceId)
                                       && c.DeletedAt == null && c.IsEnabled);
         }
@@ -340,7 +340,7 @@ namespace Nozomi.Service.Events
                     .Where(cp => cp.DeletedAt == null && cp.IsEnabled)
                     .Include(cp => cp.Currency)
                     // Where the partial currency pair's main currency is equal to the currency that is required
-                    .Where(cr => cr.Currency.Abbrv.Equals(curr.Abbrv, StringComparison.InvariantCultureIgnoreCase))
+                    .Where(cr => cr.Currency.Abbreviation.Equals(curr.Abbreviation, StringComparison.InvariantCultureIgnoreCase))
                     .Include(cpr => cpr.RequestComponents)
                     // Null checks
                     .Where(cpr => cpr.IsEnabled && cpr.DeletedAt == null
@@ -358,7 +358,7 @@ namespace Nozomi.Service.Events
                     .Where(cp => cp.DeletedAt == null && cp.IsEnabled)
                     .Include(cp => cp.Currency)
                     // Where the partial currency pair's main currency is equal to the currency that is required
-                    .Where(cr => cr.Currency.Abbrv.Equals(curr.Abbrv,
+                    .Where(cr => cr.Currency.Abbreviation.Equals(curr.Abbreviation,
                         StringComparison.InvariantCultureIgnoreCase))
                     .Include(cpr => cpr.RequestComponents)
                     // Null checks
@@ -392,7 +392,7 @@ namespace Nozomi.Service.Events
                     .ThenInclude(pcp => pcp.Currency)
                     .Select(cpr => cpr.CurrencyPair)
                     .SelectMany(cp => cp.CurrencyPairCurrencies
-                        .Where(ccp => ccp.Currency.Abbrv
+                        .Where(ccp => ccp.Currency.Abbreviation
                             .Equals(ccp.CurrencyPair.MainCurrency, StringComparison.InvariantCultureIgnoreCase)))
                     .Select(pcp => pcp.Currency)
                     .FirstOrDefault();
@@ -415,10 +415,10 @@ namespace Nozomi.Service.Events
                         .ThenInclude(pcp => pcp.Currency)
                         // Where the partial currency pair's main currency is equal to the currency that is required
                         .Where(cpr => cpr.CurrencyPair.CurrencyPairCurrencies
-                            .Any(ccp => ccp.Currency.Abbrv
+                            .Any(ccp => ccp.Currency.Abbreviation
                                             .Equals(ccp.CurrencyPair.MainCurrency,
                                                 StringComparison.InvariantCultureIgnoreCase)
-                                        && ccp.Currency.Abbrv.Equals(currencyCPR.Abbrv,
+                                        && ccp.Currency.Abbreviation.Equals(currencyCPR.Abbreviation,
                                             StringComparison.InvariantCultureIgnoreCase)))
                         .Include(cpr => cpr.RequestComponents)
                         // Null checks
@@ -450,7 +450,7 @@ namespace Nozomi.Service.Events
                         .ThenInclude(pcp => pcp.Currency)
                         .Select(cpr => cpr.CurrencyPair)
                         .SelectMany(cp => cp.CurrencyPairCurrencies
-                            .Where(ccp => ccp.Currency.Abbrv
+                            .Where(ccp => ccp.Currency.Abbreviation
                                 .Equals(ccp.CurrencyPair.MainCurrency, StringComparison.InvariantCultureIgnoreCase)))
                         .Select(pcp => pcp.Currency)
                         .FirstOrDefault();
@@ -464,10 +464,10 @@ namespace Nozomi.Service.Events
                         .ThenInclude(pcp => pcp.Currency)
                         // Where the partial currency pair's main currency is equal to the currency that is required
                         .Where(cpr => cpr.CurrencyPair.CurrencyPairCurrencies
-                            .Any(ccp => ccp.Currency.Abbrv
+                            .Any(ccp => ccp.Currency.Abbreviation
                                             .Equals(ccp.CurrencyPair.MainCurrency,
                                                 StringComparison.InvariantCultureIgnoreCase)
-                                        && ccp.Currency.Abbrv.Equals(currencyWsr.Abbrv,
+                                        && ccp.Currency.Abbreviation.Equals(currencyWsr.Abbreviation,
                                             StringComparison.InvariantCultureIgnoreCase)))
                         .Include(cpr => cpr.RequestComponents)
                         // Null checks
@@ -580,7 +580,7 @@ namespace Nozomi.Service.Events
                     Id = c.Id,
                     CurrencyTypeId = c.CurrencyTypeId,
                     CurrencyType = c.CurrencyType,
-                    Abbrv = c.Abbrv,
+                    Abbreviation = c.Abbreviation,
                     Name = c.Name,
                     Denominations = c.Denominations,
                     DenominationName = c.DenominationName,
@@ -660,10 +660,10 @@ namespace Nozomi.Service.Events
             
             // TODO: We'll need to figure out how we can factor in non-USD counter currency tickers
 
-            var abbreviations = currencies.Select(c => c.Abbrv).Distinct().ToList();
+            var abbreviations = currencies.Select(c => c.Abbreviation).Distinct().ToList();
             foreach (var uniqueCurr in abbreviations)
             {
-                res.Add(new DetailedCurrencyResponse(currencies.Where(c => c.Abbrv
+                res.Add(new DetailedCurrencyResponse(currencies.Where(c => c.Abbreviation
                     .Equals(uniqueCurr, StringComparison.InvariantCultureIgnoreCase))
                     .ToList()));
             }
@@ -704,12 +704,12 @@ namespace Nozomi.Service.Events
                 .Where(cp => cp.CurrencyPairCurrencies
                                  .Any(pcp => pcp.Currency.Id.Equals(currencyId)
                                              // Make sure we're analyzing the main currency, not the sub.
-                                             && pcp.Currency.Abbrv.Equals(pcp.CurrencyPair.MainCurrency))
+                                             && pcp.Currency.Abbreviation.Equals(pcp.CurrencyPair.MainCurrency))
                              // Ensure that the counter currency is the generic counter currency
                              && cp.CurrencyPairCurrencies
-                                 .Any(pcp => pcp.Currency.Abbrv.Equals(CoreConstants.GenericCounterCurrency,
+                                 .Any(pcp => pcp.Currency.Abbreviation.Equals(CoreConstants.GenericCounterCurrency,
                                                  StringComparison.InvariantCultureIgnoreCase)
-                                             && pcp.Currency.Abbrv.Equals(pcp.CurrencyPair.CounterCurrency)))
+                                             && pcp.Currency.Abbreviation.Equals(pcp.CurrencyPair.CounterCurrency)))
                 .Include(cp => cp.CurrencyPairRequests)
                 .ThenInclude(cpr => cpr.RequestComponents)
                 .ThenInclude(rcd => rcd.RcdHistoricItems)
@@ -745,15 +745,15 @@ namespace Nozomi.Service.Events
                 .ThenInclude(pcp => pcp.Currency)
                 // Select any ticker that contains that abbreviation
                 .Where(cp => cp.CurrencyPairCurrencies
-                                 .Any(pcp => pcp.Currency.Abbrv.Equals(abbreviation,
+                                 .Any(pcp => pcp.Currency.Abbreviation.Equals(abbreviation,
                                                  StringComparison.InvariantCultureIgnoreCase)
                                              // Make sure we're analyzing the main currency, not the sub.
-                                             && pcp.Currency.Abbrv.Equals(pcp.CurrencyPair.MainCurrency))
+                                             && pcp.Currency.Abbreviation.Equals(pcp.CurrencyPair.MainCurrency))
                              // Ensure that the counter currency is the generic counter currency
                              && cp.CurrencyPairCurrencies
-                                 .Any(pcp => pcp.Currency.Abbrv.Equals(CoreConstants.GenericCounterCurrency,
+                                 .Any(pcp => pcp.Currency.Abbreviation.Equals(CoreConstants.GenericCounterCurrency,
                                                  StringComparison.InvariantCultureIgnoreCase)
-                                             && pcp.Currency.Abbrv.Equals(pcp.CurrencyPair.CounterCurrency)))
+                                             && pcp.Currency.Abbreviation.Equals(pcp.CurrencyPair.CounterCurrency)))
                 .Include(cp => cp.CurrencyPairRequests)
                 .ThenInclude(cpr => cpr.RequestComponents)
                 .ThenInclude(rcd => rcd.RcdHistoricItems)
@@ -779,7 +779,7 @@ namespace Nozomi.Service.Events
             {
                 return _unitOfWork.GetRepository<Currency>()
                     .Get(c => c.CurrencySourceId.Equals(createCurrency.CurrencySourceId)
-                              && c.Abbrv.Equals(createCurrency.Abbrv)).Any();
+                              && c.Abbreviation.Equals(createCurrency.Abbrv)).Any();
             }
 
             return false;
@@ -822,7 +822,7 @@ namespace Nozomi.Service.Events
                     .Select(c => new
                     {
                         id = c.Id,
-                        abbrv = c.Abbrv,
+                        abbrv = c.Abbreviation,
                         CurrencyType =
                             new
                             {
@@ -842,7 +842,7 @@ namespace Nozomi.Service.Events
                     .Select(c => new
                     {
                         id = c.Id,
-                        abbrv = c.Abbrv,
+                        abbrv = c.Abbreviation,
                         name = c.Name,
                         walletTypeId = c.WalletTypeId
                     });
@@ -867,11 +867,11 @@ namespace Nozomi.Service.Events
                     .Where(c => c.DeletedAt == null)
                     .Where(c => c.IsEnabled)
                     .Include(c => c.CurrencyType)
-                    .DistinctBy(c => c.Abbrv)
+                    .DistinctBy(c => c.Abbreviation)
                     .Select(c => new
                     {
                         Id = c.Id,
-                        Abbrv = c.Abbrv,
+                        Abbrv = c.Abbreviation,
                         CurrencyType =
                             new
                             {
@@ -887,11 +887,11 @@ namespace Nozomi.Service.Events
                     .AsNoTracking()
                     .Where(c => c.DeletedAt == null)
                     .Where(c => c.IsEnabled)
-                    .DistinctBy(c => c.Abbrv)
+                    .DistinctBy(c => c.Abbreviation)
                     .Select(c => new
                     {
                         Id = c.Id,
-                        Abbrv = c.Abbrv,
+                        Abbrv = c.Abbreviation,
                         Name = c.Name
                     });
             }
@@ -950,7 +950,7 @@ namespace Nozomi.Service.Events
                     {
                         // Add the next pair in
                         result[currCurrencyId].Add(subPCPair.CurrencyId,
-                            Tuple.Create(subPCPair.Currency.Name, subPCPair.Currency.Abbrv));
+                            Tuple.Create(subPCPair.Currency.Name, subPCPair.Currency.Abbreviation));
                     }
                     else
                     {
@@ -958,7 +958,7 @@ namespace Nozomi.Service.Events
                         result.Add(currCurrencyId, new Dictionary<long, Tuple<string, string>>()
                         {
                             // Add item on initialization
-                            {subPCPair.CurrencyId, Tuple.Create(subPCPair.Currency.Name, subPCPair.Currency.Abbrv)}
+                            {subPCPair.CurrencyId, Tuple.Create(subPCPair.Currency.Name, subPCPair.Currency.Abbreviation)}
                         });
                     }
                 }
@@ -999,7 +999,7 @@ namespace Nozomi.Service.Events
             for (var i = 0; i < dataCount / 2; i++)
             {
                 // pop!
-                var currPCPair = pcPairs.First(cpcp => cpcp.Currency.Abbrv.Equals(cpcp.CurrencyPair.MainCurrency));
+                var currPCPair = pcPairs.First(cpcp => cpcp.Currency.Abbreviation.Equals(cpcp.CurrencyPair.MainCurrency));
                 pcPairs.Remove(currPCPair);
 
                 var currCurrencyId = currPCPair.CurrencyId;
@@ -1007,7 +1007,7 @@ namespace Nozomi.Service.Events
                 // Retrieve the the counter/mainpair
                 var subPCPair = pcPairs // Not the same currency
                     .SingleOrDefault(pcp => pcp.CurrencyPairId.Equals(currPCPair.CurrencyPairId) // Same Currency pair
-                                            && pcp.Currency.Abbrv.Equals(pcp.CurrencyPair.CounterCurrency));
+                                            && pcp.Currency.Abbreviation.Equals(pcp.CurrencyPair.CounterCurrency));
 
                 // Second layer check
                 if (subPCPair != null && !subPCPair.CurrencyId.Equals(currCurrencyId))

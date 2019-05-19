@@ -48,18 +48,18 @@ namespace Nozomi.Infra.Analysis.Service.Events.Analysis
                 foreach (var cPair in cPairs)
                 {
                     var mainCurrency = cPair.CurrencyPairCurrencies
-                        .FirstOrDefault(ccp => ccp.Currency.Abbrv
+                        .FirstOrDefault(ccp => ccp.Currency.Abbreviation
                             .Equals(ccp.CurrencyPair.MainCurrency, StringComparison.InvariantCultureIgnoreCase))?.Currency;
 
                     // Null checks
                     if (mainCurrency != null)
                     {
                         // Does the currency already exist?
-                        if (res.Any(item => item.Abbrv.Equals(mainCurrency.Abbrv,
+                        if (res.Any(item => item.Abbrv.Equals(mainCurrency.Abbreviation,
                             StringComparison.InvariantCultureIgnoreCase)))
                         {
                             // Yes, populate the props.
-                            var currency = res.SingleOrDefault(item => item.Abbrv.Equals(mainCurrency.Abbrv,
+                            var currency = res.SingleOrDefault(item => item.Abbrv.Equals(mainCurrency.Abbreviation,
                                 StringComparison.InvariantCultureIgnoreCase));
                             
                             // Null checks
@@ -102,7 +102,7 @@ namespace Nozomi.Infra.Analysis.Service.Events.Analysis
                         {
                             var newCurr = new AssetResponse
                             {
-                                Abbrv = mainCurrency.Abbrv,
+                                Abbrv = mainCurrency.Abbreviation,
                                 Name = mainCurrency.Name,
                                 Properties = new Dictionary<string, string>()
                             };

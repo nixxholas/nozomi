@@ -16,7 +16,7 @@ namespace Nozomi.Data.ResponseModels.Currency
 
         public AbbrvUniqueCurrencyResponse(Models.Currency.Currency currency)
         {
-            Abbreviation = currency.Abbrv;
+            Abbreviation = currency.Abbreviation;
             Name = currency.Name;
             LastUpdated = currency.ModifiedAt;
             CurrencyType = currency.CurrencyType;
@@ -37,7 +37,7 @@ namespace Nozomi.Data.ResponseModels.Currency
 
             if (currency != null)
             {
-                Abbreviation = currency.Abbrv;
+                Abbreviation = currency.Abbreviation;
                 Name = currency.Name;
                 LastUpdated = currency.ModifiedAt;
                 CurrencyType = currency.CurrencyType;
@@ -106,7 +106,7 @@ namespace Nozomi.Data.ResponseModels.Currency
                                     // Does not, add it in.
                                     tickerPair.Sources.Add(new SourceResponse
                                     {
-                                        Abbreviation = similarCurr.Abbrv,
+                                        Abbreviation = similarCurr.Abbreviation,
                                         Name = similarCurr.Name
                                     });
                                 }

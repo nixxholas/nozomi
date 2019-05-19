@@ -33,7 +33,7 @@ namespace Nozomi.Infra.Admin.Service.Events
             var currency = _unitOfWork.GetRepository<Currency>()
                 .GetQueryable()
                 .AsNoTracking()
-                .Where(c => c.Abbrv.Equals(abbreviation, StringComparison.InvariantCultureIgnoreCase))
+                .Where(c => c.Abbreviation.Equals(abbreviation, StringComparison.InvariantCultureIgnoreCase))
                 .Include(c => c.CurrencyType)
                 .Include(c => c.AnalysedComponents)
                 .Include(c => c.CurrencySource)

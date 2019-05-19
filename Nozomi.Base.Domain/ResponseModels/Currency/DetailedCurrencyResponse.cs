@@ -47,7 +47,7 @@ namespace Nozomi.Data.ResponseModels.Currency
                 {
                     // Aggregate non-compounded properties first
                     Name = first.Name;
-                    Abbreviation = first.Abbrv;
+                    Abbreviation = first.Abbreviation;
                     LastUpdated = first.ModifiedAt;
 
                     foreach (var exchangeUniqueCurr in currencies)
@@ -309,7 +309,7 @@ namespace Nozomi.Data.ResponseModels.Currency
             if (currency != null)
             {
                 Name = currency.Name;
-                Abbreviation = currency.Abbrv;
+                Abbreviation = currency.Abbreviation;
                 LastUpdated = DateTime.UtcNow;
 
                 // Obtain analysed component data from partial currency pairs.
@@ -467,7 +467,7 @@ namespace Nozomi.Data.ResponseModels.Currency
                 if (curr != null)
                 {
                     Name = curr.Name;
-                    Abbreviation = curr.Abbrv;
+                    Abbreviation = curr.Abbreviation;
                     LastUpdated = currencyPairs
                         .Select(cp => cp.CurrencyPairRequests
                             .Select(cpr => cpr.RequestComponents
@@ -540,13 +540,13 @@ namespace Nozomi.Data.ResponseModels.Currency
                 var curr = currencyPairs
                     .Select(cp => cp.CurrencyPairCurrencies
                         .Select(pcp => pcp.Currency)
-                        .FirstOrDefault(c => c.Abbrv.Equals(abbrv, StringComparison.InvariantCultureIgnoreCase)))
+                        .FirstOrDefault(c => c.Abbreviation.Equals(abbrv, StringComparison.InvariantCultureIgnoreCase)))
                     .FirstOrDefault();
 
                 if (curr != null)
                 {
                     Name = curr.Name;
-                    Abbreviation = curr.Abbrv;
+                    Abbreviation = curr.Abbreviation;
                     LastUpdated = currencyPairs
                         .Select(cp => cp.CurrencyPairRequests
                             .Select(cpr => cpr.RequestComponents

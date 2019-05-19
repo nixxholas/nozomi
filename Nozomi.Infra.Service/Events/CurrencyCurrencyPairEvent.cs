@@ -28,7 +28,7 @@ namespace Nozomi.Service.Events
                     .Include(ccp => ccp.Currency)
                     .Include(ccp => ccp.CurrencyPair)
                     .Where(ccp => ccp.CurrencyPair.CounterCurrency
-                                      .Equals(ccp.Currency.Abbrv))
+                                      .Equals(ccp.Currency.Abbreviation))
                     .ToList();
             }
 
