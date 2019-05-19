@@ -166,8 +166,7 @@ namespace Nozomi.Infra.Analysis.Service.Events.Analysis
                 .Take(50);
         }
 
-        public ICollection<AnalysedComponent> GetAllByCurrency(long currencyId, bool ensureValid = false, bool track = false,
-            string counterCurrency = null)
+        public ICollection<AnalysedComponent> GetAllByCurrency(long currencyId, bool ensureValid = false, bool track = false)
         {
             // First, obtain the currency in question
             var qCurrency = _unitOfWork.GetRepository<Currency>()
