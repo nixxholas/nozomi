@@ -221,8 +221,35 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                         break;
                     // Calculate the current average price.
                     case AnalysedComponentType.CurrentAveragePrice:
+                        // CurrencyType-based Live Average Price
+                        if (component.CurrencyTypeId != null && component.CurrencyTypeId > 0)
+                        {
+                            // Obtain all sub components (Components in the currencies)
+                            var analysedComponents = _analysedComponentEvent.GetAllByCurrencyType(
+                                    (long)component.CurrencyTypeId)
+                                .Where(ac => ac.ComponentType.Equals(AnalysedComponentType.CurrentAveragePrice)
+                                             && ac.CurrencyType.Currencies.Any(c => 
+                                                 c.CurrencyCurrencyPairs.Any(ccp => 
+                                                     ccp.CurrencyPair.CounterCurrency.Contains(CoreConstants.GenericCounterCurrency,
+                                                         StringComparison.InvariantCultureIgnoreCase))))
+                                .ToList();
+
+                            if (analysedComponents != null && analysedComponents.Count > 0)
+                            {
+                                var averagePrice = analysedComponents
+                                    .Where(ac => !string.IsNullOrEmpty(ac.Value))
+                                    .Select(ac => decimal.Parse(ac.Value))
+                                    .Average();
+                                
+                                if (averagePrice > 0 && _analysedComponentService.UpdateValue(component.Id, 
+                                    averagePrice.ToString(CultureInfo.InvariantCulture)))
+                                {
+                                    // Updated successfully
+                                }
+                            }
+                        }
                         // Which case? Allow currency to precede first.
-                        if (component.CurrencyId != null && component.CurrencyId > 0)
+                        else if (component.CurrencyId != null && component.CurrencyId > 0)
                         {
                             // Obtain all of the req components related to this currency where it is the base.
                             var currencyReqComps =
