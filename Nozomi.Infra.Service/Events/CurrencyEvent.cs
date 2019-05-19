@@ -65,7 +65,7 @@ namespace Nozomi.Service.Events
         /// </summary>
         /// <param name="abbreviation"></param>
         /// <returns></returns>
-        public Currency GetCurrencyByAbbreviation(string abbreviation)
+        public Currency GetCurrencyByAbbreviation(string abbreviation, bool track = false)
         {
             // First obtain all 'ABBRV' objects first, 
 //            var currency = _unitOfWork.GetRepository<Currency>()
@@ -262,35 +262,6 @@ namespace Nozomi.Service.Events
 //                return result;
 //            }
 
-            return _unitOfWork.GetRepository<Currency>()
-                .GetQueryable()
-                .AsNoTracking()
-                .SingleOrDefault(c => c.Abbreviation.Equals(abbreviation, StringComparison.InvariantCultureIgnoreCase));
-        }
-
-        public ICollection<Currency> GetCurrencyByAbbreviation(string abbreviation, bool track = false)
-        {
-            var query = _unitOfWork.GetRepository<Currency>()
-                .GetQueryable()
-                .AsNoTracking()
-                .Where(c => c.Abbreviation.Equals(abbreviation, StringComparison.InvariantCultureIgnoreCase));
-
-            if (track)
-            {
-                query = query.Include(c => c.AnalysedComponents)
-                    .Include(c => c.CurrencySource)
-                    .Include(c => c.CurrencyPairSourceCurrencies)
-                    .ThenInclude(pcp => pcp.Currency)
-                    .ThenInclude(c => c.CurrencySource)
-                    .Include(c => c.CurrencyRequests)
-                    .ThenInclude(cr => cr.RequestComponents);
-            }
-
-            return query.ToList();
-        }
-
-        public Currency GetCurrencyByAbbreviation(string abbreviation, long currencySourceId, bool track = false)
-        {
             var query = _unitOfWork.GetRepository<Currency>()
                 .GetQueryable()
                 .AsNoTracking();
@@ -298,17 +269,14 @@ namespace Nozomi.Service.Events
             if (track)
             {
                 query = query.Include(c => c.AnalysedComponents)
-                    .Include(c => c.CurrencySource)
                     .Include(c => c.CurrencyPairSourceCurrencies)
-                    .ThenInclude(pcp => pcp.Currency)
+                    .ThenInclude(c => c.CurrencySource)
                     .Include(c => c.CurrencyRequests)
                     .ThenInclude(cr => cr.RequestComponents);
             }
 
             return query
-                .SingleOrDefault(c => c.Abbreviation.Equals(abbreviation, StringComparison.InvariantCultureIgnoreCase)
-                                      && c.CurrencySourceId.Equals(currencySourceId)
-                                      && c.DeletedAt == null && c.IsEnabled);
+                .SingleOrDefault(c => c.Abbreviation.Equals(abbreviation, StringComparison.InvariantCultureIgnoreCase));
         }
 
         public decimal GetCirculatingSupply(AnalysedComponent analysedComponent)
