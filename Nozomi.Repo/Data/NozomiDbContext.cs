@@ -31,6 +31,7 @@ namespace Nozomi.Repo.Data
         public DbSet<CurrencyPairRequest> CurrencyPairRequests { get; set; }
         public DbSet<CurrencyType> CurrencyTypes { get; set; }
         public DbSet<CurrencyPairSourceCurrency> CurrencyCurrencyPairs { get; set; }
+        public DbSet<CurrencySource> CurrencySources { get; set; }
         public DbSet<Request> Requests { get; set; }
         public DbSet<RequestComponent> RequestComponents { get; set; }
         public DbSet<RcdHistoricItem> RcdHistoricItems { get; set; }
@@ -55,6 +56,7 @@ namespace Nozomi.Repo.Data
             var currencyPairRequestMap = new CurrencyPairRequestMap(modelBuilder.Entity<CurrencyPairRequest>());
             var currencyTypeMap = new CurrencyTypeMap(modelBuilder.Entity<CurrencyType>());
             var currencyCurrencyPairMap = new CurrencyPairSourceCurrencyMap(modelBuilder.Entity<CurrencyPairSourceCurrency>());
+            var currencySourceMap = new CurrencySourceMap(modelBuilder.Entity<CurrencySource>());
             var requestMap = new RequestMap(modelBuilder.Entity<Request>());
             var webSocketRequestMap = new WebsocketRequestMap(modelBuilder.Entity<WebsocketRequest>());
             var webSocketCommandMap = new WebsocketCommandMap(modelBuilder.Entity<WebsocketCommand>());
