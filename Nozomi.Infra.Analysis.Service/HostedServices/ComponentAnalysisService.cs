@@ -103,6 +103,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                         // CurrencyType-based market cap
                         if (component.CurrencyTypeId != null && component.CurrencyTypeId > 0)
                         {
+                            // Obtain all sub components (Components in the currencies)
                             var analysedComponents = _analysedComponentEvent.GetAllByCurrencyType(
                                 (long)component.CurrencyTypeId)
                                 .Where(ac => ac.ComponentType.Equals(AnalysedComponentType.MarketCap)
@@ -139,13 +140,15 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                 }
                                 
                                 // Compute market cap now.
-
-                                var marketCap = marketCapByCurrencies.Sum(item => item.Value);
-                                
-                                if (_analysedComponentService.UpdateValue(component.Id, 
-                                    marketCap.ToString(CultureInfo.InvariantCulture)))
+                                if (marketCapByCurrencies.Count > 0)
                                 {
-                                    // Updated successfully
+                                    var marketCap = marketCapByCurrencies.Sum(item => item.Value);
+                                
+                                    if (_analysedComponentService.UpdateValue(component.Id, 
+                                        marketCap.ToString(CultureInfo.InvariantCulture)))
+                                    {
+                                        // Updated successfully
+                                    }
                                 }
                             }
                         }
