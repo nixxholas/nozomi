@@ -11,7 +11,7 @@ namespace Nozomi.Service.Events.Interfaces
     {
         Currency Get(long id, bool track = false);
         
-        AbbrvUniqueCurrencyResponse GetCurrencyByAbbreviation(string abbreviation);
+        Currency GetCurrencyByAbbreviation(string abbreviation);
         
         ICollection<Currency> GetCurrencyByAbbreviation(string abbreviation, bool track = false);
         

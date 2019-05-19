@@ -46,11 +46,14 @@ namespace Nozomi.Service.Events
             {
                 query = query
                     .Include(c => c.AnalysedComponents)
-                    .Include(c => c.CurrencySource)
+                    .Include(c => c.CurrencySources)
+                    .ThenInclude(cs => cs.Source)
                     .Include(c => c.CurrencyPairSourceCurrencies)
-                    .ThenInclude(pcp => pcp.Currency)
+                    .ThenInclude(pcp => pcp.CurrencyPair)
                     .Include(c => c.CurrencyRequests)
-                    .ThenInclude(cr => cr.RequestComponents);
+                    .ThenInclude(cr => cr.RequestComponents)
+                    .Include(c => c.CurrencyRequests)
+                    .ThenInclude(cr => cr.AnalysedComponents);
             }
 
             return query
@@ -62,204 +65,207 @@ namespace Nozomi.Service.Events
         /// </summary>
         /// <param name="abbreviation"></param>
         /// <returns></returns>
-        public AbbrvUniqueCurrencyResponse GetCurrencyByAbbreviation(string abbreviation)
+        public Currency GetCurrencyByAbbreviation(string abbreviation)
         {
             // First obtain all 'ABBRV' objects first, 
-            var currency = _unitOfWork.GetRepository<Currency>()
+//            var currency = _unitOfWork.GetRepository<Currency>()
+//                .GetQueryable()
+//                .AsNoTracking()
+//                .Where(c => c.Abbreviation.Equals(abbreviation, StringComparison.InvariantCultureIgnoreCase)
+//                            && c.DeletedAt == null && c.IsEnabled)
+//                .Include(c => c.AnalysedComponents)
+//                .Include(c => c.CurrencySource)
+//                .Include(c => c.CurrencyPairSourceCurrencies)
+//                .ThenInclude(pcp => pcp.Currency)
+//                .Include(c => c.CurrencyCurrencyPairs)
+//                .ThenInclude(pcp => pcp.CurrencyPair)
+//                .ThenInclude(cp => cp.CurrencyPairRequests)
+//                .ThenInclude(cpr => cpr.AnalysedComponents)
+//                .Include(c => c.CurrencyCurrencyPairs)
+//                .ThenInclude(pcp => pcp.CurrencyPair)
+//                .ThenInclude(cp => cp.CurrencyPairRequests)
+//                .ThenInclude(cpr => cpr.RequestComponents)
+//                .Include(c => c.CurrencyRequests)
+//                .ThenInclude(cr => cr.RequestComponents)
+//                .ToList();
+//
+//            // Filter it
+//            var cpACs = currency
+//                .SelectMany(c => c.CurrencyCurrencyPairs)
+//                .Select(pcp => pcp.CurrencyPair)
+//                .Where(cp => cp.CounterCurrency.Equals(CoreConstants.GenericCounterCurrency,
+//                    StringComparison.InvariantCultureIgnoreCase))
+//                .SelectMany(cp => cp.CurrencyPairRequests)
+//                .SelectMany(cpr => cpr.AnalysedComponents
+//                    .Where(ac => ac.DeletedAt == null && ac.IsEnabled))
+//                .ToList();
+//
+//            if (currency.Count > 0)
+//            {
+//                var result = new AbbrvUniqueCurrencyResponse(currency.FirstOrDefault());
+//
+//                // DTO this sitch
+//                foreach (var similarCurr in currency)
+//                {
+//                    // Currency-based ACs
+//                    foreach (var aComp in similarCurr.AnalysedComponents)
+//                    {
+//                        if (!result.AnalysedComponents
+//                            .Any(ac => ac.Id.Equals(aComp.Id)))
+//                        {
+//                            result.AnalysedComponents.Add(aComp);
+//                        }
+//                    }
+//
+//                    // Currency Pair-based ACs
+//                    foreach (var cpAComp in cpACs)
+//                    {
+//                        if (!result.AnalysedComponents
+//                            .Any(ac => ac.Id.Equals(cpAComp.Id)))
+//                        {
+//                            result.AnalysedComponents.Add(cpAComp);
+//                        }
+//                    }
+//
+//                    foreach (var cReq in similarCurr.CurrencyRequests)
+//                    {
+//                        if (!result.CurrencyRequests.Any(cr => cr.Id.Equals(cReq.Id)))
+//                        {
+//                            result.CurrencyRequests.Add(cReq);
+//                        }
+//                    }
+//
+//                    foreach (var pCPair in similarCurr.CurrencyCurrencyPairs
+//                        .Where(ccp => ccp.Currency.Abbreviation
+//                            .Equals(ccp.CurrencyPair.MainCurrency, StringComparison.InvariantCultureIgnoreCase)))
+//                    {
+//                        // Form the TickerPair abbreviation first
+//                        var tickerPairStr = pCPair.Currency.Abbreviation +
+//                                            similarCurr.CurrencyCurrencyPairs
+//                                                .SingleOrDefault(ccp => ccp.Currency.Abbreviation
+//                                                                            .Equals(ccp.CurrencyPair.CounterCurrency,
+//                                                                                StringComparison
+//                                                                                    .InvariantCultureIgnoreCase)
+//                                                                        && ccp.CurrencyPairId.Equals(
+//                                                                            pCPair.CurrencyPairId))
+//                                                ?.Currency.Abbreviation;
+//
+//                        // Make sure tickerPairStr is not a solo piece of shit
+//                        if (!tickerPairStr.Equals(pCPair.Currency.Abbreviation,
+//                            StringComparison.InvariantCultureIgnoreCase))
+//                        {
+//                            // Make sure this is a main currency and that the TickerPairs collection
+//                            // does not contain this TickerPair yet.
+//                            if (!result.TickerPairs.Any(tp => tp.PairAbbreviation.Equals(tickerPairStr,
+//                                StringComparison.InvariantCultureIgnoreCase)))
+//                            {
+//                                // Since all is good, let's toss it in
+//                                result.TickerPairs.Add(new CondensedTickerPair
+//                                {
+//                                    PairAbbreviation = tickerPairStr,
+//                                    Sources = new List<SourceResponse>
+//                                    {
+//                                        new SourceResponse
+//                                        {
+//                                            Abbreviation = similarCurr.CurrencySource.Abbreviation,
+//                                            Name = similarCurr.CurrencySource.Name
+//                                        }
+//                                    }
+//                                });
+//                            }
+//                            // Since the TickerPair already exists,
+//                            else
+//                            {
+//                                // Pull the TickerPair
+//                                var tickerPair = result.TickerPairs.SingleOrDefault(tp =>
+//                                    tp.PairAbbreviation.Equals(tickerPairStr,
+//                                        StringComparison.InvariantCultureIgnoreCase));
+//
+//                                // Check if the source exists first
+//                                if (tickerPair.Sources.Any(s => s.Abbreviation
+//                                    .Equals(similarCurr.CurrencySource.Abbreviation,
+//                                        StringComparison.InvariantCultureIgnoreCase)))
+//                                {
+//                                    // It does, so let's ignore.
+//                                    // If it reaches here it means that we have a duplicate.
+//                                }
+//                                else
+//                                {
+//                                    // Does not, add it in.
+//                                    tickerPair.Sources.Add(new SourceResponse
+//                                    {
+//                                        Abbreviation = similarCurr.Abbreviation,
+//                                        Name = similarCurr.Name
+//                                    });
+//                                }
+//                            }
+//                        }
+//                    }
+//
+//                    var counterPCPs = _currencyCurrencyPairEvent
+//                        .ObtainCounterCurrencyPairs(similarCurr.CurrencyCurrencyPairs);
+//
+//                    if (counterPCPs != null && counterPCPs.Count > 0)
+//                    {
+//                        foreach (var pCPair in similarCurr.CurrencyCurrencyPairs)
+//                        {
+//                            var tickerPairStr = pCPair.Currency.Abbreviation +
+//                                                counterPCPs
+//                                                    .SingleOrDefault(pcp =>
+//                                                        pcp.CurrencyPairId.Equals(pCPair.CurrencyPairId))
+//                                                    ?.Currency.Abbreviation;
+//
+//                            if (!result.TickerPairs.Any(tp => tp.PairAbbreviation
+//                                .Equals(tickerPairStr, StringComparison.InvariantCultureIgnoreCase)))
+//                            {
+//                                result.TickerPairs.Add(new CondensedTickerPair
+//                                {
+//                                    PairAbbreviation = tickerPairStr,
+//                                    Sources = new List<SourceResponse>
+//                                    {
+//                                        new SourceResponse
+//                                        {
+//                                            Abbreviation = similarCurr.CurrencySource.Abbreviation,
+//                                            Name = similarCurr.CurrencySource.Name
+//                                        }
+//                                    }
+//                                });
+//                            }
+//                            else
+//                            {
+//                                // Add since it exists
+//                                result.TickerPairs.SingleOrDefault(tp => tp.PairAbbreviation
+//                                                                             .Equals(tickerPairStr,
+//                                                                                 StringComparison
+//                                                                                     .InvariantCultureIgnoreCase)
+//                                                                         && !tp.Sources.Any(s => s.Abbreviation
+//                                                                             .Equals(
+//                                                                                 similarCurr.CurrencySource
+//                                                                                     .Abbreviation,
+//                                                                                 StringComparison
+//                                                                                     .InvariantCultureIgnoreCase)))
+//                                    ?.Sources.Add(new SourceResponse
+//                                    {
+//                                        Abbreviation = similarCurr.CurrencySource.Abbreviation,
+//                                        Name = similarCurr.CurrencySource.Name
+//                                    });
+//                            }
+//                        }
+//                    }
+//
+//                    if (!result.CurrencySources.Any(cs => cs.Id.Equals(similarCurr.CurrencySourceId)))
+//                    {
+//                        result.CurrencySources.Add(similarCurr.CurrencySource);
+//                    }
+//                }
+//
+//                return result;
+//            }
+
+            return _unitOfWork.GetRepository<Currency>()
                 .GetQueryable()
                 .AsNoTracking()
-                .Where(c => c.Abbreviation.Equals(abbreviation, StringComparison.InvariantCultureIgnoreCase)
-                            && c.DeletedAt == null && c.IsEnabled)
-                .Include(c => c.AnalysedComponents)
-                .Include(c => c.CurrencySource)
-                .Include(c => c.CurrencyPairSourceCurrencies)
-                .ThenInclude(pcp => pcp.Currency)
-                .Include(c => c.CurrencyCurrencyPairs)
-                .ThenInclude(pcp => pcp.CurrencyPair)
-                .ThenInclude(cp => cp.CurrencyPairRequests)
-                .ThenInclude(cpr => cpr.AnalysedComponents)
-                .Include(c => c.CurrencyCurrencyPairs)
-                .ThenInclude(pcp => pcp.CurrencyPair)
-                .ThenInclude(cp => cp.CurrencyPairRequests)
-                .ThenInclude(cpr => cpr.RequestComponents)
-                .Include(c => c.CurrencyRequests)
-                .ThenInclude(cr => cr.RequestComponents)
-                .ToList();
-
-            // Filter it
-            var cpACs = currency
-                .SelectMany(c => c.CurrencyCurrencyPairs)
-                .Select(pcp => pcp.CurrencyPair)
-                .Where(cp => cp.CounterCurrency.Equals(CoreConstants.GenericCounterCurrency,
-                    StringComparison.InvariantCultureIgnoreCase))
-                .SelectMany(cp => cp.CurrencyPairRequests)
-                .SelectMany(cpr => cpr.AnalysedComponents
-                    .Where(ac => ac.DeletedAt == null && ac.IsEnabled))
-                .ToList();
-
-            if (currency.Count > 0)
-            {
-                var result = new AbbrvUniqueCurrencyResponse(currency.FirstOrDefault());
-
-                // DTO this sitch
-                foreach (var similarCurr in currency)
-                {
-                    // Currency-based ACs
-                    foreach (var aComp in similarCurr.AnalysedComponents)
-                    {
-                        if (!result.AnalysedComponents
-                            .Any(ac => ac.Id.Equals(aComp.Id)))
-                        {
-                            result.AnalysedComponents.Add(aComp);
-                        }
-                    }
-
-                    // Currency Pair-based ACs
-                    foreach (var cpAComp in cpACs)
-                    {
-                        if (!result.AnalysedComponents
-                            .Any(ac => ac.Id.Equals(cpAComp.Id)))
-                        {
-                            result.AnalysedComponents.Add(cpAComp);
-                        }
-                    }
-
-                    foreach (var cReq in similarCurr.CurrencyRequests)
-                    {
-                        if (!result.CurrencyRequests.Any(cr => cr.Id.Equals(cReq.Id)))
-                        {
-                            result.CurrencyRequests.Add(cReq);
-                        }
-                    }
-
-                    foreach (var pCPair in similarCurr.CurrencyCurrencyPairs
-                        .Where(ccp => ccp.Currency.Abbreviation
-                            .Equals(ccp.CurrencyPair.MainCurrency, StringComparison.InvariantCultureIgnoreCase)))
-                    {
-                        // Form the TickerPair abbreviation first
-                        var tickerPairStr = pCPair.Currency.Abbreviation +
-                                            similarCurr.CurrencyCurrencyPairs
-                                                .SingleOrDefault(ccp => ccp.Currency.Abbreviation
-                                                                            .Equals(ccp.CurrencyPair.CounterCurrency,
-                                                                                StringComparison
-                                                                                    .InvariantCultureIgnoreCase)
-                                                                        && ccp.CurrencyPairId.Equals(
-                                                                            pCPair.CurrencyPairId))
-                                                ?.Currency.Abbreviation;
-
-                        // Make sure tickerPairStr is not a solo piece of shit
-                        if (!tickerPairStr.Equals(pCPair.Currency.Abbreviation,
-                            StringComparison.InvariantCultureIgnoreCase))
-                        {
-                            // Make sure this is a main currency and that the TickerPairs collection
-                            // does not contain this TickerPair yet.
-                            if (!result.TickerPairs.Any(tp => tp.PairAbbreviation.Equals(tickerPairStr,
-                                StringComparison.InvariantCultureIgnoreCase)))
-                            {
-                                // Since all is good, let's toss it in
-                                result.TickerPairs.Add(new CondensedTickerPair
-                                {
-                                    PairAbbreviation = tickerPairStr,
-                                    Sources = new List<SourceResponse>
-                                    {
-                                        new SourceResponse
-                                        {
-                                            Abbreviation = similarCurr.CurrencySource.Abbreviation,
-                                            Name = similarCurr.CurrencySource.Name
-                                        }
-                                    }
-                                });
-                            }
-                            // Since the TickerPair already exists,
-                            else
-                            {
-                                // Pull the TickerPair
-                                var tickerPair = result.TickerPairs.SingleOrDefault(tp =>
-                                    tp.PairAbbreviation.Equals(tickerPairStr,
-                                        StringComparison.InvariantCultureIgnoreCase));
-
-                                // Check if the source exists first
-                                if (tickerPair.Sources.Any(s => s.Abbreviation
-                                    .Equals(similarCurr.CurrencySource.Abbreviation,
-                                        StringComparison.InvariantCultureIgnoreCase)))
-                                {
-                                    // It does, so let's ignore.
-                                    // If it reaches here it means that we have a duplicate.
-                                }
-                                else
-                                {
-                                    // Does not, add it in.
-                                    tickerPair.Sources.Add(new SourceResponse
-                                    {
-                                        Abbreviation = similarCurr.Abbreviation,
-                                        Name = similarCurr.Name
-                                    });
-                                }
-                            }
-                        }
-                    }
-
-                    var counterPCPs = _currencyCurrencyPairEvent
-                        .ObtainCounterCurrencyPairs(similarCurr.CurrencyCurrencyPairs);
-
-                    if (counterPCPs != null && counterPCPs.Count > 0)
-                    {
-                        foreach (var pCPair in similarCurr.CurrencyCurrencyPairs)
-                        {
-                            var tickerPairStr = pCPair.Currency.Abbreviation +
-                                                counterPCPs
-                                                    .SingleOrDefault(pcp =>
-                                                        pcp.CurrencyPairId.Equals(pCPair.CurrencyPairId))
-                                                    ?.Currency.Abbreviation;
-
-                            if (!result.TickerPairs.Any(tp => tp.PairAbbreviation
-                                .Equals(tickerPairStr, StringComparison.InvariantCultureIgnoreCase)))
-                            {
-                                result.TickerPairs.Add(new CondensedTickerPair
-                                {
-                                    PairAbbreviation = tickerPairStr,
-                                    Sources = new List<SourceResponse>
-                                    {
-                                        new SourceResponse
-                                        {
-                                            Abbreviation = similarCurr.CurrencySource.Abbreviation,
-                                            Name = similarCurr.CurrencySource.Name
-                                        }
-                                    }
-                                });
-                            }
-                            else
-                            {
-                                // Add since it exists
-                                result.TickerPairs.SingleOrDefault(tp => tp.PairAbbreviation
-                                                                             .Equals(tickerPairStr,
-                                                                                 StringComparison
-                                                                                     .InvariantCultureIgnoreCase)
-                                                                         && !tp.Sources.Any(s => s.Abbreviation
-                                                                             .Equals(
-                                                                                 similarCurr.CurrencySource
-                                                                                     .Abbreviation,
-                                                                                 StringComparison
-                                                                                     .InvariantCultureIgnoreCase)))
-                                    ?.Sources.Add(new SourceResponse
-                                    {
-                                        Abbreviation = similarCurr.CurrencySource.Abbreviation,
-                                        Name = similarCurr.CurrencySource.Name
-                                    });
-                            }
-                        }
-                    }
-
-                    if (!result.CurrencySources.Any(cs => cs.Id.Equals(similarCurr.CurrencySourceId)))
-                    {
-                        result.CurrencySources.Add(similarCurr.CurrencySource);
-                    }
-                }
-
-                return result;
-            }
-
-            return null;
+                .SingleOrDefault(c => c.Abbreviation.Equals(abbreviation, StringComparison.InvariantCultureIgnoreCase));
         }
 
         public ICollection<Currency> GetCurrencyByAbbreviation(string abbreviation, bool track = false)
