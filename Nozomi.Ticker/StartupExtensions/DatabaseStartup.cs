@@ -138,7 +138,7 @@ namespace Nozomi.Ticker.StartupExtensions
                     // Auto Wipe
                     if (env.IsDevelopment())
                     {
-                        context.Database.EnsureDeleted();
+                        //context.Database.EnsureDeleted();
 
                         context.Database.EnsureCreated();
                     }
