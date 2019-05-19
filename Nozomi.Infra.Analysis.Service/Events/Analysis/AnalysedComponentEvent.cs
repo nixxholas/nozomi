@@ -180,28 +180,38 @@ namespace Nozomi.Infra.Analysis.Service.Events.Analysis
             // Then we return
             var finalQuery = _unitOfWork.GetRepository<CurrencyPair>()
                 .GetQueryable()
-                .AsNoTracking();
+                .AsNoTracking()
+                // Immediately filter first
+                .Where(cp =>
+                    // Make sure the main currencies are identical
+                    cp.CurrencyPairCurrencies.FirstOrDefault(ccp => ccp.CurrencyPair.MainCurrency
+                            .Equals(ccp.Currency.Abbrv)).Currency.Abbrv
+                        .Equals(qCurrency.Abbrv, StringComparison.InvariantCultureIgnoreCase));
+            
+            #if DEBUG
+            // Debug and see if the correct currencies are present.
+            var correctCPairList = finalQuery.ToList();
+            #endif
 
             if (ensureValid)
             {
-                finalQuery
+                finalQuery = finalQuery
                     .Where(cp => cp.IsEnabled && cp.DeletedAt == null);
             }
 
             if (!string.IsNullOrEmpty(counterCurrency))
             {
-                finalQuery.Where(cp =>
+                finalQuery = finalQuery.Where(cp =>
                     cp.CounterCurrency.Equals(counterCurrency, StringComparison.InvariantCultureIgnoreCase));
             }
+            
+            #if DEBUG
+            var filteredCPairList = finalQuery.ToList();
+            #endif
 
             var analysedComponents = finalQuery
                 .Include(cp => cp.CurrencyPairCurrencies)
                 .ThenInclude(pcp => pcp.Currency)
-                .Where(cp =>
-                    // Make sure the main currencies are identical
-                    cp.CurrencyPairCurrencies.FirstOrDefault(ccp => ccp.CurrencyPair.MainCurrency
-                            .Equals(ccp.Currency.Abbrv)).Currency.Abbrv
-                        .Equals(qCurrency.Abbrv, StringComparison.InvariantCultureIgnoreCase))
                 .Include(cp => cp.CurrencyPairRequests)
                 .ThenInclude(cpr => cpr.AnalysedComponents)
                 .ThenInclude(rc => rc.AnalysedHistoricItems)
@@ -214,6 +224,14 @@ namespace Nozomi.Infra.Analysis.Service.Events.Analysis
                 .SelectMany(cp => cp.CurrencyPairRequests)
                 .SelectMany(cpr => cpr.AnalysedComponents);
 
+#if DEBUG
+            if (currencyId.Equals(4))
+            {
+                var test = analysedComponents.ToList();
+                Console.WriteLine("Banf");
+            }
+#endif
+            
             if (!finalQuery.Any()) return new List<AnalysedComponent>();
 
             if (!track)
