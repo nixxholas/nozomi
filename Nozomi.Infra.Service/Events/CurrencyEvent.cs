@@ -563,12 +563,16 @@ namespace Nozomi.Service.Events
                 .Include(c => c.AnalysedComponents)
                 .ThenInclude(ac => ac.AnalysedHistoricItems)
                 .Include(c => c.CurrencyCurrencyPairs)
-                .ThenInclude(pcp => pcp.Currency)
-                .Include(c => c.CurrencyCurrencyPairs)
-                .ThenInclude(pcp => pcp.CurrencyPair)
-                .ThenInclude(cp => cp.CurrencyPairRequests)
-                .ThenInclude(cpr => cpr.AnalysedComponents)
-                .ThenInclude(ac => ac.AnalysedHistoricItems)
+                .ThenInclude(ccp => ccp.CurrencyPair)
+                // TODO: Exclude this rule
+                .Where(c => c.CurrencyCurrencyPairs.Any(ccp => ccp.CurrencyPair.CounterCurrency
+                    .Equals(CoreConstants.GenericCounterCurrency, StringComparison.InvariantCultureIgnoreCase)))
+//                .ThenInclude(pcp => pcp.Currency)
+//                .Include(c => c.CurrencyCurrencyPairs)
+//                .ThenInclude(pcp => pcp.CurrencyPair)
+//                .ThenInclude(cp => cp.CurrencyPairRequests)
+//                .ThenInclude(cpr => cpr.AnalysedComponents)
+//                .ThenInclude(ac => ac.AnalysedHistoricItems)
                 .Skip(20 * index)
                 .Take(20)
                 .Select(c => new Currency
@@ -653,6 +657,8 @@ namespace Nozomi.Service.Events
             #if DEBUG
             var currenciesColl = currencies.ToList();
             #endif
+            
+            // TODO: We'll need to figure out how we can factor in non-USD counter currency tickers
 
             var abbreviations = currencies.Select(c => c.Abbrv).Distinct().ToList();
             foreach (var uniqueCurr in abbreviations)
