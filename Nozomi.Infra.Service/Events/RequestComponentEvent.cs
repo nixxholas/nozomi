@@ -62,8 +62,6 @@ namespace Nozomi.Service.Events
                     .ToList();
         }
 
-        // TODO: Ask .NET Core devs for advice to optimise this...
-        // TODO: 100% sure this is 100x un-optimised... fuck this query
         public void ConvertToGenericCurrency(ICollection<RequestComponent> requestComponents)
         {
             if (requestComponents != null && requestComponents.Count > 0)
@@ -81,9 +79,10 @@ namespace Nozomi.Service.Events
                         .ThenInclude(cpr => cpr.RequestComponents)
                         .SingleOrDefault(c => c.CurrencyPairSourceCurrencies
                                 // Make sure we're not converting if we don't have to.
-                            .Where(ccp => ccp.Currency.Abbreviation
-                                              .Equals(ccp.CurrencyPair.CounterCurrency, StringComparison.InvariantCultureIgnoreCase)
-                                          && !ccp.Currency.Abbreviation.Equals(CoreConstants.GenericCounterCurrency,
+                            .Where(cpsc => cpsc.CurrencySource.Currency.Abbreviation
+                                              .Equals(cpsc.CurrencyPair.CounterCurrency, StringComparison.InvariantCultureIgnoreCase)
+                                           // make sure the counter currency is not the generic counter currency
+                                          && !cpsc.CurrencyPair.CounterCurrency.Contains(CoreConstants.GenericCounterCurrency,
                                               StringComparison.InvariantCultureIgnoreCase))
                             .Select(pcp => pcp.CurrencyPair)
                             .SelectMany(cp => cp.CurrencyPairRequests)
@@ -98,13 +97,11 @@ namespace Nozomi.Service.Events
                             .GetRepository<CurrencyPairSourceCurrency>()
                             .GetQueryable()
                             .AsNoTracking()
-                            .Where(ccp => ccp.Currency.Abbreviation
-                                              .Equals(ccp.CurrencyPair.MainCurrency, StringComparison.InvariantCultureIgnoreCase) &&
-                                          ccp.Currency.Abbreviation.Equals(counterCurr.Abbreviation,
-                                              StringComparison.InvariantCultureIgnoreCase))
-                            .Where(ccp => ccp.Currency.Abbreviation
-                                              .Equals(ccp.CurrencyPair.CounterCurrency, StringComparison.InvariantCultureIgnoreCase) && 
-                                          ccp.Currency.Abbreviation.Equals(CoreConstants.GenericCounterCurrency,
+                            // Make sure the counter currency is the main currency
+                            .Where(cpsc => cpsc.CurrencyPair.MainCurrency
+                                              .Contains(counterCurr.Abbreviation, StringComparison.InvariantCultureIgnoreCase)
+                                           // Make sure the counter currency is the generic counter currency
+                                           && cpsc.CurrencyPair.CounterCurrency.Equals(CoreConstants.GenericCounterCurrency,
                                               StringComparison.InvariantCultureIgnoreCase))
                             .Include(pcp => pcp.CurrencyPair)
                             .ThenInclude(cp => cp.CurrencyPairRequests)
@@ -113,6 +110,7 @@ namespace Nozomi.Service.Events
                             .SelectMany(cpr => cpr.AnalysedComponents)
                             .FirstOrDefault(ac => ac.ComponentType.Equals(AnalysedComponentType.CurrentAveragePrice));
 
+                        // Make sure we can actually convert tho
                         if (conversionRate != null && decimal.TryParse(conversionRate.Value, out var conversionVal))
                         {
                             // Since we've gotten the conversion rate, let's convert.
