@@ -27,177 +27,177 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                 new CurrencyPairSourceCurrency
                 {
                     CurrencyPairId = 1,
-                    CurrencyId = 3
+                    CurrencySourceId = 3
                 },
                 new CurrencyPairSourceCurrency
                 {
                     CurrencyPairId = 1,
-                    CurrencyId = 1
+                    CurrencySourceId = 1
                 },
                 // BFX KNCUSD
                 new CurrencyPairSourceCurrency
                 {
                     CurrencyPairId = 2,
-                    CurrencyId = 4
+                    CurrencySourceId = 4
                 },
                 new CurrencyPairSourceCurrency
                 {
                     CurrencyPairId = 2,
-                    CurrencyId = 1
+                    CurrencySourceId = 1
                 },
                 // ECB EURUSD
                 new CurrencyPairSourceCurrency
                 {
                     CurrencyPairId = 3,
-                    CurrencyId = 8
+                    CurrencySourceId = 8
                 },
                 new CurrencyPairSourceCurrency
                 {
                     CurrencyPairId = 3,
-                    CurrencyId = 9
+                    CurrencySourceId = 9
                 },
                 // AlphaVantage EURUSD
                 new CurrencyPairSourceCurrency
                 {
                     CurrencyPairId = 4,
-                    CurrencyId = 10
+                    CurrencySourceId = 10
                 },
                 new CurrencyPairSourceCurrency
                 {
                     CurrencyPairId = 4,
-                    CurrencyId = 11
+                    CurrencySourceId = 11
                 },
                 // POLO BTCBCN
                 new CurrencyPairSourceCurrency
                 {
                     CurrencyPairId = 5,
-                    CurrencyId = 12
+                    CurrencySourceId = 12
                 },
                 new CurrencyPairSourceCurrency
                 {
                     CurrencyPairId = 5,
-                    CurrencyId = 13
+                    CurrencySourceId = 13
                 },
                 // POLO BTCBTS
                 new CurrencyPairSourceCurrency
                 {
                     CurrencyPairId = 6,
-                    CurrencyId = 12
+                    CurrencySourceId = 12
                 },
                 new CurrencyPairSourceCurrency
                 {
                     CurrencyPairId = 6,
-                    CurrencyId = 14
+                    CurrencySourceId = 14
                 },
                 // BFX ETHEUR
                 new CurrencyPairSourceCurrency
                 {
                     CurrencyPairId = 7,
-                    CurrencyId = 3
+                    CurrencySourceId = 3
                 },
                 new CurrencyPairSourceCurrency
                 {
                     CurrencyPairId = 7,
-                    CurrencyId = 2
+                    CurrencySourceId = 2
                 },
                 // POLO BTCUSDT
                 new CurrencyPairSourceCurrency
                 {
                     CurrencyPairId = 8,
-                    CurrencyId = 12
+                    CurrencySourceId = 12
                 },
                 new CurrencyPairSourceCurrency
                 {
                     CurrencyPairId = 8,
-                    CurrencyId = 15
+                    CurrencySourceId = 15
                 },
                 // Binance ETHBTC
                 new CurrencyPairSourceCurrency
                 {
                     CurrencyPairId = 9,
-                    CurrencyId = 6
+                    CurrencySourceId = 6
                 },
                 new CurrencyPairSourceCurrency
                 {
                     CurrencyPairId = 9,
-                    CurrencyId = 7
+                    CurrencySourceId = 7
                 },
                 // Binance KNCETH
                 new CurrencyPairSourceCurrency
                 {
                     CurrencyPairId = 10,
-                    CurrencyId = 5
+                    CurrencySourceId = 5
                 },
                 new CurrencyPairSourceCurrency
                 {
                     CurrencyPairId = 10,
-                    CurrencyId = 6
+                    CurrencySourceId = 6
                 },
                 // Coinhako BTCSGD
                 new CurrencyPairSourceCurrency
                 {
                     CurrencyPairId = 11,
-                    CurrencyId = 16
+                    CurrencySourceId = 16
                 },
                 new CurrencyPairSourceCurrency
                 {
                     CurrencyPairId = 11,
-                    CurrencyId = 17
+                    CurrencySourceId = 17
                 },
                 // Coinhako BTCUSD
                 new CurrencyPairSourceCurrency
                 {
                     CurrencyPairId = 12,
-                    CurrencyId = 16
+                    CurrencySourceId = 16
                 },
                 new CurrencyPairSourceCurrency
                 {
                     CurrencyPairId = 12,
-                    CurrencyId = 19
+                    CurrencySourceId = 19
                 },
                 // Coinhako ETHSGD
                 new CurrencyPairSourceCurrency
                 {
                     CurrencyPairId = 13,
-                    CurrencyId = 18
+                    CurrencySourceId = 18
                 },
                 new CurrencyPairSourceCurrency
                 {
                     CurrencyPairId = 13,
-                    CurrencyId = 17
+                    CurrencySourceId = 17
                 },
                 // Coinhako ETHUSD
                 new CurrencyPairSourceCurrency
                 {
                     CurrencyPairId = 14,
-                    CurrencyId = 18
+                    CurrencySourceId = 18
                 },
                 new CurrencyPairSourceCurrency
                 {
                     CurrencyPairId = 14,
-                    CurrencyId = 19
+                    CurrencySourceId = 19
                 },
                 // Coinhako LTCSGD
                 new CurrencyPairSourceCurrency
                 {
                     CurrencyPairId = 15,
-                    CurrencyId = 20
+                    CurrencySourceId = 20
                 },
                 new CurrencyPairSourceCurrency
                 {
                     CurrencyPairId = 15,
-                    CurrencyId = 17
+                    CurrencySourceId = 17
                 },
                 // Coinhako LTCUSD
                 new CurrencyPairSourceCurrency
                 {
                     CurrencyPairId = 16,
-                    CurrencyId = 20
+                    CurrencySourceId = 20
                 },
                 new CurrencyPairSourceCurrency
                 {
                     CurrencyPairId = 16,
-                    CurrencyId = 19
+                    CurrencySourceId = 19
                 }
             );
         }
