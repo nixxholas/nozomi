@@ -45,7 +45,6 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                     CurrencyTypeId = 1,
                     Abbreviation = "USD",
                     Name = "United States Dollar",
-                    CurrencySourceId = 1,
                     WalletTypeId = 0
                 },
                 new Currency
@@ -54,7 +53,6 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                     CurrencyTypeId = 1,
                     Abbreviation = "EUR",
                     Name = "Euro",
-                    CurrencySourceId = 1,
                     WalletTypeId = 0
                 },
                 new Currency
@@ -63,7 +61,6 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                     CurrencyTypeId = 2,
                     Abbreviation = "ETH",
                     Name = "Ethereum",
-                    CurrencySourceId = 1,
                     WalletTypeId = 1, // As per CNWallet
                     Denominations = 18,
                     DenominationName = "Wei"
@@ -74,7 +71,6 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                     CurrencyTypeId = 2,
                     Abbreviation = "KNC",
                     Name = "Kyber Network Crystal",
-                    CurrencySourceId = 1,
                     Denominations = 18,
                     WalletTypeId = 4, // As per CNWallet
                 },
@@ -84,7 +80,6 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                     CurrencyTypeId = 2,
                     Abbreviation = "KNC",
                     Name = "Kyber Network Crystal",
-                    CurrencySourceId = 3,
                     WalletTypeId = 4 // As per CNWallet
                 },
                 new Currency
@@ -93,7 +88,6 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                     CurrencyTypeId = 2,
                     Abbreviation = "ETH",
                     Name = "Ethereum",
-                    CurrencySourceId = 3,
                     WalletTypeId = 1, // As per CNWallet
                     Denominations = 18,
                     DenominationName = "Wei",
@@ -104,7 +98,6 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                     CurrencyTypeId = 2,
                     Abbreviation = "BTC",
                     Name = "Bitcoin",
-                    CurrencySourceId = 3,
                     WalletTypeId = 0, // As per CNWallet
                     Denominations = 8,
                     DenominationName = "Sat"
@@ -115,7 +108,6 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                     CurrencyTypeId = 1,
                     Abbreviation = "EUR",
                     Name = "Euro",
-                    CurrencySourceId = 4,
                     WalletTypeId = 0
                 },
                 new Currency
@@ -124,7 +116,6 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                     CurrencyTypeId = 1,
                     Abbreviation = "USD",
                     Name = "United States Dollar",
-                    CurrencySourceId = 4,
                     WalletTypeId = 0
                 },
                 new Currency
@@ -133,7 +124,6 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                     CurrencyTypeId = 1,
                     Abbreviation = "EUR",
                     Name = "Euro",
-                    CurrencySourceId = 5,
                     WalletTypeId = 0
                 },
                 new Currency
@@ -142,7 +132,6 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                     CurrencyTypeId = 1,
                     Abbreviation = "USD",
                     Name = "United States Dollar",
-                    CurrencySourceId = 5,
                     WalletTypeId = 0
                 },
                 new Currency
@@ -151,7 +140,6 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                     CurrencyTypeId = 2,
                     Abbreviation = "BTC",
                     Name = "Bitcoin",
-                    CurrencySourceId = 6,
                     WalletTypeId = 0,
                     Denominations = 8,
                     DenominationName = "Sat"
@@ -162,7 +150,6 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                     CurrencyTypeId = 2,
                     Abbreviation = "BCN",
                     Name = "Bytecoin",
-                    CurrencySourceId = 6,
                     WalletTypeId = 0
                 },
                 new Currency
@@ -171,7 +158,6 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                     CurrencyTypeId = 2,
                     Abbreviation = "BTS",
                     Name = "BitShares",
-                    CurrencySourceId = 6,
                     WalletTypeId = 0
                 },
                 new Currency
@@ -180,7 +166,6 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                     CurrencyTypeId = 1,
                     Abbreviation = "USDT",
                     Name = "Tether USD",
-                    CurrencySourceId = 6,
                     WalletTypeId = 0
                 },
                 new Currency
@@ -189,7 +174,6 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                     CurrencyTypeId = 2,
                     Abbreviation = "BTC",
                     Name = "Bitcoin",
-                    CurrencySourceId = 2,
                     WalletTypeId = 0
                 },
                 new Currency
@@ -198,7 +182,6 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                     CurrencyTypeId = 1,
                     Abbreviation = "SGD",
                     Name = "Singapore Dollar",
-                    CurrencySourceId = 2,
                     WalletTypeId = 0
                 },
                 new Currency
@@ -207,7 +190,6 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                     CurrencyTypeId = 2,
                     Abbreviation = "ETH",
                     Name = "Ethereum",
-                    CurrencySourceId = 2,
                     WalletTypeId = 0
                 },
                 new Currency
@@ -216,7 +198,6 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                     CurrencyTypeId = 1,
                     Abbreviation = "USD",
                     Name = "United States Dollar",
-                    CurrencySourceId = 2,
                     WalletTypeId = 0
                 },
                 new Currency
@@ -225,7 +206,6 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                     CurrencyTypeId = 2,
                     Abbreviation = "LTC",
                     Name = "Litecoin",
-                    CurrencySourceId = 2,
                     WalletTypeId = 0
                 });
         }
