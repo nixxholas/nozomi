@@ -165,192 +165,234 @@ namespace Nozomi.Service.Events
         /// <returns>Collection of request components related to the component</returns>
         public ICollection<RequestComponent> GetAllByCorrelation(long analysedComponentId, bool track = false)
         {
-            // First, obtain the correlation PCPs
-            var correlPCPs = _unitOfWork.GetRepository<CurrencyPair>()
+            var analysedComponent = _unitOfWork.GetRepository<AnalysedComponent>()
                 .GetQueryable()
                 .AsNoTracking()
-                .Where(cp => cp.IsEnabled && cp.DeletedAt == null)
-                .Include(cp => cp.CurrencyPairRequests)
-                .ThenInclude(cpr => cpr.AnalysedComponents)
-                .Include(cp => cp.WebsocketRequests)
-                    .ThenInclude(wsr => wsr.AnalysedComponents)
-                .Where(cp => cp.CurrencyPairRequests
-                    .Any(cpr => cpr.DeletedAt == null && cpr.IsEnabled
-                                                      // We can ignore disabled or deleted ACs, just using this 
-                                                      // to find the correlation
-                                                      && cpr.AnalysedComponents.Any(ac =>
-                                                          ac.Id.Equals(analysedComponentId)))
-                || cp.WebsocketRequests
-                    .Any(cpr => cpr.DeletedAt == null && cpr.IsEnabled
-                                                      // We can ignore disabled or deleted ACs, just using this 
-                                                      // to find the correlation
-                                                      && cpr.AnalysedComponents.Any(ac =>
-                                                          ac.Id.Equals(analysedComponentId))))
-                .Include(cp => cp.CurrencyPairCurrencies)
-                .ThenInclude(pcp => pcp.Currency)
-                .SelectMany(cp => cp.CurrencyPairCurrencies
-                    .Select(pcp => new CurrencyPairSourceCurrency
-                    {
-                        Currency = pcp.Currency,
-                        CurrencyPair = pcp.CurrencyPair,
-                        CurrencyId = pcp.CurrencyId,
-                        CurrencyPairId = pcp.CurrencyPairId
-                    }))
-                .DefaultIfEmpty()
-                .ToList();
+                .SingleOrDefault(ac => ac.Id.Equals(analysedComponentId));
 
-            var firstCcp = correlPCPs.FirstOrDefault();
-            
-            if (correlPCPs.Count < 2 || firstCcp == null)
+            if (analysedComponent != null)
             {
-                var query = _unitOfWork.GetRepository<Currency>()
-                    .GetQueryable()
-                    .AsNoTracking()
-                    .Where(cp => cp.IsEnabled && cp.DeletedAt == null)
-                    .Include(c => c.CurrencyRequests)
-                    .ThenInclude(cpr => cpr.AnalysedComponents)
-                    .Where(c => c.CurrencyRequests
-                        .Any(cr => cr.DeletedAt == null && cr.IsEnabled
-                                                        // We can ignore disabled or deleted ACs, just using this 
-                                                        // to find the correlation
-                                                        && cr.AnalysedComponents.Any(ac =>
-                                                            ac.Id.Equals(analysedComponentId))))
-                    .Include(c => c.CurrencyRequests)
-                    .ThenInclude(c => c.RequestComponents);
-                
-                if (track)
+                // Request-based tracking
+                if (analysedComponent.RequestId != null && analysedComponent.RequestId > 0)
                 {
-                    query.ThenInclude(rc => rc.RcdHistoricItems);
+                    var query = _unitOfWork.GetRepository<RequestComponent>()
+                        .GetQueryable()
+                        .AsNoTracking()
+                        .Where(rc => rc.RequestId.Equals(analysedComponent.RequestId));
+
+                    if (track)
+                    {
+                        query = query.Include(rc => rc.RcdHistoricItems);
+                    }
+                
+                    return query.ToList();
+                } 
+                // Currency-based tracking
+                else if (analysedComponent.CurrencyId != null && analysedComponent.CurrencyId > 0)
+                {
+                    var query = _unitOfWork.GetRepository<CurrencyRequest>()
+                        .GetQueryable()
+                        .AsNoTracking()
+                        .Where(cr => cr.CurrencyId.Equals(analysedComponent.CurrencyId))
+                        .Include(cr => cr.RequestComponents);
+
+                    if (track)
+                    {
+                        query.ThenInclude(rc => rc.RcdHistoricItems);
+                    }
+                
+                    return query.SelectMany(rc => rc.RequestComponents).ToList();
                 }
-                
-                return query
-                    .SelectMany(c => c.CurrencyRequests)
-                    .SelectMany(cr => cr.RequestComponents)
-                    .Select(rc => new RequestComponent
-                    {
-                        Id = rc.Id,
-                        ComponentType = rc.ComponentType,
-                        Identifier = rc.Identifier,
-                        IsDenominated = rc.IsDenominated,
-                        QueryComponent = rc.QueryComponent,
-                        Value = rc.Value,
-                        RcdHistoricItems = rc.RcdHistoricItems
-                    })
-                    .ToList();
             }
 
-            var tickerPairStr = string.Concat(firstCcp.CurrencyPair.MainCurrency, firstCcp.CurrencyPair.CounterCurrency);
+            return null;
 
-            var queryRes = _unitOfWork.GetRepository<CurrencyPair>()
-                .GetQueryable()
-                .AsNoTracking()
-                .Include(cp => cp.CurrencyPairCurrencies)
-                .ThenInclude(pcp => pcp.Currency)
-                .Where(cp => string.Concat(cp.MainCurrency, cp.CounterCurrency)
-                        .Equals(tickerPairStr, StringComparison.InvariantCultureIgnoreCase)
-                )
-                .Include(cp => cp.CurrencyPairRequests)
-                    .ThenInclude(cpr => cpr.RequestComponents)
-                        .ThenInclude(rc => rc.RcdHistoricItems)
-                .Include(cp => cp.WebsocketRequests)
-                    .ThenInclude(wsr => wsr.RequestComponents)
-                        .ThenInclude(rc => rc.RcdHistoricItems);
-            
-            #if DEBUG
-            var testReqComps = queryRes
-                .SelectMany(cp => cp.CurrencyPairRequests)
-                .SelectMany(cpr => cpr.RequestComponents)
-                .Select(rc => new RequestComponent
-                {
-                    Id = rc.Id,
-                    ComponentType = rc.ComponentType,
-                    Identifier = rc.Identifier,
-                    IsDenominated = rc.IsDenominated,
-                    QueryComponent = rc.QueryComponent,
-                    Value = rc.Value,
-                    RcdHistoricItems = rc.RcdHistoricItems.Where(rcdhi => rcdhi.CreatedAt < 
-                                                                          DateTime.UtcNow.Subtract(TimeSpan.FromDays(7)))
-                        .ToList()
-                })
-                .ToList();
-            
-            if (analysedComponentId == 12 || analysedComponentId == 18 || analysedComponentId == 21)
-            {
-                var cprReqCompsTest = queryRes
-                    .SelectMany(cp => cp.CurrencyPairRequests)
-                    .SelectMany(cpr => cpr.RequestComponents)
-                    .Select(rc => new RequestComponent
-                    {
-                        Id = rc.Id,
-                        ComponentType = rc.ComponentType,
-                        Identifier = rc.Identifier,
-                        IsDenominated = rc.IsDenominated,
-                        QueryComponent = rc.QueryComponent,
-                        Value = rc.Value,
-                        RcdHistoricItems = rc.RcdHistoricItems
-                    }).ToList();
-                
-                var res = queryRes
-                    .SelectMany(cp => cp.CurrencyPairRequests)
-                    .SelectMany(cpr => cpr.RequestComponents)
-                    .Select(rc => new RequestComponent
-                    {
-                        Id = rc.Id,
-                        ComponentType = rc.ComponentType,
-                        Identifier = rc.Identifier,
-                        IsDenominated = rc.IsDenominated,
-                        QueryComponent = rc.QueryComponent,
-                        Value = rc.Value,
-                        RcdHistoricItems = rc.RcdHistoricItems
-                    })
-                    .Concat(queryRes
-                        .SelectMany(cp => cp.WebsocketRequests)
-                        .SelectMany(cpr => cpr.RequestComponents)
-                        .Select(rc => new RequestComponent
-                        {
-                            Id = rc.Id,
-                            ComponentType = rc.ComponentType,
-                            Identifier = rc.Identifier,
-                            IsDenominated = rc.IsDenominated,
-                            QueryComponent = rc.QueryComponent,
-                            Value = rc.Value,
-                            RcdHistoricItems = rc.RcdHistoricItems
-                        })
-                    )
-                    .ToList();
-
-                var testReqCom = res.FirstOrDefault();
-            }
-#endif
-            
-            return queryRes
-                .SelectMany(cp => cp.CurrencyPairRequests)
-                .SelectMany(cpr => cpr.RequestComponents)
-                .Select(rc => new RequestComponent
-                {
-                    Id = rc.Id,
-                    ComponentType = rc.ComponentType,
-                    Identifier = rc.Identifier,
-                    IsDenominated = rc.IsDenominated,
-                    QueryComponent = rc.QueryComponent,
-                    Value = rc.Value,
-                    RcdHistoricItems = rc.RcdHistoricItems
-                })
-                .Concat(queryRes
-                    .SelectMany(cp => cp.WebsocketRequests)
-                    .SelectMany(cpr => cpr.RequestComponents)
-                    .Select(rc => new RequestComponent
-                    {
-                        Id = rc.Id,
-                        ComponentType = rc.ComponentType,
-                        Identifier = rc.Identifier,
-                        IsDenominated = rc.IsDenominated,
-                        QueryComponent = rc.QueryComponent,
-                        Value = rc.Value,
-                        RcdHistoricItems = rc.RcdHistoricItems
-                    })
-                )
-                .ToList();
+//            // First, obtain the correlation PCPs
+//            var correlPCPs = _unitOfWork.GetRepository<CurrencyPair>()
+//                .GetQueryable()
+//                .AsNoTracking()
+//                .Where(cp => cp.IsEnabled && cp.DeletedAt == null)
+//                .Include(cp => cp.CurrencyPairRequests)
+//                .ThenInclude(cpr => cpr.AnalysedComponents)
+//                .Include(cp => cp.WebsocketRequests)
+//                    .ThenInclude(wsr => wsr.AnalysedComponents)
+//                .Where(cp => cp.CurrencyPairRequests
+//                    .Any(cpr => cpr.DeletedAt == null && cpr.IsEnabled
+//                                                      // We can ignore disabled or deleted ACs, just using this 
+//                                                      // to find the correlation
+//                                                      && cpr.AnalysedComponents.Any(ac =>
+//                                                          ac.Id.Equals(analysedComponentId)))
+//                || cp.WebsocketRequests
+//                    .Any(cpr => cpr.DeletedAt == null && cpr.IsEnabled
+//                                                      // We can ignore disabled or deleted ACs, just using this 
+//                                                      // to find the correlation
+//                                                      && cpr.AnalysedComponents.Any(ac =>
+//                                                          ac.Id.Equals(analysedComponentId))))
+//                .Include(cp => cp.CurrencyPairCurrencies)
+//                .ThenInclude(pcp => pcp.Currency)
+//                .SelectMany(cp => cp.CurrencyPairCurrencies
+//                    .Select(pcp => new CurrencyPairSourceCurrency
+//                    {
+//                        Currency = pcp.Currency,
+//                        CurrencyPair = pcp.CurrencyPair,
+//                        CurrencyId = pcp.CurrencyId,
+//                        CurrencyPairId = pcp.CurrencyPairId
+//                    }))
+//                .DefaultIfEmpty()
+//                .ToList();
+//
+//            var firstCcp = correlPCPs.FirstOrDefault();
+//            
+//            if (correlPCPs.Count < 2 || firstCcp == null)
+//            {
+//                var query = _unitOfWork.GetRepository<Currency>()
+//                    .GetQueryable()
+//                    .AsNoTracking()
+//                    .Where(cp => cp.IsEnabled && cp.DeletedAt == null)
+//                    .Include(c => c.CurrencyRequests)
+//                    .ThenInclude(cpr => cpr.AnalysedComponents)
+//                    .Where(c => c.CurrencyRequests
+//                        .Any(cr => cr.DeletedAt == null && cr.IsEnabled
+//                                                        // We can ignore disabled or deleted ACs, just using this 
+//                                                        // to find the correlation
+//                                                        && cr.AnalysedComponents.Any(ac =>
+//                                                            ac.Id.Equals(analysedComponentId))))
+//                    .Include(c => c.CurrencyRequests)
+//                    .ThenInclude(c => c.RequestComponents);
+//                
+//                if (track)
+//                {
+//                    query.ThenInclude(rc => rc.RcdHistoricItems);
+//                }
+//                
+//                return query
+//                    .SelectMany(c => c.CurrencyRequests)
+//                    .SelectMany(cr => cr.RequestComponents)
+//                    .Select(rc => new RequestComponent
+//                    {
+//                        Id = rc.Id,
+//                        ComponentType = rc.ComponentType,
+//                        Identifier = rc.Identifier,
+//                        IsDenominated = rc.IsDenominated,
+//                        QueryComponent = rc.QueryComponent,
+//                        Value = rc.Value,
+//                        RcdHistoricItems = rc.RcdHistoricItems
+//                    })
+//                    .ToList();
+//            }
+//
+//            var tickerPairStr = string.Concat(firstCcp.CurrencyPair.MainCurrency, firstCcp.CurrencyPair.CounterCurrency);
+//
+//            var queryRes = _unitOfWork.GetRepository<CurrencyPair>()
+//                .GetQueryable()
+//                .AsNoTracking()
+//                .Include(cp => cp.CurrencyPairCurrencies)
+//                .ThenInclude(pcp => pcp.Currency)
+//                .Where(cp => string.Concat(cp.MainCurrency, cp.CounterCurrency)
+//                        .Equals(tickerPairStr, StringComparison.InvariantCultureIgnoreCase)
+//                )
+//                .Include(cp => cp.CurrencyPairRequests)
+//                    .ThenInclude(cpr => cpr.RequestComponents)
+//                        .ThenInclude(rc => rc.RcdHistoricItems)
+//                .Include(cp => cp.WebsocketRequests)
+//                    .ThenInclude(wsr => wsr.RequestComponents)
+//                        .ThenInclude(rc => rc.RcdHistoricItems);
+//            
+//            #if DEBUG
+//            var testReqComps = queryRes
+//                .SelectMany(cp => cp.CurrencyPairRequests)
+//                .SelectMany(cpr => cpr.RequestComponents)
+//                .Select(rc => new RequestComponent
+//                {
+//                    Id = rc.Id,
+//                    ComponentType = rc.ComponentType,
+//                    Identifier = rc.Identifier,
+//                    IsDenominated = rc.IsDenominated,
+//                    QueryComponent = rc.QueryComponent,
+//                    Value = rc.Value,
+//                    RcdHistoricItems = rc.RcdHistoricItems.Where(rcdhi => rcdhi.CreatedAt < 
+//                                                                          DateTime.UtcNow.Subtract(TimeSpan.FromDays(7)))
+//                        .ToList()
+//                })
+//                .ToList();
+//            
+//            if (analysedComponentId == 12 || analysedComponentId == 18 || analysedComponentId == 21)
+//            {
+//                var cprReqCompsTest = queryRes
+//                    .SelectMany(cp => cp.CurrencyPairRequests)
+//                    .SelectMany(cpr => cpr.RequestComponents)
+//                    .Select(rc => new RequestComponent
+//                    {
+//                        Id = rc.Id,
+//                        ComponentType = rc.ComponentType,
+//                        Identifier = rc.Identifier,
+//                        IsDenominated = rc.IsDenominated,
+//                        QueryComponent = rc.QueryComponent,
+//                        Value = rc.Value,
+//                        RcdHistoricItems = rc.RcdHistoricItems
+//                    }).ToList();
+//                
+//                var res = queryRes
+//                    .SelectMany(cp => cp.CurrencyPairRequests)
+//                    .SelectMany(cpr => cpr.RequestComponents)
+//                    .Select(rc => new RequestComponent
+//                    {
+//                        Id = rc.Id,
+//                        ComponentType = rc.ComponentType,
+//                        Identifier = rc.Identifier,
+//                        IsDenominated = rc.IsDenominated,
+//                        QueryComponent = rc.QueryComponent,
+//                        Value = rc.Value,
+//                        RcdHistoricItems = rc.RcdHistoricItems
+//                    })
+//                    .Concat(queryRes
+//                        .SelectMany(cp => cp.WebsocketRequests)
+//                        .SelectMany(cpr => cpr.RequestComponents)
+//                        .Select(rc => new RequestComponent
+//                        {
+//                            Id = rc.Id,
+//                            ComponentType = rc.ComponentType,
+//                            Identifier = rc.Identifier,
+//                            IsDenominated = rc.IsDenominated,
+//                            QueryComponent = rc.QueryComponent,
+//                            Value = rc.Value,
+//                            RcdHistoricItems = rc.RcdHistoricItems
+//                        })
+//                    )
+//                    .ToList();
+//
+//                var testReqCom = res.FirstOrDefault();
+//            }
+//#endif
+//            
+//            return queryRes
+//                .SelectMany(cp => cp.CurrencyPairRequests)
+//                .SelectMany(cpr => cpr.RequestComponents)
+//                .Select(rc => new RequestComponent
+//                {
+//                    Id = rc.Id,
+//                    ComponentType = rc.ComponentType,
+//                    Identifier = rc.Identifier,
+//                    IsDenominated = rc.IsDenominated,
+//                    QueryComponent = rc.QueryComponent,
+//                    Value = rc.Value,
+//                    RcdHistoricItems = rc.RcdHistoricItems
+//                })
+//                .Concat(queryRes
+//                    .SelectMany(cp => cp.WebsocketRequests)
+//                    .SelectMany(cpr => cpr.RequestComponents)
+//                    .Select(rc => new RequestComponent
+//                    {
+//                        Id = rc.Id,
+//                        ComponentType = rc.ComponentType,
+//                        Identifier = rc.Identifier,
+//                        IsDenominated = rc.IsDenominated,
+//                        QueryComponent = rc.QueryComponent,
+//                        Value = rc.Value,
+//                        RcdHistoricItems = rc.RcdHistoricItems
+//                    })
+//                )
+//                .ToList();
         }
 
         /// <summary>
