@@ -159,7 +159,8 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                             var analysedComponents = _analysedComponentEvent.GetAllByCurrency((long)component.CurrencyId,
                                     // TODO: Factor in non-generic counter currency components.
                                 true, true, CoreConstants.GenericCounterCurrency)
-                                .Where(ac => ac.ComponentType.Equals(AnalysedComponentType.CurrentAveragePrice))
+                                .Where(ac => ac.ComponentType.Equals(AnalysedComponentType.CurrentAveragePrice)
+                                && !string.IsNullOrEmpty(ac.Value))
                                 .ToList();
 
                             if (analysedComponents.Count > 0)
@@ -188,6 +189,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                 }
                             }
                         }
+                        // Request-based Market Cap
                         else
                         {
                             var circuSupply = _currencyEvent.GetCirculatingSupply(component);
