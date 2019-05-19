@@ -31,7 +31,6 @@ namespace Nozomi.Ticker.StartupExtensions
             services.AddScoped<ICurrencyPairEvent, CurrencyPairEvent>();
             services.AddScoped<ICurrencyRequestEvent, CurrencyRequestEvent>();
             services.AddScoped<ICurrencyTypeEvent, CurrencyTypeEvent>();
-            services.AddScoped<IHistoricalDataEvent, HistoricalDataEvent>();
             services.AddScoped<ICurrencyCurrencyPairEvent, CurrencyCurrencyPairEvent>();
             services.AddScoped<IRequestEvent, RequestEvent>();
             services.AddScoped<IRequestComponentEvent, RequestComponentEvent>();
