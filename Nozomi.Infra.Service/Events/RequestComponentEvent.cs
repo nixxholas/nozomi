@@ -406,35 +406,23 @@ namespace Nozomi.Service.Events
             var qCurrency = _unitOfWork.GetRepository<Currency>()
                 .GetQueryable()
                 .AsNoTracking()
-                .SingleOrDefault(c => c.Id.Equals(currencyId));
+                .Where(c => c.Id.Equals(currencyId))
+                .Include(c => c.CurrencyRequests)
+                .ThenInclude(cr => cr.RequestComponents);
 
-            if (qCurrency == null) return null;
-            
-            // Now that we know what Currency it is, we make full use of its Abbreviation
-
-            var query = _unitOfWork.GetRepository<CurrencyPairRequest>()
-                .GetQueryable()
-                .AsNoTracking()
-                .Where(cpr => cpr.IsEnabled && cpr.DeletedAt == null)
-                .Include(cpr => cpr.CurrencyPair)
-                .ThenInclude(cp => cp.CurrencyPairCurrencies)
-                // Filter via qCurrency
-                .Where(cpr => cpr.CurrencyPair.CurrencyPairCurrencies
-                    .FirstOrDefault(ccp => ccp.Currency.Abbreviation
-                        .Equals(ccp.CurrencyPair.MainCurrency, StringComparison.InvariantCultureIgnoreCase))
-                    .CurrencyId.Equals(qCurrency.Id))
-                .Include(cpr => cpr.RequestComponents);
+            if (qCurrency.SingleOrDefault() == null) return null;
 
             if (track)
             {
-                query.ThenInclude(rc => rc.RcdHistoricItems);
+                qCurrency.ThenInclude(rc => rc.RcdHistoricItems);
             }
             
-            return query
-                .Where(cpr => cpr.RequestComponents
-                    .Any(rc => rc.DeletedAt == null
-                               && rc.IsEnabled))
-                .SelectMany(cpr => cpr.RequestComponents
+            return qCurrency
+                .Where(c => c.CurrencyRequests.Count > 0 
+                            && c.CurrencyRequests.Any(cr => cr.RequestComponents
+                                   .Any(rc => rc.DeletedAt == null && rc.IsEnabled)))
+                .SelectMany(cpr => cpr.CurrencyRequests
+                    .SelectMany(cr => cr.RequestComponents
                     .Select(rc => new RequestComponent
                     {
                         Id = rc.Id,
@@ -444,7 +432,7 @@ namespace Nozomi.Service.Events
                         QueryComponent = rc.QueryComponent,
                         Value = rc.Value,
                         RcdHistoricItems = rc.RcdHistoricItems
-                    }))
+                    })))
                 .ToList();
         }
 
