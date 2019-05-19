@@ -28,7 +28,7 @@ namespace Nozomi.Service.Events
         {
         }
 
-        public ICollection<RequestComponent> AllByRequestId(long requestId, bool includeNested = false)
+        public ICollection<RequestComponent> GetAllByRequest(long requestId, bool includeNested = false)
         {
             if (requestId <= 0) return null;
 
