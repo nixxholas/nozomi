@@ -15,9 +15,9 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
             entityTypeBuilder.HasKey(c => c.Id).HasName("Currency_PK_Id");
             entityTypeBuilder.Property(c => c.Id).ValueGeneratedOnAdd();
 
+            entityTypeBuilder.HasAlternateKey(c => c.Abbreviation).HasName("Currency_AK_Abbreviation");
             entityTypeBuilder.Property(c => c.Abbreviation).IsRequired();
-            entityTypeBuilder.HasIndex(c => new {Abbrv = c.Abbreviation, c.CurrencySourceId})
-                .HasName("Currency_Index_Abbrv_CurrencySourceId").IsUnique();
+
             entityTypeBuilder.Property(c => c.Denominations).HasDefaultValue(0);
             entityTypeBuilder.Property(c => c.DenominationName).IsRequired(false);
             entityTypeBuilder.Property(c => c.Name).IsRequired();
@@ -29,9 +29,9 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
             entityTypeBuilder.HasOne(c => c.CurrencyType).WithMany(ct => ct.Currencies)
                 .HasForeignKey(c => c.CurrencyTypeId).OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("Currencies_CurrencyType_Constraint");
-            entityTypeBuilder.HasOne(c => c.CurrencySource).WithMany(cs => cs.Currencies)
-                .HasForeignKey(c => c.CurrencySourceId).OnDelete(DeleteBehavior.Cascade)
-                .HasConstraintName("Currencies_CurrencySource_Constraint");
+            entityTypeBuilder.HasMany(c => c.CurrencySources).WithOne(cs => cs.Currency)
+                .HasForeignKey(cs => cs.CurrencyId).OnDelete(DeleteBehavior.Restrict)
+                .HasConstraintName("Currency_CurrencySources_Constraint");
             entityTypeBuilder.HasMany(c => c.CurrencyRequests).WithOne(cr => cr.Currency)
                 .HasForeignKey(cr => cr.CurrencyId).OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("Currencies_CurrencyRequests_Constraint");
