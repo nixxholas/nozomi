@@ -459,8 +459,9 @@ namespace Nozomi.Data.ResponseModels.Currency
             if (currencyPairs != null && currencyPairs.Any())
             {
                 var curr = currencyPairs
-                    .Select(cp => cp.CurrencyPairCurrencies
-                        .Select(pcp => pcp.Currency)
+                    .Select(cp => cp.CurrencyPairSourceCurrencies
+                        .Select(cpsc => cpsc.CurrencySource)
+                        .Select(cs => cs.Currency)
                         .FirstOrDefault())
                     .FirstOrDefault();
 
@@ -538,8 +539,9 @@ namespace Nozomi.Data.ResponseModels.Currency
 #endif
 
                 var curr = currencyPairs
-                    .Select(cp => cp.CurrencyPairCurrencies
-                        .Select(pcp => pcp.Currency)
+                    .Select(cp => cp.CurrencyPairSourceCurrencies
+                        .Select(cpsc => cpsc.CurrencySource)
+                        .Select(cs => cs.Currency)
                         .FirstOrDefault(c => c.Abbreviation.Equals(abbrv, StringComparison.InvariantCultureIgnoreCase)))
                     .FirstOrDefault();
 
