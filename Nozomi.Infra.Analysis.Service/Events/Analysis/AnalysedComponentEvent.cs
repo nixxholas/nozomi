@@ -336,8 +336,9 @@ namespace Nozomi.Infra.Analysis.Service.Events.Analysis
             var query = _unitOfWork.GetRepository<AnalysedComponent>()
                 .GetQueryable()
                 .AsNoTracking()
-                .Where(ac => ac.RequestId.Equals(aComp.RequestId) || ac.CurrencyId.Equals(aComp.CurrencyId)
-                                                                  || ac.CurrencyTypeId.Equals(aComp.CurrencyTypeId));
+                .Where(ac => (aComp.RequestId != null && ac.RequestId.Equals(aComp.RequestId)) 
+                             || (aComp.CurrencyId != null && ac.CurrencyId.Equals(aComp.CurrencyId))
+                             || (aComp.CurrencyTypeId != null && ac.CurrencyTypeId.Equals(aComp.CurrencyTypeId)));
 
             if (track)
             {
