@@ -166,7 +166,8 @@ namespace Nozomi.Infra.Analysis.Service.Events.Analysis
                 .Take(50);
         }
 
-        public ICollection<AnalysedComponent> GetAllByCurrency(long currencyId, bool ensureValid = false, bool track = false)
+        public ICollection<AnalysedComponent> GetAllByCurrency(long currencyId, bool ensureValid = false, bool track = false,
+            string counterCurrency = null)
         {
             // First, obtain the currency in question
             var qCurrency = _unitOfWork.GetRepository<Currency>()
@@ -185,6 +186,12 @@ namespace Nozomi.Infra.Analysis.Service.Events.Analysis
             {
                 finalQuery
                     .Where(cp => cp.IsEnabled && cp.DeletedAt == null);
+            }
+
+            if (!string.IsNullOrEmpty(counterCurrency))
+            {
+                finalQuery.Where(cp =>
+                    cp.CounterCurrency.Equals(counterCurrency, StringComparison.InvariantCultureIgnoreCase));
             }
 
             var analysedComponents = finalQuery
