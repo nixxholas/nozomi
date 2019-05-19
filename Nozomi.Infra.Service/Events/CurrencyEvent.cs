@@ -599,55 +599,55 @@ namespace Nozomi.Service.Events
                                 .ToList()
                         })
                         .ToList(),
-                    CurrencyCurrencyPairs = c.CurrencyCurrencyPairs
-                        .Where(ccp =>
-                            ccp.CurrencyPair.MainCurrency.Equals(c.Abbrv, StringComparison.InvariantCultureIgnoreCase)
-                            && ccp.CurrencyPair.CounterCurrency.Contains(CoreConstants.GenericCounterCurrency))
-                        .Select(pcp => new CurrencyCurrencyPair
-                        {
-                            CurrencyId = pcp.CurrencyId,
-                            CurrencyPair = new CurrencyPair
-                            {
-                                Id = pcp.CurrencyPair.Id,
-                                CurrencyPairType = pcp.CurrencyPair.CurrencyPairType,
-                                APIUrl = pcp.CurrencyPair.APIUrl,
-                                DefaultComponent = pcp.CurrencyPair.DefaultComponent,
-                                CounterCurrency = pcp.CurrencyPair.CounterCurrency,
-                                CurrencySourceId = pcp.CurrencyPair.CurrencySourceId,
-                                CurrencyPairRequests = pcp.CurrencyPair.CurrencyPairRequests
-                                    .Where(cpr => cpr.DeletedAt == null && cpr.IsEnabled)
-                                    .Select(cpr => new CurrencyPairRequest
-                                    {
-                                        Id = cpr.Id,
-                                        CurrencyPairId = cpr.CurrencyPairId,
-                                        AnalysedComponents = cpr.AnalysedComponents
-                                            .Where(ac =>
-                                                AnalysisConstants.CompactAnalysedComponentTypes.Contains(
-                                                    ac.ComponentType)
-                                                || AnalysisConstants.LiveAnalysedComponentTypes.Contains(
-                                                    ac.ComponentType))
-                                            .Select(ac => new AnalysedComponent
-                                            {
-                                                Id = ac.Id,
-                                                ComponentType = ac.ComponentType,
-                                                Value = ac.Value,
-                                                Delay = ac.Delay,
-                                                RequestId = ac.RequestId,
-                                                CurrencyId = ac.CurrencyId,
-                                                AnalysedHistoricItems = ac.AnalysedHistoricItems
-                                                    .OrderByDescending(ahi => ahi.HistoricDateTime)
-                                                    .Where(ahi => ahi.HistoricDateTime <
-                                                                  DateTime.UtcNow.Subtract(TimeSpan.FromDays(daysOfData)))
-                                                    .Take(200) // Always limit the payload
-                                                    .ToList()
-                                            })
-                                            .ToList()
-                                    })
-                                    .ToList(),
-                            },
-                            CurrencyPairId = pcp.CurrencyPairId
-                        })
-                        .ToList()
+//                    CurrencyCurrencyPairs = c.CurrencyCurrencyPairs
+//                        .Where(ccp =>
+//                            ccp.CurrencyPair.MainCurrency.Equals(c.Abbrv, StringComparison.InvariantCultureIgnoreCase)
+//                            && ccp.CurrencyPair.CounterCurrency.Contains(CoreConstants.GenericCounterCurrency))
+//                        .Select(pcp => new CurrencyCurrencyPair
+//                        {
+//                            CurrencyId = pcp.CurrencyId,
+//                            CurrencyPair = new CurrencyPair
+//                            {
+//                                Id = pcp.CurrencyPair.Id,
+//                                CurrencyPairType = pcp.CurrencyPair.CurrencyPairType,
+//                                APIUrl = pcp.CurrencyPair.APIUrl,
+//                                DefaultComponent = pcp.CurrencyPair.DefaultComponent,
+//                                CounterCurrency = pcp.CurrencyPair.CounterCurrency,
+//                                CurrencySourceId = pcp.CurrencyPair.CurrencySourceId,
+//                                CurrencyPairRequests = pcp.CurrencyPair.CurrencyPairRequests
+//                                    .Where(cpr => cpr.DeletedAt == null && cpr.IsEnabled)
+//                                    .Select(cpr => new CurrencyPairRequest
+//                                    {
+//                                        Id = cpr.Id,
+//                                        CurrencyPairId = cpr.CurrencyPairId,
+//                                        AnalysedComponents = cpr.AnalysedComponents
+//                                            .Where(ac =>
+//                                                AnalysisConstants.CompactAnalysedComponentTypes.Contains(
+//                                                    ac.ComponentType)
+//                                                || AnalysisConstants.LiveAnalysedComponentTypes.Contains(
+//                                                    ac.ComponentType))
+//                                            .Select(ac => new AnalysedComponent
+//                                            {
+//                                                Id = ac.Id,
+//                                                ComponentType = ac.ComponentType,
+//                                                Value = ac.Value,
+//                                                Delay = ac.Delay,
+//                                                RequestId = ac.RequestId,
+//                                                CurrencyId = ac.CurrencyId,
+//                                                AnalysedHistoricItems = ac.AnalysedHistoricItems
+//                                                    .OrderByDescending(ahi => ahi.HistoricDateTime)
+//                                                    .Where(ahi => ahi.HistoricDateTime <
+//                                                                  DateTime.UtcNow.Subtract(TimeSpan.FromDays(daysOfData)))
+//                                                    .Take(200) // Always limit the payload
+//                                                    .ToList()
+//                                            })
+//                                            .ToList()
+//                                    })
+//                                    .ToList(),
+//                            },
+//                            CurrencyPairId = pcp.CurrencyPairId
+//                        })
+//                        .ToList()
                 });
             
             #if DEBUG
