@@ -195,16 +195,6 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                             var circuSupply = _currencyEvent.GetCirculatingSupply(component);
                             var analysedComponents = _analysedComponentEvent.GetAllByCorrelation(component.Id);
 
-#if DEBUG
-                            // Parsable average?
-                            var averagePrice = decimal.Parse(analysedComponents
-                                                                 .Where(ac =>
-                                                                     ac.ComponentType.Equals(AnalysedComponentType
-                                                                         .CurrentAveragePrice))
-                                                                 .Select(ac => ac.Value)
-                                                                 .FirstOrDefault() ?? "0");
-#endif
-
                             // Parsable average?
                             if (circuSupply > 0
                                 // Parsable average?
