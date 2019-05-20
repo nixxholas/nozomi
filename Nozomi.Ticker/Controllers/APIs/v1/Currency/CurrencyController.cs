@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data;
 using Nozomi.Data.AreaModels.v1.Currency;
+using Nozomi.Data.Models.Web.Analytical;
 using Nozomi.Data.ResponseModels.Currency;
 using Nozomi.Service.Events.Interfaces;
 using Nozomi.Service.Identity.Managers;
@@ -44,9 +45,9 @@ namespace Nozomi.Ticker.Controllers.APIs.v1.Currency
         public NozomiResult<DetailedCurrencyResponse> Detailed(string abbreviation)
         {
             return new NozomiResult<DetailedCurrencyResponse>(_currencyEvent.GetDetailedByAbbreviation(abbreviation, 
-                new List<Data.Models.Currency.ComponentType>()
+                new List<AnalysedComponentType>()
                 {
-                    Data.Models.Currency.ComponentType.Ask
+                    AnalysedComponentType.CurrentAveragePrice
                 }));
         }
 
