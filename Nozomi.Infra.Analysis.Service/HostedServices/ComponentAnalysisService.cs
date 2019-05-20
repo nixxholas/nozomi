@@ -575,15 +575,16 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                         {
                             // Obtain all Average price ACs that relate to this currency
                             var currencyAnalysedComps =
-                                _analysedComponentEvent.GetAllByCurrency((long) component.CurrencyId, true);
+                                _analysedComponentEvent.GetAllByCurrency((long) component.CurrencyId, true)
+                                    .Where(ac => ac.ComponentType.Equals(AnalysedComponentType.CurrentAveragePrice)
+                                                 && ac.AnalysedHistoricItems.Count > 0)
+                                    .ToList();
 
                             // Safetynet
                             if (currencyAnalysedComps != null && currencyAnalysedComps.Count > 0)
                             {
                                 // Filter
                                 var historicItems = currencyAnalysedComps
-                                    .Where(ac => ac.ComponentType.Equals(AnalysedComponentType.CurrentAveragePrice)
-                                                 && ac.AnalysedHistoricItems.Count > 0)
                                     .SelectMany(ac => ac.AnalysedHistoricItems)
                                     .Where(ahi => ahi.CreatedAt > DateTime.UtcNow.Subtract(TimeSpan.FromDays(1)))
                                     // Make sure the latest is at the top, oldest at the bottom
