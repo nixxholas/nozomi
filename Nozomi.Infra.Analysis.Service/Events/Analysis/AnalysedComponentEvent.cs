@@ -234,13 +234,10 @@ namespace Nozomi.Infra.Analysis.Service.Events.Analysis
 
                 if (track)
                 {
-                    components.Include(ac => ac.CurrencyType)
-                        .ThenInclude(ct => ct.Currencies)
-                        .ThenInclude(c => c.AnalysedComponents)
+                    components
                         .Include(ac => ac.CurrencyType)
                         .ThenInclude(ct => ct.Currencies)
-                        .ThenInclude(c => c.CurrencyPairSourceCurrencies)
-                        .ThenInclude(ccp => ccp.CurrencyPair)
+                        .ThenInclude(c => c.AnalysedComponents)
                         .Include(ac => ac.AnalysedHistoricItems);
                 }
 
