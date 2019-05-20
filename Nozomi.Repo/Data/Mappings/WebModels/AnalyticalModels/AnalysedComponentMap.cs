@@ -48,7 +48,7 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                 {
                     Id = 1,
                     ComponentType = AnalysedComponentType.MarketCap,
-                    Delay = 1000,
+                    Delay = 3000,
                     UIFormatting = "$ 0 a",
                     CreatedAt = DateTime.UtcNow,
                     ModifiedAt = DateTime.UtcNow,
@@ -60,7 +60,7 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                 {
                     Id = 46,
                     ComponentType = AnalysedComponentType.MarketCapChange,
-                    Delay = 1000,
+                    Delay = 3000,
                     UIFormatting = "$ 0 a",
                     CreatedAt = DateTime.UtcNow,
                     ModifiedAt = DateTime.UtcNow,
@@ -72,7 +72,7 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                 {
                     Id = 47,
                     ComponentType = AnalysedComponentType.MarketCapPctChange,
-                    Delay = 1000,
+                    Delay = 3000,
                     UIFormatting = "$ 0 a",
                     CreatedAt = DateTime.UtcNow,
                     ModifiedAt = DateTime.UtcNow,
@@ -84,7 +84,7 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                 {
                     Id = 48,
                     ComponentType = AnalysedComponentType.MarketCapHourlyPctChange,
-                    Delay = 1000,
+                    Delay = 3000,
                     UIFormatting = "$ 0 a",
                     CreatedAt = DateTime.UtcNow,
                     ModifiedAt = DateTime.UtcNow,
@@ -125,7 +125,7 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                 {
                     Id = 2,
                     ComponentType = AnalysedComponentType.MarketCap,
-                    Delay = 1000,
+                    Delay = 3000,
                     UIFormatting = "$ 0 a",
                     CreatedAt = DateTime.UtcNow,
                     ModifiedAt = DateTime.UtcNow,
@@ -137,7 +137,7 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                 {
                     Id = 49,
                     ComponentType = AnalysedComponentType.MarketCapChange,
-                    Delay = 1000,
+                    Delay = 3000,
                     UIFormatting = "$ 0 a",
                     CreatedAt = DateTime.UtcNow,
                     ModifiedAt = DateTime.UtcNow,
@@ -149,7 +149,7 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                 {
                     Id = 50,
                     ComponentType = AnalysedComponentType.MarketCapPctChange,
-                    Delay = 1000,
+                    Delay = 3000,
                     UIFormatting = "$ 0 a",
                     CreatedAt = DateTime.UtcNow,
                     ModifiedAt = DateTime.UtcNow,
@@ -161,8 +161,34 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                 {
                     Id = 51,
                     ComponentType = AnalysedComponentType.MarketCapHourlyPctChange,
-                    Delay = 1000,
+                    Delay = 3000,
                     UIFormatting = "$ 0 a",
+                    CreatedAt = DateTime.UtcNow,
+                    ModifiedAt = DateTime.UtcNow,
+                    IsDenominated = true,
+                    DeletedAt = null,
+                    CurrencyId = 4
+                },
+                // KNC Current Average Price
+                new AnalysedComponent
+                {
+                    Id = 58,
+                    ComponentType = AnalysedComponentType.CurrentAveragePrice,
+                    Delay = 3000,
+                    UIFormatting = "$ 0[.]00",
+                    CreatedAt = DateTime.UtcNow,
+                    ModifiedAt = DateTime.UtcNow,
+                    IsDenominated = true,
+                    DeletedAt = null,
+                    CurrencyId = 4
+                },
+                // KNC Hourly Average Price
+                new AnalysedComponent
+                {
+                    Id = 59,
+                    ComponentType = AnalysedComponentType.HourlyAveragePrice,
+                    Delay = 3000,
+                    UIFormatting = "$ 0[.]00",
                     CreatedAt = DateTime.UtcNow,
                     ModifiedAt = DateTime.UtcNow,
                     IsDenominated = true,
@@ -177,7 +203,7 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                 {
                     Id = 3,
                     ComponentType = AnalysedComponentType.MarketCap,
-                    Delay = 500,
+                    Delay = 3000,
                     UIFormatting = "$ 0 a",
                     CreatedAt = DateTime.UtcNow,
                     ModifiedAt = DateTime.UtcNow,
@@ -188,7 +214,7 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                 {
                     Id = 52,
                     ComponentType = AnalysedComponentType.MarketCapChange,
-                    Delay = 1000,
+                    Delay = 3000,
                     UIFormatting = "$ 0 a",
                     CreatedAt = DateTime.UtcNow,
                     ModifiedAt = DateTime.UtcNow,
@@ -200,7 +226,7 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                 {
                     Id = 53,
                     ComponentType = AnalysedComponentType.MarketCapPctChange,
-                    Delay = 1000,
+                    Delay = 3000,
                     UIFormatting = "$ 0 a",
                     CreatedAt = DateTime.UtcNow,
                     ModifiedAt = DateTime.UtcNow,
@@ -212,8 +238,34 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                 {
                     Id = 54,
                     ComponentType = AnalysedComponentType.MarketCapHourlyPctChange,
-                    Delay = 1000,
+                    Delay = 3000,
                     UIFormatting = "$ 0 a",
+                    CreatedAt = DateTime.UtcNow,
+                    ModifiedAt = DateTime.UtcNow,
+                    IsDenominated = true,
+                    DeletedAt = null,
+                    CurrencyId = 5
+                },
+                // KNC Current Average Price
+                new AnalysedComponent
+                {
+                    Id = 60,
+                    ComponentType = AnalysedComponentType.CurrentAveragePrice,
+                    Delay = 3000,
+                    UIFormatting = "$ 0[.]00",
+                    CreatedAt = DateTime.UtcNow,
+                    ModifiedAt = DateTime.UtcNow,
+                    IsDenominated = true,
+                    DeletedAt = null,
+                    CurrencyId = 5
+                },
+                // KNC Hourly Average Price
+                new AnalysedComponent
+                {
+                    Id = 61,
+                    ComponentType = AnalysedComponentType.HourlyAveragePrice,
+                    Delay = 3000,
+                    UIFormatting = "$ 0[.]00",
                     CreatedAt = DateTime.UtcNow,
                     ModifiedAt = DateTime.UtcNow,
                     IsDenominated = true,
