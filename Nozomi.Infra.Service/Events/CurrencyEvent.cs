@@ -504,7 +504,12 @@ namespace Nozomi.Service.Events
                     .AsNoTracking()
                     .Where(c => c.DeletedAt == null)
                     .Where(c => c.IsEnabled)
-                    .Include(c => c.CurrencyPairSourceCurrencies);
+                    .Include(c => c.AnalysedComponents)
+                    .Include(c => c.CurrencyRequests)
+                    .Include(c => c.CurrencySources)
+                    .Include(c => c.CurrencyPairs)
+                    .Include(c => c.CurrencyProperties)
+                    .Include(c => c.CurrencyType);
             }
             else
             {
