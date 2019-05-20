@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using Nozomi.Base.Core;
 using Nozomi.Data.Models.Web;
@@ -33,12 +35,18 @@ namespace Nozomi.Data.Models.Currency
         
         public string MainCurrencyAbbrv { get; set; }
         
-        public Currency MainCurrency { get; set; }
-        
         public string CounterCurrencyAbbrv { get; set; }
         
-        public Currency CounterCurrency { get; set; }
+        public ICollection<Currency> Currencies { get; set; }
 
+        [NotMapped]
+        public Currency MainCurrency => Currencies.FirstOrDefault(c => c.Abbreviation.Equals(MainCurrencyAbbrv,
+            StringComparison.InvariantCultureIgnoreCase));
+
+        [NotMapped]
+        public Currency CounterCurrency => Currencies.FirstOrDefault(c => c.Abbreviation.Equals(CounterCurrencyAbbrv,
+            StringComparison.InvariantCultureIgnoreCase));
+        
         public bool IsValid()
         {
             if (MainCurrency != null && CounterCurrency != null)
