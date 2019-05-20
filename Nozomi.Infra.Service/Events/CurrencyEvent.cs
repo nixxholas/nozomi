@@ -46,10 +46,7 @@ namespace Nozomi.Service.Events
                     .Include(c => c.AnalysedComponents)
                     .Include(c => c.CurrencySources)
                     .ThenInclude(cs => cs.Source)
-                    .Include(c => c.CurrencyPairSourceCurrencies)
-                    .ThenInclude(pcp => pcp.CurrencyPair)
-                    .Include(c => c.CurrencyPairSourceCurrencies)
-                    .ThenInclude(pcp => pcp.CurrencyPair)
+                    .Include(c => c.CurrencyPairs)
                     .ThenInclude(cp => cp.AnalysedComponents)
                     .Include(c => c.CurrencyRequests)
                     .ThenInclude(cr => cr.RequestComponents);
@@ -268,8 +265,8 @@ namespace Nozomi.Service.Events
             if (track)
             {
                 query = query.Include(c => c.AnalysedComponents)
-                    .Include(c => c.CurrencyPairSourceCurrencies)
-                    .ThenInclude(c => c.CurrencySource)
+                    .Include(c => c.CurrencySources)
+                    .ThenInclude(cs => cs.Source)
                     .Include(c => c.CurrencyRequests)
                     .ThenInclude(cr => cr.RequestComponents);
             }
