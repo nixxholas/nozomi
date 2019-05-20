@@ -7,6 +7,10 @@ namespace Nozomi.Repo.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropForeignKey(
+                name: "FK_RequestComponents_Requests_RequestId",
+                table: "RequestComponents");
+
             migrationBuilder.DropIndex(
                 name: "IX_AnalysedComponents_CurrencyId",
                 table: "AnalysedComponents");
@@ -124,409 +128,409 @@ namespace Nozomi.Repo.Migrations
                 keyColumn: "Id",
                 keyValue: 1L,
                 columns: new[] { "CreatedAt", "Delay", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(4800), 3000, new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(5240) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 3000, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "AnalysedComponents",
                 keyColumn: "Id",
                 keyValue: 2L,
                 columns: new[] { "CreatedAt", "Delay", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(6940), 3000, new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(6940) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 3000, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "AnalysedComponents",
                 keyColumn: "Id",
                 keyValue: 3L,
                 columns: new[] { "CreatedAt", "Delay", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(6950), 3000, new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(6960) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 3000, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "AnalysedComponents",
                 keyColumn: "Id",
                 keyValue: 4L,
                 columns: new[] { "CreatedAt", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(6970), new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(6970) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "AnalysedComponents",
                 keyColumn: "Id",
                 keyValue: 5L,
                 columns: new[] { "CreatedAt", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(7380), new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(7380) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "AnalysedComponents",
                 keyColumn: "Id",
                 keyValue: 6L,
                 columns: new[] { "CreatedAt", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(7390), new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(7390) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "AnalysedComponents",
                 keyColumn: "Id",
                 keyValue: 7L,
                 columns: new[] { "CreatedAt", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(7390), new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(7390) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "AnalysedComponents",
                 keyColumn: "Id",
                 keyValue: 8L,
                 columns: new[] { "CreatedAt", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(7390), new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(7390) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "AnalysedComponents",
                 keyColumn: "Id",
                 keyValue: 9L,
                 columns: new[] { "CreatedAt", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(7400), new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(7400) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "AnalysedComponents",
                 keyColumn: "Id",
                 keyValue: 10L,
                 columns: new[] { "CreatedAt", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(7400), new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(7400) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "AnalysedComponents",
                 keyColumn: "Id",
                 keyValue: 11L,
                 columns: new[] { "CreatedAt", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(7400), new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(7400) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "AnalysedComponents",
                 keyColumn: "Id",
                 keyValue: 12L,
                 columns: new[] { "CreatedAt", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(7400), new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(7400) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "AnalysedComponents",
                 keyColumn: "Id",
                 keyValue: 13L,
                 columns: new[] { "CreatedAt", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(7400), new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(7410) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "AnalysedComponents",
                 keyColumn: "Id",
                 keyValue: 14L,
                 columns: new[] { "CreatedAt", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(7410), new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(7410) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "AnalysedComponents",
                 keyColumn: "Id",
                 keyValue: 15L,
                 columns: new[] { "CreatedAt", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(7410), new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(7410) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "AnalysedComponents",
                 keyColumn: "Id",
                 keyValue: 16L,
                 columns: new[] { "CreatedAt", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(7410), new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(7410) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "AnalysedComponents",
                 keyColumn: "Id",
                 keyValue: 17L,
                 columns: new[] { "CreatedAt", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(7410), new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(7410) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "AnalysedComponents",
                 keyColumn: "Id",
                 keyValue: 18L,
                 columns: new[] { "CreatedAt", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(7410), new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(7410) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "AnalysedComponents",
                 keyColumn: "Id",
                 keyValue: 19L,
                 columns: new[] { "CreatedAt", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(7410), new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(7410) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "AnalysedComponents",
                 keyColumn: "Id",
                 keyValue: 20L,
                 columns: new[] { "CreatedAt", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(7410), new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(7410) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "AnalysedComponents",
                 keyColumn: "Id",
                 keyValue: 21L,
                 columns: new[] { "CreatedAt", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(7420), new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(7420) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "AnalysedComponents",
                 keyColumn: "Id",
                 keyValue: 22L,
                 columns: new[] { "CreatedAt", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(7500), new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(7500) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "AnalysedComponents",
                 keyColumn: "Id",
                 keyValue: 23L,
                 columns: new[] { "CreatedAt", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(7500), new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(7500) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "AnalysedComponents",
                 keyColumn: "Id",
                 keyValue: 24L,
                 columns: new[] { "CreatedAt", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(7500), new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(7500) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "AnalysedComponents",
                 keyColumn: "Id",
                 keyValue: 25L,
                 columns: new[] { "CreatedAt", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(7510), new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(7510) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "AnalysedComponents",
                 keyColumn: "Id",
                 keyValue: 26L,
                 columns: new[] { "CreatedAt", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(7510), new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(7510) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "AnalysedComponents",
                 keyColumn: "Id",
                 keyValue: 27L,
                 columns: new[] { "CreatedAt", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(7510), new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(7510) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "AnalysedComponents",
                 keyColumn: "Id",
                 keyValue: 28L,
                 columns: new[] { "CreatedAt", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(7510), new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(7510) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "AnalysedComponents",
                 keyColumn: "Id",
                 keyValue: 29L,
                 columns: new[] { "CreatedAt", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(7510), new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(7510) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "AnalysedComponents",
                 keyColumn: "Id",
                 keyValue: 30L,
                 columns: new[] { "CreatedAt", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(7510), new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(7510) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "AnalysedComponents",
                 keyColumn: "Id",
                 keyValue: 31L,
                 columns: new[] { "CreatedAt", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(7520), new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(7520) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "AnalysedComponents",
                 keyColumn: "Id",
                 keyValue: 32L,
                 columns: new[] { "CreatedAt", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(7520), new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(7520) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "AnalysedComponents",
                 keyColumn: "Id",
                 keyValue: 33L,
                 columns: new[] { "CreatedAt", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(7520), new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(7520) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "AnalysedComponents",
                 keyColumn: "Id",
                 keyValue: 34L,
                 columns: new[] { "CreatedAt", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(7520), new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(7520) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "AnalysedComponents",
                 keyColumn: "Id",
                 keyValue: 35L,
                 columns: new[] { "CreatedAt", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(7520), new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(7520) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "AnalysedComponents",
                 keyColumn: "Id",
                 keyValue: 36L,
                 columns: new[] { "CreatedAt", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(7530), new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(7530) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "AnalysedComponents",
                 keyColumn: "Id",
                 keyValue: 37L,
                 columns: new[] { "CreatedAt", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(7530), new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(7530) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "AnalysedComponents",
                 keyColumn: "Id",
                 keyValue: 38L,
                 columns: new[] { "CreatedAt", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(7530), new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(7530) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "AnalysedComponents",
                 keyColumn: "Id",
                 keyValue: 39L,
                 columns: new[] { "CreatedAt", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(7530), new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(7530) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "AnalysedComponents",
                 keyColumn: "Id",
                 keyValue: 40L,
                 columns: new[] { "CreatedAt", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(7530), new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(7530) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "AnalysedComponents",
                 keyColumn: "Id",
                 keyValue: 41L,
                 columns: new[] { "CreatedAt", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(7530), new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(7530) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "AnalysedComponents",
                 keyColumn: "Id",
                 keyValue: 42L,
                 columns: new[] { "CreatedAt", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(7530), new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(7530) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "AnalysedComponents",
                 keyColumn: "Id",
                 keyValue: 43L,
                 columns: new[] { "CreatedAt", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(7540), new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(7540) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "AnalysedComponents",
                 keyColumn: "Id",
                 keyValue: 44L,
                 columns: new[] { "CreatedAt", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(7540), new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(7540) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "AnalysedComponents",
                 keyColumn: "Id",
                 keyValue: 45L,
                 columns: new[] { "CreatedAt", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(7540), new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(7540) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "AnalysedComponents",
                 keyColumn: "Id",
                 keyValue: 46L,
                 columns: new[] { "CreatedAt", "Delay", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(6920), 3000, new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(6920) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 3000, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "AnalysedComponents",
                 keyColumn: "Id",
                 keyValue: 47L,
                 columns: new[] { "CreatedAt", "Delay", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(6940), 3000, new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(6940) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 3000, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "AnalysedComponents",
                 keyColumn: "Id",
                 keyValue: 48L,
                 columns: new[] { "CreatedAt", "Delay", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(6940), 3000, new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(6940) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 3000, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "AnalysedComponents",
                 keyColumn: "Id",
                 keyValue: 49L,
                 columns: new[] { "CreatedAt", "Delay", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(6940), 3000, new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(6940) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 3000, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "AnalysedComponents",
                 keyColumn: "Id",
                 keyValue: 50L,
                 columns: new[] { "CreatedAt", "Delay", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(6950), 3000, new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(6950) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 3000, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "AnalysedComponents",
                 keyColumn: "Id",
                 keyValue: 51L,
                 columns: new[] { "CreatedAt", "Delay", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(6950), 3000, new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(6950) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 3000, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "AnalysedComponents",
                 keyColumn: "Id",
                 keyValue: 52L,
                 columns: new[] { "CreatedAt", "Delay", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(6960), 3000, new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(6960) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 3000, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "AnalysedComponents",
                 keyColumn: "Id",
                 keyValue: 53L,
                 columns: new[] { "CreatedAt", "Delay", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(6960), 3000, new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(6960) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 3000, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "AnalysedComponents",
                 keyColumn: "Id",
                 keyValue: 54L,
                 columns: new[] { "CreatedAt", "Delay", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(6960), 3000, new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(6960) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 3000, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "AnalysedComponents",
                 keyColumn: "Id",
                 keyValue: 55L,
                 columns: new[] { "CreatedAt", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(7540), new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(7540) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "AnalysedComponents",
                 keyColumn: "Id",
                 keyValue: 56L,
                 columns: new[] { "ComponentType", "CreatedAt", "ModifiedAt" },
-                values: new object[] { 10, new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(6940), new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(6940) });
+                values: new object[] { 10, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "AnalysedComponents",
                 keyColumn: "Id",
                 keyValue: 57L,
                 columns: new[] { "CreatedAt", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(6940), new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(6940) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.InsertData(
                 table: "AnalysedComponents",
                 columns: new[] { "Id", "ComponentType", "CreatedAt", "CreatedBy", "CurrencyId", "CurrencyPairId", "CurrencyTypeId", "Delay", "DeletedAt", "DeletedBy", "IsDenominated", "IsEnabled", "ModifiedAt", "ModifiedBy", "UIFormatting", "Value" },
                 values: new object[,]
                 {
-                    { 61L, 11, new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(6960), 0L, 5L, null, null, 3000, null, 0L, true, true, new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(6960), 0L, "$ 0[.]00", null },
-                    { 60L, 10, new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(6960), 0L, 5L, null, null, 3000, null, 0L, true, true, new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(6960), 0L, "$ 0[.]00", null },
-                    { 59L, 11, new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(6950), 0L, 4L, null, null, 3000, null, 0L, true, true, new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(6950), 0L, "$ 0[.]00", null },
-                    { 58L, 10, new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(6950), 0L, 4L, null, null, 3000, null, 0L, true, true, new DateTime(2019, 5, 20, 13, 0, 27, 830, DateTimeKind.Utc).AddTicks(6950), 0L, "$ 0[.]00", null }
+                    { 61L, 11, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 5L, null, null, 3000, null, 0L, true, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "$ 0[.]00", null },
+                    { 60L, 10, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 5L, null, null, 3000, null, 0L, true, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "$ 0[.]00", null },
+                    { 59L, 11, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 4L, null, null, 3000, null, 0L, true, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "$ 0[.]00", null },
+                    { 58L, 10, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 4L, null, null, 3000, null, 0L, true, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "$ 0[.]00", null }
                 });
 
             migrationBuilder.UpdateData(
@@ -534,590 +538,590 @@ namespace Nozomi.Repo.Migrations
                 keyColumn: "Id",
                 keyValue: 1L,
                 columns: new[] { "CreatedAt", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 914, DateTimeKind.Utc).AddTicks(3650), new DateTime(2019, 5, 20, 13, 0, 27, 914, DateTimeKind.Utc).AddTicks(3650) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "CurrencySources",
                 keyColumn: "Id",
                 keyValue: 2L,
                 columns: new[] { "CreatedAt", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 914, DateTimeKind.Utc).AddTicks(4420), new DateTime(2019, 5, 20, 13, 0, 27, 914, DateTimeKind.Utc).AddTicks(4430) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "CurrencySources",
                 keyColumn: "Id",
                 keyValue: 3L,
                 columns: new[] { "CreatedAt", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 914, DateTimeKind.Utc).AddTicks(4430), new DateTime(2019, 5, 20, 13, 0, 27, 914, DateTimeKind.Utc).AddTicks(4430) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "CurrencySources",
                 keyColumn: "Id",
                 keyValue: 4L,
                 columns: new[] { "CreatedAt", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 914, DateTimeKind.Utc).AddTicks(4430), new DateTime(2019, 5, 20, 13, 0, 27, 914, DateTimeKind.Utc).AddTicks(4430) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "CurrencySources",
                 keyColumn: "Id",
                 keyValue: 5L,
                 columns: new[] { "CreatedAt", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 914, DateTimeKind.Utc).AddTicks(4440), new DateTime(2019, 5, 20, 13, 0, 27, 914, DateTimeKind.Utc).AddTicks(4440) });
+                values: new object[] { new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) });
 
             migrationBuilder.UpdateData(
                 table: "CurrencySources",
                 keyColumn: "Id",
                 keyValue: 6L,
                 columns: new[] { "CreatedAt", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 914, DateTimeKind.Utc).AddTicks(4440), new DateTime(2019, 5, 20, 13, 0, 27, 914, DateTimeKind.Utc).AddTicks(4440) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "CurrencySources",
                 keyColumn: "Id",
                 keyValue: 7L,
                 columns: new[] { "CreatedAt", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 914, DateTimeKind.Utc).AddTicks(4440), new DateTime(2019, 5, 20, 13, 0, 27, 914, DateTimeKind.Utc).AddTicks(4440) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "CurrencySources",
                 keyColumn: "Id",
                 keyValue: 8L,
                 columns: new[] { "CreatedAt", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 914, DateTimeKind.Utc).AddTicks(4440), new DateTime(2019, 5, 20, 13, 0, 27, 914, DateTimeKind.Utc).AddTicks(4440) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "CurrencySources",
                 keyColumn: "Id",
                 keyValue: 9L,
                 columns: new[] { "CreatedAt", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 914, DateTimeKind.Utc).AddTicks(4440), new DateTime(2019, 5, 20, 13, 0, 27, 914, DateTimeKind.Utc).AddTicks(4440) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "CurrencySources",
                 keyColumn: "Id",
                 keyValue: 10L,
                 columns: new[] { "CreatedAt", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 914, DateTimeKind.Utc).AddTicks(4440), new DateTime(2019, 5, 20, 13, 0, 27, 914, DateTimeKind.Utc).AddTicks(4440) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "CurrencySources",
                 keyColumn: "Id",
                 keyValue: 11L,
                 columns: new[] { "CreatedAt", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 914, DateTimeKind.Utc).AddTicks(4440), new DateTime(2019, 5, 20, 13, 0, 27, 914, DateTimeKind.Utc).AddTicks(4440) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "CurrencySources",
                 keyColumn: "Id",
                 keyValue: 12L,
                 columns: new[] { "CreatedAt", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 914, DateTimeKind.Utc).AddTicks(4440), new DateTime(2019, 5, 20, 13, 0, 27, 914, DateTimeKind.Utc).AddTicks(4440) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "CurrencySources",
                 keyColumn: "Id",
                 keyValue: 13L,
                 columns: new[] { "CreatedAt", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 914, DateTimeKind.Utc).AddTicks(4450), new DateTime(2019, 5, 20, 13, 0, 27, 914, DateTimeKind.Utc).AddTicks(4450) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "CurrencySources",
                 keyColumn: "Id",
                 keyValue: 14L,
                 columns: new[] { "CreatedAt", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 914, DateTimeKind.Utc).AddTicks(4450), new DateTime(2019, 5, 20, 13, 0, 27, 914, DateTimeKind.Utc).AddTicks(4450) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "CurrencySources",
                 keyColumn: "Id",
                 keyValue: 15L,
                 columns: new[] { "CreatedAt", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 914, DateTimeKind.Utc).AddTicks(4450), new DateTime(2019, 5, 20, 13, 0, 27, 914, DateTimeKind.Utc).AddTicks(4450) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "CurrencySources",
                 keyColumn: "Id",
                 keyValue: 16L,
                 columns: new[] { "CreatedAt", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 914, DateTimeKind.Utc).AddTicks(4450), new DateTime(2019, 5, 20, 13, 0, 27, 914, DateTimeKind.Utc).AddTicks(4450) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "CurrencySources",
                 keyColumn: "Id",
                 keyValue: 17L,
                 columns: new[] { "CreatedAt", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 914, DateTimeKind.Utc).AddTicks(4450), new DateTime(2019, 5, 20, 13, 0, 27, 914, DateTimeKind.Utc).AddTicks(4450) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "CurrencySources",
                 keyColumn: "Id",
                 keyValue: 18L,
                 columns: new[] { "CreatedAt", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 914, DateTimeKind.Utc).AddTicks(4520), new DateTime(2019, 5, 20, 13, 0, 27, 914, DateTimeKind.Utc).AddTicks(4520) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "CurrencySources",
                 keyColumn: "Id",
                 keyValue: 19L,
                 columns: new[] { "CreatedAt", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 914, DateTimeKind.Utc).AddTicks(4520), new DateTime(2019, 5, 20, 13, 0, 27, 914, DateTimeKind.Utc).AddTicks(4520) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "CurrencySources",
                 keyColumn: "Id",
                 keyValue: 20L,
                 columns: new[] { "CreatedAt", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 914, DateTimeKind.Utc).AddTicks(4520), new DateTime(2019, 5, 20, 13, 0, 27, 914, DateTimeKind.Utc).AddTicks(4530) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.InsertData(
                 table: "Requests",
                 columns: new[] { "Id", "CreatedAt", "CreatedBy", "DataPath", "Delay", "DeletedAt", "DeletedBy", "Discriminator", "Guid", "IsEnabled", "ModifiedAt", "ModifiedBy", "RequestType", "CurrencyId" },
-                values: new object[] { 4L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "https://api.coinranking.com/v1/public/coin/1?base=USD", 90000, null, 0L, "CurrencyRequest", new Guid("faea6e5b-0363-43d0-9b40-c0ae0ecf606b"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 5L });
+                values: new object[] { 4L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "https://api.coinranking.com/v1/public/coin/1?base=USD", 90000, null, 0L, "CurrencyRequest", new Guid("8c506c76-cd32-4289-bbb2-19cf0c301521"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 5L });
 
             migrationBuilder.InsertData(
                 table: "Requests",
                 columns: new[] { "Id", "CreatedAt", "CreatedBy", "DataPath", "Delay", "DeletedAt", "DeletedBy", "Discriminator", "Guid", "IsEnabled", "ModifiedAt", "ModifiedBy", "RequestType", "CurrencyId" },
-                values: new object[] { 3L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "https://insight.bitpay.com/api/status?q=getBlockCount", 90000, null, 0L, "CurrencyRequest", new Guid("2d2ef11d-9ea0-4274-ad11-8890618c4b13"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 5L });
+                values: new object[] { 3L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "https://insight.bitpay.com/api/status?q=getBlockCount", 90000, null, 0L, "CurrencyRequest", new Guid("db359a96-f0c4-4b70-b5ef-b762701a7536"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 5L });
 
             migrationBuilder.InsertData(
                 table: "Requests",
                 columns: new[] { "Id", "CreatedAt", "CreatedBy", "DataPath", "Delay", "DeletedAt", "DeletedBy", "Discriminator", "Guid", "IsEnabled", "ModifiedAt", "ModifiedBy", "RequestType", "CurrencyId" },
-                values: new object[] { 2L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "https://api.etherscan.io/api", 5000, null, 0L, "CurrencyRequest", new Guid("6bd6ee0f-f396-4ad7-a6aa-d81c27b84927"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 4L });
+                values: new object[] { 2L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "https://api.etherscan.io/api", 5000, null, 0L, "CurrencyRequest", new Guid("b09c380a-28dd-4644-aa04-b2b41b86b6e5"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 4L });
 
             migrationBuilder.InsertData(
                 table: "Requests",
                 columns: new[] { "Id", "CreatedAt", "CreatedBy", "DataPath", "Delay", "DeletedAt", "DeletedBy", "Discriminator", "Guid", "IsEnabled", "ModifiedAt", "ModifiedBy", "RequestType", "CurrencyId" },
-                values: new object[] { 1L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "https://api.etherscan.io/api", 5000, null, 0L, "CurrencyRequest", new Guid("01ca7d1d-599a-46ce-99b9-8bb0d433ada1"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 3L });
+                values: new object[] { 1L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "https://api.etherscan.io/api", 5000, null, 0L, "CurrencyRequest", new Guid("4a4b66d9-6c68-48a1-9ef6-4d3aa0874a3a"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 3L });
 
             migrationBuilder.InsertData(
                 table: "Requests",
                 columns: new[] { "Id", "CreatedAt", "CreatedBy", "DataPath", "Delay", "DeletedAt", "DeletedBy", "Discriminator", "Guid", "IsEnabled", "ModifiedAt", "ModifiedBy", "RequestType", "ResponseType", "CurrencyPairId" },
-                values: new object[] { 20L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "https://www.coinhako.com/api/v1/price/currency/LTCUSD", 10000, null, 0L, "CurrencyPairRequest", new Guid("52ae43d0-c724-4c83-b2cb-39e8c4f49fe6"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 1, 16L });
+                values: new object[] { 20L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "https://www.coinhako.com/api/v1/price/currency/LTCUSD", 10000, null, 0L, "CurrencyPairRequest", new Guid("eb5ee0f9-3a87-4c18-9f7b-d2219848e92a"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 1, 16L });
 
             migrationBuilder.InsertData(
                 table: "Requests",
                 columns: new[] { "Id", "CreatedAt", "CreatedBy", "DataPath", "Delay", "DeletedAt", "DeletedBy", "Discriminator", "Guid", "IsEnabled", "ModifiedAt", "ModifiedBy", "RequestType", "ResponseType", "CurrencyPairId" },
-                values: new object[] { 19L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "https://www.coinhako.com/api/v1/price/currency/LTCSGD", 10000, null, 0L, "CurrencyPairRequest", new Guid("6c9d3702-1fbd-404b-ab0e-cb0c7190c168"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 1, 15L });
+                values: new object[] { 19L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "https://www.coinhako.com/api/v1/price/currency/LTCSGD", 10000, null, 0L, "CurrencyPairRequest", new Guid("d60d00a0-84d4-4fc6-a84a-87252714724a"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 1, 15L });
 
             migrationBuilder.InsertData(
                 table: "Requests",
                 columns: new[] { "Id", "CreatedAt", "CreatedBy", "DataPath", "Delay", "DeletedAt", "DeletedBy", "Discriminator", "Guid", "IsEnabled", "ModifiedAt", "ModifiedBy", "RequestType", "ResponseType", "CurrencyPairId" },
-                values: new object[] { 18L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "https://www.coinhako.com/api/v1/price/currency/ETHUSD", 10000, null, 0L, "CurrencyPairRequest", new Guid("dc341d6d-687d-4a58-8e82-a5d54eb7a900"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 1, 14L });
+                values: new object[] { 18L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "https://www.coinhako.com/api/v1/price/currency/ETHUSD", 10000, null, 0L, "CurrencyPairRequest", new Guid("c39f11ad-1daf-49c4-a482-3e092a12ec12"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 1, 14L });
 
             migrationBuilder.InsertData(
                 table: "Requests",
                 columns: new[] { "Id", "CreatedAt", "CreatedBy", "DataPath", "Delay", "DeletedAt", "DeletedBy", "Discriminator", "Guid", "IsEnabled", "ModifiedAt", "ModifiedBy", "RequestType", "ResponseType", "CurrencyPairId" },
-                values: new object[] { 17L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "https://www.coinhako.com/api/v1/price/currency/ETHSGD", 10000, null, 0L, "CurrencyPairRequest", new Guid("5b7451e3-24e7-445f-a030-b86a3443123f"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 1, 13L });
+                values: new object[] { 17L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "https://www.coinhako.com/api/v1/price/currency/ETHSGD", 10000, null, 0L, "CurrencyPairRequest", new Guid("0599d2a6-af78-497a-a3d7-936192286e7c"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 1, 13L });
 
             migrationBuilder.InsertData(
                 table: "Requests",
                 columns: new[] { "Id", "CreatedAt", "CreatedBy", "DataPath", "Delay", "DeletedAt", "DeletedBy", "Discriminator", "Guid", "IsEnabled", "ModifiedAt", "ModifiedBy", "RequestType", "ResponseType", "CurrencyPairId" },
-                values: new object[] { 16L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "https://www.coinhako.com/api/v1/price/currency/BTCUSD", 10000, null, 0L, "CurrencyPairRequest", new Guid("7ce3a852-9ae8-4f94-a982-0fe4bc51c23d"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 1, 12L });
+                values: new object[] { 16L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "https://www.coinhako.com/api/v1/price/currency/BTCUSD", 10000, null, 0L, "CurrencyPairRequest", new Guid("d217a341-c207-4216-9dd9-cfd7523446a6"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 1, 12L });
 
             migrationBuilder.InsertData(
                 table: "Requests",
                 columns: new[] { "Id", "CreatedAt", "CreatedBy", "DataPath", "Delay", "DeletedAt", "DeletedBy", "Discriminator", "Guid", "IsEnabled", "ModifiedAt", "ModifiedBy", "RequestType", "CurrencyPairId" },
-                values: new object[] { 5L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "https://api.ethfinex.com/v2/ticker/tETHUSD", 5000, null, 0L, "CurrencyPairRequest", new Guid("da923b38-8336-40cd-b6a8-cf5f85903ba9"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 1L });
+                values: new object[] { 5L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "https://api.ethfinex.com/v2/ticker/tETHUSD", 5000, null, 0L, "CurrencyPairRequest", new Guid("5b088425-8ec3-4c22-8ef8-b8e94b8f96d6"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 1L });
 
             migrationBuilder.InsertData(
                 table: "Requests",
                 columns: new[] { "Id", "CreatedAt", "CreatedBy", "DataPath", "Delay", "DeletedAt", "DeletedBy", "Discriminator", "Guid", "IsEnabled", "ModifiedAt", "ModifiedBy", "RequestType", "ResponseType", "CurrencyPairId" },
-                values: new object[] { 12L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "https://poloniex.com/public?command=returnTicker", 5000, null, 0L, "CurrencyPairRequest", new Guid("5c3050fe-7a6b-48fa-b78c-3d7269aa2c75"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 1, 8L });
+                values: new object[] { 12L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "https://poloniex.com/public?command=returnTicker", 5000, null, 0L, "CurrencyPairRequest", new Guid("472c2eaa-fd8a-43d5-b6be-7a1733afa1fe"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 1, 8L });
 
             migrationBuilder.InsertData(
                 table: "Requests",
                 columns: new[] { "Id", "CreatedAt", "CreatedBy", "DataPath", "Delay", "DeletedAt", "DeletedBy", "Discriminator", "Guid", "IsEnabled", "ModifiedAt", "ModifiedBy", "RequestType", "ResponseType", "CurrencyPairId" },
-                values: new object[] { 11L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "https://api.bitfinex.com/v1/pubticker/etheur", 2000, null, 0L, "CurrencyPairRequest", new Guid("67adce52-ea8e-4f7d-9c2f-9282e34bfc25"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 1, 7L });
+                values: new object[] { 11L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "https://api.bitfinex.com/v1/pubticker/etheur", 2000, null, 0L, "CurrencyPairRequest", new Guid("5ca68892-2800-41fa-87b4-59d9648edacd"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 1, 7L });
 
             migrationBuilder.InsertData(
                 table: "Requests",
                 columns: new[] { "Id", "CreatedAt", "CreatedBy", "DataPath", "Delay", "DeletedAt", "DeletedBy", "Discriminator", "Guid", "IsEnabled", "ModifiedAt", "ModifiedBy", "RequestType", "ResponseType", "CurrencyPairId" },
-                values: new object[] { 10L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "https://poloniex.com/public?command=returnTicker", 5000, null, 0L, "CurrencyPairRequest", new Guid("63e97b92-e358-4905-a9cf-0d5e9876effd"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 1, 6L });
+                values: new object[] { 10L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "https://poloniex.com/public?command=returnTicker", 5000, null, 0L, "CurrencyPairRequest", new Guid("0333240b-7e5e-4f3e-9153-f121f9cad422"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 1, 6L });
 
             migrationBuilder.InsertData(
                 table: "Requests",
                 columns: new[] { "Id", "CreatedAt", "CreatedBy", "DataPath", "Delay", "DeletedAt", "DeletedBy", "Discriminator", "Guid", "IsEnabled", "ModifiedAt", "ModifiedBy", "RequestType", "ResponseType", "CurrencyPairId" },
-                values: new object[] { 9L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "https://poloniex.com/public?command=returnTicker", 5000, null, 0L, "CurrencyPairRequest", new Guid("dda1284c-e32c-40e3-829b-8ee620279159"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 1, 5L });
+                values: new object[] { 9L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "https://poloniex.com/public?command=returnTicker", 5000, null, 0L, "CurrencyPairRequest", new Guid("58a1e6de-8051-4e00-a279-5fcdae4eafcd"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 1, 5L });
 
             migrationBuilder.InsertData(
                 table: "Requests",
                 columns: new[] { "Id", "CreatedAt", "CreatedBy", "DataPath", "Delay", "DeletedAt", "DeletedBy", "Discriminator", "Guid", "IsEnabled", "ModifiedAt", "ModifiedBy", "RequestType", "ResponseType", "CurrencyPairId" },
-                values: new object[] { 8L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "https://www.alphavantage.co/query", 5000, null, 0L, "CurrencyPairRequest", new Guid("1e4e028f-c2b7-4ecf-a656-577a7d8cf6a7"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 1, 4L });
+                values: new object[] { 8L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "https://www.alphavantage.co/query", 5000, null, 0L, "CurrencyPairRequest", new Guid("76cbe383-a460-4fae-80d8-180160836fbb"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 1, 4L });
 
             migrationBuilder.InsertData(
                 table: "Requests",
                 columns: new[] { "Id", "CreatedAt", "CreatedBy", "DataPath", "Delay", "DeletedAt", "DeletedBy", "Discriminator", "Guid", "IsEnabled", "ModifiedAt", "ModifiedBy", "RequestType", "ResponseType", "CurrencyPairId" },
-                values: new object[] { 7L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml", 86400000, null, 0L, "CurrencyPairRequest", new Guid("ef581f4d-8d16-485a-8e09-eda821eb2f34"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 2, 3L });
+                values: new object[] { 7L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml", 86400000, null, 0L, "CurrencyPairRequest", new Guid("003bb6c5-0c54-489a-a73c-225a20c9c176"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 2, 3L });
 
             migrationBuilder.InsertData(
                 table: "Requests",
                 columns: new[] { "Id", "CreatedAt", "CreatedBy", "DataPath", "Delay", "DeletedAt", "DeletedBy", "Discriminator", "Guid", "IsEnabled", "ModifiedAt", "ModifiedBy", "RequestType", "CurrencyPairId" },
-                values: new object[] { 6L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "https://api.ethfinex.com/v2/ticker/tKNCUSD", 5000, null, 0L, "CurrencyPairRequest", new Guid("57e6a3af-aa20-4964-80fe-8736e39c1c2c"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 2L });
+                values: new object[] { 6L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "https://api.ethfinex.com/v2/ticker/tKNCUSD", 5000, null, 0L, "CurrencyPairRequest", new Guid("f0ffb042-2c37-47a7-a91f-613cdd6d51c6"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 2L });
 
             migrationBuilder.InsertData(
                 table: "Requests",
                 columns: new[] { "Id", "CreatedAt", "CreatedBy", "DataPath", "DeletedAt", "DeletedBy", "Discriminator", "Guid", "IsEnabled", "ModifiedAt", "ModifiedBy", "RequestType", "ResponseType", "WebsocketRequest_CurrencyPairId" },
-                values: new object[] { 13L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "wss://stream.binance.com:9443/stream?streams=!ticker@arr", null, 0L, "WebsocketRequest", new Guid("22d39750-6aa3-42e1-ae62-5491e000adc9"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 50, 1, 9L });
+                values: new object[] { 13L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "wss://stream.binance.com:9443/stream?streams=!ticker@arr", null, 0L, "WebsocketRequest", new Guid("4ed43459-14c6-4e1d-86bd-03f8c725254a"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 50, 1, 9L });
 
             migrationBuilder.InsertData(
                 table: "Requests",
                 columns: new[] { "Id", "CreatedAt", "CreatedBy", "DataPath", "Delay", "DeletedAt", "DeletedBy", "Discriminator", "Guid", "IsEnabled", "ModifiedAt", "ModifiedBy", "RequestType", "ResponseType", "CurrencyPairId" },
-                values: new object[] { 15L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "https://www.coinhako.com/api/v1/price/currency/BTCSGD", 10000, null, 0L, "CurrencyPairRequest", new Guid("2210f3c9-9f4a-452a-ab4f-6c9c0cbc43d6"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 1, 11L });
+                values: new object[] { 15L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "https://www.coinhako.com/api/v1/price/currency/BTCSGD", 10000, null, 0L, "CurrencyPairRequest", new Guid("57c9ad4b-06cc-4ddf-ab9d-0bb1e5ad0fc2"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 1, 11L });
 
             migrationBuilder.InsertData(
                 table: "Requests",
                 columns: new[] { "Id", "CreatedAt", "CreatedBy", "DataPath", "DeletedAt", "DeletedBy", "Discriminator", "Guid", "IsEnabled", "ModifiedAt", "ModifiedBy", "RequestType", "ResponseType", "WebsocketRequest_CurrencyPairId" },
-                values: new object[] { 14L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "wss://stream.binance.com:9443/stream?streams=!ticker@arr", null, 0L, "WebsocketRequest", new Guid("eb6558c6-600b-42b5-876c-8fb5ce6223ea"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 50, 1, 10L });
+                values: new object[] { 14L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "wss://stream.binance.com:9443/stream?streams=!ticker@arr", null, 0L, "WebsocketRequest", new Guid("c1b10e48-baf6-4f18-bce7-d6b40f7cac1f"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 50, 1, 10L });
 
             migrationBuilder.UpdateData(
                 table: "RequestComponents",
                 keyColumn: "Id",
                 keyValue: 1L,
                 columns: new[] { "CreatedAt", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 892, DateTimeKind.Utc).AddTicks(8650), new DateTime(2019, 5, 20, 13, 0, 27, 892, DateTimeKind.Utc).AddTicks(8660) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "RequestComponents",
                 keyColumn: "Id",
                 keyValue: 2L,
                 columns: new[] { "CreatedAt", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 892, DateTimeKind.Utc).AddTicks(9040), new DateTime(2019, 5, 20, 13, 0, 27, 892, DateTimeKind.Utc).AddTicks(9040) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "RequestComponents",
                 keyColumn: "Id",
                 keyValue: 3L,
                 columns: new[] { "CreatedAt", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 892, DateTimeKind.Utc).AddTicks(9050), new DateTime(2019, 5, 20, 13, 0, 27, 892, DateTimeKind.Utc).AddTicks(9050) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "RequestComponents",
                 keyColumn: "Id",
                 keyValue: 4L,
                 columns: new[] { "CreatedAt", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 892, DateTimeKind.Utc).AddTicks(9050), new DateTime(2019, 5, 20, 13, 0, 27, 892, DateTimeKind.Utc).AddTicks(9050) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "RequestComponents",
                 keyColumn: "Id",
                 keyValue: 5L,
                 columns: new[] { "CreatedAt", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 892, DateTimeKind.Utc).AddTicks(9050), new DateTime(2019, 5, 20, 13, 0, 27, 892, DateTimeKind.Utc).AddTicks(9050) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "RequestComponents",
                 keyColumn: "Id",
                 keyValue: 6L,
                 columns: new[] { "CreatedAt", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 892, DateTimeKind.Utc).AddTicks(9050), new DateTime(2019, 5, 20, 13, 0, 27, 892, DateTimeKind.Utc).AddTicks(9050) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "RequestComponents",
                 keyColumn: "Id",
                 keyValue: 7L,
                 columns: new[] { "CreatedAt", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 892, DateTimeKind.Utc).AddTicks(9050), new DateTime(2019, 5, 20, 13, 0, 27, 892, DateTimeKind.Utc).AddTicks(9050) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "RequestComponents",
                 keyColumn: "Id",
                 keyValue: 8L,
                 columns: new[] { "CreatedAt", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 892, DateTimeKind.Utc).AddTicks(9050), new DateTime(2019, 5, 20, 13, 0, 27, 892, DateTimeKind.Utc).AddTicks(9050) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "RequestComponents",
                 keyColumn: "Id",
                 keyValue: 9L,
                 columns: new[] { "CreatedAt", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 892, DateTimeKind.Utc).AddTicks(9060), new DateTime(2019, 5, 20, 13, 0, 27, 892, DateTimeKind.Utc).AddTicks(9060) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "RequestComponents",
                 keyColumn: "Id",
                 keyValue: 10L,
                 columns: new[] { "CreatedAt", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 892, DateTimeKind.Utc).AddTicks(9060), new DateTime(2019, 5, 20, 13, 0, 27, 892, DateTimeKind.Utc).AddTicks(9060) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "RequestComponents",
                 keyColumn: "Id",
                 keyValue: 11L,
                 columns: new[] { "CreatedAt", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 892, DateTimeKind.Utc).AddTicks(9060), new DateTime(2019, 5, 20, 13, 0, 27, 892, DateTimeKind.Utc).AddTicks(9060) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "RequestComponents",
                 keyColumn: "Id",
                 keyValue: 12L,
                 columns: new[] { "CreatedAt", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 892, DateTimeKind.Utc).AddTicks(9060), new DateTime(2019, 5, 20, 13, 0, 27, 892, DateTimeKind.Utc).AddTicks(9060) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "RequestComponents",
                 keyColumn: "Id",
                 keyValue: 13L,
                 columns: new[] { "CreatedAt", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 892, DateTimeKind.Utc).AddTicks(9140), new DateTime(2019, 5, 20, 13, 0, 27, 892, DateTimeKind.Utc).AddTicks(9140) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "RequestComponents",
                 keyColumn: "Id",
                 keyValue: 14L,
                 columns: new[] { "CreatedAt", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 892, DateTimeKind.Utc).AddTicks(9150), new DateTime(2019, 5, 20, 13, 0, 27, 892, DateTimeKind.Utc).AddTicks(9150) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "RequestComponents",
                 keyColumn: "Id",
                 keyValue: 15L,
                 columns: new[] { "CreatedAt", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 892, DateTimeKind.Utc).AddTicks(9150), new DateTime(2019, 5, 20, 13, 0, 27, 892, DateTimeKind.Utc).AddTicks(9150) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "RequestComponents",
                 keyColumn: "Id",
                 keyValue: 16L,
                 columns: new[] { "CreatedAt", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 892, DateTimeKind.Utc).AddTicks(9150), new DateTime(2019, 5, 20, 13, 0, 27, 892, DateTimeKind.Utc).AddTicks(9150) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "RequestComponents",
                 keyColumn: "Id",
                 keyValue: 17L,
                 columns: new[] { "CreatedAt", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 892, DateTimeKind.Utc).AddTicks(9150), new DateTime(2019, 5, 20, 13, 0, 27, 892, DateTimeKind.Utc).AddTicks(9150) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "RequestComponents",
                 keyColumn: "Id",
                 keyValue: 18L,
                 columns: new[] { "CreatedAt", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 892, DateTimeKind.Utc).AddTicks(9150), new DateTime(2019, 5, 20, 13, 0, 27, 892, DateTimeKind.Utc).AddTicks(9150) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "RequestComponents",
                 keyColumn: "Id",
                 keyValue: 19L,
                 columns: new[] { "CreatedAt", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 892, DateTimeKind.Utc).AddTicks(9150), new DateTime(2019, 5, 20, 13, 0, 27, 892, DateTimeKind.Utc).AddTicks(9150) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "RequestComponents",
                 keyColumn: "Id",
                 keyValue: 20L,
                 columns: new[] { "CreatedAt", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 892, DateTimeKind.Utc).AddTicks(9160), new DateTime(2019, 5, 20, 13, 0, 27, 892, DateTimeKind.Utc).AddTicks(9160) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "RequestComponents",
                 keyColumn: "Id",
                 keyValue: 21L,
                 columns: new[] { "CreatedAt", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 892, DateTimeKind.Utc).AddTicks(9160), new DateTime(2019, 5, 20, 13, 0, 27, 892, DateTimeKind.Utc).AddTicks(9160) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "RequestComponents",
                 keyColumn: "Id",
                 keyValue: 22L,
                 columns: new[] { "CreatedAt", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 892, DateTimeKind.Utc).AddTicks(9160), new DateTime(2019, 5, 20, 13, 0, 27, 892, DateTimeKind.Utc).AddTicks(9160) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "RequestComponents",
                 keyColumn: "Id",
                 keyValue: 23L,
                 columns: new[] { "CreatedAt", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 892, DateTimeKind.Utc).AddTicks(9160), new DateTime(2019, 5, 20, 13, 0, 27, 892, DateTimeKind.Utc).AddTicks(9160) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "RequestComponents",
                 keyColumn: "Id",
                 keyValue: 24L,
                 columns: new[] { "CreatedAt", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 892, DateTimeKind.Utc).AddTicks(9160), new DateTime(2019, 5, 20, 13, 0, 27, 892, DateTimeKind.Utc).AddTicks(9160) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "RequestComponents",
                 keyColumn: "Id",
                 keyValue: 25L,
                 columns: new[] { "CreatedAt", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 892, DateTimeKind.Utc).AddTicks(9160), new DateTime(2019, 5, 20, 13, 0, 27, 892, DateTimeKind.Utc).AddTicks(9160) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "RequestComponents",
                 keyColumn: "Id",
                 keyValue: 26L,
                 columns: new[] { "CreatedAt", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 892, DateTimeKind.Utc).AddTicks(9160), new DateTime(2019, 5, 20, 13, 0, 27, 892, DateTimeKind.Utc).AddTicks(9160) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "RequestComponents",
                 keyColumn: "Id",
                 keyValue: 27L,
                 columns: new[] { "CreatedAt", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 892, DateTimeKind.Utc).AddTicks(9170), new DateTime(2019, 5, 20, 13, 0, 27, 892, DateTimeKind.Utc).AddTicks(9170) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "RequestComponents",
                 keyColumn: "Id",
                 keyValue: 28L,
                 columns: new[] { "CreatedAt", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 892, DateTimeKind.Utc).AddTicks(9170), new DateTime(2019, 5, 20, 13, 0, 27, 892, DateTimeKind.Utc).AddTicks(9170) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "RequestComponents",
                 keyColumn: "Id",
                 keyValue: 29L,
                 columns: new[] { "CreatedAt", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 892, DateTimeKind.Utc).AddTicks(9170), new DateTime(2019, 5, 20, 13, 0, 27, 892, DateTimeKind.Utc).AddTicks(9170) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "RequestComponents",
                 keyColumn: "Id",
                 keyValue: 30L,
                 columns: new[] { "CreatedAt", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 892, DateTimeKind.Utc).AddTicks(9170), new DateTime(2019, 5, 20, 13, 0, 27, 892, DateTimeKind.Utc).AddTicks(9170) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "RequestComponents",
                 keyColumn: "Id",
                 keyValue: 31L,
                 columns: new[] { "CreatedAt", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 892, DateTimeKind.Utc).AddTicks(9170), new DateTime(2019, 5, 20, 13, 0, 27, 892, DateTimeKind.Utc).AddTicks(9170) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "RequestComponents",
                 keyColumn: "Id",
                 keyValue: 32L,
                 columns: new[] { "CreatedAt", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 892, DateTimeKind.Utc).AddTicks(9170), new DateTime(2019, 5, 20, 13, 0, 27, 892, DateTimeKind.Utc).AddTicks(9170) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "RequestComponents",
                 keyColumn: "Id",
                 keyValue: 33L,
                 columns: new[] { "CreatedAt", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 892, DateTimeKind.Utc).AddTicks(9170), new DateTime(2019, 5, 20, 13, 0, 27, 892, DateTimeKind.Utc).AddTicks(9170) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "RequestComponents",
                 keyColumn: "Id",
                 keyValue: 34L,
                 columns: new[] { "CreatedAt", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 892, DateTimeKind.Utc).AddTicks(9180), new DateTime(2019, 5, 20, 13, 0, 27, 892, DateTimeKind.Utc).AddTicks(9180) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "RequestComponents",
                 keyColumn: "Id",
                 keyValue: 35L,
                 columns: new[] { "CreatedAt", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 892, DateTimeKind.Utc).AddTicks(9180), new DateTime(2019, 5, 20, 13, 0, 27, 892, DateTimeKind.Utc).AddTicks(9180) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "RequestComponents",
                 keyColumn: "Id",
                 keyValue: 36L,
                 columns: new[] { "CreatedAt", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 892, DateTimeKind.Utc).AddTicks(9180), new DateTime(2019, 5, 20, 13, 0, 27, 892, DateTimeKind.Utc).AddTicks(9180) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "RequestComponents",
                 keyColumn: "Id",
                 keyValue: 37L,
                 columns: new[] { "CreatedAt", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 892, DateTimeKind.Utc).AddTicks(9180), new DateTime(2019, 5, 20, 13, 0, 27, 892, DateTimeKind.Utc).AddTicks(9180) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "RequestComponents",
                 keyColumn: "Id",
                 keyValue: 38L,
                 columns: new[] { "CreatedAt", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 892, DateTimeKind.Utc).AddTicks(9180), new DateTime(2019, 5, 20, 13, 0, 27, 892, DateTimeKind.Utc).AddTicks(9180) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "RequestComponents",
                 keyColumn: "Id",
                 keyValue: 39L,
                 columns: new[] { "CreatedAt", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 892, DateTimeKind.Utc).AddTicks(9180), new DateTime(2019, 5, 20, 13, 0, 27, 892, DateTimeKind.Utc).AddTicks(9180) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "RequestComponents",
                 keyColumn: "Id",
                 keyValue: 40L,
                 columns: new[] { "CreatedAt", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 892, DateTimeKind.Utc).AddTicks(9180), new DateTime(2019, 5, 20, 13, 0, 27, 892, DateTimeKind.Utc).AddTicks(9180) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "RequestComponents",
                 keyColumn: "Id",
                 keyValue: 41L,
                 columns: new[] { "CreatedAt", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 892, DateTimeKind.Utc).AddTicks(9190), new DateTime(2019, 5, 20, 13, 0, 27, 892, DateTimeKind.Utc).AddTicks(9190) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "RequestComponents",
                 keyColumn: "Id",
                 keyValue: 42L,
                 columns: new[] { "CreatedAt", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 892, DateTimeKind.Utc).AddTicks(9190), new DateTime(2019, 5, 20, 13, 0, 27, 892, DateTimeKind.Utc).AddTicks(9190) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "RequestComponents",
                 keyColumn: "Id",
                 keyValue: 43L,
                 columns: new[] { "CreatedAt", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 892, DateTimeKind.Utc).AddTicks(9190), new DateTime(2019, 5, 20, 13, 0, 27, 892, DateTimeKind.Utc).AddTicks(9190) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "RequestComponents",
                 keyColumn: "Id",
                 keyValue: 44L,
                 columns: new[] { "CreatedAt", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 892, DateTimeKind.Utc).AddTicks(9190), new DateTime(2019, 5, 20, 13, 0, 27, 892, DateTimeKind.Utc).AddTicks(9190) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "RequestComponents",
                 keyColumn: "Id",
                 keyValue: 45L,
                 columns: new[] { "CreatedAt", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 892, DateTimeKind.Utc).AddTicks(9190), new DateTime(2019, 5, 20, 13, 0, 27, 892, DateTimeKind.Utc).AddTicks(9190) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "RequestComponents",
                 keyColumn: "Id",
                 keyValue: 46L,
                 columns: new[] { "CreatedAt", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 892, DateTimeKind.Utc).AddTicks(9190), new DateTime(2019, 5, 20, 13, 0, 27, 892, DateTimeKind.Utc).AddTicks(9190) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "RequestComponents",
                 keyColumn: "Id",
                 keyValue: 47L,
                 columns: new[] { "CreatedAt", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 892, DateTimeKind.Utc).AddTicks(9190), new DateTime(2019, 5, 20, 13, 0, 27, 892, DateTimeKind.Utc).AddTicks(9190) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "RequestComponents",
                 keyColumn: "Id",
                 keyValue: 48L,
                 columns: new[] { "CreatedAt", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 892, DateTimeKind.Utc).AddTicks(9190), new DateTime(2019, 5, 20, 13, 0, 27, 892, DateTimeKind.Utc).AddTicks(9190) });
+                values: new object[] { new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.UpdateData(
                 table: "RequestComponents",
                 keyColumn: "Id",
                 keyValue: 49L,
                 columns: new[] { "CreatedAt", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 892, DateTimeKind.Utc).AddTicks(9200), new DateTime(2019, 5, 20, 13, 0, 27, 892, DateTimeKind.Utc).AddTicks(9200) });
+                values: new object[] { new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) });
 
             migrationBuilder.UpdateData(
                 table: "RequestComponents",
                 keyColumn: "Id",
                 keyValue: 50L,
                 columns: new[] { "CreatedAt", "ModifiedAt" },
-                values: new object[] { new DateTime(2019, 5, 20, 13, 0, 27, 892, DateTimeKind.Utc).AddTicks(9200), new DateTime(2019, 5, 20, 13, 0, 27, 892, DateTimeKind.Utc).AddTicks(9200) });
+                values: new object[] { new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) });
 
             migrationBuilder.CreateIndex(
                 name: "AnalysedComponent_Index_CurrencyId_ComponentType",
@@ -1136,10 +1140,22 @@ namespace Nozomi.Repo.Migrations
                 table: "AnalysedComponents",
                 columns: new[] { "CurrencyTypeId", "ComponentType" },
                 unique: true);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_RequestComponents_Requests_RequestId",
+                table: "RequestComponents",
+                column: "RequestId",
+                principalTable: "Requests",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Restrict);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropForeignKey(
+                name: "FK_RequestComponents_Requests_RequestId",
+                table: "RequestComponents");
+
             migrationBuilder.DropIndex(
                 name: "AnalysedComponent_Index_CurrencyId_ComponentType",
                 table: "AnalysedComponents");
@@ -2275,6 +2291,14 @@ namespace Nozomi.Repo.Migrations
                 name: "IX_AnalysedComponents_CurrencyTypeId",
                 table: "AnalysedComponents",
                 column: "CurrencyTypeId");
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_RequestComponents_Requests_RequestId",
+                table: "RequestComponents",
+                column: "RequestId",
+                principalTable: "Requests",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
         }
     }
 }
