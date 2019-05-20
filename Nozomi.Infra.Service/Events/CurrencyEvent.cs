@@ -386,160 +386,24 @@ namespace Nozomi.Service.Events
         public ICollection<DetailedCurrencyResponse> GetAllDetailed(string typeShortForm = "CRYPTO",
             int index = 0, int daysOfData = 1)
         {
-            // Resultant collection
-            var res = new List<DetailedCurrencyResponse>();
-
-            // Initial query
-            var currencies = _unitOfWork.GetRepository<Currency>()
+            var currencyType = _unitOfWork.GetRepository<CurrencyType>()
                 .GetQueryable()
                 .AsNoTracking()
-                .Include(c => c.CurrencyType)
-                .Where(c => c.IsEnabled && c.DeletedAt == null);
-
-            if (!string.IsNullOrEmpty(typeShortForm))
-            {
-                currencies = currencies.Where(c
-                    => c.CurrencyType.TypeShortForm
-                        .Equals(typeShortForm, StringComparison.InvariantCultureIgnoreCase));
-            }
-            else
-            {
-                // Default to crypto
-                currencies = currencies.Where(c => c.CurrencyType.TypeShortForm
-                    .Equals("CRYPTO", StringComparison.InvariantCultureIgnoreCase));
-            }
-
-            currencies = currencies
-                .Include(c => c.AnalysedComponents)
+                .Where(ct => ct.TypeShortForm.Equals(typeShortForm, StringComparison.InvariantCultureIgnoreCase))
+                .Include(ct => ct.Currencies)
+                .ThenInclude(c => c.AnalysedComponents)
                 .ThenInclude(ac => ac.AnalysedHistoricItems)
-                .Include(c => c.CurrencyPairSourceCurrencies)
-                .ThenInclude(ccp => ccp.CurrencyPair)
-                // TODO: Exclude this rule
-                .Where(c => c.CurrencyPairSourceCurrencies.Any(ccp => ccp.CurrencyPair.CounterCurrency
-                    .Equals(CoreConstants.GenericCounterCurrency, StringComparison.InvariantCultureIgnoreCase)))
-//                .ThenInclude(pcp => pcp.Currency)
-//                .Include(c => c.CurrencyCurrencyPairs)
-//                .ThenInclude(pcp => pcp.CurrencyPair)
-//                .ThenInclude(cp => cp.CurrencyPairRequests)
-//                .ThenInclude(cpr => cpr.AnalysedComponents)
-//                .ThenInclude(ac => ac.AnalysedHistoricItems)
-                .Skip(20 * index)
-                .Take(20)
-                .Select(c => new Currency
-                {
-                    Id = c.Id,
-                    CurrencyTypeId = c.CurrencyTypeId,
-                    CurrencyType = c.CurrencyType,
-                    Abbreviation = c.Abbreviation,
-                    Name = c.Name,
-                    Denominations = c.Denominations,
-                    DenominationName = c.DenominationName,
-                    CurrencySourceId = c.CurrencySourceId,
-                    WalletTypeId = c.WalletTypeId,
-                    AnalysedComponents = c.AnalysedComponents
-                        .Where(ac => AnalysisConstants.CompactAnalysedComponentTypes.Contains(ac.ComponentType)
-                                     || AnalysisConstants.LiveAnalysedComponentTypes.Contains(ac.ComponentType))
-                        .Select(ac => new AnalysedComponent
-                        {
-                            Id = ac.Id,
-                            ComponentType = ac.ComponentType,
-                            Value = ac.Value,
-                            Delay = ac.Delay,
-                            RequestId = ac.RequestId,
-                            AnalysedHistoricItems = ac.AnalysedHistoricItems
-                                .OrderByDescending(ahi => ahi.HistoricDateTime)
-                                .Where(ahi => ahi.HistoricDateTime < DateTime.UtcNow.Subtract(TimeSpan.FromDays(daysOfData)))
-                                .Take(200) // Always limit the payload
-                                .ToList()
-                        })
-                        .ToList(),
-//                    CurrencyCurrencyPairs = c.CurrencyCurrencyPairs
-//                        .Where(ccp =>
-//                            ccp.CurrencyPair.MainCurrency.Equals(c.Abbrv, StringComparison.InvariantCultureIgnoreCase)
-//                            && ccp.CurrencyPair.CounterCurrency.Contains(CoreConstants.GenericCounterCurrency))
-//                        .Select(pcp => new CurrencyCurrencyPair
-//                        {
-//                            CurrencyId = pcp.CurrencyId,
-//                            CurrencyPair = new CurrencyPair
-//                            {
-//                                Id = pcp.CurrencyPair.Id,
-//                                CurrencyPairType = pcp.CurrencyPair.CurrencyPairType,
-//                                APIUrl = pcp.CurrencyPair.APIUrl,
-//                                DefaultComponent = pcp.CurrencyPair.DefaultComponent,
-//                                CounterCurrency = pcp.CurrencyPair.CounterCurrency,
-//                                CurrencySourceId = pcp.CurrencyPair.CurrencySourceId,
-//                                CurrencyPairRequests = pcp.CurrencyPair.CurrencyPairRequests
-//                                    .Where(cpr => cpr.DeletedAt == null && cpr.IsEnabled)
-//                                    .Select(cpr => new CurrencyPairRequest
-//                                    {
-//                                        Id = cpr.Id,
-//                                        CurrencyPairId = cpr.CurrencyPairId,
-//                                        AnalysedComponents = cpr.AnalysedComponents
-//                                            .Where(ac =>
-//                                                AnalysisConstants.CompactAnalysedComponentTypes.Contains(
-//                                                    ac.ComponentType)
-//                                                || AnalysisConstants.LiveAnalysedComponentTypes.Contains(
-//                                                    ac.ComponentType))
-//                                            .Select(ac => new AnalysedComponent
-//                                            {
-//                                                Id = ac.Id,
-//                                                ComponentType = ac.ComponentType,
-//                                                Value = ac.Value,
-//                                                Delay = ac.Delay,
-//                                                RequestId = ac.RequestId,
-//                                                CurrencyId = ac.CurrencyId,
-//                                                AnalysedHistoricItems = ac.AnalysedHistoricItems
-//                                                    .OrderByDescending(ahi => ahi.HistoricDateTime)
-//                                                    .Where(ahi => ahi.HistoricDateTime <
-//                                                                  DateTime.UtcNow.Subtract(TimeSpan.FromDays(daysOfData)))
-//                                                    .Take(200) // Always limit the payload
-//                                                    .ToList()
-//                                            })
-//                                            .ToList()
-//                                    })
-//                                    .ToList(),
-//                            },
-//                            CurrencyPairId = pcp.CurrencyPairId
-//                        })
-//                        .ToList()
-                });
-            
-            #if DEBUG
-            var currenciesColl = currencies.ToList();
-            #endif
-            
-            // TODO: We'll need to figure out how we can factor in non-USD counter currency tickers
+                .SingleOrDefault();
 
-            var abbreviations = currencies.Select(c => c.Abbreviation).Distinct().ToList();
-            foreach (var uniqueCurr in abbreviations)
+            if (currencyType == null) return null;
+
+            var res = new List<DetailedCurrencyResponse>();
+
+            foreach (var currency in currencyType.Currencies)
             {
-                res.Add(new DetailedCurrencyResponse(currencies.Where(c => c.Abbreviation
-                    .Equals(uniqueCurr, StringComparison.InvariantCultureIgnoreCase))
-                    .ToList()));
+                res.Add(new DetailedCurrencyResponse(currency));
             }
-
-//            foreach (var currency in currencies)
-//            {
-//                // Do not add duplicates
-//                if (!res.Any(item =>
-//                    item.Abbreviation.Equals(currency.Abbrv, StringComparison.InvariantCultureIgnoreCase)))
-//                {
-//                    res.Add(new DetailedCurrencyResponse(currency));
-//                }
-//                // Since there already is a duplicate
-//                else
-//                {
-//                    // Populate it further
-//                    res.SingleOrDefault(item => item.Abbreviation.Equals(currency.Abbrv,
-//                            StringComparison.InvariantCultureIgnoreCase))
-//                        ?.Populate(currency);
-//                }
-//            }
-
-            res = res
-                .OrderByDescending(c => c.MarketCap)
-                .ToList();
-
+            
             return res;
         }
 
