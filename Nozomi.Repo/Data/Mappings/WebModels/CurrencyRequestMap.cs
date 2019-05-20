@@ -17,7 +17,7 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
                 .HasConstraintName("CurrencyRequest_Currency_Constraint");
 
             entityTypeBuilder.HasData(
-                // ETH BFX Etherscan Request
+                // ETH Etherscan Request
                 new CurrencyRequest
                 {
                     Id = 1,
@@ -27,7 +27,7 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
                     DataPath = "https://api.etherscan.io/api",
                     Delay = 5000
                 },
-                // KNC BFX Etherscan Request
+                // KNC Etherscan Request
                 new CurrencyRequest
                 {
                     Id = 2,
@@ -37,21 +37,21 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
                     DataPath = "https://api.etherscan.io/api",
                     Delay = 5000
                 },
-                // BTC POLO Bitpay Insight Request
+                // BTC Bitpay Insight Request
                 new CurrencyRequest
                 {
                     Id = 3,
-                    CurrencyId = 12,
+                    CurrencyId = 5,
                     Guid = Guid.NewGuid(),
                     RequestType = RequestType.HttpGet,
                     DataPath = "https://insight.bitpay.com/api/status?q=getBlockCount",
                     Delay = 90000
                 },
-                // BTC POLO Coinranking Request
+                // BTC Coinranking Request
                 new CurrencyRequest
                 {
                     Id = 4,
-                    CurrencyId = 12,
+                    CurrencyId = 5,
                     Guid = Guid.NewGuid(),
                     RequestType = RequestType.HttpGet,
                     DataPath = "https://api.coinranking.com/v1/public/coin/1?base=USD",
