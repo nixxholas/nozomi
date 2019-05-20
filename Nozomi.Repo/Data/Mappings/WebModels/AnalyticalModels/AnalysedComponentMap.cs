@@ -14,6 +14,13 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
             entityTypeBuilder.HasKey(ac => ac.Id).HasName("AnalysedComponent_PK_Id");
             entityTypeBuilder.Property(ac => ac.Id).ValueGeneratedOnAdd();
 
+            entityTypeBuilder.HasIndex(ac => new { ac.CurrencyId, ac.ComponentType })
+                .HasName("AnalysedComponent_Index_CurrencyId_ComponentType").IsUnique();
+            entityTypeBuilder.HasIndex(ac => new { ac.CurrencyPairId, ac.ComponentType })
+                .HasName("AnalysedComponent_Index_CurrencyPairId_ComponentType").IsUnique();
+            entityTypeBuilder.HasIndex(ac => new { ac.CurrencyTypeId, ac.ComponentType })
+                .HasName("AnalysedComponent_Index_CurrencyTypeId_ComponentType").IsUnique();
+
             entityTypeBuilder.Property(ac => ac.UIFormatting).IsRequired(false);
             entityTypeBuilder.Property(ac => ac.Value).IsRequired(false);
             entityTypeBuilder.Property(ac => ac.Delay).HasDefaultValue(86400000); // 24 hours
@@ -41,10 +48,10 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                 {
                     Id = 1,
                     ComponentType = AnalysedComponentType.MarketCap,
-                    Delay = 1000,
+                    Delay = 3000,
                     UIFormatting = "$ 0 a",
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     IsDenominated = true,
                     DeletedAt = null,
                     CurrencyId = 3
@@ -53,10 +60,10 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                 {
                     Id = 46,
                     ComponentType = AnalysedComponentType.MarketCapChange,
-                    Delay = 1000,
+                    Delay = 3000,
                     UIFormatting = "$ 0 a",
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     IsDenominated = true,
                     DeletedAt = null,
                     CurrencyId = 3
@@ -65,10 +72,10 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                 {
                     Id = 47,
                     ComponentType = AnalysedComponentType.MarketCapPctChange,
-                    Delay = 1000,
+                    Delay = 3000,
                     UIFormatting = "$ 0 a",
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     IsDenominated = true,
                     DeletedAt = null,
                     CurrencyId = 3
@@ -77,23 +84,23 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                 {
                     Id = 48,
                     ComponentType = AnalysedComponentType.MarketCapHourlyPctChange,
-                    Delay = 1000,
+                    Delay = 3000,
                     UIFormatting = "$ 0 a",
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     IsDenominated = true,
                     DeletedAt = null,
                     CurrencyId = 3
                 },
-                // ETH Hourly Average Price
+                // ETH Current Average Price
                 new AnalysedComponent
                 {
                     Id = 56,
-                    ComponentType = AnalysedComponentType.HourlyAveragePrice,
+                    ComponentType = AnalysedComponentType.CurrentAveragePrice,
                     Delay = 3000,
                     UIFormatting = "$ 0[.]00",
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     IsDenominated = true,
                     DeletedAt = null,
                     CurrencyId = 3
@@ -105,8 +112,8 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                     ComponentType = AnalysedComponentType.HourlyAveragePrice,
                     Delay = 3000,
                     UIFormatting = "$ 0[.]00",
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     IsDenominated = true,
                     DeletedAt = null,
                     CurrencyId = 3
@@ -118,10 +125,10 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                 {
                     Id = 2,
                     ComponentType = AnalysedComponentType.MarketCap,
-                    Delay = 1000,
+                    Delay = 3000,
                     UIFormatting = "$ 0 a",
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     IsDenominated = true,
                     DeletedAt = null,
                     CurrencyId = 4
@@ -130,10 +137,10 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                 {
                     Id = 49,
                     ComponentType = AnalysedComponentType.MarketCapChange,
-                    Delay = 1000,
+                    Delay = 3000,
                     UIFormatting = "$ 0 a",
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     IsDenominated = true,
                     DeletedAt = null,
                     CurrencyId = 4
@@ -142,10 +149,10 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                 {
                     Id = 50,
                     ComponentType = AnalysedComponentType.MarketCapPctChange,
-                    Delay = 1000,
+                    Delay = 3000,
                     UIFormatting = "$ 0 a",
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     IsDenominated = true,
                     DeletedAt = null,
                     CurrencyId = 4
@@ -154,10 +161,36 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                 {
                     Id = 51,
                     ComponentType = AnalysedComponentType.MarketCapHourlyPctChange,
-                    Delay = 1000,
+                    Delay = 3000,
                     UIFormatting = "$ 0 a",
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    IsDenominated = true,
+                    DeletedAt = null,
+                    CurrencyId = 4
+                },
+                // KNC Current Average Price
+                new AnalysedComponent
+                {
+                    Id = 58,
+                    ComponentType = AnalysedComponentType.CurrentAveragePrice,
+                    Delay = 3000,
+                    UIFormatting = "$ 0[.]00",
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    IsDenominated = true,
+                    DeletedAt = null,
+                    CurrencyId = 4
+                },
+                // KNC Hourly Average Price
+                new AnalysedComponent
+                {
+                    Id = 59,
+                    ComponentType = AnalysedComponentType.HourlyAveragePrice,
+                    Delay = 3000,
+                    UIFormatting = "$ 0[.]00",
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     IsDenominated = true,
                     DeletedAt = null,
                     CurrencyId = 4
@@ -170,10 +203,10 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                 {
                     Id = 3,
                     ComponentType = AnalysedComponentType.MarketCap,
-                    Delay = 500,
+                    Delay = 3000,
                     UIFormatting = "$ 0 a",
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     DeletedAt = null,
                     CurrencyId = 5
                 },
@@ -181,10 +214,10 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                 {
                     Id = 52,
                     ComponentType = AnalysedComponentType.MarketCapChange,
-                    Delay = 1000,
+                    Delay = 3000,
                     UIFormatting = "$ 0 a",
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     IsDenominated = true,
                     DeletedAt = null,
                     CurrencyId = 5
@@ -193,10 +226,10 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                 {
                     Id = 53,
                     ComponentType = AnalysedComponentType.MarketCapPctChange,
-                    Delay = 1000,
+                    Delay = 3000,
                     UIFormatting = "$ 0 a",
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     IsDenominated = true,
                     DeletedAt = null,
                     CurrencyId = 5
@@ -205,10 +238,36 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                 {
                     Id = 54,
                     ComponentType = AnalysedComponentType.MarketCapHourlyPctChange,
-                    Delay = 1000,
+                    Delay = 3000,
                     UIFormatting = "$ 0 a",
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    IsDenominated = true,
+                    DeletedAt = null,
+                    CurrencyId = 5
+                },
+                // KNC Current Average Price
+                new AnalysedComponent
+                {
+                    Id = 60,
+                    ComponentType = AnalysedComponentType.CurrentAveragePrice,
+                    Delay = 3000,
+                    UIFormatting = "$ 0[.]00",
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    IsDenominated = true,
+                    DeletedAt = null,
+                    CurrencyId = 5
+                },
+                // KNC Hourly Average Price
+                new AnalysedComponent
+                {
+                    Id = 61,
+                    ComponentType = AnalysedComponentType.HourlyAveragePrice,
+                    Delay = 3000,
+                    UIFormatting = "$ 0[.]00",
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     IsDenominated = true,
                     DeletedAt = null,
                     CurrencyId = 5
@@ -222,8 +281,8 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                     ComponentType = AnalysedComponentType.DailyVolume,
                     Delay = 1000,
                     UIFormatting = "$ 0 a",
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     DeletedAt = null,
                     CurrencyPairId = 1
                 },
@@ -233,8 +292,8 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                     ComponentType = AnalysedComponentType.CurrentAveragePrice,
                     Delay = 500,
                     UIFormatting = "$ 0[.]00",
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     DeletedAt = null,
                     CurrencyPairId = 1
                 },
@@ -244,8 +303,8 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                     ComponentType = AnalysedComponentType.HourlyAveragePrice,
                     Delay = 10000,
                     UIFormatting = "$ 0[.]00",
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     DeletedAt = null,
                     CurrencyPairId = 1
                 },
@@ -255,8 +314,8 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                     ComponentType = AnalysedComponentType.DailyPricePctChange,
                     Delay = 500,
                     UIFormatting = "0[.]0",
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     DeletedAt = null,
                     CurrencyPairId = 1
                 },
@@ -267,8 +326,8 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                     ComponentType = AnalysedComponentType.DailyVolume,
                     Delay = 1000,
                     UIFormatting = "0 a",
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     DeletedAt = null,
                     CurrencyPairId = 2
                 },
@@ -278,8 +337,8 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                     ComponentType = AnalysedComponentType.CurrentAveragePrice,
                     Delay = 500,
                     UIFormatting = "$ 0[.]00",
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     DeletedAt = null,
                     CurrencyPairId = 2
                 },
@@ -289,8 +348,8 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                     ComponentType = AnalysedComponentType.HourlyAveragePrice,
                     Delay = 10000,
                     UIFormatting = "$ 0[.]00",
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     DeletedAt = null,
                     CurrencyPairId = 2
                 },
@@ -300,8 +359,8 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                     ComponentType = AnalysedComponentType.DailyPricePctChange,
                     Delay = 500,
                     UIFormatting = "0[.]0",
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     DeletedAt = null,
                     CurrencyPairId = 2
                 },
@@ -312,8 +371,8 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                     ComponentType = AnalysedComponentType.DailyVolume,
                     Delay = 1000,
                     UIFormatting = "0 a",
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     DeletedAt = null,
                     CurrencyPairId = 5
                 },
@@ -323,8 +382,8 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                     ComponentType = AnalysedComponentType.CurrentAveragePrice,
                     Delay = 500,
                     UIFormatting = "0[.]00",
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     DeletedAt = null,
                     CurrencyPairId = 5
                 },
@@ -334,8 +393,8 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                     ComponentType = AnalysedComponentType.HourlyAveragePrice,
                     Delay = 10000,
                     UIFormatting = "0[.]00",
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     DeletedAt = null,
                     CurrencyPairId = 5
                 },
@@ -345,8 +404,8 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                     ComponentType = AnalysedComponentType.DailyPricePctChange,
                     Delay = 500,
                     UIFormatting = "0[.]0",
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     DeletedAt = null,
                     CurrencyPairId = 5
                 },
@@ -357,8 +416,8 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                     ComponentType = AnalysedComponentType.DailyVolume,
                     Delay = 1000,
                     UIFormatting = "0 a",
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     DeletedAt = null,
                     CurrencyPairId = 6
                 },
@@ -368,8 +427,8 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                     ComponentType = AnalysedComponentType.CurrentAveragePrice,
                     Delay = 500,
                     UIFormatting = "0[.]00",
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     DeletedAt = null,
                     CurrencyPairId = 6
                 },
@@ -379,8 +438,8 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                     ComponentType = AnalysedComponentType.HourlyAveragePrice,
                     Delay = 10000,
                     UIFormatting = "0[.]00",
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     DeletedAt = null,
                     CurrencyPairId = 6
                 },
@@ -390,8 +449,8 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                     ComponentType = AnalysedComponentType.DailyPricePctChange,
                     Delay = 500,
                     UIFormatting = "0[.]0",
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     DeletedAt = null,
                     CurrencyPairId = 6
                 },
@@ -402,8 +461,8 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                     ComponentType = AnalysedComponentType.DailyVolume,
                     Delay = 1000,
                     UIFormatting = "0 a",
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     DeletedAt = null,
                     CurrencyPairId = 7
                 },
@@ -413,8 +472,8 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                     ComponentType = AnalysedComponentType.CurrentAveragePrice,
                     Delay = 500,
                     UIFormatting = "0[.]00",
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     DeletedAt = null,
                     CurrencyPairId = 7
                 },
@@ -424,8 +483,8 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                     ComponentType = AnalysedComponentType.HourlyAveragePrice,
                     Delay = 10000,
                     UIFormatting = "0[.]00",
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     DeletedAt = null,
                     CurrencyPairId = 7
                 },
@@ -435,8 +494,8 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                     ComponentType = AnalysedComponentType.DailyPricePctChange,
                     Delay = 500,
                     UIFormatting = "0[.]0",
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     DeletedAt = null,
                     CurrencyPairId = 7
                 },
@@ -447,8 +506,8 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                     ComponentType = AnalysedComponentType.DailyVolume,
                     Delay = 1000,
                     UIFormatting = "0 a",
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     DeletedAt = null,
                     CurrencyPairId = 8
                 },
@@ -458,8 +517,8 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                     ComponentType = AnalysedComponentType.CurrentAveragePrice,
                     Delay = 500,
                     UIFormatting = "$ 0[.]00",
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     DeletedAt = null,
                     CurrencyPairId = 8
                 },
@@ -469,8 +528,8 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                     ComponentType = AnalysedComponentType.HourlyAveragePrice,
                     Delay = 10000,
                     UIFormatting = "$ 0[.]00",
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     DeletedAt = null,
                     CurrencyPairId = 8
                 },
@@ -480,8 +539,8 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                     ComponentType = AnalysedComponentType.DailyPricePctChange,
                     Delay = 500,
                     UIFormatting = "0[.]0",
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     DeletedAt = null,
                     CurrencyPairId = 8
                 },
@@ -492,8 +551,8 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                     ComponentType = AnalysedComponentType.CurrentAveragePrice,
                     Delay = 10000,
                     UIFormatting = "$ 0[.]00",
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     DeletedAt = null,
                     CurrencyPairId = 11
                 },
@@ -504,8 +563,8 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                     ComponentType = AnalysedComponentType.HourlyAveragePrice,
                     Delay = 10000,
                     UIFormatting = "$ 0[.]00",
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     DeletedAt = null,
                     CurrencyPairId = 11
                 },
@@ -516,8 +575,8 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                     ComponentType = AnalysedComponentType.DailyPricePctChange,
                     Delay = 10000,
                     UIFormatting = "0[.]0",
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     DeletedAt = null,
                     CurrencyPairId = 11
                 },
@@ -528,8 +587,8 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                     ComponentType = AnalysedComponentType.CurrentAveragePrice,
                     Delay = 10000,
                     UIFormatting = "$ 0[.]00",
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     DeletedAt = null,
                     CurrencyPairId = 12
                 },
@@ -540,8 +599,8 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                     ComponentType = AnalysedComponentType.HourlyAveragePrice,
                     Delay = 10000,
                     UIFormatting = "$ 0[.]00",
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     DeletedAt = null,
                     CurrencyPairId = 12
                 },
@@ -552,8 +611,8 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                     ComponentType = AnalysedComponentType.DailyPricePctChange,
                     Delay = 10000,
                     UIFormatting = "0[.]0",
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     DeletedAt = null,
                     CurrencyPairId = 12
                 },
@@ -564,8 +623,8 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                     ComponentType = AnalysedComponentType.CurrentAveragePrice,
                     Delay = 10000,
                     UIFormatting = "$ 0[.]00",
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     DeletedAt = null,
                     CurrencyPairId = 13
                 },
@@ -576,8 +635,8 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                     ComponentType = AnalysedComponentType.HourlyAveragePrice,
                     Delay = 10000,
                     UIFormatting = "$ 0[.]00",
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     DeletedAt = null,
                     CurrencyPairId = 13
                 },
@@ -588,8 +647,8 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                     ComponentType = AnalysedComponentType.DailyPricePctChange,
                     Delay = 10000,
                     UIFormatting = "0[.]0",
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     DeletedAt = null,
                     CurrencyPairId = 13
                 },
@@ -600,8 +659,8 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                     ComponentType = AnalysedComponentType.CurrentAveragePrice,
                     Delay = 10000,
                     UIFormatting = "$ 0[.]00",
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     DeletedAt = null,
                     CurrencyPairId = 14
                 },
@@ -612,8 +671,8 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                     ComponentType = AnalysedComponentType.HourlyAveragePrice,
                     Delay = 10000,
                     UIFormatting = "$ 0[.]00",
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     DeletedAt = null,
                     CurrencyPairId = 14
                 },
@@ -624,8 +683,8 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                     ComponentType = AnalysedComponentType.DailyPricePctChange,
                     Delay = 10000,
                     UIFormatting = "0[.]0",
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     DeletedAt = null,
                     CurrencyPairId = 14
                 },
@@ -636,8 +695,8 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                     ComponentType = AnalysedComponentType.CurrentAveragePrice,
                     Delay = 10000,
                     UIFormatting = "$ 0[.]00",
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     DeletedAt = null,
                     CurrencyPairId = 15
                 },
@@ -648,8 +707,8 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                     ComponentType = AnalysedComponentType.HourlyAveragePrice,
                     Delay = 10000,
                     UIFormatting = "$ 0[.]00",
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     DeletedAt = null,
                     CurrencyPairId = 15
                 },
@@ -660,8 +719,8 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                     ComponentType = AnalysedComponentType.DailyPricePctChange,
                     Delay = 10000,
                     UIFormatting = "0[.]0",
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     DeletedAt = null,
                     CurrencyPairId = 15
                 },
@@ -672,8 +731,8 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                     ComponentType = AnalysedComponentType.CurrentAveragePrice,
                     Delay = 10000,
                     UIFormatting = "$ 0[.]00",
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     DeletedAt = null,
                     CurrencyPairId = 16
                 },
@@ -684,8 +743,8 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                     ComponentType = AnalysedComponentType.HourlyAveragePrice,
                     Delay = 10000,
                     UIFormatting = "$ 0[.]00",
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     DeletedAt = null,
                     CurrencyPairId = 16
                 },
@@ -696,8 +755,8 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                     ComponentType = AnalysedComponentType.DailyPricePctChange,
                     Delay = 10000,
                     UIFormatting = "0[.]0",
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     DeletedAt = null,
                     CurrencyPairId = 16
                 },
@@ -708,8 +767,8 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                     ComponentType = AnalysedComponentType.MarketCap,
                     Delay = 3000,
                     UIFormatting = "$ 0 a",
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     DeletedAt = null,
                     CurrencyTypeId = 2
                 }

@@ -304,22 +304,15 @@ namespace Nozomi.Service.Events
                 var reqComp = _unitOfWork.GetRepository<CurrencyRequest>()
                     .GetQueryable()
                     .AsNoTracking()
-                    .Where(cp => cp.DeletedAt == null && cp.IsEnabled)
+                    .Where(cr => cr.DeletedAt == null && cr.IsEnabled
+                                 && cr.CurrencyId.Equals(curr.Id))
                     .Include(cp => cp.Currency)
-                    // Where the partial currency pair's main currency is equal to the currency that is required
-                    .Where(cr => cr.Currency.Abbreviation.Equals(curr.Abbreviation,
-                        StringComparison.InvariantCultureIgnoreCase))
                     .Include(cpr => cpr.RequestComponents)
-                    // Null checks
-                    .Where(cpr => cpr.IsEnabled && cpr.DeletedAt == null
-                                                && cpr.RequestComponents
-                                                    .Any(rc =>
-                                                        rc.DeletedAt == null && rc.IsEnabled
-                                                                             && !string.IsNullOrEmpty(rc.Value)))
                     // Obtain only the circulating supply
                     .SelectMany(cpr => cpr.RequestComponents
-                        .Where(rc =>
-                            rc.ComponentType.Equals(ComponentType.Circulating_Supply)))
+                        .Where(rc => rc.DeletedAt == null && rc.IsEnabled
+                                                          && rc.ComponentType.Equals(ComponentType.Circulating_Supply)
+                                                          && !string.IsNullOrEmpty(rc.Value)))
                     .FirstOrDefault();
 
                 return reqComp != null
@@ -442,7 +435,10 @@ namespace Nozomi.Service.Events
 
             foreach (var currency in currencyType.Currencies)
             {
-                res.Add(new DetailedCurrencyResponse(currency));
+                if (currency?.AnalysedComponents != null && currency.AnalysedComponents.Count > 0)
+                {
+                    res.Add(new DetailedCurrencyResponse(currency));
+                }
             }
             
             return res;

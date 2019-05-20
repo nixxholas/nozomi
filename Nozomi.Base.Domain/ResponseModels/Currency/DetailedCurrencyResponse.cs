@@ -35,42 +35,41 @@ namespace Nozomi.Data.ResponseModels.Currency
         public DetailedCurrencyResponse()
         {
         }
-        
+
         public DetailedCurrencyResponse(Models.Currency.Currency currency)
         {
-            if (currency != null && currency.AnalysedComponents != null && currency.AnalysedComponents.Count > 0)
-            {
-                // Aggregate non-compounded properties first
-                Name = currency.Name;
-                Abbreviation = currency.Abbreviation;
-                LastUpdated = currency.ModifiedAt;
-                
-                foreach (var ac in currency.AnalysedComponents)
-                {
-                    switch (ac.ComponentType)
-                    {
-                        case AnalysedComponentType.DailyVolume:
-                            DailyVolume = decimal.Parse(ac.Value);
-                            break;
-                        case AnalysedComponentType.MarketCap:
-                            MarketCap = decimal.Parse(ac.Value);
-                            break;
-                        case AnalysedComponentType.CurrentAveragePrice:
-                            AveragePrice = decimal.Parse(ac.Value);
-                            break;
-                        case AnalysedComponentType.HourlyAveragePrice:
-                            if (ac.AnalysedHistoricItems != null && ac.AnalysedHistoricItems.Count > 0)
-                            {
-                                AveragePriceHistory = ac.AnalysedHistoricItems
-                                    .Select(ahi => decimal.Parse(ahi.Value))
-                                    .ToList();
-                            }
+            // Aggregate non-compounded properties first
+            Name = currency.Name;
+            Abbreviation = currency.Abbreviation;
+            LastUpdated = currency.ModifiedAt;
 
-                            break;
-                        case AnalysedComponentType.DailyPricePctChange:
-                            DailyAvgPctChange = decimal.Parse(ac.Value);
-                            break;
-                    }
+            foreach (var ac in currency.AnalysedComponents)
+            {
+                switch (ac.ComponentType)
+                {
+                    case AnalysedComponentType.DailyVolume:
+                        DailyVolume = decimal.Parse(ac.Value ?? "0");
+                        break;
+                    case AnalysedComponentType.MarketCap:
+                        MarketCap = decimal.Parse(ac.Value ?? "0");
+                        break;
+                    case AnalysedComponentType.CurrentAveragePrice:
+                        AveragePrice = decimal.Parse(ac.Value ?? "0");
+                        break;
+                    case AnalysedComponentType.HourlyAveragePrice:
+                        if (ac.AnalysedHistoricItems != null && ac.AnalysedHistoricItems.Count > 0)
+                        {
+                            AveragePriceHistory = ac.AnalysedHistoricItems
+                                .Where(ahi => string.IsNullOrEmpty(ahi.Value)
+                                              && decimal.TryParse(ahi.Value, out var junk))
+                                .Select(ahi => decimal.Parse(ahi.Value))
+                                .ToList();
+                        }
+
+                        break;
+                    case AnalysedComponentType.DailyPricePctChange:
+                        DailyAvgPctChange = decimal.Parse(ac.Value ?? "0");
+                        break;
                 }
             }
         }

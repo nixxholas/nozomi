@@ -11,6 +11,7 @@ namespace Nozomi.Service.Services.Interfaces
         NozomiResult<string> Create(CreateCurrencyPairComponent obj, long userId = 0);
         
         NozomiResult<string> UpdatePairValue(long id, decimal val);
+        NozomiResult<string> UpdatePairValue(long id, string val);
 
         NozomiResult<string> Update(UpdateCurrencyPairComponent obj, long userId = 0);
 

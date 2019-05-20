@@ -95,6 +95,8 @@ namespace Nozomi.Analysis
 
             app.UseHttpsRedirection();
             app.UseMvc();
+            
+            app.UseAutoDbMigration(env);
         }
     }
 }

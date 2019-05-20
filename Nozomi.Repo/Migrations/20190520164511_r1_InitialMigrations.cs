@@ -326,7 +326,7 @@ namespace Nozomi.Repo.Migrations
                         column: x => x.RequestId,
                         principalTable: "Requests",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -497,7 +497,7 @@ namespace Nozomi.Repo.Migrations
             migrationBuilder.InsertData(
                 table: "AnalysedComponents",
                 columns: new[] { "Id", "ComponentType", "CreatedAt", "CreatedBy", "CurrencyId", "CurrencyPairId", "CurrencyTypeId", "Delay", "DeletedAt", "DeletedBy", "IsDenominated", "IsEnabled", "ModifiedAt", "ModifiedBy", "UIFormatting", "Value" },
-                values: new object[] { 55L, 1, new DateTime(2019, 5, 20, 9, 14, 41, 0, DateTimeKind.Utc).AddTicks(3120), 0L, null, null, 2L, 3000, null, 0L, false, true, new DateTime(2019, 5, 20, 9, 14, 41, 0, DateTimeKind.Utc).AddTicks(3120), 0L, "$ 0 a", null });
+                values: new object[] { 55L, 1, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, null, 2L, 3000, null, 0L, false, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "$ 0 a", null });
 
             migrationBuilder.InsertData(
                 table: "Currencies",
@@ -556,62 +556,66 @@ namespace Nozomi.Repo.Migrations
                 columns: new[] { "Id", "ComponentType", "CreatedAt", "CreatedBy", "CurrencyId", "CurrencyPairId", "CurrencyTypeId", "Delay", "DeletedAt", "DeletedBy", "IsDenominated", "IsEnabled", "ModifiedAt", "ModifiedBy", "UIFormatting", "Value" },
                 values: new object[,]
                 {
-                    { 5L, 10, new DateTime(2019, 5, 20, 9, 14, 41, 0, DateTimeKind.Utc).AddTicks(2970), 0L, null, 1L, null, 500, null, 0L, false, true, new DateTime(2019, 5, 20, 9, 14, 41, 0, DateTimeKind.Utc).AddTicks(2970), 0L, "$ 0[.]00", null },
-                    { 53L, 20, new DateTime(2019, 5, 20, 9, 14, 41, 0, DateTimeKind.Utc).AddTicks(2520), 0L, 5L, null, null, 1000, null, 0L, true, true, new DateTime(2019, 5, 20, 9, 14, 41, 0, DateTimeKind.Utc).AddTicks(2520), 0L, "$ 0 a", null },
-                    { 54L, 21, new DateTime(2019, 5, 20, 9, 14, 41, 0, DateTimeKind.Utc).AddTicks(2530), 0L, 5L, null, null, 1000, null, 0L, true, true, new DateTime(2019, 5, 20, 9, 14, 41, 0, DateTimeKind.Utc).AddTicks(2530), 0L, "$ 0 a", null },
-                    { 24L, 80, new DateTime(2019, 5, 20, 9, 14, 41, 0, DateTimeKind.Utc).AddTicks(3010), 0L, null, 8L, null, 1000, null, 0L, false, true, new DateTime(2019, 5, 20, 9, 14, 41, 0, DateTimeKind.Utc).AddTicks(3010), 0L, "0 a", null },
-                    { 33L, 70, new DateTime(2019, 5, 20, 9, 14, 41, 0, DateTimeKind.Utc).AddTicks(3020), 0L, null, 12L, null, 10000, null, 0L, false, true, new DateTime(2019, 5, 20, 9, 14, 41, 0, DateTimeKind.Utc).AddTicks(3020), 0L, "0[.]0", null },
-                    { 32L, 11, new DateTime(2019, 5, 20, 9, 14, 41, 0, DateTimeKind.Utc).AddTicks(3020), 0L, null, 12L, null, 10000, null, 0L, false, true, new DateTime(2019, 5, 20, 9, 14, 41, 0, DateTimeKind.Utc).AddTicks(3020), 0L, "$ 0[.]00", null },
-                    { 31L, 10, new DateTime(2019, 5, 20, 9, 14, 41, 0, DateTimeKind.Utc).AddTicks(3020), 0L, null, 12L, null, 10000, null, 0L, false, true, new DateTime(2019, 5, 20, 9, 14, 41, 0, DateTimeKind.Utc).AddTicks(3020), 0L, "$ 0[.]00", null },
-                    { 30L, 70, new DateTime(2019, 5, 20, 9, 14, 41, 0, DateTimeKind.Utc).AddTicks(3020), 0L, null, 11L, null, 10000, null, 0L, false, true, new DateTime(2019, 5, 20, 9, 14, 41, 0, DateTimeKind.Utc).AddTicks(3020), 0L, "0[.]0", null },
-                    { 29L, 11, new DateTime(2019, 5, 20, 9, 14, 41, 0, DateTimeKind.Utc).AddTicks(3010), 0L, null, 11L, null, 10000, null, 0L, false, true, new DateTime(2019, 5, 20, 9, 14, 41, 0, DateTimeKind.Utc).AddTicks(3010), 0L, "$ 0[.]00", null },
-                    { 4L, 80, new DateTime(2019, 5, 20, 9, 14, 41, 0, DateTimeKind.Utc).AddTicks(2530), 0L, null, 1L, null, 1000, null, 0L, false, true, new DateTime(2019, 5, 20, 9, 14, 41, 0, DateTimeKind.Utc).AddTicks(2530), 0L, "$ 0 a", null },
-                    { 45L, 70, new DateTime(2019, 5, 20, 9, 14, 41, 0, DateTimeKind.Utc).AddTicks(3110), 0L, null, 16L, null, 10000, null, 0L, false, true, new DateTime(2019, 5, 20, 9, 14, 41, 0, DateTimeKind.Utc).AddTicks(3110), 0L, "0[.]0", null },
-                    { 6L, 11, new DateTime(2019, 5, 20, 9, 14, 41, 0, DateTimeKind.Utc).AddTicks(2980), 0L, null, 1L, null, 10000, null, 0L, false, true, new DateTime(2019, 5, 20, 9, 14, 41, 0, DateTimeKind.Utc).AddTicks(2980), 0L, "$ 0[.]00", null },
-                    { 52L, 6, new DateTime(2019, 5, 20, 9, 14, 41, 0, DateTimeKind.Utc).AddTicks(2520), 0L, 5L, null, null, 1000, null, 0L, true, true, new DateTime(2019, 5, 20, 9, 14, 41, 0, DateTimeKind.Utc).AddTicks(2520), 0L, "$ 0 a", null },
-                    { 7L, 70, new DateTime(2019, 5, 20, 9, 14, 41, 0, DateTimeKind.Utc).AddTicks(2980), 0L, null, 1L, null, 500, null, 0L, false, true, new DateTime(2019, 5, 20, 9, 14, 41, 0, DateTimeKind.Utc).AddTicks(2980), 0L, "0[.]0", null },
-                    { 8L, 80, new DateTime(2019, 5, 20, 9, 14, 41, 0, DateTimeKind.Utc).AddTicks(2980), 0L, null, 2L, null, 1000, null, 0L, false, true, new DateTime(2019, 5, 20, 9, 14, 41, 0, DateTimeKind.Utc).AddTicks(2980), 0L, "0 a", null },
-                    { 9L, 10, new DateTime(2019, 5, 20, 9, 14, 41, 0, DateTimeKind.Utc).AddTicks(2990), 0L, null, 2L, null, 500, null, 0L, false, true, new DateTime(2019, 5, 20, 9, 14, 41, 0, DateTimeKind.Utc).AddTicks(2990), 0L, "$ 0[.]00", null },
-                    { 10L, 11, new DateTime(2019, 5, 20, 9, 14, 41, 0, DateTimeKind.Utc).AddTicks(2990), 0L, null, 2L, null, 10000, null, 0L, false, true, new DateTime(2019, 5, 20, 9, 14, 41, 0, DateTimeKind.Utc).AddTicks(2990), 0L, "$ 0[.]00", null },
-                    { 11L, 70, new DateTime(2019, 5, 20, 9, 14, 41, 0, DateTimeKind.Utc).AddTicks(2990), 0L, null, 2L, null, 500, null, 0L, false, true, new DateTime(2019, 5, 20, 9, 14, 41, 0, DateTimeKind.Utc).AddTicks(2990), 0L, "0[.]0", null },
-                    { 27L, 70, new DateTime(2019, 5, 20, 9, 14, 41, 0, DateTimeKind.Utc).AddTicks(3010), 0L, null, 8L, null, 500, null, 0L, false, true, new DateTime(2019, 5, 20, 9, 14, 41, 0, DateTimeKind.Utc).AddTicks(3010), 0L, "0[.]0", null },
-                    { 20L, 80, new DateTime(2019, 5, 20, 9, 14, 41, 0, DateTimeKind.Utc).AddTicks(3000), 0L, null, 7L, null, 1000, null, 0L, false, true, new DateTime(2019, 5, 20, 9, 14, 41, 0, DateTimeKind.Utc).AddTicks(3000), 0L, "0 a", null },
-                    { 21L, 10, new DateTime(2019, 5, 20, 9, 14, 41, 0, DateTimeKind.Utc).AddTicks(3000), 0L, null, 7L, null, 500, null, 0L, false, true, new DateTime(2019, 5, 20, 9, 14, 41, 0, DateTimeKind.Utc).AddTicks(3000), 0L, "0[.]00", null },
-                    { 22L, 11, new DateTime(2019, 5, 20, 9, 14, 41, 0, DateTimeKind.Utc).AddTicks(3000), 0L, null, 7L, null, 10000, null, 0L, false, true, new DateTime(2019, 5, 20, 9, 14, 41, 0, DateTimeKind.Utc).AddTicks(3010), 0L, "0[.]00", null },
-                    { 23L, 70, new DateTime(2019, 5, 20, 9, 14, 41, 0, DateTimeKind.Utc).AddTicks(3010), 0L, null, 7L, null, 500, null, 0L, false, true, new DateTime(2019, 5, 20, 9, 14, 41, 0, DateTimeKind.Utc).AddTicks(3010), 0L, "0[.]0", null },
-                    { 18L, 11, new DateTime(2019, 5, 20, 9, 14, 41, 0, DateTimeKind.Utc).AddTicks(3000), 0L, null, 6L, null, 10000, null, 0L, false, true, new DateTime(2019, 5, 20, 9, 14, 41, 0, DateTimeKind.Utc).AddTicks(3000), 0L, "0[.]00", null },
-                    { 17L, 10, new DateTime(2019, 5, 20, 9, 14, 41, 0, DateTimeKind.Utc).AddTicks(3000), 0L, null, 6L, null, 500, null, 0L, false, true, new DateTime(2019, 5, 20, 9, 14, 41, 0, DateTimeKind.Utc).AddTicks(3000), 0L, "0[.]00", null },
-                    { 19L, 70, new DateTime(2019, 5, 20, 9, 14, 41, 0, DateTimeKind.Utc).AddTicks(3000), 0L, null, 6L, null, 500, null, 0L, false, true, new DateTime(2019, 5, 20, 9, 14, 41, 0, DateTimeKind.Utc).AddTicks(3000), 0L, "0[.]0", null },
-                    { 3L, 1, new DateTime(2019, 5, 20, 9, 14, 41, 0, DateTimeKind.Utc).AddTicks(2520), 0L, 5L, null, null, 500, null, 0L, false, true, new DateTime(2019, 5, 20, 9, 14, 41, 0, DateTimeKind.Utc).AddTicks(2520), 0L, "$ 0 a", null },
-                    { 15L, 70, new DateTime(2019, 5, 20, 9, 14, 41, 0, DateTimeKind.Utc).AddTicks(2990), 0L, null, 5L, null, 500, null, 0L, false, true, new DateTime(2019, 5, 20, 9, 14, 41, 0, DateTimeKind.Utc).AddTicks(3000), 0L, "0[.]0", null },
-                    { 34L, 10, new DateTime(2019, 5, 20, 9, 14, 41, 0, DateTimeKind.Utc).AddTicks(3020), 0L, null, 13L, null, 10000, null, 0L, false, true, new DateTime(2019, 5, 20, 9, 14, 41, 0, DateTimeKind.Utc).AddTicks(3020), 0L, "$ 0[.]00", null },
-                    { 44L, 11, new DateTime(2019, 5, 20, 9, 14, 41, 0, DateTimeKind.Utc).AddTicks(3110), 0L, null, 16L, null, 10000, null, 0L, false, true, new DateTime(2019, 5, 20, 9, 14, 41, 0, DateTimeKind.Utc).AddTicks(3110), 0L, "$ 0[.]00", null },
-                    { 43L, 10, new DateTime(2019, 5, 20, 9, 14, 41, 0, DateTimeKind.Utc).AddTicks(3110), 0L, null, 16L, null, 10000, null, 0L, false, true, new DateTime(2019, 5, 20, 9, 14, 41, 0, DateTimeKind.Utc).AddTicks(3110), 0L, "$ 0[.]00", null },
-                    { 12L, 80, new DateTime(2019, 5, 20, 9, 14, 41, 0, DateTimeKind.Utc).AddTicks(2990), 0L, null, 5L, null, 1000, null, 0L, false, true, new DateTime(2019, 5, 20, 9, 14, 41, 0, DateTimeKind.Utc).AddTicks(2990), 0L, "0 a", null },
-                    { 42L, 70, new DateTime(2019, 5, 20, 9, 14, 41, 0, DateTimeKind.Utc).AddTicks(3110), 0L, null, 15L, null, 10000, null, 0L, false, true, new DateTime(2019, 5, 20, 9, 14, 41, 0, DateTimeKind.Utc).AddTicks(3110), 0L, "0[.]0", null },
-                    { 41L, 11, new DateTime(2019, 5, 20, 9, 14, 41, 0, DateTimeKind.Utc).AddTicks(3110), 0L, null, 15L, null, 10000, null, 0L, false, true, new DateTime(2019, 5, 20, 9, 14, 41, 0, DateTimeKind.Utc).AddTicks(3110), 0L, "$ 0[.]00", null },
-                    { 40L, 10, new DateTime(2019, 5, 20, 9, 14, 41, 0, DateTimeKind.Utc).AddTicks(3110), 0L, null, 15L, null, 10000, null, 0L, false, true, new DateTime(2019, 5, 20, 9, 14, 41, 0, DateTimeKind.Utc).AddTicks(3110), 0L, "$ 0[.]00", null },
-                    { 13L, 10, new DateTime(2019, 5, 20, 9, 14, 41, 0, DateTimeKind.Utc).AddTicks(2990), 0L, null, 5L, null, 500, null, 0L, false, true, new DateTime(2019, 5, 20, 9, 14, 41, 0, DateTimeKind.Utc).AddTicks(2990), 0L, "0[.]00", null },
-                    { 39L, 70, new DateTime(2019, 5, 20, 9, 14, 41, 0, DateTimeKind.Utc).AddTicks(3110), 0L, null, 14L, null, 10000, null, 0L, false, true, new DateTime(2019, 5, 20, 9, 14, 41, 0, DateTimeKind.Utc).AddTicks(3110), 0L, "0[.]0", null },
-                    { 38L, 11, new DateTime(2019, 5, 20, 9, 14, 41, 0, DateTimeKind.Utc).AddTicks(3100), 0L, null, 14L, null, 10000, null, 0L, false, true, new DateTime(2019, 5, 20, 9, 14, 41, 0, DateTimeKind.Utc).AddTicks(3100), 0L, "$ 0[.]00", null },
-                    { 37L, 10, new DateTime(2019, 5, 20, 9, 14, 41, 0, DateTimeKind.Utc).AddTicks(3100), 0L, null, 14L, null, 10000, null, 0L, false, true, new DateTime(2019, 5, 20, 9, 14, 41, 0, DateTimeKind.Utc).AddTicks(3100), 0L, "$ 0[.]00", null },
-                    { 1L, 1, new DateTime(2019, 5, 20, 9, 14, 41, 0, DateTimeKind.Utc).AddTicks(200), 0L, 3L, null, null, 1000, null, 0L, true, true, new DateTime(2019, 5, 20, 9, 14, 41, 0, DateTimeKind.Utc).AddTicks(620), 0L, "$ 0 a", null },
-                    { 46L, 6, new DateTime(2019, 5, 20, 9, 14, 41, 0, DateTimeKind.Utc).AddTicks(2390), 0L, 3L, null, null, 1000, null, 0L, true, true, new DateTime(2019, 5, 20, 9, 14, 41, 0, DateTimeKind.Utc).AddTicks(2400), 0L, "$ 0 a", null },
-                    { 47L, 20, new DateTime(2019, 5, 20, 9, 14, 41, 0, DateTimeKind.Utc).AddTicks(2410), 0L, 3L, null, null, 1000, null, 0L, true, true, new DateTime(2019, 5, 20, 9, 14, 41, 0, DateTimeKind.Utc).AddTicks(2410), 0L, "$ 0 a", null },
-                    { 48L, 21, new DateTime(2019, 5, 20, 9, 14, 41, 0, DateTimeKind.Utc).AddTicks(2420), 0L, 3L, null, null, 1000, null, 0L, true, true, new DateTime(2019, 5, 20, 9, 14, 41, 0, DateTimeKind.Utc).AddTicks(2420), 0L, "$ 0 a", null },
-                    { 56L, 11, new DateTime(2019, 5, 20, 9, 14, 41, 0, DateTimeKind.Utc).AddTicks(2420), 0L, 3L, null, null, 3000, null, 0L, true, true, new DateTime(2019, 5, 20, 9, 14, 41, 0, DateTimeKind.Utc).AddTicks(2420), 0L, "$ 0[.]00", null },
-                    { 57L, 11, new DateTime(2019, 5, 20, 9, 14, 41, 0, DateTimeKind.Utc).AddTicks(2510), 0L, 3L, null, null, 3000, null, 0L, true, true, new DateTime(2019, 5, 20, 9, 14, 41, 0, DateTimeKind.Utc).AddTicks(2510), 0L, "$ 0[.]00", null },
-                    { 26L, 11, new DateTime(2019, 5, 20, 9, 14, 41, 0, DateTimeKind.Utc).AddTicks(3010), 0L, null, 8L, null, 10000, null, 0L, false, true, new DateTime(2019, 5, 20, 9, 14, 41, 0, DateTimeKind.Utc).AddTicks(3010), 0L, "$ 0[.]00", null },
-                    { 14L, 11, new DateTime(2019, 5, 20, 9, 14, 41, 0, DateTimeKind.Utc).AddTicks(2990), 0L, null, 5L, null, 10000, null, 0L, false, true, new DateTime(2019, 5, 20, 9, 14, 41, 0, DateTimeKind.Utc).AddTicks(2990), 0L, "0[.]00", null },
-                    { 36L, 70, new DateTime(2019, 5, 20, 9, 14, 41, 0, DateTimeKind.Utc).AddTicks(3100), 0L, null, 13L, null, 10000, null, 0L, false, true, new DateTime(2019, 5, 20, 9, 14, 41, 0, DateTimeKind.Utc).AddTicks(3100), 0L, "0[.]0", null },
-                    { 2L, 1, new DateTime(2019, 5, 20, 9, 14, 41, 0, DateTimeKind.Utc).AddTicks(2510), 0L, 4L, null, null, 1000, null, 0L, true, true, new DateTime(2019, 5, 20, 9, 14, 41, 0, DateTimeKind.Utc).AddTicks(2510), 0L, "$ 0 a", null },
-                    { 49L, 6, new DateTime(2019, 5, 20, 9, 14, 41, 0, DateTimeKind.Utc).AddTicks(2520), 0L, 4L, null, null, 1000, null, 0L, true, true, new DateTime(2019, 5, 20, 9, 14, 41, 0, DateTimeKind.Utc).AddTicks(2520), 0L, "$ 0 a", null },
-                    { 50L, 20, new DateTime(2019, 5, 20, 9, 14, 41, 0, DateTimeKind.Utc).AddTicks(2520), 0L, 4L, null, null, 1000, null, 0L, true, true, new DateTime(2019, 5, 20, 9, 14, 41, 0, DateTimeKind.Utc).AddTicks(2520), 0L, "$ 0 a", null },
-                    { 51L, 21, new DateTime(2019, 5, 20, 9, 14, 41, 0, DateTimeKind.Utc).AddTicks(2520), 0L, 4L, null, null, 1000, null, 0L, true, true, new DateTime(2019, 5, 20, 9, 14, 41, 0, DateTimeKind.Utc).AddTicks(2520), 0L, "$ 0 a", null },
-                    { 25L, 10, new DateTime(2019, 5, 20, 9, 14, 41, 0, DateTimeKind.Utc).AddTicks(3010), 0L, null, 8L, null, 500, null, 0L, false, true, new DateTime(2019, 5, 20, 9, 14, 41, 0, DateTimeKind.Utc).AddTicks(3010), 0L, "$ 0[.]00", null },
-                    { 35L, 11, new DateTime(2019, 5, 20, 9, 14, 41, 0, DateTimeKind.Utc).AddTicks(3100), 0L, null, 13L, null, 10000, null, 0L, false, true, new DateTime(2019, 5, 20, 9, 14, 41, 0, DateTimeKind.Utc).AddTicks(3100), 0L, "$ 0[.]00", null },
-                    { 16L, 80, new DateTime(2019, 5, 20, 9, 14, 41, 0, DateTimeKind.Utc).AddTicks(3000), 0L, null, 6L, null, 1000, null, 0L, false, true, new DateTime(2019, 5, 20, 9, 14, 41, 0, DateTimeKind.Utc).AddTicks(3000), 0L, "0 a", null },
-                    { 28L, 10, new DateTime(2019, 5, 20, 9, 14, 41, 0, DateTimeKind.Utc).AddTicks(3010), 0L, null, 11L, null, 10000, null, 0L, false, true, new DateTime(2019, 5, 20, 9, 14, 41, 0, DateTimeKind.Utc).AddTicks(3010), 0L, "$ 0[.]00", null }
+                    { 10L, 11, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 2L, null, 10000, null, 0L, false, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "$ 0[.]00", null },
+                    { 53L, 20, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 5L, null, null, 3000, null, 0L, true, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "$ 0 a", null },
+                    { 54L, 21, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 5L, null, null, 3000, null, 0L, true, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "$ 0 a", null },
+                    { 60L, 10, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 5L, null, null, 3000, null, 0L, true, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "$ 0[.]00", null },
+                    { 61L, 11, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 5L, null, null, 3000, null, 0L, true, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "$ 0[.]00", null },
+                    { 39L, 70, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 14L, null, 10000, null, 0L, false, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "0[.]0", null },
+                    { 38L, 11, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 14L, null, 10000, null, 0L, false, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "$ 0[.]00", null },
+                    { 37L, 10, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 14L, null, 10000, null, 0L, false, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "$ 0[.]00", null },
+                    { 36L, 70, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 13L, null, 10000, null, 0L, false, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "0[.]0", null },
+                    { 35L, 11, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 13L, null, 10000, null, 0L, false, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "$ 0[.]00", null },
+                    { 34L, 10, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 13L, null, 10000, null, 0L, false, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "$ 0[.]00", null },
+                    { 4L, 80, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 1L, null, 1000, null, 0L, false, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "$ 0 a", null },
+                    { 5L, 10, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 1L, null, 500, null, 0L, false, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "$ 0[.]00", null },
+                    { 52L, 6, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 5L, null, null, 3000, null, 0L, true, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "$ 0 a", null },
+                    { 6L, 11, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 1L, null, 10000, null, 0L, false, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "$ 0[.]00", null },
+                    { 33L, 70, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 12L, null, 10000, null, 0L, false, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "0[.]0", null },
+                    { 8L, 80, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 2L, null, 1000, null, 0L, false, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "0 a", null },
+                    { 9L, 10, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 2L, null, 500, null, 0L, false, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "$ 0[.]00", null },
+                    { 27L, 70, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 8L, null, 500, null, 0L, false, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "0[.]0", null },
+                    { 11L, 70, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 2L, null, 500, null, 0L, false, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "0[.]0", null },
+                    { 32L, 11, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 12L, null, 10000, null, 0L, false, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "$ 0[.]00", null },
+                    { 20L, 80, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 7L, null, 1000, null, 0L, false, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "0 a", null },
+                    { 21L, 10, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 7L, null, 500, null, 0L, false, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "0[.]00", null },
+                    { 22L, 11, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 7L, null, 10000, null, 0L, false, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "0[.]00", null },
+                    { 23L, 70, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 7L, null, 500, null, 0L, false, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "0[.]0", null },
+                    { 31L, 10, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 12L, null, 10000, null, 0L, false, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "$ 0[.]00", null },
+                    { 30L, 70, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 11L, null, 10000, null, 0L, false, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "0[.]0", null },
+                    { 7L, 70, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 1L, null, 500, null, 0L, false, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "0[.]0", null },
+                    { 3L, 1, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 5L, null, null, 3000, null, 0L, false, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "$ 0 a", null },
+                    { 40L, 10, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 15L, null, 10000, null, 0L, false, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "$ 0[.]00", null },
+                    { 41L, 11, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 15L, null, 10000, null, 0L, false, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "$ 0[.]00", null },
+                    { 26L, 11, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 8L, null, 10000, null, 0L, false, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "$ 0[.]00", null },
+                    { 25L, 10, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 8L, null, 500, null, 0L, false, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "$ 0[.]00", null },
+                    { 24L, 80, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 8L, null, 1000, null, 0L, false, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "0 a", null },
+                    { 19L, 70, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 6L, null, 500, null, 0L, false, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "0[.]0", null },
+                    { 18L, 11, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 6L, null, 10000, null, 0L, false, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "0[.]00", null },
+                    { 17L, 10, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 6L, null, 500, null, 0L, false, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "0[.]00", null },
+                    { 16L, 80, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 6L, null, 1000, null, 0L, false, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "0 a", null },
+                    { 15L, 70, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 5L, null, 500, null, 0L, false, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "0[.]0", null },
+                    { 14L, 11, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 5L, null, 10000, null, 0L, false, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "0[.]00", null },
+                    { 13L, 10, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 5L, null, 500, null, 0L, false, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "0[.]00", null },
+                    { 1L, 1, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 3L, null, null, 3000, null, 0L, true, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "$ 0 a", null },
+                    { 46L, 6, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 3L, null, null, 3000, null, 0L, true, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "$ 0 a", null },
+                    { 47L, 20, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 3L, null, null, 3000, null, 0L, true, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "$ 0 a", null },
+                    { 48L, 21, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 3L, null, null, 3000, null, 0L, true, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "$ 0 a", null },
+                    { 56L, 10, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 3L, null, null, 3000, null, 0L, true, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "$ 0[.]00", null },
+                    { 57L, 11, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 3L, null, null, 3000, null, 0L, true, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "$ 0[.]00", null },
+                    { 12L, 80, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 5L, null, 1000, null, 0L, false, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "0 a", null },
+                    { 45L, 70, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 16L, null, 10000, null, 0L, false, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "0[.]0", null },
+                    { 44L, 11, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 16L, null, 10000, null, 0L, false, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "$ 0[.]00", null },
+                    { 2L, 1, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 4L, null, null, 3000, null, 0L, true, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "$ 0 a", null },
+                    { 49L, 6, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 4L, null, null, 3000, null, 0L, true, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "$ 0 a", null },
+                    { 50L, 20, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 4L, null, null, 3000, null, 0L, true, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "$ 0 a", null },
+                    { 51L, 21, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 4L, null, null, 3000, null, 0L, true, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "$ 0 a", null },
+                    { 58L, 10, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 4L, null, null, 3000, null, 0L, true, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "$ 0[.]00", null },
+                    { 59L, 11, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 4L, null, null, 3000, null, 0L, true, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "$ 0[.]00", null },
+                    { 43L, 10, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 16L, null, 10000, null, 0L, false, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "$ 0[.]00", null },
+                    { 42L, 70, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 15L, null, 10000, null, 0L, false, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "0[.]0", null },
+                    { 29L, 11, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 11L, null, 10000, null, 0L, false, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "$ 0[.]00", null },
+                    { 28L, 10, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 11L, null, 10000, null, 0L, false, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "$ 0[.]00", null }
                 });
 
             migrationBuilder.InsertData(
@@ -619,410 +623,413 @@ namespace Nozomi.Repo.Migrations
                 columns: new[] { "Id", "CreatedAt", "CreatedBy", "CurrencyId", "DeletedAt", "DeletedBy", "IsEnabled", "ModifiedAt", "ModifiedBy", "SourceId" },
                 values: new object[,]
                 {
-                    { 1L, new DateTime(2019, 5, 20, 9, 14, 41, 82, DateTimeKind.Utc).AddTicks(7260), 0L, 1L, null, 0L, true, new DateTime(2019, 5, 20, 9, 14, 41, 82, DateTimeKind.Utc).AddTicks(7260), 0L, 1L },
-                    { 14L, new DateTime(2019, 5, 20, 9, 14, 41, 82, DateTimeKind.Utc).AddTicks(8030), 0L, 7L, null, 0L, true, new DateTime(2019, 5, 20, 9, 14, 41, 82, DateTimeKind.Utc).AddTicks(8030), 0L, 6L },
-                    { 9L, new DateTime(2019, 5, 20, 9, 14, 41, 82, DateTimeKind.Utc).AddTicks(8030), 0L, 1L, null, 0L, true, new DateTime(2019, 5, 20, 9, 14, 41, 82, DateTimeKind.Utc).AddTicks(8030), 0L, 4L },
-                    { 11L, new DateTime(2019, 5, 20, 9, 14, 41, 82, DateTimeKind.Utc).AddTicks(8030), 0L, 1L, null, 0L, true, new DateTime(2019, 5, 20, 9, 14, 41, 82, DateTimeKind.Utc).AddTicks(8030), 0L, 5L },
-                    { 19L, new DateTime(2019, 5, 20, 9, 14, 41, 82, DateTimeKind.Utc).AddTicks(8040), 0L, 1L, null, 0L, true, new DateTime(2019, 5, 20, 9, 14, 41, 82, DateTimeKind.Utc).AddTicks(8040), 0L, 2L },
-                    { 2L, new DateTime(2019, 5, 20, 9, 14, 41, 82, DateTimeKind.Utc).AddTicks(8010), 0L, 2L, null, 0L, true, new DateTime(2019, 5, 20, 9, 14, 41, 82, DateTimeKind.Utc).AddTicks(8010), 0L, 1L },
-                    { 8L, new DateTime(2019, 5, 20, 9, 14, 41, 82, DateTimeKind.Utc).AddTicks(8030), 0L, 2L, null, 0L, true, new DateTime(2019, 5, 20, 9, 14, 41, 82, DateTimeKind.Utc).AddTicks(8030), 0L, 4L },
-                    { 10L, new DateTime(2019, 5, 20, 9, 14, 41, 82, DateTimeKind.Utc).AddTicks(8030), 0L, 2L, null, 0L, true, new DateTime(2019, 5, 20, 9, 14, 41, 82, DateTimeKind.Utc).AddTicks(8030), 0L, 5L },
-                    { 15L, new DateTime(2019, 5, 20, 9, 14, 41, 82, DateTimeKind.Utc).AddTicks(8040), 0L, 8L, null, 0L, true, new DateTime(2019, 5, 20, 9, 14, 41, 82, DateTimeKind.Utc).AddTicks(8040), 0L, 6L },
-                    { 17L, new DateTime(2019, 5, 20, 9, 14, 41, 82, DateTimeKind.Utc).AddTicks(8040), 0L, 9L, null, 0L, true, new DateTime(2019, 5, 20, 9, 14, 41, 82, DateTimeKind.Utc).AddTicks(8040), 0L, 2L },
-                    { 3L, new DateTime(2019, 5, 20, 9, 14, 41, 82, DateTimeKind.Utc).AddTicks(8020), 0L, 3L, null, 0L, true, new DateTime(2019, 5, 20, 9, 14, 41, 82, DateTimeKind.Utc).AddTicks(8020), 0L, 1L },
-                    { 6L, new DateTime(2019, 5, 20, 9, 14, 41, 82, DateTimeKind.Utc).AddTicks(8020), 0L, 3L, null, 0L, true, new DateTime(2019, 5, 20, 9, 14, 41, 82, DateTimeKind.Utc).AddTicks(8020), 0L, 3L },
-                    { 4L, new DateTime(2019, 5, 20, 9, 14, 41, 82, DateTimeKind.Utc).AddTicks(8020), 0L, 4L, null, 0L, true, new DateTime(2019, 5, 20, 9, 14, 41, 82, DateTimeKind.Utc).AddTicks(8020), 0L, 1L },
-                    { 5L, new DateTime(2019, 5, 20, 9, 14, 41, 82, DateTimeKind.Utc).AddTicks(8020), 0L, 4L, null, 0L, true, new DateTime(2019, 5, 20, 9, 14, 41, 82, DateTimeKind.Utc).AddTicks(8020), 0L, 3L },
-                    { 7L, new DateTime(2019, 5, 20, 9, 14, 41, 82, DateTimeKind.Utc).AddTicks(8030), 0L, 5L, null, 0L, true, new DateTime(2019, 5, 20, 9, 14, 41, 82, DateTimeKind.Utc).AddTicks(8030), 0L, 3L },
-                    { 12L, new DateTime(2019, 5, 20, 9, 14, 41, 82, DateTimeKind.Utc).AddTicks(8030), 0L, 5L, null, 0L, true, new DateTime(2019, 5, 20, 9, 14, 41, 82, DateTimeKind.Utc).AddTicks(8030), 0L, 6L },
-                    { 16L, new DateTime(2019, 5, 20, 9, 14, 41, 82, DateTimeKind.Utc).AddTicks(8040), 0L, 5L, null, 0L, true, new DateTime(2019, 5, 20, 9, 14, 41, 82, DateTimeKind.Utc).AddTicks(8040), 0L, 2L },
-                    { 13L, new DateTime(2019, 5, 20, 9, 14, 41, 82, DateTimeKind.Utc).AddTicks(8030), 0L, 6L, null, 0L, true, new DateTime(2019, 5, 20, 9, 14, 41, 82, DateTimeKind.Utc).AddTicks(8030), 0L, 6L },
-                    { 18L, new DateTime(2019, 5, 20, 9, 14, 41, 82, DateTimeKind.Utc).AddTicks(8040), 0L, 6L, null, 0L, true, new DateTime(2019, 5, 20, 9, 14, 41, 82, DateTimeKind.Utc).AddTicks(8040), 0L, 2L },
-                    { 20L, new DateTime(2019, 5, 20, 9, 14, 41, 82, DateTimeKind.Utc).AddTicks(8040), 0L, 10L, null, 0L, true, new DateTime(2019, 5, 20, 9, 14, 41, 82, DateTimeKind.Utc).AddTicks(8040), 0L, 2L }
+                    { 1L, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 1L, null, 0L, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 1L },
+                    { 5L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 4L, null, 0L, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 3L },
+                    { 4L, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 4L, null, 0L, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 1L },
+                    { 6L, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 3L, null, 0L, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 3L },
+                    { 3L, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 3L, null, 0L, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 1L },
+                    { 17L, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 9L, null, 0L, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 2L },
+                    { 7L, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 5L, null, 0L, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 3L },
+                    { 12L, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 5L, null, 0L, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 6L },
+                    { 16L, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 5L, null, 0L, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 2L },
+                    { 15L, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 8L, null, 0L, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 6L },
+                    { 13L, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 6L, null, 0L, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 6L },
+                    { 10L, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 2L, null, 0L, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 5L },
+                    { 18L, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 6L, null, 0L, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 2L },
+                    { 14L, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 7L, null, 0L, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 6L },
+                    { 20L, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 10L, null, 0L, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 2L },
+                    { 2L, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 2L, null, 0L, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 1L },
+                    { 19L, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 1L, null, 0L, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 2L },
+                    { 11L, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 1L, null, 0L, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 5L },
+                    { 9L, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 1L, null, 0L, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 4L },
+                    { 8L, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 2L, null, 0L, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 4L }
                 });
 
             migrationBuilder.InsertData(
                 table: "Requests",
-                columns: new[] { "Id", "CreatedAt", "CreatedBy", "DataPath", "Delay", "DeletedAt", "DeletedBy", "Discriminator", "Guid", "IsEnabled", "ModifiedAt", "ModifiedBy", "RequestType", "ResponseType", "CurrencyPairId" },
-                values: new object[] { 10L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "https://poloniex.com/public?command=returnTicker", 5000, null, 0L, "CurrencyPairRequest", new Guid("eba1ac98-9072-4429-b60d-35e9da307d7a"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 1, 6L });
+                columns: new[] { "Id", "CreatedAt", "CreatedBy", "DataPath", "Delay", "DeletedAt", "DeletedBy", "Discriminator", "Guid", "IsEnabled", "ModifiedAt", "ModifiedBy", "RequestType", "CurrencyId" },
+                values: new object[] { 1L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "https://api.etherscan.io/api", 5000, null, 0L, "CurrencyRequest", new Guid("d13fc276-8077-49d2-ba38-998c58895df9"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 3L });
 
             migrationBuilder.InsertData(
                 table: "Requests",
                 columns: new[] { "Id", "CreatedAt", "CreatedBy", "DataPath", "Delay", "DeletedAt", "DeletedBy", "Discriminator", "Guid", "IsEnabled", "ModifiedAt", "ModifiedBy", "RequestType", "ResponseType", "CurrencyPairId" },
-                values: new object[] { 9L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "https://poloniex.com/public?command=returnTicker", 5000, null, 0L, "CurrencyPairRequest", new Guid("97646141-1e27-46c0-9271-5f557f92836f"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 1, 5L });
+                values: new object[] { 9L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "https://poloniex.com/public?command=returnTicker", 5000, null, 0L, "CurrencyPairRequest", new Guid("419db9ee-0510-47d1-8b14-620e2c86dcb4"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 1, 5L });
 
             migrationBuilder.InsertData(
                 table: "Requests",
                 columns: new[] { "Id", "CreatedAt", "CreatedBy", "DataPath", "Delay", "DeletedAt", "DeletedBy", "Discriminator", "Guid", "IsEnabled", "ModifiedAt", "ModifiedBy", "RequestType", "ResponseType", "CurrencyPairId" },
-                values: new object[] { 8L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "https://www.alphavantage.co/query", 5000, null, 0L, "CurrencyPairRequest", new Guid("653138a5-3df4-43fa-875f-945e7dffa40e"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 1, 4L });
-
-            migrationBuilder.InsertData(
-                table: "Requests",
-                columns: new[] { "Id", "CreatedAt", "CreatedBy", "DataPath", "Delay", "DeletedAt", "DeletedBy", "Discriminator", "Guid", "IsEnabled", "ModifiedAt", "ModifiedBy", "RequestType", "CurrencyPairId" },
-                values: new object[] { 6L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "https://api.ethfinex.com/v2/ticker/tKNCUSD", 5000, null, 0L, "CurrencyPairRequest", new Guid("be003106-ba60-46e8-a56d-10ff33a0c4ef"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 2L });
+                values: new object[] { 10L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "https://poloniex.com/public?command=returnTicker", 5000, null, 0L, "CurrencyPairRequest", new Guid("b729acf9-a83c-4e76-8af8-a2ac7efc28c2"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 1, 6L });
 
             migrationBuilder.InsertData(
                 table: "Requests",
                 columns: new[] { "Id", "CreatedAt", "CreatedBy", "DataPath", "Delay", "DeletedAt", "DeletedBy", "Discriminator", "Guid", "IsEnabled", "ModifiedAt", "ModifiedBy", "RequestType", "ResponseType", "CurrencyPairId" },
-                values: new object[] { 20L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "https://www.coinhako.com/api/v1/price/currency/LTCUSD", 10000, null, 0L, "CurrencyPairRequest", new Guid("c1f6fc3f-d5f2-4a04-8e9e-66528e3bb568"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 1, 16L });
-
-            migrationBuilder.InsertData(
-                table: "Requests",
-                columns: new[] { "Id", "CreatedAt", "CreatedBy", "DataPath", "Delay", "DeletedAt", "DeletedBy", "Discriminator", "Guid", "IsEnabled", "ModifiedAt", "ModifiedBy", "RequestType", "ResponseType", "CurrencyPairId" },
-                values: new object[] { 19L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "https://www.coinhako.com/api/v1/price/currency/LTCSGD", 10000, null, 0L, "CurrencyPairRequest", new Guid("94702f2f-8527-4ddf-98de-998343fe9784"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 1, 15L });
-
-            migrationBuilder.InsertData(
-                table: "Requests",
-                columns: new[] { "Id", "CreatedAt", "CreatedBy", "DataPath", "Delay", "DeletedAt", "DeletedBy", "Discriminator", "Guid", "IsEnabled", "ModifiedAt", "ModifiedBy", "RequestType", "ResponseType", "CurrencyPairId" },
-                values: new object[] { 18L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "https://www.coinhako.com/api/v1/price/currency/ETHUSD", 10000, null, 0L, "CurrencyPairRequest", new Guid("5b68db33-4f46-4e6b-97ba-ad9393a95168"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 1, 14L });
-
-            migrationBuilder.InsertData(
-                table: "Requests",
-                columns: new[] { "Id", "CreatedAt", "CreatedBy", "DataPath", "Delay", "DeletedAt", "DeletedBy", "Discriminator", "Guid", "IsEnabled", "ModifiedAt", "ModifiedBy", "RequestType", "ResponseType", "CurrencyPairId" },
-                values: new object[] { 17L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "https://www.coinhako.com/api/v1/price/currency/ETHSGD", 10000, null, 0L, "CurrencyPairRequest", new Guid("52088480-0ee9-41e6-8eda-aab4b2d09761"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 1, 13L });
-
-            migrationBuilder.InsertData(
-                table: "Requests",
-                columns: new[] { "Id", "CreatedAt", "CreatedBy", "DataPath", "Delay", "DeletedAt", "DeletedBy", "Discriminator", "Guid", "IsEnabled", "ModifiedAt", "ModifiedBy", "RequestType", "ResponseType", "CurrencyPairId" },
-                values: new object[] { 16L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "https://www.coinhako.com/api/v1/price/currency/BTCUSD", 10000, null, 0L, "CurrencyPairRequest", new Guid("36caf468-b8d1-4d82-98ea-fba94bdf921a"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 1, 12L });
-
-            migrationBuilder.InsertData(
-                table: "Requests",
-                columns: new[] { "Id", "CreatedAt", "CreatedBy", "DataPath", "Delay", "DeletedAt", "DeletedBy", "Discriminator", "Guid", "IsEnabled", "ModifiedAt", "ModifiedBy", "RequestType", "ResponseType", "CurrencyPairId" },
-                values: new object[] { 15L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "https://www.coinhako.com/api/v1/price/currency/BTCSGD", 10000, null, 0L, "CurrencyPairRequest", new Guid("7df93046-cea1-4b37-8005-539c255bbfe9"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 1, 11L });
+                values: new object[] { 8L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "https://www.alphavantage.co/query", 5000, null, 0L, "CurrencyPairRequest", new Guid("48ad7cb2-b2b7-41be-8540-64136b72883c"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 1, 4L });
 
             migrationBuilder.InsertData(
                 table: "Requests",
                 columns: new[] { "Id", "CreatedAt", "CreatedBy", "DataPath", "DeletedAt", "DeletedBy", "Discriminator", "Guid", "IsEnabled", "ModifiedAt", "ModifiedBy", "RequestType", "ResponseType", "WebsocketRequest_CurrencyPairId" },
-                values: new object[] { 14L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "wss://stream.binance.com:9443/stream?streams=!ticker@arr", null, 0L, "WebsocketRequest", new Guid("bff8f54a-0bc8-4ae6-9a44-9de66a85d662"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 50, 1, 10L });
+                values: new object[] { 13L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "wss://stream.binance.com:9443/stream?streams=!ticker@arr", null, 0L, "WebsocketRequest", new Guid("6f9d8fe7-71f4-42b8-ac31-526f559549a3"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 50, 1, 9L });
+
+            migrationBuilder.InsertData(
+                table: "Requests",
+                columns: new[] { "Id", "CreatedAt", "CreatedBy", "DataPath", "Delay", "DeletedAt", "DeletedBy", "Discriminator", "Guid", "IsEnabled", "ModifiedAt", "ModifiedBy", "RequestType", "ResponseType", "CurrencyPairId" },
+                values: new object[] { 20L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "https://www.coinhako.com/api/v1/price/currency/LTCUSD", 10000, null, 0L, "CurrencyPairRequest", new Guid("92121fbb-8f01-45de-bfab-fe17aeac7174"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 1, 16L });
 
             migrationBuilder.InsertData(
                 table: "Requests",
                 columns: new[] { "Id", "CreatedAt", "CreatedBy", "DataPath", "DeletedAt", "DeletedBy", "Discriminator", "Guid", "IsEnabled", "ModifiedAt", "ModifiedBy", "RequestType", "ResponseType", "WebsocketRequest_CurrencyPairId" },
-                values: new object[] { 13L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "wss://stream.binance.com:9443/stream?streams=!ticker@arr", null, 0L, "WebsocketRequest", new Guid("c7cb205a-9800-44c5-88c9-050eb7ca3dc0"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 50, 1, 9L });
+                values: new object[] { 14L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "wss://stream.binance.com:9443/stream?streams=!ticker@arr", null, 0L, "WebsocketRequest", new Guid("dc33dc82-26e5-4eef-af44-78e1efce2d1f"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 50, 1, 10L });
+
+            migrationBuilder.InsertData(
+                table: "Requests",
+                columns: new[] { "Id", "CreatedAt", "CreatedBy", "DataPath", "Delay", "DeletedAt", "DeletedBy", "Discriminator", "Guid", "IsEnabled", "ModifiedAt", "ModifiedBy", "RequestType", "CurrencyId" },
+                values: new object[] { 2L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "https://api.etherscan.io/api", 5000, null, 0L, "CurrencyRequest", new Guid("b7b9642e-357a-451c-9741-bf5a7fcb0ad1"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 4L });
 
             migrationBuilder.InsertData(
                 table: "Requests",
                 columns: new[] { "Id", "CreatedAt", "CreatedBy", "DataPath", "Delay", "DeletedAt", "DeletedBy", "Discriminator", "Guid", "IsEnabled", "ModifiedAt", "ModifiedBy", "RequestType", "ResponseType", "CurrencyPairId" },
-                values: new object[] { 11L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "https://api.bitfinex.com/v1/pubticker/etheur", 2000, null, 0L, "CurrencyPairRequest", new Guid("7883e24f-d941-4cf3-b684-d3d1eb27dac7"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 1, 7L });
+                values: new object[] { 19L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "https://www.coinhako.com/api/v1/price/currency/LTCSGD", 10000, null, 0L, "CurrencyPairRequest", new Guid("58bf3728-1887-4460-bf61-6b898be360f3"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 1, 15L });
+
+            migrationBuilder.InsertData(
+                table: "Requests",
+                columns: new[] { "Id", "CreatedAt", "CreatedBy", "DataPath", "Delay", "DeletedAt", "DeletedBy", "Discriminator", "Guid", "IsEnabled", "ModifiedAt", "ModifiedBy", "RequestType", "ResponseType", "CurrencyPairId" },
+                values: new object[] { 18L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "https://www.coinhako.com/api/v1/price/currency/ETHUSD", 10000, null, 0L, "CurrencyPairRequest", new Guid("ceb4e033-ebbb-45d9-9312-951f09228c30"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 1, 14L });
+
+            migrationBuilder.InsertData(
+                table: "Requests",
+                columns: new[] { "Id", "CreatedAt", "CreatedBy", "DataPath", "Delay", "DeletedAt", "DeletedBy", "Discriminator", "Guid", "IsEnabled", "ModifiedAt", "ModifiedBy", "RequestType", "CurrencyId" },
+                values: new object[] { 3L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "https://insight.bitpay.com/api/status?q=getBlockCount", 90000, null, 0L, "CurrencyRequest", new Guid("31ceeb18-1d89-43d2-b215-0488d9417c67"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 5L });
+
+            migrationBuilder.InsertData(
+                table: "Requests",
+                columns: new[] { "Id", "CreatedAt", "CreatedBy", "DataPath", "Delay", "DeletedAt", "DeletedBy", "Discriminator", "Guid", "IsEnabled", "ModifiedAt", "ModifiedBy", "RequestType", "CurrencyId" },
+                values: new object[] { 4L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "https://api.coinranking.com/v1/public/coin/1?base=USD", 90000, null, 0L, "CurrencyRequest", new Guid("7f10715f-b5cc-4e52-9fa8-011311a5a2ca"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 5L });
+
+            migrationBuilder.InsertData(
+                table: "Requests",
+                columns: new[] { "Id", "CreatedAt", "CreatedBy", "DataPath", "Delay", "DeletedAt", "DeletedBy", "Discriminator", "Guid", "IsEnabled", "ModifiedAt", "ModifiedBy", "RequestType", "ResponseType", "CurrencyPairId" },
+                values: new object[] { 17L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "https://www.coinhako.com/api/v1/price/currency/ETHSGD", 10000, null, 0L, "CurrencyPairRequest", new Guid("49be3d33-d7b8-47aa-abf0-ee8765100b21"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 1, 13L });
+
+            migrationBuilder.InsertData(
+                table: "Requests",
+                columns: new[] { "Id", "CreatedAt", "CreatedBy", "DataPath", "Delay", "DeletedAt", "DeletedBy", "Discriminator", "Guid", "IsEnabled", "ModifiedAt", "ModifiedBy", "RequestType", "ResponseType", "CurrencyPairId" },
+                values: new object[] { 16L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "https://www.coinhako.com/api/v1/price/currency/BTCUSD", 10000, null, 0L, "CurrencyPairRequest", new Guid("fd199860-f699-4414-ba14-fdae9e856b5e"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 1, 12L });
 
             migrationBuilder.InsertData(
                 table: "Requests",
                 columns: new[] { "Id", "CreatedAt", "CreatedBy", "DataPath", "Delay", "DeletedAt", "DeletedBy", "Discriminator", "Guid", "IsEnabled", "ModifiedAt", "ModifiedBy", "RequestType", "CurrencyPairId" },
-                values: new object[] { 5L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "https://api.ethfinex.com/v2/ticker/tETHUSD", 5000, null, 0L, "CurrencyPairRequest", new Guid("0214da06-699d-4843-a88f-b3cf6883454f"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 1L });
+                values: new object[] { 5L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "https://api.ethfinex.com/v2/ticker/tETHUSD", 5000, null, 0L, "CurrencyPairRequest", new Guid("096e9def-1c0f-4d1c-aa7b-273499f2cbda"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 1L });
 
             migrationBuilder.InsertData(
                 table: "Requests",
-                columns: new[] { "Id", "CreatedAt", "CreatedBy", "DataPath", "Delay", "DeletedAt", "DeletedBy", "Discriminator", "Guid", "IsEnabled", "ModifiedAt", "ModifiedBy", "RequestType", "CurrencyId" },
-                values: new object[] { 4L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "https://api.coinranking.com/v1/public/coin/1?base=USD", 90000, null, 0L, "CurrencyRequest", new Guid("4c192fd7-c924-4dad-a1a7-640aa4b583c4"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 5L });
-
-            migrationBuilder.InsertData(
-                table: "Requests",
-                columns: new[] { "Id", "CreatedAt", "CreatedBy", "DataPath", "Delay", "DeletedAt", "DeletedBy", "Discriminator", "Guid", "IsEnabled", "ModifiedAt", "ModifiedBy", "RequestType", "CurrencyId" },
-                values: new object[] { 3L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "https://insight.bitpay.com/api/status?q=getBlockCount", 90000, null, 0L, "CurrencyRequest", new Guid("73b5731a-77ad-4a5c-a111-0d133c89cd1e"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 5L });
-
-            migrationBuilder.InsertData(
-                table: "Requests",
-                columns: new[] { "Id", "CreatedAt", "CreatedBy", "DataPath", "Delay", "DeletedAt", "DeletedBy", "Discriminator", "Guid", "IsEnabled", "ModifiedAt", "ModifiedBy", "RequestType", "CurrencyId" },
-                values: new object[] { 2L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "https://api.etherscan.io/api", 5000, null, 0L, "CurrencyRequest", new Guid("aa85dcba-a5d5-49c3-a858-d0d6c46e9b2b"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 4L });
-
-            migrationBuilder.InsertData(
-                table: "Requests",
-                columns: new[] { "Id", "CreatedAt", "CreatedBy", "DataPath", "Delay", "DeletedAt", "DeletedBy", "Discriminator", "Guid", "IsEnabled", "ModifiedAt", "ModifiedBy", "RequestType", "CurrencyId" },
-                values: new object[] { 1L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "https://api.etherscan.io/api", 5000, null, 0L, "CurrencyRequest", new Guid("f9ede5ad-aea5-4154-9395-671b2611a5ac"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 3L });
+                columns: new[] { "Id", "CreatedAt", "CreatedBy", "DataPath", "Delay", "DeletedAt", "DeletedBy", "Discriminator", "Guid", "IsEnabled", "ModifiedAt", "ModifiedBy", "RequestType", "CurrencyPairId" },
+                values: new object[] { 6L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "https://api.ethfinex.com/v2/ticker/tKNCUSD", 5000, null, 0L, "CurrencyPairRequest", new Guid("534ccff8-b6ff-4cce-961b-8458ef0ca5af"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 2L });
 
             migrationBuilder.InsertData(
                 table: "Requests",
                 columns: new[] { "Id", "CreatedAt", "CreatedBy", "DataPath", "Delay", "DeletedAt", "DeletedBy", "Discriminator", "Guid", "IsEnabled", "ModifiedAt", "ModifiedBy", "RequestType", "ResponseType", "CurrencyPairId" },
-                values: new object[] { 7L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml", 86400000, null, 0L, "CurrencyPairRequest", new Guid("b1aecae0-0235-4878-9e2e-8b44a98b49a2"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 2, 3L });
+                values: new object[] { 11L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "https://api.bitfinex.com/v1/pubticker/etheur", 2000, null, 0L, "CurrencyPairRequest", new Guid("ee593665-c6c5-454a-8831-b7e28265a1c8"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 1, 7L });
 
             migrationBuilder.InsertData(
                 table: "Requests",
                 columns: new[] { "Id", "CreatedAt", "CreatedBy", "DataPath", "Delay", "DeletedAt", "DeletedBy", "Discriminator", "Guid", "IsEnabled", "ModifiedAt", "ModifiedBy", "RequestType", "ResponseType", "CurrencyPairId" },
-                values: new object[] { 12L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "https://poloniex.com/public?command=returnTicker", 5000, null, 0L, "CurrencyPairRequest", new Guid("8deb3374-962d-4e06-97ac-0ccc39cc7906"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 1, 8L });
+                values: new object[] { 15L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "https://www.coinhako.com/api/v1/price/currency/BTCSGD", 10000, null, 0L, "CurrencyPairRequest", new Guid("c162e683-cceb-4a03-aa24-f095b4d9db1f"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 1, 11L });
+
+            migrationBuilder.InsertData(
+                table: "Requests",
+                columns: new[] { "Id", "CreatedAt", "CreatedBy", "DataPath", "Delay", "DeletedAt", "DeletedBy", "Discriminator", "Guid", "IsEnabled", "ModifiedAt", "ModifiedBy", "RequestType", "ResponseType", "CurrencyPairId" },
+                values: new object[] { 7L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml", 86400000, null, 0L, "CurrencyPairRequest", new Guid("1d8ba5ea-9d3a-4b02-b2d8-84ccd0851e69"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 2, 3L });
+
+            migrationBuilder.InsertData(
+                table: "Requests",
+                columns: new[] { "Id", "CreatedAt", "CreatedBy", "DataPath", "Delay", "DeletedAt", "DeletedBy", "Discriminator", "Guid", "IsEnabled", "ModifiedAt", "ModifiedBy", "RequestType", "ResponseType", "CurrencyPairId" },
+                values: new object[] { 12L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "https://poloniex.com/public?command=returnTicker", 5000, null, 0L, "CurrencyPairRequest", new Guid("e47e6062-e727-41ed-a0c1-750b1a792dd7"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 1, 8L });
 
             migrationBuilder.InsertData(
                 table: "RequestComponents",
                 columns: new[] { "Id", "ComponentType", "CreatedAt", "CreatedBy", "DeletedAt", "DeletedBy", "Identifier", "IsDenominated", "IsEnabled", "ModifiedAt", "ModifiedBy", "QueryComponent", "RequestId", "Value" },
-                values: new object[] { 1L, 1000, new DateTime(2019, 5, 20, 9, 14, 41, 62, DateTimeKind.Utc).AddTicks(1400), 0L, null, 0L, null, true, true, new DateTime(2019, 5, 20, 9, 14, 41, 62, DateTimeKind.Utc).AddTicks(1400), 0L, "result", 1L, null });
+                values: new object[] { 1L, 1000, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 0L, null, true, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "result", 1L, null });
 
             migrationBuilder.InsertData(
                 table: "RequestComponents",
                 columns: new[] { "Id", "ComponentType", "CreatedAt", "CreatedBy", "DeletedAt", "DeletedBy", "Identifier", "IsEnabled", "ModifiedAt", "ModifiedBy", "QueryComponent", "RequestId", "Value" },
-                values: new object[] { 27L, 1, new DateTime(2019, 5, 20, 9, 14, 41, 62, DateTimeKind.Utc).AddTicks(1900), 0L, null, 0L, null, true, new DateTime(2019, 5, 20, 9, 14, 41, 62, DateTimeKind.Utc).AddTicks(1900), 0L, "USDT_BTC/lowestAsk", 12L, null });
+                values: new object[] { 27L, 1, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 0L, null, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "USDT_BTC/lowestAsk", 12L, null });
 
             migrationBuilder.InsertData(
                 table: "RequestComponents",
                 columns: new[] { "Id", "ComponentType", "CreatedAt", "CreatedBy", "DeletedAt", "DeletedBy", "Identifier", "IsEnabled", "ModifiedAt", "ModifiedBy", "QueryComponent", "RequestId", "Value" },
-                values: new object[] { 35L, 1, new DateTime(2019, 5, 20, 9, 14, 41, 62, DateTimeKind.Utc).AddTicks(1910), 0L, null, 0L, "data/s=>KNCETH", true, new DateTime(2019, 5, 20, 9, 14, 41, 62, DateTimeKind.Utc).AddTicks(1910), 0L, "a", 14L, null });
+                values: new object[] { 35L, 1, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 0L, "data/s=>KNCETH", true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "a", 14L, null });
 
             migrationBuilder.InsertData(
                 table: "RequestComponents",
                 columns: new[] { "Id", "ComponentType", "CreatedAt", "CreatedBy", "DeletedAt", "DeletedBy", "Identifier", "IsEnabled", "ModifiedAt", "ModifiedBy", "QueryComponent", "RequestId", "Value" },
-                values: new object[] { 36L, 8, new DateTime(2019, 5, 20, 9, 14, 41, 62, DateTimeKind.Utc).AddTicks(1910), 0L, null, 0L, "data/s=>KNCETH", true, new DateTime(2019, 5, 20, 9, 14, 41, 62, DateTimeKind.Utc).AddTicks(1910), 0L, "A", 14L, null });
+                values: new object[] { 36L, 8, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 0L, "data/s=>KNCETH", true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "A", 14L, null });
 
             migrationBuilder.InsertData(
                 table: "RequestComponents",
                 columns: new[] { "Id", "ComponentType", "CreatedAt", "CreatedBy", "DeletedAt", "DeletedBy", "Identifier", "IsEnabled", "ModifiedAt", "ModifiedBy", "QueryComponent", "RequestId", "Value" },
-                values: new object[] { 37L, 2, new DateTime(2019, 5, 20, 9, 14, 41, 62, DateTimeKind.Utc).AddTicks(1910), 0L, null, 0L, "data/s=>KNCETH", true, new DateTime(2019, 5, 20, 9, 14, 41, 62, DateTimeKind.Utc).AddTicks(1910), 0L, "b", 14L, null });
+                values: new object[] { 37L, 2, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 0L, "data/s=>KNCETH", true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "b", 14L, null });
 
             migrationBuilder.InsertData(
                 table: "RequestComponents",
                 columns: new[] { "Id", "ComponentType", "CreatedAt", "CreatedBy", "DeletedAt", "DeletedBy", "Identifier", "IsEnabled", "ModifiedAt", "ModifiedBy", "QueryComponent", "RequestId", "Value" },
-                values: new object[] { 38L, 5, new DateTime(2019, 5, 20, 9, 14, 41, 62, DateTimeKind.Utc).AddTicks(1910), 0L, null, 0L, "data/s=>KNCETH", true, new DateTime(2019, 5, 20, 9, 14, 41, 62, DateTimeKind.Utc).AddTicks(1910), 0L, "B", 14L, null });
+                values: new object[] { 38L, 5, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 0L, "data/s=>KNCETH", true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "B", 14L, null });
 
             migrationBuilder.InsertData(
                 table: "RequestComponents",
                 columns: new[] { "Id", "ComponentType", "CreatedAt", "CreatedBy", "DeletedAt", "DeletedBy", "Identifier", "IsEnabled", "ModifiedAt", "ModifiedBy", "QueryComponent", "RequestId", "Value" },
-                values: new object[] { 39L, 2, new DateTime(2019, 5, 20, 9, 14, 41, 62, DateTimeKind.Utc).AddTicks(1910), 0L, null, 0L, null, true, new DateTime(2019, 5, 20, 9, 14, 41, 62, DateTimeKind.Utc).AddTicks(1910), 0L, "data/buy_price", 15L, null });
+                values: new object[] { 39L, 2, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 0L, null, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "data/buy_price", 15L, null });
 
             migrationBuilder.InsertData(
                 table: "RequestComponents",
                 columns: new[] { "Id", "ComponentType", "CreatedAt", "CreatedBy", "DeletedAt", "DeletedBy", "Identifier", "IsEnabled", "ModifiedAt", "ModifiedBy", "QueryComponent", "RequestId", "Value" },
-                values: new object[] { 40L, 1, new DateTime(2019, 5, 20, 9, 14, 41, 62, DateTimeKind.Utc).AddTicks(1910), 0L, null, 0L, null, true, new DateTime(2019, 5, 20, 9, 14, 41, 62, DateTimeKind.Utc).AddTicks(1910), 0L, "data/sell_price", 15L, null });
+                values: new object[] { 40L, 1, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 0L, null, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "data/sell_price", 15L, null });
 
             migrationBuilder.InsertData(
                 table: "RequestComponents",
                 columns: new[] { "Id", "ComponentType", "CreatedAt", "CreatedBy", "DeletedAt", "DeletedBy", "Identifier", "IsEnabled", "ModifiedAt", "ModifiedBy", "QueryComponent", "RequestId", "Value" },
-                values: new object[] { 41L, 2, new DateTime(2019, 5, 20, 9, 14, 41, 62, DateTimeKind.Utc).AddTicks(1920), 0L, null, 0L, null, true, new DateTime(2019, 5, 20, 9, 14, 41, 62, DateTimeKind.Utc).AddTicks(1920), 0L, "data/buy_price", 16L, null });
+                values: new object[] { 41L, 2, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 0L, null, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "data/buy_price", 16L, null });
 
             migrationBuilder.InsertData(
                 table: "RequestComponents",
                 columns: new[] { "Id", "ComponentType", "CreatedAt", "CreatedBy", "DeletedAt", "DeletedBy", "Identifier", "IsEnabled", "ModifiedAt", "ModifiedBy", "QueryComponent", "RequestId", "Value" },
-                values: new object[] { 42L, 1, new DateTime(2019, 5, 20, 9, 14, 41, 62, DateTimeKind.Utc).AddTicks(1920), 0L, null, 0L, null, true, new DateTime(2019, 5, 20, 9, 14, 41, 62, DateTimeKind.Utc).AddTicks(1920), 0L, "data/sell_price", 16L, null });
+                values: new object[] { 42L, 1, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 0L, null, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "data/sell_price", 16L, null });
 
             migrationBuilder.InsertData(
                 table: "RequestComponents",
                 columns: new[] { "Id", "ComponentType", "CreatedAt", "CreatedBy", "DeletedAt", "DeletedBy", "Identifier", "IsEnabled", "ModifiedAt", "ModifiedBy", "QueryComponent", "RequestId", "Value" },
-                values: new object[] { 43L, 2, new DateTime(2019, 5, 20, 9, 14, 41, 62, DateTimeKind.Utc).AddTicks(1920), 0L, null, 0L, null, true, new DateTime(2019, 5, 20, 9, 14, 41, 62, DateTimeKind.Utc).AddTicks(1920), 0L, "data/buy_price", 17L, null });
+                values: new object[] { 43L, 2, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 0L, null, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "data/buy_price", 17L, null });
 
             migrationBuilder.InsertData(
                 table: "RequestComponents",
                 columns: new[] { "Id", "ComponentType", "CreatedAt", "CreatedBy", "DeletedAt", "DeletedBy", "Identifier", "IsEnabled", "ModifiedAt", "ModifiedBy", "QueryComponent", "RequestId", "Value" },
-                values: new object[] { 44L, 1, new DateTime(2019, 5, 20, 9, 14, 41, 62, DateTimeKind.Utc).AddTicks(1920), 0L, null, 0L, null, true, new DateTime(2019, 5, 20, 9, 14, 41, 62, DateTimeKind.Utc).AddTicks(1920), 0L, "data/sell_price", 17L, null });
+                values: new object[] { 44L, 1, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 0L, null, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "data/sell_price", 17L, null });
 
             migrationBuilder.InsertData(
                 table: "RequestComponents",
                 columns: new[] { "Id", "ComponentType", "CreatedAt", "CreatedBy", "DeletedAt", "DeletedBy", "Identifier", "IsEnabled", "ModifiedAt", "ModifiedBy", "QueryComponent", "RequestId", "Value" },
-                values: new object[] { 45L, 2, new DateTime(2019, 5, 20, 9, 14, 41, 62, DateTimeKind.Utc).AddTicks(1920), 0L, null, 0L, null, true, new DateTime(2019, 5, 20, 9, 14, 41, 62, DateTimeKind.Utc).AddTicks(1920), 0L, "data/buy_price", 18L, null });
+                values: new object[] { 45L, 2, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 0L, null, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "data/buy_price", 18L, null });
 
             migrationBuilder.InsertData(
                 table: "RequestComponents",
                 columns: new[] { "Id", "ComponentType", "CreatedAt", "CreatedBy", "DeletedAt", "DeletedBy", "Identifier", "IsEnabled", "ModifiedAt", "ModifiedBy", "QueryComponent", "RequestId", "Value" },
-                values: new object[] { 46L, 1, new DateTime(2019, 5, 20, 9, 14, 41, 62, DateTimeKind.Utc).AddTicks(1920), 0L, null, 0L, null, true, new DateTime(2019, 5, 20, 9, 14, 41, 62, DateTimeKind.Utc).AddTicks(1920), 0L, "data/sell_price", 18L, null });
+                values: new object[] { 46L, 1, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 0L, null, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "data/sell_price", 18L, null });
 
             migrationBuilder.InsertData(
                 table: "RequestComponents",
                 columns: new[] { "Id", "ComponentType", "CreatedAt", "CreatedBy", "DeletedAt", "DeletedBy", "Identifier", "IsEnabled", "ModifiedAt", "ModifiedBy", "QueryComponent", "RequestId", "Value" },
-                values: new object[] { 47L, 2, new DateTime(2019, 5, 20, 9, 14, 41, 62, DateTimeKind.Utc).AddTicks(1920), 0L, null, 0L, null, true, new DateTime(2019, 5, 20, 9, 14, 41, 62, DateTimeKind.Utc).AddTicks(1920), 0L, "data/buy_price", 19L, null });
+                values: new object[] { 47L, 2, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 0L, null, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "data/buy_price", 19L, null });
 
             migrationBuilder.InsertData(
                 table: "RequestComponents",
                 columns: new[] { "Id", "ComponentType", "CreatedAt", "CreatedBy", "DeletedAt", "DeletedBy", "Identifier", "IsEnabled", "ModifiedAt", "ModifiedBy", "QueryComponent", "RequestId", "Value" },
-                values: new object[] { 48L, 1, new DateTime(2019, 5, 20, 9, 14, 41, 62, DateTimeKind.Utc).AddTicks(1930), 0L, null, 0L, null, true, new DateTime(2019, 5, 20, 9, 14, 41, 62, DateTimeKind.Utc).AddTicks(1930), 0L, "data/sell_price", 19L, null });
+                values: new object[] { 48L, 1, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 0L, null, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "data/sell_price", 19L, null });
 
             migrationBuilder.InsertData(
                 table: "RequestComponents",
                 columns: new[] { "Id", "ComponentType", "CreatedAt", "CreatedBy", "DeletedAt", "DeletedBy", "Identifier", "IsEnabled", "ModifiedAt", "ModifiedBy", "QueryComponent", "RequestId", "Value" },
-                values: new object[] { 49L, 2, new DateTime(2019, 5, 20, 9, 14, 41, 62, DateTimeKind.Utc).AddTicks(1930), 0L, null, 0L, null, true, new DateTime(2019, 5, 20, 9, 14, 41, 62, DateTimeKind.Utc).AddTicks(1930), 0L, "data/buy_price", 20L, null });
+                values: new object[] { 49L, 2, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, null, 0L, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "data/buy_price", 20L, null });
 
             migrationBuilder.InsertData(
                 table: "RequestComponents",
                 columns: new[] { "Id", "ComponentType", "CreatedAt", "CreatedBy", "DeletedAt", "DeletedBy", "Identifier", "IsEnabled", "ModifiedAt", "ModifiedBy", "QueryComponent", "RequestId", "Value" },
-                values: new object[] { 50L, 1, new DateTime(2019, 5, 20, 9, 14, 41, 62, DateTimeKind.Utc).AddTicks(1930), 0L, null, 0L, null, true, new DateTime(2019, 5, 20, 9, 14, 41, 62, DateTimeKind.Utc).AddTicks(1930), 0L, "data/sell_price", 20L, null });
+                values: new object[] { 50L, 1, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, null, 0L, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "data/sell_price", 20L, null });
 
             migrationBuilder.InsertData(
                 table: "RequestComponents",
                 columns: new[] { "Id", "ComponentType", "CreatedAt", "CreatedBy", "DeletedAt", "DeletedBy", "Identifier", "IsEnabled", "ModifiedAt", "ModifiedBy", "QueryComponent", "RequestId", "Value" },
-                values: new object[] { 16L, 1, new DateTime(2019, 5, 20, 9, 14, 41, 62, DateTimeKind.Utc).AddTicks(1800), 0L, null, 0L, null, true, new DateTime(2019, 5, 20, 9, 14, 41, 62, DateTimeKind.Utc).AddTicks(1800), 0L, "gesmes:Envelope/Cube/Cube/Cube/0=>@rate", 7L, null });
+                values: new object[] { 16L, 1, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 0L, null, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "gesmes:Envelope/Cube/Cube/Cube/0=>@rate", 7L, null });
 
             migrationBuilder.InsertData(
                 table: "RequestComponents",
                 columns: new[] { "Id", "ComponentType", "CreatedAt", "CreatedBy", "DeletedAt", "DeletedBy", "Identifier", "IsEnabled", "ModifiedAt", "ModifiedBy", "QueryComponent", "RequestId", "Value" },
-                values: new object[] { 17L, 1, new DateTime(2019, 5, 20, 9, 14, 41, 62, DateTimeKind.Utc).AddTicks(1800), 0L, null, 0L, null, true, new DateTime(2019, 5, 20, 9, 14, 41, 62, DateTimeKind.Utc).AddTicks(1800), 0L, "['Realtime Currency Exchange Rate']/['5. Exchange Rate']", 8L, null });
+                values: new object[] { 17L, 1, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 0L, null, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "['Realtime Currency Exchange Rate']/['5. Exchange Rate']", 8L, null });
 
             migrationBuilder.InsertData(
                 table: "RequestComponents",
                 columns: new[] { "Id", "ComponentType", "CreatedAt", "CreatedBy", "DeletedAt", "DeletedBy", "Identifier", "IsEnabled", "ModifiedAt", "ModifiedBy", "QueryComponent", "RequestId", "Value" },
-                values: new object[] { 18L, 12, new DateTime(2019, 5, 20, 9, 14, 41, 62, DateTimeKind.Utc).AddTicks(1800), 0L, null, 0L, null, true, new DateTime(2019, 5, 20, 9, 14, 41, 62, DateTimeKind.Utc).AddTicks(1800), 0L, "BTC_BCN/baseVolume", 9L, null });
+                values: new object[] { 18L, 12, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 0L, null, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "BTC_BCN/baseVolume", 9L, null });
 
             migrationBuilder.InsertData(
                 table: "RequestComponents",
                 columns: new[] { "Id", "ComponentType", "CreatedAt", "CreatedBy", "DeletedAt", "DeletedBy", "Identifier", "IsEnabled", "ModifiedAt", "ModifiedBy", "QueryComponent", "RequestId", "Value" },
-                values: new object[] { 19L, 1, new DateTime(2019, 5, 20, 9, 14, 41, 62, DateTimeKind.Utc).AddTicks(1810), 0L, null, 0L, null, true, new DateTime(2019, 5, 20, 9, 14, 41, 62, DateTimeKind.Utc).AddTicks(1810), 0L, "BTC_BCN/lowestAsk", 9L, null });
+                values: new object[] { 19L, 1, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 0L, null, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "BTC_BCN/lowestAsk", 9L, null });
 
             migrationBuilder.InsertData(
                 table: "RequestComponents",
                 columns: new[] { "Id", "ComponentType", "CreatedAt", "CreatedBy", "DeletedAt", "DeletedBy", "Identifier", "IsEnabled", "ModifiedAt", "ModifiedBy", "QueryComponent", "RequestId", "Value" },
-                values: new object[] { 20L, 2, new DateTime(2019, 5, 20, 9, 14, 41, 62, DateTimeKind.Utc).AddTicks(1810), 0L, null, 0L, null, true, new DateTime(2019, 5, 20, 9, 14, 41, 62, DateTimeKind.Utc).AddTicks(1810), 0L, "BTC_BCN/highestBid", 9L, null });
+                values: new object[] { 20L, 2, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 0L, null, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "BTC_BCN/highestBid", 9L, null });
 
             migrationBuilder.InsertData(
                 table: "RequestComponents",
                 columns: new[] { "Id", "ComponentType", "CreatedAt", "CreatedBy", "DeletedAt", "DeletedBy", "Identifier", "IsEnabled", "ModifiedAt", "ModifiedBy", "QueryComponent", "RequestId", "Value" },
-                values: new object[] { 21L, 12, new DateTime(2019, 5, 20, 9, 14, 41, 62, DateTimeKind.Utc).AddTicks(1810), 0L, null, 0L, null, true, new DateTime(2019, 5, 20, 9, 14, 41, 62, DateTimeKind.Utc).AddTicks(1810), 0L, "BTC_BTS/baseVolume", 10L, null });
+                values: new object[] { 21L, 12, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 0L, null, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "BTC_BTS/baseVolume", 10L, null });
 
             migrationBuilder.InsertData(
                 table: "RequestComponents",
                 columns: new[] { "Id", "ComponentType", "CreatedAt", "CreatedBy", "DeletedAt", "DeletedBy", "Identifier", "IsEnabled", "ModifiedAt", "ModifiedBy", "QueryComponent", "RequestId", "Value" },
-                values: new object[] { 22L, 1, new DateTime(2019, 5, 20, 9, 14, 41, 62, DateTimeKind.Utc).AddTicks(1810), 0L, null, 0L, null, true, new DateTime(2019, 5, 20, 9, 14, 41, 62, DateTimeKind.Utc).AddTicks(1810), 0L, "BTC_BTS/lowestAsk", 10L, null });
+                values: new object[] { 22L, 1, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 0L, null, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "BTC_BTS/lowestAsk", 10L, null });
 
             migrationBuilder.InsertData(
                 table: "RequestComponents",
                 columns: new[] { "Id", "ComponentType", "CreatedAt", "CreatedBy", "DeletedAt", "DeletedBy", "Identifier", "IsEnabled", "ModifiedAt", "ModifiedBy", "QueryComponent", "RequestId", "Value" },
-                values: new object[] { 23L, 2, new DateTime(2019, 5, 20, 9, 14, 41, 62, DateTimeKind.Utc).AddTicks(1890), 0L, null, 0L, null, true, new DateTime(2019, 5, 20, 9, 14, 41, 62, DateTimeKind.Utc).AddTicks(1890), 0L, "BTC_BTS/highestBid", 10L, null });
+                values: new object[] { 23L, 2, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 0L, null, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "BTC_BTS/highestBid", 10L, null });
 
             migrationBuilder.InsertData(
                 table: "RequestComponents",
                 columns: new[] { "Id", "ComponentType", "CreatedAt", "CreatedBy", "DeletedAt", "DeletedBy", "Identifier", "IsEnabled", "ModifiedAt", "ModifiedBy", "QueryComponent", "RequestId", "Value" },
-                values: new object[] { 33L, 5, new DateTime(2019, 5, 20, 9, 14, 41, 62, DateTimeKind.Utc).AddTicks(1900), 0L, null, 0L, "data/s=>ETHBTC", true, new DateTime(2019, 5, 20, 9, 14, 41, 62, DateTimeKind.Utc).AddTicks(1910), 0L, "B", 13L, null });
+                values: new object[] { 33L, 5, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 0L, "data/s=>ETHBTC", true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "B", 13L, null });
 
             migrationBuilder.InsertData(
                 table: "RequestComponents",
                 columns: new[] { "Id", "ComponentType", "CreatedAt", "CreatedBy", "DeletedAt", "DeletedBy", "Identifier", "IsEnabled", "ModifiedAt", "ModifiedBy", "QueryComponent", "RequestId", "Value" },
-                values: new object[] { 32L, 2, new DateTime(2019, 5, 20, 9, 14, 41, 62, DateTimeKind.Utc).AddTicks(1900), 0L, null, 0L, "data/s=>ETHBTC", true, new DateTime(2019, 5, 20, 9, 14, 41, 62, DateTimeKind.Utc).AddTicks(1900), 0L, "b", 13L, null });
+                values: new object[] { 32L, 2, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 0L, "data/s=>ETHBTC", true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "b", 13L, null });
 
             migrationBuilder.InsertData(
                 table: "RequestComponents",
                 columns: new[] { "Id", "ComponentType", "CreatedAt", "CreatedBy", "DeletedAt", "DeletedBy", "Identifier", "IsEnabled", "ModifiedAt", "ModifiedBy", "QueryComponent", "RequestId", "Value" },
-                values: new object[] { 34L, 12, new DateTime(2019, 5, 20, 9, 14, 41, 62, DateTimeKind.Utc).AddTicks(1910), 0L, null, 0L, "data/s=>KNCETH", true, new DateTime(2019, 5, 20, 9, 14, 41, 62, DateTimeKind.Utc).AddTicks(1910), 0L, "v", 14L, null });
+                values: new object[] { 34L, 12, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 0L, "data/s=>KNCETH", true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "v", 14L, null });
 
             migrationBuilder.InsertData(
                 table: "RequestComponents",
                 columns: new[] { "Id", "ComponentType", "CreatedAt", "CreatedBy", "DeletedAt", "DeletedBy", "Identifier", "IsEnabled", "ModifiedAt", "ModifiedBy", "QueryComponent", "RequestId", "Value" },
-                values: new object[] { 30L, 1, new DateTime(2019, 5, 20, 9, 14, 41, 62, DateTimeKind.Utc).AddTicks(1900), 0L, null, 0L, "data/s=>ETHBTC", true, new DateTime(2019, 5, 20, 9, 14, 41, 62, DateTimeKind.Utc).AddTicks(1900), 0L, "a", 13L, null });
+                values: new object[] { 30L, 1, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 0L, "data/s=>ETHBTC", true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "a", 13L, null });
 
             migrationBuilder.InsertData(
                 table: "RequestComponents",
                 columns: new[] { "Id", "ComponentType", "CreatedAt", "CreatedBy", "DeletedAt", "DeletedBy", "Identifier", "IsDenominated", "IsEnabled", "ModifiedAt", "ModifiedBy", "QueryComponent", "RequestId", "Value" },
-                values: new object[] { 2L, 1000, new DateTime(2019, 5, 20, 9, 14, 41, 62, DateTimeKind.Utc).AddTicks(1770), 0L, null, 0L, null, true, true, new DateTime(2019, 5, 20, 9, 14, 41, 62, DateTimeKind.Utc).AddTicks(1770), 0L, "result", 2L, null });
+                values: new object[] { 2L, 1000, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 0L, null, true, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "result", 2L, null });
 
             migrationBuilder.InsertData(
                 table: "RequestComponents",
                 columns: new[] { "Id", "ComponentType", "CreatedAt", "CreatedBy", "DeletedAt", "DeletedBy", "Identifier", "IsEnabled", "ModifiedAt", "ModifiedBy", "QueryComponent", "RequestId", "Value" },
-                values: new object[] { 3L, 1005, new DateTime(2019, 5, 20, 9, 14, 41, 62, DateTimeKind.Utc).AddTicks(1780), 0L, null, 0L, null, true, new DateTime(2019, 5, 20, 9, 14, 41, 62, DateTimeKind.Utc).AddTicks(1780), 0L, "info/blocks", 3L, null });
+                values: new object[] { 3L, 1005, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 0L, null, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "info/blocks", 3L, null });
 
             migrationBuilder.InsertData(
                 table: "RequestComponents",
                 columns: new[] { "Id", "ComponentType", "CreatedAt", "CreatedBy", "DeletedAt", "DeletedBy", "Identifier", "IsEnabled", "ModifiedAt", "ModifiedBy", "QueryComponent", "RequestId", "Value" },
-                values: new object[] { 4L, 1010, new DateTime(2019, 5, 20, 9, 14, 41, 62, DateTimeKind.Utc).AddTicks(1780), 0L, null, 0L, null, true, new DateTime(2019, 5, 20, 9, 14, 41, 62, DateTimeKind.Utc).AddTicks(1780), 0L, "info/difficulty", 3L, null });
+                values: new object[] { 4L, 1010, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 0L, null, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "info/difficulty", 3L, null });
 
             migrationBuilder.InsertData(
                 table: "RequestComponents",
                 columns: new[] { "Id", "ComponentType", "CreatedAt", "CreatedBy", "DeletedAt", "DeletedBy", "Identifier", "IsEnabled", "ModifiedAt", "ModifiedBy", "QueryComponent", "RequestId", "Value" },
-                values: new object[] { 31L, 8, new DateTime(2019, 5, 20, 9, 14, 41, 62, DateTimeKind.Utc).AddTicks(1900), 0L, null, 0L, "data/s=>ETHBTC", true, new DateTime(2019, 5, 20, 9, 14, 41, 62, DateTimeKind.Utc).AddTicks(1900), 0L, "A", 13L, null });
+                values: new object[] { 31L, 8, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 0L, "data/s=>ETHBTC", true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "A", 13L, null });
 
             migrationBuilder.InsertData(
                 table: "RequestComponents",
                 columns: new[] { "Id", "ComponentType", "CreatedAt", "CreatedBy", "DeletedAt", "DeletedBy", "Identifier", "IsEnabled", "ModifiedAt", "ModifiedBy", "QueryComponent", "RequestId", "Value" },
-                values: new object[] { 6L, 12, new DateTime(2019, 5, 20, 9, 14, 41, 62, DateTimeKind.Utc).AddTicks(1790), 0L, null, 0L, null, true, new DateTime(2019, 5, 20, 9, 14, 41, 62, DateTimeKind.Utc).AddTicks(1790), 0L, "7", 5L, null });
+                values: new object[] { 6L, 12, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 0L, null, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "7", 5L, null });
 
             migrationBuilder.InsertData(
                 table: "RequestComponents",
                 columns: new[] { "Id", "ComponentType", "CreatedAt", "CreatedBy", "DeletedAt", "DeletedBy", "Identifier", "IsEnabled", "ModifiedAt", "ModifiedBy", "QueryComponent", "RequestId", "Value" },
-                values: new object[] { 7L, 1, new DateTime(2019, 5, 20, 9, 14, 41, 62, DateTimeKind.Utc).AddTicks(1790), 0L, null, 0L, null, true, new DateTime(2019, 5, 20, 9, 14, 41, 62, DateTimeKind.Utc).AddTicks(1790), 0L, "2", 5L, null });
+                values: new object[] { 7L, 1, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 0L, null, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "2", 5L, null });
 
             migrationBuilder.InsertData(
                 table: "RequestComponents",
                 columns: new[] { "Id", "ComponentType", "CreatedAt", "CreatedBy", "DeletedAt", "DeletedBy", "Identifier", "IsEnabled", "ModifiedAt", "ModifiedBy", "QueryComponent", "RequestId", "Value" },
-                values: new object[] { 8L, 8, new DateTime(2019, 5, 20, 9, 14, 41, 62, DateTimeKind.Utc).AddTicks(1790), 0L, null, 0L, null, true, new DateTime(2019, 5, 20, 9, 14, 41, 62, DateTimeKind.Utc).AddTicks(1790), 0L, "3", 5L, null });
+                values: new object[] { 8L, 8, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 0L, null, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "3", 5L, null });
 
             migrationBuilder.InsertData(
                 table: "RequestComponents",
                 columns: new[] { "Id", "ComponentType", "CreatedAt", "CreatedBy", "DeletedAt", "DeletedBy", "Identifier", "IsEnabled", "ModifiedAt", "ModifiedBy", "QueryComponent", "RequestId", "Value" },
-                values: new object[] { 9L, 2, new DateTime(2019, 5, 20, 9, 14, 41, 62, DateTimeKind.Utc).AddTicks(1790), 0L, null, 0L, null, true, new DateTime(2019, 5, 20, 9, 14, 41, 62, DateTimeKind.Utc).AddTicks(1790), 0L, "0", 5L, null });
+                values: new object[] { 9L, 2, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 0L, null, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "0", 5L, null });
 
             migrationBuilder.InsertData(
                 table: "RequestComponents",
                 columns: new[] { "Id", "ComponentType", "CreatedAt", "CreatedBy", "DeletedAt", "DeletedBy", "Identifier", "IsEnabled", "ModifiedAt", "ModifiedBy", "QueryComponent", "RequestId", "Value" },
-                values: new object[] { 10L, 5, new DateTime(2019, 5, 20, 9, 14, 41, 62, DateTimeKind.Utc).AddTicks(1790), 0L, null, 0L, null, true, new DateTime(2019, 5, 20, 9, 14, 41, 62, DateTimeKind.Utc).AddTicks(1790), 0L, "1", 5L, null });
+                values: new object[] { 10L, 5, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 0L, null, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "1", 5L, null });
 
             migrationBuilder.InsertData(
                 table: "RequestComponents",
                 columns: new[] { "Id", "ComponentType", "CreatedAt", "CreatedBy", "DeletedAt", "DeletedBy", "Identifier", "IsEnabled", "ModifiedAt", "ModifiedBy", "QueryComponent", "RequestId", "Value" },
-                values: new object[] { 5L, 1000, new DateTime(2019, 5, 20, 9, 14, 41, 62, DateTimeKind.Utc).AddTicks(1780), 0L, null, 0L, null, true, new DateTime(2019, 5, 20, 9, 14, 41, 62, DateTimeKind.Utc).AddTicks(1780), 0L, "data/coin/circulatingSupply", 4L, null });
+                values: new object[] { 5L, 1000, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 0L, null, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "data/coin/circulatingSupply", 4L, null });
 
             migrationBuilder.InsertData(
                 table: "RequestComponents",
                 columns: new[] { "Id", "ComponentType", "CreatedAt", "CreatedBy", "DeletedAt", "DeletedBy", "Identifier", "IsEnabled", "ModifiedAt", "ModifiedBy", "QueryComponent", "RequestId", "Value" },
-                values: new object[] { 12L, 1, new DateTime(2019, 5, 20, 9, 14, 41, 62, DateTimeKind.Utc).AddTicks(1800), 0L, null, 0L, null, true, new DateTime(2019, 5, 20, 9, 14, 41, 62, DateTimeKind.Utc).AddTicks(1800), 0L, "2", 6L, null });
+                values: new object[] { 12L, 1, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 0L, null, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "2", 6L, null });
 
             migrationBuilder.InsertData(
                 table: "RequestComponents",
                 columns: new[] { "Id", "ComponentType", "CreatedAt", "CreatedBy", "DeletedAt", "DeletedBy", "Identifier", "IsEnabled", "ModifiedAt", "ModifiedBy", "QueryComponent", "RequestId", "Value" },
-                values: new object[] { 29L, 12, new DateTime(2019, 5, 20, 9, 14, 41, 62, DateTimeKind.Utc).AddTicks(1900), 0L, null, 0L, "data/s=>ETHBTC", true, new DateTime(2019, 5, 20, 9, 14, 41, 62, DateTimeKind.Utc).AddTicks(1900), 0L, "v", 13L, null });
+                values: new object[] { 29L, 12, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 0L, "data/s=>ETHBTC", true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "v", 13L, null });
 
             migrationBuilder.InsertData(
                 table: "RequestComponents",
                 columns: new[] { "Id", "ComponentType", "CreatedAt", "CreatedBy", "DeletedAt", "DeletedBy", "Identifier", "IsEnabled", "ModifiedAt", "ModifiedBy", "QueryComponent", "RequestId", "Value" },
-                values: new object[] { 11L, 12, new DateTime(2019, 5, 20, 9, 14, 41, 62, DateTimeKind.Utc).AddTicks(1790), 0L, null, 0L, null, true, new DateTime(2019, 5, 20, 9, 14, 41, 62, DateTimeKind.Utc).AddTicks(1800), 0L, "7", 6L, null });
+                values: new object[] { 11L, 12, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 0L, null, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "7", 6L, null });
 
             migrationBuilder.InsertData(
                 table: "RequestComponents",
                 columns: new[] { "Id", "ComponentType", "CreatedAt", "CreatedBy", "DeletedAt", "DeletedBy", "Identifier", "IsEnabled", "ModifiedAt", "ModifiedBy", "QueryComponent", "RequestId", "Value" },
-                values: new object[] { 26L, 2, new DateTime(2019, 5, 20, 9, 14, 41, 62, DateTimeKind.Utc).AddTicks(1900), 0L, null, 0L, null, true, new DateTime(2019, 5, 20, 9, 14, 41, 62, DateTimeKind.Utc).AddTicks(1900), 0L, "bid", 11L, null });
+                values: new object[] { 26L, 2, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 0L, null, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "bid", 11L, null });
 
             migrationBuilder.InsertData(
                 table: "RequestComponents",
                 columns: new[] { "Id", "ComponentType", "CreatedAt", "CreatedBy", "DeletedAt", "DeletedBy", "Identifier", "IsEnabled", "ModifiedAt", "ModifiedBy", "QueryComponent", "RequestId", "Value" },
-                values: new object[] { 25L, 1, new DateTime(2019, 5, 20, 9, 14, 41, 62, DateTimeKind.Utc).AddTicks(1890), 0L, null, 0L, null, true, new DateTime(2019, 5, 20, 9, 14, 41, 62, DateTimeKind.Utc).AddTicks(1890), 0L, "ask", 11L, null });
+                values: new object[] { 25L, 1, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 0L, null, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "ask", 11L, null });
 
             migrationBuilder.InsertData(
                 table: "RequestComponents",
                 columns: new[] { "Id", "ComponentType", "CreatedAt", "CreatedBy", "DeletedAt", "DeletedBy", "Identifier", "IsEnabled", "ModifiedAt", "ModifiedBy", "QueryComponent", "RequestId", "Value" },
-                values: new object[] { 28L, 2, new DateTime(2019, 5, 20, 9, 14, 41, 62, DateTimeKind.Utc).AddTicks(1900), 0L, null, 0L, null, true, new DateTime(2019, 5, 20, 9, 14, 41, 62, DateTimeKind.Utc).AddTicks(1900), 0L, "USDT_BTC/highestBid", 12L, null });
+                values: new object[] { 28L, 2, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 0L, null, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "USDT_BTC/highestBid", 12L, null });
 
             migrationBuilder.InsertData(
                 table: "RequestComponents",
                 columns: new[] { "Id", "ComponentType", "CreatedAt", "CreatedBy", "DeletedAt", "DeletedBy", "Identifier", "IsEnabled", "ModifiedAt", "ModifiedBy", "QueryComponent", "RequestId", "Value" },
-                values: new object[] { 15L, 5, new DateTime(2019, 5, 20, 9, 14, 41, 62, DateTimeKind.Utc).AddTicks(1800), 0L, null, 0L, null, true, new DateTime(2019, 5, 20, 9, 14, 41, 62, DateTimeKind.Utc).AddTicks(1800), 0L, "1", 6L, null });
+                values: new object[] { 15L, 5, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 0L, null, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "1", 6L, null });
 
             migrationBuilder.InsertData(
                 table: "RequestComponents",
                 columns: new[] { "Id", "ComponentType", "CreatedAt", "CreatedBy", "DeletedAt", "DeletedBy", "Identifier", "IsEnabled", "ModifiedAt", "ModifiedBy", "QueryComponent", "RequestId", "Value" },
-                values: new object[] { 14L, 2, new DateTime(2019, 5, 20, 9, 14, 41, 62, DateTimeKind.Utc).AddTicks(1800), 0L, null, 0L, null, true, new DateTime(2019, 5, 20, 9, 14, 41, 62, DateTimeKind.Utc).AddTicks(1800), 0L, "0", 6L, null });
+                values: new object[] { 14L, 2, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 0L, null, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "0", 6L, null });
 
             migrationBuilder.InsertData(
                 table: "RequestComponents",
                 columns: new[] { "Id", "ComponentType", "CreatedAt", "CreatedBy", "DeletedAt", "DeletedBy", "Identifier", "IsEnabled", "ModifiedAt", "ModifiedBy", "QueryComponent", "RequestId", "Value" },
-                values: new object[] { 13L, 8, new DateTime(2019, 5, 20, 9, 14, 41, 62, DateTimeKind.Utc).AddTicks(1800), 0L, null, 0L, null, true, new DateTime(2019, 5, 20, 9, 14, 41, 62, DateTimeKind.Utc).AddTicks(1800), 0L, "3", 6L, null });
+                values: new object[] { 13L, 8, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 0L, null, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "3", 6L, null });
 
             migrationBuilder.InsertData(
                 table: "RequestComponents",
                 columns: new[] { "Id", "ComponentType", "CreatedAt", "CreatedBy", "DeletedAt", "DeletedBy", "Identifier", "IsEnabled", "ModifiedAt", "ModifiedBy", "QueryComponent", "RequestId", "Value" },
-                values: new object[] { 24L, 12, new DateTime(2019, 5, 20, 9, 14, 41, 62, DateTimeKind.Utc).AddTicks(1890), 0L, null, 0L, null, true, new DateTime(2019, 5, 20, 9, 14, 41, 62, DateTimeKind.Utc).AddTicks(1890), 0L, "volume", 11L, null });
+                values: new object[] { 24L, 12, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 0L, null, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "volume", 11L, null });
 
             migrationBuilder.InsertData(
                 table: "RequestProperties",
                 columns: new[] { "Id", "CreatedAt", "CreatedBy", "DeletedAt", "DeletedBy", "IsEnabled", "Key", "ModifiedAt", "ModifiedBy", "RequestId", "RequestPropertyType", "Value" },
                 values: new object[,]
                 {
-                    { 7L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, null, 0L, true, "apikey", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2L, 32, "TGAFGMGDKHJ8W2EKI26MJRRWGH44AV9224" },
-                    { 6L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, null, 0L, true, "contractaddress", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2L, 32, "0xdd974d5c2e2928dea5f71b9825b8b646686bd200" },
-                    { 8L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, null, 0L, true, "apikey", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 8L, 300, "TV5HJJHNP8094BRO" },
-                    { 10L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, null, 0L, true, "from_currency", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 8L, 300, "EUR" },
-                    { 11L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, null, 0L, true, "to_currency", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 8L, 300, "USD" },
-                    { 5L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, null, 0L, true, "action", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2L, 32, "tokensupply" },
-                    { 4L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, null, 0L, true, "module", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2L, 32, "stats" },
-                    { 3L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, null, 0L, true, "apikey", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 1L, 32, "TGAFGMGDKHJ8W2EKI26MJRRWGH44AV9224" },
-                    { 2L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, null, 0L, true, "action", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 1L, 32, "ethsupply" },
-                    { 1L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, null, 0L, true, "module", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 1L, 32, "stats" },
-                    { 9L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, null, 0L, true, "function", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 8L, 300, "CURRENCY_EXCHANGE_RATE" }
+                    { 7L, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 0L, true, "apikey", new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 2L, 32, "TGAFGMGDKHJ8W2EKI26MJRRWGH44AV9224" },
+                    { 6L, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 0L, true, "contractaddress", new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 2L, 32, "0xdd974d5c2e2928dea5f71b9825b8b646686bd200" },
+                    { 8L, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 0L, true, "apikey", new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 8L, 300, "TV5HJJHNP8094BRO" },
+                    { 10L, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 0L, true, "from_currency", new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 8L, 300, "EUR" },
+                    { 11L, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 0L, true, "to_currency", new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 8L, 300, "USD" },
+                    { 5L, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 0L, true, "action", new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 2L, 32, "tokensupply" },
+                    { 4L, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 0L, true, "module", new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 2L, 32, "stats" },
+                    { 3L, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 0L, true, "apikey", new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 1L, 32, "TGAFGMGDKHJ8W2EKI26MJRRWGH44AV9224" },
+                    { 2L, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 0L, true, "action", new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 1L, 32, "ethsupply" },
+                    { 1L, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 0L, true, "module", new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 1L, 32, "stats" },
+                    { 9L, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 0L, true, "function", new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 8L, 300, "CURRENCY_EXCHANGE_RATE" }
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_AnalysedComponents_CurrencyId",
+                name: "AnalysedComponent_Index_CurrencyId_ComponentType",
                 table: "AnalysedComponents",
-                column: "CurrencyId");
+                columns: new[] { "CurrencyId", "ComponentType" },
+                unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_AnalysedComponents_CurrencyPairId",
+                name: "AnalysedComponent_Index_CurrencyPairId_ComponentType",
                 table: "AnalysedComponents",
-                column: "CurrencyPairId");
+                columns: new[] { "CurrencyPairId", "ComponentType" },
+                unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_AnalysedComponents_CurrencyTypeId",
+                name: "AnalysedComponent_Index_CurrencyTypeId_ComponentType",
                 table: "AnalysedComponents",
-                column: "CurrencyTypeId");
+                columns: new[] { "CurrencyTypeId", "ComponentType" },
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_AnalysedHistoricItems_AnalysedComponentId",

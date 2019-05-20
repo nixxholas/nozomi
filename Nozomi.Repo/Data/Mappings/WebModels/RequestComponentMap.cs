@@ -24,9 +24,9 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
             entityTypeBuilder.Property(rc => rc.AnomalyIgnorance).HasDefaultValue(false).IsRequired();
             
             entityTypeBuilder.HasOne(rc => rc.Request).WithMany(r => r.RequestComponents)
-                .HasForeignKey(rc => rc.RequestId).IsRequired();
+                .HasForeignKey(rc => rc.RequestId).OnDelete(DeleteBehavior.Restrict);
             entityTypeBuilder.HasMany(rc => rc.RcdHistoricItems).WithOne(rcd => rcd.RequestComponent)
-                .HasForeignKey(rcd => rcd.RequestComponentId);
+                .HasForeignKey(rcd => rcd.RequestComponentId).OnDelete(DeleteBehavior.Restrict);
 
             entityTypeBuilder.HasData(
                 // ETH BFX Etherscan Request for Circulating Supply
@@ -37,8 +37,8 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
                     Identifier = null,
                     IsDenominated = true,
                     QueryComponent = "result",
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     DeletedAt = null,
                     RequestId = 1
                 },
@@ -50,8 +50,8 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
                     Identifier = null,
                     IsDenominated = true,
                     QueryComponent = "result",
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     DeletedAt = null,
                     RequestId = 2
                 },
@@ -62,8 +62,8 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
                     ComponentType = ComponentType.BlockCount,
                     Identifier = null,
                     QueryComponent = "info/blocks",
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     DeletedAt = null,
                     RequestId = 3
                 },
@@ -74,8 +74,8 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
                     ComponentType = ComponentType.Difficulty,
                     Identifier = null,
                     QueryComponent = "info/difficulty",
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     DeletedAt = null,
                     RequestId = 3
                 },
@@ -86,8 +86,8 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
                     ComponentType = ComponentType.Circulating_Supply,
                     Identifier = null,
                     QueryComponent = "data/coin/circulatingSupply",
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     DeletedAt = null,
                     RequestId = 4
                 },
@@ -97,8 +97,8 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
                     ComponentType = ComponentType.VOLUME,
                     Identifier = null,
                     QueryComponent = "7",
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     DeletedAt = null,
                     RequestId = 5
                 },
@@ -108,8 +108,8 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
                     ComponentType = ComponentType.Ask,
                     Identifier = null,
                     QueryComponent = "2",
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     DeletedAt = null,
                     RequestId = 5
                 },
@@ -119,8 +119,8 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
                     ComponentType = ComponentType.Ask_Size,
                     Identifier = null,
                     QueryComponent = "3",
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     DeletedAt = null,
                     RequestId = 5
                 },
@@ -130,8 +130,8 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
                     ComponentType = ComponentType.Bid,
                     Identifier = null,
                     QueryComponent = "0",
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     DeletedAt = null,
                     RequestId = 5
                 },
@@ -141,8 +141,8 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
                     ComponentType = ComponentType.Bid_Size,
                     Identifier = null,
                     QueryComponent = "1",
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     DeletedAt = null,
                     RequestId = 5
                 },
@@ -152,8 +152,8 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
                     ComponentType = ComponentType.VOLUME,
                     Identifier = null,
                     QueryComponent = "7",
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     DeletedAt = null,
                     RequestId = 6
                 },
@@ -163,8 +163,8 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
                     ComponentType = ComponentType.Ask,
                     Identifier = null,
                     QueryComponent = "2",
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     DeletedAt = null,
                     RequestId = 6
                 },
@@ -174,8 +174,8 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
                     ComponentType = ComponentType.Ask_Size,
                     Identifier = null,
                     QueryComponent = "3",
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     DeletedAt = null,
                     RequestId = 6
                 },
@@ -185,8 +185,8 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
                     ComponentType = ComponentType.Bid,
                     Identifier = null,
                     QueryComponent = "0",
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     DeletedAt = null,
                     RequestId = 6
                 },
@@ -196,8 +196,8 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
                     ComponentType = ComponentType.Bid_Size,
                     Identifier = null,
                     QueryComponent = "1",
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     DeletedAt = null,
                     RequestId = 6
                 },
@@ -207,8 +207,8 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
                     ComponentType = ComponentType.Ask,
                     Identifier = null,
                     QueryComponent = "gesmes:Envelope/Cube/Cube/Cube/0=>@rate",
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     DeletedAt = null,
                     RequestId = 7
                 },
@@ -218,8 +218,8 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
                     ComponentType = ComponentType.Ask,
                     Identifier = null,
                     QueryComponent = "['Realtime Currency Exchange Rate']/['5. Exchange Rate']",
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     DeletedAt = null,
                     RequestId = 8
                 },
@@ -229,8 +229,8 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
                     ComponentType = ComponentType.VOLUME,
                     Identifier = null,
                     QueryComponent = "BTC_BCN/baseVolume",
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     DeletedAt = null,
                     RequestId = 9
                 },
@@ -240,8 +240,8 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
                     ComponentType = ComponentType.Ask,
                     Identifier = null,
                     QueryComponent = "BTC_BCN/lowestAsk",
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     DeletedAt = null,
                     RequestId = 9
                 },
@@ -251,8 +251,8 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
                     ComponentType = ComponentType.Bid,
                     Identifier = null,
                     QueryComponent = "BTC_BCN/highestBid",
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     DeletedAt = null,
                     RequestId = 9
                 },
@@ -262,8 +262,8 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
                     ComponentType = ComponentType.VOLUME,
                     Identifier = null,
                     QueryComponent = "BTC_BTS/baseVolume",
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     DeletedAt = null,
                     RequestId = 10
                 },
@@ -273,8 +273,8 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
                     ComponentType = ComponentType.Ask,
                     Identifier = null,
                     QueryComponent = "BTC_BTS/lowestAsk",
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     DeletedAt = null,
                     RequestId = 10
                 },
@@ -284,8 +284,8 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
                     ComponentType = ComponentType.Bid,
                     Identifier = null,
                     QueryComponent = "BTC_BTS/highestBid",
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     DeletedAt = null,
                     RequestId = 10
                 },
@@ -295,8 +295,8 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
                     ComponentType = ComponentType.VOLUME,
                     Identifier = null,
                     QueryComponent = "volume",
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     DeletedAt = null,
                     RequestId = 11
                 },
@@ -306,8 +306,8 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
                     ComponentType = ComponentType.Ask,
                     Identifier = null,
                     QueryComponent = "ask",
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     DeletedAt = null,
                     RequestId = 11
                 },
@@ -317,8 +317,8 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
                     ComponentType = ComponentType.Bid,
                     Identifier = null,
                     QueryComponent = "bid",
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     DeletedAt = null,
                     RequestId = 11
                 },
@@ -328,8 +328,8 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
                     ComponentType = ComponentType.Ask,
                     Identifier = null,
                     QueryComponent = "USDT_BTC/lowestAsk",
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     DeletedAt = null,
                     RequestId = 12
                 },
@@ -339,8 +339,8 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
                     ComponentType = ComponentType.Bid,
                     Identifier = null,
                     QueryComponent = "USDT_BTC/highestBid",
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     DeletedAt = null,
                     RequestId = 12
                 },
@@ -350,8 +350,8 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
                     ComponentType = ComponentType.VOLUME,
                     Identifier = "data/s=>ETHBTC",
                     QueryComponent = "v",
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     DeletedAt = null,
                     RequestId = 13
                 },
@@ -361,8 +361,8 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
                     ComponentType = ComponentType.Ask,
                     Identifier = "data/s=>ETHBTC",
                     QueryComponent = "a",
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     DeletedAt = null,
                     RequestId = 13
                 },
@@ -372,8 +372,8 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
                     ComponentType = ComponentType.Ask_Size,
                     Identifier = "data/s=>ETHBTC",
                     QueryComponent = "A",
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     DeletedAt = null,
                     RequestId = 13
                 },
@@ -383,8 +383,8 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
                     ComponentType = ComponentType.Bid,
                     Identifier = "data/s=>ETHBTC",
                     QueryComponent = "b",
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     DeletedAt = null,
                     RequestId = 13
                 },
@@ -394,8 +394,8 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
                     ComponentType = ComponentType.Bid_Size,
                     Identifier = "data/s=>ETHBTC",
                     QueryComponent = "B",
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     DeletedAt = null,
                     RequestId = 13
                 },
@@ -405,8 +405,8 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
                     ComponentType = ComponentType.VOLUME,
                     Identifier = "data/s=>KNCETH",
                     QueryComponent = "v",
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     DeletedAt = null,
                     RequestId = 14
                 },
@@ -416,8 +416,8 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
                     ComponentType = ComponentType.Ask,
                     Identifier = "data/s=>KNCETH",
                     QueryComponent = "a",
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     DeletedAt = null,
                     RequestId = 14
                 },
@@ -427,8 +427,8 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
                     ComponentType = ComponentType.Ask_Size,
                     Identifier = "data/s=>KNCETH",
                     QueryComponent = "A",
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     DeletedAt = null,
                     RequestId = 14
                 },
@@ -438,8 +438,8 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
                     ComponentType = ComponentType.Bid,
                     Identifier = "data/s=>KNCETH",
                     QueryComponent = "b",
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     DeletedAt = null,
                     RequestId = 14
                 },
@@ -449,8 +449,8 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
                     ComponentType = ComponentType.Bid_Size,
                     Identifier = "data/s=>KNCETH",
                     QueryComponent = "B",
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     DeletedAt = null,
                     RequestId = 14
                 },
@@ -461,8 +461,8 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
                     ComponentType = ComponentType.Bid,
                     Identifier = null,
                     QueryComponent = "data/buy_price",
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     DeletedAt = null,
                     RequestId = 15
                 },
@@ -472,8 +472,8 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
                     ComponentType = ComponentType.Ask,
                     Identifier = null,
                     QueryComponent = "data/sell_price",
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     DeletedAt = null,
                     RequestId = 15
                 },
@@ -484,8 +484,8 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
                     ComponentType = ComponentType.Bid,
                     Identifier = null,
                     QueryComponent = "data/buy_price",
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     DeletedAt = null,
                     RequestId = 16
                 },
@@ -495,8 +495,8 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
                     ComponentType = ComponentType.Ask,
                     Identifier = null,
                     QueryComponent = "data/sell_price",
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     DeletedAt = null,
                     RequestId = 16
                 },
@@ -507,8 +507,8 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
                     ComponentType = ComponentType.Bid,
                     Identifier = null,
                     QueryComponent = "data/buy_price",
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     DeletedAt = null,
                     RequestId = 17
                 },
@@ -518,8 +518,8 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
                     ComponentType = ComponentType.Ask,
                     Identifier = null,
                     QueryComponent = "data/sell_price",
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     DeletedAt = null,
                     RequestId = 17
                 },
@@ -530,8 +530,8 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
                     ComponentType = ComponentType.Bid,
                     Identifier = null,
                     QueryComponent = "data/buy_price",
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     DeletedAt = null,
                     RequestId = 18
                 },
@@ -541,8 +541,8 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
                     ComponentType = ComponentType.Ask,
                     Identifier = null,
                     QueryComponent = "data/sell_price",
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     DeletedAt = null,
                     RequestId = 18
                 },
@@ -553,8 +553,8 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
                     ComponentType = ComponentType.Bid,
                     Identifier = null,
                     QueryComponent = "data/buy_price",
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     DeletedAt = null,
                     RequestId = 19
                 },
@@ -564,8 +564,8 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
                     ComponentType = ComponentType.Ask,
                     Identifier = null,
                     QueryComponent = "data/sell_price",
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     DeletedAt = null,
                     RequestId = 19
                 },
@@ -576,9 +576,6 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
                     ComponentType = ComponentType.Bid,
                     Identifier = null,
                     QueryComponent = "data/buy_price",
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
-                    DeletedAt = null,
                     RequestId = 20
                 },
                 new RequestComponent
@@ -587,9 +584,6 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
                     ComponentType = ComponentType.Ask,
                     Identifier = null,
                     QueryComponent = "data/sell_price",
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
-                    DeletedAt = null,
                     RequestId = 20
                 }
             );

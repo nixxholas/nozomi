@@ -7,9 +7,9 @@ namespace Nozomi.Data.Models.Web.Analytical
         Unknown = 0,
         [Description("Market Cap")]
         MarketCap = 1,
-        [Description("Market Cap")]
+        [Description("Hourly Market Cap")]
         HourlyMarketCap = 2,
-        [Description("Market Cap")]
+        [Description("Daily Market Cap")]
         DailyMarketCap = 3,
         [Description("Market Cap Change")]
         MarketCapChange = 6,

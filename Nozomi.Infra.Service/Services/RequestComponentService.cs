@@ -111,6 +111,60 @@ namespace Nozomi.Service.Services
             }
         }
 
+        public NozomiResult<string> UpdatePairValue(long id, string val)
+        {
+            try
+            {
+                var lastCompVal = _unitOfWork
+                    .GetRepository<RequestComponent>()
+                    .GetQueryable()
+                    .AsTracking()
+                    .Where(cp => cp.Id.Equals(id))
+                    .SingleOrDefault(cp => cp.DeletedAt == null && cp.IsEnabled);
+
+                if (lastCompVal != null)
+                {
+                    if (!string.IsNullOrEmpty(lastCompVal.Value))
+                    {
+                        // Save old data first
+                        if (_rcdHistoricItemService.Push(lastCompVal))
+                        {
+
+                        }
+                        // Old data failed to save. Something along the lines between the old data being new
+                        // or the old data having a similarity with the latest rcdhi.
+                        else
+                        {
+                            _logger.LogInformation($"[{serviceName}]: UpdatePairValue failed to save " +
+                                                   $"the current RCD value.");
+                        }
+                    }
+
+                    lastCompVal.Value = val.ToString(CultureInfo.InvariantCulture);
+
+                    _unitOfWork.GetRepository<RequestComponent>().Update(lastCompVal);
+                    _unitOfWork.Commit();
+
+                    return new NozomiResult<string>
+                        (NozomiResultType.Success, "Currency Pair Component successfully updated!");
+                }
+                
+                return new NozomiResult<string>
+                (NozomiResultType.Failed,
+                    $"Invalid component datum id:{id}, val:{val}. Please make sure that the " +
+                    "RequestComponent is properly instantiated.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogCritical($"{serviceName} " + ex);
+                
+                return new NozomiResult<string>
+                (NozomiResultType.Failed,
+                    $"Invalid component datum id:{id}, val:{val}. Please make sure that the " +
+                    "RequestComponent is properly instantiated.");
+            }
+        }
+
         public NozomiResult<string> Update(UpdateCurrencyPairComponent obj, long userId = 0)
         {
             if (obj == null || userId < 0) return new NozomiResult<string>
