@@ -99,27 +99,6 @@ namespace Nozomi.Service.Services
                 .ToList();
         }
 
-        public long GetCPairIdByTrio(long walletTypeId, long currencyId, long currencySourceId)
-        {
-            var cPair = _unitOfWork
-                .GetRepository<CurrencyPair>()
-                .GetQueryable()
-                .AsNoTracking()
-                .Where(cp => cp.SourceId.Equals(currencySourceId))
-                .FirstOrDefault(cp => cp.CurrencyPairCurrencies // CurrencyId is the counterpair
-                                          .Any(pcp => pcp.CurrencyId.Equals(currencyId) &&
-                                                      pcp.Currency.Abbreviation.Equals(pcp.CurrencyPair.CounterCurrency,
-                                                          StringComparison.InvariantCultureIgnoreCase)) &&
-                                      cp.CurrencyPairCurrencies.Any(pcp =>
-                                          pcp.Currency.WalletTypeId.Equals(walletTypeId) &&
-                                          pcp.CurrencyPair.CurrencySourceId.Equals(currencySourceId)));
-
-            if (cPair != null)
-                return cPair.Id;
-
-            return -1; // bad
-        }
-
         public long[][] GetCurrencySourceMappings()
         {
             return _unitOfWork.GetRepository<CurrencyPair>()
