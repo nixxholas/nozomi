@@ -46,8 +46,6 @@ namespace Nozomi.Service.Events
                     .Include(c => c.AnalysedComponents)
                     .Include(c => c.CurrencySources)
                     .ThenInclude(cs => cs.Source)
-                    .Include(c => c.CurrencyPairs)
-                    .ThenInclude(cp => cp.AnalysedComponents)
                     .Include(c => c.CurrencyRequests)
                     .ThenInclude(cr => cr.RequestComponents);
             }
@@ -507,7 +505,6 @@ namespace Nozomi.Service.Events
                     .Include(c => c.AnalysedComponents)
                     .Include(c => c.CurrencyRequests)
                     .Include(c => c.CurrencySources)
-                    .Include(c => c.CurrencyPairs)
                     .Include(c => c.CurrencyProperties)
                     .Include(c => c.CurrencyType);
             }
