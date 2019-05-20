@@ -133,7 +133,6 @@ namespace Nozomi.Infra.Analysis.Service.Events.Analysis
                     IsDenominated = ac.IsDenominated,
                     Delay = ac.Delay,
                     UIFormatting = ac.UIFormatting,
-                    RequestId = ac.RequestId,
                     AnalysedHistoricItems = ac.AnalysedHistoricItems
                 })
                 .ToList();
