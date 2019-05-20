@@ -325,8 +325,8 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                         .DefaultIfEmpty()
                                         .ToList();
 
-                                    // Convert whatever is needed
-                                    _requestComponentEvent.ConvertToGenericCurrency(currencyReqComps);
+                                    // TODO: Convert whatever is needed
+                                    //_requestComponentEvent.ConvertToGenericCurrency(currencyReqComps);
 
                                     // Now we can aggregate this
                                     var currAvgPrice = currencyReqComps
@@ -405,8 +405,8 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                     .DefaultIfEmpty()
                                     .ToList();
 
-                                // Convert whatever is needed
-                                _analysedComponentEvent.ConvertToGenericCurrency(currencyAnalysedComps);
+                                // TODO: Convert whatever is needed
+                                //_analysedComponentEvent.ConvertToGenericCurrency(currencyAnalysedComps);
 
                                 // Now we can aggregate this
                                 var currAvgPrice = currencyAnalysedComps
@@ -494,7 +494,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                     .ToList();
 
                                 // Convert whatever is needed
-                                _analysedComponentEvent.ConvertToGenericCurrency(currencyAnalysedComps);
+                                // TODO: _analysedComponentEvent.ConvertToGenericCurrency(currencyAnalysedComps);
 
                                 // Now we can aggregate this
                                 var currAvgPrice = currencyAnalysedComps
@@ -581,8 +581,8 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                     .DefaultIfEmpty()
                                     .ToList();
 
-                                // Convert whatever is needed
-                                _analysedComponentEvent.ConvertToGenericCurrency(currencyAnalysedComps);
+                                // TODO: Convert whatever is needed
+                                // _analysedComponentEvent.ConvertToGenericCurrency(currencyAnalysedComps);
 
                                 // Now we can aggregate this
                                 var currAvgPrice = currencyAnalysedComps
@@ -863,8 +863,8 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                     .DefaultIfEmpty()
                                     .ToList();
 
-                                // Convert whatever is needed
-                                _analysedComponentEvent.ConvertToGenericCurrency(currencyAnalysedComps);
+                                // TODO: Convert whatever is needed
+                                // _analysedComponentEvent.ConvertToGenericCurrency(currencyAnalysedComps);
 
                                 // Now we can aggregate this
                                 var currAvgVol = currencyAnalysedComps
