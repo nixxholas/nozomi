@@ -22,6 +22,7 @@ namespace Nozomi.Service.Services
         {
         }
 
+        [Obsolete]
         public bool Create(CreateCurrencyPair createCurrencyPair, long userId)
         {
             if (createCurrencyPair == null || !createCurrencyPair.IsValid()) return false;
@@ -32,12 +33,6 @@ namespace Nozomi.Service.Services
                 APIUrl = createCurrencyPair.ApiUrl,
                 DefaultComponent = createCurrencyPair.DefaultComponent,
                 SourceId = createCurrencyPair.CurrencySourceId,
-                CurrencyPairCurrencies = createCurrencyPair.PartialCurrencyPairs
-                    .Select(pcp => new CurrencyPairSourceCurrency
-                    {
-                        CurrencyId = pcp.CurrencyId
-                    })
-                    .ToList(),
                 CurrencyPairRequests = createCurrencyPair.CurrencyPairRequests
                     .Select(cpr => new CurrencyPairRequest()
                     {
