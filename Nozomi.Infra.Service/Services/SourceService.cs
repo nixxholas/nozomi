@@ -83,24 +83,24 @@ namespace Nozomi.Service.Services
                         // Modification or Addition?
                         if (sourceToUpd.SourceCurrencies
                                 .Any(c => c.Id.Equals(usc.Id)) // Make sure this source has the currency first
-                            && usc.CurrencySourceId >= 0) // Make sure we're not making an invalid modification
+                            && usc.SourceId >= 0) // Make sure we're not making an invalid modification
                         {
                             // Modification
-                            var currency = _unitOfWork.GetRepository<Currency>()
+                            var currencySource = _unitOfWork.GetRepository<CurrencySource>()
                                 .Get(c => c.Id.Equals(usc.Id) && c.DeletedAt == null).SingleOrDefault();
 
-                            if (currency != null)
+                            if (currencySource != null)
                             {
-                                if (usc.CurrencySourceId.Equals(0))
+                                if (usc.SourceId.Equals(0))
                                 {
-                                    currency.DeletedAt = DateTime.Now;
+                                    currencySource.DeletedAt = DateTime.Now;
                                 }
                                 else
                                 {
-                                    currency.CurrencySourceId = usc.CurrencySourceId;
+                                    currencySource.SourceId = usc.SourceId;
                                 }
 
-                                _unitOfWork.GetRepository<Currency>().Update(currency);
+                                _unitOfWork.GetRepository<CurrencySource>().Update(currencySource);
                                 _unitOfWork.Commit(); // Commit this modification.
                             }
                             else
@@ -109,8 +109,8 @@ namespace Nozomi.Service.Services
                             }
                         }
                         else if (!sourceToUpd.SourceCurrencies.Any(c => c.Id.Equals(usc.Id) 
-                                                                  && c.CurrencySourceId.Equals(usc.CurrencySourceId))
-                            && usc.CurrencySourceId.Equals(sourceToUpd.Id))
+                                                                  && c.SourceId.Equals(usc.SourceId))
+                            && usc.SourceId.Equals(sourceToUpd.Id))
                         {
                             // Addition?
                             var currency = _unitOfWork.GetRepository<Currency>()
@@ -119,9 +119,11 @@ namespace Nozomi.Service.Services
 
                             if (currency != null)
                             {
-                                currency.CurrencySourceId = usc.CurrencySourceId;
-                                
-                                _unitOfWork.GetRepository<Currency>().Update(currency);
+                                _unitOfWork.GetRepository<CurrencySource>().Add(new CurrencySource
+                                {
+                                    CurrencyId = usc.Id,
+                                    SourceId = usc.SourceId
+                                });
                                 _unitOfWork.Commit();
                             }
                             else
@@ -260,7 +262,7 @@ namespace Nozomi.Service.Services
                         // Modification or Addition?
                         if (sourceToUpd.SourceCurrencies
                                 .Any(c => c.Id.Equals(usc.Id)) // Make sure this source has the currency first
-                            && usc.CurrencySourceId >= 0) // Make sure we're not making an invalid modification
+                            && usc.SourceId >= 0) // Make sure we're not making an invalid modification
                         {
                             // Modification
                             var currency = _unitOfWork.GetRepository<Currency>()
@@ -268,13 +270,13 @@ namespace Nozomi.Service.Services
 
                             if (currency != null)
                             {
-                                if (usc.CurrencySourceId.Equals(0))
+                                if (usc.SourceId.Equals(0))
                                 {
                                     currency.DeletedAt = DateTime.Now;
                                 }
                                 else
                                 {
-                                    currency.CurrencySourceId = usc.CurrencySourceId;
+                                    currency.CurrencySourceId = usc.SourceId;
                                 }
 
                                 _unitOfWork.GetRepository<Currency>().Update(currency);
@@ -286,8 +288,8 @@ namespace Nozomi.Service.Services
                             }
                         }
                         else if (!sourceToUpd.SourceCurrencies.Any(c => c.Id.Equals(usc.Id) 
-                                                                  && c.CurrencySourceId.Equals(usc.CurrencySourceId))
-                            && usc.CurrencySourceId.Equals(sourceToUpd.Id))
+                                                                  && c.CurrencySourceId.Equals(usc.SourceId))
+                            && usc.SourceId.Equals(sourceToUpd.Id))
                         {
                             // Addition?
                             var currency = _unitOfWork.GetRepository<Currency>()
@@ -296,7 +298,7 @@ namespace Nozomi.Service.Services
 
                             if (currency != null)
                             {
-                                currency.CurrencySourceId = usc.CurrencySourceId;
+                                currency.CurrencySourceId = usc.SourceId;
                                 
                                 _unitOfWork.GetRepository<Currency>().Update(currency);
                                 _unitOfWork.Commit();
