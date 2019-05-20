@@ -417,7 +417,6 @@ namespace Nozomi.Service.Events
             {
                 query = query
                     .Include(c => c.AnalysedComponents)
-                    .Include(c => c.CurrencyPairSourceCurrencies)
                     .Include(c => c.CurrencyType)
                     .Include(c => c.CurrencySources)
                     .Include(c => c.CurrencyRequests)
