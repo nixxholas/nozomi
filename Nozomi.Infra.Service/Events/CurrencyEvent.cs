@@ -428,41 +428,18 @@ namespace Nozomi.Service.Events
         /// <param name="componentTypes"></param>
         /// <returns></returns>
         public DetailedCurrencyResponse GetDetailedByAbbreviation(string abbreviation,
-            ICollection<ComponentType> componentTypes)
+            ICollection<AnalysedComponentType> componentTypes)
         {
-            var query = _unitOfWork.GetRepository<CurrencyPair>()
+            var query = _unitOfWork.GetRepository<Currency>()
                 .GetQueryable()
                 .AsNoTracking()
-                .Include(cp => cp.CurrencyPairCurrencies)
-                .ThenInclude(pcp => pcp.Currency)
-                // Select any ticker that contains that abbreviation
-                .Where(cp => cp.CurrencyPairCurrencies
-                                 .Any(pcp => pcp.Currency.Abbreviation.Equals(abbreviation,
-                                                 StringComparison.InvariantCultureIgnoreCase)
-                                             // Make sure we're analyzing the main currency, not the sub.
-                                             && pcp.Currency.Abbreviation.Equals(pcp.CurrencyPair.MainCurrency))
-                             // Ensure that the counter currency is the generic counter currency
-                             && cp.CurrencyPairCurrencies
-                                 .Any(pcp => pcp.Currency.Abbreviation.Equals(CoreConstants.GenericCounterCurrency,
-                                                 StringComparison.InvariantCultureIgnoreCase)
-                                             && pcp.Currency.Abbreviation.Equals(pcp.CurrencyPair.CounterCurrency)))
-                .Include(cp => cp.CurrencyPairRequests)
-                .ThenInclude(cpr => cpr.RequestComponents)
-                .ThenInclude(rcd => rcd.RcdHistoricItems)
-                .Where(cp => cp.CurrencyPairRequests
-                    .Any(cpr => cpr.IsEnabled && cpr.DeletedAt == null
-                                              && cpr.RequestComponents
-                                                  .Any(rc => rc.DeletedAt == null && rc.IsEnabled
-                                                                                  && componentTypes.Contains(
-                                                                                      rc.ComponentType)
-                                                                                  && !string.IsNullOrEmpty(rc.Value)
-                                                                                  && rc.RcdHistoricItems != null
-                                                                                  && rc.RcdHistoricItems
-                                                                                      .Any(rcdhi =>
-                                                                                          rcdhi.DeletedAt == null &&
-                                                                                          rcdhi.IsEnabled))));
+                .Where(c => c.Abbreviation.Equals(abbreviation, StringComparison.InvariantCultureIgnoreCase))
+                .Include(cp => cp.AnalysedComponents
+                    .Where(ac => componentTypes.Contains(ac.ComponentType)))
+                .ThenInclude(ac => ac.AnalysedHistoricItems)
+                .SingleOrDefault();
 
-            return new DetailedCurrencyResponse(abbreviation, query);
+            return new DetailedCurrencyResponse(query);
         }
 
         public bool Any(CreateCurrency createCurrency)
