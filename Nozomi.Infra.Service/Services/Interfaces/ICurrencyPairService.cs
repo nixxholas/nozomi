@@ -9,7 +9,6 @@ namespace Nozomi.Service.Services.Interfaces
     {
         bool Create(CreateCurrencyPair createCurrencyPair, long userId);
         IEnumerable<dynamic> GetAllObsc(bool track = false);
-        dynamic GetByIdObsc(long id, bool track = false);
         long GetCPairIdByTrio(long walletTypeId, long currencyId, long currencySourceId);
         ICollection<dynamic> GetAvailCPairsObsc(int index = 0, bool track = false);
         long[][] GetCurrencySourceMappings();

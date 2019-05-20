@@ -74,69 +74,6 @@ namespace Nozomi.Service.Services
             }
         }
 
-        public dynamic GetByIdObsc(long id, bool track = false)
-        {
-            if (!track)
-            {
-                return _unitOfWork.GetRepository<CurrencyPair>()
-                    .GetQueryable()
-                    .Where(cp => cp.Id.Equals(id))
-                    .Select(cp => new
-                    {
-                        id = cp.Id,
-                        currencyPairType = cp.CurrencyPairType,
-                        apiUrl = cp.APIUrl,
-                        defaultComponent = cp.DefaultComponent,
-                        currencySourceId = cp.SourceId,
-                    })
-                    .SingleOrDefault();
-            }
-
-            return _unitOfWork.GetRepository<CurrencyPair>()
-                .GetQueryable()
-                .Where(cp => cp.Id.Equals(id))
-                //.Include(cp => cp.Adverts)
-                //.Include(cp => cp.CurrencyPairAdvertTypes)
-                .Include(cp => cp.CurrencyPairRequests)
-                    .ThenInclude(cpr => cpr.RequestComponents)
-                .Include(cp => cp.Source)
-                .Include(cp => cp.CurrencyPairCurrencies)
-                .Select(cp => new
-                {
-                    id = cp.Id,
-                    currencyPairType = cp.CurrencyPairType,
-                    apiUrl = cp.APIUrl,
-                    defaultComponent = cp.DefaultComponent,
-                    currencySourceId = cp.SourceId,
-                    currencySource = new
-                    {
-                        abbrv = cp.Source.Abbreviation,
-                        name = cp.Source.Name
-                    },
-                    //advertCount = cp.Adverts.Count,
-                    currencyPairComponents = cp.CurrencyPairRequests
-                        .FirstOrDefault(cpr => cpr.IsEnabled && cpr.DeletedAt == null)
-                        .RequestComponents.Select(cpc => new
-                    {
-                        id = cpc.Id,
-                        componentType = cpc.ComponentType,
-                        queryComponent = cpc.QueryComponent,
-                        value = cpc.Value
-                    }),
-                    partialCurrencyPairs = cp.CurrencyPairCurrencies.Select(pcp => new
-                    {
-                        currencyId = pcp.CurrencyId,
-                        currency = new
-                        {
-                            abbrv = pcp.Currency.Abbreviation,
-                            name = pcp.Currency.Name,
-                            walletTypeId = pcp.Currency.WalletTypeId
-                        }
-                    })
-                })
-                .SingleOrDefault();
-        }
-
         public IEnumerable<dynamic> GetAllObsc(bool track = false)
         {
             if (!track)
