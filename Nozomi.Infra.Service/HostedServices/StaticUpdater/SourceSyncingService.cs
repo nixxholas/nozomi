@@ -10,6 +10,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Nozomi.Base.Core.Helpers.Enumerator;
 using Nozomi.Data.Models.Currency;
+using Nozomi.Data.Models.Web.Analytical;
 using Nozomi.Data.ResponseModels;
 using Nozomi.Data.ResponseModels.Ticker;
 using Nozomi.Infra.Preprocessing.SignalR;
@@ -32,17 +33,12 @@ namespace Nozomi.Service.HostedServices.StaticUpdater
                         .AsQueryable()
                         .Where(s => s.IsEnabled && s.DeletedAt == null)
                         .Include(s => s.CurrencyPairs)
-                            .ThenInclude(cp => cp.CurrencyPairCurrencies)
-                                .ThenInclude(pcp => pcp.Currency)
-                        .Include(s => s.CurrencyPairs)
-                            .ThenInclude(cp => cp.CurrencyPairRequests)
+                            .ThenInclude(cp => cp.CurrencyPairSourceCurrencies)
+                                .ThenInclude(cpsc => cpsc.CurrencySource)
+                                    .ThenInclude(cs => cs.Currency)
                         // Historical Data Inclusions
-                        .Include(s => s.SourceCurrencies)
-                        .ThenInclude(c => c.CurrencyCurrencyPairs)
-                        .ThenInclude(pcp => pcp.CurrencyPair)
-                        .ThenInclude(cp => cp.CurrencyPairRequests)
-                        .ThenInclude(cpr => cpr.RequestComponents)
-                        .ThenInclude(rcd => rcd.RcdHistoricItems)
+                        .Include(s => s.CurrencyPairs)
+                            .ThenInclude(cp => cp.AnalysedComponents)
                     );
         
         private readonly IHubContext<NozomiSourceStreamHub, ISourceHubClient> _nozomiSourceStreamHub;
@@ -74,24 +70,26 @@ namespace Nozomi.Service.HostedServices.StaticUpdater
                                 .Select(cp => new UniqueTickerResponse
                                 {
                                     MainTickerAbbreviation = 
-                                        cp.CurrencyPairCurrencies.FirstOrDefault(ccp => ccp.Currency.Abbreviation
-                                            .Equals(ccp.CurrencyPair.MainCurrency, StringComparison.InvariantCultureIgnoreCase))?.Currency.Abbreviation,
+                                        cp.MainCurrency,
                                     MainTickerName = 
-                                        cp.CurrencyPairCurrencies.FirstOrDefault(ccp => ccp.Currency.Abbreviation
-                                            .Equals(ccp.CurrencyPair.MainCurrency, StringComparison.InvariantCultureIgnoreCase))?.Currency.Name,
+                                        cp.CurrencyPairSourceCurrencies.Where(cpsc => 
+                                            cpsc.CurrencySource.Currency.Abbreviation
+                                                .Equals(cp.MainCurrency, StringComparison.InvariantCultureIgnoreCase))
+                                            .Select(cpsc => cpsc.CurrencySource.Currency.Name)
+                                            .SingleOrDefault(),
                                     CounterTickerAbbreviation = 
-                                        cp.CurrencyPairCurrencies.FirstOrDefault(ccp => ccp.Currency.Abbreviation
-                                            .Equals(ccp.CurrencyPair.CounterCurrency, StringComparison.InvariantCultureIgnoreCase))?.Currency.Abbreviation,
-                                    CounterTickerName = 
-                                        cp.CurrencyPairCurrencies.FirstOrDefault(ccp => ccp.Currency.Abbreviation
-                                            .Equals(ccp.CurrencyPair.CounterCurrency, StringComparison.InvariantCultureIgnoreCase))?.Currency.Name,
+                                        cp.CurrencyPairSourceCurrencies.Where(cpsc => 
+                                                cpsc.CurrencySource.Currency.Abbreviation
+                                                    .Equals(cp.CounterCurrency, StringComparison.InvariantCultureIgnoreCase))
+                                            .Select(cpsc => cpsc.CurrencySource.Currency.Name)
+                                            .SingleOrDefault(),
+                                    CounterTickerName = cp.CounterCurrency,
                                     LastUpdated = cp.ModifiedAt,
-                                    Properties = cp.CurrencyPairRequests
-                                        .FirstOrDefault(cpr => cpr.IsEnabled && cpr.DeletedAt == null)
-                                        ?.RequestComponents.OrderByDescending(rc => rc.ComponentType)
+                                    Properties = cp.AnalysedComponents
+                                        ?.OrderByDescending(rc => rc.ComponentType)
                                         .Where(rc => !string.IsNullOrEmpty(rc.Value))
                                         .Select(rc => 
-                                            new KeyValuePair<string, string>(rc.QueryComponent.GetDescription(), 
+                                            new KeyValuePair<string, string>(rc.ComponentType.GetDescription(), 
                                             rc.Value))
                                         .ToList()
                                 }).ToList());
