@@ -197,42 +197,22 @@ namespace Nozomi.Service.Events
                 .AsNoTracking()
                 // Make sure all currency sources are not disabled or deleted
                 .Where(cs => cs.IsEnabled && cs.DeletedAt == null)
-                .Include(cs => cs.CurrencyPairs)
-                    .ThenInclude(cp => cp.CurrencyPairCurrencies)
-                        .ThenInclude(pcp => pcp.Currency)
-                            .ThenInclude(c => c.CurrencyType)
+                .Include(s => s.CurrencyPairs)
+                .ThenInclude(cp => cp.CurrencyPairSourceCurrencies)
+                .Include(s => s.SourceCurrencies)
+                .ThenInclude(sc => sc.Currency)
                 .Where(cs => cs.CurrencyPairs
                     // Make sure all currencypairs are not disabled or deleted
                     .Any(cp => cp.IsEnabled && cp.DeletedAt == null
                     &&
                     // Make sure none of the currency pair's partial currency pair is not disabled or deleted
-                    cp.CurrencyPairCurrencies
-                    .Any(pcp => pcp.Currency.IsEnabled && pcp.Currency.DeletedAt == null)))
+                    cp.CurrencyPairSourceCurrencies
+                    .Any(cpsc => cpsc.CurrencySource.DeletedAt == null && cpsc.CurrencySource.IsEnabled)))
                 .Select(cs => new {
                     id = cs.Id,
                     abbreviation = cs.Abbreviation,
                     name = cs.Name,
                     currencyPairs = cs.CurrencyPairs
-                        .Select(cp => new
-                        {
-                            id = cp.Id,
-                            partialCurrencyPairs = cp.CurrencyPairCurrencies
-                                .Select(pcp => new
-                                {
-                                    currencyId = pcp.CurrencyId,
-                                    currency = new
-                                    {
-                                        abbrv = pcp.Currency.Abbreviation,
-                                        currencyTypeId = pcp.Currency.CurrencyTypeId,
-                                        currencyType = new {
-                                            typeShortForm = pcp.Currency.CurrencyType.TypeShortForm,
-                                            name = pcp.Currency.CurrencyType.Name
-                                        },
-                                        name = pcp.Currency.Name,
-                                        walletTypeId = pcp.Currency.WalletTypeId
-                                    }
-                                })
-                        })
                 });
         }
     }
