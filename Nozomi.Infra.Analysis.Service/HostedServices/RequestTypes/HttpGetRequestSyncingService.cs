@@ -9,6 +9,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 using System.Xml;
+using Microsoft.EntityFrameworkCore.Internal;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -24,6 +26,7 @@ using Nozomi.Repo.Data;
 using Nozomi.Service.Events.Interfaces;
 using Nozomi.Service.Services.Interfaces;
 using Nozomi.Service.Services.Requests.Interfaces;
+using StackExchange.Redis;
 
 /*
  * HttpGetCurrencyPairRequestSyncingService
@@ -75,7 +78,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
                     // the ones we want to poll
                     var cpRequests = _currencyPairRequestService
                         .GetAllByRequestTypeUniqueToURL(RequestType.HttpGet);
-                    
+
                     // Iterate the requests
                     // NOTE: Let's not call a parallel loop since HttpClients might tend to result in memory leaks.
                     foreach (var cpRequest in cpRequests)
@@ -87,7 +90,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
                         }
                     }
 
-                    var cRequests = _currencyRequestEvent.GetAllByRequestTypeUniqueToUrl(_nozomiDbContext, 
+                    var cRequests = _currencyRequestEvent.GetAllByRequestTypeUniqueToUrl(_nozomiDbContext,
                         RequestType.HttpGet);
 
                     foreach (var cRequest in cRequests)
@@ -109,7 +112,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
 
             _logger.LogWarning("HttpGetCurrencyPairRequestSyncingService background task is stopping.");
         }
-        
+
         /// <summary>
         /// Every URL path may have multiple requests attempting to update separate entities.
         /// This method introduces a way of handling the collection of requests bundled together according to
@@ -123,288 +126,355 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
         {
             if (requests != null && requests.Count > 0)
             {
-                // Randomly obtain the first.
-                var firstRequest = requests.FirstOrDefault();
-
-                // quit if shit
-                if (firstRequest == null) return false;
-
-                _logger.LogInformation($"HttpGetCurrencyPairRequestSyncingService PROCESSING: {firstRequest.DataPath}");
-
-                // FLUSH
-                _httpClient.DefaultRequestHeaders.Clear();
-
-                // Setup the url
-                var uri = new UriBuilder(firstRequest.DataPath);
-                var urlParams = HttpUtility.ParseQueryString(string.Empty);
-
-                // Setup the request properties
-                foreach (var reqProp in firstRequest.RequestProperties)
+                var requestCollection = new List<List<T>>();
+                
+                // Let's group the requests again, by the property
+                foreach (var request in requests)
                 {
-                    switch (reqProp.RequestPropertyType)
+                    // For every request collection item we got
+                    for (var i = 0; i < requestCollection.Count; i++)
                     {
-                        // Adds a custom header
-                        case RequestPropertyType.HttpHeader:
-                            _httpClient.DefaultRequestHeaders.Add(reqProp.Key, reqProp.Value);
-                            break;
-                        // Adds a custom acceptance type
-                        case RequestPropertyType.HttpHeader_Accept:
-                            _httpClient.DefaultRequestHeaders.Accept.Add(
-                                new MediaTypeWithQualityHeaderValue(reqProp.Value));
-                            break;
-                        // Adds a custom charset acceptance type
-                        case RequestPropertyType.HttpHeader_AcceptCharset:
-                            _httpClient.DefaultRequestHeaders.AcceptCharset.Add(
-                                new StringWithQualityHeaderValue(reqProp.Value));
-                            break;
-                        // Adds a custom encoding acceptance type
-                        case RequestPropertyType.HttpHeader_AcceptEncoding:
-                            _httpClient.DefaultRequestHeaders.AcceptEncoding.Add(
-                                new StringWithQualityHeaderValue(reqProp.Value));
-                            break;
-                        // Adds a custom language acceptance type
-                        case RequestPropertyType.HttpHeader_AcceptLanguage:
-                            _httpClient.DefaultRequestHeaders.AcceptLanguage.Add(
-                                new StringWithQualityHeaderValue(reqProp.Value));
-                            break;
-                        // Adds a header authorization value
-                        case RequestPropertyType.HttpHeader_Authorization:
-                            _httpClient.DefaultRequestHeaders.Authorization =
-                                new AuthenticationHeaderValue(reqProp.Key, reqProp.Value);
-                            break;
-                        // Modifies the cache control header values
-                        case RequestPropertyType.HttpHeader_CacheControl:
-                            var cchv = JsonConvert.DeserializeObject<CacheControlHeaderValue>(reqProp.Value);
-
-                            if (cchv != null)
+                        var match = true;
+                        // Check
+                        var firstReq = requestCollection[i].FirstOrDefault();
+                        if (firstReq != null)
+                        {
+                            // Check to see if request has all of these properties
+                            foreach (var reqProp in firstReq.RequestProperties)
                             {
-                                _httpClient.DefaultRequestHeaders.CacheControl = cchv;
+                                // If there is no request property that matches this
+                                if (!request.RequestProperties.Any(rp =>
+                                    rp.Key.Equals(reqProp.Key) && rp.Value.Equals(reqProp.Value)
+                                                               && rp.RequestPropertyType.Equals(
+                                                                   reqProp.RequestPropertyType)))
+                                {
+                                    match = false;
+                                    break; // Break from this foreach
+                                }
+                            }
+                            
+                            // Since its a match, add it in
+                            if (match)
+                                requestCollection[i].Add(request);
+                        }
+                        
+                        // If there are no matches and we already checked till the last
+                        if (!match && i.Equals(requestCollection.Count - 1))
+                        {
+                            // Create its own scheme
+                            requestCollection.Add(new List<T>()
+                            {
+                                request
+                            });
+                        }
+                    }
+                    
+                    if (requestCollection.Count == 0) // Seed
+                        requestCollection.Add(new List<T>()
+                        {
+                            request
+                        });
+                }
+                
+                // For requests with the same data path and property set
+                foreach (var currentRequests in requestCollection)
+                {
+                    // Get the first
+                    var firstRequest = currentRequests.FirstOrDefault();
+                    
+                    // quit if shit
+                    if (firstRequest == null) return false;
+
+                    _logger.LogInformation(
+                        $"HttpGetCurrencyPairRequestSyncingService PROCESSING: {firstRequest.DataPath}");
+
+                    // FLUSH
+                    _httpClient.DefaultRequestHeaders.Clear();
+
+                    // Setup the url
+                    var uri = new UriBuilder(firstRequest.DataPath);
+                    var urlParams = HttpUtility.ParseQueryString(string.Empty);
+
+                    // Setup the request properties
+                    foreach (var reqProp in firstRequest.RequestProperties)
+                    {
+                        switch (reqProp.RequestPropertyType)
+                        {
+                            // Adds a custom header
+                            case RequestPropertyType.HttpHeader:
+                                _httpClient.DefaultRequestHeaders.Add(reqProp.Key, reqProp.Value);
+                                break;
+                            // Adds a custom acceptance type
+                            case RequestPropertyType.HttpHeader_Accept:
+                                _httpClient.DefaultRequestHeaders.Accept.Add(
+                                    new MediaTypeWithQualityHeaderValue(reqProp.Value));
+                                break;
+                            // Adds a custom charset acceptance type
+                            case RequestPropertyType.HttpHeader_AcceptCharset:
+                                _httpClient.DefaultRequestHeaders.AcceptCharset.Add(
+                                    new StringWithQualityHeaderValue(reqProp.Value));
+                                break;
+                            // Adds a custom encoding acceptance type
+                            case RequestPropertyType.HttpHeader_AcceptEncoding:
+                                _httpClient.DefaultRequestHeaders.AcceptEncoding.Add(
+                                    new StringWithQualityHeaderValue(reqProp.Value));
+                                break;
+                            // Adds a custom language acceptance type
+                            case RequestPropertyType.HttpHeader_AcceptLanguage:
+                                _httpClient.DefaultRequestHeaders.AcceptLanguage.Add(
+                                    new StringWithQualityHeaderValue(reqProp.Value));
+                                break;
+                            // Adds a header authorization value
+                            case RequestPropertyType.HttpHeader_Authorization:
+                                _httpClient.DefaultRequestHeaders.Authorization =
+                                    new AuthenticationHeaderValue(reqProp.Key, reqProp.Value);
+                                break;
+                            // Modifies the cache control header values
+                            case RequestPropertyType.HttpHeader_CacheControl:
+                                var cchv = JsonConvert.DeserializeObject<CacheControlHeaderValue>(reqProp.Value);
+
+                                if (cchv != null)
+                                {
+                                    _httpClient.DefaultRequestHeaders.CacheControl = cchv;
+                                }
+
+                                break;
+                            // Adds a custom connection header value
+                            case RequestPropertyType.HttpHeader_Connection:
+                                _httpClient.DefaultRequestHeaders.Connection.Add(reqProp.Value);
+                                break;
+                            // Declares whether if the data path has a close value
+                            case RequestPropertyType.HttpHeader_ConnectionClose:
+                                if (bool.TryParse(reqProp.Value, out var res))
+                                {
+                                    _httpClient.DefaultRequestHeaders.ConnectionClose = res;
+                                }
+
+                                break;
+                            // Declares the datetimeoffset
+                            case RequestPropertyType.HttpHeader_Date:
+                                if (DateTimeOffset.TryParse(reqProp.Value, out var dtoRes))
+                                {
+                                    _httpClient.DefaultRequestHeaders.Date = dtoRes;
+                                }
+
+                                break;
+                            // Declares the Expect Header
+                            case RequestPropertyType.HttpHeader_Expect:
+                                _httpClient.DefaultRequestHeaders.Expect
+                                    .Add(new NameValueWithParametersHeaderValue(reqProp.Key, reqProp.Value));
+                                break;
+                            // Declares the ExpectContinue Header to see if we need to continue or not
+                            // after getting what we're expecting
+                            case RequestPropertyType.HttpHeader_ExpectContinue:
+                                if (bool.TryParse(reqProp.Value, out var ecRes))
+                                {
+                                    _httpClient.DefaultRequestHeaders.ExpectContinue = ecRes;
+                                }
+
+                                break;
+                            // Declares the From Header, where this request came from or who.. idk.. whatever the API
+                            // asks to put in the From header.
+                            case RequestPropertyType.HttpHeader_From:
+                                _httpClient.DefaultRequestHeaders.From = reqProp.Value;
+                                break;
+                            // Declares the Host Header
+                            case RequestPropertyType.HttpHeader_Host:
+                                _httpClient.DefaultRequestHeaders.Host = reqProp.Value;
+                                break;
+                            // Declares the If-Match Header
+                            case RequestPropertyType.HttpHeader_IfMatch:
+                                _httpClient.DefaultRequestHeaders.IfMatch
+                                    .Add(new EntityTagHeaderValue(reqProp.Value));
+                                break;
+                            // Declares the If-Modified-Since Header
+                            case RequestPropertyType.HttpHeader_IfModifiedSince:
+                                if (DateTimeOffset.TryParse(reqProp.Value, out var imsRes))
+                                {
+                                    _httpClient.DefaultRequestHeaders.IfModifiedSince = imsRes;
+                                }
+
+                                break;
+                            // Declares the If-None-Match Header
+                            case RequestPropertyType.HttpHeader_IfNoneMatch:
+                                _httpClient.DefaultRequestHeaders.IfNoneMatch
+                                    .Add(new EntityTagHeaderValue(reqProp.Value));
+                                break;
+                            // Declares the If-Range Header
+                            case RequestPropertyType.HttpHeader_IfRange:
+                                if (RangeConditionHeaderValue.TryParse(reqProp.Value, out var rchvRes))
+                                {
+                                    _httpClient.DefaultRequestHeaders.IfRange = rchvRes;
+                                }
+
+                                break;
+                            // Declares the If-Unmodified-Since Header
+                            case RequestPropertyType.HttpHeader_IfUnmodifiedSince:
+                                if (DateTimeOffset.TryParse(reqProp.Value, out var iumsRes))
+                                {
+                                    _httpClient.DefaultRequestHeaders.IfUnmodifiedSince = iumsRes;
+                                }
+
+                                break;
+                            // Declares the Max-Forwards Header, the maximum number of forwarding allowed.
+                            case RequestPropertyType.HttpHeader_MaxForwards:
+                                if (int.TryParse(reqProp.Value, out var mfRes))
+                                {
+                                    _httpClient.DefaultRequestHeaders.MaxForwards = mfRes;
+                                }
+
+                                break;
+                            // Declares a Pragma Header
+                            case RequestPropertyType.HttpHeader_Pragma:
+                                _httpClient.DefaultRequestHeaders.Pragma
+                                    .Add(new NameValueHeaderValue(reqProp.Key, reqProp.Value));
+                                break;
+                            // Declares the Proxy-Authorization Header values
+                            case RequestPropertyType.HttpHeader_ProxyAuthorization:
+                                _httpClient.DefaultRequestHeaders.ProxyAuthorization =
+                                    new AuthenticationHeaderValue(reqProp.Key, reqProp.Value);
+
+                                break;
+                            // Declares the Range Header
+                            case RequestPropertyType.HttpHeader_Range:
+                                var rhvRes = JsonConvert.DeserializeObject<RangeHeaderValue>(reqProp.Value);
+
+                                if (rhvRes != null)
+                                {
+                                    _httpClient.DefaultRequestHeaders.Range = rhvRes;
+                                }
+
+                                break;
+                            // Declares the Referrer Header, who referred this request
+                            case RequestPropertyType.HttpHeader_Referrer:
+                                _httpClient.DefaultRequestHeaders.Referrer = new Uri(reqProp.Value);
+                                break;
+                            // Declares the TE Header
+                            case RequestPropertyType.HttpHeader_TE:
+                                _httpClient.DefaultRequestHeaders.TE
+                                    .Add(new TransferCodingWithQualityHeaderValue(reqProp.Value));
+                                break;
+                            // Declares the Trailer Header
+                            case RequestPropertyType.HttpHeader_Trailer:
+                                _httpClient.DefaultRequestHeaders.Trailer.Add(reqProp.Value);
+                                break;
+                            // Declares the Transfer-Encoding Header value
+                            case RequestPropertyType.HttpHeader_TransferEncoding:
+                                _httpClient.DefaultRequestHeaders.TransferEncoding
+                                    .Add(new TransferCodingHeaderValue(reqProp.Value));
+                                break;
+                            // Declares the Transfer-Encoding-Chunked Header value, whether the Transfer-Encoding is
+                            // chunked or not..
+                            case RequestPropertyType.HttpHeader_TransferEncodingChunked:
+                                if (bool.TryParse(reqProp.Value, out var tecRes))
+                                {
+                                    _httpClient.DefaultRequestHeaders.TransferEncodingChunked = tecRes;
+                                }
+
+                                break;
+                            // Declares the Upgrade Header
+                            case RequestPropertyType.HttpHeader_Upgrade:
+                                _httpClient.DefaultRequestHeaders.Upgrade
+                                    .Add(new ProductHeaderValue(reqProp.Key, reqProp.Value));
+                                break;
+                            // Declares the User-Agent Header Values
+                            case RequestPropertyType.HttpHeader_UserAgent:
+                                _httpClient.DefaultRequestHeaders.UserAgent
+                                    .Add(string.IsNullOrEmpty(reqProp.Key)
+                                        ? new ProductInfoHeaderValue(reqProp.Value)
+                                        : new ProductInfoHeaderValue(reqProp.Key, reqProp.Value));
+
+                                break;
+                            // Declares a Via Header Value
+                            case RequestPropertyType.HttpHeader_Via:
+                                _httpClient.DefaultRequestHeaders.Via.Add(
+                                    new ViaHeaderValue(reqProp.Key, reqProp.Value));
+                                break;
+                            // Declares a Warning Header value
+                            case RequestPropertyType.HttpHeader_Warning:
+                                var wRes = JsonConvert.DeserializeObject<WarningHeaderValue>(reqProp.Value);
+
+                                if (wRes != null)
+                                {
+                                    _httpClient.DefaultRequestHeaders.Warning.Add(wRes);
+                                }
+
+                                break;
+                            case RequestPropertyType.HttpHeader_Custom:
+                            case RequestPropertyType.HttpQuery:
+                                urlParams.Add(reqProp.Key, reqProp.Value);
+                                break;
+                            default:
+                                // Do nothing for now
+                                break;
+                        }
+                    }
+
+                    if (urlParams.Count > 0)
+                    {
+                        // Setup the url
+                        uri.Query = urlParams.ToString();
+                    }
+
+                    // Pull in the payload
+                    var payload = await _httpClient.GetAsync(uri.ToString());
+
+                    switch (payload.StatusCode)
+                    {
+                        case HttpStatusCode.OK:
+                            // Let's update the entire bunch whom have the same properties only.
+                            if (currentRequests.Any(r => r.RequestComponents
+                                .Any(rc => rc.DeletedAt == null && rc.IsEnabled)))
+                            {
+                                // Pull the content
+                                var content = await payload.Content.ReadAsStringAsync();
+                                var resType = ResponseType.Json;
+
+                                // Pull the components wanted
+                                var requestComponents = currentRequests
+                                    .SelectMany(r => r.RequestComponents
+                                        .Where(rc => rc.DeletedAt == null && rc.IsEnabled));
+
+                                // Parse the content
+                                if (payload.Content.Headers.ContentType.MediaType.Equals(ResponseType.Json
+                                    .GetDescription()))
+                                {
+                                    // No action needed
+                                }
+                                else if (payload.Content.Headers.ContentType.MediaType.Equals(
+                                    ResponseType.XML.GetDescription()))
+                                {
+                                    // Load the XML
+                                    //var xmlElement = XElement.Parse(content);
+                                    resType = ResponseType.XML;
+                                    var xmlDoc = new XmlDocument();
+                                    xmlDoc.LoadXml(content);
+                                    content = JsonConvert.SerializeObject(xmlDoc);
+                                }
+
+                                var contentToken = JToken.Parse(content);
+
+                                if (!Update(contentToken, resType, requestComponents))
+                                {
+                                    // Log
+                                }
+                            }
+                            else
+                            {
+                                // Else error
+                                return false;
                             }
 
                             break;
-                        // Adds a custom connection header value
-                        case RequestPropertyType.HttpHeader_Connection:
-                            _httpClient.DefaultRequestHeaders.Connection.Add(reqProp.Value);
-                            break;
-                        // Declares whether if the data path has a close value
-                        case RequestPropertyType.HttpHeader_ConnectionClose:
-                            if (bool.TryParse(reqProp.Value, out var res))
-                            {
-                                _httpClient.DefaultRequestHeaders.ConnectionClose = res;
-                            }
-
-                            break;
-                        // Declares the datetimeoffset
-                        case RequestPropertyType.HttpHeader_Date:
-                            if (DateTimeOffset.TryParse(reqProp.Value, out var dtoRes))
-                            {
-                                _httpClient.DefaultRequestHeaders.Date = dtoRes;
-                            }
-
-                            break;
-                        // Declares the Expect Header
-                        case RequestPropertyType.HttpHeader_Expect:
-                            _httpClient.DefaultRequestHeaders.Expect
-                                .Add(new NameValueWithParametersHeaderValue(reqProp.Key, reqProp.Value));
-                            break;
-                        // Declares the ExpectContinue Header to see if we need to continue or not
-                        // after getting what we're expecting
-                        case RequestPropertyType.HttpHeader_ExpectContinue:
-                            if (bool.TryParse(reqProp.Value, out var ecRes))
-                            {
-                                _httpClient.DefaultRequestHeaders.ExpectContinue = ecRes;
-                            }
-
-                            break;
-                        // Declares the From Header, where this request came from or who.. idk.. whatever the API
-                        // asks to put in the From header.
-                        case RequestPropertyType.HttpHeader_From:
-                            _httpClient.DefaultRequestHeaders.From = reqProp.Value;
-                            break;
-                        // Declares the Host Header
-                        case RequestPropertyType.HttpHeader_Host:
-                            _httpClient.DefaultRequestHeaders.Host = reqProp.Value;
-                            break;
-                        // Declares the If-Match Header
-                        case RequestPropertyType.HttpHeader_IfMatch:
-                            _httpClient.DefaultRequestHeaders.IfMatch
-                                .Add(new EntityTagHeaderValue(reqProp.Value));
-                            break;
-                        // Declares the If-Modified-Since Header
-                        case RequestPropertyType.HttpHeader_IfModifiedSince:
-                            if (DateTimeOffset.TryParse(reqProp.Value, out var imsRes))
-                            {
-                                _httpClient.DefaultRequestHeaders.IfModifiedSince = imsRes;
-                            }
-
-                            break;
-                        // Declares the If-None-Match Header
-                        case RequestPropertyType.HttpHeader_IfNoneMatch:
-                            _httpClient.DefaultRequestHeaders.IfNoneMatch
-                                .Add(new EntityTagHeaderValue(reqProp.Value));
-                            break;
-                        // Declares the If-Range Header
-                        case RequestPropertyType.HttpHeader_IfRange:
-                            if (RangeConditionHeaderValue.TryParse(reqProp.Value, out var rchvRes))
-                            {
-                                _httpClient.DefaultRequestHeaders.IfRange = rchvRes;
-                            }
-
-                            break;
-                        // Declares the If-Unmodified-Since Header
-                        case RequestPropertyType.HttpHeader_IfUnmodifiedSince:
-                            if (DateTimeOffset.TryParse(reqProp.Value, out var iumsRes))
-                            {
-                                _httpClient.DefaultRequestHeaders.IfUnmodifiedSince = iumsRes;
-                            }
-
-                            break;
-                        // Declares the Max-Forwards Header, the maximum number of forwarding allowed.
-                        case RequestPropertyType.HttpHeader_MaxForwards:
-                            if (int.TryParse(reqProp.Value, out var mfRes))
-                            {
-                                _httpClient.DefaultRequestHeaders.MaxForwards = mfRes;
-                            }
-
-                            break;
-                        // Declares a Pragma Header
-                        case RequestPropertyType.HttpHeader_Pragma:
-                            _httpClient.DefaultRequestHeaders.Pragma
-                                .Add(new NameValueHeaderValue(reqProp.Key, reqProp.Value));
-                            break;
-                        // Declares the Proxy-Authorization Header values
-                        case RequestPropertyType.HttpHeader_ProxyAuthorization:
-                            _httpClient.DefaultRequestHeaders.ProxyAuthorization =
-                                new AuthenticationHeaderValue(reqProp.Key, reqProp.Value);
-
-                            break;
-                        // Declares the Range Header
-                        case RequestPropertyType.HttpHeader_Range:
-                            var rhvRes = JsonConvert.DeserializeObject<RangeHeaderValue>(reqProp.Value);
-
-                            if (rhvRes != null)
-                            {
-                                _httpClient.DefaultRequestHeaders.Range = rhvRes;
-                            }
-
-                            break;
-                        // Declares the Referrer Header, who referred this request
-                        case RequestPropertyType.HttpHeader_Referrer:
-                            _httpClient.DefaultRequestHeaders.Referrer = new Uri(reqProp.Value);
-                            break;
-                        // Declares the TE Header
-                        case RequestPropertyType.HttpHeader_TE:
-                            _httpClient.DefaultRequestHeaders.TE
-                                .Add(new TransferCodingWithQualityHeaderValue(reqProp.Value));
-                            break;
-                        // Declares the Trailer Header
-                        case RequestPropertyType.HttpHeader_Trailer:
-                            _httpClient.DefaultRequestHeaders.Trailer.Add(reqProp.Value);
-                            break;
-                        // Declares the Transfer-Encoding Header value
-                        case RequestPropertyType.HttpHeader_TransferEncoding:
-                            _httpClient.DefaultRequestHeaders.TransferEncoding
-                                .Add(new TransferCodingHeaderValue(reqProp.Value));
-                            break;
-                        // Declares the Transfer-Encoding-Chunked Header value, whether the Transfer-Encoding is
-                        // chunked or not..
-                        case RequestPropertyType.HttpHeader_TransferEncodingChunked:
-                            if (bool.TryParse(reqProp.Value, out var tecRes))
-                            {
-                                _httpClient.DefaultRequestHeaders.TransferEncodingChunked = tecRes;
-                            }
-
-                            break;
-                        // Declares the Upgrade Header
-                        case RequestPropertyType.HttpHeader_Upgrade:
-                            _httpClient.DefaultRequestHeaders.Upgrade
-                                .Add(new ProductHeaderValue(reqProp.Key, reqProp.Value));
-                            break;
-                        // Declares the User-Agent Header Values
-                        case RequestPropertyType.HttpHeader_UserAgent:
-                            _httpClient.DefaultRequestHeaders.UserAgent
-                                .Add(string.IsNullOrEmpty(reqProp.Key)
-                                    ? new ProductInfoHeaderValue(reqProp.Value)
-                                    : new ProductInfoHeaderValue(reqProp.Key, reqProp.Value));
-
-                            break;
-                        // Declares a Via Header Value
-                        case RequestPropertyType.HttpHeader_Via:
-                            _httpClient.DefaultRequestHeaders.Via.Add(new ViaHeaderValue(reqProp.Key, reqProp.Value));
-                            break;
-                        // Declares a Warning Header value
-                        case RequestPropertyType.HttpHeader_Warning:
-                            var wRes = JsonConvert.DeserializeObject<WarningHeaderValue>(reqProp.Value);
-
-                            if (wRes != null)
-                            {
-                                _httpClient.DefaultRequestHeaders.Warning.Add(wRes);
-                            }
-
-                            break;
-                        case RequestPropertyType.HttpHeader_Custom:
-                        case RequestPropertyType.HttpQuery:
-                            urlParams.Add(reqProp.Key, reqProp.Value);
-                            break;
-                        default:
-                            // Do nothing for now
-                            break;
+                        case HttpStatusCode.TooManyRequests:
+                            // Rate limited. Push back update timings
+                            _requestService.Delay(firstRequest,
+                                TimeSpan.FromMilliseconds(firstRequest.FailureDelay));
+                            return false;
                     }
                 }
 
-                if (urlParams.Count > 0)
-                {
-                    // Setup the url
-                    uri.Query = urlParams.ToString();
-                }
-
-                // Pull in the payload
-                var payload = await _httpClient.GetAsync(uri.ToString());
-
-                switch (payload.StatusCode)
-                {
-                    case HttpStatusCode.OK:
-                        if (requests.Any(r => r.RequestComponents
-                            .Any(rc => rc.DeletedAt == null && rc.IsEnabled)))
-                        {
-                            // Pull the content
-                            var content = await payload.Content.ReadAsStringAsync();
-                            var resType = ResponseType.Json;
-
-                            // Pull the components wanted
-                            var requestComponents = requests
-                                .SelectMany(r => r.RequestComponents
-                                    .Where(rc => rc.DeletedAt == null && rc.IsEnabled));
-
-                            // Parse the content
-                            if (payload.Content.Headers.ContentType.MediaType.Equals(ResponseType.Json.GetDescription()))
-                            {
-                                // No action needed
-                            }
-                            else if (payload.Content.Headers.ContentType.MediaType.Equals(ResponseType.XML.GetDescription()))
-                            {
-                                // Load the XML
-                                //var xmlElement = XElement.Parse(content);
-                                resType = ResponseType.XML;
-                                var xmlDoc = new XmlDocument();
-                                xmlDoc.LoadXml(content);
-                                content = JsonConvert.SerializeObject(xmlDoc);
-                            }
-
-                            var contentToken = JToken.Parse(content);
-
-                            if (Update(contentToken, resType, requestComponents)) return true;
-                        }
-                        
-                        // Else error
-                        return false;
-                    case HttpStatusCode.TooManyRequests:
-                        // Rate limited. Push back update timings
-                        return _requestService.Delay(firstRequest, TimeSpan.FromMilliseconds(firstRequest.FailureDelay));
-                    default:
-                        // ded
-                        return false;
-                }
+                return true;
             }
 
             // Log the failure
@@ -417,13 +487,13 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
         {
             // Save it first
             var currToken = token;
-            
+
             // For each component we're checking
             foreach (var component in requestComponents)
             {
                 // Always reset
                 currToken = token;
-                
+
                 var comArr = component.QueryComponent.Split("/"); // Split the string if its nesting
                 var last = comArr.LastOrDefault(); // get the last to identify if its the last
 
@@ -488,7 +558,8 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
                                                 if (val > 0)
                                                 {
                                                     // Update it
-                                                    var res = _requestComponentService.UpdatePairValue(component.Id, val);
+                                                    var res = _requestComponentService.UpdatePairValue(component.Id,
+                                                        val);
 
                                                     if (res.ResultType.Equals(NozomiResultType.Failed))
                                                     {
@@ -526,7 +597,8 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
                                                 if (val > 0)
                                                 {
                                                     // Update it
-                                                    var res = _requestComponentService.UpdatePairValue(component.Id, val);
+                                                    var res = _requestComponentService.UpdatePairValue(component.Id,
+                                                        val);
 
                                                     if (res.ResultType.Equals(NozomiResultType.Failed))
                                                     {
