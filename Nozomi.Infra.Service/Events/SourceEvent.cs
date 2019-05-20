@@ -189,31 +189,5 @@ namespace Nozomi.Service.Events
                 })
                 .SingleOrDefault();
         }
-
-        public IEnumerable<dynamic> GetAllNested()
-        {
-            return _unitOfWork.GetRepository<Source>()
-                .GetQueryable()
-                .AsNoTracking()
-                // Make sure all currency sources are not disabled or deleted
-                .Where(cs => cs.IsEnabled && cs.DeletedAt == null)
-                .Include(s => s.CurrencyPairs)
-                .ThenInclude(cp => cp.CurrencyPairSourceCurrencies)
-                .Include(s => s.SourceCurrencies)
-                .ThenInclude(sc => sc.Currency)
-                .Where(cs => cs.CurrencyPairs
-                    // Make sure all currencypairs are not disabled or deleted
-                    .Any(cp => cp.IsEnabled && cp.DeletedAt == null
-                    &&
-                    // Make sure none of the currency pair's partial currency pair is not disabled or deleted
-                    cp.CurrencyPairSourceCurrencies
-                    .Any(cpsc => cpsc.CurrencySource.DeletedAt == null && cpsc.CurrencySource.IsEnabled)))
-                .Select(cs => new {
-                    id = cs.Id,
-                    abbreviation = cs.Abbreviation,
-                    name = cs.Name,
-                    currencyPairs = cs.CurrencyPairs
-                });
-        }
     }
 }

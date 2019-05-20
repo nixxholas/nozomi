@@ -10,8 +10,6 @@ namespace Nozomi.Service.Events.Interfaces
         
         XSourceResponse Get(long id);
         XSourceResponse Get(string abbreviation);
-        
-        IEnumerable<dynamic> GetAllNested();
 
         IEnumerable<Source> GetAllActive(bool countPairs = false, bool includeNested = false);
 
