@@ -30,8 +30,8 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                 new CurrencySource
                 {
                     Id = 1,
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     DeletedAt = null,
                     CurrencyId = 1,
                     SourceId = 1
@@ -40,8 +40,8 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                 new CurrencySource
                 {
                     Id = 2,
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     DeletedAt = null,
                     CurrencyId = 2,
                     SourceId = 1
@@ -50,8 +50,8 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                 new CurrencySource
                 {
                     Id = 3,
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     DeletedAt = null,
                     CurrencyId = 3,
                     SourceId = 1
@@ -60,8 +60,8 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                 new CurrencySource
                 {
                     Id = 4,
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     DeletedAt = null,
                     CurrencyId = 4,
                     SourceId = 1
@@ -70,9 +70,6 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                 new CurrencySource
                 {
                     Id = 5,
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
-                    DeletedAt = null,
                     CurrencyId = 4,
                     SourceId = 3
                 },
@@ -80,8 +77,8 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                 new CurrencySource
                 {
                     Id = 6,
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     DeletedAt = null,
                     CurrencyId = 3,
                     SourceId = 3
@@ -90,8 +87,8 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                 new CurrencySource
                 {
                     Id = 7,
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     DeletedAt = null,
                     CurrencyId = 5,
                     SourceId = 3
@@ -100,8 +97,8 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                 new CurrencySource
                 {
                     Id = 8,
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     DeletedAt = null,
                     CurrencyId = 2,
                     SourceId = 4
@@ -110,8 +107,8 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                 new CurrencySource
                 {
                     Id = 9,
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     DeletedAt = null,
                     CurrencyId = 1,
                     SourceId = 4
@@ -120,8 +117,8 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                 new CurrencySource
                 {
                     Id = 10,
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     DeletedAt = null,
                     CurrencyId = 2,
                     SourceId = 5
@@ -130,8 +127,8 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                 new CurrencySource
                 {
                     Id = 11,
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     DeletedAt = null,
                     CurrencyId = 1,
                     SourceId = 5
@@ -140,8 +137,8 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                 new CurrencySource
                 {
                     Id = 12,
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     DeletedAt = null,
                     CurrencyId = 5,
                     SourceId = 6
@@ -150,8 +147,8 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                 new CurrencySource
                 {
                     Id = 13,
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     DeletedAt = null,
                     CurrencyId = 6,
                     SourceId = 6
@@ -160,8 +157,8 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                 new CurrencySource
                 {
                     Id = 14,
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     DeletedAt = null,
                     CurrencyId = 7,
                     SourceId = 6
@@ -170,8 +167,8 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                 new CurrencySource
                 {
                     Id = 15,
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     DeletedAt = null,
                     CurrencyId = 8,
                     SourceId = 6
@@ -180,8 +177,8 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                 new CurrencySource
                 {
                     Id = 16,
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     DeletedAt = null,
                     CurrencyId = 5,
                     SourceId = 2
@@ -190,8 +187,8 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                 new CurrencySource
                 {
                     Id = 17,
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     DeletedAt = null,
                     CurrencyId = 9,
                     SourceId = 2
@@ -200,8 +197,8 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                 new CurrencySource
                 {
                     Id = 18,
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     DeletedAt = null,
                     CurrencyId = 6,
                     SourceId = 2
@@ -210,8 +207,8 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                 new CurrencySource
                 {
                     Id = 19,
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     DeletedAt = null,
                     CurrencyId = 1,
                     SourceId = 2
@@ -220,8 +217,8 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                 new CurrencySource
                 {
                     Id = 20,
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                    ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                     DeletedAt = null,
                     CurrencyId = 10,
                     SourceId = 2
