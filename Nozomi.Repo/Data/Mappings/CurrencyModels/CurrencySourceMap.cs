@@ -73,7 +73,7 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                     CreatedAt = DateTime.UtcNow,
                     ModifiedAt = DateTime.UtcNow,
                     DeletedAt = null,
-                    CurrencyId = 5,
+                    CurrencyId = 4,
                     SourceId = 3
                 },
                 // Binance ETH
@@ -83,7 +83,7 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                     CreatedAt = DateTime.UtcNow,
                     ModifiedAt = DateTime.UtcNow,
                     DeletedAt = null,
-                    CurrencyId = 6,
+                    CurrencyId = 3,
                     SourceId = 3
                 },
                 // Binance BTC
@@ -93,7 +93,7 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                     CreatedAt = DateTime.UtcNow,
                     ModifiedAt = DateTime.UtcNow,
                     DeletedAt = null,
-                    CurrencyId = 7,
+                    CurrencyId = 5,
                     SourceId = 3
                 },
                 // European Central Bank EUR
@@ -143,7 +143,7 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                     CreatedAt = DateTime.UtcNow,
                     ModifiedAt = DateTime.UtcNow,
                     DeletedAt = null,
-                    CurrencyId = 7,
+                    CurrencyId = 5,
                     SourceId = 6
                 },
                 // Poloniex BCN
@@ -153,7 +153,7 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                     CreatedAt = DateTime.UtcNow,
                     ModifiedAt = DateTime.UtcNow,
                     DeletedAt = null,
-                    CurrencyId = 8,
+                    CurrencyId = 6,
                     SourceId = 6
                 },
                 // Poloniex BTS
@@ -163,7 +163,7 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                     CreatedAt = DateTime.UtcNow,
                     ModifiedAt = DateTime.UtcNow,
                     DeletedAt = null,
-                    CurrencyId = 9,
+                    CurrencyId = 7,
                     SourceId = 6
                 },
                 // Poloniex USDT
@@ -173,7 +173,7 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                     CreatedAt = DateTime.UtcNow,
                     ModifiedAt = DateTime.UtcNow,
                     DeletedAt = null,
-                    CurrencyId = 10,
+                    CurrencyId = 8,
                     SourceId = 6
                 },
                 // Coinhako BTC
@@ -183,7 +183,7 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                     CreatedAt = DateTime.UtcNow,
                     ModifiedAt = DateTime.UtcNow,
                     DeletedAt = null,
-                    CurrencyId = 7,
+                    CurrencyId = 5,
                     SourceId = 2
                 },
                 // Coinhako SGD
@@ -193,7 +193,7 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                     CreatedAt = DateTime.UtcNow,
                     ModifiedAt = DateTime.UtcNow,
                     DeletedAt = null,
-                    CurrencyId = 11,
+                    CurrencyId = 9,
                     SourceId = 2
                 },
                 // Coinhako ETH
@@ -223,7 +223,7 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                     CreatedAt = DateTime.UtcNow,
                     ModifiedAt = DateTime.UtcNow,
                     DeletedAt = null,
-                    CurrencyId = 12,
+                    CurrencyId = 10,
                     SourceId = 2
                 }
             );

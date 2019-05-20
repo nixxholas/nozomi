@@ -79,7 +79,7 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                 },
                 new Currency
                 {
-                    Id = 7,
+                    Id = 5,
                     CurrencyTypeId = 2,
                     Abbreviation = "BTC",
                     Name = "Bitcoin",
@@ -89,7 +89,7 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                 },
                 new Currency
                 {
-                    Id = 8,
+                    Id = 6,
                     CurrencyTypeId = 2,
                     Abbreviation = "BCN",
                     Name = "Bytecoin",
@@ -97,7 +97,7 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                 },
                 new Currency
                 {
-                    Id = 9,
+                    Id = 7,
                     CurrencyTypeId = 2,
                     Abbreviation = "BTS",
                     Name = "BitShares",
@@ -105,7 +105,7 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                 },
                 new Currency
                 {
-                    Id = 10,
+                    Id = 8,
                     CurrencyTypeId = 1,
                     Abbreviation = "USDT",
                     Name = "Tether USD",
@@ -113,7 +113,7 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                 },
                 new Currency
                 {
-                    Id = 11,
+                    Id = 9,
                     CurrencyTypeId = 1,
                     Abbreviation = "SGD",
                     Name = "Singapore Dollar",
@@ -121,7 +121,7 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                 },
                 new Currency
                 {
-                    Id = 12,
+                    Id = 10,
                     CurrencyTypeId = 2,
                     Abbreviation = "LTC",
                     Name = "Litecoin",
