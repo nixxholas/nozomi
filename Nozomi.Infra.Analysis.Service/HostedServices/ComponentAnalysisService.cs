@@ -424,14 +424,14 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                             // Since it's not currency-based, its currencypair-based.
 
                             // Obtain all of the analysed components that are related to this AC.
-                            var correlatedAnaComps = _analysedComponentEvent.GetAllByCorrelation(component.Id);
+                            var correlatedAnaComps = _analysedComponentEvent.GetAllByCorrelation(component.Id)
+                                .Where(ac => ac.ComponentType.Equals(AnalysedComponentType.CurrentAveragePrice))
+                                .ToList();
 
-                            if (correlatedAnaComps != null)
+                            if (correlatedAnaComps != null && correlatedAnaComps.Count > 0)
                             {
                                 // Aggregate it
                                 var avgPrice = correlatedAnaComps
-                                    .Where(ac => ac.ComponentType.Equals(ComponentType.Ask)
-                                                 || ac.ComponentType.Equals(ComponentType.Bid))
                                     .DefaultIfEmpty()
                                     .Average(ac => ac.AnalysedHistoricItems
                                         .Where(ahi => ahi.CreatedAt >
