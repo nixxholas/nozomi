@@ -134,12 +134,6 @@ namespace Nozomi.Service.Events
                 .Include(s => s.SourceCurrencies)
                     .ThenInclude(sc => sc.Currency)
                         .ThenInclude(c => c.CurrencyType)
-                .Include(s => s.SourceCurrencies)
-                .ThenInclude(sc => sc.CurrencyPairSourceCurrencies)
-                .Include(s => s.CurrencyPairs)
-                    .ThenInclude(cp => cp.CurrencyPairSourceCurrencies)
-                        .ThenInclude(pcp => pcp.CurrencySource)
-                            .ThenInclude(cs => cs.Currency)
                 .Select(s => new XSourceResponse
                 {
                     Abbreviation = s.Abbreviation,
