@@ -282,19 +282,13 @@ namespace Nozomi.Service.Services
         {
             var tickerObj = _unitOfWork.GetRepository<CurrencyPair>()
                 .GetQueryable()
-                .Where(cp => cp.DeletedAt == null && cp.IsEnabled)
-                .Include(cp => cp.CurrencyPairCurrencies)
-                .ThenInclude(pcp => pcp.Currency)
+                .Where(cp => cp.DeletedAt == null && cp.IsEnabled 
+                                                  // Ticker pair check
+                                                  && string.Concat(cp.MainCurrency, cp.CounterCurrency)
+                                                      .Equals(ticker, StringComparison.InvariantCultureIgnoreCase))
                 .Include(cp => cp.CurrencySource)
-                .Include(cp => cp.CurrencyPairRequests)
-                .ThenInclude(cpr => cpr.RequestComponents)
-                .SingleOrDefault(cp => string.Concat(
-                    cp.CurrencyPairCurrencies.FirstOrDefault(ccp => ccp.Currency.Abbreviation
-                        .Equals(ccp.CurrencyPair.MainCurrency, StringComparison.InvariantCultureIgnoreCase)).Currency.Abbreviation,
-                    cp.CurrencyPairCurrencies.FirstOrDefault(ccp => ccp.Currency.Abbreviation
-                        .Equals(ccp.CurrencyPair.CounterCurrency, StringComparison.InvariantCultureIgnoreCase)).Currency.Abbreviation)
-                    .Equals(ticker, StringComparison.InvariantCultureIgnoreCase)
-                && cp.CurrencySource.Abbreviation.Equals(exchangeAbbrv, StringComparison.InvariantCultureIgnoreCase));
+                .SingleOrDefault(cp => cp.CurrencySource.Abbreviation
+                    .Equals(exchangeAbbrv, StringComparison.InvariantCultureIgnoreCase));
 
             if (tickerObj != null)
             {
