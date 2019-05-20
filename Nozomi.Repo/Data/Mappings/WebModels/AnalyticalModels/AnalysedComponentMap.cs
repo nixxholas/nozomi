@@ -218,7 +218,7 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                     CreatedAt = DateTime.UtcNow,
                     ModifiedAt = DateTime.UtcNow,
                     DeletedAt = null,
-                    RequestId = 5
+                    CurrencyPairId = 1
                 },
                 new AnalysedComponent
                 {
@@ -229,7 +229,7 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                     CreatedAt = DateTime.UtcNow,
                     ModifiedAt = DateTime.UtcNow,
                     DeletedAt = null,
-                    RequestId = 5
+                    CurrencyPairId = 1
                 },
                 new AnalysedComponent
                 {
@@ -240,7 +240,7 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                     CreatedAt = DateTime.UtcNow,
                     ModifiedAt = DateTime.UtcNow,
                     DeletedAt = null,
-                    RequestId = 5
+                    CurrencyPairId = 1
                 },
                 new AnalysedComponent()
                 {
@@ -251,7 +251,7 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                     CreatedAt = DateTime.UtcNow,
                     ModifiedAt = DateTime.UtcNow,
                     DeletedAt = null,
-                    RequestId = 5
+                    CurrencyPairId = 1
                 },
                 // Calculates volume ONLY for this exact Currency pair on this exchange.
                 new AnalysedComponent
@@ -263,7 +263,7 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                     CreatedAt = DateTime.UtcNow,
                     ModifiedAt = DateTime.UtcNow,
                     DeletedAt = null,
-                    RequestId = 6
+                    CurrencyPairId = 2
                 },
                 new AnalysedComponent
                 {
@@ -274,7 +274,7 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                     CreatedAt = DateTime.UtcNow,
                     ModifiedAt = DateTime.UtcNow,
                     DeletedAt = null,
-                    RequestId = 6
+                    CurrencyPairId = 2
                 },
                 new AnalysedComponent
                 {
@@ -285,7 +285,7 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                     CreatedAt = DateTime.UtcNow,
                     ModifiedAt = DateTime.UtcNow,
                     DeletedAt = null,
-                    RequestId = 6
+                    CurrencyPairId = 2
                 },
                 new AnalysedComponent()
                 {
@@ -296,7 +296,7 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                     CreatedAt = DateTime.UtcNow,
                     ModifiedAt = DateTime.UtcNow,
                     DeletedAt = null,
-                    RequestId = 6
+                    CurrencyPairId = 2
                 },
                 // Calculates volume ONLY for this exact Currency pair on this exchange.
                 new AnalysedComponent
@@ -308,7 +308,7 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                     CreatedAt = DateTime.UtcNow,
                     ModifiedAt = DateTime.UtcNow,
                     DeletedAt = null,
-                    RequestId = 9
+                    CurrencyPairId = 5
                 },
                 new AnalysedComponent
                 {
@@ -319,7 +319,7 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                     CreatedAt = DateTime.UtcNow,
                     ModifiedAt = DateTime.UtcNow,
                     DeletedAt = null,
-                    RequestId = 9
+                    CurrencyPairId = 5
                 },
                 new AnalysedComponent
                 {
@@ -330,7 +330,7 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                     CreatedAt = DateTime.UtcNow,
                     ModifiedAt = DateTime.UtcNow,
                     DeletedAt = null,
-                    RequestId = 9
+                    CurrencyPairId = 5
                 },
                 new AnalysedComponent()
                 {
@@ -341,7 +341,7 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                     CreatedAt = DateTime.UtcNow,
                     ModifiedAt = DateTime.UtcNow,
                     DeletedAt = null,
-                    RequestId = 9
+                    CurrencyPairId = 5
                 },
                 // Calculates volume ONLY for this exact Currency pair on this exchange.
                 new AnalysedComponent
@@ -353,7 +353,7 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                     CreatedAt = DateTime.UtcNow,
                     ModifiedAt = DateTime.UtcNow,
                     DeletedAt = null,
-                    RequestId = 10
+                    CurrencyPairId = 6
                 },
                 new AnalysedComponent
                 {
@@ -364,7 +364,7 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                     CreatedAt = DateTime.UtcNow,
                     ModifiedAt = DateTime.UtcNow,
                     DeletedAt = null,
-                    RequestId = 10
+                    CurrencyPairId = 6
                 },
                 new AnalysedComponent
                 {
@@ -375,7 +375,7 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                     CreatedAt = DateTime.UtcNow,
                     ModifiedAt = DateTime.UtcNow,
                     DeletedAt = null,
-                    RequestId = 10
+                    CurrencyPairId = 6
                 },
                 new AnalysedComponent()
                 {
@@ -386,7 +386,7 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                     CreatedAt = DateTime.UtcNow,
                     ModifiedAt = DateTime.UtcNow,
                     DeletedAt = null,
-                    RequestId = 10
+                    CurrencyPairId = 6
                 },
                 // Calculates volume ONLY for this exact Currency pair on this exchange.
                 new AnalysedComponent
@@ -398,7 +398,7 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                     CreatedAt = DateTime.UtcNow,
                     ModifiedAt = DateTime.UtcNow,
                     DeletedAt = null,
-                    RequestId = 11
+                    CurrencyPairId = 7
                 },
                 new AnalysedComponent
                 {
@@ -409,7 +409,7 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                     CreatedAt = DateTime.UtcNow,
                     ModifiedAt = DateTime.UtcNow,
                     DeletedAt = null,
-                    RequestId = 11
+                    CurrencyPairId = 7
                 },
                 new AnalysedComponent
                 {
@@ -420,7 +420,7 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                     CreatedAt = DateTime.UtcNow,
                     ModifiedAt = DateTime.UtcNow,
                     DeletedAt = null,
-                    RequestId = 11
+                    CurrencyPairId = 7
                 },
                 new AnalysedComponent()
                 {
@@ -431,7 +431,7 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                     CreatedAt = DateTime.UtcNow,
                     ModifiedAt = DateTime.UtcNow,
                     DeletedAt = null,
-                    RequestId = 11
+                    CurrencyPairId = 7
                 },
                 // Calculates volume ONLY for this exact Currency pair on this exchange.
                 new AnalysedComponent
@@ -443,7 +443,7 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                     CreatedAt = DateTime.UtcNow,
                     ModifiedAt = DateTime.UtcNow,
                     DeletedAt = null,
-                    RequestId = 12
+                    CurrencyPairId = 8
                 },
                 new AnalysedComponent
                 {
@@ -454,7 +454,7 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                     CreatedAt = DateTime.UtcNow,
                     ModifiedAt = DateTime.UtcNow,
                     DeletedAt = null,
-                    RequestId = 12
+                    CurrencyPairId = 8
                 },
                 new AnalysedComponent
                 {
@@ -465,7 +465,7 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                     CreatedAt = DateTime.UtcNow,
                     ModifiedAt = DateTime.UtcNow,
                     DeletedAt = null,
-                    RequestId = 12
+                    CurrencyPairId = 8
                 },
                 new AnalysedComponent()
                 {
@@ -476,7 +476,7 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                     CreatedAt = DateTime.UtcNow,
                     ModifiedAt = DateTime.UtcNow,
                     DeletedAt = null,
-                    RequestId = 12
+                    CurrencyPairId = 8
                 },
                 // Coinhako BTCSGD
                 new AnalysedComponent
@@ -488,7 +488,7 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                     CreatedAt = DateTime.UtcNow,
                     ModifiedAt = DateTime.UtcNow,
                     DeletedAt = null,
-                    RequestId = 15
+                    CurrencyPairId = 11
                 },
                 // Coinhako BTCSGD
                 new AnalysedComponent
@@ -500,7 +500,7 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                     CreatedAt = DateTime.UtcNow,
                     ModifiedAt = DateTime.UtcNow,
                     DeletedAt = null,
-                    RequestId = 15
+                    CurrencyPairId = 11
                 },
                 // Coinhako BTCSGD
                 new AnalysedComponent()
@@ -512,7 +512,7 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                     CreatedAt = DateTime.UtcNow,
                     ModifiedAt = DateTime.UtcNow,
                     DeletedAt = null,
-                    RequestId = 15
+                    CurrencyPairId = 11
                 },
                 // Coinhako BTCUSD
                 new AnalysedComponent
@@ -524,7 +524,7 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                     CreatedAt = DateTime.UtcNow,
                     ModifiedAt = DateTime.UtcNow,
                     DeletedAt = null,
-                    RequestId = 16
+                    CurrencyPairId = 12
                 },
                 // Coinhako BTCUSD
                 new AnalysedComponent
@@ -536,7 +536,7 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                     CreatedAt = DateTime.UtcNow,
                     ModifiedAt = DateTime.UtcNow,
                     DeletedAt = null,
-                    RequestId = 16
+                    CurrencyPairId = 12
                 },
                 // Coinhako BTCUSD
                 new AnalysedComponent()
@@ -548,7 +548,7 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                     CreatedAt = DateTime.UtcNow,
                     ModifiedAt = DateTime.UtcNow,
                     DeletedAt = null,
-                    RequestId = 16
+                    CurrencyPairId = 12
                 },
                 // Coinhako ETHSGD
                 new AnalysedComponent
@@ -560,7 +560,7 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                     CreatedAt = DateTime.UtcNow,
                     ModifiedAt = DateTime.UtcNow,
                     DeletedAt = null,
-                    RequestId = 17
+                    CurrencyPairId = 13
                 },
                 // Coinhako ETHSGD
                 new AnalysedComponent
@@ -572,7 +572,7 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                     CreatedAt = DateTime.UtcNow,
                     ModifiedAt = DateTime.UtcNow,
                     DeletedAt = null,
-                    RequestId = 17
+                    CurrencyPairId = 13
                 },
                 // Coinhako ETHSGD
                 new AnalysedComponent()
@@ -584,7 +584,7 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                     CreatedAt = DateTime.UtcNow,
                     ModifiedAt = DateTime.UtcNow,
                     DeletedAt = null,
-                    RequestId = 17
+                    CurrencyPairId = 13
                 },
                 // Coinhako ETHUSD
                 new AnalysedComponent
@@ -596,7 +596,7 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                     CreatedAt = DateTime.UtcNow,
                     ModifiedAt = DateTime.UtcNow,
                     DeletedAt = null,
-                    RequestId = 18
+                    CurrencyPairId = 14
                 },
                 // Coinhako ETHUSD
                 new AnalysedComponent
@@ -608,7 +608,7 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                     CreatedAt = DateTime.UtcNow,
                     ModifiedAt = DateTime.UtcNow,
                     DeletedAt = null,
-                    RequestId = 18
+                    CurrencyPairId = 14
                 },
                 // Coinhako ETHUSD
                 new AnalysedComponent()
@@ -620,7 +620,7 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                     CreatedAt = DateTime.UtcNow,
                     ModifiedAt = DateTime.UtcNow,
                     DeletedAt = null,
-                    RequestId = 18
+                    CurrencyPairId = 14
                 },
                 // Coinhako LTCSGD
                 new AnalysedComponent
@@ -632,7 +632,7 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                     CreatedAt = DateTime.UtcNow,
                     ModifiedAt = DateTime.UtcNow,
                     DeletedAt = null,
-                    RequestId = 19
+                    CurrencyPairId = 15
                 },
                 // Coinhako LTCSGD
                 new AnalysedComponent
@@ -644,7 +644,7 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                     CreatedAt = DateTime.UtcNow,
                     ModifiedAt = DateTime.UtcNow,
                     DeletedAt = null,
-                    RequestId = 19
+                    CurrencyPairId = 15
                 },
                 // Coinhako LTCSGD
                 new AnalysedComponent()
@@ -656,7 +656,7 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                     CreatedAt = DateTime.UtcNow,
                     ModifiedAt = DateTime.UtcNow,
                     DeletedAt = null,
-                    RequestId = 19
+                    CurrencyPairId = 15
                 },
                 // Coinhako LTCUSD
                 new AnalysedComponent
@@ -668,7 +668,7 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                     CreatedAt = DateTime.UtcNow,
                     ModifiedAt = DateTime.UtcNow,
                     DeletedAt = null,
-                    RequestId = 20
+                    CurrencyPairId = 16
                 },
                 // Coinhako LTCUSD
                 new AnalysedComponent
@@ -680,7 +680,7 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                     CreatedAt = DateTime.UtcNow,
                     ModifiedAt = DateTime.UtcNow,
                     DeletedAt = null,
-                    RequestId = 20
+                    CurrencyPairId = 16
                 },
                 // Coinhako LTCUSD
                 new AnalysedComponent()
@@ -692,7 +692,7 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                     CreatedAt = DateTime.UtcNow,
                     ModifiedAt = DateTime.UtcNow,
                     DeletedAt = null,
-                    RequestId = 20
+                    CurrencyPairId = 16
                 },
                 // Crypto Market Cap
                 new AnalysedComponent
