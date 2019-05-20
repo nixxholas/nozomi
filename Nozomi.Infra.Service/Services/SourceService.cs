@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data;
 using Nozomi.Data.AreaModels.v1.CurrencySource;
@@ -272,14 +273,29 @@ namespace Nozomi.Service.Services
                                 if (usc.SourceId.Equals(0))
                                 {
                                     currency.DeletedAt = DateTime.Now;
+
+                                    _unitOfWork.GetRepository<CurrencySource>().Update(currency);
+                                    _unitOfWork.Commit(); // Commit this modification.
                                 }
                                 else
                                 {
-                                    currency.SourceId = usc.SourceId;
+                                    if (!_unitOfWork
+                                        .GetRepository<CurrencySource>()
+                                        .GetQueryable()
+                                        .AsNoTracking()
+                                        .Any(cs => cs.SourceId.Equals(usc.SourceId)
+                                                                  && cs.CurrencyId.Equals(currency.CurrencyId)))
+                                    {
+                                        currency.SourceId = usc.SourceId;
+                                        
+                                        _unitOfWork.GetRepository<CurrencySource>().Update(currency);
+                                        _unitOfWork.Commit(); // Commit this modification.
+                                    }
+                                    else
+                                    {
+                                        return false;
+                                    }
                                 }
-
-                                _unitOfWork.GetRepository<CurrencySource>().Update(currency);
-                                _unitOfWork.Commit(); // Commit this modification.
                             }
                             else
                             {
@@ -331,14 +347,33 @@ namespace Nozomi.Service.Services
                                 if (ucp.CurrencySourceId.Equals(0))
                                 {
                                     currencyPair.DeletedAt = DateTime.Now;
+
+                                    _unitOfWork.GetRepository<CurrencyPair>().Update(currencyPair);
+                                    _unitOfWork.Commit(); // Commit this modification.
                                 }
                                 else
                                 {
-                                    currencyPair.SourceId = ucp.CurrencySourceId;
-                                }
+                                    // Make sure we're not changing the source where it already exists
+                                    if (!_unitOfWork
+                                        .GetRepository<CurrencyPair>()
+                                        .GetQueryable()
+                                        .AsNoTracking()
+                                        .Any(cp => cp.MainCurrencyAbbrv.Equals(currencyPair.MainCurrencyAbbrv
+                                                       ,StringComparison.InvariantCultureIgnoreCase)
+                                        && cp.CounterCurrencyAbbrv.Equals(currencyPair.CounterCurrencyAbbrv,
+                                            StringComparison.InvariantCultureIgnoreCase)
+                                        && cp.SourceId.Equals(ucp.CurrencySourceId)))
+                                    {
+                                        currencyPair.SourceId = ucp.CurrencySourceId;
 
-                                _unitOfWork.GetRepository<CurrencyPair>().Update(currencyPair);
-                                _unitOfWork.Commit(); // Commit this modification.
+                                        _unitOfWork.GetRepository<CurrencyPair>().Update(currencyPair);
+                                        _unitOfWork.Commit(); // Commit this modification.
+                                    }
+                                    else
+                                    {
+                                        return false;
+                                    }
+                                }
                             }
                             else
                             {
