@@ -224,6 +224,51 @@ namespace Nozomi.Infra.Analysis.Service.Events.Analysis
 //                .ToList();
         }
 
+        public ICollection<AnalysedComponent> GetTickerPairComponentsByCurrency(long currencyId, bool ensureValid = false, bool track = false)
+        {
+            var cPairs = _unitOfWork.GetRepository<CurrencyPair>()
+                .GetQueryable()
+                .AsNoTracking()
+                .Include(cp => cp.Source)
+                .ThenInclude(s => s.SourceCurrencies)
+                .ThenInclude(sc => sc.Currency)
+                // Make sure the source has such currency
+                .Where(cp => cp.Source.SourceCurrencies.Any(sc => sc.CurrencyId.Equals(currencyId)
+                                                                  // And that the main currency abbreviation matches
+                                                                  // the currency's abbreviation
+                                                                  && sc.Currency.Abbreviation.Equals(cp.MainCurrencyAbbrv)));
+
+            if (ensureValid)
+            {
+                cPairs = cPairs.Where(cp => cp.DeletedAt == null && cp.IsEnabled);
+            }
+
+            cPairs = cPairs
+                .Include(cp => cp.AnalysedComponents);
+
+            if (track)
+            {
+                cPairs = cPairs.Include(c => c.AnalysedComponents)
+                    .ThenInclude(ac => ac.AnalysedHistoricItems);
+            }
+
+            return cPairs
+                .SelectMany(cp => cp.AnalysedComponents)
+                .Select(ac => new AnalysedComponent
+                {
+                    Id = ac.Id,
+                    ComponentType = ac.ComponentType,
+                    Value = ac.Value,
+                    IsDenominated = ac.IsDenominated,
+                    Delay = ac.Delay,
+                    UIFormatting = ac.UIFormatting,
+                    AnalysedHistoricItems = ac.AnalysedHistoricItems,
+                    CurrencyPairId = ac.CurrencyPairId,
+                    CurrencyPair = ac.CurrencyPair
+                })
+                .ToList();
+        }
+
         public ICollection<AnalysedComponent> GetAllByCurrencyType(long currencyTypeId, bool track = false)
         {
             if (currencyTypeId > 0)
