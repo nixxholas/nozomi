@@ -480,10 +480,10 @@ namespace Nozomi.Service.Services
                     .GetQueryable()
                     .AsNoTracking()
                     .Where(cp => cp.DeletedAt == null && cp.IsEnabled)
-                    .Include(cp => cp.CurrencyPairCurrencies)
-                    .ThenInclude(pcp => pcp.Currency)
-                    .Include(cp => cp.CurrencySource)
-                    .Where(cp => cp.CurrencySource != null) // Make sure we have a source
+                    .Include(cp => cp.MainCurrency)
+                    .Include(cp => cp.CounterCurrency)
+                    .Include(cp => cp.Source)
+                    .Where(cp => cp.Source != null) // Make sure we have a source
                     .Include(cp => cp.CurrencyPairRequests)
                         .ThenInclude(cpr => cpr.RequestComponents)
                     // Make sure there's something
@@ -491,8 +491,8 @@ namespace Nozomi.Service.Services
                         .Any(cpr => cpr.RequestComponents.Any(rc => rc.IsEnabled && rc.DeletedAt == null)))
                     .Select(cp => new TickerByExchangeResponse()
                     {
-                        Exchange = cp.CurrencySource.Name,
-                        ExchangeAbbrv = cp.CurrencySource.Abbreviation,
+                        Exchange = cp.Source.Name,
+                        ExchangeAbbrv = cp.Source.Abbreviation,
                         LastUpdated = cp.CurrencyPairRequests.FirstOrDefault()
                             .RequestComponents.FirstOrDefault()
                             .ModifiedAt,
