@@ -83,9 +83,9 @@ namespace Nozomi.Infra.Analysis.Service.Events.Analysis
             {
                 query
                     .Include(ac => ac.AnalysedHistoricItems)
-                    .Include(ac => ac.Request)
-                    .ThenInclude(r => r.RequestComponents)
-                    .ThenInclude(rcd => rcd.RcdHistoricItems);
+                    .Include(ac => ac.Currency)
+                    .Include(ac => ac.CurrencyPair)
+                    .Include(ac => ac.CurrencyType);
             }
 
             return query
