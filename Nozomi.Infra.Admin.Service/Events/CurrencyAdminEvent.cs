@@ -40,7 +40,6 @@ namespace Nozomi.Infra.Admin.Service.Events
                 // Currency Pair Source Currencies
                 .Include(c => c.CurrencyPairSourceCurrencies)
                 .ThenInclude(pcp => pcp.CurrencyPair)
-                .ThenInclude(cp => cp.CurrencyPairRequests)
                 .ThenInclude(cpr => cpr.AnalysedComponents)
                 .Include(c => c.CurrencyPairSourceCurrencies)
                 .ThenInclude(pcp => pcp.CurrencyPair)
@@ -49,7 +48,6 @@ namespace Nozomi.Infra.Admin.Service.Events
                 .Include(c => c.CurrencyPairSourceCurrencies)
                 .ThenInclude(cpsc => cpsc.CurrencyPair)
                 .ThenInclude(cp => cp.WebsocketRequests)
-                .ThenInclude(wsr => wsr.AnalysedComponents)
                 .Include(c => c.CurrencyPairSourceCurrencies)
                 .ThenInclude(cpsc => cpsc.CurrencyPair)
                 .ThenInclude(cp => cp.WebsocketRequests)
@@ -58,7 +56,6 @@ namespace Nozomi.Infra.Admin.Service.Events
                 .Include(c => c.CurrencyRequests)
                 .ThenInclude(cr => cr.RequestComponents)
                 .Include(c => c.CurrencyRequests)
-                .ThenInclude(cr => cr.AnalysedComponents)
                 .SingleOrDefault();
         }
     }
