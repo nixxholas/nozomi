@@ -442,7 +442,10 @@ namespace Nozomi.Service.Events
 
             foreach (var currency in currencyType.Currencies)
             {
-                res.Add(new DetailedCurrencyResponse(currency));
+                if (currency?.AnalysedComponents != null && currency.AnalysedComponents.Count > 0)
+                {
+                    res.Add(new DetailedCurrencyResponse(currency));
+                }
             }
             
             return res;
