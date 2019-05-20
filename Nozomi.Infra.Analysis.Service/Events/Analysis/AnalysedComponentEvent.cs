@@ -31,8 +31,10 @@ namespace Nozomi.Infra.Analysis.Service.Events.Analysis
             
             if (track)
             {
-                query.Include(ac => ac.Request)
+                query
                     .Include(ac => ac.Currency)
+                    .Include(ac => ac.CurrencyPair)
+                    .Include(ac => ac.CurrencyType)
                     .Include(ac => ac.AnalysedHistoricItems);
             }
 
