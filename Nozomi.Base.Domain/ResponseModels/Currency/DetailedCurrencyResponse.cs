@@ -35,6 +35,45 @@ namespace Nozomi.Data.ResponseModels.Currency
         public DetailedCurrencyResponse()
         {
         }
+        
+        public DetailedCurrencyResponse(Models.Currency.Currency currency)
+        {
+            if (currency != null && currency.AnalysedComponents != null && currency.AnalysedComponents.Count > 0)
+            {
+                // Aggregate non-compounded properties first
+                Name = currency.Name;
+                Abbreviation = currency.Abbreviation;
+                LastUpdated = currency.ModifiedAt;
+                
+                foreach (var ac in currency.AnalysedComponents)
+                {
+                    switch (ac.ComponentType)
+                    {
+                        case AnalysedComponentType.DailyVolume:
+                            DailyVolume = decimal.Parse(ac.Value);
+                            break;
+                        case AnalysedComponentType.MarketCap:
+                            MarketCap = decimal.Parse(ac.Value);
+                            break;
+                        case AnalysedComponentType.CurrentAveragePrice:
+                            AveragePrice = decimal.Parse(ac.Value);
+                            break;
+                        case AnalysedComponentType.HourlyAveragePrice:
+                            if (ac.AnalysedHistoricItems != null && ac.AnalysedHistoricItems.Count > 0)
+                            {
+                                AveragePriceHistory = ac.AnalysedHistoricItems
+                                    .Select(ahi => decimal.Parse(ahi.Value))
+                                    .ToList();
+                            }
+
+                            break;
+                        case AnalysedComponentType.DailyPricePctChange:
+                            DailyAvgPctChange = decimal.Parse(ac.Value);
+                            break;
+                    }
+                }
+            }
+        }
 
         // Generic Counter Currency-assumed objects.
         public DetailedCurrencyResponse(ICollection<Models.Currency.Currency> currencies)
@@ -216,150 +255,6 @@ namespace Nozomi.Data.ResponseModels.Currency
                         }
                     }
                 }
-            }
-        }
-
-        public DetailedCurrencyResponse(Models.Currency.Currency currency)
-        {
-            if (currency != null)
-            {
-                Name = currency.Name;
-                Abbreviation = currency.Abbreviation;
-                LastUpdated = DateTime.UtcNow;
-
-                // Obtain analysed component data from partial currency pairs.
-                if (currency.CurrencyPairSourceCurrencies != null && currency.CurrencyPairSourceCurrencies.Count > 0)
-                {
-                    // Obtain via the Request method
-                    var query = currency.CurrencyPairSourceCurrencies
-                        .Select(pcp => pcp.CurrencyPair)
-                        .SelectMany(cpr => cpr.AnalysedComponents)
-                        .Select(ac => new AnalysedComponent
-                        {
-                            Id = ac.Id,
-                            ComponentType = ac.ComponentType,
-                            Value = ac.Value,
-                            Delay = ac.Delay,
-                            CurrencyId = ac.CurrencyId,
-                            AnalysedHistoricItems = ac.AnalysedHistoricItems
-                        })
-                        .ToList();
-
-                    if (query.Count > 0)
-                    {
-                        foreach (var aComp in query)
-                        {
-                            switch (aComp.ComponentType)
-                            {
-                                case AnalysedComponentType.CurrentAveragePrice:
-                                    if (decimal.TryParse(aComp.Value, out var avgPrice))
-                                    {
-                                        AveragePrice = avgPrice;
-                                    }
-
-                                    break;
-                                case AnalysedComponentType.HourlyAveragePrice:
-                                    if (aComp.AnalysedHistoricItems.Count > 0)
-                                    {
-                                        AveragePriceHistory = aComp.AnalysedHistoricItems
-                                            .Where(ahi => ahi.DeletedAt == null && ahi.IsEnabled
-                                                                                && !string.IsNullOrEmpty(ahi.Value))
-                                            .Select(ahi => decimal.Parse(ahi.Value))
-                                            .ToList();
-                                    }
-
-                                    break;
-                                case AnalysedComponentType.DailyPricePctChange:
-                                    if (decimal.TryParse(aComp.Value, out var dailyAvgPricePctChange))
-                                    {
-                                        DailyAvgPctChange = Math.Round(dailyAvgPricePctChange, 1);
-                                    }
-
-                                    break;
-                                case AnalysedComponentType.DailyVolume:
-                                    if (decimal.TryParse(aComp.Value, out var dailyVol))
-                                    {
-                                        if (DailyVolume > 0)
-                                            DailyVolume = (AveragePrice + dailyVol) / 2;
-                                        else
-                                            DailyVolume = dailyVol;
-                                    }
-
-                                    break;
-                            }
-                        }
-                    }
-                }
-
-                // If the average price is still not computed,
-                if (AveragePrice <= 0 &&
-                    currency.AnalysedComponents.Any(ac =>
-                        ac.DeletedAt == null && ac.IsEnabled
-                                             && ac.ComponentType.Equals(AnalysedComponentType.CurrentAveragePrice)))
-                {
-                    // Compute the average price directly with a currency-binded analysed component.
-                    var currencyAP = currency.AnalysedComponents.FirstOrDefault(ac =>
-                        ac.DeletedAt == null && ac.IsEnabled
-                                             && ac.ComponentType.Equals(AnalysedComponentType.CurrentAveragePrice));
-                    var currencyAPVal = currencyAP?.Value;
-
-                    if (!string.IsNullOrEmpty(currencyAPVal))
-                    {
-                        AveragePrice = decimal.Parse(currencyAPVal);
-                    }
-                }
-
-                // If the historical price is still not computed,
-                if ((AveragePriceHistory == null || AveragePriceHistory.Count == 0)
-                    && currency.AnalysedComponents.Any(ac => ac.DeletedAt == null && ac.IsEnabled
-                                                                                  && ac.ComponentType.Equals(
-                                                                                      AnalysedComponentType
-                                                                                          .HourlyAveragePrice)))
-                {
-                    // Compute the hourly average prices directly with a currency-binded analysed component.
-                    var currencyHAP = currency.AnalysedComponents
-                        .FirstOrDefault(ac => ac.DeletedAt == null && ac.IsEnabled
-                                                                   && ac.ComponentType.Equals(AnalysedComponentType
-                                                                       .HourlyAveragePrice));
-
-                    // Make sure there is actually data
-                    if (currencyHAP?.AnalysedHistoricItems != null
-                        && currencyHAP.AnalysedHistoricItems
-                            .Any(ahi => ahi.HistoricDateTime >= DateTime.UtcNow.Subtract(TimeSpan.FromDays(1))))
-                    {
-                        AveragePriceHistory = currencyHAP.AnalysedHistoricItems
-                            .Where(ahi => ahi.HistoricDateTime >= DateTime.UtcNow.Subtract(TimeSpan.FromDays(1)))
-                            .OrderByDescending(ahi => ahi.HistoricDateTime)
-                            .DefaultIfEmpty()
-                            .Select(ahi => decimal.Parse(ahi.Value))
-                            .ToList();
-                    }
-                }
-
-                // Daily average percentage change via the Currency
-                if (currency.AnalysedComponents.Any(ac =>
-                    ac.DeletedAt == null && ac.IsEnabled
-                                         && ac.ComponentType.Equals(AnalysedComponentType.DailyPricePctChange)))
-                {
-                    var currencyDAPPC = currency.AnalysedComponents.FirstOrDefault(ac =>
-                            ac.DeletedAt == null && ac.IsEnabled
-                                                 && ac.ComponentType.Equals(AnalysedComponentType.DailyPricePctChange))
-                        ?.Value;
-
-                    if (string.IsNullOrEmpty(currencyDAPPC)
-                        && currencyDAPPC.Equals("0", StringComparison.InvariantCultureIgnoreCase))
-                    {
-                        DailyAvgPctChange = Math.Round(decimal.Parse(currencyDAPPC), 1);
-                    }
-                }
-
-                // Market cap is usually stored with a currency-based AC.
-                // Thus we directly obtain the value like that.
-                MarketCap = decimal.Parse(currency.AnalysedComponents.FirstOrDefault(ac =>
-                                                  ac.DeletedAt == null && ac.IsEnabled
-                                                                       && ac.ComponentType.Equals(AnalysedComponentType
-                                                                           .MarketCap))
-                                              ?.Value ?? "0");
             }
         }
 
