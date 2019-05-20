@@ -19,17 +19,15 @@ namespace Nozomi.Service.Events
         {
         }
 
-        public ICollection<CurrencyPair> GetAllByCounterCurrency(string counterCurrencyAbbrv = CoreConstants.GenericCounterCurrency)
+        public ICollection<CurrencyPair> GetAllByCounterCurrency(string counterCurrencyAbbrv = 
+            CoreConstants.GenericCounterCurrency)
         {
             return _unitOfWork.GetRepository<CurrencyPair>()
                 .GetQueryable()
                 .AsNoTracking()
-                .Where(cp => cp.DeletedAt == null && cp.IsEnabled)
-                .Include(cp => cp.CurrencyPairCurrencies)
-                .ThenInclude(pcp => pcp.Currency)
-                .Where(pcp => pcp.CurrencyPairCurrencies.FirstOrDefault(ccp => ccp.Currency.Abbrv
-                        .Equals(ccp.CurrencyPair.CounterCurrency, StringComparison.InvariantCultureIgnoreCase)).Currency.Abbrv
-                    .Contains(counterCurrencyAbbrv, StringComparison.InvariantCultureIgnoreCase))
+                .Where(cp => cp.DeletedAt == null && cp.IsEnabled
+                             && cp.CounterCurrencyAbbrv.Equals(counterCurrencyAbbrv, 
+                                 StringComparison.InvariantCultureIgnoreCase))
                 .ToList();
         }
     }

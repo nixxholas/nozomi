@@ -33,7 +33,6 @@ namespace Nozomi.Data.Models.Web
         
         public long FailureDelay { get; set; }
 
-        public ICollection<AnalysedComponent> AnalysedComponents { get; set; }
         public ICollection<RequestComponent> RequestComponents { get; set; }
         public ICollection<RequestLog> RequestLogs { get; set; }
         public ICollection<RequestProperty> RequestProperties { get; set; }
@@ -61,16 +60,16 @@ namespace Nozomi.Data.Models.Web
                 DataPath = DataPath,
                 Delay = Delay,
                 FailureDelay = FailureDelay,
-                AnalysedComponents = AnalysedComponents
-                    .Select(ac => new AnalysedComponentDTO
-                    {
-                        ComponentType = ac.ComponentType,
-                        Delay = ac.Delay,
-                        Id = ac.Id,
-                        IsDenominated = ac.IsDenominated,
-                        Value = ac.Value
-                    })
-                    .ToList(),
+//                AnalysedComponents = AnalysedComponents
+//                    .Select(ac => new AnalysedComponentDTO
+//                    {
+//                        ComponentType = ac.ComponentType,
+//                        Delay = ac.Delay,
+//                        Id = ac.Id,
+//                        IsDenominated = ac.IsDenominated,
+//                        Value = ac.Value
+//                    })
+//                    .ToList(),
                 RequestComponents = RequestComponents
                     .Select(rc => new RequestComponentDTO
                     {

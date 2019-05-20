@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Nozomi.Base.Core;
 using Nozomi.Base.Core.Helpers.Enumerator;
 using Nozomi.Data.Models.Currency;
 using Nozomi.Data.Models.Web;
@@ -36,13 +37,13 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
         private readonly IRequestComponentEvent _requestComponentEvent;
 
         public ComponentAnalysisService(IServiceProvider serviceProvider
-            )
+        )
             : base(serviceProvider)
         {
             _analysedComponentEvent = _scope.ServiceProvider.GetRequiredService<IAnalysedComponentEvent>();
             _analysedHistoricItemEvent = _scope.ServiceProvider.GetRequiredService<IAnalysedHistoricItemEvent>();
             _analysedComponentService = _scope.ServiceProvider.GetRequiredService<IAnalysedComponentService>();
-            _analysedHistoricItemService = _scope.ServiceProvider.GetRequiredService<IAnalysedHistoricItemService>(); 
+            _analysedHistoricItemService = _scope.ServiceProvider.GetRequiredService<IAnalysedHistoricItemService>();
             _currencyEvent = _scope.ServiceProvider.GetRequiredService<ICurrencyEvent>();
             _requestComponentEvent = _scope.ServiceProvider.GetRequiredService<IRequestComponentEvent>();
         }
@@ -99,36 +100,116 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                 {
                     // Calculate the market cap.
                     case AnalysedComponentType.MarketCap:
-                        var circuSupply = _currencyEvent.GetCirculatingSupply(component);
-                        var analysedComponents = _analysedComponentEvent.GetAllByCorrelation(component.Id);
-
-#if DEBUG
-                        // Parsable average?
-                        var averagePrice = decimal.Parse(analysedComponents
-                                                             .Where(ac => ac.ComponentType.Equals(AnalysedComponentType
-                                                                 .CurrentAveragePrice))
-                                                             .Select(ac => ac.Value)
-                                                             .FirstOrDefault() ?? "0");
-#endif
-
-                        // Parsable average?
-                        if (circuSupply > 0
-                            // Parsable average?
-                            && decimal.TryParse(analysedComponents
-                                                    .Where(ac =>
-                                                        ac.ComponentType.Equals(AnalysedComponentType
-                                                            .CurrentAveragePrice))
-                                                    .Select(ac => ac.Value)
-                                                    .FirstOrDefault() ?? "0", out var mCap_avgPrice))
+                        // CurrencyType-based market cap
+                        if (component.CurrencyTypeId != null && component.CurrencyTypeId > 0)
                         {
-                            var marketCap = circuSupply
-                                            * mCap_avgPrice;
+                            // Obtain all sub components (Components in the currencies)
+                            var analysedComponents = _analysedComponentEvent.GetAllByCurrencyType(
+                                    (long) component.CurrencyTypeId, true)
+                                .Where(ac => ac.ComponentType.Equals(AnalysedComponentType.MarketCap))
+                                .ToList();
 
-                            if (!decimal.Zero.Equals(marketCap))
+                            if (analysedComponents != null && analysedComponents.Count > 0)
                             {
-                                if (_analysedComponentService.UpdateValue(component.Id, marketCap.ToString()))
+                                // Compute the market cap now since we can get in
+                                var marketCapByCurrencies = new Dictionary<string, decimal>();
+
+                                // Compute per-currency first
+                                foreach (var ac in analysedComponents)
                                 {
-                                    // Updated successfully
+                                    // Value check first
+                                    if (decimal.TryParse(ac.Value, out var val) && val > decimal.Zero)
+                                    {
+                                        // Does this ticker exist on the list of market caps yet?
+                                        if (marketCapByCurrencies.ContainsKey(ac.Currency.Abbreviation))
+                                        {
+                                            // Since yes, let's work on averaging it
+                                            marketCapByCurrencies[ac.Currency.Abbreviation] =
+                                                (marketCapByCurrencies[ac.Currency.Abbreviation] + val) / 2;
+                                        }
+                                        else
+                                        {
+                                            // Since no, let's set it
+                                            marketCapByCurrencies.Add(ac.Currency.Abbreviation, val);
+                                        }
+                                    }
+                                }
+
+                                // Compute market cap now.
+                                if (marketCapByCurrencies.Count > 0)
+                                {
+                                    var marketCap = marketCapByCurrencies.Sum(item => item.Value);
+
+                                    if (_analysedComponentService.UpdateValue(component.Id,
+                                        marketCap.ToString(CultureInfo.InvariantCulture)))
+                                    {
+                                        // Updated successfully
+                                    }
+                                }
+                            }
+                        }
+                        // Currency-based Market Cap
+                        else if (component.CurrencyId != null && component.CurrencyId > 0)
+                        {
+                            // obtain all related entities first
+                            var analysedComponents = _analysedComponentEvent.GetAllByCurrency(
+                                    (long) component.CurrencyId,
+                                    true, true)
+                                .Where(ac => ac.ComponentType.Equals(AnalysedComponentType.CurrentAveragePrice)
+                                             && !string.IsNullOrEmpty(ac.Value))
+                                .ToList();
+
+                            if (analysedComponents.Count > 0)
+                            {
+                                // Obtain the circulating supply
+                                var circuSupply = _currencyEvent.GetCirculatingSupply(component);
+
+                                // Average everything
+                                var averagePrice = analysedComponents
+                                    .Select(ac => decimal.Parse(ac.Value))
+                                    .Average();
+
+                                // Parsable average?
+                                if (circuSupply > 0 && averagePrice > decimal.Zero)
+                                {
+                                    var marketCap = circuSupply
+                                                    * averagePrice;
+
+                                    if (!decimal.Zero.Equals(marketCap))
+                                    {
+                                        if (_analysedComponentService.UpdateValue(component.Id, marketCap.ToString()))
+                                        {
+                                            // Updated successfully
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        // Request-based Market Cap
+                        else
+                        {
+                            var circuSupply = _currencyEvent.GetCirculatingSupply(component);
+                            var analysedComponents = _analysedComponentEvent.GetAllByCorrelation(component.Id);
+
+                            // Parsable average?
+                            if (circuSupply > 0
+                                // Parsable average?
+                                && decimal.TryParse(analysedComponents
+                                                        .Where(ac =>
+                                                            ac.ComponentType.Equals(AnalysedComponentType
+                                                                .CurrentAveragePrice))
+                                                        .Select(ac => ac.Value)
+                                                        .FirstOrDefault() ?? "0", out var mCap_avgPrice))
+                            {
+                                var marketCap = circuSupply
+                                                * mCap_avgPrice;
+
+                                if (!decimal.Zero.Equals(marketCap))
+                                {
+                                    if (_analysedComponentService.UpdateValue(component.Id, marketCap.ToString()))
+                                    {
+                                        // Updated successfully
+                                    }
                                 }
                             }
                         }
@@ -136,44 +217,58 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                         break;
                     // Calculate the current average price.
                     case AnalysedComponentType.CurrentAveragePrice:
-                        // Which case? Allow currency to precede first.
-                        if (component.CurrencyId != null && component.CurrencyId > 0)
+                        // CurrencyType-based Live Average Price
+                        if (component.CurrencyTypeId != null && component.CurrencyTypeId > 0)
                         {
-                            // Obtain all of the req components related to this currency where it is the base.
-                            var currencyReqComps =
-                                _requestComponentEvent.GetAllByCurrency((long) component.CurrencyId);
-
-                            // Safetynet
-                            if (currencyReqComps != null && currencyReqComps.Count > 0)
-                            {
-                                // Filter
-                                currencyReqComps = currencyReqComps
-                                    .Where(rc => rc.ComponentType.Equals(ComponentType.Ask)
-                                                 || rc.ComponentType.Equals(ComponentType.Bid))
-                                    .DefaultIfEmpty()
-                                    .ToList();
-
-                                // Convert whatever is needed
-                                _requestComponentEvent.ConvertToGenericCurrency(currencyReqComps);
-
-                                // Now we can aggregate this
-                                var currAvgPrice = currencyReqComps
-                                    .Where(rc => rc.ComponentType.Equals(ComponentType.Ask)
-                                                 || rc.ComponentType.Equals(ComponentType.Bid))
-                                    .Average(rc => decimal.Parse(string.IsNullOrEmpty(rc.Value)
-                                        ? "0"
-                                        : rc.Value));
-
-                                if (!(currAvgPrice <= decimal.Zero))
-                                {
-                                    if (_analysedComponentService.UpdateValue(component.Id,
-                                        currAvgPrice.ToString(CultureInfo.InvariantCulture)))
-                                    {
-                                        // Updated successfully
-                                    }
-                                }
-                            }
+                            _logger.LogCritical($"[{ServiceName} / ID: {component.Id}] " +
+                                                $"Analyse/CurrentAveragePrice: A CurrencyType-" +
+                                                $"based component is attempting to compute its CurrentAveragePrice.");
                         }
+                        // Currency-based Live Average Price
+                        // 1. Multiple Currency Pairs with Different Counter Currencies
+                        // 2. Just one pair that has the generic counter currency
+                        // 3. Just one pair that doesn't have the generic counter currency
+                        else if (component.CurrencyId != null && component.CurrencyId > 0)
+                        {
+                            // TODO: Get things going by important ACs from Ticker pairs instead of directly hitting the compoennts.
+//                            // Obtain all of the req components related to this currency where it is the base.
+//                            var currencyReqComps =
+//                                _requestComponentEvent.GetAllByCurrency((long) component.CurrencyId);
+//
+//                            // Safetynet
+//                            if (currencyReqComps != null && currencyReqComps.Count > 0)
+//                            {
+//                                // Filter
+//                                currencyReqComps = currencyReqComps
+//                                    .Where(rc => rc.ComponentType.Equals(ComponentType.Ask)
+//                                                 || rc.ComponentType.Equals(ComponentType.Bid))
+//                                    .DefaultIfEmpty()
+//                                    .ToList();
+//
+//                                // Convert whatever is needed
+//                                _requestComponentEvent.ConvertToGenericCurrency(currencyReqComps);
+//
+//                                // Now we can aggregate this
+//                                var currAvgPrice = currencyReqComps
+//                                    .Where(rc => rc.ComponentType.Equals(ComponentType.Ask)
+//                                                 || rc.ComponentType.Equals(ComponentType.Bid))
+//                                    .Average(rc => decimal.Parse(string.IsNullOrEmpty(rc.Value)
+//                                        ? "0"
+//                                        : rc.Value));
+//
+//                                if (!(currAvgPrice <= decimal.Zero))
+//                                {
+//                                    if (_analysedComponentService.UpdateValue(component.Id,
+//                                        currAvgPrice.ToString(CultureInfo.InvariantCulture)))
+//                                    {
+//                                        // Updated successfully
+//                                    }
+//                                }
+//                            }
+                        }
+                        // Request-based Live Average Price
+                        // 1. This came from a CurrencyPair
+                        // 2. This came from a non-currency request
                         else
                         {
                             // Obtain all of the req components that are related to this AC.
@@ -218,7 +313,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                 // Obtain all of the req components related to this currency where it is the base.
                                 var currencyReqComps =
                                     _requestComponentEvent.GetAllByCurrency((long) component.CurrencyId, true)
-                                        .Where(rc => rc.RcdHistoricItems != null && 
+                                        .Where(rc => rc.RcdHistoricItems != null &&
                                                      rc.ComponentType.Equals(ComponentType.Ask)
                                                      || rc.ComponentType.Equals(ComponentType.Bid))
                                         .ToList();
@@ -231,8 +326,8 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                         .DefaultIfEmpty()
                                         .ToList();
 
-                                    // Convert whatever is needed
-                                    _requestComponentEvent.ConvertToGenericCurrency(currencyReqComps);
+                                    // TODO: Convert whatever is needed
+                                    //_requestComponentEvent.ConvertToGenericCurrency(currencyReqComps);
 
                                     // Now we can aggregate this
                                     var currAvgPrice = currencyReqComps
@@ -254,7 +349,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                 }
                             }
                             else
-                            {                                
+                            {
                                 // Obtain all of the req components that are related to this AC.
                                 var correlatedReqComps = _requestComponentEvent.GetAllByCorrelation(component.Id, true)
                                     .Where(rc => (rc.ComponentType.Equals(ComponentType.Ask)
@@ -262,10 +357,10 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                                  && rc.RcdHistoricItems != null)
                                     .ToList();
 
-                                if (correlatedReqComps != null && 
+                                if (correlatedReqComps != null &&
                                     correlatedReqComps // Make sure there's some historic items.
                                         .Where(rc => rc.RcdHistoricItems
-                                            .Any(rcdhi => rcdhi.HistoricDateTime > 
+                                            .Any(rcdhi => rcdhi.HistoricDateTime >
                                                           DateTime.UtcNow.Subtract(TimeSpan.FromHours(1))))
                                         .SelectMany(rc => rc.RcdHistoricItems).Any())
                                 {
@@ -297,25 +392,17 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                         // If its a currency-based AnalaysedComponent, we have to aggregate an
                         if (component.CurrencyId != null && component.CurrencyId > 0)
                         {
-                            // Obtain all Average price ACs that relate to this currency
-                            var currencyAnalysedComps =
-                                _analysedComponentEvent.GetAllByCurrency((long) component.CurrencyId, ensureValid: true);
-
-                            // Safetynet
-                            if (currencyAnalysedComps != null && currencyAnalysedComps.Count > 0)
-                            {
-                                // Filter
-                                currencyAnalysedComps = currencyAnalysedComps
-                                    .Where(rc => rc.ComponentType.Equals(ComponentType.Ask)
-                                                 || rc.ComponentType.Equals(ComponentType.Bid))
-                                    .DefaultIfEmpty()
+                            // Obtain the average price of this currency
+                            var currAveragePriceComp =
+                                _analysedComponentEvent.GetAllByCurrency((long) component.CurrencyId, ensureValid: true)
+                                    .Where(ac => ac.ComponentType.Equals(AnalysedComponentType.CurrentAveragePrice))
                                     .ToList();
 
-                                // Convert whatever is needed
-                                _analysedComponentEvent.ConvertToGenericCurrency(currencyAnalysedComps);
-
+                            // Safetynet
+                            if (currAveragePriceComp != null && currAveragePriceComp.Count > 0)
+                            {
                                 // Now we can aggregate this
-                                var currAvgPrice = currencyAnalysedComps
+                                var currAvgPrice = currAveragePriceComp
                                     .DefaultIfEmpty()
                                     .Average(rc => rc.AnalysedHistoricItems
                                         .Where(ahi => ahi.CreatedAt >
@@ -323,29 +410,26 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                         .DefaultIfEmpty()
                                         .Average(ahi => decimal.Parse(ahi.Value)));
 
-                                if (!(currAvgPrice <= decimal.Zero))
+                                if (_analysedComponentService.UpdateValue(component.Id,
+                                    currAvgPrice.ToString(CultureInfo.InvariantCulture)))
                                 {
-                                    if (_analysedComponentService.UpdateValue(component.Id,
-                                        currAvgPrice.ToString(CultureInfo.InvariantCulture)))
-                                    {
-                                        // Updated successfully
-                                    }
+                                    // Updated successfully
                                 }
                             }
                         }
-                        else
+                        else if (component.CurrencyPairId != null && component.CurrencyPairId > 0)
                         {
                             // Since it's not currency-based, its currencypair-based.
 
                             // Obtain all of the analysed components that are related to this AC.
-                            var correlatedAnaComps = _analysedComponentEvent.GetAllByCorrelation(component.Id);
+                            var correlatedAnaComps = _analysedComponentEvent.GetAllByCorrelation(component.Id)
+                                .Where(ac => ac.ComponentType.Equals(AnalysedComponentType.CurrentAveragePrice))
+                                .ToList();
 
-                            if (correlatedAnaComps != null)
+                            if (correlatedAnaComps != null && correlatedAnaComps.Count > 0)
                             {
                                 // Aggregate it
                                 var avgPrice = correlatedAnaComps
-                                    .Where(ac => ac.ComponentType.Equals(ComponentType.Ask)
-                                                 || ac.ComponentType.Equals(ComponentType.Bid))
                                     .DefaultIfEmpty()
                                     .Average(ac => ac.AnalysedHistoricItems
                                         .Where(ahi => ahi.CreatedAt >
@@ -353,57 +437,32 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                         .DefaultIfEmpty()
                                         .Average(ahi => decimal.Parse(ahi.Value)));
 
-                                if (!decimal.Zero.Equals(avgPrice))
+                                if (_analysedComponentService.UpdateValue(component.Id, avgPrice
+                                    .ToString(CultureInfo.InvariantCulture)))
                                 {
-                                    if (_analysedComponentService.UpdateValue(component.Id, avgPrice
-                                        .ToString(CultureInfo.InvariantCulture)))
-                                    {
-                                        // Updated successfully
-                                    }
+                                    // Updated successfully
                                 }
                             }
                         }
 
-                        var dailyCompute = component.Request.RequestComponents
-                            .SelectMany(rcd => rcd.RcdHistoricItems)
-                            .Where(rcdhi => rcdhi.CreatedAt >= DateTime.UtcNow.Subtract(TimeSpan.FromDays(1)))
-                            .Select(rcdhi => rcdhi.Value)
-                            .DefaultIfEmpty()
-                            .Average(val => decimal.Parse(val));
-
-                        if (!decimal.Zero.Equals(dailyCompute))
-                        {
-                            // Update
-                            if (_analysedComponentService.UpdateValue(component.Id, dailyCompute.ToString()))
-                            {
-                                // Updated successfully
-                            }
-                        }
-
+                        // Hits here? Definitely a misconfigured component or a CurrencyType-based component
+                        // that is wrongly configured
                         break;
                     case AnalysedComponentType.WeeklyPriceChange:
                         // If its a currency-based AnalaysedComponent, we have to aggregate an
                         if (component.CurrencyId != null && component.CurrencyId > 0)
                         {
-                            // Obtain all Average price ACs that relate to this currency
-                            var currencyAnalysedComps =
-                                _analysedComponentEvent.GetAllByCurrency((long) component.CurrencyId, ensureValid: true);
-
-                            // Safetynet
-                            if (currencyAnalysedComps != null && currencyAnalysedComps.Count > 0)
-                            {
-                                // Filter
-                                currencyAnalysedComps = currencyAnalysedComps
-                                    .Where(rc => rc.ComponentType.Equals(ComponentType.Ask)
-                                                 || rc.ComponentType.Equals(ComponentType.Bid))
-                                    .DefaultIfEmpty()
+                            // Obtain the average price of this currency
+                            var currAveragePriceComp =
+                                _analysedComponentEvent.GetAllByCurrency((long) component.CurrencyId, ensureValid: true)
+                                    .Where(ac => ac.ComponentType.Equals(AnalysedComponentType.DailyPriceChange))
                                     .ToList();
 
-                                // Convert whatever is needed
-                                _analysedComponentEvent.ConvertToGenericCurrency(currencyAnalysedComps);
-
+                            // Safetynet
+                            if (currAveragePriceComp != null && currAveragePriceComp.Count > 0)
+                            {
                                 // Now we can aggregate this
-                                var currAvgPrice = currencyAnalysedComps
+                                var currAvgPrice = currAveragePriceComp
                                     .DefaultIfEmpty()
                                     .Average(rc => rc.AnalysedHistoricItems
                                         .Where(ahi => ahi.CreatedAt >
@@ -411,29 +470,26 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                         .DefaultIfEmpty()
                                         .Average(ahi => decimal.Parse(ahi.Value)));
 
-                                if (!(currAvgPrice <= decimal.Zero))
+                                if (_analysedComponentService.UpdateValue(component.Id,
+                                    currAvgPrice.ToString(CultureInfo.InvariantCulture)))
                                 {
-                                    if (_analysedComponentService.UpdateValue(component.Id,
-                                        currAvgPrice.ToString(CultureInfo.InvariantCulture)))
-                                    {
-                                        // Updated successfully
-                                    }
+                                    // Updated successfully
                                 }
                             }
                         }
-                        else
+                        else if (component.CurrencyPairId != null && component.CurrencyPairId > 0)
                         {
                             // Since it's not currency-based, its currencypair-based.
 
                             // Obtain all of the analysed components that are related to this AC.
-                            var correlatedAnaComps = _analysedComponentEvent.GetAllByCorrelation(component.Id);
+                            var correlatedAnaComps = _analysedComponentEvent.GetAllByCorrelation(component.Id)
+                                .Where(ac => ac.ComponentType.Equals(AnalysedComponentType.DailyPriceChange))
+                                .ToList();
 
-                            if (correlatedAnaComps != null)
+                            if (correlatedAnaComps != null && correlatedAnaComps.Count > 0)
                             {
                                 // Aggregate it
                                 var avgPrice = correlatedAnaComps
-                                    .Where(ac => ac.ComponentType.Equals(ComponentType.Ask)
-                                                 || ac.ComponentType.Equals(ComponentType.Bid))
                                     .DefaultIfEmpty()
                                     .Average(ac => ac.AnalysedHistoricItems
                                         .Where(ahi => ahi.CreatedAt >
@@ -441,57 +497,32 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                         .DefaultIfEmpty()
                                         .Average(ahi => decimal.Parse(ahi.Value)));
 
-                                if (!decimal.Zero.Equals(avgPrice))
+                                if (_analysedComponentService.UpdateValue(component.Id, avgPrice
+                                    .ToString(CultureInfo.InvariantCulture)))
                                 {
-                                    if (_analysedComponentService.UpdateValue(component.Id, avgPrice
-                                        .ToString(CultureInfo.InvariantCulture)))
-                                    {
-                                        // Updated successfully
-                                    }
+                                    // Updated successfully
                                 }
                             }
                         }
 
-                        var weeklyCompute = component.Request.RequestComponents
-                            .SelectMany(rcd => rcd.RcdHistoricItems)
-                            .Where(rcdhi => rcdhi.CreatedAt >= DateTime.UtcNow.Subtract(TimeSpan.FromDays(7)))
-                            .Select(rcdhi => rcdhi.Value)
-                            .DefaultIfEmpty()
-                            .Average(val => decimal.Parse(val));
-
-                        if (!decimal.Zero.Equals(weeklyCompute))
-                        {
-                            // Update
-                            if (_analysedComponentService.UpdateValue(component.Id, weeklyCompute.ToString()))
-                            {
-                                // Updated successfully
-                            }
-                        }
-
+                        // Hits here? Definitely a misconfigured component or a CurrencyType-based component
+                        // that is wrongly configured
                         break;
                     case AnalysedComponentType.MonthlyPriceChange:
                         // If its a currency-based AnalaysedComponent, we have to aggregate an
                         if (component.CurrencyId != null && component.CurrencyId > 0)
                         {
-                            // Obtain all Average price ACs that relate to this currency
-                            var currencyAnalysedComps =
-                                _analysedComponentEvent.GetAllByCurrency((long) component.CurrencyId, ensureValid: true);
-
-                            // Safetynet
-                            if (currencyAnalysedComps != null && currencyAnalysedComps.Count > 0)
-                            {
-                                // Filter
-                                currencyAnalysedComps = currencyAnalysedComps
-                                    .Where(rc => rc.ComponentType.Equals(ComponentType.Ask)
-                                                 || rc.ComponentType.Equals(ComponentType.Bid))
-                                    .DefaultIfEmpty()
+                            // Obtain the average price of this currency
+                            var currAveragePriceComp =
+                                _analysedComponentEvent.GetAllByCurrency((long) component.CurrencyId, ensureValid: true)
+                                    .Where(ac => ac.ComponentType.Equals(AnalysedComponentType.WeeklyPriceChange))
                                     .ToList();
 
-                                // Convert whatever is needed
-                                _analysedComponentEvent.ConvertToGenericCurrency(currencyAnalysedComps);
-
+                            // Safetynet
+                            if (currAveragePriceComp != null && currAveragePriceComp.Count > 0)
+                            {
                                 // Now we can aggregate this
-                                var currAvgPrice = currencyAnalysedComps
+                                var currAvgPrice = currAveragePriceComp
                                     .DefaultIfEmpty()
                                     .Average(rc => rc.AnalysedHistoricItems
                                         .Where(ahi => ahi.CreatedAt >
@@ -499,29 +530,26 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                         .DefaultIfEmpty()
                                         .Average(ahi => decimal.Parse(ahi.Value)));
 
-                                if (!(currAvgPrice <= decimal.Zero))
+                                if (_analysedComponentService.UpdateValue(component.Id,
+                                    currAvgPrice.ToString(CultureInfo.InvariantCulture)))
                                 {
-                                    if (_analysedComponentService.UpdateValue(component.Id,
-                                        currAvgPrice.ToString(CultureInfo.InvariantCulture)))
-                                    {
-                                        // Updated successfully
-                                    }
+                                    // Updated successfully
                                 }
                             }
                         }
-                        else
+                        else if (component.CurrencyPairId != null && component.CurrencyPairId > 0)
                         {
                             // Since it's not currency-based, its currencypair-based.
 
                             // Obtain all of the analysed components that are related to this AC.
-                            var correlatedAnaComps = _analysedComponentEvent.GetAllByCorrelation(component.Id);
+                            var correlatedAnaComps = _analysedComponentEvent.GetAllByCorrelation(component.Id)
+                                .Where(ac => ac.ComponentType.Equals(AnalysedComponentType.WeeklyPriceChange))
+                                .ToList();
 
-                            if (correlatedAnaComps != null)
+                            if (correlatedAnaComps != null && correlatedAnaComps.Count > 0)
                             {
                                 // Aggregate it
                                 var avgPrice = correlatedAnaComps
-                                    .Where(ac => ac.ComponentType.Equals(ComponentType.Ask)
-                                                 || ac.ComponentType.Equals(ComponentType.Bid))
                                     .DefaultIfEmpty()
                                     .Average(ac => ac.AnalysedHistoricItems
                                         .Where(ahi => ahi.CreatedAt >
@@ -529,33 +557,16 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                         .DefaultIfEmpty()
                                         .Average(ahi => decimal.Parse(ahi.Value)));
 
-                                if (!decimal.Zero.Equals(avgPrice))
+                                if (_analysedComponentService.UpdateValue(component.Id, avgPrice
+                                    .ToString(CultureInfo.InvariantCulture)))
                                 {
-                                    if (_analysedComponentService.UpdateValue(component.Id, avgPrice
-                                        .ToString(CultureInfo.InvariantCulture)))
-                                    {
-                                        // Updated successfully
-                                    }
+                                    // Updated successfully
                                 }
                             }
                         }
 
-                        var monthlyCompute = component.Request.RequestComponents
-                            .SelectMany(rcd => rcd.RcdHistoricItems)
-                            .Where(rcdhi => rcdhi.CreatedAt >= DateTime.UtcNow.Subtract(TimeSpan.FromDays(30)))
-                            .Select(rcdhi => rcdhi.Value)
-                            .DefaultIfEmpty()
-                            .Average(val => decimal.Parse(val));
-
-                        if (!decimal.Zero.Equals(monthlyCompute))
-                        {
-                            // Update
-                            if (_analysedComponentService.UpdateValue(component.Id, monthlyCompute.ToString()))
-                            {
-                                // Updated successfully
-                            }
-                        }
-
+                        // Hits here? Definitely a misconfigured component or a CurrencyType-based component
+                        // that is wrongly configured
                         break;
                     // Calculate the daily price percentage change.
                     case AnalysedComponentType.DailyPricePctChange:
@@ -585,16 +596,19 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                                                     ?? "0");
                                     var oldestValue = decimal.Parse(historicItems.Last().Value ?? "0");
 
-                                    // Calculate the increase
-                                    var increase = (latestValue - oldestValue) / oldestValue * 100;
-
-                                    // Now we can aggregate this
-                                    if (increase != decimal.Zero)
+                                    if (latestValue > decimal.Zero && oldestValue > decimal.Zero)
                                     {
-                                        if (_analysedComponentService.UpdateValue(component.Id,
-                                            increase.ToString(CultureInfo.InvariantCulture)))
+                                        // Calculate the increase
+                                        var increase = (latestValue - oldestValue) / oldestValue * 100;
+
+                                        // Now we can aggregate this
+                                        if (increase != decimal.Zero)
                                         {
-                                            // Updated successfully
+                                            if (_analysedComponentService.UpdateValue(component.Id,
+                                                increase.ToString(CultureInfo.InvariantCulture)))
+                                            {
+                                                // Updated successfully
+                                            }
                                         }
                                     }
                                 }
@@ -628,16 +642,19 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                                                     ?? "0");
                                     var oldestValue = decimal.Parse(historicItems.Last().Value ?? "0");
 
-                                    // Calculate the increase
-                                    var increase = (latestValue - oldestValue) / oldestValue * 100;
-
-                                    // Now we can aggregate this
-                                    if (increase != decimal.Zero)
+                                    if (latestValue > decimal.Zero && oldestValue > decimal.Zero)
                                     {
-                                        if (_analysedComponentService.UpdateValue(component.Id,
-                                            increase.ToString(CultureInfo.InvariantCulture)))
+                                        // Calculate the increase
+                                        var increase = (latestValue - oldestValue) / oldestValue * 100;
+
+                                        // Now we can aggregate this
+                                        if (increase != decimal.Zero)
                                         {
-                                            // Updated successfully
+                                            if (_analysedComponentService.UpdateValue(component.Id,
+                                                increase.ToString(CultureInfo.InvariantCulture)))
+                                            {
+                                                // Updated successfully
+                                            }
                                         }
                                     }
                                 }
@@ -675,16 +692,19 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                                                     ?? "0");
                                     var oldestValue = decimal.Parse(historicItems.Last().Value ?? "0");
 
-                                    // Calculate the increase
-                                    var increase = (latestValue - oldestValue) / oldestValue * 100;
-
-                                    // Now we can aggregate this
-                                    if (increase != decimal.Zero)
+                                    if (latestValue > decimal.Zero && oldestValue > decimal.Zero)
                                     {
-                                        if (_analysedComponentService.UpdateValue(component.Id,
-                                            increase.ToString(CultureInfo.InvariantCulture)))
+                                        // Calculate the increase
+                                        var increase = (latestValue - oldestValue) / oldestValue * 100;
+
+                                        // Now we can aggregate this
+                                        if (increase != decimal.Zero)
                                         {
-                                            // Updated successfully
+                                            if (_analysedComponentService.UpdateValue(component.Id,
+                                                increase.ToString(CultureInfo.InvariantCulture)))
+                                            {
+                                                // Updated successfully
+                                            }
                                         }
                                     }
                                 }
@@ -718,16 +738,19 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                                                     ?? "0");
                                     var oldestValue = decimal.Parse(historicItems.Last().Value ?? "0");
 
-                                    // Calculate the increase
-                                    var increase = (latestValue - oldestValue) / oldestValue * 100;
-
-                                    // Now we can aggregate this
-                                    if (increase != decimal.Zero)
+                                    if (latestValue > decimal.Zero && oldestValue > decimal.Zero)
                                     {
-                                        if (_analysedComponentService.UpdateValue(component.Id,
-                                            increase.ToString(CultureInfo.InvariantCulture)))
+                                        // Calculate the increase
+                                        var increase = (latestValue - oldestValue) / oldestValue * 100;
+
+                                        // Now we can aggregate this
+                                        if (increase != decimal.Zero)
                                         {
-                                            // Updated successfully
+                                            if (_analysedComponentService.UpdateValue(component.Id,
+                                                increase.ToString(CultureInfo.InvariantCulture)))
+                                            {
+                                                // Updated successfully
+                                            }
                                         }
                                     }
                                 }
@@ -746,7 +769,8 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                         {
                             // Obtain all Average price ACs that relate to this currency
                             var currencyAnalysedComps =
-                                _analysedComponentEvent.GetAllByCurrency((long) component.CurrencyId, ensureValid: true);
+                                _analysedComponentEvent.GetAllByCurrency((long) component.CurrencyId,
+                                    ensureValid: true);
 
                             // Safetynet
                             if (currencyAnalysedComps != null && currencyAnalysedComps.Count > 0)
@@ -757,8 +781,8 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                     .DefaultIfEmpty()
                                     .ToList();
 
-                                // Convert whatever is needed
-                                _analysedComponentEvent.ConvertToGenericCurrency(currencyAnalysedComps);
+                                // TODO: Convert whatever is needed
+                                // _analysedComponentEvent.ConvertToGenericCurrency(currencyAnalysedComps);
 
                                 // Now we can aggregate this
                                 var currAvgVol = currencyAnalysedComps

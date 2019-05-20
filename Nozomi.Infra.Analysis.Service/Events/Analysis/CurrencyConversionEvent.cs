@@ -3,11 +3,13 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Logging;
 using Nozomi.Base.Core.Helpers.Enumerator;
 using Nozomi.Data;
 using Nozomi.Data.Models.Currency;
 using Nozomi.Data.Models.Web;
+using Nozomi.Data.Models.Web.Analytical;
 using Nozomi.Infra.Analysis.Service.Events.Analysis.Interfaces;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.BCL.Repository;
@@ -28,55 +30,36 @@ namespace Nozomi.Infra.Analysis.Service.Events.Analysis
         {
             // Setups
             var res = new Dictionary<string, decimal>();
-            var uncomputedRes = new Dictionary<string, ICollection<decimal>>();
             
             // Obtain all components.
-            var reqComps = _unitOfWork.GetRepository<CurrencyPair>()
+            var cPairs = _unitOfWork.GetRepository<CurrencyPair>()
                 .GetQueryable()
                 .AsNoTracking()
-                .Where(cp => cp.IsEnabled && cp.DeletedAt == null)
-                .Include(cp => cp.CurrencyPairCurrencies)
-                .ThenInclude(pcp => pcp.Currency)
-                .Where(cp => cp.CurrencyPairCurrencies
-                    .Any(ccp => ccp.Currency.Abbrv
-                                           .Equals(ccp.CurrencyPair.CounterCurrency, StringComparison.InvariantCultureIgnoreCase)
-                                       && ccp.Currency.Abbrv.Equals(abbrv,
-                                    StringComparison.InvariantCultureIgnoreCase)))
-                .Include(cp => cp.CurrencyPairRequests
-                    .Where(cpr => cpr.IsEnabled && cpr.DeletedAt == null))
-                .ThenInclude(cpr => cpr.RequestComponents
-                    .Where(rc => rc.IsEnabled && rc.DeletedAt == null))
-                .SelectMany(cp => cp.CurrencyPairRequests)
-                .SelectMany(cpr => cpr.RequestComponents)
+                .Where(cp => cp.IsEnabled && cp.DeletedAt == null
+                             && cp.MainCurrencyAbbrv.Equals(abbrv, StringComparison.InvariantCultureIgnoreCase))
+                .Include(cp => cp.AnalysedComponents
+                    .Where(ac => ac.IsEnabled && ac.DeletedAt == null
+                                 && ac.ComponentType.Equals(AnalysedComponentType.CurrentAveragePrice)))
                 .ToList();
 
             // Obtain the uncomputed first
-            foreach (var reqComp in reqComps)
+            foreach (var cPair in cPairs)
             {
-                var reqCompType = reqComp.ComponentType.GetDescription();
+                var counterCurrency = cPair.CounterCurrencyAbbrv.ToUpper();
                 
-                if (res.ContainsKey(reqCompType))
+                var avgPrice = cPair.AnalysedComponents.FirstOrDefault(ac =>
+                    ac.ComponentType.Equals(AnalysedComponentType.CurrentAveragePrice));
+
+                if (avgPrice != null && decimal.TryParse(avgPrice.Value, out var rate))
                 {
-                    uncomputedRes[reqCompType].Add(decimal.Parse(reqComp.Value));
-                }
-                else
-                {
-                    uncomputedRes.Add(reqCompType, new List<decimal>
+                    if (res.ContainsKey(counterCurrency))
                     {
-                        decimal.Parse(reqComp.Value)
-                    });
-                }
-            }
-            
-            // Aggregate it
-            foreach (var kvp in uncomputedRes)
-            {
-                // Check
-                if (kvp.Value != null && kvp.Value.Count > 0)
-                {
-                    if (!res.ContainsKey(kvp.Key)) // Extra checks
+                        // Average it
+                        res[counterCurrency] = (res[counterCurrency] + rate) / 2;
+                    }
+                    else
                     {
-                        res.Add(kvp.Key, kvp.Value.Average());
+                        res.Add(counterCurrency, rate);
                     }
                 }
             }

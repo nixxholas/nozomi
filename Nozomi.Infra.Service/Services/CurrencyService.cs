@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Logging;
 using Nozomi.Base.Core.Helpers.Enumerable;
 using Nozomi.Data;
@@ -32,16 +33,66 @@ namespace Nozomi.Service.Services
             {
                 if (createCurrency != null && createCurrency.IsValid())
                 {
-                    _unitOfWork.GetRepository<Currency>().Add(new Currency()
-                    {
-                        Abbrv = createCurrency.Abbrv,
-                        Name = createCurrency.Name,
-                        CurrencyTypeId = createCurrency.CurrencyTypeId,
-                        CurrencySourceId = createCurrency.CurrencySourceId,
-                        WalletTypeId = createCurrency.WalletTypeId
-                    });
-                    _unitOfWork.Commit(userId);
+                    var currencyExists = _unitOfWork.GetRepository<Currency>()
+                        .GetQueryable()
+                        .AsNoTracking()
+                        .Any(c => c.Abbreviation.Equals(createCurrency.Abbrv,
+                            StringComparison.InvariantCultureIgnoreCase));
 
+                    var sourceExists = _unitOfWork.GetRepository<Source>()
+                        .GetQueryable()
+                        .AsNoTracking()
+                        .Any(s => s.Id.Equals(createCurrency.CurrencySourceId));
+
+                    if (!currencyExists)
+                    {
+                        var currency = new Currency()
+                        {
+                            Abbreviation = createCurrency.Abbrv,
+                            Name = createCurrency.Name,
+                            CurrencyTypeId = createCurrency.CurrencyTypeId,
+                            WalletTypeId = createCurrency.WalletTypeId
+                        };
+                    
+                        _unitOfWork.GetRepository<Currency>().Add(currency);
+                        _unitOfWork.Commit(userId);
+                    
+                        // Make sure source exists before adding
+                        if (sourceExists)
+                        {
+                            _unitOfWork.GetRepository<CurrencySource>().Add(new CurrencySource
+                            {
+                                CurrencyId = currency.Id,
+                                SourceId = createCurrency.CurrencySourceId
+                            });
+
+                            _unitOfWork.Commit(userId);
+                        }
+                        
+                        return new NozomiResult<string>(NozomiResultType.Success, "Currency successfully created" +
+                                                                                  "and binded to source!");
+                    }
+                    else
+                    {
+                        var currency = _unitOfWork.GetRepository<Currency>()
+                            .GetQueryable()
+                            .AsNoTracking()
+                            .SingleOrDefault(c => c.Abbreviation.Equals(createCurrency.Abbrv,
+                                StringComparison.InvariantCultureIgnoreCase));
+                        
+                        // Make sure source exists before adding
+                        if (sourceExists && currency != null)
+                        {
+                            _unitOfWork.GetRepository<CurrencySource>().Add(new CurrencySource
+                            {
+                                CurrencyId = currency.Id,
+                                SourceId = createCurrency.CurrencySourceId
+                            });
+
+                            _unitOfWork.Commit(userId);
+                        }
+                    }
+                    
                     return new NozomiResult<string>(NozomiResultType.Success, "Currency successfully created!");
                 }
 
@@ -64,7 +115,7 @@ namespace Nozomi.Service.Services
 
                 if (currToUpd != null)
                 {
-                    currToUpd.Abbrv = currency.Abbrv;
+                    currToUpd.Abbreviation = currency.Abbrv;
                     currToUpd.CurrencyTypeId = currency.CurrencyTypeId;
                     currToUpd.Description = currency.Description;
                     currToUpd.Denominations = currency.Denominations;

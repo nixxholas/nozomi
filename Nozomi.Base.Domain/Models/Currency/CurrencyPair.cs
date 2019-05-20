@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using Nozomi.Base.Core;
 using Nozomi.Data.Models.Web;
+using Nozomi.Data.Models.Web.Analytical;
 using Nozomi.Data.Models.Web.Websocket;
 
 namespace Nozomi.Data.Models.Currency
@@ -22,33 +25,44 @@ namespace Nozomi.Data.Models.Currency
         /// </summary>
         public string DefaultComponent { get; set; }
 
-        public long CurrencySourceId { get; set; }
-        public Source CurrencySource { get; set; }
+        public long SourceId { get; set; }
+        public Source Source { get; set; }
 
         // =========== RELATIONS ============ //
+        public ICollection<AnalysedComponent> AnalysedComponents { get; set; }
         public ICollection<CurrencyPairRequest> CurrencyPairRequests { get; set; }
         public ICollection<WebsocketRequest> WebsocketRequests { get; set; }
         
-        public string MainCurrency { get; set; }
+        public string MainCurrencyAbbrv { get; set; }
         
-        public string CounterCurrency { get; set; }
-        
-        public ICollection<CurrencyCurrencyPair> CurrencyPairCurrencies{ get; set; }
+        public string CounterCurrencyAbbrv { get; set; }
 
+        [NotMapped]
+        public Currency MainCurrency => Source.SourceCurrencies
+            .Where(sc => sc.Currency.Abbreviation.Equals(MainCurrencyAbbrv, StringComparison.InvariantCultureIgnoreCase))
+            .Select(sc => sc.Currency).FirstOrDefault();
+
+        [NotMapped]
+        public Currency CounterCurrency => Source.SourceCurrencies
+            .Where(sc =>
+                sc.Currency.Abbreviation.Equals(CounterCurrencyAbbrv, StringComparison.InvariantCultureIgnoreCase))
+            .Select(sc => sc.Currency).FirstOrDefault();
+        
         public bool IsValid()
         {
-            var firstPair = CurrencyPairCurrencies.FirstOrDefault(cp => cp.Currency.Abbrv.Equals(MainCurrency, 
-                StringComparison.InvariantCultureIgnoreCase) 
-            && cp.Currency.CurrencySourceId.Equals(CurrencySourceId));
-            var lastPair = CurrencyPairCurrencies.SingleOrDefault(cp => cp.Currency.Abbrv.Equals(CounterCurrency, 
-                                                               StringComparison.InvariantCultureIgnoreCase) 
-                                                           && cp.Currency.CurrencySourceId.Equals(CurrencySourceId));
-
-            return (CurrencyPairType > 0) && (!string.IsNullOrEmpty(APIUrl))
-                                          && (!string.IsNullOrEmpty(DefaultComponent))
-                                          && (CurrencySourceId > 0)
-                                          && (CurrencyPairCurrencies.Count == 2)
-                                          && (firstPair.CurrencyId != lastPair.CurrencyId);
+            if (MainCurrency != null && CounterCurrency != null)
+            {
+                var mainCurr = MainCurrency.Abbreviation.Equals(MainCurrencyAbbrv,
+                        StringComparison.InvariantCultureIgnoreCase);
+                var counterCurr = CounterCurrency.Abbreviation.Equals(CounterCurrencyAbbrv,
+                        StringComparison.InvariantCultureIgnoreCase);
+                
+                return (CurrencyPairType > 0) && (!string.IsNullOrEmpty(APIUrl))
+                                              && (!string.IsNullOrEmpty(DefaultComponent))
+                                              && (SourceId > 0);
+            }
+            
+            return false;
         }
     }
 }

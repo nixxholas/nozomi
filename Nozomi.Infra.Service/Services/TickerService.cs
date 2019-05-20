@@ -10,6 +10,7 @@ using Microsoft.Extensions.Logging;
 using Nozomi.Base.Core.Helpers.Native.Collections;
 using Nozomi.Base.Identity.ViewModels.Manage.Tickers;
 using Nozomi.Data;
+using Nozomi.Data.AreaModels.v1.Currency;
 using Nozomi.Data.Models.Currency;
 using Nozomi.Data.Models.Web;
 using Nozomi.Data.ResponseModels;
@@ -19,14 +20,19 @@ using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Data;
 using Nozomi.Repo.Data.Mappings.CurrencyModels;
+using Nozomi.Service.Events.Interfaces;
 using Nozomi.Service.Services.Interfaces;
 
 namespace Nozomi.Service.Services
 {
     public class TickerService : BaseService<TickerService, NozomiDbContext>, ITickerService
     {
-        public TickerService(ILogger<TickerService> logger, IUnitOfWork<NozomiDbContext> unitOfWork) : base(logger, unitOfWork)
+        private readonly ICurrencyService _currencyService;
+        
+        public TickerService(ICurrencyService currencyService, ILogger<TickerService> logger, 
+            IUnitOfWork<NozomiDbContext> unitOfWork) : base(logger, unitOfWork)
         {
+            _currencyService = currencyService;
         }
 
         public NozomiResult<UniqueTickerResponse> Create(CreateTickerInputModel createTickerInputModel)
@@ -44,74 +50,75 @@ namespace Nozomi.Service.Services
 
             var mainCurrency = new Currency
             {
-                CurrencySourceId = createTickerInputModel.CurrencySourceId,
                 CurrencyTypeId = createTickerInputModel.MainCurrencyTypeId,
-                Abbrv = createTickerInputModel.MainCurrencyAbbrv,
+                Abbreviation = createTickerInputModel.MainCurrencyAbbrv,
                 Name = createTickerInputModel.MainCurrencyName
             };
             
             // Main
+            // Make sure the currency exists
             if (_unitOfWork.GetRepository<Currency>().GetQueryable()
-                .Any(c => c.Abbrv.Equals(mainCurrency.Abbrv)
-                          && c.CurrencySourceId.Equals(createTickerInputModel.CurrencySourceId)
+                .Any(c => c.Abbreviation.Equals(mainCurrency.Abbreviation, StringComparison.InvariantCultureIgnoreCase)
                           && c.DeletedAt == null))
             {
                 // Currency already exists
                 mainCurrency = _unitOfWork.GetRepository<Currency>()
-                    .Get(c => c.Abbrv.Equals(mainCurrency.Abbrv)
-                              && c.CurrencySourceId.Equals(createTickerInputModel.CurrencySourceId))
+                    .Get(c => c.Abbreviation.Equals(mainCurrency.Abbreviation, StringComparison.InvariantCultureIgnoreCase))
                     .SingleOrDefault();
             }
             else
             {
                 // Create the currency
-                _unitOfWork.GetRepository<Currency>().Add(mainCurrency);
-                _unitOfWork.Commit();
+                _currencyService.Create(new CreateCurrency
+                {
+                    CurrencySourceId = createTickerInputModel.CurrencySourceId,
+                    CurrencyTypeId = mainCurrency.CurrencyTypeId,
+                    Abbrv = mainCurrency.Abbreviation,
+                    Name = mainCurrency.Name
+                });
                 
                 // Retrieve it
                 mainCurrency = _unitOfWork.GetRepository<Currency>()
-                    .Get(c => c.Abbrv.Equals(mainCurrency.Abbrv)
-                              && c.CurrencySourceId.Equals(mainCurrency.CurrencySourceId))
+                    .Get(c => c.Abbreviation.Equals(mainCurrency.Abbreviation, StringComparison.InvariantCultureIgnoreCase))
                     .SingleOrDefault();
                 
-                _logger.LogInformation($"Currency {mainCurrency.Name} created for " +
-                                       $"source {mainCurrency.CurrencySourceId}.");
+                _logger.LogInformation($"Currency {mainCurrency.Name} created.");
             }
 
             var counterCurrency = new Currency
             {
-                CurrencySourceId = createTickerInputModel.CurrencySourceId,
                 CurrencyTypeId = createTickerInputModel.CounterCurrencyTypeId,
-                Abbrv = createTickerInputModel.CounterCurrencyAbbrv,
+                Abbreviation = createTickerInputModel.CounterCurrencyAbbrv,
                 Name = createTickerInputModel.CounterCurrencyName
             };
             
             // Counter
             if (_unitOfWork.GetRepository<Currency>().GetQueryable()
-                .Any(c => c.Abbrv.Equals(counterCurrency.Abbrv)
-                          && c.CurrencySourceId.Equals(createTickerInputModel.CurrencySourceId)
+                .Any(c => c.Abbreviation.Equals(counterCurrency.Abbreviation, StringComparison.InvariantCultureIgnoreCase)
                           && c.DeletedAt == null))
             {
                 // Currency already exists
                 counterCurrency = _unitOfWork.GetRepository<Currency>()
-                    .Get(c => c.Abbrv.Equals(counterCurrency.Abbrv)
-                              && c.CurrencySourceId.Equals(createTickerInputModel.CurrencySourceId))
+                    .Get(c => c.Abbreviation.Equals(counterCurrency.Abbreviation, StringComparison.InvariantCultureIgnoreCase))
                     .SingleOrDefault();
             }
             else
             {
                 // Create the currency
-                _unitOfWork.GetRepository<Currency>().Add(counterCurrency);
-                _unitOfWork.Commit();
+                _currencyService.Create(new CreateCurrency
+                {
+                    CurrencySourceId = createTickerInputModel.CurrencySourceId,
+                    CurrencyTypeId = counterCurrency.CurrencyTypeId,
+                    Abbrv = counterCurrency.Abbreviation,
+                    Name = counterCurrency.Name
+                });
                 
                 // Retrieve it
                 counterCurrency = _unitOfWork.GetRepository<Currency>()
-                    .Get(c => c.Abbrv.Equals(counterCurrency.Abbrv)
-                              && c.CurrencySourceId.Equals(counterCurrency.CurrencySourceId))
+                    .Get(c => c.Abbreviation.Equals(counterCurrency.Abbreviation, StringComparison.InvariantCultureIgnoreCase))
                     .SingleOrDefault();
                 
-                _logger.LogInformation($"Currency {counterCurrency.Name} created for " +
-                                       $"source {counterCurrency.CurrencySourceId}.");
+                _logger.LogInformation($"Currency {counterCurrency.Name} created.");
             }
 
             // Currency check
@@ -120,33 +127,14 @@ namespace Nozomi.Service.Services
                 return new NozomiResult<UniqueTickerResponse>(NozomiResultType.Failed,
                     "Invalid currency sub pair/s.");
             }
-            
-            // Currency source check
-            if (counterCurrency.CurrencySourceId != mainCurrency.CurrencySourceId)
-            {
-                return new NozomiResult<UniqueTickerResponse>(NozomiResultType.Failed,
-                    "Unable to peg a main and counter currency that have a different" +
-                    " source.");
-            }
 
             var currencyPair = new CurrencyPair
             {
                 APIUrl = createTickerInputModel.DataPath,
                 CurrencyPairType = createTickerInputModel.CurrencyPairType,
-                CurrencySourceId = createTickerInputModel.CurrencySourceId,
-                MainCurrency = mainCurrency.Abbrv,
-                CounterCurrency = counterCurrency.Abbrv,
-                CurrencyPairCurrencies = new List<CurrencyCurrencyPair>
-                {
-                    new CurrencyCurrencyPair
-                    {
-                        CurrencyId = mainCurrency.Id
-                    },
-                    new CurrencyCurrencyPair
-                    {
-                        CurrencyId = counterCurrency.Id
-                    }
-                }
+                SourceId = createTickerInputModel.CurrencySourceId,
+                MainCurrencyAbbrv = mainCurrency.Abbreviation,
+                CounterCurrencyAbbrv = counterCurrency.Abbreviation
             };
             
             var currencyPairRequest = new CurrencyPairRequest
@@ -262,11 +250,11 @@ namespace Nozomi.Service.Services
                     new UniqueTickerResponse
                     {
                         MainTickerAbbreviation = 
-                            mainCurrency.Abbrv,
+                            mainCurrency.Abbreviation,
                         MainTickerName = 
                             mainCurrency.Name,
                         CounterTickerAbbreviation = 
-                            counterCurrency.Abbrv,
+                            counterCurrency.Abbreviation,
                         CounterTickerName = 
                             counterCurrency.Name,
                     });
@@ -282,19 +270,13 @@ namespace Nozomi.Service.Services
         {
             var tickerObj = _unitOfWork.GetRepository<CurrencyPair>()
                 .GetQueryable()
-                .Where(cp => cp.DeletedAt == null && cp.IsEnabled)
-                .Include(cp => cp.CurrencyPairCurrencies)
-                .ThenInclude(pcp => pcp.Currency)
-                .Include(cp => cp.CurrencySource)
-                .Include(cp => cp.CurrencyPairRequests)
-                .ThenInclude(cpr => cpr.RequestComponents)
-                .SingleOrDefault(cp => string.Concat(
-                    cp.CurrencyPairCurrencies.FirstOrDefault(ccp => ccp.Currency.Abbrv
-                        .Equals(ccp.CurrencyPair.MainCurrency, StringComparison.InvariantCultureIgnoreCase)).Currency.Abbrv,
-                    cp.CurrencyPairCurrencies.FirstOrDefault(ccp => ccp.Currency.Abbrv
-                        .Equals(ccp.CurrencyPair.CounterCurrency, StringComparison.InvariantCultureIgnoreCase)).Currency.Abbrv)
-                    .Equals(ticker, StringComparison.InvariantCultureIgnoreCase)
-                && cp.CurrencySource.Abbreviation.Equals(exchangeAbbrv, StringComparison.InvariantCultureIgnoreCase));
+                .Where(cp => cp.DeletedAt == null && cp.IsEnabled 
+                                                  // Ticker pair check
+                                                  && string.Concat(cp.MainCurrencyAbbrv, cp.CounterCurrencyAbbrv)
+                                                      .Equals(ticker, StringComparison.InvariantCultureIgnoreCase))
+                .Include(cp => cp.Source)
+                .SingleOrDefault(cp => cp.Source.Abbreviation
+                    .Equals(exchangeAbbrv, StringComparison.InvariantCultureIgnoreCase));
 
             if (tickerObj != null)
             {
@@ -320,9 +302,9 @@ namespace Nozomi.Service.Services
                     .GetQueryable()
                     .AsNoTracking()
                     .Where(cp => cp.DeletedAt == null && cp.IsEnabled)
-                    .Include(cp => cp.CurrencyPairCurrencies)
-                    .ThenInclude(pcp => pcp.Currency)
-                    .Include(cp => cp.CurrencySource)
+                    .Include(cp => cp.MainCurrency)
+                    .Include(cp => cp.CounterCurrency)
+                    .Include(cp => cp.Source)
                     .Include(cp => cp.CurrencyPairRequests)
                     .ThenInclude(cpr => cpr.RequestComponents)
                     .Skip(index * 20)
@@ -331,20 +313,12 @@ namespace Nozomi.Service.Services
                     .DefaultIfEmpty()
                     .Select(cp => new UniqueTickerResponse
                     {
-                        MainTickerAbbreviation =
-                            cp.CurrencyPairCurrencies.FirstOrDefault(ccp => ccp.Currency.Abbrv
-                                .Equals(ccp.CurrencyPair.MainCurrency, StringComparison.InvariantCultureIgnoreCase)).Currency.Abbrv,
-                        MainTickerName =
-                            cp.CurrencyPairCurrencies.FirstOrDefault(ccp => ccp.Currency.Abbrv
-                                .Equals(ccp.CurrencyPair.MainCurrency, StringComparison.InvariantCultureIgnoreCase)).Currency.Name,
-                        CounterTickerAbbreviation =
-                            cp.CurrencyPairCurrencies.FirstOrDefault(ccp => ccp.Currency.Abbrv
-                                .Equals(ccp.CurrencyPair.CounterCurrency, StringComparison.InvariantCultureIgnoreCase)).Currency.Abbrv,
-                        CounterTickerName =
-                            cp.CurrencyPairCurrencies.FirstOrDefault(ccp => ccp.Currency.Abbrv
-                                .Equals(ccp.CurrencyPair.CounterCurrency, StringComparison.InvariantCultureIgnoreCase)).Currency.Name,
-                        Exchange = cp.CurrencySource.Name,
-                        ExchangeAbbrv = cp.CurrencySource.Abbreviation,
+                        MainTickerAbbreviation = cp.MainCurrencyAbbrv,
+                        MainTickerName = cp.MainCurrency.Name,
+                        CounterTickerAbbreviation = cp.CounterCurrencyAbbrv,
+                        CounterTickerName = cp.CounterCurrency.Name,
+                        Exchange = cp.Source.Name,
+                        ExchangeAbbrv = cp.Source.Abbreviation,
                         LastUpdated = cp.CurrencyPairRequests
                             .SelectMany(cpr => cpr.RequestComponents)
                             .Any(rc => rc.DeletedAt == null && rc.IsEnabled) ?
@@ -374,9 +348,9 @@ namespace Nozomi.Service.Services
                 .GetQueryable()
                 .AsNoTracking()
                 .Where(cp => cp.DeletedAt == null && cp.IsEnabled)
-                .Include(cp => cp.CurrencyPairCurrencies)
-                .ThenInclude(pcp => pcp.Currency)
-                .Include(cp => cp.CurrencySource)
+                .Include(cp => cp.MainCurrency)
+                .Include(cp => cp.CounterCurrency)
+                .Include(cp => cp.Source)
                 .Include(cp => cp.CurrencyPairRequests)
                 .ThenInclude(cpr => cpr.RequestComponents)
                 .Skip(index * 20)
@@ -385,20 +359,12 @@ namespace Nozomi.Service.Services
                 .DefaultIfEmpty()
                 .Select(cp => new UniqueTickerResponse
                 {
-                    MainTickerAbbreviation =
-                        cp.CurrencyPairCurrencies.FirstOrDefault(ccp => ccp.Currency.Abbrv
-                            .Equals(ccp.CurrencyPair.MainCurrency, StringComparison.InvariantCultureIgnoreCase)).Currency.Abbrv,
-                    MainTickerName =
-                        cp.CurrencyPairCurrencies.FirstOrDefault(ccp => ccp.Currency.Abbrv
-                            .Equals(ccp.CurrencyPair.MainCurrency, StringComparison.InvariantCultureIgnoreCase)).Currency.Name,
-                    CounterTickerAbbreviation =
-                        cp.CurrencyPairCurrencies.FirstOrDefault(ccp => ccp.Currency.Abbrv
-                            .Equals(ccp.CurrencyPair.CounterCurrency, StringComparison.InvariantCultureIgnoreCase)).Currency.Abbrv,
-                    CounterTickerName =
-                        cp.CurrencyPairCurrencies.FirstOrDefault(ccp => ccp.Currency.Abbrv
-                            .Equals(ccp.CurrencyPair.CounterCurrency, StringComparison.InvariantCultureIgnoreCase)).Currency.Name,
-                    Exchange = cp.CurrencySource.Name,
-                    ExchangeAbbrv = cp.CurrencySource.Abbreviation,
+                    MainTickerAbbreviation = cp.MainCurrencyAbbrv,
+                    MainTickerName = cp.MainCurrency.Name,
+                    CounterTickerAbbreviation = cp.CounterCurrencyAbbrv,
+                    CounterTickerName = cp.CounterCurrency.Name,
+                    Exchange = cp.Source.Name,
+                    ExchangeAbbrv = cp.Source.Abbreviation,
                     LastUpdated = cp.CurrencyPairRequests
                         .SelectMany(cpr => cpr.RequestComponents)
                         .Any(rc => rc.DeletedAt == null && rc.IsEnabled)
@@ -423,9 +389,9 @@ namespace Nozomi.Service.Services
                 .GetQueryable()
                 .AsNoTracking()
                 .Where(cp => cp.DeletedAt == null && cp.IsEnabled)
-                .Include(cp => cp.CurrencyPairCurrencies)
-                .ThenInclude(pcp => pcp.Currency)
-                .Include(cp => cp.CurrencySource)
+                .Include(cp => cp.MainCurrency)
+                .Include(cp => cp.CounterCurrency)
+                .Include(cp => cp.Source)
                 .Include(cp => cp.WebsocketRequests)
                 .ThenInclude(cpr => cpr.RequestComponents)
                 .Skip(index * 20)
@@ -434,20 +400,12 @@ namespace Nozomi.Service.Services
                 .DefaultIfEmpty()
                 .Select(cp => new UniqueTickerResponse
                 {
-                    MainTickerAbbreviation =
-                        cp.CurrencyPairCurrencies.FirstOrDefault(ccp => ccp.Currency.Abbrv
-                            .Equals(ccp.CurrencyPair.MainCurrency, StringComparison.InvariantCultureIgnoreCase)).Currency.Abbrv,
-                    MainTickerName =
-                        cp.CurrencyPairCurrencies.FirstOrDefault(ccp => ccp.Currency.Abbrv
-                            .Equals(ccp.CurrencyPair.MainCurrency, StringComparison.InvariantCultureIgnoreCase)).Currency.Name,
-                    CounterTickerAbbreviation =
-                        cp.CurrencyPairCurrencies.FirstOrDefault(ccp => ccp.Currency.Abbrv
-                            .Equals(ccp.CurrencyPair.CounterCurrency, StringComparison.InvariantCultureIgnoreCase)).Currency.Abbrv,
-                    CounterTickerName =
-                        cp.CurrencyPairCurrencies.FirstOrDefault(ccp => ccp.Currency.Abbrv
-                            .Equals(ccp.CurrencyPair.CounterCurrency, StringComparison.InvariantCultureIgnoreCase)).Currency.Name,
-                    Exchange = cp.CurrencySource.Name,
-                    ExchangeAbbrv = cp.CurrencySource.Abbreviation,
+                    MainTickerAbbreviation = cp.MainCurrencyAbbrv,
+                    MainTickerName = cp.MainCurrency.Name,
+                    CounterTickerAbbreviation = cp.CounterCurrencyAbbrv,
+                    CounterTickerName = cp.CounterCurrency.Name,
+                    Exchange = cp.Source.Name,
+                    ExchangeAbbrv = cp.Source.Abbreviation,
                     LastUpdated = cp.CurrencyPairRequests
                         .SelectMany(cpr => cpr.RequestComponents)
                         .Any(rc => rc.DeletedAt == null && rc.IsEnabled)
@@ -479,10 +437,10 @@ namespace Nozomi.Service.Services
                     .GetQueryable()
                     .AsNoTracking()
                     .Where(cp => cp.DeletedAt == null && cp.IsEnabled)
-                    .Include(cp => cp.CurrencyPairCurrencies)
-                    .ThenInclude(pcp => pcp.Currency)
-                    .Include(cp => cp.CurrencySource)
-                    .Where(cp => cp.CurrencySource != null) // Make sure we have a source
+                    .Include(cp => cp.MainCurrency)
+                    .Include(cp => cp.CounterCurrency)
+                    .Include(cp => cp.Source)
+                    .Where(cp => cp.Source != null) // Make sure we have a source
                     .Include(cp => cp.CurrencyPairRequests)
                         .ThenInclude(cpr => cpr.RequestComponents)
                     // Make sure there's something
@@ -490,8 +448,8 @@ namespace Nozomi.Service.Services
                         .Any(cpr => cpr.RequestComponents.Any(rc => rc.IsEnabled && rc.DeletedAt == null)))
                     .Select(cp => new TickerByExchangeResponse()
                     {
-                        Exchange = cp.CurrencySource.Name,
-                        ExchangeAbbrv = cp.CurrencySource.Abbreviation,
+                        Exchange = cp.Source.Name,
+                        ExchangeAbbrv = cp.Source.Abbreviation,
                         LastUpdated = cp.CurrencyPairRequests.FirstOrDefault()
                             .RequestComponents.FirstOrDefault()
                             .ModifiedAt,

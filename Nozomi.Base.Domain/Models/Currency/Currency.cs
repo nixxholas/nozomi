@@ -12,37 +12,13 @@ namespace Nozomi.Data.Models.Currency
 {
     public class Currency : BaseEntityModel
     {
-        public Currency () {}
-
-        public Currency(ICollection<Currency> currencies)
-        {
-            if (currencies.Any())
-            {
-                var firstCurr = currencies.FirstOrDefault();
-
-                if (firstCurr != null)
-                {
-                    // Doesn't matter...
-                    Id = firstCurr.Id;
-                    CurrencyTypeId = firstCurr.Id;
-                    CurrencyType = firstCurr.CurrencyType;
-                    Abbrv = firstCurr.Abbrv;
-                    Name = firstCurr.Name;
-                    CurrencySourceId = firstCurr.CurrencySourceId;
-                    CurrencySource = firstCurr.CurrencySource;
-                    WalletTypeId = firstCurr.WalletTypeId;
-                    CurrencyCurrencyPairs = CurrencyCurrencyPairs;
-                }
-            }
-        }
-        
         [Key]
         public long Id { get; set; }
 
         public long CurrencyTypeId { get; set; }
         public CurrencyType CurrencyType { get; set; }
 
-        public string Abbrv { get; set; } // USD? MYR? IND?
+        public string Abbreviation { get; set; } // USD? MYR? IND?
 
         public string Name { get; set; }
         
@@ -51,9 +27,6 @@ namespace Nozomi.Data.Models.Currency
         public int Denominations { get; set; } = 0;
         
         public string DenominationName { get; set; }
-
-        public long CurrencySourceId { get; set; }
-        public Source CurrencySource { get; set; }
 
         // This will have a number if it is a crypto pair to peg to proper entities
         public long WalletTypeId { get; set; } = 0;
@@ -64,11 +37,11 @@ namespace Nozomi.Data.Models.Currency
         
         public ICollection<CurrencyRequest> CurrencyRequests { get; set; }
         
-        public ICollection<CurrencyCurrencyPair> CurrencyCurrencyPairs { get; set; }
+        public ICollection<CurrencySource> CurrencySources { get; set; }
 
         public bool IsValid()
         {
-            return !String.IsNullOrEmpty(Abbrv) && !String.IsNullOrEmpty(Name) && CurrencyTypeId > 0 && CurrencySourceId > 0;
+            return !String.IsNullOrEmpty(Abbreviation) && !String.IsNullOrEmpty(Name) && CurrencyTypeId > 0;
         }
     }
 }

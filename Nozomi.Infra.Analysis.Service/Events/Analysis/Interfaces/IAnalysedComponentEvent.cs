@@ -6,8 +6,6 @@ namespace Nozomi.Infra.Analysis.Service.Events.Analysis.Interfaces
     public interface IAnalysedComponentEvent
     {
         AnalysedComponent Get(long id, bool track = false);
-    
-        void ConvertToGenericCurrency(ICollection<AnalysedComponent> analysedComponents);
         
         /// <summary>
         /// For internal consumption, exposes the entire dbset.
@@ -21,9 +19,11 @@ namespace Nozomi.Infra.Analysis.Service.Events.Analysis.Interfaces
 
         ICollection<AnalysedComponent> GetAllByCurrency(long currencyId, bool ensureValid = false, bool track = false);
 
+        ICollection<AnalysedComponent> GetAllByCurrencyType(long currencyTypeId, bool track = false);
+
         ICollection<AnalysedComponent> GetAllByCorrelation(long analysedComponentId, bool track = false);
 
-        ICollection<AnalysedComponent> GetAllByRequest(long requestId, bool track = false);
+        ICollection<AnalysedComponent> GetAllByCurrencyPair(long currencyPairId, bool track = false);
 
         string GetCurrencyAbbreviation(AnalysedComponent analysedComponent);
     }

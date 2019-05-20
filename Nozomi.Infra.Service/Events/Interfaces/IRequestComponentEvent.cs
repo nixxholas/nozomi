@@ -10,14 +10,7 @@ namespace Nozomi.Service.Events.Interfaces
 {
     public interface IRequestComponentEvent
     {
-        ICollection<RequestComponent> AllByRequestId(long requestId, bool includeNested = false);
-
         ICollection<RequestComponent> All(int index = 0, bool includeNested = false);
-
-        decimal ComputeDifference(string baseCurrencyAbbrv, string comparingCurrencyAbbrv,
-            ComponentType componentType);
-        
-        void ConvertToGenericCurrency(ICollection<RequestComponent> requestComponents);
 
         /// <summary>
         /// Allows the caller to obtain all RequestComponents relevant to the currency
@@ -35,6 +28,8 @@ namespace Nozomi.Service.Events.Interfaces
         /// <param name="currencyId">The unique identifier of the base currency</param>
         /// <returns>Collection of request components related to the currency</returns>
         ICollection<Data.Models.Web.RequestComponent> GetAllByCurrency(long currencyId, bool track = false);
+
+        ICollection<RequestComponent> GetAllByRequest(long requestId, bool includeNested = false);
 
         ICollection<RequestComponent> GetByMainCurrency(string mainCurrencyAbbrv, 
             ICollection<ComponentType> componentTypes);

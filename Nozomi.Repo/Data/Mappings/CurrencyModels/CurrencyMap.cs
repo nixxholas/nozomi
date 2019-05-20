@@ -15,9 +15,9 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
             entityTypeBuilder.HasKey(c => c.Id).HasName("Currency_PK_Id");
             entityTypeBuilder.Property(c => c.Id).ValueGeneratedOnAdd();
 
-            entityTypeBuilder.Property(c => c.Abbrv).IsRequired();
-            entityTypeBuilder.HasIndex(c => new {c.Abbrv, c.CurrencySourceId})
-                .HasName("Currency_Index_Abbrv_CurrencySourceId").IsUnique();
+            entityTypeBuilder.HasIndex(c => c.Abbreviation).IsUnique().HasName("Currency_Index_Abbreviation");
+            entityTypeBuilder.Property(c => c.Abbreviation).IsRequired();
+
             entityTypeBuilder.Property(c => c.Denominations).HasDefaultValue(0);
             entityTypeBuilder.Property(c => c.DenominationName).IsRequired(false);
             entityTypeBuilder.Property(c => c.Name).IsRequired();
@@ -29,15 +29,104 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
             entityTypeBuilder.HasOne(c => c.CurrencyType).WithMany(ct => ct.Currencies)
                 .HasForeignKey(c => c.CurrencyTypeId).OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("Currencies_CurrencyType_Constraint");
-            entityTypeBuilder.HasOne(c => c.CurrencySource).WithMany(cs => cs.Currencies)
-                .HasForeignKey(c => c.CurrencySourceId).OnDelete(DeleteBehavior.Cascade)
-                .HasConstraintName("Currencies_CurrencySource_Constraint");
+            entityTypeBuilder.HasMany(c => c.CurrencySources).WithOne(cs => cs.Currency)
+                .HasForeignKey(cs => cs.CurrencyId).OnDelete(DeleteBehavior.Restrict)
+                .HasConstraintName("Currency_CurrencySources_Constraint");
             entityTypeBuilder.HasMany(c => c.CurrencyRequests).WithOne(cr => cr.Currency)
                 .HasForeignKey(cr => cr.CurrencyId).OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("Currencies_CurrencyRequests_Constraint");
-            entityTypeBuilder.HasMany(c => c.CurrencyCurrencyPairs).WithOne(pcp => pcp.Currency)
-                .HasForeignKey(pcp => pcp.CurrencyId)
-                .HasConstraintName("Currency_PartialCurrencyPairs_Constraint");
+//            entityTypeBuilder.HasMany(c => c.CurrencyPairs).WithOne(cp => cp.MainCurrency)
+//                .HasForeignKey(cp => cp.MainCurrencyAbbrv).OnDelete(DeleteBehavior.Restrict)
+//                .HasConstraintName("Currency_CurrencyPair_MainCurrency_Constraint");
+//            entityTypeBuilder.HasMany(c => c.CurrencyPairs).WithOne(cp => cp.CounterCurrency)
+//                .HasForeignKey(cp => cp.CounterCurrencyAbbrv).OnDelete(DeleteBehavior.Restrict)
+//                .HasConstraintName("Currency_CurrencyPair_CounterCurrency_Constraint");
+
+            entityTypeBuilder.HasData(new Currency
+                {
+                    Id = 1,
+                    CurrencyTypeId = 1,
+                    Abbreviation = "USD",
+                    Name = "United States Dollar",
+                    WalletTypeId = 0
+                },
+                new Currency
+                {
+                    Id = 2,
+                    CurrencyTypeId = 1,
+                    Abbreviation = "EUR",
+                    Name = "Euro",
+                    WalletTypeId = 0
+                },
+                new Currency
+                {
+                    Id = 3,
+                    CurrencyTypeId = 2,
+                    Abbreviation = "ETH",
+                    Name = "Ethereum",
+                    WalletTypeId = 1, // As per CNWallet
+                    Denominations = 18,
+                    DenominationName = "Wei"
+                },
+                new Currency
+                {
+                    Id = 4,
+                    CurrencyTypeId = 2,
+                    Abbreviation = "KNC",
+                    Name = "Kyber Network Crystal",
+                    Denominations = 18,
+                    WalletTypeId = 4, // As per CNWallet
+                },
+                new Currency
+                {
+                    Id = 5,
+                    CurrencyTypeId = 2,
+                    Abbreviation = "BTC",
+                    Name = "Bitcoin",
+                    WalletTypeId = 0, // As per CNWallet
+                    Denominations = 8,
+                    DenominationName = "Sat"
+                },
+                new Currency
+                {
+                    Id = 6,
+                    CurrencyTypeId = 2,
+                    Abbreviation = "BCN",
+                    Name = "Bytecoin",
+                    WalletTypeId = 0
+                },
+                new Currency
+                {
+                    Id = 7,
+                    CurrencyTypeId = 2,
+                    Abbreviation = "BTS",
+                    Name = "BitShares",
+                    WalletTypeId = 0
+                },
+                new Currency
+                {
+                    Id = 8,
+                    CurrencyTypeId = 1,
+                    Abbreviation = "USDT",
+                    Name = "Tether USD",
+                    WalletTypeId = 0
+                },
+                new Currency
+                {
+                    Id = 9,
+                    CurrencyTypeId = 1,
+                    Abbreviation = "SGD",
+                    Name = "Singapore Dollar",
+                    WalletTypeId = 0
+                },
+                new Currency
+                {
+                    Id = 10,
+                    CurrencyTypeId = 2,
+                    Abbreviation = "LTC",
+                    Name = "Litecoin",
+                    WalletTypeId = 0
+                });
         }
     }
 }

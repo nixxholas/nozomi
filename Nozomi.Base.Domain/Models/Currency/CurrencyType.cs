@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Nozomi.Base.Core;
+using Nozomi.Data.Models.Web.Analytical;
 
 namespace Nozomi.Data.Models.Currency
 {
@@ -13,6 +14,8 @@ namespace Nozomi.Data.Models.Currency
         public string TypeShortForm { get; set; }
 
         public string Name { get; set; }
+        
+        public ICollection<AnalysedComponent> AnalysedComponents { get; set; }
 
         public ICollection<Currency> Currencies { get; set; }
 

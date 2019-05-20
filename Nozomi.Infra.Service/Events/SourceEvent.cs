@@ -33,7 +33,7 @@ namespace Nozomi.Service.Events
             if (includeNested)
             {
                 query = query
-                    .Include(cs => cs.Currencies);
+                    .Include(cs => cs.SourceCurrencies);
             }
 
             if (countPairs)
@@ -47,7 +47,7 @@ namespace Nozomi.Service.Events
                         APIDocsURL = s.APIDocsURL,
                         PairCount = s.CurrencyPairs != null ? s.CurrencyPairs.Count : 0,
                         CurrencyPairs = s.CurrencyPairs,
-                        Currencies = s.Currencies
+                        SourceCurrencies = s.SourceCurrencies
                     });
             }
 
@@ -65,7 +65,7 @@ namespace Nozomi.Service.Events
             if (includeNested)
             {
                 query = query
-                    .Include(cs => cs.Currencies);
+                    .Include(cs => cs.SourceCurrencies);
             }
 
             if (countPairs)
@@ -79,7 +79,7 @@ namespace Nozomi.Service.Events
                         APIDocsURL = s.APIDocsURL,
                         PairCount = s.CurrencyPairs != null ? s.CurrencyPairs.Count : 0,
                         CurrencyPairs = s.CurrencyPairs,
-                        Currencies = s.Currencies,
+                        SourceCurrencies = s.SourceCurrencies,
                         IsEnabled = s.IsEnabled
                     });
             }
@@ -94,14 +94,14 @@ namespace Nozomi.Service.Events
                     .GetQueryable()
                     .Where(cs => cs.DeletedAt == null)
                     .Where(cs => cs.IsEnabled)
-                    .Include(cs => cs.Currencies)
+                    .Include(cs => cs.SourceCurrencies)
                     .Include(cs => cs.CurrencyPairs)
                     .Select(cs => new
                     {
                         id = cs.Id, 
                         abbrv = cs.Abbreviation,
                         name = cs.Name,
-                        currencies = cs.Currencies,
+                        currencies = cs.SourceCurrencies,
                         currencyPairs = cs.CurrencyPairs
                     });
             } else {
@@ -131,24 +131,22 @@ namespace Nozomi.Service.Events
             return _unitOfWork.GetRepository<Source>()
                 .GetQueryable()
                 .Where(s => s.DeletedAt == null && s.IsEnabled && s.Id.Equals(id))
-                .Include(s => s.Currencies)
-                    .ThenInclude(c => c.CurrencyType)
-                .Include(s => s.CurrencyPairs)
-                    .ThenInclude(cp => cp.CurrencyPairCurrencies)
-                        .ThenInclude(pcp => pcp.Currency)
+                .Include(s => s.SourceCurrencies)
+                    .ThenInclude(sc => sc.Currency)
+                        .ThenInclude(c => c.CurrencyType)
                 .Select(s => new XSourceResponse
                 {
                     Abbreviation = s.Abbreviation,
                     Name = s.Name,
-                    Currencies = s.Currencies
+                    Currencies = s.SourceCurrencies
                         .Where(c => c.IsEnabled && c.DeletedAt == null)
                         .Select(c => new CurrencyResponse
                         {
                             Id = c.Id,
-                            CurrencyTypeId = c.CurrencyTypeId,
-                            CurrencyType = c.CurrencyType.Name,
-                            Abbrv = c.Abbrv,
-                            Name = c.Name
+                            CurrencyTypeId = c.Currency.CurrencyTypeId,
+                            CurrencyType = c.Currency.CurrencyType.Name,
+                            Abbrv = c.Currency.Abbreviation,
+                            Name = c.Currency.Name
                         })
                         .ToList()
                 })
@@ -160,75 +158,26 @@ namespace Nozomi.Service.Events
             return _unitOfWork.GetRepository<Source>()
                 .GetQueryable()
                 .Where(s => s.DeletedAt == null && s.IsEnabled && s.Abbreviation.Equals(abbreviation))
-                .Include(s => s.Currencies)
+                .Include(s => s.SourceCurrencies)
+                .ThenInclude(sc => sc.Currency)
                 .ThenInclude(c => c.CurrencyType)
-                .Include(s => s.CurrencyPairs)
-                .ThenInclude(cp => cp.CurrencyPairCurrencies)
-                .ThenInclude(pcp => pcp.Currency)
                 .Select(s => new XSourceResponse
                 {
                     Abbreviation = s.Abbreviation,
                     Name = s.Name,
-                    APIDocsURL = s.APIDocsURL,
-                    Currencies = s.Currencies
+                    Currencies = s.SourceCurrencies
                         .Where(c => c.IsEnabled && c.DeletedAt == null)
                         .Select(c => new CurrencyResponse
                         {
                             Id = c.Id,
-                            CurrencyTypeId = c.CurrencyTypeId,
-                            CurrencyType = c.CurrencyType.Name,
-                            Abbrv = c.Abbrv,
-                            Name = c.Name
+                            CurrencyTypeId = c.Currency.CurrencyTypeId,
+                            CurrencyType = c.Currency.CurrencyType.Name,
+                            Abbrv = c.Currency.Abbreviation,
+                            Name = c.Currency.Name
                         })
                         .ToList()
                 })
                 .SingleOrDefault();
-        }
-
-        public IEnumerable<dynamic> GetAllNested()
-        {
-            return _unitOfWork.GetRepository<Source>()
-                .GetQueryable()
-                .AsNoTracking()
-                // Make sure all currency sources are not disabled or deleted
-                .Where(cs => cs.IsEnabled && cs.DeletedAt == null)
-                .Include(cs => cs.CurrencyPairs)
-                    .ThenInclude(cp => cp.CurrencyPairCurrencies)
-                        .ThenInclude(pcp => pcp.Currency)
-                            .ThenInclude(c => c.CurrencyType)
-                .Where(cs => cs.CurrencyPairs
-                    // Make sure all currencypairs are not disabled or deleted
-                    .Any(cp => cp.IsEnabled && cp.DeletedAt == null
-                    &&
-                    // Make sure none of the currency pair's partial currency pair is not disabled or deleted
-                    cp.CurrencyPairCurrencies
-                    .Any(pcp => pcp.Currency.IsEnabled && pcp.Currency.DeletedAt == null)))
-                .Select(cs => new {
-                    id = cs.Id,
-                    abbreviation = cs.Abbreviation,
-                    name = cs.Name,
-                    currencyPairs = cs.CurrencyPairs
-                        .Select(cp => new
-                        {
-                            id = cp.Id,
-                            partialCurrencyPairs = cp.CurrencyPairCurrencies
-                                .Select(pcp => new
-                                {
-                                    currencyId = pcp.CurrencyId,
-                                    currency = new
-                                    {
-                                        abbrv = pcp.Currency.Abbrv,
-                                        currencyTypeId = pcp.Currency.CurrencyTypeId,
-                                        currencyType = new {
-                                            typeShortForm = pcp.Currency.CurrencyType.TypeShortForm,
-                                            name = pcp.Currency.CurrencyType.Name
-                                        },
-                                        name = pcp.Currency.Name,
-                                        walletTypeId = pcp.Currency.WalletTypeId
-                                    }
-                                })
-                        })
-                });
         }
     }
 }

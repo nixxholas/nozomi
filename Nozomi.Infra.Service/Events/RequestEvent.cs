@@ -31,8 +31,7 @@ namespace Nozomi.Service.Events
             {
                 query.Include(r => r.RequestComponents)
                     .Include(r => r.RequestLogs)
-                    .Include(r => r.RequestProperties)
-                    .Include(r => r.AnalysedComponents);
+                    .Include(r => r.RequestProperties);
             }
             
             return query.FirstOrDefault(r => r.Guid.Equals(guid));
@@ -50,8 +49,7 @@ namespace Nozomi.Service.Events
                 {
                     query.Include(r => r.RequestComponents)
                         .Include(r => r.RequestLogs)
-                        .Include(r => r.RequestProperties)
-                        .Include(r => r.AnalysedComponents);
+                        .Include(r => r.RequestProperties);
                 }
             }
 

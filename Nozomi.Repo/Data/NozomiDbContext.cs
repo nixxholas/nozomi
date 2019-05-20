@@ -17,6 +17,7 @@ using Nozomi.Repo.Data.Mappings.CurrencyModels;
 using Nozomi.Repo.Data.Mappings.WebModels;
 using Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels;
 using Nozomi.Repo.Data.Mappings.WebModels.LoggingModels;
+using Nozomi.Repo.Data.Mappings.WebModels.WebsocketModels;
 
 namespace Nozomi.Repo.Data
 {
@@ -29,7 +30,7 @@ namespace Nozomi.Repo.Data
         public DbSet<CurrencyPair> CurrencyPairs { get; set; }
         public DbSet<CurrencyPairRequest> CurrencyPairRequests { get; set; }
         public DbSet<CurrencyType> CurrencyTypes { get; set; }
-        public DbSet<CurrencyCurrencyPair> CurrencyCurrencyPairs { get; set; }
+        public DbSet<CurrencySource> CurrencySources { get; set; }
         public DbSet<Request> Requests { get; set; }
         public DbSet<RequestComponent> RequestComponents { get; set; }
         public DbSet<RcdHistoricItem> RcdHistoricItems { get; set; }
@@ -53,13 +54,18 @@ namespace Nozomi.Repo.Data
             var currencyPairMap = new CurrencyPairMap(modelBuilder.Entity<CurrencyPair>());
             var currencyPairRequestMap = new CurrencyPairRequestMap(modelBuilder.Entity<CurrencyPairRequest>());
             var currencyTypeMap = new CurrencyTypeMap(modelBuilder.Entity<CurrencyType>());
-            var currencyCurrencyPairMap = new CurrencyCurrencyPairMap(modelBuilder.Entity<CurrencyCurrencyPair>());
             var requestMap = new RequestMap(modelBuilder.Entity<Request>());
+            var webSocketRequestMap = new WebsocketRequestMap(modelBuilder.Entity<WebsocketRequest>());
+            var webSocketCommandMap = new WebsocketCommandMap(modelBuilder.Entity<WebsocketCommand>());
+            var webSocketCommandPropertyMap = new WebsocketCommandPropertyMap(modelBuilder.Entity<WebsocketCommandProperty>());
             var requestComponentMap = new RequestComponentMap(modelBuilder.Entity<RequestComponent>());
             var rcdHistoricItemMap = new RcdHistoricItemMap(modelBuilder.Entity<RcdHistoricItem>());
             var requestLogMap = new RequestLogMap(modelBuilder.Entity<RequestLog>());
             var requestPropertyMap = new RequestPropertyMap(modelBuilder.Entity<RequestProperty>());
             var sourceMap = new SourceMap(modelBuilder.Entity<Source>());
+            
+            // MTM
+            var currencySourceMap = new CurrencySourceMap(modelBuilder.Entity<CurrencySource>());
             
             base.OnModelCreating(modelBuilder);
         }

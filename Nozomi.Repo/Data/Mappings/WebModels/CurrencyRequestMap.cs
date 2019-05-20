@@ -1,6 +1,9 @@
+using System;
+using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Nozomi.Base.Core.Helpers.Mapping;
+using Nozomi.Data.Models.Currency;
 using Nozomi.Data.Models.Web;
 
 namespace Nozomi.Repo.Data.Mappings.WebModels
@@ -12,6 +15,49 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
             entityTypeBuilder.HasOne(cr => cr.Currency)
                 .WithMany(c => c.CurrencyRequests).HasForeignKey(cr => cr.CurrencyId)
                 .HasConstraintName("CurrencyRequest_Currency_Constraint");
+
+            entityTypeBuilder.HasData(
+                // ETH Etherscan Request
+                new CurrencyRequest
+                {
+                    Id = 1,
+                    CurrencyId = 3,
+                    Guid = Guid.NewGuid(),
+                    RequestType = RequestType.HttpGet,
+                    DataPath = "https://api.etherscan.io/api",
+                    Delay = 5000
+                },
+                // KNC Etherscan Request
+                new CurrencyRequest
+                {
+                    Id = 2,
+                    CurrencyId = 4,
+                    Guid = Guid.NewGuid(),
+                    RequestType = RequestType.HttpGet,
+                    DataPath = "https://api.etherscan.io/api",
+                    Delay = 5000
+                },
+                // BTC Bitpay Insight Request
+                new CurrencyRequest
+                {
+                    Id = 3,
+                    CurrencyId = 5,
+                    Guid = Guid.NewGuid(),
+                    RequestType = RequestType.HttpGet,
+                    DataPath = "https://insight.bitpay.com/api/status?q=getBlockCount",
+                    Delay = 90000
+                },
+                // BTC Coinranking Request
+                new CurrencyRequest
+                {
+                    Id = 4,
+                    CurrencyId = 5,
+                    Guid = Guid.NewGuid(),
+                    RequestType = RequestType.HttpGet,
+                    DataPath = "https://api.coinranking.com/v1/public/coin/1?base=USD",
+                    Delay = 90000
+                }
+            );
         }
     }
 }

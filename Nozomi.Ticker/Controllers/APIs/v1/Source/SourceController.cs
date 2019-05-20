@@ -8,7 +8,6 @@ using Nozomi.Data;
 using Nozomi.Data.AreaModels.v1.CurrencySource;
 using Nozomi.Data.ResponseModels.Currency;
 using Nozomi.Service.Events.Interfaces;
-using Nozomi.Service.Events.Memory.Interfaces;
 using Nozomi.Service.Identity.Managers;
 using Nozomi.Service.Services.Interfaces;
 
@@ -18,14 +17,12 @@ namespace Nozomi.Ticker.Controllers.APIs.v1.Source
     {
         private readonly ISourceEvent _sourceEvent;
         private readonly ISourceService _sourceService;
-        private readonly IHistoricalDataEvent _historicalDataEvent;
         
         public SourceController(ILogger<SourceController> logger, NozomiUserManager userManager,
-            ISourceEvent sourceEvent,IHistoricalDataEvent historicalDataEvent, ISourceService sourceService) 
+            ISourceEvent sourceEvent, ISourceService sourceService) 
             : base(logger, userManager)
         {
             _sourceEvent = sourceEvent;
-            _historicalDataEvent = historicalDataEvent;
             _sourceService = sourceService;
         }
 
@@ -34,10 +31,11 @@ namespace Nozomi.Ticker.Controllers.APIs.v1.Source
         {
             try
             {
-                var res = _historicalDataEvent.GetSimpleCurrencyHistory(sourceId, days);
-            
-                if (res == null) throw new ArgumentNullException();
-                return new NozomiResult<ICollection<DistinctiveCurrencyResponse>>(res);
+                //TODO: Implementation again
+//                var res = _historicalDataEvent.GetSimpleCurrencyHistory(sourceId, days);
+//            
+//                if (res == null) throw new ArgumentNullException();
+                return new NozomiResult<ICollection<DistinctiveCurrencyResponse>>(null);
             }
             catch (Exception ex)
             {

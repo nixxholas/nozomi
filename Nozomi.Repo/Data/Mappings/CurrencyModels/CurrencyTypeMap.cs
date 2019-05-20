@@ -15,8 +15,25 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
             entityTypeBuilder.Property(ct => ct.Name).IsRequired();
             entityTypeBuilder.Property(ct => ct.TypeShortForm).IsRequired();
 
+            entityTypeBuilder.HasMany(ct => ct.AnalysedComponents).WithOne(ac => ac.CurrencyType)
+                .HasForeignKey(ac => ac.CurrencyTypeId).HasConstraintName("CurrencyType_AnalysedComponents_Constraint")
+                .IsRequired(false);
             entityTypeBuilder.HasMany(ct => ct.Currencies).WithOne(c => c.CurrencyType)
                 .HasForeignKey(c => c.CurrencyTypeId).HasConstraintName("CurrencyType_Currencies_Constraint");
+
+            entityTypeBuilder.HasData(
+                new CurrencyType()
+                {
+                    Id = 1,
+                    TypeShortForm = "FIAT",
+                    Name = "FIAT Cash"
+                },
+                new CurrencyType()
+                {
+                    Id = 2,
+                    TypeShortForm = "CRYPTO",
+                    Name = "Cryptocurrency"
+                });
         }
     }
 }

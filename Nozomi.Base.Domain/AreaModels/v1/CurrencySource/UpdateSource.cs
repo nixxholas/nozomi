@@ -22,7 +22,7 @@ namespace Nozomi.Data.AreaModels.v1.CurrencySource
             
             [Required]
             [DefaultValue(0)]
-            public long CurrencySourceId { get; set; }
+            public long SourceId { get; set; }
             
             // I've left these here to tell you that we're not supposed to modify the Currency here,
             // but to allow editors to associate or dissociate this with the Source that we're updating.

@@ -50,7 +50,7 @@ namespace Nozomi.Ticker.StartupExtensions
             
             // Admin Service Injections
             services.AddScoped<ICurrencyAdminEvent, CurrencyAdminEvent>();
-            services.AddScoped<ICurrencyCurrencyPairAdminEvent, CurrencyCurrencyPairAdminEvent>();
+            services.AddScoped<ICurrencyPairSourceCurrencyAdminEvent, Infra.Admin.Service.Events.CurrencyPairSourceCurrencyAdminEvent>();
             
             // Identity-related service injections
             services.AddTransient<INozomiUserStore, NozomiUserStore>();

@@ -34,7 +34,7 @@ namespace Nozomi.Ticker.Controllers.APIs.v1.CurrencyPairComponent
         public NozomiResult<ICollection<RequestComponent>> AllByRequestId(long requestId, bool includeNested = false)
         {
             return new NozomiResult<ICollection<RequestComponent>>
-                (_requestComponentEvent.AllByRequestId(requestId, includeNested));
+                (_requestComponentEvent.GetAllByRequest(requestId, includeNested));
         }
 
         [HttpGet]

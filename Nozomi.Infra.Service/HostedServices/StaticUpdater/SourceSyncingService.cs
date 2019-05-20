@@ -10,6 +10,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Nozomi.Base.Core.Helpers.Enumerator;
 using Nozomi.Data.Models.Currency;
+using Nozomi.Data.Models.Web.Analytical;
 using Nozomi.Data.ResponseModels;
 using Nozomi.Data.ResponseModels.Ticker;
 using Nozomi.Infra.Preprocessing.SignalR;
@@ -32,17 +33,12 @@ namespace Nozomi.Service.HostedServices.StaticUpdater
                         .AsQueryable()
                         .Where(s => s.IsEnabled && s.DeletedAt == null)
                         .Include(s => s.CurrencyPairs)
-                            .ThenInclude(cp => cp.CurrencyPairCurrencies)
-                                .ThenInclude(pcp => pcp.Currency)
+                        .ThenInclude(cp => cp.MainCurrency)
                         .Include(s => s.CurrencyPairs)
-                            .ThenInclude(cp => cp.CurrencyPairRequests)
+                        .ThenInclude(cp => cp.CounterCurrency)
                         // Historical Data Inclusions
-                        .Include(s => s.Currencies)
-                        .ThenInclude(c => c.CurrencyCurrencyPairs)
-                        .ThenInclude(pcp => pcp.CurrencyPair)
-                        .ThenInclude(cp => cp.CurrencyPairRequests)
-                        .ThenInclude(cpr => cpr.RequestComponents)
-                        .ThenInclude(rcd => rcd.RcdHistoricItems)
+                        .Include(s => s.CurrencyPairs)
+                            .ThenInclude(cp => cp.AnalysedComponents)
                     );
         
         private readonly IHubContext<NozomiSourceStreamHub, ISourceHubClient> _nozomiSourceStreamHub;
@@ -74,24 +70,16 @@ namespace Nozomi.Service.HostedServices.StaticUpdater
                                 .Select(cp => new UniqueTickerResponse
                                 {
                                     MainTickerAbbreviation = 
-                                        cp.CurrencyPairCurrencies.FirstOrDefault(ccp => ccp.Currency.Abbrv
-                                            .Equals(ccp.CurrencyPair.MainCurrency, StringComparison.InvariantCultureIgnoreCase))?.Currency.Abbrv,
-                                    MainTickerName = 
-                                        cp.CurrencyPairCurrencies.FirstOrDefault(ccp => ccp.Currency.Abbrv
-                                            .Equals(ccp.CurrencyPair.MainCurrency, StringComparison.InvariantCultureIgnoreCase))?.Currency.Name,
-                                    CounterTickerAbbreviation = 
-                                        cp.CurrencyPairCurrencies.FirstOrDefault(ccp => ccp.Currency.Abbrv
-                                            .Equals(ccp.CurrencyPair.CounterCurrency, StringComparison.InvariantCultureIgnoreCase))?.Currency.Abbrv,
-                                    CounterTickerName = 
-                                        cp.CurrencyPairCurrencies.FirstOrDefault(ccp => ccp.Currency.Abbrv
-                                            .Equals(ccp.CurrencyPair.CounterCurrency, StringComparison.InvariantCultureIgnoreCase))?.Currency.Name,
+                                        cp.MainCurrencyAbbrv,
+                                    MainTickerName = cp.MainCurrency.Name,
+                                    CounterTickerAbbreviation = cp.CounterCurrencyAbbrv,
+                                    CounterTickerName = cp.CounterCurrency.Name,
                                     LastUpdated = cp.ModifiedAt,
-                                    Properties = cp.CurrencyPairRequests
-                                        .FirstOrDefault(cpr => cpr.IsEnabled && cpr.DeletedAt == null)
-                                        ?.RequestComponents.OrderByDescending(rc => rc.ComponentType)
+                                    Properties = cp.AnalysedComponents
+                                        ?.OrderByDescending(rc => rc.ComponentType)
                                         .Where(rc => !string.IsNullOrEmpty(rc.Value))
                                         .Select(rc => 
-                                            new KeyValuePair<string, string>(rc.QueryComponent.GetDescription(), 
+                                            new KeyValuePair<string, string>(rc.ComponentType.GetDescription(), 
                                             rc.Value))
                                         .ToList()
                                 }).ToList());

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -8,6 +9,10 @@ using Nozomi.Data.Models.Currency;
 
 namespace Nozomi.Data.AreaModels.v1.CurrencyPair
 {
+    /// <summary>
+    /// Please update.
+    /// </summary>
+    [Obsolete]
     public class CreateCurrencyPair
     {
         [Required]

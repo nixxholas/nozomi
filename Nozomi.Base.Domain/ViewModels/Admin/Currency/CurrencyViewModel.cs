@@ -7,6 +7,6 @@ namespace Nozomi.Data.ViewModels.Admin.Currency
         /// <summary>
         /// Stores all currency data to the currency.
         /// </summary>
-        public AbbrvUniqueCurrencyResponse Currency { get; set; }
+        public Models.Currency.Currency Currency { get; set; }
     }
 }
