@@ -412,11 +412,11 @@ namespace Nozomi.Service.Events
             var query = _unitOfWork.GetRepository<Currency>()
                 .GetQueryable()
                 .AsNoTracking()
+                .Where(c => c.Id.Equals(currencyId))
                 .Include(cp => cp.AnalysedComponents
                     .Where(ac => componentTypes.Contains(ac.ComponentType)))
                     .ThenInclude(ac => ac.AnalysedHistoricItems)
-                
-                .SingleOrDefault(c => c.Id.Equals(currencyId));
+                .SingleOrDefault();
 
             return new DetailedCurrencyResponse(query);
         }
