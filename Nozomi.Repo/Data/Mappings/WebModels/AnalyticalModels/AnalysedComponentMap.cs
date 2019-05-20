@@ -14,6 +14,13 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
             entityTypeBuilder.HasKey(ac => ac.Id).HasName("AnalysedComponent_PK_Id");
             entityTypeBuilder.Property(ac => ac.Id).ValueGeneratedOnAdd();
 
+            entityTypeBuilder.HasIndex(ac => new { ac.CurrencyId, ac.ComponentType })
+                .HasName("AnalysedComponent_Index_CurrencyId_ComponentType").IsUnique();
+            entityTypeBuilder.HasIndex(ac => new { ac.CurrencyPairId, ac.ComponentType })
+                .HasName("AnalysedComponent_Index_CurrencyPairId_ComponentType").IsUnique();
+            entityTypeBuilder.HasIndex(ac => new { ac.CurrencyTypeId, ac.ComponentType })
+                .HasName("AnalysedComponent_Index_CurrencyTypeId_ComponentType").IsUnique();
+
             entityTypeBuilder.Property(ac => ac.UIFormatting).IsRequired(false);
             entityTypeBuilder.Property(ac => ac.Value).IsRequired(false);
             entityTypeBuilder.Property(ac => ac.Delay).HasDefaultValue(86400000); // 24 hours
@@ -85,11 +92,11 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                     DeletedAt = null,
                     CurrencyId = 3
                 },
-                // ETH Hourly Average Price
+                // ETH Current Average Price
                 new AnalysedComponent
                 {
                     Id = 56,
-                    ComponentType = AnalysedComponentType.HourlyAveragePrice,
+                    ComponentType = AnalysedComponentType.CurrentAveragePrice,
                     Delay = 3000,
                     UIFormatting = "$ 0[.]00",
                     CreatedAt = DateTime.UtcNow,
