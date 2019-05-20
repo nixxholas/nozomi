@@ -410,13 +410,10 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                         .DefaultIfEmpty()
                                         .Average(ahi => decimal.Parse(ahi.Value)));
 
-                                if (!(currAvgPrice <= decimal.Zero))
+                                if (_analysedComponentService.UpdateValue(component.Id,
+                                    currAvgPrice.ToString(CultureInfo.InvariantCulture)))
                                 {
-                                    if (_analysedComponentService.UpdateValue(component.Id,
-                                        currAvgPrice.ToString(CultureInfo.InvariantCulture)))
-                                    {
-                                        // Updated successfully
-                                    }
+                                    // Updated successfully
                                 }
                             }
                         }
@@ -440,13 +437,10 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                         .DefaultIfEmpty()
                                         .Average(ahi => decimal.Parse(ahi.Value)));
 
-                                if (!decimal.Zero.Equals(avgPrice))
+                                if (_analysedComponentService.UpdateValue(component.Id, avgPrice
+                                    .ToString(CultureInfo.InvariantCulture)))
                                 {
-                                    if (_analysedComponentService.UpdateValue(component.Id, avgPrice
-                                        .ToString(CultureInfo.InvariantCulture)))
-                                    {
-                                        // Updated successfully
-                                    }
+                                    // Updated successfully
                                 }
                             }
                         }
