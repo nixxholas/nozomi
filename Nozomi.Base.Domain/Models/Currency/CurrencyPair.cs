@@ -36,16 +36,17 @@ namespace Nozomi.Data.Models.Currency
         public string MainCurrencyAbbrv { get; set; }
         
         public string CounterCurrencyAbbrv { get; set; }
-        
-        public ICollection<Currency> Currencies { get; set; }
 
         [NotMapped]
-        public Currency MainCurrency => Currencies.FirstOrDefault(c => c.Abbreviation.Equals(MainCurrencyAbbrv,
-            StringComparison.InvariantCultureIgnoreCase));
+        public Currency MainCurrency => Source.SourceCurrencies
+            .Where(sc => sc.Currency.Abbreviation.Equals(MainCurrencyAbbrv, StringComparison.InvariantCultureIgnoreCase))
+            .Select(sc => sc.Currency).FirstOrDefault();
 
         [NotMapped]
-        public Currency CounterCurrency => Currencies.FirstOrDefault(c => c.Abbreviation.Equals(CounterCurrencyAbbrv,
-            StringComparison.InvariantCultureIgnoreCase));
+        public Currency CounterCurrency => Source.SourceCurrencies
+            .Where(sc =>
+                sc.Currency.Abbreviation.Equals(CounterCurrencyAbbrv, StringComparison.InvariantCultureIgnoreCase))
+            .Select(sc => sc.Currency).FirstOrDefault();
         
         public bool IsValid()
         {

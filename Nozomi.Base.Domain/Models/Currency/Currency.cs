@@ -12,28 +12,6 @@ namespace Nozomi.Data.Models.Currency
 {
     public class Currency : BaseEntityModel
     {
-        public Currency () {}
-
-        public Currency(ICollection<Currency> currencies)
-        {
-            if (currencies.Any())
-            {
-                var firstCurr = currencies.FirstOrDefault();
-
-                if (firstCurr != null)
-                {
-                    // Doesn't matter...
-                    Id = firstCurr.Id;
-                    CurrencyTypeId = firstCurr.Id;
-                    CurrencyType = firstCurr.CurrencyType;
-                    Abbreviation = firstCurr.Abbreviation;
-                    Name = firstCurr.Name;
-                    WalletTypeId = firstCurr.WalletTypeId;
-                    CurrencyPairs = CurrencyPairs;
-                }
-            }
-        }
-        
         [Key]
         public long Id { get; set; }
 
@@ -56,8 +34,6 @@ namespace Nozomi.Data.Models.Currency
         public ICollection<AnalysedComponent> AnalysedComponents { get; set; }
         
         public ICollection<CurrencyProperty> CurrencyProperties { get; set; }
-        
-        public ICollection<CurrencyPair> CurrencyPairs { get; set; }
         
         public ICollection<CurrencyRequest> CurrencyRequests { get; set; }
         
