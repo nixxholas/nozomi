@@ -54,7 +54,6 @@ namespace Nozomi.Repo.Data
             var currencyPairMap = new CurrencyPairMap(modelBuilder.Entity<CurrencyPair>());
             var currencyPairRequestMap = new CurrencyPairRequestMap(modelBuilder.Entity<CurrencyPairRequest>());
             var currencyTypeMap = new CurrencyTypeMap(modelBuilder.Entity<CurrencyType>());
-            var currencySourceMap = new CurrencySourceMap(modelBuilder.Entity<CurrencySource>());
             var requestMap = new RequestMap(modelBuilder.Entity<Request>());
             var webSocketRequestMap = new WebsocketRequestMap(modelBuilder.Entity<WebsocketRequest>());
             var webSocketCommandMap = new WebsocketCommandMap(modelBuilder.Entity<WebsocketCommand>());
@@ -64,6 +63,9 @@ namespace Nozomi.Repo.Data
             var requestLogMap = new RequestLogMap(modelBuilder.Entity<RequestLog>());
             var requestPropertyMap = new RequestPropertyMap(modelBuilder.Entity<RequestProperty>());
             var sourceMap = new SourceMap(modelBuilder.Entity<Source>());
+            
+            // MTM
+            var currencySourceMap = new CurrencySourceMap(modelBuilder.Entity<CurrencySource>());
             
             base.OnModelCreating(modelBuilder);
         }
