@@ -36,7 +36,7 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                 .OnDelete(DeleteBehavior.Restrict);
 
             entityTypeBuilder.HasData(
-                // ETH Bitfinex Market Cap
+                // ============================ START OF ETHEREUM ============================ //
                 new AnalysedComponent
                 {
                     Id = 1,
@@ -111,7 +111,9 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                     DeletedAt = null,
                     CurrencyId = 3
                 },
-                // KNC Bitfinex Market Cap
+                // ============================ END OF ETHEREUM ============================ //
+                
+                // ============================ START OF KYBER ============================ //
                 new AnalysedComponent
                 {
                     Id = 2,
@@ -160,7 +162,10 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                     DeletedAt = null,
                     CurrencyId = 4
                 },
-                // BTC POLO Market Cap
+                // ============================ END OF KYBER ============================ //
+                
+                // ============================ START OF BITCOIN ============================ //
+                // BTC Market Cap
                 new AnalysedComponent
                 {
                     Id = 3,
@@ -170,7 +175,7 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                     CreatedAt = DateTime.UtcNow,
                     ModifiedAt = DateTime.UtcNow,
                     DeletedAt = null,
-                    CurrencyId = 12
+                    CurrencyId = 5
                 },
                 new AnalysedComponent
                 {
@@ -182,7 +187,7 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                     ModifiedAt = DateTime.UtcNow,
                     IsDenominated = true,
                     DeletedAt = null,
-                    CurrencyId = 12
+                    CurrencyId = 5
                 },
                 new AnalysedComponent
                 {
@@ -194,7 +199,7 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                     ModifiedAt = DateTime.UtcNow,
                     IsDenominated = true,
                     DeletedAt = null,
-                    CurrencyId = 12
+                    CurrencyId = 5
                 },
                 new AnalysedComponent
                 {
@@ -206,8 +211,10 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                     ModifiedAt = DateTime.UtcNow,
                     IsDenominated = true,
                     DeletedAt = null,
-                    CurrencyId = 12
+                    CurrencyId = 5
                 },
+                // ============================ END OF BITCOIN ============================ //
+                
                 // Calculates volume ONLY for this exact Currency pair on this exchange.
                 new AnalysedComponent
                 {
