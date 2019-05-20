@@ -63,24 +63,13 @@ namespace Nozomi.Service.Events
                 .AsNoTracking()
                 .Where(cp => cp.DeletedAt == null && cp.IsEnabled)
                 .Include(cp => cp.Source)
-                .Where(cp => cp.Source.DeletedAt == null && cp.Source.IsEnabled)
-                .Include(cp => cp.CurrencyPairCurrencies)
-                .ThenInclude(pcp => pcp.Currency)
-                .Where(cp => cp.CurrencyPairCurrencies.FirstOrDefault(ccp => ccp.Currency.Abbreviation
-                                 .Equals(ccp.CurrencyPair.MainCurrency, StringComparison.InvariantCultureIgnoreCase)) != null
-                             && cp.CurrencyPairCurrencies.FirstOrDefault(ccp => ccp.Currency.Abbreviation
-                                 .Equals(ccp.CurrencyPair.CounterCurrency, StringComparison.InvariantCultureIgnoreCase)) != null);
+                .Where(cp => cp.Source != null && cp.Source.DeletedAt == null && cp.Source.IsEnabled);
 
             var res = new List<TickerPairResponse>();
 
             foreach (var cPair in cPairs)
             {
-                var tickerPairStr = cPair.CurrencyPairCurrencies.FirstOrDefault(ccp => ccp.Currency.Abbreviation
-                                        .Equals(ccp.CurrencyPair.MainCurrency, StringComparison.InvariantCultureIgnoreCase))?
-                                        .Currency.Abbreviation +
-                                    cPair.CurrencyPairCurrencies.FirstOrDefault(ccp => ccp.Currency.Abbreviation
-                                        .Equals(ccp.CurrencyPair.CounterCurrency, StringComparison.InvariantCultureIgnoreCase))?
-                                        .Currency.Abbreviation;
+                var tickerPairStr = string.Concat(cPair.MainCurrencyAbbrv, cPair.CounterCurrencyAbbrv);
                 
                 var tPair = res.FirstOrDefault(tpair => tpair.Key.Equals(tickerPairStr,
                     StringComparison.InvariantCultureIgnoreCase));
@@ -90,8 +79,8 @@ namespace Nozomi.Service.Events
                 {
                     tPair.Sources.Add(new SourceResponse
                     {
-                        Abbreviation = cPair.CurrencySource.Abbreviation,
-                        Name = cPair.CurrencySource.Name
+                        Abbreviation = cPair.Source.Abbreviation,
+                        Name = cPair.Source.Name
                     });
                 }
                 else
@@ -104,8 +93,8 @@ namespace Nozomi.Service.Events
                         {
                             new SourceResponse
                             {
-                                Abbreviation = cPair.CurrencySource.Abbreviation,
-                                Name = cPair.CurrencySource.Name
+                                Abbreviation = cPair.Source.Abbreviation,
+                                Name = cPair.Source.Name
                             }
                         }
                     });
