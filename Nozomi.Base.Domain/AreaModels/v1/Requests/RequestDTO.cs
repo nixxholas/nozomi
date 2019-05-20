@@ -21,9 +21,7 @@ namespace Nozomi.Data.AreaModels.v1.Requests
         public int Delay { get; set; }
         
         public long FailureDelay { get; set; }
-        
-        public ICollection<AnalysedComponentDTO> AnalysedComponents { get; set; }
-        
+
         public ICollection<RequestComponentDTO> RequestComponents { get; set; }
         
         public ICollection<RequestPropertyDTO> RequestProperties { get; set; }

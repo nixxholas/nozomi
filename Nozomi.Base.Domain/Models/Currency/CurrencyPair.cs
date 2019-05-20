@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Nozomi.Base.Core;
 using Nozomi.Data.Models.Web;
+using Nozomi.Data.Models.Web.Analytical;
 using Nozomi.Data.Models.Web.Websocket;
 
 namespace Nozomi.Data.Models.Currency
@@ -26,6 +27,7 @@ namespace Nozomi.Data.Models.Currency
         public Source CurrencySource { get; set; }
 
         // =========== RELATIONS ============ //
+        public ICollection<AnalysedComponent> AnalysedComponents { get; set; }
         public ICollection<CurrencyPairRequest> CurrencyPairRequests { get; set; }
         public ICollection<WebsocketRequest> WebsocketRequests { get; set; }
         

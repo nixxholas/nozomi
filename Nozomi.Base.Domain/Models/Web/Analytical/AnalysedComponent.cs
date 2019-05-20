@@ -30,13 +30,13 @@ namespace Nozomi.Data.Models.Web.Analytical
         /// <value>The UIF ormatting.</value>
         public string UIFormatting { get; set; }
         
-        public long? RequestId { get; set; }
-        
-        public Request Request { get; set; }
-        
         public long? CurrencyId { get; set; }
         
         public Currency.Currency Currency { get; set; }
+        
+        public long? CurrencyPairId { get; set; }
+        
+        public CurrencyPair CurrencyPair { get; set; }
         
         public long? CurrencyTypeId { get; set; }
         
