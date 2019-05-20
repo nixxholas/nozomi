@@ -233,40 +233,41 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                         // 3. Just one pair that doesn't have the generic counter currency
                         else if (component.CurrencyId != null && component.CurrencyId > 0)
                         {
-                            // Obtain all of the req components related to this currency where it is the base.
-                            var currencyReqComps =
-                                _requestComponentEvent.GetAllByCurrency((long) component.CurrencyId);
-
-                            // Safetynet
-                            if (currencyReqComps != null && currencyReqComps.Count > 0)
-                            {
-                                // Filter
-                                currencyReqComps = currencyReqComps
-                                    .Where(rc => rc.ComponentType.Equals(ComponentType.Ask)
-                                                 || rc.ComponentType.Equals(ComponentType.Bid))
-                                    .DefaultIfEmpty()
-                                    .ToList();
-
-                                // Convert whatever is needed
-                                _requestComponentEvent.ConvertToGenericCurrency(currencyReqComps);
-
-                                // Now we can aggregate this
-                                var currAvgPrice = currencyReqComps
-                                    .Where(rc => rc.ComponentType.Equals(ComponentType.Ask)
-                                                 || rc.ComponentType.Equals(ComponentType.Bid))
-                                    .Average(rc => decimal.Parse(string.IsNullOrEmpty(rc.Value)
-                                        ? "0"
-                                        : rc.Value));
-
-                                if (!(currAvgPrice <= decimal.Zero))
-                                {
-                                    if (_analysedComponentService.UpdateValue(component.Id,
-                                        currAvgPrice.ToString(CultureInfo.InvariantCulture)))
-                                    {
-                                        // Updated successfully
-                                    }
-                                }
-                            }
+                            // TODO: Get things going by important ACs from Ticker pairs instead of directly hitting the compoennts.
+//                            // Obtain all of the req components related to this currency where it is the base.
+//                            var currencyReqComps =
+//                                _requestComponentEvent.GetAllByCurrency((long) component.CurrencyId);
+//
+//                            // Safetynet
+//                            if (currencyReqComps != null && currencyReqComps.Count > 0)
+//                            {
+//                                // Filter
+//                                currencyReqComps = currencyReqComps
+//                                    .Where(rc => rc.ComponentType.Equals(ComponentType.Ask)
+//                                                 || rc.ComponentType.Equals(ComponentType.Bid))
+//                                    .DefaultIfEmpty()
+//                                    .ToList();
+//
+//                                // Convert whatever is needed
+//                                _requestComponentEvent.ConvertToGenericCurrency(currencyReqComps);
+//
+//                                // Now we can aggregate this
+//                                var currAvgPrice = currencyReqComps
+//                                    .Where(rc => rc.ComponentType.Equals(ComponentType.Ask)
+//                                                 || rc.ComponentType.Equals(ComponentType.Bid))
+//                                    .Average(rc => decimal.Parse(string.IsNullOrEmpty(rc.Value)
+//                                        ? "0"
+//                                        : rc.Value));
+//
+//                                if (!(currAvgPrice <= decimal.Zero))
+//                                {
+//                                    if (_analysedComponentService.UpdateValue(component.Id,
+//                                        currAvgPrice.ToString(CultureInfo.InvariantCulture)))
+//                                    {
+//                                        // Updated successfully
+//                                    }
+//                                }
+//                            }
                         }
                         // Request-based Live Average Price
                         // 1. This came from a CurrencyPair
