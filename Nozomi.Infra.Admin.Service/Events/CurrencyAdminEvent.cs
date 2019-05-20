@@ -18,10 +18,10 @@ namespace Nozomi.Infra.Admin.Service.Events
 {
     public class CurrencyAdminEvent : BaseEvent<CurrencyEvent, NozomiDbContext>, ICurrencyAdminEvent
     {
-        private readonly Interfaces.CurrencyPairSourceCurrencyAdminEvent _currencyPairSourceCurrencyAdminEvent;
+        private readonly Interfaces.ICurrencyPairSourceCurrencyAdminEvent _currencyPairSourceCurrencyAdminEvent;
         
         public CurrencyAdminEvent(ILogger<CurrencyEvent> logger, IUnitOfWork<NozomiDbContext> unitOfWork,
-            Interfaces.CurrencyPairSourceCurrencyAdminEvent currencyPairSourceCurrencyAdminEvent) 
+            Interfaces.ICurrencyPairSourceCurrencyAdminEvent currencyPairSourceCurrencyAdminEvent) 
             : base(logger, unitOfWork)
         {
             _currencyPairSourceCurrencyAdminEvent = currencyPairSourceCurrencyAdminEvent;
@@ -37,21 +37,9 @@ namespace Nozomi.Infra.Admin.Service.Events
                 .Include(c => c.AnalysedComponents)
                 .Include(c => c.CurrencySources)
                 .ThenInclude(cs => cs.Source)
-                // Currency Pair Source Currencies
-                .Include(c => c.CurrencyPairSourceCurrencies)
-                .ThenInclude(pcp => pcp.CurrencyPair)
-                .ThenInclude(cpr => cpr.AnalysedComponents)
-                .Include(c => c.CurrencyPairSourceCurrencies)
-                .ThenInclude(pcp => pcp.CurrencyPair)
-                .ThenInclude(cp => cp.CurrencyPairRequests)
-                .ThenInclude(cpr => cpr.RequestComponents)
-                .Include(c => c.CurrencyPairSourceCurrencies)
-                .ThenInclude(cpsc => cpsc.CurrencyPair)
-                .ThenInclude(cp => cp.WebsocketRequests)
-                .Include(c => c.CurrencyPairSourceCurrencies)
-                .ThenInclude(cpsc => cpsc.CurrencyPair)
-                .ThenInclude(cp => cp.WebsocketRequests)
-                .ThenInclude(wsr => wsr.RequestComponents)
+                .Include(c => c.CurrencySources)
+                .ThenInclude(cs => cs.Source)
+                .ThenInclude(s => s.CurrencyPairs)
                 // Currency Requests
                 .Include(c => c.CurrencyRequests)
                 .ThenInclude(cr => cr.RequestComponents)
