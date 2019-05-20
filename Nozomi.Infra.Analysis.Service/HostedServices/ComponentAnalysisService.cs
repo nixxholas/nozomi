@@ -269,15 +269,15 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                             var correlatedReqComps = _requestComponentEvent.GetAllByCorrelation(component.Id)
                                 .Where(rc => rc.DeletedAt == null && rc.IsEnabled 
                                                                   && (rc.ComponentType.Equals(ComponentType.Ask)
-                                                                      || rc.ComponentType.Equals(ComponentType.Bid)))
+                                                                      || rc.ComponentType.Equals(ComponentType.Bid))
+                                                                  && !string.IsNullOrEmpty(rc.Value)
+                                                                  && decimal.TryParse(rc.Value, out var validVal))
                                 .ToList();
 
                             if (correlatedReqComps != null && correlatedReqComps.Count > 0)
                             {
                                 // Aggregate it
                                 var avgPrice = correlatedReqComps
-                                    .Where(rc => !string.IsNullOrEmpty(rc.Value)
-                                                 && decimal.TryParse(rc.Value, out var validVal))
                                     .Average(rc => decimal.Parse(rc.Value));
 
                                 if (!decimal.Zero.Equals(avgPrice))
