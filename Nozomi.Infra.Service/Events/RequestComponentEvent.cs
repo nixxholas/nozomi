@@ -172,20 +172,54 @@ namespace Nozomi.Service.Events
 
             if (analysedComponent != null)
             {
-                // Request-based tracking
-                if (analysedComponent.RequestId != null && analysedComponent.RequestId > 0)
+                var res = new List<RequestComponent>();
+                
+                // CurrencyPair-based tracking
+                if (analysedComponent.CurrencyPairId != null && analysedComponent.CurrencyPairId > 0)
                 {
-                    var query = _unitOfWork.GetRepository<RequestComponent>()
+                    var query = _unitOfWork.GetRepository<CurrencyPair>()
                         .GetQueryable()
                         .AsNoTracking()
-                        .Where(rc => rc.RequestId.Equals(analysedComponent.RequestId));
+                        .Where(cp => cp.DeletedAt == null && cp.IsEnabled
+                                                          && cp.Id.Equals(analysedComponent.CurrencyPairId));
 
                     if (track)
                     {
-                        query = query.Include(rc => rc.RcdHistoricItems);
+                        query = query
+                            .Include(cp => cp.WebsocketRequests)
+                            .ThenInclude(wsr => wsr.RequestComponents)
+                            .ThenInclude(rc => rc.RcdHistoricItems)
+                            .Include(cp => cp.CurrencyPairRequests)
+                            .ThenInclude(cpr => cpr.RequestComponents)
+                            .ThenInclude(rc => rc.RcdHistoricItems);
                     }
+                    else
+                    {
+                        query = query
+                            .Include(cp => cp.WebsocketRequests)
+                            .ThenInclude(wsr => wsr.RequestComponents)
+                            .Include(cp => cp.CurrencyPairRequests)
+                            .ThenInclude(cpr => cpr.RequestComponents);
+                    }
+
+                    var currencyPair = query.SingleOrDefault();
+
+                    if (currencyPair != null)
+                    {
+                        foreach (var wsr in currencyPair.WebsocketRequests)
+                        {
+                            if (wsr.RequestComponents != null && wsr.RequestComponents.Count > 0)
+                                res.AddRange(wsr.RequestComponents);
+                        }
+
+                        foreach (var cpr in currencyPair.CurrencyPairRequests)
+                        {
+                            if (cpr.RequestComponents != null && cpr.RequestComponents.Count > 0)
+                                res.AddRange(cpr.RequestComponents);
+                        }
                 
-                    return query.ToList();
+                        return res;
+                    }
                 } 
                 // Currency-based tracking
                 else if (analysedComponent.CurrencyId != null && analysedComponent.CurrencyId > 0)
@@ -200,8 +234,16 @@ namespace Nozomi.Service.Events
                     {
                         query.ThenInclude(rc => rc.RcdHistoricItems);
                     }
+
+                    var currencyReqs = query.ToList();
+
+                    foreach (var cr in currencyReqs)
+                    {
+                        if (cr.RequestComponents != null && cr.RequestComponents.Count > 0)
+                            res.AddRange(cr.RequestComponents);
+                    }
                 
-                    return query.SelectMany(rc => rc.RequestComponents).ToList();
+                    return res;
                 }
             }
 
