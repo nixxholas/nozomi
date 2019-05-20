@@ -239,16 +239,16 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                                  && ac.CurrencyPair.CounterCurrencyAbbrv
                                                      .Equals(CoreConstants.GenericCounterCurrency, 
                                                          StringComparison.InvariantCultureIgnoreCase)
-                                                 && ac.ComponentType.Equals(AnalysedComponentType.CurrentAveragePrice))
+                                                 && ac.ComponentType.Equals(AnalysedComponentType.CurrentAveragePrice)
+                                                 && !string.IsNullOrEmpty(ac.Value)
+                                                 && decimal.TryParse(ac.Value, out var validVal))
                                     .ToList();
 
                             if (analysedComps != null && analysedComps.Count > 0)
                             {
                                 // Aggregate it
                                 var avgPrice = analysedComps
-                                    .Average(ac => decimal.Parse(string.IsNullOrEmpty(ac.Value)
-                                        ? "0"
-                                        : ac.Value));
+                                    .Average(ac => decimal.Parse(ac.Value));
 
                                 if (!decimal.Zero.Equals(avgPrice))
                                 {
@@ -270,24 +270,18 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
 
                             if (correlatedReqComps != null && correlatedReqComps.Count > 0)
                             {
-#if DEBUG
-                                var filteredCorrelatedReqComps = correlatedReqComps
-                                    .Where(rc => rc.ComponentType.Equals(ComponentType.Ask)
-                                                 || rc.ComponentType.Equals(ComponentType.Bid))
-                                    .ToList();
-#endif
-
                                 // Aggregate it
                                 var avgPrice = correlatedReqComps
-                                    .Where(rc => rc.ComponentType.Equals(ComponentType.Ask)
+                                    .Where(rc => (rc.ComponentType.Equals(ComponentType.Ask)
                                                  || rc.ComponentType.Equals(ComponentType.Bid))
-                                    .Average(rc => decimal.Parse(string.IsNullOrEmpty(rc.Value)
-                                        ? "0"
-                                        : rc.Value));
+                                                 && !string.IsNullOrEmpty(rc.Value)
+                                                 && decimal.TryParse(rc.Value, out var validVal))
+                                    .Average(rc => decimal.Parse(rc.Value));
 
                                 if (!decimal.Zero.Equals(avgPrice))
                                 {
-                                    if (_analysedComponentService.UpdateValue(component.Id, avgPrice.ToString()))
+                                    if (_analysedComponentService.UpdateValue(component.Id, 
+                                        avgPrice.ToString(CultureInfo.InvariantCulture)))
                                     {
                                         // Updated successfully
                                     }
@@ -834,7 +828,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
 
                         break;
                     default:
-                        return false;
+                        break;
                 }
             }
 
