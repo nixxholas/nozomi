@@ -33,9 +33,9 @@ namespace Nozomi.Service.HostedServices.StaticUpdater
                         .AsQueryable()
                         .Where(s => s.IsEnabled && s.DeletedAt == null)
                         .Include(s => s.CurrencyPairs)
-                            .ThenInclude(cp => cp.CurrencyPairSourceCurrencies)
-                                .ThenInclude(cpsc => cpsc.CurrencySource)
-                                    .ThenInclude(cs => cs.Currency)
+                        .ThenInclude(cp => cp.MainCurrency)
+                        .Include(s => s.CurrencyPairs)
+                        .ThenInclude(cp => cp.CounterCurrency)
                         // Historical Data Inclusions
                         .Include(s => s.CurrencyPairs)
                             .ThenInclude(cp => cp.AnalysedComponents)
@@ -71,19 +71,9 @@ namespace Nozomi.Service.HostedServices.StaticUpdater
                                 {
                                     MainTickerAbbreviation = 
                                         cp.MainCurrencyAbbrv,
-                                    MainTickerName = 
-                                        cp.CurrencyPairSourceCurrencies.Where(cpsc => 
-                                            cpsc.CurrencySource.Currency.Abbreviation
-                                                .Equals(cp.MainCurrencyAbbrv, StringComparison.InvariantCultureIgnoreCase))
-                                            .Select(cpsc => cpsc.CurrencySource.Currency.Name)
-                                            .SingleOrDefault(),
-                                    CounterTickerAbbreviation = 
-                                        cp.CurrencyPairSourceCurrencies.Where(cpsc => 
-                                                cpsc.CurrencySource.Currency.Abbreviation
-                                                    .Equals(cp.CounterCurrencyAbbrv, StringComparison.InvariantCultureIgnoreCase))
-                                            .Select(cpsc => cpsc.CurrencySource.Currency.Name)
-                                            .SingleOrDefault(),
-                                    CounterTickerName = cp.CounterCurrencyAbbrv,
+                                    MainTickerName = cp.MainCurrency.Name,
+                                    CounterTickerAbbreviation = cp.CounterCurrencyAbbrv,
+                                    CounterTickerName = cp.CounterCurrency.Name,
                                     LastUpdated = cp.ModifiedAt,
                                     Properties = cp.AnalysedComponents
                                         ?.OrderByDescending(rc => rc.ComponentType)
