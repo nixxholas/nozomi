@@ -122,102 +122,53 @@ namespace Nozomi.Service.Events
             {
                 if (ticker.Length != 6) return new NozomiResult<ICollection<TickerByExchangeResponse>>(
                     NozomiResultType.Failed, "Invalid Ticker Symbol."); // Invalid ticker length
+
+                var query = _unitOfWork.GetRepository<CurrencyPair>()
+                    .GetQueryable()
+                    .AsNoTracking()
+                    .Where(cp => cp.DeletedAt == null && cp.IsEnabled 
+                                                      && string.Concat(cp.MainCurrencyAbbrv, cp.CounterCurrencyAbbrv)
+                                                          .Equals(ticker, StringComparison.InvariantCultureIgnoreCase))
+                    .Include(cp => cp.Source)
+                    .Include(cp => cp.AnalysedComponents);
                 
                 // Exchange? Specification.
                 if (!string.IsNullOrEmpty(exchangeAbbrv))
                 {
-                    return new NozomiResult<ICollection<TickerByExchangeResponse>>(_unitOfWork.GetRepository<CurrencyPair>()
-                        .GetQueryable()
-                        .AsNoTracking()
-                        .Include(cp => cp.CurrencyPairCurrencies)
-                        .ThenInclude(pcp => pcp.Currency)
-                        .Where(cp => cp.IsEnabled && cp.DeletedAt == null
-                                                  && (cp.CurrencyPairCurrencies.FirstOrDefault(ccp => ccp.Currency.Abbreviation
-                                                              .Equals(ccp.CurrencyPair.MainCurrency, 
-                                                                  StringComparison.InvariantCultureIgnoreCase))
-                                                          .Currency.Abbreviation + cp.CurrencyPairCurrencies
-                                                          .FirstOrDefault(ccp => ccp.Currency.Abbreviation
-                                                              .Equals(ccp.CurrencyPair.CounterCurrency, 
-                                                                  StringComparison.InvariantCultureIgnoreCase))
-                                                          .Currency.Abbreviation).Equals(ticker,
-                                                      StringComparison.InvariantCultureIgnoreCase))
-                        .Include(cp => cp.CurrencySource)
-                        .Include(cp => cp.CurrencyPairRequests)
-                        .ThenInclude(cpr => cpr.RequestComponents)
-                        .Where(cp => cp.CurrencySource.Abbreviation.Equals(exchangeAbbrv, 
-                            StringComparison.InvariantCultureIgnoreCase))
+                    return new NozomiResult<ICollection<TickerByExchangeResponse>>(query
+                        .Where(cp => cp.Source != null 
+                                     && cp.Source.Name.Equals(exchangeAbbrv, StringComparison.InvariantCultureIgnoreCase))
                         .Select(cp => new TickerByExchangeResponse
                         {
-                            Exchange = cp.CurrencySource.Name,
-                            ExchangeAbbrv = cp.CurrencySource.Abbreviation,
+                            Exchange = cp.Source.Name,
+                            ExchangeAbbrv = cp.Source.Abbreviation,
                             LastUpdated = cp.CurrencyPairRequests
                                 .FirstOrDefault(cpr => cpr.IsEnabled && cpr.DeletedAt == null)
                                 .RequestComponents.FirstOrDefault(rc => rc.IsEnabled && rc.DeletedAt == null)
                                 .ModifiedAt,
-                            Properties = cp.CurrencyPairRequests
-                                .SelectMany(cpr => cpr.RequestComponents)
+                            Properties = cp.AnalysedComponents
                                 .OrderBy(rc => rc.ComponentType).Select(rc => 
                                     new KeyValuePair<string,string>(rc.ComponentType.ToString(), 
                                         rc.Value)).ToList()
                         })
                         .ToList());
-                    
-//                    var key = new Tuple<string, string>(ticker, exchangeAbbrv);
-//
-//                    if (NozomiServiceConstants.CurrencySourceSymbolDictionary
-//                        .ContainsKey(key))
-//                    {
-//                        return new NozomiResult<ICollection<TickerByExchangeResponse>>(
-//                            new List<TickerByExchangeResponse> {
-//                                NozomiServiceConstants.CurrencyPairDictionary[
-//                                    NozomiServiceConstants.CurrencySourceSymbolDictionary[key]
-//                                ]
-//                            });
-//                    }
-//                    else
-//                    {
-//                        return new NozomiResult<ICollection<TickerByExchangeResponse>>(
-//                            NozomiResultType.Failed, "The ticker specific to the exchange stated does not exist.");
-//                    }
                 }
-                
-//                return new NozomiResult<ICollection<TickerByExchangeResponse>>(
-//                    NozomiServiceConstants.TickerSymbolDictionary[ticker].Where(i => i > 0).Select(
-//                    i => NozomiServiceConstants.CurrencyPairDictionary[i]).ToList());
 
-                    return new NozomiResult<ICollection<TickerByExchangeResponse>>(_unitOfWork.GetRepository<CurrencyPair>()
-                        .GetQueryable()
-                        .AsNoTracking()
-                        .Include(cp => cp.CurrencyPairCurrencies)
-                        .ThenInclude(pcp => pcp.Currency)
-                        .Where(cp => cp.IsEnabled && cp.DeletedAt == null
-                                                  && (cp.CurrencyPairCurrencies.FirstOrDefault(ccp => ccp.Currency.Abbreviation
-                                                              .Equals(ccp.CurrencyPair.MainCurrency, 
-                                                                  StringComparison.InvariantCultureIgnoreCase))
-                                                          .Currency.Abbreviation + cp.CurrencyPairCurrencies
-                                                          .FirstOrDefault(ccp => ccp.Currency.Abbreviation
-                                                              .Equals(ccp.CurrencyPair.CounterCurrency, 
-                                                                  StringComparison.InvariantCultureIgnoreCase))
-                                                          .Currency.Abbreviation).Equals(ticker,
-                                                      StringComparison.InvariantCultureIgnoreCase))
-                        .Include(cp => cp.CurrencySource)
-                        .Include(cp => cp.CurrencyPairRequests)
-                        .ThenInclude(cpr => cpr.RequestComponents)
-                        .Select(cp => new TickerByExchangeResponse
-                        {
-                            Exchange = cp.CurrencySource.Name,
-                            ExchangeAbbrv = cp.CurrencySource.Abbreviation,
-                            LastUpdated = cp.CurrencyPairRequests
-                                .FirstOrDefault(cpr => cpr.IsEnabled && cpr.DeletedAt == null)
-                                .RequestComponents.FirstOrDefault(rc => rc.IsEnabled && rc.DeletedAt == null)
-                                .ModifiedAt,
-                            Properties = cp.CurrencyPairRequests
-                                .SelectMany(cpr => cpr.RequestComponents)
-                                .OrderBy(rc => rc.ComponentType).Select(rc => 
-                                    new KeyValuePair<string,string>(rc.ComponentType.ToString(), 
-                                        rc.Value)).ToList()
-                        })
-                        .ToList());
+                return new NozomiResult<ICollection<TickerByExchangeResponse>>(query
+                    .Select(cp => new TickerByExchangeResponse
+                    {
+                        Exchange = cp.Source.Name,
+                        ExchangeAbbrv = cp.Source.Abbreviation,
+                        LastUpdated = cp.CurrencyPairRequests
+                            .FirstOrDefault(cpr => cpr.IsEnabled && cpr.DeletedAt == null)
+                            .RequestComponents.FirstOrDefault(rc => rc.IsEnabled && rc.DeletedAt == null)
+                            .ModifiedAt,
+                        Properties = cp.AnalysedComponents
+                            .OrderBy(rc => rc.ComponentType).Select(rc => 
+                                new KeyValuePair<string,string>(rc.ComponentType.ToString(), 
+                                    rc.Value)).ToList()
+                    })
+                    .ToList());
             }
             catch (Exception ex)
             {
