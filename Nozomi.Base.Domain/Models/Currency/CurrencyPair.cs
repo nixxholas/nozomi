@@ -23,38 +23,34 @@ namespace Nozomi.Data.Models.Currency
         /// </summary>
         public string DefaultComponent { get; set; }
 
-        public long CurrencySourceId { get; set; }
-        public Source CurrencySource { get; set; }
+        public long SourceId { get; set; }
+        public Source Source { get; set; }
 
         // =========== RELATIONS ============ //
         public ICollection<AnalysedComponent> AnalysedComponents { get; set; }
         public ICollection<CurrencyPairRequest> CurrencyPairRequests { get; set; }
         public ICollection<WebsocketRequest> WebsocketRequests { get; set; }
         
-        public string MainCurrency { get; set; }
+        public string MainCurrencyAbbrv { get; set; }
         
-        public string CounterCurrency { get; set; }
+        public Currency MainCurrency { get; set; }
         
-        public ICollection<CurrencyPairSourceCurrency> CurrencyPairSourceCurrencies { get; set; }
+        public string CounterCurrencyAbbrv { get; set; }
+        
+        public Currency CounterCurrency { get; set; }
 
         public bool IsValid()
         {
-            if (CurrencyPairSourceCurrencies != null && CurrencyPairSourceCurrencies.Count == 2)
+            if (MainCurrency != null && CounterCurrency != null)
             {
-                var mainCurr = CurrencyPairSourceCurrencies.FirstOrDefault(cpsc =>
-                    cpsc.CurrencySource.Currency.Abbreviation.Equals(MainCurrency,
-                        StringComparison.InvariantCultureIgnoreCase));
-                var counterCurr = CurrencyPairSourceCurrencies.FirstOrDefault(cpsc =>
-                    cpsc.CurrencySource.Currency.Abbreviation.Equals(CounterCurrency,
-                        StringComparison.InvariantCultureIgnoreCase));
+                var mainCurr = MainCurrency.Abbreviation.Equals(MainCurrencyAbbrv,
+                        StringComparison.InvariantCultureIgnoreCase);
+                var counterCurr = CounterCurrency.Abbreviation.Equals(CounterCurrencyAbbrv,
+                        StringComparison.InvariantCultureIgnoreCase);
                 
                 return (CurrencyPairType > 0) && (!string.IsNullOrEmpty(APIUrl))
                                               && (!string.IsNullOrEmpty(DefaultComponent))
-                                              && (CurrencySourceId > 0)
-                                              && mainCurr != null && counterCurr != null 
-                                              && !mainCurr.CurrencySourceId.Equals(counterCurr.CurrencySourceId)
-                                              && mainCurr.CurrencySource.SourceId
-                                                  .Equals(counterCurr.CurrencySource.SourceId);
+                                              && (SourceId > 0);
             }
             
             return false;

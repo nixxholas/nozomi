@@ -31,7 +31,7 @@ namespace Nozomi.Service.Services
                 CurrencyPairType = createCurrencyPair.CurrencyPairType,
                 APIUrl = createCurrencyPair.ApiUrl,
                 DefaultComponent = createCurrencyPair.DefaultComponent,
-                CurrencySourceId = createCurrencyPair.CurrencySourceId,
+                SourceId = createCurrencyPair.CurrencySourceId,
                 CurrencyPairCurrencies = createCurrencyPair.PartialCurrencyPairs
                     .Select(pcp => new CurrencyPairSourceCurrency
                     {
@@ -92,7 +92,7 @@ namespace Nozomi.Service.Services
                         currencyPairType = cp.CurrencyPairType,
                         apiUrl = cp.APIUrl,
                         defaultComponent = cp.DefaultComponent,
-                        currencySourceId = cp.CurrencySourceId,
+                        currencySourceId = cp.SourceId,
                     })
                     .SingleOrDefault();
             }
@@ -104,7 +104,7 @@ namespace Nozomi.Service.Services
                 //.Include(cp => cp.CurrencyPairAdvertTypes)
                 .Include(cp => cp.CurrencyPairRequests)
                     .ThenInclude(cpr => cpr.RequestComponents)
-                .Include(cp => cp.CurrencySource)
+                .Include(cp => cp.Source)
                 .Include(cp => cp.CurrencyPairCurrencies)
                 .Select(cp => new
                 {
@@ -112,11 +112,11 @@ namespace Nozomi.Service.Services
                     currencyPairType = cp.CurrencyPairType,
                     apiUrl = cp.APIUrl,
                     defaultComponent = cp.DefaultComponent,
-                    currencySourceId = cp.CurrencySourceId,
+                    currencySourceId = cp.SourceId,
                     currencySource = new
                     {
-                        abbrv = cp.CurrencySource.Abbreviation,
-                        name = cp.CurrencySource.Name
+                        abbrv = cp.Source.Abbreviation,
+                        name = cp.Source.Name
                     },
                     //advertCount = cp.Adverts.Count,
                     currencyPairComponents = cp.CurrencyPairRequests
@@ -154,7 +154,7 @@ namespace Nozomi.Service.Services
                         currencyPairType = cp.CurrencyPairType,
                         apiUrl = cp.APIUrl,
                         defaultComponent = cp.DefaultComponent,
-                        currencySourceId = cp.CurrencySourceId,
+                        currencySourceId = cp.SourceId,
                     });
             }
 
@@ -164,7 +164,7 @@ namespace Nozomi.Service.Services
                 //.Include(cp => cp.CurrencyPairAdvertTypes)
                 .Include(cp => cp.CurrencyPairRequests)
                     .ThenInclude(cpr => cpr.RequestComponents)
-                .Include(cp => cp.CurrencySource)
+                .Include(cp => cp.Source)
                 .Include(cp => cp.CurrencyPairCurrencies)
                 .Select(cp => new
                 {
@@ -172,11 +172,11 @@ namespace Nozomi.Service.Services
                     currencyPairType = cp.CurrencyPairType,
                     apiUrl = cp.APIUrl,
                     defaultComponent = cp.DefaultComponent,
-                    currencySourceId = cp.CurrencySourceId,
+                    currencySourceId = cp.SourceId,
                     currencySource = new
                     {
-                        abbrv = cp.CurrencySource.Abbreviation,
-                        name = cp.CurrencySource.Name
+                        abbrv = cp.Source.Abbreviation,
+                        name = cp.Source.Name
                     },
                     //advertCount = cp.Adverts.Count,
                     currencyPairComponents = cp.CurrencyPairRequests
@@ -294,7 +294,7 @@ namespace Nozomi.Service.Services
                 .GetRepository<CurrencyPair>()
                 .GetQueryable()
                 .AsNoTracking()
-                .Where(cp => cp.CurrencySourceId.Equals(currencySourceId))
+                .Where(cp => cp.SourceId.Equals(currencySourceId))
                 .FirstOrDefault(cp => cp.CurrencyPairCurrencies // CurrencyId is the counterpair
                                           .Any(pcp => pcp.CurrencyId.Equals(currencyId) &&
                                                       pcp.Currency.Abbreviation.Equals(pcp.CurrencyPair.CounterCurrency,
@@ -334,7 +334,7 @@ namespace Nozomi.Service.Services
                     .Select(cp => new
                     {
                         id = cp.Id,
-                        currencySourceId = cp.CurrencySourceId,
+                        currencySourceId = cp.SourceId,
                         currencyPairComponents = cp.CurrencyPairRequests
                             .FirstOrDefault(cpr => cpr.IsEnabled && cpr.DeletedAt == null)
                             .RequestComponents
@@ -369,7 +369,7 @@ namespace Nozomi.Service.Services
                     .Select(cp => new
                     {
                         id = cp.Id,
-                        currencySourceId = cp.CurrencySourceId,
+                        currencySourceId = cp.SourceId,
                         defaultComponent = cp.DefaultComponent
                     })
                     .Skip(index * 20)
@@ -384,8 +384,8 @@ namespace Nozomi.Service.Services
                 .GetQueryable()
                 .Where(cp => cp.DeletedAt == null)
                 .Where(cp => cp.IsEnabled)
-                .Include(cp => cp.CurrencySource)
-                .Select(cp => new long[] {cp.Id, cp.CurrencySource.Id})
+                .Include(cp => cp.Source)
+                .Select(cp => new long[] {cp.Id, cp.Source.Id})
                 .ToArray();
         }
     }

@@ -70,20 +70,20 @@ namespace Nozomi.Service.HostedServices.StaticUpdater
                                 .Select(cp => new UniqueTickerResponse
                                 {
                                     MainTickerAbbreviation = 
-                                        cp.MainCurrency,
+                                        cp.MainCurrencyAbbrv,
                                     MainTickerName = 
                                         cp.CurrencyPairSourceCurrencies.Where(cpsc => 
                                             cpsc.CurrencySource.Currency.Abbreviation
-                                                .Equals(cp.MainCurrency, StringComparison.InvariantCultureIgnoreCase))
+                                                .Equals(cp.MainCurrencyAbbrv, StringComparison.InvariantCultureIgnoreCase))
                                             .Select(cpsc => cpsc.CurrencySource.Currency.Name)
                                             .SingleOrDefault(),
                                     CounterTickerAbbreviation = 
                                         cp.CurrencyPairSourceCurrencies.Where(cpsc => 
                                                 cpsc.CurrencySource.Currency.Abbreviation
-                                                    .Equals(cp.CounterCurrency, StringComparison.InvariantCultureIgnoreCase))
+                                                    .Equals(cp.CounterCurrencyAbbrv, StringComparison.InvariantCultureIgnoreCase))
                                             .Select(cpsc => cpsc.CurrencySource.Currency.Name)
                                             .SingleOrDefault(),
-                                    CounterTickerName = cp.CounterCurrency,
+                                    CounterTickerName = cp.CounterCurrencyAbbrv,
                                     LastUpdated = cp.ModifiedAt,
                                     Properties = cp.AnalysedComponents
                                         ?.OrderByDescending(rc => rc.ComponentType)

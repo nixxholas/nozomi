@@ -154,7 +154,7 @@ namespace Nozomi.Service.Services
                                 }
                                 else
                                 {
-                                    currencyPair.CurrencySourceId = ucp.CurrencySourceId;
+                                    currencyPair.SourceId = ucp.CurrencySourceId;
                                 }
 
                                 _unitOfWork.GetRepository<CurrencyPair>().Update(currencyPair);
@@ -166,7 +166,7 @@ namespace Nozomi.Service.Services
                             }
                         }
                         else if (!sourceToUpd.CurrencyPairs.Any(cp => cp.Id.Equals(ucp.Id) 
-                                                                  && cp.CurrencySourceId.Equals(ucp.CurrencySourceId))
+                                                                  && cp.SourceId.Equals(ucp.CurrencySourceId))
                             && ucp.CurrencySourceId.Equals(sourceToUpd.Id))
                         {
                             // Addition?
@@ -176,7 +176,7 @@ namespace Nozomi.Service.Services
 
                             if (currencyPair != null)
                             {
-                                currencyPair.CurrencySourceId = ucp.CurrencySourceId;
+                                currencyPair.SourceId = ucp.CurrencySourceId;
                                 
                                 _unitOfWork.GetRepository<CurrencyPair>().Update(currencyPair);
                                 _unitOfWork.Commit();
@@ -331,7 +331,7 @@ namespace Nozomi.Service.Services
                                 }
                                 else
                                 {
-                                    currencyPair.CurrencySourceId = ucp.CurrencySourceId;
+                                    currencyPair.SourceId = ucp.CurrencySourceId;
                                 }
 
                                 _unitOfWork.GetRepository<CurrencyPair>().Update(currencyPair);
@@ -343,7 +343,7 @@ namespace Nozomi.Service.Services
                             }
                         }
                         else if (!sourceToUpd.CurrencyPairs.Any(cp => cp.Id.Equals(ucp.Id) 
-                                                                  && cp.CurrencySourceId.Equals(ucp.CurrencySourceId))
+                                                                  && cp.SourceId.Equals(ucp.CurrencySourceId))
                             && ucp.CurrencySourceId.Equals(sourceToUpd.Id))
                         {
                             // Addition?
@@ -353,7 +353,7 @@ namespace Nozomi.Service.Services
 
                             if (currencyPair != null)
                             {
-                                currencyPair.CurrencySourceId = ucp.CurrencySourceId;
+                                currencyPair.SourceId = ucp.CurrencySourceId;
                                 
                                 _unitOfWork.GetRepository<CurrencyPair>().Update(currencyPair);
                                 _unitOfWork.Commit();

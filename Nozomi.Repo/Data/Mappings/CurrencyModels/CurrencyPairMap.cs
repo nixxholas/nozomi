@@ -16,8 +16,8 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
             entityTypeBuilder.Property(cp => cp.APIUrl).IsRequired();
             entityTypeBuilder.Property(cp => cp.DefaultComponent).IsRequired();
 
-            entityTypeBuilder.HasOne(cp => cp.CurrencySource).WithMany(cs => cs.CurrencyPairs)
-                .HasForeignKey(cp => cp.CurrencySourceId)
+            entityTypeBuilder.HasOne(cp => cp.Source).WithMany(cs => cs.CurrencyPairs)
+                .HasForeignKey(cp => cp.SourceId)
                 .HasConstraintName("CurrencyPairs_CurrencySource_Constraint");
             entityTypeBuilder.HasMany(cp => cp.AnalysedComponents).WithOne(ac => ac.CurrencyPair)
                 .HasForeignKey(ac => ac.CurrencyPairId).OnDelete(DeleteBehavior.Cascade)
@@ -25,10 +25,6 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
             entityTypeBuilder.HasMany(cp => cp.CurrencyPairRequests).WithOne(cpr => cpr.CurrencyPair)
                 .HasForeignKey(cpr => cpr.CurrencyPairId)
                 .HasConstraintName("CurrencyPair_CurrencyPairRequest_Constraint");
-            entityTypeBuilder.HasMany(cp => cp.CurrencyPairSourceCurrencies)
-                .WithOne(pcp => pcp.CurrencyPair)
-                .HasForeignKey(pcp => pcp.CurrencyPairId)
-                .HasConstraintName("CurrencyPair_CurrencyPairSourceCurrencies_Constraint");
 
             entityTypeBuilder.HasData(
                 new CurrencyPair()
@@ -37,9 +33,9 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                     CurrencyPairType = CurrencyPairType.TRADEABLE,
                     APIUrl = "https://api.ethfinex.com/v2/ticker/tETHUSD",
                     DefaultComponent = "0",
-                    CurrencySourceId = 1,
-                    MainCurrency = "ETH",
-                    CounterCurrency = "USD"
+                    SourceId = 1,
+                    MainCurrencyAbbrv = "ETH",
+                    CounterCurrencyAbbrv = "USD"
                 },
                 new CurrencyPair
                 {
@@ -47,9 +43,9 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                     CurrencyPairType = CurrencyPairType.TRADEABLE,
                     APIUrl = "https://api.ethfinex.com/v2/ticker/tKNCUSD",
                     DefaultComponent = "0",
-                    CurrencySourceId = 1,
-                    MainCurrency = "KNC",
-                    CounterCurrency = "USD"
+                    SourceId = 1,
+                    MainCurrencyAbbrv = "KNC",
+                    CounterCurrencyAbbrv = "USD"
                 },
                 new CurrencyPair()
                 {
@@ -57,9 +53,9 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                     CurrencyPairType = CurrencyPairType.TRADEABLE,
                     APIUrl = "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml",
                     DefaultComponent = "Cube",
-                    CurrencySourceId = 4,
-                    MainCurrency = "EUR",
-                    CounterCurrency = "USD"
+                    SourceId = 4,
+                    MainCurrencyAbbrv = "EUR",
+                    CounterCurrencyAbbrv = "USD"
                 },
                 new CurrencyPair
                 {
@@ -67,9 +63,9 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                     CurrencyPairType = CurrencyPairType.TRADEABLE,
                     APIUrl = "https://www.alphavantage.co/query",
                     DefaultComponent = "Realtime Currency Exchange Rate/5. Exchange Rate",
-                    CurrencySourceId = 5,
-                    MainCurrency = "EUR",
-                    CounterCurrency = "USD"
+                    SourceId = 5,
+                    MainCurrencyAbbrv = "EUR",
+                    CounterCurrencyAbbrv = "USD"
                 },
                 new CurrencyPair
                 {
@@ -77,9 +73,9 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                     CurrencyPairType = CurrencyPairType.EXCHANGEABLE,
                     APIUrl = "https://poloniex.com/public?command=returnTicker",
                     DefaultComponent = "BTC_BCN/lowestAsk",
-                    CurrencySourceId = 6,
-                    MainCurrency = "BTC",
-                    CounterCurrency = "BCN"
+                    SourceId = 6,
+                    MainCurrencyAbbrv = "BTC",
+                    CounterCurrencyAbbrv = "BCN"
                 },
                 new CurrencyPair
                 {
@@ -87,9 +83,9 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                     CurrencyPairType = CurrencyPairType.EXCHANGEABLE,
                     APIUrl = "https://poloniex.com/public?command=returnTicker",
                     DefaultComponent = "BTC_BTS/lowestAsk",
-                    CurrencySourceId = 6,
-                    MainCurrency = "BTC",
-                    CounterCurrency = "BTS"
+                    SourceId = 6,
+                    MainCurrencyAbbrv = "BTC",
+                    CounterCurrencyAbbrv = "BTS"
                 },
                 new CurrencyPair
                 {
@@ -97,9 +93,9 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                     CurrencyPairType = CurrencyPairType.TRADEABLE,
                     APIUrl = "https://api.bitfinex.com/v1/pubticker/etheur",
                     DefaultComponent = "0",
-                    CurrencySourceId = 1,
-                    MainCurrency = "ETH",
-                    CounterCurrency = "EUR"
+                    SourceId = 1,
+                    MainCurrencyAbbrv = "ETH",
+                    CounterCurrencyAbbrv = "EUR"
                 },
                 new CurrencyPair()
                 {
@@ -107,9 +103,9 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                     CurrencyPairType = CurrencyPairType.EXCHANGEABLE,
                     APIUrl = "https://poloniex.com/public?command=returnTicker",
                     DefaultComponent = "USDT_BTC/lowestAsk",
-                    CurrencySourceId = 6,
-                    MainCurrency = "BTC",
-                    CounterCurrency = "USDT"
+                    SourceId = 6,
+                    MainCurrencyAbbrv = "BTC",
+                    CounterCurrencyAbbrv = "USDT"
                 },
                 new CurrencyPair
                 {
@@ -117,9 +113,9 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                     CurrencyPairType = CurrencyPairType.EXCHANGEABLE,
                     APIUrl = "wss://stream.binance.com:9443/stream?streams=!ticker@arr",
                     DefaultComponent = "b",
-                    CurrencySourceId = 3,
-                    MainCurrency = "ETH",
-                    CounterCurrency = "BTC"
+                    SourceId = 3,
+                    MainCurrencyAbbrv = "ETH",
+                    CounterCurrencyAbbrv = "BTC"
                 },
                 new CurrencyPair
                 {
@@ -127,9 +123,9 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                     CurrencyPairType = CurrencyPairType.EXCHANGEABLE,
                     APIUrl = "wss://stream.binance.com:9443/stream?streams=!ticker@arr",
                     DefaultComponent = "b",
-                    CurrencySourceId = 3,
-                    MainCurrency = "KNC",
-                    CounterCurrency = "ETH"
+                    SourceId = 3,
+                    MainCurrencyAbbrv = "KNC",
+                    CounterCurrencyAbbrv = "ETH"
                 },
                 new CurrencyPair
                 {
@@ -137,9 +133,9 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                     CurrencyPairType = CurrencyPairType.EXCHANGEABLE,
                     APIUrl = "https://www.coinhako.com/api/v1/price/currency/BTCSGD",
                     DefaultComponent = "data/buy_price",
-                    CurrencySourceId = 3,
-                    MainCurrency = "BTC",
-                    CounterCurrency = "SGD"
+                    SourceId = 3,
+                    MainCurrencyAbbrv = "BTC",
+                    CounterCurrencyAbbrv = "SGD"
                 },
                 new CurrencyPair
                 {
@@ -147,9 +143,9 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                     CurrencyPairType = CurrencyPairType.EXCHANGEABLE,
                     APIUrl = "https://www.coinhako.com/api/v1/price/currency/BTCUSD",
                     DefaultComponent = "data/buy_price",
-                    CurrencySourceId = 3,
-                    MainCurrency = "BTC",
-                    CounterCurrency = "USD"
+                    SourceId = 3,
+                    MainCurrencyAbbrv = "BTC",
+                    CounterCurrencyAbbrv = "USD"
                 },
                 new CurrencyPair
                 {
@@ -157,9 +153,9 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                     CurrencyPairType = CurrencyPairType.EXCHANGEABLE,
                     APIUrl = "https://www.coinhako.com/api/v1/price/currency/ETHSGD",
                     DefaultComponent = "data/buy_price",
-                    CurrencySourceId = 3,
-                    MainCurrency = "ETH",
-                    CounterCurrency = "SGD"
+                    SourceId = 3,
+                    MainCurrencyAbbrv = "ETH",
+                    CounterCurrencyAbbrv = "SGD"
                 },
                 new CurrencyPair
                 {
@@ -167,9 +163,9 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                     CurrencyPairType = CurrencyPairType.EXCHANGEABLE,
                     APIUrl = "https://www.coinhako.com/api/v1/price/currency/ETHUSD",
                     DefaultComponent = "data/buy_price",
-                    CurrencySourceId = 3,
-                    MainCurrency = "ETH",
-                    CounterCurrency = "USD"
+                    SourceId = 3,
+                    MainCurrencyAbbrv = "ETH",
+                    CounterCurrencyAbbrv = "USD"
                 },
                 new CurrencyPair
                 {
@@ -177,9 +173,9 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                     CurrencyPairType = CurrencyPairType.EXCHANGEABLE,
                     APIUrl = "https://www.coinhako.com/api/v1/price/currency/LTCSGD",
                     DefaultComponent = "data/buy_price",
-                    CurrencySourceId = 3,
-                    MainCurrency = "LTC",
-                    CounterCurrency = "SGD"
+                    SourceId = 3,
+                    MainCurrencyAbbrv = "LTC",
+                    CounterCurrencyAbbrv = "SGD"
                 },
                 new CurrencyPair
                 {
@@ -187,9 +183,9 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                     CurrencyPairType = CurrencyPairType.EXCHANGEABLE,
                     APIUrl = "https://www.coinhako.com/api/v1/price/currency/LTCUSD",
                     DefaultComponent = "data/buy_price",
-                    CurrencySourceId = 3,
-                    MainCurrency = "LTC",
-                    CounterCurrency = "USD"
+                    SourceId = 3,
+                    MainCurrencyAbbrv = "LTC",
+                    CounterCurrencyAbbrv = "USD"
                 }
             );
         }

@@ -133,9 +133,9 @@ namespace Nozomi.Service.Services
             {
                 APIUrl = createTickerInputModel.DataPath,
                 CurrencyPairType = createTickerInputModel.CurrencyPairType,
-                CurrencySourceId = createTickerInputModel.CurrencySourceId,
-                MainCurrency = mainCurrency.Abbreviation,
-                CounterCurrency = counterCurrency.Abbreviation,
+                SourceId = createTickerInputModel.CurrencySourceId,
+                MainCurrencyAbbrv = mainCurrency.Abbreviation,
+                CounterCurrencyAbbrv = counterCurrency.Abbreviation,
                 CurrencyPairCurrencies = new List<CurrencyPairSourceCurrency>
                 {
                     new CurrencyPairSourceCurrency
@@ -284,11 +284,11 @@ namespace Nozomi.Service.Services
                 .GetQueryable()
                 .Where(cp => cp.DeletedAt == null && cp.IsEnabled 
                                                   // Ticker pair check
-                                                  && string.Concat(cp.MainCurrency, cp.CounterCurrency)
+                                                  && string.Concat(cp.MainCurrencyAbbrv, cp.CounterCurrencyAbbrv)
                                                       .Equals(ticker, StringComparison.InvariantCultureIgnoreCase))
-                .Include(cp => cp.CurrencySource)
+                .Include(cp => cp.Source)
                 .Include(cp => cp.CurrencyPairSourceCurrencies)
-                .SingleOrDefault(cp => cp.CurrencySource.Abbreviation
+                .SingleOrDefault(cp => cp.Source.Abbreviation
                     .Equals(exchangeAbbrv, StringComparison.InvariantCultureIgnoreCase));
 
             if (tickerObj != null)

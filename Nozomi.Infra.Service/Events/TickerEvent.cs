@@ -87,14 +87,14 @@ namespace Nozomi.Service.Events
                     .GetQueryable()
                     .AsNoTracking()
                     .Where(cp => cp.Id.Equals(id))
-                    .Include(cp => cp.CurrencySource)
-                    .Where(cp => cp.CurrencySource.IsEnabled && cp.CurrencySource.DeletedAt == null)
+                    .Include(cp => cp.Source)
+                    .Where(cp => cp.Source.IsEnabled && cp.Source.DeletedAt == null)
                     .Include(cp => cp.CurrencyPairRequests)
                     .ThenInclude(cpr => cpr.RequestComponents)
                     .Select(cp => new TickerByExchangeResponse()
                     {
-                        Exchange = cp.CurrencySource.Name,
-                        ExchangeAbbrv = cp.CurrencySource.Abbreviation,
+                        Exchange = cp.Source.Name,
+                        ExchangeAbbrv = cp.Source.Abbreviation,
                         LastUpdated = cp.CurrencyPairRequests.FirstOrDefault(cpr => cpr.DeletedAt == null && cpr.IsEnabled)
                             .RequestComponents.FirstOrDefault(rc => rc.DeletedAt == null && rc.IsEnabled)
                             .CreatedAt,
@@ -114,8 +114,8 @@ namespace Nozomi.Service.Events
                 .GetQueryable()
                 .AsNoTracking()
                 .Where(cp => cp.DeletedAt == null && cp.IsEnabled)
-                .Include(cp => cp.CurrencySource)
-                .Where(cp => cp.CurrencySource.DeletedAt == null && cp.CurrencySource.IsEnabled)
+                .Include(cp => cp.Source)
+                .Where(cp => cp.Source.DeletedAt == null && cp.Source.IsEnabled)
                 .Include(cp => cp.CurrencyPairCurrencies)
                 .ThenInclude(pcp => pcp.Currency)
                 .Where(cp => cp.CurrencyPairCurrencies.FirstOrDefault(ccp => ccp.Currency.Abbreviation

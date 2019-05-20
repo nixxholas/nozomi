@@ -26,7 +26,7 @@ namespace Nozomi.Service.Events
                 .GetQueryable()
                 .AsNoTracking()
                 .Where(cp => cp.DeletedAt == null && cp.IsEnabled
-                             && cp.CounterCurrency.Equals(counterCurrencyAbbrv, 
+                             && cp.CounterCurrencyAbbrv.Equals(counterCurrencyAbbrv, 
                                  StringComparison.InvariantCultureIgnoreCase))
                 .ToList();
         }
