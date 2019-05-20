@@ -407,13 +407,15 @@ namespace Nozomi.Service.Events
             return res;
         }
 
-        public DetailedCurrencyResponse GetDetailedById(long currencyId, ICollection<ComponentType> componentTypes)
+        public DetailedCurrencyResponse GetDetailedById(long currencyId, ICollection<AnalysedComponentType> componentTypes)
         {
             var query = _unitOfWork.GetRepository<Currency>()
                 .GetQueryable()
                 .AsNoTracking()
-                .Include(cp => cp.AnalysedComponents)
+                .Include(cp => cp.AnalysedComponents
+                    .Where(ac => componentTypes.Contains(ac.ComponentType)))
                     .ThenInclude(ac => ac.AnalysedHistoricItems)
+                
                 .SingleOrDefault(c => c.Id.Equals(currencyId));
 
             return new DetailedCurrencyResponse(query);
