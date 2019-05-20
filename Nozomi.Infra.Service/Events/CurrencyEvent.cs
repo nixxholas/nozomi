@@ -340,28 +340,20 @@ namespace Nozomi.Service.Events
                         .AsNoTracking()
                         .Where(cp => cp.Id.Equals(analysedComponent.CurrencyPairId)
                                      && cp.DeletedAt == null && cp.IsEnabled)
-                        .Include(cp => cp.CurrencyPairSourceCurrencies)
-                        .ThenInclude(cpsc => cpsc.CurrencySource)
-                        .ThenInclude(cs => cs.Currency)
+                        .Include(cp => cp.MainCurrency)
                         .ThenInclude(c => c.CurrencyRequests)
                         .ThenInclude(cr => cr.RequestComponents)
-                        .Select(cp => decimal.Parse(cp.CurrencyPairSourceCurrencies
-                            // Obtain the main currency
-                            .FirstOrDefault(cpsc =>
-                                cpsc.CurrencySource != null && cpsc.CurrencySource.Currency != null
-                                                            && cpsc.CurrencySource.Currency.Abbreviation
-                                                                .Equals(cp.MainCurrency,
-                                                                    StringComparison.InvariantCultureIgnoreCase))
-                            .CurrencySource.Currency
-                            // Find the circulating supply    
-                            .CurrencyRequests
-                            .FirstOrDefault(cr => cr.RequestComponents != null && cr.RequestComponents.Count > 0
-                                                                               && cr.RequestComponents.Any(rc =>
-                                                                                   rc.ComponentType.Equals(ComponentType
-                                                                                       .Circulating_Supply)))
-                            .RequestComponents
-                            .FirstOrDefault(rc => rc.ComponentType.Equals(ComponentType.Circulating_Supply))
-                            .Value))
+                        // Obtain the main currency
+                        .Select(cp => decimal.Parse(cp.MainCurrency
+                                // Traverse to the request
+                                .CurrencyRequests
+                                .Where(cr => cr.RequestComponents != null && cr.RequestComponents.Count > 0
+                                                                          && cr.RequestComponents.Any(rc => rc.ComponentType
+                                                                              .Equals(ComponentType.Circulating_Supply)))
+                                .Select(cr => cr.RequestComponents
+                                    .FirstOrDefault(rc => rc.DeletedAt == null && rc.IsEnabled))
+                                .FirstOrDefault()
+                                .Value ?? "-1"))
                         .FirstOrDefault();
                 }
                 catch (Exception ex)
@@ -375,25 +367,20 @@ namespace Nozomi.Service.Events
                     .AsNoTracking()
                     .Where(cp => cp.Id.Equals(analysedComponent.CurrencyPairId)
                                  && cp.DeletedAt == null && cp.IsEnabled)
-                    .Include(cp => cp.CurrencyPairSourceCurrencies)
-                        .ThenInclude(cpsc => cpsc.CurrencySource)
-                            .ThenInclude(cs => cs.Currency)
-                                .ThenInclude(c => c.CurrencyRequests)
-                                    .ThenInclude(cr => cr.RequestComponents)
-                    .Select(cp => decimal.Parse(cp.CurrencyPairSourceCurrencies
-                        // Obtain the main currency
-                        .FirstOrDefault(cpsc => 
-                            cpsc.CurrencySource != null && cpsc.CurrencySource.Currency != null
-                            && cpsc.CurrencySource.Currency.Abbreviation
-                            .Equals(cp.MainCurrency, StringComparison.InvariantCultureIgnoreCase))
-                        .CurrencySource.Currency
-                        // Find the circulating supply    
-                        .CurrencyRequests
-                            .FirstOrDefault(cr => cr.RequestComponents != null && cr.RequestComponents.Count > 0
-                                         && cr.RequestComponents.Any(rc => rc.ComponentType.Equals(ComponentType.Circulating_Supply)))
-                        .RequestComponents
-                        .FirstOrDefault(rc => rc.ComponentType.Equals(ComponentType.Circulating_Supply))
-                        .Value))
+                    .Include(cp => cp.MainCurrency)
+                    .ThenInclude(c => c.CurrencyRequests)
+                    .ThenInclude(cr => cr.RequestComponents)
+                    // Obtain the main currency
+                    .Select(cp => decimal.Parse(cp.MainCurrency
+                                                    // Traverse to the request
+                                                    .CurrencyRequests
+                                                    .Where(cr => cr.RequestComponents != null && cr.RequestComponents.Count > 0
+                                                                                              && cr.RequestComponents.Any(rc => rc.ComponentType
+                                                                                                  .Equals(ComponentType.Circulating_Supply)))
+                                                    .Select(cr => cr.RequestComponents
+                                                        .FirstOrDefault(rc => rc.DeletedAt == null && rc.IsEnabled))
+                                                    .FirstOrDefault()
+                                                    .Value ?? "-1"))
                     .FirstOrDefault();
             }
 
