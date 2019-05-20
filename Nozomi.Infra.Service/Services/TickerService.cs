@@ -287,12 +287,19 @@ namespace Nozomi.Service.Services
                                                   && string.Concat(cp.MainCurrency, cp.CounterCurrency)
                                                       .Equals(ticker, StringComparison.InvariantCultureIgnoreCase))
                 .Include(cp => cp.CurrencySource)
+                .Include(cp => cp.CurrencyPairSourceCurrencies)
                 .SingleOrDefault(cp => cp.CurrencySource.Abbreviation
                     .Equals(exchangeAbbrv, StringComparison.InvariantCultureIgnoreCase));
 
             if (tickerObj != null)
             {
                 tickerObj.DeletedAt = DateTime.UtcNow;
+                
+                // Update as well 
+                foreach (var cpsc in tickerObj.CurrencyPairSourceCurrencies)
+                {
+                    cpsc.DeletedAt = DateTime.UtcNow;
+                }
                 
                 _unitOfWork.GetRepository<CurrencyPair>().Update(tickerObj);
                 _unitOfWork.Commit();
