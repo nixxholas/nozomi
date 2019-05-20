@@ -26,14 +26,12 @@ namespace Nozomi.Service.Events
     public class CurrencyEvent : BaseEvent<CurrencyEvent, NozomiDbContext>, ICurrencyEvent
     {
         private readonly ICurrencyPairEvent _currencyPairEvent;
-        private readonly ICurrencyCurrencyPairEvent _currencyCurrencyPairEvent;
 
         public CurrencyEvent(ILogger<CurrencyEvent> logger, IUnitOfWork<NozomiDbContext> unitOfWork,
-            ICurrencyPairEvent currencyPairEvent, ICurrencyCurrencyPairEvent currencyCurrencyPairEvent)
+            ICurrencyPairEvent currencyPairEvent)
             : base(logger, unitOfWork)
         {
             _currencyPairEvent = currencyPairEvent;
-            _currencyCurrencyPairEvent = currencyCurrencyPairEvent;
         }
 
         public Currency Get(long id, bool track = false)
@@ -50,10 +48,11 @@ namespace Nozomi.Service.Events
                     .ThenInclude(cs => cs.Source)
                     .Include(c => c.CurrencyPairSourceCurrencies)
                     .ThenInclude(pcp => pcp.CurrencyPair)
+                    .Include(c => c.CurrencyPairSourceCurrencies)
+                    .ThenInclude(pcp => pcp.CurrencyPair)
+                    .ThenInclude(cp => cp.AnalysedComponents)
                     .Include(c => c.CurrencyRequests)
-                    .ThenInclude(cr => cr.RequestComponents)
-                    .Include(c => c.CurrencyRequests)
-                    .ThenInclude(cr => cr.AnalysedComponents);
+                    .ThenInclude(cr => cr.RequestComponents);
             }
 
             return query
