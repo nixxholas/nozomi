@@ -233,7 +233,6 @@ namespace Nozomi.Data.ResponseModels.Currency
                     // Obtain via the Request method
                     var query = currency.CurrencyPairSourceCurrencies
                         .Select(pcp => pcp.CurrencyPair)
-                        .SelectMany(cpr => cpr.CurrencyPairRequests)
                         .SelectMany(cpr => cpr.AnalysedComponents)
                         .Select(ac => new AnalysedComponent
                         {
@@ -241,7 +240,6 @@ namespace Nozomi.Data.ResponseModels.Currency
                             ComponentType = ac.ComponentType,
                             Value = ac.Value,
                             Delay = ac.Delay,
-                            RequestId = ac.RequestId,
                             CurrencyId = ac.CurrencyId,
                             AnalysedHistoricItems = ac.AnalysedHistoricItems
                         })
@@ -522,7 +520,6 @@ namespace Nozomi.Data.ResponseModels.Currency
                     // Obtain via the Request method
                     var query = currency.CurrencyPairSourceCurrencies
                         .Select(pcp => pcp.CurrencyPair)
-                        .SelectMany(cpr => cpr.CurrencyPairRequests)
                         .SelectMany(cpr => cpr.AnalysedComponents)
                         .ToList();
 
