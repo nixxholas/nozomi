@@ -24,58 +24,6 @@ namespace Nozomi.Service.Events
         {
         }
 
-        public DataTableResult<UniqueTickerResponse> GetAllForDatatable(int index = 0)
-        {
-            var data = _unitOfWork.GetRepository<CurrencyPair>()
-                .GetQueryable()
-                .AsNoTracking()
-                .Skip(index * 20)
-                .Take(20)
-                .OrderBy(cp => cp.Id)
-                .Where(cp => cp.DeletedAt == null && cp.IsEnabled)
-                .Include(cp => cp.CurrencyPairCurrencies)
-                .ThenInclude(pcp => pcp.Currency)
-                .Include(cp => cp.CurrencySource)
-                .Include(cp => cp.CurrencyPairRequests)
-                .ThenInclude(cpr => cpr.RequestComponents)
-                .Select(cp => new UniqueTickerResponse
-                {
-                    MainTickerAbbreviation = 
-                        cp.CurrencyPairCurrencies.FirstOrDefault(ccp => ccp.Currency.Abbreviation
-                            .Equals(ccp.CurrencyPair.MainCurrency, StringComparison.InvariantCultureIgnoreCase)).Currency.Abbreviation,
-                    MainTickerName = 
-                        cp.CurrencyPairCurrencies.FirstOrDefault(ccp => ccp.Currency.Abbreviation
-                            .Equals(ccp.CurrencyPair.MainCurrency, StringComparison.InvariantCultureIgnoreCase)).Currency.Name,
-                    CounterTickerAbbreviation = 
-                        cp.CurrencyPairCurrencies.FirstOrDefault(ccp => ccp.Currency.Abbreviation
-                            .Equals(ccp.CurrencyPair.CounterCurrency, StringComparison.InvariantCultureIgnoreCase)).Currency.Abbreviation,
-                    CounterTickerName = 
-                        cp.CurrencyPairCurrencies.FirstOrDefault(ccp => ccp.Currency.Abbreviation
-                            .Equals(ccp.CurrencyPair.CounterCurrency, StringComparison.InvariantCultureIgnoreCase)).Currency.Name,
-                    Exchange = cp.CurrencySource.Name,
-                    ExchangeAbbrv = cp.CurrencySource.Abbreviation,
-                    LastUpdated = cp.CurrencyPairRequests.FirstOrDefault(cpr => cpr.DeletedAt == null && cpr.IsEnabled)
-                        .RequestComponents.FirstOrDefault(rc => rc.DeletedAt == null && rc.IsEnabled)
-                        .ModifiedAt,
-                    Properties = cp.CurrencyPairRequests.FirstOrDefault()
-                        .RequestComponents
-                        .Select(rc => new KeyValuePair<string, string>(
-                            rc.ComponentType.ToString(),
-                            rc.Value))
-                        .ToList()
-                })
-                .ToList();
-            var fullCount = _unitOfWork.GetRepository<CurrencyPair>().GetQueryable().Count();
-            
-            return new DataTableResult<UniqueTickerResponse>
-            {
-                Draw = index,
-                RecordsTotal = fullCount,
-                RecordFiltered = fullCount - data.Count,
-                Data = data
-            };
-        }
-
         public Task<NozomiResult<TickerByExchangeResponse>> GetById(long id)
         {
 //            return Task.FromResult(new NozomiResult<TickerByExchangeResponse>(
