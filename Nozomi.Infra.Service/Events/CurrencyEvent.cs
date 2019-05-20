@@ -333,10 +333,71 @@ namespace Nozomi.Service.Events
                     : decimal.Zero;
             }
             else if (analysedComponent.CurrencyPairId != null && analysedComponent.CurrencyPairId > 0)
-                // It means that this is a request 
+                // It means that this is a currency pair 
             {
-                // Request-based currency obtaining
-                var 
+                #if DEBUG
+                try
+                {
+                    var qTest = _unitOfWork.GetRepository<CurrencyPair>()
+                        .GetQueryable()
+                        .AsNoTracking()
+                        .Where(cp => cp.Id.Equals(analysedComponent.CurrencyPairId)
+                                     && cp.DeletedAt == null && cp.IsEnabled)
+                        .Include(cp => cp.CurrencyPairSourceCurrencies)
+                        .ThenInclude(cpsc => cpsc.CurrencySource)
+                        .ThenInclude(cs => cs.Currency)
+                        .ThenInclude(c => c.CurrencyRequests)
+                        .ThenInclude(cr => cr.RequestComponents)
+                        .Select(cp => decimal.Parse(cp.CurrencyPairSourceCurrencies
+                            // Obtain the main currency
+                            .FirstOrDefault(cpsc =>
+                                cpsc.CurrencySource != null && cpsc.CurrencySource.Currency != null
+                                                            && cpsc.CurrencySource.Currency.Abbreviation
+                                                                .Equals(cp.MainCurrency,
+                                                                    StringComparison.InvariantCultureIgnoreCase))
+                            .CurrencySource.Currency
+                            // Find the circulating supply    
+                            .CurrencyRequests
+                            .FirstOrDefault(cr => cr.RequestComponents != null && cr.RequestComponents.Count > 0
+                                                                               && cr.RequestComponents.Any(rc =>
+                                                                                   rc.ComponentType.Equals(ComponentType
+                                                                                       .Circulating_Supply)))
+                            .RequestComponents
+                            .FirstOrDefault(rc => rc.ComponentType.Equals(ComponentType.Circulating_Supply))
+                            .Value))
+                        .FirstOrDefault();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.ToString());
+                }
+                #endif
+                
+                return _unitOfWork.GetRepository<CurrencyPair>()
+                    .GetQueryable()
+                    .AsNoTracking()
+                    .Where(cp => cp.Id.Equals(analysedComponent.CurrencyPairId)
+                                 && cp.DeletedAt == null && cp.IsEnabled)
+                    .Include(cp => cp.CurrencyPairSourceCurrencies)
+                        .ThenInclude(cpsc => cpsc.CurrencySource)
+                            .ThenInclude(cs => cs.Currency)
+                                .ThenInclude(c => c.CurrencyRequests)
+                                    .ThenInclude(cr => cr.RequestComponents)
+                    .Select(cp => decimal.Parse(cp.CurrencyPairSourceCurrencies
+                        // Obtain the main currency
+                        .FirstOrDefault(cpsc => 
+                            cpsc.CurrencySource != null && cpsc.CurrencySource.Currency != null
+                            && cpsc.CurrencySource.Currency.Abbreviation
+                            .Equals(cp.MainCurrency, StringComparison.InvariantCultureIgnoreCase))
+                        .CurrencySource.Currency
+                        // Find the circulating supply    
+                        .CurrencyRequests
+                            .FirstOrDefault(cr => cr.RequestComponents != null && cr.RequestComponents.Count > 0
+                                         && cr.RequestComponents.Any(rc => rc.ComponentType.Equals(ComponentType.Circulating_Supply)))
+                        .RequestComponents
+                        .FirstOrDefault(rc => rc.ComponentType.Equals(ComponentType.Circulating_Supply))
+                        .Value))
+                    .FirstOrDefault();
             }
 
             return decimal.MinusOne;
