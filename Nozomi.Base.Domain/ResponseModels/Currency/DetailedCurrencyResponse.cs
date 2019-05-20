@@ -120,7 +120,7 @@ namespace Nozomi.Data.ResponseModels.Currency
 
                                             AveragePriceHistory.AddRange(currAc.AnalysedHistoricItems
                                                 .OrderBy(ahi => ahi.HistoricDateTime).Select(ahi =>
-                                                decimal.Parse(ahi.Value)));
+                                                    decimal.Parse(ahi.Value)));
                                         }
 
                                         break;
@@ -134,83 +134,80 @@ namespace Nozomi.Data.ResponseModels.Currency
                             foreach (var ccp in exchangeUniqueCurr.CurrencyPairSourceCurrencies
                                 .Where(ccp => ccp.CurrencyPair != null))
                             {
-                                if (ccp.CurrencyPair.CurrencyPairRequests != null)
+                                if (ccp.CurrencyPair.AnalysedComponents != null)
                                 {
-                                    foreach (var cpReq in ccp.CurrencyPair.CurrencyPairRequests)
+                                    foreach (var cprAc in ccp.CurrencyPair.AnalysedComponents)
                                     {
-                                        foreach (var cprAc in cpReq.AnalysedComponents)
+                                        // Make sure the value is parse-able
+                                        if (!string.IsNullOrEmpty(cprAc.Value) &&
+                                            decimal.TryParse(cprAc.Value, out var val) && val != decimal.Zero)
                                         {
-                                            // Make sure the value is parse-able
-                                            if (!string.IsNullOrEmpty(cprAc.Value) &&
-                                                decimal.TryParse(cprAc.Value, out var val) && val != decimal.Zero)
+                                            switch (cprAc.ComponentType)
                                             {
-                                                switch (cprAc.ComponentType)
-                                                {
-                                                    case AnalysedComponentType.CurrentAveragePrice:
-                                                        // Is the AveragePrice used yet? 
-                                                        if (AveragePrice > decimal.Zero)
-                                                        {
-                                                            AveragePrice = (AveragePrice + val) / 2;
-                                                        }
-                                                        // Nope
-                                                        else
-                                                        {
-                                                            AveragePrice = val;
-                                                        }
+                                                case AnalysedComponentType.CurrentAveragePrice:
+                                                    // Is the AveragePrice used yet? 
+                                                    if (AveragePrice > decimal.Zero)
+                                                    {
+                                                        AveragePrice = (AveragePrice + val) / 2;
+                                                    }
+                                                    // Nope
+                                                    else
+                                                    {
+                                                        AveragePrice = val;
+                                                    }
 
-                                                        break;
-                                                    case AnalysedComponentType.DailyPricePctChange:
-                                                        // Is the DailyAvgPctChange used yet? 
-                                                        if (DailyAvgPctChange != decimal.Zero)
-                                                        {
-                                                            DailyAvgPctChange = (DailyAvgPctChange + val) / 2;
-                                                        }
-                                                        // Nope
-                                                        else
-                                                        {
-                                                            DailyAvgPctChange = val;
-                                                        }
+                                                    break;
+                                                case AnalysedComponentType.DailyPricePctChange:
+                                                    // Is the DailyAvgPctChange used yet? 
+                                                    if (DailyAvgPctChange != decimal.Zero)
+                                                    {
+                                                        DailyAvgPctChange = (DailyAvgPctChange + val) / 2;
+                                                    }
+                                                    // Nope
+                                                    else
+                                                    {
+                                                        DailyAvgPctChange = val;
+                                                    }
 
-                                                        break;
-                                                    case AnalysedComponentType.DailyVolume:
-                                                        // Is the DailyVolume used yet?
-                                                        if (DailyVolume > decimal.Zero)
-                                                        {
-                                                            DailyVolume = (DailyVolume + val) / 2;
-                                                        }
-                                                        // Nope
-                                                        else
-                                                        {
-                                                            DailyVolume = val;
-                                                        }
+                                                    break;
+                                                case AnalysedComponentType.DailyVolume:
+                                                    // Is the DailyVolume used yet?
+                                                    if (DailyVolume > decimal.Zero)
+                                                    {
+                                                        DailyVolume = (DailyVolume + val) / 2;
+                                                    }
+                                                    // Nope
+                                                    else
+                                                    {
+                                                        DailyVolume = val;
+                                                    }
 
-                                                        break;
-                                                    case AnalysedComponentType.MarketCap:
-                                                        // Is the MarketCap used yet?
-                                                        if (MarketCap > decimal.Zero)
-                                                        {
-                                                            MarketCap = (MarketCap + val) / 2;
-                                                        }
-                                                        // Nope
-                                                        else
-                                                        {
-                                                            MarketCap = val;
-                                                        }
+                                                    break;
+                                                case AnalysedComponentType.MarketCap:
+                                                    // Is the MarketCap used yet?
+                                                    if (MarketCap > decimal.Zero)
+                                                    {
+                                                        MarketCap = (MarketCap + val) / 2;
+                                                    }
+                                                    // Nope
+                                                    else
+                                                    {
+                                                        MarketCap = val;
+                                                    }
 
-                                                        break;
-                                                    case AnalysedComponentType.HourlyAveragePrice:
-                                                        if (AveragePriceHistory == null ||
-                                                            AveragePriceHistory.Count == 0)
-                                                        {
-                                                            AveragePriceHistory = new List<decimal>();
+                                                    break;
+                                                case AnalysedComponentType.HourlyAveragePrice:
+                                                    if (AveragePriceHistory == null ||
+                                                        AveragePriceHistory.Count == 0)
+                                                    {
+                                                        AveragePriceHistory = new List<decimal>();
 
-                                                            AveragePriceHistory.AddRange(cprAc.AnalysedHistoricItems
-                                                                .OrderBy(ahi => ahi.HistoricDateTime).Select(ahi =>
-                                                                    decimal.Parse(ahi.Value)));
-                                                        }
+                                                        AveragePriceHistory.AddRange(cprAc.AnalysedHistoricItems
+                                                            .OrderBy(ahi => ahi.HistoricDateTime).Select(ahi =>
+                                                                decimal.Parse(ahi.Value)));
+                                                    }
 
-                                                        break;
-                                                }
+                                                    break;
                                             }
                                         }
                                     }
