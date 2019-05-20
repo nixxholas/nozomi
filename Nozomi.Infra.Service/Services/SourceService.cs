@@ -234,7 +234,6 @@ namespace Nozomi.Service.Services
         }
         
         // Services for Staff
-        
         public bool StaffSourceUpdate(UpdateSource updateSource)
         {
             if (updateSource == null) return false;
@@ -265,7 +264,7 @@ namespace Nozomi.Service.Services
                             && usc.SourceId >= 0) // Make sure we're not making an invalid modification
                         {
                             // Modification
-                            var currency = _unitOfWork.GetRepository<Currency>()
+                            var currency = _unitOfWork.GetRepository<CurrencySource>()
                                 .Get(c => c.Id.Equals(usc.Id) && c.DeletedAt == null).SingleOrDefault();
 
                             if (currency != null)
@@ -276,10 +275,10 @@ namespace Nozomi.Service.Services
                                 }
                                 else
                                 {
-                                    currency.CurrencySourceId = usc.SourceId;
+                                    currency.SourceId = usc.SourceId;
                                 }
 
-                                _unitOfWork.GetRepository<Currency>().Update(currency);
+                                _unitOfWork.GetRepository<CurrencySource>().Update(currency);
                                 _unitOfWork.Commit(); // Commit this modification.
                             }
                             else
@@ -288,7 +287,7 @@ namespace Nozomi.Service.Services
                             }
                         }
                         else if (!sourceToUpd.SourceCurrencies.Any(c => c.Id.Equals(usc.Id) 
-                                                                  && c.CurrencySourceId.Equals(usc.SourceId))
+                                                                  && c.SourceId.Equals(usc.SourceId))
                             && usc.SourceId.Equals(sourceToUpd.Id))
                         {
                             // Addition?
@@ -298,9 +297,11 @@ namespace Nozomi.Service.Services
 
                             if (currency != null)
                             {
-                                currency.CurrencySourceId = usc.SourceId;
-                                
-                                _unitOfWork.GetRepository<Currency>().Update(currency);
+                                _unitOfWork.GetRepository<CurrencySource>().Add(new CurrencySource
+                                {
+                                    CurrencyId = currency.Id,
+                                    SourceId = usc.SourceId
+                                });
                                 _unitOfWork.Commit();
                             }
                             else
