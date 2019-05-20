@@ -12,24 +12,21 @@ using Nozomi.Service.Events;
 
 namespace Nozomi.Infra.Admin.Service.Events
 {
-    public class CurrencyPairSourceCurrencyAdminEvent : BaseEvent<CurrencyEvent, NozomiDbContext>, Interfaces.CurrencyPairSourceCurrencyAdminEvent
+    public class CurrencyPairSourceCurrencyAdminEvent : BaseEvent<CurrencyEvent, NozomiDbContext>, Interfaces.ICurrencyPairSourceCurrencyAdminEvent
     {
         public CurrencyPairSourceCurrencyAdminEvent(ILogger<CurrencyEvent> logger, IUnitOfWork<NozomiDbContext> unitOfWork) 
             : base(logger, unitOfWork)
         {
         }
 
-        public ICollection<CurrencyPairSourceCurrency> GetCounterCurrenciesByAbbreviation(string mainAbbreviation)
+        public ICollection<Currency> GetCounterCurrenciesByAbbreviation(string mainAbbreviation)
         {
-            return _unitOfWork.GetRepository<CurrencyPairSourceCurrency>()
+            return _unitOfWork.GetRepository<CurrencyPair>()
                 .GetQueryable()
                 .AsNoTracking()
-                .Include(cpsc => cpsc.CurrencySource)
-                .ThenInclude(cs => cs.Currency)
-                .Include(ccp => ccp.CurrencyPair)
-                .Where(ccp => ccp.CurrencyPair.MainCurrency.Equals(mainAbbreviation)
-                && !ccp.CurrencySource.Currency.Abbreviation.Equals(mainAbbreviation, 
-                    StringComparison.InvariantCultureIgnoreCase))
+                .Where(cp => cp.MainCurrencyAbbrv.Equals(mainAbbreviation, StringComparison.InvariantCultureIgnoreCase))
+                .Include(c => c.CounterCurrency)
+                .Select(cp => cp.CounterCurrency)
                 .ToList();
         }
     }
