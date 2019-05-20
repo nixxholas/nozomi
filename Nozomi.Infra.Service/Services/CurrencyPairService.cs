@@ -90,57 +90,6 @@ namespace Nozomi.Service.Services
                     .Take(20);
         }
 
-        public IDictionary<string, IDictionary<long, long>> GetCurrencyPairSources()
-        {
-            // Prep the result
-            // BTCUSDT => CurrencySources => CurrencyId of USDT
-            IDictionary<string, IDictionary<long, long>> result = new Dictionary<string, IDictionary<long, long>>();
-
-            var pcPairs = _unitOfWork.GetRepository<CurrencyPairSourceCurrency>()
-                .GetQueryable()
-                .Include(pcp => pcp.CurrencyPair)
-                .Include(pcp => pcp.Currency)
-                .Include(pcp => pcp.CurrencyPair.CurrencySource)
-                .Include(pcp => pcp.CurrencyPair.CurrencyPairCurrencies)
-                .ToList();
-
-            // Foreach partialcurrencypair in pcps
-            foreach (var pcPair in pcPairs)
-            {
-                // Make sure this partial pair is the main unit
-                if (pcPair.Currency.Abbreviation.Equals(pcPair.CurrencyPair.MainCurrency))
-                {
-                    var counterPair = pcPairs.FirstOrDefault(pcp =>
-                        pcp.CurrencyPairId.Equals(pcPair.CurrencyPairId) &&
-                        pcp.Currency.Abbreviation.Equals(pcp.CurrencyPair.CounterCurrency, StringComparison.InvariantCultureIgnoreCase));
-                    var counterPairStr = counterPair?.Currency.Abbreviation;
-
-                    if (!string.IsNullOrEmpty(counterPairStr))
-                    {
-                        // Find the Pair string first
-                        var pairStr = pcPair.Currency.Abbreviation + counterPairStr;
-
-                        // GetAll the currencysource
-                        var cSource = pcPair.CurrencyPair.CurrencySource;
-
-                        // Add the CurrencySource if it hasn't been added already
-                        if (!result.ContainsKey(pairStr))
-                        {
-                            result.Add(pairStr,
-                                new Dictionary<long, long>() { { cSource.Id, counterPair.CurrencyPairId } });
-                        }
-                        // If the Pair has been added, but the value doesn't exist
-                        else if (result.ContainsKey(pairStr) && !result[pairStr].ContainsKey(cSource.Id))
-                        {
-                            result[pairStr].Add(cSource.Id, counterPair.CurrencyPairId);
-                        }
-                    }
-                }
-            }
-
-            return result;
-        }
-
         public IEnumerable<string> GetAllCurrencyPairUrls()
         {
             return _unitOfWork.GetRepository<CurrencyPair>()
@@ -149,17 +98,6 @@ namespace Nozomi.Service.Services
                 .Select(cp => cp.APIUrl)
                 .ToList();
         }
-
-//        public IEnumerable<CurrencyPair> GetAvailCPairsForAdvType(long id)
-//        {
-//            return _unitOfWork.GetRepository<CurrencyPair>()
-//                .GetQueryable()
-//                .Where(cp => cp.DeletedAt == null)
-//                .Where(cp => cp.IsEnabled)
-//                .Where(cp => cp.CurrencyPairAdvertTypes
-//                    .Where(cpat => cpat.AdvertTypeId.Equals(id))
-//                    .Any());
-//        }
 
         public long GetCPairIdByTrio(long walletTypeId, long currencyId, long currencySourceId)
         {
