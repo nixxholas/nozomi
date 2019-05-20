@@ -158,17 +158,13 @@ namespace Nozomi.Service.Events
             return _unitOfWork.GetRepository<Source>()
                 .GetQueryable()
                 .Where(s => s.DeletedAt == null && s.IsEnabled && s.Abbreviation.Equals(abbreviation))
-                // Extend towards Currency Pairs
-                .Include(s => s.CurrencyPairs)
-                .ThenInclude(cp => cp.CurrencyPairSourceCurrencies)
-                // Extend towards Currencies
                 .Include(s => s.SourceCurrencies)
-                .ThenInclude(cs => cs.Currency)
+                .ThenInclude(sc => sc.Currency)
+                .ThenInclude(c => c.CurrencyType)
                 .Select(s => new XSourceResponse
                 {
                     Abbreviation = s.Abbreviation,
                     Name = s.Name,
-                    APIDocsURL = s.APIDocsURL,
                     Currencies = s.SourceCurrencies
                         .Where(c => c.IsEnabled && c.DeletedAt == null)
                         .Select(c => new CurrencyResponse
