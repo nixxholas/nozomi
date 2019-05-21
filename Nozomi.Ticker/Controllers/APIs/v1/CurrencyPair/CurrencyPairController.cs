@@ -60,6 +60,7 @@ namespace Nozomi.Ticker.Controllers.APIs.v1.CurrencyPair
             return _tickerEvent.GetById(id);
         }
 
+        [Authorize(Roles = "Owner")]
         [HttpGet("{abbrv}")]
         public NozomiResult<ICollection<Data.Models.Currency.CurrencyPair>> Ticker(string abbrv)
         {
