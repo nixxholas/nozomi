@@ -30,5 +30,29 @@ namespace Nozomi.Service.Events
                                  StringComparison.InvariantCultureIgnoreCase))
                 .ToList();
         }
+
+        public ICollection<CurrencyPair> GetAllByTickerPairAbbreviation(string tickerPairAbbreviation, bool track = false)
+        {
+            if (!string.IsNullOrEmpty(tickerPairAbbreviation))
+            {
+                var query = _unitOfWork.GetRepository<CurrencyPair>()
+                    .GetQueryable()
+                    .AsNoTracking()
+                    .Where(cp => cp.DeletedAt == null && cp.IsEnabled 
+                        && string.Concat(cp.MainCurrencyAbbrv, cp.CounterCurrencyAbbrv)
+                        .Equals(tickerPairAbbreviation, StringComparison.InvariantCultureIgnoreCase));
+
+                if (track)
+                {
+                    query.Include(cp => cp.Source)
+                        .ThenInclude(s => s.SourceCurrencies)
+                        .ThenInclude(sc => sc.Currency);
+                }
+
+                return query.ToList();
+            }
+
+            return null;
+        }
     }
 }
