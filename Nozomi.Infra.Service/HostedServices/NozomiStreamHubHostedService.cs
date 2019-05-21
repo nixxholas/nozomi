@@ -51,8 +51,8 @@ namespace Nozomi.Service.HostedServices
                     await _nozomiStreamHub.Clients.Group(NozomiSocketGroup.Currencies.GetDescription())
                         .Currencies(_currencyEvent.GetAllDetailed());
                     
-                    await _nozomiStreamHub.Clients.Group(NozomiSocketGroup.MarketCaps.GetDescription())
-                        .MarketCaps(ObtainCurrencyTypeResponses(_analysedComponentEvent
+                    await _nozomiStreamHub.Clients.Group(NozomiSocketGroup.CurrencyTypes.GetDescription())
+                        .CurrencyTypes(ObtainCurrencyTypeResponses(_analysedComponentEvent
                             .GetAllCurrencyTypeAnalysedComponents(0, true, true)));
                 }
                 catch (Exception ex)
