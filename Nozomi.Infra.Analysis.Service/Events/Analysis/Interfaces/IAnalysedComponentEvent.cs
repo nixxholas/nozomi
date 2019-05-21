@@ -23,6 +23,8 @@ namespace Nozomi.Infra.Analysis.Service.Events.Analysis.Interfaces
         ICollection<AnalysedComponent> GetTickerPairComponentsByCurrency(long currencyId, bool ensureValid = false, bool track = false);
 
         ICollection<AnalysedComponent> GetAllByCurrencyType(long currencyTypeId, bool track = false);
+        
+        ICollection<AnalysedComponent> GetAllCurrencyComponentsByType(long currencyTypeId, bool track = false);
 
         ICollection<AnalysedComponent> GetAllByCorrelation(long analysedComponentId, bool track = false);
 

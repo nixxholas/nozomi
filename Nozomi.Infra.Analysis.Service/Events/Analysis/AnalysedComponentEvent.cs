@@ -292,6 +292,40 @@ namespace Nozomi.Infra.Analysis.Service.Events.Analysis
             return null;
         }
 
+        public ICollection<AnalysedComponent> GetAllCurrencyComponentsByType(long currencyTypeId, bool track = false)
+        {
+            if (currencyTypeId > 0)
+            {
+                var components = _unitOfWork.GetRepository<Currency>()
+                    .GetQueryable()
+                    .Where(c => c.CurrencyTypeId.Equals(currencyTypeId))
+                    .Include(c => c.AnalysedComponents);
+
+                if (track)
+                {
+                    components.ThenInclude(ac => ac.AnalysedHistoricItems);
+                }
+
+                return components
+                    .SelectMany(c => c.AnalysedComponents)
+                    .Select(ac => new AnalysedComponent
+                    {
+                        Id = ac.Id,
+                        ComponentType = ac.ComponentType,
+                        Value = ac.Value,
+                        IsDenominated = ac.IsDenominated,
+                        Delay = ac.Delay,
+                        UIFormatting = ac.UIFormatting,
+                        AnalysedHistoricItems = ac.AnalysedHistoricItems,
+                        CurrencyId = ac.CurrencyId,
+                        Currency = ac.Currency
+                    })
+                    .ToList();
+            }
+
+            return null;
+        }
+
         public ICollection<AnalysedComponent> GetAllByCorrelation(long analysedComponentId, bool track = false)
         {
             var aComp = _unitOfWork.GetRepository<AnalysedComponent>()
