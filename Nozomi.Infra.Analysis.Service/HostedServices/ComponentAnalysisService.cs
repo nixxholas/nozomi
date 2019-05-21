@@ -305,18 +305,22 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                         (long) component.CurrencyId,
                                         true, true)
                                     .SingleOrDefault(ac =>
-                                        ac.ComponentType.Equals(AnalysedComponentType.CurrentAveragePrice));
+                                        ac.ComponentType.Equals(AnalysedComponentType.CurrentAveragePrice)
+                                        && ac.AnalysedHistoricItems != null
+                                        && ac.AnalysedHistoricItems.Count > 0
+                                        && ac.AnalysedHistoricItems
+                                        .Any(ahi => ahi.HistoricDateTime >
+                                                        DateTime.UtcNow.Subtract(TimeSpan.FromHours(1))
+                                                        && !string.IsNullOrEmpty(ahi.Value)));
 
                                 // Safetynet
                                 if (currencyAveragePrice != null)
                                 {
                                     // Now we can aggregate this
                                     var currAvgPrice = currencyAveragePrice.AnalysedHistoricItems
-                                        .Where(rcdhi => rcdhi.HistoricDateTime >
+                                        .Where(ahi => ahi.HistoricDateTime >
                                                         DateTime.UtcNow.Subtract(TimeSpan.FromHours(1)))
-                                        .Average(rcdhi => decimal.Parse(string.IsNullOrEmpty(rcdhi.Value)
-                                            ? "0"
-                                            : rcdhi.Value));
+                                        .Average(rcdhi => decimal.Parse(rcdhi.Value));
 
                                     if (!(currAvgPrice <= decimal.Zero))
                                     {
