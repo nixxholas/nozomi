@@ -80,7 +80,7 @@ namespace Nozomi.Service.Hubs
             {
                 case NozomiSocketGroup.Tickers:
                 case NozomiSocketGroup.Currencies:
-                case NozomiSocketGroup.MarketCaps:
+                case NozomiSocketGroup.CurrencyTypes:
                     return await PropagateSubscription(group);
                 default:
                     return new NozomiResult<string>(NozomiResultType.Failed,
@@ -97,8 +97,8 @@ namespace Nozomi.Service.Hubs
                 case NozomiSocketGroup.Currencies:
                     await _nozomiStreamHub.Clients.Client(Context.ConnectionId).Currencies(_currencyEvent.GetAllDetailed());
                     break;
-                case NozomiSocketGroup.MarketCaps:
-                    await _nozomiStreamHub.Clients.Client(Context.ConnectionId).MarketCaps(
+                case NozomiSocketGroup.CurrencyTypes:
+                    await _nozomiStreamHub.Clients.Client(Context.ConnectionId).CurrencyTypes(
                         ObtainCurrencyTypeResponses(
                             _analysedComponentEvent.GetAllCurrencyTypeAnalysedComponents(0, true, true)));
                     break;

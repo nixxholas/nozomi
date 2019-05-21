@@ -19,7 +19,7 @@ namespace Nozomi.Infra.Preprocessing.SignalR.Hubs.Interfaces
         /// <returns></returns>
         Task Tickers(ICollection<UniqueTickerResponse> tickers);
 
-        Task MarketCaps(ICollection<CurrencyTypeResponse> currencyTypes);
+        Task CurrencyTypes(ICollection<CurrencyTypeResponse> currencyTypes);
         Task BroadcastData(JObject data);
     }
 }
