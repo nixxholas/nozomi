@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
+using Nozomi.Data.Models.Currency;
 using Nozomi.Data.ResponseModels;
 using Nozomi.Data.ResponseModels.Currency;
+using Nozomi.Data.ResponseModels.CurrencyType;
 using Nozomi.Data.ResponseModels.Ticker;
 
 namespace Nozomi.Infra.Preprocessing.SignalR.Hubs.Interfaces
@@ -16,6 +18,8 @@ namespace Nozomi.Infra.Preprocessing.SignalR.Hubs.Interfaces
         /// </summary>
         /// <returns></returns>
         Task Tickers(ICollection<UniqueTickerResponse> tickers);
+
+        Task MarketCaps(ICollection<CurrencyTypeResponse> currencyTypes);
         Task BroadcastData(JObject data);
     }
 }
