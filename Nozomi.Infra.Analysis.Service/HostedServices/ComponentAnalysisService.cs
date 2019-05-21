@@ -301,27 +301,17 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                             if (component.CurrencyId != null && component.CurrencyId > 0)
                             {
                                 // Obtain all of the req components related to this currency where it is the base.
-                                var currencyReqComps =
-                                    _requestComponentEvent.GetAllByCurrency((long) component.CurrencyId, true)
-                                        .Where(rc => rc.RcdHistoricItems != null &&
-                                                     rc.ComponentType.Equals(ComponentType.Ask)
-                                                     || rc.ComponentType.Equals(ComponentType.Bid))
-                                        .ToList();
+                                var currencyAveragePrice = _analysedComponentEvent.GetAllByCurrency(
+                                        (long) component.CurrencyId,
+                                        true, true)
+                                    .SingleOrDefault(ac =>
+                                        ac.ComponentType.Equals(AnalysedComponentType.CurrentAveragePrice));
 
                                 // Safetynet
-                                if (currencyReqComps != null && currencyReqComps.Count > 0)
+                                if (currencyAveragePrice != null)
                                 {
-                                    // Filter
-                                    currencyReqComps = currencyReqComps
-                                        .DefaultIfEmpty()
-                                        .ToList();
-
-                                    // TODO: Convert whatever is needed
-                                    //_requestComponentEvent.ConvertToGenericCurrency(currencyReqComps);
-
                                     // Now we can aggregate this
-                                    var currAvgPrice = currencyReqComps
-                                        .SelectMany(rc => rc.RcdHistoricItems)
+                                    var currAvgPrice = currencyAveragePrice.AnalysedHistoricItems
                                         .Where(rcdhi => rcdhi.HistoricDateTime >
                                                         DateTime.UtcNow.Subtract(TimeSpan.FromHours(1)))
                                         .Average(rcdhi => decimal.Parse(string.IsNullOrEmpty(rcdhi.Value)
