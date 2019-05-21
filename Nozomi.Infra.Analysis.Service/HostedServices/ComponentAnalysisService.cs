@@ -152,22 +152,21 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                         else if (component.CurrencyId != null && component.CurrencyId > 0)
                         {
                             // obtain all related entities first
-                            var analysedComponents = _analysedComponentEvent.GetAllByCurrency(
+                            var currencyAveragePrice = _analysedComponentEvent.GetAllByCurrency(
                                     (long) component.CurrencyId,
                                     true, true)
-                                .Where(ac => ac.ComponentType.Equals(AnalysedComponentType.CurrentAveragePrice)
-                                             && !string.IsNullOrEmpty(ac.Value))
-                                .ToList();
+                                .SingleOrDefault(ac => ac.DeletedAt == null && ac.IsEnabled
+                                                                            && ac.ComponentType
+                                                                                .Equals(AnalysedComponentType.CurrentAveragePrice)
+                                                                            && !string.IsNullOrEmpty(ac.Value));
 
-                            if (analysedComponents.Count > 0)
+                            if (currencyAveragePrice != null)
                             {
                                 // Obtain the circulating supply
                                 var circuSupply = _currencyEvent.GetCirculatingSupply(component);
 
                                 // Average everything
-                                var averagePrice = analysedComponents
-                                    .Select(ac => decimal.Parse(ac.Value))
-                                    .Average();
+                                var averagePrice = decimal.Parse(currencyAveragePrice.Value);
 
                                 // Parsable average?
                                 if (circuSupply > 0 && averagePrice > decimal.Zero)
