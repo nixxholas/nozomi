@@ -104,7 +104,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                         if (component.CurrencyTypeId != null && component.CurrencyTypeId > 0)
                         {
                             // Obtain all sub components (Components in the currencies)
-                            var analysedComponents = _analysedComponentEvent.GetAllByCurrencyType(
+                            var analysedComponents = _analysedComponentEvent.GetAllCurrencyComponentsByType(
                                     (long) component.CurrencyTypeId, true)
                                 .Where(ac => ac.ComponentType.Equals(AnalysedComponentType.MarketCap))
                                 .ToList();
