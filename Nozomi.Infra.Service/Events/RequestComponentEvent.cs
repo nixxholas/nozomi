@@ -404,6 +404,117 @@ namespace Nozomi.Service.Events
                 .ToList();
         }
 
+        public ICollection<RequestComponent> GetAllTickerPairCompsByCurrency(long currencyId, bool track = false)
+        {
+            // First, obtain the currency in question
+            var qCurrency = _unitOfWork.GetRepository<Currency>()
+                .GetQueryable()
+                .AsNoTracking()
+                .Where(c => c.Id.Equals(currencyId));
+
+            if (qCurrency.SingleOrDefault() == null) return null;
+
+            if (track)
+            {
+                qCurrency = qCurrency
+                    .Include(c => c.CurrencySources)
+                        .ThenInclude(cs => cs.Source)
+                            .ThenInclude(s => s.CurrencyPairs)
+                                .ThenInclude(cp => cp.CurrencyPairRequests)
+                                    .ThenInclude(cpr => cpr.RequestComponents)
+                                        .ThenInclude(rc => rc.RcdHistoricItems)
+                    .Include(c => c.CurrencySources)
+                        .ThenInclude(cs => cs.Source)
+                            .ThenInclude(s => s.CurrencyPairs)
+                                .ThenInclude(cp => cp.WebsocketRequests)
+                                    .ThenInclude(cpr => cpr.RequestComponents)
+                                        .ThenInclude(rc => rc.RcdHistoricItems);
+            }
+            else
+            {
+                qCurrency = qCurrency
+                    .Include(c => c.CurrencySources)
+                        .ThenInclude(cs => cs.Source)
+                            .ThenInclude(s => s.CurrencyPairs)
+                                .ThenInclude(cp => cp.CurrencyPairRequests)
+                                    .ThenInclude(cpr => cpr.RequestComponents)
+                    .Include(c => c.CurrencySources)
+                        .ThenInclude(cs => cs.Source)
+                            .ThenInclude(s => s.CurrencyPairs)
+                                .ThenInclude(cp => cp.WebsocketRequests)
+                                    .ThenInclude(cpr => cpr.RequestComponents);
+            }
+
+            return qCurrency
+                .SelectMany(c => c.CurrencySources
+                    .Where(cs => cs.IsEnabled && cs.DeletedAt == null)
+                    .SelectMany(cs => cs.Source
+                        .CurrencyPairs
+                        .Where(cp => cp.IsEnabled && cp.DeletedAt == null
+                                     && cp.CounterCurrencyAbbrv.Equals(CoreConstants.GenericCounterCurrency))
+                        .SelectMany(cp => cp.CurrencyPairRequests
+                            .Where(cpr => cpr.IsEnabled && cpr.DeletedAt == null)
+                            .SelectMany(cpr => cpr.RequestComponents
+                                .Where(rc => rc.IsEnabled && rc.DeletedAt == null)
+                                .Select(rc => new RequestComponent
+                                {
+                                    Id = rc.Id,
+                                    ComponentType = rc.ComponentType,
+                                    Identifier = rc.Identifier,
+                                    QueryComponent = rc.QueryComponent,
+                                    IsDenominated = rc.IsDenominated,
+                                    AnomalyIgnorance = rc.AnomalyIgnorance,
+                                    Value = rc.Value,
+                                    RequestId = rc.RequestId,
+                                    RcdHistoricItems = rc.RcdHistoricItems
+                                        .Where(rcdhi => rcdhi.IsEnabled && rcdhi.DeletedAt == null)
+                                        .ToList()
+                                })))))
+                .Concat(qCurrency
+                    .SelectMany(c => c.CurrencySources
+                        .Where(cs => cs.IsEnabled && cs.DeletedAt == null)
+                        .SelectMany(cs => cs.Source
+                            .CurrencyPairs
+                            .Where(cp => cp.IsEnabled && cp.DeletedAt == null)
+                            .SelectMany(cp => cp.WebsocketRequests
+                                .Where(cpr => cpr.IsEnabled && cpr.DeletedAt == null)
+                                .SelectMany(cpr => cpr.RequestComponents
+                                    .Where(rc => rc.IsEnabled && rc.DeletedAt == null)
+                                    .Select(rc => new RequestComponent
+                                    {
+                                        Id = rc.Id,
+                                        ComponentType = rc.ComponentType,
+                                        Identifier = rc.Identifier,
+                                        QueryComponent = rc.QueryComponent,
+                                        IsDenominated = rc.IsDenominated,
+                                        AnomalyIgnorance = rc.AnomalyIgnorance,
+                                        Value = rc.Value,
+                                        RequestId = rc.RequestId,
+                                        RcdHistoricItems = rc.RcdHistoricItems
+                                            .Where(rcdhi => rcdhi.IsEnabled && rcdhi.DeletedAt == null)
+                                            .ToList()
+                                    }))))))
+                .ToList();
+
+//            return qCurrency
+//                .Where(c => c.CurrencyRequests.Count > 0 
+//                            && c.CurrencyRequests.Any(cr => cr.RequestComponents
+//                                .Any(rc => rc.DeletedAt == null && rc.IsEnabled)))
+//                .SelectMany(cpr => cpr.CurrencyRequests
+//                    .SelectMany(cr => cr.RequestComponents
+//                        .Select(rc => new RequestComponent
+//                        {
+//                            Id = rc.Id,
+//                            ComponentType = rc.ComponentType,
+//                            Identifier = rc.Identifier,
+//                            IsDenominated = rc.IsDenominated,
+//                            QueryComponent = rc.QueryComponent,
+//                            Value = rc.Value,
+//                            RcdHistoricItems = rc.RcdHistoricItems
+//                        })))
+//                .ToList();
+        }
+
         public NozomiResult<RequestComponent> Get(long id, bool includeNested = false)
         {
             if (includeNested)
