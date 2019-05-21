@@ -112,7 +112,8 @@ namespace Nozomi.Service.Events.Analysis
             }
 
             return query
-                .SelectMany(ct => ct.AnalysedComponents)
+                .SelectMany(ct => ct.AnalysedComponents
+                    .Where(ac => ac.IsEnabled && ac.DeletedAt == null))
                 .Select(ac => new AnalysedComponent
                 {
                     Id = ac.Id,
