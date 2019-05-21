@@ -106,7 +106,9 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
                 return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
 
-            if (_currencyService.Create(createCurrency).ResultType.Equals(NozomiResultType.Success)) return Ok();
+            var result = _currencyService.Create((createCurrency));
+            
+            if (result.ResultType.Equals(NozomiResultType.Success)) return Ok(result);
 
             // Create failed
             return NotFound();

@@ -1,16 +1,53 @@
 @using Newtonsoft.Json
+@using Nozomi.Base.Core.Helpers.Enumerator
 @using Nozomi.Preprocessing
-@model Nozomi.Data.ViewModels.Manage.RequestViewModel
+@model Nozomi.Base.Identity.ViewModels.Manage.Request.RequestViewModel
+
+@{
+    int requestType = (int) Model.Request.RequestType;
+    int responseType = (int) Model.Request.ResponseType;
+}
 
 <!-- Content Section -->
 <div class="bg-light">
     <div class="container space-2">
         @* Change the naming of heading later*@
         <h3 class="mb-6">Request</h3>
+        <b-form method="Put">
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <b-form-group label="Data path">
+                        <b-form-input
+                            v-model="editRequest.dataPath"
+                            placeholder="Enter data path">
+                        </b-form-input>
+                    </b-form-group>
+
+                    <b-form-group label="Frequency(Milliseconds)">
+                        <b-form-input
+                            v-model="editRequest.delay"
+                            placeholder="Enter frequency">
+                        </b-form-input>
+                    </b-form-group>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <b-form-group id="requestType-input-group" label="Request Type">
+                        <b-form-select v-model="editRequest.requestType" :options="requestTypes"></b-form-select>
+                    </b-form-group>
+
+                    <b-form-group id="responseType-input-group" label="Response Type">
+                        <b-form-select v-model="editRequest.responseType" :options="responseTypes"></b-form-select>
+                    </b-form-group>
+                </div>
+            </div>
+        </b-form>
 
         <h3 class="mb-6">Analysed Component</h3>
         @* Table for analysedComponent *@
-        <b-table :items="request.AnalysedComponents" :fields="dataFields">
+        <b-table :items="request.AnalysedComponents" :fields="analysedComponentsDataFields">
             <template slot="AnalysedComponentType" slot-scope="datum">
                 {{ getAnalysedComponentTypeStr(datum.item.ComponentType) }}
             </template>
@@ -127,17 +164,17 @@
                         sortable: true,
                     }
                 ],
+                editRequest: {
+                    requestType: @requestType,
+                    responseType: @responseType,
+                    dataPath: '@Model.Request.DataPath',
+                    delay: @Model.Request.Delay
+                },
                 // The data from the dto
                 request: @Html.Raw(JsonConvert.SerializeObject(@Model.Request)),
                 // Grab the types so we can check with the enum into readable data for user
-                requestTypes: @Html.Raw(Json.Serialize(NozomiServiceConstants.requestTypes, new JsonSerializerSettings
-                              {
-                                  ReferenceLoopHandling = ReferenceLoopHandling.Ignore
-                              })),
-                responseTypes: @Html.Raw(Json.Serialize(NozomiServiceConstants.responseTypes, new JsonSerializerSettings
-                               {
-                                   ReferenceLoopHandling = ReferenceLoopHandling.Ignore
-                               })),
+                requestTypes: @Html.Raw(Json.Serialize(@Model.RequestTypes)),
+                responseTypes: @Html.Raw(Json.Serialize(@Model.ResponseTypes)),
                 analysedComponentTypes:
                     @Html.Raw(Json.Serialize(NozomiServiceConstants.analysedComponentTypes, new JsonSerializerSettings
                     {
@@ -154,7 +191,33 @@
                         ReferenceLoopHandling = ReferenceLoopHandling.Ignore
                     })),
             },
+            mounted() {
+                this.convertRequestTypesOption();
+                this.convertResponseTypesOption();
+            },
             methods: {
+                convertRequestTypesOption() {
+                    var requestTypesArr = [];
+                    for (var i = 0; i < this.requestTypes.length; i++) {
+                        var requestType = {
+                            value: this.requestTypes[i].value,
+                            text: this.requestTypes[i].key
+                        };
+                        requestTypesArr.push(requestType);
+                    }
+                    this.requestTypes = requestTypesArr;
+                },
+                convertResponseTypesOption() {
+                    var responseTypesArr = [];
+                    for (var i = 0; i < this.responseTypes.length; i++) {
+                        var responseType = {
+                            value: this.responseTypes[i].value,
+                            text: this.responseTypes[i].key
+                        };
+                        responseTypesArr.push(responseType);
+                    }
+                    this.responseTypes = responseTypesArr;
+                },
                 getRequestTypeStr(val) {
                     if (this.requestTypes != null) {
                         for (let i = 0; i < this.requestTypes.length; i++) {
@@ -205,7 +268,7 @@
                     }
                     return null;
                 }
-            }
+            },
         })
     </script>
 }

@@ -1,18 +1,15 @@
 @using Newtonsoft.Json
 @using Nozomi.Preprocessing
 @using Nozomi.Service.Events.Interfaces
-@inject IRequestEvent _requestEvent
-
-@{
-    var requests = _requestEvent.GetAllDTO(0);
-}
-
+@model Nozomi.Base.Identity.ViewModels.Manage.Request.RequestsViewModel
 
 <!-- Content Section -->
 <div class="bg-light">
     <div class="container space-2">
         <h3 class="mb-6">Requests</h3>
-        
+
+        <b-button variant="primary" class="mb-3" v-on:click="showCreateModal">Create</b-button>
+
         <b-table :items="requests" :fields="dataFields">
             <template slot="RequestType" slot-scope="datum">
                 {{ getRequestTypeStr(datum.item.RequestType) }}
@@ -36,6 +33,35 @@
         </b-table>
     </div>
 </div>
+
+
+<!-- CreateModal -->
+<b-modal ref="create-modal" size="xl" title="Create Request" ok-title="Create" v-on:ok="handleCreateOk">
+    <b-form v-on:submit.stop.prevent="onCreateSubmit">
+        <b-form-group label="Data path">
+            <b-form-input
+                type="url"
+                v-model="createForm.dataPath"
+                placeholder="Enter data path">
+            </b-form-input>
+        </b-form-group>
+
+        <b-form-group label="Frequency(Milliseconds)">
+            <b-form-input
+                v-model="createForm.delay"
+                placeholder="Enter frequency">
+            </b-form-input>
+        </b-form-group>
+
+        <b-form-group id="requestType-input-group" label="Request Type">
+            <b-form-select v-model="createForm.requestType" :options="requestTypes"></b-form-select>
+        </b-form-group>
+
+        <b-form-group id="responseType-input-group" label="Response Type">
+            <b-form-select v-model="createForm.responseType" :options="responseTypes"></b-form-select>
+        </b-form-group>
+    </b-form>
+</b-modal>
 
 @section Scripts {
     <script>
@@ -76,41 +102,100 @@
                         sortable: false
                     }
                 ],
-                requestTypes: @Html.Raw(Json.Serialize(NozomiServiceConstants.requestTypes, new JsonSerializerSettings
-                 {
-                   ReferenceLoopHandling = ReferenceLoopHandling.Ignore
-                 })),
-                responseTypes: @Html.Raw(Json.Serialize(NozomiServiceConstants.responseTypes, new JsonSerializerSettings
-                 {
-                   ReferenceLoopHandling = ReferenceLoopHandling.Ignore
-                 })),
-                requests: @Html.Raw(JsonConvert.SerializeObject(requests))
+                requests: @Html.Raw(JsonConvert.SerializeObject(@Model.Requests)),
+                requestTypes: @Html.Raw(Json.Serialize(@Model.RequestTypes)),
+                responseTypes: @Html.Raw(Json.Serialize(@Model.ResponseTypes)),
+                createForm: {
+                    requestType: Number,
+                    responseType: Number,
+                    dataPath: '',
+                    delay: ''
+                }
             },
             methods: {
+                showCreateModal() {
+                    this.$refs['create-modal'].show();
+                },
+                handleCreateOk(bvModalEvt) {
+                    // Prevent modal from closing
+                    bvModalEvt.preventDefault();
+                    // Trigger submit handler
+                    this.onCreateSubmit();
+                },
+                async onCreateSubmit() {
+                    var formData = new FormData();
+                    formData.append('RequestType', this.createForm.requestType);
+                    formData.append('ResponseType', this.createForm.responseType);
+                    formData.append('DataPath', this.createForm.dataPath);
+                    formData.append('Delay', this.createForm.delay);
+
+                    const response = await fetch('/Admin/Request/CreateRequest',
+                        {
+                            method: 'POST',
+                            body: formData
+                        });
+
+                    if (response.status === 200) {
+                        // Put alert for now, change the ui later.
+                        alert("Successfully created request");
+
+                    } else {
+                        alert("Create failed");
+                    }
+
+                    // Hide the modal manually
+                    this.$refs['create-modal'].hide();
+
+                    // Reload for now. Controller to return the currency object then push into table.
+                    location.reload(this);
+
+                },
                 getRequestTypeStr(val) {
                     if (this.requestTypes != null) {
                         for (i = 0; i < this.requestTypes.length; i++) {
-                            if (this.requestTypes[i].Value == val) {
-                                return this.requestTypes[i].Key;
+                            if (this.requestTypes[i].value === val) {
+                                return this.requestTypes[i].text;
                             }
                         }
                     }
-          
                     return null;
                 },
                 getResponseTypeStr(val) {
                     if (this.responseTypes != null) {
                         for (i = 0; i < this.responseTypes.length; i++) {
-                            if (this.responseTypes[i].Value == val) {
-                                return this.responseTypes[i].Key;
+                            if (this.responseTypes[i].value === val) {
+                                return this.responseTypes[i].text;
                             }
                         }
                     }
-          
                     return null;
+                },
+                convertRequestTypesOption() {
+                    var requestTypesArr = [];
+                    for (var i = 0; i < this.requestTypes.length; i++) {
+                        var requestType = {
+                            value: this.requestTypes[i].value,
+                            text: this.requestTypes[i].key
+                        };
+                        requestTypesArr.push(requestType);
+                    }
+                    this.requestTypes = requestTypesArr;
+                },
+                convertResponseTypesOption() {
+                    var responseTypesArr = [];
+                    for (var i = 0; i < this.responseTypes.length; i++) {
+                        var responseType = {
+                            value: this.responseTypes[i].value,
+                            text: this.responseTypes[i].key
+                        };
+                        responseTypesArr.push(responseType);
+                    }
+                    this.responseTypes = responseTypesArr;
                 }
             },
-            created: function() {
+            mounted: function() {
+                this.convertRequestTypesOption();
+                this.convertResponseTypesOption();
             }
         });
     </script>

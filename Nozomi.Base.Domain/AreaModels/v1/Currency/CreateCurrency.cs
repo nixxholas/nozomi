@@ -15,9 +15,13 @@ namespace Nozomi.Data.AreaModels.v1.Currency
 
         [Required]
         public long CurrencySourceId { get; set; }
+        
+        public string Description { get; set; }
 
         // This will have a number if it is a crypto pair to peg to proper entities
         public long WalletTypeId { get; set; } = 0;
+        
+        public bool IsEnabled { get; set; }
 
         public bool IsValid()
         {
