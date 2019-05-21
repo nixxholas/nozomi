@@ -32,7 +32,7 @@ namespace Nozomi.Ticker.Controllers.APIs.v1.CurrencyPair
         /// </summary>
         /// <param name="id">Unique identifier </param>
         /// <returns></returns>
-        Task Ticker(long id);
+        Task Get(long id);
 
         NozomiResult<ICollection<Data.Models.Currency.CurrencyPair>> Ticker(string abbrv);
     }

@@ -55,7 +55,7 @@ namespace Nozomi.Ticker.Controllers.APIs.v1.CurrencyPair
         }
 
         [HttpGet("{id}")]
-        public Task Ticker(long id)
+        public Task Get(long id)
         {
             return _tickerEvent.GetById(id);
         }
