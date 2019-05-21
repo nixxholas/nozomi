@@ -117,6 +117,8 @@ namespace Nozomi.Service.Events.Analysis
                 {
                     Id = ac.Id,
                     ComponentType = ac.ComponentType,
+                    CurrencyType = ac.CurrencyType,
+                    CurrencyTypeId = ac.CurrencyTypeId,
                     Value = ac.Value,
                     IsDenominated = ac.IsDenominated,
                     Delay = ac.Delay,
