@@ -13,13 +13,13 @@
             <div class="col-lg-5 mb-11 mb-lg-0">
                 <!-- Info -->
                 <div class="mb-6">
-                    <h1 class="text-white font-weight-semi-bold mb-3" v-if="marketCaps.length > 0"
-                        v-for="marketCap in marketCaps">
-                        <div v-if="getACValueByComponentType(marketCap.components, 1) !== null">
-                            {{ marketCap.name }} has
+                    <h1 class="text-white font-weight-semi-bold mb-3" v-if="currencyTypes.length > 0"
+                        v-for="currencyType in currencyTypes">
+                        <div v-if="currencyType.name === 'Cryptocurrency' && getACValueByComponentType(currencyType.components, 1) !== null">
+                            {{ currencyType.name }} has
                             <span class="text-warning">
                                 <strong class="u-text-animation u-text-animation--typing">
-                                    {{ numeral(getACValueByComponentType(marketCap.components, 1)).format('$0.00 a') }}
+                                    {{ numeral(getACValueByComponentType(currencyType.components, 1)).format('$0.00 a') }}
                                 </strong>
                             </span>
                             <br>
@@ -185,7 +185,7 @@
                 currentCurrencyPage: 1,
                 currencies: [],
                 itemsPerPage: 40,
-                marketCaps: []
+                currencyTypes: []
             },
             created: function() {
                 const connection = new SignalR.HubConnectionBuilder()
@@ -217,9 +217,9 @@
                         this.currencies = currencies;
                     });
                 
-                connection.on("marketcaps",
-                    (marketCaps) => {
-                        this.marketCaps = marketCaps;
+                connection.on("currencytypes",
+                    (currencyTypes) => {
+                        this.currencyTypes = currencyTypes;
                     });
             },
             methods: {
