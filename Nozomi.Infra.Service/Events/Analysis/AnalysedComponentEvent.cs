@@ -90,6 +90,42 @@ namespace Nozomi.Service.Events.Analysis
                 .Take(50);
         }
 
+        public ICollection<AnalysedComponent> GetAllCurrencyTypeAnalysedComponents(int index = 0, bool filter = false, bool track = false)
+        {
+            var query = _unitOfWork.GetRepository<CurrencyType>()
+                .GetQueryable()
+                .AsNoTracking();
+
+            if (filter)
+            {
+                query = query.Where(ct => ct.DeletedAt == null && ct.IsEnabled);
+            }
+
+            if (track)
+            {
+                query = query.Include(ct => ct.AnalysedComponents)
+                    .ThenInclude(ac => ac.AnalysedHistoricItems);
+            }
+            else
+            {
+                query = query.Include(ct => ct.AnalysedComponents);
+            }
+
+            return query
+                .SelectMany(ct => ct.AnalysedComponents)
+                .Select(ac => new AnalysedComponent
+                {
+                    Id = ac.Id,
+                    ComponentType = ac.ComponentType,
+                    Value = ac.Value,
+                    IsDenominated = ac.IsDenominated,
+                    Delay = ac.Delay,
+                    UIFormatting = ac.UIFormatting,
+                    AnalysedHistoricItems = ac.AnalysedHistoricItems
+                })
+                .ToList();
+        }
+
         /// <summary>
         /// Obtains all Analysed Components relevant to the currency in question based on the generic counter currency.
         /// </summary>
