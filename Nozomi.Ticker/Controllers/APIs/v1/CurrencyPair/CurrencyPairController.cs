@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
@@ -15,18 +17,21 @@ namespace Nozomi.Ticker.Controllers.APIs.v1.CurrencyPair
     [ApiController]
     public class CurrencyPairController : BaseController<CurrencyPairController>, ICurrencyPairController
     {
+        private readonly ICurrencyPairEvent _currencyPairEvent;
         private readonly ICurrencyPairService _currencyPairService;
         private readonly ITickerEvent _tickerEvent;
         private readonly IHubContext<NozomiStreamHub> _tickerHubContext;
 
         public CurrencyPairController(IHubContext<NozomiStreamHub> tickerHubContext, NozomiUserManager userManager,
-            ICurrencyPairService currencyPairService, ITickerEvent tickerEvent,
+            ICurrencyPairEvent currencyPairEvent, ITickerEvent tickerEvent,
+            ICurrencyPairService currencyPairService,
             ILogger<CurrencyPairController> logger)
             : base(logger, userManager)
         {
             _tickerHubContext = tickerHubContext;
-            _currencyPairService = currencyPairService;
+            _currencyPairEvent = currencyPairEvent;
             _tickerEvent = tickerEvent;
+            _currencyPairService = currencyPairService;
         }
 
         [Authorize]
@@ -53,6 +58,13 @@ namespace Nozomi.Ticker.Controllers.APIs.v1.CurrencyPair
         public Task Ticker(long id)
         {
             return _tickerEvent.GetById(id);
+        }
+
+        [HttpGet("{abbrv}")]
+        public NozomiResult<ICollection<Data.Models.Currency.CurrencyPair>> Ticker(string abbrv)
+        {
+            return new NozomiResult<ICollection<Data.Models.Currency.CurrencyPair>>(
+                _currencyPairEvent.GetAllByTickerPairAbbreviation(abbrv, true));
         }
     }
 }

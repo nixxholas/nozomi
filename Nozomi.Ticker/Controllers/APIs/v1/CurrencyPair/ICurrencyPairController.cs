@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Nozomi.Data;
 using Nozomi.Data.AreaModels.v1.CurrencyPair;
@@ -32,5 +33,7 @@ namespace Nozomi.Ticker.Controllers.APIs.v1.CurrencyPair
         /// <param name="id">Unique identifier </param>
         /// <returns></returns>
         Task Ticker(long id);
+
+        NozomiResult<ICollection<Data.Models.Currency.CurrencyPair>> Ticker(string abbrv);
     }
 }
