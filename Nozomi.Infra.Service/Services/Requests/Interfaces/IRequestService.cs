@@ -13,7 +13,7 @@ namespace Nozomi.Service.Services.Requests.Interfaces
         
         bool Delay(Request request, TimeSpan duration);
 
-        bool Update(Request req, long userId = 0);
+        NozomiResult<string> Update(UpdateRequest updateRequest, long userId = 0);
 
         bool SoftDelete(long reqId, long userId = 0);
 

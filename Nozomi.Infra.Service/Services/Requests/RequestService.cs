@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data;
@@ -71,25 +72,33 @@ namespace Nozomi.Service.Services.Requests
             return false;
         }
 
-        public bool Update(Request req, long userId = 0)
+        public NozomiResult<string> Update(UpdateRequest updateRequest, long userId = 0)
         {
-            // Safetynet
-            if (req == null || !req.IsValid()) return false;
+            try
+            {
+                if (updateRequest == null || !updateRequest.IsValid())
+                    return new NozomiResult<string>(NozomiResultType.Failed, "Failed to update request");
 
-            var reqToUpd = _unitOfWork.GetRepository<Request>()
-                .Get(r => r.Id.Equals(req.Id) && r.DeletedAt == null)
-                .SingleOrDefault();
+                var reqToUpd = _unitOfWork.GetRepository<Request>()
+                    .Get(r => r.Guid.Equals(updateRequest.Guid) && r.DeletedAt == null)
+                    .SingleOrDefault();
 
-            if (reqToUpd == null) return false;
+                if (reqToUpd == null)
+                    return new NozomiResult<string>(NozomiResultType.Failed, "Failed to update request. Unable to find the request");
 
-            reqToUpd.DataPath = req.DataPath;
-            reqToUpd.RequestType = req.RequestType;
-            reqToUpd.IsEnabled = req.IsEnabled;
+                reqToUpd.DataPath = updateRequest.DataPath;
+                reqToUpd.RequestType = updateRequest.RequestType;
+                reqToUpd.IsEnabled = updateRequest.IsEnabled;
 
-            _unitOfWork.GetRepository<Request>().Update(reqToUpd);
-            _unitOfWork.Commit(userId);
+                _unitOfWork.GetRepository<Request>().Update(reqToUpd);
+                _unitOfWork.Commit(userId);
 
-            return true;
+                return new NozomiResult<string>(NozomiResultType.Success, "Successfully updated the request!");
+            }
+            catch (Exception ex)
+            {
+                return new NozomiResult<string>(NozomiResultType.Failed, ex.ToString());
+            }
         }
 
         public bool SoftDelete(long reqId, long userId = 0)
