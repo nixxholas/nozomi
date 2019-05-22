@@ -60,10 +60,10 @@ namespace Nozomi.Data.ResponseModels.Currency
                         if (ac.AnalysedHistoricItems != null && ac.AnalysedHistoricItems.Count > 0)
                         {
                             AveragePriceHistory = ac.AnalysedHistoricItems
-                                .Where(ahi => string.IsNullOrEmpty(ahi.Value)
+                                .Where(ahi => !string.IsNullOrEmpty(ahi.Value)
                                               && decimal.TryParse(ahi.Value, out var junk))
                                 .Select(ahi => decimal.Parse(ahi.Value))
-                                .ToList();
+                                .ToList();    
                         }
 
                         break;

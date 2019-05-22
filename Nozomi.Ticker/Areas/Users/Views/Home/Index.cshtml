@@ -1,4 +1,7 @@
-﻿@using Nozomi.Service.Identity.Managers
+﻿@using Nozomi.Data.Models.Web.Analytical
+@using Nozomi.Service.Events.Analysis.Interfaces
+@using Nozomi.Service.Identity.Managers
+@inject IAnalysedComponentEvent AnalysedComponentEvent
 @inject NozomiSignInManager SignInManager
 @{
     ViewData["Title"] = "Home Page";
@@ -10,20 +13,28 @@
             <div class="col-lg-5 mb-11 mb-lg-0">
                 <!-- Info -->
                 <div class="mb-6">
-                    <h1 class="text-white font-weight-semi-bold mb-3">
-                        Crypto is
-                        <span class="text-indigo">
-                            <strong class="u-text-animation u-text-animation--typing"></strong>
-                        </span>
-                        <br>
-                        big right now.
+                    <h1 class="text-white font-weight-semi-bold mb-3" v-if="currencyTypes.length > 0"
+                        v-for="currencyType in currencyTypes">
+                        <div v-if="currencyType.name === 'Cryptocurrency' && getACValueByComponentType(currencyType.components, 1) !== null">
+                            {{ currencyType.name }} has
+                            <span class="text-warning">
+                                <strong class="u-text-animation u-text-animation--typing">
+                                    {{ numeral(getACValueByComponentType(currencyType.components, 1)).format('$0.00 a') }}
+                                </strong>
+                            </span>
+                            <br>
+                            right now.
+                        </div>
                     </h1>
                     @* <p class="text-white-70"></p> *@
+                    <h1 class="text-white font-weight-semi-bold mb-3" v-else>
+                        Poll any endpoint, anytime.
+                    </h1>
                 </div>
 
                 @* <a class="btn btn-white btn-wide btn-pill text-primary shadow-soft transition-3d-hover mb-2 mb-sm-0 mr-4"  *@
                 @*    href="#">Contact Sales</a> *@
-                <a class="btn btn-indigo btn-wide btn-pill transition-3d-hover mb-2 mb-sm-0" asp-controller="Account"
+                <a class="btn btn-warning btn-wide btn-pill transition-3d-hover mb-2 mb-sm-0" asp-controller="Account"
                    asp-action="Register">
                     Get Started
                 </a>
@@ -173,7 +184,8 @@
                 ],
                 currentCurrencyPage: 1,
                 currencies: [],
-                itemsPerPage: 40
+                itemsPerPage: 40,
+                currencyTypes: []
             },
             created: function() {
                 const connection = new SignalR.HubConnectionBuilder()
@@ -183,6 +195,7 @@
                 // https://github.com/aspnet/SignalR/issues/3294
                 connection.start().then(() => {
                     connection.invoke("Subscribe", 2).catch(err => console.error(err.toString()));
+                    connection.invoke("Subscribe", 3).catch(err => console.error(err.toString()));
                 }).catch(err => document.write(err));
 
                 function start() {
@@ -203,32 +216,24 @@
                     (currencies) => {
                         this.currencies = currencies;
                     });
+                
+                connection.on("currencytypes",
+                    (currencyTypes) => {
+                        this.currencyTypes = currencyTypes;
+                    });
             },
             methods: {
-                // This function provides the capability of updating the tickerData array.
-                // It does NOT delete deprecated rows. After all, we expect the clients to refresh once a week or so.
-//        updateTickerData: function(incomingData) {
-//          // Iterate all incoming datum
-//          $.each(incomingData, function(incomingDatum) {
-//            // Look for the ticker datum in question
-//            for (let i = 0; i < this.tickerData.length; i++) {
-//              // Found matching ticker
-//              if (this.tickerData[i].currencyPairId === incomingDatum.currencyPairId) {
-//                // Tell them its updated
-//                if (this.tickerData[i].lastUpdated) {
-//                  // Bring in data
-//                  
-//                  
-//                  this.tickerData[i].lastUpdated = moment();
-//                } else {
-//                  // Else we don't have to update... lol
-//                }
-//                break;
-//              }
-//            }
-//          });
-//        }
-      
+                getACValueByComponentType(collection, componentType) {
+                    if (collection !== null && collection.length > 0) {
+                        for (let i = 0; i < collection.length; i++) {
+                            if (collection[i].componentType === componentType) {
+                                return collection[i].value;
+                            }
+                        }
+                    }
+                    
+                    return null;
+                }
             },
             mounted: function() {
             }

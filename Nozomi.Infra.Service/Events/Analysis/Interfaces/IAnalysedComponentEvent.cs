@@ -1,8 +1,7 @@
-using System.Collections;
 using System.Collections.Generic;
 using Nozomi.Data.Models.Web.Analytical;
 
-namespace Nozomi.Infra.Analysis.Service.Events.Analysis.Interfaces
+namespace Nozomi.Service.Events.Analysis.Interfaces
 {
     public interface IAnalysedComponentEvent
     {
@@ -18,11 +17,15 @@ namespace Nozomi.Infra.Analysis.Service.Events.Analysis.Interfaces
         
         IEnumerable<AnalysedComponent> GetAll(int index = 0, bool filter = false, bool track = false);
 
+        ICollection<AnalysedComponent> GetAllCurrencyTypeAnalysedComponents(int index = 0, bool filter = false, bool track = false);
+
         ICollection<AnalysedComponent> GetAllByCurrency(long currencyId, bool ensureValid = false, bool track = false);
         
         ICollection<AnalysedComponent> GetTickerPairComponentsByCurrency(long currencyId, bool ensureValid = false, bool track = false);
 
         ICollection<AnalysedComponent> GetAllByCurrencyType(long currencyTypeId, bool track = false);
+        
+        ICollection<AnalysedComponent> GetAllCurrencyComponentsByType(long currencyTypeId, bool track = false);
 
         ICollection<AnalysedComponent> GetAllByCorrelation(long analysedComponentId, bool track = false);
 

@@ -15,12 +15,12 @@ using Nozomi.Base.Core.Helpers.Enumerator;
 using Nozomi.Data.Models.Currency;
 using Nozomi.Data.Models.Web;
 using Nozomi.Data.Models.Web.Analytical;
-using Nozomi.Infra.Analysis.Service.Events.Analysis.Interfaces;
 using Nozomi.Infra.Analysis.Service.HostedServices.Interfaces;
 using Nozomi.Infra.Analysis.Service.Services.Interfaces;
 using Nozomi.Infra.Preprocessing.SignalR;
 using Nozomi.Infra.Preprocessing.SignalR.Hubs.Interfaces;
 using Nozomi.Preprocessing.Abstracts;
+using Nozomi.Service.Events.Analysis.Interfaces;
 using Nozomi.Service.Events.Interfaces;
 using Nozomi.Service.Hubs;
 
@@ -104,7 +104,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                         if (component.CurrencyTypeId != null && component.CurrencyTypeId > 0)
                         {
                             // Obtain all sub components (Components in the currencies)
-                            var analysedComponents = _analysedComponentEvent.GetAllByCurrencyType(
+                            var analysedComponents = _analysedComponentEvent.GetAllCurrencyComponentsByType(
                                     (long) component.CurrencyTypeId, true)
                                 .Where(ac => ac.ComponentType.Equals(AnalysedComponentType.MarketCap))
                                 .ToList();
@@ -152,22 +152,21 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                         else if (component.CurrencyId != null && component.CurrencyId > 0)
                         {
                             // obtain all related entities first
-                            var analysedComponents = _analysedComponentEvent.GetAllByCurrency(
+                            var currencyAveragePrice = _analysedComponentEvent.GetAllByCurrency(
                                     (long) component.CurrencyId,
                                     true, true)
-                                .Where(ac => ac.ComponentType.Equals(AnalysedComponentType.CurrentAveragePrice)
-                                             && !string.IsNullOrEmpty(ac.Value))
-                                .ToList();
+                                .SingleOrDefault(ac => ac.DeletedAt == null && ac.IsEnabled
+                                                                            && ac.ComponentType
+                                                                                .Equals(AnalysedComponentType.CurrentAveragePrice)
+                                                                            && !string.IsNullOrEmpty(ac.Value));
 
-                            if (analysedComponents.Count > 0)
+                            if (currencyAveragePrice != null)
                             {
                                 // Obtain the circulating supply
                                 var circuSupply = _currencyEvent.GetCirculatingSupply(component);
 
                                 // Average everything
-                                var averagePrice = analysedComponents
-                                    .Select(ac => decimal.Parse(ac.Value))
-                                    .Average();
+                                var averagePrice = decimal.Parse(currencyAveragePrice.Value);
 
                                 // Parsable average?
                                 if (circuSupply > 0 && averagePrice > decimal.Zero)
@@ -301,32 +300,26 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                             if (component.CurrencyId != null && component.CurrencyId > 0)
                             {
                                 // Obtain all of the req components related to this currency where it is the base.
-                                var currencyReqComps =
-                                    _requestComponentEvent.GetAllByCurrency((long) component.CurrencyId, true)
-                                        .Where(rc => rc.RcdHistoricItems != null &&
-                                                     rc.ComponentType.Equals(ComponentType.Ask)
-                                                     || rc.ComponentType.Equals(ComponentType.Bid))
-                                        .ToList();
+                                var currencyAveragePrice = _analysedComponentEvent.GetAllByCurrency(
+                                        (long) component.CurrencyId,
+                                        true, true)
+                                    .SingleOrDefault(ac =>
+                                        ac.ComponentType.Equals(AnalysedComponentType.CurrentAveragePrice)
+                                        && ac.AnalysedHistoricItems != null
+                                        && ac.AnalysedHistoricItems.Count > 0
+                                        && ac.AnalysedHistoricItems
+                                        .Any(ahi => ahi.HistoricDateTime >
+                                                        DateTime.UtcNow.Subtract(TimeSpan.FromHours(1))
+                                                        && !string.IsNullOrEmpty(ahi.Value)));
 
                                 // Safetynet
-                                if (currencyReqComps != null && currencyReqComps.Count > 0)
+                                if (currencyAveragePrice != null)
                                 {
-                                    // Filter
-                                    currencyReqComps = currencyReqComps
-                                        .DefaultIfEmpty()
-                                        .ToList();
-
-                                    // TODO: Convert whatever is needed
-                                    //_requestComponentEvent.ConvertToGenericCurrency(currencyReqComps);
-
                                     // Now we can aggregate this
-                                    var currAvgPrice = currencyReqComps
-                                        .SelectMany(rc => rc.RcdHistoricItems)
-                                        .Where(rcdhi => rcdhi.HistoricDateTime >
+                                    var currAvgPrice = currencyAveragePrice.AnalysedHistoricItems
+                                        .Where(ahi => ahi.HistoricDateTime >
                                                         DateTime.UtcNow.Subtract(TimeSpan.FromHours(1)))
-                                        .Average(rcdhi => decimal.Parse(string.IsNullOrEmpty(rcdhi.Value)
-                                            ? "0"
-                                            : rcdhi.Value));
+                                        .Average(rcdhi => decimal.Parse(rcdhi.Value));
 
                                     if (!(currAvgPrice <= decimal.Zero))
                                     {

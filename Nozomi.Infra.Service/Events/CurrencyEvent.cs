@@ -441,7 +441,7 @@ namespace Nozomi.Service.Events
                 }
             }
             
-            return res;
+            return res.OrderByDescending(dcr => dcr.MarketCap).ToList();
         }
 
         public DetailedCurrencyResponse GetDetailedById(long currencyId, ICollection<AnalysedComponentType> componentTypes)

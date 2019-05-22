@@ -3,7 +3,7 @@ using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data.Models.Web.Analytical;
-using Nozomi.Infra.Analysis.Service.Events.Analysis.Interfaces;
+using Nozomi.Service.Events.Analysis.Interfaces;
 using Nozomi.Service.Events.Interfaces;
 using Nozomi.Service.Identity.Managers;
 using Nozomi.Ticker.Controllers;
@@ -28,17 +28,17 @@ namespace Nozomi.Ticker.Areas.Users.Controllers
         [HttpGet("/[controller]/{abbrv}")]
         public IActionResult View(string abbrv)
         {
-            var currency = _currencyEvent.GetCurrencyByAbbreviation(abbrv);
+            var currency = _currencyEvent.GetCurrencyByAbbreviation(abbrv, true);
 
             if (currency != null)
             {
-                if (currency.AnalysedComponents.Any(ac =>
-                    ac.ComponentType.Equals(AnalysedComponentType.HourlyAveragePrice)))
+                var aComp = currency.AnalysedComponents
+                    .SingleOrDefault(ac => ac.ComponentType.Equals(AnalysedComponentType.HourlyAveragePrice));
+                
+                if (aComp != null)
                 {
-                    var aComp = currency.AnalysedComponents
-                        .SingleOrDefault(ac => ac.ComponentType.Equals(AnalysedComponentType.HourlyAveragePrice));
-
-                    aComp.AnalysedHistoricItems = _analysedHistoricItemEvent.GetAll(aComp.Id, TimeSpan.FromHours(72));
+                    aComp.AnalysedHistoricItems = _analysedHistoricItemEvent.GetAll(aComp.Id, TimeSpan.FromHours(72))
+                        .OrderByDescending(ahi => ahi.HistoricDateTime).ToList();
                 }
                 
                 return View(currency);

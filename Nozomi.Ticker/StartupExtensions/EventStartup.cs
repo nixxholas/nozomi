@@ -1,10 +1,12 @@
 using Microsoft.Extensions.DependencyInjection;
 using Nozomi.Data.Models.Web.Analytical;
-using Nozomi.Infra.Analysis.Service.Events.Analysis;
-using Nozomi.Infra.Analysis.Service.Events.Analysis.Interfaces;
+using Nozomi.Infra.Analysis.Service.Events;
+using Nozomi.Infra.Analysis.Service.Events.Interfaces;
 using Nozomi.Preprocessing.Events;
 using Nozomi.Preprocessing.Events.Interfaces;
 using Nozomi.Service.Events;
+using Nozomi.Service.Events.Analysis;
+using Nozomi.Service.Events.Analysis.Interfaces;
 using Nozomi.Service.Events.Interfaces;
 using Nozomi.Service.Events.Websocket;
 using Nozomi.Service.Events.Websocket.Interfaces;

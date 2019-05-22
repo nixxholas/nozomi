@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
-using Nozomi.Infra.Analysis.Service.Events.Analysis.Interfaces;
 using Nozomi.Infra.Analysis.Service.Hubs.Interfaces;
 
 namespace Nozomi.Infra.Analysis.Service.Hubs

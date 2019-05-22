@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Channels;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
@@ -8,9 +9,13 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
 using Nozomi.Base.Core.Helpers.Enumerator;
 using Nozomi.Data;
+using Nozomi.Data.Models.Web.Analytical;
+using Nozomi.Data.ResponseModels.AnalysedComponent;
 using Nozomi.Data.ResponseModels.Currency;
+using Nozomi.Data.ResponseModels.CurrencyType;
 using Nozomi.Infra.Preprocessing.SignalR;
 using Nozomi.Infra.Preprocessing.SignalR.Hubs.Interfaces;
+using Nozomi.Service.Events.Analysis.Interfaces;
 using Nozomi.Service.Events.Interfaces;
 using Nozomi.Service.Services.Interfaces;
 
@@ -19,14 +24,17 @@ namespace Nozomi.Service.Hubs
     public class NozomiStreamHub : Hub<INozomiStreamClient>
     {
         private readonly ILogger<NozomiStreamHub> _logger;
+        private readonly IAnalysedComponentEvent _analysedComponentEvent;
         private readonly ICurrencyEvent _currencyEvent;
         public IDictionary<string, ICollection<NozomiSocketGroup>> _subscriptions;
         private readonly IHubContext<NozomiStreamHub, INozomiStreamClient> _nozomiStreamHub;
 
-        public NozomiStreamHub(ILogger<NozomiStreamHub> logger, ICurrencyEvent currencyEvent,
+        public NozomiStreamHub(ILogger<NozomiStreamHub> logger, IAnalysedComponentEvent analysedComponentEvent, 
+            ICurrencyEvent currencyEvent,
         IHubContext<NozomiStreamHub, INozomiStreamClient> nozomiStreamHub)
         {
             _logger = logger;
+            _analysedComponentEvent = analysedComponentEvent;
             _currencyEvent = currencyEvent;
             _nozomiStreamHub = nozomiStreamHub;
             
@@ -71,9 +79,8 @@ namespace Nozomi.Service.Hubs
             switch (group)
             {
                 case NozomiSocketGroup.Tickers:
-                    return await PropagateSubscription(group);
-                // TODO: Dedicated server to handle this. Too performance intensive.
                 case NozomiSocketGroup.Currencies:
+                case NozomiSocketGroup.CurrencyTypes:
                     return await PropagateSubscription(group);
                 default:
                     return new NozomiResult<string>(NozomiResultType.Failed,
@@ -89,6 +96,11 @@ namespace Nozomi.Service.Hubs
             {
                 case NozomiSocketGroup.Currencies:
                     await _nozomiStreamHub.Clients.Client(Context.ConnectionId).Currencies(_currencyEvent.GetAllDetailed());
+                    break;
+                case NozomiSocketGroup.CurrencyTypes:
+                    await _nozomiStreamHub.Clients.Client(Context.ConnectionId).CurrencyTypes(
+                        ObtainCurrencyTypeResponses(
+                            _analysedComponentEvent.GetAllCurrencyTypeAnalysedComponents(0, true, true)));
                     break;
             }
 
@@ -149,6 +161,51 @@ namespace Nozomi.Service.Hubs
             }
             
             return base.OnDisconnectedAsync(exception);
+        }
+
+        private ICollection<CurrencyTypeResponse> ObtainCurrencyTypeResponses(ICollection<AnalysedComponent> analysedComponents)
+        {
+            var res = new List<CurrencyTypeResponse>();
+            
+            if (analysedComponents != null && analysedComponents.Count > 0)
+            {
+                foreach (var ac in analysedComponents)
+                {
+                    // Safetynet
+                    if (ac.CurrencyType != null && !string.IsNullOrEmpty(ac.Value))
+                    {
+                        // If the CTR does not exist yet
+                        if (!res.Any(ctr => ctr.Name.Equals(ac.CurrencyType.Name)))
+                        {
+                            // Create
+                            res.Add(new CurrencyTypeResponse
+                            {
+                                Name = ac.CurrencyType.Name,
+                                Components = new List<AnalysedComponentResponse>()
+                                {
+                                    new AnalysedComponentResponse
+                                    {
+                                        ComponentType = ac.ComponentType,
+                                        Value = ac.Value
+                                    }
+                                }
+                            });
+                        }
+                        else
+                        {
+                            // Already exists, populate
+                            res.SingleOrDefault(ctr => ctr.Name.Equals(ac.CurrencyType.Name))?.Components
+                                .Add(new AnalysedComponentResponse
+                                {
+                                    ComponentType = ac.ComponentType,
+                                    Value = ac.Value
+                                });
+                        }
+                    }
+                }
+            }
+
+            return res;
         }
         
 //        public async Task<NozomiResult<IEnumerable<CurrencyPair>>> Tickers(IEnumerable<CurrencyPair> currencyPairs = null)

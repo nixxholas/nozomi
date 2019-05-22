@@ -1,21 +1,17 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Logging;
-using Nozomi.Base.Core.Helpers.Enumerator;
 using Nozomi.Data;
 using Nozomi.Data.Models.Currency;
-using Nozomi.Data.Models.Web;
 using Nozomi.Data.Models.Web.Analytical;
-using Nozomi.Infra.Analysis.Service.Events.Analysis.Interfaces;
+using Nozomi.Infra.Analysis.Service.Events.Interfaces;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Data;
 
-namespace Nozomi.Infra.Analysis.Service.Events.Analysis
+namespace Nozomi.Infra.Analysis.Service.Events
 {
     public class CurrencyConversionEvent : BaseEvent<CurrencyConversionEvent, NozomiDbContext>, 
         ICurrencyConversionEvent

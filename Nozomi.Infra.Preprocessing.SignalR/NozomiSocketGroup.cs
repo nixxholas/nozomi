@@ -10,6 +10,8 @@ namespace Nozomi.Infra.Preprocessing.SignalR
         [Description("Ticker Stream")]
         Tickers = 1,
         [Description("Currency Stream")]
-        Currencies = 2
+        Currencies = 2,
+        [Description("Currency Type Stream")]
+        CurrencyTypes = 3
     }
 }

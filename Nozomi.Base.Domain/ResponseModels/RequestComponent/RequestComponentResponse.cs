@@ -3,7 +3,7 @@ using Nozomi.Data.Models.Currency;
 
 namespace Nozomi.Data.ResponseModels.RequestComponent
 {
-    public class ComponentResponse
+    public class RequestComponentResponse
     {
         public ComponentType ComponentType { get; set; }
         
