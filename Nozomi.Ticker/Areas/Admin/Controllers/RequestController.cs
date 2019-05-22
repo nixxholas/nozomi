@@ -93,5 +93,25 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
         }
         
         #endregion
+        
+        #region PUT Request
+
+        [HttpPut]
+        public async Task<IActionResult> UpdateRequest(UpdateRequest updateRequest)
+        {
+            var user = await GetCurrentUserAsync();
+            if (user == null)
+            {
+                return NotFound($"Unable to load user withID '{_userManager.GetUserId(User)}'.");
+            }
+
+            var result = _requestService.Update(updateRequest);
+            
+            if (result.ResultType.Equals(NozomiResultType.Success)) return Ok(result.Item);
+
+            return NotFound();
+        }
+        
+        #endregion
     }
 }
