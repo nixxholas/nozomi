@@ -1,11 +1,12 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using Nozomi.Base.Core;
 using Nozomi.Data.Models.Web;
 using Nozomi.Data.Models.Web.Logging;
 
 namespace Nozomi.Data.AreaModels.v1.Requests
 {
-    public class CreateRequest
+    public class CreateRequest: BaseEntityModel
     {
         
         [Required]
