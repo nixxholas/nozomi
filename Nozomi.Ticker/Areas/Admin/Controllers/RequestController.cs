@@ -118,5 +118,25 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
         }
         
         #endregion
+        
+        #region DELETE Request
+        
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteRequest(long id)
+        {
+            var user = await GetCurrentUserAsync();
+            if (user == null)
+            {
+                return NotFound($"Unable to load user withID '{_userManager.GetUserId(User)}'.");
+            }
+            
+            var result = _requestService.SoftDelete(id);
+            
+            if (result.ResultType.Equals(NozomiResultType.Success)) return Ok(result);
+
+            return NotFound();
+        }
+        
+        #endregion
     }
 }
