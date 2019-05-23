@@ -80,14 +80,16 @@ namespace Nozomi.Service.Services.Requests
                     return new NozomiResult<string>(NozomiResultType.Failed, "Failed to update request");
 
                 var reqToUpd = _unitOfWork.GetRepository<Request>()
-                    .Get(r => r.Guid.Equals(updateRequest.Guid) && r.DeletedAt == null)
+                    .Get(r => r.Id.Equals(updateRequest.Id) && r.DeletedAt == null)
                     .SingleOrDefault();
 
                 if (reqToUpd == null)
                     return new NozomiResult<string>(NozomiResultType.Failed, "Failed to update request. Unable to find the request");
 
                 reqToUpd.DataPath = updateRequest.DataPath;
+                reqToUpd.Delay = updateRequest.Delay;
                 reqToUpd.RequestType = updateRequest.RequestType;
+                reqToUpd.ResponseType = updateRequest.ResponseType;
                 reqToUpd.IsEnabled = updateRequest.IsEnabled;
 
                 _unitOfWork.GetRepository<Request>().Update(reqToUpd);
