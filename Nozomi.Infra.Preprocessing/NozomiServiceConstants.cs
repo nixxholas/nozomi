@@ -31,5 +31,14 @@ namespace Nozomi.Preprocessing
             EnumHelper.GetEnumValuesAndDescriptions<ResponseType>();
         public static List<KeyValuePair<string, int>> requestPropertyTypes =
             EnumHelper.GetEnumValuesAndDescriptions<RequestPropertyType>();
+        
+        /// <summary>
+        /// Let's say if an AnalysedComponent Updates every second,
+        /// It means that the maximum rows obtainable would be = to this.
+        ///
+        /// i.e. 1 hour of data, NozomiServiceConstants.AnalysedComponentTakeoutLimit is 1000 = 3600 rows. You need 4 queries to do that.
+        /// 4000 rows will cover 3.6k
+        /// </summary>
+        public const int AnalysedComponentTakeoutLimit = 5000;
     }
 }

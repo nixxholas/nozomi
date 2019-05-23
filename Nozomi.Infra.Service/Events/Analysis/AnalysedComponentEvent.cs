@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data.Models.Currency;
 using Nozomi.Data.Models.Web.Analytical;
+using Nozomi.Preprocessing;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Data;
@@ -14,15 +15,6 @@ namespace Nozomi.Service.Events.Analysis
 {
     public class AnalysedComponentEvent : BaseEvent<AnalysedComponentEvent, NozomiDbContext>, IAnalysedComponentEvent
     {
-        /// <summary>
-        /// Let's say if an AnalysedComponent Updates every second,
-        /// It means that the maximum rows obtainable would be = to this.
-        ///
-        /// i.e. 1 hour of data, AnalysedComponentTakeoutLimit is 1000 = 3600 rows. You need 4 queries to do that.
-        /// 4000 rows will cover 3.6k
-        /// </summary>
-        private const int AnalysedComponentTakeoutLimit = 5000;
-
         public AnalysedComponentEvent(ILogger<AnalysedComponentEvent> logger, IUnitOfWork<NozomiDbContext> unitOfWork) 
             : base(logger, unitOfWork)
         {
@@ -56,8 +48,8 @@ namespace Nozomi.Service.Events.Analysis
                         UIFormatting = ac.UIFormatting,
                         AnalysedHistoricItems = ac.AnalysedHistoricItems
                             .OrderByDescending(ahi => ahi.HistoricDateTime)
-                            .Skip(index * AnalysedComponentTakeoutLimit)
-                            .Take(AnalysedComponentTakeoutLimit)
+                            .Skip(index * NozomiServiceConstants.AnalysedComponentTakeoutLimit)
+                            .Take(NozomiServiceConstants.AnalysedComponentTakeoutLimit)
                             .ToList()
                     })
                     .SingleOrDefault();
@@ -100,8 +92,8 @@ namespace Nozomi.Service.Events.Analysis
                         UIFormatting = ac.UIFormatting,
                         AnalysedHistoricItems = ac.AnalysedHistoricItems
                             .OrderByDescending(ahi => ahi.HistoricDateTime)
-                            .Skip(index * AnalysedComponentTakeoutLimit)
-                            .Take(AnalysedComponentTakeoutLimit)
+                            .Skip(index * NozomiServiceConstants.AnalysedComponentTakeoutLimit)
+                            .Take(NozomiServiceConstants.AnalysedComponentTakeoutLimit)
                             .ToList()
                     });
             }
@@ -132,8 +124,8 @@ namespace Nozomi.Service.Events.Analysis
             }
 
             return query
-                .Skip(index * AnalysedComponentTakeoutLimit)
-                .Take(AnalysedComponentTakeoutLimit);
+                .Skip(index * NozomiServiceConstants.AnalysedComponentTakeoutLimit)
+                .Take(NozomiServiceConstants.AnalysedComponentTakeoutLimit);
         }
 
         public ICollection<AnalysedComponent> GetAllCurrencyTypeAnalysedComponents(int index = 0, bool filter = false, bool track = false)
@@ -172,8 +164,8 @@ namespace Nozomi.Service.Events.Analysis
                     UIFormatting = ac.UIFormatting,
                     AnalysedHistoricItems = ac.AnalysedHistoricItems
                         .OrderByDescending(ahi => ahi.HistoricDateTime)
-                        .Skip(index * AnalysedComponentTakeoutLimit)
-                        .Take(AnalysedComponentTakeoutLimit)
+                        .Skip(index * NozomiServiceConstants.AnalysedComponentTakeoutLimit)
+                        .Take(NozomiServiceConstants.AnalysedComponentTakeoutLimit)
                         .ToList()
                 })
                 .ToList();
@@ -225,8 +217,8 @@ namespace Nozomi.Service.Events.Analysis
                     UIFormatting = ac.UIFormatting,
                     AnalysedHistoricItems = ac.AnalysedHistoricItems
                         .OrderByDescending(ahi => ahi.HistoricDateTime)
-                        .Skip(index * AnalysedComponentTakeoutLimit)
-                        .Take(AnalysedComponentTakeoutLimit)
+                        .Skip(index * NozomiServiceConstants.AnalysedComponentTakeoutLimit)
+                        .Take(NozomiServiceConstants.AnalysedComponentTakeoutLimit)
                         .ToList()
                 })
                 .ToList();
@@ -273,8 +265,8 @@ namespace Nozomi.Service.Events.Analysis
                     UIFormatting = ac.UIFormatting,
                     AnalysedHistoricItems = ac.AnalysedHistoricItems
                         .OrderByDescending(ahi => ahi.HistoricDateTime)
-                        .Skip(index * AnalysedComponentTakeoutLimit)
-                        .Take(AnalysedComponentTakeoutLimit)
+                        .Skip(index * NozomiServiceConstants.AnalysedComponentTakeoutLimit)
+                        .Take(NozomiServiceConstants.AnalysedComponentTakeoutLimit)
                         .ToList(),
                     CurrencyPairId = ac.CurrencyPairId,
                     CurrencyPair = ac.CurrencyPair
@@ -310,8 +302,8 @@ namespace Nozomi.Service.Events.Analysis
                         UIFormatting = ac.UIFormatting,
                         AnalysedHistoricItems = ac.AnalysedHistoricItems
                             .OrderByDescending(ahi => ahi.HistoricDateTime)
-                            .Skip(index * AnalysedComponentTakeoutLimit)
-                            .Take(AnalysedComponentTakeoutLimit)
+                            .Skip(index * NozomiServiceConstants.AnalysedComponentTakeoutLimit)
+                            .Take(NozomiServiceConstants.AnalysedComponentTakeoutLimit)
                             .ToList(),
                         CurrencyPairId = ac.CurrencyPairId,
                         CurrencyPair = ac.CurrencyPair
@@ -349,8 +341,8 @@ namespace Nozomi.Service.Events.Analysis
                         UIFormatting = ac.UIFormatting,
                         AnalysedHistoricItems = ac.AnalysedHistoricItems
                             .OrderByDescending(ahi => ahi.HistoricDateTime)
-                            .Skip(index * AnalysedComponentTakeoutLimit)
-                            .Take(AnalysedComponentTakeoutLimit)
+                            .Skip(index * NozomiServiceConstants.AnalysedComponentTakeoutLimit)
+                            .Take(NozomiServiceConstants.AnalysedComponentTakeoutLimit)
                             .ToList(),
                         CurrencyId = ac.CurrencyId,
                         Currency = ac.Currency
@@ -393,8 +385,8 @@ namespace Nozomi.Service.Events.Analysis
                         UIFormatting = ac.UIFormatting,
                         AnalysedHistoricItems = ac.AnalysedHistoricItems
                             .OrderByDescending(ahi => ahi.HistoricDateTime)
-                            .Skip(index * AnalysedComponentTakeoutLimit)
-                            .Take(AnalysedComponentTakeoutLimit)
+                            .Skip(index * NozomiServiceConstants.AnalysedComponentTakeoutLimit)
+                            .Take(NozomiServiceConstants.AnalysedComponentTakeoutLimit)
                             .ToList(),
                         CurrencyId = ac.CurrencyId,
                         Currency = ac.Currency
@@ -588,8 +580,8 @@ namespace Nozomi.Service.Events.Analysis
                          UIFormatting = ac.UIFormatting,
                          AnalysedHistoricItems = ac.AnalysedHistoricItems
                              .OrderByDescending(ahi => ahi.HistoricDateTime)
-                             .Skip(index * AnalysedComponentTakeoutLimit)
-                             .Take(AnalysedComponentTakeoutLimit)
+                             .Skip(index * NozomiServiceConstants.AnalysedComponentTakeoutLimit)
+                             .Take(NozomiServiceConstants.AnalysedComponentTakeoutLimit)
                              .ToList(),
                          CurrencyId = ac.CurrencyId,
                          Currency = ac.Currency
