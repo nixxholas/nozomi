@@ -313,7 +313,8 @@ namespace Nozomi.Service.Events.Analysis
             return null;
         }
 
-        public ICollection<AnalysedComponent> GetAllCurrencyComponentsByType(long currencyTypeId, bool track = false)
+        public ICollection<AnalysedComponent> GetAllCurrencyComponentsByType(long currencyTypeId, bool track = false,
+            int index = 0)
         {
             if (currencyTypeId > 0)
             {
@@ -337,7 +338,11 @@ namespace Nozomi.Service.Events.Analysis
                         IsDenominated = ac.IsDenominated,
                         Delay = ac.Delay,
                         UIFormatting = ac.UIFormatting,
-                        AnalysedHistoricItems = ac.AnalysedHistoricItems,
+                        AnalysedHistoricItems = ac.AnalysedHistoricItems
+                            .OrderByDescending(ahi => ahi.HistoricDateTime)
+                            .Skip(index * 200)
+                            .Take(200)
+                            .ToList(),
                         CurrencyId = ac.CurrencyId,
                         Currency = ac.Currency
                     })
