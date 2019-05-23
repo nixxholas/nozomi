@@ -466,7 +466,7 @@ namespace Nozomi.Service.Events
         /// </summary>
         /// <param name="currencyId">Base Currency Id</param>
         /// <returns></returns>
-        public ICollection<RequestComponent> GetAllByCurrency(long currencyId, bool track = false)
+        public ICollection<RequestComponent> GetAllByCurrency(long currencyId, bool track = false, int index = 0)
         {
             // First, obtain the currency in question
             var qCurrency = _unitOfWork.GetRepository<Currency>()
@@ -498,6 +498,9 @@ namespace Nozomi.Service.Events
                         QueryComponent = rc.QueryComponent,
                         Value = rc.Value,
                         RcdHistoricItems = rc.RcdHistoricItems
+                            .Skip(index * NozomiServiceConstants.RequestComponentTakeoutLimit)
+                            .Take(NozomiServiceConstants.RequestComponentTakeoutLimit)
+                            .ToList()
                     })))
                 .ToList();
         }
