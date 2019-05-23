@@ -55,8 +55,8 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
 
         #region GET Request by GUID
         
-        [HttpGet("{guid}")]
-        public async Task<IActionResult> Request([FromRoute] Guid guid)
+        [HttpGet("{id}")]
+        public async Task<IActionResult> Request([FromRoute] long id)
         {
             var user = await GetCurrentUserAsync();
             if (user == null)
@@ -66,7 +66,7 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
 
             return View(new RequestViewModel
             {
-                Request = _requestEvent.GetByGuid(guid, true).ToDTO(),
+                Request = _requestEvent.GetActive(id, true).ToDTO(),
                 RequestTypes = NozomiServiceConstants.requestTypes,
                 ResponseTypes = NozomiServiceConstants.responseTypes
             });
@@ -96,18 +96,23 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
         
         #region PUT Request
 
-        [HttpPut]
-        public async Task<IActionResult> UpdateRequest(UpdateRequest updateRequest)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> EditRequest(long id, UpdateRequest updateRequest)
         {
             var user = await GetCurrentUserAsync();
             if (user == null)
             {
                 return NotFound($"Unable to load user withID '{_userManager.GetUserId(User)}'.");
             }
+            
+            if (id != updateRequest.Id)
+            {
+                return BadRequest();
+            }
 
             var result = _requestService.Update(updateRequest);
             
-            if (result.ResultType.Equals(NozomiResultType.Success)) return Ok(result.Item);
+            if (result.ResultType.Equals(NozomiResultType.Success)) return Ok(result);
 
             return NotFound();
         }

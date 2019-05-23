@@ -11,13 +11,14 @@
 <!-- Content Section -->
 <div class="bg-light">
     <div class="container space-2">
-        @* Change the naming of heading later*@
         <h3 class="mb-6">Request</h3>
-        <b-form method="Put">
+
+        <b-form v-on:submit.prevent="onEditRequestSubmit">
             <div class="row">
                 <div class="col-md-4 mb-3">
                     <b-form-group label="Data path">
                         <b-form-input
+                            type="url"
                             v-model="editRequest.dataPath"
                             placeholder="Enter data path">
                         </b-form-input>
@@ -41,9 +42,16 @@
                     <b-form-group id="responseType-input-group" label="Response Type">
                         <b-form-select v-model="editRequest.responseType" :options="responseTypes"></b-form-select>
                     </b-form-group>
+                    <b-form-group id="isEnabled-input-group">
+                        <b-form-checkbox v-model="editRequest.isEnabled">Is Enabled</b-form-checkbox>
+                    </b-form-group>
                 </div>
             </div>
+
+            <b-button variant="primary" class="mb-3" type="submit">Save Changes</b-button>
         </b-form>
+
+        <hr/>
 
         <h3 class="mb-6">Analysed Component</h3>
         @* Table for analysedComponent *@
@@ -62,6 +70,8 @@
             </template>
         </b-table>
 
+        <hr/>
+
         <h3 class="mb-6">Request Components</h3>
         @* Table for requestComponent *@
         <b-table :items="request.RequestComponents" :fields="requestComponentsDataFields">
@@ -78,6 +88,8 @@
                 {{ datum.item.Value }}
             </template>
         </b-table>
+
+        <hr/>
 
         <h3 class="mb-6">Request Properties</h3>
         @* Table for requestProperties *@
@@ -168,7 +180,8 @@
                     requestType: @requestType,
                     responseType: @responseType,
                     dataPath: '@Model.Request.DataPath',
-                    delay: @Model.Request.Delay
+                    delay: @Model.Request.Delay,
+                    isEnabled: @Model.Request.IsEnabled.ToString().ToLower()
                 },
                 // The data from the dto
                 request: @Html.Raw(JsonConvert.SerializeObject(@Model.Request)),
@@ -217,6 +230,29 @@
                         responseTypesArr.push(responseType);
                     }
                     this.responseTypes = responseTypesArr;
+                },
+                async onEditRequestSubmit() {
+                    const formData = new FormData();
+                    formData.append('Id', '@Model.Request.Id');
+                    formData.append('RequestType', this.editRequest.requestType);
+                    formData.append('ResponseType', this.editRequest.responseType);
+                    formData.append('DataPath', this.editRequest.dataPath);
+                    formData.append('Delay', this.editRequest.delay);
+                    formData.append('IsEnabled', this.editRequest.isEnabled);
+
+                    const response = await fetch('/Admin/Request/EditRequest/@Model.Request.Id',
+                        {
+                            method: 'PUT',
+                            body: formData
+                        });
+
+                    if (response.status === 200) {
+                        const data = await response.json();
+                        // Put alert for now, change the ui later.
+                        alert(data.message);
+                    } else {
+                        alert(data.message);
+                    }
                 },
                 getRequestTypeStr(val) {
                     if (this.requestTypes != null) {

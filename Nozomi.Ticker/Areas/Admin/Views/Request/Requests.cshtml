@@ -28,7 +28,7 @@
                 {{ moment.duration(datum.item.FailureDelay, 'SSS').humanize() }}
             </template>
             <template slot="actions" slot-scope="datum">
-                <b-button variant="primary" :href="'request/' + datum.item.Guid">View</b-button>
+                <b-button variant="primary" :href="'request/' + datum.item.Id">View</b-button>
             </template>
         </b-table>
     </div>
