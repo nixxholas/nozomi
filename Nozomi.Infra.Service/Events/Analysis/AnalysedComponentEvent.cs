@@ -19,7 +19,7 @@ namespace Nozomi.Service.Events.Analysis
         {
         }
 
-        public AnalysedComponent Get(long id, bool track = false)
+        public AnalysedComponent Get(long id, bool track = false, int index = 0)
         {
             var query = _unitOfWork.GetRepository<AnalysedComponent>()
                 .GetQueryable()
@@ -33,6 +33,24 @@ namespace Nozomi.Service.Events.Analysis
                     .Include(ac => ac.CurrencyPair)
                     .Include(ac => ac.CurrencyType)
                     .Include(ac => ac.AnalysedHistoricItems);
+
+                return query
+                    .Select(ac => new AnalysedComponent
+                    {
+                        Id = ac.Id,
+                        ComponentType = ac.ComponentType,
+                        CurrencyType = ac.CurrencyType,
+                        CurrencyTypeId = ac.CurrencyTypeId,
+                        Value = ac.Value,
+                        IsDenominated = ac.IsDenominated,
+                        Delay = ac.Delay,
+                        UIFormatting = ac.UIFormatting,
+                        AnalysedHistoricItems = ac.AnalysedHistoricItems
+                            .Skip(index * 200)
+                            .Take(200)
+                            .ToList()
+                    })
+                    .SingleOrDefault();
             }
 
             return query.SingleOrDefault();

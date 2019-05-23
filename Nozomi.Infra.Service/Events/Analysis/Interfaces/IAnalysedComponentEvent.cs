@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Nozomi.Data.Models.Web.Analytical;
 
@@ -5,7 +6,7 @@ namespace Nozomi.Service.Events.Analysis.Interfaces
 {
     public interface IAnalysedComponentEvent
     {
-        AnalysedComponent Get(long id, bool track = false);
+        AnalysedComponent Get(long id, bool track = false, int index = 0);
         
         /// <summary>
         /// For internal consumption, exposes the entire dbset.
