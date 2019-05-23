@@ -20,8 +20,6 @@ namespace Nozomi.Service.Events
         {
         }
 
-        // Elvis 4/17/2019
-        // TODO: Fix the query so that it returns it's related data
         public Request GetByGuid(Guid guid, bool track = false)
         {
             var query = _unitOfWork.GetRepository<Request>()
@@ -37,7 +35,7 @@ namespace Nozomi.Service.Events
             
             return query.FirstOrDefault(r => r.Guid.Equals(guid));
         }
-
+        
         public Request GetActive(long id, bool track = false)
         {
             var query = _unitOfWork.GetRepository<Request>()
@@ -55,8 +53,7 @@ namespace Nozomi.Service.Events
             }
 
             return query?
-                .SingleOrDefault(r => r.Id.Equals(id) && r.DeletedAt == null
-                                                      && r.IsEnabled);
+                .SingleOrDefault(r => r.Id.Equals(id) && r.DeletedAt == null);
         }
 
         public ICollection<RequestDTO> GetAllDTO(int index)
@@ -69,6 +66,7 @@ namespace Nozomi.Service.Events
                 .Take(50)
                 .Select(r => new RequestDTO
                 {
+                    Id = r.Id,
                     Guid = r.Guid,
                     RequestType = r.RequestType,
                     ResponseType = r.ResponseType,
