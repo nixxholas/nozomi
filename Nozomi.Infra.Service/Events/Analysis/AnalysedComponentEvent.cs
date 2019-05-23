@@ -176,8 +176,10 @@ namespace Nozomi.Service.Events.Analysis
         /// <param name="currencyId"></param>
         /// <param name="ensureValid"></param>
         /// <param name="track"></param>
+        /// <param name="index"></param>
         /// <returns></returns>
-        public ICollection<AnalysedComponent> GetAllByCurrency(long currencyId, bool ensureValid = false, bool track = false)
+        public ICollection<AnalysedComponent> GetAllByCurrency(long currencyId, bool ensureValid = false, bool track = false,
+            int index = 0)
         {
             // First, obtain the currency in question
             var qCurrency = _unitOfWork.GetRepository<Currency>()
@@ -206,99 +208,19 @@ namespace Nozomi.Service.Events.Analysis
                 {
                     Id = ac.Id,
                     ComponentType = ac.ComponentType,
+                    CurrencyType = ac.CurrencyType,
+                    CurrencyTypeId = ac.CurrencyTypeId,
                     Value = ac.Value,
                     IsDenominated = ac.IsDenominated,
                     Delay = ac.Delay,
                     UIFormatting = ac.UIFormatting,
                     AnalysedHistoricItems = ac.AnalysedHistoricItems
+                        .OrderByDescending(ahi => ahi.HistoricDateTime)
+                        .Skip(index * 200)
+                        .Take(200)
+                        .ToList()
                 })
                 .ToList();
-
-
-//            // Then we return
-//            var finalQuery = _unitOfWork.GetRepository<CurrencyPair>()
-//                .GetQueryable()
-//                .AsNoTracking()
-//                // Immediately filter first
-//                .Where(cp =>
-//                    // Make sure the main currencies are identical
-//                    cp.CurrencyPairCurrencies.FirstOrDefault(ccp => ccp.CurrencyPair.MainCurrency
-//                            .Equals(ccp.Currency.Abbreviation)).Currency.Abbreviation
-//                        .Equals(qCurrency.Abbreviation, StringComparison.InvariantCultureIgnoreCase));
-//            
-//            #if DEBUG
-//            // Debug and see if the correct currencies are present.
-//            var correctCPairList = finalQuery.ToList();
-//            #endif
-//
-//            if (ensureValid)
-//            {
-//                finalQuery = finalQuery
-//                    .Where(cp => cp.IsEnabled && cp.DeletedAt == null);
-//            }
-//
-//            if (!string.IsNullOrEmpty(counterCurrency))
-//            {
-//                finalQuery = finalQuery.Where(cp =>
-//                    cp.CounterCurrency.Equals(counterCurrency, StringComparison.InvariantCultureIgnoreCase));
-//            }
-//            
-//            #if DEBUG
-//            var filteredCPairList = finalQuery.ToList();
-//            #endif
-//
-//            var analysedComponents = finalQuery
-//                .Include(cp => cp.CurrencyPairCurrencies)
-//                .ThenInclude(pcp => pcp.Currency)
-//                .Include(cp => cp.CurrencyPairRequests)
-//                .ThenInclude(cpr => cpr.AnalysedComponents)
-//                .ThenInclude(rc => rc.AnalysedHistoricItems)
-//                .Where(cp => cp.CurrencyPairRequests.Any(cpr => cpr.IsEnabled && cpr.DeletedAt == null
-//                                                                              && cpr.AnalysedComponents
-//                                                                                  .Any(ac =>
-//                                                                                      ac.IsEnabled && ac.DeletedAt ==
-//                                                                                                   null
-//                                                                                                   && ac.AnalysedHistoricItems.Count > 0)))
-//                .SelectMany(cp => cp.CurrencyPairRequests)
-//                .SelectMany(cpr => cpr.AnalysedComponents);
-//
-//#if DEBUG
-//            if (currencyId.Equals(4))
-//            {
-//                var test = analysedComponents.ToList();
-//                Console.WriteLine("Banf");
-//            }
-//#endif
-//            
-//            if (!finalQuery.Any()) return new List<AnalysedComponent>();
-//
-//            if (!track)
-//            {
-//                return analysedComponents
-//                    .Select(ac => new AnalysedComponent
-//                    {
-//                        Id = ac.Id,
-//                        ComponentType = ac.ComponentType,
-//                        Value = ac.Value,
-//                        Delay = ac.Delay,
-//                        RequestId = ac.RequestId,
-//                        CurrencyId = ac.CurrencyId
-//                    })
-//                    .ToList();
-//            }
-//            
-//            return analysedComponents
-//                .Select(ac => new AnalysedComponent
-//                {
-//                    AnalysedHistoricItems = ac.AnalysedHistoricItems,
-//                    Id = ac.Id,
-//                    ComponentType = ac.ComponentType,
-//                    Value = ac.Value,
-//                    Delay = ac.Delay,
-//                    RequestId = ac.RequestId,
-//                    CurrencyId = ac.CurrencyId
-//                })
-//                .ToList();
         }
 
         public ICollection<AnalysedComponent> GetTickerPairComponentsByCurrency(long currencyId, bool ensureValid = false, bool track = false)
