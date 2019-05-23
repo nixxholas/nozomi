@@ -33,9 +33,9 @@ namespace Nozomi.Service.HostedServices.StaticUpdater
                         .AsQueryable()
                         .Where(s => s.IsEnabled && s.DeletedAt == null)
                         .Include(s => s.CurrencyPairs)
-                        .ThenInclude(cp => cp.MainCurrency)
-                        .Include(s => s.CurrencyPairs)
-                        .ThenInclude(cp => cp.CounterCurrency)
+                        .ThenInclude(cp => cp.Source)
+                        .ThenInclude(s => s.SourceCurrencies)
+                        .ThenInclude(sc => sc.Currency)
                         // Historical Data Inclusions
                         .Include(s => s.CurrencyPairs)
                             .ThenInclude(cp => cp.AnalysedComponents)
@@ -71,9 +71,15 @@ namespace Nozomi.Service.HostedServices.StaticUpdater
                                 {
                                     MainTickerAbbreviation = 
                                         cp.MainCurrencyAbbrv,
-                                    MainTickerName = cp.MainCurrency.Name,
+                                    MainTickerName = cp.Source.SourceCurrencies
+                                        .SingleOrDefault(sc => sc.Currency.Abbreviation.Equals(cp.MainCurrencyAbbrv))?
+                                        .Currency?
+                                        .Name,
                                     CounterTickerAbbreviation = cp.CounterCurrencyAbbrv,
-                                    CounterTickerName = cp.CounterCurrency.Name,
+                                    CounterTickerName = cp.Source.SourceCurrencies
+                                        .SingleOrDefault(sc => sc.Currency.Abbreviation.Equals(cp.CounterCurrencyAbbrv))?
+                                        .Currency?
+                                        .Name,
                                     LastUpdated = cp.ModifiedAt,
                                     Properties = cp.AnalysedComponents
                                         ?.OrderByDescending(rc => rc.ComponentType)

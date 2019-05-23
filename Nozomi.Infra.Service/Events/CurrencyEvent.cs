@@ -331,11 +331,19 @@ namespace Nozomi.Service.Events
                         .AsNoTracking()
                         .Where(cp => cp.Id.Equals(analysedComponent.CurrencyPairId)
                                      && cp.DeletedAt == null && cp.IsEnabled)
-                        .Include(cp => cp.MainCurrency)
+                        .Include(cp => cp.Source)
+                        .ThenInclude(s => s.SourceCurrencies)
+                        .ThenInclude(sc => sc.Currency)
                         .ThenInclude(c => c.CurrencyRequests)
                         .ThenInclude(cr => cr.RequestComponents)
+                        .Where(cp => cp.Source != null && cp.Source.SourceCurrencies != null)
                         // Obtain the main currency
-                        .Select(cp => decimal.Parse(cp.MainCurrency
+                        .Select(cp => decimal.Parse(cp.Source
+                                                        .SourceCurrencies
+                                                        .SingleOrDefault(sc => 
+                                                            sc.Currency.Abbreviation.Equals(cp.MainCurrencyAbbrv)
+                                                            && sc.Currency.CurrencyRequests != null)
+                                                        .Currency
                                 // Traverse to the request
                                 .CurrencyRequests
                                 .Where(cr => cr.RequestComponents != null && cr.RequestComponents.Count > 0
@@ -358,11 +366,18 @@ namespace Nozomi.Service.Events
                     .AsNoTracking()
                     .Where(cp => cp.Id.Equals(analysedComponent.CurrencyPairId)
                                  && cp.DeletedAt == null && cp.IsEnabled)
-                    .Include(cp => cp.MainCurrency)
+                    .Include(cp => cp.Source)
+                    .ThenInclude(s => s.SourceCurrencies)
+                    .ThenInclude(sc => sc.Currency)
                     .ThenInclude(c => c.CurrencyRequests)
                     .ThenInclude(cr => cr.RequestComponents)
                     // Obtain the main currency
-                    .Select(cp => decimal.Parse(cp.MainCurrency
+                    .Select(cp => decimal.Parse(cp.Source
+                                                    .SourceCurrencies
+                                                    .SingleOrDefault(sc => 
+                                                        sc.Currency.Abbreviation.Equals(cp.MainCurrencyAbbrv)
+                                                        && sc.Currency.CurrencyRequests != null)
+                                                    .Currency
                                                     // Traverse to the request
                                                     .CurrencyRequests
                                                     .Where(cr => cr.RequestComponents != null && cr.RequestComponents.Count > 0
