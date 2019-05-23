@@ -29,7 +29,7 @@ namespace Nozomi.Service.Events.Interfaces
         /// <returns>Collection of request components related to the currency</returns>
         ICollection<Data.Models.Web.RequestComponent> GetAllByCurrency(long currencyId, bool track = false, int index = 0);
 
-        ICollection<RequestComponent> GetAllTickerPairCompsByCurrency(long currencyId, bool track = false);
+        ICollection<RequestComponent> GetAllTickerPairCompsByCurrency(long currencyId, bool track = false, int index = 0);
 
         ICollection<RequestComponent> GetAllByRequest(long requestId, bool includeNested = false);
 

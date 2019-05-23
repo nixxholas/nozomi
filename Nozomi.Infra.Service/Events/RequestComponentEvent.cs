@@ -505,7 +505,8 @@ namespace Nozomi.Service.Events
                 .ToList();
         }
 
-        public ICollection<RequestComponent> GetAllTickerPairCompsByCurrency(long currencyId, bool track = false)
+        public ICollection<RequestComponent> GetAllTickerPairCompsByCurrency(long currencyId, bool track = false, 
+            int index = 0)
         {
             // First, obtain the currency in question
             var qCurrency = _unitOfWork.GetRepository<Currency>()
@@ -569,6 +570,8 @@ namespace Nozomi.Service.Events
                                     RequestId = rc.RequestId,
                                     RcdHistoricItems = rc.RcdHistoricItems
                                         .Where(rcdhi => rcdhi.IsEnabled && rcdhi.DeletedAt == null)
+                                        .Skip(index * NozomiServiceConstants.RequestComponentTakeoutLimit)
+                                        .Take(NozomiServiceConstants.RequestComponentTakeoutLimit)
                                         .ToList()
                                 })))))
                 .Concat(qCurrency
@@ -593,6 +596,8 @@ namespace Nozomi.Service.Events
                                         RequestId = rc.RequestId,
                                         RcdHistoricItems = rc.RcdHistoricItems
                                             .Where(rcdhi => rcdhi.IsEnabled && rcdhi.DeletedAt == null)
+                                            .Skip(index * NozomiServiceConstants.RequestComponentTakeoutLimit)
+                                            .Take(NozomiServiceConstants.RequestComponentTakeoutLimit)
                                             .ToList()
                                     }))))))
                 .ToList();
