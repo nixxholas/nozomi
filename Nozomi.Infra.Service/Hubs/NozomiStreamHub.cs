@@ -186,6 +186,9 @@ namespace Nozomi.Service.Hubs
                                     new AnalysedComponentResponse
                                     {
                                         ComponentType = ac.ComponentType,
+                                        Historical = ac.AnalysedHistoricItems.OrderByDescending(ahi => ahi.HistoricDateTime)
+                                            .Select(ahi => ahi.Value)
+                                            .ToList(),
                                         Value = ac.Value
                                     }
                                 }
@@ -198,6 +201,9 @@ namespace Nozomi.Service.Hubs
                                 .Add(new AnalysedComponentResponse
                                 {
                                     ComponentType = ac.ComponentType,
+                                    Historical = ac.AnalysedHistoricItems.OrderByDescending(ahi => ahi.HistoricDateTime)
+                                        .Select(ahi => ahi.Value)
+                                        .ToList(),
                                     Value = ac.Value
                                 });
                         }

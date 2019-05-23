@@ -1,4 +1,6 @@
-﻿@using Nozomi.Data.Models.Web.Analytical
+﻿@using Newtonsoft.Json
+@using Nozomi.Data.Models.Web.Analytical
+@using Nozomi.Preprocessing
 @using Nozomi.Service.Events.Analysis.Interfaces
 @using Nozomi.Service.Identity.Managers
 @inject IAnalysedComponentEvent AnalysedComponentEvent
@@ -48,15 +50,17 @@
                          data-infinite="true"
                          data-autoplay="true"
                          data-speed="5000">
-                        <div class="js-slide mt-1">
+                        <div class="js-slide mt-1" v-for="currencyType in currencyTypes">
                             <!-- Icon Block -->
-                            <article class="card border-0 shadow-sm transition-3d-hover mb-3">
-                                <div class="mb-3 p-5">
-                                    <h1 class="h4 mb-0">Total Market Volume (Test)</h1>
+                            <article class="card border-0 shadow-sm transition-3d-hover mb-3"
+                                     v-if="currencyType.components !== null && currencyType.components.length > 0"
+                                     v-for="component in currencyType.components">
+                                <div class="mb-3 p-5" v-if="component.historical.length > 1">
+                                    <h1 class="h4 mb-0">{{ currencyType.name }} {{ getAnalysedCompTypeStr(component.componentType) }}</h1>
                                 </div>
-                                <div class="card-body bg-white rounded-top p-5">
+                                <div class="card-body bg-white rounded-top p-5" v-if="component.historical.length > 1">
                                     <trend
-                                        :data="[1,5,10]" radius="16"
+                                        :data="component.historical" radius="16"
                                         :gradient="['#6fa8dc', '#42b983', '#2c3e50']" auto-draw smooth>
                                     </trend>
                                 </div>
@@ -150,6 +154,10 @@
             el: "#content",
             // Just dish any random variable in for now
             data: {
+                acTypes: @Html.Raw(Json.Serialize(NozomiServiceConstants.analysedComponentTypes, new JsonSerializerSettings
+                 {
+                     ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                 })),
                 currencyDataFields: [
                     {
                         key: 'name',
@@ -223,6 +231,15 @@
                     });
             },
             methods: {
+                getAnalysedCompTypeStr(val) {
+                  if (this.acTypes != null) {
+                    for (i = 0; i < this.acTypes.length; i++) {
+                      if (this.acTypes[i].Value == val) {
+                        return this.acTypes[i].Key;
+                      }
+                    }
+                  }
+                },
                 getACValueByComponentType(collection, componentType) {
                     if (collection !== null && collection.length > 0) {
                         for (let i = 0; i < collection.length; i++) {

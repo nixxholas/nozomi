@@ -93,6 +93,9 @@ namespace Nozomi.Service.HostedServices
                                     new AnalysedComponentResponse
                                     {
                                         ComponentType = ac.ComponentType,
+                                        Historical = ac.AnalysedHistoricItems.OrderByDescending(ahi => ahi.HistoricDateTime)
+                                            .Select(ahi => ahi.Value)
+                                            .ToList(),
                                         Value = ac.Value
                                     }
                                 }
@@ -105,6 +108,9 @@ namespace Nozomi.Service.HostedServices
                                 .Add(new AnalysedComponentResponse
                                 {
                                     ComponentType = ac.ComponentType,
+                                    Historical = ac.AnalysedHistoricItems.OrderByDescending(ahi => ahi.HistoricDateTime)
+                                        .Select(ahi => ahi.Value)
+                                        .ToList(),
                                     Value = ac.Value
                                 });
                         }
