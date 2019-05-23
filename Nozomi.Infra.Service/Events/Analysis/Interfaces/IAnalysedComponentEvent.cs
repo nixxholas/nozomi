@@ -28,11 +28,11 @@ namespace Nozomi.Service.Events.Analysis.Interfaces
 
         ICollection<AnalysedComponent> GetAllByCurrencyType(long currencyTypeId, bool track = false, int index = 0);
         
-        ICollection<AnalysedComponent> GetAllCurrencyComponentsByType(long currencyTypeId, bool track = false);
+        ICollection<AnalysedComponent> GetAllCurrencyComponentsByType(long currencyTypeId, bool track = false, int index = 0);
 
-        ICollection<AnalysedComponent> GetAllByCorrelation(long analysedComponentId, bool track = false);
+        ICollection<AnalysedComponent> GetAllByCorrelation(long analysedComponentId, bool track = false, int index = 0);
 
-        ICollection<AnalysedComponent> GetAllByCurrencyPair(long currencyPairId, bool track = false);
+        ICollection<AnalysedComponent> GetAllByCurrencyPair(long currencyPairId, bool track = false, int index = 0);
 
         string GetCurrencyAbbreviation(AnalysedComponent analysedComponent);
     }

@@ -352,7 +352,8 @@ namespace Nozomi.Service.Events.Analysis
             return null;
         }
 
-        public ICollection<AnalysedComponent> GetAllByCorrelation(long analysedComponentId, bool track = false)
+        public ICollection<AnalysedComponent> GetAllByCorrelation(long analysedComponentId, bool track = false
+            ,int index = 0)
         {
             var aComp = _unitOfWork.GetRepository<AnalysedComponent>()
                 .GetQueryable()
@@ -371,6 +372,25 @@ namespace Nozomi.Service.Events.Analysis
             if (track)
             {
                 query = query.Include(ac => ac.AnalysedHistoricItems);
+                
+                return query
+                    .Select(ac => new AnalysedComponent
+                    {
+                        Id = ac.Id,
+                        ComponentType = ac.ComponentType,
+                        Value = ac.Value,
+                        IsDenominated = ac.IsDenominated,
+                        Delay = ac.Delay,
+                        UIFormatting = ac.UIFormatting,
+                        AnalysedHistoricItems = ac.AnalysedHistoricItems
+                            .OrderByDescending(ahi => ahi.HistoricDateTime)
+                            .Skip(index * 200)
+                            .Take(200)
+                            .ToList(),
+                        CurrencyId = ac.CurrencyId,
+                        Currency = ac.Currency
+                    })
+                    .ToList();
             }
 
             return query
@@ -536,7 +556,7 @@ namespace Nozomi.Service.Events.Analysis
 //                .ToList();
         }
 
-        public ICollection<AnalysedComponent> GetAllByCurrencyPair(long currencyPairId, bool track = false)
+        public ICollection<AnalysedComponent> GetAllByCurrencyPair(long currencyPairId, bool track = false, int index = 0)
         {
             var query = _unitOfWork.GetRepository<CurrencyPair>()
                 .GetQueryable()
@@ -547,9 +567,30 @@ namespace Nozomi.Service.Events.Analysis
             if (track)
             {
                  query.ThenInclude(ac => ac.AnalysedHistoricItems);
+                 
+                 return query.SelectMany(r => r.AnalysedComponents)
+                     .Select(ac => new AnalysedComponent
+                     {
+                         Id = ac.Id,
+                         ComponentType = ac.ComponentType,
+                         Value = ac.Value,
+                         IsDenominated = ac.IsDenominated,
+                         Delay = ac.Delay,
+                         UIFormatting = ac.UIFormatting,
+                         AnalysedHistoricItems = ac.AnalysedHistoricItems
+                             .OrderByDescending(ahi => ahi.HistoricDateTime)
+                             .Skip(index * 200)
+                             .Take(200)
+                             .ToList(),
+                         CurrencyId = ac.CurrencyId,
+                         Currency = ac.Currency
+                     })
+                     .ToList();
             }
 
-            return query.SelectMany(r => r.AnalysedComponents).ToList();
+            return query
+                .SelectMany(r => r.AnalysedComponents)
+                .ToList();
         }
 
         public string GetCurrencyAbbreviation(AnalysedComponent analysedComponent)
