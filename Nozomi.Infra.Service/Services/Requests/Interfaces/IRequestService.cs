@@ -15,7 +15,7 @@ namespace Nozomi.Service.Services.Requests.Interfaces
 
         NozomiResult<string> Update(UpdateRequest updateRequest, long userId = 0);
 
-        bool SoftDelete(long reqId, long userId = 0);
+        NozomiResult<string> SoftDelete(long reqId, long userId = 0);
 
     } 
 }

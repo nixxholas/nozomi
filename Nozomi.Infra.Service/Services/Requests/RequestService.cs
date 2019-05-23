@@ -84,7 +84,8 @@ namespace Nozomi.Service.Services.Requests
                     .SingleOrDefault();
 
                 if (reqToUpd == null)
-                    return new NozomiResult<string>(NozomiResultType.Failed, "Failed to update request. Unable to find the request");
+                    return new NozomiResult<string>(NozomiResultType.Failed,
+                        "Failed to update request. Unable to find the request");
 
                 reqToUpd.DataPath = updateRequest.DataPath;
                 reqToUpd.Delay = updateRequest.Delay;
@@ -103,27 +104,34 @@ namespace Nozomi.Service.Services.Requests
             }
         }
 
-        public bool SoftDelete(long reqId, long userId = 0)
+        public NozomiResult<string> SoftDelete(long reqId, long userId = 0)
         {
-            if (reqId > 0)
+            try
             {
-                var reqToDel = _unitOfWork.GetRepository<Request>()
-                    .Get(r => r.Id.Equals(reqId) && r.DeletedAt == null)
-                    .SingleOrDefault();
-
-                if (reqToDel != null)
+                if (reqId > 0 && userId >= 0)
                 {
-                    reqToDel.DeletedAt = DateTime.UtcNow;
-                    reqToDel.DeletedBy = userId;
+                    var reqToDel = _unitOfWork.GetRepository<Request>()
+                        .Get(r => r.Id.Equals(reqId) && r.DeletedAt == null)
+                        .SingleOrDefault();
 
-                    _unitOfWork.GetRepository<Request>().Update(reqToDel);
-                    _unitOfWork.Commit(userId);
+                    if (reqToDel != null)
+                    {
+                        reqToDel.DeletedAt = DateTime.UtcNow;
+                        reqToDel.DeletedBy = userId;
 
-                    return true;
+                        _unitOfWork.GetRepository<Request>().Update(reqToDel);
+                        _unitOfWork.Commit(userId);
+
+                        return new NozomiResult<string>(NozomiResultType.Success, "Request successfully deleted!");
+                    }
                 }
-            }
 
-            return false;
+                return new NozomiResult<string>(NozomiResultType.Failed, "Invalid request ID.");
+            }
+            catch (Exception ex)
+            {
+                return new NozomiResult<string>(NozomiResultType.Failed, ex.ToString());
+            }
         }
     }
 }
