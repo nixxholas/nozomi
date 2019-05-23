@@ -57,7 +57,7 @@ namespace Nozomi.Service.Events.Analysis
             return query.SingleOrDefault();
         }
 
-        public IEnumerable<AnalysedComponent> GetAll(bool filter = false, bool track = false)
+        public IEnumerable<AnalysedComponent> GetAll(bool filter = false, bool track = false, int index = 0)
         {
             var query = _unitOfWork.GetRepository<AnalysedComponent>()
                 .GetQueryable()
@@ -77,6 +77,24 @@ namespace Nozomi.Service.Events.Analysis
                     .Include(ac => ac.Currency)
                     .Include(ac => ac.CurrencyPair)
                     .Include(ac => ac.CurrencyType);
+                
+                return query
+                    .Select(ac => new AnalysedComponent
+                    {
+                        Id = ac.Id,
+                        ComponentType = ac.ComponentType,
+                        CurrencyType = ac.CurrencyType,
+                        CurrencyTypeId = ac.CurrencyTypeId,
+                        Value = ac.Value,
+                        IsDenominated = ac.IsDenominated,
+                        Delay = ac.Delay,
+                        UIFormatting = ac.UIFormatting,
+                        AnalysedHistoricItems = ac.AnalysedHistoricItems
+                            .OrderByDescending(ahi => ahi.HistoricDateTime)
+                            .Skip(index * 200)
+                            .Take(200)
+                            .ToList()
+                    });
             }
 
             return query;

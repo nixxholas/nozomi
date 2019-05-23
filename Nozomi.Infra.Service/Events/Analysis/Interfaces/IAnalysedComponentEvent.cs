@@ -14,7 +14,7 @@ namespace Nozomi.Service.Events.Analysis.Interfaces
         /// <param name="filter"></param>
         /// <param name="track"></param>
         /// <returns></returns>
-        IEnumerable<AnalysedComponent> GetAll(bool filter = false, bool track = false);
+        IEnumerable<AnalysedComponent> GetAll(bool filter = false, bool track = false, int index = 0);
         
         IEnumerable<AnalysedComponent> GetAll(int index = 0, bool filter = false, bool track = false);
 
