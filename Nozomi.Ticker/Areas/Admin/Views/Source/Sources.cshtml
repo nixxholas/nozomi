@@ -6,6 +6,8 @@
     <div class="container space-2">
         <h3 class="mb-6">Sources</h3>
 
+        <b-button variant="primary" class="mb-3" v-on:click="showCreateModal">Create</b-button>
+        
         <b-table
             :per-page="sourcesDataRowsPerPage" :current-page="currentSourceDataPage"
             :items="sources" :fields="dataFields">
@@ -77,6 +79,40 @@
     </b-form>
 </b-modal>
 
+<!-- CreateModal -->
+<b-modal ref="create-modal" size="xl" title="Create Source" ok-title="Create" v-on:ok="handleCreateOk">
+    <b-form v-on:submit.stop.prevent="onCreateSubmit">
+        <b-form-group label="Source Name">
+            <b-form-input
+                v-model="createForm.sourceName"
+                required
+                placeholder="Enter source name">
+            </b-form-input>
+        </b-form-group>
+
+        <b-form-group label="Abbreviation">
+            <b-form-input
+                v-model="createForm.abbreviation"
+                required
+                placeholder="Enter source abbreviation">
+            </b-form-input>
+        </b-form-group>
+
+        <b-form-group label="Api Docs URL">
+            <b-form-input
+                v-model="createForm.apiDocsURL"
+                required
+                type="url"
+                placeholder="Enter Api Docs URL abbreviation">
+            </b-form-input>
+        </b-form-group>
+        
+        <b-form-group>
+            <b-form-checkbox v-model="createForm.isEnabled">Is Enabled</b-form-checkbox>
+        </b-form-group>
+    </b-form>
+</b-modal>
+
 <!-- DeleteModal -->
 <b-modal ref="delete-modal" title="Confirm Delete" ok-title="Yes" ok-variant="danger" cancel-title="No" v-on:ok="handleDeleteOk" centered>
     <p>Are you sure that you want to delete {{ deleteModal.name }} source?</p>
@@ -123,10 +159,17 @@
                 ],
                 sourcesDataRowsPerPage: 20,
                 currentSourceDataPage: 1,
-                sources: @Html.Raw(JsonConvert.SerializeObject(@Model.Sources, Formatting.Indented, new JsonSerializerSettings
+                sources:
+                    @Html.Raw(JsonConvert.SerializeObject(@Model.Sources, Formatting.Indented, new JsonSerializerSettings
                     {
                         ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
                     })),
+                createForm: {
+                    sourceName: '',
+                    abbreviation: '',
+                    apiDocsURL: '',
+                    isEnabled: Boolean
+                },
                 editForm: {
                     id: Number,
                     sourceName: '',
@@ -140,6 +183,43 @@
                 }
             },
             methods: {
+                showCreateModal() {
+                    this.$refs['create-modal'].show();
+                },
+                handleCreateOk(bvModalEvt) {
+                    // Prevent modal from closing
+                    bvModalEvt.preventDefault();
+                    // Trigger submit handler
+                    this.onCreateSubmit();
+                },
+                async onCreateSubmit() {
+                    var formData = new FormData();
+                    formData.append('Id', this.createForm.id);
+                    formData.append('Name', this.createForm.sourceName);
+                    formData.append('Abbreviation', this.createForm.abbreviation);
+                    formData.append('ApiDocsURL', this.createForm.apiDocsURL);
+                    formData.append('IsEnabled', this.createForm.isEnabled);
+
+                    const response = await fetch('/Admin/Source/CreateSource',
+                        {
+                            method: 'POST',
+                            body: formData
+                        });
+
+                    if (response.status === 200) {
+                        const data = await response.json();
+
+                        const newRequest = data.item;                        
+                        
+                        this.requests.push(newRequest);
+                        // Put alert for now, change the ui later.
+                        alert(data.message);
+                    } else {
+                        alert("Create failed");
+                    }
+                    // Hide the modal manually
+                    this.$refs['create-modal'].hide();
+                },
                 // Methods for edit modal
                 showEditModal(id, sourceName, abbreviation, apiDocsURL, isEnabled) {
                     this.editForm.id = id;
@@ -186,7 +266,7 @@
                     } else {
                         alert("Update failed");
                     }
-                    
+
                     // Hide the modal manually
                     this.$refs['edit-modal'].hide();
                 },
