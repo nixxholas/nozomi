@@ -24,10 +24,10 @@
                         <!-- Breadcrumb -->
                         <ol class="breadcrumb breadcrumb-white breadcrumb-no-gutter mb-0">
                             <li class="breadcrumb-item">
-                                <a class="breadcrumb-link" asp-controller="Home" asp-action="Index">Home</a>
+                                <a class="breadcrumb-link" asp-area="Users" asp-controller="Home" asp-action="Index">Home</a>
                             </li>
                             <li class="breadcrumb-item">
-                                <a class="breadcrumb-link" asp-controller="Manage" asp-action="Index">Account</a>
+                                <a class="breadcrumb-link" asp-area="Users" asp-controller="Manage" asp-action="Index">Account</a>
                             </li>
                             <li class="breadcrumb-item active" aria-current="page">Dashboard</li>
                         </ol>
@@ -82,7 +82,7 @@
                                         data-animation-in="slideInUp"
                                         data-animation-out="fadeOut">
                                         <a id="generalDropdown" class="nav-link u-header__nav-link u-header__nav-link-toggle"
-                                           asp-controller="Manage" asp-action="Index" aria-haspopup="true" aria-expanded="false"
+                                           asp-area="Users" asp-controller="Manage" asp-action="Index" aria-haspopup="true" aria-expanded="false"
                                            aria-labelledby="generalDropdownMenu">
                                             General
                                         </a>
@@ -90,7 +90,7 @@
                                         <ul id="generalDropdownMenu" class="hs-sub-menu u-header__sub-menu u-header__sub-menu--spacer" style="min-width: 230px;" aria-labelledby="generalDropdown">
                                             <li>
                                                 <a class="nav-link u-header__sub-menu-nav-link"
-                                                   asp-controller="Manage" asp-action="Index">
+                                                   asp-area="Users" asp-controller="Manage" asp-action="Index">
                                                     Dashboard
                                                 </a>
                                             </li>
@@ -112,8 +112,7 @@
                                                     </li>
                                                     <li>
                                                         <a class="nav-link u-header__sub-menu-nav-link"
-                                                           asp-area="Admin"
-                                                           asp-controller="Request" asp-action="Requests">
+                                                           asp-area="Admin" asp-controller="Request" asp-action="Requests">
                                                             View Requests
                                                         </a>
                                                     </li>
