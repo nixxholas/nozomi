@@ -6,7 +6,7 @@ using Nozomi.Data.Models.Web.Logging;
 
 namespace Nozomi.Data.AreaModels.v1.Requests
 {
-    public class CreateRequest: BaseEntityModel
+    public class CreateRequest
     {
         
         [Required]
