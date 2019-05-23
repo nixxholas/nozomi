@@ -123,7 +123,10 @@
                 ],
                 sourcesDataRowsPerPage: 20,
                 currentSourceDataPage: 1,
-                sources: @Html.Raw(JsonConvert.SerializeObject(@Model.Sources)),
+                sources: @Html.Raw(JsonConvert.SerializeObject(@Model.Sources, Formatting.Indented, new JsonSerializerSettings
+                    {
+                        ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+                    })),
                 editForm: {
                     id: Number,
                     sourceName: '',
