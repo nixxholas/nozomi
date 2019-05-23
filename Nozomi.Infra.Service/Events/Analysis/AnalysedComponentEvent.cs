@@ -223,7 +223,8 @@ namespace Nozomi.Service.Events.Analysis
                 .ToList();
         }
 
-        public ICollection<AnalysedComponent> GetTickerPairComponentsByCurrency(long currencyId, bool ensureValid = false, bool track = false)
+        public ICollection<AnalysedComponent> GetTickerPairComponentsByCurrency(long currencyId, bool ensureValid = false, 
+            bool track = false, int index = 0)
         {
             var cPairs = _unitOfWork.GetRepository<CurrencyPair>()
                 .GetQueryable()
@@ -261,7 +262,11 @@ namespace Nozomi.Service.Events.Analysis
                     IsDenominated = ac.IsDenominated,
                     Delay = ac.Delay,
                     UIFormatting = ac.UIFormatting,
-                    AnalysedHistoricItems = ac.AnalysedHistoricItems,
+                    AnalysedHistoricItems = ac.AnalysedHistoricItems
+                        .OrderByDescending(ahi => ahi.HistoricDateTime)
+                        .Skip(index * 200)
+                        .Take(200)
+                        .ToList(),
                     CurrencyPairId = ac.CurrencyPairId,
                     CurrencyPair = ac.CurrencyPair
                 })
