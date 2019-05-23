@@ -87,7 +87,7 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
 
             var result = _requestService.Create(createRequest);
             
-            if (result.ResultType.Equals(NozomiResultType.Success)) return Ok(result.Item);
+            if (result.ResultType.Equals(NozomiResultType.Success)) return Ok(result);
 
             return NotFound();
         }
