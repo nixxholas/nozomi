@@ -40,5 +40,7 @@ namespace Nozomi.Preprocessing
         /// 4000 rows will cover 3.6k
         /// </summary>
         public const int AnalysedComponentTakeoutLimit = 5000;
+        
+        public const int RequestComponentTakeoutLimit = 10000;
     }
 }
