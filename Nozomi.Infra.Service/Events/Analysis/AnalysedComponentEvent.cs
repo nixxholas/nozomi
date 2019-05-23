@@ -46,6 +46,7 @@ namespace Nozomi.Service.Events.Analysis
                         Delay = ac.Delay,
                         UIFormatting = ac.UIFormatting,
                         AnalysedHistoricItems = ac.AnalysedHistoricItems
+                            .OrderByDescending(ahi => ahi.HistoricDateTime)
                             .Skip(index * 200)
                             .Take(200)
                             .ToList()
