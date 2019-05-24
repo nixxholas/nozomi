@@ -418,7 +418,7 @@ namespace Nozomi.Service.Events
         }
 
         public ICollection<DetailedCurrencyResponse> GetAllDetailed(string typeShortForm = "CRYPTO",
-            int index = 0, int daysOfData = 1)
+            int index = 0, int daysOfData = 7)
         {
             var currencies = _unitOfWork.GetRepository<CurrencyType>()
                 .GetQueryable()
@@ -453,6 +453,7 @@ namespace Nozomi.Service.Events
                                 Delay = ac.Delay,
                                 UIFormatting = ac.UIFormatting,
                                 AnalysedHistoricItems = ac.AnalysedHistoricItems
+                                    .Where(ahi => ahi.HistoricDateTime >= DateTime.UtcNow.Subtract(TimeSpan.FromDays(daysOfData)))
                                     .OrderByDescending(ahi => ahi.HistoricDateTime)
                                     .Skip(index * NozomiServiceConstants.AnalysedComponentTakeoutLimit)
                                     .Take(NozomiServiceConstants.AnalysedComponentTakeoutLimit)
