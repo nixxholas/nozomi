@@ -428,7 +428,8 @@ namespace Nozomi.Service.Events
                 .ThenInclude(c => c.AnalysedComponents)
                 .ThenInclude(ac => ac.AnalysedHistoricItems)
                 .SelectMany(ct => ct.Currencies
-                    .Where(c => c.DeletedAt == null && c.IsEnabled)
+                    .Where(c => c.DeletedAt == null && c.IsEnabled
+                                && c.AnalysedComponents.Count > 0)
                     .Select(c => new Currency
                     {
                         Id = c.Id,
