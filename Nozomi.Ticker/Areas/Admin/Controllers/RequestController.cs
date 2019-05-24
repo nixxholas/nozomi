@@ -21,14 +21,17 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
     public class RequestController : AreaBaseViewController<RequestController>
     {
         private readonly IRequestEvent _requestEvent;
+        private readonly IRequestComponentEvent _requestComponentEvent;
         private readonly IRequestService _requestService;
 
         public RequestController(ILogger<RequestController> logger, NozomiSignInManager signInManager,
-            NozomiUserManager userManager, IRequestEvent requestEvent, IRequestService requestService)
+            NozomiUserManager userManager, IRequestEvent requestEvent, IRequestService requestService,
+            IRequestComponentEvent requestComponentEvent)
             : base(logger, signInManager, userManager)
         {
             _requestEvent = requestEvent;
             _requestService = requestService;
+            _requestComponentEvent = requestComponentEvent;
         }
 
         #region GET Requests
@@ -53,7 +56,7 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
         
         #endregion
 
-        #region GET Request by GUID
+        #region GET Request by Id
         
         [HttpGet("{id}")]
         public async Task<IActionResult> Request([FromRoute] long id)
@@ -66,7 +69,7 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
 
             return View(new RequestViewModel
             {
-                Request = _requestEvent.GetActive(id, true).ToDTO(),
+                Request = _requestEvent.GetActive(id, true).ToDTO(_requestComponentEvent.GetAllByRequest(id)),
                 RequestTypes = NozomiServiceConstants.requestTypes,
                 ResponseTypes = NozomiServiceConstants.responseTypes
             });
