@@ -1,4 +1,5 @@
 @using Newtonsoft.Json
+@using Newtonsoft.Json.Serialization
 @model Nozomi.Base.Identity.ViewModels.Manage.IndexViewModel
 
 <!-- Content Section -->
@@ -12,25 +13,25 @@
             :per-page="sourcesDataRowsPerPage" :current-page="currentSourceDataPage"
             :items="sources" :fields="dataFields">
             <template slot="Name" slot-scope="datum">
-                {{ datum.item.Name }}
+                {{ datum.item.name }}
             </template>
             <template slot="Abbreviation" slot-scope="datum">
-                {{ datum.item.Abbreviation }}
+                {{ datum.item.abbreviation }}
             </template>
             <template slot="APIDocsURL" slot-scope="datum">
-                <a :href="datum.item.APIDocsURL">{{ datum.item.APIDocsURL }}</a>
+                <a :href="datum.item.aPIDocsURL">{{ datum.item.aPIDocsURL }}</a>
             </template>
             <template slot="isEnabled" slot-scope="datum">
-                <b-form-checkbox v-model="datum.item.IsEnabled" disabled/>
+                <b-form-checkbox v-model="datum.item.isEnabled" disabled/>
             </template>
             <template slot="Edit" slot-scope="datum">
                 <b-button variant="primary" b-modal.modal-xl
-                          v-on:click="showEditModal(datum.item.Id, datum.item.Name, datum.item.Abbreviation, datum.item.APIDocsURL, datum.item.IsEnabled)">
+                          v-on:click="showEditModal(datum.item.id, datum.item.name, datum.item.abbreviation, datum.item.aPIDocsURL, datum.item.isEnabled)">
                     Edit
                 </b-button>
             </template>
             <template slot="Delete" slot-scope="datum">
-                <b-button variant="danger" v-on:click="showDeleteModal(datum.item.Id, datum.item.Name)">Delete</b-button>
+                <b-button variant="danger" v-on:click="showDeleteModal(datum.item.id, datum.item.name)">Delete</b-button>
             </template>
         </b-table>
     </div>
@@ -163,6 +164,7 @@
                     @Html.Raw(JsonConvert.SerializeObject(@Model.Sources, Formatting.Indented, new JsonSerializerSettings
                     {
                         ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+                        ContractResolver = new CamelCasePropertyNamesContractResolver() 
                     })),
                 createForm: {
                     sourceName: '',
@@ -209,9 +211,11 @@
                     if (response.status === 200) {
                         const data = await response.json();
 
-                        const newRequest = data.item;                        
+                        const newRequest = data.item;
+
+                        console.log(newRequest);
                         
-                        this.requests.push(newRequest);
+                        this.sources.push(newRequest);
                         // Put alert for now, change the ui later.
                         alert(data.message);
                     } else {
