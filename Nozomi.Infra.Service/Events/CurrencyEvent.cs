@@ -418,24 +418,56 @@ namespace Nozomi.Service.Events
         }
 
         public ICollection<DetailedCurrencyResponse> GetAllDetailed(string typeShortForm = "CRYPTO",
-            int index = 0, int daysOfData = 1)
+            int index = 0, int daysOfData = 7)
         {
-            var currencyType = _unitOfWork.GetRepository<CurrencyType>()
+            var currencies = _unitOfWork.GetRepository<CurrencyType>()
                 .GetQueryable()
                 .AsNoTracking()
                 .Where(ct => ct.TypeShortForm.Equals(typeShortForm, StringComparison.InvariantCultureIgnoreCase))
                 .Include(ct => ct.Currencies)
                 .ThenInclude(c => c.AnalysedComponents)
                 .ThenInclude(ac => ac.AnalysedHistoricItems)
-                .SingleOrDefault();
-
-            if (currencyType == null) return null;
+                .SelectMany(ct => ct.Currencies
+                    .Where(c => c.DeletedAt == null && c.IsEnabled
+                                && c.AnalysedComponents.Count > 0)
+                    .Select(c => new Currency
+                    {
+                        Id = c.Id,
+                        CurrencyTypeId = c.CurrencyTypeId,
+                        Abbreviation = c.Abbreviation,
+                        Name = c.Name,
+                        Description = c.Description,
+                        Denominations = c.Denominations,
+                        DenominationName = c.DenominationName,
+                        WalletTypeId = c.WalletTypeId,
+                        AnalysedComponents = c.AnalysedComponents
+                            .Where(ac => ac.DeletedAt == null && ac.IsEnabled)
+                            .Select(ac => new AnalysedComponent
+                            {
+                                Id = ac.Id,
+                                ComponentType = ac.ComponentType,
+                                CurrencyType = ac.CurrencyType,
+                                CurrencyTypeId = ac.CurrencyTypeId,
+                                Value = ac.Value,
+                                IsDenominated = ac.IsDenominated,
+                                Delay = ac.Delay,
+                                UIFormatting = ac.UIFormatting,
+                                AnalysedHistoricItems = ac.AnalysedHistoricItems
+                                    .Where(ahi => ahi.HistoricDateTime >= DateTime.UtcNow.Subtract(TimeSpan.FromDays(daysOfData)))
+                                    .OrderByDescending(ahi => ahi.HistoricDateTime)
+                                    .Skip(index * NozomiServiceConstants.AnalysedComponentTakeoutLimit)
+                                    .Take(NozomiServiceConstants.AnalysedComponentTakeoutLimit)
+                                    .ToList()
+                            })
+                            .ToList()
+                    }))
+                .ToList();
 
             var res = new List<DetailedCurrencyResponse>();
 
-            foreach (var currency in currencyType.Currencies)
+            foreach (var currency in currencies)
             {
-                if (currency?.AnalysedComponents != null && currency.AnalysedComponents.Count > 0)
+                if (currency.AnalysedComponents != null && currency.AnalysedComponents.Count > 0)
                 {
                     res.Add(new DetailedCurrencyResponse(currency));
                 }

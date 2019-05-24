@@ -61,7 +61,8 @@ namespace Nozomi.Data.ResponseModels.Currency
                         {
                             AveragePriceHistory = ac.AnalysedHistoricItems
                                 .Where(ahi => !string.IsNullOrEmpty(ahi.Value)
-                                              && decimal.TryParse(ahi.Value, out var junk))
+                                              && decimal.TryParse(ahi.Value, out var junk)
+                                              && ahi.HistoricDateTime > DateTime.UtcNow.Subtract(TimeSpan.FromDays(7)))
                                 .Select(ahi => decimal.Parse(ahi.Value))
                                 .ToList();    
                         }
