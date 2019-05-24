@@ -14,6 +14,8 @@ using Nozomi.Data;
 using Nozomi.Data.Models.Currency;
 using Nozomi.Data.Models.Web;
 using Nozomi.Data.Models.Web.Analytical;
+using Nozomi.Data.Models.Web.Websocket;
+using Nozomi.Preprocessing;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Data;
@@ -89,7 +91,8 @@ namespace Nozomi.Service.Events
         /// <param name="analysedComponentId">The unique identifier of the analysed component
         /// that is related to the ticker in question.</param>
         /// <returns>Collection of request components related to the component</returns>
-        public ICollection<RequestComponent> GetAllByCorrelation(long analysedComponentId, bool track = false)
+        public ICollection<RequestComponent> GetAllByCorrelation(long analysedComponentId, bool track = false
+            , int index = 0)
         {
             var analysedComponent = _unitOfWork.GetRepository<AnalysedComponent>()
                 .GetQueryable()
@@ -125,7 +128,75 @@ namespace Nozomi.Service.Events
                             .Include(cp => cp.WebsocketRequests)
                             .ThenInclude(wsr => wsr.RequestComponents)
                             .Include(cp => cp.CurrencyPairRequests)
-                            .ThenInclude(cpr => cpr.RequestComponents);
+                            .ThenInclude(cpr => cpr.RequestComponents)
+                            .Select(cp => new CurrencyPair
+                            {
+                                Id = cp.Id,
+                                CurrencyPairType = cp.CurrencyPairType,
+                                APIUrl = cp.APIUrl,
+                                DefaultComponent = cp.DefaultComponent,
+                                SourceId = cp.SourceId,
+                                CurrencyPairRequests = cp.CurrencyPairRequests
+                                    .Where(cpr => cpr.DeletedAt == null && cpr.IsEnabled)
+                                    .Select(cpr => new CurrencyPairRequest
+                                    {
+                                        Id = cpr.Id,
+                                        Guid = cpr.Guid,
+                                        RequestType = cpr.RequestType,
+                                        DataPath = cpr.DataPath,
+                                        Delay = cpr.Delay,
+                                        FailureDelay = cpr.FailureDelay,
+                                        RequestComponents = cpr.RequestComponents
+                                            .Select(rc => new RequestComponent
+                                            {
+                                                Id = rc.Id,
+                                                ComponentType = rc.ComponentType,
+                                                Identifier = rc.Identifier,
+                                                QueryComponent = rc.QueryComponent,
+                                                IsDenominated = rc.IsDenominated,
+                                                AnomalyIgnorance = rc.AnomalyIgnorance,
+                                                Value = rc.Value,
+                                                RequestId = rc.RequestId,
+                                                RcdHistoricItems = rc.RcdHistoricItems
+                                                    .Where(rcdhi => rcdhi.DeletedAt == null && rcdhi.IsEnabled)
+                                                    .Skip(index * NozomiServiceConstants.RequestComponentTakeoutLimit)
+                                                    .Take(NozomiServiceConstants.RequestComponentTakeoutLimit)
+                                                    .ToList()
+                                            })
+                                            .ToList()
+                                    })
+                                    .ToList(),
+                                WebsocketRequests = cp.WebsocketRequests
+                                    .Where(wsr => wsr.DeletedAt == null && wsr.IsEnabled)
+                                    .Select(wsr => new WebsocketRequest
+                                    {
+                                        Id = wsr.Id,
+                                        Guid = wsr.Guid,
+                                        RequestType = wsr.RequestType,
+                                        DataPath = wsr.DataPath,
+                                        Delay = wsr.Delay,
+                                        FailureDelay = wsr.FailureDelay,
+                                        RequestComponents = wsr.RequestComponents
+                                            .Select(rc => new RequestComponent
+                                            {
+                                                Id = rc.Id,
+                                                ComponentType = rc.ComponentType,
+                                                Identifier = rc.Identifier,
+                                                QueryComponent = rc.QueryComponent,
+                                                IsDenominated = rc.IsDenominated,
+                                                AnomalyIgnorance = rc.AnomalyIgnorance,
+                                                Value = rc.Value,
+                                                RequestId = rc.RequestId,
+                                                RcdHistoricItems = rc.RcdHistoricItems
+                                                    .Where(rcdhi => rcdhi.DeletedAt == null && rcdhi.IsEnabled)
+                                                    .Skip(index * NozomiServiceConstants.RequestComponentTakeoutLimit)
+                                                    .Take(NozomiServiceConstants.RequestComponentTakeoutLimit)
+                                                    .ToList()
+                                            })
+                                            .ToList()
+                                    })
+                                    .ToList()
+                            });
                     }
 
                     var currencyPair = query.SingleOrDefault();
@@ -158,7 +229,34 @@ namespace Nozomi.Service.Events
 
                     if (track)
                     {
-                        query.ThenInclude(rc => rc.RcdHistoricItems);
+                        query.ThenInclude(rc => rc.RcdHistoricItems)
+                            .Select(cr => new CurrencyRequest
+                            {
+                                Id = cr.Id,
+                                Guid = cr.Guid,
+                                RequestType = cr.RequestType,
+                                DataPath = cr.DataPath,
+                                Delay = cr.Delay,
+                                FailureDelay = cr.FailureDelay,
+                                RequestComponents = cr.RequestComponents
+                                    .Select(rc => new RequestComponent
+                                    {
+                                        Id = rc.Id,
+                                        ComponentType = rc.ComponentType,
+                                        Identifier = rc.Identifier,
+                                        QueryComponent = rc.QueryComponent,
+                                        IsDenominated = rc.IsDenominated,
+                                        AnomalyIgnorance = rc.AnomalyIgnorance,
+                                        Value = rc.Value,
+                                        RequestId = rc.RequestId,
+                                        RcdHistoricItems = rc.RcdHistoricItems
+                                            .Where(rcdhi => rcdhi.DeletedAt == null && rcdhi.IsEnabled)
+                                            .Skip(index * NozomiServiceConstants.RequestComponentTakeoutLimit)
+                                            .Take(NozomiServiceConstants.RequestComponentTakeoutLimit)
+                                            .ToList()
+                                    })
+                                    .ToList()
+                            });
                     }
 
                     var currencyReqs = query.ToList();
@@ -368,7 +466,7 @@ namespace Nozomi.Service.Events
         /// </summary>
         /// <param name="currencyId">Base Currency Id</param>
         /// <returns></returns>
-        public ICollection<RequestComponent> GetAllByCurrency(long currencyId, bool track = false)
+        public ICollection<RequestComponent> GetAllByCurrency(long currencyId, bool track = false, int index = 0)
         {
             // First, obtain the currency in question
             var qCurrency = _unitOfWork.GetRepository<Currency>()
@@ -400,11 +498,15 @@ namespace Nozomi.Service.Events
                         QueryComponent = rc.QueryComponent,
                         Value = rc.Value,
                         RcdHistoricItems = rc.RcdHistoricItems
+                            .Skip(index * NozomiServiceConstants.RequestComponentTakeoutLimit)
+                            .Take(NozomiServiceConstants.RequestComponentTakeoutLimit)
+                            .ToList()
                     })))
                 .ToList();
         }
 
-        public ICollection<RequestComponent> GetAllTickerPairCompsByCurrency(long currencyId, bool track = false)
+        public ICollection<RequestComponent> GetAllTickerPairCompsByCurrency(long currencyId, bool track = false, 
+            int index = 0)
         {
             // First, obtain the currency in question
             var qCurrency = _unitOfWork.GetRepository<Currency>()
@@ -468,6 +570,8 @@ namespace Nozomi.Service.Events
                                     RequestId = rc.RequestId,
                                     RcdHistoricItems = rc.RcdHistoricItems
                                         .Where(rcdhi => rcdhi.IsEnabled && rcdhi.DeletedAt == null)
+                                        .Skip(index * NozomiServiceConstants.RequestComponentTakeoutLimit)
+                                        .Take(NozomiServiceConstants.RequestComponentTakeoutLimit)
                                         .ToList()
                                 })))))
                 .Concat(qCurrency
@@ -492,6 +596,8 @@ namespace Nozomi.Service.Events
                                         RequestId = rc.RequestId,
                                         RcdHistoricItems = rc.RcdHistoricItems
                                             .Where(rcdhi => rcdhi.IsEnabled && rcdhi.DeletedAt == null)
+                                            .Skip(index * NozomiServiceConstants.RequestComponentTakeoutLimit)
+                                            .Take(NozomiServiceConstants.RequestComponentTakeoutLimit)
                                             .ToList()
                                     }))))))
                 .ToList();

@@ -19,7 +19,7 @@ namespace Nozomi.Service.Events.Interfaces
         /// <param name="analysedComponentId">The unique identifier of the analysed component
         /// that is related to the ticker in question.</param>
         /// <returns>Collection of request components related to the component</returns>
-        ICollection<RequestComponent> GetAllByCorrelation(long analysedComponentId, bool track = false);
+        ICollection<RequestComponent> GetAllByCorrelation(long analysedComponentId, bool track = false, int index = 0);
 
         /// <summary>
         /// Obtains all RequestComponents relevant to the currency given, utilizing it as
@@ -27,9 +27,9 @@ namespace Nozomi.Service.Events.Interfaces
         /// </summary>
         /// <param name="currencyId">The unique identifier of the base currency</param>
         /// <returns>Collection of request components related to the currency</returns>
-        ICollection<Data.Models.Web.RequestComponent> GetAllByCurrency(long currencyId, bool track = false);
+        ICollection<Data.Models.Web.RequestComponent> GetAllByCurrency(long currencyId, bool track = false, int index = 0);
 
-        ICollection<RequestComponent> GetAllTickerPairCompsByCurrency(long currencyId, bool track = false);
+        ICollection<RequestComponent> GetAllTickerPairCompsByCurrency(long currencyId, bool track = false, int index = 0);
 
         ICollection<RequestComponent> GetAllByRequest(long requestId, bool includeNested = false);
 
