@@ -49,7 +49,7 @@ namespace Nozomi.Service.Events
             var testCol = query.ToList();
             #endif
 
-            return query;
+            return query.ToList();
         }
         
         // Get all including disabled sources.
