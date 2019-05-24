@@ -36,7 +36,7 @@ namespace Nozomi.Service.Events
             return query.FirstOrDefault(r => r.Guid.Equals(guid));
         }
         
-        public Request GetActive(long id, bool track = false)
+        public Request GetActive(long id, bool includeNested = false)
         {
             var query = _unitOfWork.GetRepository<Request>()
                 .GetQueryable()
@@ -44,7 +44,7 @@ namespace Nozomi.Service.Events
 
             if (query != null)
             {
-                if (track)
+                if (includeNested)
                 {
                     query.Include(r => r.RequestComponents)
                         .Include(r => r.RequestLogs)
