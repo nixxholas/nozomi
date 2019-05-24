@@ -18,19 +18,19 @@ namespace Nozomi.Data.Models.Web
         public Guid Guid { get; set; }
 
         public RequestType RequestType { get; set; }
-        
+
         public ResponseType ResponseType { get; set; }
 
         /// <summary>
         /// URL.
         /// </summary>
         public string DataPath { get; set; }
-        
+
         /// <summary>
         /// Defines the delay of repeating in milliseconds.
         /// </summary>
         public int Delay { get; set; }
-        
+
         public long FailureDelay { get; set; }
 
         public ICollection<RequestComponent> RequestComponents { get; set; }
@@ -40,17 +40,17 @@ namespace Nozomi.Data.Models.Web
         public bool IsValid()
         {
             return (!string.IsNullOrEmpty(DataPath) && !string.IsNullOrWhiteSpace(DataPath)
-                    && RequestType >= 0);
+                                                    && RequestType >= 0);
         }
 
         public bool IsValidForPolling()
         {
             return (!string.IsNullOrEmpty(DataPath) && !string.IsNullOrWhiteSpace(DataPath)
                                                     && RequestType >= 0)
-                && (RequestComponents != null) && RequestComponents.Count > 0; 
+                   && (RequestComponents != null) && RequestComponents.Count > 0;
         }
 
-        public RequestDTO ToDTO()
+        public RequestDTO ToDTO(ICollection<RequestComponent> requestComponents)
         {
             return new RequestDTO
             {
@@ -62,6 +62,16 @@ namespace Nozomi.Data.Models.Web
                 Delay = Delay,
                 FailureDelay = FailureDelay,
                 IsEnabled = IsEnabled,
+                RequestComponents = requestComponents.Select(rc => new RequestComponentDTO
+                {
+                    AnomalyIgnorance = rc.AnomalyIgnorance,
+                    ComponentType = rc.ComponentType,
+                    Id = rc.Id,
+                    Identifier = rc.Identifier,
+                    IsDenominated = rc.IsDenominated,
+                    QueryComponent = rc.QueryComponent,
+                    Value = rc.Value
+                }).ToList(),
 //                AnalysedComponents = AnalysedComponents
 //                    .Select(ac => new AnalysedComponentDTO
 //                    {
