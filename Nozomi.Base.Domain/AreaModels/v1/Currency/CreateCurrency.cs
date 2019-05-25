@@ -8,7 +8,7 @@ namespace Nozomi.Data.AreaModels.v1.Currency
         public long CurrencyTypeId { get; set; }
 
         [Required]
-        public string Abbrv { get; set; } // USD? MYR? IND?
+        public string Abbreviation { get; set; } // USD? MYR? IND?
 
         [Required]
         public string Name { get; set; }
@@ -25,7 +25,7 @@ namespace Nozomi.Data.AreaModels.v1.Currency
 
         public bool IsValid()
         {
-            return CurrencyTypeId > 0 && !string.IsNullOrEmpty(Abbrv) && !string.IsNullOrEmpty(Name)
+            return CurrencyTypeId > 0 && !string.IsNullOrEmpty(Abbreviation) && !string.IsNullOrEmpty(Name)
                    && CurrencySourceId > 0;
         }
     }
