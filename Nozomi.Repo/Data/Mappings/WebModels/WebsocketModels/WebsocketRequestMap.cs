@@ -23,7 +23,7 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.WebsocketModels
                 {
                     Id = 13,
                     CurrencyPairId = 9,
-                    Guid = Guid.NewGuid(),
+                    Guid = Guid.Parse("6f9d8fe7-71f4-42b8-ac31-526f559549a3"),
                     RequestType = RequestType.WebSocket,
                     ResponseType = ResponseType.Json,
                     DataPath = "wss://stream.binance.com:9443/stream?streams=!ticker@arr",
@@ -33,7 +33,7 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.WebsocketModels
                 {
                     Id = 14,
                     CurrencyPairId = 10,
-                    Guid = Guid.NewGuid(),
+                    Guid = Guid.Parse("dc33dc82-26e5-4eef-af44-78e1efce2d1f"),
                     RequestType = RequestType.WebSocket,
                     ResponseType = ResponseType.Json,
                     DataPath = "wss://stream.binance.com:9443/stream?streams=!ticker@arr",
