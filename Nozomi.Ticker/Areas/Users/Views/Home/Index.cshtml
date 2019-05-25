@@ -60,7 +60,7 @@
                                 </div>
                                 <div class="card-body bg-white rounded-top p-5" v-if="component.historical.length > 1">
                                     <trend
-                                        :data="component.historical" radius="16"
+                                        :data="component.historical.map(Number)" radius="16"
                                         :gradient="['#6fa8dc', '#42b983', '#2c3e50']" auto-draw smooth>
                                     </trend>
                                 </div>

@@ -12,6 +12,7 @@ using Nozomi.Data.ResponseModels.AnalysedComponent;
 using Nozomi.Data.ResponseModels.CurrencyType;
 using Nozomi.Infra.Preprocessing.SignalR;
 using Nozomi.Infra.Preprocessing.SignalR.Hubs.Interfaces;
+using Nozomi.Preprocessing;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Service.Events.Analysis.Interfaces;
 using Nozomi.Service.Events.Interfaces;
@@ -53,7 +54,9 @@ namespace Nozomi.Service.HostedServices
                     
                     await _nozomiStreamHub.Clients.Group(NozomiSocketGroup.CurrencyTypes.GetDescription())
                         .CurrencyTypes(ObtainCurrencyTypeResponses(_analysedComponentEvent
-                            .GetAllCurrencyTypeAnalysedComponents(0, true, true)));
+                            .GetAllCurrencyTypeAnalysedComponents(0, true, true)
+                            .Where(ac => AnalysisConstants.LiveAnalysedComponentTypes.Contains(ac.ComponentType))
+                            .ToList()));
                 }
                 catch (Exception ex)
                 {
