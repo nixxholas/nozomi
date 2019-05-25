@@ -24,16 +24,6 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
         private readonly ICurrencyTypeEvent _currencyTypeEvent;
         private readonly ISourceEvent _sourceEvent;
 
-        [Route("{abbreviation}")]
-        public IActionResult Currency([FromRoute] string abbreviation)
-        {
-            var vm = new CurrencyViewModel
-            {
-                Currency = _currencyAdminEvent.GetCurrencyByAbbreviation(abbreviation)
-            };
-
-            return View(vm);
-        }
 
         public CurrencyController(ILogger<CurrencyController> logger, NozomiSignInManager signInManager,
             NozomiUserManager userManager, ICurrencyEvent currencyEvent, ICurrencyAdminEvent currencyAdminEvent,
@@ -70,7 +60,22 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
         
         #endregion
 
+        #region Get Currency(id)
+        
+        [Route("{abbreviation}")]
+        public IActionResult Currency([FromRoute] string abbreviation)
+        {
+            var vm = new CurrencyViewModel
+            {
+                Currency = _currencyAdminEvent.GetCurrencyByAbbreviation(abbreviation)
+            };
+
+            return View(vm);
+        }
+        #endregion
+        
         #region PUT EditCurrency
+        
 
         [HttpPut("{id}")]
         public async Task<IActionResult> EditCurrency(long id, UpdateCurrency updateCurrency)
