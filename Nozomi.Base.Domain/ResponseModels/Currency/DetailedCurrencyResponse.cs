@@ -35,8 +35,6 @@ namespace Nozomi.Data.ResponseModels.Currency
         public List<decimal> AveragePriceHistory { get; set; }
         
         public DateTime LastUpdated { get; set; }
-        
-        public ICollection<CurrencyTickerPair> CurrencyTickerPairs { get; set; }
 
         public DetailedCurrencyResponse()
         {
@@ -71,7 +69,7 @@ namespace Nozomi.Data.ResponseModels.Currency
                                               && decimal.TryParse(ahi.Value, out var junk)
                                               && ahi.HistoricDateTime > DateTime.UtcNow.Subtract(TimeSpan.FromDays(7)))
                                 .Select(ahi => decimal.Parse(ahi.Value))
-                                .ToList();    
+                                .ToList();
                         }
 
                         break;
