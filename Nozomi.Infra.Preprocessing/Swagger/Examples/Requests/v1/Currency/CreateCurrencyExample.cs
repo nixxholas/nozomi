@@ -10,7 +10,7 @@ namespace Nozomi.Preprocessing.Swagger.Examples.Requests.v1.Currency
             return new CreateCurrency()
             {
                 CurrencyTypeId = 1, // 1, FIAT; 2, CRYPTO
-                Abbrv = "EUR",
+                Abbreviation = "EUR",
                 Name = "Euro",
                 CurrencySourceId = 1,
                 WalletTypeId = 0
