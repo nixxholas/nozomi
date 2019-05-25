@@ -31,6 +31,8 @@ namespace Nozomi.Data.ResponseModels.Currency
         public Dictionary<ComponentType, List<ComponentHistoricalDatum>> Historical { get; set; }
 
         public List<decimal> AveragePriceHistory { get; set; }
+        
+        public DateTime LastUpdated { get; set; }
 
         public DetailedCurrencyResponse()
         {

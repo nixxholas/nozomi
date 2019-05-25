@@ -145,7 +145,7 @@ namespace Nozomi.Service.Events
                             Id = c.Id,
                             CurrencyTypeId = c.Currency.CurrencyTypeId,
                             CurrencyType = c.Currency.CurrencyType.Name,
-                            Abbrv = c.Currency.Abbreviation,
+                            Abbreviation = c.Currency.Abbreviation,
                             Name = c.Currency.Name
                         })
                         .ToList()
@@ -172,7 +172,7 @@ namespace Nozomi.Service.Events
                             Id = c.Id,
                             CurrencyTypeId = c.Currency.CurrencyTypeId,
                             CurrencyType = c.Currency.CurrencyType.Name,
-                            Abbrv = c.Currency.Abbreviation,
+                            Abbreviation = c.Currency.Abbreviation,
                             Name = c.Currency.Name
                         })
                         .ToList()
