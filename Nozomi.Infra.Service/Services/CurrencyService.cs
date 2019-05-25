@@ -36,7 +36,7 @@ namespace Nozomi.Service.Services
                     var currencyExists = _unitOfWork.GetRepository<Currency>()
                         .GetQueryable()
                         .AsNoTracking()
-                        .Any(c => c.Abbreviation.Equals(createCurrency.Abbrv,
+                        .Any(c => c.Abbreviation.Equals(createCurrency.Abbreviation,
                             StringComparison.InvariantCultureIgnoreCase));
 
                     var sourceExists = _unitOfWork.GetRepository<Source>()
@@ -48,7 +48,7 @@ namespace Nozomi.Service.Services
                     {
                         var currency = new Currency()
                         {
-                            Abbreviation = createCurrency.Abbrv,
+                            Abbreviation = createCurrency.Abbreviation,
                             Name = createCurrency.Name,
                             CurrencyTypeId = createCurrency.CurrencyTypeId,
                             WalletTypeId = createCurrency.WalletTypeId
@@ -77,7 +77,7 @@ namespace Nozomi.Service.Services
                         var currency = _unitOfWork.GetRepository<Currency>()
                             .GetQueryable()
                             .AsNoTracking()
-                            .SingleOrDefault(c => c.Abbreviation.Equals(createCurrency.Abbrv,
+                            .SingleOrDefault(c => c.Abbreviation.Equals(createCurrency.Abbreviation,
                                 StringComparison.InvariantCultureIgnoreCase));
                         
                         // Make sure source exists before adding
@@ -115,12 +115,12 @@ namespace Nozomi.Service.Services
 
                 if (currToUpd != null)
                 {
-                    currToUpd.Abbreviation = currency.Abbrv;
+                    currToUpd.Abbreviation = currency.Abbreviation;
                     currToUpd.CurrencyTypeId = currency.CurrencyTypeId;
                     currToUpd.Description = currency.Description;
                     currToUpd.Denominations = currency.Denominations;
                     currToUpd.DenominationName = currency.DenomationName;
-                    currToUpd.Name = currency.Name;
+                    currToUpd.Name =currency.Name;
                     currToUpd.WalletTypeId = currency.WalletTypeId;
                     currToUpd.IsEnabled = currency.IsEnabled;
                     
