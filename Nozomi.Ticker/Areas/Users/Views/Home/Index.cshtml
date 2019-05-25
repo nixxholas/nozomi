@@ -94,8 +94,8 @@
                   </div>
                 <!-- A virtual composite column -->
                 <template slot="name" slot-scope="datum">
-                    <a :href="'/currency/' + datum.item.abbreviation">{{ datum.item.name }}</a><br>
-                    {{ datum.item.abbreviation }}
+                    <img :src="datum.item.logoPath" class="mr-1" style="width: 24px; height: 24px; vertical-align: bottom;"/>
+                    <a :href="'/currency/' + datum.item.abbreviation">{{ datum.item.name }}</a>
                 </template>
                 <!-- A virtual composite column -->
                 <template slot="marketCap" slot-scope="datum">
