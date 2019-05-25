@@ -58,7 +58,7 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
             // Will be using IndexViewModel for now because it does the same thing
             var vm = new IndexViewModel
             {
-                Sources = _sourceEvent.GetAll(true).ToList()
+                Sources = _sourceEvent.GetAllNonDeleted(true).ToList()
             };
 
             return View(vm);
