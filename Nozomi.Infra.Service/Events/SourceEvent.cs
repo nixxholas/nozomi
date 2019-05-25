@@ -52,6 +52,32 @@ namespace Nozomi.Service.Events
             return query.ToList();
         }
         
+        public IEnumerable<Source> GetAllNonDeleted(bool countPairs = false, bool includeNested = false)
+        {
+            var query = _unitOfWork.GetRepository<Source>()
+                .GetQueryable()
+                .Where(s => s.DeletedAt == null);
+
+            if (countPairs)
+            {
+                query = query
+                    .Include(s => s.CurrencyPairs);
+            }
+
+            if (includeNested)
+            {
+                query = query
+                    .Include(s => s.SourceCurrencies)
+                    .ThenInclude(sc => sc.Currency)
+                    .Include(s => s.CurrencyPairs)
+                    .ThenInclude(cp => cp.Source)
+                    .ThenInclude(s => s.SourceCurrencies)
+                    .ThenInclude(sc => sc.Currency);
+            }
+            
+            return query;
+        }
+        
         // Get all including disabled sources.
         public IEnumerable<Source> GetAll(bool countPairs = false, bool includeNested = false)
         {
