@@ -532,7 +532,7 @@ namespace Nozomi.Service.Events
             if (createCurrency != null && createCurrency.IsValid())
             {
                 return _unitOfWork.GetRepository<Currency>()
-                    .Get(c => c.Abbreviation.Equals(createCurrency.Abbrv)).Any();
+                    .Get(c => c.Abbreviation.Equals(createCurrency.Abbreviation)).Any();
             }
 
             return false;
