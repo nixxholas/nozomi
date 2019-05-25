@@ -1,7 +1,13 @@
 @using Newtonsoft.Json
 @using Nozomi.Data.Models.Web.Analytical
 @using Nozomi.Preprocessing
+@using Nozomi.Service.Events.Interfaces
+@inject ITickerEvent _TickerEvent
 @model Nozomi.Data.Models.Currency.Currency
+
+@{
+    var tickerPairs = _TickerEvent.GetCurrencyTickerPairs(Model.Abbreviation);
+}
 
 <!-- Description Section -->
 <div id="partialView" class="container space-2 space-top-md-4 space-bottom-md-3">
@@ -18,6 +24,7 @@
                      data-offset-top="80"
                      data-offset-bottom="130">
                     <div class="mb-6">
+                        <img :src="'/' + currency.LogoPath" class="mb-2" style="height: 48px;"/>
                         <h1 class="h2 text-primary font-weight-semi-bold">{{ currency.Name }}</h1>
                         <p class="mb-0">{{ currency.Description }}</p>
                     </div>
@@ -47,20 +54,6 @@
                                 </small>
                             </div>
                         </li>
-
-                        @* <li class="media"> *@
-                        @*   <div class="d-flex w-40 w-sm-30"> *@
-                        @*     <h4 class="h6">Ticker Pairs</h4> *@
-                        @*   </div> *@
-                        @*   <div class="media-body"> *@
-                        @*     <small class="d-block text-muted" v-for="tp in currency.TickerPairs"> *@
-                        @*       {{ tp.PairAbbreviation }} *@
-                        @*       <span class="badge badge-pill badge-primary" v-for="source in tp.Sources"> *@
-                        @*         {{ source.Name }} *@
-                        @*       </span> *@
-                        @*     </small> *@
-                        @*   </div> *@
-                        @* </li> *@
                     </ul>
                     <!-- End List -->
 
@@ -163,12 +156,12 @@
                             <div class="row justify-content-lg-between align-items-lg-center">
                                 <div class="col">
                                     <b-table :fields="tickerPairTableFields"
-                                             :items="currency.TickerPairs">
-                                        <template slot="PairAbbreviation" slot-scope="datum">
-                                            {{ datum.item.PairAbbreviation }}
+                                             :items="tickerPairs">
+                                        <template slot="TickerPair" slot-scope="datum">
+                                            {{ datum.item.TickerPair }}
                                         </template>
-                                        <template slot="Sources" slot-scope="datum">
-                                            <small v-for="source in datum.item.Sources">{{ source.Name }}</small>
+                                        <template slot="Source" slot-scope="datum">
+                                            {{ datum.item.Source }}
                                         </template>
                                     </b-table>
                                 </div>
@@ -221,6 +214,10 @@
                   {
                       ReferenceLoopHandling = ReferenceLoopHandling.Ignore
                   })),
+                  tickerPairs: @Html.Raw(Json.Serialize(tickerPairs, new JsonSerializerSettings
+                               {
+                                   ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                               })),
         currencyHistoricPrice: [],
         currencyHistoricPriceFields: [
           {
@@ -235,13 +232,13 @@
           }],
         tickerPairTableFields: [
           {
-            key: 'PairAbbreviation',
+            key: 'TickerPair',
             label: 'Pair',
             sortable: true
           },
           {
-            key: 'Sources',
-            label: 'Exchanges',
+            key: 'Source',
+            label: 'Exchange',
             sortable: false
           }]
       },
