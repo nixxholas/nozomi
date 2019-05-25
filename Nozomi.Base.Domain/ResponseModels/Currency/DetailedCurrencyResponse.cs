@@ -76,37 +76,5 @@ namespace Nozomi.Data.ResponseModels.Currency
                 }
             }
         }
-
-        private void ConfigureHistoricals(List<Models.Currency.CurrencyPair> currencyPairs)
-        {
-            Historical = new Dictionary<ComponentType, List<ComponentHistoricalDatum>>();
-
-            foreach (var reqComp in currencyPairs
-                .SelectMany(cp => cp.CurrencyPairRequests
-                    .SelectMany(cpr => cpr.RequestComponents)))
-            {
-                if (reqComp.RcdHistoricItems != null &&
-                    reqComp.RcdHistoricItems.Count > 0)
-                {
-                    var rcdhiList = reqComp.RcdHistoricItems;
-
-                    foreach (var rcdhi in rcdhiList)
-                    {
-                        if (Historical.ContainsKey(reqComp.ComponentType))
-                        {
-                            Historical[reqComp.ComponentType].Add(new ComponentHistoricalDatum
-                            {
-                                CreatedAt = rcdhi.HistoricDateTime,
-                                Value = rcdhi.Value
-                            });
-                        }
-                        else
-                        {
-                            Historical.Add(reqComp.ComponentType, new List<ComponentHistoricalDatum>());
-                        }
-                    }
-                }
-            }
-        }
     }
 }
