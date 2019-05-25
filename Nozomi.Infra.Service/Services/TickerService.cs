@@ -73,7 +73,7 @@ namespace Nozomi.Service.Services
                 {
                     CurrencySourceId = createTickerInputModel.CurrencySourceId,
                     CurrencyTypeId = mainCurrency.CurrencyTypeId,
-                    Abbrv = mainCurrency.Abbreviation,
+                    Abbreviation = mainCurrency.Abbreviation,
                     Name = mainCurrency.Name
                 });
                 
@@ -109,7 +109,7 @@ namespace Nozomi.Service.Services
                 {
                     CurrencySourceId = createTickerInputModel.CurrencySourceId,
                     CurrencyTypeId = counterCurrency.CurrencyTypeId,
-                    Abbrv = counterCurrency.Abbreviation,
+                    Abbreviation = counterCurrency.Abbreviation,
                     Name = counterCurrency.Name
                 });
                 
