@@ -26,12 +26,14 @@ namespace Nozomi.Service.Events
     public class CurrencyEvent : BaseEvent<CurrencyEvent, NozomiDbContext>, ICurrencyEvent
     {
         private readonly ICurrencyPairEvent _currencyPairEvent;
+        private readonly ITickerEvent _tickerEvent;
 
         public CurrencyEvent(ILogger<CurrencyEvent> logger, IUnitOfWork<NozomiDbContext> unitOfWork,
-            ICurrencyPairEvent currencyPairEvent)
+            ICurrencyPairEvent currencyPairEvent, ITickerEvent tickerEvent)
             : base(logger, unitOfWork)
         {
             _currencyPairEvent = currencyPairEvent;
+            _tickerEvent = tickerEvent;
         }
 
         public Currency Get(long id, bool track = false)
@@ -469,7 +471,8 @@ namespace Nozomi.Service.Events
             {
                 if (currency.AnalysedComponents != null && currency.AnalysedComponents.Count > 0)
                 {
-                    res.Add(new DetailedCurrencyResponse(currency));
+                    res.Add(new DetailedCurrencyResponse(currency, 
+                        _tickerEvent.GetCurrencyTickerPairs(currency.Abbreviation)));
                 }
             }
             
@@ -487,7 +490,10 @@ namespace Nozomi.Service.Events
                     .ThenInclude(ac => ac.AnalysedHistoricItems)
                 .SingleOrDefault();
 
-            return new DetailedCurrencyResponse(query);
+            if (query == null) return null;
+
+            return new DetailedCurrencyResponse(query, 
+                _tickerEvent.GetCurrencyTickerPairs(query.Abbreviation));
         }
 
         /// <summary>
@@ -508,7 +514,10 @@ namespace Nozomi.Service.Events
                 .ThenInclude(ac => ac.AnalysedHistoricItems)
                 .SingleOrDefault();
 
-            return new DetailedCurrencyResponse(query);
+            if (query == null) return null;
+
+            return new DetailedCurrencyResponse(query, 
+                _tickerEvent.GetCurrencyTickerPairs(query.Abbreviation));
         }
 
         public bool Any(CreateCurrency createCurrency)

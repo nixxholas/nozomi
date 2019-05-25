@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -9,6 +10,7 @@ using Nozomi.Data.Models.Currency;
 using Nozomi.Data.Models.Web;
 using Nozomi.Data.Models.Web.Analytical;
 using Nozomi.Data.ResponseModels.RequestComponent;
+using Nozomi.Data.ResponseModels.TickerPair;
 
 namespace Nozomi.Data.ResponseModels.Currency
 {
@@ -33,12 +35,14 @@ namespace Nozomi.Data.ResponseModels.Currency
         public List<decimal> AveragePriceHistory { get; set; }
         
         public DateTime LastUpdated { get; set; }
+        
+        public ICollection<CurrencyTickerPair> CurrencyTickerPairs { get; set; }
 
         public DetailedCurrencyResponse()
         {
         }
 
-        public DetailedCurrencyResponse(Models.Currency.Currency currency)
+        public DetailedCurrencyResponse(Models.Currency.Currency currency, ICollection<CurrencyTickerPair> currencyTickerPairs)
         {
             // Aggregate non-compounded properties first
             Name = currency.Name;
