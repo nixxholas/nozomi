@@ -48,6 +48,7 @@ namespace Nozomi.Data.ResponseModels.Currency
             Name = currency.Name;
             Abbreviation = currency.Abbreviation;
             LastUpdated = currency.ModifiedAt;
+            LogoPath = currency.LogoPath;
 
             foreach (var ac in currency.AnalysedComponents)
             {
