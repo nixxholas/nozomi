@@ -15,7 +15,7 @@ namespace Nozomi.Data.ResponseModels.Currency
     /// <summary>
     /// Detailed Currency Response specific to a currency.
     /// </summary>
-    public class DetailedCurrencyResponse : DistinctiveCurrencyResponse
+    public class DetailedCurrencyResponse : CurrencyResponse
     {
         /// <summary>
         /// Obtain the live average price, averaged across ALL sources.
