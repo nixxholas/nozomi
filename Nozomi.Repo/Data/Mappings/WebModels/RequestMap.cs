@@ -27,9 +27,9 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
             entityTypeBuilder.Property(r => r.DataPath).IsRequired(false);
 
             entityTypeBuilder.HasMany(r => r.RequestComponents).WithOne(rc => rc.Request)
-                .HasForeignKey(rc => rc.RequestId);
+                .HasForeignKey(rc => rc.RequestId).OnDelete(DeleteBehavior.Cascade);
             entityTypeBuilder.HasMany(r => r.RequestProperties).WithOne(rp => rp.Request)
-                .HasForeignKey(rp => rp.RequestId);
+                .HasForeignKey(rp => rp.RequestId).OnDelete(DeleteBehavior.Cascade);
         }
     }
 }
