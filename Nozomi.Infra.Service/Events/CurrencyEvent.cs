@@ -441,6 +441,7 @@ namespace Nozomi.Service.Events
                         Description = c.Description,
                         Denominations = c.Denominations,
                         DenominationName = c.DenominationName,
+                        LogoPath = c.LogoPath,
                         WalletTypeId = c.WalletTypeId,
                         AnalysedComponents = c.AnalysedComponents
                             .Where(ac => ac.DeletedAt == null && ac.IsEnabled)
