@@ -21,6 +21,8 @@ namespace Nozomi.Data.Models.Currency
         public string LogoPath { get; set; }
 
         public string Abbreviation { get; set; } // USD? MYR? IND?
+        
+        public string Slug { get; set; }
 
         public string Name { get; set; }
         
