@@ -442,7 +442,6 @@ namespace Nozomi.Service.Events
                         Denominations = c.Denominations,
                         DenominationName = c.DenominationName,
                         LogoPath = c.LogoPath,
-                        WalletTypeId = c.WalletTypeId,
                         AnalysedComponents = c.AnalysedComponents
                             .Where(ac => ac.DeletedAt == null && ac.IsEnabled)
                             .Select(ac => new AnalysedComponent
@@ -580,8 +579,7 @@ namespace Nozomi.Service.Events
                                 name = c.CurrencyType.Name,
                                 typeShortForm = c.CurrencyType.TypeShortForm
                             },
-                        name = c.Name,
-                        walletTypeId = c.WalletTypeId
+                        name = c.Name
                     });
             }
             else
@@ -594,8 +592,7 @@ namespace Nozomi.Service.Events
                     {
                         id = c.Id,
                         abbrv = c.Abbreviation,
-                        name = c.Name,
-                        walletTypeId = c.WalletTypeId
+                        name = c.Name
                     });
             }
         }

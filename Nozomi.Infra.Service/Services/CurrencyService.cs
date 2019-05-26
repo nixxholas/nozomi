@@ -50,8 +50,7 @@ namespace Nozomi.Service.Services
                         {
                             Abbreviation = createCurrency.Abbrv,
                             Name = createCurrency.Name,
-                            CurrencyTypeId = createCurrency.CurrencyTypeId,
-                            WalletTypeId = createCurrency.WalletTypeId
+                            CurrencyTypeId = createCurrency.CurrencyTypeId
                         };
                     
                         _unitOfWork.GetRepository<Currency>().Add(currency);
@@ -121,7 +120,6 @@ namespace Nozomi.Service.Services
                     currToUpd.Denominations = currency.Denominations;
                     currToUpd.DenominationName = currency.DenomationName;
                     currToUpd.Name = currency.Name;
-                    currToUpd.WalletTypeId = currency.WalletTypeId;
                     currToUpd.IsEnabled = currency.IsEnabled;
                     
                     _unitOfWork.GetRepository<Currency>().Update(currToUpd);

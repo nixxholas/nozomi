@@ -29,9 +29,6 @@ namespace Nozomi.Data.Models.Currency
         public int Denominations { get; set; } = 0;
         
         public string DenominationName { get; set; }
-
-        // This will have a number if it is a crypto pair to peg to proper entities
-        public long WalletTypeId { get; set; } = 0;
         
         public ICollection<AnalysedComponent> AnalysedComponents { get; set; }
         
