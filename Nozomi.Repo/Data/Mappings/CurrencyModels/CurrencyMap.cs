@@ -94,9 +94,9 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                 new Currency
                 {
                     Id = 8,
-                    CurrencyTypeId = 1,
+                    CurrencyTypeId = 2,
                     Abbreviation = "USDT",
-                    Name = "Tether USD"
+                    Name = "Tether"
                 },
                 new Currency
                 {
