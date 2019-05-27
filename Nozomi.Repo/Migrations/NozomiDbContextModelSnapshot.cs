@@ -47,6 +47,11 @@ namespace Nozomi.Repo.Migrations
 
                     b.Property<bool>("IsEnabled");
 
+                    b.Property<string>("LogoPath")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasDefaultValue("assets/svg/icons/question.svg");
+
                     b.Property<DateTime>("ModifiedAt");
 
                     b.Property<long>("ModifiedBy");
@@ -54,16 +59,17 @@ namespace Nozomi.Repo.Migrations
                     b.Property<string>("Name")
                         .IsRequired();
 
-                    b.Property<long>("WalletTypeId");
+                    b.Property<string>("Slug")
+                        .IsRequired();
 
                     b.HasKey("Id")
                         .HasName("Currency_PK_Id");
 
-                    b.HasIndex("Abbreviation")
-                        .IsUnique()
-                        .HasName("Currency_Index_Abbreviation");
-
                     b.HasIndex("CurrencyTypeId");
+
+                    b.HasIndex("Slug")
+                        .IsUnique()
+                        .HasName("Currency_Index_Slug");
 
                     b.ToTable("Currencies");
 
@@ -81,7 +87,7 @@ namespace Nozomi.Repo.Migrations
                             ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             ModifiedBy = 0L,
                             Name = "United States Dollar",
-                            WalletTypeId = 0L
+                            Slug = "USD"
                         },
                         new
                         {
@@ -96,7 +102,7 @@ namespace Nozomi.Repo.Migrations
                             ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             ModifiedBy = 0L,
                             Name = "Euro",
-                            WalletTypeId = 0L
+                            Slug = "EUR"
                         },
                         new
                         {
@@ -112,7 +118,7 @@ namespace Nozomi.Repo.Migrations
                             ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             ModifiedBy = 0L,
                             Name = "Ethereum",
-                            WalletTypeId = 1L
+                            Slug = "ETH"
                         },
                         new
                         {
@@ -127,7 +133,7 @@ namespace Nozomi.Repo.Migrations
                             ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             ModifiedBy = 0L,
                             Name = "Kyber Network Crystal",
-                            WalletTypeId = 4L
+                            Slug = "KNC"
                         },
                         new
                         {
@@ -143,7 +149,7 @@ namespace Nozomi.Repo.Migrations
                             ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             ModifiedBy = 0L,
                             Name = "Bitcoin",
-                            WalletTypeId = 0L
+                            Slug = "BTC"
                         },
                         new
                         {
@@ -158,7 +164,7 @@ namespace Nozomi.Repo.Migrations
                             ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             ModifiedBy = 0L,
                             Name = "Bytecoin",
-                            WalletTypeId = 0L
+                            Slug = "BCN"
                         },
                         new
                         {
@@ -173,7 +179,7 @@ namespace Nozomi.Repo.Migrations
                             ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             ModifiedBy = 0L,
                             Name = "BitShares",
-                            WalletTypeId = 0L
+                            Slug = "BTS"
                         },
                         new
                         {
@@ -181,14 +187,14 @@ namespace Nozomi.Repo.Migrations
                             Abbreviation = "USDT",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             CreatedBy = 0L,
-                            CurrencyTypeId = 1L,
+                            CurrencyTypeId = 2L,
                             DeletedBy = 0L,
                             Denominations = 0,
                             IsEnabled = true,
                             ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             ModifiedBy = 0L,
-                            Name = "Tether USD",
-                            WalletTypeId = 0L
+                            Name = "Tether",
+                            Slug = "USDT"
                         },
                         new
                         {
@@ -203,7 +209,7 @@ namespace Nozomi.Repo.Migrations
                             ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             ModifiedBy = 0L,
                             Name = "Singapore Dollar",
-                            WalletTypeId = 0L
+                            Slug = "SGD"
                         },
                         new
                         {
@@ -218,7 +224,1492 @@ namespace Nozomi.Repo.Migrations
                             ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             ModifiedBy = 0L,
                             Name = "Litecoin",
-                            WalletTypeId = 0L
+                            Slug = "LTC"
+                        },
+                        new
+                        {
+                            Id = 11L,
+                            Abbreviation = "XRP",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 0L,
+                            CurrencyTypeId = 2L,
+                            DeletedBy = 0L,
+                            Denominations = 0,
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedBy = 0L,
+                            Name = "XRP",
+                            Slug = "XRP"
+                        },
+                        new
+                        {
+                            Id = 12L,
+                            Abbreviation = "BCH",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 0L,
+                            CurrencyTypeId = 2L,
+                            DeletedBy = 0L,
+                            Denominations = 0,
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedBy = 0L,
+                            Name = "Bitcoin Cash",
+                            Slug = "BCH"
+                        },
+                        new
+                        {
+                            Id = 13L,
+                            Abbreviation = "EOS",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 0L,
+                            CurrencyTypeId = 2L,
+                            DeletedBy = 0L,
+                            Denominations = 0,
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedBy = 0L,
+                            Name = "EOS",
+                            Slug = "EOS"
+                        },
+                        new
+                        {
+                            Id = 14L,
+                            Abbreviation = "BNB",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 0L,
+                            CurrencyTypeId = 2L,
+                            DeletedBy = 0L,
+                            Denominations = 0,
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedBy = 0L,
+                            Name = "Binance Coin",
+                            Slug = "BNB"
+                        },
+                        new
+                        {
+                            Id = 15L,
+                            Abbreviation = "XLM",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 0L,
+                            CurrencyTypeId = 2L,
+                            DeletedBy = 0L,
+                            Denominations = 0,
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedBy = 0L,
+                            Name = "Stellar",
+                            Slug = "XLM"
+                        },
+                        new
+                        {
+                            Id = 16L,
+                            Abbreviation = "ADA",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 0L,
+                            CurrencyTypeId = 2L,
+                            DeletedBy = 0L,
+                            Denominations = 0,
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedBy = 0L,
+                            Name = "Cardano",
+                            Slug = "ADA"
+                        },
+                        new
+                        {
+                            Id = 17L,
+                            Abbreviation = "TRX",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 0L,
+                            CurrencyTypeId = 2L,
+                            DeletedBy = 0L,
+                            Denominations = 0,
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedBy = 0L,
+                            Name = "TRON",
+                            Slug = "TRX"
+                        },
+                        new
+                        {
+                            Id = 18L,
+                            Abbreviation = "BSV",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 0L,
+                            CurrencyTypeId = 2L,
+                            DeletedBy = 0L,
+                            Denominations = 0,
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedBy = 0L,
+                            Name = "Bitcoin SV",
+                            Slug = "BSV"
+                        },
+                        new
+                        {
+                            Id = 19L,
+                            Abbreviation = "XMR",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 0L,
+                            CurrencyTypeId = 2L,
+                            DeletedBy = 0L,
+                            Denominations = 0,
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedBy = 0L,
+                            Name = "Monero",
+                            Slug = "XMR"
+                        },
+                        new
+                        {
+                            Id = 20L,
+                            Abbreviation = "DASH",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 0L,
+                            CurrencyTypeId = 2L,
+                            DeletedBy = 0L,
+                            Denominations = 0,
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedBy = 0L,
+                            Name = "Dash",
+                            Slug = "DASH"
+                        },
+                        new
+                        {
+                            Id = 21L,
+                            Abbreviation = "MIOTA",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 0L,
+                            CurrencyTypeId = 2L,
+                            DeletedBy = 0L,
+                            Denominations = 0,
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedBy = 0L,
+                            Name = "IOTA",
+                            Slug = "MIOTA"
+                        },
+                        new
+                        {
+                            Id = 22L,
+                            Abbreviation = "XTZ",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 0L,
+                            CurrencyTypeId = 2L,
+                            DeletedBy = 0L,
+                            Denominations = 0,
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedBy = 0L,
+                            Name = "Tezos",
+                            Slug = "XTZ"
+                        },
+                        new
+                        {
+                            Id = 23L,
+                            Abbreviation = "ATOM",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 0L,
+                            CurrencyTypeId = 2L,
+                            DeletedBy = 0L,
+                            Denominations = 0,
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedBy = 0L,
+                            Name = "Cosmos",
+                            Slug = "ATOM"
+                        },
+                        new
+                        {
+                            Id = 24L,
+                            Abbreviation = "ETC",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 0L,
+                            CurrencyTypeId = 2L,
+                            DeletedBy = 0L,
+                            Denominations = 0,
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedBy = 0L,
+                            Name = "Ethereum Classic",
+                            Slug = "ETC"
+                        },
+                        new
+                        {
+                            Id = 25L,
+                            Abbreviation = "XEM",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 0L,
+                            CurrencyTypeId = 2L,
+                            DeletedBy = 0L,
+                            Denominations = 0,
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedBy = 0L,
+                            Name = "NEM",
+                            Slug = "XEM"
+                        },
+                        new
+                        {
+                            Id = 26L,
+                            Abbreviation = "NEO",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 0L,
+                            CurrencyTypeId = 2L,
+                            DeletedBy = 0L,
+                            Denominations = 0,
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedBy = 0L,
+                            Name = "NEO",
+                            Slug = "NEO"
+                        },
+                        new
+                        {
+                            Id = 27L,
+                            Abbreviation = "MKR",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 0L,
+                            CurrencyTypeId = 2L,
+                            DeletedBy = 0L,
+                            Denominations = 0,
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedBy = 0L,
+                            Name = "Maker",
+                            Slug = "MKR"
+                        },
+                        new
+                        {
+                            Id = 28L,
+                            Abbreviation = "ONT",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 0L,
+                            CurrencyTypeId = 2L,
+                            DeletedBy = 0L,
+                            Denominations = 0,
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedBy = 0L,
+                            Name = "Ontology",
+                            Slug = "ONT"
+                        },
+                        new
+                        {
+                            Id = 29L,
+                            Abbreviation = "ZEC",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 0L,
+                            CurrencyTypeId = 2L,
+                            DeletedBy = 0L,
+                            Denominations = 0,
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedBy = 0L,
+                            Name = "Zcash",
+                            Slug = "ZEC"
+                        },
+                        new
+                        {
+                            Id = 30L,
+                            Abbreviation = "BAT",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 0L,
+                            CurrencyTypeId = 2L,
+                            DeletedBy = 0L,
+                            Denominations = 0,
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedBy = 0L,
+                            Name = "Basic Attention Token",
+                            Slug = "BAT"
+                        },
+                        new
+                        {
+                            Id = 31L,
+                            Abbreviation = "CRO",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 0L,
+                            CurrencyTypeId = 2L,
+                            DeletedBy = 0L,
+                            Denominations = 0,
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedBy = 0L,
+                            Name = "Crypto.com Chain",
+                            Slug = "CRO"
+                        },
+                        new
+                        {
+                            Id = 2083L,
+                            Abbreviation = "BTG",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 0L,
+                            CurrencyTypeId = 2L,
+                            DeletedBy = 0L,
+                            Denominations = 0,
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedBy = 0L,
+                            Name = "Bitcoin Gold",
+                            Slug = "BTG"
+                        },
+                        new
+                        {
+                            Id = 3077L,
+                            Abbreviation = "VET",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 0L,
+                            CurrencyTypeId = 2L,
+                            DeletedBy = 0L,
+                            Denominations = 0,
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedBy = 0L,
+                            Name = "VeChain",
+                            Slug = "VET"
+                        },
+                        new
+                        {
+                            Id = 1975L,
+                            Abbreviation = "LINK",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 0L,
+                            CurrencyTypeId = 2L,
+                            DeletedBy = 0L,
+                            Denominations = 0,
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedBy = 0L,
+                            Name = "Chainlink",
+                            Slug = "LINK"
+                        },
+                        new
+                        {
+                            Id = 3408L,
+                            Abbreviation = "USDC",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 0L,
+                            CurrencyTypeId = 2L,
+                            DeletedBy = 0L,
+                            Denominations = 0,
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedBy = 0L,
+                            Name = "USD Coin",
+                            Slug = "USDC"
+                        },
+                        new
+                        {
+                            Id = 74L,
+                            Abbreviation = "DOGE",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 0L,
+                            CurrencyTypeId = 2L,
+                            DeletedBy = 0L,
+                            Denominations = 0,
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedBy = 0L,
+                            Name = "Dogecoin",
+                            Slug = "DOGE"
+                        },
+                        new
+                        {
+                            Id = 2874L,
+                            Abbreviation = "AOA",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 0L,
+                            CurrencyTypeId = 2L,
+                            DeletedBy = 0L,
+                            Denominations = 0,
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedBy = 0L,
+                            Name = "Aurora",
+                            Slug = "AOA"
+                        },
+                        new
+                        {
+                            Id = 1808L,
+                            Abbreviation = "OMG",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 0L,
+                            CurrencyTypeId = 2L,
+                            DeletedBy = 0L,
+                            Denominations = 0,
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedBy = 0L,
+                            Name = "OmiseGO",
+                            Slug = "OMG"
+                        },
+                        new
+                        {
+                            Id = 1684L,
+                            Abbreviation = "QTUM",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 0L,
+                            CurrencyTypeId = 2L,
+                            DeletedBy = 0L,
+                            Denominations = 0,
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedBy = 0L,
+                            Name = "Qtum",
+                            Slug = "QTUM"
+                        },
+                        new
+                        {
+                            Id = 1168L,
+                            Abbreviation = "DCR",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 0L,
+                            CurrencyTypeId = 2L,
+                            DeletedBy = 0L,
+                            Denominations = 0,
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedBy = 0L,
+                            Name = "Decred",
+                            Slug = "DCR"
+                        },
+                        new
+                        {
+                            Id = 1274L,
+                            Abbreviation = "WAVES",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 0L,
+                            CurrencyTypeId = 2L,
+                            DeletedBy = 0L,
+                            Denominations = 0,
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedBy = 0L,
+                            Name = "Waves",
+                            Slug = "WAVES"
+                        },
+                        new
+                        {
+                            Id = 3718L,
+                            Abbreviation = "BTT",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 0L,
+                            CurrencyTypeId = 2L,
+                            DeletedBy = 0L,
+                            Denominations = 0,
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedBy = 0L,
+                            Name = "BitTorrent",
+                            Slug = "BTT"
+                        },
+                        new
+                        {
+                            Id = 2682L,
+                            Abbreviation = "HOT",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 0L,
+                            CurrencyTypeId = 2L,
+                            DeletedBy = 0L,
+                            Denominations = 0,
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedBy = 0L,
+                            Name = "Holo",
+                            Slug = "HOT"
+                        },
+                        new
+                        {
+                            Id = 2563L,
+                            Abbreviation = "TUSD",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 0L,
+                            CurrencyTypeId = 2L,
+                            DeletedBy = 0L,
+                            Denominations = 0,
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedBy = 0L,
+                            Name = "TrueUSD",
+                            Slug = "TUSD"
+                        },
+                        new
+                        {
+                            Id = 1214L,
+                            Abbreviation = "LSK",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 0L,
+                            CurrencyTypeId = 2L,
+                            DeletedBy = 0L,
+                            Denominations = 0,
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedBy = 0L,
+                            Name = "Lisk",
+                            Slug = "LSK"
+                        },
+                        new
+                        {
+                            Id = 1567L,
+                            Abbreviation = "NANO",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 0L,
+                            CurrencyTypeId = 2L,
+                            DeletedBy = 0L,
+                            Denominations = 0,
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedBy = 0L,
+                            Name = "Nano",
+                            Slug = "NANO"
+                        },
+                        new
+                        {
+                            Id = 1104L,
+                            Abbreviation = "REP",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 0L,
+                            CurrencyTypeId = 2L,
+                            DeletedBy = 0L,
+                            Denominations = 0,
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedBy = 0L,
+                            Name = "Augur",
+                            Slug = "REP"
+                        },
+                        new
+                        {
+                            Id = 2222L,
+                            Abbreviation = "BCD",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 0L,
+                            CurrencyTypeId = 2L,
+                            DeletedBy = 0L,
+                            Denominations = 0,
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedBy = 0L,
+                            Name = "Bitcoin Diamond",
+                            Slug = "BCD"
+                        },
+                        new
+                        {
+                            Id = 1896L,
+                            Abbreviation = "ZRX",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 0L,
+                            CurrencyTypeId = 2L,
+                            DeletedBy = 0L,
+                            Denominations = 0,
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedBy = 0L,
+                            Name = "0x",
+                            Slug = "ZRX"
+                        },
+                        new
+                        {
+                            Id = 2577L,
+                            Abbreviation = "RVN",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 0L,
+                            CurrencyTypeId = 2L,
+                            DeletedBy = 0L,
+                            Denominations = 0,
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedBy = 0L,
+                            Name = "Ravencoin",
+                            Slug = "RVN"
+                        },
+                        new
+                        {
+                            Id = 109L,
+                            Abbreviation = "DGB",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 0L,
+                            CurrencyTypeId = 2L,
+                            DeletedBy = 0L,
+                            Denominations = 0,
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedBy = 0L,
+                            Name = "DigiByte",
+                            Slug = "DGB"
+                        },
+                        new
+                        {
+                            Id = 2099L,
+                            Abbreviation = "ICX",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 0L,
+                            CurrencyTypeId = 2L,
+                            DeletedBy = 0L,
+                            Denominations = 0,
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedBy = 0L,
+                            Name = "ICON",
+                            Slug = "ICX"
+                        },
+                        new
+                        {
+                            Id = 693L,
+                            Abbreviation = "XVG",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 0L,
+                            CurrencyTypeId = 2L,
+                            DeletedBy = 0L,
+                            Denominations = 0,
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedBy = 0L,
+                            Name = "Verge",
+                            Slug = "XVG"
+                        },
+                        new
+                        {
+                            Id = 3330L,
+                            Abbreviation = "PAX",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 0L,
+                            CurrencyTypeId = 2L,
+                            DeletedBy = 0L,
+                            Denominations = 0,
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedBy = 0L,
+                            Name = "Paxos Standard Token",
+                            Slug = "PAX"
+                        },
+                        new
+                        {
+                            Id = 2603L,
+                            Abbreviation = "NPXS",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 0L,
+                            CurrencyTypeId = 2L,
+                            DeletedBy = 0L,
+                            Denominations = 0,
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedBy = 0L,
+                            Name = "Pundi X",
+                            Slug = "NPXS"
+                        },
+                        new
+                        {
+                            Id = 2469L,
+                            Abbreviation = "ZIL",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 0L,
+                            CurrencyTypeId = 2L,
+                            DeletedBy = 0L,
+                            Denominations = 0,
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedBy = 0L,
+                            Name = "Zilliqa",
+                            Slug = "ZIL"
+                        },
+                        new
+                        {
+                            Id = 2502L,
+                            Abbreviation = "HT",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 0L,
+                            CurrencyTypeId = 2L,
+                            DeletedBy = 0L,
+                            Denominations = 0,
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedBy = 0L,
+                            Name = "Huobi Token",
+                            Slug = "HT"
+                        },
+                        new
+                        {
+                            Id = 1700L,
+                            Abbreviation = "AE",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 0L,
+                            CurrencyTypeId = 2L,
+                            DeletedBy = 0L,
+                            Denominations = 0,
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedBy = 0L,
+                            Name = "Aeternity",
+                            Slug = "AE"
+                        },
+                        new
+                        {
+                            Id = 2405L,
+                            Abbreviation = "IOST",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 0L,
+                            CurrencyTypeId = 2L,
+                            DeletedBy = 0L,
+                            Denominations = 0,
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedBy = 0L,
+                            Name = "IOST",
+                            Slug = "IOST"
+                        },
+                        new
+                        {
+                            Id = 1042L,
+                            Abbreviation = "SC",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 0L,
+                            CurrencyTypeId = 2L,
+                            DeletedBy = 0L,
+                            Denominations = 0,
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedBy = 0L,
+                            Name = "Siacoin",
+                            Slug = "SC"
+                        },
+                        new
+                        {
+                            Id = 3437L,
+                            Abbreviation = "ABBC",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 0L,
+                            CurrencyTypeId = 2L,
+                            DeletedBy = 0L,
+                            Denominations = 0,
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedBy = 0L,
+                            Name = "ABBC Coin",
+                            Slug = "ABBC"
+                        },
+                        new
+                        {
+                            Id = 1521L,
+                            Abbreviation = "KMD",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 0L,
+                            CurrencyTypeId = 2L,
+                            DeletedBy = 0L,
+                            Denominations = 0,
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedBy = 0L,
+                            Name = "Komodo",
+                            Slug = "KMD"
+                        },
+                        new
+                        {
+                            Id = 2130L,
+                            Abbreviation = "ENJ",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 0L,
+                            CurrencyTypeId = 2L,
+                            DeletedBy = 0L,
+                            Denominations = 0,
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedBy = 0L,
+                            Name = "Enjin Coin",
+                            Slug = "ENJ"
+                        },
+                        new
+                        {
+                            Id = 1230L,
+                            Abbreviation = "STEEM",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 0L,
+                            CurrencyTypeId = 2L,
+                            DeletedBy = 0L,
+                            Denominations = 0,
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedBy = 0L,
+                            Name = "Steem",
+                            Slug = "STEEM"
+                        },
+                        new
+                        {
+                            Id = 1866L,
+                            Abbreviation = "BTM",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 0L,
+                            CurrencyTypeId = 2L,
+                            DeletedBy = 0L,
+                            Denominations = 0,
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedBy = 0L,
+                            Name = "Bytom",
+                            Slug = "BTM"
+                        },
+                        new
+                        {
+                            Id = 3224L,
+                            Abbreviation = "QBIT",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 0L,
+                            CurrencyTypeId = 2L,
+                            DeletedBy = 0L,
+                            Denominations = 0,
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedBy = 0L,
+                            Name = "Qubitica",
+                            Slug = "QBIT"
+                        },
+                        new
+                        {
+                            Id = 2416L,
+                            Abbreviation = "THETA",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 0L,
+                            CurrencyTypeId = 2L,
+                            DeletedBy = 0L,
+                            Denominations = 0,
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedBy = 0L,
+                            Name = "THETA",
+                            Slug = "THETA"
+                        },
+                        new
+                        {
+                            Id = 1343L,
+                            Abbreviation = "STRAT",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 0L,
+                            CurrencyTypeId = 2L,
+                            DeletedBy = 0L,
+                            Denominations = 0,
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedBy = 0L,
+                            Name = "Stratis",
+                            Slug = "STRAT"
+                        },
+                        new
+                        {
+                            Id = 3144L,
+                            Abbreviation = "THR",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 0L,
+                            CurrencyTypeId = 2L,
+                            DeletedBy = 0L,
+                            Denominations = 0,
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedBy = 0L,
+                            Name = "ThoreCoin",
+                            Slug = "THR"
+                        },
+                        new
+                        {
+                            Id = 291L,
+                            Abbreviation = "MAID",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 0L,
+                            CurrencyTypeId = 2L,
+                            DeletedBy = 0L,
+                            Denominations = 0,
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedBy = 0L,
+                            Name = "MaidSafeCoin",
+                            Slug = "MAID"
+                        },
+                        new
+                        {
+                            Id = 1886L,
+                            Abbreviation = "DENT",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 0L,
+                            CurrencyTypeId = 2L,
+                            DeletedBy = 0L,
+                            Denominations = 0,
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedBy = 0L,
+                            Name = "Dent",
+                            Slug = "DENT"
+                        },
+                        new
+                        {
+                            Id = 3116L,
+                            Abbreviation = "INB",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 0L,
+                            CurrencyTypeId = 2L,
+                            DeletedBy = 0L,
+                            Denominations = 0,
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedBy = 0L,
+                            Name = "Insight Chain",
+                            Slug = "INB"
+                        },
+                        new
+                        {
+                            Id = 2087L,
+                            Abbreviation = "KCS",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 0L,
+                            CurrencyTypeId = 2L,
+                            DeletedBy = 0L,
+                            Denominations = 0,
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedBy = 0L,
+                            Name = "KuCoin Shares",
+                            Slug = "KCS"
+                        },
+                        new
+                        {
+                            Id = 3724L,
+                            Abbreviation = "SOLVE",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 0L,
+                            CurrencyTypeId = 2L,
+                            DeletedBy = 0L,
+                            Denominations = 0,
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedBy = 0L,
+                            Name = "SOLVE",
+                            Slug = "SOLVE"
+                        },
+                        new
+                        {
+                            Id = 1925L,
+                            Abbreviation = "WTC",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 0L,
+                            CurrencyTypeId = 2L,
+                            DeletedBy = 0L,
+                            Denominations = 0,
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedBy = 0L,
+                            Name = "Waltonchain",
+                            Slug = "WTC"
+                        },
+                        new
+                        {
+                            Id = 1455L,
+                            Abbreviation = "GNT",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 0L,
+                            CurrencyTypeId = 2L,
+                            DeletedBy = 0L,
+                            Denominations = 0,
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedBy = 0L,
+                            Name = "Golem",
+                            Slug = "GNT"
+                        },
+                        new
+                        {
+                            Id = 2299L,
+                            Abbreviation = "ELF",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 0L,
+                            CurrencyTypeId = 2L,
+                            DeletedBy = 0L,
+                            Denominations = 0,
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedBy = 0L,
+                            Name = "aelf",
+                            Slug = "ELF"
+                        },
+                        new
+                        {
+                            Id = 1759L,
+                            Abbreviation = "SNT",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 0L,
+                            CurrencyTypeId = 2L,
+                            DeletedBy = 0L,
+                            Denominations = 0,
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedBy = 0L,
+                            Name = "Status",
+                            Slug = "SNT"
+                        },
+                        new
+                        {
+                            Id = 1776L,
+                            Abbreviation = "MCO",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 0L,
+                            CurrencyTypeId = 2L,
+                            DeletedBy = 0L,
+                            Denominations = 0,
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedBy = 0L,
+                            Name = "Crypto.com",
+                            Slug = "MCO"
+                        },
+                        new
+                        {
+                            Id = 2349L,
+                            Abbreviation = "XIN",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 0L,
+                            CurrencyTypeId = 2L,
+                            DeletedBy = 0L,
+                            Denominations = 0,
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedBy = 0L,
+                            Name = "Mixin",
+                            Slug = "XIN"
+                        },
+                        new
+                        {
+                            Id = 2027L,
+                            Abbreviation = "CNX",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 0L,
+                            CurrencyTypeId = 2L,
+                            DeletedBy = 0L,
+                            Denominations = 0,
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedBy = 0L,
+                            Name = "Cryptonex",
+                            Slug = "CNX"
+                        },
+                        new
+                        {
+                            Id = 3822L,
+                            Abbreviation = "TFUEL",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 0L,
+                            CurrencyTypeId = 2L,
+                            DeletedBy = 0L,
+                            Denominations = 0,
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedBy = 0L,
+                            Name = "Theta Fuel",
+                            Slug = "TFUEL"
+                        },
+                        new
+                        {
+                            Id = 1320L,
+                            Abbreviation = "ARDR",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 0L,
+                            CurrencyTypeId = 2L,
+                            DeletedBy = 0L,
+                            Denominations = 0,
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedBy = 0L,
+                            Name = "Ardor",
+                            Slug = "ARDR"
+                        },
+                        new
+                        {
+                            Id = 3607L,
+                            Abbreviation = "VEST",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 0L,
+                            CurrencyTypeId = 2L,
+                            DeletedBy = 0L,
+                            Denominations = 0,
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedBy = 0L,
+                            Name = "VestChain",
+                            Slug = "VEST"
+                        },
+                        new
+                        {
+                            Id = 2308L,
+                            Abbreviation = "DAI",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 0L,
+                            CurrencyTypeId = 2L,
+                            DeletedBy = 0L,
+                            Denominations = 0,
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedBy = 0L,
+                            Name = "Dai",
+                            Slug = "DAI"
+                        },
+                        new
+                        {
+                            Id = 1087L,
+                            Abbreviation = "FCT",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 0L,
+                            CurrencyTypeId = 2L,
+                            DeletedBy = 0L,
+                            Denominations = 0,
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedBy = 0L,
+                            Name = "Factom",
+                            Slug = "FCT"
+                        },
+                        new
+                        {
+                            Id = 2900L,
+                            Abbreviation = "PAI",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 0L,
+                            CurrencyTypeId = 2L,
+                            DeletedBy = 0L,
+                            Denominations = 0,
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedBy = 0L,
+                            Name = "Project Pai",
+                            Slug = "PAI"
+                        },
+                        new
+                        {
+                            Id = 2300L,
+                            Abbreviation = "WAX",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 0L,
+                            CurrencyTypeId = 2L,
+                            DeletedBy = 0L,
+                            Denominations = 0,
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedBy = 0L,
+                            Name = "WAX",
+                            Slug = "WAX"
+                        },
+                        new
+                        {
+                            Id = 2457L,
+                            Abbreviation = "TRUE",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 0L,
+                            CurrencyTypeId = 2L,
+                            DeletedBy = 0L,
+                            Denominations = 0,
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedBy = 0L,
+                            Name = "TrueChain",
+                            Slug = "TRUE"
+                        },
+                        new
+                        {
+                            Id = 1586L,
+                            Abbreviation = "ARK",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 0L,
+                            CurrencyTypeId = 2L,
+                            DeletedBy = 0L,
+                            Denominations = 0,
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedBy = 0L,
+                            Name = "Ark",
+                            Slug = "ARK"
+                        },
+                        new
+                        {
+                            Id = 1698L,
+                            Abbreviation = "ZEN",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 0L,
+                            CurrencyTypeId = 2L,
+                            DeletedBy = 0L,
+                            Denominations = 0,
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedBy = 0L,
+                            Name = "Horizen",
+                            Slug = "ZEN"
+                        },
+                        new
+                        {
+                            Id = 1229L,
+                            Abbreviation = "DGD",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 0L,
+                            CurrencyTypeId = 2L,
+                            DeletedBy = 0L,
+                            Denominations = 0,
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedBy = 0L,
+                            Name = "DigixDAO",
+                            Slug = "DGD"
+                        },
+                        new
+                        {
+                            Id = 460L,
+                            Abbreviation = "CLAM",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 0L,
+                            CurrencyTypeId = 2L,
+                            DeletedBy = 0L,
+                            Denominations = 0,
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedBy = 0L,
+                            Name = "Clams",
+                            Slug = "CLAM"
+                        },
+                        new
+                        {
+                            Id = 213L,
+                            Abbreviation = "MONA",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 0L,
+                            CurrencyTypeId = 2L,
+                            DeletedBy = 0L,
+                            Denominations = 0,
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedBy = 0L,
+                            Name = "MonaCoin",
+                            Slug = "MONA"
+                        },
+                        new
+                        {
+                            Id = 1750L,
+                            Abbreviation = "GXC",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 0L,
+                            CurrencyTypeId = 2L,
+                            DeletedBy = 0L,
+                            Denominations = 0,
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedBy = 0L,
+                            Name = "GXChain",
+                            Slug = "GXC"
+                        },
+                        new
+                        {
+                            Id = 1966L,
+                            Abbreviation = "MANA",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 0L,
+                            CurrencyTypeId = 2L,
+                            DeletedBy = 0L,
+                            Denominations = 0,
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedBy = 0L,
+                            Name = "Decentraland",
+                            Slug = "MANA"
+                        },
+                        new
+                        {
+                            Id = 3835L,
+                            Abbreviation = "ORBS",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 0L,
+                            CurrencyTypeId = 2L,
+                            DeletedBy = 0L,
+                            Denominations = 0,
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedBy = 0L,
+                            Name = "Orbs",
+                            Slug = "ORBS"
+                        },
+                        new
+                        {
+                            Id = 2062L,
+                            Abbreviation = "AION",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 0L,
+                            CurrencyTypeId = 2L,
+                            DeletedBy = 0L,
+                            Denominations = 0,
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedBy = 0L,
+                            Name = "Aion",
+                            Slug = "AION"
+                        },
+                        new
+                        {
+                            Id = 1703L,
+                            Abbreviation = "ETP",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 0L,
+                            CurrencyTypeId = 2L,
+                            DeletedBy = 0L,
+                            Denominations = 0,
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedBy = 0L,
+                            Name = "Metaverse ETP",
+                            Slug = "ETP"
+                        },
+                        new
+                        {
+                            Id = 2492L,
+                            Abbreviation = "ELA",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 0L,
+                            CurrencyTypeId = 2L,
+                            DeletedBy = 0L,
+                            Denominations = 0,
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedBy = 0L,
+                            Name = "Elastos",
+                            Slug = "ELA"
+                        },
+                        new
+                        {
+                            Id = 1934L,
+                            Abbreviation = "LRC",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 0L,
+                            CurrencyTypeId = 2L,
+                            DeletedBy = 0L,
+                            Denominations = 0,
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedBy = 0L,
+                            Name = "Loopring",
+                            Slug = "LRC"
+                        },
+                        new
+                        {
+                            Id = 2588L,
+                            Abbreviation = "LOOM",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 0L,
+                            CurrencyTypeId = 2L,
+                            DeletedBy = 0L,
+                            Denominations = 0,
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedBy = 0L,
+                            Name = "Loom Network",
+                            Slug = "LOOM"
+                        },
+                        new
+                        {
+                            Id = 1807L,
+                            Abbreviation = "SAN",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 0L,
+                            CurrencyTypeId = 2L,
+                            DeletedBy = 0L,
+                            Denominations = 0,
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedBy = 0L,
+                            Name = "Santiment Network Token",
+                            Slug = "SAN"
+                        },
+                        new
+                        {
+                            Id = 2135L,
+                            Abbreviation = "R",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 0L,
+                            CurrencyTypeId = 2L,
+                            DeletedBy = 0L,
+                            Denominations = 0,
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedBy = 0L,
+                            Name = "Revain",
+                            Slug = "R"
+                        },
+                        new
+                        {
+                            Id = 2092L,
+                            Abbreviation = "NULS",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 0L,
+                            CurrencyTypeId = 2L,
+                            DeletedBy = 0L,
+                            Denominations = 0,
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedBy = 0L,
+                            Name = "NULS",
+                            Slug = "NULS"
+                        },
+                        new
+                        {
+                            Id = 1789L,
+                            Abbreviation = "PPT",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 0L,
+                            CurrencyTypeId = 2L,
+                            DeletedBy = 0L,
+                            Denominations = 0,
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedBy = 0L,
+                            Name = "Populous",
+                            Slug = "PPT"
+                        },
+                        new
+                        {
+                            Id = 3890L,
+                            Abbreviation = "MATIC",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 0L,
+                            CurrencyTypeId = 2L,
+                            DeletedBy = 0L,
+                            Denominations = 0,
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedBy = 0L,
+                            Name = "Matic Network",
+                            Slug = "MATIC"
+                        },
+                        new
+                        {
+                            Id = 2090L,
+                            Abbreviation = "LA",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 0L,
+                            CurrencyTypeId = 2L,
+                            DeletedBy = 0L,
+                            Denominations = 0,
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedBy = 0L,
+                            Name = "LATOKEN",
+                            Slug = "LA"
+                        },
+                        new
+                        {
+                            Id = 1414L,
+                            Abbreviation = "XZC",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 0L,
+                            CurrencyTypeId = 2L,
+                            DeletedBy = 0L,
+                            Denominations = 0,
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedBy = 0L,
+                            Name = "Zcoin",
+                            Slug = "XZC"
                         });
                 });
 

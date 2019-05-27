@@ -27,7 +27,7 @@ namespace Nozomi.Ticker.Controllers.APIs.v1.Source
         }
 
         [HttpGet]
-        public NozomiResult<ICollection<DistinctiveCurrencyResponse>> History(long sourceId, long days = 7)
+        public NozomiResult<ICollection<CurrencyResponse>> History(long sourceId, long days = 7)
         {
             try
             {
@@ -35,13 +35,13 @@ namespace Nozomi.Ticker.Controllers.APIs.v1.Source
 //                var res = _historicalDataEvent.GetSimpleCurrencyHistory(sourceId, days);
 //            
 //                if (res == null) throw new ArgumentNullException();
-                return new NozomiResult<ICollection<DistinctiveCurrencyResponse>>(null);
+                return new NozomiResult<ICollection<CurrencyResponse>>(null);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex.ToString());
                 
-                return new NozomiResult<ICollection<DistinctiveCurrencyResponse>>(NozomiResultType.Failed,
+                return new NozomiResult<ICollection<CurrencyResponse>>(NozomiResultType.Failed,
                     "Invalid source or days input.");
             }
         }

@@ -17,8 +17,12 @@ namespace Nozomi.Data.Models.Currency
 
         public long CurrencyTypeId { get; set; }
         public CurrencyType CurrencyType { get; set; }
+        
+        public string LogoPath { get; set; }
 
         public string Abbreviation { get; set; } // USD? MYR? IND?
+        
+        public string Slug { get; set; }
 
         public string Name { get; set; }
         
@@ -27,9 +31,6 @@ namespace Nozomi.Data.Models.Currency
         public int Denominations { get; set; } = 0;
         
         public string DenominationName { get; set; }
-
-        // This will have a number if it is a crypto pair to peg to proper entities
-        public long WalletTypeId { get; set; } = 0;
         
         public ICollection<AnalysedComponent> AnalysedComponents { get; set; }
         

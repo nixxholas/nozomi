@@ -22,7 +22,7 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
                 {
                     Id = 1,
                     CurrencyId = 3,
-                    Guid = Guid.NewGuid(),
+                    Guid = Guid.Parse("d13fc276-8077-49d2-ba38-998c58895df9"),
                     RequestType = RequestType.HttpGet,
                     DataPath = "https://api.etherscan.io/api",
                     Delay = 5000
@@ -32,7 +32,7 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
                 {
                     Id = 2,
                     CurrencyId = 4,
-                    Guid = Guid.NewGuid(),
+                    Guid = Guid.Parse("b7b9642e-357a-451c-9741-bf5a7fcb0ad1"),
                     RequestType = RequestType.HttpGet,
                     DataPath = "https://api.etherscan.io/api",
                     Delay = 5000
@@ -42,7 +42,7 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
                 {
                     Id = 3,
                     CurrencyId = 5,
-                    Guid = Guid.NewGuid(),
+                    Guid = Guid.Parse("31ceeb18-1d89-43d2-b215-0488d9417c67"),
                     RequestType = RequestType.HttpGet,
                     DataPath = "https://insight.bitpay.com/api/status?q=getBlockCount",
                     Delay = 90000
@@ -52,7 +52,7 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
                 {
                     Id = 4,
                     CurrencyId = 5,
-                    Guid = Guid.NewGuid(),
+                    Guid = Guid.Parse("7f10715f-b5cc-4e52-9fa8-011311a5a2ca"),
                     RequestType = RequestType.HttpGet,
                     DataPath = "https://api.coinranking.com/v1/public/coin/1?base=USD",
                     Delay = 90000
