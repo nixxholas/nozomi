@@ -7,7 +7,8 @@ Vue.use(BootstrapVue); // Expose bootstrap-vue globally
 import Trend from 'vuetrend';
 Vue.use(Trend);
 (<any> window).Vue = Vue;
-
+import { Laue } from 'laue';
+Vue.use(Laue);
 
 import * as moment from 'moment';
 import 'moment-timezone';
