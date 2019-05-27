@@ -19,14 +19,14 @@
                 {{ datum.item.abbreviation }}
             </template>
             <template slot="APIDocsURL" slot-scope="datum">
-                <a :href="datum.item.aPIDocsURL">{{ datum.item.aPIDocsURL }}</a>
+                <a :href="datum.item.apiDocsURL">{{ datum.item.apiDocsURL }}</a>
             </template>
             <template slot="isEnabled" slot-scope="datum">
                 <b-form-checkbox v-model="datum.item.isEnabled" disabled/>
             </template>
             <template slot="Edit" slot-scope="datum">
                 <b-button variant="primary" b-modal.modal-xl
-                          v-on:click="showEditModal(datum.item.id, datum.item.name, datum.item.abbreviation, datum.item.aPIDocsURL, datum.item.isEnabled)">
+                          v-on:click="showEditModal(datum.item.id, datum.item.name, datum.item.abbreviation, datum.item.apiDocsURL, datum.item.isEnabled)">
                     Edit
                 </b-button>
             </template>
