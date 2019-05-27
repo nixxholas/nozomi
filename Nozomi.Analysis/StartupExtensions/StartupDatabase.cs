@@ -19,17 +19,7 @@ namespace Nozomi.Analysis.StartupExtensions
 
                 using (var context = serviceScope.ServiceProvider.GetService<NozomiDbContext>())
                 {
-                    // Auto Wipe
-                    if (env.IsDevelopment())
-                    {
-                        //context.Database.EnsureDeleted();
-
-                        context.Database.EnsureCreated();
-                    }
-                    else
-                    {
-                        context.Database.Migrate();
-                    }
+                    context.Database.Migrate();
                 }
             }
         }
