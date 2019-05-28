@@ -24,6 +24,24 @@ namespace Nozomi.Service.Events
         {
         }
 
+        public ICollection<CurrencyTickerPair> GetCurrencyTickerPairs(string currencyAbbrv)
+        {
+            return _unitOfWork.GetRepository<CurrencyPair>()
+                .GetQueryable()
+                .AsNoTracking()
+                .Where(cp => cp.DeletedAt == null && cp.IsEnabled
+                                                  && cp.MainCurrencyAbbrv.Equals(currencyAbbrv,
+                                                      StringComparison.InvariantCultureIgnoreCase))
+                .Include(cp => cp.Source)
+                .Where(cp => cp.Source.DeletedAt == null && cp.Source.IsEnabled)
+                .Select(cp => new CurrencyTickerPair
+                {
+                    TickerPair = string.Concat(cp.MainCurrencyAbbrv, cp.CounterCurrencyAbbrv),
+                    Source = cp.Source.Name
+                })
+                .ToList();
+        }
+
         public Task<NozomiResult<TickerByExchangeResponse>> GetById(long id)
         {
 //            return Task.FromResult(new NozomiResult<TickerByExchangeResponse>(

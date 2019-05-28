@@ -65,12 +65,13 @@ namespace Nozomi.Repo.Migrations
                     ModifiedBy = table.Column<long>(nullable: false),
                     DeletedBy = table.Column<long>(nullable: false),
                     CurrencyTypeId = table.Column<long>(nullable: false),
+                    LogoPath = table.Column<string>(nullable: false, defaultValue: "assets/svg/icons/question.svg"),
                     Abbreviation = table.Column<string>(nullable: false),
+                    Slug = table.Column<string>(nullable: false),
                     Name = table.Column<string>(nullable: false),
                     Description = table.Column<string>(nullable: true),
                     Denominations = table.Column<int>(nullable: false, defaultValue: 0),
-                    DenominationName = table.Column<string>(nullable: true),
-                    WalletTypeId = table.Column<long>(nullable: false)
+                    DenominationName = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -501,32 +502,548 @@ namespace Nozomi.Repo.Migrations
 
             migrationBuilder.InsertData(
                 table: "Currencies",
-                columns: new[] { "Id", "Abbreviation", "CreatedAt", "CreatedBy", "CurrencyTypeId", "DeletedAt", "DeletedBy", "DenominationName", "Description", "IsEnabled", "ModifiedAt", "ModifiedBy", "Name", "WalletTypeId" },
-                values: new object[] { 1L, "USD", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 1L, null, 0L, null, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "United States Dollar", 0L });
+                columns: new[] { "Id", "Abbreviation", "CreatedAt", "CreatedBy", "CurrencyTypeId", "DeletedAt", "DeletedBy", "DenominationName", "Description", "IsEnabled", "ModifiedAt", "ModifiedBy", "Name", "Slug" },
+                values: new object[] { 1L, "USD", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 1L, null, 0L, null, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "United States Dollar", "USD" });
 
             migrationBuilder.InsertData(
                 table: "Currencies",
-                columns: new[] { "Id", "Abbreviation", "CreatedAt", "CreatedBy", "CurrencyTypeId", "DeletedAt", "DeletedBy", "DenominationName", "Description", "IsEnabled", "ModifiedAt", "ModifiedBy", "Name", "WalletTypeId" },
-                values: new object[] { 10L, "LTC", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2L, null, 0L, null, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "Litecoin", 0L });
+                columns: new[] { "Id", "Abbreviation", "CreatedAt", "CreatedBy", "CurrencyTypeId", "DeletedAt", "DeletedBy", "DenominationName", "Description", "IsEnabled", "ModifiedAt", "ModifiedBy", "Name", "Slug" },
+                values: new object[] { 2027L, "CNX", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2L, null, 0L, null, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "Cryptonex", "CNX" });
 
             migrationBuilder.InsertData(
                 table: "Currencies",
-                columns: new[] { "Id", "Abbreviation", "CreatedAt", "CreatedBy", "CurrencyTypeId", "DeletedAt", "DeletedBy", "DenominationName", "Description", "IsEnabled", "ModifiedAt", "ModifiedBy", "Name", "WalletTypeId" },
-                values: new object[] { 6L, "BCN", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2L, null, 0L, null, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "Bytecoin", 0L });
+                columns: new[] { "Id", "Abbreviation", "CreatedAt", "CreatedBy", "CurrencyTypeId", "DeletedAt", "DeletedBy", "DenominationName", "Description", "IsEnabled", "ModifiedAt", "ModifiedBy", "Name", "Slug" },
+                values: new object[] { 2349L, "XIN", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2L, null, 0L, null, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "Mixin", "XIN" });
 
             migrationBuilder.InsertData(
                 table: "Currencies",
-                columns: new[] { "Id", "Abbreviation", "CreatedAt", "CreatedBy", "CurrencyTypeId", "DeletedAt", "DeletedBy", "DenominationName", "Denominations", "Description", "IsEnabled", "ModifiedAt", "ModifiedBy", "Name", "WalletTypeId" },
-                values: new object[,]
-                {
-                    { 5L, "BTC", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2L, null, 0L, "Sat", 8, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "Bitcoin", 0L },
-                    { 7L, "BTS", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2L, null, 0L, null, 0, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "BitShares", 0L },
-                    { 3L, "ETH", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2L, null, 0L, "Wei", 18, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "Ethereum", 1L },
-                    { 9L, "SGD", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 1L, null, 0L, null, 0, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "Singapore Dollar", 0L },
-                    { 8L, "USDT", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 1L, null, 0L, null, 0, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "Tether USD", 0L },
-                    { 2L, "EUR", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 1L, null, 0L, null, 0, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "Euro", 0L },
-                    { 4L, "KNC", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2L, null, 0L, null, 18, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "Kyber Network Crystal", 4L }
-                });
+                columns: new[] { "Id", "Abbreviation", "CreatedAt", "CreatedBy", "CurrencyTypeId", "DeletedAt", "DeletedBy", "DenominationName", "Description", "IsEnabled", "ModifiedAt", "ModifiedBy", "Name", "Slug" },
+                values: new object[] { 1776L, "MCO", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2L, null, 0L, null, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "Crypto.com", "MCO" });
+
+            migrationBuilder.InsertData(
+                table: "Currencies",
+                columns: new[] { "Id", "Abbreviation", "CreatedAt", "CreatedBy", "CurrencyTypeId", "DeletedAt", "DeletedBy", "DenominationName", "Description", "IsEnabled", "ModifiedAt", "ModifiedBy", "Name", "Slug" },
+                values: new object[] { 1759L, "SNT", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2L, null, 0L, null, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "Status", "SNT" });
+
+            migrationBuilder.InsertData(
+                table: "Currencies",
+                columns: new[] { "Id", "Abbreviation", "CreatedAt", "CreatedBy", "CurrencyTypeId", "DeletedAt", "DeletedBy", "DenominationName", "Description", "IsEnabled", "ModifiedAt", "ModifiedBy", "Name", "Slug" },
+                values: new object[] { 2299L, "ELF", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2L, null, 0L, null, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "aelf", "ELF" });
+
+            migrationBuilder.InsertData(
+                table: "Currencies",
+                columns: new[] { "Id", "Abbreviation", "CreatedAt", "CreatedBy", "CurrencyTypeId", "DeletedAt", "DeletedBy", "DenominationName", "Description", "IsEnabled", "ModifiedAt", "ModifiedBy", "Name", "Slug" },
+                values: new object[] { 1455L, "GNT", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2L, null, 0L, null, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "Golem", "GNT" });
+
+            migrationBuilder.InsertData(
+                table: "Currencies",
+                columns: new[] { "Id", "Abbreviation", "CreatedAt", "CreatedBy", "CurrencyTypeId", "DeletedAt", "DeletedBy", "DenominationName", "Description", "IsEnabled", "ModifiedAt", "ModifiedBy", "Name", "Slug" },
+                values: new object[] { 1925L, "WTC", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2L, null, 0L, null, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "Waltonchain", "WTC" });
+
+            migrationBuilder.InsertData(
+                table: "Currencies",
+                columns: new[] { "Id", "Abbreviation", "CreatedAt", "CreatedBy", "CurrencyTypeId", "DeletedAt", "DeletedBy", "DenominationName", "Description", "IsEnabled", "ModifiedAt", "ModifiedBy", "Name", "Slug" },
+                values: new object[] { 3724L, "SOLVE", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2L, null, 0L, null, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "SOLVE", "SOLVE" });
+
+            migrationBuilder.InsertData(
+                table: "Currencies",
+                columns: new[] { "Id", "Abbreviation", "CreatedAt", "CreatedBy", "CurrencyTypeId", "DeletedAt", "DeletedBy", "DenominationName", "Description", "IsEnabled", "ModifiedAt", "ModifiedBy", "Name", "Slug" },
+                values: new object[] { 2087L, "KCS", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2L, null, 0L, null, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "KuCoin Shares", "KCS" });
+
+            migrationBuilder.InsertData(
+                table: "Currencies",
+                columns: new[] { "Id", "Abbreviation", "CreatedAt", "CreatedBy", "CurrencyTypeId", "DeletedAt", "DeletedBy", "DenominationName", "Description", "IsEnabled", "ModifiedAt", "ModifiedBy", "Name", "Slug" },
+                values: new object[] { 3116L, "INB", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2L, null, 0L, null, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "Insight Chain", "INB" });
+
+            migrationBuilder.InsertData(
+                table: "Currencies",
+                columns: new[] { "Id", "Abbreviation", "CreatedAt", "CreatedBy", "CurrencyTypeId", "DeletedAt", "DeletedBy", "DenominationName", "Description", "IsEnabled", "ModifiedAt", "ModifiedBy", "Name", "Slug" },
+                values: new object[] { 1886L, "DENT", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2L, null, 0L, null, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "Dent", "DENT" });
+
+            migrationBuilder.InsertData(
+                table: "Currencies",
+                columns: new[] { "Id", "Abbreviation", "CreatedAt", "CreatedBy", "CurrencyTypeId", "DeletedAt", "DeletedBy", "DenominationName", "Description", "IsEnabled", "ModifiedAt", "ModifiedBy", "Name", "Slug" },
+                values: new object[] { 291L, "MAID", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2L, null, 0L, null, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "MaidSafeCoin", "MAID" });
+
+            migrationBuilder.InsertData(
+                table: "Currencies",
+                columns: new[] { "Id", "Abbreviation", "CreatedAt", "CreatedBy", "CurrencyTypeId", "DeletedAt", "DeletedBy", "DenominationName", "Description", "IsEnabled", "ModifiedAt", "ModifiedBy", "Name", "Slug" },
+                values: new object[] { 3144L, "THR", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2L, null, 0L, null, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "ThoreCoin", "THR" });
+
+            migrationBuilder.InsertData(
+                table: "Currencies",
+                columns: new[] { "Id", "Abbreviation", "CreatedAt", "CreatedBy", "CurrencyTypeId", "DeletedAt", "DeletedBy", "DenominationName", "Description", "IsEnabled", "ModifiedAt", "ModifiedBy", "Name", "Slug" },
+                values: new object[] { 1343L, "STRAT", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2L, null, 0L, null, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "Stratis", "STRAT" });
+
+            migrationBuilder.InsertData(
+                table: "Currencies",
+                columns: new[] { "Id", "Abbreviation", "CreatedAt", "CreatedBy", "CurrencyTypeId", "DeletedAt", "DeletedBy", "DenominationName", "Description", "IsEnabled", "ModifiedAt", "ModifiedBy", "Name", "Slug" },
+                values: new object[] { 2416L, "THETA", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2L, null, 0L, null, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "THETA", "THETA" });
+
+            migrationBuilder.InsertData(
+                table: "Currencies",
+                columns: new[] { "Id", "Abbreviation", "CreatedAt", "CreatedBy", "CurrencyTypeId", "DeletedAt", "DeletedBy", "DenominationName", "Description", "IsEnabled", "ModifiedAt", "ModifiedBy", "Name", "Slug" },
+                values: new object[] { 3224L, "QBIT", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2L, null, 0L, null, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "Qubitica", "QBIT" });
+
+            migrationBuilder.InsertData(
+                table: "Currencies",
+                columns: new[] { "Id", "Abbreviation", "CreatedAt", "CreatedBy", "CurrencyTypeId", "DeletedAt", "DeletedBy", "DenominationName", "Description", "IsEnabled", "ModifiedAt", "ModifiedBy", "Name", "Slug" },
+                values: new object[] { 1866L, "BTM", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2L, null, 0L, null, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "Bytom", "BTM" });
+
+            migrationBuilder.InsertData(
+                table: "Currencies",
+                columns: new[] { "Id", "Abbreviation", "CreatedAt", "CreatedBy", "CurrencyTypeId", "DeletedAt", "DeletedBy", "DenominationName", "Description", "IsEnabled", "ModifiedAt", "ModifiedBy", "Name", "Slug" },
+                values: new object[] { 1230L, "STEEM", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2L, null, 0L, null, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "Steem", "STEEM" });
+
+            migrationBuilder.InsertData(
+                table: "Currencies",
+                columns: new[] { "Id", "Abbreviation", "CreatedAt", "CreatedBy", "CurrencyTypeId", "DeletedAt", "DeletedBy", "DenominationName", "Description", "IsEnabled", "ModifiedAt", "ModifiedBy", "Name", "Slug" },
+                values: new object[] { 1521L, "KMD", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2L, null, 0L, null, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "Komodo", "KMD" });
+
+            migrationBuilder.InsertData(
+                table: "Currencies",
+                columns: new[] { "Id", "Abbreviation", "CreatedAt", "CreatedBy", "CurrencyTypeId", "DeletedAt", "DeletedBy", "DenominationName", "Description", "IsEnabled", "ModifiedAt", "ModifiedBy", "Name", "Slug" },
+                values: new object[] { 3437L, "ABBC", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2L, null, 0L, null, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "ABBC Coin", "ABBC" });
+
+            migrationBuilder.InsertData(
+                table: "Currencies",
+                columns: new[] { "Id", "Abbreviation", "CreatedAt", "CreatedBy", "CurrencyTypeId", "DeletedAt", "DeletedBy", "DenominationName", "Description", "IsEnabled", "ModifiedAt", "ModifiedBy", "Name", "Slug" },
+                values: new object[] { 1042L, "SC", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2L, null, 0L, null, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "Siacoin", "SC" });
+
+            migrationBuilder.InsertData(
+                table: "Currencies",
+                columns: new[] { "Id", "Abbreviation", "CreatedAt", "CreatedBy", "CurrencyTypeId", "DeletedAt", "DeletedBy", "DenominationName", "Description", "IsEnabled", "ModifiedAt", "ModifiedBy", "Name", "Slug" },
+                values: new object[] { 2405L, "IOST", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2L, null, 0L, null, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "IOST", "IOST" });
+
+            migrationBuilder.InsertData(
+                table: "Currencies",
+                columns: new[] { "Id", "Abbreviation", "CreatedAt", "CreatedBy", "CurrencyTypeId", "DeletedAt", "DeletedBy", "DenominationName", "Description", "IsEnabled", "ModifiedAt", "ModifiedBy", "Name", "Slug" },
+                values: new object[] { 1700L, "AE", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2L, null, 0L, null, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "Aeternity", "AE" });
+
+            migrationBuilder.InsertData(
+                table: "Currencies",
+                columns: new[] { "Id", "Abbreviation", "CreatedAt", "CreatedBy", "CurrencyTypeId", "DeletedAt", "DeletedBy", "DenominationName", "Description", "IsEnabled", "ModifiedAt", "ModifiedBy", "Name", "Slug" },
+                values: new object[] { 3822L, "TFUEL", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2L, null, 0L, null, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "Theta Fuel", "TFUEL" });
+
+            migrationBuilder.InsertData(
+                table: "Currencies",
+                columns: new[] { "Id", "Abbreviation", "CreatedAt", "CreatedBy", "CurrencyTypeId", "DeletedAt", "DeletedBy", "DenominationName", "Description", "IsEnabled", "ModifiedAt", "ModifiedBy", "Name", "Slug" },
+                values: new object[] { 1320L, "ARDR", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2L, null, 0L, null, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "Ardor", "ARDR" });
+
+            migrationBuilder.InsertData(
+                table: "Currencies",
+                columns: new[] { "Id", "Abbreviation", "CreatedAt", "CreatedBy", "CurrencyTypeId", "DeletedAt", "DeletedBy", "DenominationName", "Description", "IsEnabled", "ModifiedAt", "ModifiedBy", "Name", "Slug" },
+                values: new object[] { 3607L, "VEST", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2L, null, 0L, null, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "VestChain", "VEST" });
+
+            migrationBuilder.InsertData(
+                table: "Currencies",
+                columns: new[] { "Id", "Abbreviation", "CreatedAt", "CreatedBy", "CurrencyTypeId", "DeletedAt", "DeletedBy", "DenominationName", "Description", "IsEnabled", "ModifiedAt", "ModifiedBy", "Name", "Slug" },
+                values: new object[] { 2308L, "DAI", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2L, null, 0L, null, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "Dai", "DAI" });
+
+            migrationBuilder.InsertData(
+                table: "Currencies",
+                columns: new[] { "Id", "Abbreviation", "CreatedAt", "CreatedBy", "CurrencyTypeId", "DeletedAt", "DeletedBy", "DenominationName", "Description", "IsEnabled", "ModifiedAt", "ModifiedBy", "Name", "Slug" },
+                values: new object[] { 1414L, "XZC", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2L, null, 0L, null, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "Zcoin", "XZC" });
+
+            migrationBuilder.InsertData(
+                table: "Currencies",
+                columns: new[] { "Id", "Abbreviation", "CreatedAt", "CreatedBy", "CurrencyTypeId", "DeletedAt", "DeletedBy", "DenominationName", "Description", "IsEnabled", "ModifiedAt", "ModifiedBy", "Name", "Slug" },
+                values: new object[] { 2090L, "LA", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2L, null, 0L, null, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "LATOKEN", "LA" });
+
+            migrationBuilder.InsertData(
+                table: "Currencies",
+                columns: new[] { "Id", "Abbreviation", "CreatedAt", "CreatedBy", "CurrencyTypeId", "DeletedAt", "DeletedBy", "DenominationName", "Description", "IsEnabled", "ModifiedAt", "ModifiedBy", "Name", "Slug" },
+                values: new object[] { 3890L, "MATIC", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2L, null, 0L, null, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "Matic Network", "MATIC" });
+
+            migrationBuilder.InsertData(
+                table: "Currencies",
+                columns: new[] { "Id", "Abbreviation", "CreatedAt", "CreatedBy", "CurrencyTypeId", "DeletedAt", "DeletedBy", "DenominationName", "Description", "IsEnabled", "ModifiedAt", "ModifiedBy", "Name", "Slug" },
+                values: new object[] { 1789L, "PPT", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2L, null, 0L, null, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "Populous", "PPT" });
+
+            migrationBuilder.InsertData(
+                table: "Currencies",
+                columns: new[] { "Id", "Abbreviation", "CreatedAt", "CreatedBy", "CurrencyTypeId", "DeletedAt", "DeletedBy", "DenominationName", "Description", "IsEnabled", "ModifiedAt", "ModifiedBy", "Name", "Slug" },
+                values: new object[] { 2092L, "NULS", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2L, null, 0L, null, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "NULS", "NULS" });
+
+            migrationBuilder.InsertData(
+                table: "Currencies",
+                columns: new[] { "Id", "Abbreviation", "CreatedAt", "CreatedBy", "CurrencyTypeId", "DeletedAt", "DeletedBy", "DenominationName", "Description", "IsEnabled", "ModifiedAt", "ModifiedBy", "Name", "Slug" },
+                values: new object[] { 2135L, "R", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2L, null, 0L, null, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "Revain", "R" });
+
+            migrationBuilder.InsertData(
+                table: "Currencies",
+                columns: new[] { "Id", "Abbreviation", "CreatedAt", "CreatedBy", "CurrencyTypeId", "DeletedAt", "DeletedBy", "DenominationName", "Description", "IsEnabled", "ModifiedAt", "ModifiedBy", "Name", "Slug" },
+                values: new object[] { 1807L, "SAN", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2L, null, 0L, null, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "Santiment Network Token", "SAN" });
+
+            migrationBuilder.InsertData(
+                table: "Currencies",
+                columns: new[] { "Id", "Abbreviation", "CreatedAt", "CreatedBy", "CurrencyTypeId", "DeletedAt", "DeletedBy", "DenominationName", "Description", "IsEnabled", "ModifiedAt", "ModifiedBy", "Name", "Slug" },
+                values: new object[] { 2588L, "LOOM", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2L, null, 0L, null, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "Loom Network", "LOOM" });
+
+            migrationBuilder.InsertData(
+                table: "Currencies",
+                columns: new[] { "Id", "Abbreviation", "CreatedAt", "CreatedBy", "CurrencyTypeId", "DeletedAt", "DeletedBy", "DenominationName", "Description", "IsEnabled", "ModifiedAt", "ModifiedBy", "Name", "Slug" },
+                values: new object[] { 1934L, "LRC", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2L, null, 0L, null, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "Loopring", "LRC" });
+
+            migrationBuilder.InsertData(
+                table: "Currencies",
+                columns: new[] { "Id", "Abbreviation", "CreatedAt", "CreatedBy", "CurrencyTypeId", "DeletedAt", "DeletedBy", "DenominationName", "Description", "IsEnabled", "ModifiedAt", "ModifiedBy", "Name", "Slug" },
+                values: new object[] { 2492L, "ELA", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2L, null, 0L, null, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "Elastos", "ELA" });
+
+            migrationBuilder.InsertData(
+                table: "Currencies",
+                columns: new[] { "Id", "Abbreviation", "CreatedAt", "CreatedBy", "CurrencyTypeId", "DeletedAt", "DeletedBy", "DenominationName", "Description", "IsEnabled", "ModifiedAt", "ModifiedBy", "Name", "Slug" },
+                values: new object[] { 1703L, "ETP", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2L, null, 0L, null, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "Metaverse ETP", "ETP" });
+
+            migrationBuilder.InsertData(
+                table: "Currencies",
+                columns: new[] { "Id", "Abbreviation", "CreatedAt", "CreatedBy", "CurrencyTypeId", "DeletedAt", "DeletedBy", "DenominationName", "Description", "IsEnabled", "ModifiedAt", "ModifiedBy", "Name", "Slug" },
+                values: new object[] { 2502L, "HT", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2L, null, 0L, null, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "Huobi Token", "HT" });
+
+            migrationBuilder.InsertData(
+                table: "Currencies",
+                columns: new[] { "Id", "Abbreviation", "CreatedAt", "CreatedBy", "CurrencyTypeId", "DeletedAt", "DeletedBy", "DenominationName", "Description", "IsEnabled", "ModifiedAt", "ModifiedBy", "Name", "Slug" },
+                values: new object[] { 2062L, "AION", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2L, null, 0L, null, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "Aion", "AION" });
+
+            migrationBuilder.InsertData(
+                table: "Currencies",
+                columns: new[] { "Id", "Abbreviation", "CreatedAt", "CreatedBy", "CurrencyTypeId", "DeletedAt", "DeletedBy", "DenominationName", "Description", "IsEnabled", "ModifiedAt", "ModifiedBy", "Name", "Slug" },
+                values: new object[] { 1966L, "MANA", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2L, null, 0L, null, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "Decentraland", "MANA" });
+
+            migrationBuilder.InsertData(
+                table: "Currencies",
+                columns: new[] { "Id", "Abbreviation", "CreatedAt", "CreatedBy", "CurrencyTypeId", "DeletedAt", "DeletedBy", "DenominationName", "Description", "IsEnabled", "ModifiedAt", "ModifiedBy", "Name", "Slug" },
+                values: new object[] { 1750L, "GXC", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2L, null, 0L, null, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "GXChain", "GXC" });
+
+            migrationBuilder.InsertData(
+                table: "Currencies",
+                columns: new[] { "Id", "Abbreviation", "CreatedAt", "CreatedBy", "CurrencyTypeId", "DeletedAt", "DeletedBy", "DenominationName", "Description", "IsEnabled", "ModifiedAt", "ModifiedBy", "Name", "Slug" },
+                values: new object[] { 213L, "MONA", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2L, null, 0L, null, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "MonaCoin", "MONA" });
+
+            migrationBuilder.InsertData(
+                table: "Currencies",
+                columns: new[] { "Id", "Abbreviation", "CreatedAt", "CreatedBy", "CurrencyTypeId", "DeletedAt", "DeletedBy", "DenominationName", "Description", "IsEnabled", "ModifiedAt", "ModifiedBy", "Name", "Slug" },
+                values: new object[] { 460L, "CLAM", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2L, null, 0L, null, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "Clams", "CLAM" });
+
+            migrationBuilder.InsertData(
+                table: "Currencies",
+                columns: new[] { "Id", "Abbreviation", "CreatedAt", "CreatedBy", "CurrencyTypeId", "DeletedAt", "DeletedBy", "DenominationName", "Description", "IsEnabled", "ModifiedAt", "ModifiedBy", "Name", "Slug" },
+                values: new object[] { 1229L, "DGD", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2L, null, 0L, null, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "DigixDAO", "DGD" });
+
+            migrationBuilder.InsertData(
+                table: "Currencies",
+                columns: new[] { "Id", "Abbreviation", "CreatedAt", "CreatedBy", "CurrencyTypeId", "DeletedAt", "DeletedBy", "DenominationName", "Description", "IsEnabled", "ModifiedAt", "ModifiedBy", "Name", "Slug" },
+                values: new object[] { 1698L, "ZEN", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2L, null, 0L, null, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "Horizen", "ZEN" });
+
+            migrationBuilder.InsertData(
+                table: "Currencies",
+                columns: new[] { "Id", "Abbreviation", "CreatedAt", "CreatedBy", "CurrencyTypeId", "DeletedAt", "DeletedBy", "DenominationName", "Description", "IsEnabled", "ModifiedAt", "ModifiedBy", "Name", "Slug" },
+                values: new object[] { 1586L, "ARK", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2L, null, 0L, null, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "Ark", "ARK" });
+
+            migrationBuilder.InsertData(
+                table: "Currencies",
+                columns: new[] { "Id", "Abbreviation", "CreatedAt", "CreatedBy", "CurrencyTypeId", "DeletedAt", "DeletedBy", "DenominationName", "Description", "IsEnabled", "ModifiedAt", "ModifiedBy", "Name", "Slug" },
+                values: new object[] { 2457L, "TRUE", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2L, null, 0L, null, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "TrueChain", "TRUE" });
+
+            migrationBuilder.InsertData(
+                table: "Currencies",
+                columns: new[] { "Id", "Abbreviation", "CreatedAt", "CreatedBy", "CurrencyTypeId", "DeletedAt", "DeletedBy", "DenominationName", "Description", "IsEnabled", "ModifiedAt", "ModifiedBy", "Name", "Slug" },
+                values: new object[] { 2300L, "WAX", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2L, null, 0L, null, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "WAX", "WAX" });
+
+            migrationBuilder.InsertData(
+                table: "Currencies",
+                columns: new[] { "Id", "Abbreviation", "CreatedAt", "CreatedBy", "CurrencyTypeId", "DeletedAt", "DeletedBy", "DenominationName", "Description", "IsEnabled", "ModifiedAt", "ModifiedBy", "Name", "Slug" },
+                values: new object[] { 2900L, "PAI", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2L, null, 0L, null, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "Project Pai", "PAI" });
+
+            migrationBuilder.InsertData(
+                table: "Currencies",
+                columns: new[] { "Id", "Abbreviation", "CreatedAt", "CreatedBy", "CurrencyTypeId", "DeletedAt", "DeletedBy", "DenominationName", "Description", "IsEnabled", "ModifiedAt", "ModifiedBy", "Name", "Slug" },
+                values: new object[] { 1087L, "FCT", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2L, null, 0L, null, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "Factom", "FCT" });
+
+            migrationBuilder.InsertData(
+                table: "Currencies",
+                columns: new[] { "Id", "Abbreviation", "CreatedAt", "CreatedBy", "CurrencyTypeId", "DeletedAt", "DeletedBy", "DenominationName", "Description", "IsEnabled", "ModifiedAt", "ModifiedBy", "Name", "Slug" },
+                values: new object[] { 3835L, "ORBS", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2L, null, 0L, null, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "Orbs", "ORBS" });
+
+            migrationBuilder.InsertData(
+                table: "Currencies",
+                columns: new[] { "Id", "Abbreviation", "CreatedAt", "CreatedBy", "CurrencyTypeId", "DeletedAt", "DeletedBy", "DenominationName", "Description", "IsEnabled", "ModifiedAt", "ModifiedBy", "Name", "Slug" },
+                values: new object[] { 2469L, "ZIL", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2L, null, 0L, null, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "Zilliqa", "ZIL" });
+
+            migrationBuilder.InsertData(
+                table: "Currencies",
+                columns: new[] { "Id", "Abbreviation", "CreatedAt", "CreatedBy", "CurrencyTypeId", "DeletedAt", "DeletedBy", "DenominationName", "Description", "IsEnabled", "ModifiedAt", "ModifiedBy", "Name", "Slug" },
+                values: new object[] { 2130L, "ENJ", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2L, null, 0L, null, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "Enjin Coin", "ENJ" });
+
+            migrationBuilder.InsertData(
+                table: "Currencies",
+                columns: new[] { "Id", "Abbreviation", "CreatedAt", "CreatedBy", "CurrencyTypeId", "DeletedAt", "DeletedBy", "DenominationName", "Description", "IsEnabled", "ModifiedAt", "ModifiedBy", "Name", "Slug" },
+                values: new object[] { 3330L, "PAX", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2L, null, 0L, null, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "Paxos Standard Token", "PAX" });
+
+            migrationBuilder.InsertData(
+                table: "Currencies",
+                columns: new[] { "Id", "Abbreviation", "CreatedAt", "CreatedBy", "CurrencyTypeId", "DeletedAt", "DeletedBy", "DenominationName", "Description", "IsEnabled", "ModifiedAt", "ModifiedBy", "Name", "Slug" },
+                values: new object[] { 25L, "XEM", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2L, null, 0L, null, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "NEM", "XEM" });
+
+            migrationBuilder.InsertData(
+                table: "Currencies",
+                columns: new[] { "Id", "Abbreviation", "CreatedAt", "CreatedBy", "CurrencyTypeId", "DeletedAt", "DeletedBy", "DenominationName", "Description", "IsEnabled", "ModifiedAt", "ModifiedBy", "Name", "Slug" },
+                values: new object[] { 24L, "ETC", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2L, null, 0L, null, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "Ethereum Classic", "ETC" });
+
+            migrationBuilder.InsertData(
+                table: "Currencies",
+                columns: new[] { "Id", "Abbreviation", "CreatedAt", "CreatedBy", "CurrencyTypeId", "DeletedAt", "DeletedBy", "DenominationName", "Description", "IsEnabled", "ModifiedAt", "ModifiedBy", "Name", "Slug" },
+                values: new object[] { 23L, "ATOM", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2L, null, 0L, null, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "Cosmos", "ATOM" });
+
+            migrationBuilder.InsertData(
+                table: "Currencies",
+                columns: new[] { "Id", "Abbreviation", "CreatedAt", "CreatedBy", "CurrencyTypeId", "DeletedAt", "DeletedBy", "DenominationName", "Description", "IsEnabled", "ModifiedAt", "ModifiedBy", "Name", "Slug" },
+                values: new object[] { 22L, "XTZ", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2L, null, 0L, null, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "Tezos", "XTZ" });
+
+            migrationBuilder.InsertData(
+                table: "Currencies",
+                columns: new[] { "Id", "Abbreviation", "CreatedAt", "CreatedBy", "CurrencyTypeId", "DeletedAt", "DeletedBy", "DenominationName", "Description", "IsEnabled", "ModifiedAt", "ModifiedBy", "Name", "Slug" },
+                values: new object[] { 2603L, "NPXS", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2L, null, 0L, null, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "Pundi X", "NPXS" });
+
+            migrationBuilder.InsertData(
+                table: "Currencies",
+                columns: new[] { "Id", "Abbreviation", "CreatedAt", "CreatedBy", "CurrencyTypeId", "DeletedAt", "DeletedBy", "DenominationName", "Description", "IsEnabled", "ModifiedAt", "ModifiedBy", "Name", "Slug" },
+                values: new object[] { 20L, "DASH", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2L, null, 0L, null, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "Dash", "DASH" });
+
+            migrationBuilder.InsertData(
+                table: "Currencies",
+                columns: new[] { "Id", "Abbreviation", "CreatedAt", "CreatedBy", "CurrencyTypeId", "DeletedAt", "DeletedBy", "DenominationName", "Description", "IsEnabled", "ModifiedAt", "ModifiedBy", "Name", "Slug" },
+                values: new object[] { 19L, "XMR", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2L, null, 0L, null, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "Monero", "XMR" });
+
+            migrationBuilder.InsertData(
+                table: "Currencies",
+                columns: new[] { "Id", "Abbreviation", "CreatedAt", "CreatedBy", "CurrencyTypeId", "DeletedAt", "DeletedBy", "DenominationName", "Description", "IsEnabled", "ModifiedAt", "ModifiedBy", "Name", "Slug" },
+                values: new object[] { 18L, "BSV", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2L, null, 0L, null, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "Bitcoin SV", "BSV" });
+
+            migrationBuilder.InsertData(
+                table: "Currencies",
+                columns: new[] { "Id", "Abbreviation", "CreatedAt", "CreatedBy", "CurrencyTypeId", "DeletedAt", "DeletedBy", "DenominationName", "Description", "IsEnabled", "ModifiedAt", "ModifiedBy", "Name", "Slug" },
+                values: new object[] { 17L, "TRX", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2L, null, 0L, null, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "TRON", "TRX" });
+
+            migrationBuilder.InsertData(
+                table: "Currencies",
+                columns: new[] { "Id", "Abbreviation", "CreatedAt", "CreatedBy", "CurrencyTypeId", "DeletedAt", "DeletedBy", "DenominationName", "Description", "IsEnabled", "ModifiedAt", "ModifiedBy", "Name", "Slug" },
+                values: new object[] { 16L, "ADA", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2L, null, 0L, null, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "Cardano", "ADA" });
+
+            migrationBuilder.InsertData(
+                table: "Currencies",
+                columns: new[] { "Id", "Abbreviation", "CreatedAt", "CreatedBy", "CurrencyTypeId", "DeletedAt", "DeletedBy", "DenominationName", "Description", "IsEnabled", "ModifiedAt", "ModifiedBy", "Name", "Slug" },
+                values: new object[] { 15L, "XLM", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2L, null, 0L, null, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "Stellar", "XLM" });
+
+            migrationBuilder.InsertData(
+                table: "Currencies",
+                columns: new[] { "Id", "Abbreviation", "CreatedAt", "CreatedBy", "CurrencyTypeId", "DeletedAt", "DeletedBy", "DenominationName", "Description", "IsEnabled", "ModifiedAt", "ModifiedBy", "Name", "Slug" },
+                values: new object[] { 26L, "NEO", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2L, null, 0L, null, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "NEO", "NEO" });
+
+            migrationBuilder.InsertData(
+                table: "Currencies",
+                columns: new[] { "Id", "Abbreviation", "CreatedAt", "CreatedBy", "CurrencyTypeId", "DeletedAt", "DeletedBy", "DenominationName", "Description", "IsEnabled", "ModifiedAt", "ModifiedBy", "Name", "Slug" },
+                values: new object[] { 14L, "BNB", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2L, null, 0L, null, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "Binance Coin", "BNB" });
+
+            migrationBuilder.InsertData(
+                table: "Currencies",
+                columns: new[] { "Id", "Abbreviation", "CreatedAt", "CreatedBy", "CurrencyTypeId", "DeletedAt", "DeletedBy", "DenominationName", "Description", "IsEnabled", "ModifiedAt", "ModifiedBy", "Name", "Slug" },
+                values: new object[] { 12L, "BCH", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2L, null, 0L, null, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "Bitcoin Cash", "BCH" });
+
+            migrationBuilder.InsertData(
+                table: "Currencies",
+                columns: new[] { "Id", "Abbreviation", "CreatedAt", "CreatedBy", "CurrencyTypeId", "DeletedAt", "DeletedBy", "DenominationName", "Description", "IsEnabled", "ModifiedAt", "ModifiedBy", "Name", "Slug" },
+                values: new object[] { 11L, "XRP", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2L, null, 0L, null, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "XRP", "XRP" });
+
+            migrationBuilder.InsertData(
+                table: "Currencies",
+                columns: new[] { "Id", "Abbreviation", "CreatedAt", "CreatedBy", "CurrencyTypeId", "DeletedAt", "DeletedBy", "DenominationName", "Description", "IsEnabled", "ModifiedAt", "ModifiedBy", "Name", "Slug" },
+                values: new object[] { 10L, "LTC", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2L, null, 0L, null, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "Litecoin", "LTC" });
+
+            migrationBuilder.InsertData(
+                table: "Currencies",
+                columns: new[] { "Id", "Abbreviation", "CreatedAt", "CreatedBy", "CurrencyTypeId", "DeletedAt", "DeletedBy", "DenominationName", "Description", "IsEnabled", "ModifiedAt", "ModifiedBy", "Name", "Slug" },
+                values: new object[] { 8L, "USDT", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2L, null, 0L, null, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "Tether", "USDT" });
+
+            migrationBuilder.InsertData(
+                table: "Currencies",
+                columns: new[] { "Id", "Abbreviation", "CreatedAt", "CreatedBy", "CurrencyTypeId", "DeletedAt", "DeletedBy", "DenominationName", "Description", "IsEnabled", "ModifiedAt", "ModifiedBy", "Name", "Slug" },
+                values: new object[] { 7L, "BTS", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2L, null, 0L, null, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "BitShares", "BTS" });
+
+            migrationBuilder.InsertData(
+                table: "Currencies",
+                columns: new[] { "Id", "Abbreviation", "CreatedAt", "CreatedBy", "CurrencyTypeId", "DeletedAt", "DeletedBy", "DenominationName", "Description", "IsEnabled", "ModifiedAt", "ModifiedBy", "Name", "Slug" },
+                values: new object[] { 6L, "BCN", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2L, null, 0L, null, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "Bytecoin", "BCN" });
+
+            migrationBuilder.InsertData(
+                table: "Currencies",
+                columns: new[] { "Id", "Abbreviation", "CreatedAt", "CreatedBy", "CurrencyTypeId", "DeletedAt", "DeletedBy", "DenominationName", "Denominations", "Description", "IsEnabled", "ModifiedAt", "ModifiedBy", "Name", "Slug" },
+                values: new object[] { 5L, "BTC", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2L, null, 0L, "Sat", 8, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "Bitcoin", "BTC" });
+
+            migrationBuilder.InsertData(
+                table: "Currencies",
+                columns: new[] { "Id", "Abbreviation", "CreatedAt", "CreatedBy", "CurrencyTypeId", "DeletedAt", "DeletedBy", "DenominationName", "Denominations", "Description", "IsEnabled", "ModifiedAt", "ModifiedBy", "Name", "Slug" },
+                values: new object[] { 4L, "KNC", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2L, null, 0L, null, 18, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "Kyber Network Crystal", "KNC" });
+
+            migrationBuilder.InsertData(
+                table: "Currencies",
+                columns: new[] { "Id", "Abbreviation", "CreatedAt", "CreatedBy", "CurrencyTypeId", "DeletedAt", "DeletedBy", "DenominationName", "Denominations", "Description", "IsEnabled", "ModifiedAt", "ModifiedBy", "Name", "Slug" },
+                values: new object[] { 3L, "ETH", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2L, null, 0L, "Wei", 18, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "Ethereum", "ETH" });
+
+            migrationBuilder.InsertData(
+                table: "Currencies",
+                columns: new[] { "Id", "Abbreviation", "CreatedAt", "CreatedBy", "CurrencyTypeId", "DeletedAt", "DeletedBy", "DenominationName", "Description", "IsEnabled", "ModifiedAt", "ModifiedBy", "Name", "Slug" },
+                values: new object[] { 9L, "SGD", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 1L, null, 0L, null, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "Singapore Dollar", "SGD" });
+
+            migrationBuilder.InsertData(
+                table: "Currencies",
+                columns: new[] { "Id", "Abbreviation", "CreatedAt", "CreatedBy", "CurrencyTypeId", "DeletedAt", "DeletedBy", "DenominationName", "Description", "IsEnabled", "ModifiedAt", "ModifiedBy", "Name", "Slug" },
+                values: new object[] { 2L, "EUR", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 1L, null, 0L, null, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "Euro", "EUR" });
+
+            migrationBuilder.InsertData(
+                table: "Currencies",
+                columns: new[] { "Id", "Abbreviation", "CreatedAt", "CreatedBy", "CurrencyTypeId", "DeletedAt", "DeletedBy", "DenominationName", "Description", "IsEnabled", "ModifiedAt", "ModifiedBy", "Name", "Slug" },
+                values: new object[] { 13L, "EOS", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2L, null, 0L, null, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "EOS", "EOS" });
+
+            migrationBuilder.InsertData(
+                table: "Currencies",
+                columns: new[] { "Id", "Abbreviation", "CreatedAt", "CreatedBy", "CurrencyTypeId", "DeletedAt", "DeletedBy", "DenominationName", "Description", "IsEnabled", "ModifiedAt", "ModifiedBy", "Name", "Slug" },
+                values: new object[] { 27L, "MKR", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2L, null, 0L, null, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "Maker", "MKR" });
+
+            migrationBuilder.InsertData(
+                table: "Currencies",
+                columns: new[] { "Id", "Abbreviation", "CreatedAt", "CreatedBy", "CurrencyTypeId", "DeletedAt", "DeletedBy", "DenominationName", "Description", "IsEnabled", "ModifiedAt", "ModifiedBy", "Name", "Slug" },
+                values: new object[] { 21L, "MIOTA", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2L, null, 0L, null, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "IOTA", "MIOTA" });
+
+            migrationBuilder.InsertData(
+                table: "Currencies",
+                columns: new[] { "Id", "Abbreviation", "CreatedAt", "CreatedBy", "CurrencyTypeId", "DeletedAt", "DeletedBy", "DenominationName", "Description", "IsEnabled", "ModifiedAt", "ModifiedBy", "Name", "Slug" },
+                values: new object[] { 29L, "ZEC", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2L, null, 0L, null, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "Zcash", "ZEC" });
+
+            migrationBuilder.InsertData(
+                table: "Currencies",
+                columns: new[] { "Id", "Abbreviation", "CreatedAt", "CreatedBy", "CurrencyTypeId", "DeletedAt", "DeletedBy", "DenominationName", "Description", "IsEnabled", "ModifiedAt", "ModifiedBy", "Name", "Slug" },
+                values: new object[] { 693L, "XVG", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2L, null, 0L, null, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "Verge", "XVG" });
+
+            migrationBuilder.InsertData(
+                table: "Currencies",
+                columns: new[] { "Id", "Abbreviation", "CreatedAt", "CreatedBy", "CurrencyTypeId", "DeletedAt", "DeletedBy", "DenominationName", "Description", "IsEnabled", "ModifiedAt", "ModifiedBy", "Name", "Slug" },
+                values: new object[] { 2099L, "ICX", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2L, null, 0L, null, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "ICON", "ICX" });
+
+            migrationBuilder.InsertData(
+                table: "Currencies",
+                columns: new[] { "Id", "Abbreviation", "CreatedAt", "CreatedBy", "CurrencyTypeId", "DeletedAt", "DeletedBy", "DenominationName", "Description", "IsEnabled", "ModifiedAt", "ModifiedBy", "Name", "Slug" },
+                values: new object[] { 109L, "DGB", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2L, null, 0L, null, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "DigiByte", "DGB" });
+
+            migrationBuilder.InsertData(
+                table: "Currencies",
+                columns: new[] { "Id", "Abbreviation", "CreatedAt", "CreatedBy", "CurrencyTypeId", "DeletedAt", "DeletedBy", "DenominationName", "Description", "IsEnabled", "ModifiedAt", "ModifiedBy", "Name", "Slug" },
+                values: new object[] { 2577L, "RVN", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2L, null, 0L, null, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "Ravencoin", "RVN" });
+
+            migrationBuilder.InsertData(
+                table: "Currencies",
+                columns: new[] { "Id", "Abbreviation", "CreatedAt", "CreatedBy", "CurrencyTypeId", "DeletedAt", "DeletedBy", "DenominationName", "Description", "IsEnabled", "ModifiedAt", "ModifiedBy", "Name", "Slug" },
+                values: new object[] { 1896L, "ZRX", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2L, null, 0L, null, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "0x", "ZRX" });
+
+            migrationBuilder.InsertData(
+                table: "Currencies",
+                columns: new[] { "Id", "Abbreviation", "CreatedAt", "CreatedBy", "CurrencyTypeId", "DeletedAt", "DeletedBy", "DenominationName", "Description", "IsEnabled", "ModifiedAt", "ModifiedBy", "Name", "Slug" },
+                values: new object[] { 28L, "ONT", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2L, null, 0L, null, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "Ontology", "ONT" });
+
+            migrationBuilder.InsertData(
+                table: "Currencies",
+                columns: new[] { "Id", "Abbreviation", "CreatedAt", "CreatedBy", "CurrencyTypeId", "DeletedAt", "DeletedBy", "DenominationName", "Description", "IsEnabled", "ModifiedAt", "ModifiedBy", "Name", "Slug" },
+                values: new object[] { 2222L, "BCD", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2L, null, 0L, null, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "Bitcoin Diamond", "BCD" });
+
+            migrationBuilder.InsertData(
+                table: "Currencies",
+                columns: new[] { "Id", "Abbreviation", "CreatedAt", "CreatedBy", "CurrencyTypeId", "DeletedAt", "DeletedBy", "DenominationName", "Description", "IsEnabled", "ModifiedAt", "ModifiedBy", "Name", "Slug" },
+                values: new object[] { 1104L, "REP", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2L, null, 0L, null, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "Augur", "REP" });
+
+            migrationBuilder.InsertData(
+                table: "Currencies",
+                columns: new[] { "Id", "Abbreviation", "CreatedAt", "CreatedBy", "CurrencyTypeId", "DeletedAt", "DeletedBy", "DenominationName", "Description", "IsEnabled", "ModifiedAt", "ModifiedBy", "Name", "Slug" },
+                values: new object[] { 1567L, "NANO", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2L, null, 0L, null, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "Nano", "NANO" });
+
+            migrationBuilder.InsertData(
+                table: "Currencies",
+                columns: new[] { "Id", "Abbreviation", "CreatedAt", "CreatedBy", "CurrencyTypeId", "DeletedAt", "DeletedBy", "DenominationName", "Description", "IsEnabled", "ModifiedAt", "ModifiedBy", "Name", "Slug" },
+                values: new object[] { 2563L, "TUSD", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2L, null, 0L, null, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "TrueUSD", "TUSD" });
+
+            migrationBuilder.InsertData(
+                table: "Currencies",
+                columns: new[] { "Id", "Abbreviation", "CreatedAt", "CreatedBy", "CurrencyTypeId", "DeletedAt", "DeletedBy", "DenominationName", "Description", "IsEnabled", "ModifiedAt", "ModifiedBy", "Name", "Slug" },
+                values: new object[] { 2682L, "HOT", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2L, null, 0L, null, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "Holo", "HOT" });
+
+            migrationBuilder.InsertData(
+                table: "Currencies",
+                columns: new[] { "Id", "Abbreviation", "CreatedAt", "CreatedBy", "CurrencyTypeId", "DeletedAt", "DeletedBy", "DenominationName", "Description", "IsEnabled", "ModifiedAt", "ModifiedBy", "Name", "Slug" },
+                values: new object[] { 3718L, "BTT", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2L, null, 0L, null, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "BitTorrent", "BTT" });
+
+            migrationBuilder.InsertData(
+                table: "Currencies",
+                columns: new[] { "Id", "Abbreviation", "CreatedAt", "CreatedBy", "CurrencyTypeId", "DeletedAt", "DeletedBy", "DenominationName", "Description", "IsEnabled", "ModifiedAt", "ModifiedBy", "Name", "Slug" },
+                values: new object[] { 1214L, "LSK", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2L, null, 0L, null, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "Lisk", "LSK" });
+
+            migrationBuilder.InsertData(
+                table: "Currencies",
+                columns: new[] { "Id", "Abbreviation", "CreatedAt", "CreatedBy", "CurrencyTypeId", "DeletedAt", "DeletedBy", "DenominationName", "Description", "IsEnabled", "ModifiedAt", "ModifiedBy", "Name", "Slug" },
+                values: new object[] { 1168L, "DCR", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2L, null, 0L, null, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "Decred", "DCR" });
+
+            migrationBuilder.InsertData(
+                table: "Currencies",
+                columns: new[] { "Id", "Abbreviation", "CreatedAt", "CreatedBy", "CurrencyTypeId", "DeletedAt", "DeletedBy", "DenominationName", "Description", "IsEnabled", "ModifiedAt", "ModifiedBy", "Name", "Slug" },
+                values: new object[] { 30L, "BAT", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2L, null, 0L, null, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "Basic Attention Token", "BAT" });
+
+            migrationBuilder.InsertData(
+                table: "Currencies",
+                columns: new[] { "Id", "Abbreviation", "CreatedAt", "CreatedBy", "CurrencyTypeId", "DeletedAt", "DeletedBy", "DenominationName", "Description", "IsEnabled", "ModifiedAt", "ModifiedBy", "Name", "Slug" },
+                values: new object[] { 31L, "CRO", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2L, null, 0L, null, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "Crypto.com Chain", "CRO" });
+
+            migrationBuilder.InsertData(
+                table: "Currencies",
+                columns: new[] { "Id", "Abbreviation", "CreatedAt", "CreatedBy", "CurrencyTypeId", "DeletedAt", "DeletedBy", "DenominationName", "Description", "IsEnabled", "ModifiedAt", "ModifiedBy", "Name", "Slug" },
+                values: new object[] { 1274L, "WAVES", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2L, null, 0L, null, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "Waves", "WAVES" });
+
+            migrationBuilder.InsertData(
+                table: "Currencies",
+                columns: new[] { "Id", "Abbreviation", "CreatedAt", "CreatedBy", "CurrencyTypeId", "DeletedAt", "DeletedBy", "DenominationName", "Description", "IsEnabled", "ModifiedAt", "ModifiedBy", "Name", "Slug" },
+                values: new object[] { 3077L, "VET", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2L, null, 0L, null, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "VeChain", "VET" });
+
+            migrationBuilder.InsertData(
+                table: "Currencies",
+                columns: new[] { "Id", "Abbreviation", "CreatedAt", "CreatedBy", "CurrencyTypeId", "DeletedAt", "DeletedBy", "DenominationName", "Description", "IsEnabled", "ModifiedAt", "ModifiedBy", "Name", "Slug" },
+                values: new object[] { 1975L, "LINK", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2L, null, 0L, null, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "Chainlink", "LINK" });
+
+            migrationBuilder.InsertData(
+                table: "Currencies",
+                columns: new[] { "Id", "Abbreviation", "CreatedAt", "CreatedBy", "CurrencyTypeId", "DeletedAt", "DeletedBy", "DenominationName", "Description", "IsEnabled", "ModifiedAt", "ModifiedBy", "Name", "Slug" },
+                values: new object[] { 2083L, "BTG", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2L, null, 0L, null, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "Bitcoin Gold", "BTG" });
+
+            migrationBuilder.InsertData(
+                table: "Currencies",
+                columns: new[] { "Id", "Abbreviation", "CreatedAt", "CreatedBy", "CurrencyTypeId", "DeletedAt", "DeletedBy", "DenominationName", "Description", "IsEnabled", "ModifiedAt", "ModifiedBy", "Name", "Slug" },
+                values: new object[] { 74L, "DOGE", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2L, null, 0L, null, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "Dogecoin", "DOGE" });
+
+            migrationBuilder.InsertData(
+                table: "Currencies",
+                columns: new[] { "Id", "Abbreviation", "CreatedAt", "CreatedBy", "CurrencyTypeId", "DeletedAt", "DeletedBy", "DenominationName", "Description", "IsEnabled", "ModifiedAt", "ModifiedBy", "Name", "Slug" },
+                values: new object[] { 2874L, "AOA", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2L, null, 0L, null, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "Aurora", "AOA" });
+
+            migrationBuilder.InsertData(
+                table: "Currencies",
+                columns: new[] { "Id", "Abbreviation", "CreatedAt", "CreatedBy", "CurrencyTypeId", "DeletedAt", "DeletedBy", "DenominationName", "Description", "IsEnabled", "ModifiedAt", "ModifiedBy", "Name", "Slug" },
+                values: new object[] { 1808L, "OMG", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2L, null, 0L, null, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "OmiseGO", "OMG" });
+
+            migrationBuilder.InsertData(
+                table: "Currencies",
+                columns: new[] { "Id", "Abbreviation", "CreatedAt", "CreatedBy", "CurrencyTypeId", "DeletedAt", "DeletedBy", "DenominationName", "Description", "IsEnabled", "ModifiedAt", "ModifiedBy", "Name", "Slug" },
+                values: new object[] { 1684L, "QTUM", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2L, null, 0L, null, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "Qtum", "QTUM" });
+
+            migrationBuilder.InsertData(
+                table: "Currencies",
+                columns: new[] { "Id", "Abbreviation", "CreatedAt", "CreatedBy", "CurrencyTypeId", "DeletedAt", "DeletedBy", "DenominationName", "Description", "IsEnabled", "ModifiedAt", "ModifiedBy", "Name", "Slug" },
+                values: new object[] { 3408L, "USDC", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2L, null, 0L, null, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "USD Coin", "USDC" });
 
             migrationBuilder.InsertData(
                 table: "CurrencyPairs",
@@ -540,11 +1057,11 @@ namespace Nozomi.Repo.Migrations
                     { 16L, "https://www.coinhako.com/api/v1/price/currency/LTCUSD", "USD", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2, "data/buy_price", null, 0L, true, "LTC", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 3L },
                     { 15L, "https://www.coinhako.com/api/v1/price/currency/LTCSGD", "SGD", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2, "data/buy_price", null, 0L, true, "LTC", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 3L },
                     { 13L, "https://www.coinhako.com/api/v1/price/currency/ETHSGD", "SGD", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2, "data/buy_price", null, 0L, true, "ETH", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 3L },
-                    { 7L, "https://api.bitfinex.com/v1/pubticker/etheur", "EUR", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 1, "0", null, 0L, true, "ETH", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 1L },
+                    { 6L, "https://poloniex.com/public?command=returnTicker", "BTS", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2, "BTC_BTS/lowestAsk", null, 0L, true, "BTC", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 6L },
                     { 11L, "https://www.coinhako.com/api/v1/price/currency/BTCSGD", "SGD", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2, "data/buy_price", null, 0L, true, "BTC", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 3L },
                     { 10L, "wss://stream.binance.com:9443/stream?streams=!ticker@arr", "ETH", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2, "b", null, 0L, true, "KNC", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 3L },
                     { 9L, "wss://stream.binance.com:9443/stream?streams=!ticker@arr", "BTC", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2, "b", null, 0L, true, "ETH", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 3L },
-                    { 6L, "https://poloniex.com/public?command=returnTicker", "BTS", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2, "BTC_BTS/lowestAsk", null, 0L, true, "BTC", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 6L },
+                    { 7L, "https://api.bitfinex.com/v1/pubticker/etheur", "EUR", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 1, "0", null, 0L, true, "ETH", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 1L },
                     { 2L, "https://api.ethfinex.com/v2/ticker/tKNCUSD", "USD", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 1, "0", null, 0L, true, "KNC", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 1L },
                     { 1L, "https://api.ethfinex.com/v2/ticker/tETHUSD", "USD", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 1, "0", null, 0L, true, "ETH", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 1L },
                     { 12L, "https://www.coinhako.com/api/v1/price/currency/BTCUSD", "USD", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 2, "data/buy_price", null, 0L, true, "BTC", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 3L },
@@ -557,10 +1074,10 @@ namespace Nozomi.Repo.Migrations
                 values: new object[,]
                 {
                     { 10L, 11, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 2L, null, 10000, null, 0L, false, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "$ 0[.]00", null },
-                    { 53L, 20, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 5L, null, null, 3000, null, 0L, true, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "$ 0 a", null },
                     { 54L, 21, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 5L, null, null, 3000, null, 0L, true, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "$ 0 a", null },
                     { 60L, 10, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 5L, null, null, 3000, null, 0L, true, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "$ 0[.]00", null },
                     { 61L, 11, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 5L, null, null, 3000, null, 0L, true, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "$ 0[.]00", null },
+                    { 40L, 10, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 15L, null, 10000, null, 0L, false, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "$ 0[.]00", null },
                     { 39L, 70, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 14L, null, 10000, null, 0L, false, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "0[.]0", null },
                     { 38L, 11, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 14L, null, 10000, null, 0L, false, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "$ 0[.]00", null },
                     { 37L, 10, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 14L, null, 10000, null, 0L, false, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "$ 0[.]00", null },
@@ -569,7 +1086,7 @@ namespace Nozomi.Repo.Migrations
                     { 34L, 10, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 13L, null, 10000, null, 0L, false, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "$ 0[.]00", null },
                     { 4L, 80, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 1L, null, 1000, null, 0L, false, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "$ 0 a", null },
                     { 5L, 10, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 1L, null, 500, null, 0L, false, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "$ 0[.]00", null },
-                    { 52L, 6, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 5L, null, null, 3000, null, 0L, true, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "$ 0 a", null },
+                    { 53L, 20, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 5L, null, null, 3000, null, 0L, true, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "$ 0 a", null },
                     { 6L, 11, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 1L, null, 10000, null, 0L, false, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "$ 0[.]00", null },
                     { 33L, 70, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 12L, null, 10000, null, 0L, false, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "0[.]0", null },
                     { 8L, 80, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 2L, null, 1000, null, 0L, false, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "0 a", null },
@@ -584,8 +1101,8 @@ namespace Nozomi.Repo.Migrations
                     { 31L, 10, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 12L, null, 10000, null, 0L, false, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "$ 0[.]00", null },
                     { 30L, 70, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 11L, null, 10000, null, 0L, false, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "0[.]0", null },
                     { 7L, 70, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 1L, null, 500, null, 0L, false, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "0[.]0", null },
+                    { 52L, 6, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 5L, null, null, 3000, null, 0L, true, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "$ 0 a", null },
                     { 3L, 1, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 5L, null, null, 3000, null, 0L, false, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "$ 0 a", null },
-                    { 40L, 10, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 15L, null, 10000, null, 0L, false, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "$ 0[.]00", null },
                     { 41L, 11, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 15L, null, 10000, null, 0L, false, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "$ 0[.]00", null },
                     { 26L, 11, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 8L, null, 10000, null, 0L, false, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "$ 0[.]00", null },
                     { 25L, 10, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 8L, null, 500, null, 0L, false, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "$ 0[.]00", null },
@@ -596,22 +1113,22 @@ namespace Nozomi.Repo.Migrations
                     { 16L, 80, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 6L, null, 1000, null, 0L, false, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "0 a", null },
                     { 15L, 70, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 5L, null, 500, null, 0L, false, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "0[.]0", null },
                     { 14L, 11, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 5L, null, 10000, null, 0L, false, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "0[.]00", null },
-                    { 13L, 10, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 5L, null, 500, null, 0L, false, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "0[.]00", null },
                     { 1L, 1, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 3L, null, null, 3000, null, 0L, true, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "$ 0 a", null },
                     { 46L, 6, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 3L, null, null, 3000, null, 0L, true, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "$ 0 a", null },
                     { 47L, 20, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 3L, null, null, 3000, null, 0L, true, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "$ 0 a", null },
                     { 48L, 21, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 3L, null, null, 3000, null, 0L, true, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "$ 0 a", null },
                     { 56L, 10, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 3L, null, null, 3000, null, 0L, true, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "$ 0[.]00", null },
                     { 57L, 11, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 3L, null, null, 3000, null, 0L, true, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "$ 0[.]00", null },
+                    { 13L, 10, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 5L, null, 500, null, 0L, false, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "0[.]00", null },
                     { 12L, 80, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 5L, null, 1000, null, 0L, false, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "0 a", null },
                     { 45L, 70, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 16L, null, 10000, null, 0L, false, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "0[.]0", null },
-                    { 44L, 11, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 16L, null, 10000, null, 0L, false, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "$ 0[.]00", null },
                     { 2L, 1, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 4L, null, null, 3000, null, 0L, true, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "$ 0 a", null },
                     { 49L, 6, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 4L, null, null, 3000, null, 0L, true, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "$ 0 a", null },
                     { 50L, 20, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 4L, null, null, 3000, null, 0L, true, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "$ 0 a", null },
                     { 51L, 21, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 4L, null, null, 3000, null, 0L, true, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "$ 0 a", null },
                     { 58L, 10, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 4L, null, null, 3000, null, 0L, true, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "$ 0[.]00", null },
                     { 59L, 11, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 4L, null, null, 3000, null, 0L, true, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "$ 0[.]00", null },
+                    { 44L, 11, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 16L, null, 10000, null, 0L, false, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "$ 0[.]00", null },
                     { 43L, 10, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 16L, null, 10000, null, 0L, false, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "$ 0[.]00", null },
                     { 42L, 70, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 15L, null, 10000, null, 0L, false, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "0[.]0", null },
                     { 29L, 11, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, null, 11L, null, 10000, null, 0L, false, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, "$ 0[.]00", null },
@@ -624,19 +1141,19 @@ namespace Nozomi.Repo.Migrations
                 values: new object[,]
                 {
                     { 1L, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 1L, null, 0L, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 1L },
+                    { 13L, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 6L, null, 0L, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 6L },
                     { 5L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 4L, null, 0L, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 3L },
-                    { 4L, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 4L, null, 0L, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 1L },
                     { 6L, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 3L, null, 0L, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 3L },
-                    { 3L, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 3L, null, 0L, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 1L },
-                    { 17L, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 9L, null, 0L, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 2L },
                     { 7L, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 5L, null, 0L, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 3L },
+                    { 3L, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 3L, null, 0L, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 1L },
                     { 12L, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 5L, null, 0L, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 6L },
                     { 16L, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 5L, null, 0L, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 2L },
-                    { 15L, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 8L, null, 0L, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 6L },
-                    { 13L, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 6L, null, 0L, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 6L },
+                    { 17L, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 9L, null, 0L, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 2L },
                     { 10L, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 2L, null, 0L, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 5L },
                     { 18L, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 6L, null, 0L, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 2L },
+                    { 4L, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 4L, null, 0L, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 1L },
                     { 14L, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 7L, null, 0L, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 6L },
+                    { 15L, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 8L, null, 0L, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 6L },
                     { 20L, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 10L, null, 0L, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 2L },
                     { 2L, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 2L, null, 0L, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 1L },
                     { 19L, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 1L, null, 0L, true, new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0L, 2L },
@@ -662,13 +1179,18 @@ namespace Nozomi.Repo.Migrations
 
             migrationBuilder.InsertData(
                 table: "Requests",
-                columns: new[] { "Id", "CreatedAt", "CreatedBy", "DataPath", "Delay", "DeletedAt", "DeletedBy", "Discriminator", "Guid", "IsEnabled", "ModifiedAt", "ModifiedBy", "RequestType", "ResponseType", "CurrencyPairId" },
-                values: new object[] { 8L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "https://www.alphavantage.co/query", 5000, null, 0L, "CurrencyPairRequest", new Guid("48ad7cb2-b2b7-41be-8540-64136b72883c"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 1, 4L });
+                columns: new[] { "Id", "CreatedAt", "CreatedBy", "DataPath", "DeletedAt", "DeletedBy", "Discriminator", "Guid", "IsEnabled", "ModifiedAt", "ModifiedBy", "RequestType", "ResponseType", "WebsocketRequest_CurrencyPairId" },
+                values: new object[] { 13L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "wss://stream.binance.com:9443/stream?streams=!ticker@arr", null, 0L, "WebsocketRequest", new Guid("6f9d8fe7-71f4-42b8-ac31-526f559549a3"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 50, 1, 9L });
 
             migrationBuilder.InsertData(
                 table: "Requests",
-                columns: new[] { "Id", "CreatedAt", "CreatedBy", "DataPath", "DeletedAt", "DeletedBy", "Discriminator", "Guid", "IsEnabled", "ModifiedAt", "ModifiedBy", "RequestType", "ResponseType", "WebsocketRequest_CurrencyPairId" },
-                values: new object[] { 13L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "wss://stream.binance.com:9443/stream?streams=!ticker@arr", null, 0L, "WebsocketRequest", new Guid("6f9d8fe7-71f4-42b8-ac31-526f559549a3"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 50, 1, 9L });
+                columns: new[] { "Id", "CreatedAt", "CreatedBy", "DataPath", "Delay", "DeletedAt", "DeletedBy", "Discriminator", "Guid", "IsEnabled", "ModifiedAt", "ModifiedBy", "RequestType", "CurrencyId" },
+                values: new object[] { 2L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "https://api.etherscan.io/api", 5000, null, 0L, "CurrencyRequest", new Guid("b7b9642e-357a-451c-9741-bf5a7fcb0ad1"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 4L });
+
+            migrationBuilder.InsertData(
+                table: "Requests",
+                columns: new[] { "Id", "CreatedAt", "CreatedBy", "DataPath", "Delay", "DeletedAt", "DeletedBy", "Discriminator", "Guid", "IsEnabled", "ModifiedAt", "ModifiedBy", "RequestType", "ResponseType", "CurrencyPairId" },
+                values: new object[] { 7L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml", 86400000, null, 0L, "CurrencyPairRequest", new Guid("1d8ba5ea-9d3a-4b02-b2d8-84ccd0851e69"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 2, 3L });
 
             migrationBuilder.InsertData(
                 table: "Requests",
@@ -682,23 +1204,18 @@ namespace Nozomi.Repo.Migrations
 
             migrationBuilder.InsertData(
                 table: "Requests",
-                columns: new[] { "Id", "CreatedAt", "CreatedBy", "DataPath", "Delay", "DeletedAt", "DeletedBy", "Discriminator", "Guid", "IsEnabled", "ModifiedAt", "ModifiedBy", "RequestType", "CurrencyId" },
-                values: new object[] { 2L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "https://api.etherscan.io/api", 5000, null, 0L, "CurrencyRequest", new Guid("b7b9642e-357a-451c-9741-bf5a7fcb0ad1"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 4L });
-
-            migrationBuilder.InsertData(
-                table: "Requests",
                 columns: new[] { "Id", "CreatedAt", "CreatedBy", "DataPath", "Delay", "DeletedAt", "DeletedBy", "Discriminator", "Guid", "IsEnabled", "ModifiedAt", "ModifiedBy", "RequestType", "ResponseType", "CurrencyPairId" },
                 values: new object[] { 19L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "https://www.coinhako.com/api/v1/price/currency/LTCSGD", 10000, null, 0L, "CurrencyPairRequest", new Guid("58bf3728-1887-4460-bf61-6b898be360f3"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 1, 15L });
 
             migrationBuilder.InsertData(
                 table: "Requests",
-                columns: new[] { "Id", "CreatedAt", "CreatedBy", "DataPath", "Delay", "DeletedAt", "DeletedBy", "Discriminator", "Guid", "IsEnabled", "ModifiedAt", "ModifiedBy", "RequestType", "ResponseType", "CurrencyPairId" },
-                values: new object[] { 18L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "https://www.coinhako.com/api/v1/price/currency/ETHUSD", 10000, null, 0L, "CurrencyPairRequest", new Guid("ceb4e033-ebbb-45d9-9312-951f09228c30"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 1, 14L });
+                columns: new[] { "Id", "CreatedAt", "CreatedBy", "DataPath", "Delay", "DeletedAt", "DeletedBy", "Discriminator", "Guid", "IsEnabled", "ModifiedAt", "ModifiedBy", "RequestType", "CurrencyId" },
+                values: new object[] { 3L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "https://insight.bitpay.com/api/status?q=getBlockCount", 90000, null, 0L, "CurrencyRequest", new Guid("31ceeb18-1d89-43d2-b215-0488d9417c67"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 5L });
 
             migrationBuilder.InsertData(
                 table: "Requests",
-                columns: new[] { "Id", "CreatedAt", "CreatedBy", "DataPath", "Delay", "DeletedAt", "DeletedBy", "Discriminator", "Guid", "IsEnabled", "ModifiedAt", "ModifiedBy", "RequestType", "CurrencyId" },
-                values: new object[] { 3L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "https://insight.bitpay.com/api/status?q=getBlockCount", 90000, null, 0L, "CurrencyRequest", new Guid("31ceeb18-1d89-43d2-b215-0488d9417c67"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 5L });
+                columns: new[] { "Id", "CreatedAt", "CreatedBy", "DataPath", "Delay", "DeletedAt", "DeletedBy", "Discriminator", "Guid", "IsEnabled", "ModifiedAt", "ModifiedBy", "RequestType", "ResponseType", "CurrencyPairId" },
+                values: new object[] { 18L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "https://www.coinhako.com/api/v1/price/currency/ETHUSD", 10000, null, 0L, "CurrencyPairRequest", new Guid("ceb4e033-ebbb-45d9-9312-951f09228c30"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 1, 14L });
 
             migrationBuilder.InsertData(
                 table: "Requests",
@@ -738,7 +1255,7 @@ namespace Nozomi.Repo.Migrations
             migrationBuilder.InsertData(
                 table: "Requests",
                 columns: new[] { "Id", "CreatedAt", "CreatedBy", "DataPath", "Delay", "DeletedAt", "DeletedBy", "Discriminator", "Guid", "IsEnabled", "ModifiedAt", "ModifiedBy", "RequestType", "ResponseType", "CurrencyPairId" },
-                values: new object[] { 7L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml", 86400000, null, 0L, "CurrencyPairRequest", new Guid("1d8ba5ea-9d3a-4b02-b2d8-84ccd0851e69"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 2, 3L });
+                values: new object[] { 8L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "https://www.alphavantage.co/query", 5000, null, 0L, "CurrencyPairRequest", new Guid("48ad7cb2-b2b7-41be-8540-64136b72883c"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 1, 4L });
 
             migrationBuilder.InsertData(
                 table: "Requests",
@@ -1037,15 +1554,15 @@ namespace Nozomi.Repo.Migrations
                 column: "AnalysedComponentId");
 
             migrationBuilder.CreateIndex(
-                name: "Currency_Index_Abbreviation",
-                table: "Currencies",
-                column: "Abbreviation",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Currencies_CurrencyTypeId",
                 table: "Currencies",
                 column: "CurrencyTypeId");
+
+            migrationBuilder.CreateIndex(
+                name: "Currency_Index_Slug",
+                table: "Currencies",
+                column: "Slug",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_CurrencyPairs_SourceId",

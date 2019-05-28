@@ -60,7 +60,7 @@
                                 </div>
                                 <div class="card-body bg-white rounded-top p-5" v-if="component.historical.length > 1">
                                     <trend
-                                        :data="component.historical" radius="16"
+                                        :data="component.historical.map(Number)" radius="16"
                                         :gradient="['#6fa8dc', '#42b983', '#2c3e50']" auto-draw smooth>
                                     </trend>
                                 </div>
@@ -89,13 +89,13 @@
                      :per-page="itemsPerPage" :current-page="currentCurrencyPage"
                      class="table-borderless"
                      :fields="currencyDataFields" :items="currencies">
-                  <div slot="table-busy" class="text-center text-danger my-2">
+                <div slot="table-busy" class="text-center text-danger my-2">
                     <b-spinner class="align-middle"></b-spinner>
-                  </div>
+                </div>
                 <!-- A virtual composite column -->
                 <template slot="name" slot-scope="datum">
-                    <a :href="'/currency/' + datum.item.abbreviation">{{ datum.item.name }}</a><br>
-                    {{ datum.item.abbreviation }}
+                    <img :src="datum.item.logoPath" class="mr-1" style="width: 24px; height: 24px; vertical-align: bottom;"/>
+                    <a :href="'/currency/' + datum.item.abbreviation">{{ datum.item.name }}</a>
                 </template>
                 <!-- A virtual composite column -->
                 <template slot="marketCap" slot-scope="datum">
@@ -124,9 +124,9 @@
                     </div>
                 </template>
                 <!-- A virtual composite column -->
-                <template slot="dailyVolume" slot-scope="datum">
-                    {{ numeral(datum.item.dailyVolume).format('0 a') }} {{ datum.item.abbreviation }}
-                </template>
+                @* <template slot="dailyVolume" slot-scope="datum"> *@
+                @*     {{ numeral(datum.item.dailyVolume).format('0 a') }} {{ datum.item.abbreviation }} *@
+                @* </template> *@
                 <template slot="averagePriceHistory" slot-scope="datum">
                     <!-- Area Chart -->
                     <trend
@@ -179,11 +179,11 @@
                         label: 'Daily Change',
                         sortable: true
                     },
-                    {
-                        key: 'dailyVolume',
-                        label: 'Volume',
-                        sortable: true
-                    },
+                    // {
+                    //     key: 'dailyVolume',
+                    //     label: 'Volume',
+                    //     sortable: true
+                    // },
                     {
                         key: 'averagePriceHistory',
                         label: 'Price Chart',
