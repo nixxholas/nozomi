@@ -54,9 +54,9 @@ namespace Nozomi.Ticker.Controllers.APIs.v1.CurrencyPairComponent
 
         [Authorize]
         [HttpPost]
-        public NozomiResult<string> Update(UpdateCurrencyPairComponent updateCurrencyPairComponent)
+        public NozomiResult<string> Update(UpdateRequestComponent updateRequestComponent)
         {
-            return _requestComponentService.Update(updateCurrencyPairComponent);
+            return _requestComponentService.Update(updateRequestComponent);
         }
 
         [Authorize]
