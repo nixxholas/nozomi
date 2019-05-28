@@ -10,6 +10,8 @@ namespace Nozomi.Base.Identity.ViewModels.Manage.Request
         public List<KeyValuePair<string, int>> RequestTypes { get; set; }
         
         public List<KeyValuePair<string, int>> ResponseTypes { get; set; }
+        
+        public List<KeyValuePair<string, int>> RequestComponentTypes { get; set; }
        
     }
 }
