@@ -2,9 +2,9 @@
 {
     internal static class ApiRoutes
     {
-        internal static class IceAndFire
+        internal static class Nozomi
         {
-            internal const string BaseRoute = "iceandfire";
+            internal const string BaseRoute = "";
             internal const string CharactersById = "api/characters/{id}";
         }
     }

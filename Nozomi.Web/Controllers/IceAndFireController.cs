@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Nozomi.Web.Controllers
 {
-    [Route(ApiRoutes.IceAndFire.BaseRoute)]
+    [Route(ApiRoutes.Nozomi.BaseRoute)]
     public class IceAndFireController : Controller
     {
         private const string ApiOfIceAndFireCharactersUrl = "https://anapioficeandfire.com/api/characters";
@@ -28,7 +28,7 @@ namespace Nozomi.Web.Controllers
             return View();
         }
 
-        [HttpGet(ApiRoutes.IceAndFire.CharactersById)]
+        [HttpGet(ApiRoutes.Nozomi.CharactersById)]
         public async Task<IActionResult> GetCharacterAsync([FromRoute] int id)
         {
             if (id == default(int))
