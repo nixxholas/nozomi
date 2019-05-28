@@ -1,5 +1,3 @@
-using System;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -7,7 +5,6 @@ using Microsoft.Extensions.Logging;
 using Nozomi.Base.Identity.ViewModels.Manage.Request;
 using Nozomi.Data;
 using Nozomi.Data.AreaModels.v1.Requests;
-using Nozomi.Data.Models.Web;
 using Nozomi.Preprocessing;
 using Nozomi.Service.Events.Interfaces;
 using Nozomi.Service.Identity.Managers;
@@ -66,12 +63,13 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
             {
                 return NotFound($"Unable to load user withID '{_userManager.GetUserId(User)}'.");
             }
-
+                      
             return View(new RequestViewModel
             {
                 Request = _requestEvent.GetActive(id, true).ToDTO(_requestComponentEvent.GetAllByRequest(id)),
                 RequestTypes = NozomiServiceConstants.requestTypes,
-                ResponseTypes = NozomiServiceConstants.responseTypes
+                ResponseTypes = NozomiServiceConstants.responseTypes,
+                RequestComponentTypes = NozomiServiceConstants.requestComponentTypes
             });
         }
         
