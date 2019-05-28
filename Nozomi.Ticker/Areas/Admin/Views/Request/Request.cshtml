@@ -97,6 +97,12 @@
             <template slot="AnomalyIgnorance" slot-scope="datum">
                 <b-form-checkbox v-model="datum.item.anomalyIgnorance " disabled/>
             </template>
+            <template slot="Edit" slot-scope="datum">
+                <b-button variant="primary" v-on:click="showRCEditModal(datum.item.id, datum.item.componentType, datum.item.identifier, datum.item.queryComponent, datum.item.isDenominated, datum.item.anomalyIgnorance)" >Edit</b-button>
+            </template>
+            <template slot="Delete" slot-scope="datum">
+                <b-button variant="danger" v-on:click="showRCDeleteModal(datum.item.id)">Delete</b-button>
+            </template>
         </b-table>
 
         <hr/>
@@ -118,7 +124,7 @@
     </div>
 </div>
 
-<!-- CreateModal -->
+<!-- Request Component CreateModal -->
 <b-modal ref="rc-create-modal" size="xl" title="Create Request Component" ok-title="Create Request Component" v-on:ok="handleRCCreateOk">
     <b-form v-on:submit.stop.prevent="onRCCreateSubmit">
         <b-form-group label="Request Component Type">
@@ -149,6 +155,44 @@
             <b-form-checkbox v-model="createRCForm.anomalyIgnorance">Anomaly Ignorance</b-form-checkbox>
         </b-form-group>
     </b-form>
+</b-modal>
+
+<!-- Request Component EditModal -->
+<b-modal ref="rc-edit-modal" size="xl" title="Edit Request Component" ok-title="Edit Request Component" v-on:ok="handleRCEditOk">
+    <b-form v-on:submit.stop.prevent="onRCCEditSubmit">
+        <b-form-group label="Request Component Type">
+            <b-form-select v-model="editRCForm.componentType" :options="requestComponentTypes"></b-form-select>
+        </b-form-group>
+        
+        <b-form-group label="Query Component">
+            <b-form-input
+                v-model="editRCForm.queryComponent"
+                required
+                placeholder="Enter Query Component">
+            </b-form-input>
+        </b-form-group>
+
+        <b-form-group label="Identifier">
+            <b-form-input
+                v-model="editRCForm.identifier"
+                required
+                placeholder="Enter identifier">
+            </b-form-input>
+        </b-form-group>
+
+        <b-form-group>
+            <b-form-checkbox v-model="editRCForm.isDenominated">Is Denominated</b-form-checkbox>
+        </b-form-group>
+
+        <b-form-group>
+            <b-form-checkbox v-model="editRCForm.anomalyIgnorance">Anomaly Ignorance</b-form-checkbox>
+        </b-form-group>
+    </b-form>
+</b-modal>
+
+<!-- Request Component DeleteModal -->
+<b-modal ref="rc-delete-modal" title="Confirm Delete" ok-title="Yes" ok-variant="danger" cancel-title="No" v-on:ok="handleRCDeleteOk" centered>
+    <p>Are you sure that you want to delete this request component??</p>
 </b-modal>
 
 @section Scripts
@@ -210,6 +254,16 @@
                         key: 'AnomalyIgnorance',
                         label: 'Anomaly Ignorance',
                         sortable: true,
+                    },
+                    {
+                        key:'Edit',
+                        label: '',
+                        sortable: false
+                    },
+                    {
+                        key:'Delete',
+                        label:'',
+                        sortable: false
                     }
                 ],
                 requestPropertiesDataFields: [
@@ -242,6 +296,17 @@
                     identifier: '',
                     isDenominated: Boolean,
                     anomalyIgnorance: Boolean
+                },
+                editRCForm: {
+                    id: Number,
+                    componentType: Number,
+                    queryComponent: '',
+                    identifier: '',
+                    isDenominated: Boolean,
+                    anomalyIgnorance: Boolean
+                },
+                deleteRCModal: {
+                    id: Number,
                 },
                 // The data from the dto
                 request:
@@ -312,45 +377,6 @@
                     }
                     this.requestComponentTypes = requestComponentTypesArr;
                 },
-                showRCCreateModal() {
-                    this.$refs['rc-create-modal'].show();
-                },
-                handleRCCreateOk(bvModalEvt) {
-                    // Prevent modal from closing
-                    bvModalEvt.preventDefault();
-                    // Trigger submit handler
-                    this.onRCCreateSubmit();
-                },
-                async onRCCreateSubmit() {
-                    var formData = new FormData();
-                    formData.append('RequestId', @Model.Request.Id);
-                    formData.append('ComponentType', this.createRCForm.componentType);
-                    formData.append('QueryComponent', this.createRCForm.queryComponent);
-                    formData.append('IsDenominated', this.createRCForm.isDenominated);
-                    formData.append('AnomalyIgnorance', this.createRCForm.anomalyIgnorance);
-
-                    console.log(this.createRCForm.componentType);
-
-                    const response = await fetch('/Admin/RequestComponent/CreateRequestComponent',
-                        {
-                            method: 'POST',
-                            body: formData
-                        });
-
-                    if (response.status === 200) {
-                        const data = await response.json();
-
-                        const newRequest = data.item;
-
-                        this.requests.requestComponent.push(newRequest);
-                        // Put alert for now, change the ui later.
-                        alert(data.message);
-                    } else {
-                        alert("Create failed");
-                    }
-                    // Hide the modal manually
-                    this.$refs['rc-create-modal'].hide();
-                },
                 async onEditRequestSubmit() {
                     const formData = new FormData();
                     formData.append('Id', '@Model.Request.Id');
@@ -373,6 +399,128 @@
                     } else {
                         alert(data.message);
                     }
+                },
+                showRCCreateModal() {
+                    this.$refs['rc-create-modal'].show();
+                },
+                handleRCCreateOk(bvModalEvt) {
+                    // Prevent modal from closing
+                    bvModalEvt.preventDefault();
+                    // Trigger submit handler
+                    this.onRCCreateSubmit();
+                },
+                async onRCCreateSubmit() {
+                    var formData = new FormData();
+                    formData.append('RequestId', @Model.Request.Id);
+                    formData.append('ComponentType', this.createRCForm.componentType);
+                    formData.append('QueryComponent', this.createRCForm.queryComponent);
+                    formData.append('IsDenominated', this.createRCForm.isDenominated);
+                    formData.append('AnomalyIgnorance', this.createRCForm.anomalyIgnorance);
+
+                    const response = await fetch('/Admin/RequestComponent/CreateRequestComponent',
+                        {
+                            method: 'POST',
+                            body: formData
+                        });
+
+                    if (response.status === 200) {
+                        const data = await response.json();
+
+                        const newRequest = data.item;
+
+                        this.requests.requestComponent.push(newRequest);
+                        // Put alert for now, change the ui later.
+                        alert(data.message);
+                    } else {
+                        alert("Create failed");
+                    }
+                    // Hide the modal manually
+                    this.$refs['rc-create-modal'].hide();
+                },
+                // Methods for edit modal
+                showRCEditModal(id, componentType, identifier, queryComponent, isDenominated, anomalyIgnorance) {
+                    this.editRCForm.id = id;
+                    this.editRCForm.componentType = componentType;
+                    this.editRCForm.queryComponent = queryComponent === null ? '' : queryComponent;
+                    this.editRCForm.identifier = identifier === null ? '' : identifier;
+                    this.editRCForm.isDenominated = isDenominated;
+                    this.editRCForm.anomalyIgnorance = anomalyIgnorance;
+
+                    console.log(this.editRCForm.queryComponent);
+                    
+                    this.$refs['rc-edit-modal'].show();
+                },
+                handleRCEditOk(bvModalEvt) {
+                    // Prevent modal from closing
+                    bvModalEvt.preventDefault();
+                    // Trigger submit handler
+                    this.onRCEditSubmit();
+                },
+                async onRCEditSubmit() {
+                    var formData = new FormData();
+                    formData.append('RequestId', @Model.Request.Id);
+                    formData.append('ComponentType', this.editRCForm.componentType);
+                    formData.append('QueryComponent', this.editRCForm.queryComponent);
+                    formData.append('Identifier', this.editRCForm.identifier);
+                    formData.append('IsDenominated', this.editRCForm.isDenominated);
+                    formData.append('AnomalyIgnorance', this.editRCForm.anomalyIgnorance);
+
+                    const response = await fetch(`/Admin/RequestComponent/EditRequestComponent/${this.editRCForm.id}`,
+                        {
+                            method: 'PUT',
+                            body: formData
+                        });
+
+                    if (response.status === 200) {
+                        const data = await response.json();
+                        // Update the data table
+                        this.request.requestComponents.find((element, index) => {
+                            if (element.id === this.editRCForm.id) {
+                                this.request.requestComponents[index].id = this.editRCForm.id;
+                                this.request.requestComponents[index].componentType = this.editRCForm.componentType;
+                                this.request.requestComponents[index].queryComponent = this.editRCForm.queryComponent;
+                                this.request.requestComponents[index].identifier = this.editRCForm.identifier;
+                                this.request.requestComponents[index].isDenominated = this.editRCForm.isDenominated;
+                                this.request.requestComponents[index].anomalyIgnorance = this.editRCForm.anomalyIgnorance;
+                            }
+                        });
+
+                        // Put alert for now, change the ui later.
+                        alert(data.message);
+                    } else {
+                        alert("Update failed");
+                    }
+
+                    // Hide the modal manually
+                    this.$refs['rc-edit-modal'].hide();
+                },
+                // Methods for delete modal
+                showRCDeleteModal(id) {
+                    this.deleteRCModal.id = id;
+
+                    this.$refs['rc-delete-modal'].show();
+                },
+                async handleRCDeleteOk(bvModalEvt) {
+                    bvModalEvt.preventDefault();
+
+                    const response = await fetch(`/Admin/RequestComponent/DeleteRequestComponent/${this.deleteRCModal.id}`,
+                        {
+                            method: 'DELETE'
+                        });
+
+                    if (response.status === 200) {
+                        const data = await response.json();
+                        
+                        // Update the datatable
+                        const index = this.request.requestComponents.findIndex(element => element.id === this.deleteRCModal.id);
+                        this.request.requestComponents.splice(index, 1);
+
+                        alert(data.message);
+                    } else {
+                        alert("Delete failed");
+                    }
+
+                    this.$refs['rc-delete-modal'].hide();
                 },
                 getRequestTypeStr(val) {
                     if (this.requestTypes != null) {

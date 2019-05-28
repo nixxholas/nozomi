@@ -45,5 +45,49 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
         
         #endregion
         
+        #region PUT RequestComponent
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> EditRequestComponent(long id, UpdateRequestComponent updateRequestComponent)
+        {
+            var user = await GetCurrentUserAsync();
+            if (user == null)
+            {
+                return NotFound($"Unable to load user withID '{_userManager.GetUserId(User)}'.");
+            }
+
+            if (id != updateRequestComponent.Id)
+            {
+                return BadRequest();
+            }
+
+            var result = _requestComponentService.Update(updateRequestComponent);
+            
+            if (result.ResultType.Equals(NozomiResultType.Success)) return Ok(result);
+
+            return NotFound();
+        }
+        
+        #endregion
+        
+        #region DELETE RequestComponent
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteRequestComponent(long id)
+        {
+            var user = await GetCurrentUserAsync();
+            if (user == null)
+            {
+                return NotFound($"Unable to load user withID '{_userManager.GetUserId(User)}'.");
+            }
+
+            var result = _requestComponentService.Delete(id);
+            
+            if (result.ResultType.Equals(NozomiResultType.Success)) return Ok(result);
+
+            return NotFound();
+        }
+        
+        #endregion
     }
 }
