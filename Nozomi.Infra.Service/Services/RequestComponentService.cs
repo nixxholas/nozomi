@@ -58,6 +58,7 @@ namespace Nozomi.Service.Services
                 return new NozomiResult<string>(NozomiResultType.Failed, ex.ToString());
             }
         }
+
         public NozomiResult<string> UpdatePairValue(long id, decimal val)
         {
             try
@@ -173,32 +174,40 @@ namespace Nozomi.Service.Services
             }
         }
 
-        public NozomiResult<string> Update(UpdateCurrencyPairComponent obj, long userId = 0)
+        public NozomiResult<string> Update(UpdateRequestComponent updateRequestComponent, long userId = 0)
         {
-            if (obj == null || userId < 0)
-                return new NozomiResult<string>
-                    (NozomiResultType.Failed, "Invalid payload or userId.");
-
-            var cpcToUpd = _unitOfWork.GetRepository<RequestComponent>()
-                .Get(rc => rc.Id.Equals(obj.Id) && rc.DeletedAt == null && rc.IsEnabled)
-                .SingleOrDefault();
-
-            if (cpcToUpd != null)
+            try
             {
-                cpcToUpd.ComponentType = obj.ComponentType;
-                cpcToUpd.QueryComponent = obj.QueryComponent;
+                if (updateRequestComponent == null || userId < 0)
+                    return new NozomiResult<string>
+                        (NozomiResultType.Failed, "Invalid payload or userId.");
 
-                _unitOfWork.GetRepository<RequestComponent>().Update(cpcToUpd);
-                _unitOfWork.Commit(userId);
+                var rcToUpd = _unitOfWork.GetRepository<RequestComponent>()
+                    .Get(rc => rc.Id.Equals(updateRequestComponent.Id) && rc.DeletedAt == null && rc.IsEnabled)
+                    .SingleOrDefault();
 
-                return new NozomiResult<string>
-                    (NozomiResultType.Success, "Currency Pair Component successfully updated!");
-            }
-            else
-            {
+                if (rcToUpd != null)
+                {
+                    rcToUpd.QueryComponent = updateRequestComponent.QueryComponent;
+                    rcToUpd.Identifier = updateRequestComponent.Identifier;
+                    rcToUpd.ComponentType = updateRequestComponent.ComponentType;
+                    rcToUpd.IsDenominated = updateRequestComponent.IsDenominated;
+                    rcToUpd.AnomalyIgnorance = updateRequestComponent.AnomalyIgnorance;
+
+                    _unitOfWork.GetRepository<RequestComponent>().Update(rcToUpd);
+                    _unitOfWork.Commit(userId);
+
+                    return new NozomiResult<string>
+                        (NozomiResultType.Success, "Request Component successfully updated!", rcToUpd);
+                }
+
                 return new NozomiResult<string>
                 (NozomiResultType.Failed, "Invalid Currency Pair Component. " +
                                           "Please make sure it is not deleted or disabled.");
+            }
+            catch (Exception ex)
+            {
+                return new NozomiResult<string>(NozomiResultType.Failed, ex.ToString());
             }
         }
 
