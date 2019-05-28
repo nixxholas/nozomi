@@ -2,9 +2,12 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Nozomi.Data;
+using Nozomi.Data.AreaModels.v1.CurrencyPairComponent;
 using Nozomi.Data.AreaModels.v1.RequestComponent;
 using Nozomi.Service.Events.Interfaces;
 using Nozomi.Service.Identity.Managers;
+using Nozomi.Service.Services.Interfaces;
 using Nozomi.Ticker.Controllers;
 
 namespace Nozomi.Ticker.Areas.Admin.Controllers
@@ -13,39 +16,34 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
     [Authorize(Roles = "Owner, Administrator, Staff")]
     public class RequestComponentController : AreaBaseViewController<RequestComponentController>
     {
-        private readonly IRequestEvent _requestEvent;
+        private readonly IRequestComponentService _requestComponentService;
         
         public RequestComponentController(ILogger<RequestComponentController> logger, NozomiSignInManager signInManager,
-            NozomiUserManager userManager, IRequestEvent requestEvent)
+            NozomiUserManager userManager, IRequestComponentService requestComponentService)
             : base(logger, signInManager, userManager)
         {
-            _requestEvent = requestEvent;
+            _requestComponentService = requestComponentService;
         }
         
-        /// <summary>
-        /// Allows you to create a request component relative to the request.
-        /// </summary>
-        /// <param name="id">Request Id</param>
-        /// <returns></returns>
-        [HttpGet("{id}")]
-        public async Task<IActionResult> CreateRequestComponent(long id)
+        #region POST RequestComponent
+
+        [HttpPost]
+        public async Task<IActionResult> CreateRequestComponent(CreateRequestComponent createRequestComponent)
         {
             var user = await GetCurrentUserAsync();
             if (user == null)
             {
-                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+                return NotFound($"Unable to load user withID '{_userManager.GetUserId(User)}'.");
             }
 
-            var req = _requestEvent.GetActive(id);
+            var result = _requestComponentService.Create(createRequestComponent);
             
-            if (req == null)
-                ModelState.AddModelError("InvalidRequestException", "Invalid Request.");
+            if (result.ResultType.Equals(NozomiResultType.Success)) return Ok(result);
 
-            return View(new CreateRequestComponent
-            {
-                RequestId = req.Id
-            });
+            return NotFound();
         }
+        
+        #endregion
         
     }
 }
