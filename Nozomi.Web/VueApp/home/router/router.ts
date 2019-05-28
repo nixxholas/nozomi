@@ -1,9 +1,9 @@
 import VueRouter from 'vue-router'
 
 // Pages
-import Characters from '@/iceandfire/views/Characters.vue'
+import Characters from '@/home/views/Characters.vue'
 
-const routePrefix = 'iceandfire'
+const routePrefix = ''
 
 const routes = [
 	{

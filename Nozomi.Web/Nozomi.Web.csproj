@@ -64,4 +64,8 @@
     <ProjectReference Include="..\Nozomi.Infra.Analysis.Service\Nozomi.Infra.Analysis.Service.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="Views\IDontNeedTypeScript\Index.cshtml" />
+  </ItemGroup>
+
 </Project>

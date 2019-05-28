@@ -8,13 +8,13 @@ using System.Threading.Tasks;
 namespace Nozomi.Web.Controllers
 {
     [Route(ApiRoutes.Nozomi.BaseRoute)]
-    public class IceAndFireController : Controller
+    public class HomeController : Controller
     {
         private const string ApiOfIceAndFireCharactersUrl = "https://anapioficeandfire.com/api/characters";
 
         private readonly HttpClient _httpClient;
 
-        public IceAndFireController(IHttpClientFactory httpClientFactory)
+        public HomeController(IHttpClientFactory httpClientFactory)
         {
             _httpClient = httpClientFactory.CreateClient();
         }
