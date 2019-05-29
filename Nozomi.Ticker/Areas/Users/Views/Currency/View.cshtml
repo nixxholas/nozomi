@@ -26,7 +26,6 @@
                     <div class="mb-6">
                         <img :src="'/' + currency.LogoPath" class="mb-2" style="height: 48px;"/>
                         <h1 class="h2 text-primary font-weight-semi-bold">{{ currency.Name }}</h1>
-                        <p class="mb-0">{{ currency.Description }}</p>
                     </div>
 
                     <hr class="my-5">
@@ -93,9 +92,17 @@
                 </div>
                 <!-- End Sticky Block -->
             </div>
-        
-        
+
+
             <div class="col-lg-7">
+                <p class="text-info">
+                    {{ currency.Description }}
+                </p>
+            </div>
+        </div>
+
+        <div class="row pt-6">
+            <div class="col">
                 <div id="SVGmockupBg" class="svg-preloader">
                     <!-- Nav Classic -->
                     <div class="position-relative w-lg-85 bg-white text-center z-index-2 mx-lg-auto">
@@ -123,7 +130,7 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link font-weight-medium" id="pills-three-tab" data-toggle="pill" href="#pills-three" 
+                                <a class="nav-link font-weight-medium" id="pills-three-tab" data-toggle="pill" href="#pills-three"
                                    role="tab" aria-controls="pills-three" aria-selected="false">
                                     <div class="d-md-flex justify-content-md-center align-items-md-center">
                                         <figure class="ie-height-40 d-none d-md-block w-100 max-width-6 mr-3">
@@ -164,6 +171,7 @@
                                             {{ datum.item.Source }}
                                         </template>
                                     </b-table>
+                                    <!-- Mockup Block -->
                                 </div>
                             </div>
                             <!-- End Mockup Block -->
@@ -190,10 +198,23 @@
                 </div>
             </div>
         </div>
+        <div class="row pt-6" v-if="getHistoricalPriceData().AnalysedHistoricItems.length > 0">
+            <div class="col">
+                <div class="card card=frame">
+                    <div class="card-body">
+                        <la-cartesian autoresize :data="values">
+                            <la-area curve :width="2" :bound="[0]" :width="2" prop="value"></la-area>
+                            <la-y-axis></la-y-axis>
+                            <la-tooltip></la-tooltip>
+                        </la-cartesian>
+                    </div>
+                </div>
+            </div>
+        </div>
     }
 </div>
 <!-- End Description Section -->
-  
+
 @section Scripts
 {
     <script>
@@ -218,7 +239,6 @@
                                {
                                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore
                                })),
-        currencyHistoricPrice: [],
         currencyHistoricPriceFields: [
           {
             key: 'HistoricDateTime',
@@ -260,18 +280,18 @@
           if (aComp.UIFormatting != null) {
             switch (aComp.ComponentType) {
             // TODO: Make sure this is not repeated, create a vue component for this.
-            case @((int)AnalysedComponentType.MarketCap):
-            case @((int)AnalysedComponentType.HourlyMarketCap):
-            case @((int)AnalysedComponentType.DailyMarketCap): 
-            case @((int)AnalysedComponentType.CurrentAveragePrice):
-            case @((int)AnalysedComponentType.HourlyAveragePrice): 
-            case @((int)AnalysedComponentType.DailyAveragePrice):
-            case @((int)AnalysedComponentType.DailyPriceChange): 
-            case @((int)AnalysedComponentType.WeeklyPriceChange):
-            case @((int)AnalysedComponentType.MonthlyPriceChange): 
-            case @((int)AnalysedComponentType.DailyPricePctChange):
-            case @((int)AnalysedComponentType.HourlyPricePctChange): 
-            case @((int)AnalysedComponentType.DailyVolume):
+            case @((int) AnalysedComponentType.MarketCap):
+            case @((int) AnalysedComponentType.HourlyMarketCap):
+            case @((int) AnalysedComponentType.DailyMarketCap): 
+            case @((int) AnalysedComponentType.CurrentAveragePrice):
+            case @((int) AnalysedComponentType.HourlyAveragePrice): 
+            case @((int) AnalysedComponentType.DailyAveragePrice):
+            case @((int) AnalysedComponentType.DailyPriceChange): 
+            case @((int) AnalysedComponentType.WeeklyPriceChange):
+            case @((int) AnalysedComponentType.MonthlyPriceChange): 
+            case @((int) AnalysedComponentType.DailyPricePctChange):
+            case @((int) AnalysedComponentType.HourlyPricePctChange): 
+            case @((int) AnalysedComponentType.DailyVolume):
                 return numeral(aComp.Value).format(aComp.UIFormatting).toString();
               default:
                 return aComp.Value;
@@ -285,7 +305,7 @@
             for (let i = 0; i < this.currency.AnalysedComponents.length; i++) {
               const currentAc = this.currency.AnalysedComponents[i];
             
-              if (currentAc.ComponentType === @((int)AnalysedComponentType.HourlyAveragePrice)) {
+              if (currentAc.ComponentType === @((int) AnalysedComponentType.HourlyAveragePrice)) {
                 return currentAc;
               }
             }
