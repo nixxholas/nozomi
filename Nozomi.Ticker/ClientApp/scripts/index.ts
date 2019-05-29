@@ -8,6 +8,8 @@ import BootstrapVue from 'bootstrap-vue/dist/bootstrap-vue.esm';
 Vue.use(BootstrapVue); // Expose bootstrap-vue globally
 import Trend from 'vuetrend';
 Vue.use(Trend);
+import { Laue } from 'laue';
+Vue.use(Laue);
 (<any> window).Vue = Vue;
 
 
