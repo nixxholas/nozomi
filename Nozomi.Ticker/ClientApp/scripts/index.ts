@@ -1,5 +1,7 @@
 // https://stackoverflow.com/questions/52376720/how-to-make-font-awesome-5-work-with-webpack
 //import fontawesome from '@fortawesome/fontawesome';
+import axios from 'axios';
+(<any> window).axios = axios;
 
 import Vue from 'vue';
 import BootstrapVue from 'bootstrap-vue/dist/bootstrap-vue.esm';
