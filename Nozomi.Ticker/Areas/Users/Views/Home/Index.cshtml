@@ -84,11 +84,11 @@
 <div class="container shadow-lg p-3 mt-5 mb-5 bg-white rounded">
     <div class="row justify-content-lg-between align-items-md-center h-100">
         <div class="col h-100">
-            <b-table stacked="md" :busy="currencies.length === 0"
+            <b-table stacked="md" :busy="isCurrencyTableBusy"
                      tbody-class="font-weight-medium" thead-class="text-uppercase font-size-1"
                      :per-page="itemsPerPage" :current-page="currentCurrencyPage"
                      class="table-borderless"
-                     :fields="currencyDataFields" :items="currencies">
+                     :fields="currencyDataFields" :items="getCurrencies">
                 <div slot="table-busy" class="text-center text-danger my-2">
                     <b-spinner class="align-middle"></b-spinner>
                 </div>
@@ -191,8 +191,9 @@
                     }
                 ],
                 currentCurrencyPage: 1,
+                isCurrencyTableBusy: false,
                 currencies: [],
-                itemsPerPage: 40,
+                itemsPerPage: 100,
                 currencyTypes: []
             },
             created: function() {
@@ -202,7 +203,7 @@
 
                 // https://github.com/aspnet/SignalR/issues/3294
                 connection.start().then(() => {
-                    connection.invoke("Subscribe", 2).catch(err => console.error(err.toString()));
+                    // connection.invoke("Subscribe", 2).catch(err => console.error(err.toString()));
                     connection.invoke("Subscribe", 3).catch(err => console.error(err.toString()));
                 }).catch(err => document.write(err));
 
@@ -220,10 +221,10 @@
                     start();
                 });
 
-                connection.on("currencies",
-                    (currencies) => {
-                        this.currencies = currencies;
-                    });
+                // connection.on("currencies",
+                //     (currencies) => {
+                //         this.currencies = currencies;
+                //     });
                 
                 connection.on("currencytypes",
                     (currencyTypes) => {
@@ -231,6 +232,25 @@
                     });
             },
             methods: {
+              getCurrencies (ctx) {
+                // Here we don't set isBusy prop, so busy state will be
+                // handled by table itself
+                // this.isBusy = true
+                let promise = axios.get('/api/currency/getalldetailed/' + (ctx.currentPage - 1));
+        
+                return promise.then((data) => {
+                  const items = data.data;
+                  // Here we could override the busy state, setting isBusy to false
+                  // this.isBusy = false
+                  return(items);
+                }).catch(error => {
+                  // Here we could override the busy state, setting isBusy to false
+                  // this.isBusy = false
+                  // Returning an empty array, allows table to correctly handle
+                  // internal busy state in case of error
+                  return [];
+                })
+              },
                 getAnalysedCompTypeStr(val) {
                   if (this.acTypes != null) {
                     for (i = 0; i < this.acTypes.length; i++) {
