@@ -1,4 +1,4 @@
-import { CharacterResponse } from '@/iceandfire/types/models/character'
+import { CharacterResponse } from '@/home/types/models/character'
 
 export interface RootState {
 	character: CharacterResponse

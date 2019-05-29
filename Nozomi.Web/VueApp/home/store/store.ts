@@ -4,7 +4,7 @@ import { GetterTree } from 'vuex'
 import { ActionTree } from 'vuex'
 import { MutationTree } from 'vuex'
 import { RootState } from './state'
-import { CharacterResponse } from '@/iceandfire/types/models/character'
+import { CharacterResponse } from '@/home/types/models/character'
 
 import axios from 'axios'
 
