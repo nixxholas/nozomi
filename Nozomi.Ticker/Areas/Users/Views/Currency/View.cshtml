@@ -72,27 +72,15 @@
     </div>
     <!-- End Hero Section -->
 
-    <div class="row pt-4 pb-4">
+    <div class="row pt-4 pb-4" v-if="getHistoricalPriceData(true).length > 0">
         <div class="col w-100">
             <h1 class="h5 ml-1 mb-1">
                 Price Chart
             </h1>
-            <la-cartesian :bound="[0]" autoresize :data="values">
+            <la-cartesian :bound="[0]" autoresize :data="getHistoricalPriceData(true)">
                 <la-area curve :width="2" :width="2" prop="value"></la-area>
                 <la-tooltip></la-tooltip>
             </la-cartesian>
-        </div>
-    </div>
-    <div class="row pt-6" v-if="getHistoricalPriceData().AnalysedHistoricItems.length > 0">
-        <div class="col">
-            <div class="card card=frame">
-                <div class="card-body">
-                    <la-cartesian autoresize :data="getHistoricalPriceData().AnalysedHistoricItems">
-                        <la-area curve :width="2" :bound="[0]" :width="2" prop="value"></la-area>
-                        <la-tooltip></la-tooltip>
-                    </la-cartesian>
-                </div>
-            </div>
         </div>
     </div>
 
@@ -278,8 +266,7 @@
             key: 'Source',
             label: 'Exchange',
             sortable: false
-          }],
-          values: [ { value: 120 }, { value: 150 }, { value: 140 }, { value: 200 }, { value: 300 }, { value: 900 }, { value: 450 }, { value: 290 }, { value: 130 }, { value: 90 }]
+          }]
       },
       created: function() {
       },
@@ -319,12 +306,23 @@
             return aComp.Value;
           }
         },
-        getHistoricalPriceData() {
+        getHistoricalPriceData(laueCompat = false) {
           if (this.currency != null && this.currency.AnalysedComponents != null) {
             for (let i = 0; i < this.currency.AnalysedComponents.length; i++) {
               const currentAc = this.currency.AnalysedComponents[i];
             
               if (currentAc.ComponentType === @((int) AnalysedComponentType.HourlyAveragePrice)) {
+                  if (laueCompat && currentAc.AnalysedHistoricItems != null 
+                  && currentAc.AnalysedHistoricItems.length > 0) {
+                      let newArr = [];
+                      
+                      for (let j = 0; j < currentAc.AnalysedHistoricItems.length; j++) {
+                          newArr.push({ name: "Price", value: currentAc.AnalysedHistoricItems[j].Value });
+                      }
+                      
+                      return newArr;
+                  }
+                  
                 return currentAc;
               }
             }
