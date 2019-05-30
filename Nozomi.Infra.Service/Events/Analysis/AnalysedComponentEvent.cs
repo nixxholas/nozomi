@@ -163,6 +163,7 @@ namespace Nozomi.Service.Events.Analysis
                     Delay = ac.Delay,
                     UIFormatting = ac.UIFormatting,
                     AnalysedHistoricItems = ac.AnalysedHistoricItems
+                        .Where(ahi => ahi.DeletedAt == null && ahi.IsEnabled)
                         .OrderByDescending(ahi => ahi.HistoricDateTime)
                         .Skip(index * NozomiServiceConstants.AnalysedComponentTakeoutLimit)
                         .Take(NozomiServiceConstants.AnalysedComponentTakeoutLimit)
