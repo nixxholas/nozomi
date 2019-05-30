@@ -10,208 +10,226 @@
 }
 
 <!-- Description Section -->
-<div id="partialView" class="container space-2 space-top-md-4 space-bottom-md-3">
-    @if (Model != null)
-    {
-        <div class="row">
-            <div id="stickyBlockStartPoint" class="col-lg-5 mb-7 mb-lg-0">
-                <!-- Sticky Block -->
-                <div class="js-sticky-block pl-lg-4"
-                     data-parent="#stickyBlockStartPoint"
-                     data-sticky-view="lg"
-                     data-start-point="#stickyBlockStartPoint"
-                     data-end-point="#stickyBlockEndPoint"
-                     data-offset-top="80"
-                     data-offset-bottom="130">
-                    <div class="mb-6">
-                        <img :src="'/' + currency.LogoPath" class="mb-2" style="height: 48px;"/>
-                        <h1 class="h2 text-primary font-weight-semi-bold">{{ currency.Name }}</h1>
+<div id="partialView" class="container space-2 space-bottom-md-3">
+@if (Model != null)
+{
+    <!-- Hero Section -->
+    <div class="container">
+        <div class="border-bottom space-top-2">
+            <div class="media mb-5">
+                <div class="u-lg-avatar mr-4">
+                    <img class="img-fluid rounded-circle" :src="'/' + currency.LogoPath" alt="Image Description">
+                </div>
+
+                <div class="media-body">
+                    <div class="row">
+                        <div class="col-lg-6 mb-3 mb-lg-0">
+                            <h1 class="h4 mb-1">
+                                {{ currency.Name }}
+                                <small class="font-weight-semi-bold text-muted ml-2">{{ currency.Abbreviation }}</small>
+                            </h1>
+
+                            @* <!-- Review --> *@
+                            @* <span class="text-warning font-size-1"> *@
+                            @*   <span class="fas fa-star"></span> *@
+                            @*   <span class="fas fa-star"></span> *@
+                            @*   <span class="fas fa-star"></span> *@
+                            @*   <span class="fas fa-star"></span> *@
+                            @*   <span class="fas fa-star"></span> *@
+                            @* </span> *@
+                            @* <span class="font-weight-semi-bold ml-2">4.91</span> *@
+                            @* <small class="text-muted">(12k+ reviews)</small> *@
+                            @* <!-- End Review --> *@
+                        </div>
+
+                        <div class="col-lg-6 text-lg-right">
+                            <div class="d-flex justify-content-md-end align-items-center">
+                                <!-- Bookmark -->
+                                <div class="d-inline-block mr-2">
+                                    <div class="bookmark-checkbox" data-toggle="tooltip" data-placement="top" title="Bookmarking coming soon!">
+                                        <input type="checkbox" class="bookmark-checkbox-input" id="bookmark1">
+                                        <label class="bookmark-checkbox-label" for="bookmark1"></label>
+                                    </div>
+                                </div>
+                                <!-- End Bookmark -->
+
+                                <a class="btn btn-sm btn-soft-primary" href="#">Website</a>
+                            </div>
+                        </div>
                     </div>
+                </div>
+            </div>
 
-                    <hr class="my-5">
+            <!-- Viewed Info -->
+            <div class="space-bottom-1">
+                <div class="small text-right text-secondary">
+                    <span class="fa fa-superscript mr-1"></span>
+                    {{ currency.Denominations }} Denominations
+                </div>
+            </div>
+            <!-- End Viewed Info -->
+        </div>
+    </div>
+    <!-- End Hero Section -->
 
-                    <!-- List -->
-                    <ul class="list-unstyled mb-0">
-                        <li class="media mb-1">
-                            <div class="d-flex w-40 w-sm-30">
-                                <h3 class="h6">Abbreviation</h3>
-                            </div>
-                            <div class="media-body">
-                                <small class="text-muted">
-                                    {{ currency.Abbreviation }}
-                                </small>
-                            </div>
+    <div class="row pt-4 pb-4">
+        <div class="col w-100">
+            <h1 class="h5 ml-1 mb-1">
+                Price Chart
+            </h1>
+            <la-cartesian :bound="[0]" autoresize :data="values">
+                <la-area curve :width="2" :width="2" prop="value"></la-area>
+                <la-tooltip></la-tooltip>
+            </la-cartesian>
+        </div>
+    </div>
+    <div class="row pt-6" v-if="getHistoricalPriceData().AnalysedHistoricItems.length > 0">
+        <div class="col">
+            <div class="card card=frame">
+                <div class="card-body">
+                    <la-cartesian autoresize :data="getHistoricalPriceData().AnalysedHistoricItems">
+                        <la-area curve :width="2" :bound="[0]" :width="2" prop="value"></la-area>
+                        <la-tooltip></la-tooltip>
+                    </la-cartesian>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row pt-6">
+        <div class="col">
+            <div id="SVGmockupBg" class="svg-preloader">
+                <!-- Nav Classic -->
+                <div class="position-relative w-lg-85 bg-white text-center z-index-2 mx-lg-auto">
+                    <ul class="nav nav-classic nav-rounded nav-shadow nav-justified" id="pills-tab" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link font-weight-medium active" id="pills-one-tab" data-toggle="pill" href="#pills-one" role="tab" aria-controls="pills-one" aria-selected="true">
+                                <div class="d-md-flex justify-content-md-center align-items-md-center">
+                                    <figure class="ie-height-40 d-none d-md-block w-100 max-width-6 mr-3">
+                                        <img class="js-svg-injector" src="../../assets/svg/icons/icon-14.svg" alt="SVG"
+                                             data-parent="#SVGmockupBg">
+                                    </figure>
+                                    Statistics
+                                </div>
+                            </a>
                         </li>
-
-                        <li class="media mb-1">
-                            <div class="d-flex w-40 w-sm-30">
-                                <h4 class="h6">Sources</h4>
-                            </div>
-                            <div class="media-body">
-                                <small class="d-block text-muted" v-for="cSource in currency.CurrencySources">
-                                    {{ cSource.Source.Name }}
-                                </small>
-                            </div>
+                        <li class="nav-item">
+                            <a class="nav-link font-weight-medium" id="pills-two-tab" data-toggle="pill" href="#pills-two" role="tab" aria-controls="pills-two" aria-selected="false">
+                                <div class="d-md-flex justify-content-md-center align-items-md-center">
+                                    <figure class="ie-height-40 d-none d-md-block w-100 max-width-6 mr-3">
+                                        <img class="js-svg-injector" src="../../assets/svg/icons/icon-21.svg" alt="SVG"
+                                             data-parent="#SVGmockupBg">
+                                    </figure>
+                                    Markets
+                                </div>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link font-weight-medium" id="pills-three-tab" data-toggle="pill" href="#pills-three"
+                               role="tab" aria-controls="pills-three" aria-selected="false">
+                                <div class="d-md-flex justify-content-md-center align-items-md-center">
+                                    <figure class="ie-height-40 d-none d-md-block w-100 max-width-6 mr-3">
+                                        <img class="js-svg-injector" src="../../assets/svg/icons/icon-5.svg" alt="SVG"
+                                             data-parent="#SVGmockupBg">
+                                    </figure>
+                                    Historical
+                                </div>
+                            </a>
                         </li>
                     </ul>
-                    <!-- End List -->
+                </div>
+                <!-- End Nav Classic -->
 
-                    <hr class="my-5">
+                <!-- Tab Content -->
+                <div class="tab-content" id="pills-tabContent">
+                    <div class="tab-pane fade pt-9 show active" id="pills-one" role="tabpanel" aria-labelledby="pills-one-tab">
+                        <p class="text-info">
+                            {{ currency.Description }}
+                        </p>
+                        
+                        <!-- Mockup Block -->
+                        <div class="row justify-content-lg-between align-items-lg-center border-bottom">
+                            <div v-for="aComp in currency.AnalysedComponents" class="col-6 p-3" v-if="aComp.Value != null">
+                                <h4>{{ getAnalysedCompTypeStr(aComp.ComponentType) }}</h4>
+                                <small class="h5 text-muted" v-if="aComp.UIFormatting == null">{{ aComp.Value }}</small>
+                                <small class="h5 text-primary" v-else>{{ getAnalysedCompStr(aComp) }}</small>
+                            </div>
+                        </div>
+                        <!-- End Mockup Block -->
 
-                    <div class="media">
-                        <div class="d-flex w-40 w-sm-30">
-                            <h4 class="h6">Share</h4>
+                        <div class="media space-top-1">
+                            <div class="d-flex w-40 w-sm-30">
+                                <h4 class="h6">Share</h4>
+                            </div>
+                            <div class="media-body">
+                                <!-- Social Networks -->
+                                <ul class="list-inline mb-0">
+                                    <li class="list-inline-item">
+                                        <a class="btn btn-sm btn-icon btn-soft-secondary btn-bg-transparent" href="#">
+                                            <span class="fa fa-facebook-f btn-icon__inner"></span>
+                                        </a>
+                                    </li>
+                                    <li class="list-inline-item">
+                                        <a class="btn btn-sm btn-icon btn-soft-secondary btn-bg-transparent" href="#">
+                                            <span class="fa fa-google btn-icon__inner"></span>
+                                        </a>
+                                    </li>
+                                    <li class="list-inline-item">
+                                        <a class="btn btn-sm btn-icon btn-soft-secondary btn-bg-transparent" href="#">
+                                            <span class="fa fa-twitter btn-icon__inner"></span>
+                                        </a>
+                                    </li>
+                                    <li class="list-inline-item">
+                                        <a class="btn btn-sm btn-icon btn-soft-secondary btn-bg-transparent" href="#">
+                                            <span class="fa fa-github btn-icon__inner"></span>
+                                        </a>
+                                    </li>
+                                </ul>
+                                <!-- End Social Networks -->
+                            </div>
                         </div>
-                        <div class="media-body">
-                            <!-- Social Networks -->
-                            <ul class="list-inline mb-0">
-                                <li class="list-inline-item">
-                                    <a class="btn btn-sm btn-icon btn-soft-secondary btn-bg-transparent" href="#">
-                                        <span class="fa fa-facebook-f btn-icon__inner"></span>
-                                    </a>
-                                </li>
-                                <li class="list-inline-item">
-                                    <a class="btn btn-sm btn-icon btn-soft-secondary btn-bg-transparent" href="#">
-                                        <span class="fa fa-google btn-icon__inner"></span>
-                                    </a>
-                                </li>
-                                <li class="list-inline-item">
-                                    <a class="btn btn-sm btn-icon btn-soft-secondary btn-bg-transparent" href="#">
-                                        <span class="fa fa-twitter btn-icon__inner"></span>
-                                    </a>
-                                </li>
-                                <li class="list-inline-item">
-                                    <a class="btn btn-sm btn-icon btn-soft-secondary btn-bg-transparent" href="#">
-                                        <span class="fa fa-github btn-icon__inner"></span>
-                                    </a>
-                                </li>
-                            </ul>
-                            <!-- End Social Networks -->
+                    </div>
+                    <div class="tab-pane fade pt-9" id="pills-two" role="tabpanel" aria-labelledby="pills-two-tab">
+                        <!-- Mockup Block -->
+                        <div class="row justify-content-lg-between align-items-lg-center">
+                            <div class="col">
+                                <b-table :fields="tickerPairTableFields"
+                                         :items="tickerPairs">
+                                    <template slot="TickerPair" slot-scope="datum">
+                                        {{ datum.item.TickerPair }}
+                                    </template>
+                                    <template slot="Source" slot-scope="datum">
+                                        {{ datum.item.Source }}
+                                    </template>
+                                </b-table>
+                                <!-- Mockup Block -->
+                            </div>
                         </div>
+                        <!-- End Mockup Block -->
+                    </div>
+                    <div class="tab-pane fade pt-9" id="pills-three" role="tabpanel" aria-labelledby="pills-three-tab">
+                        <!-- Mockup Block -->
+                        <div class="row justify-content-lg-between align-items-lg-center">
+                            <div class="col">
+                                <b-table :items="getHistoricalPriceData().AnalysedHistoricItems"
+                                         :fields="currencyHistoricPriceFields">
+                                    <template slot="HistoricDateTime" slot-scope="datum">
+                                        {{ moment(datum.item.HistoricDateTime).format('LLL') }}
+                                    </template>
+                                    <template slot="Value" slot-scope="datum">
+                                        {{ numeral(datum.item.Value).format('$ 0[.]00') }}
+                                    </template>
+                                </b-table>
+                            </div>
+                        </div>
+                        <!-- End Mockup Block -->
                     </div>
                 </div>
-                <!-- End Sticky Block -->
-            </div>
-
-
-            <div class="col-lg-7">
-                <p class="text-info">
-                    {{ currency.Description }}
-                </p>
+                <!-- End Tab Content -->
             </div>
         </div>
-
-        <div class="row pt-6">
-            <div class="col">
-                <div id="SVGmockupBg" class="svg-preloader">
-                    <!-- Nav Classic -->
-                    <div class="position-relative w-lg-85 bg-white text-center z-index-2 mx-lg-auto">
-                        <ul class="nav nav-classic nav-rounded nav-shadow nav-justified" id="pills-tab" role="tablist">
-                            <li class="nav-item">
-                                <a class="nav-link font-weight-medium active" id="pills-one-tab" data-toggle="pill" href="#pills-one" role="tab" aria-controls="pills-one" aria-selected="true">
-                                    <div class="d-md-flex justify-content-md-center align-items-md-center">
-                                        <figure class="ie-height-40 d-none d-md-block w-100 max-width-6 mr-3">
-                                            <img class="js-svg-injector" src="../../assets/svg/icons/icon-14.svg" alt="SVG"
-                                                 data-parent="#SVGmockupBg">
-                                        </figure>
-                                        Statistics
-                                    </div>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link font-weight-medium" id="pills-two-tab" data-toggle="pill" href="#pills-two" role="tab" aria-controls="pills-two" aria-selected="false">
-                                    <div class="d-md-flex justify-content-md-center align-items-md-center">
-                                        <figure class="ie-height-40 d-none d-md-block w-100 max-width-6 mr-3">
-                                            <img class="js-svg-injector" src="../../assets/svg/icons/icon-21.svg" alt="SVG"
-                                                 data-parent="#SVGmockupBg">
-                                        </figure>
-                                        Markets
-                                    </div>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link font-weight-medium" id="pills-three-tab" data-toggle="pill" href="#pills-three"
-                                   role="tab" aria-controls="pills-three" aria-selected="false">
-                                    <div class="d-md-flex justify-content-md-center align-items-md-center">
-                                        <figure class="ie-height-40 d-none d-md-block w-100 max-width-6 mr-3">
-                                            <img class="js-svg-injector" src="../../assets/svg/icons/icon-5.svg" alt="SVG"
-                                                 data-parent="#SVGmockupBg">
-                                        </figure>
-                                        Historical
-                                    </div>
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                    <!-- End Nav Classic -->
-
-                    <!-- Tab Content -->
-                    <div class="tab-content" id="pills-tabContent">
-                        <div class="tab-pane fade pt-9 show active" id="pills-one" role="tabpanel" aria-labelledby="pills-one-tab">
-                            <!-- Mockup Block -->
-                            <div class="row justify-content-lg-between align-items-lg-center">
-                                <div v-for="aComp in currency.AnalysedComponents" class="col-6 p-3" v-if="aComp.Value != null">
-                                    <h4>{{ getAnalysedCompTypeStr(aComp.ComponentType) }}</h4>
-                                    <small class="h5 text-muted" v-if="aComp.UIFormatting == null">{{ aComp.Value }}</small>
-                                    <small class="h5 text-primary" v-else>{{ getAnalysedCompStr(aComp) }}</small>
-                                </div>
-                            </div>
-                            <!-- End Mockup Block -->
-                        </div>
-                        <div class="tab-pane fade pt-9" id="pills-two" role="tabpanel" aria-labelledby="pills-two-tab">
-                            <!-- Mockup Block -->
-                            <div class="row justify-content-lg-between align-items-lg-center">
-                                <div class="col">
-                                    <b-table :fields="tickerPairTableFields"
-                                             :items="tickerPairs">
-                                        <template slot="TickerPair" slot-scope="datum">
-                                            {{ datum.item.TickerPair }}
-                                        </template>
-                                        <template slot="Source" slot-scope="datum">
-                                            {{ datum.item.Source }}
-                                        </template>
-                                    </b-table>
-                                    <!-- Mockup Block -->
-                                </div>
-                            </div>
-                            <!-- End Mockup Block -->
-                        </div>
-                        <div class="tab-pane fade pt-9" id="pills-three" role="tabpanel" aria-labelledby="pills-three-tab">
-                            <!-- Mockup Block -->
-                            <div class="row justify-content-lg-between align-items-lg-center">
-                                <div class="col">
-                                    <b-table :items="getHistoricalPriceData().AnalysedHistoricItems"
-                                             :fields="currencyHistoricPriceFields">
-                                        <template slot="HistoricDateTime" slot-scope="datum">
-                                            {{ moment(datum.item.HistoricDateTime).format('LLL') }}
-                                        </template>
-                                        <template slot="Value" slot-scope="datum">
-                                            {{ numeral(datum.item.Value).format('$ 0[.]00') }}
-                                        </template>
-                                    </b-table>
-                                </div>
-                            </div>
-                            <!-- End Mockup Block -->
-                        </div>
-                    </div>
-                    <!-- End Tab Content -->
-                </div>
-            </div>
-        </div>
-        <div class="row pt-6" v-if="getHistoricalPriceData().AnalysedHistoricItems.length > 0">
-            <div class="col">
-                <div class="card card=frame">
-                    <div class="card-body">
-                        <la-cartesian autoresize :data="values">
-                            <la-area curve :width="2" :bound="[0]" :width="2" prop="value"></la-area>
-                            <la-y-axis></la-y-axis>
-                            <la-tooltip></la-tooltip>
-                        </la-cartesian>
-                    </div>
-                </div>
-            </div>
-        </div>
-    }
+    </div>
+}
 </div>
 <!-- End Description Section -->
 
@@ -260,7 +278,8 @@
             key: 'Source',
             label: 'Exchange',
             sortable: false
-          }]
+          }],
+          values: [ { value: 120 }, { value: 150 }, { value: 140 }, { value: 200 }, { value: 300 }, { value: 900 }, { value: 450 }, { value: 290 }, { value: 130 }, { value: 90 }]
       },
       created: function() {
       },
