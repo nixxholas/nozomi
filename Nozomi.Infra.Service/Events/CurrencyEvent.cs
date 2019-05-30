@@ -431,7 +431,12 @@ namespace Nozomi.Service.Events
                 .ThenInclude(ac => ac.AnalysedHistoricItems)
                 .SelectMany(ct => ct.Currencies
                     .Where(c => c.DeletedAt == null && c.IsEnabled
-                                && c.AnalysedComponents.Count > 0)
+                                && c.AnalysedComponents.Count > 0
+                                && c.AnalysedComponents.Any(ac => ac.ComponentType.Equals(AnalysedComponentType.MarketCap)))
+                    .OrderByDescending(c => decimal.Parse(c.AnalysedComponents
+                        .SingleOrDefault(ac => ac.ComponentType == AnalysedComponentType.MarketCap).Value))
+                    .Skip(index * 100)
+                    .Take(100)
                     .Select(c => new Currency
                     {
                         Id = c.Id,
@@ -455,7 +460,8 @@ namespace Nozomi.Service.Events
                                 Delay = ac.Delay,
                                 UIFormatting = ac.UIFormatting,
                                 AnalysedHistoricItems = ac.AnalysedHistoricItems
-                                    .Where(ahi => ahi.HistoricDateTime >= DateTime.UtcNow.Subtract(TimeSpan.FromDays(daysOfData)))
+                                    .Where(ahi => ahi.DeletedAt == null && ahi.IsEnabled
+                                                                        && ahi.HistoricDateTime >= DateTime.UtcNow.Subtract(TimeSpan.FromDays(daysOfData)))
                                     .OrderByDescending(ahi => ahi.HistoricDateTime)
                                     .Skip(index * NozomiServiceConstants.AnalysedComponentTakeoutLimit)
                                     .Take(NozomiServiceConstants.AnalysedComponentTakeoutLimit)
