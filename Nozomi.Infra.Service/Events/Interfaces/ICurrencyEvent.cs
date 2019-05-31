@@ -23,6 +23,8 @@ namespace Nozomi.Service.Events.Interfaces
 
         ICollection<Currency> GetAll(bool includeNested = false);
         ICollection<Currency> GetAllNonDeleted(bool includeNested = false);
+        
+        ICollection<CurrencyDTO> GetAllDTO();
 
         /// <summary>
         /// Provides the requestor detailed currency data

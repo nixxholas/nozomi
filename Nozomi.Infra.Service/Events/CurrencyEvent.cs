@@ -434,6 +434,28 @@ namespace Nozomi.Service.Events
 
             return query.ToList();
         }
+        
+        public ICollection<CurrencyDTO> GetAllDTO()
+        {
+            return _unitOfWork.GetRepository<Currency>()
+                .GetQueryable()
+                .AsNoTracking()
+                .Where(c => c.DeletedAt == null)
+                .Include(c => c.CurrencySources)
+                .Select(c => new CurrencyDTO
+                {
+                    Id = c.Id,
+                    CurrencyType = c.CurrencyType,
+                    LogoPath = c.LogoPath,
+                    Abbreviation = c.Abbreviation,
+                    SourceCount = c.CurrencySources.Count,
+                    Slug = c.Slug,
+                    Name = c.Name,
+                    Description = c.Description,
+                    DenominationName = c.DenominationName,
+                    IsEnabled = c.IsEnabled
+                }).ToList();
+        }
 
         public ICollection<DetailedCurrencyResponse> GetAllDetailed(string typeShortForm = "CRYPTO",
             int index = 0, int daysOfData = 7)
