@@ -50,7 +50,7 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
 
             var vm = new CurrenciesViewModel
             {
-                Currencies = _currencyEvent.GetAllNonDeleted(true),
+                Currencies = _currencyEvent.GetAllDTO(),
                 CurrencyTypes = _currencyTypeEvent.GetAllActive(),
                 CurrencySources = _sourceEvent.GetAllActive()
             };

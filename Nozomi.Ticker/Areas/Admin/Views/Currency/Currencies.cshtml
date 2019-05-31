@@ -9,9 +9,7 @@
 
         <b-button variant="primary" class="mb-3" v-on:click="showCreateModal">Create</b-button>
 
-        <b-table
-            :per-page="currencyDataRowsPerPage" :current-page="currentCurrencyDataPage"
-            :items="currencies" :fields="dataFields">
+        <b-table :items="currencies" :per-page="perPage" :current-page="currentPage" :fields="dataFields">
             <template slot="Name" slot-scope="datum">
                 {{ datum.item.name }}
             </template>
@@ -22,7 +20,7 @@
                 {{ datum.item.currencyType.name }}
             </template>
             <template slot="CurrencySource" slot-scope="datum">
-                {{ datum.item.currencySources.length}}
+                {{ datum.item.sourceCount }}
             </template>
             <template slot="Description" slot-scope="datum">
                 {{ datum.item.description }}
@@ -39,6 +37,13 @@
                 <b-button variant="danger" v-on:click="showDeleteModal(datum.item.id, datum.item.name)">Delete</b-button>
             </template>
         </b-table>
+
+        <b-pagination
+            v-model="currentPage"
+            :total-rows="rows"
+            :per-page="perPage"
+            aria-controls="currency-table">
+        </b-pagination>
     </div>
 </div>
 
@@ -95,24 +100,30 @@
             el: "#content",
             // Just dish any random variable in for now
             data: {
+                perPage: 10,
+                currentPage: 1,
                 dataFields: [
                     {
                         key: 'Name',
                         label: 'Name',
                         sortable: true
-                    }, {
+                    }, 
+                    {
                         key: 'Abbreviation',
                         label: 'Abbreviation',
                         sortable: true
-                    }, {
+                    }, 
+                    {
                         key: 'CurrencyType',
                         label: 'Currency Type',
                         sortable: true
-                    }, {
+                    }, 
+                    {
                         key: 'CurrencySource',
                         label: 'No. Of Sources',
                         sortable: true
-                    }, {
+                    }, 
+                    {
                         key: 'Description',
                         label: 'Description',
                         sortable: true
@@ -132,25 +143,23 @@
                         sortable: false
                     }
                 ],
-                currencyDataRowsPerPage: 20,
-                currentCurrencyDataPage: 1,
                 // https://stackoverflow.com/questions/7397207/json-net-error-self-referencing-loop-detected-for-type
                 currencies:
                     @Html.Raw(JsonConvert.SerializeObject(@Model.Currencies, Formatting.Indented, new JsonSerializerSettings
                     {
-                        ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
                         // Converts data to camelCase
-                        ContractResolver = new CamelCasePropertyNamesContractResolver() 
+                        ContractResolver = new CamelCasePropertyNamesContractResolver(),
                     })),
-                currencyTypes: @Html.Raw(JsonConvert.SerializeObject(@Model.CurrencyTypes, Formatting.Indented, new JsonSerializerSettings
-                               {
-                                   ContractResolver = new CamelCasePropertyNamesContractResolver() 
-                               })),
+                currencyTypes:
+                    @Html.Raw(JsonConvert.SerializeObject(@Model.CurrencyTypes, Formatting.Indented, new JsonSerializerSettings
+                    {
+                        ContractResolver = new CamelCasePropertyNamesContractResolver()
+                    })),
                 currencySources:
                     @Html.Raw(JsonConvert.SerializeObject(@Model.CurrencySources, Formatting.Indented, new JsonSerializerSettings
                     {
                         ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
-                        ContractResolver = new CamelCasePropertyNamesContractResolver() 
+                        ContractResolver = new CamelCasePropertyNamesContractResolver()
                     })),
                 createForm: {
                     currencyTypeId: Number,
@@ -166,6 +175,7 @@
                 },
             },
             mounted() {
+                console.log(this.currencies);
                 this.convertCurrencyTypesOption();
                 this.convertCurrencySourcesOption();
             },
@@ -219,18 +229,18 @@
 
                     if (response.status === 200) {
                         const data = await response.json();
-                        
+
                         const newCurrency = data.item;
-                        
+
                         // Insert the currencyType and source here manually instead of calling api again
                         newCurrency.currencyType = {
                             name: this.getCurrencyTypeName(this.createForm.currencyTypeId)
                         }
                         newCurrency.currencySource =
                         {
-                             name: this.getCurrencySourceName(this.createForm.currencySourceId)
+                            name: this.getCurrencySourceName(this.createForm.currencySourceId)
                         }
-                        
+
                         this.currencies.push(newCurrency);
                         // Put alert for now, change the ui later.
                         alert(data.message);
@@ -268,17 +278,22 @@
                     this.$refs['delete-modal'].hide();
                 },
                 getCurrencyTypeName(id) {
-                    for (let i = 0; i < this.currencyTypes.length; i++){
-                        if(this.currencyTypes.value === id)
+                    for (let i = 0; i < this.currencyTypes.length; i++) {
+                        if (this.currencyTypes.value === id)
                             return this.currencyTypes.text;
-                        }
+                    }
                 },
-                getCurrencySourceName(id){
-                    for (let i = 0; i < this.currencySources.length; i++){
-                        if(this.currencySources.value === id)
+                getCurrencySourceName(id) {
+                    for (let i = 0; i < this.currencySources.length; i++) {
+                        if (this.currencySources.value === id)
                             return this.currencySources.text;
-                        }
+                    }
                 },
+            },
+            computed: {
+                rows() {
+                    return this.currencies.length;
+                }
             }
         });
     </script>
