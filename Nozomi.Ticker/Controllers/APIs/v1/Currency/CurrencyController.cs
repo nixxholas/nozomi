@@ -51,6 +51,12 @@ namespace Nozomi.Ticker.Controllers.APIs.v1.Currency
                 }));
         }
 
+        [HttpGet("{index}")]
+        public ICollection<DetailedCurrencyResponse> GetAllDetailed([FromQuery]string currencyType = "CRYPTO", int index = 0)
+        {
+            return _currencyEvent.GetAllDetailed(currencyType, index);
+        }
+
         [Authorize]
         [HttpPost]
         public NozomiResult<string> Update(UpdateCurrency updateCurrency)
