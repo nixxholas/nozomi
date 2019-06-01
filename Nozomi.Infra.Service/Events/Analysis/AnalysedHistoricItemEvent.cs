@@ -38,7 +38,8 @@ namespace Nozomi.Service.Events.Analysis
                 .GetQueryable()
                 .AsNoTracking()
                 .Where(ahi => ahi.AnalysedComponentId.Equals(analysedComponentId)
-                              && ahi.HistoricDateTime > DateTime.UtcNow.Subtract(since))
+                              // Obtain the ahi that is older than the current time - since
+                              && ahi.HistoricDateTime < DateTime.UtcNow.Subtract(since))
                 .OrderByDescending(ahi => ahi.HistoricDateTime)
                 // Take only the selected 50
                 .Skip(page * 50)
