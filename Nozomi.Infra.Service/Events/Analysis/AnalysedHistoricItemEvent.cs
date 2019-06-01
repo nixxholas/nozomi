@@ -42,7 +42,7 @@ namespace Nozomi.Service.Events.Analysis
         public ICollection<AnalysedHistoricItem> GetAll(long analysedComponentId, TimeSpan since, int page = 0)
         {
             if (// null check 
-                analysedComponentId <= 0 || since == TimeSpan.Zero || page < 0) return new List<AnalysedHistoricItem>();
+                analysedComponentId <= 0 || page < 0) return new List<AnalysedHistoricItem>();
 
             return _unitOfWork.GetRepository<AnalysedHistoricItem>()
                 .GetQueryable()
