@@ -21,6 +21,12 @@ namespace Nozomi.Ticker.Controllers.APIs.v1.AnalysedHistoricItem
             _analysedHistoricItemEvent = analysedHistoricItemEvent;
         }
 
+        [HttpGet("{analysedComponentId}")]
+        public Task<long> Count(long analysedComponentId)
+        {
+            return Task.FromResult(_analysedHistoricItemEvent.Count(analysedComponentId));
+        }
+
         [HttpGet]
         public Task<NozomiResult<ICollection<Data.Models.Web.Analytical.AnalysedHistoricItem>>> GetAll(
             long analysedComponentId, int index = 0)
