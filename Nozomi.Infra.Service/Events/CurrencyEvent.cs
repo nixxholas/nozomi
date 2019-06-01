@@ -442,6 +442,7 @@ namespace Nozomi.Service.Events
                         Id = c.Id,
                         CurrencyTypeId = c.CurrencyTypeId,
                         Abbreviation = c.Abbreviation,
+                        Slug = c.Slug,
                         Name = c.Name,
                         Description = c.Description,
                         Denominations = c.Denominations,
