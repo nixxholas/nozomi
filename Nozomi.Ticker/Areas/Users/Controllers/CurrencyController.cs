@@ -32,15 +32,6 @@ namespace Nozomi.Ticker.Areas.Users.Controllers
 
             if (currency != null)
             {
-                var aComp = currency.AnalysedComponents
-                    .SingleOrDefault(ac => ac.ComponentType.Equals(AnalysedComponentType.HourlyAveragePrice));
-                
-                if (aComp != null)
-                {
-                    aComp.AnalysedHistoricItems = _analysedHistoricItemEvent.GetAll(aComp.Id, TimeSpan.FromHours(72))
-                        .OrderByDescending(ahi => ahi.HistoricDateTime).ToList();
-                }
-                
                 return View(currency);
             }
             
