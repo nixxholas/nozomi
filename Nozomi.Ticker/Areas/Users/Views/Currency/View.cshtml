@@ -18,7 +18,7 @@
         <div class="border-bottom space-top-2">
             <div class="media mb-5">
                 <div class="u-lg-avatar">
-                    <img class="img-fluid rounded-circle" :src="'/' + currency.LogoPath" alt="Image Description">
+                    <img class="img-fluid rounded-circle" width="46px" height="46px" :src="'/' + currency.LogoPath" alt="Image Description">
                 </div>
 
                 <div class="media-body">
@@ -80,8 +80,8 @@
             <h1 class="h5 ml-1 mb-1">
                 Price Chart
             </h1>
-            <la-cartesian :bound="[0]" autoresize :data="getHistoricalPriceData(true)">
-                <la-area curve :width="2" :width="2" prop="value"></la-area>
+            <la-cartesian autoresize :data="getHistoricalPriceData(true)">
+                <la-area curve prop="value"></la-area>
                 <la-tooltip></la-tooltip>
             </la-cartesian>
         </div>
