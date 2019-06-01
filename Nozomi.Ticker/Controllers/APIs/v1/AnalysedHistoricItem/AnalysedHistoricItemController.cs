@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data;
 using Nozomi.Service.Events.Analysis.Interfaces;
@@ -20,6 +21,7 @@ namespace Nozomi.Ticker.Controllers.APIs.v1.AnalysedHistoricItem
             _analysedHistoricItemEvent = analysedHistoricItemEvent;
         }
 
+        [HttpGet]
         public Task<NozomiResult<ICollection<Data.Models.Web.Analytical.AnalysedHistoricItem>>> GetAll(
             long analysedComponentId, int index = 0)
         {
