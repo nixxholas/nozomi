@@ -12,6 +12,8 @@ namespace Nozomi.Data.ResponseModels.Currency
         
         public string Abbreviation { get; set; }
         
+        public string Slug { get; set; }
+        
         public string Name { get; set; }
     }
 }
