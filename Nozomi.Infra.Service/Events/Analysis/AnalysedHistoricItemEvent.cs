@@ -41,6 +41,7 @@ namespace Nozomi.Service.Events.Analysis
                 .AsNoTracking()
                 .Where(ahi => ahi.AnalysedComponentId.Equals(analysedComponentId)
                               && ahi.HistoricDateTime > DateTime.UtcNow.Subtract(since))
+                .OrderByDescending(ahi => ahi.HistoricDateTime)
                 .Skip(page * 50)
                 .Take(50)
                 .ToList();
