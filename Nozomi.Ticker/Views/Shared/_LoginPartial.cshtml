@@ -4,7 +4,7 @@
 @inject UserManager<User> UserManager
 @if (SignInManager.IsSignedIn(User))
 {
-    <div class="ml-auto">
+    <li class="nav-item u-header__nav-last-item">
         <!-- Account Sidebar Toggle Button -->
         <a id="sidebarNavToggler" class="btn btn-xs btn-text-secondary u-sidebar--account__toggle-bg ml-1 target-of-invoker-has-unfolds active"
            href="javascript:;" role="button" aria-controls="sidebarContent" aria-haspopup="true" aria-expanded="true"
@@ -18,7 +18,7 @@
             </span>
         </a>
         <!-- End Account Sidebar Toggle Button -->
-    </div>
+    </li>
 
     <aside id="sidebarContent" class="u-sidebar u-unfold--css-animation fadeInRight" aria-labelledby="sidebarNavToggler" 
            style="animation-duration: 500ms; right: 0px;">
@@ -224,11 +224,10 @@
 }
 else
 {
-    <!-- Button -->
-    <div class="ml-auto">
-        <a class="btn btn-sm btn-primary transition-3d-hover" asp-controller="Account"
-           asp-action="Register">
-            Join now
+    <li class="nav-item u-header__nav-last-item">
+        <a class="btn btn-sm btn-primary" asp-controller="Account"
+           asp-action="Login">
+            Sign in
         </a>
-    </div>
+    </li>
 }
