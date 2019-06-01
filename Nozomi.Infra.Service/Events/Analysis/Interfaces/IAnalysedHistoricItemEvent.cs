@@ -8,6 +8,8 @@ namespace Nozomi.Service.Events.Analysis.Interfaces
     {
         AnalysedHistoricItem Latest(long analysedComponentId);
 
+        long Count(long analysedComponentId);
+
         ICollection<AnalysedHistoricItem> GetAll(long analysedComponentId, TimeSpan since, int page = 0);
     }
 }

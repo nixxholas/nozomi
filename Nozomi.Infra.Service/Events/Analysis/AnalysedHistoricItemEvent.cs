@@ -29,6 +29,16 @@ namespace Nozomi.Service.Events.Analysis
                 .FirstOrDefault(ahi => ahi.AnalysedComponentId.Equals(analysedComponentId));
         }
 
+        public long Count(long analysedComponentId)
+        {
+            return _unitOfWork.GetRepository<AnalysedHistoricItem>()
+                .GetQueryable()
+                .AsNoTracking()
+                .Where(ahi => ahi.AnalysedComponentId.Equals(analysedComponentId) &&
+                              ahi.DeletedAt == null && ahi.IsEnabled)
+                .LongCount();
+        }
+
         public ICollection<AnalysedHistoricItem> GetAll(long analysedComponentId, TimeSpan since, int page = 0)
         {
             if (// null check 
