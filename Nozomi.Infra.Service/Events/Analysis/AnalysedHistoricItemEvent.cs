@@ -32,9 +32,7 @@ namespace Nozomi.Service.Events.Analysis
         public ICollection<AnalysedHistoricItem> GetAll(long analysedComponentId, TimeSpan since, int page = 0)
         {
             if (// null check 
-                (analysedComponentId <= 0 || since == TimeSpan.Zero || page < 0) &&
-                // we don't want an OOM problem lol
-                since < TimeSpan.FromDays(60)) return new List<AnalysedHistoricItem>();
+                analysedComponentId <= 0 || since == TimeSpan.Zero || page < 0) return new List<AnalysedHistoricItem>();
 
             return _unitOfWork.GetRepository<AnalysedHistoricItem>()
                 .GetQueryable()
@@ -42,6 +40,7 @@ namespace Nozomi.Service.Events.Analysis
                 .Where(ahi => ahi.AnalysedComponentId.Equals(analysedComponentId)
                               && ahi.HistoricDateTime > DateTime.UtcNow.Subtract(since))
                 .OrderByDescending(ahi => ahi.HistoricDateTime)
+                // Take only the selected 50
                 .Skip(page * 50)
                 .Take(50)
                 .ToList();
