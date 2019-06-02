@@ -28,7 +28,7 @@
 
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Nozomi - @ViewData["Title"]</title>
+    <title>@CoreConstants.Name - @ViewData["Title"]</title>
     <meta name="description" content="Nozomi is a High speed informatics app that stores 
 ticker data from any market, anywhere.">
 
@@ -51,26 +51,68 @@ ticker data from any market, anywhere.">
 @*     Find what looks <span class="fa fa-heart"></span> lovely on you with Front shop. <a class="font-weight-semi-bold link-white" href="#">Learn More</a> *@
 @* </div> *@
 
-<header id="header" class="u-header u-header-center-aligned-nav u-header--bg-transparent u-header--white-nav-links-md 
-u-header--sub-menu-dark-bg-md u-header--abs-top u-scrolled"
-        data-header-fix-moment="500" data-header-fix-effect="slide">
+<!-- ========== HEADER ========== -->
+  <header id="header" class="u-header u-header--bg-transparent u-header--abs-top u-header--white-nav-links-md u-header--show-hide"
+          data-header-fix-moment="500"
+          data-header-fix-effect="slide">
     <div class="u-header__section">
-        <div id="logoAndNav" class="container">
-            <!-- Nav -->
-            <nav class="navbar navbar-expand u-header__navbar">
-                <a class="navbar-brand u-header__navbar-brand u-header__navbar-brand-center u-header__navbar-brand-text-white"
-                   asp-controller="Home" asp-action="Index" aria-label="Nozomi">
-                    @* <img class="img-fluid rounded-circle" src="/assets/svg/logos/logo.svg" alt="Image Description"> *@
-                    <span class="u-header__navbar-brand-text text-white">Nozomi</span>
-                </a>
+      <div id="logoAndNav" class="container">
+        <!-- Nav -->
+        <nav class="js-mega-menu navbar navbar-expand-md u-header__navbar u-header__navbar--no-space">
+          <!-- White Logo -->
+          <a class="navbar-brand u-header__navbar-brand u-header__navbar-brand-center u-header__navbar-brand-default 
+u-header__navbar-brand-text-white" 
+             asp-controller="Home" asp-action="Index" aria-label="@CoreConstants.Name">
+              <span class="u-header__navbar-brand-text">@CoreConstants.Name</span>
+          </a>
+          <!-- End White Logo -->
 
+          <!-- Default Logo -->
+          <a class="navbar-brand u-header__navbar-brand u-header__navbar-brand-center u-header__navbar-brand-collapsed" 
+             asp-controller="Home" asp-action="Index" aria-label="@CoreConstants.Name">
+            
+            <span class="u-header__navbar-brand-text">@CoreConstants.Name</span>
+          </a>
+          <!-- End Default Logo -->
+
+          <!-- On Scroll Logo -->
+          <a class="navbar-brand u-header__navbar-brand u-header__navbar-brand-center u-header__navbar-brand-on-scroll" 
+             asp-controller="Home" asp-action="Index" aria-label="@CoreConstants.Name">
+            
+            <span class="u-header__navbar-brand-text">@CoreConstants.Name</span>
+          </a>
+          <!-- End On Scroll Logo -->
+
+          <!-- Responsive Toggle Button -->
+          <button type="button" class="navbar-toggler btn u-hamburger u-hamburger--white"
+                  aria-label="Toggle navigation"
+                  aria-expanded="false"
+                  aria-controls="navBar"
+                  data-toggle="collapse"
+                  data-target="#navBar">
+            <span id="hamburgerTrigger" class="u-hamburger__box">
+              <span class="u-hamburger__inner"></span>
+            </span>
+          </button>
+          <!-- End Responsive Toggle Button -->
+
+          <!-- Navigation -->
+          <div id="navBar" class="collapse navbar-collapse u-header__navbar-collapse">
+            <div class="js-scrollbar u-header__navbar-body u-header--abs-top__inner">
+              <ul class="navbar-nav u-header__navbar-nav">
+                <!-- Button -->
                 <partial name="_LoginPartial"/>
                 <!-- End Button -->
-            </nav>
-            <!-- End Nav -->
-        </div>
+              </ul>
+            </div>
+          </div>
+          <!-- End Navigation -->
+        </nav>
+        <!-- End Nav -->
+      </div>
     </div>
-</header>
+  </header>
+<!-- ========== END HEADER ========== -->
 
 <partial name="_CookieConsentPartial"/>
 <main id="content" role="main">

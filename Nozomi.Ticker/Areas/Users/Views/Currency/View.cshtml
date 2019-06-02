@@ -18,7 +18,7 @@
         <div class="border-bottom space-top-2">
             <div class="media mb-5">
                 <div class="u-lg-avatar">
-                    <img class="img-fluid rounded-circle" :src="'/' + currency.LogoPath" alt="Image Description">
+                    <img class="img-fluid rounded-circle" width="46px" height="46px" :src="'/' + currency.LogoPath" alt="Image Description">
                 </div>
 
                 <div class="media-body">
@@ -63,7 +63,7 @@
             <!-- Viewed Info -->
             <div class="space-bottom-1">
                 <div class="small text-right text-secondary">
-                    <span class="fa fa-superscript mr-1"></span>
+                    @* <span class="fa fa-superscript mr-1"></span> *@
                     <b>{{ currency.DenominationName }}</b> is its subunit
                 </div>
                 <div class="small text-right text-secondary">
@@ -75,13 +75,13 @@
     </div>
     <!-- End Hero Section -->
 
-    <div class="row pt-4 pb-4" v-if="getHistoricalPriceData(true).length > 0">
+    <div class="row pt-4 pb-4" v-if="getHistoricalPriceData().length > 0">
         <div class="col w-100">
             <h1 class="h5 ml-1 mb-1">
                 Price Chart
             </h1>
-            <la-cartesian :bound="[0]" autoresize :data="getHistoricalPriceData(true)">
-                <la-area curve :width="2" :width="2" prop="value"></la-area>
+            <la-cartesian autoresize :data="getHistoricalPriceData()">
+                <la-area curve prop="value"></la-area>
                 <la-tooltip></la-tooltip>
             </la-cartesian>
         </div>
@@ -202,15 +202,29 @@
                         <!-- Mockup Block -->
                         <div class="row justify-content-lg-between align-items-lg-center">
                             <div class="col">
-                                <b-table :items="getHistoricalPriceData().AnalysedHistoricItems"
+                                <b-table :items="getHistoricalPricing" :busy="isHistoricalPricingTableBusy"
+                                         :per-page="itemsPerPage" :current-page="currentHistoricPage"
                                          :fields="currencyHistoricPriceFields">
-                                    <template slot="HistoricDateTime" slot-scope="datum">
-                                        {{ moment(datum.item.HistoricDateTime).format('LLL') }}
+                                    <div slot="table-busy" class="my-2">
+                                        <div class="text-center">
+                                            <div class="spinner-border" role="status">
+                                                <span class="sr-only">Loading...</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <template slot="historicDateTime" slot-scope="datum">
+                                        {{ moment(datum.item.historicDateTime).format('LLL') }}
                                     </template>
-                                    <template slot="Value" slot-scope="datum">
-                                        {{ numeral(datum.item.Value).format('$ 0[.]00') }}
+                                    <template slot="value" slot-scope="datum">
+                                        {{ numeral(datum.item.value).format('$ 0[.]00') }}
                                     </template>
                                 </b-table>
+                                <b-row>
+                                    <b-col md="6" class="my-1">
+                                        <b-pagination :total-rows="getHistoricalPricingCount" :per-page="itemsPerPage"
+                                                      v-model="currentHistoricPage" class="my-0"/>
+                                    </b-col>
+                                </b-row>
                             </div>
                         </div>
                         <!-- End Mockup Block -->
@@ -248,14 +262,17 @@
                                {
                                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore
                                })),
+          itemsPerPage: 50,
+          currentHistoricPage: 1,
+          isHistoricalPricingTableBusy: false,
         currencyHistoricPriceFields: [
           {
-            key: 'HistoricDateTime',
+            key: 'historicDateTime',
             label: 'Date & time',
             sortable: true
           },
           {
-            key: 'Value',
+            key: 'value',
             label: 'Price',
             sortable: true
           }],
@@ -285,6 +302,18 @@
           
           return null;
         },
+        getAnalysedCompId(componentType) {
+            if (this.currency != null && this.currency.AnalysedComponents != null) {
+                for (let i = 0; i < this.currency.AnalysedComponents.length; i++) {
+                    let currentAc = this.currency.AnalysedComponents[i];
+                    if (currentAc != null && currentAc.ComponentType == componentType) {
+                        return currentAc.Id;
+                    }
+                }
+            }
+          
+          return null;
+        },
         getAnalysedCompStr(aComp) {
           if (aComp.UIFormatting != null) {
             switch (aComp.ComponentType) {
@@ -309,29 +338,95 @@
             return aComp.Value;
           }
         },
-        getHistoricalPriceData(laueCompat = false) {
-          if (this.currency != null && this.currency.AnalysedComponents != null) {
-            for (let i = 0; i < this.currency.AnalysedComponents.length; i++) {
-              const currentAc = this.currency.AnalysedComponents[i];
+              getHistoricalPricing(ctx) {
+                let hourlyAvgACId = this.getAnalysedCompId(@((int) AnalysedComponentType.HourlyAveragePrice));
             
-              if (currentAc.ComponentType === @((int) AnalysedComponentType.HourlyAveragePrice)) {
-                  if (laueCompat && currentAc.AnalysedHistoricItems != null 
-                  && currentAc.AnalysedHistoricItems.length > 0) {
-                      let newArr = [];
+                if (hourlyAvgACId) {
+                    // Here we don't set isBusy prop, so busy state will be
+                    // handled by table itself
+                    // this.isBusy = true
+                    let promise = axios.get('/api/analysedhistoricitem/getall?analysedComponentId=' 
+                    + hourlyAvgACId
+                    + '&index=' + (ctx.currentPage - 1));
+            
+                    return promise.then((res) => {
+                      let items = res.data.data;
                       
-                      for (let j = 0; j < currentAc.AnalysedHistoricItems.length; j++) {
-                          newArr.push({ name: "Price", value: currentAc.AnalysedHistoricItems[j].Value });
+                      let newArr = [];
+                                            
+                      for (let j = 0; j < items.length; j++) {
+                          newArr.push({ historicDateTime: items[j].historicDateTime, value: items[j].value });
                       }
                       
-                      return newArr;
-                  }
-                  
-                return currentAc;
-              }
+                      // Here we could override the busy state, setting isBusy to false
+                      // this.isBusy = false
+                      return(newArr);
+                    }).catch(error => {
+                        console.dir(error);
+                      // Here we could override the busy state, setting isBusy to false
+                      // this.isBusy = false
+                      // Returning an empty array, allows table to correctly handle
+                      // internal busy state in case of error
+                      return [];
+                    })
+                }
+                
+                return [];
+              },
+              getHistoricalPricingCount() {
+                let hourlyAvgACId = this.getAnalysedCompId(@((int) AnalysedComponentType.HourlyAveragePrice));
+            
+                if (hourlyAvgACId) {
+                    // Here we don't set isBusy prop, so busy state will be
+                    // handled by table itself
+                    // this.isBusy = true
+                    let promise = axios.get('/api/analysedhistoricitem/count/' + hourlyAvgACId);
+            
+                    return promise.then((res) => {
+                      const items = res.data;
+                      
+                      // Here we could override the busy state, setting isBusy to false
+                      // this.isBusy = false
+                      return(items);
+                    }).catch(error => {
+                        console.dir(error);
+                      // Here we could override the busy state, setting isBusy to false
+                      // this.isBusy = false
+                      // Returning an empty array, allows table to correctly handle
+                      // internal busy state in case of error
+                      return [];
+                    })
+                }
+                
+                return [];
+              },
+        getHistoricalPriceData() {
+            let hourlyAvgACId = this.getAnalysedCompId(@((int) AnalysedComponentType.HourlyAveragePrice));
+            let newArr = [];
+            
+            if (hourlyAvgACId) {
+                let promise = axios.get('/api/analysedhistoricitem/getall?analysedComponentId=' + hourlyAvgACId
+                + '&index=0');
+                
+                promise
+                .then(res => {
+                    const items = res.data.data;
+                    
+                    for (let j = 0; j < items.length; j++) {
+                        newArr.push({ name: "Price", value: Number(items[j].value) });
+                    }
+                    
+                    console.dir(newArr);
+                    
+                    return newArr;
+                })
+                .catch(error => {
+                    console.dir(error);
+                    return newArr;
+                });
             }
-          }
-          
-          return [];
+            
+            return newArr;
         }
       },
       mounted: function() {

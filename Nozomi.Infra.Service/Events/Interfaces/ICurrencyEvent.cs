@@ -41,7 +41,7 @@ namespace Nozomi.Service.Events.Interfaces
         /// <returns></returns>
         DetailedCurrencyResponse GetDetailedById(long currencyId, ICollection<AnalysedComponentType> componentTypes);
         
-        DetailedCurrencyResponse GetDetailedByAbbreviation(string abbreviation, ICollection<AnalysedComponentType> componentTypes);
+        DetailedCurrencyResponse GetDetailedBySlug(string slug, ICollection<AnalysedComponentType> componentTypes);
          
         bool Any(CreateCurrency currency);
         
