@@ -11,5 +11,7 @@ namespace Nozomi.Service.Events.Analysis.Interfaces
         long Count(long analysedComponentId);
 
         ICollection<AnalysedHistoricItem> GetAll(long analysedComponentId, TimeSpan since, int page = 0);
+        
+        IEnumerable<AnalysedHistoricItem> GetAll(long analysedComponentId, bool track = false, int index = 0);
     }
 }

@@ -4,6 +4,7 @@ using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data.Models.Web.Analytical;
+using Nozomi.Preprocessing;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Data;
@@ -55,6 +56,30 @@ namespace Nozomi.Service.Events.Analysis
                 .Skip(page * 50)
                 .Take(50)
                 .ToList();
+        }
+
+        public IEnumerable<AnalysedHistoricItem> GetAll(long analysedComponentId, bool track = false, int index = 0)
+        {
+            if (analysedComponentId > 0)
+            {
+                var query = _unitOfWork.GetRepository<AnalysedHistoricItem>()
+                    .GetQueryable()
+                    .AsNoTracking()
+                    .Where(ahi => ahi.DeletedAt == null && ahi.IsEnabled 
+                                                        && ahi.AnalysedComponentId.Equals(analysedComponentId));
+
+                if (track)
+                {
+                    query = query.Include(ahi => ahi.AnalysedComponent);
+                }
+
+                return query
+                    .OrderByDescending(ahi => ahi.HistoricDateTime)
+                    .Skip(index * NozomiServiceConstants.AnalysedHistoricItemTakeoutLimit)
+                    .Take(NozomiServiceConstants.AnalysedHistoricItemTakeoutLimit);
+            }
+
+            throw new ArgumentOutOfRangeException("Invalid analysedComponentId.");
         }
     }
 }
