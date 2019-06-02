@@ -75,12 +75,12 @@
     </div>
     <!-- End Hero Section -->
 
-    <div class="row pt-4 pb-4" v-if="getHistoricalPriceData(true).length > 0">
+    <div class="row pt-4 pb-4" v-if="getHistoricalPriceData().length > 0">
         <div class="col w-100">
             <h1 class="h5 ml-1 mb-1">
                 Price Chart
             </h1>
-            <la-cartesian autoresize :data="getHistoricalPriceData(true)">
+            <la-cartesian autoresize :data="getHistoricalPriceData()">
                 <la-area curve prop="value"></la-area>
                 <la-tooltip></la-tooltip>
             </la-cartesian>
@@ -350,7 +350,7 @@
                     + '&index=' + (ctx.currentPage - 1));
             
                     return promise.then((res) => {
-                      const items = res.data.data;
+                      let items = res.data.data;
                       
                       let newArr = [];
                                             
@@ -400,29 +400,33 @@
                 
                 return [];
               },
-        getHistoricalPriceData(laueCompat = false) {
-          if (this.currency != null && this.currency.AnalysedComponents != null) {
-            for (let i = 0; i < this.currency.AnalysedComponents.length; i++) {
-              const currentAc = this.currency.AnalysedComponents[i];
+        getHistoricalPriceData() {
+            let hourlyAvgACId = this.getAnalysedCompId(@((int) AnalysedComponentType.HourlyAveragePrice));
+            let newArr = [];
             
-              if (currentAc.ComponentType === @((int) AnalysedComponentType.HourlyAveragePrice)) {
-                  if (laueCompat && currentAc.AnalysedHistoricItems != null 
-                  && currentAc.AnalysedHistoricItems.length > 0) {
-                      let newArr = [];
-                      
-                      for (let j = 0; j < currentAc.AnalysedHistoricItems.length; j++) {
-                          newArr.push({ name: "Price", value: currentAc.AnalysedHistoricItems[j].Value });
-                      }
-                      
-                      return newArr;
-                  }
-                  
-                return currentAc;
-              }
+            if (hourlyAvgACId) {
+                let promise = axios.get('/api/analysedhistoricitem/getall?analysedComponentId=' + hourlyAvgACId
+                + '&index=0');
+                
+                promise
+                .then(res => {
+                    const items = res.data.data;
+                    
+                    for (let j = 0; j < items.length; j++) {
+                        newArr.push({ name: "Price", value: Number(items[j].value) });
+                    }
+                    
+                    console.dir(newArr);
+                    
+                    return newArr;
+                })
+                .catch(error => {
+                    console.dir(error);
+                    return newArr;
+                });
             }
-          }
-          
-          return [];
+            
+            return newArr;
         }
       },
       mounted: function() {
