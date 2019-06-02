@@ -1,4 +1,6 @@
+using System.Collections;
 using System.Collections.Generic;
+using Nozomi.Data;
 using Nozomi.Data.Models.Currency;
 using Nozomi.Data.ResponseModels.Source;
 
@@ -18,5 +20,7 @@ namespace Nozomi.Service.Events.Interfaces
         IEnumerable<Source> GetAllNonDeleted(bool countPairs = false, bool includeNested = false);
 
         IEnumerable<dynamic> GetAllActiveObsc(bool includeNested = false);
+
+        IEnumerable<Source> GetAllCurrencySourceOptions(IEnumerable<CurrencySource> currencySources);
     }
 }

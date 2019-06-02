@@ -1,9 +1,11 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Logging;
+using Nozomi.Data;
 using Nozomi.Data.Models.Currency;
 using Nozomi.Data.ResponseModels;
 using Nozomi.Data.ResponseModels.Currency;
@@ -172,6 +174,20 @@ namespace Nozomi.Service.Events
                         .ToList()
                 })
                 .SingleOrDefault();
+        }
+
+        public IEnumerable<Source> GetAllCurrencySourceOptions(IEnumerable<CurrencySource> currencySources)
+        {
+            IEnumerable<Source> sources = currencySources.Select(cs => cs.Source).ToList();
+            
+            var query = _unitOfWork.GetRepository<Source>()
+                .GetQueryable()
+                .Where(s => s.DeletedAt == null && s.IsEnabled
+                            && sources.All(x => x.Id != s.Id))
+                .ToList();
+            
+            return query;
+
         }
 
         public XSourceResponse Get(string abbreviation)
