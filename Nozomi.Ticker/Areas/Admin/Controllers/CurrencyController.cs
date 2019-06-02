@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using Nozomi.Base.Identity.ViewModels.Manage.Currency;
 using Nozomi.Data;
 using Nozomi.Data.AreaModels.v1.Currency;
+using Nozomi.Data.Models.Currency;
 using Nozomi.Data.ViewModels.Admin.Currency;
 using Nozomi.Infra.Admin.Service.Events.Interfaces;
 using Nozomi.Service.Events.Interfaces;
@@ -114,6 +115,27 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
             }
 
             var result = _currencyService.Create((createCurrency));
+            
+            if (result.ResultType.Equals(NozomiResultType.Success)) return Ok(result);
+
+            // Create failed
+            return NotFound();
+        }
+        
+        #endregion
+        
+        #region POST AddCurrencySource
+
+        [HttpPost]
+        public async Task<IActionResult> CreateCurrencySource(CurrencySource currencySource)
+        {
+            var user = await GetCurrentUserAsync();
+            if (user == null)
+            {
+                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
+
+            var result = _currencyService.CreateCurrencySource(currencySource);
             
             if (result.ResultType.Equals(NozomiResultType.Success)) return Ok(result);
 
