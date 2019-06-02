@@ -1,385 +1,352 @@
 @using Newtonsoft.Json
-@using Nozomi.Data.Models.Web.Analytical
-@using Nozomi.Preprocessing
+@using Newtonsoft.Json.Serialization
 @model Nozomi.Data.ViewModels.Admin.Currency.CurrencyViewModel
 
-<!-- Hero Section -->
-<div class="container">
-    <div class="border-bottom space-top-2">
-        <div class="media mb-5">
-            <!-- Avatar 
-            TODO: Implement Logo loading-->
-            @* <div class="u-lg-avatar mr-4"> *@
-            @*   <img class="img-fluid rounded-circle" src="../../assets/img/160x160/img3.jpg" alt="Image Description"> *@
-            @* </div> *@
-            <!-- End Avatar -->
+<!-- Content Section -->
+<div class="bg-light">
+    <div class="container space-2">
+        <h3 class="mb-6">@Model.Currency.Name</h3>
 
-            <div class="media-body">
-                <div class="row">
-                    <div class="col-lg-6 mb-3 mb-lg-0">
-                        <h1 class="h4 mb-1">{{ currency.Name }}</h1>
+        <b-form v-on:submit.prevent="onEditRequestSubmit">
+            <div class="col-md-4 mb-3">
+                <b-form-group label="Currency name">
+                    <b-form-input
+                        v-model="editCurrency.name"
+                        placeholder="Enter currency name">
+                    </b-form-input>
+                </b-form-group>
 
-                        <span class="font-weight-semi-bold">{{ currency.Abbreviation }}</span>
-                        <small class="text-muted">(Updated {{ moment(currency.LastUpdated).startOf('hour').fromNow() }})</small>
-                        <!-- End Review -->
-                    </div>
+                <b-form-group label="Currency Abbreviation">
+                    <b-form-input
+                        v-model="editCurrency.abbreviation"
+                        placeholder="Enter currency abbreviation">
+                    </b-form-input>
+                </b-form-group>
 
-                    <div class="col-lg-6 text-lg-right">
-                        <div class="d-flex justify-content-md-end align-items-center">
-                            <a class="btn btn-sm btn-soft-primary transition-3d-hover" href="#">Modify</a>
-                        </div>
-                    </div>
-                </div>
+                <b-form-group label="Description">
+                    <b-form-textarea
+                        v-model="editCurrency.description"
+                        placeholder="Enter description (optional)">
+                    </b-form-textarea>
+                </b-form-group>
+
+                <b-form-group label="Denomination Name">
+                    <b-form-input
+                        v-model="editCurrency.denominationName"
+                        placeholder="Enter denomination name">
+                    </b-form-input>
+                </b-form-group>
+
+                <b-form-group label="Denomination">
+                    <b-form-input
+                        v-model="editCurrency.denomination"
+                        placeholder="Enter denomination">
+                    </b-form-input>
+                </b-form-group>
+
+                <b-form-group id="isEnabled-input-group">
+                    <b-form-checkbox v-model="editCurrency.isEnabled">Is Enabled</b-form-checkbox>
+                </b-form-group>
             </div>
-        </div>
 
-        <!-- Viewed Info -->
-        <div class="space-bottom-1">
-            <div class="small text-right text-secondary">
-                <span class="fa fa-eye mr-1"></span>
-                Viewed 3,910 times
-            </div>
-        </div>
-        <!-- End Viewed Info -->
+            <b-button variant="primary" class="mb-3" type="submit">Save Changes</b-button>
+        </b-form>
+
+        <hr/>
+
+        <h3>Sources in @Model.Currency.Name</h3>
+        <!-- Currency source table -->
+        <b-button variant="primary" class="mb-3" v-on:click="showSourceAddModal">Add Source</b-button>
+
+        <b-table
+            :per-page="sourceDataRowsPerPage" :current-page="sourceCurrentPage"
+            :items="currencySources" :fields="sourceDataFields">
+            <template slot="Name" slot-scope="datum">
+                {{ datum.item.source.name }}
+            </template>
+            <template slot="Abbreviation" slot-scope="datum">
+                {{ datum.item.source.abbreviation }}
+            </template>
+            <template slot="APIDocsURL" slot-scope="datum">
+                <a :href="datum.item.apiDocsURL">{{ datum.item.source.apiDocsURL }}</a>
+            </template>
+            <template slot="isEnabled" slot-scope="datum">
+                <b-form-checkbox v-model="datum.item.source.isEnabled" disabled/>
+            </template>
+            <template slot="Edit" slot-scope="datum">
+                <b-button variant="primary" b-modal.modal-xl
+                          v-on:click="showSourceEditModal(datum.item.source.id, datum.item.source.name, datum.item.source.abbreviation, datum.item.source.apiDocsURL, datum.item.source.isEnabled)">
+                    Edit
+                </b-button>
+            </template>
+            <template slot="Delete" slot-scope="datum">
+                <b-button variant="danger" v-on:click="showSourceDeleteModal(datum.item.source.id, datum.item.source.name)">Delete</b-button>
+            </template>
+        </b-table>
     </div>
 </div>
-<!-- End Hero Section -->
 
-<!-- Jobs Description Section -->
-<div class="container">
-<div class="border-bottom space-2">
-<div class="row">
-<div class="col-lg-8 mb-9 mb-lg-0">
-    <div class="mb-4" v-if="currency.Description !== null">
-        <h2 class="h5">Description</h2>
-        @* <p class="text-muted font-size-1"></p> *@
-    </div>
+<!-- EditModal -->
+<b-modal ref="source-edit-modal" size="xl" title="Edit Source" ok-title="Save changes" v-on:ok="handleSourceEditOk">
+    <b-form v-on:submit.stop.prevent="onSourceEditSubmit">
+        <b-form-group
+            id="sourceName-input-group"
+            label="Name"
+            label-for="sourceName-input">
+            <b-form-input
+                id="sourceName-input"
+                v-model="editSourceForm.sourceName"
+                required
+                placeholder="Enter source name">
+            </b-form-input>
+        </b-form-group>
 
-    <div class="mb-7" v-if="currency.Description !== null">
-        {{ currency.Description }}
-    </div>
+        <b-form-group
+            id="abbreviation-input-group"
+            label="Abbreviation"
+            label-for="abbreviation-input">
+            <b-form-input
+                id="abbreviation-input"
+                v-model="editSourceForm.abbreviation"
+                required
+                placeholder="Enter source abbreviation">
+            </b-form-input>
+        </b-form-group>
 
-    <!-- Title -->
-    <div class="mb-4" v-if="currency.CurrencySources !== null && currency.CurrencySources.length > 0">
-        <h3 class="h5">Sources</h3>
-    </div>
-    <!-- End Title -->
+        <b-form-group id="apiDocsURL-input-group" label="API Docs URL:" label-for="apiDocsURL-input">
+            <b-form-input
+                id="apiDocsURL-input"
+                v-model="editSourceForm.apiDocsURL"
+                required
+                placeholder="Enter source API documentation URL">
+            </b-form-input>
+        </b-form-group>
 
-    <!-- Skills -->
-    <ul class="list-inline mb-7" v-if="currency.CurrencySources !== null && currency.CurrencySources.length > 0">
-        <li class="list-inline-item pb-3" v-for="source in currency.CurrencySources">
-            <a class="btn btn-xs btn-gray btn-pill" href="#">{{ source.Name }}</a>
-        </li>
-    </ul>
-    <!-- End Skills -->
+        <b-form-group>
+            <b-form-checkbox v-model="editSourceForm.isEnabled" switch>Is Enabled</b-form-checkbox>
+        </b-form-group>
+    </b-form>
+</b-modal>
 
-    <!-- Title -->
-    <div class="mb-4" v-if="currency.TickerPairs !== null && currency.TickerPairs.length > 0">
-        <h3 class="h5">Ticker Pairs</h3>
-    </div>
-    <!-- End Title -->
+<!-- Source AddModal -->
+<b-modal ref="source-add-modal" size="xl" title="Add source to @Model.Currency.Name" ok-title="Create" v-on:ok="handleSourceAddOk">
+    <b-form v-on:submit.stop.prevent="onSourceAddSubmit">
+        <b-form-group label="Currency source">
+            <b-form-select v-model="addSourceForm.currencySourceId" :options="addSourceForm.currencySourcesOptions"></b-form-select>
+        </b-form-group>
+    </b-form>
+</b-modal>
 
-    <!-- Skills -->
-    <ul class="list-inline mb-7" v-if="currency.TickerPairs !== null && currency.TickerPairs.length > 0">
-        <li class="list-inline-item pb-3" v-for="tickerPair in currency.TickerPairs">
-            <a class="btn card bg-primary text-white text-center p-3 mb-3" href="#">
-                <blockquote class="blockquote mb-0">
-                    {{ tickerPair.PairAbbreviation }}
-                    <footer class="blockquote-footer text-light">
-                        <span class="badge badge-pill badge-light" v-for="source in tickerPair.Sources">
-                            {{ source.Name }}
-                        </span>
-                    </footer>
-                </blockquote>
-            </a>
-        </li>
-    </ul>
-    <!-- End Skills -->
-
-    <!-- Title -->
-    <div class="mb-4" v-if="currency.CurrencyRequests !== null && currency.CurrencyRequests.length > 0"
-         class="mb-2">
-        <h3 class="h5">Requests</h3>
-    </div>
-    <!-- End Title -->
-
-    <!-- List -->
-    <ul class="list-unstyled mb-7" v-if="currency.CurrencyRequests !== null && currency.CurrencyRequests.length > 0">
-        <li class="py-3" v-for="request in currency.CurrencyRequests">
-            <div class="card bg-primary text-white mb-3">
-                <div class="card-body">
-                    <h5 class="card-title">Card title</h5>
-                    <p class="card-text">
-                        <ul class="list-inline">
-                            <li class="list-inline-item">
-                            </li>
-                        </ul>
-                    </p>
-                    <p class="card-text">
-                        <a :href="request.DataPath"></a><small class="text-muted">{{ request.DataPath }}</small>
-                    </p>
-                </div>
-            </div>
-        </li>
-    </ul>
-    <!-- End List -->
-
-    <!-- Title -->
-    <div class="mb-4" v-if="currency.AnalysedComponents !== null && currency.AnalysedComponents.length > 0"
-         class="mb-2">
-        <h3 class="h5">Analysed Components</h3>
-    </div>
-    <!-- End Title -->
-
-    <!-- List -->
-    <ul class="list-unstyled mb-7" v-if="currency.AnalysedComponents !== null && currency.AnalysedComponents.length > 0">
-        <li class="py-3" v-for="aComp in currency.AnalysedComponents">
-            <div class="media">
-                <span class="btn btn-xs btn-icon btn-soft-primary rounded-circle mr-3">
-                    <span class="fa fa-arrow-right btn-icon__inner"></span>
-                </span>
-                <div class="media-body text-secondary">
-                    <b>{{ getAnalysedCompTypeStr(aComp.ComponentType) }}</b> - {{ getAnalysedCompStr(aComp) }}
-                </div>
-            </div>
-        </li>
-    </ul>
-    <!-- End List -->
-
-    <!-- Title -->
-    <div class="mb-4">
-        <h3 class="h5">Share:</h3>
-    </div>
-    <!-- End Title -->
-
-    <!-- Social Networks -->
-    <ul class="list-inline mb-0">
-        <li class="list-inline-item">
-            <a class="btn btn-icon btn-soft-secondary btn-bg-transparent" href="#">
-                <span class="fa fa-facebook-f btn-icon__inner"></span>
-            </a>
-        </li>
-        <li class="list-inline-item">
-            <a class="btn btn-icon btn-soft-secondary btn-bg-transparent" href="#">
-                <span class="fa fa-google btn-icon__inner"></span>
-            </a>
-        </li>
-        <li class="list-inline-item">
-            <a class="btn btn-icon btn-soft-secondary btn-bg-transparent" href="#">
-                <span class="fa fa-twitter btn-icon__inner"></span>
-            </a>
-        </li>
-        <li class="list-inline-item">
-            <a class="btn btn-icon btn-soft-secondary btn-bg-transparent" href="#">
-                <span class="fa fa-pinterest btn-icon__inner"></span>
-            </a>
-        </li>
-        <li class="list-inline-item">
-            <a class="btn btn-icon btn-soft-secondary btn-bg-transparent" href="#">
-                <span class="fa fa-get-pocket btn-icon__inner"></span>
-            </a>
-        </li>
-        <li class="list-inline-item">
-            <a class="btn btn-icon btn-soft-secondary btn-bg-transparent" href="#">
-                <span class="fa fa-telegram-plane btn-icon__inner"></span>
-            </a>
-        </li>
-        <li class="list-inline-item">
-            <a class="btn btn-icon btn-soft-secondary btn-bg-transparent" href="#">
-                <span class="fa fa-slack-hash btn-icon__inner"></span>
-            </a>
-        </li>
-    </ul>
-    <!-- End Social Networks -->
-</div>
-
-<div class="col-lg-4">
-    <div class="pl-lg-4">
-        <!-- Sidebar Info -->
-        <div class="card border-0 shadow-sm mb-3">
-            <!-- Header -->
-            <header id="SVGwave1BottomShapeID1" class="svg-preloader card-header border-bottom-0 bg-primary text-white p-0">
-                <div class="pt-5 px-5">
-                    <h3 class="h5">Information</h3>
-                </div>
-
-                <figure class="ie-wave-1-bottom mt-n5">
-                    <img class="js-svg-injector" src="/assets/svg/components/wave-1-bottom.svg" alt="Image Description"
-                         data-parent="#SVGwave1BottomShapeID1">
-                </figure>
-            </header>
-            <!-- End Header -->
-
-            <!-- Content -->
-            <div class="card-body pt-1 px-5 pb-5">
-                <!-- Icon Block -->
-                <div class="media mb-3" v-if="currency.CurrencyType !== null">
-                    <div class="min-width-4 text-center text-primary mt-1 mr-3">
-                        <span class="fa fa-money-bill-alt"></span>
-                    </div>
-                    <div class="media-body">
-                        <span class="d-block font-weight-medium">{{ currency.CurrencyType.Name }}</span>
-                        <small class="d-block text-secondary">Currency type</small>
-                    </div>
-                </div>
-                <!-- End Icon Block -->
-
-                <!-- Icon Block -->
-                <div class="media mb-3">
-                    <div class="min-width-4 text-center text-primary mt-1 mr-3">
-                        <span class="fa fa-certificate"></span>
-                    </div>
-                    <div class="media-body">
-                        <span class="d-block font-weight-medium">{{ currency.DenominationName }}</span>
-                        <small class="d-block text-secondary">Denominated Name</small>
-                    </div>
-                </div>
-                <!-- End Icon Block -->
-
-                <!-- Icon Block -->
-                <div class="media mb-3">
-                    <div class="min-width-4 text-center text-primary mt-1 mr-3">
-                        <span class="fa fa-globe"></span>
-                    </div>
-                    <div class="media-body">
-                        <span class="d-block font-weight-medium">{{ currency.Denominations }}</span>
-                        <small class="d-block text-secondary">Denominations</small>
-                    </div>
-                </div>
-                <!-- End Icon Block -->
-            </div>
-            <!-- End Content -->
-        </div>
-        <!-- End Sidebar Info -->
-
-        @* <!-- Company About --> *@
-        @* <div class="mb-4"> *@
-        @*   <img class="u-clients mb-4" src="/assets/svg/clients-logo/slack-original.svg" alt="Airbnb"> *@
-        @*   <h4 class="h6">About</h4> *@
-        @*   <p class="font-size-1 mb-0">Our Mission is to deliver a high quality, technology-based education that provides the skills and knowledge students need for success.</p> *@
-        @*   <a class="font-size-1" href="#">View company profile</a> *@
-        @* </div> *@
-        @* <!-- End Company About --> *@
-        @* *@
-        @* <!-- Company Contacts --> *@
-        @* <div class="mb-7"> *@
-        @*   <h4 class="h6">Contacts</h4> *@
-        @*   <address class="text-secondary font-size-1"> *@
-        @*     <span class="d-block mb-2">44-46 Morningside Road <br> Edinburgh Scotland EH10 4BF</span> *@
-        @*     <span class="d-block mb-2">Email: <a href="mailto:careers@airbnb.com">careers@airbnb.com</a></span> *@
-        @*     <span class="d-block">Phone: <a class="text-dark" href="tel:1-855-424-7262">1-855-424-7262</a></span> *@
-        @*   </address> *@
-        @* </div> *@
-        @* <!-- End Company Contacts --> *@
-
-    </div>
-</div>
-</div>
-
-<!-- Sticky Block End Point -->
-<div id="stickyBlockEndPoint"></div>
-</div>
-</div>
-<!-- End Jobs Description Section -->
+<!-- DeleteModal -->
+<b-modal ref="source-delete-modal" title="Confirm Delete" ok-title="Yes" ok-variant="danger" cancel-title="No" v-on:ok="handleSourceDeleteOk" centered>
+    <p>Are you sure that you want to delete {{ deleteSourceModal.name }} source?</p>
+</b-modal>
 
 @section Scripts
 {
     <script>
-    const vm = new Vue({
-      // options
-      el: "#content",
-      // Just dish any random variable in for now
-      data: {
-        acTypes: @Html.Raw(Json.Serialize(NozomiServiceConstants.analysedComponentTypes, new JsonSerializerSettings
-                 {
-                     ReferenceLoopHandling = ReferenceLoopHandling.Ignore
-                 })),
-        reqCompTypes: @Html.Raw(Json.Serialize(NozomiServiceConstants.requestComponentTypes, new JsonSerializerSettings
-                      {
-                          ReferenceLoopHandling = ReferenceLoopHandling.Ignore
-                      })),
-        currency: @Html.Raw(Json.Serialize(Model.Currency, new JsonSerializerSettings
-                  {
-                      ReferenceLoopHandling = ReferenceLoopHandling.Ignore
-                  })),
-        currencyHistoricPrice: [],
-        currencyHistoricPriceFields: [
-          {
-            key: 'HistoricDateTime',
-            label: 'Date & time',
-            sortable: true
-          },
-          {
-            key: 'Value',
-            label: 'Price',
-            sortable: true
-          }],
-        tickerPairTableFields: [
-          {
-            key: 'PairAbbreviation',
-            label: 'Pair',
-            sortable: true
-          },
-          {
-            key: 'Sources',
-            label: 'Exchanges',
-            sortable: false
-          }]
-      },
-      created: function() {
-      },
-      methods: {
-        getAnalysedCompTypeStr(val) {
-          if (this.acTypes != null) {
-            for (i = 0; i < this.acTypes.length; i++) {
-              if (this.acTypes[i].Value == val) {
-                return this.acTypes[i].Key;
-              }
+        const vm = new Vue({
+            el: '#content',
+            data: {
+                sourceCurrentPage: 1,
+                sourceDataRowsPerPage: 10,
+                sourceDataFields: [
+                    {
+                        key: 'Name',
+                        label: 'Name',
+                        sortable: true
+                    },
+                    {
+                        key: 'Abbreviation',
+                        label: 'Abbreviation',
+                        sortable: true
+                    },
+                    {
+                        key: 'APIDocsURL',
+                        label: 'API Docs URL',
+                        sortable: true
+                    },
+                    {
+                        key: 'isEnabled',
+                        label: 'Is Enabled',
+                        sortable: true
+                    },
+                    {
+                        key: 'Edit',
+                        label: '',
+                        sortable: false
+                    },
+                    {
+                        key: 'Delete',
+                        label: '',
+                        sortable: false
+                    }
+                ],
+                currencySources:
+                    @Html.Raw(JsonConvert.SerializeObject(@Model.Currency.CurrencySources, Formatting.Indented, new JsonSerializerSettings
+                    {
+                        ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+                        ContractResolver = new CamelCasePropertyNamesContractResolver()
+                    })),
+                editCurrency: {
+                    name: '@Model.Currency.Name',
+                    abbreviation: '@Model.Currency.Abbreviation',
+                    description: '@Model.Currency.Description',
+                    denominationName: '@Model.Currency.DenominationName',
+                    denominations: '@Model.Currency.Denominations',
+                    isEnabled: @Model.Currency.IsEnabled.ToString().ToLower()
+                },
+                addSourceForm: {
+                    currencySourcesOptions:
+                        @Html.Raw(JsonConvert.SerializeObject(@Model.CurrencySourcesOptions, Formatting.Indented, new JsonSerializerSettings
+                        {
+                            ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+                            ContractResolver = new CamelCasePropertyNamesContractResolver()
+                        })),
+                    currencySourceId: '',
+                },
+                editSourceForm: {
+                    id: Number,
+                    sourceName: '',
+                    abbreviation: '',
+                    apiDocsURL: '',
+                    isEnabled: Boolean
+                },
+                deleteSourceModal: {
+                    id: Number,
+                    name: ''
+                }
+            },
+            mounted() {
+                this.convertCurrencySourcesOption();
+            },
+            methods: {
+                convertCurrencySourcesOption() {
+                    const currencySourcesArr = [];
+                    for (let i = 0; i < this.addSourceForm.currencySourcesOptions.length; i++) {
+                        const currencySource = {
+                            value: this.addSourceForm.currencySourcesOptions[i].id,
+                            text: this.addSourceForm.currencySourcesOptions[i].name
+                        };
+                        currencySourcesArr.push(currencySource);
+                    }
+                    this.addSourceForm.currencySourcesOptions = currencySourcesArr;
+                },
+                showSourceAddModal() {
+                    this.$refs['source-add-modal'].show();
+                },
+                handleSourceAddOk(bvModalEvt) {
+                    // Prevent modal from closing
+                    bvModalEvt.preventDefault();
+                    // Trigger submit handler
+                    this.onSourceCreateSubmit();
+                },
+                async onSourceAddSubmit() {
+                    var formData = new FormData();
+                    formData.append('Id', this.createSourceForm.id);
+                    formData.append('Name', this.createSourceForm.sourceName);
+                    formData.append('Abbreviation', this.createSourceForm.abbreviation);
+                    formData.append('ApiDocsURL', this.createSourceForm.apiDocsURL);
+                    formData.append('IsEnabled', this.createSourceForm.isEnabled);
+
+                    const response = await fetch('/Admin/Source/CreateSource',
+                        {
+                            method: 'POST',
+                            body: formData
+                        });
+
+                    if (response.status === 200) {
+                        const data = await response.json();
+
+                        const newRequest = data.item;
+
+                        this.currencySources.push(newRequest);
+                        // Put alert for now, change the ui later.
+                        alert(data.message);
+                    } else {
+                        alert("Create failed");
+                    }
+                    // Hide the modal manually
+                    this.$refs['create-modal'].hide();
+                },
+                // Methods for edit modal
+                showSourceEditModal(id, sourceName, abbreviation, apiDocsURL, isEnabled) {
+                    this.editSourceForm.id = id;
+                    this.editSourceForm.sourceName = sourceName;
+                    this.editSourceForm.abbreviation = abbreviation;
+                    this.editSourceForm.apiDocsURL = apiDocsURL;
+                    this.editSourceForm.isEnabled = isEnabled;
+
+                    this.$refs['source-edit-modal'].show();
+                },
+                handleSourceEditOk(bvModalEvt) {
+                    // Prevent modal from closing
+                    bvModalEvt.preventDefault();
+                    // Trigger submit handler
+                    this.onEditSubmit();
+                },
+                async onSourceEditSubmit() {
+                    var formData = new FormData();
+                    formData.append('Id', this.editSourceForm.id);
+                    formData.append('Name', this.editSourceForm.sourceName);
+                    formData.append('Abbreviation', this.editSourceForm.abbreviation);
+                    formData.append('ApiDocsURL', this.editSourceForm.apiDocsURL);
+                    formData.append('IsEnabled', this.editSourceForm.isEnabled);
+
+                    const response = await fetch(`/Admin/Source/EditSource/${this.editSourceForm.id}`,
+                        {
+                            method: 'PUT',
+                            body: formData
+                        });
+
+                    if (response.status === 200) {
+                        // Update the data table
+                        this.currencySources.find((element, index) => {
+                            if (element.Id === this.editSourceForm.id) {
+                                this.currencySources[index].Name = this.editSourceForm.sourceName;
+                                this.currencySources[index].Abbreviation = this.editSourceForm.abbreviation;
+                                this.currencySources[index].ApiDocsURL = this.editSourceForm.apiDocsURL;
+                                this.currencySources[index].IsEnabled = this.editSourceForm.isEnabled;
+                            }
+                        });
+
+                        // Put alert for now, change the ui later.
+                        alert("Successfully updated source");
+                    } else {
+                        alert("Update failed");
+                    }
+
+                    // Hide the modal manually
+                    this.$refs['source-edit-modal'].hide();
+                },
+                // Methods for delete modal
+                showSourceDeleteModal(id, sourceName) {
+                    this.deleteSourceModal.id = id;
+                    this.deleteSourceModal.name = sourceName;
+
+                    this.$refs['source-delete-modal'].show();
+                },
+                async handleSourceDeleteOk(bvModalEvt) {
+                    bvModalEvt.preventDefault();
+
+                    const response = await fetch(`/Admin/Source/DeleteSource/${this.deleteModal.id}`,
+                        {
+                            method: 'DELETE'
+                        });
+
+                    if (response.status === 200) {
+                        // Update the datatable
+                        const index = this.currencySources.findIndex(element => element.Id === this.deleteModal.id);
+                        this.currencySources.splice(index, 1);
+
+                        alert(`Successfully deleted ${this.deleteModal.name}`);
+                    } else {
+                        alert("Delete failed");
+                    }
+
+                    this.$refs['source-delete-modal'].hide();
+                }
             }
-          }
-          
-          return null;
-        },
-        getAnalysedCompStr(aComp) {
-          if (aComp.UIFormatting != null) {
-            switch (aComp.ComponentType) {
-            // TODO: Make sure this is not repeated, create a vue component for this.
-            case @((int) AnalysedComponentType.MarketCap):
-            case @((int) AnalysedComponentType.HourlyMarketCap):
-            case @((int) AnalysedComponentType.DailyMarketCap): 
-            case @((int) AnalysedComponentType.CurrentAveragePrice):
-            case @((int) AnalysedComponentType.HourlyAveragePrice): 
-            case @((int) AnalysedComponentType.DailyAveragePrice):
-            case @((int) AnalysedComponentType.DailyPriceChange): 
-            case @((int) AnalysedComponentType.WeeklyPriceChange):
-            case @((int) AnalysedComponentType.MonthlyPriceChange): 
-            case @((int) AnalysedComponentType.DailyPricePctChange):
-            case @((int) AnalysedComponentType.HourlyPricePctChange): 
-            case @((int) AnalysedComponentType.DailyVolume):
-                return numeral(aComp.Value).format(aComp.UIFormatting).toString();
-              default:
-                return aComp.Value;
-            }
-          } else {
-            return aComp.Value;
-          }
-        },
-        getHistoricalPriceData() {
-          if (this.currency != null && this.currency.AnalysedComponents != null) {
-            for (let i = 0; i < this.currency.AnalysedComponents.length; i++) {
-              const currentAc = this.currency.AnalysedComponents[i];
-            
-              if (currentAc.ComponentType === @((int) AnalysedComponentType.HourlyAveragePrice)) {
-                return currentAc;
-              }
-            }
-          }
-          
-          return [];
-        }
-      },
-      mounted: function() {
-      }
-    });
-  </script>
+        });
+    </script>
 }
