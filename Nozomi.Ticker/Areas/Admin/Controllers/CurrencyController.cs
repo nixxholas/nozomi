@@ -62,12 +62,14 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
 
         #region Get Currency(id)
         
-        [Route("{abbreviation}")]
+        [HttpGet("{abbreviation}")]
         public IActionResult Currency([FromRoute] string abbreviation)
         {
+            var currency = _currencyAdminEvent.GetCurrencyByAbbreviation(abbreviation);
             var vm = new CurrencyViewModel
             {
-                Currency = _currencyAdminEvent.GetCurrencyByAbbreviation(abbreviation)
+                Currency = currency,
+                CurrencySourcesOptions = _sourceEvent.GetAllCurrencySourceOptions(currency.CurrencySources)
             };
 
             return View(vm);
@@ -120,7 +122,7 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
         }
         
         #endregion
-
+        
         #region Delete DeleteCurrency
         
         [HttpDelete("{id}")]
