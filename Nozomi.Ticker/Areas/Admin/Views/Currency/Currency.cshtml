@@ -239,17 +239,14 @@
                     // Prevent modal from closing
                     bvModalEvt.preventDefault();
                     // Trigger submit handler
-                    this.onSourceCreateSubmit();
+                    this.onSourceAddSubmit();
                 },
                 async onSourceAddSubmit() {
                     var formData = new FormData();
-                    formData.append('Id', this.createSourceForm.id);
-                    formData.append('Name', this.createSourceForm.sourceName);
-                    formData.append('Abbreviation', this.createSourceForm.abbreviation);
-                    formData.append('ApiDocsURL', this.createSourceForm.apiDocsURL);
-                    formData.append('IsEnabled', this.createSourceForm.isEnabled);
+                    formData.append('CurrencyId', @Model.Currency.Id);
+                    formData.append('SourceId', this.addSourceForm.id);
 
-                    const response = await fetch('/Admin/Source/CreateSource',
+                    const response = await fetch('/Admin/Currency/CreateCurrencySource',
                         {
                             method: 'POST',
                             body: formData
@@ -258,9 +255,8 @@
                     if (response.status === 200) {
                         const data = await response.json();
 
-                        const newRequest = data.item;
-
-                        this.currencySources.push(newRequest);
+                        // TODO: Refresh the UI when the source is added.
+                        
                         // Put alert for now, change the ui later.
                         alert(data.message);
                     } else {
