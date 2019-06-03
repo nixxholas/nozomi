@@ -295,61 +295,6 @@ namespace Nozomi.Service.Services
 
         public Task<NozomiResult<ICollection<UniqueTickerResponse>>> GetAll(int index)
         {
-            #if DEBUG
-            try
-            {
-                var dataRes = _unitOfWork.GetRepository<CurrencyPair>()
-                    .GetQueryable()
-                    .AsNoTracking()
-                    .Where(cp => cp.DeletedAt == null && cp.IsEnabled)
-                    .Include(cp => cp.Source)
-                    .ThenInclude(s => s.SourceCurrencies)
-                    .ThenInclude(sc => sc.Currency)
-                    .Include(cp => cp.CurrencyPairRequests)
-                    .ThenInclude(cpr => cpr.RequestComponents)
-                    .Skip(index * 20)
-                    .Take(20)
-                    .OrderBy(cp => cp.Id)
-                    .DefaultIfEmpty()
-                    .Select(cp => new UniqueTickerResponse
-                    {
-                        MainTickerAbbreviation = cp.MainCurrencyAbbrv,
-                        MainTickerName = cp.Source.SourceCurrencies
-                            .SingleOrDefault(sc => sc.Currency.Abbreviation.Equals(cp.MainCurrencyAbbrv))
-                            .Currency
-                            .Name,
-                        CounterTickerAbbreviation = cp.CounterCurrencyAbbrv,
-                        CounterTickerName = cp.Source.SourceCurrencies
-                            .SingleOrDefault(sc => sc.Currency.Abbreviation.Equals(cp.CounterCurrencyAbbrv))
-                            .Currency
-                            .Name,
-                        Exchange = cp.Source.Name,
-                        ExchangeAbbrv = cp.Source.Abbreviation,
-                        LastUpdated = cp.CurrencyPairRequests
-                            .SelectMany(cpr => cpr.RequestComponents)
-                            .Any(rc => rc.DeletedAt == null && rc.IsEnabled) ?
-                        cp.CurrencyPairRequests
-                        .SelectMany(cpr => cpr.RequestComponents)
-                        .FirstOrDefault(rc => rc.DeletedAt == null && rc.IsEnabled)
-                            .ModifiedAt : DateTime.Now,
-                        Properties = cp.CurrencyPairRequests
-                            .SelectMany(cpr => cpr.RequestComponents)
-                            .Where(rc => rc.IsEnabled && rc.DeletedAt == null
-                                                      && !string.IsNullOrEmpty(rc.Value))
-                            .Select(rc => new KeyValuePair<string, string>(
-                                rc.ComponentType.ToString(),
-                                rc.Value))
-                            .DefaultIfEmpty()
-                            .ToList()
-                    })
-                    .ToList();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogInformation(ex.ToString());
-            }
-            #endif
-
             var utrByCpr = _unitOfWork.GetRepository<CurrencyPair>()
                 .GetQueryable()
                 .AsNoTracking()
@@ -378,13 +323,11 @@ namespace Nozomi.Service.Services
                     Exchange = cp.Source.Name,
                     ExchangeAbbrv = cp.Source.Abbreviation,
                     LastUpdated = cp.CurrencyPairRequests
-                        .SelectMany(cpr => cpr.RequestComponents)
-                        .Any(rc => rc.DeletedAt == null && rc.IsEnabled)
-                        ? cp.CurrencyPairRequests
-                            .SelectMany(cpr => cpr.RequestComponents)
-                            .FirstOrDefault(rc => rc.DeletedAt == null && rc.IsEnabled)
-                            .ModifiedAt
-                        : DateTime.Now,
+                        .Select(cpr => cpr.RequestComponents
+                            .OrderByDescending(rc => rc.ModifiedAt)
+                            .FirstOrDefault()
+                            .ModifiedAt)
+                        .SingleOrDefault(),
                     Properties = cp.CurrencyPairRequests
                         .SelectMany(cpr => cpr.RequestComponents)
                         .Where(rc => rc.IsEnabled && rc.DeletedAt == null
@@ -424,15 +367,13 @@ namespace Nozomi.Service.Services
                         .Name,
                     Exchange = cp.Source.Name,
                     ExchangeAbbrv = cp.Source.Abbreviation,
-                    LastUpdated = cp.CurrencyPairRequests
-                        .SelectMany(cpr => cpr.RequestComponents)
-                        .Any(rc => rc.DeletedAt == null && rc.IsEnabled)
-                        ? cp.CurrencyPairRequests
-                            .SelectMany(cpr => cpr.RequestComponents)
-                            .FirstOrDefault(rc => rc.DeletedAt == null && rc.IsEnabled)
-                            .ModifiedAt
-                        : DateTime.Now,
-                    Properties = cp.CurrencyPairRequests
+                    LastUpdated = cp.WebsocketRequests
+                        .Select(cpr => cpr.RequestComponents
+                            .OrderByDescending(rc => rc.ModifiedAt)
+                            .FirstOrDefault()
+                            .ModifiedAt)
+                        .SingleOrDefault(),
+                    Properties = cp.WebsocketRequests
                         .SelectMany(cpr => cpr.RequestComponents)
                         .Where(rc => rc.IsEnabled && rc.DeletedAt == null
                                                   && !string.IsNullOrEmpty(rc.Value))
