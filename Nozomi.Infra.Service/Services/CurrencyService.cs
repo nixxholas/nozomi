@@ -157,25 +157,5 @@ namespace Nozomi.Service.Services
 
             return new NozomiResult<string>(NozomiResultType.Failed, "Invalid Currency ID.");
         }
-
-        public NozomiResult<string> CreateCurrencySource(CurrencySource currencySource, long userId = 0)
-        {
-            try
-            {
-                _unitOfWork.GetRepository<CurrencySource>().Add(new CurrencySource
-                {
-                    CurrencyId = currencySource.CurrencyId,
-                    SourceId = currencySource.SourceId
-                });
-
-                _unitOfWork.Commit(userId);
-                
-                return new NozomiResult<string>(NozomiResultType.Success, "Source successfully added!");
-            }
-            catch (Exception ex)
-            {
-                return new NozomiResult<string>(NozomiResultType.Failed, ex.ToString());
-            }
-        }
     }
 }
