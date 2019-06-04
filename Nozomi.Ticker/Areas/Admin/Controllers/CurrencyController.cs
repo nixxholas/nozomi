@@ -5,7 +5,6 @@ using Microsoft.Extensions.Logging;
 using Nozomi.Base.Identity.ViewModels.Manage.Currency;
 using Nozomi.Data;
 using Nozomi.Data.AreaModels.v1.Currency;
-using Nozomi.Data.Models.Currency;
 using Nozomi.Data.ViewModels.Admin.Currency;
 using Nozomi.Infra.Admin.Service.Events.Interfaces;
 using Nozomi.Service.Events.Interfaces;
@@ -55,14 +54,14 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
                 CurrencyTypes = _currencyTypeEvent.GetAllActive(),
                 CurrencySources = _sourceEvent.GetAllActive()
             };
-            
+
             return View(vm);
         }
-        
+
         #endregion
 
         #region Get Currency(id)
-        
+
         [HttpGet("{abbreviation}")]
         public IActionResult Currency([FromRoute] string abbreviation)
         {
@@ -75,10 +74,10 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
 
             return View(vm);
         }
+
         #endregion
-        
+
         #region PUT EditCurrency
-        
 
         [HttpPut("{id}")]
         public async Task<IActionResult> EditCurrency(long id, UpdateCurrency updateCurrency)
@@ -99,12 +98,11 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
             // Update failed.
             return NotFound();
         }
-        
 
         #endregion
-        
+
         #region POST CreateCurrency
-        
+
         [HttpPost]
         public async Task<IActionResult> CreateCurrency(CreateCurrency createCurrency)
         {
@@ -115,38 +113,17 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
             }
 
             var result = _currencyService.Create((createCurrency));
-            
+
             if (result.ResultType.Equals(NozomiResultType.Success)) return Ok(result);
 
             // Create failed
             return NotFound();
         }
-        
+
         #endregion
-        
-        #region POST AddCurrencySource
 
-        [HttpPost]
-        public async Task<IActionResult> CreateCurrencySource(CurrencySource currencySource)
-        {
-            var user = await GetCurrentUserAsync();
-            if (user == null)
-            {
-                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
-            }
-
-            var result = _currencyService.CreateCurrencySource(currencySource);
-            
-            if (result.ResultType.Equals(NozomiResultType.Success)) return Ok(result);
-
-            // Create failed
-            return NotFound();
-        }
-        
-        #endregion
-        
         #region Delete DeleteCurrency
-        
+
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCurrency(long id)
         {
@@ -156,13 +133,12 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
                 return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
 
-            if(_currencyService.Delete(id).ResultType.Equals(NozomiResultType.Success)) return Ok();
+            if (_currencyService.Delete(id).ResultType.Equals(NozomiResultType.Success)) return Ok();
 
             // Update failed.
             return NotFound();
         }
 
         #endregion
-
     }
 }

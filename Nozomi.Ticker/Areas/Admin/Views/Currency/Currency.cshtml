@@ -73,60 +73,12 @@
             <template slot="isEnabled" slot-scope="datum">
                 <b-form-checkbox v-model="datum.item.source.isEnabled" disabled/>
             </template>
-            <template slot="Edit" slot-scope="datum">
-                <b-button variant="primary" b-modal.modal-xl
-                          v-on:click="showSourceEditModal(datum.item.source.id, datum.item.source.name, datum.item.source.abbreviation, datum.item.source.apiDocsURL, datum.item.source.isEnabled)">
-                    Edit
-                </b-button>
-            </template>
-            <template slot="Delete" slot-scope="datum">
-                <b-button variant="danger" v-on:click="showSourceDeleteModal(datum.item.source.id, datum.item.source.name)">Delete</b-button>
+            <template slot="Remove" slot-scope="datum">
+                <b-button variant="danger" v-on:click="showSourceDeleteModal(datum.item.id, datum.item.source.name)">Remove</b-button>
             </template>
         </b-table>
     </div>
 </div>
-
-<!-- EditModal -->
-<b-modal ref="source-edit-modal" size="xl" title="Edit Source" ok-title="Save changes" v-on:ok="handleSourceEditOk">
-    <b-form v-on:submit.stop.prevent="onSourceEditSubmit">
-        <b-form-group
-            id="sourceName-input-group"
-            label="Name"
-            label-for="sourceName-input">
-            <b-form-input
-                id="sourceName-input"
-                v-model="editSourceForm.sourceName"
-                required
-                placeholder="Enter source name">
-            </b-form-input>
-        </b-form-group>
-
-        <b-form-group
-            id="abbreviation-input-group"
-            label="Abbreviation"
-            label-for="abbreviation-input">
-            <b-form-input
-                id="abbreviation-input"
-                v-model="editSourceForm.abbreviation"
-                required
-                placeholder="Enter source abbreviation">
-            </b-form-input>
-        </b-form-group>
-
-        <b-form-group id="apiDocsURL-input-group" label="API Docs URL:" label-for="apiDocsURL-input">
-            <b-form-input
-                id="apiDocsURL-input"
-                v-model="editSourceForm.apiDocsURL"
-                required
-                placeholder="Enter source API documentation URL">
-            </b-form-input>
-        </b-form-group>
-
-        <b-form-group>
-            <b-form-checkbox v-model="editSourceForm.isEnabled" switch>Is Enabled</b-form-checkbox>
-        </b-form-group>
-    </b-form>
-</b-modal>
 
 <!-- Source AddModal -->
 <b-modal ref="source-add-modal" size="xl" title="Add source to @Model.Currency.Name" ok-title="Create" v-on:ok="handleSourceAddOk">
@@ -139,7 +91,7 @@
 
 <!-- DeleteModal -->
 <b-modal ref="source-delete-modal" title="Confirm Delete" ok-title="Yes" ok-variant="danger" cancel-title="No" v-on:ok="handleSourceDeleteOk" centered>
-    <p>Are you sure that you want to delete {{ deleteSourceModal.name }} source?</p>
+    <p>Are you sure that you want to remove {{ deleteSourceModal.name }} source from this currency?</p>
 </b-modal>
 
 @section Scripts
@@ -172,12 +124,7 @@
                         sortable: true
                     },
                     {
-                        key: 'Edit',
-                        label: '',
-                        sortable: false
-                    },
-                    {
-                        key: 'Delete',
+                        key: 'Remove',
                         label: '',
                         sortable: false
                     }
@@ -205,17 +152,10 @@
                         })),
                     currencySourceId: '',
                 },
-                editSourceForm: {
-                    id: Number,
-                    sourceName: '',
-                    abbreviation: '',
-                    apiDocsURL: '',
-                    isEnabled: Boolean
-                },
                 deleteSourceModal: {
                     id: Number,
                     name: ''
-                }
+                },
             },
             mounted() {
                 this.convertCurrencySourcesOption();
@@ -246,7 +186,7 @@
                     formData.append('CurrencyId', @Model.Currency.Id);
                     formData.append('SourceId', this.addSourceForm.id);
 
-                    const response = await fetch('/Admin/Currency/CreateCurrencySource',
+                    const response = await fetch('/Admin/CurrencySource/Create',
                         {
                             method: 'POST',
                             body: formData
@@ -256,7 +196,7 @@
                         const data = await response.json();
 
                         // TODO: Refresh the UI when the source is added.
-                        
+
                         // Put alert for now, change the ui later.
                         alert(data.message);
                     } else {
@@ -264,56 +204,6 @@
                     }
                     // Hide the modal manually
                     this.$refs['create-modal'].hide();
-                },
-                // Methods for edit modal
-                showSourceEditModal(id, sourceName, abbreviation, apiDocsURL, isEnabled) {
-                    this.editSourceForm.id = id;
-                    this.editSourceForm.sourceName = sourceName;
-                    this.editSourceForm.abbreviation = abbreviation;
-                    this.editSourceForm.apiDocsURL = apiDocsURL;
-                    this.editSourceForm.isEnabled = isEnabled;
-
-                    this.$refs['source-edit-modal'].show();
-                },
-                handleSourceEditOk(bvModalEvt) {
-                    // Prevent modal from closing
-                    bvModalEvt.preventDefault();
-                    // Trigger submit handler
-                    this.onEditSubmit();
-                },
-                async onSourceEditSubmit() {
-                    var formData = new FormData();
-                    formData.append('Id', this.editSourceForm.id);
-                    formData.append('Name', this.editSourceForm.sourceName);
-                    formData.append('Abbreviation', this.editSourceForm.abbreviation);
-                    formData.append('ApiDocsURL', this.editSourceForm.apiDocsURL);
-                    formData.append('IsEnabled', this.editSourceForm.isEnabled);
-
-                    const response = await fetch(`/Admin/Source/EditSource/${this.editSourceForm.id}`,
-                        {
-                            method: 'PUT',
-                            body: formData
-                        });
-
-                    if (response.status === 200) {
-                        // Update the data table
-                        this.currencySources.find((element, index) => {
-                            if (element.Id === this.editSourceForm.id) {
-                                this.currencySources[index].Name = this.editSourceForm.sourceName;
-                                this.currencySources[index].Abbreviation = this.editSourceForm.abbreviation;
-                                this.currencySources[index].ApiDocsURL = this.editSourceForm.apiDocsURL;
-                                this.currencySources[index].IsEnabled = this.editSourceForm.isEnabled;
-                            }
-                        });
-
-                        // Put alert for now, change the ui later.
-                        alert("Successfully updated source");
-                    } else {
-                        alert("Update failed");
-                    }
-
-                    // Hide the modal manually
-                    this.$refs['source-edit-modal'].hide();
                 },
                 // Methods for delete modal
                 showSourceDeleteModal(id, sourceName) {
@@ -325,7 +215,7 @@
                 async handleSourceDeleteOk(bvModalEvt) {
                     bvModalEvt.preventDefault();
 
-                    const response = await fetch(`/Admin/Source/DeleteSource/${this.deleteModal.id}`,
+                    const response = await fetch(`/Admin/CurrencySource/Delete/${this.deleteSourceModal.id}`,
                         {
                             method: 'DELETE'
                         });
@@ -335,7 +225,7 @@
                         const index = this.currencySources.findIndex(element => element.Id === this.deleteModal.id);
                         this.currencySources.splice(index, 1);
 
-                        alert(`Successfully deleted ${this.deleteModal.name}`);
+                        alert(`Successfully deleted ${this.deleteSourceModal.name}`);
                     } else {
                         alert("Delete failed");
                     }
