@@ -15,6 +15,7 @@
             <div class="col-lg-5 mb-11 mb-lg-0">
                 <!-- Info -->
                 <div class="mb-6">
+                    <span class="btn btn-xs btn-soft-warning btn-pill mb-2 mb-sm-0 mr-2">Currently in Alpha</span>
                     <h1 class="text-white font-weight-semi-bold mb-3" v-if="currencyTypes.length > 0"
                         v-for="currencyType in currencyTypes">
                         <div v-if="currencyType.name === 'Cryptocurrency' && getACValueByComponentType(currencyType.components, 1) !== null">
@@ -99,7 +100,7 @@
                 <!-- A virtual composite column -->
                 <template slot="name" slot-scope="datum">
                     <img :src="datum.item.logoPath" class="mr-1" style="width: 24px; height: 24px; vertical-align: bottom;"/>
-                    <a :href="'/currency/' + datum.item.abbreviation">{{ datum.item.name }}</a>
+                    <a :href="'/currency/' + datum.item.slug">{{ datum.item.name }}</a>
                 </template>
                 <!-- A virtual composite column -->
                 <template slot="marketCap" slot-scope="datum">

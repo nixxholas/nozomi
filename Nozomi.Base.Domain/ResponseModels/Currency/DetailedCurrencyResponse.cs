@@ -45,6 +45,7 @@ namespace Nozomi.Data.ResponseModels.Currency
             // Aggregate non-compounded properties first
             Name = currency.Name;
             Abbreviation = currency.Abbreviation;
+            Slug = currency.Slug;
             LastUpdated = currency.ModifiedAt;
             LogoPath = currency.LogoPath;
 

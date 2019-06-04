@@ -480,6 +480,7 @@ namespace Nozomi.Service.Events
                         Id = c.Id,
                         CurrencyTypeId = c.CurrencyTypeId,
                         Abbreviation = c.Abbreviation,
+                        Slug = c.Slug,
                         Name = c.Name,
                         Description = c.Description,
                         Denominations = c.Denominations,
@@ -543,16 +544,16 @@ namespace Nozomi.Service.Events
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="abbreviation"></param>
+        /// <param name="slug"></param>
         /// <param name="componentTypes"></param>
         /// <returns></returns>
-        public DetailedCurrencyResponse GetDetailedByAbbreviation(string abbreviation,
+        public DetailedCurrencyResponse GetDetailedBySlug(string slug,
             ICollection<AnalysedComponentType> componentTypes)
         {
             var query = _unitOfWork.GetRepository<Currency>()
                 .GetQueryable()
                 .AsNoTracking()
-                .Where(c => c.Abbreviation.Equals(abbreviation, StringComparison.InvariantCultureIgnoreCase))
+                .Where(c => c.Slug.Equals(slug, StringComparison.InvariantCultureIgnoreCase))
                 .Include(cp => cp.AnalysedComponents
                     .Where(ac => componentTypes.Contains(ac.ComponentType)))
                 .ThenInclude(ac => ac.AnalysedHistoricItems)
