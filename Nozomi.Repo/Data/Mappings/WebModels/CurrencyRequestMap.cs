@@ -16,6 +16,16 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
                 .WithMany(c => c.CurrencyRequests).HasForeignKey(cr => cr.CurrencyId)
                 .HasConstraintName("CurrencyRequest_Currency_Constraint");
 
+            entityTypeBuilder.HasMany(cr => cr.RequestComponents)
+                .WithOne(rc => rc.Request as CurrencyRequest).HasForeignKey(rc => rc.RequestId)
+                .OnDelete(DeleteBehavior.Restrict);
+            entityTypeBuilder.HasMany(cr => cr.RequestLogs)
+                .WithOne(rc => rc.Request as CurrencyRequest).HasForeignKey(rc => rc.RequestId)
+                .OnDelete(DeleteBehavior.Restrict);
+            entityTypeBuilder.HasMany(cr => cr.RequestProperties)
+                .WithOne(rc => rc.Request as CurrencyRequest).HasForeignKey(rc => rc.RequestId)
+                .OnDelete(DeleteBehavior.Restrict);
+
             entityTypeBuilder.HasData(
                 // ETH Etherscan Request
                 new CurrencyRequest
