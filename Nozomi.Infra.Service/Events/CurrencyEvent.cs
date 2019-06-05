@@ -48,7 +48,7 @@ namespace Nozomi.Service.Events
                     .Include(c => c.AnalysedComponents)
                     .Include(c => c.CurrencySources)
                     .ThenInclude(cs => cs.Source)
-                    .Include(c => c.CurrencyRequests)
+                    .Include(c => c.Requests)
                     .ThenInclude(cr => cr.RequestComponents);
             }
 
@@ -267,7 +267,7 @@ namespace Nozomi.Service.Events
                 query = query.Include(c => c.AnalysedComponents)
                     .Include(c => c.CurrencySources)
                     .ThenInclude(cs => cs.Source)
-                    .Include(c => c.CurrencyRequests)
+                    .Include(c => c.Requests)
                     .ThenInclude(cr => cr.RequestComponents);
             }
 
@@ -303,7 +303,7 @@ namespace Nozomi.Service.Events
 
                 // TODO: Validate with multiple sources.
                 
-                var reqComp = _unitOfWork.GetRepository<CurrencyRequest>()
+                var reqComp = _unitOfWork.GetRepository<Request>()
                     .GetQueryable()
                     .AsNoTracking()
                     .Where(cr => cr.DeletedAt == null && cr.IsEnabled
@@ -336,7 +336,7 @@ namespace Nozomi.Service.Events
                         .Include(cp => cp.Source)
                         .ThenInclude(s => s.SourceCurrencies)
                         .ThenInclude(sc => sc.Currency)
-                        .ThenInclude(c => c.CurrencyRequests)
+                        .ThenInclude(c => c.Requests)
                         .ThenInclude(cr => cr.RequestComponents)
                         .Where(cp => cp.Source != null && cp.Source.SourceCurrencies != null)
                         // Obtain the main currency
@@ -344,10 +344,10 @@ namespace Nozomi.Service.Events
                                                         .SourceCurrencies
                                                         .SingleOrDefault(sc => 
                                                             sc.Currency.Abbreviation.Equals(cp.MainCurrencyAbbrv)
-                                                            && sc.Currency.CurrencyRequests != null)
+                                                            && sc.Currency.Requests != null)
                                                         .Currency
                                 // Traverse to the request
-                                .CurrencyRequests
+                                .Requests
                                 .Where(cr => cr.RequestComponents != null && cr.RequestComponents.Count > 0
                                                                           && cr.RequestComponents.Any(rc => rc.ComponentType
                                                                               .Equals(ComponentType.Circulating_Supply)))
@@ -371,17 +371,17 @@ namespace Nozomi.Service.Events
                     .Include(cp => cp.Source)
                     .ThenInclude(s => s.SourceCurrencies)
                     .ThenInclude(sc => sc.Currency)
-                    .ThenInclude(c => c.CurrencyRequests)
+                    .ThenInclude(c => c.Requests)
                     .ThenInclude(cr => cr.RequestComponents)
                     // Obtain the main currency
                     .Select(cp => decimal.Parse(cp.Source
                                                     .SourceCurrencies
                                                     .SingleOrDefault(sc => 
                                                         sc.Currency.Abbreviation.Equals(cp.MainCurrencyAbbrv)
-                                                        && sc.Currency.CurrencyRequests != null)
+                                                        && sc.Currency.Requests != null)
                                                     .Currency
                                                     // Traverse to the request
-                                                    .CurrencyRequests
+                                                    .Requests
                                                     .Where(cr => cr.RequestComponents != null && cr.RequestComponents.Count > 0
                                                                                               && cr.RequestComponents.Any(rc => rc.ComponentType
                                                                                                   .Equals(ComponentType.Circulating_Supply)))
@@ -407,7 +407,7 @@ namespace Nozomi.Service.Events
                     .Include(c => c.AnalysedComponents)
                     .Include(c => c.CurrencyType)
                     .Include(c => c.CurrencySources)
-                    .Include(c => c.CurrencyRequests)
+                    .Include(c => c.Requests)
                     .Include(c => c.CurrencyProperties);
             }
 
@@ -428,7 +428,7 @@ namespace Nozomi.Service.Events
                     .Include(c => c.CurrencyType)
                     .Include(c => c.CurrencySources)
                     .ThenInclude(cs => cs.Source)
-                    .Include(c => c.CurrencyRequests)
+                    .Include(c => c.Requests)
                     .Include(c => c.CurrencyProperties);
             }
 
@@ -585,7 +585,7 @@ namespace Nozomi.Service.Events
                     .Where(c => c.DeletedAt == null)
                     .Where(c => c.IsEnabled)
                     .Include(c => c.AnalysedComponents)
-                    .Include(c => c.CurrencyRequests)
+                    .Include(c => c.Requests)
                     .Include(c => c.CurrencySources)
                     .Include(c => c.CurrencyProperties)
                     .Include(c => c.CurrencyType);
@@ -678,6 +678,7 @@ namespace Nozomi.Service.Events
             {
                 return _unitOfWork.GetRepository<Currency>().GetQueryable()
                     .AsNoTracking()
+                    .AsEnumerable()
                     .Where(c => c.DeletedAt == null)
                     .Where(c => c.IsEnabled)
                     .DistinctBy(c => c.Abbreviation)
