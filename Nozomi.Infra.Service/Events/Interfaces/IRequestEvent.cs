@@ -9,6 +9,8 @@ namespace Nozomi.Service.Events.Interfaces
 {
     public interface IRequestEvent
     {
+        Request Get(Expression<Func<Request, bool>> predicate);
+        
         Request GetByGuid(Guid guid, bool track = false);
         
         Request GetActive(long id, bool track = false);

@@ -19,7 +19,18 @@ namespace Nozomi.Service.Events
             : base(logger, unitOfWork)
         {
         }
-
+        
+        public Request Get(Expression<Func<Request, bool>> predicate)
+        {
+            return _unitOfWork.GetRepository<Request>()
+                       .GetQueryable()
+                       .AsNoTracking()
+                       .Where(cpr => cpr.DeletedAt == null && cpr.IsEnabled)
+                       .Include(r => r.RequestComponents)
+                       .Include(r => r.RequestProperties)
+                       .SingleOrDefault(predicate) ?? null;
+        }
+        
         public Request GetByGuid(Guid guid, bool track = false)
         {
             var query = _unitOfWork.GetRepository<Request>()
