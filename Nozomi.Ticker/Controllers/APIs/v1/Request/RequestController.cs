@@ -4,21 +4,22 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data;
 using Nozomi.Data.AreaModels.v1.CurrencyPairRequest;
+using Nozomi.Data.AreaModels.v1.RequestComponent;
+using Nozomi.Data.AreaModels.v1.Requests;
 using Nozomi.Data.Models.Web;
 using Nozomi.Service.Events.Interfaces;
 using Nozomi.Service.Identity.Managers;
-using Nozomi.Service.Services.Interfaces;
 using Nozomi.Service.Services.Requests.Interfaces;
 
-namespace Nozomi.Ticker.Controllers.APIs.v1.CurrencyPairRequest
+namespace Nozomi.Ticker.Controllers.APIs.v1.Request
 {
     [ApiController]
-    public class CurrencyPairRequestController : BaseController<CurrencyPairRequestController>, ICurrencyPairRequestController
+    public class RequestController : BaseController<RequestController>, IRequestController
     {
         private readonly IRequestEvent _requestEvent;
         private readonly IRequestService _requestService;
         
-        public CurrencyPairRequestController(ILogger<CurrencyPairRequestController> logger, NozomiUserManager userManager,
+        public RequestController(ILogger<RequestController> logger, NozomiUserManager userManager,
             IRequestEvent requestEvent, IRequestService requestService) : base(logger, userManager)
         {
             _requestEvent = requestEvent;
@@ -40,36 +41,9 @@ namespace Nozomi.Ticker.Controllers.APIs.v1.CurrencyPairRequest
 
         [Authorize]
         [HttpPost("{userId}")]
-        public NozomiResult<JsonResult> Create([FromBody]CreateCurrencyPairRequest obj, long userId = 0)
+        public NozomiResult<string> Create([FromBody]CreateRequest obj, long userId = 0)
         {
-            var res = _requestService.Create(new Request()
-            {
-                CurrencyPairId = obj.CurrencyPairId,
-                RequestType = obj.RequestType,
-                DataPath = obj.DataPath,
-                Delay = obj.Delay,
-                RequestComponents = obj.RequestComponents
-                    .Select(rc => new RequestComponent()
-                    {
-                        ComponentType = rc.ComponentType,
-                        QueryComponent = rc.QueryComponent
-                    })
-                    .ToList(),
-                RequestProperties = obj.RequestProperties
-                    .Select(rp => new RequestProperty()
-                    {
-                        RequestPropertyType = rp.RequestPropertyType,
-                        Key = rp.Key,
-                        Value = rp.Value
-                    })
-                    .ToList()
-            });
-            
-            return new NozomiResult<JsonResult>()
-            {
-                ResultType = (res > 0) ? NozomiResultType.Success : NozomiResultType.Failed,
-                Data = new JsonResult(string.Empty)
-            };
+            return _requestService.Create(obj);
         }
 
         [Authorize]

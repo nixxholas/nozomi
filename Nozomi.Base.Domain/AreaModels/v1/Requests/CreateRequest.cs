@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Nozomi.Base.Core;
+using Nozomi.Data.AreaModels.v1.CurrencyPairComponent;
+using Nozomi.Data.AreaModels.v1.RequestProperty;
 using Nozomi.Data.Models.Web;
 using Nozomi.Data.Models.Web.Logging;
 
@@ -28,6 +30,12 @@ namespace Nozomi.Data.AreaModels.v1.Requests
         public int Delay { get; set; }
         
         public long FailureDelay { get; set; }
+        
+        public ICollection<CreateCurrencyPairComponent> RequestComponents { get; set; }
+        
+        public ICollection<CreateRequestProperty> RequestProperties { get; set; }
+        
+        public long CurrencyPairId { get; set; }
 
         public bool IsValid()
         {

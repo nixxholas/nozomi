@@ -2,13 +2,13 @@ using Microsoft.AspNetCore.Mvc;
 using Nozomi.Data;
 using Nozomi.Data.AreaModels.v1.CurrencyPairRequest;
 
-namespace Nozomi.Ticker.Controllers.APIs.v1.CurrencyPairRequest
+namespace Nozomi.Ticker.Controllers.APIs.v1.Request
 {
-    public interface ICurrencyPairRequestController
+    public interface IRequestController
     {
         NozomiResult<JsonResult> All(bool includeNested);
 
-        NozomiResult<JsonResult> Create(CreateCurrencyPairRequest obj, long userId = 0);
+        NozomiResult<string> Create(CreateCurrencyPairRequest obj, long userId = 0);
 
         NozomiResult<JsonResult> Update(UpdateCurrencyPairRequest obj, long userId = 0);
 
