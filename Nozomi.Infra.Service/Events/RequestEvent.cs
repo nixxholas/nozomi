@@ -269,5 +269,42 @@ namespace Nozomi.Service.Events
                         })
                 });
         }
+        
+        // CurrencyRequest obtainability
+        private static readonly Func<NozomiDbContext, RequestType, IEnumerable<Request>> 
+            GetActiveCurrencyRequests =
+                EF.CompileQuery((NozomiDbContext context, RequestType requestType) =>
+                    context.Requests
+                        .Where(cr => cr.DeletedAt == null && cr.IsEnabled
+                                                          && cr.CurrencyId > 0
+                                                          && cr.RequestType.Equals(requestType))
+                        // TODO: Websocket Support
+                        .Include(cr => cr.RequestComponents)
+                        .Include(cr => cr.RequestProperties));
+        
+        public IDictionary<string, ICollection<Request>> GetAllByRequestTypeUniqueToUrl(
+            NozomiDbContext nozomiDbContext, RequestType requestType)
+        {
+            var dict = new Dictionary<string, ICollection<Request>>();
+            var currencyRequests = GetActiveCurrencyRequests(_unitOfWork.Context, requestType);
+
+            foreach (var cReq in currencyRequests)
+            {
+                // If the key exists,
+                if (dict.ContainsKey(cReq.DataPath) && dict[cReq.DataPath] != null 
+                                                    && dict[cReq.DataPath].Count > 0)
+                {
+                    dict[cReq.DataPath].Add(cReq);
+                }
+                // If not create it
+                else
+                {
+                    dict.Add(cReq.DataPath, new List<Request>());
+                    dict[cReq.DataPath].Add(cReq);
+                }
+            }
+
+            return dict;
+        }
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using Nozomi.Data.AreaModels.v1.Requests;
 using Nozomi.Data.Models.Web;
+using Nozomi.Repo.Data;
 
 namespace Nozomi.Service.Events.Interfaces
 {
@@ -28,5 +29,8 @@ namespace Nozomi.Service.Events.Interfaces
         IEnumerable<Request> GetAll(Expression<Func<Request, bool>> predicate, bool track = false);
 
         IEnumerable<dynamic> GetAllObsc(bool track = false);
+        
+        IDictionary<string, ICollection<Request>> GetAllByRequestTypeUniqueToUrl(
+            NozomiDbContext nozomiDbContext, RequestType requestType);
     }
 }
