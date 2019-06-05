@@ -34,9 +34,10 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
             entityTypeBuilder.HasMany(c => c.CurrencySources).WithOne(cs => cs.Currency)
                 .HasForeignKey(cs => cs.CurrencyId).OnDelete(DeleteBehavior.Restrict)
                 .HasConstraintName("Currency_CurrencySources_Constraint");
-            entityTypeBuilder.HasMany(c => c.CurrencyRequests).WithOne(cr => cr.Currency)
-                .HasForeignKey(cr => cr.CurrencyId).OnDelete(DeleteBehavior.Cascade)
-                .HasConstraintName("Currencies_CurrencyRequests_Constraint");
+            entityTypeBuilder.HasMany(c => c.Requests).WithOne(r => r.Currency)
+                .HasForeignKey(r => r.CurrencyId).OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("Currencies_CurrencyRequests_Constraint")
+                .IsRequired(false);
 
             entityTypeBuilder.HasData(new Currency
                 {
