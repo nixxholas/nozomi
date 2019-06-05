@@ -131,7 +131,7 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
                 return NotFound($"Unable to load user withID '{_userManager.GetUserId(User)}'.");
             }
             
-            var result = _requestService.SoftDelete(id);
+            var result = _requestService.Delete(id);
             
             if (result.ResultType.Equals(NozomiResultType.Success)) return Ok(result);
 

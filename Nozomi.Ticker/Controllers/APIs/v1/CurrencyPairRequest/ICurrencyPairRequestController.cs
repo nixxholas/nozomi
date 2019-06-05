@@ -12,7 +12,7 @@ namespace Nozomi.Ticker.Controllers.APIs.v1.CurrencyPairRequest
 
         NozomiResult<JsonResult> Update(UpdateCurrencyPairRequest obj, long userId = 0);
 
-        NozomiResult<JsonResult> Delete(long id, bool hardDelete = false, long userId = 0);
+        NozomiResult<string> Delete(long id, bool hardDelete = false, long userId = 0);
 
         NozomiResult<JsonResult> ManualPoll(long requestId, long userId = 0);
     }

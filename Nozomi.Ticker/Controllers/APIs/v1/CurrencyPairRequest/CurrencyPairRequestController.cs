@@ -87,15 +87,9 @@ namespace Nozomi.Ticker.Controllers.APIs.v1.CurrencyPairRequest
 
         [Authorize]
         [HttpDelete("{id}")]
-        public NozomiResult<JsonResult> Delete(long id, bool hardDelete = false, long userId = 0)
+        public NozomiResult<string> Delete(long id, bool hardDelete = false, long userId = 0)
         {
-            return new NozomiResult<JsonResult>()
-            {
-                ResultType = _requestService.Delete(id, hardDelete, userId)
-                    ? NozomiResultType.Success
-                    : NozomiResultType.Failed,
-                Data = new JsonResult(string.Empty)
-            };
+            return _requestService.Delete(id, hardDelete, userId);
         }                                                 
 
         [HttpPost("{requestId}")]
