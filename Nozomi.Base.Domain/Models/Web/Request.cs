@@ -35,15 +35,15 @@ namespace Nozomi.Data.Models.Web
 
         public long FailureDelay { get; set; }
         
-        public long CurrencyId { get; set; }
+        public long? CurrencyId { get; set; }
         
         public Currency.Currency Currency { get; set; }
         
-        public long CurrencyPairId { get; set; }
+        public long? CurrencyPairId { get; set; }
         
         public CurrencyPair CurrencyPair { get; set; }
         
-        public long CurrencyTypeId { get; set; }
+        public long? CurrencyTypeId { get; set; }
         
         public CurrencyType CurrencyType { get; set; }
 
