@@ -55,16 +55,16 @@ namespace Nozomi.Service.Events
                     .Where(cp => cp.Id.Equals(id))
                     .Include(cp => cp.Source)
                     .Where(cp => cp.Source.IsEnabled && cp.Source.DeletedAt == null)
-                    .Include(cp => cp.CurrencyPairRequests)
+                    .Include(cp => cp.Requests)
                     .ThenInclude(cpr => cpr.RequestComponents)
                     .Select(cp => new TickerByExchangeResponse()
                     {
                         Exchange = cp.Source.Name,
                         ExchangeAbbrv = cp.Source.Abbreviation,
-                        LastUpdated = cp.CurrencyPairRequests.FirstOrDefault(cpr => cpr.DeletedAt == null && cpr.IsEnabled)
+                        LastUpdated = cp.Requests.FirstOrDefault(cpr => cpr.DeletedAt == null && cpr.IsEnabled)
                             .RequestComponents.FirstOrDefault(rc => rc.DeletedAt == null && rc.IsEnabled)
                             .CreatedAt,
-                        Properties = cp.CurrencyPairRequests
+                        Properties = cp.Requests
                             .SelectMany(cpr => cpr.RequestComponents)
                             .OrderBy(rc => rc.ComponentType).Select(rc => 
                                 new KeyValuePair<string,string>(rc.ComponentType.ToString(), 
@@ -149,7 +149,7 @@ namespace Nozomi.Service.Events
                         {
                             Exchange = cp.Source.Name,
                             ExchangeAbbrv = cp.Source.Abbreviation,
-                            LastUpdated = cp.CurrencyPairRequests
+                            LastUpdated = cp.Requests
                                 .FirstOrDefault(cpr => cpr.IsEnabled && cpr.DeletedAt == null)
                                 .RequestComponents.FirstOrDefault(rc => rc.IsEnabled && rc.DeletedAt == null)
                                 .ModifiedAt,
@@ -166,7 +166,7 @@ namespace Nozomi.Service.Events
                     {
                         Exchange = cp.Source.Name,
                         ExchangeAbbrv = cp.Source.Abbreviation,
-                        LastUpdated = cp.CurrencyPairRequests
+                        LastUpdated = cp.Requests
                             .FirstOrDefault(cpr => cpr.IsEnabled && cpr.DeletedAt == null)
                             .RequestComponents.FirstOrDefault(rc => rc.IsEnabled && rc.DeletedAt == null)
                             .ModifiedAt,
