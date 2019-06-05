@@ -119,7 +119,7 @@ namespace Nozomi.Service.Services.Requests
             }
         }
 
-        public NozomiResult<string> SoftDelete(long reqId, long userId = 0)
+        public NozomiResult<string> Delete(long reqId, bool hardDelete = false, long userId = 0)
         {
             try
             {
@@ -131,10 +131,17 @@ namespace Nozomi.Service.Services.Requests
 
                     if (reqToDel != null)
                     {
-                        reqToDel.DeletedAt = DateTime.UtcNow;
-                        reqToDel.DeletedBy = userId;
-
-                        _unitOfWork.GetRepository<Request>().Update(reqToDel);
+                        if (!hardDelete)
+                        {
+                            reqToDel.DeletedAt = DateTime.UtcNow;
+                            reqToDel.DeletedBy = userId;
+                            _unitOfWork.GetRepository<Request>().Update(reqToDel);
+                        }
+                        else
+                        {
+                            _unitOfWork.GetRepository<Request>().Delete(reqToDel);
+                        }
+                        
                         _unitOfWork.Commit(userId);
 
                         return new NozomiResult<string>(NozomiResultType.Success, "Request successfully deleted!");
