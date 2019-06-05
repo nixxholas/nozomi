@@ -33,8 +33,8 @@ namespace Nozomi.Service.Services
                 APIUrl = createCurrencyPair.ApiUrl,
                 DefaultComponent = createCurrencyPair.DefaultComponent,
                 SourceId = createCurrencyPair.CurrencySourceId,
-                CurrencyPairRequests = createCurrencyPair.CurrencyPairRequests
-                    .Select(cpr => new CurrencyPairRequest()
+                Requests = createCurrencyPair.CurrencyPairRequests
+                    .Select(cpr => new Request()
                     {
                         RequestType = cpr.RequestType,
                         DataPath = cpr.DataPath,
@@ -78,7 +78,7 @@ namespace Nozomi.Service.Services
         {
             return !includeNested ? _unitOfWork.GetRepository<CurrencyPair>()
                 .GetQueryable()
-                .Include(cp => cp.CurrencyPairRequests)
+                .Include(cp => cp.Requests)
                     .ThenInclude(cpr => cpr.RequestComponents)
                 .Where(cp => cp.DeletedAt == null && cp.IsEnabled)
                 .Skip(index * 20)
