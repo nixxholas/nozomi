@@ -306,5 +306,49 @@ namespace Nozomi.Service.Events
 
             return dict;
         }
+        
+        private static readonly Func<NozomiDbContext, RequestType, IEnumerable<Request>> 
+            CompiledGetAllByRequestType =
+            EF.CompileQuery((NozomiDbContext context, RequestType type) =>
+                context.Requests
+                    .AsQueryable()
+                    .Include(cpr => cpr.RequestComponents)
+                    .Include(r => r.CurrencyPair)
+                    .Include(r => r.RequestProperties)
+                    .Include(r => r.WebsocketCommands)
+                    .ThenInclude(wsc => wsc.WebsocketCommandProperties)
+                    .Where(r => r.IsEnabled && r.DeletedAt == null
+                                            && r.RequestType == type
+                                            && r.RequestComponents
+                                                .Any(rc => (DateTime.UtcNow > (rc.ModifiedAt.Add(TimeSpan.FromMilliseconds(r.Delay)))))));
+
+        public ICollection<Request> GetAllByRequestType(RequestType requestType)
+        {
+            return CompiledGetAllByRequestType(_unitOfWork.Context, requestType).ToList();
+        }
+
+        public IDictionary<string, ICollection<Request>> GetAllByRequestTypeUniqueToURL(RequestType requestType)
+        {
+            var dict = new Dictionary<string, ICollection<Request>>();
+            var requests = CompiledGetAllByRequestType(_unitOfWork.Context, requestType);
+
+            foreach (var request in requests)
+            {
+                // If the key exists,
+                if (dict.ContainsKey(request.DataPath) && dict[request.DataPath] != null 
+                                                        && dict[request.DataPath].Count > 0)
+                {
+                    dict[request.DataPath].Add(request);
+                }
+                // If not create it
+                else
+                {
+                    dict.Add(request.DataPath, new List<Request>());
+                    dict[request.DataPath].Add(request);
+                }
+            }
+
+            return dict;
+        }
     }
 }

@@ -32,5 +32,9 @@ namespace Nozomi.Service.Events.Interfaces
         
         IDictionary<string, ICollection<Request>> GetAllByRequestTypeUniqueToUrl(
             NozomiDbContext nozomiDbContext, RequestType requestType);
+        
+        ICollection<Request> GetAllByRequestType(RequestType requestType);
+
+        IDictionary<string, ICollection<Request>> GetAllByRequestTypeUniqueToURL(RequestType requestType);
     }
 }
