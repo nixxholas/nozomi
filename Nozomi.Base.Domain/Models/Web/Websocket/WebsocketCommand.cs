@@ -19,9 +19,9 @@ namespace Nozomi.Data.Models.Web.Websocket
         /// </summary>
         public long Delay { get; set; }
         
-        public long WebsocketRequestId { get; set; }
+        public long RequestId { get; set; }
         
-        public WebsocketRequest WebsocketRequest { get; set; }
+        public Request Request { get; set; }
         
         public ICollection<WebsocketCommandProperty> WebsocketCommandProperties { get; set; }
     }

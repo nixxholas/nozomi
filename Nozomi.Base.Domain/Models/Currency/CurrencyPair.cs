@@ -31,8 +31,7 @@ namespace Nozomi.Data.Models.Currency
 
         // =========== RELATIONS ============ //
         public ICollection<AnalysedComponent> AnalysedComponents { get; set; }
-        public ICollection<CurrencyPairRequest> CurrencyPairRequests { get; set; }
-        public ICollection<WebsocketRequest> WebsocketRequests { get; set; }
+        public ICollection<Request> Requests { get; set; }
         
         public string MainCurrencyAbbrv { get; set; }
         
