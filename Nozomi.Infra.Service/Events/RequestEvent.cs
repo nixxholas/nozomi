@@ -53,14 +53,11 @@ namespace Nozomi.Service.Events
                 .GetQueryable()
                 .AsNoTracking();
 
-            if (query != null)
+            if (includeNested)
             {
-                if (includeNested)
-                {
-                    query.Include(r => r.RequestComponents)
-                        .Include(r => r.RequestLogs)
-                        .Include(r => r.RequestProperties);
-                }
+                query = query.Include(r => r.RequestComponents)
+                    .Include(r => r.RequestLogs)
+                    .Include(r => r.RequestProperties);
             }
 
             return query?
