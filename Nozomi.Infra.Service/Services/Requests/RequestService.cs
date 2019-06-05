@@ -155,5 +155,10 @@ namespace Nozomi.Service.Services.Requests
                 return new NozomiResult<string>(NozomiResultType.Failed, ex.ToString());
             }
         }
+        
+        public bool ManualPoll(long id, long userId = 0)
+        {
+            return false;
+        }
     }
 }

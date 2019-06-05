@@ -19,5 +19,6 @@ namespace Nozomi.Service.Services.Requests.Interfaces
 
         NozomiResult<string> Delete(long reqId, bool hardDelete = false, long userId = 0);
 
+        bool ManualPoll(long id, long userId = 0);
     } 
 }
