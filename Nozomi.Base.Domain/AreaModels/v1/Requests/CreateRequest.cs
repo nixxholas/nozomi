@@ -35,7 +35,11 @@ namespace Nozomi.Data.AreaModels.v1.Requests
         
         public ICollection<CreateRequestProperty> RequestProperties { get; set; }
         
+        public long CurrencyId { get; set; }
+        
         public long CurrencyPairId { get; set; }
+        
+        public long CurrencyTypeId { get; set; }
 
         public bool IsValid()
         {

@@ -45,12 +45,32 @@ namespace Nozomi.Service.Services.Requests
                     return new NozomiResult<string>(NozomiResultType.Failed,
                         "Failed to create request. Please make sure " +
                         "that your request object is proper");
+                
                 var request = new Request()
                 {
+                    CurrencyId = createRequest.CurrencyId,
+                    CurrencyPairId = createRequest.CurrencyPairId,
+                    CurrencyTypeId = createRequest.CurrencyTypeId,
                     DataPath = createRequest.DataPath,
                     Delay = createRequest.Delay,
+                    FailureDelay = createRequest.FailureDelay,
                     RequestType = createRequest.RequestType,
-                    ResponseType = createRequest.ResponseType
+                    ResponseType = createRequest.ResponseType,
+                    RequestComponents = createRequest.RequestComponents
+                        .Select(rc => new RequestComponent()
+                        {
+                            ComponentType = rc.ComponentType,
+                            QueryComponent = rc.QueryComponent
+                        })
+                        .ToList(),
+                    RequestProperties = createRequest.RequestProperties
+                        .Select(rp => new RequestProperty()
+                        {
+                            RequestPropertyType = rp.RequestPropertyType,
+                            Key = rp.Key,
+                            Value = rp.Value
+                        })
+                        .ToList()
                 };
 
                 _unitOfWork.GetRepository<Request>().Add(request);
