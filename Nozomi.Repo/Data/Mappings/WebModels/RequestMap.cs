@@ -31,6 +31,8 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
                 .HasForeignKey(rc => rc.RequestId).OnDelete(DeleteBehavior.Cascade);
             entityTypeBuilder.HasMany(r => r.RequestProperties).WithOne(rp => rp.Request)
                 .HasForeignKey(rp => rp.RequestId).OnDelete(DeleteBehavior.Cascade);
+            entityTypeBuilder.HasMany(r => r.WebsocketCommands).WithOne(wsc => wsc.Request)
+                .HasForeignKey(wsc => wsc.RequestId).OnDelete(DeleteBehavior.Cascade);
 
             entityTypeBuilder.HasData(
                 // ETH Etherscan Request
