@@ -25,7 +25,6 @@ namespace Nozomi.Analysis.StartupExtensions
             services.AddTransient<ICurrencyService, CurrencyService>();
             services.AddTransient<ICurrencyPairService, CurrencyPairService>();
             services.AddTransient<IRequestComponentService, RequestComponentService>();
-            services.AddTransient<ICurrencyPairRequestService, CurrencyPairRequestService>();
             services.AddTransient<IRequestService, RequestService>();
             services.AddTransient<IRcdHistoricItemService, RcdHistoricItemService>();
             services.AddTransient<IRequestLogService, RequestLogService>();
