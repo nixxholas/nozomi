@@ -9,6 +9,8 @@ namespace Nozomi.Service.Services.Requests.Interfaces
 {
     public interface IRequestService
     {
+        long Create(Request request, long userId = 0);
+        
         NozomiResult<string> Create(CreateRequest createRequest, long userId = 0);
         
         bool Delay(Request request, TimeSpan duration);

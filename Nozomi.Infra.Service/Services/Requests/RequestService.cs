@@ -22,6 +22,21 @@ namespace Nozomi.Service.Services.Requests
         {
         }
 
+        public long Create(Request request, long userId = 0)
+        {
+            try
+            {
+                _unitOfWork.GetRepository<Request>().Add(request);
+                _unitOfWork.SaveChanges(userId);
+
+                return request.Id;
+            }
+            catch (Exception ex)
+            {
+                return long.MinValue;
+            }
+        }
+
         public NozomiResult<string> Create(CreateRequest createRequest, long userId = 0)
         {
             try
