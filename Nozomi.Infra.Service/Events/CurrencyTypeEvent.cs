@@ -3,6 +3,7 @@ using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data.Models.Currency;
+using Nozomi.Preprocessing;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Data;
@@ -14,6 +15,31 @@ namespace Nozomi.Service.Events
     {
         public CurrencyTypeEvent(ILogger<CurrencyTypeEvent> logger, IUnitOfWork<NozomiDbContext> unitOfWork) : base(logger, unitOfWork)
         {
+        }
+
+        public ICollection<CurrencyType> GetAll(int index = 0, bool track = false)
+        {
+            if (index >= 0)
+            {
+                var cTypes = _unitOfWork.GetRepository<CurrencyType>()
+                    .GetQueryable()
+                    .AsNoTracking();
+
+                if (track)
+                {
+                    cTypes = cTypes
+                        .Include(ct => ct.AnalysedComponents)
+                        .Include(ct => ct.Currencies)
+                        .Include(ct => ct.Requests);
+                }
+
+                return cTypes
+                    .Skip(index * NozomiServiceConstants.CurrencyTypeTakeoutLimit)
+                    .Take(NozomiServiceConstants.CurrencyTypeTakeoutLimit)
+                    .ToList();
+            }
+
+            return null;
         }
 
         public ICollection<CurrencyType> GetAllActive(bool includeNested = false)

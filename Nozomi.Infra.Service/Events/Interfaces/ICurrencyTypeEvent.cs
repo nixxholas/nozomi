@@ -5,6 +5,7 @@ namespace Nozomi.Service.Events.Interfaces
 {
     public interface ICurrencyTypeEvent
     {
+        ICollection<CurrencyType> GetAll(int index = 0, bool track = false);
         ICollection<CurrencyType> GetAllActive(bool includeNested = false);
     }
 }
