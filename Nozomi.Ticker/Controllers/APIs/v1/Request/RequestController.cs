@@ -48,15 +48,9 @@ namespace Nozomi.Ticker.Controllers.APIs.v1.Request
 
         [Authorize]
         [HttpPost("{userId}")]
-        public NozomiResult<JsonResult> Update([FromBody]UpdateCurrencyPairRequest obj, long userId = 0)
+        public NozomiResult<string> Update([FromBody]UpdateRequest obj, long userId = 0)
         {
-            return new NozomiResult<JsonResult>()
-            {
-                ResultType = _requestService.Update(obj, userId)
-                    ? NozomiResultType.Success
-                    : NozomiResultType.Failed,
-                Data = new JsonResult(string.Empty)
-            };
+            return _requestService.Update(obj, userId);
         }
 
         [Authorize]

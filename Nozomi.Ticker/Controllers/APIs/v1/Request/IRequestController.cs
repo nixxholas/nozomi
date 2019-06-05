@@ -11,7 +11,7 @@ namespace Nozomi.Ticker.Controllers.APIs.v1.Request
 
         NozomiResult<string> Create(CreateRequest obj, long userId = 0);
 
-        NozomiResult<JsonResult> Update(UpdateCurrencyPairRequest obj, long userId = 0);
+        NozomiResult<string> Update(UpdateRequest obj, long userId = 0);
 
         NozomiResult<string> Delete(long id, bool hardDelete = false, long userId = 0);
 
