@@ -137,7 +137,7 @@ namespace Nozomi.Service.Services
                 CounterCurrencyAbbrv = counterCurrency.Abbreviation
             };
             
-            var currencyPairRequest = new CurrencyPairRequest
+            var currencyPairRequest = new Request()
             {
                 CurrencyPair = currencyPair,
                 DataPath = createTickerInputModel.DataPath,
@@ -243,7 +243,7 @@ namespace Nozomi.Service.Services
             try
             {
                 // Create the request
-                _unitOfWork.GetRepository<CurrencyPairRequest>().Add(currencyPairRequest);
+                _unitOfWork.GetRepository<Request>().Add(currencyPairRequest);
                 _unitOfWork.Commit();
                 
                 return new NozomiResult<UniqueTickerResponse>(
@@ -302,7 +302,7 @@ namespace Nozomi.Service.Services
                 .Include(cp => cp.Source)
                 .ThenInclude(s => s.SourceCurrencies)
                 .ThenInclude(sc => sc.Currency)
-                .Include(cp => cp.CurrencyPairRequests)
+                .Include(cp => cp.Requests)
                 .ThenInclude(cpr => cpr.RequestComponents)
                 .Skip(index * 20)
                 .Take(20)
@@ -322,13 +322,13 @@ namespace Nozomi.Service.Services
                         .Name,
                     Exchange = cp.Source.Name,
                     ExchangeAbbrv = cp.Source.Abbreviation,
-                    LastUpdated = cp.CurrencyPairRequests
+                    LastUpdated = cp.Requests
                         .Select(cpr => cpr.RequestComponents
                             .OrderByDescending(rc => rc.ModifiedAt)
                             .FirstOrDefault()
                             .ModifiedAt)
                         .SingleOrDefault(),
-                    Properties = cp.CurrencyPairRequests
+                    Properties = cp.Requests
                         .SelectMany(cpr => cpr.RequestComponents)
                         .Where(rc => rc.IsEnabled && rc.DeletedAt == null
                                                   && !string.IsNullOrEmpty(rc.Value))
@@ -347,7 +347,7 @@ namespace Nozomi.Service.Services
                 .Include(cp => cp.Source)
                 .ThenInclude(s => s.SourceCurrencies)
                 .ThenInclude(sc => sc.Currency)
-                .Include(cp => cp.WebsocketRequests)
+                .Include(cp => cp.Requests)
                 .ThenInclude(cpr => cpr.RequestComponents)
                 .Skip(index * 20)
                 .Take(20)
@@ -367,13 +367,13 @@ namespace Nozomi.Service.Services
                         .Name,
                     Exchange = cp.Source.Name,
                     ExchangeAbbrv = cp.Source.Abbreviation,
-                    LastUpdated = cp.WebsocketRequests
+                    LastUpdated = cp.Requests
                         .Select(cpr => cpr.RequestComponents
                             .OrderByDescending(rc => rc.ModifiedAt)
                             .FirstOrDefault()
                             .ModifiedAt)
                         .SingleOrDefault(),
-                    Properties = cp.WebsocketRequests
+                    Properties = cp.Requests
                         .SelectMany(cpr => cpr.RequestComponents)
                         .Where(rc => rc.IsEnabled && rc.DeletedAt == null
                                                   && !string.IsNullOrEmpty(rc.Value))
@@ -401,19 +401,19 @@ namespace Nozomi.Service.Services
                     .ThenInclude(sc => sc.Currency)
                     .Include(cp => cp.Source)
                     .Where(cp => cp.Source != null) // Make sure we have a source
-                    .Include(cp => cp.CurrencyPairRequests)
+                    .Include(cp => cp.Requests)
                         .ThenInclude(cpr => cpr.RequestComponents)
                     // Make sure there's something
-                    .Where(cp => cp.CurrencyPairRequests
+                    .Where(cp => cp.Requests
                         .Any(cpr => cpr.RequestComponents.Any(rc => rc.IsEnabled && rc.DeletedAt == null)))
                     .Select(cp => new TickerByExchangeResponse()
                     {
                         Exchange = cp.Source.Name,
                         ExchangeAbbrv = cp.Source.Abbreviation,
-                        LastUpdated = cp.CurrencyPairRequests.FirstOrDefault()
+                        LastUpdated = cp.Requests.FirstOrDefault()
                             .RequestComponents.FirstOrDefault()
                             .ModifiedAt,
-                        Properties = cp.CurrencyPairRequests.FirstOrDefault()
+                        Properties = cp.Requests.FirstOrDefault()
                             .RequestComponents
                             .Select(rc => new KeyValuePair<string, string>(
                                 rc.ComponentType.ToString(), 
