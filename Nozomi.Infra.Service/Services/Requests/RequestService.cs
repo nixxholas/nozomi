@@ -45,7 +45,7 @@ namespace Nozomi.Service.Services.Requests
                     return new NozomiResult<string>(NozomiResultType.Failed,
                         "Failed to create request. Please make sure " +
                         "that your request object is proper");
-                
+
                 var request = new Request()
                 {
                     CurrencyId = createRequest.CurrencyId,
@@ -115,8 +115,10 @@ namespace Nozomi.Service.Services.Requests
                     return new NozomiResult<string>(NozomiResultType.Failed, "Failed to update request");
 
                 var reqToUpd = _unitOfWork.GetRepository<Request>()
-                    .Get(r => r.Id.Equals(updateRequest.Id) && r.DeletedAt == null)
-                    .SingleOrDefault();
+                    .GetQueryable()
+                    .Include(r => r.RequestComponents)
+                    .Include(r => r.RequestProperties)
+                    .SingleOrDefault(r => r.Id.Equals(updateRequest.Id) && r.DeletedAt == null);
 
                 if (reqToUpd == null)
                     return new NozomiResult<string>(NozomiResultType.Failed,
@@ -127,6 +129,66 @@ namespace Nozomi.Service.Services.Requests
                 reqToUpd.RequestType = updateRequest.RequestType;
                 reqToUpd.ResponseType = updateRequest.ResponseType;
                 reqToUpd.IsEnabled = updateRequest.IsEnabled;
+
+                // Include RequestComponents if there are any modified objects
+                if (updateRequest.RequestComponents != null && updateRequest.RequestComponents.Count > 0)
+                {
+                    foreach (var ucpc in updateRequest.RequestComponents)
+                    {
+                        var cpc = reqToUpd.RequestComponents.SingleOrDefault(rc => rc.Id.Equals(ucpc.Id));
+
+                        if (cpc == null)
+                            return new NozomiResult<string>(NozomiResultType.Failed, "Failed to update request");
+
+                        // Deleting?
+                        if (ucpc.ToBeDeleted())
+                        {
+                            cpc.DeletedAt = DateTime.UtcNow;
+                            cpc.DeletedBy = userId;
+
+                            _unitOfWork.GetRepository<RequestComponent>().Update(cpc);
+                        }
+                        // Updating?
+                        else
+                        {
+                            if (ucpc.ComponentType >= 0) cpc.ComponentType = ucpc.ComponentType;
+                            if (!string.IsNullOrEmpty(ucpc.QueryComponent)) cpc.QueryComponent = ucpc.QueryComponent;
+
+                            _unitOfWork.GetRepository<RequestComponent>().Update(cpc);
+                        }
+                    }
+                }
+
+                // Include RequestProperties if there are any modified objects
+                if (updateRequest.RequestProperties != null && updateRequest.RequestProperties.Count > 0)
+                {
+                    foreach (var urp in updateRequest.RequestProperties)
+                    {
+                        var requestProperty = reqToUpd.RequestProperties.SingleOrDefault(rc => rc.Id.Equals(urp.Id));
+
+                        if (requestProperty == null)
+                            return new NozomiResult<string>(NozomiResultType.Failed, "Failed to update request");
+
+                        // Deleting?
+                        if (urp.ToBeDeleted())
+                        {
+                            requestProperty.DeletedAt = DateTime.UtcNow;
+                            requestProperty.DeletedBy = userId;
+
+                            _unitOfWork.GetRepository<RequestProperty>().Update(requestProperty);
+                        }
+                        // Updating?
+                        else
+                        {
+                            if (urp.RequestPropertyType > 0)
+                                requestProperty.RequestPropertyType = urp.RequestPropertyType;
+                            if (urp.Key != null) requestProperty.Key = urp.Key;
+                            if (urp.Value != null) requestProperty.Value = urp.Value;
+
+                            _unitOfWork.GetRepository<RequestProperty>().Update(requestProperty);
+                        }
+                    }
+                }
 
                 _unitOfWork.GetRepository<Request>().Update(reqToUpd);
                 _unitOfWork.Commit(userId);
@@ -161,7 +223,7 @@ namespace Nozomi.Service.Services.Requests
                         {
                             _unitOfWork.GetRepository<Request>().Delete(reqToDel);
                         }
-                        
+
                         _unitOfWork.Commit(userId);
 
                         return new NozomiResult<string>(NozomiResultType.Success, "Request successfully deleted!");
@@ -175,7 +237,7 @@ namespace Nozomi.Service.Services.Requests
                 return new NozomiResult<string>(NozomiResultType.Failed, ex.ToString());
             }
         }
-        
+
         public bool ManualPoll(long id, long userId = 0)
         {
             return false;
