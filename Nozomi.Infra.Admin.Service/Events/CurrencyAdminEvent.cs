@@ -40,10 +40,8 @@ namespace Nozomi.Infra.Admin.Service.Events
                 .Include(c => c.CurrencySources)
                 .ThenInclude(cs => cs.Source)
                 .ThenInclude(s => s.CurrencyPairs)
-                // Currency Requests
-                .Include(c => c.CurrencyRequests)
+                .Include(c => c.Requests)
                 .ThenInclude(cr => cr.RequestComponents)
-                .Include(c => c.CurrencyRequests)
                 .SingleOrDefault();
         }
     }
