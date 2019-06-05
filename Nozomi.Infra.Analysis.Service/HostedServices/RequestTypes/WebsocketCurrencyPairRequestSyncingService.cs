@@ -14,7 +14,7 @@ using Nozomi.Data.Models.Web;
 using Nozomi.Data.Models.Web.Websocket;
 using Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes.Interfaces;
 using Nozomi.Preprocessing.Abstracts;
-using Nozomi.Service.Events.Websocket.Interfaces;
+using Nozomi.Service.Events.Interfaces;
 using Nozomi.Service.Services.Interfaces;
 using WebSocketSharp;
 using WebSocket = WebSocketSharp.WebSocket;
@@ -31,14 +31,14 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
         /// <key>The Id of the WebsocketRequest</key≥
         private readonly Dictionary<string, WebSocket> _wsrWebsockets;
 
-        private readonly IWebsocketRequestEvent _websocketRequestEvent;
+        private readonly IRequestEvent _websocketRequestEvent;
         private readonly IRequestComponentService _requestComponentService;
 
         public WebsocketCurrencyPairRequestSyncingService(IServiceProvider serviceProvider) : base(serviceProvider)
         {
             _wsrWebsockets = new Dictionary<string, WebSocket>();
             _requestComponentService = _scope.ServiceProvider.GetRequiredService<IRequestComponentService>();
-            _websocketRequestEvent = _scope.ServiceProvider.GetRequiredService<IWebsocketRequestEvent>();
+            _websocketRequestEvent = _scope.ServiceProvider.GetRequiredService<IRequestEvent>();
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -178,7 +178,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
             _logger.LogWarning("WebsocketCurrencyPairRequestSyncingService background task is stopping.");
         }
 
-        public Task<bool> Process(ICollection<WebsocketRequest> wsr, string payload)
+        public Task<bool> Process(ICollection<Request> wsr, string payload)
         {
             // Are we processing anything?
             if (wsr.Count > 0 && !string.IsNullOrEmpty(payload))

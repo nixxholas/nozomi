@@ -16,6 +16,7 @@ using Nozomi.Data.Models.Web;
 using Nozomi.Data.Models.Web.Logging;
 using Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes.Interfaces;
 using Nozomi.Preprocessing.Abstracts;
+using Nozomi.Service.Events.Interfaces;
 using Nozomi.Service.Services.Interfaces;
 using Nozomi.Service.Services.Requests.Interfaces;
 
@@ -26,17 +27,17 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
     {
         private readonly HttpClient _httpClient = new HttpClient();
         private readonly IRequestComponentService _requestComponentService;
-        private readonly ICurrencyPairRequestService _currencyPairRequestService;
+        private readonly IRequestEvent _requestEvent;
         private readonly IRequestLogService _requestLogService;
         
         public HttpPostCurrencyPairRequestSyncingService(IServiceProvider serviceProvider) : base(serviceProvider)
         {
             _requestComponentService = _scope.ServiceProvider.GetRequiredService<IRequestComponentService>();
-            _currencyPairRequestService = _scope.ServiceProvider.GetRequiredService<ICurrencyPairRequestService>();
+            _requestEvent = _scope.ServiceProvider.GetRequiredService<IRequestEvent>();
             _requestLogService = _scope.ServiceProvider.GetRequiredService<IRequestLogService>();
         }
 
-        public async Task<bool> Process(CurrencyPairRequest req)
+        public async Task<bool> Process(Request req)
         {
             if (req != null && req.IsValidForPolling())
             {
@@ -377,7 +378,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
             while (!stoppingToken.IsCancellationRequested)
             {
                 // We will need to resync the Request collection to make sure we're polling only the ones we want to poll
-                var requests = _currencyPairRequestService.GetAllByRequestType(RequestType.HttpPost);
+                var requests = _requestEvent.GetAllByRequestType(RequestType.HttpPost);
 
                 // Iterate the requests
                 // NOTE: Let's not call a parallel loop since HttpClients might tend to result in memory leaks.
