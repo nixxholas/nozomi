@@ -241,33 +241,32 @@ namespace Nozomi.Repo.Migrations
                     DataPath = table.Column<string>(nullable: true),
                     Delay = table.Column<int>(nullable: false, defaultValue: 0),
                     FailureDelay = table.Column<long>(nullable: false, defaultValue: 3600000L),
-                    Discriminator = table.Column<string>(nullable: false),
-                    CurrencyPairId = table.Column<long>(nullable: true),
                     CurrencyId = table.Column<long>(nullable: true),
-                    WebsocketRequest_CurrencyPairId = table.Column<long>(nullable: true)
+                    CurrencyPairId = table.Column<long>(nullable: true),
+                    CurrencyTypeId = table.Column<long>(nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("Request_PK_Id", x => x.Id);
                     table.UniqueConstraint("Request_AK_Guid", x => x.Guid);
                     table.ForeignKey(
-                        name: "CurrencyPair_CurrencyPairRequest_Constraint",
-                        column: x => x.CurrencyPairId,
-                        principalTable: "CurrencyPairs",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "CurrencyRequest_Currency_Constraint",
+                        name: "Currencies_CurrencyRequests_Constraint",
                         column: x => x.CurrencyId,
                         principalTable: "Currencies",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Requests_CurrencyPairs_WebsocketRequest_CurrencyPairId",
-                        column: x => x.WebsocketRequest_CurrencyPairId,
+                        name: "CurrencyPair_CurrencyPairRequest_Constraint",
+                        column: x => x.CurrencyPairId,
                         principalTable: "CurrencyPairs",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "CurrencyType_Request_Constraint",
+                        column: x => x.CurrencyTypeId,
+                        principalTable: "CurrencyTypes",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -403,14 +402,14 @@ namespace Nozomi.Repo.Migrations
                     CommandType = table.Column<int>(nullable: false),
                     Name = table.Column<string>(nullable: true),
                     Delay = table.Column<long>(nullable: false, defaultValue: 0L),
-                    WebsocketRequestId = table.Column<long>(nullable: false)
+                    RequestId = table.Column<long>(nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("WebsocketCommand_PK_Id", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_WebsocketCommands_Requests_WebsocketRequestId",
-                        column: x => x.WebsocketRequestId,
+                        name: "FK_WebsocketCommands_Requests_RequestId",
+                        column: x => x.RequestId,
                         principalTable: "Requests",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -1164,103 +1163,103 @@ namespace Nozomi.Repo.Migrations
 
             migrationBuilder.InsertData(
                 table: "Requests",
-                columns: new[] { "Id", "CreatedAt", "CreatedBy", "DataPath", "Delay", "DeletedAt", "DeletedBy", "Discriminator", "Guid", "IsEnabled", "ModifiedAt", "ModifiedBy", "RequestType", "CurrencyId" },
-                values: new object[] { 1L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "https://api.etherscan.io/api", 5000, null, 0L, "CurrencyRequest", new Guid("d13fc276-8077-49d2-ba38-998c58895df9"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 3L });
+                columns: new[] { "Id", "CreatedAt", "CreatedBy", "CurrencyId", "CurrencyPairId", "CurrencyTypeId", "DataPath", "Delay", "DeletedAt", "DeletedBy", "Guid", "IsEnabled", "ModifiedAt", "ModifiedBy", "RequestType" },
+                values: new object[] { 1L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 3L, null, null, "https://api.etherscan.io/api", 5000, null, 0L, new Guid("d13fc276-8077-49d2-ba38-998c58895df9"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0 });
 
             migrationBuilder.InsertData(
                 table: "Requests",
-                columns: new[] { "Id", "CreatedAt", "CreatedBy", "DataPath", "Delay", "DeletedAt", "DeletedBy", "Discriminator", "Guid", "IsEnabled", "ModifiedAt", "ModifiedBy", "RequestType", "ResponseType", "CurrencyPairId" },
-                values: new object[] { 9L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "https://poloniex.com/public?command=returnTicker", 5000, null, 0L, "CurrencyPairRequest", new Guid("419db9ee-0510-47d1-8b14-620e2c86dcb4"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 1, 5L });
+                columns: new[] { "Id", "CreatedAt", "CreatedBy", "CurrencyId", "CurrencyPairId", "CurrencyTypeId", "DataPath", "Delay", "DeletedAt", "DeletedBy", "Guid", "IsEnabled", "ModifiedAt", "ModifiedBy", "RequestType", "ResponseType" },
+                values: new object[] { 9L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, null, 5L, null, "https://poloniex.com/public?command=returnTicker", 5000, null, 0L, new Guid("419db9ee-0510-47d1-8b14-620e2c86dcb4"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 1 });
 
             migrationBuilder.InsertData(
                 table: "Requests",
-                columns: new[] { "Id", "CreatedAt", "CreatedBy", "DataPath", "Delay", "DeletedAt", "DeletedBy", "Discriminator", "Guid", "IsEnabled", "ModifiedAt", "ModifiedBy", "RequestType", "ResponseType", "CurrencyPairId" },
-                values: new object[] { 10L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "https://poloniex.com/public?command=returnTicker", 5000, null, 0L, "CurrencyPairRequest", new Guid("b729acf9-a83c-4e76-8af8-a2ac7efc28c2"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 1, 6L });
+                columns: new[] { "Id", "CreatedAt", "CreatedBy", "CurrencyId", "CurrencyPairId", "CurrencyTypeId", "DataPath", "Delay", "DeletedAt", "DeletedBy", "Guid", "IsEnabled", "ModifiedAt", "ModifiedBy", "RequestType", "ResponseType" },
+                values: new object[] { 10L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, null, 6L, null, "https://poloniex.com/public?command=returnTicker", 5000, null, 0L, new Guid("b729acf9-a83c-4e76-8af8-a2ac7efc28c2"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 1 });
 
             migrationBuilder.InsertData(
                 table: "Requests",
-                columns: new[] { "Id", "CreatedAt", "CreatedBy", "DataPath", "DeletedAt", "DeletedBy", "Discriminator", "Guid", "IsEnabled", "ModifiedAt", "ModifiedBy", "RequestType", "ResponseType", "WebsocketRequest_CurrencyPairId" },
-                values: new object[] { 13L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "wss://stream.binance.com:9443/stream?streams=!ticker@arr", null, 0L, "WebsocketRequest", new Guid("6f9d8fe7-71f4-42b8-ac31-526f559549a3"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 50, 1, 9L });
+                columns: new[] { "Id", "CreatedAt", "CreatedBy", "CurrencyId", "CurrencyPairId", "CurrencyTypeId", "DataPath", "DeletedAt", "DeletedBy", "Guid", "IsEnabled", "ModifiedAt", "ModifiedBy", "RequestType", "ResponseType" },
+                values: new object[] { 13L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, null, 9L, null, "wss://stream.binance.com:9443/stream?streams=!ticker@arr", null, 0L, new Guid("6f9d8fe7-71f4-42b8-ac31-526f559549a3"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 50, 1 });
 
             migrationBuilder.InsertData(
                 table: "Requests",
-                columns: new[] { "Id", "CreatedAt", "CreatedBy", "DataPath", "Delay", "DeletedAt", "DeletedBy", "Discriminator", "Guid", "IsEnabled", "ModifiedAt", "ModifiedBy", "RequestType", "CurrencyId" },
-                values: new object[] { 2L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "https://api.etherscan.io/api", 5000, null, 0L, "CurrencyRequest", new Guid("b7b9642e-357a-451c-9741-bf5a7fcb0ad1"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 4L });
+                columns: new[] { "Id", "CreatedAt", "CreatedBy", "CurrencyId", "CurrencyPairId", "CurrencyTypeId", "DataPath", "Delay", "DeletedAt", "DeletedBy", "Guid", "IsEnabled", "ModifiedAt", "ModifiedBy", "RequestType" },
+                values: new object[] { 2L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 4L, null, null, "https://api.etherscan.io/api", 5000, null, 0L, new Guid("b7b9642e-357a-451c-9741-bf5a7fcb0ad1"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0 });
 
             migrationBuilder.InsertData(
                 table: "Requests",
-                columns: new[] { "Id", "CreatedAt", "CreatedBy", "DataPath", "Delay", "DeletedAt", "DeletedBy", "Discriminator", "Guid", "IsEnabled", "ModifiedAt", "ModifiedBy", "RequestType", "ResponseType", "CurrencyPairId" },
-                values: new object[] { 7L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml", 86400000, null, 0L, "CurrencyPairRequest", new Guid("1d8ba5ea-9d3a-4b02-b2d8-84ccd0851e69"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 2, 3L });
+                columns: new[] { "Id", "CreatedAt", "CreatedBy", "CurrencyId", "CurrencyPairId", "CurrencyTypeId", "DataPath", "Delay", "DeletedAt", "DeletedBy", "Guid", "IsEnabled", "ModifiedAt", "ModifiedBy", "RequestType", "ResponseType" },
+                values: new object[] { 7L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, null, 3L, null, "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml", 86400000, null, 0L, new Guid("1d8ba5ea-9d3a-4b02-b2d8-84ccd0851e69"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 2 });
 
             migrationBuilder.InsertData(
                 table: "Requests",
-                columns: new[] { "Id", "CreatedAt", "CreatedBy", "DataPath", "Delay", "DeletedAt", "DeletedBy", "Discriminator", "Guid", "IsEnabled", "ModifiedAt", "ModifiedBy", "RequestType", "ResponseType", "CurrencyPairId" },
-                values: new object[] { 20L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "https://www.coinhako.com/api/v1/price/currency/LTCUSD", 10000, null, 0L, "CurrencyPairRequest", new Guid("92121fbb-8f01-45de-bfab-fe17aeac7174"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 1, 16L });
+                columns: new[] { "Id", "CreatedAt", "CreatedBy", "CurrencyId", "CurrencyPairId", "CurrencyTypeId", "DataPath", "Delay", "DeletedAt", "DeletedBy", "Guid", "IsEnabled", "ModifiedAt", "ModifiedBy", "RequestType", "ResponseType" },
+                values: new object[] { 20L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, null, 16L, null, "https://www.coinhako.com/api/v1/price/currency/LTCUSD", 10000, null, 0L, new Guid("92121fbb-8f01-45de-bfab-fe17aeac7174"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 1 });
 
             migrationBuilder.InsertData(
                 table: "Requests",
-                columns: new[] { "Id", "CreatedAt", "CreatedBy", "DataPath", "DeletedAt", "DeletedBy", "Discriminator", "Guid", "IsEnabled", "ModifiedAt", "ModifiedBy", "RequestType", "ResponseType", "WebsocketRequest_CurrencyPairId" },
-                values: new object[] { 14L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "wss://stream.binance.com:9443/stream?streams=!ticker@arr", null, 0L, "WebsocketRequest", new Guid("dc33dc82-26e5-4eef-af44-78e1efce2d1f"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 50, 1, 10L });
+                columns: new[] { "Id", "CreatedAt", "CreatedBy", "CurrencyId", "CurrencyPairId", "CurrencyTypeId", "DataPath", "DeletedAt", "DeletedBy", "Guid", "IsEnabled", "ModifiedAt", "ModifiedBy", "RequestType", "ResponseType" },
+                values: new object[] { 14L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, null, 10L, null, "wss://stream.binance.com:9443/stream?streams=!ticker@arr", null, 0L, new Guid("dc33dc82-26e5-4eef-af44-78e1efce2d1f"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 50, 1 });
 
             migrationBuilder.InsertData(
                 table: "Requests",
-                columns: new[] { "Id", "CreatedAt", "CreatedBy", "DataPath", "Delay", "DeletedAt", "DeletedBy", "Discriminator", "Guid", "IsEnabled", "ModifiedAt", "ModifiedBy", "RequestType", "ResponseType", "CurrencyPairId" },
-                values: new object[] { 19L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "https://www.coinhako.com/api/v1/price/currency/LTCSGD", 10000, null, 0L, "CurrencyPairRequest", new Guid("58bf3728-1887-4460-bf61-6b898be360f3"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 1, 15L });
+                columns: new[] { "Id", "CreatedAt", "CreatedBy", "CurrencyId", "CurrencyPairId", "CurrencyTypeId", "DataPath", "Delay", "DeletedAt", "DeletedBy", "Guid", "IsEnabled", "ModifiedAt", "ModifiedBy", "RequestType", "ResponseType" },
+                values: new object[] { 19L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, null, 15L, null, "https://www.coinhako.com/api/v1/price/currency/LTCSGD", 10000, null, 0L, new Guid("58bf3728-1887-4460-bf61-6b898be360f3"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 1 });
 
             migrationBuilder.InsertData(
                 table: "Requests",
-                columns: new[] { "Id", "CreatedAt", "CreatedBy", "DataPath", "Delay", "DeletedAt", "DeletedBy", "Discriminator", "Guid", "IsEnabled", "ModifiedAt", "ModifiedBy", "RequestType", "CurrencyId" },
-                values: new object[] { 3L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "https://insight.bitpay.com/api/status?q=getBlockCount", 90000, null, 0L, "CurrencyRequest", new Guid("31ceeb18-1d89-43d2-b215-0488d9417c67"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 5L });
+                columns: new[] { "Id", "CreatedAt", "CreatedBy", "CurrencyId", "CurrencyPairId", "CurrencyTypeId", "DataPath", "Delay", "DeletedAt", "DeletedBy", "Guid", "IsEnabled", "ModifiedAt", "ModifiedBy", "RequestType" },
+                values: new object[] { 3L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 5L, null, null, "https://insight.bitpay.com/api/status?q=getBlockCount", 90000, null, 0L, new Guid("31ceeb18-1d89-43d2-b215-0488d9417c67"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0 });
 
             migrationBuilder.InsertData(
                 table: "Requests",
-                columns: new[] { "Id", "CreatedAt", "CreatedBy", "DataPath", "Delay", "DeletedAt", "DeletedBy", "Discriminator", "Guid", "IsEnabled", "ModifiedAt", "ModifiedBy", "RequestType", "ResponseType", "CurrencyPairId" },
-                values: new object[] { 18L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "https://www.coinhako.com/api/v1/price/currency/ETHUSD", 10000, null, 0L, "CurrencyPairRequest", new Guid("ceb4e033-ebbb-45d9-9312-951f09228c30"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 1, 14L });
+                columns: new[] { "Id", "CreatedAt", "CreatedBy", "CurrencyId", "CurrencyPairId", "CurrencyTypeId", "DataPath", "Delay", "DeletedAt", "DeletedBy", "Guid", "IsEnabled", "ModifiedAt", "ModifiedBy", "RequestType", "ResponseType" },
+                values: new object[] { 18L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, null, 14L, null, "https://www.coinhako.com/api/v1/price/currency/ETHUSD", 10000, null, 0L, new Guid("ceb4e033-ebbb-45d9-9312-951f09228c30"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 1 });
 
             migrationBuilder.InsertData(
                 table: "Requests",
-                columns: new[] { "Id", "CreatedAt", "CreatedBy", "DataPath", "Delay", "DeletedAt", "DeletedBy", "Discriminator", "Guid", "IsEnabled", "ModifiedAt", "ModifiedBy", "RequestType", "CurrencyId" },
-                values: new object[] { 4L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "https://api.coinranking.com/v1/public/coin/1?base=USD", 90000, null, 0L, "CurrencyRequest", new Guid("7f10715f-b5cc-4e52-9fa8-011311a5a2ca"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 5L });
+                columns: new[] { "Id", "CreatedAt", "CreatedBy", "CurrencyId", "CurrencyPairId", "CurrencyTypeId", "DataPath", "Delay", "DeletedAt", "DeletedBy", "Guid", "IsEnabled", "ModifiedAt", "ModifiedBy", "RequestType" },
+                values: new object[] { 4L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 5L, null, null, "https://api.coinranking.com/v1/public/coin/1?base=USD", 90000, null, 0L, new Guid("7f10715f-b5cc-4e52-9fa8-011311a5a2ca"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0 });
 
             migrationBuilder.InsertData(
                 table: "Requests",
-                columns: new[] { "Id", "CreatedAt", "CreatedBy", "DataPath", "Delay", "DeletedAt", "DeletedBy", "Discriminator", "Guid", "IsEnabled", "ModifiedAt", "ModifiedBy", "RequestType", "ResponseType", "CurrencyPairId" },
-                values: new object[] { 17L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "https://www.coinhako.com/api/v1/price/currency/ETHSGD", 10000, null, 0L, "CurrencyPairRequest", new Guid("49be3d33-d7b8-47aa-abf0-ee8765100b21"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 1, 13L });
+                columns: new[] { "Id", "CreatedAt", "CreatedBy", "CurrencyId", "CurrencyPairId", "CurrencyTypeId", "DataPath", "Delay", "DeletedAt", "DeletedBy", "Guid", "IsEnabled", "ModifiedAt", "ModifiedBy", "RequestType", "ResponseType" },
+                values: new object[] { 17L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, null, 13L, null, "https://www.coinhako.com/api/v1/price/currency/ETHSGD", 10000, null, 0L, new Guid("49be3d33-d7b8-47aa-abf0-ee8765100b21"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 1 });
 
             migrationBuilder.InsertData(
                 table: "Requests",
-                columns: new[] { "Id", "CreatedAt", "CreatedBy", "DataPath", "Delay", "DeletedAt", "DeletedBy", "Discriminator", "Guid", "IsEnabled", "ModifiedAt", "ModifiedBy", "RequestType", "ResponseType", "CurrencyPairId" },
-                values: new object[] { 16L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "https://www.coinhako.com/api/v1/price/currency/BTCUSD", 10000, null, 0L, "CurrencyPairRequest", new Guid("fd199860-f699-4414-ba14-fdae9e856b5e"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 1, 12L });
+                columns: new[] { "Id", "CreatedAt", "CreatedBy", "CurrencyId", "CurrencyPairId", "CurrencyTypeId", "DataPath", "Delay", "DeletedAt", "DeletedBy", "Guid", "IsEnabled", "ModifiedAt", "ModifiedBy", "RequestType", "ResponseType" },
+                values: new object[] { 16L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, null, 12L, null, "https://www.coinhako.com/api/v1/price/currency/BTCUSD", 10000, null, 0L, new Guid("fd199860-f699-4414-ba14-fdae9e856b5e"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 1 });
 
             migrationBuilder.InsertData(
                 table: "Requests",
-                columns: new[] { "Id", "CreatedAt", "CreatedBy", "DataPath", "Delay", "DeletedAt", "DeletedBy", "Discriminator", "Guid", "IsEnabled", "ModifiedAt", "ModifiedBy", "RequestType", "CurrencyPairId" },
-                values: new object[] { 5L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "https://api.ethfinex.com/v2/ticker/tETHUSD", 5000, null, 0L, "CurrencyPairRequest", new Guid("096e9def-1c0f-4d1c-aa7b-273499f2cbda"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 1L });
+                columns: new[] { "Id", "CreatedAt", "CreatedBy", "CurrencyId", "CurrencyPairId", "CurrencyTypeId", "DataPath", "Delay", "DeletedAt", "DeletedBy", "Guid", "IsEnabled", "ModifiedAt", "ModifiedBy", "RequestType" },
+                values: new object[] { 5L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, null, 1L, null, "https://api.ethfinex.com/v2/ticker/tETHUSD", 5000, null, 0L, new Guid("096e9def-1c0f-4d1c-aa7b-273499f2cbda"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0 });
 
             migrationBuilder.InsertData(
                 table: "Requests",
-                columns: new[] { "Id", "CreatedAt", "CreatedBy", "DataPath", "Delay", "DeletedAt", "DeletedBy", "Discriminator", "Guid", "IsEnabled", "ModifiedAt", "ModifiedBy", "RequestType", "CurrencyPairId" },
-                values: new object[] { 6L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "https://api.ethfinex.com/v2/ticker/tKNCUSD", 5000, null, 0L, "CurrencyPairRequest", new Guid("534ccff8-b6ff-4cce-961b-8458ef0ca5af"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 2L });
+                columns: new[] { "Id", "CreatedAt", "CreatedBy", "CurrencyId", "CurrencyPairId", "CurrencyTypeId", "DataPath", "Delay", "DeletedAt", "DeletedBy", "Guid", "IsEnabled", "ModifiedAt", "ModifiedBy", "RequestType" },
+                values: new object[] { 6L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, null, 2L, null, "https://api.ethfinex.com/v2/ticker/tKNCUSD", 5000, null, 0L, new Guid("534ccff8-b6ff-4cce-961b-8458ef0ca5af"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0 });
 
             migrationBuilder.InsertData(
                 table: "Requests",
-                columns: new[] { "Id", "CreatedAt", "CreatedBy", "DataPath", "Delay", "DeletedAt", "DeletedBy", "Discriminator", "Guid", "IsEnabled", "ModifiedAt", "ModifiedBy", "RequestType", "ResponseType", "CurrencyPairId" },
-                values: new object[] { 11L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "https://api.bitfinex.com/v1/pubticker/etheur", 2000, null, 0L, "CurrencyPairRequest", new Guid("ee593665-c6c5-454a-8831-b7e28265a1c8"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 1, 7L });
+                columns: new[] { "Id", "CreatedAt", "CreatedBy", "CurrencyId", "CurrencyPairId", "CurrencyTypeId", "DataPath", "Delay", "DeletedAt", "DeletedBy", "Guid", "IsEnabled", "ModifiedAt", "ModifiedBy", "RequestType", "ResponseType" },
+                values: new object[] { 11L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, null, 7L, null, "https://api.bitfinex.com/v1/pubticker/etheur", 2000, null, 0L, new Guid("ee593665-c6c5-454a-8831-b7e28265a1c8"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 1 });
 
             migrationBuilder.InsertData(
                 table: "Requests",
-                columns: new[] { "Id", "CreatedAt", "CreatedBy", "DataPath", "Delay", "DeletedAt", "DeletedBy", "Discriminator", "Guid", "IsEnabled", "ModifiedAt", "ModifiedBy", "RequestType", "ResponseType", "CurrencyPairId" },
-                values: new object[] { 15L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "https://www.coinhako.com/api/v1/price/currency/BTCSGD", 10000, null, 0L, "CurrencyPairRequest", new Guid("c162e683-cceb-4a03-aa24-f095b4d9db1f"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 1, 11L });
+                columns: new[] { "Id", "CreatedAt", "CreatedBy", "CurrencyId", "CurrencyPairId", "CurrencyTypeId", "DataPath", "Delay", "DeletedAt", "DeletedBy", "Guid", "IsEnabled", "ModifiedAt", "ModifiedBy", "RequestType", "ResponseType" },
+                values: new object[] { 15L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, null, 11L, null, "https://www.coinhako.com/api/v1/price/currency/BTCSGD", 10000, null, 0L, new Guid("c162e683-cceb-4a03-aa24-f095b4d9db1f"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 1 });
 
             migrationBuilder.InsertData(
                 table: "Requests",
-                columns: new[] { "Id", "CreatedAt", "CreatedBy", "DataPath", "Delay", "DeletedAt", "DeletedBy", "Discriminator", "Guid", "IsEnabled", "ModifiedAt", "ModifiedBy", "RequestType", "ResponseType", "CurrencyPairId" },
-                values: new object[] { 8L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "https://www.alphavantage.co/query", 5000, null, 0L, "CurrencyPairRequest", new Guid("48ad7cb2-b2b7-41be-8540-64136b72883c"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 1, 4L });
+                columns: new[] { "Id", "CreatedAt", "CreatedBy", "CurrencyId", "CurrencyPairId", "CurrencyTypeId", "DataPath", "Delay", "DeletedAt", "DeletedBy", "Guid", "IsEnabled", "ModifiedAt", "ModifiedBy", "RequestType", "ResponseType" },
+                values: new object[] { 8L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, null, 4L, null, "https://www.alphavantage.co/query", 5000, null, 0L, new Guid("48ad7cb2-b2b7-41be-8540-64136b72883c"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 1 });
 
             migrationBuilder.InsertData(
                 table: "Requests",
-                columns: new[] { "Id", "CreatedAt", "CreatedBy", "DataPath", "Delay", "DeletedAt", "DeletedBy", "Discriminator", "Guid", "IsEnabled", "ModifiedAt", "ModifiedBy", "RequestType", "ResponseType", "CurrencyPairId" },
-                values: new object[] { 12L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, "https://poloniex.com/public?command=returnTicker", 5000, null, 0L, "CurrencyPairRequest", new Guid("e47e6062-e727-41ed-a0c1-750b1a792dd7"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 1, 8L });
+                columns: new[] { "Id", "CreatedAt", "CreatedBy", "CurrencyId", "CurrencyPairId", "CurrencyTypeId", "DataPath", "Delay", "DeletedAt", "DeletedBy", "Guid", "IsEnabled", "ModifiedAt", "ModifiedBy", "RequestType", "ResponseType" },
+                values: new object[] { 12L, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, null, 8L, null, "https://poloniex.com/public?command=returnTicker", 5000, null, 0L, new Guid("e47e6062-e727-41ed-a0c1-750b1a792dd7"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0L, 0, 1 });
 
             migrationBuilder.InsertData(
                 table: "RequestComponents",
@@ -1607,19 +1606,19 @@ namespace Nozomi.Repo.Migrations
                 column: "RequestId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Requests_CurrencyPairId",
-                table: "Requests",
-                column: "CurrencyPairId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Requests_CurrencyId",
                 table: "Requests",
                 column: "CurrencyId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Requests_WebsocketRequest_CurrencyPairId",
+                name: "IX_Requests_CurrencyPairId",
                 table: "Requests",
-                column: "WebsocketRequest_CurrencyPairId");
+                column: "CurrencyPairId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Requests_CurrencyTypeId",
+                table: "Requests",
+                column: "CurrencyTypeId");
 
             migrationBuilder.CreateIndex(
                 name: "Source_Index_Abbreviation",
@@ -1632,9 +1631,9 @@ namespace Nozomi.Repo.Migrations
                 column: "WebsocketCommandId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_WebsocketCommands_WebsocketRequestId",
+                name: "IX_WebsocketCommands_RequestId",
                 table: "WebsocketCommands",
-                column: "WebsocketRequestId");
+                column: "RequestId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -1673,16 +1672,16 @@ namespace Nozomi.Repo.Migrations
                 name: "Requests");
 
             migrationBuilder.DropTable(
-                name: "CurrencyPairs");
-
-            migrationBuilder.DropTable(
                 name: "Currencies");
 
             migrationBuilder.DropTable(
-                name: "Sources");
+                name: "CurrencyPairs");
 
             migrationBuilder.DropTable(
                 name: "CurrencyTypes");
+
+            migrationBuilder.DropTable(
+                name: "Sources");
         }
     }
 }

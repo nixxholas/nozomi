@@ -10,8 +10,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Nozomi.Repo.Migrations
 {
     [DbContext(typeof(NozomiDbContext))]
-    [Migration("20190605163139_r2_RequestRelations")]
-    partial class r2_RequestRelations
+    [Migration("20190605163946_r1_InitialMigrations")]
+    partial class r1_InitialMigrations
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
