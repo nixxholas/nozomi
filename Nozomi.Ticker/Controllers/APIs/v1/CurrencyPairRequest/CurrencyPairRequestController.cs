@@ -5,26 +5,30 @@ using Microsoft.Extensions.Logging;
 using Nozomi.Data;
 using Nozomi.Data.AreaModels.v1.CurrencyPairRequest;
 using Nozomi.Data.Models.Web;
+using Nozomi.Service.Events.Interfaces;
 using Nozomi.Service.Identity.Managers;
 using Nozomi.Service.Services.Interfaces;
+using Nozomi.Service.Services.Requests.Interfaces;
 
 namespace Nozomi.Ticker.Controllers.APIs.v1.CurrencyPairRequest
 {
     [ApiController]
     public class CurrencyPairRequestController : BaseController<CurrencyPairRequestController>, ICurrencyPairRequestController
     {
-        private readonly ICurrencyPairRequestService _currencyPairRequestService;
+        private readonly IRequestEvent _requestEvent;
+        private readonly IRequestService _requestService;
         
         public CurrencyPairRequestController(ILogger<CurrencyPairRequestController> logger, NozomiUserManager userManager,
-            ICurrencyPairRequestService currencyPairRequestService) : base(logger, userManager)
+            IRequestEvent requestEvent, IRequestService requestService) : base(logger, userManager)
         {
-            _currencyPairRequestService = currencyPairRequestService;
+            _requestEvent = requestEvent;
+            _requestService = requestService;
         }
 
         [HttpGet]
         public NozomiResult<JsonResult> All(bool includeNested)
         {
-            var res = _currencyPairRequestService.GetAllActive();
+            var res = _requestEvent.GetAllActive();
             
             return new NozomiResult<JsonResult>()
             {
@@ -38,7 +42,7 @@ namespace Nozomi.Ticker.Controllers.APIs.v1.CurrencyPairRequest
         [HttpPost("{userId}")]
         public NozomiResult<JsonResult> Create([FromBody]CreateCurrencyPairRequest obj, long userId = 0)
         {
-            var res = _currencyPairRequestService.Create(new Data.Models.Web.CurrencyPairRequest()
+            var res = _requestService.Create(new Request()
             {
                 CurrencyPairId = obj.CurrencyPairId,
                 RequestType = obj.RequestType,
@@ -74,7 +78,7 @@ namespace Nozomi.Ticker.Controllers.APIs.v1.CurrencyPairRequest
         {
             return new NozomiResult<JsonResult>()
             {
-                ResultType = _currencyPairRequestService.Update(obj, userId)
+                ResultType = _requestService.Update(obj, userId)
                     ? NozomiResultType.Success
                     : NozomiResultType.Failed,
                 Data = new JsonResult(string.Empty)
@@ -87,7 +91,7 @@ namespace Nozomi.Ticker.Controllers.APIs.v1.CurrencyPairRequest
         {
             return new NozomiResult<JsonResult>()
             {
-                ResultType = _currencyPairRequestService.Delete(id, hardDelete, userId)
+                ResultType = _requestService.Delete(id, hardDelete, userId)
                     ? NozomiResultType.Success
                     : NozomiResultType.Failed,
                 Data = new JsonResult(string.Empty)
@@ -99,7 +103,7 @@ namespace Nozomi.Ticker.Controllers.APIs.v1.CurrencyPairRequest
         {
             return new NozomiResult<JsonResult>()
             {
-                ResultType = _currencyPairRequestService.ManualPoll(requestId, userId) 
+                ResultType = _requestService.ManualPoll(requestId, userId) 
                     ? NozomiResultType.Success 
                     : NozomiResultType.Failed,
                 Data = new JsonResult(string.Empty)
