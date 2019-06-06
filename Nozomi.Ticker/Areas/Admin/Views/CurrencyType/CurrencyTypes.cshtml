@@ -30,14 +30,14 @@
     <b-form v-on:submit.stop.prevent="onCreateSubmit">
         <b-form-group label="Name">
             <b-form-input
-                :v-model="createForm.Name"
+                :v-model="createForm.name"
                 placeholder="Metals">
             </b-form-input>
         </b-form-group>
 
         <b-form-group label="Abbreviation (Type Short Form)">
             <b-form-input
-                :v-model="createForm.TypeShortForm"
+                :v-model="createForm.typeShortForm"
                 placeholder="METALS">
             </b-form-input>
         </b-form-group>
@@ -80,8 +80,8 @@
                 ],
                 currencyTypes: @Html.Raw(Json.Serialize(@Model)),
                 createForm: {
-                    Name: String,
-                    TypeShortForm: String
+                    name: "",
+                    typeShortForm: ""
                 },
                 deleteModal: {
                     id: Number,
@@ -99,11 +99,14 @@
                     this.onCreateSubmit();
                 },
                 async onCreateSubmit() {
+                    let formData = new FormData();
+                    formData.append('Name', this.createForm.name);
+                    formData.append('TypeShortForm', this.createForm.typeShortForm);
 
                     const response = await fetch('/Admin/CurrencyType/Create',
                         {
                             method: 'POST',
-                            body: this.createForm
+                            body: formData
                         });
 
                     if (response.status === 200) {
