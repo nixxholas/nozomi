@@ -17,6 +17,32 @@ namespace Nozomi.Service.Events
         {
         }
 
+        public CurrencyType Get(long id, bool track = false)
+        {
+            if (id > 0)
+            {
+                var currencyType = _unitOfWork.GetRepository<CurrencyType>()
+                    .GetQueryable()
+                    .AsNoTracking()
+                    .Where(ct => ct.Id.Equals(id));
+
+                if (currencyType.Any())
+                {
+                    if (track)
+                    {
+                        currencyType = currencyType
+                            .Include(ct => ct.AnalysedComponents)
+                            .Include(ct => ct.Currencies)
+                            .Include(ct => ct.Requests);
+                    }
+
+                    return currencyType.SingleOrDefault();
+                }
+            }
+
+            return null;
+        }
+
         public ICollection<CurrencyType> GetAll(int index = 0, bool track = false)
         {
             if (index >= 0)
