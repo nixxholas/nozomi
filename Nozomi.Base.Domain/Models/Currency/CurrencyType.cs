@@ -12,8 +12,12 @@ namespace Nozomi.Data.Models.Currency
         public long Id { get; set; }
 
         [MaxLength(12)]
+        [Display(Name = "Abbreviation", Prompt = "Enter a short form for the name.",
+            Description = "The abbreviated form of the currency type's name.")]
         public string TypeShortForm { get; set; }
 
+        [Display(Name = "Name", Prompt = "Enter a name.",
+            Description = "Name of the Currency Type.")]
         public string Name { get; set; }
         
         public ICollection<AnalysedComponent> AnalysedComponents { get; set; }
