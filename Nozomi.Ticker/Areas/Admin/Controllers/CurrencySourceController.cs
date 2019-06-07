@@ -43,7 +43,6 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
         }
 
         #endregion
-
         #region Delete Currency Source
 
         [HttpDelete("{id}")]

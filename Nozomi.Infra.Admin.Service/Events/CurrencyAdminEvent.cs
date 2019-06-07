@@ -19,17 +19,17 @@ namespace Nozomi.Infra.Admin.Service.Events
     public class CurrencyAdminEvent : BaseEvent<CurrencyEvent, NozomiDbContext>, ICurrencyAdminEvent
     {
         private readonly Interfaces.ICurrencyPairSourceCurrencyAdminEvent _currencyPairSourceCurrencyAdminEvent;
-        
+
         public CurrencyAdminEvent(ILogger<CurrencyEvent> logger, IUnitOfWork<NozomiDbContext> unitOfWork,
-            Interfaces.ICurrencyPairSourceCurrencyAdminEvent currencyPairSourceCurrencyAdminEvent) 
+            Interfaces.ICurrencyPairSourceCurrencyAdminEvent currencyPairSourceCurrencyAdminEvent)
             : base(logger, unitOfWork)
         {
             _currencyPairSourceCurrencyAdminEvent = currencyPairSourceCurrencyAdminEvent;
         }
 
         public Currency GetCurrencyByAbbreviation(string abbreviation)
-        { 
-            return _unitOfWork.GetRepository<Currency>()
+        {
+            var currency = _unitOfWork.GetRepository<Currency>()
                 .GetQueryable()
                 .AsNoTracking()
                 .Where(c => c.Abbreviation.Equals(abbreviation, StringComparison.InvariantCultureIgnoreCase))
@@ -43,6 +43,13 @@ namespace Nozomi.Infra.Admin.Service.Events
                 .Include(c => c.Requests)
                 .ThenInclude(cr => cr.RequestComponents)
                 .SingleOrDefault();
+
+            if (currency != null)
+            {
+                currency.CurrencySources = currency.CurrencySources.Where(cs => cs.DeletedAt == null).ToList();
+            }
+
+            return currency;
         }
     }
 }
