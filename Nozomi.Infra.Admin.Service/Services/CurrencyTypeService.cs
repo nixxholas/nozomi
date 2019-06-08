@@ -29,6 +29,30 @@ namespace Nozomi.Infra.Admin.Service.Services
             return long.MinValue;
         }
 
+        public bool Update(CurrencyType currencyType, long userId = 0)
+        {
+            if (currencyType != null && currencyType.IsValid())
+            {
+                var cType = _unitOfWork.GetRepository<CurrencyType>()
+                    .Get(ct => ct.Id.Equals(currencyType.Id))
+                    .SingleOrDefault();
+
+                if (cType != null)
+                {
+                    cType.Name = currencyType.Name;
+                    cType.TypeShortForm = currencyType.TypeShortForm;
+                    cType.IsEnabled = currencyType.IsEnabled;
+                    
+                    _unitOfWork.GetRepository<CurrencyType>().Update(cType);
+                    _unitOfWork.Commit(userId);
+
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         public bool Delete(long currencyTypeId, bool hardDelete = false, long userId = 0)
         {
             if (currencyTypeId > 0)
