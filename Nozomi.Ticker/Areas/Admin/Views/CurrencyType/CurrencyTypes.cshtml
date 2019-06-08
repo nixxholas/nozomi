@@ -5,7 +5,10 @@
     <div class="container space-2">
         <h3 class="mb-6">Currency Types</h3>
 
-        <b-button variant="primary" class="mb-3" v-on:click="showCreateModal">Create</b-button>
+        <b-button variant="primary" class="mb-3" href="#createModal"
+                  data-modal-target="#createModal">
+            Create
+        </b-button>
 
         <b-table :items="currencyTypes" :fields="dataFields">
             <template slot="name" slot-scope="datum">
@@ -24,25 +27,71 @@
     </div>
 </div>
 
+<!-- Two-Step Verification Modal Window -->
+<div id="createModal" class="js-modal-window u-modal-window u-modal-window--payment rounded">
+    <div class="card border-0">
+        <!-- Header -->
+        <header class="card-header bg-light py-3 px-5">
+            <div class="row justify-content-between align-items-center no-gutters">
+                <div class="col-8">
+                    <h4 class="h6 mb-0">Create Currency Type</h4>
+                </div>
 
-<!-- CreateModal -->
-<b-modal ref="create-modal" size="xl" title="Create Type" ok-title="Create" v-on:ok="handleCreateOk">
-    <b-form v-on:submit.stop.prevent="onCreateSubmit">
-        <b-form-group label="Name">
-            <b-form-input
-                :v-model="createForm.name"
-                placeholder="Metals">
-            </b-form-input>
-        </b-form-group>
+                <div class="col-8 text-right">
+                    <button type="button" class="close" aria-label="Close" onclick="Custombox.modal.close();">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            </div>
+        </header>
+        <!-- End Header -->
 
-        <b-form-group label="Abbreviation (Type Short Form)">
-            <b-form-input
-                :v-model="createForm.typeShortForm"
-                placeholder="METALS">
-            </b-form-input>
-        </b-form-group>
-    </b-form>
-</b-modal>
+        <form class="js-validate" asp-action="Create">
+            <div class="card-body p-5">
+                <!-- Input Group -->
+                <div class="mb-4">
+                    <label class="h6 small d-block text-uppercase mb-2">Name</label>
+                    <div class="js-form-message">
+                        <div class="input-group">
+                            <input type="text" class="form-control" name="Name" placeholder="Enter a name"
+                                   aria-label="Enter a name" required
+                                   data-msg="Please enter your name."
+                                   data-error-class="u-has-error"
+                                   data-success-class="u-has-success">
+                        </div>
+                    </div>
+                </div>
+                <!-- End Input Group -->
+
+                <!-- Input Group -->
+                <label class="h6 small d-block text-uppercase mb-2">
+                    Abbreviation
+                </label>
+                <div class="js-form-message js-focus-state">
+                    <div class="input-group">
+                        <div class="input-group">
+                            <input type="text" class="form-control" name="TypeShortForm" required
+                                   data-msg="Please enter a short form."
+                                   data-error-class="u-has-error"
+                                   data-success-class="u-has-success">
+                        </div>
+                    </div>
+                </div>
+                <!-- End Input Group -->
+            </div>
+
+            <!-- Card Footer -->
+            <div class="card-footer py-3 px-5">
+                <div class="d-flex justify-content-end">
+                    <button type="submit" class="btn btn-sm btn-primary transition-3d-hover mr-1">Create</button>
+                    <button type="submit" class="btn btn-sm btn-soft-secondary transition-3d-hover" onclick="Custombox.modal.close();">Cancel</button>
+                </div>
+            </div>
+            <!-- End Card Footer -->
+        </form>
+    </div>
+</div>
+<!-- End Two-Step Verification Modal Window -->
 
 <!-- DeleteModal -->
 <b-modal ref="delete-modal" title="Confirm Delete" ok-title="Yes" ok-variant="danger" cancel-title="No" v-on:ok="handleDeleteOk" centered>
@@ -79,51 +128,12 @@
                     }
                 ],
                 currencyTypes: @Html.Raw(Json.Serialize(@Model)),
-                createForm: {
-                    name: "",
-                    typeShortForm: ""
-                },
                 deleteModal: {
                     id: Number,
                     name: ''
                 }
             },
             methods: {
-                showCreateModal() {
-                    this.$refs['create-modal'].show();
-                },
-                handleCreateOk(bvModalEvt) {
-                    // Prevent modal from closing
-                    bvModalEvt.preventDefault();
-                    // Trigger submit handler
-                    this.onCreateSubmit();
-                },
-                async onCreateSubmit() {
-                    let formData = new FormData();
-                    formData.append('Name', this.createForm.name);
-                    formData.append('TypeShortForm', this.createForm.typeShortForm);
-
-                    const response = await fetch('/Admin/CurrencyType/Create',
-                        {
-                            method: 'POST',
-                            body: formData
-                        });
-
-                    if (response.status === 200) {
-                        // Put alert for now, change the ui later.
-                        alert("Successfully created currency type!");
-
-                    } else {
-                        alert("Create failed");
-                    }
-
-                    // Hide the modal manually
-                    this.$refs['create-modal'].hide();
-
-                    // Reload for now. Controller to return the currency object then push into table.
-                    location.reload(this);
-
-                },
                 // Methods for delete modal
                 showDeleteModal(id, requestName) {
                     this.deleteModal.id = id;
