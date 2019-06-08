@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Nozomi.Data.Models.Currency;
 
 namespace Nozomi.Data.ViewModels.Admin.Currency
 {
@@ -10,5 +11,7 @@ namespace Nozomi.Data.ViewModels.Admin.Currency
         public Models.Currency.Currency Currency { get; set; }
         
         public IEnumerable<Models.Currency.Source> CurrencySourcesOptions { get; set; }
+        
+        public ICollection<CurrencyType> CurrencyTypes { get; set; }
     }
 }
