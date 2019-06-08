@@ -3,6 +3,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Nozomi.Infra.Admin.Service.Events;
 using Nozomi.Infra.Admin.Service.Events.Interfaces;
+using Nozomi.Infra.Admin.Service.Services;
+using Nozomi.Infra.Admin.Service.Services.Interfaces;
 using Nozomi.Infra.Analysis.Service.Services;
 using Nozomi.Infra.Analysis.Service.Services.Interfaces;
 using Nozomi.Preprocessing.Events;
@@ -40,6 +42,7 @@ namespace Nozomi.Ticker.StartupExtensions
             services.AddTransient<IRequestLogService, RequestLogService>();
             services.AddTransient<ISourceService, SourceService>();
             services.AddTransient<ITickerService, TickerService>();
+            services.AddTransient<ICurrencySourceService, CurrencySourceService>();
 
             // Singleton service injections for in-memory-related processes.
             services.AddScoped<IComponentTypeService, ComponentTypeService>();
