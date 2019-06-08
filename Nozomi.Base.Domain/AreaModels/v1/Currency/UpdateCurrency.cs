@@ -34,8 +34,7 @@ namespace Nozomi.Data.AreaModels.v1.Currency
         
         public bool IsValid()
         {
-            return CurrencyTypeId > 0 && !string.IsNullOrEmpty(Abbreviation) && !string.IsNullOrEmpty(Name)
-                   && CurrencySourceId > 0;
+            return CurrencyTypeId > 0 && !string.IsNullOrEmpty(Abbreviation) && !string.IsNullOrEmpty(Name);
         }
     }
 }
