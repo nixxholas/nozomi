@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data;
 using Nozomi.Data.Models.Currency;
+using Nozomi.Infra.Admin.Service.Events.Interfaces;
 using Nozomi.Infra.Admin.Service.Services.Interfaces;
 using Nozomi.Service.Events.Interfaces;
 using Nozomi.Service.Identity.Managers;

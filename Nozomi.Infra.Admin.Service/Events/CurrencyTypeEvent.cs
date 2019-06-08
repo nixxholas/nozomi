@@ -3,13 +3,13 @@ using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data.Models.Currency;
+using Nozomi.Infra.Admin.Service.Events.Interfaces;
 using Nozomi.Preprocessing;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Data;
-using Nozomi.Service.Events.Interfaces;
 
-namespace Nozomi.Service.Events
+namespace Nozomi.Infra.Admin.Service.Events
 {
     public class CurrencyTypeEvent : BaseEvent<CurrencyTypeEvent, NozomiDbContext>, ICurrencyTypeEvent
     {

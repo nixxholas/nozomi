@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Nozomi.Data.Models.Currency;
 
-namespace Nozomi.Service.Events.Interfaces
+namespace Nozomi.Infra.Admin.Service.Events.Interfaces
 {
     public interface ICurrencyTypeEvent
     {

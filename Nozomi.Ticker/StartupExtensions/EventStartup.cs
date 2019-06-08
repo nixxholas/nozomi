@@ -1,5 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Nozomi.Data.Models.Web.Analytical;
+using Nozomi.Infra.Admin.Service.Events;
+using Nozomi.Infra.Admin.Service.Events.Interfaces;
 using Nozomi.Infra.Analysis.Service.Events;
 using Nozomi.Infra.Analysis.Service.Events.Interfaces;
 using Nozomi.Preprocessing.Events;
