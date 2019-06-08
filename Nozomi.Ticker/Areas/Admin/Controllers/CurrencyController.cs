@@ -69,7 +69,8 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
             var vm = new CurrencyViewModel
             {
                 Currency = currency,
-                CurrencySourcesOptions = _sourceEvent.GetAllCurrencySourceOptions(currency.CurrencySources)
+                CurrencySourcesOptions = _sourceEvent.GetAllCurrencySourceOptions(currency.CurrencySources),
+                CurrencyTypes = _currencyTypeEvent.GetAllActive(),
             };
 
             return View(vm);
@@ -77,10 +78,10 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
 
         #endregion
 
-        #region PUT EditCurrency
+        #region PUT Edit Currency
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> EditCurrency(long id, UpdateCurrency updateCurrency)
+        public async Task<IActionResult> Edit(long id, UpdateCurrency updateCurrency)
         {
             var user = await GetCurrentUserAsync();
             if (user == null)
@@ -93,7 +94,9 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
                 return BadRequest();
             }
 
-            if (_currencyService.Update(updateCurrency).ResultType.Equals(NozomiResultType.Success)) return Ok();
+            var result = _currencyService.Update(updateCurrency);
+
+            if (result.ResultType.Equals(NozomiResultType.Success)) return Ok(result);
 
             // Update failed.
             return NotFound();

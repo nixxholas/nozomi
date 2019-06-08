@@ -23,6 +23,10 @@
                     </b-form-input>
                 </b-form-group>
 
+                <b-form-group label="Currency Type" label-for="currencyType-input">
+                    <b-form-select v-model="editCurrency.currencyTypeId" :options="currencyTypes"></b-form-select>
+                </b-form-group>
+
                 <b-form-group label="Description">
                     <b-form-textarea
                         v-model="editCurrency.description"
@@ -135,9 +139,15 @@
                         ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
                         ContractResolver = new CamelCasePropertyNamesContractResolver()
                     })),
+                currencyTypes:
+                    @Html.Raw(JsonConvert.SerializeObject(@Model.CurrencyTypes, Formatting.Indented, new JsonSerializerSettings
+                    {
+                        ContractResolver = new CamelCasePropertyNamesContractResolver()
+                    })),
                 editCurrency: {
                     name: '@Model.Currency.Name',
                     abbreviation: '@Model.Currency.Abbreviation',
+                    currencyTypeId: @Model.Currency.CurrencyTypeId,
                     description: '@Model.Currency.Description',
                     denominationName: '@Model.Currency.DenominationName',
                     denominations: '@Model.Currency.Denominations',
@@ -158,9 +168,21 @@
                 },
             },
             mounted() {
+                this.convertCurrencyTypesOption();
                 this.convertCurrencySourcesOption();
             },
             methods: {
+                convertCurrencyTypesOption() {
+                    const currencyTypesArr = [];
+                    for (let i = 0; i < this.currencyTypes.length; i++) {
+                        const currencyType = {
+                            value: this.currencyTypes[i].id,
+                            text: this.currencyTypes[i].name
+                        };
+                        currencyTypesArr.push(currencyType);
+                    }
+                    this.currencyTypes = currencyTypesArr;
+                },
                 convertCurrencySourcesOption() {
                     const currencySourcesArr = [];
                     for (let i = 0; i < this.addSourceForm.currencySourcesOptions.length; i++) {
@@ -171,6 +193,32 @@
                         currencySourcesArr.push(currencySource);
                     }
                     this.addSourceForm.currencySourcesOptions = currencySourcesArr;
+                },
+                async onEditRequestSubmit() {
+                    const formData = new FormData();
+                    formData.append('Id', @Model.Currency.Id);
+                    formData.append('Name', this.editCurrency.name);
+                    formData.append('CurrencyTypeId', this.editCurrency.currencyTypeId);
+                    formData.append('Abbreviation', this.editCurrency.abbreviation);
+                    formData.append('Description', this.editCurrency.description);
+                    formData.append('DenominationName', this.editCurrency.denominationName);
+                    formData.append('Denominations', this.editCurrency.denominations);
+                    formData.append('IsEnabled', this.editCurrency.isEnabled);
+
+                    const response = await fetch('/Admin/Currency/Edit/@Model.Currency.Id',
+                        {
+                            method: 'PUT',
+                            body: formData
+                        });
+
+                    if (response.status === 200) {
+                        const data = await response.json();
+                        // Put alert for now, change the ui later.
+                        alert(data.message);
+                        window.location.replace(`/admin/currency/currency/${this.editCurrency.abbreviation}`);
+                    } else {
+                        alert(data.message);
+                    }
                 },
                 showSourceAddModal() {
                     this.$refs['source-add-modal'].show();
@@ -222,7 +270,7 @@
 
                     if (response.status === 200) {
                         // Update the datatable
-                        const index = this.currencySources.findIndex(element => element.Id === this.deleteModal.id);
+                        const index = this.currencySources.findIndex(element => element.Id === this.deleteSourceModal.id);
                         this.currencySources.splice(index, 1);
 
                         alert(`Successfully deleted ${this.deleteSourceModal.name}`);
