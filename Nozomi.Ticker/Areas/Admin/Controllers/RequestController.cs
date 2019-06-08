@@ -66,7 +66,7 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
                       
             return View(new RequestViewModel
             {
-                Request = _requestEvent.GetActive(id, true).ToDTO(_requestComponentEvent.GetAllByRequest(id)),
+                Request = _requestEvent.GetActive(id, true).ToDTO(),
                 RequestTypes = NozomiServiceConstants.requestTypes,
                 ResponseTypes = NozomiServiceConstants.responseTypes,
                 RequestComponentTypes = NozomiServiceConstants.requestComponentTypes

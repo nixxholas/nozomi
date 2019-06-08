@@ -68,7 +68,7 @@ namespace Nozomi.Data.Models.Web
                    && (RequestComponents != null) && RequestComponents.Count > 0;
         }
 
-        public RequestDTO ToDTO(ICollection<RequestComponent> requestComponents)
+        public RequestDTO ToDTO()
         {
             return new RequestDTO
             {
@@ -80,16 +80,6 @@ namespace Nozomi.Data.Models.Web
                 Delay = Delay,
                 FailureDelay = FailureDelay,
                 IsEnabled = IsEnabled,
-                RequestComponents = requestComponents.Select(rc => new RequestComponentDTO
-                {
-                    AnomalyIgnorance = rc.AnomalyIgnorance,
-                    ComponentType = rc.ComponentType,
-                    Id = rc.Id,
-                    Identifier = rc.Identifier,
-                    IsDenominated = rc.IsDenominated,
-                    QueryComponent = rc.QueryComponent,
-                    Value = rc.Value
-                }).ToList(),
 //                AnalysedComponents = AnalysedComponents
 //                    .Select(ac => new AnalysedComponentDTO
 //                    {
@@ -100,27 +90,29 @@ namespace Nozomi.Data.Models.Web
 //                        Value = ac.Value
 //                    })
 //                    .ToList(),
-//                RequestComponents = RequestComponents
-//                    .Select(rc => new RequestComponentDTO
-//                    {
-//                        AnomalyIgnorance = rc.AnomalyIgnorance,
-//                        ComponentType = rc.ComponentType,
-//                        Id = rc.Id,
-//                        Identifier = rc.Identifier,
-//                        IsDenominated = rc.IsDenominated,
-//                        QueryComponent = rc.QueryComponent,
-//                        Value = rc.Value
-//                    })
-//                    .ToList(),
-//                RequestProperties = RequestProperties
-//                    .Select(rp => new RequestPropertyDTO
-//                    {
-//                        Id = rp.Id,
-//                        Key = rp.Key,
-//                        RequestPropertyType = rp.RequestPropertyType,
-//                        Value = rp.Value
-//                    })
-//                    .ToList()
+                RequestComponents = RequestComponents
+                    .Where(rc => rc.DeletedAt == null)
+                    .Select(rc => new RequestComponentDTO
+                    {
+                        AnomalyIgnorance = rc.AnomalyIgnorance,
+                        ComponentType = rc.ComponentType,
+                        Id = rc.Id,
+                        Identifier = rc.Identifier,
+                        IsDenominated = rc.IsDenominated,
+                        QueryComponent = rc.QueryComponent,
+                        Value = rc.Value
+                    })
+                    .ToList(),
+                RequestProperties = RequestProperties
+                    .Where(rp => rp.DeletedAt == null)
+                    .Select(rp => new RequestPropertyDTO
+                    {
+                        Id = rp.Id,
+                        Key = rp.Key,
+                        RequestPropertyType = rp.RequestPropertyType,
+                        Value = rp.Value
+                    })
+                    .ToList()
             };
         }
     }
