@@ -42,7 +42,22 @@ namespace Nozomi.Infra.Admin.Service.Events
 
         public CurrencyProperty Get(long id, bool track = false)
         {
-            throw new System.NotImplementedException();
+            if (id > 0)
+            {
+                var query = _unitOfWork.GetRepository<CurrencyProperty>()
+                    .GetQueryable()
+                    .AsNoTracking()
+                    .Where(cp => cp.Id.Equals(id));
+
+                if (track)
+                {
+                    query = query.Include(cp => cp.Currency);
+                }
+
+                return query.SingleOrDefault();
+            }
+
+            return null;
         }
 
         public ICollection<CurrencyProperty> GetAllByCurrency(long currencyId, bool track = false)
