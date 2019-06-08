@@ -6,13 +6,15 @@
         <!-- Personal Info Form -->
         <form class="js-validate">
           <div class="row">
+            <input type="hidden" asp-for="Id" />
+            
             <!-- Input -->
             <div class="col-sm-6 mb-6">
               <div class="js-form-message">
                 <label asp-for="Name" class="form-label"></label>
 
                 <div class="form-group">
-                  <input type="text" class="form-control" name="name" placeholder="Enter your name" 
+                  <input type="text" class="form-control" name="name" placeholder="Enter your name"
                          asp-for="Name" aria-label="Enter your name" required
                          data-msg="Please enter your name."
                          data-error-class="u-has-error"
@@ -28,7 +30,7 @@
                 <label asp-for="TypeShortForm" class="form-label"></label>
 
                 <div class="form-group">
-                  <input type="text" class="form-control" name="username" placeholder="Enter your username" 
+                  <input type="text" class="form-control" name="username" placeholder="Enter your username"
                          asp-for="TypeShortForm" aria-label="Enter your username" required
                          data-msg="Please enter your username."
                          data-error-class="u-has-error"

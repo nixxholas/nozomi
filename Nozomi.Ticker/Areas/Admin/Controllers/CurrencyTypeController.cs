@@ -47,6 +47,20 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
         }
         
         #endregion
+
+        [HttpPut]
+        public async Task<IActionResult> Update(CurrencyType currencyType)
+        {
+            var user = await GetCurrentUserAsync();
+            if (user == null)
+            {
+                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
+
+            var result = _currencyTypeService.Create(currencyType);
+            
+            return Edit(currencyType.Id);
+        }
         
         #region POST Create
 
