@@ -1,3 +1,4 @@
+using System;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data.Models.Currency;
 using Nozomi.Infra.Admin.Service.Services.Interfaces;
@@ -15,7 +16,15 @@ namespace Nozomi.Infra.Admin.Service.Services
 
         public long Create(CurrencyProperty currencyProperty, long userId = 0)
         {
-            throw new System.NotImplementedException();
+            if (currencyProperty != null && currencyProperty.IsValid())
+            {
+                _unitOfWork.GetRepository<CurrencyProperty>().Add(currencyProperty);
+                _unitOfWork.Commit(userId);
+
+                return currencyProperty.Id;
+            }
+
+            return long.MinValue;
         }
 
         public bool Update(CurrencyProperty currencyProperty, long userId = 0)
