@@ -3,7 +3,7 @@ using Nozomi.Data.Models.Currency;
 
 namespace Nozomi.Infra.Admin.Service.Events.Interfaces
 {
-    public interface ICurrencyPropertyEvent
+    public interface ICurrencyPropertyAdminEvent
     {
         ICollection<CurrencyProperty> GetAll(int index = 0, bool track = false);
 

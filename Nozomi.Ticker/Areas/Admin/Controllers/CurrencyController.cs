@@ -21,19 +21,19 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
         private readonly ICurrencyEvent _currencyEvent;
         private readonly ICurrencyAdminEvent _currencyAdminEvent;
         private readonly ICurrencyService _currencyService;
-        private readonly ICurrencyTypeEvent _currencyTypeEvent;
+        private readonly ICurrencyTypeAdminEvent _currencyTypeAdminEvent;
         private readonly ISourceEvent _sourceEvent;
 
 
         public CurrencyController(ILogger<CurrencyController> logger, NozomiSignInManager signInManager,
             NozomiUserManager userManager, ICurrencyEvent currencyEvent, ICurrencyAdminEvent currencyAdminEvent,
-            ICurrencyService currencyService, ICurrencyTypeEvent currencyTypeEvent, ISourceEvent sourceEvent)
+            ICurrencyService currencyService, ICurrencyTypeAdminEvent currencyTypeAdminEvent, ISourceEvent sourceEvent)
             : base(logger, signInManager, userManager)
         {
             _currencyEvent = currencyEvent;
             _currencyAdminEvent = currencyAdminEvent;
             _currencyService = currencyService;
-            _currencyTypeEvent = currencyTypeEvent;
+            _currencyTypeAdminEvent = currencyTypeAdminEvent;
             _sourceEvent = sourceEvent;
         }
 
@@ -51,7 +51,7 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
             var vm = new CurrenciesViewModel
             {
                 Currencies = _currencyEvent.GetAllDTO(),
-                CurrencyTypes = _currencyTypeEvent.GetAllActive(),
+                CurrencyTypes = _currencyTypeAdminEvent.GetAllActive(),
                 CurrencySources = _sourceEvent.GetAllActive()
             };
 
@@ -70,7 +70,7 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
             {
                 Currency = currency,
                 CurrencySourcesOptions = _sourceEvent.GetAllCurrencySourceOptions(currency.CurrencySources),
-                CurrencyTypes = _currencyTypeEvent.GetAllActive(),
+                CurrencyTypes = _currencyTypeAdminEvent.GetAllActive(),
             };
 
             return View(vm);

@@ -17,15 +17,15 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
     [Authorize(Roles = "Owner, Administrator, Staff")]
     public class CurrencyTypeController : AreaBaseViewController<CurrencyTypeController>
     {
-        private readonly ICurrencyTypeEvent _currencyTypeEvent;
+        private readonly ICurrencyTypeAdminEvent _currencyTypeAdminEvent;
         private readonly ICurrencyTypeService _currencyTypeService;
 
         public CurrencyTypeController(ILogger<CurrencyTypeController> logger, NozomiSignInManager signInManager,
-            NozomiUserManager userManager, ICurrencyTypeEvent currencyTypeEvent, 
+            NozomiUserManager userManager, ICurrencyTypeAdminEvent currencyTypeAdminEvent, 
             ICurrencyTypeService currencyTypeService) 
             : base(logger, signInManager, userManager)
         {
-            _currencyTypeEvent = currencyTypeEvent;
+            _currencyTypeAdminEvent = currencyTypeAdminEvent;
             _currencyTypeService = currencyTypeService;
         }
         
@@ -34,7 +34,7 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
         [HttpGet]
         public IActionResult CurrencyTypes()
         {
-            return View(_currencyTypeEvent.GetAll());
+            return View(_currencyTypeAdminEvent.GetAll());
         }
          
         #endregion
@@ -44,7 +44,7 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
         [HttpGet("{id}")]
         public IActionResult Edit(long id)
         {
-            return View(_currencyTypeEvent.Get(id));
+            return View(_currencyTypeAdminEvent.Get(id));
         }
         
         #endregion

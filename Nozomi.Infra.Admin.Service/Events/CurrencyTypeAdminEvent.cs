@@ -11,9 +11,9 @@ using Nozomi.Repo.Data;
 
 namespace Nozomi.Infra.Admin.Service.Events
 {
-    public class CurrencyTypeEvent : BaseEvent<CurrencyTypeEvent, NozomiDbContext>, ICurrencyTypeEvent
+    public class CurrencyTypeAdminEvent : BaseEvent<CurrencyTypeAdminEvent, NozomiDbContext>, ICurrencyTypeAdminEvent
     {
-        public CurrencyTypeEvent(ILogger<CurrencyTypeEvent> logger, IUnitOfWork<NozomiDbContext> unitOfWork) : base(logger, unitOfWork)
+        public CurrencyTypeAdminEvent(ILogger<CurrencyTypeAdminEvent> logger, IUnitOfWork<NozomiDbContext> unitOfWork) : base(logger, unitOfWork)
         {
         }
 
