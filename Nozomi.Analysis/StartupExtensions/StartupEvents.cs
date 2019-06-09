@@ -26,6 +26,7 @@ namespace Nozomi.Analysis.StartupExtensions
             services.AddScoped<IAnalysedComponentEvent, AnalysedComponentEvent>();
             services.AddScoped<IAnalysedHistoricItemEvent, AnalysedHistoricItemEvent>();
             services.AddScoped<ICurrencyConversionEvent, CurrencyConversionEvent>();
+            services.AddScoped<IXAnalysedComponentEvent, XAnalysedComponentEvent>();
         }
     }
 }
