@@ -25,12 +25,12 @@ namespace Nozomi.Analysis.StartupExtensions
             services.AddTransient<ICurrencyService, CurrencyService>();
             services.AddTransient<ICurrencyPairService, CurrencyPairService>();
             services.AddTransient<IRequestComponentService, RequestComponentService>();
-            services.AddTransient<ICurrencyPairRequestService, CurrencyPairRequestService>();
             services.AddTransient<IRequestService, RequestService>();
             services.AddTransient<IRcdHistoricItemService, RcdHistoricItemService>();
             services.AddTransient<IRequestLogService, RequestLogService>();
             services.AddTransient<ISourceService, SourceService>();
             services.AddTransient<ITickerService, TickerService>();
+            services.AddTransient<ICurrencySourceService, CurrencySourceService>();
 
             // Singleton service injections for in-memory-related processes.
             services.AddScoped<IComponentTypeService, ComponentTypeService>();

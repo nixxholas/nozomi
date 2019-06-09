@@ -1,4 +1,5 @@
-using Nozomi.Data.ResponseModels.Currency;
+using System.Collections.Generic;
+using Nozomi.Data.Models.Currency;
 
 namespace Nozomi.Data.ViewModels.Admin.Currency
 {
@@ -8,5 +9,9 @@ namespace Nozomi.Data.ViewModels.Admin.Currency
         /// Stores all currency data to the currency.
         /// </summary>
         public Models.Currency.Currency Currency { get; set; }
+        
+        public IEnumerable<Models.Currency.Source> CurrencySourcesOptions { get; set; }
+        
+        public ICollection<CurrencyType> CurrencyTypes { get; set; }
     }
 }

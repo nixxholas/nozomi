@@ -3585,6 +3585,12 @@ namespace Nozomi.Repo.Migrations
 
                     b.Property<long>("CreatedBy");
 
+                    b.Property<long?>("CurrencyId");
+
+                    b.Property<long?>("CurrencyPairId");
+
+                    b.Property<long?>("CurrencyTypeId");
+
                     b.Property<string>("DataPath");
 
                     b.Property<int>("Delay")
@@ -3594,9 +3600,6 @@ namespace Nozomi.Repo.Migrations
                     b.Property<DateTime?>("DeletedAt");
 
                     b.Property<long>("DeletedBy");
-
-                    b.Property<string>("Discriminator")
-                        .IsRequired();
 
                     b.Property<long>("FailureDelay")
                         .ValueGeneratedOnAdd()
@@ -3623,9 +3626,355 @@ namespace Nozomi.Repo.Migrations
                     b.HasAlternateKey("Guid")
                         .HasName("Request_AK_Guid");
 
+                    b.HasIndex("CurrencyId");
+
+                    b.HasIndex("CurrencyPairId");
+
+                    b.HasIndex("CurrencyTypeId");
+
                     b.ToTable("Requests");
 
-                    b.HasDiscriminator<string>("Discriminator").HasValue("Request");
+                    b.HasData(
+                        new
+                        {
+                            Id = 1L,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 0L,
+                            CurrencyId = 3L,
+                            DataPath = "https://api.etherscan.io/api",
+                            Delay = 5000,
+                            DeletedBy = 0L,
+                            FailureDelay = 0L,
+                            Guid = new Guid("d13fc276-8077-49d2-ba38-998c58895df9"),
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedBy = 0L,
+                            RequestType = 0,
+                            ResponseType = 0
+                        },
+                        new
+                        {
+                            Id = 2L,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 0L,
+                            CurrencyId = 4L,
+                            DataPath = "https://api.etherscan.io/api",
+                            Delay = 5000,
+                            DeletedBy = 0L,
+                            FailureDelay = 0L,
+                            Guid = new Guid("b7b9642e-357a-451c-9741-bf5a7fcb0ad1"),
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedBy = 0L,
+                            RequestType = 0,
+                            ResponseType = 0
+                        },
+                        new
+                        {
+                            Id = 3L,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 0L,
+                            CurrencyId = 5L,
+                            DataPath = "https://insight.bitpay.com/api/status?q=getBlockCount",
+                            Delay = 90000,
+                            DeletedBy = 0L,
+                            FailureDelay = 0L,
+                            Guid = new Guid("31ceeb18-1d89-43d2-b215-0488d9417c67"),
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedBy = 0L,
+                            RequestType = 0,
+                            ResponseType = 0
+                        },
+                        new
+                        {
+                            Id = 4L,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 0L,
+                            CurrencyId = 5L,
+                            DataPath = "https://api.coinranking.com/v1/public/coin/1?base=USD",
+                            Delay = 90000,
+                            DeletedBy = 0L,
+                            FailureDelay = 0L,
+                            Guid = new Guid("7f10715f-b5cc-4e52-9fa8-011311a5a2ca"),
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedBy = 0L,
+                            RequestType = 0,
+                            ResponseType = 0
+                        },
+                        new
+                        {
+                            Id = 5L,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 0L,
+                            CurrencyPairId = 1L,
+                            DataPath = "https://api.ethfinex.com/v2/ticker/tETHUSD",
+                            Delay = 5000,
+                            DeletedBy = 0L,
+                            FailureDelay = 0L,
+                            Guid = new Guid("096e9def-1c0f-4d1c-aa7b-273499f2cbda"),
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedBy = 0L,
+                            RequestType = 0,
+                            ResponseType = 0
+                        },
+                        new
+                        {
+                            Id = 6L,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 0L,
+                            CurrencyPairId = 2L,
+                            DataPath = "https://api.ethfinex.com/v2/ticker/tKNCUSD",
+                            Delay = 5000,
+                            DeletedBy = 0L,
+                            FailureDelay = 0L,
+                            Guid = new Guid("534ccff8-b6ff-4cce-961b-8458ef0ca5af"),
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedBy = 0L,
+                            RequestType = 0,
+                            ResponseType = 0
+                        },
+                        new
+                        {
+                            Id = 7L,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 0L,
+                            CurrencyPairId = 3L,
+                            DataPath = "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml",
+                            Delay = 86400000,
+                            DeletedBy = 0L,
+                            FailureDelay = 0L,
+                            Guid = new Guid("1d8ba5ea-9d3a-4b02-b2d8-84ccd0851e69"),
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedBy = 0L,
+                            RequestType = 0,
+                            ResponseType = 2
+                        },
+                        new
+                        {
+                            Id = 8L,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 0L,
+                            CurrencyPairId = 4L,
+                            DataPath = "https://www.alphavantage.co/query",
+                            Delay = 5000,
+                            DeletedBy = 0L,
+                            FailureDelay = 0L,
+                            Guid = new Guid("48ad7cb2-b2b7-41be-8540-64136b72883c"),
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedBy = 0L,
+                            RequestType = 0,
+                            ResponseType = 1
+                        },
+                        new
+                        {
+                            Id = 9L,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 0L,
+                            CurrencyPairId = 5L,
+                            DataPath = "https://poloniex.com/public?command=returnTicker",
+                            Delay = 5000,
+                            DeletedBy = 0L,
+                            FailureDelay = 0L,
+                            Guid = new Guid("419db9ee-0510-47d1-8b14-620e2c86dcb4"),
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedBy = 0L,
+                            RequestType = 0,
+                            ResponseType = 1
+                        },
+                        new
+                        {
+                            Id = 10L,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 0L,
+                            CurrencyPairId = 6L,
+                            DataPath = "https://poloniex.com/public?command=returnTicker",
+                            Delay = 5000,
+                            DeletedBy = 0L,
+                            FailureDelay = 0L,
+                            Guid = new Guid("b729acf9-a83c-4e76-8af8-a2ac7efc28c2"),
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedBy = 0L,
+                            RequestType = 0,
+                            ResponseType = 1
+                        },
+                        new
+                        {
+                            Id = 11L,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 0L,
+                            CurrencyPairId = 7L,
+                            DataPath = "https://api.bitfinex.com/v1/pubticker/etheur",
+                            Delay = 2000,
+                            DeletedBy = 0L,
+                            FailureDelay = 0L,
+                            Guid = new Guid("ee593665-c6c5-454a-8831-b7e28265a1c8"),
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedBy = 0L,
+                            RequestType = 0,
+                            ResponseType = 1
+                        },
+                        new
+                        {
+                            Id = 12L,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 0L,
+                            CurrencyPairId = 8L,
+                            DataPath = "https://poloniex.com/public?command=returnTicker",
+                            Delay = 5000,
+                            DeletedBy = 0L,
+                            FailureDelay = 0L,
+                            Guid = new Guid("e47e6062-e727-41ed-a0c1-750b1a792dd7"),
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedBy = 0L,
+                            RequestType = 0,
+                            ResponseType = 1
+                        },
+                        new
+                        {
+                            Id = 15L,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 0L,
+                            CurrencyPairId = 11L,
+                            DataPath = "https://www.coinhako.com/api/v1/price/currency/BTCSGD",
+                            Delay = 10000,
+                            DeletedBy = 0L,
+                            FailureDelay = 0L,
+                            Guid = new Guid("c162e683-cceb-4a03-aa24-f095b4d9db1f"),
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedBy = 0L,
+                            RequestType = 0,
+                            ResponseType = 1
+                        },
+                        new
+                        {
+                            Id = 16L,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 0L,
+                            CurrencyPairId = 12L,
+                            DataPath = "https://www.coinhako.com/api/v1/price/currency/BTCUSD",
+                            Delay = 10000,
+                            DeletedBy = 0L,
+                            FailureDelay = 0L,
+                            Guid = new Guid("fd199860-f699-4414-ba14-fdae9e856b5e"),
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedBy = 0L,
+                            RequestType = 0,
+                            ResponseType = 1
+                        },
+                        new
+                        {
+                            Id = 17L,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 0L,
+                            CurrencyPairId = 13L,
+                            DataPath = "https://www.coinhako.com/api/v1/price/currency/ETHSGD",
+                            Delay = 10000,
+                            DeletedBy = 0L,
+                            FailureDelay = 0L,
+                            Guid = new Guid("49be3d33-d7b8-47aa-abf0-ee8765100b21"),
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedBy = 0L,
+                            RequestType = 0,
+                            ResponseType = 1
+                        },
+                        new
+                        {
+                            Id = 18L,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 0L,
+                            CurrencyPairId = 14L,
+                            DataPath = "https://www.coinhako.com/api/v1/price/currency/ETHUSD",
+                            Delay = 10000,
+                            DeletedBy = 0L,
+                            FailureDelay = 0L,
+                            Guid = new Guid("ceb4e033-ebbb-45d9-9312-951f09228c30"),
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedBy = 0L,
+                            RequestType = 0,
+                            ResponseType = 1
+                        },
+                        new
+                        {
+                            Id = 19L,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 0L,
+                            CurrencyPairId = 15L,
+                            DataPath = "https://www.coinhako.com/api/v1/price/currency/LTCSGD",
+                            Delay = 10000,
+                            DeletedBy = 0L,
+                            FailureDelay = 0L,
+                            Guid = new Guid("58bf3728-1887-4460-bf61-6b898be360f3"),
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedBy = 0L,
+                            RequestType = 0,
+                            ResponseType = 1
+                        },
+                        new
+                        {
+                            Id = 20L,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 0L,
+                            CurrencyPairId = 16L,
+                            DataPath = "https://www.coinhako.com/api/v1/price/currency/LTCUSD",
+                            Delay = 10000,
+                            DeletedBy = 0L,
+                            FailureDelay = 0L,
+                            Guid = new Guid("92121fbb-8f01-45de-bfab-fe17aeac7174"),
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedBy = 0L,
+                            RequestType = 0,
+                            ResponseType = 1
+                        },
+                        new
+                        {
+                            Id = 13L,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 0L,
+                            CurrencyPairId = 9L,
+                            DataPath = "wss://stream.binance.com:9443/stream?streams=!ticker@arr",
+                            Delay = 0,
+                            DeletedBy = 0L,
+                            FailureDelay = 0L,
+                            Guid = new Guid("6f9d8fe7-71f4-42b8-ac31-526f559549a3"),
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedBy = 0L,
+                            RequestType = 50,
+                            ResponseType = 1
+                        },
+                        new
+                        {
+                            Id = 14L,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 0L,
+                            CurrencyPairId = 10L,
+                            DataPath = "wss://stream.binance.com:9443/stream?streams=!ticker@arr",
+                            Delay = 0,
+                            DeletedBy = 0L,
+                            FailureDelay = 0L,
+                            Guid = new Guid("dc33dc82-26e5-4eef-af44-78e1efce2d1f"),
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModifiedBy = 0L,
+                            RequestType = 50,
+                            ResponseType = 1
+                        });
                 });
 
             modelBuilder.Entity("Nozomi.Data.Models.Web.RequestComponent", b =>
@@ -4655,12 +5004,12 @@ namespace Nozomi.Repo.Migrations
 
                     b.Property<string>("Name");
 
-                    b.Property<long>("WebsocketRequestId");
+                    b.Property<long>("RequestId");
 
                     b.HasKey("Id")
                         .HasName("WebsocketCommand_PK_Id");
 
-                    b.HasIndex("WebsocketRequestId");
+                    b.HasIndex("RequestId");
 
                     b.ToTable("WebsocketCommands");
                 });
@@ -4701,386 +5050,6 @@ namespace Nozomi.Repo.Migrations
                     b.HasIndex("WebsocketCommandId");
 
                     b.ToTable("WebsocketCommandProperties");
-                });
-
-            modelBuilder.Entity("Nozomi.Data.Models.Web.CurrencyPairRequest", b =>
-                {
-                    b.HasBaseType("Nozomi.Data.Models.Web.Request");
-
-                    b.Property<long>("CurrencyPairId");
-
-                    b.HasIndex("CurrencyPairId");
-
-                    b.HasDiscriminator().HasValue("CurrencyPairRequest");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 5L,
-                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CreatedBy = 0L,
-                            DataPath = "https://api.ethfinex.com/v2/ticker/tETHUSD",
-                            Delay = 5000,
-                            DeletedBy = 0L,
-                            FailureDelay = 0L,
-                            Guid = new Guid("096e9def-1c0f-4d1c-aa7b-273499f2cbda"),
-                            IsEnabled = true,
-                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            ModifiedBy = 0L,
-                            RequestType = 0,
-                            ResponseType = 0,
-                            CurrencyPairId = 1L
-                        },
-                        new
-                        {
-                            Id = 6L,
-                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CreatedBy = 0L,
-                            DataPath = "https://api.ethfinex.com/v2/ticker/tKNCUSD",
-                            Delay = 5000,
-                            DeletedBy = 0L,
-                            FailureDelay = 0L,
-                            Guid = new Guid("534ccff8-b6ff-4cce-961b-8458ef0ca5af"),
-                            IsEnabled = true,
-                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            ModifiedBy = 0L,
-                            RequestType = 0,
-                            ResponseType = 0,
-                            CurrencyPairId = 2L
-                        },
-                        new
-                        {
-                            Id = 7L,
-                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CreatedBy = 0L,
-                            DataPath = "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml",
-                            Delay = 86400000,
-                            DeletedBy = 0L,
-                            FailureDelay = 0L,
-                            Guid = new Guid("1d8ba5ea-9d3a-4b02-b2d8-84ccd0851e69"),
-                            IsEnabled = true,
-                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            ModifiedBy = 0L,
-                            RequestType = 0,
-                            ResponseType = 2,
-                            CurrencyPairId = 3L
-                        },
-                        new
-                        {
-                            Id = 8L,
-                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CreatedBy = 0L,
-                            DataPath = "https://www.alphavantage.co/query",
-                            Delay = 5000,
-                            DeletedBy = 0L,
-                            FailureDelay = 0L,
-                            Guid = new Guid("48ad7cb2-b2b7-41be-8540-64136b72883c"),
-                            IsEnabled = true,
-                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            ModifiedBy = 0L,
-                            RequestType = 0,
-                            ResponseType = 1,
-                            CurrencyPairId = 4L
-                        },
-                        new
-                        {
-                            Id = 9L,
-                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CreatedBy = 0L,
-                            DataPath = "https://poloniex.com/public?command=returnTicker",
-                            Delay = 5000,
-                            DeletedBy = 0L,
-                            FailureDelay = 0L,
-                            Guid = new Guid("419db9ee-0510-47d1-8b14-620e2c86dcb4"),
-                            IsEnabled = true,
-                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            ModifiedBy = 0L,
-                            RequestType = 0,
-                            ResponseType = 1,
-                            CurrencyPairId = 5L
-                        },
-                        new
-                        {
-                            Id = 10L,
-                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CreatedBy = 0L,
-                            DataPath = "https://poloniex.com/public?command=returnTicker",
-                            Delay = 5000,
-                            DeletedBy = 0L,
-                            FailureDelay = 0L,
-                            Guid = new Guid("b729acf9-a83c-4e76-8af8-a2ac7efc28c2"),
-                            IsEnabled = true,
-                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            ModifiedBy = 0L,
-                            RequestType = 0,
-                            ResponseType = 1,
-                            CurrencyPairId = 6L
-                        },
-                        new
-                        {
-                            Id = 11L,
-                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CreatedBy = 0L,
-                            DataPath = "https://api.bitfinex.com/v1/pubticker/etheur",
-                            Delay = 2000,
-                            DeletedBy = 0L,
-                            FailureDelay = 0L,
-                            Guid = new Guid("ee593665-c6c5-454a-8831-b7e28265a1c8"),
-                            IsEnabled = true,
-                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            ModifiedBy = 0L,
-                            RequestType = 0,
-                            ResponseType = 1,
-                            CurrencyPairId = 7L
-                        },
-                        new
-                        {
-                            Id = 12L,
-                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CreatedBy = 0L,
-                            DataPath = "https://poloniex.com/public?command=returnTicker",
-                            Delay = 5000,
-                            DeletedBy = 0L,
-                            FailureDelay = 0L,
-                            Guid = new Guid("e47e6062-e727-41ed-a0c1-750b1a792dd7"),
-                            IsEnabled = true,
-                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            ModifiedBy = 0L,
-                            RequestType = 0,
-                            ResponseType = 1,
-                            CurrencyPairId = 8L
-                        },
-                        new
-                        {
-                            Id = 15L,
-                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CreatedBy = 0L,
-                            DataPath = "https://www.coinhako.com/api/v1/price/currency/BTCSGD",
-                            Delay = 10000,
-                            DeletedBy = 0L,
-                            FailureDelay = 0L,
-                            Guid = new Guid("c162e683-cceb-4a03-aa24-f095b4d9db1f"),
-                            IsEnabled = true,
-                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            ModifiedBy = 0L,
-                            RequestType = 0,
-                            ResponseType = 1,
-                            CurrencyPairId = 11L
-                        },
-                        new
-                        {
-                            Id = 16L,
-                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CreatedBy = 0L,
-                            DataPath = "https://www.coinhako.com/api/v1/price/currency/BTCUSD",
-                            Delay = 10000,
-                            DeletedBy = 0L,
-                            FailureDelay = 0L,
-                            Guid = new Guid("fd199860-f699-4414-ba14-fdae9e856b5e"),
-                            IsEnabled = true,
-                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            ModifiedBy = 0L,
-                            RequestType = 0,
-                            ResponseType = 1,
-                            CurrencyPairId = 12L
-                        },
-                        new
-                        {
-                            Id = 17L,
-                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CreatedBy = 0L,
-                            DataPath = "https://www.coinhako.com/api/v1/price/currency/ETHSGD",
-                            Delay = 10000,
-                            DeletedBy = 0L,
-                            FailureDelay = 0L,
-                            Guid = new Guid("49be3d33-d7b8-47aa-abf0-ee8765100b21"),
-                            IsEnabled = true,
-                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            ModifiedBy = 0L,
-                            RequestType = 0,
-                            ResponseType = 1,
-                            CurrencyPairId = 13L
-                        },
-                        new
-                        {
-                            Id = 18L,
-                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CreatedBy = 0L,
-                            DataPath = "https://www.coinhako.com/api/v1/price/currency/ETHUSD",
-                            Delay = 10000,
-                            DeletedBy = 0L,
-                            FailureDelay = 0L,
-                            Guid = new Guid("ceb4e033-ebbb-45d9-9312-951f09228c30"),
-                            IsEnabled = true,
-                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            ModifiedBy = 0L,
-                            RequestType = 0,
-                            ResponseType = 1,
-                            CurrencyPairId = 14L
-                        },
-                        new
-                        {
-                            Id = 19L,
-                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CreatedBy = 0L,
-                            DataPath = "https://www.coinhako.com/api/v1/price/currency/LTCSGD",
-                            Delay = 10000,
-                            DeletedBy = 0L,
-                            FailureDelay = 0L,
-                            Guid = new Guid("58bf3728-1887-4460-bf61-6b898be360f3"),
-                            IsEnabled = true,
-                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            ModifiedBy = 0L,
-                            RequestType = 0,
-                            ResponseType = 1,
-                            CurrencyPairId = 15L
-                        },
-                        new
-                        {
-                            Id = 20L,
-                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CreatedBy = 0L,
-                            DataPath = "https://www.coinhako.com/api/v1/price/currency/LTCUSD",
-                            Delay = 10000,
-                            DeletedBy = 0L,
-                            FailureDelay = 0L,
-                            Guid = new Guid("92121fbb-8f01-45de-bfab-fe17aeac7174"),
-                            IsEnabled = true,
-                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            ModifiedBy = 0L,
-                            RequestType = 0,
-                            ResponseType = 1,
-                            CurrencyPairId = 16L
-                        });
-                });
-
-            modelBuilder.Entity("Nozomi.Data.Models.Web.CurrencyRequest", b =>
-                {
-                    b.HasBaseType("Nozomi.Data.Models.Web.Request");
-
-                    b.Property<long>("CurrencyId");
-
-                    b.HasIndex("CurrencyId");
-
-                    b.HasDiscriminator().HasValue("CurrencyRequest");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1L,
-                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CreatedBy = 0L,
-                            DataPath = "https://api.etherscan.io/api",
-                            Delay = 5000,
-                            DeletedBy = 0L,
-                            FailureDelay = 0L,
-                            Guid = new Guid("d13fc276-8077-49d2-ba38-998c58895df9"),
-                            IsEnabled = true,
-                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            ModifiedBy = 0L,
-                            RequestType = 0,
-                            ResponseType = 0,
-                            CurrencyId = 3L
-                        },
-                        new
-                        {
-                            Id = 2L,
-                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CreatedBy = 0L,
-                            DataPath = "https://api.etherscan.io/api",
-                            Delay = 5000,
-                            DeletedBy = 0L,
-                            FailureDelay = 0L,
-                            Guid = new Guid("b7b9642e-357a-451c-9741-bf5a7fcb0ad1"),
-                            IsEnabled = true,
-                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            ModifiedBy = 0L,
-                            RequestType = 0,
-                            ResponseType = 0,
-                            CurrencyId = 4L
-                        },
-                        new
-                        {
-                            Id = 3L,
-                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CreatedBy = 0L,
-                            DataPath = "https://insight.bitpay.com/api/status?q=getBlockCount",
-                            Delay = 90000,
-                            DeletedBy = 0L,
-                            FailureDelay = 0L,
-                            Guid = new Guid("31ceeb18-1d89-43d2-b215-0488d9417c67"),
-                            IsEnabled = true,
-                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            ModifiedBy = 0L,
-                            RequestType = 0,
-                            ResponseType = 0,
-                            CurrencyId = 5L
-                        },
-                        new
-                        {
-                            Id = 4L,
-                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CreatedBy = 0L,
-                            DataPath = "https://api.coinranking.com/v1/public/coin/1?base=USD",
-                            Delay = 90000,
-                            DeletedBy = 0L,
-                            FailureDelay = 0L,
-                            Guid = new Guid("7f10715f-b5cc-4e52-9fa8-011311a5a2ca"),
-                            IsEnabled = true,
-                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            ModifiedBy = 0L,
-                            RequestType = 0,
-                            ResponseType = 0,
-                            CurrencyId = 5L
-                        });
-                });
-
-            modelBuilder.Entity("Nozomi.Data.Models.Web.Websocket.WebsocketRequest", b =>
-                {
-                    b.HasBaseType("Nozomi.Data.Models.Web.Request");
-
-                    b.Property<long>("CurrencyPairId")
-                        .HasColumnName("WebsocketRequest_CurrencyPairId");
-
-                    b.HasIndex("CurrencyPairId");
-
-                    b.HasDiscriminator().HasValue("WebsocketRequest");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 13L,
-                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CreatedBy = 0L,
-                            DataPath = "wss://stream.binance.com:9443/stream?streams=!ticker@arr",
-                            Delay = 0,
-                            DeletedBy = 0L,
-                            FailureDelay = 0L,
-                            Guid = new Guid("6f9d8fe7-71f4-42b8-ac31-526f559549a3"),
-                            IsEnabled = true,
-                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            ModifiedBy = 0L,
-                            RequestType = 50,
-                            ResponseType = 1,
-                            CurrencyPairId = 9L
-                        },
-                        new
-                        {
-                            Id = 14L,
-                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CreatedBy = 0L,
-                            DataPath = "wss://stream.binance.com:9443/stream?streams=!ticker@arr",
-                            Delay = 0,
-                            DeletedBy = 0L,
-                            FailureDelay = 0L,
-                            Guid = new Guid("dc33dc82-26e5-4eef-af44-78e1efce2d1f"),
-                            IsEnabled = true,
-                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            ModifiedBy = 0L,
-                            RequestType = 50,
-                            ResponseType = 1,
-                            CurrencyPairId = 10L
-                        });
                 });
 
             modelBuilder.Entity("Nozomi.Data.Models.Currency.Currency", b =>
@@ -5168,6 +5137,25 @@ namespace Nozomi.Repo.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
+            modelBuilder.Entity("Nozomi.Data.Models.Web.Request", b =>
+                {
+                    b.HasOne("Nozomi.Data.Models.Currency.Currency", "Currency")
+                        .WithMany("Requests")
+                        .HasForeignKey("CurrencyId")
+                        .HasConstraintName("Currencies_CurrencyRequests_Constraint")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("Nozomi.Data.Models.Currency.CurrencyPair", "CurrencyPair")
+                        .WithMany("Requests")
+                        .HasForeignKey("CurrencyPairId")
+                        .HasConstraintName("CurrencyPair_CurrencyPairRequest_Constraint");
+
+                    b.HasOne("Nozomi.Data.Models.Currency.CurrencyType", "CurrencyType")
+                        .WithMany("Requests")
+                        .HasForeignKey("CurrencyTypeId")
+                        .HasConstraintName("CurrencyType_Request_Constraint");
+                });
+
             modelBuilder.Entity("Nozomi.Data.Models.Web.RequestComponent", b =>
                 {
                     b.HasOne("Nozomi.Data.Models.Web.Request", "Request")
@@ -5186,9 +5174,9 @@ namespace Nozomi.Repo.Migrations
 
             modelBuilder.Entity("Nozomi.Data.Models.Web.Websocket.WebsocketCommand", b =>
                 {
-                    b.HasOne("Nozomi.Data.Models.Web.Websocket.WebsocketRequest", "WebsocketRequest")
+                    b.HasOne("Nozomi.Data.Models.Web.Request", "Request")
                         .WithMany("WebsocketCommands")
-                        .HasForeignKey("WebsocketRequestId")
+                        .HasForeignKey("RequestId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
@@ -5197,32 +5185,6 @@ namespace Nozomi.Repo.Migrations
                     b.HasOne("Nozomi.Data.Models.Web.Websocket.WebsocketCommand", "WebsocketCommand")
                         .WithMany("WebsocketCommandProperties")
                         .HasForeignKey("WebsocketCommandId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("Nozomi.Data.Models.Web.CurrencyPairRequest", b =>
-                {
-                    b.HasOne("Nozomi.Data.Models.Currency.CurrencyPair", "CurrencyPair")
-                        .WithMany("CurrencyPairRequests")
-                        .HasForeignKey("CurrencyPairId")
-                        .HasConstraintName("CurrencyPair_CurrencyPairRequest_Constraint")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("Nozomi.Data.Models.Web.CurrencyRequest", b =>
-                {
-                    b.HasOne("Nozomi.Data.Models.Currency.Currency", "Currency")
-                        .WithMany("CurrencyRequests")
-                        .HasForeignKey("CurrencyId")
-                        .HasConstraintName("CurrencyRequest_Currency_Constraint")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("Nozomi.Data.Models.Web.Websocket.WebsocketRequest", b =>
-                {
-                    b.HasOne("Nozomi.Data.Models.Currency.CurrencyPair", "CurrencyPair")
-                        .WithMany("WebsocketRequests")
-                        .HasForeignKey("CurrencyPairId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 #pragma warning restore 612, 618

@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Nozomi.Base.Identity.ViewModels.Manage;
+using Nozomi.Data;
 using Nozomi.Data.AreaModels.v1.CurrencySource;
 using Nozomi.Service.Events.Interfaces;
 using Nozomi.Service.Identity.Managers;
@@ -57,7 +58,7 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
             // Will be using IndexViewModel for now because it does the same thing
             var vm = new IndexViewModel
             {
-                Sources = _sourceEvent.GetAll(true).ToList()
+                Sources = _sourceEvent.GetAllNonDeleted(true).ToList()
             };
 
             return View(vm);
@@ -76,15 +77,11 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
                 return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
 
-            // If it works
-            if (!ModelState.IsValid)
-            {
-                
-            }
-
-            var res = _sourceService.Create(createSource);
+            var result = _sourceService.Create(createSource);
             
-            return RedirectToAction("CreateSource");
+            if (result.ResultType.Equals(NozomiResultType.Success)) return Ok(result);
+
+            return NotFound();
         }
         
         #endregion

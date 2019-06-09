@@ -20,6 +20,10 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                 .IsRequired(false);
             entityTypeBuilder.HasMany(ct => ct.Currencies).WithOne(c => c.CurrencyType)
                 .HasForeignKey(c => c.CurrencyTypeId).HasConstraintName("CurrencyType_Currencies_Constraint");
+            entityTypeBuilder.HasMany(ct => ct.Requests)
+                .WithOne(r => r.CurrencyType).HasForeignKey(r => r.CurrencyTypeId)
+                .HasConstraintName("CurrencyType_Request_Constraint")
+                .IsRequired(false);
 
             entityTypeBuilder.HasData(
                 new CurrencyType()

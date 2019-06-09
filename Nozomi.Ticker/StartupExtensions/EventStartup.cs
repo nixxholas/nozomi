@@ -1,5 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Nozomi.Data.Models.Web.Analytical;
+using Nozomi.Infra.Admin.Service.Events;
+using Nozomi.Infra.Admin.Service.Events.Interfaces;
 using Nozomi.Infra.Analysis.Service.Events;
 using Nozomi.Infra.Analysis.Service.Events.Interfaces;
 using Nozomi.Preprocessing.Events;
@@ -8,8 +10,6 @@ using Nozomi.Service.Events;
 using Nozomi.Service.Events.Analysis;
 using Nozomi.Service.Events.Analysis.Interfaces;
 using Nozomi.Service.Events.Interfaces;
-using Nozomi.Service.Events.Websocket;
-using Nozomi.Service.Events.Websocket.Interfaces;
 using Nozomi.Service.Identity.Events;
 using Nozomi.Service.Identity.Events.Auth;
 using Nozomi.Service.Identity.Events.Auth.Interfaces;
@@ -29,13 +29,12 @@ namespace Nozomi.Ticker.StartupExtensions
             
             services.AddScoped<ICurrencyEvent, CurrencyEvent>();
             services.AddScoped<ICurrencyPairEvent, CurrencyPairEvent>();
-            services.AddScoped<ICurrencyRequestEvent, CurrencyRequestEvent>();
-            services.AddScoped<ICurrencyTypeEvent, CurrencyTypeEvent>();
+            services.AddScoped<ICurrencyPropertyAdminEvent, CurrencyPropertyAdminEvent>();
+            services.AddScoped<ICurrencyTypeAdminEvent, CurrencyTypeAdminEvent>();
             services.AddScoped<IRequestEvent, RequestEvent>();
             services.AddScoped<IRequestComponentEvent, RequestComponentEvent>();
             services.AddScoped<ISourceEvent, SourceEvent>();
             services.AddScoped<ITickerEvent, TickerEvent>();
-            services.AddScoped<IWebsocketRequestEvent, WebsocketRequestEvent>();
             
             // TODO: Microservices
             // Nozomi.Analysis event injections

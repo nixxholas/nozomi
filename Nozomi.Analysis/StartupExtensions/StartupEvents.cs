@@ -1,12 +1,12 @@
 using Microsoft.Extensions.DependencyInjection;
+using Nozomi.Infra.Admin.Service.Events;
+using Nozomi.Infra.Admin.Service.Events.Interfaces;
 using Nozomi.Infra.Analysis.Service.Events;
 using Nozomi.Infra.Analysis.Service.Events.Interfaces;
 using Nozomi.Service.Events;
 using Nozomi.Service.Events.Analysis;
 using Nozomi.Service.Events.Analysis.Interfaces;
 using Nozomi.Service.Events.Interfaces;
-using Nozomi.Service.Events.Websocket;
-using Nozomi.Service.Events.Websocket.Interfaces;
 
 namespace Nozomi.Analysis.StartupExtensions
 {
@@ -16,13 +16,11 @@ namespace Nozomi.Analysis.StartupExtensions
         {
             services.AddScoped<ICurrencyEvent, CurrencyEvent>();
             services.AddScoped<ICurrencyPairEvent, CurrencyPairEvent>();
-            services.AddScoped<ICurrencyRequestEvent, CurrencyRequestEvent>();
-            services.AddScoped<ICurrencyTypeEvent, CurrencyTypeEvent>();
+            services.AddScoped<ICurrencyTypeAdminEvent, CurrencyTypeAdminEvent>();
             services.AddScoped<IRequestEvent, RequestEvent>();
             services.AddScoped<IRequestComponentEvent, RequestComponentEvent>();
             services.AddScoped<ISourceEvent, SourceEvent>();
             services.AddScoped<ITickerEvent, TickerEvent>();
-            services.AddScoped<IWebsocketRequestEvent, WebsocketRequestEvent>();
             
             // Nozomi.Analysis event injections
             services.AddScoped<IAnalysedComponentEvent, AnalysedComponentEvent>();

@@ -26,9 +26,7 @@ namespace Nozomi.Repo.Data
         public DbSet<AnalysedComponent> AnalysedComponents { get; set; }
         public DbSet<AnalysedHistoricItem> AnalysedHistoricItems { get; set; }
         public DbSet<Currency> Currencies { get; set; }
-        public DbSet<CurrencyRequest> CurrencyRequests { get; set; }
         public DbSet<CurrencyPair> CurrencyPairs { get; set; }
-        public DbSet<CurrencyPairRequest> CurrencyPairRequests { get; set; }
         public DbSet<CurrencyType> CurrencyTypes { get; set; }
         public DbSet<CurrencySource> CurrencySources { get; set; }
         public DbSet<Request> Requests { get; set; }
@@ -37,7 +35,6 @@ namespace Nozomi.Repo.Data
         public DbSet<RequestLog> RequestLogs { get; set; }
         public DbSet<RequestProperty> RequestProperties { get; set; }
         public DbSet<Source> Sources { get; set; }
-        public DbSet<WebsocketRequest> WebsocketRequests { get; set; }
         public DbSet<WebsocketCommand> WebsocketCommands { get; set; }
         public DbSet<WebsocketCommandProperty> WebsocketCommandProperties { get; set; }
         
@@ -50,12 +47,9 @@ namespace Nozomi.Repo.Data
             var analysedComponentMap = new AnalysedComponentMap(modelBuilder.Entity<AnalysedComponent>());
             var analysedHistoricItemMap = new AnalysedHistoricItemMap(modelBuilder.Entity<AnalysedHistoricItem>());
             var currencyMap = new CurrencyMap(modelBuilder.Entity<Currency>());
-            var currencyRequestMap = new CurrencyRequestMap(modelBuilder.Entity<CurrencyRequest>());
             var currencyPairMap = new CurrencyPairMap(modelBuilder.Entity<CurrencyPair>());
-            var currencyPairRequestMap = new CurrencyPairRequestMap(modelBuilder.Entity<CurrencyPairRequest>());
             var currencyTypeMap = new CurrencyTypeMap(modelBuilder.Entity<CurrencyType>());
             var requestMap = new RequestMap(modelBuilder.Entity<Request>());
-            var webSocketRequestMap = new WebsocketRequestMap(modelBuilder.Entity<WebsocketRequest>());
             var webSocketCommandMap = new WebsocketCommandMap(modelBuilder.Entity<WebsocketCommand>());
             var webSocketCommandPropertyMap = new WebsocketCommandPropertyMap(modelBuilder.Entity<WebsocketCommandProperty>());
             var requestComponentMap = new RequestComponentMap(modelBuilder.Entity<RequestComponent>());

@@ -10,7 +10,7 @@ namespace Nozomi.Preprocessing.Swagger.Examples.Requests.v1.Currency
             return new UpdateCurrency()
             {
                 CurrencyTypeId = 2, // 1, FIAT; 2, CRYPTO
-                Abbrv = "USDT",
+                Abbreviation = "USDT",
                 Name = "Tether USD",
                 CurrencySourceId = 1,
                 WalletTypeId = 9

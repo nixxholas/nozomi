@@ -73,7 +73,7 @@ namespace Nozomi.Service.Services
                 {
                     CurrencySourceId = createTickerInputModel.CurrencySourceId,
                     CurrencyTypeId = mainCurrency.CurrencyTypeId,
-                    Abbrv = mainCurrency.Abbreviation,
+                    Abbreviation = mainCurrency.Abbreviation,
                     Name = mainCurrency.Name
                 });
                 
@@ -109,7 +109,7 @@ namespace Nozomi.Service.Services
                 {
                     CurrencySourceId = createTickerInputModel.CurrencySourceId,
                     CurrencyTypeId = counterCurrency.CurrencyTypeId,
-                    Abbrv = counterCurrency.Abbreviation,
+                    Abbreviation = counterCurrency.Abbreviation,
                     Name = counterCurrency.Name
                 });
                 
@@ -137,7 +137,7 @@ namespace Nozomi.Service.Services
                 CounterCurrencyAbbrv = counterCurrency.Abbreviation
             };
             
-            var currencyPairRequest = new CurrencyPairRequest
+            var currencyPairRequest = new Request()
             {
                 CurrencyPair = currencyPair,
                 DataPath = createTickerInputModel.DataPath,
@@ -243,7 +243,7 @@ namespace Nozomi.Service.Services
             try
             {
                 // Create the request
-                _unitOfWork.GetRepository<CurrencyPairRequest>().Add(currencyPairRequest);
+                _unitOfWork.GetRepository<Request>().Add(currencyPairRequest);
                 _unitOfWork.Commit();
                 
                 return new NozomiResult<UniqueTickerResponse>(
@@ -295,63 +295,14 @@ namespace Nozomi.Service.Services
 
         public Task<NozomiResult<ICollection<UniqueTickerResponse>>> GetAll(int index)
         {
-            #if DEBUG
-            try
-            {
-                var dataRes = _unitOfWork.GetRepository<CurrencyPair>()
-                    .GetQueryable()
-                    .AsNoTracking()
-                    .Where(cp => cp.DeletedAt == null && cp.IsEnabled)
-                    .Include(cp => cp.MainCurrency)
-                    .Include(cp => cp.CounterCurrency)
-                    .Include(cp => cp.Source)
-                    .Include(cp => cp.CurrencyPairRequests)
-                    .ThenInclude(cpr => cpr.RequestComponents)
-                    .Skip(index * 20)
-                    .Take(20)
-                    .OrderBy(cp => cp.Id)
-                    .DefaultIfEmpty()
-                    .Select(cp => new UniqueTickerResponse
-                    {
-                        MainTickerAbbreviation = cp.MainCurrencyAbbrv,
-                        MainTickerName = cp.MainCurrency.Name,
-                        CounterTickerAbbreviation = cp.CounterCurrencyAbbrv,
-                        CounterTickerName = cp.CounterCurrency.Name,
-                        Exchange = cp.Source.Name,
-                        ExchangeAbbrv = cp.Source.Abbreviation,
-                        LastUpdated = cp.CurrencyPairRequests
-                            .SelectMany(cpr => cpr.RequestComponents)
-                            .Any(rc => rc.DeletedAt == null && rc.IsEnabled) ?
-                        cp.CurrencyPairRequests
-                        .SelectMany(cpr => cpr.RequestComponents)
-                        .FirstOrDefault(rc => rc.DeletedAt == null && rc.IsEnabled)
-                            .ModifiedAt : DateTime.Now,
-                        Properties = cp.CurrencyPairRequests
-                            .SelectMany(cpr => cpr.RequestComponents)
-                            .Where(rc => rc.IsEnabled && rc.DeletedAt == null
-                                                      && !string.IsNullOrEmpty(rc.Value))
-                            .Select(rc => new KeyValuePair<string, string>(
-                                rc.ComponentType.ToString(),
-                                rc.Value))
-                            .DefaultIfEmpty()
-                            .ToList()
-                    })
-                    .ToList();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogInformation(ex.ToString());
-            }
-            #endif
-
             var utrByCpr = _unitOfWork.GetRepository<CurrencyPair>()
                 .GetQueryable()
                 .AsNoTracking()
                 .Where(cp => cp.DeletedAt == null && cp.IsEnabled)
-                .Include(cp => cp.MainCurrency)
-                .Include(cp => cp.CounterCurrency)
                 .Include(cp => cp.Source)
-                .Include(cp => cp.CurrencyPairRequests)
+                .ThenInclude(s => s.SourceCurrencies)
+                .ThenInclude(sc => sc.Currency)
+                .Include(cp => cp.Requests)
                 .ThenInclude(cpr => cpr.RequestComponents)
                 .Skip(index * 20)
                 .Take(20)
@@ -360,20 +311,24 @@ namespace Nozomi.Service.Services
                 .Select(cp => new UniqueTickerResponse
                 {
                     MainTickerAbbreviation = cp.MainCurrencyAbbrv,
-                    MainTickerName = cp.MainCurrency.Name,
+                    MainTickerName = cp.Source.SourceCurrencies
+                        .SingleOrDefault(sc => sc.Currency.Abbreviation.Equals(cp.MainCurrencyAbbrv))
+                        .Currency
+                        .Name,
                     CounterTickerAbbreviation = cp.CounterCurrencyAbbrv,
-                    CounterTickerName = cp.CounterCurrency.Name,
+                    CounterTickerName = cp.Source.SourceCurrencies
+                        .SingleOrDefault(sc => sc.Currency.Abbreviation.Equals(cp.CounterCurrencyAbbrv))
+                        .Currency
+                        .Name,
                     Exchange = cp.Source.Name,
                     ExchangeAbbrv = cp.Source.Abbreviation,
-                    LastUpdated = cp.CurrencyPairRequests
-                        .SelectMany(cpr => cpr.RequestComponents)
-                        .Any(rc => rc.DeletedAt == null && rc.IsEnabled)
-                        ? cp.CurrencyPairRequests
-                            .SelectMany(cpr => cpr.RequestComponents)
-                            .FirstOrDefault(rc => rc.DeletedAt == null && rc.IsEnabled)
-                            .ModifiedAt
-                        : DateTime.Now,
-                    Properties = cp.CurrencyPairRequests
+                    LastUpdated = cp.Requests
+                        .Select(cpr => cpr.RequestComponents
+                            .OrderByDescending(rc => rc.ModifiedAt)
+                            .FirstOrDefault()
+                            .ModifiedAt)
+                        .SingleOrDefault(),
+                    Properties = cp.Requests
                         .SelectMany(cpr => cpr.RequestComponents)
                         .Where(rc => rc.IsEnabled && rc.DeletedAt == null
                                                   && !string.IsNullOrEmpty(rc.Value))
@@ -389,10 +344,10 @@ namespace Nozomi.Service.Services
                 .GetQueryable()
                 .AsNoTracking()
                 .Where(cp => cp.DeletedAt == null && cp.IsEnabled)
-                .Include(cp => cp.MainCurrency)
-                .Include(cp => cp.CounterCurrency)
                 .Include(cp => cp.Source)
-                .Include(cp => cp.WebsocketRequests)
+                .ThenInclude(s => s.SourceCurrencies)
+                .ThenInclude(sc => sc.Currency)
+                .Include(cp => cp.Requests)
                 .ThenInclude(cpr => cpr.RequestComponents)
                 .Skip(index * 20)
                 .Take(20)
@@ -401,20 +356,24 @@ namespace Nozomi.Service.Services
                 .Select(cp => new UniqueTickerResponse
                 {
                     MainTickerAbbreviation = cp.MainCurrencyAbbrv,
-                    MainTickerName = cp.MainCurrency.Name,
+                    MainTickerName = cp.Source.SourceCurrencies
+                        .SingleOrDefault(sc => sc.Currency.Abbreviation.Equals(cp.MainCurrencyAbbrv))
+                        .Currency
+                        .Name,
                     CounterTickerAbbreviation = cp.CounterCurrencyAbbrv,
-                    CounterTickerName = cp.CounterCurrency.Name,
+                    CounterTickerName = cp.Source.SourceCurrencies
+                        .SingleOrDefault(sc => sc.Currency.Abbreviation.Equals(cp.CounterCurrencyAbbrv))
+                        .Currency
+                        .Name,
                     Exchange = cp.Source.Name,
                     ExchangeAbbrv = cp.Source.Abbreviation,
-                    LastUpdated = cp.CurrencyPairRequests
-                        .SelectMany(cpr => cpr.RequestComponents)
-                        .Any(rc => rc.DeletedAt == null && rc.IsEnabled)
-                        ? cp.CurrencyPairRequests
-                            .SelectMany(cpr => cpr.RequestComponents)
-                            .FirstOrDefault(rc => rc.DeletedAt == null && rc.IsEnabled)
-                            .ModifiedAt
-                        : DateTime.Now,
-                    Properties = cp.CurrencyPairRequests
+                    LastUpdated = cp.Requests
+                        .Select(cpr => cpr.RequestComponents
+                            .OrderByDescending(rc => rc.ModifiedAt)
+                            .FirstOrDefault()
+                            .ModifiedAt)
+                        .SingleOrDefault(),
+                    Properties = cp.Requests
                         .SelectMany(cpr => cpr.RequestComponents)
                         .Where(rc => rc.IsEnabled && rc.DeletedAt == null
                                                   && !string.IsNullOrEmpty(rc.Value))
@@ -437,23 +396,24 @@ namespace Nozomi.Service.Services
                     .GetQueryable()
                     .AsNoTracking()
                     .Where(cp => cp.DeletedAt == null && cp.IsEnabled)
-                    .Include(cp => cp.MainCurrency)
-                    .Include(cp => cp.CounterCurrency)
+                    .Include(cp => cp.Source)
+                    .ThenInclude(s => s.SourceCurrencies)
+                    .ThenInclude(sc => sc.Currency)
                     .Include(cp => cp.Source)
                     .Where(cp => cp.Source != null) // Make sure we have a source
-                    .Include(cp => cp.CurrencyPairRequests)
+                    .Include(cp => cp.Requests)
                         .ThenInclude(cpr => cpr.RequestComponents)
                     // Make sure there's something
-                    .Where(cp => cp.CurrencyPairRequests
+                    .Where(cp => cp.Requests
                         .Any(cpr => cpr.RequestComponents.Any(rc => rc.IsEnabled && rc.DeletedAt == null)))
                     .Select(cp => new TickerByExchangeResponse()
                     {
                         Exchange = cp.Source.Name,
                         ExchangeAbbrv = cp.Source.Abbreviation,
-                        LastUpdated = cp.CurrencyPairRequests.FirstOrDefault()
+                        LastUpdated = cp.Requests.FirstOrDefault()
                             .RequestComponents.FirstOrDefault()
                             .ModifiedAt,
-                        Properties = cp.CurrencyPairRequests.FirstOrDefault()
+                        Properties = cp.Requests.FirstOrDefault()
                             .RequestComponents
                             .Select(rc => new KeyValuePair<string, string>(
                                 rc.ComponentType.ToString(), 

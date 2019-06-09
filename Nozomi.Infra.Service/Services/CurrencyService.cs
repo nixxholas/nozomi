@@ -22,7 +22,7 @@ namespace Nozomi.Service.Services
 {
     public class CurrencyService : BaseService<CurrencyService, NozomiDbContext>, ICurrencyService
     {
-        public CurrencyService(ILogger<CurrencyService> logger, 
+        public CurrencyService(ILogger<CurrencyService> logger,
             IUnitOfWork<NozomiDbContext> unitOfWork) : base(logger, unitOfWork)
         {
         }
@@ -36,7 +36,7 @@ namespace Nozomi.Service.Services
                     var currencyExists = _unitOfWork.GetRepository<Currency>()
                         .GetQueryable()
                         .AsNoTracking()
-                        .Any(c => c.Abbreviation.Equals(createCurrency.Abbrv,
+                        .Any(c => c.Abbreviation.Equals(createCurrency.Abbreviation,
                             StringComparison.InvariantCultureIgnoreCase));
 
                     var sourceExists = _unitOfWork.GetRepository<Source>()
@@ -48,14 +48,16 @@ namespace Nozomi.Service.Services
                     {
                         var currency = new Currency()
                         {
-                            Abbreviation = createCurrency.Abbrv,
+                            Abbreviation = createCurrency.Abbreviation,
+                            Slug = createCurrency.Slug,
                             Name = createCurrency.Name,
-                            CurrencyTypeId = createCurrency.CurrencyTypeId
+                            CurrencyTypeId = createCurrency.CurrencyTypeId,
+                            IsEnabled = createCurrency.IsEnabled
                         };
-                    
+
                         _unitOfWork.GetRepository<Currency>().Add(currency);
                         _unitOfWork.Commit(userId);
-                    
+
                         // Make sure source exists before adding
                         if (sourceExists)
                         {
@@ -67,7 +69,7 @@ namespace Nozomi.Service.Services
 
                             _unitOfWork.Commit(userId);
                         }
-                        
+
                         return new NozomiResult<string>(NozomiResultType.Success, "Currency successfully created" +
                                                                                   "and binded to source!");
                     }
@@ -76,9 +78,9 @@ namespace Nozomi.Service.Services
                         var currency = _unitOfWork.GetRepository<Currency>()
                             .GetQueryable()
                             .AsNoTracking()
-                            .SingleOrDefault(c => c.Abbreviation.Equals(createCurrency.Abbrv,
+                            .SingleOrDefault(c => c.Abbreviation.Equals(createCurrency.Abbreviation,
                                 StringComparison.InvariantCultureIgnoreCase));
-                        
+
                         // Make sure source exists before adding
                         if (sourceExists && currency != null)
                         {
@@ -91,12 +93,13 @@ namespace Nozomi.Service.Services
                             _unitOfWork.Commit(userId);
                         }
                     }
-                    
+
                     return new NozomiResult<string>(NozomiResultType.Success, "Currency successfully created!");
                 }
 
-                return new NozomiResult<string>(NozomiResultType.Failed, "Failed to create currency. Please make sure " +
-                                                                         "that your currency object is proper.");
+                return new NozomiResult<string>(NozomiResultType.Failed,
+                    "Failed to create currency. Please make sure " +
+                    "that your currency object is proper.");
             }
             catch (Exception ex)
             {
@@ -114,14 +117,15 @@ namespace Nozomi.Service.Services
 
                 if (currToUpd != null)
                 {
-                    currToUpd.Abbreviation = currency.Abbrv;
+                    currToUpd.Abbreviation = currency.Abbreviation;
+                    currToUpd.Slug = currency.Slug;
                     currToUpd.CurrencyTypeId = currency.CurrencyTypeId;
                     currToUpd.Description = currency.Description;
                     currToUpd.Denominations = currency.Denominations;
                     currToUpd.DenominationName = currency.DenomationName;
                     currToUpd.Name = currency.Name;
                     currToUpd.IsEnabled = currency.IsEnabled;
-                    
+
                     _unitOfWork.GetRepository<Currency>().Update(currToUpd);
                     _unitOfWork.Commit(userId);
 
@@ -129,8 +133,9 @@ namespace Nozomi.Service.Services
                 }
             }
 
-            return new NozomiResult<string>(NozomiResultType.Failed, "Invalid payload, please ensure that your currency" +
-                                                                     " payload contains valid entries.");
+            return new NozomiResult<string>(NozomiResultType.Failed,
+                "Invalid payload, please ensure that your currency" +
+                " payload contains valid entries.");
         }
 
         public NozomiResult<string> Delete(long currencyId, bool hardDelete = false, long userId = 0)
@@ -145,7 +150,7 @@ namespace Nozomi.Service.Services
                 {
                     currToDel.DeletedAt = DateTime.UtcNow;
                     currToDel.DeletedBy = userId;
-                    
+
                     _unitOfWork.GetRepository<Currency>().Update(currToDel);
                     _unitOfWork.Commit(userId);
 

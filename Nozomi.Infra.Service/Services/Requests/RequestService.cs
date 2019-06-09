@@ -2,8 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Nozomi.Data;
+using Nozomi.Data.AreaModels.v1.Requests;
 using Nozomi.Data.Models.Web;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.BCL.Repository;
@@ -14,23 +17,72 @@ namespace Nozomi.Service.Services.Requests
 {
     public class RequestService : BaseService<RequestService, NozomiDbContext>, IRequestService
     {
-        public RequestService(ILogger<RequestService> logger, IUnitOfWork<NozomiDbContext> unitOfWork) 
+        public RequestService(ILogger<RequestService> logger, IUnitOfWork<NozomiDbContext> unitOfWork)
             : base(logger, unitOfWork)
         {
         }
 
-        public long Create(Request req, long userId = 0)
+        public long Create(Request request, long userId = 0)
         {
-            // Safetynet
-            if (req != null && req.IsValid())
+            try
             {
-                _unitOfWork.GetRepository<Request>().Add(req);
+                _unitOfWork.GetRepository<Request>().Add(request);
+                _unitOfWork.SaveChanges(userId);
+
+                return request.Id;
+            }
+            catch (Exception ex)
+            {
+                return long.MinValue;
+            }
+        }
+
+        public NozomiResult<string> Create(CreateRequest createRequest, long userId = 0)
+        {
+            try
+            {
+                if (createRequest == null || !createRequest.IsValid())
+                    return new NozomiResult<string>(NozomiResultType.Failed,
+                        "Failed to create request. Please make sure " +
+                        "that your request object is proper");
+
+                var request = new Request()
+                {
+                    CurrencyId = createRequest.CurrencyId,
+                    CurrencyPairId = createRequest.CurrencyPairId,
+                    CurrencyTypeId = createRequest.CurrencyTypeId,
+                    DataPath = createRequest.DataPath,
+                    Delay = createRequest.Delay,
+                    FailureDelay = createRequest.FailureDelay,
+                    RequestType = createRequest.RequestType,
+                    ResponseType = createRequest.ResponseType,
+                    RequestComponents = createRequest.RequestComponents
+                        .Select(rc => new RequestComponent()
+                        {
+                            ComponentType = rc.ComponentType,
+                            QueryComponent = rc.QueryComponent
+                        })
+                        .ToList(),
+                    RequestProperties = createRequest.RequestProperties
+                        .Select(rp => new RequestProperty()
+                        {
+                            RequestPropertyType = rp.RequestPropertyType,
+                            Key = rp.Key,
+                            Value = rp.Value
+                        })
+                        .ToList()
+                };
+
+                _unitOfWork.GetRepository<Request>().Add(request);
                 _unitOfWork.Commit(userId);
 
-                return req.Id;
+                return new NozomiResult<string>(NozomiResultType.Success, "Request successfully created!", request);
             }
 
-            return -1;
+            catch (Exception ex)
+            {
+                return new NozomiResult<string>(NozomiResultType.Failed, ex.ToString());
+            }
         }
 
         public bool Delay(Request request, TimeSpan duration)
@@ -45,7 +97,7 @@ namespace Nozomi.Service.Services.Requests
             if (req != null)
             {
                 req.ModifiedAt = req.ModifiedAt.Add(duration);
-                
+
                 _unitOfWork.GetRepository<Request>().Update(req);
                 _unitOfWork.Commit();
 
@@ -55,241 +107,140 @@ namespace Nozomi.Service.Services.Requests
             return false;
         }
 
-        public bool Update(Request req, long userId = 0)
+        public NozomiResult<string> Update(UpdateRequest updateRequest, long userId = 0)
         {
-            // Safetynet
-            if (req == null || !req.IsValid()) return false;
-            
-            var reqToUpd = _unitOfWork.GetRepository<Request>()
-                .Get(r => r.Id.Equals(req.Id) && r.DeletedAt == null)
-                .SingleOrDefault();
-
-            if (reqToUpd == null) return false;
-
-            reqToUpd.DataPath = req.DataPath;
-            reqToUpd.RequestType = req.RequestType;
-            reqToUpd.IsEnabled = req.IsEnabled;
-                
-            _unitOfWork.GetRepository<Request>().Update(reqToUpd);
-            _unitOfWork.Commit(userId);
-
-            return true;
-        }
-
-        public bool SoftDelete(long reqId, long userId = 0)
-        {
-            if (reqId > 0)
+            try
             {
-                var reqToDel = _unitOfWork.GetRepository<Request>()
-                    .Get(r => r.Id.Equals(reqId) && r.DeletedAt == null)
-                    .SingleOrDefault();
+                if (updateRequest == null || !updateRequest.IsValid())
+                    return new NozomiResult<string>(NozomiResultType.Failed, "Failed to update request");
 
-                if (reqToDel != null)
+                var reqToUpd = _unitOfWork.GetRepository<Request>()
+                    .GetQueryable()
+                    .Include(r => r.RequestComponents)
+                    .Include(r => r.RequestProperties)
+                    .SingleOrDefault(r => r.Id.Equals(updateRequest.Id) && r.DeletedAt == null);
+
+                if (reqToUpd == null)
+                    return new NozomiResult<string>(NozomiResultType.Failed,
+                        "Failed to update request. Unable to find the request");
+
+                reqToUpd.DataPath = updateRequest.DataPath;
+                reqToUpd.Delay = updateRequest.Delay;
+                reqToUpd.RequestType = updateRequest.RequestType;
+                reqToUpd.ResponseType = updateRequest.ResponseType;
+                reqToUpd.IsEnabled = updateRequest.IsEnabled;
+
+                // Include RequestComponents if there are any modified objects
+                if (updateRequest.RequestComponents != null && updateRequest.RequestComponents.Count > 0)
                 {
-                    reqToDel.DeletedAt = DateTime.UtcNow;
-                    reqToDel.DeletedBy = userId;
+                    foreach (var ucpc in updateRequest.RequestComponents)
+                    {
+                        var cpc = reqToUpd.RequestComponents.SingleOrDefault(rc => rc.Id.Equals(ucpc.Id));
 
-                    _unitOfWork.GetRepository<Request>().Update(reqToDel);
-                    _unitOfWork.Commit(userId);
+                        if (cpc == null)
+                            return new NozomiResult<string>(NozomiResultType.Failed, "Failed to update request");
 
-                    return true;
+                        // Deleting?
+                        if (ucpc.ToBeDeleted())
+                        {
+                            cpc.DeletedAt = DateTime.UtcNow;
+                            cpc.DeletedBy = userId;
+
+                            _unitOfWork.GetRepository<RequestComponent>().Update(cpc);
+                        }
+                        // Updating?
+                        else
+                        {
+                            if (ucpc.ComponentType >= 0) cpc.ComponentType = ucpc.ComponentType;
+                            if (!string.IsNullOrEmpty(ucpc.QueryComponent)) cpc.QueryComponent = ucpc.QueryComponent;
+
+                            _unitOfWork.GetRepository<RequestComponent>().Update(cpc);
+                        }
+                    }
                 }
-            }
 
+                // Include RequestProperties if there are any modified objects
+                if (updateRequest.RequestProperties != null && updateRequest.RequestProperties.Count > 0)
+                {
+                    foreach (var urp in updateRequest.RequestProperties)
+                    {
+                        var requestProperty = reqToUpd.RequestProperties.SingleOrDefault(rc => rc.Id.Equals(urp.Id));
+
+                        if (requestProperty == null)
+                            return new NozomiResult<string>(NozomiResultType.Failed, "Failed to update request");
+
+                        // Deleting?
+                        if (urp.ToBeDeleted())
+                        {
+                            requestProperty.DeletedAt = DateTime.UtcNow;
+                            requestProperty.DeletedBy = userId;
+
+                            _unitOfWork.GetRepository<RequestProperty>().Update(requestProperty);
+                        }
+                        // Updating?
+                        else
+                        {
+                            if (urp.RequestPropertyType > 0)
+                                requestProperty.RequestPropertyType = urp.RequestPropertyType;
+                            if (urp.Key != null) requestProperty.Key = urp.Key;
+                            if (urp.Value != null) requestProperty.Value = urp.Value;
+
+                            _unitOfWork.GetRepository<RequestProperty>().Update(requestProperty);
+                        }
+                    }
+                }
+
+                _unitOfWork.GetRepository<Request>().Update(reqToUpd);
+                _unitOfWork.Commit(userId);
+
+                return new NozomiResult<string>(NozomiResultType.Success, "Successfully updated the request!");
+            }
+            catch (Exception ex)
+            {
+                return new NozomiResult<string>(NozomiResultType.Failed, ex.ToString());
+            }
+        }
+
+        public NozomiResult<string> Delete(long reqId, bool hardDelete = false, long userId = 0)
+        {
+            try
+            {
+                if (reqId > 0 && userId >= 0)
+                {
+                    var reqToDel = _unitOfWork.GetRepository<Request>()
+                        .Get(r => r.Id.Equals(reqId) && r.DeletedAt == null)
+                        .SingleOrDefault();
+
+                    if (reqToDel != null)
+                    {
+                        if (!hardDelete)
+                        {
+                            reqToDel.DeletedAt = DateTime.UtcNow;
+                            reqToDel.DeletedBy = userId;
+                            _unitOfWork.GetRepository<Request>().Update(reqToDel);
+                        }
+                        else
+                        {
+                            _unitOfWork.GetRepository<Request>().Delete(reqToDel);
+                        }
+
+                        _unitOfWork.Commit(userId);
+
+                        return new NozomiResult<string>(NozomiResultType.Success, "Request successfully deleted!");
+                    }
+                }
+
+                return new NozomiResult<string>(NozomiResultType.Failed, "Invalid request ID.");
+            }
+            catch (Exception ex)
+            {
+                return new NozomiResult<string>(NozomiResultType.Failed, ex.ToString());
+            }
+        }
+
+        public bool ManualPoll(long id, long userId = 0)
+        {
             return false;
-        }
-
-        public IEnumerable<Request> GetAllActive(bool track = false)
-        {
-            if (!track)
-            {
-                return _unitOfWork.GetRepository<Request>()
-                    .GetQueryable()
-                    .AsNoTracking()
-                    .Where(r => r.DeletedAt == null && r.IsEnabled);
-            }
-
-            return _unitOfWork.GetRepository<Request>()
-                .GetQueryable()
-                .AsNoTracking()
-                .Where(r => r.DeletedAt == null && r.IsEnabled)
-                .Include(r => r.RequestComponents)
-                .Include(r => r.RequestProperties);
-        }
-
-        public IEnumerable<dynamic> GetAllActiveObsc(bool track = false)
-        {
-            if (!track)
-            {
-                return _unitOfWork.GetRepository<Request>()
-                    .GetQueryable()
-                    .AsNoTracking()
-                    .Where(r => r.DeletedAt == null && r.IsEnabled)
-                    .Select(r => new
-                    {
-                        id = r.Id,
-                        dataPath = r.DataPath,
-                        guid = r.Guid,
-                        requestType = r.RequestType,
-                        createdAt = r.CreatedAt,
-                        createdBy = r.CreatedBy,
-                        modifiedAt = r.ModifiedAt,
-                        modifiedBy = r.ModifiedBy
-                    });
-            }
-
-            return _unitOfWork.GetRepository<Request>()
-                .GetQueryable()
-                .AsNoTracking()
-                .Where(r => r.DeletedAt == null && r.IsEnabled)
-                .Include(r => r.RequestComponents)
-                .Include(r => r.RequestProperties)
-                .Where(r => r.RequestComponents
-                    .Any(rc => rc.DeletedAt == null && rc.IsEnabled))
-                .Where(r => r.RequestProperties
-                    .Any(rp => rp.DeletedAt == null & rp.IsEnabled))
-                .Select(r => new
-                {
-                    id = r.Id,
-                    dataPath = r.DataPath,
-                    guid = r.Guid,
-                    requestType = r.RequestType,
-                    createdAt = r.CreatedAt,
-                    createdBy = r.CreatedBy,
-                    modifiedAt = r.ModifiedAt,
-                    modifiedBy = r.ModifiedBy,
-                    requestComponents = r.RequestComponents
-                        .Select(rc => new
-                        {
-                            id = rc.Id,
-                            queryComponent = rc.QueryComponent,
-                            value = rc.Value,
-                            isEnabled = rc.IsEnabled,
-                            createdAt = rc.CreatedAt,
-                            createdBy = rc.CreatedBy,
-                            modifiedAt = rc.ModifiedAt,
-                            modifiedBy = rc.ModifiedBy
-                        }),
-                    requestProperties = r.RequestProperties
-                        .Select(rp => new
-                        {
-                            id = rp.Id,
-                            requestPropertyType = rp.RequestPropertyType,
-                            key = rp.Key,
-                            value = rp.Value,
-                            createdAt = rp.CreatedAt,
-                            createdBy = rp.CreatedBy,
-                            modifiedAt = rp.ModifiedAt,
-                            modifiedBy = rp.ModifiedBy
-                        })
-                });
-        }
-
-        public IEnumerable<Request> GetAll(bool track = false)
-        {
-            if (!track)
-            {
-                return _unitOfWork.GetRepository<Request>()
-                    .GetQueryable()
-                    .AsNoTracking();
-            }
-
-            return _unitOfWork.GetRepository<Request>()
-                .GetQueryable()
-                .AsNoTracking()
-                .Include(r => r.RequestComponents)
-                .Include(r => r.RequestProperties);
-        }
-
-        public IEnumerable<Request> GetAll(Expression<Func<Request, bool>> predicate, bool track = false)
-        {
-            if (!track)
-            {
-                return _unitOfWork.GetRepository<Request>()
-                    .GetQueryable()
-                    .Where(predicate)
-                    .AsNoTracking();
-            }
-
-            return _unitOfWork.GetRepository<Request>()
-                .GetQueryable()
-                .AsNoTracking()
-                .Include(r => r.RequestComponents)
-                .Include(r => r.RequestProperties)
-                .Where(predicate);
-        }
-
-        public IEnumerable<dynamic> GetAllObsc(bool track = false)
-        {
-            if (!track)
-            {
-                return _unitOfWork.GetRepository<Request>()
-                    .GetQueryable()
-                    .AsNoTracking()
-                    .Select(r => new
-                    {
-                        id = r.Id,
-                        dataPath = r.DataPath,
-                        guid = r.Guid,
-                        requestType = r.RequestType,
-                        isEnabled = r.IsEnabled,
-                        createdAt = r.CreatedAt,
-                        createdBy = r.CreatedBy,
-                        modifiedAt = r.ModifiedAt,
-                        modifiedBy = r.ModifiedBy,
-                        deletedAt = r.DeletedAt,
-                        deletedBy = r.DeletedBy
-                    });
-            }
-
-            return _unitOfWork.GetRepository<Request>()
-                .GetQueryable()
-                .AsNoTracking()
-                .Include(r => r.RequestComponents)
-                .Include(r => r.RequestProperties)
-                .Select(r => new
-                {
-                    id = r.Id,
-                    dataPath = r.DataPath,
-                    guid = r.Guid,
-                    requestType = r.RequestType,
-                    isEnabled = r.IsEnabled,
-                    createdAt = r.CreatedAt,
-                    createdBy = r.CreatedBy,
-                    modifiedAt = r.ModifiedAt,
-                    modifiedBy = r.ModifiedBy,
-                    deletedAt = r.DeletedAt,
-                    deletedBy = r.DeletedBy,
-                    requestComponents = r.RequestComponents
-                        .Select(rc => new
-                        {
-                            id = rc.Id,
-                            queryComponent = rc.QueryComponent,
-                            value = rc.Value,
-                            isEnabled = rc.IsEnabled,
-                            createdAt = rc.CreatedAt,
-                            createdBy = rc.CreatedBy,
-                            modifiedAt = rc.ModifiedAt,
-                            modifiedBy = rc.ModifiedBy,
-                            deletedAt = rc.DeletedAt,
-                            deletedBy = rc.DeletedBy
-                        }),
-                    requestProperties = r.RequestProperties
-                        .Select(rp => new
-                        {
-                            id = rp.Id,
-                            requestPropertyType = rp.RequestPropertyType,
-                            key = rp.Key,
-                            value = rp.Value,
-                            isEnabled = rp.IsEnabled,
-                            createdAt = rp.CreatedAt,
-                            createdBy = rp.CreatedBy,
-                            modifiedAt = rp.ModifiedAt,
-                            modifiedBy = rp.ModifiedBy,
-                            deletedAt = rp.DeletedAt,
-                            deletedBy = rp.DeletedBy
-                        })
-                });
         }
     }
 }

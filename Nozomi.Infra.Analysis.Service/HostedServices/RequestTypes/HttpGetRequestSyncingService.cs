@@ -47,18 +47,16 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
     {
         private readonly NozomiDbContext _nozomiDbContext;
         private readonly HttpClient _httpClient = new HttpClient();
-        private readonly ICurrencyRequestEvent _currencyRequestEvent;
         private readonly IRequestComponentService _requestComponentService;
-        private readonly ICurrencyPairRequestService _currencyPairRequestService;
+        private readonly IRequestEvent _requestEvent;
         private readonly IRequestService _requestService;
         private readonly IRequestLogService _requestLogService;
 
         public HttpGetRequestSyncingService(IServiceProvider serviceProvider) : base(serviceProvider)
         {
             _nozomiDbContext = _scope.ServiceProvider.GetService<NozomiDbContext>();
-            _currencyRequestEvent = _scope.ServiceProvider.GetRequiredService<ICurrencyRequestEvent>();
             _requestComponentService = _scope.ServiceProvider.GetRequiredService<IRequestComponentService>();
-            _currencyPairRequestService = _scope.ServiceProvider.GetRequiredService<ICurrencyPairRequestService>();
+            _requestEvent = _scope.ServiceProvider.GetRequiredService<IRequestEvent>();
             _requestService = _scope.ServiceProvider.GetRequiredService<IRequestService>();
             _requestLogService = _scope.ServiceProvider.GetRequiredService<IRequestLogService>();
         }
@@ -76,26 +74,15 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
                 {
                     // We will need to re-synchronize the Request collection to make sure we're polling only
                     // the ones we want to poll
-                    var cpRequests = _currencyPairRequestService
+                    var requests = _requestEvent
                         .GetAllByRequestTypeUniqueToURL(RequestType.HttpGet);
 
                     // Iterate the requests
                     // NOTE: Let's not call a parallel loop since HttpClients might tend to result in memory leaks.
-                    foreach (var cpRequest in cpRequests)
+                    foreach (var cpRequest in requests)
                     {
                         // Process the request
                         if (await ProcessRequest(cpRequest.Value))
-                        {
-                            // TODO: Broadcasting
-                        }
-                    }
-
-                    var cRequests = _currencyRequestEvent.GetAllByRequestTypeUniqueToUrl(_nozomiDbContext,
-                        RequestType.HttpGet);
-
-                    foreach (var cRequest in cRequests)
-                    {
-                        if (await ProcessRequest(cRequest.Value))
                         {
                             // TODO: Broadcasting
                         }

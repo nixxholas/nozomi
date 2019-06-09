@@ -8,7 +8,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes.Interfaces
 {
     public interface IWebsocketCurrencyPairRequestSyncingService
     {
-        Task<bool> Process(ICollection<WebsocketRequest> cpr, string payload);
+        Task<bool> Process(ICollection<Request> cpr, string payload);
 
         bool Update(JToken token, ResponseType resType, IEnumerable<RequestComponent> requestComponents);
     }

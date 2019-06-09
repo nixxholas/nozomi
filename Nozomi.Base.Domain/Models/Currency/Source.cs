@@ -16,9 +16,14 @@ namespace Nozomi.Data.Models.Currency
         public string Name { get; set; }
 
         public string APIDocsURL { get; set; }
-        
-        [NotMapped]
-        public long PairCount { get; set; }
+
+        public long PairCount()
+        {
+            if (CurrencyPairs != null)
+                return CurrencyPairs.Count;
+
+            return -1;
+        }
 
         // =========== RELATIONS ============ //
         public ICollection<CurrencySource> SourceCurrencies { get; set; }

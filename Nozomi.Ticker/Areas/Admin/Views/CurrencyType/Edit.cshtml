@@ -1,0 +1,53 @@
+@model Nozomi.Data.Models.Currency.CurrencyType
+
+<!-- Content Section -->
+    <div class="bg-light">
+      <div class="container space-2">
+        <!-- Personal Info Form -->
+        <form class="js-validate">
+          <div class="row">
+            <input type="hidden" asp-for="Id" />
+            
+            <!-- Input -->
+            <div class="col-sm-6 mb-6">
+              <div class="js-form-message">
+                <label asp-for="Name" class="form-label"></label>
+
+                <div class="form-group">
+                  <input type="text" class="form-control" name="name" placeholder="Enter your name"
+                         asp-for="Name" aria-label="Enter your name" required
+                         data-msg="Please enter your name."
+                         data-error-class="u-has-error"
+                         data-success-class="u-has-success">
+                </div>
+              </div>
+            </div>
+            <!-- End Input -->
+
+            <!-- Input -->
+            <div class="col-sm-6 mb-6">
+              <div class="js-form-message">
+                <label asp-for="TypeShortForm" class="form-label"></label>
+
+                <div class="form-group">
+                  <input type="text" class="form-control" name="username" placeholder="Enter your username"
+                         asp-for="TypeShortForm" aria-label="Enter your username" required
+                         data-msg="Please enter your username."
+                         data-error-class="u-has-error"
+                         data-success-class="u-has-success">
+                </div>
+              </div>
+            </div>
+            <!-- End Input -->
+          </div>
+
+          <!-- Buttons -->
+          <button type="submit" class="btn btn-sm btn-primary transition-3d-hover mr-1">Save Changes</button>
+          <a class="btn btn-sm btn-soft-secondary transition-3d-hover"
+                  asp-area="Admin" asp-controller="CurrencyType" asp-action="CurrencyTypes">Cancel</a>
+          <!-- End Buttons -->
+        </form>
+        <!-- End Personal Info Form -->
+      </div>
+    </div>
+    <!-- End Content Section -->

@@ -21,29 +21,19 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
         private readonly ICurrencyEvent _currencyEvent;
         private readonly ICurrencyAdminEvent _currencyAdminEvent;
         private readonly ICurrencyService _currencyService;
-        private readonly ICurrencyTypeEvent _currencyTypeEvent;
+        private readonly ICurrencyTypeAdminEvent _currencyTypeAdminEvent;
         private readonly ISourceEvent _sourceEvent;
 
-        [Route("{abbreviation}")]
-        public IActionResult Currency([FromRoute] string abbreviation)
-        {
-            var vm = new CurrencyViewModel
-            {
-                Currency = _currencyAdminEvent.GetCurrencyByAbbreviation(abbreviation)
-            };
-
-            return View(vm);
-        }
 
         public CurrencyController(ILogger<CurrencyController> logger, NozomiSignInManager signInManager,
             NozomiUserManager userManager, ICurrencyEvent currencyEvent, ICurrencyAdminEvent currencyAdminEvent,
-            ICurrencyService currencyService, ICurrencyTypeEvent currencyTypeEvent, ISourceEvent sourceEvent)
+            ICurrencyService currencyService, ICurrencyTypeAdminEvent currencyTypeAdminEvent, ISourceEvent sourceEvent)
             : base(logger, signInManager, userManager)
         {
             _currencyEvent = currencyEvent;
             _currencyAdminEvent = currencyAdminEvent;
             _currencyService = currencyService;
-            _currencyTypeEvent = currencyTypeEvent;
+            _currencyTypeAdminEvent = currencyTypeAdminEvent;
             _sourceEvent = sourceEvent;
         }
 
@@ -60,20 +50,38 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
 
             var vm = new CurrenciesViewModel
             {
-                Currencies = _currencyEvent.GetAllNonDeleted(true),
-                CurrencyTypes = _currencyTypeEvent.GetAllActive(),
+                Currencies = _currencyEvent.GetAllDTO(),
+                CurrencyTypes = _currencyTypeAdminEvent.GetAllActive(),
                 CurrencySources = _sourceEvent.GetAllActive()
             };
-            
+
             return View(vm);
         }
-        
+
         #endregion
 
-        #region PUT EditCurrency
+        #region Get Currency(id)
+
+        [HttpGet("{slug}")]
+        public IActionResult Currency([FromRoute] string slug)
+        {
+            var currency = _currencyAdminEvent.GetCurrencyBySlug(slug);
+            var vm = new CurrencyViewModel
+            {
+                Currency = currency,
+                CurrencySourcesOptions = _sourceEvent.GetAllCurrencySourceOptions(currency.CurrencySources),
+                CurrencyTypes = _currencyTypeAdminEvent.GetAllActive(),
+            };
+
+            return View(vm);
+        }
+
+        #endregion
+
+        #region PUT Edit Currency
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> EditCurrency(long id, UpdateCurrency updateCurrency)
+        public async Task<IActionResult> Edit(long id, UpdateCurrency updateCurrency)
         {
             var user = await GetCurrentUserAsync();
             if (user == null)
@@ -86,17 +94,18 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
                 return BadRequest();
             }
 
-            if (_currencyService.Update(updateCurrency).ResultType.Equals(NozomiResultType.Success)) return Ok();
+            var result = _currencyService.Update(updateCurrency);
+
+            if (result.ResultType.Equals(NozomiResultType.Success)) return Ok(result);
 
             // Update failed.
             return NotFound();
         }
-        
 
         #endregion
-        
+
         #region POST CreateCurrency
-        
+
         [HttpPost]
         public async Task<IActionResult> CreateCurrency(CreateCurrency createCurrency)
         {
@@ -106,16 +115,18 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
                 return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
 
-            if (_currencyService.Create(createCurrency).ResultType.Equals(NozomiResultType.Success)) return Ok();
+            var result = _currencyService.Create((createCurrency));
+
+            if (result.ResultType.Equals(NozomiResultType.Success)) return Ok(result);
 
             // Create failed
             return NotFound();
         }
-        
+
         #endregion
 
         #region Delete DeleteCurrency
-        
+
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCurrency(long id)
         {
@@ -125,13 +136,12 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
                 return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
 
-            if(_currencyService.Delete(id).ResultType.Equals(NozomiResultType.Success)) return Ok();
+            if (_currencyService.Delete(id).ResultType.Equals(NozomiResultType.Success)) return Ok();
 
             // Update failed.
             return NotFound();
         }
 
         #endregion
-
     }
 }

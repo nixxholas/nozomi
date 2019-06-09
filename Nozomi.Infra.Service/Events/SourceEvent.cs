@@ -1,9 +1,11 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Logging;
+using Nozomi.Data;
 using Nozomi.Data.Models.Currency;
 using Nozomi.Data.ResponseModels;
 using Nozomi.Data.ResponseModels.Currency;
@@ -26,31 +28,55 @@ namespace Nozomi.Service.Events
         {
             var query = _unitOfWork.GetRepository<Source>()
                 .GetQueryable()
-                .Include(cs => cs.CurrencyPairs)
-                .Where(cs => cs.DeletedAt == null)
-                .Where(cs => cs.IsEnabled);
-
-            if (includeNested)
-            {
-                query = query
-                    .Include(cs => cs.SourceCurrencies);
-            }
+                .Where(s => s.DeletedAt == null && s.IsEnabled);
 
             if (countPairs)
             {
                 query = query
-                    .Select(s => new Source
-                    {
-                        Id = s.Id,
-                        Abbreviation = s.Abbreviation, 
-                        Name = s.Name,
-                        APIDocsURL = s.APIDocsURL,
-                        PairCount = s.CurrencyPairs != null ? s.CurrencyPairs.Count : 0,
-                        CurrencyPairs = s.CurrencyPairs,
-                        SourceCurrencies = s.SourceCurrencies
-                    });
+                    .Include(s => s.CurrencyPairs);
             }
 
+            if (includeNested)
+            {
+                query = query
+                    .Include(s => s.SourceCurrencies)
+                    .ThenInclude(sc => sc.Currency)
+                    .Include(s => s.CurrencyPairs)
+                    .ThenInclude(cp => cp.Source)
+                    .ThenInclude(s => s.SourceCurrencies)
+                    .ThenInclude(sc => sc.Currency);
+            }
+            
+            #if DEBUG
+            var testCol = query.ToList();
+            #endif
+
+            return query.ToList();
+        }
+        
+        public IEnumerable<Source> GetAllNonDeleted(bool countPairs = false, bool includeNested = false)
+        {
+            var query = _unitOfWork.GetRepository<Source>()
+                .GetQueryable()
+                .Where(s => s.DeletedAt == null);
+
+            if (countPairs)
+            {
+                query = query
+                    .Include(s => s.CurrencyPairs);
+            }
+
+            if (includeNested)
+            {
+                query = query
+                    .Include(s => s.SourceCurrencies)
+                    .ThenInclude(sc => sc.Currency)
+                    .Include(s => s.CurrencyPairs)
+                    .ThenInclude(cp => cp.Source)
+                    .ThenInclude(s => s.SourceCurrencies)
+                    .ThenInclude(sc => sc.Currency);
+            }
+            
             return query;
         }
         
@@ -58,31 +84,28 @@ namespace Nozomi.Service.Events
         public IEnumerable<Source> GetAll(bool countPairs = false, bool includeNested = false)
         {
             var query = _unitOfWork.GetRepository<Source>()
-                .GetQueryable()
-                .Include(cs => cs.CurrencyPairs)
-                .Where(cs => cs.DeletedAt == null);
-
-            if (includeNested)
-            {
-                query = query
-                    .Include(cs => cs.SourceCurrencies);
-            }
+                .GetQueryable();
 
             if (countPairs)
             {
                 query = query
-                    .Select(s => new Source
-                    {
-                        Id = s.Id,
-                        Abbreviation = s.Abbreviation, 
-                        Name = s.Name,
-                        APIDocsURL = s.APIDocsURL,
-                        PairCount = s.CurrencyPairs != null ? s.CurrencyPairs.Count : 0,
-                        CurrencyPairs = s.CurrencyPairs,
-                        SourceCurrencies = s.SourceCurrencies,
-                        IsEnabled = s.IsEnabled
-                    });
+                    .Include(s => s.CurrencyPairs);
             }
+
+            if (includeNested)
+            {
+                query = query
+                    .Include(s => s.SourceCurrencies)
+                    .ThenInclude(sc => sc.Currency)
+                    .Include(s => s.CurrencyPairs)
+                    .ThenInclude(cp => cp.Source)
+                    .ThenInclude(s => s.SourceCurrencies)
+                    .ThenInclude(sc => sc.Currency);
+            }
+            
+#if DEBUG
+            var testCol = query.ToList();
+#endif
 
             return query;
         }
@@ -151,6 +174,20 @@ namespace Nozomi.Service.Events
                         .ToList()
                 })
                 .SingleOrDefault();
+        }
+
+        public IEnumerable<Source> GetAllCurrencySourceOptions(IEnumerable<CurrencySource> currencySources)
+        {
+            IEnumerable<Source> sources = currencySources.Select(cs => cs.Source).ToList();
+            
+            var query = _unitOfWork.GetRepository<Source>()
+                .GetQueryable()
+                .Where(s => s.DeletedAt == null && s.IsEnabled
+                            && sources.All(x => x.Id != s.Id))
+                .ToList();
+            
+            return query;
+
         }
 
         public XSourceResponse Get(string abbreviation)

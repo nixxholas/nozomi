@@ -1,4 +1,5 @@
 @using Newtonsoft.Json
+@using Newtonsoft.Json.Serialization
 @model Nozomi.Base.Identity.ViewModels.Manage.Currency.CurrenciesViewModel
 
 <!-- Content Section -->
@@ -8,44 +9,49 @@
 
         <b-button variant="primary" class="mb-3" v-on:click="showCreateModal">Create</b-button>
 
-        <b-table
-            :per-page="currencyDataRowsPerPage" :current-page="currentCurrencyDataPage"
-            :items="currencies" :fields="dataFields">
+        <b-table :items="currencies" :per-page="perPage" :current-page="currentPage" :fields="dataFields">
             <template slot="Name" slot-scope="datum">
-                {{ datum.item.Name }}
+                {{ datum.item.name }}
             </template>
             <template slot="Abbreviation" slot-scope="datum">
-                {{ datum.item.Abbrv }}
+                {{ datum.item.abbreviation }}
+            </template>
+            <template slot="Slug" slot-scope="datum">
+                {{ datum.item.slug }}
             </template>
             <template slot="CurrencyType" slot-scope="datum">
-                {{ datum.item.CurrencyType.Name }}
+                {{ datum.item.currencyType.name }}
             </template>
             <template slot="CurrencySource" slot-scope="datum">
-                {{ datum.item.CurrencySource.Name }}
+                {{ datum.item.sourceCount }}
             </template>
             <template slot="Description" slot-scope="datum">
-                {{ datum.item.Description }}
+                {{ datum.item.description }}
             </template>
             <template slot="isEnabled" slot-scope="datum">
-                <b-form-checkbox v-model="datum.item.IsEnabled" disabled/>
+                <b-form-checkbox v-model="datum.item.isEnabled" disabled/>
             </template>
-            <template slot="Edit" slot-scope="datum">
-                <b-button variant="primary" b-modal.modal-xl
-                          v-on:click="showEditModal(datum.item.Id, datum.item.CurrencyTypeId, datum.item.Abbrv, 
-                                datum.item.Description, datum.item.Name, datum.item.CurrencySourceId, 
-                                datum.item.IsEnabled, datum.item.CurrencyType, datum.item.CurrencySource)">
-                    Edit
+            <template slot="View" slot-scope="datum">
+                <b-button variant="primary" :href="'currency/' + datum.item.slug">
+                    View
                 </b-button>
             </template>
             <template slot="Delete" slot-scope="datum">
-                <b-button variant="danger" v-on:click="showDeleteModal(datum.item.Id, datum.item.Name)">Delete</b-button>
+                <b-button variant="danger" v-on:click="showDeleteModal(datum.item.id, datum.item.name)">Delete</b-button>
             </template>
         </b-table>
+
+        <b-pagination
+            v-model="currentPage"
+            :total-rows="rows"
+            :per-page="perPage"
+            aria-controls="currency-table">
+        </b-pagination>
     </div>
 </div>
 
 <!-- CreateModal -->
-<b-modal ref="create-modal" size="xl" title="Create Currency" ok-title="Save changes" v-on:ok="handleCreateOk">
+<b-modal ref="create-modal" size="xl" title="Create Currency" ok-title="Create" v-on:ok="handleCreateOk">
     <b-form v-on:submit.stop.prevent="onCreateSubmit">
         <b-form-group
             label="Name"
@@ -63,7 +69,17 @@
             <b-form-input
                 v-model="createForm.abbreviation"
                 required
-                placeholder="Enter source abbreviation">
+                placeholder="Enter abbreviation">
+            </b-form-input>
+        </b-form-group>
+
+        <b-form-group
+            label="Slug"
+            label-for="slug-input">
+            <b-form-input
+                v-model="createForm.slug"
+                required
+                placeholder="Enter the currency's slug">
             </b-form-input>
         </b-form-group>
 
@@ -76,56 +92,11 @@
         </b-form-group>
 
         <b-form-group label="Description">
-            <b-form-textarea v-model="editForm.description" rows="3"></b-form-textarea>
+            <b-form-textarea v-model="createForm.description" rows="3"></b-form-textarea>
         </b-form-group>
 
         <b-form-group>
-            <b-form-checkbox v-model="editForm.isEnabled">Is Enabled</b-form-checkbox>
-        </b-form-group>
-    </b-form>
-</b-modal>
-
-<!-- EditModal -->
-<b-modal ref="edit-modal" size="xl" title="Edit Currency" ok-title="Save changes" v-on:ok="handleEditOk">
-    <b-form v-on:submit.stop.prevent="onEditSubmit">
-        <b-form-group
-            id="currencyName-input-group"
-            label="Name"
-            label-for="currencyName-input">
-            <b-form-input
-                id="currencyName-input"
-                v-model="editForm.currencyName"
-                required
-                placeholder="Enter currency name">
-            </b-form-input>
-        </b-form-group>
-
-        <b-form-group
-            id="abbreviation-input-group"
-            label="Abbreviation"
-            label-for="abbreviation-input">
-            <b-form-input
-                id="abbreviation-input"
-                v-model="editForm.abbreviation"
-                required
-                placeholder="Enter source abbreviation">
-            </b-form-input>
-        </b-form-group>
-
-        <b-form-group id="currencyType-input-group" label="Currency Type" label-for="currencyType-input">
-            <b-form-select v-model="editForm.currencyTypeId" :options="currencyTypes"></b-form-select>
-        </b-form-group>
-
-        <b-form-group id="currencySource-input-group" label="Currency source">
-            <b-form-select v-model="editForm.currencySourceId" :options="currencySources"></b-form-select>
-        </b-form-group>
-
-        <b-form-group id="description-input-group" label="Description">
-            <b-form-textarea v-model="editForm.description" rows="3"></b-form-textarea>
-        </b-form-group>
-
-        <b-form-group id="isEnabled-input-group">
-            <b-form-checkbox v-model="editForm.isEnabled">Is Enabled</b-form-checkbox>
+            <b-form-checkbox v-model="createForm.isEnabled">Is Enabled</b-form-checkbox>
         </b-form-group>
     </b-form>
 </b-modal>
@@ -142,24 +113,35 @@
             el: "#content",
             // Just dish any random variable in for now
             data: {
+                perPage: 10,
+                currentPage: 1,
                 dataFields: [
                     {
                         key: 'Name',
                         label: 'Name',
                         sortable: true
-                    }, {
+                    }, 
+                    {
                         key: 'Abbreviation',
                         label: 'Abbreviation',
                         sortable: true
-                    }, {
+                    }, 
+                    {
+                        key: 'Slug',
+                        label: 'Slug',
+                        sortable: true
+                    }, 
+                    {
                         key: 'CurrencyType',
                         label: 'Currency Type',
                         sortable: true
-                    }, {
+                    }, 
+                    {
                         key: 'CurrencySource',
-                        label: 'Source',
+                        label: 'No. Of Sources',
                         sortable: true
-                    }, {
+                    }, 
+                    {
                         key: 'Description',
                         label: 'Description',
                         sortable: true
@@ -170,7 +152,7 @@
                         sortable: true
                     },
                     {
-                        key: 'Edit',
+                        key: 'View',
                         label: '',
                         sortable: false
                     }, {
@@ -179,67 +161,60 @@
                         sortable: false
                     }
                 ],
-                currencyDataRowsPerPage: 20,
-                currentCurrencyDataPage: 1,
                 // https://stackoverflow.com/questions/7397207/json-net-error-self-referencing-loop-detected-for-type
                 currencies:
                     @Html.Raw(JsonConvert.SerializeObject(@Model.Currencies, Formatting.Indented, new JsonSerializerSettings
                     {
-                        ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                        // Converts data to camelCase
+                        ContractResolver = new CamelCasePropertyNamesContractResolver(),
                     })),
-                currencyTypes: @Html.Raw(JsonConvert.SerializeObject(@Model.CurrencyTypes)),
+                currencyTypes:
+                    @Html.Raw(JsonConvert.SerializeObject(@Model.CurrencyTypes, Formatting.Indented, new JsonSerializerSettings
+                    {
+                        ContractResolver = new CamelCasePropertyNamesContractResolver()
+                    })),
                 currencySources:
                     @Html.Raw(JsonConvert.SerializeObject(@Model.CurrencySources, Formatting.Indented, new JsonSerializerSettings
                     {
-                        ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                        ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+                        ContractResolver = new CamelCasePropertyNamesContractResolver()
                     })),
                 createForm: {
-                    id: Number,
                     currencyTypeId: Number,
                     abbreviation: '',
+                    slug: '',
                     description: '',
                     currencyName: '',
                     currencySourceId: '',
                     isEnabled: Boolean,
-                },
-                editForm: {
-                    id: Number,
-                    currencyTypeId: Number,
-                    abbreviation: '',
-                    description: '',
-                    currencyName: '',
-                    currencySourceId: '',
-                    isEnabled: Boolean,
-                    currencyType: {},
-                    currencySource: {}
                 },
                 deleteModal: {
                     id: Number,
                     name: ''
-                }
+                },
             },
             mounted() {
-                this.convertCurrencyTypesOption(this.currencyTypes);
-                this.convertCurrencySourcesOption(this.currencySources);
+                this.convertCurrencyTypesOption();
+                this.convertCurrencySourcesOption();
             },
             methods: {
-                convertCurrencyTypesOption(currencyTypes) {
-                    var currencyTypesArr = [];
-                    for (var i = 0; i < currencyTypes.length; i++) {
-                        var currencyType = {
-                            value: currencyTypes[i].Id,
-                            text: currencyTypes[i].Name
+                convertCurrencyTypesOption() {
+                    const currencyTypesArr = [];
+                    for (let i = 0; i < this.currencyTypes.length; i++) {
+                        const currencyType = {
+                            value: this.currencyTypes[i].id,
+                            text: this.currencyTypes[i].name
                         };
                         currencyTypesArr.push(currencyType);
                     }
                     this.currencyTypes = currencyTypesArr;
                 },
-                convertCurrencySourcesOption(currencySources) {
-                    var currencySourcesArr = [];
-                    for (var i = 0; i < currencySources.length; i++) {
-                        var currencySource = {
-                            value: currencySources[i].Id,
-                            text: currencySources[i].Name
+                convertCurrencySourcesOption() {
+                    const currencySourcesArr = [];
+                    for (let i = 0; i < this.currencySources.length; i++) {
+                        const currencySource = {
+                            value: this.currencySources[i].id,
+                            text: this.currencySources[i].name
                         };
                         currencySourcesArr.push(currencySource);
                     }
@@ -255,10 +230,11 @@
                     this.onCreateSubmit();
                 },
                 async onCreateSubmit() {
-                    var formData = new FormData();
+                    const formData = new FormData();
                     formData.append('Id', this.createForm.id);
                     formData.append('CurrencyTypeId', this.createForm.currencyTypeId);
-                    formData.append('Abbrv', this.createForm.abbreviation);
+                    formData.append('Abbreviation', this.createForm.abbreviation);
+                    formData.append('Slug', this.createForm.slug);
                     formData.append('Description', this.createForm.description);
                     formData.append('Name', this.createForm.currencyName);
                     formData.append('CurrencySourceId', this.createForm.currencySourceId);
@@ -271,79 +247,27 @@
                         });
 
                     if (response.status === 200) {
-                        // Put alert for now, change the ui later.
-                        alert("Successfully created source");
+                        const data = await response.json();
 
+                        const newCurrency = data.item;
+
+                        // Insert the currencyType and source here manually instead of calling api again
+                        newCurrency.currencyType = {
+                            name: this.getCurrencyTypeName(this.createForm.currencyTypeId)
+                        }
+                        newCurrency.currencySource =
+                        {
+                            name: this.getCurrencySourceName(this.createForm.currencySourceId)
+                        }
+
+                        this.currencies.push(newCurrency);
+                        // Put alert for now, change the ui later.
+                        alert(data.message);
                     } else {
                         alert("Create failed");
                     }
-
                     // Hide the modal manually
                     this.$refs['create-modal'].hide();
-
-                    // Reload for now. Controller to return the currency object then push into table.
-                    location.reload(this);
-
-                },
-                // Methods for edit modal
-                showEditModal(id, currencyTypeId, abbrv, description, name, currencySourceId, isEnabled, currencyType,
-                currencySource) {
-                    this.editForm.id = id;
-                    this.editForm.currencyTypeId = currencyTypeId;
-                    this.editForm.abbreviation = abbrv;
-                    this.editForm.description = description;
-                    this.editForm.currencyName = name;
-                    this.editForm.currencySourceId = currencySourceId;
-                    this.editForm.isEnabled = isEnabled;
-
-                    this.editForm.CurrencyType = currencyType;
-                    this.editForm.CurrencySource = currencySource;
-
-                    this.$refs['edit-modal'].show();
-                },
-                handleEditOk(bvModalEvt) {
-                    // Prevent modal from closing
-                    bvModalEvt.preventDefault();
-                    // Trigger submit handler
-                    this.onEditSubmit();
-                },
-                async onEditSubmit() {
-                    var formData = new FormData();
-                    formData.append('Id', this.editForm.id);
-                    formData.append('CurrencyTypeId', this.editForm.currencyTypeId);
-                    formData.append('Abbrv', this.editForm.abbreviation);
-                    formData.append('Description', this.editForm.description);
-                    formData.append('Name', this.editForm.currencyName);
-                    formData.append('CurrencySourceId', this.editForm.currencySourceId);
-                    formData.append('IsEnabled', this.editForm.isEnabled);
-
-                    const response = await fetch(`/Admin/Currency/EditCurrency/${this.editForm.id}`,
-                        {
-                            method: 'PUT',
-                            body: formData
-                        });
-
-                    if (response.status === 200) {
-                        // Update the data table
-                        this.currencies.find((element, index) => {
-                            if (element.Id === this.editForm.id) {
-                                this.currencies[index].Name = this.editForm.currencyName;
-                                this.currencies[index].Abbrv = this.editForm.abbreviation;
-                                this.currencies[index].CurrencyType = this.editForm.currencyType;
-                                this.currencies[index].CurrencySource = this.editForm.currencySource;
-                                this.currencies[index].Description = this.editForm.description;
-                                this.currencies[index].IsEnabled = this.editForm.isEnabled;
-                            }
-                        });
-
-                        // Put alert for now, change the ui later.
-                        alert("Successfully updated source");
-                    } else {
-                        alert("Update failed");
-                    }
-
-                    // Hide the modal manually
-                    this.$refs['edit-modal'].hide();
                 },
                 // Methods for delete modal
                 showDeleteModal(id, currencyName) {
@@ -371,6 +295,23 @@
                     }
 
                     this.$refs['delete-modal'].hide();
+                },
+                getCurrencyTypeName(id) {
+                    for (let i = 0; i < this.currencyTypes.length; i++) {
+                        if (this.currencyTypes.value === id)
+                            return this.currencyTypes.text;
+                    }
+                },
+                getCurrencySourceName(id) {
+                    for (let i = 0; i < this.currencySources.length; i++) {
+                        if (this.currencySources.value === id)
+                            return this.currencySources.text;
+                    }
+                },
+            },
+            computed: {
+                rows() {
+                    return this.currencies.length;
                 }
             }
         });

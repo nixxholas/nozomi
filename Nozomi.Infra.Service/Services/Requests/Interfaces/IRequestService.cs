@@ -1,28 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using Nozomi.Data;
+using Nozomi.Data.AreaModels.v1.Requests;
 using Nozomi.Data.Models.Web;
 
 namespace Nozomi.Service.Services.Requests.Interfaces
 {
     public interface IRequestService
     {
-        long Create(Request req, long userId = 0);
+        long Create(Request request, long userId = 0);
+        
+        NozomiResult<string> Create(CreateRequest createRequest, long userId = 0);
         
         bool Delay(Request request, TimeSpan duration);
 
-        bool Update(Request req, long userId = 0);
+        NozomiResult<string> Update(UpdateRequest updateRequest, long userId = 0);
 
-        bool SoftDelete(long reqId, long userId = 0);
+        NozomiResult<string> Delete(long reqId, bool hardDelete = false, long userId = 0);
 
-        IEnumerable<Request> GetAllActive(bool track = false);
-
-        IEnumerable<dynamic> GetAllActiveObsc(bool track = false);
-
-        IEnumerable<Request> GetAll(bool track = false);
-
-        IEnumerable<Request> GetAll(Expression<Func<Request, bool>> predicate, bool track = false);
-
-        IEnumerable<dynamic> GetAllObsc(bool track = false);
+        bool ManualPoll(long id, long userId = 0);
     } 
 }

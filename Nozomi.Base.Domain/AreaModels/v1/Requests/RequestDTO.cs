@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using Nozomi.Data.AreaModels.v1.AnalysedComponent;
 using Nozomi.Data.AreaModels.v1.RequestComponent;
 using Nozomi.Data.AreaModels.v1.RequestProperty;
@@ -10,6 +11,7 @@ namespace Nozomi.Data.AreaModels.v1.Requests
 {
     public class RequestDTO
     {
+        public long Id { get; set; }
         public Guid Guid { get; set; }
         
         public RequestType RequestType { get; set; }
@@ -21,6 +23,8 @@ namespace Nozomi.Data.AreaModels.v1.Requests
         public int Delay { get; set; }
         
         public long FailureDelay { get; set; }
+        
+        public bool IsEnabled { get; set; }
 
         public ICollection<RequestComponentDTO> RequestComponents { get; set; }
         

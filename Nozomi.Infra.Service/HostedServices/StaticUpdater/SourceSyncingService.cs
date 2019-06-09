@@ -33,9 +33,9 @@ namespace Nozomi.Service.HostedServices.StaticUpdater
                         .AsQueryable()
                         .Where(s => s.IsEnabled && s.DeletedAt == null)
                         .Include(s => s.CurrencyPairs)
-                            .ThenInclude(cp => cp.Source)
-                                .ThenInclude(s => s.SourceCurrencies)
-                                    .ThenInclude(sc => sc.Currency)
+                        .ThenInclude(cp => cp.Source)
+                        .ThenInclude(s => s.SourceCurrencies)
+                        .ThenInclude(sc => sc.Currency)
                         // Historical Data Inclusions
                         .Include(s => s.CurrencyPairs)
                             .ThenInclude(cp => cp.AnalysedComponents)
@@ -73,11 +73,13 @@ namespace Nozomi.Service.HostedServices.StaticUpdater
                                         cp.MainCurrencyAbbrv,
                                     MainTickerName = cp.Source.SourceCurrencies
                                         .SingleOrDefault(sc => sc.Currency.Abbreviation.Equals(cp.MainCurrencyAbbrv))?
-                                        .Currency.Name,
+                                        .Currency?
+                                        .Name,
                                     CounterTickerAbbreviation = cp.CounterCurrencyAbbrv,
                                     CounterTickerName = cp.Source.SourceCurrencies
                                         .SingleOrDefault(sc => sc.Currency.Abbreviation.Equals(cp.CounterCurrencyAbbrv))?
-                                        .Currency.Name,
+                                        .Currency?
+                                        .Name,
                                     LastUpdated = cp.ModifiedAt,
                                     Properties = cp.AnalysedComponents
                                         ?.OrderByDescending(rc => rc.ComponentType)

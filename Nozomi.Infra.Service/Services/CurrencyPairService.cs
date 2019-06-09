@@ -33,8 +33,8 @@ namespace Nozomi.Service.Services
                 APIUrl = createCurrencyPair.ApiUrl,
                 DefaultComponent = createCurrencyPair.DefaultComponent,
                 SourceId = createCurrencyPair.CurrencySourceId,
-                CurrencyPairRequests = createCurrencyPair.CurrencyPairRequests
-                    .Select(cpr => new CurrencyPairRequest()
+                Requests = createCurrencyPair.CurrencyPairRequests
+                    .Select(cpr => new Request()
                     {
                         RequestType = cpr.RequestType,
                         DataPath = cpr.DataPath,
@@ -74,11 +74,42 @@ namespace Nozomi.Service.Services
             }
         }
 
+        public bool Delete(long currencyPairId, long userId = 0, bool hardDelete = false)
+        {
+            if (currencyPairId > 0)
+            {
+                var cpToDel = _unitOfWork.GetRepository<CurrencyPair>()
+                    .GetQueryable()
+                    .SingleOrDefault(cp => cp.Id.Equals(currencyPairId));
+
+                if (hardDelete && cpToDel != null)
+                {
+                    _unitOfWork.GetRepository<CurrencyPair>().Delete(cpToDel);
+                }
+                else if (cpToDel != null && cpToDel.DeletedAt == null)
+                {
+                    cpToDel.DeletedAt = DateTime.UtcNow;
+                    cpToDel.DeletedBy = userId;
+                }
+                else
+                {
+                    // User has attempted to delete a deleted entity.
+                    return false;
+                }
+
+                _unitOfWork.Commit(userId);
+
+                return true;
+            }
+
+            return false;
+        }
+
         public IEnumerable<CurrencyPair> GetAllActive(int index = 0, bool includeNested = false)
         {
             return !includeNested ? _unitOfWork.GetRepository<CurrencyPair>()
                 .GetQueryable()
-                .Include(cp => cp.CurrencyPairRequests)
+                .Include(cp => cp.Requests)
                     .ThenInclude(cpr => cpr.RequestComponents)
                 .Where(cp => cp.DeletedAt == null && cp.IsEnabled)
                 .Skip(index * 20)

@@ -1,12 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
+using Nozomi.Data.AreaModels.v1.Currency;
 using Nozomi.Data.Models.Currency;
 
 namespace Nozomi.Base.Identity.ViewModels.Manage.Currency
 {
     public class CurrenciesViewModel
     {
-        public ICollection<Data.Models.Currency.Currency> Currencies { get; set; }
+        public ICollection<CurrencyDTO> Currencies { get; set; }
         
         public ICollection<CurrencyType> CurrencyTypes { get; set; }
         

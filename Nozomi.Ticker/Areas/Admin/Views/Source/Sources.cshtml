@@ -1,4 +1,5 @@
 @using Newtonsoft.Json
+@using Newtonsoft.Json.Serialization
 @model Nozomi.Base.Identity.ViewModels.Manage.IndexViewModel
 
 <!-- Content Section -->
@@ -6,29 +7,31 @@
     <div class="container space-2">
         <h3 class="mb-6">Sources</h3>
 
+        <b-button variant="primary" class="mb-3" v-on:click="showCreateModal">Create</b-button>
+        
         <b-table
             :per-page="sourcesDataRowsPerPage" :current-page="currentSourceDataPage"
             :items="sources" :fields="dataFields">
             <template slot="Name" slot-scope="datum">
-                {{ datum.item.Name }}
+                {{ datum.item.name }}
             </template>
             <template slot="Abbreviation" slot-scope="datum">
-                {{ datum.item.Abbreviation }}
+                {{ datum.item.abbreviation }}
             </template>
             <template slot="APIDocsURL" slot-scope="datum">
-                <a :href="datum.item.APIDocsURL">{{ datum.item.APIDocsURL }}</a>
+                <a :href="datum.item.apiDocsURL">{{ datum.item.apiDocsURL }}</a>
             </template>
             <template slot="isEnabled" slot-scope="datum">
-                <b-form-checkbox v-model="datum.item.IsEnabled" disabled/>
+                <b-form-checkbox v-model="datum.item.isEnabled" disabled/>
             </template>
             <template slot="Edit" slot-scope="datum">
                 <b-button variant="primary" b-modal.modal-xl
-                          v-on:click="showEditModal(datum.item.Id, datum.item.Name, datum.item.Abbreviation, datum.item.APIDocsURL, datum.item.IsEnabled)">
+                          v-on:click="showEditModal(datum.item.id, datum.item.name, datum.item.abbreviation, datum.item.apiDocsURL, datum.item.isEnabled)">
                     Edit
                 </b-button>
             </template>
             <template slot="Delete" slot-scope="datum">
-                <b-button variant="danger" v-on:click="showDeleteModal(datum.item.Id, datum.item.Name)">Delete</b-button>
+                <b-button variant="danger" v-on:click="showDeleteModal(datum.item.id, datum.item.name)">Delete</b-button>
             </template>
         </b-table>
     </div>
@@ -73,6 +76,40 @@
 
         <b-form-group id="isEnabled-input-group">
             <b-form-checkbox v-model="editForm.isEnabled" switch>Is Enabled</b-form-checkbox>
+        </b-form-group>
+    </b-form>
+</b-modal>
+
+<!-- CreateModal -->
+<b-modal ref="create-modal" size="xl" title="Create Source" ok-title="Create" v-on:ok="handleCreateOk">
+    <b-form v-on:submit.stop.prevent="onCreateSubmit">
+        <b-form-group label="Source Name">
+            <b-form-input
+                v-model="createForm.sourceName"
+                required
+                placeholder="Enter source name">
+            </b-form-input>
+        </b-form-group>
+
+        <b-form-group label="Abbreviation">
+            <b-form-input
+                v-model="createForm.abbreviation"
+                required
+                placeholder="Enter source abbreviation">
+            </b-form-input>
+        </b-form-group>
+
+        <b-form-group label="Api Docs URL">
+            <b-form-input
+                v-model="createForm.apiDocsURL"
+                required
+                type="url"
+                placeholder="Enter Api Docs URL abbreviation">
+            </b-form-input>
+        </b-form-group>
+        
+        <b-form-group>
+            <b-form-checkbox v-model="createForm.isEnabled">Is Enabled</b-form-checkbox>
         </b-form-group>
     </b-form>
 </b-modal>
@@ -123,7 +160,18 @@
                 ],
                 sourcesDataRowsPerPage: 20,
                 currentSourceDataPage: 1,
-                sources: @Html.Raw(JsonConvert.SerializeObject(@Model.Sources)),
+                sources:
+                    @Html.Raw(JsonConvert.SerializeObject(@Model.Sources, Formatting.Indented, new JsonSerializerSettings
+                    {
+                        ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+                        ContractResolver = new CamelCasePropertyNamesContractResolver() 
+                    })),
+                createForm: {
+                    sourceName: '',
+                    abbreviation: '',
+                    apiDocsURL: '',
+                    isEnabled: Boolean
+                },
                 editForm: {
                     id: Number,
                     sourceName: '',
@@ -137,6 +185,45 @@
                 }
             },
             methods: {
+                showCreateModal() {
+                    this.$refs['create-modal'].show();
+                },
+                handleCreateOk(bvModalEvt) {
+                    // Prevent modal from closing
+                    bvModalEvt.preventDefault();
+                    // Trigger submit handler
+                    this.onCreateSubmit();
+                },
+                async onCreateSubmit() {
+                    var formData = new FormData();
+                    formData.append('Id', this.createForm.id);
+                    formData.append('Name', this.createForm.sourceName);
+                    formData.append('Abbreviation', this.createForm.abbreviation);
+                    formData.append('ApiDocsURL', this.createForm.apiDocsURL);
+                    formData.append('IsEnabled', this.createForm.isEnabled);
+
+                    const response = await fetch('/Admin/Source/CreateSource',
+                        {
+                            method: 'POST',
+                            body: formData
+                        });
+
+                    if (response.status === 200) {
+                        const data = await response.json();
+
+                        const newRequest = data.item;
+
+                        console.log(newRequest);
+                        
+                        this.sources.push(newRequest);
+                        // Put alert for now, change the ui later.
+                        alert(data.message);
+                    } else {
+                        alert("Create failed");
+                    }
+                    // Hide the modal manually
+                    this.$refs['create-modal'].hide();
+                },
                 // Methods for edit modal
                 showEditModal(id, sourceName, abbreviation, apiDocsURL, isEnabled) {
                     this.editForm.id = id;
@@ -183,7 +270,7 @@
                     } else {
                         alert("Update failed");
                     }
-                    
+
                     // Hide the modal manually
                     this.$refs['edit-modal'].hide();
                 },

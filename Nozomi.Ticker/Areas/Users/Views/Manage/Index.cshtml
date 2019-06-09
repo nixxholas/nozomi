@@ -85,13 +85,13 @@
                       </td>
                       <td class="align-middle text-secondary">@source.Abbreviation</td>
                       <td class="align-middle">
-                        @if (source.PairCount <= 0)
+                        @if (source.PairCount() <= 0)
                         {
                           <span class="badge badge-danger">Nothing yet!</span>
                         }
                         else
                         {
-                          <span class="badge badge-primary">@source.PairCount</span>
+                          <span class="badge badge-primary">@source.PairCount()</span>
                         }
                       </td>
                     </tr>

@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data;
 using Nozomi.Data.AreaModels.v1.CurrencyPairComponent;
+using Nozomi.Data.AreaModels.v1.RequestComponent;
 using Nozomi.Data.Models.Web;
 using Nozomi.Service.Events.Interfaces;
 using Nozomi.Service.Identity.Managers;
@@ -46,16 +47,16 @@ namespace Nozomi.Ticker.Controllers.APIs.v1.CurrencyPairComponent
 
         [Authorize]
         [HttpPost]
-        public NozomiResult<string> Create(CreateCurrencyPairComponent createCurrencyPairComponent)
+        public NozomiResult<string> Create(CreateRequestComponent createRequestComponent)
         {
-            return _requestComponentService.Create(createCurrencyPairComponent);
+            return _requestComponentService.Create(createRequestComponent);
         }
 
         [Authorize]
         [HttpPost]
-        public NozomiResult<string> Update(UpdateCurrencyPairComponent updateCurrencyPairComponent)
+        public NozomiResult<string> Update(UpdateRequestComponent updateRequestComponent)
         {
-            return _requestComponentService.Update(updateCurrencyPairComponent);
+            return _requestComponentService.Update(updateRequestComponent);
         }
 
         [Authorize]

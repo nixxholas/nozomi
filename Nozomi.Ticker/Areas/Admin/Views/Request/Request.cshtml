@@ -1,16 +1,62 @@
 @using Newtonsoft.Json
+@using Newtonsoft.Json.Serialization
+@using Nozomi.Base.Core.Helpers.Enumerator
 @using Nozomi.Preprocessing
-@model Nozomi.Data.ViewModels.Manage.RequestViewModel
+@model Nozomi.Base.Identity.ViewModels.Manage.Request.RequestViewModel
+
+@{
+    int requestType = (int) Model.Request.RequestType;
+    int responseType = (int) Model.Request.ResponseType;
+}
 
 <!-- Content Section -->
 <div class="bg-light">
     <div class="container space-2">
-        @* Change the naming of heading later*@
         <h3 class="mb-6">Request</h3>
+
+        <b-form v-on:submit.prevent="onEditRequestSubmit">
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <b-form-group label="Data path">
+                        <b-form-input
+                            type="url"
+                            v-model="editRequest.dataPath"
+                            placeholder="Enter data path">
+                        </b-form-input>
+                    </b-form-group>
+
+                    <b-form-group label="Frequency(Milliseconds)">
+                        <b-form-input
+                            v-model="editRequest.delay"
+                            placeholder="Enter frequency">
+                        </b-form-input>
+                    </b-form-group>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <b-form-group id="requestType-input-group" label="Request Type">
+                        <b-form-select v-model="editRequest.requestType" :options="requestTypes"></b-form-select>
+                    </b-form-group>
+
+                    <b-form-group id="responseType-input-group" label="Response Type">
+                        <b-form-select v-model="editRequest.responseType" :options="responseTypes"></b-form-select>
+                    </b-form-group>
+                    <b-form-group id="isEnabled-input-group">
+                        <b-form-checkbox v-model="editRequest.isEnabled">Is Enabled</b-form-checkbox>
+                    </b-form-group>
+                </div>
+            </div>
+
+            <b-button variant="primary" class="mb-3" type="submit">Save Changes</b-button>
+        </b-form>
+
+        <hr/>
 
         <h3 class="mb-6">Analysed Component</h3>
         @* Table for analysedComponent *@
-        <b-table :items="request.AnalysedComponents" :fields="dataFields">
+        <b-table :items="request.AnalysedComponents" :fields="analysedComponentsDataFields">
             <template slot="AnalysedComponentType" slot-scope="datum">
                 {{ getAnalysedComponentTypeStr(datum.item.ComponentType) }}
             </template>
@@ -25,22 +71,41 @@
             </template>
         </b-table>
 
+        <hr/>
+
         <h3 class="mb-6">Request Components</h3>
+
+        <b-button variant="primary" class="mb-3" v-on:click="showRCCreateModal">Create RC</b-button>
+
         @* Table for requestComponent *@
-        <b-table :items="request.RequestComponents" :fields="requestComponentsDataFields">
+        <b-table :items="request.requestComponents" :fields="requestComponentsDataFields">
             <template slot="RequestComponentType" slot-scope="datum">
-                {{ getRequestComponentTypeStr(datum.item.ComponentType) }}
+                {{ getRequestComponentTypeStr(datum.item.componentType) }}
             </template>
             <template slot="Identifier" slot-scope="datum">
-                {{ datum.item.Identifier }}
+                {{ datum.item.identifier }}
             </template>
             <template slot="QueryComponent" slot-scope="datum">
-                {{ datum.item.QueryComponent }}
+                {{ datum.item.queryComponent }}
             </template>
             <template slot="RequestComponentValue" slot-scope="datum">
-                {{ datum.item.Value }}
+                {{ datum.item.value }}
+            </template>
+            <template slot="IsDenominated" slot-scope="datum">
+                <b-form-checkbox v-model="datum.item.isDenominated" disabled/>
+            </template>
+            <template slot="AnomalyIgnorance" slot-scope="datum">
+                <b-form-checkbox v-model="datum.item.anomalyIgnorance " disabled/>
+            </template>
+            <template slot="Edit" slot-scope="datum">
+                <b-button variant="primary" v-on:click="showRCEditModal(datum.item.id, datum.item.componentType, datum.item.identifier, datum.item.queryComponent, datum.item.isDenominated, datum.item.anomalyIgnorance)" >Edit</b-button>
+            </template>
+            <template slot="Delete" slot-scope="datum">
+                <b-button variant="danger" v-on:click="showRCDeleteModal(datum.item.id)">Delete</b-button>
             </template>
         </b-table>
+
+        <hr/>
 
         <h3 class="mb-6">Request Properties</h3>
         @* Table for requestProperties *@
@@ -58,6 +123,77 @@
 
     </div>
 </div>
+
+<!-- Request Component CreateModal -->
+<b-modal ref="rc-create-modal" size="xl" title="Create Request Component" ok-title="Create Request Component" v-on:ok="handleRCCreateOk">
+    <b-form v-on:submit.stop.prevent="onRCCreateSubmit">
+        <b-form-group label="Request Component Type">
+            <b-form-select v-model="createRCForm.componentType" :options="requestComponentTypes"></b-form-select>
+        </b-form-group>
+        
+        <b-form-group label="Query Component">
+            <b-form-input
+                v-model="createRCForm.queryComponent"
+                required
+                placeholder="Enter Query Component">
+            </b-form-input>
+        </b-form-group>
+
+        <b-form-group label="Identifier">
+            <b-form-input
+                v-model="createRCForm.identifier"
+                required
+                placeholder="Enter identifier">
+            </b-form-input>
+        </b-form-group>
+
+        <b-form-group>
+            <b-form-checkbox v-model="createRCForm.isDenominated">Is Denominated</b-form-checkbox>
+        </b-form-group>
+
+        <b-form-group>
+            <b-form-checkbox v-model="createRCForm.anomalyIgnorance">Anomaly Ignorance</b-form-checkbox>
+        </b-form-group>
+    </b-form>
+</b-modal>
+
+<!-- Request Component EditModal -->
+<b-modal ref="rc-edit-modal" size="xl" title="Edit Request Component" ok-title="Edit Request Component" v-on:ok="handleRCEditOk">
+    <b-form v-on:submit.stop.prevent="onRCCEditSubmit">
+        <b-form-group label="Request Component Type">
+            <b-form-select v-model="editRCForm.componentType" :options="requestComponentTypes"></b-form-select>
+        </b-form-group>
+        
+        <b-form-group label="Query Component">
+            <b-form-input
+                v-model="editRCForm.queryComponent"
+                required
+                placeholder="Enter Query Component">
+            </b-form-input>
+        </b-form-group>
+
+        <b-form-group label="Identifier">
+            <b-form-input
+                v-model="editRCForm.identifier"
+                required
+                placeholder="Enter identifier">
+            </b-form-input>
+        </b-form-group>
+
+        <b-form-group>
+            <b-form-checkbox v-model="editRCForm.isDenominated">Is Denominated</b-form-checkbox>
+        </b-form-group>
+
+        <b-form-group>
+            <b-form-checkbox v-model="editRCForm.anomalyIgnorance">Anomaly Ignorance</b-form-checkbox>
+        </b-form-group>
+    </b-form>
+</b-modal>
+
+<!-- Request Component DeleteModal -->
+<b-modal ref="rc-delete-modal" title="Confirm Delete" ok-title="Yes" ok-variant="danger" cancel-title="No" v-on:ok="handleRCDeleteOk" centered>
+    <p>Are you sure that you want to delete this request component??</p>
+</b-modal>
 
 @section Scripts
 {
@@ -108,6 +244,26 @@
                         key: 'RequestComponentValue',
                         label: 'Value',
                         sortable: true,
+                    },
+                    {
+                        key: 'IsDenominated',
+                        label: 'Is Denominated',
+                        sortable: true,
+                    },
+                    {
+                        key: 'AnomalyIgnorance',
+                        label: 'Anomaly Ignorance',
+                        sortable: true,
+                    },
+                    {
+                        key:'Edit',
+                        label: '',
+                        sortable: false
+                    },
+                    {
+                        key:'Delete',
+                        label:'',
+                        sortable: false
                     }
                 ],
                 requestPropertiesDataFields: [
@@ -127,39 +283,250 @@
                         sortable: true,
                     }
                 ],
+                editRequest: {
+                    requestType: @requestType,
+                    responseType: @responseType,
+                    dataPath: '@Model.Request.DataPath',
+                    delay: @Model.Request.Delay,
+                    isEnabled: @Model.Request.IsEnabled.ToString().ToLower()
+                },
+                createRCForm: {
+                    componentType: Number,
+                    queryComponent: '',
+                    identifier: '',
+                    isDenominated: Boolean,
+                    anomalyIgnorance: Boolean
+                },
+                editRCForm: {
+                    id: Number,
+                    componentType: Number,
+                    queryComponent: '',
+                    identifier: '',
+                    isDenominated: Boolean,
+                    anomalyIgnorance: Boolean
+                },
+                deleteRCModal: {
+                    id: Number,
+                },
                 // The data from the dto
-                request: @Html.Raw(JsonConvert.SerializeObject(@Model.Request)),
-                // Grab the types so we can check with the enum into readable data for user
-                requestTypes: @Html.Raw(Json.Serialize(NozomiServiceConstants.requestTypes, new JsonSerializerSettings
-                              {
-                                  ReferenceLoopHandling = ReferenceLoopHandling.Ignore
-                              })),
-                responseTypes: @Html.Raw(Json.Serialize(NozomiServiceConstants.responseTypes, new JsonSerializerSettings
-                               {
-                                   ReferenceLoopHandling = ReferenceLoopHandling.Ignore
-                               })),
-                analysedComponentTypes:
-                    @Html.Raw(Json.Serialize(NozomiServiceConstants.analysedComponentTypes, new JsonSerializerSettings
+                request:
+                    @Html.Raw(JsonConvert.SerializeObject(@Model.Request, Formatting.Indented, new JsonSerializerSettings
                     {
-                        ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                        ContractResolver = new CamelCasePropertyNamesContractResolver()
+                    })),
+                // Grab the types so we can check with the enum into readable data for user
+                requestTypes:
+                    @Html.Raw(JsonConvert.SerializeObject(@Model.RequestTypes, Formatting.Indented, new JsonSerializerSettings
+                    {
+                        ContractResolver = new CamelCasePropertyNamesContractResolver()
+                    })),
+                responseTypes:
+                    @Html.Raw(JsonConvert.SerializeObject(@Model.ResponseTypes, Formatting.Indented, new JsonSerializerSettings
+                    {
+                        ContractResolver = new CamelCasePropertyNamesContractResolver()
                     })),
                 requestComponentTypes:
-                    @Html.Raw(Json.Serialize(NozomiServiceConstants.requestComponentTypes, new JsonSerializerSettings
+                    @Html.Raw(Json.Serialize(@Model.RequestComponentTypes, new JsonSerializerSettings
                     {
-                        ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                        ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+                        ContractResolver = new CamelCasePropertyNamesContractResolver()
                     })),
                 requestPropertyTypes:
                     @Html.Raw(Json.Serialize(NozomiServiceConstants.requestPropertyTypes, new JsonSerializerSettings
                     {
-                        ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                        ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+                        ContractResolver = new CamelCasePropertyNamesContractResolver()
                     })),
             },
+            mounted() {
+                this.convertRequestTypesOption();
+                this.convertResponseTypesOption();
+                this.convertRequestComponentTypesOption();
+            },
             methods: {
+                convertRequestTypesOption() {
+                    var requestTypesArr = [];
+                    for (var i = 0; i < this.requestTypes.length; i++) {
+                        var requestType = {
+                            value: this.requestTypes[i].value,
+                            text: this.requestTypes[i].key
+                        };
+                        requestTypesArr.push(requestType);
+                    }
+                    this.requestTypes = requestTypesArr;
+                },
+                convertResponseTypesOption() {
+                    var responseTypesArr = [];
+                    for (var i = 0; i < this.responseTypes.length; i++) {
+                        var responseType = {
+                            value: this.responseTypes[i].value,
+                            text: this.responseTypes[i].key
+                        };
+                        responseTypesArr.push(responseType);
+                    }
+                    this.responseTypes = responseTypesArr;
+                },
+                convertRequestComponentTypesOption() {
+                    var requestComponentTypesArr = [];
+                    for (var i = 0; i < this.requestComponentTypes.length; i++) {
+                        var requestComponentType = {
+                            value: this.requestComponentTypes[i].value,
+                            text: this.requestComponentTypes[i].key
+                        };
+                        requestComponentTypesArr.push(requestComponentType);
+                    }
+                    this.requestComponentTypes = requestComponentTypesArr;
+                },
+                async onEditRequestSubmit() {
+                    const formData = new FormData();
+                    formData.append('Id', '@Model.Request.Id');
+                    formData.append('RequestType', this.editRequest.requestType);
+                    formData.append('ResponseType', this.editRequest.responseType);
+                    formData.append('DataPath', this.editRequest.dataPath);
+                    formData.append('Delay', this.editRequest.delay);
+                    formData.append('IsEnabled', this.editRequest.isEnabled);
+
+                    const response = await fetch('/Admin/Request/EditRequest/@Model.Request.Id',
+                        {
+                            method: 'PUT',
+                            body: formData
+                        });
+
+                    if (response.status === 200) {
+                        const data = await response.json();
+                        // Put alert for now, change the ui later.
+                        alert(data.message);
+                    } else {
+                        alert(data.message);
+                    }
+                },
+                showRCCreateModal() {
+                    this.$refs['rc-create-modal'].show();
+                },
+                handleRCCreateOk(bvModalEvt) {
+                    // Prevent modal from closing
+                    bvModalEvt.preventDefault();
+                    // Trigger submit handler
+                    this.onRCCreateSubmit();
+                },
+                async onRCCreateSubmit() {
+                    var formData = new FormData();
+                    formData.append('RequestId', @Model.Request.Id);
+                    formData.append('ComponentType', this.createRCForm.componentType);
+                    formData.append('QueryComponent', this.createRCForm.queryComponent);
+                    formData.append('IsDenominated', this.createRCForm.isDenominated);
+                    formData.append('AnomalyIgnorance', this.createRCForm.anomalyIgnorance);
+
+                    const response = await fetch('/Admin/RequestComponent/CreateRequestComponent',
+                        {
+                            method: 'POST',
+                            body: formData
+                        });
+
+                    if (response.status === 200) {
+                        const data = await response.json();
+
+                        const newRequest = data.item;
+
+                        this.requests.requestComponent.push(newRequest);
+                        // Put alert for now, change the ui later.
+                        alert(data.message);
+                    } else {
+                        alert("Create failed");
+                    }
+                    // Hide the modal manually
+                    this.$refs['rc-create-modal'].hide();
+                },
+                // Methods for edit modal
+                showRCEditModal(id, componentType, identifier, queryComponent, isDenominated, anomalyIgnorance) {
+                    this.editRCForm.id = id;
+                    this.editRCForm.componentType = componentType;
+                    this.editRCForm.queryComponent = queryComponent === null ? '' : queryComponent;
+                    this.editRCForm.identifier = identifier === null ? '' : identifier;
+                    this.editRCForm.isDenominated = isDenominated;
+                    this.editRCForm.anomalyIgnorance = anomalyIgnorance;
+
+                    console.log(this.editRCForm.queryComponent);
+                    
+                    this.$refs['rc-edit-modal'].show();
+                },
+                handleRCEditOk(bvModalEvt) {
+                    // Prevent modal from closing
+                    bvModalEvt.preventDefault();
+                    // Trigger submit handler
+                    this.onRCEditSubmit();
+                },
+                async onRCEditSubmit() {
+                    var formData = new FormData();
+                    formData.append('RequestId', @Model.Request.Id);
+                    formData.append('ComponentType', this.editRCForm.componentType);
+                    formData.append('QueryComponent', this.editRCForm.queryComponent);
+                    formData.append('Identifier', this.editRCForm.identifier);
+                    formData.append('IsDenominated', this.editRCForm.isDenominated);
+                    formData.append('AnomalyIgnorance', this.editRCForm.anomalyIgnorance);
+
+                    const response = await fetch(`/Admin/RequestComponent/EditRequestComponent/${this.editRCForm.id}`,
+                        {
+                            method: 'PUT',
+                            body: formData
+                        });
+
+                    if (response.status === 200) {
+                        const data = await response.json();
+                        // Update the data table
+                        this.request.requestComponents.find((element, index) => {
+                            if (element.id === this.editRCForm.id) {
+                                this.request.requestComponents[index].id = this.editRCForm.id;
+                                this.request.requestComponents[index].componentType = this.editRCForm.componentType;
+                                this.request.requestComponents[index].queryComponent = this.editRCForm.queryComponent;
+                                this.request.requestComponents[index].identifier = this.editRCForm.identifier;
+                                this.request.requestComponents[index].isDenominated = this.editRCForm.isDenominated;
+                                this.request.requestComponents[index].anomalyIgnorance = this.editRCForm.anomalyIgnorance;
+                            }
+                        });
+
+                        // Put alert for now, change the ui later.
+                        alert(data.message);
+                    } else {
+                        alert("Update failed");
+                    }
+
+                    // Hide the modal manually
+                    this.$refs['rc-edit-modal'].hide();
+                },
+                // Methods for delete modal
+                showRCDeleteModal(id) {
+                    this.deleteRCModal.id = id;
+
+                    this.$refs['rc-delete-modal'].show();
+                },
+                async handleRCDeleteOk(bvModalEvt) {
+                    bvModalEvt.preventDefault();
+
+                    const response = await fetch(`/Admin/RequestComponent/DeleteRequestComponent/${this.deleteRCModal.id}`,
+                        {
+                            method: 'DELETE'
+                        });
+
+                    if (response.status === 200) {
+                        const data = await response.json();
+                        
+                        // Update the datatable
+                        const index = this.request.requestComponents.findIndex(element => element.id === this.deleteRCModal.id);
+                        this.request.requestComponents.splice(index, 1);
+
+                        alert(data.message);
+                    } else {
+                        alert("Delete failed");
+                    }
+
+                    this.$refs['rc-delete-modal'].hide();
+                },
                 getRequestTypeStr(val) {
                     if (this.requestTypes != null) {
                         for (let i = 0; i < this.requestTypes.length; i++) {
-                            if (this.requestTypes[i].Value == val) {
-                                return this.requestTypes[i].Key;
+                            if (this.requestTypes[i].value == val) {
+                                return this.requestTypes[i].key;
                             }
                         }
                     }
@@ -168,8 +535,8 @@
                 getResponseTypeStr(val) {
                     if (this.responseTypes != null) {
                         for (let i = 0; i < this.responseTypes.length; i++) {
-                            if (this.responseTypes[i].Value == val) {
-                                return this.responseTypes[i].Key;
+                            if (this.responseTypes[i].value == val) {
+                                return this.responseTypes[i].key;
                             }
                         }
                     }
@@ -178,8 +545,8 @@
                 getAnalysedComponentTypeStr(val) {
                     if (this.analysedComponentTypes != null) {
                         for (let i = 0; i < this.analysedComponentTypes.length; i++) {
-                            if (this.analysedComponentTypes[i].Value === val) {
-                                return this.analysedComponentTypes[i].Key;
+                            if (this.analysedComponentTypes[i].value === val) {
+                                return this.analysedComponentTypes[i].key;
                             }
                         }
                     }
@@ -188,8 +555,8 @@
                 getRequestComponentTypeStr(val) {
                     if (this.requestComponentTypes != null) {
                         for (let i = 0; i < this.requestComponentTypes.length; i++) {
-                            if (this.requestComponentTypes[i].Value === val) {
-                                return this.requestComponentTypes[i].Key;
+                            if (this.requestComponentTypes[i].value === val) {
+                                return this.requestComponentTypes[i].text;
                             }
                         }
                     }
@@ -198,14 +565,14 @@
                 getRequestPropertyTypeStr(val) {
                     if (this.requestPropertyTypes != null) {
                         for (let i = 0; i < this.requestPropertyTypes.length; i++) {
-                            if (this.requestPropertyTypes[i].Value === val) {
-                                return this.requestPropertyTypes[i].Key;
+                            if (this.requestPropertyTypes[i].value === val) {
+                                return this.requestPropertyTypes[i].key;
                             }
                         }
                     }
                     return null;
                 }
-            }
+            },
         })
     </script>
 }

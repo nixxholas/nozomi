@@ -65,7 +65,7 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
 
             var model = new IndexViewModel
             {
-                Sources = _sourceEvent.GetAllActive(true).ToList(),
+                Sources = _sourceEvent.GetAllActive(true, true).ToList(),
                 StatusMessage = message == ManageIndexMessageId.Error ? "An error has occured."
                     : "",
             };
