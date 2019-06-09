@@ -13,5 +13,10 @@ namespace Nozomi.Data.Models.Currency
         public long CurrencyId { get; set; }
         
         public Currency Currency { get; set; }
+
+        public bool IsValid()
+        {
+            return Type >= 0 && !string.IsNullOrEmpty(Value) && CurrencyId > 0;
+        }
     }
 }
