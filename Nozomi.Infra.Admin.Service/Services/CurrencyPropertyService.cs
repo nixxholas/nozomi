@@ -30,7 +30,26 @@ namespace Nozomi.Infra.Admin.Service.Services
 
         public bool Update(CurrencyProperty currencyProperty, long userId = 0)
         {
-            throw new System.NotImplementedException();
+            if (currencyProperty != null && currencyProperty.Id > 0)
+            {
+                var query = _unitOfWork.GetRepository<CurrencyProperty>()
+                    .Get(cp => cp.Id.Equals(currencyProperty.Id))
+                    .SingleOrDefault(cp => cp.DeletedAt == null);
+
+                if (query != null)
+                {
+                    query.Type = currencyProperty.Type;
+                    query.Value = currencyProperty.Value;
+                    query.IsEnabled = currencyProperty.IsEnabled;
+                    
+                    _unitOfWork.GetRepository<CurrencyProperty>().Update(query);
+                    _unitOfWork.Commit(userId);
+
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         public bool Delete(long currencyPropertyId, bool hardDelete = false, long userId = 0)
