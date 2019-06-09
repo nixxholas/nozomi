@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Logging;
 using Nozomi.Base.Core;
 using Nozomi.Base.Core.Helpers.Enumerable;
+using Nozomi.Base.Core.Helpers.Native.Numerals;
 using Nozomi.Data.AreaModels.v1.Currency;
 using Nozomi.Data.Models.Currency;
 using Nozomi.Data.Models.Web;
@@ -469,8 +470,9 @@ namespace Nozomi.Service.Events
                 .ThenInclude(ac => ac.AnalysedHistoricItems)
                 .SelectMany(ct => ct.Currencies
                     .Where(c => c.DeletedAt == null && c.IsEnabled
-                                && c.AnalysedComponents.Count > 0
-                                && c.AnalysedComponents.Any(ac => ac.ComponentType.Equals(AnalysedComponentType.MarketCap)))
+                                                    && c.AnalysedComponents.Any(ac => ac.ComponentType.Equals(AnalysedComponentType.MarketCap)
+                                                                                      && !string.IsNullOrEmpty(ac.Value)
+                                                                                      && NumberHelper.IsNumericDecimal(ac.Value)))
                     .OrderByDescending(c => decimal.Parse(c.AnalysedComponents
                         .SingleOrDefault(ac => ac.ComponentType == AnalysedComponentType.MarketCap).Value))
                     .Skip(index * 100)
@@ -500,7 +502,8 @@ namespace Nozomi.Service.Events
                                 UIFormatting = ac.UIFormatting,
                                 AnalysedHistoricItems = ac.AnalysedHistoricItems
                                     .Where(ahi => ahi.DeletedAt == null && ahi.IsEnabled
-                                                                        && ahi.HistoricDateTime >= DateTime.UtcNow.Subtract(TimeSpan.FromDays(daysOfData)))
+                                                                        && ahi.HistoricDateTime >= DateTime.UtcNow.Subtract(TimeSpan.FromDays(daysOfData))
+                                                                        && NumberHelper.IsNumericDecimal(ahi.Value))
                                     .OrderByDescending(ahi => ahi.HistoricDateTime)
                                     .Skip(index * NozomiServiceConstants.AnalysedComponentTakeoutLimit)
                                     .Take(NozomiServiceConstants.AnalysedComponentTakeoutLimit)
