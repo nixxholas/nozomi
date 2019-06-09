@@ -49,8 +49,10 @@ namespace Nozomi.Service.Services
                         var currency = new Currency()
                         {
                             Abbreviation = createCurrency.Abbreviation,
+                            Slug = createCurrency.Slug,
                             Name = createCurrency.Name,
                             CurrencyTypeId = createCurrency.CurrencyTypeId,
+                            IsEnabled = createCurrency.IsEnabled
                         };
 
                         _unitOfWork.GetRepository<Currency>().Add(currency);
@@ -116,6 +118,7 @@ namespace Nozomi.Service.Services
                 if (currToUpd != null)
                 {
                     currToUpd.Abbreviation = currency.Abbreviation;
+                    currToUpd.Slug = currency.Slug;
                     currToUpd.CurrencyTypeId = currency.CurrencyTypeId;
                     currToUpd.Description = currency.Description;
                     currToUpd.Denominations = currency.Denominations;

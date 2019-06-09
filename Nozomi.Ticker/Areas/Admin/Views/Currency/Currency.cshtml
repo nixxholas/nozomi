@@ -23,6 +23,13 @@
                     </b-form-input>
                 </b-form-group>
 
+                <b-form-group label="Slug">
+                    <b-form-input
+                        v-model="editCurrency.slug"
+                        placeholder="Enter slug">
+                    </b-form-input>
+                </b-form-group>
+
                 <b-form-group label="Currency Type" label-for="currencyType-input">
                     <b-form-select v-model="editCurrency.currencyTypeId" :options="currencyTypes"></b-form-select>
                 </b-form-group>
@@ -147,6 +154,7 @@
                 editCurrency: {
                     name: '@Model.Currency.Name',
                     abbreviation: '@Model.Currency.Abbreviation',
+                    slug: '@Model.Currency.Slug',
                     currencyTypeId: @Model.Currency.CurrencyTypeId,
                     description: '@Model.Currency.Description',
                     denominationName: '@Model.Currency.DenominationName',
@@ -200,6 +208,7 @@
                     formData.append('Name', this.editCurrency.name);
                     formData.append('CurrencyTypeId', this.editCurrency.currencyTypeId);
                     formData.append('Abbreviation', this.editCurrency.abbreviation);
+                    formData.append('Slug', this.editCurrency.slug);
                     formData.append('Description', this.editCurrency.description);
                     formData.append('DenominationName', this.editCurrency.denominationName);
                     formData.append('Denominations', this.editCurrency.denominations);
@@ -215,7 +224,7 @@
                         const data = await response.json();
                         // Put alert for now, change the ui later.
                         alert(data.message);
-                        window.location.replace(`/admin/currency/currency/${this.editCurrency.abbreviation}`);
+                        window.location.replace(`/admin/currency/currency/${this.editCurrency.slug}`);
                     } else {
                         alert(data.message);
                     }
