@@ -9,6 +9,10 @@ namespace Nozomi.Data.AreaModels.v1.Currency
 
         [Required]
         public string Abbreviation { get; set; } // USD? MYR? IND?
+        
+        [Required]
+        [Display(Description = "Unique short form of the currency.")]
+        public string Slug { get; set; }
 
         [Required]
         public string Name { get; set; }

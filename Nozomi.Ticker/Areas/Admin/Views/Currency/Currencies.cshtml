@@ -16,6 +16,9 @@
             <template slot="Abbreviation" slot-scope="datum">
                 {{ datum.item.abbreviation }}
             </template>
+            <template slot="Slug" slot-scope="datum">
+                {{ datum.item.slug }}
+            </template>
             <template slot="CurrencyType" slot-scope="datum">
                 {{ datum.item.currencyType.name }}
             </template>
@@ -29,7 +32,7 @@
                 <b-form-checkbox v-model="datum.item.isEnabled" disabled/>
             </template>
             <template slot="View" slot-scope="datum">
-                <b-button variant="primary" :href="'currency/' + datum.item.abbreviation">
+                <b-button variant="primary" :href="'currency/' + datum.item.slug">
                     View
                 </b-button>
             </template>
@@ -66,7 +69,17 @@
             <b-form-input
                 v-model="createForm.abbreviation"
                 required
-                placeholder="Enter source abbreviation">
+                placeholder="Enter abbreviation">
+            </b-form-input>
+        </b-form-group>
+
+        <b-form-group
+            label="Slug"
+            label-for="slug-input">
+            <b-form-input
+                v-model="createForm.slug"
+                required
+                placeholder="Enter the currency's slug">
             </b-form-input>
         </b-form-group>
 
@@ -111,6 +124,11 @@
                     {
                         key: 'Abbreviation',
                         label: 'Abbreviation',
+                        sortable: true
+                    }, 
+                    {
+                        key: 'Slug',
+                        label: 'Slug',
                         sortable: true
                     }, 
                     {
@@ -164,6 +182,7 @@
                 createForm: {
                     currencyTypeId: Number,
                     abbreviation: '',
+                    slug: '',
                     description: '',
                     currencyName: '',
                     currencySourceId: '',
@@ -215,6 +234,7 @@
                     formData.append('Id', this.createForm.id);
                     formData.append('CurrencyTypeId', this.createForm.currencyTypeId);
                     formData.append('Abbreviation', this.createForm.abbreviation);
+                    formData.append('Slug', this.createForm.slug);
                     formData.append('Description', this.createForm.description);
                     formData.append('Name', this.createForm.currencyName);
                     formData.append('CurrencySourceId', this.createForm.currencySourceId);
