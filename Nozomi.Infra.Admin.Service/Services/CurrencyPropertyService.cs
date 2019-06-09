@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data.Models.Currency;
 using Nozomi.Infra.Admin.Service.Services.Interfaces;
@@ -34,7 +35,29 @@ namespace Nozomi.Infra.Admin.Service.Services
 
         public bool Delete(long currencyPropertyId, bool hardDelete = false, long userId = 0)
         {
-            throw new System.NotImplementedException();
+            if (currencyPropertyId > 0)
+            {
+                var query = _unitOfWork.GetRepository<CurrencyProperty>()
+                    .Get(cp => cp.Id.Equals(currencyPropertyId))
+                    .SingleOrDefault(cp => cp.DeletedAt == null);
+
+                if (query != null)
+                {
+                    if (hardDelete)
+                    {
+                        _unitOfWork.GetRepository<CurrencyProperty>().Delete(query);
+                    }
+                    else
+                    {
+                        query.DeletedAt = DateTime.UtcNow;
+                        _unitOfWork.GetRepository<CurrencyProperty>().Update(query);
+                    }
+
+                    _unitOfWork.Commit(userId);
+                }
+            }
+
+            return false;
         }
     }
 }
