@@ -134,7 +134,6 @@ namespace Nozomi.Service.Events
                                     RequestId = rc.RequestId,
                                     RcdHistoricItems = rc.RcdHistoricItems
                                         .Where(rcdhi => rcdhi.DeletedAt == null && rcdhi.IsEnabled)
-                                        .DefaultIfEmpty()
                                         .Skip(index * NozomiServiceConstants.RequestComponentTakeoutLimit)
                                         .Take(NozomiServiceConstants.RequestComponentTakeoutLimit)
                                         .ToList()
