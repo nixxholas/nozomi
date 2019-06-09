@@ -821,7 +821,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                     .Average(rc => rc.RcdHistoricItems
                                         .Where(rcdhi => rcdhi.CreatedAt >
                                                         DateTime.UtcNow.Subtract(TimeSpan.FromDays(1))
-                                                        && decimal.TryParse(ahi.Value, out var _out))
+                                                        && decimal.TryParse(rcdhi.Value, out var _out))
                                         .DefaultIfEmpty()
                                         .Average(rcdhi => decimal.Parse(rcdhi.Value)));
 
