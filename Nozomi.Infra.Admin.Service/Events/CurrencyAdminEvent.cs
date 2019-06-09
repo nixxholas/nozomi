@@ -27,12 +27,12 @@ namespace Nozomi.Infra.Admin.Service.Events
             _currencyPairSourceCurrencyAdminEvent = currencyPairSourceCurrencyAdminEvent;
         }
 
-        public Currency GetCurrencyByAbbreviation(string abbreviation)
+        public Currency GetCurrencyBySlug(string slug)
         {
             var currency = _unitOfWork.GetRepository<Currency>()
                 .GetQueryable()
                 .AsNoTracking()
-                .Where(c => c.Abbreviation.Equals(abbreviation, StringComparison.InvariantCultureIgnoreCase))
+                .Where(c => c.Slug.Equals(slug, StringComparison.InvariantCultureIgnoreCase))
                 .Include(c => c.CurrencyType)
                 .Include(c => c.AnalysedComponents)
                 .Include(c => c.CurrencySources)

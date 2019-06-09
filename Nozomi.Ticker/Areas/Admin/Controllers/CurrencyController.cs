@@ -65,7 +65,7 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
         [HttpGet("{abbreviation}")]
         public IActionResult Currency([FromRoute] string abbreviation)
         {
-            var currency = _currencyAdminEvent.GetCurrencyByAbbreviation(abbreviation);
+            var currency = _currencyAdminEvent.GetCurrencyBySlug(abbreviation);
             var vm = new CurrencyViewModel
             {
                 Currency = currency,

@@ -5,6 +5,6 @@ namespace Nozomi.Infra.Admin.Service.Events.Interfaces
 {
     public interface ICurrencyAdminEvent
     {
-        Currency GetCurrencyByAbbreviation(string abbreviation);
+        Currency GetCurrencyBySlug(string slug);
     }
 }
