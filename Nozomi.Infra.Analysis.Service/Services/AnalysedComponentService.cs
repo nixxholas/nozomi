@@ -61,5 +61,22 @@ namespace Nozomi.Infra.Analysis.Service.Services
 
             return false;
         }
+
+        public bool Checked(long analysedComponentId, long userId = 0)
+        {
+            var comp = _unitOfWork.GetRepository<AnalysedComponent>()
+                .Get(ac => ac.Id.Equals(analysedComponentId) && ac.DeletedAt == null)
+                .SingleOrDefault();
+
+            if (comp != null)
+            {
+                comp.ModifiedAt = DateTime.UtcNow;
+                
+                _unitOfWork.GetRepository<AnalysedComponent>().Update(comp);
+                _unitOfWork.Commit(userId);
+            }
+            
+            return false;
+        }
     }
 }
