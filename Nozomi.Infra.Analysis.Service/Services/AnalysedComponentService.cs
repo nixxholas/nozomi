@@ -65,8 +65,9 @@ namespace Nozomi.Infra.Analysis.Service.Services
         public bool Checked(long analysedComponentId, long userId = 0)
         {
             var comp = _unitOfWork.GetRepository<AnalysedComponent>()
-                .Get(ac => ac.Id.Equals(analysedComponentId) && ac.DeletedAt == null)
-                .SingleOrDefault();
+                .GetQueryable()
+                .AsNoTracking()
+                .SingleOrDefault(ac => ac.Id.Equals(analysedComponentId) && ac.DeletedAt == null);
 
             if (comp != null)
             {
