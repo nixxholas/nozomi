@@ -158,7 +158,8 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                 .SingleOrDefault(ac => ac.DeletedAt == null && ac.IsEnabled
                                                                             && ac.ComponentType
                                                                                 .Equals(AnalysedComponentType.CurrentAveragePrice)
-                                                                            && !string.IsNullOrEmpty(ac.Value));
+                                                                            && !string.IsNullOrEmpty(ac.Value)
+                                                                            && decimal.TryParse(ac.Value, out var _out));
 
                             if (currencyAveragePrice != null)
                             {
@@ -310,7 +311,8 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                         && ac.AnalysedHistoricItems
                                         .Any(ahi => ahi.HistoricDateTime >
                                                         DateTime.UtcNow.Subtract(TimeSpan.FromHours(1))
-                                                        && !string.IsNullOrEmpty(ahi.Value)));
+                                                        && !string.IsNullOrEmpty(ahi.Value)
+                                                        && decimal.TryParse(ahi.Value, out var _out)));
 
                                 // Safetynet
                                 if (currencyAveragePrice != null)
@@ -353,7 +355,8 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                                      || rc.ComponentType.Equals(ComponentType.Bid))
                                         .SelectMany(rc => rc.RcdHistoricItems)
                                         .Where(rcdhi => rcdhi.HistoricDateTime >
-                                                        DateTime.UtcNow.Subtract(TimeSpan.FromHours(1)))
+                                                        DateTime.UtcNow.Subtract(TimeSpan.FromHours(1))
+                                                        && decimal.TryParse(rcdhi.Value, out var _out))
                                         .Average(rcdhi => decimal.Parse(string.IsNullOrEmpty(rcdhi.Value)
                                             ? "0"
                                             : rcdhi.Value));
@@ -389,7 +392,8 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                     .DefaultIfEmpty()
                                     .Average(rc => rc.AnalysedHistoricItems
                                         .Where(ahi => ahi.CreatedAt >
-                                                      DateTime.UtcNow.Subtract(TimeSpan.FromHours(24)))
+                                                      DateTime.UtcNow.Subtract(TimeSpan.FromHours(24))
+                                                      && decimal.TryParse(ahi.Value, out var _out))
                                         .DefaultIfEmpty()
                                         .Average(ahi => decimal.Parse(ahi.Value)));
 
@@ -416,7 +420,8 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                     .DefaultIfEmpty()
                                     .Average(ac => ac.AnalysedHistoricItems
                                         .Where(ahi => ahi.CreatedAt >
-                                                      DateTime.UtcNow.Subtract(TimeSpan.FromHours(24)))
+                                                      DateTime.UtcNow.Subtract(TimeSpan.FromHours(24))
+                                                      && decimal.TryParse(ahi.Value, out var _out))
                                         .DefaultIfEmpty()
                                         .Average(ahi => decimal.Parse(ahi.Value)));
 
@@ -449,7 +454,8 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                     .DefaultIfEmpty()
                                     .Average(rc => rc.AnalysedHistoricItems
                                         .Where(ahi => ahi.CreatedAt >
-                                                      DateTime.UtcNow.Subtract(TimeSpan.FromDays(7)))
+                                                      DateTime.UtcNow.Subtract(TimeSpan.FromDays(7))
+                                                      && decimal.TryParse(ahi.Value, out var _out))
                                         .DefaultIfEmpty()
                                         .Average(ahi => decimal.Parse(ahi.Value)));
 
@@ -476,7 +482,8 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                     .DefaultIfEmpty()
                                     .Average(ac => ac.AnalysedHistoricItems
                                         .Where(ahi => ahi.CreatedAt >
-                                                      DateTime.UtcNow.Subtract(TimeSpan.FromDays(7)))
+                                                      DateTime.UtcNow.Subtract(TimeSpan.FromDays(7))
+                                                      && decimal.TryParse(ahi.Value, out var _out))
                                         .DefaultIfEmpty()
                                         .Average(ahi => decimal.Parse(ahi.Value)));
 
@@ -509,7 +516,8 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                     .DefaultIfEmpty()
                                     .Average(rc => rc.AnalysedHistoricItems
                                         .Where(ahi => ahi.CreatedAt >
-                                                      DateTime.UtcNow.Subtract(TimeSpan.FromDays(30)))
+                                                      DateTime.UtcNow.Subtract(TimeSpan.FromDays(30))
+                                                      && decimal.TryParse(ahi.Value, out var _out))
                                         .DefaultIfEmpty()
                                         .Average(ahi => decimal.Parse(ahi.Value)));
 
@@ -536,7 +544,8 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                     .DefaultIfEmpty()
                                     .Average(ac => ac.AnalysedHistoricItems
                                         .Where(ahi => ahi.CreatedAt >
-                                                      DateTime.UtcNow.Subtract(TimeSpan.FromDays(30)))
+                                                      DateTime.UtcNow.Subtract(TimeSpan.FromDays(30))
+                                                      && decimal.TryParse(ahi.Value, out var _out))
                                         .DefaultIfEmpty()
                                         .Average(ahi => decimal.Parse(ahi.Value)));
 
@@ -569,7 +578,8 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                 // Filter
                                 var historicItems = currencyAnalysedComps
                                     .SelectMany(ac => ac.AnalysedHistoricItems)
-                                    .Where(ahi => ahi.CreatedAt > DateTime.UtcNow.Subtract(TimeSpan.FromDays(1)))
+                                    .Where(ahi => ahi.CreatedAt > DateTime.UtcNow.Subtract(TimeSpan.FromDays(1))
+                                                  && decimal.TryParse(ahi.Value, out var _out))
                                     // Make sure the latest is at the top, oldest at the bottom
                                     .OrderByDescending(ahi => ahi.CreatedAt)
                                     .ToList();
@@ -615,7 +625,8 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                     .Where(ac => ac.ComponentType.Equals(AnalysedComponentType.CurrentAveragePrice)
                                                  && ac.AnalysedHistoricItems.Count > 0)
                                     .SelectMany(ac => ac.AnalysedHistoricItems)
-                                    .Where(ahi => ahi.CreatedAt > DateTime.UtcNow.Subtract(TimeSpan.FromDays(1)))
+                                    .Where(ahi => ahi.CreatedAt > DateTime.UtcNow.Subtract(TimeSpan.FromDays(1))
+                                                  && decimal.TryParse(ahi.Value, out var _out))
                                     // Make sure the latest is at the top, oldest at the bottom
                                     .OrderByDescending(ahi => ahi.CreatedAt)
                                     .ToList();
@@ -665,7 +676,8 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                     .Where(ac => ac.ComponentType.Equals(AnalysedComponentType.CurrentAveragePrice)
                                                  && ac.AnalysedHistoricItems.Count > 0)
                                     .SelectMany(ac => ac.AnalysedHistoricItems)
-                                    .Where(ahi => ahi.CreatedAt > DateTime.UtcNow.Subtract(TimeSpan.FromHours(1)))
+                                    .Where(ahi => ahi.CreatedAt > DateTime.UtcNow.Subtract(TimeSpan.FromHours(1))
+                                                  && decimal.TryParse(ahi.Value, out var _out))
                                     // Make sure the latest is at the top, oldest at the bottom
                                     .OrderByDescending(ahi => ahi.CreatedAt)
                                     .ToList();
@@ -711,7 +723,8 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                     .Where(ac => ac.ComponentType.Equals(AnalysedComponentType.CurrentAveragePrice)
                                                  && ac.AnalysedHistoricItems.Count > 0)
                                     .SelectMany(ac => ac.AnalysedHistoricItems)
-                                    .Where(ahi => ahi.CreatedAt > DateTime.UtcNow.Subtract(TimeSpan.FromHours(1)))
+                                    .Where(ahi => ahi.CreatedAt > DateTime.UtcNow.Subtract(TimeSpan.FromHours(1))
+                                                  && decimal.TryParse(ahi.Value, out var _out))
                                     // Make sure the latest is at the top, oldest at the bottom
                                     .OrderByDescending(ahi => ahi.CreatedAt)
                                     .ToList();
@@ -773,7 +786,8 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                     .DefaultIfEmpty()
                                     .Average(rc => rc.AnalysedHistoricItems
                                         .Where(ahi => ahi.CreatedAt >
-                                                      DateTime.UtcNow.Subtract(TimeSpan.FromDays(1)))
+                                                      DateTime.UtcNow.Subtract(TimeSpan.FromDays(1))
+                                                      && decimal.TryParse(ahi.Value, out var _out))
                                         .DefaultIfEmpty()
                                         .Average(ahi => decimal.Parse(ahi.Value)));
 
@@ -806,7 +820,8 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                     .DefaultIfEmpty()
                                     .Average(rc => rc.RcdHistoricItems
                                         .Where(rcdhi => rcdhi.CreatedAt >
-                                                        DateTime.UtcNow.Subtract(TimeSpan.FromDays(1)))
+                                                        DateTime.UtcNow.Subtract(TimeSpan.FromDays(1))
+                                                        && decimal.TryParse(ahi.Value, out var _out))
                                         .DefaultIfEmpty()
                                         .Average(rcdhi => decimal.Parse(rcdhi.Value)));
 
