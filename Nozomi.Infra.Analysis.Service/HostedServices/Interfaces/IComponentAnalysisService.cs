@@ -5,7 +5,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.Interfaces
 {
     public interface IComponentAnalysisService
     {
-        bool Analyse(ICollection<AnalysedComponent> component);
+        bool AnalyseOne(AnalysedComponent component);
 
         bool Stash(AnalysedComponent component);
     }

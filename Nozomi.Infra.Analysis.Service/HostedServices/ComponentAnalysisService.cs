@@ -12,9 +12,11 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Nozomi.Base.Core;
 using Nozomi.Base.Core.Helpers.Enumerator;
+using Nozomi.Base.Core.Helpers.Native.Numerals;
 using Nozomi.Data.Models.Currency;
 using Nozomi.Data.Models.Web;
 using Nozomi.Data.Models.Web.Analytical;
+using Nozomi.Infra.Analysis.Service.Events.Interfaces;
 using Nozomi.Infra.Analysis.Service.HostedServices.Interfaces;
 using Nozomi.Infra.Analysis.Service.Services.Interfaces;
 using Nozomi.Infra.Preprocessing.SignalR;
@@ -33,6 +35,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
         private readonly IAnalysedHistoricItemEvent _analysedHistoricItemEvent;
         private readonly IAnalysedComponentService _analysedComponentService;
         private readonly IAnalysedHistoricItemService _analysedHistoricItemService;
+        private readonly IXAnalysedComponentEvent _xAnalysedComponentEvent;
         private readonly ICurrencyEvent _currencyEvent;
         private readonly IRequestComponentEvent _requestComponentEvent;
 
@@ -43,6 +46,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
             _analysedComponentEvent = _scope.ServiceProvider.GetRequiredService<IAnalysedComponentEvent>();
             _analysedHistoricItemEvent = _scope.ServiceProvider.GetRequiredService<IAnalysedHistoricItemEvent>();
             _analysedComponentService = _scope.ServiceProvider.GetRequiredService<IAnalysedComponentService>();
+            _xAnalysedComponentEvent = _scope.ServiceProvider.GetRequiredService<IXAnalysedComponentEvent>();
             _analysedHistoricItemService = _scope.ServiceProvider.GetRequiredService<IAnalysedHistoricItemService>();
             _currencyEvent = _scope.ServiceProvider.GetRequiredService<ICurrencyEvent>();
             _requestComponentEvent = _scope.ServiceProvider.GetRequiredService<IRequestComponentEvent>();
@@ -58,19 +62,31 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
             {
                 try
                 {
-                    var items = _analysedComponentEvent.GetAll(true)
-                        .OrderBy(ac => ac.Id);
+                    var top = _xAnalysedComponentEvent.Top();
 
-                    if (Analyse(items.ToList()))
+                    if (AnalyseOne(top))
                     {
-                        _logger.LogInformation($"[{ServiceName}]" +
-                                               " Analysis successful");
+                        _logger.LogInformation($"[{ServiceName}] AnalysedComponent {top.Id}: Successfully to updated");
                     }
                     else
                     {
-                        _logger.LogWarning($"[{ServiceName}]" +
-                                           " Something bad happened");
+                        _logger.LogWarning($"[{ServiceName}] AnalysedComponent {top.Id}: Failed to update");
                     }
+
+                    // DEPRECATED
+//                    var items = _analysedComponentEvent.GetAll(true)
+//                        .OrderBy(ac => ac.Id);
+//
+//                    if (Analyse(items.ToList()))
+//                    {
+//                        _logger.LogInformation($"[{ServiceName}]" +
+//                                               " Analysis successful");
+//                    }
+//                    else
+//                    {
+//                        _logger.LogWarning($"[{ServiceName}]" +
+//                                           " Something bad happened");
+//                    }
                 }
                 catch (Exception ex)
                 {
@@ -85,16 +101,13 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
         }
 
         /// <summary>
-        /// Analysis Method that computes every AnalysedComponentType Enumerator
+        /// Analysis Method that computes an Analysed Component.
         /// </summary>
-        /// <param name="components">The list of components to compute and save.</param>
+        /// <param name="component">The component to compute and save.</param>
         /// <returns>Success or failure of collection processing</returns>
-        public bool Analyse(ICollection<AnalysedComponent> components)
+        public bool AnalyseOne(AnalysedComponent component)
         {
-            if (components == null || components.Count <= 0) return false;
-
-            foreach (var component in components)
-            {
+            if (component != null) {
                 // Always stash the value first
                 switch (component.ComponentType)
                 {
@@ -109,7 +122,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                 .Where(ac => ac.ComponentType.Equals(AnalysedComponentType.MarketCap))
                                 .ToList();
 
-                            if (analysedComponents != null && analysedComponents.Count > 0)
+                            if (analysedComponents.Count > 0)
                             {
                                 // Compute the market cap now since we can get in
                                 var marketCapByCurrencies = new Dictionary<string, decimal>();
@@ -140,11 +153,8 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                 {
                                     var marketCap = marketCapByCurrencies.Sum(item => item.Value);
 
-                                    if (_analysedComponentService.UpdateValue(component.Id,
-                                        marketCap.ToString(CultureInfo.InvariantCulture)))
-                                    {
-                                        // Updated successfully
-                                    }
+                                    return _analysedComponentService.UpdateValue(component.Id,
+                                        marketCap.ToString(CultureInfo.InvariantCulture));
                                 }
                             }
                         }
@@ -159,7 +169,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                                                             && ac.ComponentType
                                                                                 .Equals(AnalysedComponentType.CurrentAveragePrice)
                                                                             && !string.IsNullOrEmpty(ac.Value)
-                                                                            && decimal.TryParse(ac.Value, out var _out));
+                                                                            && NumberHelper.IsNumericDecimal(ac.Value));
 
                             if (currencyAveragePrice != null)
                             {
@@ -177,10 +187,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
 
                                     if (!decimal.Zero.Equals(marketCap))
                                     {
-                                        if (_analysedComponentService.UpdateValue(component.Id, marketCap.ToString()))
-                                        {
-                                            // Updated successfully
-                                        }
+                                        return _analysedComponentService.UpdateValue(component.Id, marketCap.ToString());
                                     }
                                 }
                             }
@@ -206,10 +213,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
 
                                 if (!decimal.Zero.Equals(marketCap))
                                 {
-                                    if (_analysedComponentService.UpdateValue(component.Id, marketCap.ToString()))
-                                    {
-                                        // Updated successfully
-                                    }
+                                    return _analysedComponentService.UpdateValue(component.Id, marketCap.ToString());
                                 }
                             }
                         }
@@ -241,10 +245,10 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                                          StringComparison.InvariantCultureIgnoreCase)
                                                  && ac.ComponentType.Equals(AnalysedComponentType.CurrentAveragePrice)
                                                  && !string.IsNullOrEmpty(ac.Value)
-                                                 && decimal.TryParse(ac.Value, out var validVal))
+                                                 && NumberHelper.IsNumericDecimal(ac.Value))
                                     .ToList();
 
-                            if (analysedComps != null && analysedComps.Count > 0)
+                            if (analysedComps.Count > 0)
                             {
                                 // Aggregate it
                                 var avgPrice = analysedComps
@@ -252,11 +256,8 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
 
                                 if (!decimal.Zero.Equals(avgPrice))
                                 {
-                                    if (_analysedComponentService.UpdateValue(component.Id, 
-                                        avgPrice.ToString(CultureInfo.InvariantCulture)))
-                                    {
-                                        // Updated successfully
-                                    }
+                                    return _analysedComponentService.UpdateValue(component.Id, 
+                                        avgPrice.ToString(CultureInfo.InvariantCulture));
                                 }
                             }
                         }
@@ -271,10 +272,10 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                                                   && (rc.ComponentType.Equals(ComponentType.Ask)
                                                                       || rc.ComponentType.Equals(ComponentType.Bid))
                                                                   && !string.IsNullOrEmpty(rc.Value)
-                                                                  && decimal.TryParse(rc.Value, out var validVal))
+                                                                  && NumberHelper.IsNumericDecimal(rc.Value))
                                 .ToList();
 
-                            if (correlatedReqComps != null && correlatedReqComps.Count > 0)
+                            if (correlatedReqComps.Count > 0)
                             {
                                 // Aggregate it
                                 var avgPrice = correlatedReqComps
@@ -282,11 +283,8 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
 
                                 if (!decimal.Zero.Equals(avgPrice))
                                 {
-                                    if (_analysedComponentService.UpdateValue(component.Id, 
-                                        avgPrice.ToString(CultureInfo.InvariantCulture)))
-                                    {
-                                        // Updated successfully
-                                    }
+                                    return _analysedComponentService.UpdateValue(component.Id, 
+                                        avgPrice.ToString(CultureInfo.InvariantCulture));
                                 }
                             }
                         }
@@ -312,7 +310,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                         .Any(ahi => ahi.HistoricDateTime >
                                                         DateTime.UtcNow.Subtract(TimeSpan.FromHours(1))
                                                         && !string.IsNullOrEmpty(ahi.Value)
-                                                        && decimal.TryParse(ahi.Value, out var _out)));
+                                                        && NumberHelper.IsNumericDecimal(ahi.Value)));
 
                                 // Safetynet
                                 if (currencyAveragePrice != null)
@@ -325,11 +323,8 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
 
                                     if (!(currAvgPrice <= decimal.Zero))
                                     {
-                                        if (_analysedComponentService.UpdateValue(component.Id,
-                                            currAvgPrice.ToString(CultureInfo.InvariantCulture)))
-                                        {
-                                            // Updated successfully
-                                        }
+                                        return _analysedComponentService.UpdateValue(component.Id,
+                                            currAvgPrice.ToString(CultureInfo.InvariantCulture));
                                     }
                                 }
                             }
@@ -342,17 +337,13 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                                  && rc.RcdHistoricItems != null)
                                     .ToList();
 
-                                if (correlatedReqComps != null &&
-                                    correlatedReqComps // Make sure there's some historic items.
-                                        .Where(rc => rc.RcdHistoricItems
-                                            .Any(rcdhi => rcdhi.HistoricDateTime >
-                                                          DateTime.UtcNow.Subtract(TimeSpan.FromHours(1))))
-                                        .SelectMany(rc => rc.RcdHistoricItems).Any())
+                                if (correlatedReqComps // Make sure there's some historic items.
+                                        .Any(rc => rc.RcdHistoricItems
+                                            .Any(rcdhi => rcdhi.HistoricDateTime > 
+                                                          DateTime.UtcNow.Subtract(TimeSpan.FromHours(1)))))
                                 {
                                     // Aggregate it
                                     var avgPrice = correlatedReqComps
-                                        .Where(rc => rc.ComponentType.Equals(ComponentType.Ask)
-                                                     || rc.ComponentType.Equals(ComponentType.Bid))
                                         .SelectMany(rc => rc.RcdHistoricItems)
                                         .Where(rcdhi => rcdhi.HistoricDateTime >
                                                         DateTime.UtcNow.Subtract(TimeSpan.FromHours(1))
@@ -363,10 +354,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
 
                                     if (!(avgPrice <= decimal.Zero))
                                     {
-                                        if (_analysedComponentService.UpdateValue(component.Id, avgPrice.ToString()))
-                                        {
-                                            // Updated successfully
-                                        }
+                                        return _analysedComponentService.UpdateValue(component.Id, avgPrice.ToString());
                                     }
                                 }
                             }
@@ -385,7 +373,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                     .ToList();
 
                             // Safetynet
-                            if (currAveragePriceComp != null && currAveragePriceComp.Count > 0)
+                            if (currAveragePriceComp.Count > 0)
                             {
                                 // Now we can aggregate this
                                 var currAvgPrice = currAveragePriceComp
@@ -397,11 +385,8 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                         .DefaultIfEmpty()
                                         .Average(ahi => decimal.Parse(ahi.Value)));
 
-                                if (_analysedComponentService.UpdateValue(component.Id,
-                                    currAvgPrice.ToString(CultureInfo.InvariantCulture)))
-                                {
-                                    // Updated successfully
-                                }
+                                return _analysedComponentService.UpdateValue(component.Id,
+                                    currAvgPrice.ToString(CultureInfo.InvariantCulture));
                             }
                         }
                         else if (component.CurrencyPairId != null && component.CurrencyPairId > 0)
@@ -413,7 +398,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                 .Where(ac => ac.ComponentType.Equals(AnalysedComponentType.CurrentAveragePrice))
                                 .ToList();
 
-                            if (correlatedAnaComps != null && correlatedAnaComps.Count > 0)
+                            if (correlatedAnaComps.Count > 0)
                             {
                                 // Aggregate it
                                 var avgPrice = correlatedAnaComps
@@ -425,11 +410,8 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                         .DefaultIfEmpty()
                                         .Average(ahi => decimal.Parse(ahi.Value)));
 
-                                if (_analysedComponentService.UpdateValue(component.Id, avgPrice
-                                    .ToString(CultureInfo.InvariantCulture)))
-                                {
-                                    // Updated successfully
-                                }
+                                return _analysedComponentService.UpdateValue(component.Id, avgPrice
+                                    .ToString(CultureInfo.InvariantCulture));
                             }
                         }
 
@@ -447,7 +429,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                     .ToList();
 
                             // Safetynet
-                            if (currAveragePriceComp != null && currAveragePriceComp.Count > 0)
+                            if (currAveragePriceComp.Count > 0)
                             {
                                 // Now we can aggregate this
                                 var currAvgPrice = currAveragePriceComp
@@ -459,11 +441,8 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                         .DefaultIfEmpty()
                                         .Average(ahi => decimal.Parse(ahi.Value)));
 
-                                if (_analysedComponentService.UpdateValue(component.Id,
-                                    currAvgPrice.ToString(CultureInfo.InvariantCulture)))
-                                {
-                                    // Updated successfully
-                                }
+                                return _analysedComponentService.UpdateValue(component.Id,
+                                    currAvgPrice.ToString(CultureInfo.InvariantCulture));
                             }
                         }
                         else if (component.CurrencyPairId != null && component.CurrencyPairId > 0)
@@ -475,7 +454,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                 .Where(ac => ac.ComponentType.Equals(AnalysedComponentType.DailyPriceChange))
                                 .ToList();
 
-                            if (correlatedAnaComps != null && correlatedAnaComps.Count > 0)
+                            if (correlatedAnaComps.Count > 0)
                             {
                                 // Aggregate it
                                 var avgPrice = correlatedAnaComps
@@ -487,11 +466,8 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                         .DefaultIfEmpty()
                                         .Average(ahi => decimal.Parse(ahi.Value)));
 
-                                if (_analysedComponentService.UpdateValue(component.Id, avgPrice
-                                    .ToString(CultureInfo.InvariantCulture)))
-                                {
-                                    // Updated successfully
-                                }
+                                return _analysedComponentService.UpdateValue(component.Id, avgPrice
+                                    .ToString(CultureInfo.InvariantCulture));
                             }
                         }
 
@@ -509,7 +485,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                     .ToList();
 
                             // Safetynet
-                            if (currAveragePriceComp != null && currAveragePriceComp.Count > 0)
+                            if (currAveragePriceComp.Count > 0)
                             {
                                 // Now we can aggregate this
                                 var currAvgPrice = currAveragePriceComp
@@ -521,11 +497,8 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                         .DefaultIfEmpty()
                                         .Average(ahi => decimal.Parse(ahi.Value)));
 
-                                if (_analysedComponentService.UpdateValue(component.Id,
-                                    currAvgPrice.ToString(CultureInfo.InvariantCulture)))
-                                {
-                                    // Updated successfully
-                                }
+                                return _analysedComponentService.UpdateValue(component.Id,
+                                    currAvgPrice.ToString(CultureInfo.InvariantCulture));
                             }
                         }
                         else if (component.CurrencyPairId != null && component.CurrencyPairId > 0)
@@ -537,7 +510,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                 .Where(ac => ac.ComponentType.Equals(AnalysedComponentType.WeeklyPriceChange))
                                 .ToList();
 
-                            if (correlatedAnaComps != null && correlatedAnaComps.Count > 0)
+                            if (correlatedAnaComps.Count > 0)
                             {
                                 // Aggregate it
                                 var avgPrice = correlatedAnaComps
@@ -549,11 +522,8 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                         .DefaultIfEmpty()
                                         .Average(ahi => decimal.Parse(ahi.Value)));
 
-                                if (_analysedComponentService.UpdateValue(component.Id, avgPrice
-                                    .ToString(CultureInfo.InvariantCulture)))
-                                {
-                                    // Updated successfully
-                                }
+                                return _analysedComponentService.UpdateValue(component.Id, avgPrice
+                                    .ToString(CultureInfo.InvariantCulture));
                             }
                         }
 
@@ -573,13 +543,13 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                     .ToList();
 
                             // Safetynet
-                            if (currencyAnalysedComps != null && currencyAnalysedComps.Count > 0)
+                            if (currencyAnalysedComps.Count > 0)
                             {
                                 // Filter
                                 var historicItems = currencyAnalysedComps
                                     .SelectMany(ac => ac.AnalysedHistoricItems)
                                     .Where(ahi => ahi.CreatedAt > DateTime.UtcNow.Subtract(TimeSpan.FromDays(1))
-                                                  && decimal.TryParse(ahi.Value, out var _out))
+                                                  && NumberHelper.IsNumericDecimal(ahi.Value))
                                     // Make sure the latest is at the top, oldest at the bottom
                                     .OrderByDescending(ahi => ahi.CreatedAt)
                                     .ToList();
@@ -598,11 +568,8 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                         // Now we can aggregate this
                                         if (increase != decimal.Zero)
                                         {
-                                            if (_analysedComponentService.UpdateValue(component.Id,
-                                                increase.ToString(CultureInfo.InvariantCulture)))
-                                            {
-                                                // Updated successfully
-                                            }
+                                            return _analysedComponentService.UpdateValue(component.Id,
+                                                increase.ToString(CultureInfo.InvariantCulture));
                                         }
                                     }
                                 }
@@ -626,7 +593,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                                  && ac.AnalysedHistoricItems.Count > 0)
                                     .SelectMany(ac => ac.AnalysedHistoricItems)
                                     .Where(ahi => ahi.CreatedAt > DateTime.UtcNow.Subtract(TimeSpan.FromDays(1))
-                                                  && decimal.TryParse(ahi.Value, out var _out))
+                                                  && NumberHelper.IsNumericDecimal(ahi.Value))
                                     // Make sure the latest is at the top, oldest at the bottom
                                     .OrderByDescending(ahi => ahi.CreatedAt)
                                     .ToList();
@@ -645,11 +612,8 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                         // Now we can aggregate this
                                         if (increase != decimal.Zero)
                                         {
-                                            if (_analysedComponentService.UpdateValue(component.Id,
-                                                increase.ToString(CultureInfo.InvariantCulture)))
-                                            {
-                                                // Updated successfully
-                                            }
+                                            return _analysedComponentService.UpdateValue(component.Id,
+                                                increase.ToString(CultureInfo.InvariantCulture));
                                         }
                                     }
                                 }
@@ -696,11 +660,8 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                         // Now we can aggregate this
                                         if (increase != decimal.Zero)
                                         {
-                                            if (_analysedComponentService.UpdateValue(component.Id,
-                                                increase.ToString(CultureInfo.InvariantCulture)))
-                                            {
-                                                // Updated successfully
-                                            }
+                                            return _analysedComponentService.UpdateValue(component.Id,
+                                                increase.ToString(CultureInfo.InvariantCulture));
                                         }
                                     }
                                 }
@@ -743,11 +704,8 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                         // Now we can aggregate this
                                         if (increase != decimal.Zero)
                                         {
-                                            if (_analysedComponentService.UpdateValue(component.Id,
-                                                increase.ToString(CultureInfo.InvariantCulture)))
-                                            {
-                                                // Updated successfully
-                                            }
+                                            return _analysedComponentService.UpdateValue(component.Id,
+                                                increase.ToString(CultureInfo.InvariantCulture));
                                         }
                                     }
                                 }
@@ -793,11 +751,8 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
 
                                 if (!(currAvgVol <= decimal.Zero))
                                 {
-                                    if (_analysedComponentService.UpdateValue(component.Id,
-                                        currAvgVol.ToString(CultureInfo.InvariantCulture)))
-                                    {
-                                        // Updated successfully
-                                    }
+                                    return _analysedComponentService.UpdateValue(component.Id,
+                                        currAvgVol.ToString(CultureInfo.InvariantCulture));
                                 }
                             }
                         }
@@ -827,11 +782,8 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
 
                                 if (!decimal.Zero.Equals(avgVol))
                                 {
-                                    if (_analysedComponentService.UpdateValue(component.Id, avgVol
-                                        .ToString(CultureInfo.InvariantCulture)))
-                                    {
-                                        // Updated successfully
-                                    }
+                                    return _analysedComponentService.UpdateValue(component.Id, avgVol
+                                        .ToString(CultureInfo.InvariantCulture));
                                 }
                             }
                         }
@@ -840,9 +792,12 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                     default:
                         break;
                 }
+                
+                // Pop
+                _analysedComponentService.Checked(component.Id);
             }
 
-            return true;
+            return false;
         }
 
         public bool Stash(AnalysedComponent component)
