@@ -58,9 +58,54 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
             if (entity != null)
             {
                 // Logic here once again
+                switch (entity.ComponentType)
+                {
+                    case AnalysedComponentType.Unknown:
+                        // If it winds up here, its fine
+                        _logger.LogWarning($"[{ServiceName}] Analyse ({entity.Id}): Skipping, Unknown type.");
+                        break;
+                    case AnalysedComponentType.MarketCap:
+                        break;
+                    case AnalysedComponentType.HourlyMarketCap:
+                        break;
+                    case AnalysedComponentType.DailyMarketCap:
+                        break;
+                    case AnalysedComponentType.MarketCapChange:
+                        break;
+                    case AnalysedComponentType.MarketCapHourlyChange:
+                        break;
+                    case AnalysedComponentType.MarketCapDailyChange:
+                        break;
+                    case AnalysedComponentType.MarketCapPctChange:
+                        break;
+                    case AnalysedComponentType.MarketCapHourlyPctChange:
+                        break;
+                    case AnalysedComponentType.MarketCapDailyPctChange:
+                        break;
+                    case AnalysedComponentType.CurrentAveragePrice:
+                        break;
+                    case AnalysedComponentType.HourlyAveragePrice:
+                        break;
+                    case AnalysedComponentType.DailyAveragePrice:
+                        break;
+                    case AnalysedComponentType.DailyPriceChange:
+                        break;
+                    case AnalysedComponentType.WeeklyPriceChange:
+                        break;
+                    case AnalysedComponentType.MonthlyPriceChange:
+                        break;
+                    case AnalysedComponentType.DailyPricePctChange:
+                        break;
+                    case AnalysedComponentType.HourlyPricePctChange:
+                        break;
+                    case AnalysedComponentType.DailyVolume:
+                        break;
+                    default:
+                        // If it winds up here, it needs help lol...
+                        _logger.LogWarning($"[{ServiceName}] Analyse ({entity.Id}): Unable to execute analysis.");
+                        break;
+                }
                 
-                // If it winds up here, it needs help lol...
-                _logger.LogWarning($"[{ServiceName}] Analyse ({entity.Id}): Unable to execute analysis.");
                 _analysedComponentService.Checked(entity.Id);
             }
 
