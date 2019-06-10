@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using Nozomi.Data.Models.Web.Analytical;
 using Nozomi.Infra.Analysis.Service.Events.Interfaces;
 using Nozomi.Infra.Analysis.Service.HostedServices.Interfaces;
+using Nozomi.Infra.Analysis.Service.Services.Interfaces;
 using Nozomi.Preprocessing.Abstracts;
 
 namespace Nozomi.Infra.Analysis.Service.HostedServices
@@ -14,10 +15,12 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
     {
         private const string ServiceName = "AcAnalysisHostedService";
         private readonly IXAnalysedComponentEvent _xAnalysedComponentEvent;
+        private readonly IAnalysedComponentService _analysedComponentService;
         
         public AcAnalysisHostedService(IServiceProvider serviceProvider) : base(serviceProvider)
         {
             _xAnalysedComponentEvent = _scope.ServiceProvider.GetRequiredService<IXAnalysedComponentEvent>();
+            _analysedComponentService = _scope.ServiceProvider.GetRequiredService<IAnalysedComponentService>();
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -52,7 +55,18 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
 
         public bool Analyse(AnalysedComponent entity)
         {
-            throw new NotImplementedException();
+            if (entity != null)
+            {
+                // Logic here once again
+                
+                // If it winds up here, it needs help lol...
+                _logger.LogWarning($"[{ServiceName}] Analyse ({entity.Id}): Unable to execute analysis.");
+                _analysedComponentService.Checked(entity.Id);
+            }
+
+            _logger.LogCritical($"[{ServiceName}] Analyse: Critical error here. Wow.");
+            
+            return false;
         }
     }
 }
