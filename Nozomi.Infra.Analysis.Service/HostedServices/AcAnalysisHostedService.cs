@@ -45,9 +45,6 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                 {
                     _logger.LogCritical("[ComponentAnalysisService]: " + ex);
                 }
-
-                // No naps taken
-                await Task.Delay(100, stoppingToken);
             }
 
             _logger.LogWarning("ComponentAnalysisService background task is stopping.");
