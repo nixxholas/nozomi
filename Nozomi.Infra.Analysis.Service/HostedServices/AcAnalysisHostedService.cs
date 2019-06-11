@@ -89,55 +89,35 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                         // CurrencyType-based market cap
                         if (entity.CurrencyTypeId != null && entity.CurrencyTypeId > 0)
                         {
-                            
                             switch (entity.ComponentType)
                             {
                                 case AnalysedComponentType.HourlyMarketCap:
-                                    analysedComponents = _analysedComponentEvent.GetAllByCurrencyType(
-                                        (long)entity.CurrencyTypeId, true, 0, dataTimespan.Ticks)
-                                        .ToList();
-                                    goto case AnalysedComponentType.DailyMarketCap;
                                 case AnalysedComponentType.DailyMarketCap:
-                                    analysedComponents = _analysedComponentEvent.GetAllCurrencyComponentsByType(
-                                            (long) entity.CurrencyTypeId, false)
-                                        .Where(ac => ac.ComponentType.Equals(AnalysedComponentType.MarketCap))
-                                        .ToList();
+                                    var obtainedComponent = _analysedComponentEvent
+                                        .GetAllByCurrencyType((long) entity.CurrencyTypeId, true, 
+                                            0, dataTimespan.Milliseconds)
+                                        .SingleOrDefault(ac => ac.ComponentType.Equals(entity.ComponentType));
                                     
-                                    if (analysedComponents.Count > 0)
+                                    if (obtainedComponent != null && obtainedComponent.AnalysedHistoricItems.Count > 0)
                                     {
-                                        // Compute the market cap now since we can get in
-                                        var marketCapByCurrencies = new Dictionary<string, decimal>();
-
-                                        // Compute per-currency first
-                                        foreach (var ac in analysedComponents)
-                                        {
-                                            // Value check first
-                                            if (decimal.TryParse(ac.Value, out var val) && val > decimal.Zero)
+                                        obtainedComponent.AnalysedHistoricItems
+                                            .Add(new AnalysedHistoricItem
                                             {
-                                                // Does this ticker exist on the list of market caps yet?
-                                                if (marketCapByCurrencies.ContainsKey(ac.Currency.Abbreviation))
-                                                {
-                                                    // Since yes, let's work on averaging it
-                                                    marketCapByCurrencies[ac.Currency.Abbreviation] =
-                                                        (marketCapByCurrencies[ac.Currency.Abbreviation] + val) / 2;
-                                                }
-                                                else
-                                                {
-                                                    // Since no, let's set it
-                                                    marketCapByCurrencies.Add(ac.Currency.Abbreviation, val);
-                                                }
-                                            }
-                                        }
-
-                                        // Compute market cap now.
-                                        if (marketCapByCurrencies.Count > 0)
-                                        {
-                                            var marketCap = marketCapByCurrencies.Sum(item => item.Value);
-
-                                            return _analysedComponentService.UpdateValue(entity.Id,
-                                                marketCap.ToString(CultureInfo.InvariantCulture));
-                                        }
+                                                Value = obtainedComponent.Value
+                                            });
+                                        
+                                        return _analysedComponentService.UpdateValue(entity.Id, 
+                                            obtainedComponent.AnalysedHistoricItems
+                                                .Select(ahi => decimal.Parse(ahi.Value))
+                                                .ToList()
+                                                .Average()
+                                                .ToString(CultureInfo.InvariantCulture));
                                     }
+                                    
+                                    // Hitting here? nothing to process.
+                                    _logger.LogWarning($"[{ServiceName}] Analyse ({entity.Id}): " +
+                                                       $"nothing to log yet.");
+                                    
                                     break;
                                 // Default market cap function
                                 case AnalysedComponentType.MarketCap:
