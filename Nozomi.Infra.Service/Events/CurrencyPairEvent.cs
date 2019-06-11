@@ -18,6 +18,17 @@ namespace Nozomi.Service.Events
             : base(logger, unitOfWork)
         {
         }
+        
+        public ICollection<CurrencyPair> GetAllByMainCurrency(string mainCurrencyAbbrv = CoreConstants.GenericCurrency)
+        {
+            return _unitOfWork.GetRepository<CurrencyPair>()
+                .GetQueryable()
+                .AsNoTracking()
+                .Where(cp => cp.DeletedAt == null && cp.IsEnabled
+                             && cp.MainCurrencyAbbrv.Equals(mainCurrencyAbbrv, 
+                                 StringComparison.InvariantCultureIgnoreCase))
+                .ToList();
+        }
 
         public ICollection<CurrencyPair> GetAllByCounterCurrency(string counterCurrencyAbbrv = 
             CoreConstants.GenericCounterCurrency)
