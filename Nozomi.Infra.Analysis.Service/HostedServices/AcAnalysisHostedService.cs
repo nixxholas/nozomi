@@ -96,6 +96,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                         {
                             switch (entity.ComponentType)
                             {
+                                // TODO: TEST
                                 case AnalysedComponentType.HourlyMarketCap:
                                 case AnalysedComponentType.DailyMarketCap:
                                     // Obtain the computed market cap.
@@ -211,6 +212,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                             }
                         }
                         // Request-based Market Cap
+                        // TODO: TEST
                         else
                         {
                             var circuSupply = _currencyEvent.GetCirculatingSupply(entity);
