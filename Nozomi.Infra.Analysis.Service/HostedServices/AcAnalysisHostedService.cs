@@ -68,6 +68,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
             if (entity != null)
             {
                 var dataTimespan = TimeSpan.Zero;
+                ICollection<AnalysedComponent> analysedComponents;
                 
                 // Logic here once again
                 switch (entity.ComponentType)
@@ -88,46 +89,100 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                         // CurrencyType-based market cap
                         if (entity.CurrencyTypeId != null && entity.CurrencyTypeId > 0)
                         {
-                            // Obtain all sub components (Components in the currencies)
-                            var analysedComponents = _analysedComponentEvent.GetAllCurrencyComponentsByType(
-                                    (long) entity.CurrencyTypeId, true)
-                                .Where(ac => ac.ComponentType.Equals(AnalysedComponentType.MarketCap))
-                                .ToList();
-
-                            if (analysedComponents.Count > 0)
+                            
+                            switch (entity.ComponentType)
                             {
-                                // Compute the market cap now since we can get in
-                                var marketCapByCurrencies = new Dictionary<string, decimal>();
-
-                                // Compute per-currency first
-                                foreach (var ac in analysedComponents)
-                                {
-                                    // Value check first
-                                    if (decimal.TryParse(ac.Value, out var val) && val > decimal.Zero)
+                                case AnalysedComponentType.HourlyMarketCap:
+                                    analysedComponents = _analysedComponentEvent.GetAllByCurrencyType(
+                                        (long)entity.CurrencyTypeId, true, 0, dataTimespan.Ticks)
+                                        .ToList();
+                                    goto case AnalysedComponentType.DailyMarketCap;
+                                case AnalysedComponentType.DailyMarketCap:
+                                    analysedComponents = _analysedComponentEvent.GetAllCurrencyComponentsByType(
+                                            (long) entity.CurrencyTypeId, false)
+                                        .Where(ac => ac.ComponentType.Equals(AnalysedComponentType.MarketCap))
+                                        .ToList();
+                                    
+                                    if (analysedComponents.Count > 0)
                                     {
-                                        // Does this ticker exist on the list of market caps yet?
-                                        if (marketCapByCurrencies.ContainsKey(ac.Currency.Abbreviation))
+                                        // Compute the market cap now since we can get in
+                                        var marketCapByCurrencies = new Dictionary<string, decimal>();
+
+                                        // Compute per-currency first
+                                        foreach (var ac in analysedComponents)
                                         {
-                                            // Since yes, let's work on averaging it
-                                            marketCapByCurrencies[ac.Currency.Abbreviation] =
-                                                (marketCapByCurrencies[ac.Currency.Abbreviation] + val) / 2;
+                                            // Value check first
+                                            if (decimal.TryParse(ac.Value, out var val) && val > decimal.Zero)
+                                            {
+                                                // Does this ticker exist on the list of market caps yet?
+                                                if (marketCapByCurrencies.ContainsKey(ac.Currency.Abbreviation))
+                                                {
+                                                    // Since yes, let's work on averaging it
+                                                    marketCapByCurrencies[ac.Currency.Abbreviation] =
+                                                        (marketCapByCurrencies[ac.Currency.Abbreviation] + val) / 2;
+                                                }
+                                                else
+                                                {
+                                                    // Since no, let's set it
+                                                    marketCapByCurrencies.Add(ac.Currency.Abbreviation, val);
+                                                }
+                                            }
                                         }
-                                        else
+
+                                        // Compute market cap now.
+                                        if (marketCapByCurrencies.Count > 0)
                                         {
-                                            // Since no, let's set it
-                                            marketCapByCurrencies.Add(ac.Currency.Abbreviation, val);
+                                            var marketCap = marketCapByCurrencies.Sum(item => item.Value);
+
+                                            return _analysedComponentService.UpdateValue(entity.Id,
+                                                marketCap.ToString(CultureInfo.InvariantCulture));
                                         }
                                     }
-                                }
+                                    break;
+                                // Default market cap function
+                                case AnalysedComponentType.MarketCap:
+                                    // Obtain all sub components (Components in the currencies)
+                                    analysedComponents = _analysedComponentEvent.GetAllCurrencyComponentsByType(
+                                            (long) entity.CurrencyTypeId, false)
+                                        .Where(ac => ac.ComponentType.Equals(AnalysedComponentType.MarketCap))
+                                        .ToList();
 
-                                // Compute market cap now.
-                                if (marketCapByCurrencies.Count > 0)
-                                {
-                                    var marketCap = marketCapByCurrencies.Sum(item => item.Value);
+                                    if (analysedComponents.Count > 0)
+                                    {
+                                        // Compute the market cap now since we can get in
+                                        var marketCapByCurrencies = new Dictionary<string, decimal>();
 
-                                    return _analysedComponentService.UpdateValue(entity.Id,
-                                        marketCap.ToString(CultureInfo.InvariantCulture));
-                                }
+                                        // Compute per-currency first
+                                        foreach (var ac in analysedComponents)
+                                        {
+                                            // Value check first
+                                            if (decimal.TryParse(ac.Value, out var val) && val > decimal.Zero)
+                                            {
+                                                // Does this ticker exist on the list of market caps yet?
+                                                if (marketCapByCurrencies.ContainsKey(ac.Currency.Abbreviation))
+                                                {
+                                                    // Since yes, let's work on averaging it
+                                                    marketCapByCurrencies[ac.Currency.Abbreviation] =
+                                                        (marketCapByCurrencies[ac.Currency.Abbreviation] + val) / 2;
+                                                }
+                                                else
+                                                {
+                                                    // Since no, let's set it
+                                                    marketCapByCurrencies.Add(ac.Currency.Abbreviation, val);
+                                                }
+                                            }
+                                        }
+
+                                        // Compute market cap now.
+                                        if (marketCapByCurrencies.Count > 0)
+                                        {
+                                            var marketCap = marketCapByCurrencies.Sum(item => item.Value);
+
+                                            return _analysedComponentService.UpdateValue(entity.Id,
+                                                marketCap.ToString(CultureInfo.InvariantCulture));
+                                        }
+                                    }
+                                    break;
                             }
                         }
                         // Currency-based Market Cap
@@ -168,7 +223,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                         else
                         {
                             var circuSupply = _currencyEvent.GetCirculatingSupply(entity);
-                            var analysedComponents = _analysedComponentEvent.GetAllByCorrelation(entity.Id);
+                            analysedComponents = _analysedComponentEvent.GetAllByCorrelation(entity.Id);
 
                             // Parsable average?
                             if (circuSupply > 0
