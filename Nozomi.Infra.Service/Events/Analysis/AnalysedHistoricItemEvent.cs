@@ -54,8 +54,8 @@ namespace Nozomi.Service.Events.Analysis
                               && ahi.HistoricDateTime < DateTime.UtcNow.Subtract(since))
                 .OrderByDescending(ahi => ahi.HistoricDateTime)
                 // Take only the selected 50
-                .Skip(page * 50)
-                .Take(50)
+                .Skip(page * NozomiServiceConstants.AnalysedHistoricItemTakeoutLimit)
+                .Take(NozomiServiceConstants.AnalysedHistoricItemTakeoutLimit)
                 .ToList();
         }
 
