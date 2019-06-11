@@ -272,8 +272,8 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                             var componentsToCompute = _analysedComponentEvent.GetTickerPairComponentsByCurrencyCount(
                                 (long) entity.CurrencyId, cp => (cp.IsEnabled && cp.DeletedAt == null
                                                                  && cp.AnalysedComponents
-                                                                     .Any(ac => ac.ComponentType.Equals(AnalysedComponentType.CurrentAveragePrice)
-                                                                     && ac.AnalysedHistoricItems.Any())));
+                                                                     .Any(ac => ac.ComponentType
+                                                                         .Equals(AnalysedComponentType.CurrentAveragePrice))));
                             var componentPages = 
                                 (componentsToCompute > NozomiServiceConstants.AnalysedComponentTakeoutLimit) ?
                                 componentsToCompute / NozomiServiceConstants.AnalysedComponentTakeoutLimit : 1;
@@ -378,8 +378,134 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
 
                         break;
                     case AnalysedComponentType.HourlyAveragePrice:
+                        dataTimespan = TimeSpan.FromHours(1);
+                        
+                        // CurrencyType-based Live Average Price
+                        if (entity.CurrencyTypeId != null && entity.CurrencyTypeId > 0)
+                        {
+                            // This is not good lol
+                            _logger.LogCritical($"[{ServiceName} / ID: {entity.Id}] " +
+                                                $"Analyse/CurrentAveragePrice: A CurrencyType-" +
+                                                $"based component is attempting to compute its CurrentAveragePrice.");
+                        }
+                        
+                        // Currency-based Live Average Price
+                        // 1. Multiple Currency Pairs with Different Counter Currencies
+                        // 2. Just one pair that has the generic counter currency
+                        // 3. Just one pair that doesn't have the generic counter currency
+                        else if (entity.CurrencyId != null && entity.CurrencyId > 0)
+                        {
+                            // How many components we got
+                            var componentsToCompute = _analysedComponentEvent.GetTickerPairComponentsByCurrencyCount(
+                                (long) entity.CurrencyId, cp => cp.IsEnabled && cp.DeletedAt == null
+                                                                 && cp.AnalysedComponents
+                                                                     .Any(ac => ac.ComponentType.Equals(AnalysedComponentType.CurrentAveragePrice)
+                                                                     && ac.AnalysedHistoricItems.Any()));
+                            var componentPages = 
+                                (componentsToCompute > NozomiServiceConstants.AnalysedComponentTakeoutLimit) ?
+                                componentsToCompute / NozomiServiceConstants.AnalysedComponentTakeoutLimit : 1;
+
+                            var avgPrice = decimal.Zero;
+                            
+                            // Iterate the page
+                            for (var i = 0; i < componentPages; i++)
+                            {
+                                var analysedComps =
+                                    _analysedComponentEvent.GetTickerPairComponentsByCurrency((long)entity.CurrencyId,
+                                            true, i, true, ac => // Make sure its the generic counter currency
+                                                // since we can't convert yet
+                                                ac.CurrencyPair.CounterCurrencyAbbrv
+                                                    .Equals(CoreConstants.GenericCounterCurrency, 
+                                                        StringComparison.InvariantCultureIgnoreCase)
+                                                && ac.ComponentType.Equals(AnalysedComponentType.CurrentAveragePrice)
+                                                && NumberHelper.IsNumericDecimal(ac.Value))
+                                        .ToList();
+
+                                if (analysedComps.Count > 0)
+                                {
+                                    if (!avgPrice.Equals(decimal.Zero))
+                                    {
+                                        // Aggregate it
+                                        avgPrice = decimal.Divide(decimal.Add(analysedComps
+                                            .Average(ac => decimal.Parse(ac.Value)), avgPrice), 2);
+                                    }
+                                    else
+                                    {
+                                        avgPrice = analysedComps.Average(ac => decimal.Parse(ac.Value));
+                                    }
+                                }
+                            }
+
+                            // Update!
+                            if (!decimal.Zero.Equals(avgPrice))
+                            {
+                                return _analysedComponentService.UpdateValue(entity.Id, 
+                                    avgPrice.ToString(CultureInfo.InvariantCulture));
+                            }
+                            
+                            // Hitting here? Sum ting wong
+                            _logger.LogWarning($"[{ServiceName}] Analyse ({entity.Id}): " +
+                                               $"average price can't be computed.");
+                        }
+                        // Request-based Live Average Price
+                        // 1. This came from a CurrencyPair
+                        // 2. This came from a non-currency request
+                        else
+                        {
+                            var reqCompCount = _requestComponentEvent.GetCorrelationPredicateCount(entity.Id, 
+                                rc => rc.DeletedAt == null && rc.IsEnabled 
+                                                           && (rc.ComponentType.Equals(ComponentType.Ask)
+                                                               || rc.ComponentType.Equals(ComponentType.Bid))
+                                                           && !string.IsNullOrEmpty(rc.Value)
+                                                           && NumberHelper.IsNumericDecimal(rc.Value));
+                            var reqCompsPages = (reqCompCount > NozomiServiceConstants.RequestComponentTakeoutLimit) ? 
+                                decimal.Divide(reqCompCount, NozomiServiceConstants.RequestComponentTakeoutLimit)
+                                : 1;
+
+                            // Aggregate it
+                            var avgPrice = decimal.Zero;
+                            
+                            for (var i = 0; i < reqCompsPages; i++)
+                            {
+                                // Obtain all of the req components that are related to this AC.
+                                var correlatedReqComps = _requestComponentEvent.GetAllByCorrelation(entity.Id, true, 
+                                        i, rc => rc.DeletedAt == null && rc.IsEnabled 
+                                                                      && (rc.ComponentType.Equals(ComponentType.Ask)
+                                                                          || rc.ComponentType.Equals(ComponentType.Bid))
+                                                                      && !string.IsNullOrEmpty(rc.Value)
+                                                                      && NumberHelper.IsNumericDecimal(rc.Value))
+                                    .ToList();
+
+                                if (correlatedReqComps.Count > 0)
+                                {
+                                    // Aggregate it
+                                    if (!avgPrice.Equals(decimal.Zero))
+                                    {
+                                        avgPrice = decimal.Divide(decimal.Add(avgPrice, correlatedReqComps
+                                            .Average(rc => decimal.Parse(rc.Value))), 2);
+                                    }
+                                    else
+                                    {
+                                        avgPrice = correlatedReqComps
+                                            .Average(rc => decimal.Parse(rc.Value));
+                                    }
+                                }
+                            }
+
+                            if (!decimal.Zero.Equals(avgPrice))
+                            {
+                                return _analysedComponentService.UpdateValue(entity.Id,
+                                    avgPrice.ToString(CultureInfo.InvariantCulture));
+                            }
+
+                            // Hitting here? Sum ting wong
+                            _logger.LogWarning($"[{ServiceName}] Analyse ({entity.Id}): " +
+                                               $"average price can't be computed.");
+                        }
+
                         break;
                     case AnalysedComponentType.DailyAveragePrice:
+                        dataTimespan = TimeSpan.FromHours(24);
                         break;
                     case AnalysedComponentType.DailyPriceChange:
                         break;
