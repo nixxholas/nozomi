@@ -430,8 +430,8 @@ namespace Nozomi.Service.Events.Analysis
             return null;
         }
 
-        public ICollection<AnalysedComponent> GetAllByCorrelation(long analysedComponentId, bool track = false
-            ,int index = 0)
+        public ICollection<AnalysedComponent> GetAllByCorrelation(long analysedComponentId, 
+            Expression<Func<AnalysedComponent, bool>> predicate = null, int index = 0, bool track = false)
         {
             var aComp = _unitOfWork.GetRepository<AnalysedComponent>()
                 .GetQueryable()
@@ -451,7 +451,7 @@ namespace Nozomi.Service.Events.Analysis
             {
                 query = query.Include(ac => ac.AnalysedHistoricItems);
                 
-                return query
+                query = query
                     .Select(ac => new AnalysedComponent
                     {
                         Id = ac.Id,
@@ -467,171 +467,14 @@ namespace Nozomi.Service.Events.Analysis
                             .ToList(),
                         CurrencyId = ac.CurrencyId,
                         Currency = ac.Currency
-                    })
-                    .ToList();
+                    });
             }
 
+            if (predicate != null)
+                return query.Where(predicate).ToList();
+            
             return query
                 .ToList();
-
-//            // First, obtain the correlation PCPs
-//            var correlPCPs = _unitOfWork.GetRepository<CurrencyPair>()
-//                .GetQueryable()
-//                .AsNoTracking()
-//                .Where(cp => cp.IsEnabled && cp.DeletedAt == null)
-//                .Include(cp => cp.CurrencyPairRequests)
-//                .ThenInclude(cpr => cpr.AnalysedComponents)
-//                .Where(cp => cp.CurrencyPairRequests
-//                    .Any(cpr => cpr.DeletedAt == null && cpr.IsEnabled
-//                                                      // We can ignore disabled or deleted ACs, just using this 
-//                                                      // to find the correlation
-//                                                      && cpr.AnalysedComponents.Any(ac =>
-//                                                          ac.Id.Equals(analysedComponentId))))
-//                .Include(cp => cp.CurrencyPairCurrencies)
-//                .ThenInclude(pcp => pcp.Currency)
-//                .SelectMany(cp => cp.CurrencyPairCurrencies)
-//                .Select(pcp => new CurrencyPairSourceCurrency
-//                {
-//                    CurrencyId = pcp.CurrencyId,
-//                    CurrencyPairId = pcp.CurrencyPairId,
-//                    Currency = pcp.Currency,
-//                    CurrencyPair = pcp.CurrencyPair
-//                })
-//                .ToList();
-//
-//            // Check if its a currency-based correlation
-//            if (correlPCPs.Count < 2)
-//            {
-//                // Since it is currency based, let's take a look
-//                var currency = _unitOfWork.GetRepository<Currency>()
-//                    .GetQueryable()
-//                    .AsNoTracking()
-//                    .Where(c => c.DeletedAt == null && c.IsEnabled)
-//                    .Include(c => c.AnalysedComponents)
-//                    .FirstOrDefault(c => c.AnalysedComponents.Any(ac => ac.Id.Equals(analysedComponentId)));
-//
-//                if (currency != null)
-//                {
-//                    // Obtain all analysed components relevant to the generic counter currency
-//                    var currencyACs = _unitOfWork.GetRepository<CurrencyPair>()
-//                        .GetQueryable()
-//                        .AsNoTracking()
-//                        .Where(cp => cp.DeletedAt == null && cp.IsEnabled)
-//                        .Include(cp => cp.CurrencyPairCurrencies)
-//                        .ThenInclude(pcp => pcp.Currency)
-//                        .Where(cp =>
-//                            cp.CurrencyPairCurrencies.FirstOrDefault(ccp => ccp.Currency.Abbreviation
-//                                    .Equals(ccp.CurrencyPair.MainCurrency, StringComparison.InvariantCultureIgnoreCase))
-//                                .Currency.Abbreviation
-//                                .Equals(currency.Abbreviation, StringComparison.InvariantCultureIgnoreCase)
-//                            // Counter currency is the generic counter currency
-//                            && cp.CurrencyPairCurrencies.FirstOrDefault(ccp => ccp.Currency.Abbreviation
-//                                    .Equals(ccp.CurrencyPair.CounterCurrency, StringComparison.InvariantCultureIgnoreCase))
-//                                .Currency.Abbreviation
-//                                .Contains(CoreConstants.GenericCounterCurrency,
-//                                    StringComparison.InvariantCultureIgnoreCase))
-//                        .Include(cp => cp.CurrencyPairRequests)
-//                        .ThenInclude(cpr => cpr.AnalysedComponents);
-//
-//                    if (track)
-//                    {
-//                        return currencyACs
-//                            .ThenInclude(ac => ac.AnalysedHistoricItems)
-//                            .SelectMany(cp => cp.CurrencyPairRequests)
-//                            .SelectMany(cpr => cpr.AnalysedComponents)
-//                            .Select(ac => new AnalysedComponent
-//                            {
-//                                AnalysedHistoricItems = ac.AnalysedHistoricItems,
-//                                Id = ac.Id,
-//                                ComponentType = ac.ComponentType,
-//                                Value = ac.Value,
-//                                Delay = ac.Delay,
-//                                RequestId = ac.RequestId,
-//                                CurrencyId = ac.CurrencyId
-//                            })
-//                            .ToList();
-//                    }
-//                    
-//                    return currencyACs
-//                        .SelectMany(cp => cp.CurrencyPairRequests)
-//                        .SelectMany(cpr => cpr.AnalysedComponents)
-//                        .Select(ac => new AnalysedComponent
-//                        {
-//                            Id = ac.Id,
-//                            ComponentType = ac.ComponentType,
-//                            Value = ac.Value,
-//                            Delay = ac.Delay,
-//                            RequestId = ac.RequestId,
-//                            CurrencyId = ac.CurrencyId
-//                        })
-//                        .ToList();
-//                }
-//                
-//                // Empty since nothing
-//                return new List<AnalysedComponent>();
-//            }
-//
-//            // Then we return
-//            var finalQuery = _unitOfWork.GetRepository<CurrencyPair>()
-//                .GetQueryable()
-//                .AsNoTracking()
-//                .Where(cp => cp.IsEnabled && cp.DeletedAt == null)
-//                .Include(cp => cp.CurrencyPairCurrencies)
-//                .ThenInclude(pcp => pcp.Currency)
-//                .Where(cp =>
-//                    // Make sure the main currencies are identical
-//                    cp.CurrencyPairCurrencies.FirstOrDefault(ccp => ccp.Currency.Abbreviation
-//                            .Equals(ccp.CurrencyPair.MainCurrency, StringComparison.InvariantCultureIgnoreCase))
-//                        .Currency.Abbreviation
-//                        .Equals(correlPCPs.FirstOrDefault(ccp => ccp.Currency.Abbreviation
-//                            .Equals(ccp.CurrencyPair.MainCurrency, StringComparison.InvariantCultureIgnoreCase))
-//                            .Currency.Abbreviation)
-//                    // Make sure the counter currencies are identical
-//                    && cp.CurrencyPairCurrencies.FirstOrDefault(ccp => ccp.Currency.Abbreviation
-//                            .Equals(ccp.CurrencyPair.CounterCurrency, StringComparison.InvariantCultureIgnoreCase)).Currency.Abbreviation
-//                        .Equals(correlPCPs.FirstOrDefault(ccp => ccp.Currency.Abbreviation
-//                            .Equals(ccp.CurrencyPair.CounterCurrency, StringComparison.InvariantCultureIgnoreCase)).Currency.Abbreviation))
-//                .Include(cp => cp.CurrencyPairRequests)
-//                .ThenInclude(cpr => cpr.AnalysedComponents)
-//                .ThenInclude(ac => ac.AnalysedHistoricItems)
-//                .Where(cp => cp.CurrencyPairRequests.Any(cpr => cpr.IsEnabled && cpr.DeletedAt == null
-//                                                                              && cpr.AnalysedComponents
-//                                                                                  .Any(ac =>
-//                                                                                      ac.IsEnabled && ac.DeletedAt ==
-//                                                                                                   null)))
-//                .SelectMany(cp => cp.CurrencyPairRequests)
-//                .SelectMany(cpr => cpr.AnalysedComponents);
-//
-//            if (!finalQuery.Any()) return new List<AnalysedComponent>();
-//
-//            if (!track)
-//            {
-//                return finalQuery
-//                    .Select(ac => new AnalysedComponent
-//                    {
-//                        Id = ac.Id,
-//                        ComponentType = ac.ComponentType,
-//                        Value = ac.Value,
-//                        Delay = ac.Delay,
-//                        RequestId = ac.RequestId,
-//                        CurrencyId = ac.CurrencyId
-//                    })
-//                    .ToList();
-//            }
-//
-//            return finalQuery
-//                .Where(ac => ac.AnalysedHistoricItems != null)
-//                .Select(ac => new AnalysedComponent
-//                {
-//                    AnalysedHistoricItems = ac.AnalysedHistoricItems,
-//                    Id = ac.Id,
-//                    ComponentType = ac.ComponentType,
-//                    Value = ac.Value,
-//                    Delay = ac.Delay,
-//                    RequestId = ac.RequestId,
-//                    CurrencyId = ac.CurrencyId
-//                })
-//                .ToList();
         }
 
         public ICollection<AnalysedComponent> GetAllByCurrencyPair(long currencyPairId, bool track = false, int index = 0)

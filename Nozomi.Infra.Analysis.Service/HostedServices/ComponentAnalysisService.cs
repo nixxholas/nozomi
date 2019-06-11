@@ -583,7 +583,8 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                             // Since it's not currency-based, its currencypair-based.
 
                             // Obtain all of the analysed components that are related to this AC.
-                            var correlatedAnaComps = _analysedComponentEvent.GetAllByCorrelation(component.Id, true);
+                            var correlatedAnaComps = _analysedComponentEvent.GetAllByCorrelation(component.Id, 
+                                null, 0, true);
 
                             if (correlatedAnaComps != null)
                             {
@@ -675,7 +676,8 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                             // Since it's not currency-based, its currencypair-based.
 
                             // Obtain all of the analysed components that are related to this AC.
-                            var correlatedAnaComps = _analysedComponentEvent.GetAllByCorrelation(component.Id, true);
+                            var correlatedAnaComps = _analysedComponentEvent.GetAllByCorrelation(component.Id, 
+                                null, 0, true);
 
                             if (correlatedAnaComps != null)
                             {
