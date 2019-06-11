@@ -131,7 +131,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                     // Obtain all sub components (Components in the currencies)
                                     analysedComponents = _analysedComponentEvent.GetAllCurrencyComponentsByType(
                                             (long) entity.CurrencyTypeId, false)
-                                        .Where(ac => ac.ComponentType.Equals(AnalysedComponentType.MarketCap))
+                                        .Where(ac => ac.ComponentType.Equals(entity.ComponentType))
                                         .ToList();
 
                                     if (analysedComponents.Count > 0)
@@ -150,7 +150,9 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                                 {
                                                     // Since yes, let's work on averaging it
                                                     marketCapByCurrencies[ac.Currency.Abbreviation] =
-                                                        (marketCapByCurrencies[ac.Currency.Abbreviation] + val) / 2;
+                                                        decimal.Divide(
+                                                            decimal.Add(
+                                                                marketCapByCurrencies[ac.Currency.Abbreviation], val), 2);
                                                 }
                                                 else
                                                 {
@@ -196,12 +198,12 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                 // Parsable average?
                                 if (circuSupply > 0 && averagePrice > decimal.Zero)
                                 {
-                                    var marketCap = circuSupply
-                                                    * averagePrice;
+                                    var marketCap = decimal.Multiply(circuSupply, averagePrice);
 
                                     if (!decimal.Zero.Equals(marketCap))
                                     {
-                                        return _analysedComponentService.UpdateValue(entity.Id, marketCap.ToString());
+                                        return _analysedComponentService.UpdateValue(entity.Id, marketCap
+                                            .ToString(CultureInfo.InvariantCulture));
                                     }
                                 }
                             }
@@ -210,24 +212,24 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                         else
                         {
                             var circuSupply = _currencyEvent.GetCirculatingSupply(entity);
-                            analysedComponents = _analysedComponentEvent.GetAllByCorrelation(entity.Id);
+                            analysedComponents = _analysedComponentEvent.GetAllByCorrelation(entity.Id)
+                                .Where(ac => ac.ComponentType.Equals(AnalysedComponentType.CurrentAveragePrice)
+                                && NumberHelper.IsNumericDecimal(ac.Value))
+                                .ToList();
 
                             // Parsable average?
                             if (circuSupply > 0
                                 // Parsable average?
                                 && decimal.TryParse(analysedComponents
-                                                        .Where(ac =>
-                                                            ac.ComponentType.Equals(AnalysedComponentType
-                                                                .CurrentAveragePrice))
                                                         .Select(ac => ac.Value)
-                                                        .FirstOrDefault() ?? "0", out var mCap_avgPrice))
+                                                        .FirstOrDefault() ?? "0", out var mCapAvgPrice))
                             {
-                                var marketCap = circuSupply
-                                                * mCap_avgPrice;
+                                var marketCap = decimal.Multiply(circuSupply, mCapAvgPrice);
 
                                 if (!decimal.Zero.Equals(marketCap))
                                 {
-                                    return _analysedComponentService.UpdateValue(entity.Id, marketCap.ToString());
+                                    return _analysedComponentService.UpdateValue(entity.Id, marketCap
+                                        .ToString(CultureInfo.InvariantCulture));
                                 }
                             }
                         }
