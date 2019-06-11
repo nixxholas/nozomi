@@ -92,7 +92,7 @@ namespace Nozomi.Service.Events
         /// that is related to the ticker in question.</param>
         /// <returns>Collection of request components related to the component</returns>
         public ICollection<RequestComponent> GetAllByCorrelation(long analysedComponentId, bool track = false
-            , int index = 0)
+            , int index = 0, Func<RequestComponent, bool> predicate = null)
         {
             var analysedComponent = _unitOfWork.GetRepository<AnalysedComponent>()
                 .GetQueryable()
@@ -119,6 +119,28 @@ namespace Nozomi.Service.Events
                             .Include(r => r.RequestComponents)
                             .ThenInclude(rc => rc.RcdHistoricItems);
                     }
+                    
+                    if (predicate != null)
+                        return query
+                            .SelectMany(r => r.RequestComponents
+                                .Where(predicate)
+                                .Select(rc => new RequestComponent
+                                {
+                                    Id = rc.Id,
+                                    ComponentType = rc.ComponentType,
+                                    Identifier = rc.Identifier,
+                                    QueryComponent = rc.QueryComponent,
+                                    IsDenominated = rc.IsDenominated,
+                                    AnomalyIgnorance = rc.AnomalyIgnorance,
+                                    Value = rc.Value,
+                                    RequestId = rc.RequestId,
+                                    RcdHistoricItems = rc.RcdHistoricItems
+                                        .Where(rcdhi => rcdhi.DeletedAt == null && rcdhi.IsEnabled)
+                                        .Skip(index * NozomiServiceConstants.RequestComponentTakeoutLimit)
+                                        .Take(NozomiServiceConstants.RequestComponentTakeoutLimit)
+                                        .ToList()
+                                }))
+                            .ToList();
 
                     return query
                         .SelectMany(r => r.RequestComponents
@@ -153,6 +175,28 @@ namespace Nozomi.Service.Events
                             .Include(cr => cr.RequestComponents)
                             .ThenInclude(rc => rc.RcdHistoricItems);
                     }
+                    
+                    if (predicate != null)
+                        return query
+                            .SelectMany(r => r.RequestComponents
+                                .Where(predicate)
+                                .Select(rc => new RequestComponent
+                                {
+                                    Id = rc.Id,
+                                    ComponentType = rc.ComponentType,
+                                    Identifier = rc.Identifier,
+                                    QueryComponent = rc.QueryComponent,
+                                    IsDenominated = rc.IsDenominated,
+                                    AnomalyIgnorance = rc.AnomalyIgnorance,
+                                    Value = rc.Value,
+                                    RequestId = rc.RequestId,
+                                    RcdHistoricItems = rc.RcdHistoricItems
+                                        .Where(rcdhi => rcdhi.DeletedAt == null && rcdhi.IsEnabled)
+                                        .Skip(index * NozomiServiceConstants.RequestComponentTakeoutLimit)
+                                        .Take(NozomiServiceConstants.RequestComponentTakeoutLimit)
+                                        .ToList()
+                                }))
+                            .ToList();
 
                     return query
                         .SelectMany(cr => cr.RequestComponents
