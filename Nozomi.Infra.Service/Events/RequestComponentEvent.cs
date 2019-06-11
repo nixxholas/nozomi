@@ -147,7 +147,7 @@ namespace Nozomi.Service.Events
         /// that is related to the ticker in question.</param>
         /// <returns>Collection of request components related to the component</returns>
         public ICollection<RequestComponent> GetAllByCorrelation(long analysedComponentId, bool track = false
-            , int index = 0, Func<RequestComponent, bool> predicate = null)
+            , int index = 0, Expression<Func<RequestComponent, bool>> predicate = null)
         {
             var analysedComponent = _unitOfWork.GetRepository<AnalysedComponent>()
                 .GetQueryable()
@@ -178,6 +178,7 @@ namespace Nozomi.Service.Events
                     if (predicate != null)
                         return query
                             .SelectMany(r => r.RequestComponents
+                                .AsQueryable()
                                 .Where(predicate)
                                 .Select(rc => new RequestComponent
                                 {
@@ -234,6 +235,7 @@ namespace Nozomi.Service.Events
                     if (predicate != null)
                         return query
                             .SelectMany(r => r.RequestComponents
+                                .AsQueryable()
                                 .Where(predicate)
                                 .Select(rc => new RequestComponent
                                 {
