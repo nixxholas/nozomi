@@ -13,7 +13,7 @@ using Nozomi.Service.Events.Analysis.Interfaces;
 
 namespace Nozomi.Service.Events.Analysis
 {
-    public class AnalysedComponentEvent : BaseEvent<AnalysedComponentEvent, NozomiDbContext>, IAnalysedComponentEvent
+    public class AnalysedComponentEvent : BaseEvent<AnalysedComponentEvent, NozomiDbContext, AnalysedComponent>, IAnalysedComponentEvent
     {
         public AnalysedComponentEvent(ILogger<AnalysedComponentEvent> logger, IUnitOfWork<NozomiDbContext> unitOfWork) 
             : base(logger, unitOfWork)
@@ -223,6 +223,27 @@ namespace Nozomi.Service.Events.Analysis
                         .ToList()
                 })
                 .ToList();
+        }
+
+        public long GetTickerPairComponentsByCurrencyCount(long currencyId, Func<CurrencyPair, bool> predicate)
+        {
+            var cPairs = _unitOfWork.GetRepository<CurrencyPair>()
+                .GetQueryable()
+                .AsNoTracking()
+                .Include(cp => cp.Source)
+                .ThenInclude(s => s.SourceCurrencies)
+                .ThenInclude(sc => sc.Currency)
+                // Make sure the source has such currency
+                .Where(cp => cp.Source.SourceCurrencies.Any(sc => sc.CurrencyId.Equals(currencyId)
+                                                                  // And that the main currency abbreviation matches
+                                                                  // the currency's abbreviation
+                                                                  && sc.Currency.Abbreviation.Equals(cp.MainCurrencyAbbrv)))
+                .Include(cp => cp.AnalysedComponents)
+                .ThenInclude(ac => ac.AnalysedHistoricItems);
+
+            return cPairs
+                .Where(predicate)
+                .LongCount();
         }
 
         public ICollection<AnalysedComponent> GetTickerPairComponentsByCurrency(long currencyId, bool ensureValid = false, 
