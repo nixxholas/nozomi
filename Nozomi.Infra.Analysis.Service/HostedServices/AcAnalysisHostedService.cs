@@ -326,8 +326,8 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                         else
                         {
                             // Obtain all of the req components that are related to this AC.
-                            var correlatedReqComps = _requestComponentEvent.GetAllByCorrelation(entity.Id)
-                                .Where(rc => rc.DeletedAt == null && rc.IsEnabled 
+                            var correlatedReqComps = _requestComponentEvent.GetAllByCorrelation(entity.Id, true, 
+                                    0, rc => rc.DeletedAt == null && rc.IsEnabled 
                                                                   && (rc.ComponentType.Equals(ComponentType.Ask)
                                                                       || rc.ComponentType.Equals(ComponentType.Bid))
                                                                   && !string.IsNullOrEmpty(rc.Value)
