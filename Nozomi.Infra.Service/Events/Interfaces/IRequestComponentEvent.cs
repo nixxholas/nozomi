@@ -12,7 +12,7 @@ namespace Nozomi.Service.Events.Interfaces
     {
         ICollection<RequestComponent> All(int index = 0, bool includeNested = false);
 
-        long GetPredicateCount(Func<RequestComponent, bool> predicate);
+        long GetPredicateCount(Expression<Func<RequestComponent, bool>> predicate);
 
         /// <summary>
         /// Allows the caller to obtain all RequestComponents relevant to the currency

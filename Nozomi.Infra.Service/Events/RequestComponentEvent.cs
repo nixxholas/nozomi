@@ -65,7 +65,7 @@ namespace Nozomi.Service.Events
                     .ToList();
         }
 
-        public long GetPredicateCount(Func<RequestComponent, bool> predicate)
+        public long GetPredicateCount(Expression<Func<RequestComponent, bool>> predicate)
         {
             if (predicate == null)
                 return long.MinValue;
