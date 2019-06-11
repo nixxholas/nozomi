@@ -275,7 +275,8 @@ namespace Nozomi.Service.Events.Analysis
                 .ToList();
         }
 
-        public ICollection<AnalysedComponent> GetAllByCurrencyType(long currencyTypeId, bool track = false, int index = 0)
+        public ICollection<AnalysedComponent> GetAllByCurrencyType(long currencyTypeId, bool track = false, int index = 0,
+            long ago = long.MinValue)
         {
             if (currencyTypeId > 0)
             {
@@ -290,6 +291,29 @@ namespace Nozomi.Service.Events.Analysis
                         .ThenInclude(ct => ct.Currencies)
                         .ThenInclude(c => c.AnalysedComponents)
                         .Include(ac => ac.AnalysedHistoricItems);
+                }
+
+                if (ago > 0)
+                {
+                    return components
+                        .Select(ac => new AnalysedComponent
+                        {
+                            Id = ac.Id,
+                            ComponentType = ac.ComponentType,
+                            Value = ac.Value,
+                            IsDenominated = ac.IsDenominated,
+                            Delay = ac.Delay,
+                            UIFormatting = ac.UIFormatting,
+                            AnalysedHistoricItems = ac.AnalysedHistoricItems
+                                .OrderByDescending(ahi => ahi.HistoricDateTime)
+                                .Where(ahi => ahi.HistoricDateTime >= DateTime.UtcNow.Subtract(TimeSpan.FromMilliseconds(ago)))
+                                .Skip(index * NozomiServiceConstants.AnalysedComponentTakeoutLimit)
+                                .Take(NozomiServiceConstants.AnalysedComponentTakeoutLimit)
+                                .ToList(),
+                            CurrencyPairId = ac.CurrencyPairId,
+                            CurrencyPair = ac.CurrencyPair
+                        })
+                        .ToList();
                 }
 
                 return components
