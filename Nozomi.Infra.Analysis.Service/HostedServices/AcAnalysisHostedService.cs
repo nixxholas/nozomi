@@ -217,9 +217,10 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                         else
                         {
                             var circuSupply = _currencyEvent.GetCirculatingSupply(entity);
-                            analysedComponents = _analysedComponentEvent.GetAllByCorrelation(entity.Id)
-                                .Where(ac => ac.ComponentType.Equals(AnalysedComponentType.CurrentAveragePrice)
-                                && NumberHelper.IsNumericDecimal(ac.Value))
+                            analysedComponents = _analysedComponentEvent.GetAllByCorrelation(entity.Id,
+                                    ac => ac.ComponentType
+                                              .Equals(AnalysedComponentType.CurrentAveragePrice)
+                                          && NumberHelper.IsNumericDecimal(ac.Value))
                                 .ToList();
 
                             // Parsable average?
