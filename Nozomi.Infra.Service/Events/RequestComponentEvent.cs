@@ -81,7 +81,7 @@ namespace Nozomi.Service.Events
                 .GetQueryable()
                 .AsNoTracking()
                 .SingleOrDefault(ac => ac.Id.Equals(analysedComponentId));
-
+            
             if (analysedComponent != null)
             {
                 var query = _unitOfWork.GetRepository<Request>()
@@ -97,7 +97,8 @@ namespace Nozomi.Service.Events
                     
                     return query
                         .SelectMany(r => r.RequestComponents
-                            .Where(predicate.Compile()))
+                            .AsQueryable() // https://github.com/aspnet/EntityFrameworkCore/issues/8019
+                            .Where(predicate))
                         .LongCount();
                 } 
                 // Currency-based tracking
@@ -109,7 +110,8 @@ namespace Nozomi.Service.Events
 
                     return query
                         .SelectMany(r => r.RequestComponents
-                            .Where(predicate.Compile()))
+                            .AsQueryable() // https://github.com/aspnet/EntityFrameworkCore/issues/8019
+                            .Where(predicate))
                         .LongCount();
                 }
             }
