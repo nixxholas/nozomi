@@ -14,6 +14,8 @@ namespace Nozomi.Service.Events.Interfaces
 
         long GetPredicateCount(Expression<Func<RequestComponent, bool>> predicate);
 
+        long GetCorrelationPredicateCount(long analysedComponentId, Expression<Func<RequestComponent, bool>> predicate);
+
         /// <summary>
         /// Allows the caller to obtain all RequestComponents relevant to the currency
         /// pair in question via the abbreviation method. (i.e. ETHUSD)

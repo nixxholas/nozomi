@@ -26,6 +26,8 @@ namespace Nozomi.Service.Events
     public class RequestComponentEvent : BaseEvent<RequestComponentEvent, NozomiDbContext, RequestComponent>, 
         IRequestComponentEvent
     {
+        private IRequestComponentEvent _requestComponentEventImplementation;
+
         public RequestComponentEvent(ILogger<RequestComponentEvent> logger, IUnitOfWork<NozomiDbContext> unitOfWork)
             : base(logger, unitOfWork)
         {
@@ -71,6 +73,48 @@ namespace Nozomi.Service.Events
                 return long.MinValue;
 
             return QueryCount(predicate);
+        }
+
+        public long GetCorrelationPredicateCount(long analysedComponentId, Expression<Func<RequestComponent, bool>> predicate)
+        {
+            var analysedComponent = _unitOfWork.GetRepository<AnalysedComponent>()
+                .GetQueryable()
+                .AsNoTracking()
+                .SingleOrDefault(ac => ac.Id.Equals(analysedComponentId));
+
+            if (analysedComponent != null)
+            {
+                var query = _unitOfWork.GetRepository<Request>()
+                    .GetQueryable()
+                    .AsNoTracking();
+                
+                // CurrencyPair-based tracking
+                if (analysedComponent.CurrencyPairId != null && analysedComponent.CurrencyPairId > 0)
+                {
+                    query = query
+                        .Where(r => r.CurrencyPairId.Equals(analysedComponent.CurrencyPairId))
+                        .Include(cpr => cpr.RequestComponents);
+                    
+                    return query
+                        .SelectMany(r => r.RequestComponents
+                            .Where(predicate.Compile()))
+                        .LongCount();
+                } 
+                // Currency-based tracking
+                else if (analysedComponent.CurrencyId != null && analysedComponent.CurrencyId > 0)
+                {
+                    query = query
+                        .Where(r => r.CurrencyId.Equals(analysedComponent.CurrencyId))
+                        .Include(cr => cr.RequestComponents);
+
+                    return query
+                        .SelectMany(r => r.RequestComponents
+                            .Where(predicate.Compile()))
+                        .LongCount();
+                }
+            }
+
+            return long.MinValue;
         }
 
         public ICollection<RequestComponent> GetByMainCurrency(string mainCurrencyAbbrv,
