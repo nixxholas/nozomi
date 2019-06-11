@@ -23,7 +23,8 @@ using Nozomi.Service.Events.Interfaces;
 
 namespace Nozomi.Service.Events
 {
-    public class RequestComponentEvent : BaseEvent<RequestComponentEvent, NozomiDbContext>, IRequestComponentEvent
+    public class RequestComponentEvent : BaseEvent<RequestComponentEvent, NozomiDbContext, RequestComponent>, 
+        IRequestComponentEvent
     {
         public RequestComponentEvent(ILogger<RequestComponentEvent> logger, IUnitOfWork<NozomiDbContext> unitOfWork)
             : base(logger, unitOfWork)
@@ -62,6 +63,14 @@ namespace Nozomi.Service.Events
                     .Skip(index * 20)
                     .Take(20)
                     .ToList();
+        }
+
+        public long GetPredicateCount(Func<RequestComponent, bool> predicate)
+        {
+            if (predicate == null)
+                return long.MinValue;
+
+            return QueryCount(predicate);
         }
 
         public ICollection<RequestComponent> GetByMainCurrency(string mainCurrencyAbbrv,
