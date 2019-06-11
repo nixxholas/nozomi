@@ -186,10 +186,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                             var currencyAveragePrice = _analysedComponentEvent.GetAllByCurrency(
                                     (long) entity.CurrencyId,
                                     true, true)
-                                .SingleOrDefault(ac => ac.DeletedAt == null && ac.IsEnabled
-                                                                            && ac.ComponentType
-                                                                                .Equals(AnalysedComponentType.CurrentAveragePrice)
-                                                                            && !string.IsNullOrEmpty(ac.Value)
+                                .SingleOrDefault(ac => ac.ComponentType.Equals(AnalysedComponentType.CurrentAveragePrice)
                                                                             && NumberHelper.IsNumericDecimal(ac.Value));
 
                             if (currencyAveragePrice != null)
