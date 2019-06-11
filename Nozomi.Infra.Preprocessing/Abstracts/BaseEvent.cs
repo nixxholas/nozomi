@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Linq.Expressions;
 using Microsoft.Extensions.Logging;
 using Nozomi.Preprocessing.Abstracts.Interfaces;
 using Nozomi.Repo.BCL.Context;
@@ -35,23 +36,13 @@ namespace Nozomi.Preprocessing.Abstracts
             _unitOfWork = unitOfWork;
         }
 
-        public long QueryCount(Func<T, bool> condition)
-        {
-            if (condition == null) return long.MinValue;
-            
-            return _unitOfWork.GetRepository<T>()
-                .GetQueryable().AsEnumerable()
-                .Where(condition)
-                .LongCount();
-        }
-
-        public long QueryCount(Func<TEntity, bool> predicate)
+        public long QueryCount(Expression<Func<TEntity, bool>> predicate)
         {
             if (predicate == null) return long.MinValue;
             
             return _unitOfWork.GetRepository<TEntity>()
                 .GetQueryable().AsEnumerable()
-                .Where(predicate)
+                .Where(predicate.Compile())
                 .LongCount();
         }
     }
