@@ -93,10 +93,17 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                             {
                                 case AnalysedComponentType.HourlyMarketCap:
                                 case AnalysedComponentType.DailyMarketCap:
+                                    // Obtain the computed market cap.
                                     var obtainedComponent = _analysedComponentEvent
-                                        .GetAllByCurrencyType((long) entity.CurrencyTypeId, true, 
+                                        .GetAllByCurrencyType((long) entity.CurrencyTypeId, true,
+                                            // Make sure we obtain value relevant to a certain time frame.
                                             0, dataTimespan.Milliseconds)
-                                        .SingleOrDefault(ac => ac.ComponentType.Equals(entity.ComponentType));
+                                        .SingleOrDefault(ac => ac.ComponentType.Equals(
+                                            // If its the daily market cap, base if off hourly. Else base it off
+                                            entity.ComponentType.Equals(AnalysedComponentType.DailyMarketCap) ?
+                                                // just the market cap alone.
+                                            AnalysedComponentType.HourlyMarketCap : AnalysedComponentType.MarketCap
+                                            ));
                                     
                                     if (obtainedComponent != null && obtainedComponent.AnalysedHistoricItems.Count > 0)
                                     {
