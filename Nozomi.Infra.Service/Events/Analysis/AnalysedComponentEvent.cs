@@ -226,7 +226,7 @@ namespace Nozomi.Service.Events.Analysis
         }
 
         public ICollection<AnalysedComponent> GetTickerPairComponentsByCurrency(long currencyId, bool ensureValid = false, 
-            bool track = false, int index = 0)
+            int index = 0, bool track = false, int historicItemIndex = 0)
         {
             var cPairs = _unitOfWork.GetRepository<CurrencyPair>()
                 .GetQueryable()
@@ -255,6 +255,8 @@ namespace Nozomi.Service.Events.Analysis
             }
 
             return cPairs
+                .Skip(index * NozomiServiceConstants.AnalysedComponentTakeoutLimit)
+                .Take(NozomiServiceConstants.AnalysedComponentTakeoutLimit)
                 .SelectMany(cp => cp.AnalysedComponents)
                 .Select(ac => new AnalysedComponent
                 {
@@ -266,8 +268,8 @@ namespace Nozomi.Service.Events.Analysis
                     UIFormatting = ac.UIFormatting,
                     AnalysedHistoricItems = ac.AnalysedHistoricItems
                         .OrderByDescending(ahi => ahi.HistoricDateTime)
-                        .Skip(index * NozomiServiceConstants.AnalysedComponentTakeoutLimit)
-                        .Take(NozomiServiceConstants.AnalysedComponentTakeoutLimit)
+                        .Skip(historicItemIndex * NozomiServiceConstants.AnalysedHistoricItemTakeoutLimit)
+                        .Take(NozomiServiceConstants.AnalysedHistoricItemTakeoutLimit)
                         .ToList(),
                     CurrencyPairId = ac.CurrencyPairId,
                     CurrencyPair = ac.CurrencyPair

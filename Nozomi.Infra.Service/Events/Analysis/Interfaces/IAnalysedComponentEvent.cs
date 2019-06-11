@@ -24,7 +24,7 @@ namespace Nozomi.Service.Events.Analysis.Interfaces
             int index = 0);
         
         ICollection<AnalysedComponent> GetTickerPairComponentsByCurrency(long currencyId, bool ensureValid = false, 
-            bool track = false, int index = 0);
+            int index = 0, bool track = false, int historicItemIndex = 0);
 
         ICollection<AnalysedComponent> GetAllByCurrencyType(long currencyTypeId, bool track = false, int index = 0, 
             long ago = long.MinValue);
