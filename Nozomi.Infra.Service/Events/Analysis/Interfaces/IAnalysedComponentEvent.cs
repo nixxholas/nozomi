@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using Nozomi.Data.Models.Currency;
 using Nozomi.Data.Models.Web.Analytical;
 using Nozomi.Preprocessing.Abstracts.Interfaces;
@@ -28,7 +29,8 @@ namespace Nozomi.Service.Events.Analysis.Interfaces
         long GetTickerPairComponentsByCurrencyCount(long currencyId, Func<CurrencyPair, bool> predicate);
         
         ICollection<AnalysedComponent> GetTickerPairComponentsByCurrency(long currencyId, bool ensureValid = false, 
-            int index = 0, bool track = false, int historicItemIndex = 0);
+            int index = 0, bool track = false,  Expression<Func<AnalysedComponent, bool>> predicate = null, 
+            int historicItemIndex = 0);
 
         ICollection<AnalysedComponent> GetAllByCurrencyType(long currencyTypeId, bool track = false, int index = 0, 
             long ago = long.MinValue);

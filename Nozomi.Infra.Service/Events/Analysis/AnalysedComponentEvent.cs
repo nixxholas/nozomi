@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data.Models.Currency;
@@ -247,7 +248,8 @@ namespace Nozomi.Service.Events.Analysis
         }
 
         public ICollection<AnalysedComponent> GetTickerPairComponentsByCurrency(long currencyId, bool ensureValid = false, 
-            int index = 0, bool track = false, int historicItemIndex = 0)
+            int index = 0, bool track = false, Expression<Func<AnalysedComponent, bool>> predicate = null, 
+            int historicItemIndex = 0)
         {
             var cPairs = _unitOfWork.GetRepository<CurrencyPair>()
                 .GetQueryable()
@@ -275,14 +277,41 @@ namespace Nozomi.Service.Events.Analysis
                     .ThenInclude(ac => ac.AnalysedHistoricItems);
             }
 
+            if (predicate != null)
+            {
+                return cPairs
+                    .Skip(index * NozomiServiceConstants.AnalysedComponentTakeoutLimit)
+                    .Take(NozomiServiceConstants.AnalysedComponentTakeoutLimit)
+                    .SelectMany(cp => cp.AnalysedComponents
+                        .AsQueryable()
+                        .Where(predicate))
+                    .Select(ac => new AnalysedComponent
+                    {
+                        ComponentType = ac.ComponentType,
+                        Id = ac.Id,
+                        Value = ac.Value,
+                        IsDenominated = ac.IsDenominated,
+                        Delay = ac.Delay,
+                        UIFormatting = ac.UIFormatting,
+                        AnalysedHistoricItems = ac.AnalysedHistoricItems
+                            .OrderByDescending(ahi => ahi.HistoricDateTime)
+                            .Skip(historicItemIndex * NozomiServiceConstants.AnalysedHistoricItemTakeoutLimit)
+                            .Take(NozomiServiceConstants.AnalysedHistoricItemTakeoutLimit)
+                            .ToList(),
+                        CurrencyPairId = ac.CurrencyPairId,
+                        CurrencyPair = ac.CurrencyPair
+                    })
+                    .ToList();
+            }
+
             return cPairs
                 .Skip(index * NozomiServiceConstants.AnalysedComponentTakeoutLimit)
                 .Take(NozomiServiceConstants.AnalysedComponentTakeoutLimit)
                 .SelectMany(cp => cp.AnalysedComponents)
                 .Select(ac => new AnalysedComponent
                 {
-                    Id = ac.Id,
                     ComponentType = ac.ComponentType,
+                    Id = ac.Id,
                     Value = ac.Value,
                     IsDenominated = ac.IsDenominated,
                     Delay = ac.Delay,
