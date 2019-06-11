@@ -90,6 +90,7 @@ namespace Nozomi.Service.Events.Analysis
                 var query = _unitOfWork.GetRepository<AnalysedHistoricItem>()
                     .GetQueryable()
                     .AsNoTracking()
+                    .Where(ahi => ahi.AnalysedComponentId.Equals(analysedComponentId))
                     .AsQueryable();
 
                 if (deepTrack)
