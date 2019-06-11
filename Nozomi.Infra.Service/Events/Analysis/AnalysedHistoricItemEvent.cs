@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data.Models.Web.Analytical;
@@ -80,6 +81,35 @@ namespace Nozomi.Service.Events.Analysis
             }
 
             throw new ArgumentOutOfRangeException("Invalid analysedComponentId.");
+        }
+
+        public long GetQueryCount(long analysedComponentId, Expression<Func<AnalysedHistoricItem, bool>> predicate, bool deepTrack = false)
+        {
+            if (analysedComponentId > 0 && predicate != null)
+            {
+                var query = _unitOfWork.GetRepository<AnalysedHistoricItem>()
+                    .GetQueryable()
+                    .AsNoTracking()
+                    .AsQueryable();
+
+                if (deepTrack)
+                {
+                    query = query
+                        .Include(ahi => ahi.AnalysedComponent)
+                        .ThenInclude(ac => ac.Currency)
+                        .Include(ahi => ahi.AnalysedComponent)
+                        .ThenInclude(ac => ac.CurrencyPair)
+                        .Include(ahi => ahi.AnalysedComponent)
+                        .ThenInclude(ac => ac.CurrencyType)
+                        .AsQueryable();
+                }
+
+                return query
+                    .Where(predicate)
+                    .LongCount();
+            }
+
+            return long.MinValue;
         }
     }
 }
