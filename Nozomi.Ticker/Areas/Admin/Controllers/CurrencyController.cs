@@ -23,11 +23,13 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
         private readonly ICurrencyService _currencyService;
         private readonly ICurrencyTypeAdminEvent _currencyTypeAdminEvent;
         private readonly ISourceEvent _sourceEvent;
+        private readonly ICurrencyPairEvent _currencyPairEvent;
 
 
         public CurrencyController(ILogger<CurrencyController> logger, NozomiSignInManager signInManager,
             NozomiUserManager userManager, ICurrencyEvent currencyEvent, ICurrencyAdminEvent currencyAdminEvent,
-            ICurrencyService currencyService, ICurrencyTypeAdminEvent currencyTypeAdminEvent, ISourceEvent sourceEvent)
+            ICurrencyService currencyService, ICurrencyTypeAdminEvent currencyTypeAdminEvent, ISourceEvent sourceEvent,
+            ICurrencyPairEvent currencyPairEvent)
             : base(logger, signInManager, userManager)
         {
             _currencyEvent = currencyEvent;
@@ -35,6 +37,7 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
             _currencyService = currencyService;
             _currencyTypeAdminEvent = currencyTypeAdminEvent;
             _sourceEvent = sourceEvent;
+            _currencyPairEvent = currencyPairEvent;
         }
 
         #region Get Currencies
@@ -60,7 +63,7 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
 
         #endregion
 
-        #region Get Currency(id)
+        #region Get Currency(slug)
 
         [HttpGet("{slug}")]
         public IActionResult Currency([FromRoute] string slug)
@@ -71,6 +74,7 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
                 Currency = currency,
                 CurrencySourcesOptions = _sourceEvent.GetAllCurrencySourceOptions(currency.CurrencySources),
                 CurrencyTypes = _currencyTypeAdminEvent.GetAllActive(),
+                CurrencyPairs = _currencyPairEvent.GetAllByMainCurrency(slug)
             };
 
             return View(vm);
