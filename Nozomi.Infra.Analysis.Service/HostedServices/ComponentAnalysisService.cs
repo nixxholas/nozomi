@@ -236,7 +236,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                         {
                             var analysedComps =
                                 _analysedComponentEvent.GetTickerPairComponentsByCurrency((long)component.CurrencyId,
-                                    true, true)
+                                    true, 0, true)
                                     .Where(ac => ac.CurrencyPair != null && ac.DeletedAt == null && ac.IsEnabled
                                                  // Make sure its the generic counter currency
                                                  // since we can't convert yet
