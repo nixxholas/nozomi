@@ -24,6 +24,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
     {
         private const string ServiceName = "AcAnalysisHostedService";
         private readonly IAnalysedComponentEvent _analysedComponentEvent;
+        private readonly IAnalysedHistoricItemEvent _analysedHistoricItemEvent;
         private readonly ICurrencyEvent _currencyEvent;
         private readonly IRequestComponentEvent _requestComponentEvent;
         private readonly IXAnalysedComponentEvent _xAnalysedComponentEvent;
@@ -32,6 +33,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
         public AcAnalysisHostedService(IServiceProvider serviceProvider) : base(serviceProvider)
         {
             _analysedComponentEvent = _scope.ServiceProvider.GetRequiredService<IAnalysedComponentEvent>();
+            _analysedHistoricItemEvent = _scope.ServiceProvider.GetRequiredService<IAnalysedHistoricItemEvent>();
             _currencyEvent = _scope.ServiceProvider.GetRequiredService<ICurrencyEvent>();
             _requestComponentEvent = _scope.ServiceProvider.GetRequiredService<IRequestComponentEvent>();
             _xAnalysedComponentEvent = _scope.ServiceProvider.GetRequiredService<IXAnalysedComponentEvent>();
@@ -390,48 +392,50 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                         }
                         
                         // Currency-based Live Average Price
-                        // 1. Multiple Currency Pairs with Different Counter Currencies
-                        // 2. Just one pair that has the generic counter currency
-                        // 3. Just one pair that doesn't have the generic counter currency
                         else if (entity.CurrencyId != null && entity.CurrencyId > 0)
                         {
                             // How many components we got
-                            var componentsToCompute = _analysedComponentEvent.GetTickerPairComponentsByCurrencyCount(
-                                (long) entity.CurrencyId, cp => cp.IsEnabled && cp.DeletedAt == null
-                                                                 && cp.AnalysedComponents
-                                                                     .Any(ac => ac.ComponentType.Equals(AnalysedComponentType.CurrentAveragePrice)
-                                                                     && ac.AnalysedHistoricItems.Any()));
+                            var componentsToCompute = _analysedHistoricItemEvent.GetQueryCount(entity.Id,
+                                // Active checks
+                                ahi => ahi.DeletedAt == null && ahi.IsEnabled
+                                                             // Time check
+                                                             && ahi.HistoricDateTime >= DateTime.UtcNow.Subtract(dataTimespan)
+                                                             // Relational checks
+                                                             && ahi.AnalysedComponent.CurrencyPair != null
+                                                             // Make sure the main currency matches this currency
+                                                             && ahi.AnalysedComponent.CurrencyPair.Source
+                                                                 .SourceCurrencies
+                                                                 .Any(sc => sc.Currency.Abbreviation
+                                                                     .Equals(ahi.AnalysedComponent.CurrencyPair.MainCurrencyAbbrv))
+                                                             // Make sure we only check for the CurrentAveragePrice component
+                                                             && ahi.AnalysedComponent.ComponentType
+                                                                 .Equals(AnalysedComponentType.CurrentAveragePrice), 
+                                true);
                             var componentPages = 
-                                (componentsToCompute > NozomiServiceConstants.AnalysedComponentTakeoutLimit) ?
-                                componentsToCompute / NozomiServiceConstants.AnalysedComponentTakeoutLimit : 1;
+                                (componentsToCompute > NozomiServiceConstants.AnalysedHistoricItemTakeoutLimit) ?
+                                componentsToCompute / NozomiServiceConstants.AnalysedHistoricItemTakeoutLimit : 1;
 
                             var avgPrice = decimal.Zero;
                             
                             // Iterate the page
                             for (var i = 0; i < componentPages; i++)
                             {
-                                var analysedComps =
-                                    _analysedComponentEvent.GetTickerPairComponentsByCurrency((long)entity.CurrencyId,
-                                            true, i, true, ac => // Make sure its the generic counter currency
-                                                // since we can't convert yet
-                                                ac.CurrencyPair.CounterCurrencyAbbrv
-                                                    .Equals(CoreConstants.GenericCounterCurrency, 
-                                                        StringComparison.InvariantCultureIgnoreCase)
-                                                && ac.ComponentType.Equals(AnalysedComponentType.CurrentAveragePrice)
-                                                && NumberHelper.IsNumericDecimal(ac.Value))
-                                        .ToList();
+                                var historicData = _analysedHistoricItemEvent.GetAll(entity.Id, dataTimespan, i)
+                                    .Where(ahi => NumberHelper.IsNumericDecimal(ahi.Value))
+                                    .ToList();
 
-                                if (analysedComps.Count > 0)
+                                if (historicData.Count > 0)
                                 {
+                                    // If its not zero, aggregate it.
                                     if (!avgPrice.Equals(decimal.Zero))
                                     {
                                         // Aggregate it
-                                        avgPrice = decimal.Divide(decimal.Add(analysedComps
-                                            .Average(ac => decimal.Parse(ac.Value)), avgPrice), 2);
+                                        avgPrice = decimal.Divide(decimal.Add(historicData
+                                            .Average(ahi => decimal.Parse(ahi.Value)), avgPrice), 2);
                                     }
                                     else
                                     {
-                                        avgPrice = analysedComps.Average(ac => decimal.Parse(ac.Value));
+                                        avgPrice = historicData.Average(ahi => decimal.Parse(ahi.Value));
                                     }
                                 }
                             }
