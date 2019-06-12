@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Nozomi.Base.Core;
 using Nozomi.Data.Models.Currency;
+using Nozomi.Data.Models.Web.Analytical;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Data;
@@ -50,6 +51,36 @@ namespace Nozomi.Service.Events
                 }
 
                 return query.ToList();
+            }
+
+            return null;
+        }
+
+        public ICollection<AnalysedComponent> GetAnalysedComponents(long analysedComponentId, bool track = false)
+        {
+            if (analysedComponentId <= 0)
+            {
+                var query = _unitOfWork.GetRepository<CurrencyPair>()
+                    .GetQueryable()
+                    .AsNoTracking()
+                    .Where(cp => cp.DeletedAt == null && cp.IsEnabled)
+                    .Include(cp => cp.AnalysedComponents)
+                    // Look for the Currency pair that contains the component requested
+                    .Where(cp => cp.AnalysedComponents
+                        .Any(ac => ac.Id.Equals(analysedComponentId) && ac.CurrencyPairId.Equals(cp.Id)));
+
+                if (track)
+                {
+                    query = query
+                        .Include(cp => cp.Requests)
+                        .ThenInclude(r => r.RequestComponents)
+                        .Include(cp => cp.AnalysedComponents)
+                        .ThenInclude(ac => ac.AnalysedHistoricItems);
+                }
+
+                return query
+                    .SingleOrDefault()
+                    ?.AnalysedComponents;
             }
 
             return null;
