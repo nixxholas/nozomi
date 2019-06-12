@@ -400,13 +400,6 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                 ahi => ahi.DeletedAt == null && ahi.IsEnabled
                                                              // Time check
                                                              && ahi.HistoricDateTime >= DateTime.UtcNow.Subtract(dataTimespan)
-                                                             // Relational checks
-                                                             && ahi.AnalysedComponent.CurrencyPair != null
-                                                             // Make sure the main currency matches this currency
-                                                             && ahi.AnalysedComponent.CurrencyPair.Source
-                                                                 .SourceCurrencies
-                                                                 .Any(sc => sc.Currency.Abbreviation
-                                                                     .Equals(ahi.AnalysedComponent.CurrencyPair.MainCurrencyAbbrv))
                                                              // Make sure we only check for the CurrentAveragePrice component
                                                              && ahi.AnalysedComponent.ComponentType
                                                                  .Equals(AnalysedComponentType.CurrentAveragePrice), 
@@ -456,6 +449,23 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                         // 2. This came from a non-currency request
                         else
                         {
+                            // How many components we got
+                            var componentsToCompute = _analysedHistoricItemEvent.GetQueryCount(entity.Id,
+                                // Active checks
+                                ahi => ahi.DeletedAt == null && ahi.IsEnabled
+                                                             // Time check
+                                                             && ahi.HistoricDateTime >= DateTime.UtcNow.Subtract(dataTimespan)
+                                                             // Relational checks
+                                                             && ahi.AnalysedComponent.CurrencyPair != null
+                                                             // Make sure the main currency matches this currency
+                                                             && ahi.AnalysedComponent.CurrencyPair.Source
+                                                                 .SourceCurrencies
+                                                                 .Any(sc => sc.Currency.Abbreviation
+                                                                     .Equals(ahi.AnalysedComponent.CurrencyPair.MainCurrencyAbbrv))
+                                                             // Make sure we only check for the CurrentAveragePrice component
+                                                             && ahi.AnalysedComponent.ComponentType
+                                                                 .Equals(AnalysedComponentType.CurrentAveragePrice), 
+                                true);
                             var reqCompCount = _requestComponentEvent.GetCorrelationPredicateCount(entity.Id, 
                                 rc => rc.DeletedAt == null && rc.IsEnabled 
                                                            && (rc.ComponentType.Equals(ComponentType.Ask)
