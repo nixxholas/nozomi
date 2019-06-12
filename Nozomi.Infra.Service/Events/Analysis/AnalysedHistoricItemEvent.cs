@@ -100,6 +100,9 @@ namespace Nozomi.Service.Events.Analysis
                         .ThenInclude(ac => ac.Currency)
                         .Include(ahi => ahi.AnalysedComponent)
                         .ThenInclude(ac => ac.CurrencyPair)
+                        .ThenInclude(cp => cp.Source)
+                        .ThenInclude(s => s.SourceCurrencies)
+                        .ThenInclude(sc => sc.Currency)
                         .Include(ahi => ahi.AnalysedComponent)
                         .ThenInclude(ac => ac.CurrencyType)
                         .AsQueryable();
