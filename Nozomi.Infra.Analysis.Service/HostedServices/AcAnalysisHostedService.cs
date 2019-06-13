@@ -389,8 +389,8 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                         {
                             // This is not good lol
                             _logger.LogCritical($"[{ServiceName} / ID: {entity.Id}] " +
-                                                $"Analyse/CurrentAveragePrice: A CurrencyType-" +
-                                                $"based component is attempting to compute its CurrentAveragePrice.");
+                                                $"Analyse/HourlyAveragePrice: A CurrencyType-" +
+                                                $"based component is attempting to compute its HourlyAveragePrice.");
                         }
                         
                         // Currency-based Live Average Price
@@ -481,8 +481,8 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                 var analysedComponent = _currencyPairEvent.GetRelatedAnalysedComponent(entity.Id,
                                     AnalysedComponentType.CurrentAveragePrice, true);
 
-                                if (analysedComponent != null && analysedComponent.AnalysedHistoricItems != null 
-                                                              && analysedComponent.AnalysedHistoricItems.Count > 0)
+                                if (analysedComponent?.AnalysedHistoricItems != null 
+                                    && analysedComponent.AnalysedHistoricItems.Count > 0)
                                 {
                                     // Aggregate it
                                     if (!avgPrice.Equals(decimal.Zero))
@@ -512,6 +512,132 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                         break;
                     case AnalysedComponentType.DailyAveragePrice:
                         dataTimespan = TimeSpan.FromHours(24);
+                        
+                        // CurrencyType-based Live Average Price
+                        if (entity.CurrencyTypeId != null && entity.CurrencyTypeId > 0)
+                        {
+                            // This is not good lol
+                            _logger.LogCritical($"[{ServiceName} / ID: {entity.Id}] " +
+                                                $"Analyse/DailyAveragePrice: A CurrencyType-" +
+                                                $"based component is attempting to compute its DailyAveragePrice.");
+                        }
+                        
+                        // Currency-based Live Average Price
+                        else if (entity.CurrencyId != null && entity.CurrencyId > 0)
+                        {
+                            // How many components we got
+                            var componentsToCompute = _analysedHistoricItemEvent.GetQueryCount(entity.Id,
+                                // Active checks
+                                ahi => ahi.DeletedAt == null && ahi.IsEnabled
+                                                             // Time check
+                                                             && ahi.HistoricDateTime >= DateTime.UtcNow.Subtract(dataTimespan)
+                                                             // Make sure we only check for the CurrentAveragePrice component
+                                                             && ahi.AnalysedComponent.ComponentType
+                                                                 .Equals(AnalysedComponentType.HourlyAveragePrice), 
+                                true);
+                            var componentPages = 
+                                (componentsToCompute > NozomiServiceConstants.AnalysedHistoricItemTakeoutLimit) ?
+                                componentsToCompute / NozomiServiceConstants.AnalysedHistoricItemTakeoutLimit : 1;
+
+                            var avgPrice = decimal.Zero;
+                            
+                            // Iterate the page
+                            for (var i = 0; i < componentPages; i++)
+                            {
+                                var historicData = _analysedHistoricItemEvent.GetAll(entity.Id, dataTimespan, i)
+                                    .Where(ahi => NumberHelper.IsNumericDecimal(ahi.Value))
+                                    .ToList();
+
+                                if (historicData.Count > 0)
+                                {
+                                    // If its not zero, aggregate it.
+                                    if (!avgPrice.Equals(decimal.Zero))
+                                    {
+                                        // Aggregate it
+                                        avgPrice = decimal.Divide(decimal.Add(historicData
+                                            .Average(ahi => decimal.Parse(ahi.Value)), avgPrice), 2);
+                                    }
+                                    else
+                                    {
+                                        avgPrice = historicData.Average(ahi => decimal.Parse(ahi.Value));
+                                    }
+                                }
+                            }
+
+                            // Update!
+                            if (!decimal.Zero.Equals(avgPrice))
+                            {
+                                return _analysedComponentService.UpdateValue(entity.Id, 
+                                    avgPrice.ToString(CultureInfo.InvariantCulture));
+                            }
+                            
+                            // Hitting here? Sum ting wong
+                            _logger.LogWarning($"[{ServiceName}] Analyse ({entity.Id}): " +
+                                               $"average price can't be computed.");
+                        }
+                        // Request-based Live Average Price
+                        // 1. This came from a CurrencyPair
+                        // 2. This came from a non-currency request
+                        else
+                        {
+                            // How many components we got
+                            var componentsToCompute = _analysedHistoricItemEvent.GetQueryCount(entity.Id,
+                                // Active checks
+                                ahi => ahi.DeletedAt == null && ahi.IsEnabled
+                                                             // Time check
+                                                             && ahi.HistoricDateTime >= DateTime.UtcNow.Subtract(dataTimespan)
+                                                             // Relational checks
+                                                             && ahi.AnalysedComponent.CurrencyPair != null
+                                                             // Make sure the main currency matches this currency
+                                                             && ahi.AnalysedComponent.CurrencyPair.Source
+                                                                 .SourceCurrencies
+                                                                 .Any(sc => sc.Currency.Abbreviation
+                                                                     .Equals(ahi.AnalysedComponent.CurrencyPair.MainCurrencyAbbrv))
+                                                             // Make sure we only check for the CurrentAveragePrice component
+                                                             && ahi.AnalysedComponent.ComponentType
+                                                                 .Equals(AnalysedComponentType.HourlyAveragePrice), 
+                                true);
+                            var compsPages = (componentsToCompute > NozomiServiceConstants.AnalysedHistoricItemTakeoutLimit) ? 
+                                decimal.Divide(componentsToCompute, NozomiServiceConstants.AnalysedHistoricItemTakeoutLimit)
+                                : 1;
+
+                            // Aggregate it
+                            var avgPrice = decimal.Zero;
+                            
+                            for (var i = 0; i < compsPages; i++)
+                            {
+                                // Obtain all the historic items related to this AC.
+                                var analysedComponent = _currencyPairEvent.GetRelatedAnalysedComponent(entity.Id,
+                                    AnalysedComponentType.HourlyAveragePrice, true);
+
+                                if (analysedComponent?.AnalysedHistoricItems != null 
+                                    && analysedComponent.AnalysedHistoricItems.Count > 0)
+                                {
+                                    // Aggregate it
+                                    if (!avgPrice.Equals(decimal.Zero))
+                                    {
+                                        avgPrice = decimal.Divide(decimal.Add(avgPrice, analysedComponent.AnalysedHistoricItems
+                                            .Average(ahi => decimal.Parse(ahi.Value))), 2);
+                                    }
+                                    else
+                                    {
+                                        avgPrice = analysedComponent.AnalysedHistoricItems
+                                            .Average(ahi => decimal.Parse(ahi.Value));
+                                    }
+                                }
+                            }
+
+                            if (!decimal.Zero.Equals(avgPrice))
+                            {
+                                return _analysedComponentService.UpdateValue(entity.Id,
+                                    avgPrice.ToString(CultureInfo.InvariantCulture));
+                            }
+
+                            // Hitting here? Sum ting wong
+                            _logger.LogWarning($"[{ServiceName}] Analyse ({entity.Id}): " +
+                                               $"average price can't be computed.");
+                        }
+
                         break;
                     case AnalysedComponentType.DailyPriceChange:
                         break;
