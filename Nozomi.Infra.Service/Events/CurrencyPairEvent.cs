@@ -76,6 +76,27 @@ namespace Nozomi.Service.Events
                 
                 return query
                     .Select(cp => cp.AnalysedComponents.SingleOrDefault(ac => ac.ComponentType.Equals(type)))
+                    .Select(ac => new AnalysedComponent
+                    {
+                        // Custom data binding. 
+                        Id = ac.Id,
+                        ComponentType = ac.ComponentType,
+                        Value = ac.Value,
+                        IsDenominated = ac.IsDenominated,
+                        Delay = ac.Delay,
+                        UIFormatting = ac.UIFormatting,
+                        CurrencyId = ac.CurrencyId,
+                        Currency = ac.Currency,
+                        CurrencyPairId = ac.CurrencyPairId,
+                        CurrencyPair = ac.CurrencyPair,
+                        CurrencyTypeId = ac.CurrencyTypeId,
+                        CurrencyType = ac.CurrencyType,
+                        AnalysedHistoricItems = ac.AnalysedHistoricItems,
+                        CreatedAt = ac.CreatedAt,
+                        CreatedBy = ac.CreatedBy,
+                        ModifiedAt = ac.ModifiedAt,
+                        ModifiedBy = ac.ModifiedBy
+                    })
                     .SingleOrDefault();
             }
 

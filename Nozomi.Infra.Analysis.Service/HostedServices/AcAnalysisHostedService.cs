@@ -481,7 +481,8 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                 var analysedComponent = _currencyPairEvent.GetRelatedAnalysedComponent(entity.Id,
                                     AnalysedComponentType.CurrentAveragePrice, true);
 
-                                if (analysedComponent != null && analysedComponent.AnalysedHistoricItems.Count > 0)
+                                if (analysedComponent != null && analysedComponent.AnalysedHistoricItems != null 
+                                                              && analysedComponent.AnalysedHistoricItems.Count > 0)
                                 {
                                     // Aggregate it
                                     if (!avgPrice.Equals(decimal.Zero))
