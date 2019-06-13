@@ -71,7 +71,8 @@ namespace Nozomi.Service.Events
             return _unitOfWork.GetRepository<CurrencyPair>()
                 .GetQueryable()
                 .AsNoTracking()
-                .Where(cp => cp.DeletedAt == null).ToList();
+                .Where(cp => cp.DeletedAt == null)
+                .ToList();
         }
     }
 }

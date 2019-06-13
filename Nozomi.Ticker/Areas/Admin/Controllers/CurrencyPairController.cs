@@ -2,6 +2,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Nozomi.Base.Identity.ViewModels.Manage.CurrencyPair;
 using Nozomi.Service.Events.Interfaces;
 using Nozomi.Service.Identity.Managers;
 using Nozomi.Service.Services.Interfaces;
@@ -15,15 +16,16 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
     {
         private readonly ICurrencyPairEvent _currencyPairEvent;
         private readonly ICurrencyPairService _currencyPairService;
-            
+
         public CurrencyPairController(ILogger<CurrencyPairController> logger, NozomiSignInManager signInManager,
-            NozomiUserManager userManager, ICurrencyPairEvent currencyPairEvent, ICurrencyPairService currencyPairService)
+            NozomiUserManager userManager, ICurrencyPairEvent currencyPairEvent,
+            ICurrencyPairService currencyPairService)
             : base(logger, signInManager, userManager)
         {
             _currencyPairEvent = currencyPairEvent;
             _currencyPairService = currencyPairService;
         }
-        
+
         #region Get CurrencyPairs
 
         [HttpGet]
@@ -35,10 +37,13 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
                 return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
 
-            return Ok();
+
+            return View(new CurrencyPairViewModel
+            {
+                CurrencyPairs = _currencyPairEvent.GetAll()
+            });
         }
-        
+
         #endregion
-        
     }
 }

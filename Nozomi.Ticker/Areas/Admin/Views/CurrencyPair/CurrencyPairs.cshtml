@@ -1,0 +1,36 @@
+@model Nozomi.Ticker.Areas.Admin.Views.CurrencyPair.CurrencyPairs
+
+<!-- Content Section -->
+<div class="bg-light">
+    <div class="container space-2">
+        <h3 class="mb-6">Currency Pairs</h3>
+
+        <b-button variant="primary" class="mb-3" v-on:click="showCreateModal">Create</b-button>
+        
+        <b-table
+            :per-page="sourcesDataRowsPerPage" :current-page="currentSourceDataPage"
+            :items="currencyPairs" :fields="dataFields">
+            <template slot="Name" slot-scope="datum">
+                {{ datum.item.name }}
+            </template>
+            <template slot="Abbreviation" slot-scope="datum">
+                {{ datum.item.abbreviation }}
+            </template>
+            <template slot="APIDocsURL" slot-scope="datum">
+                <a :href="datum.item.apiDocsURL">{{ datum.item.apiDocsURL }}</a>
+            </template>
+            <template slot="isEnabled" slot-scope="datum">
+                <b-form-checkbox v-model="datum.item.isEnabled" disabled/>
+            </template>
+            <template slot="Edit" slot-scope="datum">
+                <b-button variant="primary" b-modal.modal-xl
+                          v-on:click="showEditModal(datum.item.id, datum.item.name, datum.item.abbreviation, datum.item.apiDocsURL, datum.item.isEnabled)">
+                    Edit
+                </b-button>
+            </template>
+            <template slot="Delete" slot-scope="datum">
+                <b-button variant="danger" v-on:click="showDeleteModal(datum.item.id, datum.item.name)">Delete</b-button>
+            </template>
+        </b-table>
+    </div>
+</div>
