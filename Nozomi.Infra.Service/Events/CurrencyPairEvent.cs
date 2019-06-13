@@ -65,5 +65,13 @@ namespace Nozomi.Service.Events
 
             return null;
         }
+
+        public ICollection<CurrencyPair> GetAll()
+        {
+            return _unitOfWork.GetRepository<CurrencyPair>()
+                .GetQueryable()
+                .AsNoTracking()
+                .Where(cp => cp.DeletedAt == null).ToList();
+        }
     }
 }

@@ -13,5 +13,8 @@ namespace Nozomi.Service.Events.Interfaces
             string mainCurrencyAbbrv = CoreConstants.GenericCurrency);
 
         ICollection<CurrencyPair> GetAllByTickerPairAbbreviation(string tickerPairAbbreviation, bool track = false);
+
+        ICollection<CurrencyPair> GetAll();
+
     }
 }
