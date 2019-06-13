@@ -26,6 +26,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
         private readonly IAnalysedComponentEvent _analysedComponentEvent;
         private readonly IAnalysedHistoricItemEvent _analysedHistoricItemEvent;
         private readonly ICurrencyEvent _currencyEvent;
+        private readonly ICurrencyPairEvent _currencyPairEvent;
         private readonly IRequestComponentEvent _requestComponentEvent;
         private readonly IXAnalysedComponentEvent _xAnalysedComponentEvent;
         private readonly IAnalysedComponentService _analysedComponentService;
@@ -35,6 +36,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
             _analysedComponentEvent = _scope.ServiceProvider.GetRequiredService<IAnalysedComponentEvent>();
             _analysedHistoricItemEvent = _scope.ServiceProvider.GetRequiredService<IAnalysedHistoricItemEvent>();
             _currencyEvent = _scope.ServiceProvider.GetRequiredService<ICurrencyEvent>();
+            _currencyPairEvent = _scope.ServiceProvider.GetRequiredService<ICurrencyPairEvent>();
             _requestComponentEvent = _scope.ServiceProvider.GetRequiredService<IRequestComponentEvent>();
             _xAnalysedComponentEvent = _scope.ServiceProvider.GetRequiredService<IXAnalysedComponentEvent>();
             _analysedComponentService = _scope.ServiceProvider.GetRequiredService<IAnalysedComponentService>();
@@ -466,42 +468,31 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                                              && ahi.AnalysedComponent.ComponentType
                                                                  .Equals(AnalysedComponentType.CurrentAveragePrice), 
                                 true);
-                            var reqCompCount = _requestComponentEvent.GetCorrelationPredicateCount(entity.Id, 
-                                rc => rc.DeletedAt == null && rc.IsEnabled 
-                                                           && (rc.ComponentType.Equals(ComponentType.Ask)
-                                                               || rc.ComponentType.Equals(ComponentType.Bid))
-                                                           && !string.IsNullOrEmpty(rc.Value)
-                                                           && NumberHelper.IsNumericDecimal(rc.Value));
-                            var reqCompsPages = (reqCompCount > NozomiServiceConstants.RequestComponentTakeoutLimit) ? 
-                                decimal.Divide(reqCompCount, NozomiServiceConstants.RequestComponentTakeoutLimit)
+                            var compsPages = (componentsToCompute > NozomiServiceConstants.AnalysedHistoricItemTakeoutLimit) ? 
+                                decimal.Divide(componentsToCompute, NozomiServiceConstants.AnalysedHistoricItemTakeoutLimit)
                                 : 1;
 
                             // Aggregate it
                             var avgPrice = decimal.Zero;
                             
-                            for (var i = 0; i < reqCompsPages; i++)
+                            for (var i = 0; i < compsPages; i++)
                             {
-                                // Obtain all of the req components that are related to this AC.
-                                var correlatedReqComps = _requestComponentEvent.GetAllByCorrelation(entity.Id, true, 
-                                        i, rc => rc.DeletedAt == null && rc.IsEnabled 
-                                                                      && (rc.ComponentType.Equals(ComponentType.Ask)
-                                                                          || rc.ComponentType.Equals(ComponentType.Bid))
-                                                                      && !string.IsNullOrEmpty(rc.Value)
-                                                                      && NumberHelper.IsNumericDecimal(rc.Value))
-                                    .ToList();
+                                // Obtain all the historic items related to this AC.
+                                var analysedComponent = _currencyPairEvent.GetRelatedAnalysedComponent(entity.Id,
+                                    AnalysedComponentType.CurrentAveragePrice, true);
 
-                                if (correlatedReqComps.Count > 0)
+                                if (analysedComponent != null && analysedComponent.AnalysedHistoricItems.Count > 0)
                                 {
                                     // Aggregate it
                                     if (!avgPrice.Equals(decimal.Zero))
                                     {
-                                        avgPrice = decimal.Divide(decimal.Add(avgPrice, correlatedReqComps
-                                            .Average(rc => decimal.Parse(rc.Value))), 2);
+                                        avgPrice = decimal.Divide(decimal.Add(avgPrice, analysedComponent.AnalysedHistoricItems
+                                            .Average(ahi => decimal.Parse(ahi.Value))), 2);
                                     }
                                     else
                                     {
-                                        avgPrice = correlatedReqComps
-                                            .Average(rc => decimal.Parse(rc.Value));
+                                        avgPrice = analysedComponent.AnalysedHistoricItems
+                                            .Average(ahi => decimal.Parse(ahi.Value));
                                     }
                                 }
                             }
