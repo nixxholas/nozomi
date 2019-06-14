@@ -1,4 +1,6 @@
-@model Nozomi.Ticker.Areas.Admin.Views.CurrencyPair.CurrencyPairs
+@using Newtonsoft.Json
+@using Newtonsoft.Json.Serialization
+@model Nozomi.Base.Identity.ViewModels.Manage.CurrencyPair.CurrencyPairViewModel
 
 <!-- Content Section -->
 <div class="bg-light">
@@ -6,20 +8,26 @@
         <h3 class="mb-6">Currency Pairs</h3>
 
         <b-button variant="primary" class="mb-3" v-on:click="showCreateModal">Create</b-button>
-        
+
         <b-table
-            :per-page="sourcesDataRowsPerPage" :current-page="currentSourceDataPage"
+            :per-page="currentCurrencyPairDataPage" :current-page="currentSourceDataPage"
             :items="currencyPairs" :fields="dataFields">
-            <template slot="Name" slot-scope="datum">
-                {{ datum.item.name }}
+            <template slot="MainCurrencyAbbrv" slot-scope="datum">
+                {{ datum.item.mainCurrencyAbbrv }}
             </template>
-            <template slot="Abbreviation" slot-scope="datum">
-                {{ datum.item.abbreviation }}
+            <template slot="CounterCurrencyAbbrv" slot-scope="datum">
+                {{ datum.item.counterCurrencyAbbrv }}
             </template>
-            <template slot="APIDocsURL" slot-scope="datum">
-                <a :href="datum.item.apiDocsURL">{{ datum.item.apiDocsURL }}</a>
+            <template slot="CurrencyPairType" slot-scope="datum">
+                {{ datum.item.currencyPairType }}
             </template>
-            <template slot="isEnabled" slot-scope="datum">
+            <template slot="ApiUrl" slot-scope="datum">
+                <a :href="datum.item.apiDocsURL">{{ datum.item.apiUrl }}</a>
+            </template>
+            <template slot="DefaultComponent" slot-scope="datum">
+                {{ datum.item.defaultComponent }}
+            </template>
+            <template slot="IsEnabled" slot-scope="datum">
                 <b-form-checkbox v-model="datum.item.isEnabled" disabled/>
             </template>
             <template slot="Edit" slot-scope="datum">
@@ -34,3 +42,214 @@
         </b-table>
     </div>
 </div>
+
+<!-- CreateModal -->
+<b-modal ref="create-modal" size="xl" title="Create Currency Pair" ok-title="Create" v-on:ok="handleCreateOk">
+    <b-form v-on:submit.stop.prevent="onCreateSubmit">
+        <b-form-group label="Main Currency">
+            <b-form-select v-model=""></b-form-select>
+        </b-form-group>
+
+        <b-form-group label="Counter Currency">
+            <b-form-input
+                v-model="createForm.abbreviation"
+                required
+                placeholder="Enter source abbreviation">
+            </b-form-input>
+        </b-form-group>
+
+        <b-form-group label="Source">
+            <b-form-input
+                v-model="createForm.apiDocsURL"
+                required
+                type="url"
+                placeholder="Enter Api Docs URL abbreviation">
+            </b-form-input>
+        </b-form-group>
+        
+        <b-form-group>
+            <b-form-checkbox v-model="createForm.isEnabled">Is Enabled</b-form-checkbox>
+        </b-form-group>
+    </b-form>
+</b-modal>
+
+@section Scripts{
+    <script>
+        const vm = new Vue({
+            el: "#content",
+            data: {
+                currentCurrencyPairDataPage: 1,
+                currencyPairDataRowsPerPage: 20,
+                dataFields: [
+                    {
+                        key: 'MainCurrencyAbbrv',
+                        label: 'Main Currency',
+                        sortable: true
+                    },
+                    {
+                        key: 'CounterCurrencyAbbrv',
+                        label: 'Counter Currency',
+                        sortable: true
+                    },
+                    {
+                        key: 'CurrencyPairType',
+                        label: 'Currency Pair Type',
+                        sortable: true
+                    },
+                    {
+                        key: 'ApiUrl',
+                        label: 'API URL',
+                        sortable: true
+                    },
+                    {
+                        key: 'DefaultComponent',
+                        label: 'Default Component',
+                        sortable: false
+                    },
+                    {
+                        key: 'IsEnabled',
+                        label: 'Is Enabled',
+                        sortable: true
+                    },
+                    {
+                        key: 'Edit',
+                        label: '',
+                        sortable: false
+                    },
+                    {
+                        key: 'Delete',
+                        label: '',
+                        sortable: false
+                    }
+                ],
+                currencyPairs:
+                    @Html.Raw(JsonConvert.SerializeObject(@Model.CurrencyPairs, Formatting.Indented, new JsonSerializerSettings
+                    {
+                        ContractResolver = new CamelCasePropertyNamesContractResolver()
+                    })),
+                currencies:
+                    @Html.Raw(JsonConvert.SerializeObject(@Model.Currencies, Formatting.Indented, new JsonSerializerSettings
+                    {
+                        ContractResolver = new CamelCasePropertyNamesContractResolver()
+                    })),
+                methods: {
+                    showCreateModal() {
+                        this.$refs['create-modal'].show();
+                    },
+                    handleCreateOk(bvModalEvt) {
+                        bvModalEvt.preventDefault();
+                        this.onCreateSubmit();
+                    },
+                    async onCreateSubmit() {
+                        var formData = new FormData();
+                        formData.append('Id', this.createForm.id);
+                        formData.append('Name', this.createForm.sourceName);
+                        formData.append('Abbreviation', this.createForm.abbreviation);
+                        formData.append('ApiDocsURL', this.createForm.apiDocsURL);
+                        formData.append('IsEnabled', this.createForm.isEnabled);
+
+                        const response = await fetch('/Admin/Source/CreateSource',
+                            {
+                                method: 'POST',
+                                body: formData
+                            });
+
+                        if (response.status === 200) {
+                            const data = await response.json();
+
+                            const newRequest = data.item;
+
+                            console.log(newRequest);
+
+                            this.sources.push(newRequest);
+                            // Put alert for now, change the ui later.
+                            alert(data.message);
+                        } else {
+                            alert("Create failed");
+                        }
+                        // Hide the modal manually
+                        this.$refs['create-modal'].hide();
+                    },
+                    // Methods for edit modal
+                    showEditModal(id, sourceName, abbreviation, apiDocsURL, isEnabled) {
+                        this.editForm.id = id;
+                        this.editForm.sourceName = sourceName;
+                        this.editForm.abbreviation = abbreviation;
+                        this.editForm.apiDocsURL = apiDocsURL;
+                        this.editForm.isEnabled = isEnabled;
+
+                        this.$refs['edit-modal'].show();
+                    },
+                    handleEditOk(bvModalEvt) {
+                        // Prevent modal from closing
+                        bvModalEvt.preventDefault();
+                        // Trigger submit handler
+                        this.onEditSubmit();
+                    },
+                    async onEditSubmit() {
+                        var formData = new FormData();
+                        formData.append('Id', this.editForm.id);
+                        formData.append('Name', this.editForm.sourceName);
+                        formData.append('Abbreviation', this.editForm.abbreviation);
+                        formData.append('ApiDocsURL', this.editForm.apiDocsURL);
+                        formData.append('IsEnabled', this.editForm.isEnabled);
+
+                        const response = await fetch(`/Admin/Source/EditSource/${this.editForm.id}`,
+                            {
+                                method: 'PUT',
+                                body: formData
+                            });
+
+                        if (response.status === 200) {
+                            // Update the data table
+                            this.sources.find((element, index) => {
+                                if (element.Id === this.editForm.id) {
+                                    this.sources[index].Name = this.editForm.sourceName;
+                                    this.sources[index].Abbreviation = this.editForm.abbreviation;
+                                    this.sources[index].ApiDocsURL = this.editForm.apiDocsURL;
+                                    this.sources[index].IsEnabled = this.editForm.isEnabled;
+                                }
+                            });
+
+                            // Put alert for now, change the ui later.
+                            alert("Successfully updated source");
+                        } else {
+                            alert("Update failed");
+                        }
+
+                        // Hide the modal manually
+                        this.$refs['edit-modal'].hide();
+                    },
+                    // Methods for delete modal
+                    showDeleteModal(id, sourceName) {
+                        this.deleteModal.id = id;
+                        this.deleteModal.name = sourceName;
+
+                        this.$refs['delete-modal'].show();
+                    },
+                    async handleDeleteOk(bvModalEvt) {
+                        bvModalEvt.preventDefault();
+
+                        const response = await fetch(`/Admin/Source/DeleteSource/${this.deleteModal.id}`,
+                            {
+                                method: 'DELETE'
+                            });
+
+                        if (response.status === 200) {
+                            // Update the datatable
+                            const index = this.sources.findIndex(element => element.Id === this.deleteModal.id);
+                            this.sources.splice(index, 1);
+
+                            alert(`Successfully deleted ${this.deleteModal.name}`);
+                        } else {
+                            alert("Delete failed");
+                        }
+
+                        this.$refs['delete-modal'].hide();
+                    }
+                }
+            }
+        })
+    </script>
+
+}

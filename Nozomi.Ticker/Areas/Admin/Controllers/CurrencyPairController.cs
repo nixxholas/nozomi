@@ -16,14 +16,16 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
     {
         private readonly ICurrencyPairEvent _currencyPairEvent;
         private readonly ICurrencyPairService _currencyPairService;
+        private readonly ICurrencyEvent _currencyEvent;
 
         public CurrencyPairController(ILogger<CurrencyPairController> logger, NozomiSignInManager signInManager,
             NozomiUserManager userManager, ICurrencyPairEvent currencyPairEvent,
-            ICurrencyPairService currencyPairService)
+            ICurrencyPairService currencyPairService, ICurrencyEvent currencyEvent)
             : base(logger, signInManager, userManager)
         {
             _currencyPairEvent = currencyPairEvent;
             _currencyPairService = currencyPairService;
+            _currencyEvent = currencyEvent;
         }
 
         #region Get CurrencyPairs
@@ -40,7 +42,9 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
 
             return View(new CurrencyPairViewModel
             {
-                CurrencyPairs = _currencyPairEvent.GetAll()
+                CurrencyPairs = _currencyPairEvent.GetAll(),
+                Currencies = _currencyEvent.GetAllActive()
+                
             });
         }
 
