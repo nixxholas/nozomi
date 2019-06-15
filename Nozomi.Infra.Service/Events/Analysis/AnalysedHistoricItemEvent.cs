@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data.Models.Web.Analytical;
 using Nozomi.Preprocessing;
@@ -16,10 +17,13 @@ namespace Nozomi.Service.Events.Analysis
     public class AnalysedHistoricItemEvent : BaseEvent<AnalysedHistoricItemEvent, NozomiDbContext>, 
         IAnalysedHistoricItemEvent
     {
+        private readonly IAnalysedComponentEvent _analysedComponentEvent;
+        
         public AnalysedHistoricItemEvent(ILogger<AnalysedHistoricItemEvent> logger, 
-            IUnitOfWork<NozomiDbContext> unitOfWork) 
+            IAnalysedComponentEvent analysedComponentEvent, IUnitOfWork<NozomiDbContext> unitOfWork) 
             : base(logger, unitOfWork)
         {
+            _analysedComponentEvent = analysedComponentEvent;
         }
 
         public AnalysedHistoricItem Latest(long analysedComponentId)
@@ -83,13 +87,18 @@ namespace Nozomi.Service.Events.Analysis
             throw new ArgumentOutOfRangeException("Invalid analysedComponentId.");
         }
 
-        public long GetQueryCount(Expression<Func<AnalysedHistoricItem, bool>> predicate, bool deepTrack = false)
+        public long GetRelevantComponentQueryCount(long analysedComponentId, Expression<Func<AnalysedHistoricItem, bool>> predicate, bool deepTrack = false)
         {
-            if (predicate != null)
+            if (analysedComponentId > 0 && predicate != null)
             {
+                // Obtain all correlated analysed components
+                var correlations = _analysedComponentEvent.GetAllByCorrelation(analysedComponentId);
+                
+                // Inside?
                 var query = _unitOfWork.GetRepository<AnalysedHistoricItem>()
                     .GetQueryable()
                     .AsNoTracking()
+                    .Where(ahi => correlations.Any(ac => ac.Id.Equals(ahi.AnalysedComponentId)))
                     .AsQueryable();
 
                 if (deepTrack)
