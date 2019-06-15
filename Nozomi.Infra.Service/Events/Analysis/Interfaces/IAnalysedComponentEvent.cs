@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
+using Nozomi.Data.Models.Currency;
 using Nozomi.Data.Models.Web.Analytical;
+using Nozomi.Preprocessing.Abstracts.Interfaces;
 
 namespace Nozomi.Service.Events.Analysis.Interfaces
 {
@@ -22,15 +25,20 @@ namespace Nozomi.Service.Events.Analysis.Interfaces
 
         ICollection<AnalysedComponent> GetAllByCurrency(long currencyId, bool ensureValid = false, bool track = false,
             int index = 0);
+
+        long GetTickerPairComponentsByCurrencyCount(long currencyId, Func<CurrencyPair, bool> predicate);
         
         ICollection<AnalysedComponent> GetTickerPairComponentsByCurrency(long currencyId, bool ensureValid = false, 
-            bool track = false, int index = 0);
+            int index = 0, bool track = false,  Expression<Func<AnalysedComponent, bool>> predicate = null, 
+            int historicItemIndex = 0);
 
-        ICollection<AnalysedComponent> GetAllByCurrencyType(long currencyTypeId, bool track = false, int index = 0);
+        ICollection<AnalysedComponent> GetAllByCurrencyType(long currencyTypeId, bool track = false, int index = 0, 
+            long ago = long.MinValue);
         
         ICollection<AnalysedComponent> GetAllCurrencyComponentsByType(long currencyTypeId, bool track = false, int index = 0);
 
-        ICollection<AnalysedComponent> GetAllByCorrelation(long analysedComponentId, bool track = false, int index = 0);
+        ICollection<AnalysedComponent> GetAllByCorrelation(long analysedComponentId, 
+            Expression<Func<AnalysedComponent, bool>> predicate = null, int index = 0, bool track = false);
 
         ICollection<AnalysedComponent> GetAllByCurrencyPair(long currencyPairId, bool track = false, int index = 0);
 

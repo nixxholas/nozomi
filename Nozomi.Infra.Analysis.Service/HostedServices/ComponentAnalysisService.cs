@@ -236,7 +236,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                         {
                             var analysedComps =
                                 _analysedComponentEvent.GetTickerPairComponentsByCurrency((long)component.CurrencyId,
-                                    true, true)
+                                    true, 0, true)
                                     .Where(ac => ac.CurrencyPair != null && ac.DeletedAt == null && ac.IsEnabled
                                                  // Make sure its the generic counter currency
                                                  // since we can't convert yet
@@ -583,7 +583,8 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                             // Since it's not currency-based, its currencypair-based.
 
                             // Obtain all of the analysed components that are related to this AC.
-                            var correlatedAnaComps = _analysedComponentEvent.GetAllByCorrelation(component.Id, true);
+                            var correlatedAnaComps = _analysedComponentEvent.GetAllByCorrelation(component.Id, 
+                                null, 0, true);
 
                             if (correlatedAnaComps != null)
                             {
@@ -675,7 +676,8 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                             // Since it's not currency-based, its currencypair-based.
 
                             // Obtain all of the analysed components that are related to this AC.
-                            var correlatedAnaComps = _analysedComponentEvent.GetAllByCorrelation(component.Id, true);
+                            var correlatedAnaComps = _analysedComponentEvent.GetAllByCorrelation(component.Id, 
+                                null, 0, true);
 
                             if (correlatedAnaComps != null)
                             {

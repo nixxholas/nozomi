@@ -25,8 +25,7 @@ namespace Nozomi.Infra.Analysis.Service.Events
                 .AsNoTracking()
                 // Enabled?
                 .Where(ac => ac.DeletedAt == null && ac.IsEnabled
-                             && ((ac.ModifiedAt.Add(TimeSpan.FromMilliseconds(ac.Delay)) <= DateTime.UtcNow) 
-                                 || string.IsNullOrEmpty(ac.Value)))
+                             && (ac.ModifiedAt.Add(TimeSpan.FromMilliseconds(ac.Delay)) <= DateTime.UtcNow))
                 // Order by ascending to the last modified time in addition to its delay
                 .OrderBy(ac => ac.ModifiedAt.Add(TimeSpan.FromMilliseconds(ac.Delay)))
                 .FirstOrDefault();

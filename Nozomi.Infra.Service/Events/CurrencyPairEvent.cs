@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Nozomi.Base.Core;
 using Nozomi.Data.Models.Currency;
+using Nozomi.Data.Models.Web.Analytical;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Data;
@@ -50,6 +51,83 @@ namespace Nozomi.Service.Events
                 }
 
                 return query.ToList();
+            }
+
+            return null;
+        }
+
+        public AnalysedComponent GetRelatedAnalysedComponent(long analysedComponentId, AnalysedComponentType type, bool track = false)
+        {
+            var query = _unitOfWork.GetRepository<CurrencyPair>()
+                .GetQueryable()
+                .AsNoTracking()
+                .Where(cp => cp.DeletedAt == null && cp.IsEnabled)
+                .Include(cp => cp.AnalysedComponents)
+                .Where(cp => cp.AnalysedComponents.Any(ac => ac.Id.Equals(analysedComponentId)));
+
+            if (query.Any())
+            {
+                if (track)
+                {
+                    query = query
+                        .Include(cp => cp.AnalysedComponents)
+                        .ThenInclude(ac => ac.AnalysedHistoricItems);
+                }
+                
+                return query
+                    .Select(cp => cp.AnalysedComponents.SingleOrDefault(ac => ac.ComponentType.Equals(type)))
+                    .Select(ac => new AnalysedComponent
+                    {
+                        // Custom data binding. 
+                        Id = ac.Id,
+                        ComponentType = ac.ComponentType,
+                        Value = ac.Value,
+                        IsDenominated = ac.IsDenominated,
+                        Delay = ac.Delay,
+                        UIFormatting = ac.UIFormatting,
+                        CurrencyId = ac.CurrencyId,
+                        Currency = ac.Currency,
+                        CurrencyPairId = ac.CurrencyPairId,
+                        CurrencyPair = ac.CurrencyPair,
+                        CurrencyTypeId = ac.CurrencyTypeId,
+                        CurrencyType = ac.CurrencyType,
+                        AnalysedHistoricItems = ac.AnalysedHistoricItems,
+                        CreatedAt = ac.CreatedAt,
+                        CreatedBy = ac.CreatedBy,
+                        ModifiedAt = ac.ModifiedAt,
+                        ModifiedBy = ac.ModifiedBy
+                    })
+                    .SingleOrDefault();
+            }
+
+            return null;
+        }
+
+        public ICollection<AnalysedComponent> GetAnalysedComponents(long analysedComponentId, bool track = false)
+        {
+            if (analysedComponentId <= 0)
+            {
+                var query = _unitOfWork.GetRepository<CurrencyPair>()
+                    .GetQueryable()
+                    .AsNoTracking()
+                    .Where(cp => cp.DeletedAt == null && cp.IsEnabled)
+                    .Include(cp => cp.AnalysedComponents)
+                    // Look for the Currency pair that contains the component requested
+                    .Where(cp => cp.AnalysedComponents
+                        .Any(ac => ac.Id.Equals(analysedComponentId) && ac.CurrencyPairId.Equals(cp.Id)));
+
+                if (track)
+                {
+                    query = query
+                        .Include(cp => cp.Requests)
+                        .ThenInclude(r => r.RequestComponents)
+                        .Include(cp => cp.AnalysedComponents)
+                        .ThenInclude(ac => ac.AnalysedHistoricItems);
+                }
+
+                return query
+                    .SingleOrDefault()
+                    ?.AnalysedComponents;
             }
 
             return null;

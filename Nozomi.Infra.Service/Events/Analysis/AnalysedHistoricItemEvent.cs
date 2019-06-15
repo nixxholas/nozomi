@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data.Models.Web.Analytical;
 using Nozomi.Preprocessing;
@@ -15,10 +17,13 @@ namespace Nozomi.Service.Events.Analysis
     public class AnalysedHistoricItemEvent : BaseEvent<AnalysedHistoricItemEvent, NozomiDbContext>, 
         IAnalysedHistoricItemEvent
     {
+        private readonly IAnalysedComponentEvent _analysedComponentEvent;
+        
         public AnalysedHistoricItemEvent(ILogger<AnalysedHistoricItemEvent> logger, 
-            IUnitOfWork<NozomiDbContext> unitOfWork) 
+            IAnalysedComponentEvent analysedComponentEvent, IUnitOfWork<NozomiDbContext> unitOfWork) 
             : base(logger, unitOfWork)
         {
+            _analysedComponentEvent = analysedComponentEvent;
         }
 
         public AnalysedHistoricItem Latest(long analysedComponentId)
@@ -53,8 +58,8 @@ namespace Nozomi.Service.Events.Analysis
                               && ahi.HistoricDateTime < DateTime.UtcNow.Subtract(since))
                 .OrderByDescending(ahi => ahi.HistoricDateTime)
                 // Take only the selected 50
-                .Skip(page * 50)
-                .Take(50)
+                .Skip(page * NozomiServiceConstants.AnalysedHistoricItemTakeoutLimit)
+                .Take(NozomiServiceConstants.AnalysedHistoricItemTakeoutLimit)
                 .ToList();
         }
 
@@ -80,6 +85,79 @@ namespace Nozomi.Service.Events.Analysis
             }
 
             throw new ArgumentOutOfRangeException("Invalid analysedComponentId.");
+        }
+
+        public long GetRelevantComponentQueryCount(long analysedComponentId, Expression<Func<AnalysedHistoricItem, bool>> predicate, bool deepTrack = false)
+        {
+            if (analysedComponentId > 0 && predicate != null)
+            {
+                // Obtain all correlated analysed components
+                var correlations = _analysedComponentEvent.GetAllByCorrelation(analysedComponentId);
+                
+                // Inside?
+                var query = _unitOfWork.GetRepository<AnalysedHistoricItem>()
+                    .GetQueryable()
+                    .AsNoTracking()
+                    .Where(ahi => correlations.Any(ac => ac.Id.Equals(ahi.AnalysedComponentId)))
+                    .AsQueryable();
+
+                if (deepTrack)
+                {
+                    query = query
+                        .Include(ahi => ahi.AnalysedComponent)
+                        .ThenInclude(ac => ac.Currency)
+                        .Include(ahi => ahi.AnalysedComponent)
+                        .ThenInclude(ac => ac.CurrencyPair)
+                        .ThenInclude(cp => cp.Source)
+                        .ThenInclude(s => s.SourceCurrencies)
+                        .ThenInclude(sc => sc.Currency)
+                        .Include(ahi => ahi.AnalysedComponent)
+                        .ThenInclude(ac => ac.CurrencyType)
+                        .AsQueryable();
+                }
+
+                return query
+                    .Where(predicate)
+                    .LongCount();
+            }
+
+            return long.MinValue;
+        }
+        
+        public ICollection<AnalysedHistoricItem> GetRelevantHistorics(long analysedComponentId, 
+            Expression<Func<AnalysedHistoricItem, bool>> predicate, 
+            int index = 0)
+        {
+            if (analysedComponentId > 0 && predicate != null)
+            {
+                // Obtain all correlated analysed components
+                var correlations = _analysedComponentEvent.GetAllByCorrelation(analysedComponentId);
+                
+                // Inside?
+                var query = _unitOfWork.GetRepository<AnalysedHistoricItem>()
+                    .GetQueryable()
+                    .AsNoTracking()
+                    .Where(ahi => correlations.Any(ac => ac.Id.Equals(ahi.AnalysedComponentId)))
+                    .Include(ahi => ahi.AnalysedComponent)
+                        .ThenInclude(ac => ac.Currency)
+                        .Include(ahi => ahi.AnalysedComponent)
+                        .ThenInclude(ac => ac.CurrencyPair)
+                        .ThenInclude(cp => cp.Source)
+                        .ThenInclude(s => s.SourceCurrencies)
+                        .ThenInclude(sc => sc.Currency)
+                        .Include(ahi => ahi.AnalysedComponent)
+                        .ThenInclude(ac => ac.CurrencyType)
+                        .AsQueryable();
+
+                return query
+                    .Where(predicate)
+                    .OrderByDescending(ahi => ahi.HistoricDateTime)
+                    .Skip(index * NozomiServiceConstants.AnalysedHistoricItemTakeoutLimit)
+                    .Take(NozomiServiceConstants.AnalysedHistoricItemTakeoutLimit)
+                    .ToList();
+            }
+
+            return new List<AnalysedHistoricItem>();
         }
     }
 }

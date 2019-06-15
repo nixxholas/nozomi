@@ -66,7 +66,7 @@ namespace Nozomi.Infra.Analysis.Service.Services
         {
             var comp = _unitOfWork.GetRepository<AnalysedComponent>()
                 .GetQueryable()
-                .AsNoTracking()
+                .AsTracking()
                 .SingleOrDefault(ac => ac.Id.Equals(analysedComponentId) && ac.DeletedAt == null);
 
             if (comp != null)
@@ -75,6 +75,8 @@ namespace Nozomi.Infra.Analysis.Service.Services
                 
                 _unitOfWork.GetRepository<AnalysedComponent>().Update(comp);
                 _unitOfWork.Commit(userId);
+
+                return true;
             }
             
             return false;

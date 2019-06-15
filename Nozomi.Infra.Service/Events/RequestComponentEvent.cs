@@ -23,8 +23,11 @@ using Nozomi.Service.Events.Interfaces;
 
 namespace Nozomi.Service.Events
 {
-    public class RequestComponentEvent : BaseEvent<RequestComponentEvent, NozomiDbContext>, IRequestComponentEvent
+    public class RequestComponentEvent : BaseEvent<RequestComponentEvent, NozomiDbContext, RequestComponent>, 
+        IRequestComponentEvent
     {
+        private IRequestComponentEvent _requestComponentEventImplementation;
+
         public RequestComponentEvent(ILogger<RequestComponentEvent> logger, IUnitOfWork<NozomiDbContext> unitOfWork)
             : base(logger, unitOfWork)
         {
@@ -64,6 +67,58 @@ namespace Nozomi.Service.Events
                     .ToList();
         }
 
+        public long GetPredicateCount(Expression<Func<RequestComponent, bool>> predicate)
+        {
+            if (predicate == null)
+                return long.MinValue;
+
+            return QueryCount(predicate);
+        }
+
+        public long GetCorrelationPredicateCount(long analysedComponentId, Expression<Func<RequestComponent, bool>> predicate)
+        {
+            var analysedComponent = _unitOfWork.GetRepository<AnalysedComponent>()
+                .GetQueryable()
+                .AsNoTracking()
+                .SingleOrDefault(ac => ac.Id.Equals(analysedComponentId));
+            
+            if (analysedComponent != null)
+            {
+                var query = _unitOfWork.GetRepository<Request>()
+                    .GetQueryable()
+                    .AsNoTracking();
+                
+                // CurrencyPair-based tracking
+                if (analysedComponent.CurrencyPairId != null && analysedComponent.CurrencyPairId > 0)
+                {
+                    query = query
+                        .Where(r => r.CurrencyPairId.Equals(analysedComponent.CurrencyPairId))
+                        .Include(cpr => cpr.RequestComponents);
+                    
+                    return query
+                        .SelectMany(r => r.RequestComponents
+                            .AsQueryable() // https://github.com/aspnet/EntityFrameworkCore/issues/8019
+                            .Where(predicate))
+                        .LongCount();
+                } 
+                // Currency-based tracking
+                else if (analysedComponent.CurrencyId != null && analysedComponent.CurrencyId > 0)
+                {
+                    query = query
+                        .Where(r => r.CurrencyId.Equals(analysedComponent.CurrencyId))
+                        .Include(cr => cr.RequestComponents);
+
+                    return query
+                        .SelectMany(r => r.RequestComponents
+                            .AsQueryable() // https://github.com/aspnet/EntityFrameworkCore/issues/8019
+                            .Where(predicate))
+                        .LongCount();
+                }
+            }
+
+            return long.MinValue;
+        }
+
         public ICollection<RequestComponent> GetByMainCurrency(string mainCurrencyAbbrv,
             ICollection<ComponentType> componentTypes)
         {
@@ -92,7 +147,7 @@ namespace Nozomi.Service.Events
         /// that is related to the ticker in question.</param>
         /// <returns>Collection of request components related to the component</returns>
         public ICollection<RequestComponent> GetAllByCorrelation(long analysedComponentId, bool track = false
-            , int index = 0)
+            , int index = 0, Expression<Func<RequestComponent, bool>> predicate = null)
         {
             var analysedComponent = _unitOfWork.GetRepository<AnalysedComponent>()
                 .GetQueryable()
@@ -119,6 +174,29 @@ namespace Nozomi.Service.Events
                             .Include(r => r.RequestComponents)
                             .ThenInclude(rc => rc.RcdHistoricItems);
                     }
+                    
+                    if (predicate != null)
+                        return query
+                            .SelectMany(r => r.RequestComponents
+                                .AsQueryable()
+                                .Where(predicate)
+                                .Select(rc => new RequestComponent
+                                {
+                                    Id = rc.Id,
+                                    ComponentType = rc.ComponentType,
+                                    Identifier = rc.Identifier,
+                                    QueryComponent = rc.QueryComponent,
+                                    IsDenominated = rc.IsDenominated,
+                                    AnomalyIgnorance = rc.AnomalyIgnorance,
+                                    Value = rc.Value,
+                                    RequestId = rc.RequestId,
+                                    RcdHistoricItems = rc.RcdHistoricItems
+                                        .Where(rcdhi => rcdhi.DeletedAt == null && rcdhi.IsEnabled)
+                                        .Skip(index * NozomiServiceConstants.RequestComponentTakeoutLimit)
+                                        .Take(NozomiServiceConstants.RequestComponentTakeoutLimit)
+                                        .ToList()
+                                }))
+                            .ToList();
 
                     return query
                         .SelectMany(r => r.RequestComponents
@@ -153,6 +231,29 @@ namespace Nozomi.Service.Events
                             .Include(cr => cr.RequestComponents)
                             .ThenInclude(rc => rc.RcdHistoricItems);
                     }
+                    
+                    if (predicate != null)
+                        return query
+                            .SelectMany(r => r.RequestComponents
+                                .AsQueryable()
+                                .Where(predicate)
+                                .Select(rc => new RequestComponent
+                                {
+                                    Id = rc.Id,
+                                    ComponentType = rc.ComponentType,
+                                    Identifier = rc.Identifier,
+                                    QueryComponent = rc.QueryComponent,
+                                    IsDenominated = rc.IsDenominated,
+                                    AnomalyIgnorance = rc.AnomalyIgnorance,
+                                    Value = rc.Value,
+                                    RequestId = rc.RequestId,
+                                    RcdHistoricItems = rc.RcdHistoricItems
+                                        .Where(rcdhi => rcdhi.DeletedAt == null && rcdhi.IsEnabled)
+                                        .Skip(index * NozomiServiceConstants.RequestComponentTakeoutLimit)
+                                        .Take(NozomiServiceConstants.RequestComponentTakeoutLimit)
+                                        .ToList()
+                                }))
+                            .ToList();
 
                     return query
                         .SelectMany(cr => cr.RequestComponents

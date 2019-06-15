@@ -43,7 +43,7 @@ namespace Nozomi.Analysis
                 services.AddDbContext<NozomiDbContext>(options =>
                     {
                         options.UseNpgsql(str);
-                        options.EnableSensitiveDataLogging(false);
+                        options.EnableSensitiveDataLogging();
                         options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
                     },
                     ServiceLifetime.Transient);

@@ -12,6 +12,10 @@ namespace Nozomi.Service.Events.Interfaces
     {
         ICollection<RequestComponent> All(int index = 0, bool includeNested = false);
 
+        long GetPredicateCount(Expression<Func<RequestComponent, bool>> predicate);
+
+        long GetCorrelationPredicateCount(long analysedComponentId, Expression<Func<RequestComponent, bool>> predicate);
+
         /// <summary>
         /// Allows the caller to obtain all RequestComponents relevant to the currency
         /// pair in question via the abbreviation method. (i.e. ETHUSD)
@@ -19,7 +23,8 @@ namespace Nozomi.Service.Events.Interfaces
         /// <param name="analysedComponentId">The unique identifier of the analysed component
         /// that is related to the ticker in question.</param>
         /// <returns>Collection of request components related to the component</returns>
-        ICollection<RequestComponent> GetAllByCorrelation(long analysedComponentId, bool track = false, int index = 0);
+        ICollection<RequestComponent> GetAllByCorrelation(long analysedComponentId, bool track = false, int index = 0,
+            Expression<Func<RequestComponent, bool>> predicate = null);
 
         /// <summary>
         /// Obtains all RequestComponents relevant to the currency given, utilizing it as
