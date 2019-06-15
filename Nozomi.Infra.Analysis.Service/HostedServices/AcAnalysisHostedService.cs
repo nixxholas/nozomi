@@ -645,9 +645,79 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                         break;
                     case AnalysedComponentType.MonthlyPriceChange:
                         break;
-                    case AnalysedComponentType.DailyPricePctChange:
-                        break;
                     case AnalysedComponentType.HourlyPricePctChange:
+                        dataTimespan = TimeSpan.FromHours(1);
+                        goto case AnalysedComponentType.DailyPricePctChange;
+                    case AnalysedComponentType.DailyPricePctChange:
+                        if (entity.ComponentType.Equals(AnalysedComponentType.DailyPricePctChange))
+                            dataTimespan = TimeSpan.FromHours(24);
+                        
+                        // CurrencyType-based PricePctChange
+                        if (entity.CurrencyTypeId != null && entity.CurrencyTypeId > 0)
+                        {
+                            // This is not good lol
+                            _logger.LogCritical($"[{ServiceName} / ID: {entity.Id}] " +
+                                                $"Analyse/PricePctChange: A CurrencyType-" +
+                                                $"based component is attempting to compute its PricePctChange.");
+                        } 
+                        // Currency-based PricePctChange
+                        else if (entity.CurrencyId != null && entity.CurrencyId > 0)
+                        {
+                            // How many components we got
+                            var componentsToCompute = _analysedHistoricItemEvent.GetQueryCount(entity.Id,
+                                // Active checks
+                                ahi => ahi.DeletedAt == null && ahi.IsEnabled
+                                                             // Time check
+                                                             && ahi.HistoricDateTime >= DateTime.UtcNow.Subtract(dataTimespan)
+                                                             // Make sure we only check for the CurrentAveragePrice component
+                                                             && ahi.AnalysedComponent.ComponentType
+                                                                 .Equals(AnalysedComponentType.HourlyAveragePrice), 
+                                true);
+                            var componentPages = 
+                                (componentsToCompute > NozomiServiceConstants.AnalysedHistoricItemTakeoutLimit) ?
+                                componentsToCompute / NozomiServiceConstants.AnalysedHistoricItemTakeoutLimit : 1;
+
+                            // Iterate the page
+                            for (var i = 0; i < componentPages; i++)
+                            {
+                                var historicData = _analysedHistoricItemEvent.GetAll(entity.Id, dataTimespan, i)
+                                    .Where(ahi => NumberHelper.IsNumericDecimal(ahi.Value))
+                                    .OrderByDescending(ahi => ahi.HistoricDateTime)
+                                    .ToList();
+
+                                // You need more than 1 to compute.
+                                // For higher data reliability, let's ensure at least 18 hours of recorded data is 
+                                // present before computing.
+                                if (historicData.Count > 20)
+                                {
+                                    // Obtain the percentage diff.
+                                    // NEW - OLD / OLD * 100%
+                                    var compute = decimal.Multiply(
+                                        decimal.Divide(
+                                            decimal.Subtract(
+                                                decimal.Parse(historicData.Last().Value), 
+                                                decimal.Parse(historicData.First().Value)), 
+                                            decimal.Parse(historicData.First().Value)),
+                                        100);
+
+                                    // Update!
+                                    if (!decimal.Zero.Equals(compute))
+                                    {
+                                        return _analysedComponentService.UpdateValue(entity.Id, 
+                                            compute.ToString(CultureInfo.InvariantCulture));
+                                    }
+                                }
+                            }
+                            
+                            // Hitting here? Sum ting wong
+                            _logger.LogWarning($"[{ServiceName}] Analyse ({entity.Id}): " +
+                                               $"PricePctChange can't be computed.");
+                        }
+                        // Request-based PricePctChange
+                        else
+                        {
+                            
+                        }
                         break;
                     case AnalysedComponentType.DailyVolume:
                         break;
