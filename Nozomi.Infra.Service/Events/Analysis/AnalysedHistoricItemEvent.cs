@@ -151,6 +151,7 @@ namespace Nozomi.Service.Events.Analysis
 
                 return query
                     .Where(predicate)
+                    .OrderByDescending(ahi => ahi.HistoricDateTime)
                     .Skip(index * NozomiServiceConstants.AnalysedHistoricItemTakeoutLimit)
                     .Take(NozomiServiceConstants.AnalysedHistoricItemTakeoutLimit)
                     .ToList();
