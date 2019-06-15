@@ -123,5 +123,40 @@ namespace Nozomi.Service.Events.Analysis
 
             return long.MinValue;
         }
+        
+        public ICollection<AnalysedHistoricItem> GetRelevantHistorics(long analysedComponentId, 
+            Expression<Func<AnalysedHistoricItem, bool>> predicate, 
+            int index = 0)
+        {
+            if (analysedComponentId > 0 && predicate != null)
+            {
+                // Obtain all correlated analysed components
+                var correlations = _analysedComponentEvent.GetAllByCorrelation(analysedComponentId);
+                
+                // Inside?
+                var query = _unitOfWork.GetRepository<AnalysedHistoricItem>()
+                    .GetQueryable()
+                    .AsNoTracking()
+                    .Where(ahi => correlations.Any(ac => ac.Id.Equals(ahi.AnalysedComponentId)))
+                    .Include(ahi => ahi.AnalysedComponent)
+                        .ThenInclude(ac => ac.Currency)
+                        .Include(ahi => ahi.AnalysedComponent)
+                        .ThenInclude(ac => ac.CurrencyPair)
+                        .ThenInclude(cp => cp.Source)
+                        .ThenInclude(s => s.SourceCurrencies)
+                        .ThenInclude(sc => sc.Currency)
+                        .Include(ahi => ahi.AnalysedComponent)
+                        .ThenInclude(ac => ac.CurrencyType)
+                        .AsQueryable();
+
+                return query
+                    .Where(predicate)
+                    .Skip(index * NozomiServiceConstants.AnalysedHistoricItemTakeoutLimit)
+                    .Take(NozomiServiceConstants.AnalysedHistoricItemTakeoutLimit)
+                    .ToList();
+            }
+
+            return new List<AnalysedHistoricItem>();
+        }
     }
 }

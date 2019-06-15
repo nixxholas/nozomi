@@ -17,5 +17,8 @@ namespace Nozomi.Service.Events.Analysis.Interfaces
 
         long GetRelevantComponentQueryCount(long analysedComponentId, Expression<Func<AnalysedHistoricItem, bool>> predicate = null, 
             bool deepTrack = false);
+
+        ICollection<AnalysedHistoricItem> GetRelevantHistorics(long analysedComponentId, 
+            Expression<Func<AnalysedHistoricItem, bool>> predicate, int index = 0);
     }
 }
