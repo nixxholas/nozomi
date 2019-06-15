@@ -250,17 +250,10 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                         }
 
                         break;
+                    // TODO:
                     case AnalysedComponentType.MarketCapChange:
-                        goto case AnalysedComponentType.MarketCapDailyChange;
                     case AnalysedComponentType.MarketCapHourlyChange:
-                        goto case AnalysedComponentType.MarketCapDailyChange;
                     case AnalysedComponentType.MarketCapDailyChange:
-                        break;
-                    case AnalysedComponentType.MarketCapPctChange:
-                        break;
-                    case AnalysedComponentType.MarketCapHourlyPctChange:
-                        break;
-                    case AnalysedComponentType.MarketCapDailyPctChange:
                         break;
                     case AnalysedComponentType.CurrentAveragePrice:
                         // CurrencyType-based Live Average Price
@@ -665,12 +658,16 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                         }
 
                         break;
+                    // TODO:
+                    case AnalysedComponentType.MarketCapPctChange:
+                        break;
+                    // TODO:
                     case AnalysedComponentType.DailyPriceChange:
-                        break;
                     case AnalysedComponentType.WeeklyPriceChange:
-                        break;
                     case AnalysedComponentType.MonthlyPriceChange:
                         break;
+                    case AnalysedComponentType.MarketCapHourlyPctChange:
+                    case AnalysedComponentType.MarketCapDailyPctChange:
                     case AnalysedComponentType.HourlyPricePctChange:
                     case AnalysedComponentType.DailyPricePctChange:
                         // CurrencyType-based PricePctChange
@@ -682,37 +679,45 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                                 $"based component is attempting to compute its PricePctChange.");
                         }
 
-                        var componentType = AnalysedComponentType.Unknown;
+                        var pctChangeComponentType = AnalysedComponentType.Unknown;
                         switch (entity.ComponentType)
                         {
                             case AnalysedComponentType.HourlyPricePctChange:
                                 dataTimespan = TimeSpan.FromHours(1);
-                                componentType = AnalysedComponentType.CurrentAveragePrice;
+                                pctChangeComponentType = AnalysedComponentType.CurrentAveragePrice;
                                 break;
                             case AnalysedComponentType.DailyPricePctChange:
                                 dataTimespan = TimeSpan.FromHours(24);
-                                componentType = AnalysedComponentType.HourlyAveragePrice;
+                                pctChangeComponentType = AnalysedComponentType.HourlyAveragePrice;
+                                break;
+                            case AnalysedComponentType.MarketCapHourlyPctChange:
+                                dataTimespan = TimeSpan.FromHours(1);
+                                pctChangeComponentType = AnalysedComponentType.MarketCap;
+                                break;
+                            case AnalysedComponentType.MarketCapDailyPctChange:
+                                dataTimespan = TimeSpan.FromHours(24);
+                                pctChangeComponentType = AnalysedComponentType.HourlyMarketCap;
                                 break;
                         }
 
                         // How many components we got
-                        var ppctcComponentsToCompute = _analysedHistoricItemEvent.GetRelevantComponentQueryCount(
+                        var pctChangeComponentsToCompute = _analysedHistoricItemEvent.GetRelevantComponentQueryCount(
                             entity.Id,
                             // Active checks
                             ahi => ahi.DeletedAt == null && ahi.IsEnabled
                                                          // Time check
                                                          && ahi.HistoricDateTime >=
                                                          DateTime.UtcNow.Subtract(dataTimespan)
-                                                         // Make sure we only check for the CurrentAveragePrice component
+                                                         // Make sure we only check for the correct component
                                                          && ahi.AnalysedComponent.ComponentType
-                                                             .Equals(AnalysedComponentType.HourlyAveragePrice),
+                                                             .Equals(pctChangeComponentType),
                             true);
 
-                        if (ppctcComponentsToCompute > 0)
+                        if (pctChangeComponentsToCompute > 0)
                         {
                             var ppctcComponentPages =
-                                (ppctcComponentsToCompute > NozomiServiceConstants.AnalysedHistoricItemTakeoutLimit)
-                                    ? ppctcComponentsToCompute / NozomiServiceConstants.AnalysedHistoricItemTakeoutLimit
+                                (pctChangeComponentsToCompute > NozomiServiceConstants.AnalysedHistoricItemTakeoutLimit)
+                                    ? pctChangeComponentsToCompute / NozomiServiceConstants.AnalysedHistoricItemTakeoutLimit
                                     : 1;
 
                             // Currency-based PricePctChange
@@ -729,7 +734,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                                                          DateTime.UtcNow.Subtract(dataTimespan)
                                                                          // Make sure we only check for the CurrentAveragePrice component
                                                                          && ahi.AnalysedComponent.ComponentType
-                                                                             .Equals(componentType)
+                                                                             .Equals(pctChangeComponentType)
                                                                          && NumberHelper.IsNumericDecimal(ahi.Value), i)
                                         .ToList();
 
@@ -774,8 +779,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                                                          DateTime.UtcNow.Subtract(dataTimespan)
                                                                          // Make sure we only check for the CurrentAveragePrice component
                                                                          && ahi.AnalysedComponent.ComponentType
-                                                                             .Equals(AnalysedComponentType
-                                                                                 .HourlyAveragePrice)
+                                                                             .Equals(pctChangeComponentType)
                                                                          && NumberHelper.IsNumericDecimal(ahi.Value), i)
                                         .ToList();
 
@@ -811,6 +815,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                         }
 
                         break;
+                    // TODO:
                     case AnalysedComponentType.DailyVolume:
                         break;
                     default:
