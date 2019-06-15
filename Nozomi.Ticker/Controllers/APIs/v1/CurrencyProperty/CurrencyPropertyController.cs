@@ -37,5 +37,13 @@ namespace Nozomi.Ticker.Controllers.APIs.v1.CurrencyProperty
             
             return new NozomiResult<string>(NozomiResultType.Failed, "Invalid payload.");
         }
+
+        [HttpDelete("{currencyPropertyId}")]
+        public NozomiResult<string> Delete(long currencyPropertyId)
+        {
+            var res = _currencyPropertyService.Delete(currencyPropertyId);
+            return new NozomiResult<string>(res ? NozomiResultType.Success : NozomiResultType.Failed,
+                res ? "Property successfully deleted!" : "Deletion unsuccessful.");
+        }
     }
 }
