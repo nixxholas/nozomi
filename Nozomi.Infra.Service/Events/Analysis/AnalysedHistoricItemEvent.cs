@@ -83,14 +83,13 @@ namespace Nozomi.Service.Events.Analysis
             throw new ArgumentOutOfRangeException("Invalid analysedComponentId.");
         }
 
-        public long GetQueryCount(long analysedComponentId, Expression<Func<AnalysedHistoricItem, bool>> predicate, bool deepTrack = false)
+        public long GetQueryCount(Expression<Func<AnalysedHistoricItem, bool>> predicate, bool deepTrack = false)
         {
-            if (analysedComponentId > 0 && predicate != null)
+            if (predicate != null)
             {
                 var query = _unitOfWork.GetRepository<AnalysedHistoricItem>()
                     .GetQueryable()
                     .AsNoTracking()
-                    .Where(ahi => ahi.AnalysedComponentId.Equals(analysedComponentId))
                     .AsQueryable();
 
                 if (deepTrack)
