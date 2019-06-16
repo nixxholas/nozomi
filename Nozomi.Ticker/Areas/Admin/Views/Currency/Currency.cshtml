@@ -1,5 +1,6 @@
 @using Newtonsoft.Json
 @using Newtonsoft.Json.Serialization
+@using Nozomi.Preprocessing
 @model Nozomi.Data.ViewModels.Admin.Currency.CurrencyViewModel
 
 <!-- Content Section -->
@@ -88,6 +89,14 @@
                 <b-button variant="danger" v-on:click="showSourceDeleteModal(datum.item.id, datum.item.source.name)">Remove</b-button>
             </template>
         </b-table>
+
+        <hr/>
+        
+        <h3>Properties</h3>
+        <!-- Currency source table -->
+        <b-button variant="primary" class="mb-3" v-on:click="showPropertyAddModal">Create property</b-button>
+        <div v-if="currencyProperties != null && currencyProperties.length > 0">
+        </div>
     </div>
 </div>
 
@@ -103,6 +112,29 @@
 <!-- DeleteModal -->
 <b-modal ref="source-delete-modal" title="Confirm Delete" ok-title="Yes" ok-variant="danger" cancel-title="No" v-on:ok="handleSourceDeleteOk" centered>
     <p>Are you sure that you want to remove {{ deleteSourceModal.name }} source from this currency?</p>
+</b-modal>
+
+<!-- Source AddModal -->
+<b-modal ref="property-add-modal" size="xl" title="Create a property for @Model.Currency.Name" ok-title="Create" v-on:ok="handlePropertyAddOk">
+    <b-form v-on:submit.stop.prevent="onPropertyAddSubmit">
+        <b-form-group label="Type">
+            <b-form-select v-model="addPropertyForm.type">
+                <option v-for="propType in currencyPropertyTypes" :value="propType.value">{{ propType.key }}</option>
+            </b-form-select>
+        </b-form-group>
+        
+        <b-form-group label="Value">
+            <b-form-input
+                v-model="addPropertyForm.value"
+                placeholder="Enter the value">
+            </b-form-input>
+        </b-form-group>
+    </b-form>
+</b-modal>
+
+<!-- DeleteModal -->
+<b-modal ref="property-delete-modal" title="Confirm Delete" ok-title="Yes" ok-variant="danger" cancel-title="No" v-on:ok="handlePropertyDeleteOk" centered>
+    <p>Are you sure that you want to remove this property from this currency?</p>
 </b-modal>
 
 @section Scripts
@@ -151,6 +183,18 @@
                     {
                         ContractResolver = new CamelCasePropertyNamesContractResolver()
                     })),
+                currencyPropertyTypes: 
+                    @Html.Raw(JsonConvert.SerializeObject(@NozomiServiceConstants.CurrencyPropertyTypes, 
+                        Formatting.Indented, new JsonSerializerSettings
+                    {
+                        ContractResolver = new CamelCasePropertyNamesContractResolver()
+                    })),
+                currencyProperties: 
+                    @Html.Raw(JsonConvert.SerializeObject(@Model.Currency.CurrencyProperties, Formatting.Indented, new JsonSerializerSettings
+                    {
+                        ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+                        ContractResolver = new CamelCasePropertyNamesContractResolver()
+                    })),
                 editCurrency: {
                     name: '@Model.Currency.Name',
                     abbreviation: '@Model.Currency.Abbreviation',
@@ -171,6 +215,15 @@
                     currencySourceId: '',
                 },
                 deleteSourceModal: {
+                    id: Number,
+                    name: ''
+                },
+                addPropertyForm: {
+                    currencyId: @Model.Currency.Id,    
+                    type: 0,
+                    value: ''
+                },
+                deletePropertyModal: {
                     id: Number,
                     name: ''
                 },
@@ -232,14 +285,23 @@
                 showSourceAddModal() {
                     this.$refs['source-add-modal'].show();
                 },
+                showPropertyAddModal() {
+                    this.$refs['property-add-modal'].show();
+                },
                 handleSourceAddOk(bvModalEvt) {
                     // Prevent modal from closing
                     bvModalEvt.preventDefault();
                     // Trigger submit handler
                     this.onSourceAddSubmit();
                 },
+                handlePropertyAddOk(bvModalEvt) {
+                    // Prevent modal from closing
+                    bvModalEvt.preventDefault();
+                    // Trigger submit handler
+                    this.onPropertyAddSubmit();
+                },
                 async onSourceAddSubmit() {
-                    var formData = new FormData();
+                    let formData = new FormData();
                     formData.append('CurrencyId', @Model.Currency.Id);
                     formData.append('SourceId', this.addSourceForm.id);
 
@@ -260,7 +322,29 @@
                         alert("Create failed");
                     }
                     // Hide the modal manually
-                    this.$refs['create-modal'].hide();
+                    this.$refs['source-add-modal'].hide();
+                },
+                onPropertyAddSubmit() {
+                    // Send a POST request
+                    axios({
+                      method: 'post',
+                      responseType: 'application/json',
+                      url: '/Admin/CurrencyProperty/Create',
+                      data: this.addPropertyForm
+                    })
+                    .then(function (response) {
+                        console.log(response);
+
+                        // Put alert for now, change the ui later.
+                        alert("Creation failed");
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                        alert("Create failed");
+                    });
+                    
+                    // Hide the modal manually
+                    this.$refs['property-add-modal'].hide();
                 },
                 // Methods for delete modal
                 showSourceDeleteModal(id, sourceName) {
@@ -268,6 +352,13 @@
                     this.deleteSourceModal.name = sourceName;
 
                     this.$refs['source-delete-modal'].show();
+                },
+                // Methods for delete modal
+                showPropertyDeleteModal(id, sourceName) {
+                    this.deleteSourceModal.id = id;
+                    this.deleteSourceModal.name = sourceName;
+
+                    this.$refs['property-delete-modal'].show();
                 },
                 async handleSourceDeleteOk(bvModalEvt) {
                     bvModalEvt.preventDefault();
@@ -288,6 +379,26 @@
                     }
 
                     this.$refs['source-delete-modal'].hide();
+                },
+                async handlePropertyDeleteOk(bvModalEvt) {
+                    bvModalEvt.preventDefault();
+                    
+                    const response = await fetch(`/Admin/CurrencyProperty/Delete/${this.deletePropertyModal.id}`,
+                    {
+                        method: 'DELETE'
+                    });
+                    
+                    if (response.status === 200) {
+                        // Update the datatable
+                        const index = this.currencyProperties.findIndex(element => element.Id === this.deletePropertyModal.id);
+                        this.currencyProperties.splice(index, 1);
+                 
+                        alert(`Successfully deleted ${this.deletePropertyModal.name}`);
+                    } else {
+                        alert("Delete failed");
+                    }
+                 
+                    this.$refs['property-delete-modal'].hide();
                 }
             }
         });

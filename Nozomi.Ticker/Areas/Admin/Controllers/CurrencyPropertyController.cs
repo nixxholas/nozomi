@@ -23,7 +23,7 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public NozomiResult<string> Create(CreateCurrencyProperty currencyProperty)
+        public NozomiResult<string> Create([FromBody]CreateCurrencyProperty currencyProperty)
         {
             if (currencyProperty.IsValid())
             {
