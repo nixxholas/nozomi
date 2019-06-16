@@ -47,7 +47,7 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
         }    
 
         [HttpPut]
-        public NozomiResult<string> Update([FromBody] UpdateCurrencyProperty currencyProperty)
+        public IActionResult Update([FromBody] UpdateCurrencyProperty currencyProperty)
         {
             if (ModelState.IsValid)
             {
@@ -59,11 +59,13 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
                     IsEnabled = currencyProperty.IsEnabled
                 });
                 
-                return new NozomiResult<string>(res ? NozomiResultType.Success : NozomiResultType.Failed,
-                    res ? "Property successfully updated!" : "Please make sure you're modifying a valid property.");
+                return res ? (IActionResult) Ok(new NozomiResult<string>(NozomiResultType.Success, 
+                        "Property successfully updated!"))
+                : BadRequest(new NozomiResult<string>(NozomiResultType.Failed, 
+                    "Please make sure you're modifying a valid property."));
             }
             
-            return new NozomiResult<string>(NozomiResultType.Failed, "Invalid payload");
+            return BadRequest(new NozomiResult<string>(NozomiResultType.Failed, "Invalid payload"));
         }
 
         [HttpDelete("{currencyPropertyId}")]
