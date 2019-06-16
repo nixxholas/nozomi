@@ -9,10 +9,6 @@ using Nozomi.Data.Models.Currency;
 
 namespace Nozomi.Data.AreaModels.v1.CurrencyPair
 {
-    /// <summary>
-    /// Please update.
-    /// </summary>
-    [Obsolete]
     public class CreateCurrencyPair
     {
         public CurrencyPairType CurrencyPairType { get; set; }
@@ -23,14 +19,14 @@ namespace Nozomi.Data.AreaModels.v1.CurrencyPair
         
         public long SourceId { get; set; }
         
-        public string MainCurrencyAbbrv { get; set; }
+        public Models.Currency.Currency MainCurrency{ get; set; }
         
-        public string CounterCurrencyAbbrv { get; set; }
+        public Models.Currency.Currency CounterCurrency{ get; set; }
 
         public bool IsValid()
         {
             return CurrencyPairType >= 0 && !string.IsNullOrEmpty(APIUrl) && SourceId > 0
-                   && MainCurrencyAbbrv != null && CounterCurrencyAbbrv != null;
+                   && MainCurrency != null && CounterCurrency != null;
         }
     }
 }
