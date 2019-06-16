@@ -23,6 +23,8 @@ namespace Nozomi.Preprocessing
 
         public static List<KeyValuePair<string, int>> analysedComponentTypes =
             EnumHelper.GetEnumValuesAndDescriptions<AnalysedComponentType>();
+        public static List<KeyValuePair<string, int>> CurrencyPropertyTypes =
+            EnumHelper.GetEnumValuesAndDescriptions<CurrencyPropertyType>();
         public static List<KeyValuePair<string, int>> requestComponentTypes = 
             EnumHelper.GetEnumValuesAndDescriptions<ComponentType>();
         public static List<KeyValuePair<string, int>> requestTypes =

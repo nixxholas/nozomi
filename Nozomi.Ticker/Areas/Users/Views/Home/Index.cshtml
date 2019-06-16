@@ -18,10 +18,10 @@
                     <span class="btn btn-xs btn-soft-warning btn-pill mb-2 mb-sm-0 mr-2">Currently in Alpha</span>
                     <h1 class="text-white font-weight-semi-bold mb-3" v-if="currencyTypes.length > 0"
                         v-for="currencyType in currencyTypes">
-                        <div v-if="currencyType.name === 'Cryptocurrency' && getACValueByComponentType(currencyType.components, 1) !== null">
+                        <div v-if="currencyType.name === 'Cryptocurrency' && getACValueByComponentType(currencyType.components, 1) !== null" v-cloak>
                             {{ currencyType.name }} has
                             <span class="text-warning">
-                                <strong class="u-text-animation u-text-animation--typing">
+                                <strong class="u-text-animation u-text-animation--typing" v-cloak>
                                     {{ numeral(getACValueByComponentType(currencyType.components, 1)).format('$0.00 a') }}
                                 </strong>
                             </span>
@@ -82,7 +82,7 @@
     <!-- End SVG Background Section -->
 </div>
 
-<div class="container shadow-lg p-3 mt-5 mb-5 bg-white rounded">
+<div class="container shadow-lg p-3 mt-5 mb-5 bg-white rounded" v-cloak>
     <div class="row justify-content-lg-between align-items-md-center h-100">
         <div class="col h-100">
             <b-table stacked="md" :busy="isCurrencyTableBusy"
