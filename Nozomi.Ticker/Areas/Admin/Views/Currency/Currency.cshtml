@@ -128,7 +128,7 @@
     <p>Are you sure that you want to remove {{ deleteSourceModal.name }} source from this currency?</p>
 </b-modal>
 
-<!-- Source AddModal -->
+<!-- Property AddModal -->
 <b-modal ref="property-add-modal" size="xl" title="Create a property for @Model.Currency.Name" ok-title="Create" v-on:ok="handlePropertyAddOk">
     <b-form v-on:submit.stop.prevent="onPropertyAddSubmit">
         <b-form-group label="Type">
@@ -143,10 +143,14 @@
                 placeholder="Enter the value">
             </b-form-input>
         </b-form-group>
+        
+        <b-form-checkbox v-model="addPropertyForm.isEnabled" switch>
+            Enabled
+        </b-form-checkbox>
     </b-form>
 </b-modal>
 
-<!-- DeleteModal -->
+<!-- Delete Property Modal -->
 <b-modal ref="property-delete-modal" title="Confirm Delete" ok-title="Yes" ok-variant="danger" cancel-title="No" v-on:ok="handlePropertyDeleteOk" centered>
     <p>Are you sure that you want to remove this property from this currency?</p>
 </b-modal>
@@ -258,7 +262,8 @@
                 addPropertyForm: {
                     currencyId: @Model.Currency.Id,    
                     type: 0,
-                    value: ''
+                    value: '',
+                    isEnabled: false
                 },
                 deletePropertyModal: {
                     id: Number,
