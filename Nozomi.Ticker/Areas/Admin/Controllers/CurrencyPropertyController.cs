@@ -56,7 +56,8 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
                     IsEnabled = currencyProperty.IsEnabled
                 });
                 
-                return new NozomiResult<string>();
+                return new NozomiResult<string>(res ? NozomiResultType.Success : NozomiResultType.Failed,
+                    res ? "Property successfully updated!" : "Please make sure you're modifying a valid property.");
             }
             
             return new NozomiResult<string>(NozomiResultType.Failed, "Invalid payload");
