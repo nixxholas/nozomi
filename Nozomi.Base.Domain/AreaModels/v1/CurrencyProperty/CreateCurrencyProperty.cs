@@ -15,10 +15,5 @@ namespace Nozomi.Data.AreaModels.v1.CurrencyProperty
         public long CurrencyId { get; set; }
         
         public bool IsEnabled { get; set; }
-
-        public bool IsValid()
-        {
-            return !string.IsNullOrEmpty(Value) && CurrencyId > 0;
-        }
     }
 }

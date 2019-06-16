@@ -26,7 +26,7 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
         [HttpPost]
         public NozomiResult<string> Create([FromBody]CreateCurrencyProperty currencyProperty)
         {
-            if (currencyProperty.IsValid())
+            if (ModelState.IsValid)
             {
                 var res = _currencyPropertyService.Create(new Data.Models.Currency.CurrencyProperty
                 {
