@@ -107,6 +107,9 @@
             <template slot="isEnabled" slot-scope="datum">
                 <b-form-checkbox v-model="datum.item.isEnabled" disabled/>
             </template>
+            <template slot="Edit" slot-scope="datum">
+                <b-button variant="primary" v-on:click="showPropertyEditModal(datum.item)">Edit</b-button>
+            </template>
             <template slot="Remove" slot-scope="datum">
                 <b-button variant="danger" v-on:click="showPropertyDeleteModal(datum.item.id, datum.item.type)">Remove</b-button>
             </template>
@@ -147,6 +150,29 @@
         <b-form-checkbox v-model="addPropertyForm.isEnabled" switch>
             Enabled
         </b-form-checkbox>
+    </b-form>
+</b-modal>
+
+<!-- Property EditModal -->
+<b-modal ref="property-edit-modal" size="xl" title="Edit Property" ok-title="Update" v-on:ok="handlePropertyEditOk">
+    <b-form v-on:submit.stop.prevent="onPropertyEditSubmit">
+        <b-form-group label="Type">
+            <b-form-select v-model="editPropertyForm.type">
+                <option v-for="propType in currencyPropertyTypes" :value="propType.value">{{ propType.key }}</option>
+            </b-form-select>
+        </b-form-group>
+
+        <b-form-group label="Value">
+            <b-form-input
+                v-model="editPropertyForm.value"
+                required
+                placeholder="Enter the value">
+            </b-form-input>
+        </b-form-group>
+
+        <b-form-group>
+            <b-form-checkbox v-model="editPropertyForm.isEnabled" switch>Enabled</b-form-checkbox>
+        </b-form-group>
     </b-form>
 </b-modal>
 
@@ -208,6 +234,11 @@
                         sortable: true
                     },
                     {
+                        key: 'Edit',
+                        label: '',
+                        sortable: false
+                    },
+                    {
                         key: 'Remove',
                         label: '',
                         sortable: false
@@ -262,6 +293,12 @@
                 addPropertyForm: {
                     currencyId: @Model.Currency.Id,    
                     type: 0,
+                    value: '',
+                    isEnabled: false
+                },
+                editPropertyForm: {
+                    id: Number,    
+                    type: Number,
                     value: '',
                     isEnabled: false
                 },
@@ -383,13 +420,10 @@
                       data: this.addPropertyForm
                     })
                     .then(function (response) {
-                        console.log(response);
-
                         // Put alert for now, change the ui later.
                         alert(response.data.message);
                     })
                     .catch(function (error) {
-                        console.log(error);
                         alert("Create failed");
                     });
                     
@@ -455,6 +489,47 @@
                     
                     // Hide the modal manually
                     this.$refs['property-delete-modal'].hide();
+                },
+                // Methods for property edit modal
+                showPropertyEditModal(property) {
+                    this.editPropertyForm.id = property.id;
+                    this.editPropertyForm.type = property.type;
+                    this.editPropertyForm.value = property.value === null ? '' : property.value;
+                    this.editPropertyForm.isEnabled = property.isEnabled;
+                    
+                    this.$refs['property-edit-modal'].show();
+                },
+                handlePropertyEditOk(bvModalEvt) {
+                    // Prevent modal from closing
+                    bvModalEvt.preventDefault();
+                    // Trigger submit handler
+                    this.onPropertyEditSubmit();
+                },
+                async onPropertyEditSubmit() {
+                    // let formData = new FormData();
+                    // formData.append('Id', this.editPropertyForm.id);
+                    // formData.append('Type', this.editPropertyForm.type);
+                    // formData.append('Value', this.editPropertyForm.value);
+                    // formData.append('IsEnabled', this.editPropertyForm.isEnabled);
+
+                    axios({
+                        method: 'put',
+                        url: '/Admin/CurrencyProperty/Update/',
+                        data: this.editPropertyForm
+                    })
+                    .then(function (response) {
+                        console.log(response);
+                        
+                        // Put alert for now, change the ui later.
+                        alert(response.data.message);
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                        alert("Update failed");
+                    });
+
+                    // Hide the modal manually
+                    this.$refs['property-edit-modal'].hide();
                 }
             }
         });
