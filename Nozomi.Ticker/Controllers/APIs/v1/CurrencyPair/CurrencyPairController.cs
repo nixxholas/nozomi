@@ -38,14 +38,14 @@ namespace Nozomi.Ticker.Controllers.APIs.v1.CurrencyPair
         [HttpPost]
         public async Task<NozomiResult<string>> Create([FromBody] CreateCurrencyPair currencyPair)
         {
-            if (_currencyPairService.Create(currencyPair, 0 /* 0 for now */))
-            {
-                return new NozomiResult<string>()
-                {
-                    ResultType = NozomiResultType.Success,
-                    Data = "Currency pair successfully created!"
-                };
-            }
+//            if (_currencyPairService.Create(currencyPair, 0 /* 0 for now */))
+//            {
+//                return new NozomiResult<string>()
+//                {
+//                    ResultType = NozomiResultType.Success,
+//                    Data = "Currency pair successfully created!"
+//                };
+//            }
 
             return new NozomiResult<string>()
             {
