@@ -1,20 +1,23 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data;
 using Nozomi.Data.AreaModels.v1.CurrencyProperty;
 using Nozomi.Infra.Admin.Service.Services.Interfaces;
 using Nozomi.Service.Identity.Managers;
+using Nozomi.Ticker.Controllers;
 
-namespace Nozomi.Ticker.Controllers.APIs.v1.CurrencyProperty
+namespace Nozomi.Ticker.Areas.Admin.Controllers
 {
-    [ApiController]
-    public class CurrencyPropertyController : BaseController<CurrencyPropertyController>, ICurrencyPropertyController
+    [Area("Admin")]
+    [Authorize(Roles = "Owner, Administrator, Staff")]
+    public class CurrencyPropertyController : AreaBaseViewController<CurrencyPropertyController>
     {
         private readonly ICurrencyPropertyService _currencyPropertyService;
         
-        public CurrencyPropertyController(ILogger<CurrencyPropertyController> logger, NozomiUserManager nozomiUserManager,
-            ICurrencyPropertyService currencyPropertyService) 
-            : base(logger, nozomiUserManager)
+        public CurrencyPropertyController(ILogger<CurrencyPropertyController> logger, NozomiSignInManager signInManager,
+            NozomiUserManager userManager, ICurrencyPropertyService currencyPropertyService) 
+            : base(logger, signInManager, userManager)
         {
             _currencyPropertyService = currencyPropertyService;
         }
