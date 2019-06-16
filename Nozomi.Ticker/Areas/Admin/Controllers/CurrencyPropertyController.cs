@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -24,7 +25,7 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public NozomiResult<string> Create([FromBody]CreateCurrencyProperty currencyProperty)
+        public IActionResult Create([FromBody]CreateCurrencyProperty currencyProperty)
         {
             if (ModelState.IsValid)
             {
@@ -35,12 +36,14 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
                     CurrencyId = currencyProperty.CurrencyId,
                     IsEnabled = currencyProperty.IsEnabled
                 });
-                
-                return new NozomiResult<string>(res > 0 ? NozomiResultType.Success : NozomiResultType.Failed,
-                    res.ToString());
+
+                return res > 0 ? (IActionResult) Ok(new NozomiResult<string>(NozomiResultType.Success,
+                    "Currency Property successfully created!")) 
+                    : BadRequest(new NozomiResult<string>(NozomiResultType.Failed,
+                    "Invalid payload."));
             }
             
-            return new NozomiResult<string>(NozomiResultType.Failed, "Invalid payload.");
+            return BadRequest(new NozomiResult<string>(NozomiResultType.Failed, "Invalid payload."));
         }    
 
         [HttpPut]
