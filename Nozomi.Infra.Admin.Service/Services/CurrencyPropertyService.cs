@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data.Models.Currency;
 using Nozomi.Infra.Admin.Service.Services.Interfaces;
@@ -33,8 +34,9 @@ namespace Nozomi.Infra.Admin.Service.Services
             if (currencyProperty != null && currencyProperty.Id > 0)
             {
                 var query = _unitOfWork.GetRepository<CurrencyProperty>()
-                    .Get(cp => cp.Id.Equals(currencyProperty.Id))
-                    .SingleOrDefault(cp => cp.DeletedAt == null);
+                    .GetQueryable()
+                    .AsTracking()
+                    .SingleOrDefault(cp => cp.DeletedAt == null && cp.Id.Equals(currencyProperty.Id));
 
                 if (query != null)
                 {
