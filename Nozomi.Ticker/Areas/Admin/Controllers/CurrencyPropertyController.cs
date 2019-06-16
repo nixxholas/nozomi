@@ -69,11 +69,11 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
         }
 
         [HttpDelete("{currencyPropertyId}")]
-        public NozomiResult<string> Delete(long currencyPropertyId)
+        public IActionResult Delete(long currencyPropertyId)
         {
             var res = _currencyPropertyService.Delete(currencyPropertyId);
-            return new NozomiResult<string>(res ? NozomiResultType.Success : NozomiResultType.Failed,
-                res ? "Property successfully deleted!" : "Deletion unsuccessful.");
+            return res ? (IActionResult) Ok(new NozomiResult<string>(NozomiResultType.Success,"Property successfully deleted!")) 
+                : NotFound(new NozomiResult<string>(NozomiResultType.Failed, "Deletion unsuccessful."));
         }
     }
 }
