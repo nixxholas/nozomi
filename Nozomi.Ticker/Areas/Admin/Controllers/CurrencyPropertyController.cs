@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data;
 using Nozomi.Data.AreaModels.v1.CurrencyProperty;
+using Nozomi.Data.Models.Currency;
 using Nozomi.Infra.Admin.Service.Services.Interfaces;
 using Nozomi.Service.Identity.Managers;
 using Nozomi.Ticker.Controllers;
@@ -31,7 +32,8 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
                 {
                     Type = currencyProperty.Type,
                     Value = currencyProperty.Value,
-                    CurrencyId = currencyProperty.CurrencyId
+                    CurrencyId = currencyProperty.CurrencyId,
+                    IsEnabled = currencyProperty.IsEnabled
                 });
                 
                 return new NozomiResult<string>(res > 0 ? NozomiResultType.Success : NozomiResultType.Failed,
@@ -39,6 +41,25 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
             }
             
             return new NozomiResult<string>(NozomiResultType.Failed, "Invalid payload.");
+        }    
+
+        [HttpPut]
+        public NozomiResult<string> Update([FromBody] UpdateCurrencyProperty currencyProperty)
+        {
+            if (ModelState.IsValid)
+            {
+                var res = _currencyPropertyService.Update(new CurrencyProperty
+                {
+                    Id = currencyProperty.Id,
+                    Type = currencyProperty.Type,
+                    Value = currencyProperty.Value,
+                    IsEnabled = currencyProperty.IsEnabled
+                });
+                
+                return new NozomiResult<string>();
+            }
+            
+            return new NozomiResult<string>(NozomiResultType.Failed, "Invalid payload");
         }
 
         [HttpDelete("{currencyPropertyId}")]

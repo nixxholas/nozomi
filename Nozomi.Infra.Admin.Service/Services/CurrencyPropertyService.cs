@@ -42,7 +42,6 @@ namespace Nozomi.Infra.Admin.Service.Services
                     query.Value = currencyProperty.Value;
                     query.IsEnabled = currencyProperty.IsEnabled;
                     
-                    _unitOfWork.GetRepository<CurrencyProperty>().Update(query);
                     _unitOfWork.Commit(userId);
 
                     return true;
