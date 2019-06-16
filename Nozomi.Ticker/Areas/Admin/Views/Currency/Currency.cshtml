@@ -98,10 +98,10 @@
         <b-table v-if="currencyProperties != null && currencyProperties.length > 0"
                  :per-page="sourceDataRowsPerPage" :current-page="propertiesCurrentPage"
                  :items="currencyProperties" :fields="propertyDataFields">
-            <template slot="Type" slot-scope="datum">
-                {{ datum.item.type }}
+            <template slot="type" slot-scope="datum">
+                {{ getCurrencyPropertyString(datum.item.type) }}
             </template>
-            <template slot="Value" slot-scope="datum">
+            <template slot="value" slot-scope="datum">
                 {{ datum.item.value }}
             </template>
             <template slot="isEnabled" slot-scope="datum">
@@ -404,9 +404,9 @@
                     this.$refs['source-delete-modal'].show();
                 },
                 // Methods for delete modal
-                showPropertyDeleteModal(id, sourceName) {
-                    this.deleteSourceModal.id = id;
-                    this.deleteSourceModal.name = sourceName;
+                showPropertyDeleteModal(id, propName) {
+                    this.deletePropertyModal.id = id;
+                    this.deletePropertyModal.name = propName;
 
                     this.$refs['property-delete-modal'].show();
                 },
@@ -432,22 +432,28 @@
                 },
                 async handlePropertyDeleteOk(bvModalEvt) {
                     bvModalEvt.preventDefault();
+                    console.dir(this.deletePropertyModal);
                     
-                    const response = await fetch(`/Admin/CurrencyProperty/Delete/${this.deletePropertyModal.id}`,
-                    {
-                        method: 'DELETE'
-                    });
-                    
-                    if (response.status === 200) {
+                    // Send a POST request
+                    axios({
+                      method: 'delete',
+                      url: '/Admin/CurrencyProperty/Delete/' + this.deletePropertyModal.id,
+                    })
+                    .then(function (response) {
+                        console.log(response);
                         // Update the datatable
                         const index = this.currencyProperties.findIndex(element => element.Id === this.deletePropertyModal.id);
                         this.currencyProperties.splice(index, 1);
-                 
-                        alert(`Successfully deleted ${this.deletePropertyModal.name}`);
-                    } else {
+
+                        // Put alert for now, change the ui later.
+                        alert(response.data.message);
+                    })
+                    .catch(function (error) {
+                        console.log(error);
                         alert("Delete failed");
-                    }
-                 
+                    });
+                    
+                    // Hide the modal manually
                     this.$refs['property-delete-modal'].hide();
                 }
             }
