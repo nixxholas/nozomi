@@ -17,15 +17,17 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
         private readonly ICurrencyPairEvent _currencyPairEvent;
         private readonly ICurrencyPairService _currencyPairService;
         private readonly ICurrencyEvent _currencyEvent;
+        private readonly ISourceEvent _sourceEvent;
 
         public CurrencyPairController(ILogger<CurrencyPairController> logger, NozomiSignInManager signInManager,
             NozomiUserManager userManager, ICurrencyPairEvent currencyPairEvent,
-            ICurrencyPairService currencyPairService, ICurrencyEvent currencyEvent)
+            ICurrencyPairService currencyPairService, ICurrencyEvent currencyEvent, ISourceEvent sourceEvent)
             : base(logger, signInManager, userManager)
         {
             _currencyPairEvent = currencyPairEvent;
             _currencyPairService = currencyPairService;
             _currencyEvent = currencyEvent;
+            _sourceEvent = sourceEvent;
         }
 
         #region Get CurrencyPairs
@@ -39,13 +41,14 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
                 return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
 
-
-            return View(new CurrencyPairViewModel
+            var vm = new CurrencyPairViewModel
             {
                 CurrencyPairs = _currencyPairEvent.GetAll(),
-                Currencies = _currencyEvent.GetAllActive()
-                
-            });
+                Currencies = _currencyEvent.GetAllActive(),
+                Sources = _sourceEvent.GetAllActive()
+            };
+
+            return View(vm);
         }
 
         #endregion
