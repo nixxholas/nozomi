@@ -4,6 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Nozomi.Data;
 using Nozomi.Data.AreaModels.v1.CurrencyPair;
 using Nozomi.Data.Models.Currency;
 using Nozomi.Data.Models.Web;
@@ -22,56 +23,26 @@ namespace Nozomi.Service.Services
         {
         }
 
-        [Obsolete]
-        public bool Create(CreateCurrencyPair createCurrencyPair, long userId)
+        public NozomiResult<string> Create(CreateCurrencyPair createCurrencyPair, long userId)
         {
-            if (createCurrencyPair == null || !createCurrencyPair.IsValid()) return false;
-
+            if (createCurrencyPair == null || !createCurrencyPair.IsValid()) 
+                return new NozomiResult<string>(
+                    NozomiResultType.Failed, "Please ensure that the payload is valid");
+            
             var currencyPair = new CurrencyPair()
             {
                 CurrencyPairType = createCurrencyPair.CurrencyPairType,
-                APIUrl = createCurrencyPair.ApiUrl,
+                APIUrl = createCurrencyPair.APIUrl,
                 DefaultComponent = createCurrencyPair.DefaultComponent,
-                SourceId = createCurrencyPair.CurrencySourceId,
-                Requests = createCurrencyPair.CurrencyPairRequests
-                    .Select(cpr => new Request()
-                    {
-                        RequestType = cpr.RequestType,
-                        DataPath = cpr.DataPath,
-                        Delay = cpr.Delay,
-                        RequestComponents = cpr.RequestComponents
-                            .Select(rc => new RequestComponent()
-                            {
-                                ComponentType = rc.ComponentType,
-                                QueryComponent = rc.QueryComponent
-                            })
-                            .ToList(),
-                        RequestProperties = cpr.RequestProperties
-                            .Select(rp => new RequestProperty()
-                            {
-                                RequestPropertyType = rp.RequestPropertyType,
-                                Key = rp.Key,
-                                Value = rp.Value
-                            })
-                            .ToList()
-                    })
-                    .ToList()
+                SourceId = createCurrencyPair.SourceId,
+                MainCurrencyAbbrv = createCurrencyPair.MainCurrency.Abbreviation,
+                CounterCurrencyAbbrv = createCurrencyPair.CounterCurrency.Abbreviation
             };
             
-            if (userId > 0)
-            {
-                _unitOfWork.GetRepository<CurrencyPair>().Add(currencyPair);
-                _unitOfWork.Commit(userId);
+            _unitOfWork.GetRepository<CurrencyPair>().Add(currencyPair);
+            _unitOfWork.Commit(userId);
 
-                return true;
-            }
-            else
-            {
-                _unitOfWork.GetRepository<CurrencyPair>().Add(currencyPair);
-                _unitOfWork.Commit();
-
-                return true;
-            }
+            return new NozomiResult<string>(NozomiResultType.Success, "CurrencyPair successfully created");
         }
 
         public bool Delete(long currencyPairId, long userId = 0, bool hardDelete = false)
