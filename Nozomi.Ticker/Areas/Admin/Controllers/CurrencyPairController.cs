@@ -3,6 +3,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Nozomi.Base.Identity.ViewModels.Manage.CurrencyPair;
+using Nozomi.Data;
+using Nozomi.Data.AreaModels.v1.CurrencyPair;
+using Nozomi.Preprocessing;
 using Nozomi.Service.Events.Interfaces;
 using Nozomi.Service.Identity.Managers;
 using Nozomi.Service.Services.Interfaces;
@@ -45,12 +48,38 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
             {
                 CurrencyPairs = _currencyPairEvent.GetAll(),
                 Currencies = _currencyEvent.GetAllActive(),
-                Sources = _sourceEvent.GetAllActive()
+                Sources = _sourceEvent.GetAllActive(),
+                CurrencyPairTypes = NozomiServiceConstants.currencyPairType
             };
 
             return View(vm);
         }
 
         #endregion
+        
+        #region Post CurrencyPairs
+        
+        [HttpPost]
+        public async Task<IActionResult> Create([FromBody] CreateCurrencyPair createCurrencyPair)
+        {
+            var user = await GetCurrentUserAsync();
+            if (user == null)
+            {
+                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
+
+            if (!ModelState.IsValid)
+                return BadRequest(new NozomiResult<string>(NozomiResultType.Failed, "Invalid payload."));
+
+            var result = _currencyPairService.Create(createCurrencyPair);
+
+            if (result.ResultType.Equals(NozomiResultType.Success)) return Ok(result);
+
+            // Create failed
+            return BadRequest(new NozomiResult<string>(NozomiResultType.Failed, "Invalid payload."));
+        }
+        
+        #endregion
+        
     }
 }
