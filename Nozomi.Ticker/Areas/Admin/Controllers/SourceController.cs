@@ -77,7 +77,7 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
                 return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
 
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
                 return BadRequest("Invalid payload, please provide the missing properties.");
 
             var result = _sourceService.Create(createSource);
