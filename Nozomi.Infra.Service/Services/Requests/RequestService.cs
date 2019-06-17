@@ -56,21 +56,25 @@ namespace Nozomi.Service.Services.Requests
                     FailureDelay = createRequest.FailureDelay,
                     RequestType = createRequest.RequestType,
                     ResponseType = createRequest.ResponseType,
-                    RequestComponents = createRequest.RequestComponents
+                    RequestComponents = createRequest.RequestComponents?.Count > 0 ? 
+                        createRequest.RequestComponents
                         .Select(rc => new RequestComponent()
                         {
                             ComponentType = rc.ComponentType,
                             QueryComponent = rc.QueryComponent
                         })
-                        .ToList(),
-                    RequestProperties = createRequest.RequestProperties
+                        .ToList() 
+                        : new List<RequestComponent>(),
+                    RequestProperties = createRequest.RequestProperties?.Count > 0 ? 
+                        createRequest.RequestProperties
                         .Select(rp => new RequestProperty()
                         {
                             RequestPropertyType = rp.RequestPropertyType,
                             Key = rp.Key,
                             Value = rp.Value
                         })
-                        .ToList()
+                        .ToList() 
+                        : new List<RequestProperty>()
                 };
 
                 _unitOfWork.GetRepository<Request>().Add(request);
