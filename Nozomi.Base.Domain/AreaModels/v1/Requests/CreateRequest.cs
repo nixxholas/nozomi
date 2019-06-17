@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Runtime.InteropServices;
 using Nozomi.Base.Core;
 using Nozomi.Data.AreaModels.v1.CurrencyPairComponent;
 using Nozomi.Data.AreaModels.v1.RequestProperty;
@@ -10,7 +11,6 @@ namespace Nozomi.Data.AreaModels.v1.Requests
 {
     public class CreateRequest
     {
-        
         [Required]
         public RequestType RequestType { get; set; }
         
@@ -35,11 +35,11 @@ namespace Nozomi.Data.AreaModels.v1.Requests
         
         public ICollection<CreateRequestProperty> RequestProperties { get; set; }
         
-        public long CurrencyId { get; set; }
+        public long? CurrencyId { get; set; }
         
-        public long CurrencyPairId { get; set; }
+        public long? CurrencyPairId { get; set; }
         
-        public long CurrencyTypeId { get; set; }
+        public long? CurrencyTypeId { get; set; }
 
         public bool IsValid()
         {
