@@ -22,26 +22,25 @@ namespace Nozomi.Service.Services
         {
         }
 
-        public NozomiResult<string> Create(CreateSource createSource)
+        public NozomiResult<string> Create(CreateSource createSource, long userId = 0)
         {
-            if (!createSource.IsValid())
-            {
-                return new NozomiResult<string>(NozomiResultType.Failed, "Invalid payload");
-            }
-
             try
             {
-                var newSource = new Source()
+                if (_unitOfWork.GetRepository<Source>()
+                    .GetQueryable()
+                    .AsNoTracking()
+                    .Any(s => s.Abbreviation.Equals(createSource.Abbreviation)))
+                    return new NozomiResult<string>(NozomiResultType.Failed, "An existing source already exists!");
+                
+                _unitOfWork.GetRepository<Source>().Add(new Source
                 {
                     APIDocsURL = createSource.ApiDocsUrl,
                     Abbreviation = createSource.Abbreviation,
                     Name = createSource.Name
-                };
+                });
+                _unitOfWork.Commit(userId);
                 
-                _unitOfWork.GetRepository<Source>().Add(newSource);
-                _unitOfWork.Commit();
-                
-                return new NozomiResult<string>(NozomiResultType.Success, "Source successfully created!", newSource);
+                return new NozomiResult<string>(NozomiResultType.Success, "Source successfully created!");
             }
             catch (DbUpdateException ex)
             {
