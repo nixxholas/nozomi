@@ -23,7 +23,7 @@ namespace Nozomi.Service.Services
         {
         }
 
-        public NozomiResult<string> Create(CreateCurrencyPair createCurrencyPair, long userId)
+        public NozomiResult<string> Create(CreateCurrencyPair createCurrencyPair, long userId = 0)
         {
             if (createCurrencyPair == null || !createCurrencyPair.IsValid()) 
                 return new NozomiResult<string>(
