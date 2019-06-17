@@ -24,11 +24,6 @@ namespace Nozomi.Service.Services
 
         public NozomiResult<string> Create(CreateSource createSource)
         {
-            if (!createSource.IsValid())
-            {
-                return new NozomiResult<string>(NozomiResultType.Failed, "Invalid payload");
-            }
-
             try
             {
                 var newSource = new Source()
