@@ -1,25 +1,34 @@
 @using Newtonsoft.Json
 @using Newtonsoft.Json.Serialization
-@model Nozomi.Base.Identity.ViewModels.Manage.IndexViewModel
+@model Nozomi.Base.Identity.ViewModels.Manage.CurrencyPair.CurrencyPairViewModel
 
 <!-- Content Section -->
 <div class="bg-light">
     <div class="container space-2">
-        <h3 class="mb-6">Sources</h3>
+        <h3 class="mb-6">Currency Pairs</h3>
 
         <b-button variant="primary" class="mb-3" v-on:click="showCreateModal">Create</b-button>
-        
+
         <b-table
-            :per-page="sourcesDataRowsPerPage" :current-page="currentSourceDataPage"
-            :items="sources" :fields="dataFields">
-            <template slot="Name" slot-scope="datum">
-                {{ datum.item.name }}
+            :per-page="currencyPairPerPage" :current-page="currentCurrencyPairPage"
+            :items="currencyPairs" :fields="dataFields">
+            <template slot="MainCurrencyAbbrv" slot-scope="datum">
+                {{ datum.item.mainCurrencyAbbrv }}
             </template>
-            <template slot="Abbreviation" slot-scope="datum">
-                {{ datum.item.abbreviation }}
+            <template slot="CounterCurrencyAbbrv" slot-scope="datum">
+                {{ datum.item.counterCurrencyAbbrv }}
             </template>
-            <template slot="APIDocsURL" slot-scope="datum">
-                <a :href="datum.item.apiDocsURL">{{ datum.item.apiDocsURL }}</a>
+            <template slot="CurrencyPairType" slot-scope="datum">
+                {{ datum.item.currencyPairType }}
+            </template>
+            <template slot="ApiUrl" slot-scope="datum">
+                <a :href="datum.item.apiDocsURL">{{ datum.item.apiUrl }}</a>
+            </template>
+            <template slot="SourceName" slot-scope="datum">
+                {{ getSourceName(datum.item.sourceId) }}
+            </template>
+            <template slot="DefaultComponent" slot-scope="datum">
+                {{ datum.item.defaultComponent }}
             </template>
             <template slot="IsEnabled" slot-scope="datum">
                 <b-form-checkbox v-model="datum.item.isEnabled" disabled/>
@@ -38,109 +47,79 @@
 </div>
 
 <!-- CreateModal -->
-<b-modal ref="create-modal" size="xl" title="Create Source" ok-title="Create" v-on:ok="handleCreateOk">
+<b-modal ref="create-modal" size="xl" title="Create Currency Pair" ok-title="Create" v-on:ok="handleCreateOk">
     <b-form v-on:submit.stop.prevent="onCreateSubmit">
-        <b-form-group label="Source Name">
-            <b-form-input
-                v-model="createForm.sourceName"
-                required
-                placeholder="Enter source name">
-            </b-form-input>
+        <b-form-group label="Main Currency">
+            <b-form-select v-model="createForm.mainCurrency" :options="mainCurrencies"></b-form-select>
         </b-form-group>
 
-        <b-form-group label="Abbreviation">
-            <b-form-input
-                v-model="createForm.abbreviation"
-                required
-                placeholder="Enter source abbreviation">
-            </b-form-input>
-        </b-form-group>
-
-        <b-form-group label="Api Docs URL">
-            <b-form-input
-                v-model="createForm.apiDocsURL"
-                required
-                type="url"
-                placeholder="Enter Api Docs URL abbreviation">
-            </b-form-input>
+        <b-form-group label="Counter Currency">
+            <b-form-select v-model="createForm.counterCurrency" :options="counterCurrencies"></b-form-select>
         </b-form-group>
         
+        <b-form-group label="Sources">
+            <b-form-select v-model="createForm.source">
+                <option v-for="source in sources" 
+                        :key="source.name"
+                        :value="source.id"
+                    >
+                        {{ source.name }}
+                    </option>
+            </b-form-select>
+        </b-form-group>
+
+        <b-form-group label="API Url">
+            <b-form-input
+                v-model="createForm.apiUrl"
+                required
+                type="url"
+                placeholder="Enter Api Url ">
+            </b-form-input>
+        </b-form-group>
+
         <b-form-group>
             <b-form-checkbox v-model="createForm.isEnabled">Is Enabled</b-form-checkbox>
         </b-form-group>
     </b-form>
 </b-modal>
 
-<!-- EditModal -->
-<b-modal ref="edit-modal" size="xl" title="Edit Source" ok-title="Save changes" v-on:ok="handleEditOk">
-    <b-form v-on:submit.stop.prevent="onEditSubmit">
-        <b-form-group
-            id="sourceName-input-group"
-            label="Name"
-            label-for="sourceName-input">
-            <b-form-input
-                id="sourceName-input"
-                v-model="editForm.sourceName"
-                required
-                placeholder="Enter source name">
-            </b-form-input>
-        </b-form-group>
-
-        <b-form-group
-            id="abbreviation-input-group"
-            label="Abbreviation"
-            label-for="abbreviation-input">
-            <b-form-input
-                id="abbreviation-input"
-                v-model="editForm.abbreviation"
-                required
-                placeholder="Enter source abbreviation">
-            </b-form-input>
-        </b-form-group>
-
-        <b-form-group id="apiDocsURL-input-group" label="API Docs URL:" label-for="apiDocsURL-input">
-            <b-form-input
-                id="apiDocsURL-input"
-                v-model="editForm.apiDocsURL"
-                required
-                placeholder="Enter source API documentation URL">
-            </b-form-input>
-        </b-form-group>
-
-        <b-form-group id="isEnabled-input-group">
-            <b-form-checkbox v-model="editForm.isEnabled" switch>Is Enabled</b-form-checkbox>
-        </b-form-group>
-    </b-form>
-</b-modal>
-
-
-<!-- DeleteModal -->
-<b-modal ref="delete-modal" title="Confirm Delete" ok-title="Yes" ok-variant="danger" cancel-title="No" v-on:ok="handleDeleteOk" centered>
-    <p>Are you sure that you want to delete {{ deleteModal.name }} source?</p>
-</b-modal>
-
-@section Scripts {
+@section Scripts{
     <script>
         const vm = new Vue({
-            // options
             el: "#content",
-            // Just dish any random variable in for now
             data: {
+                currentCurrencyPairPage: 1,
+                currencyPairPerPage: 20,
                 dataFields: [
                     {
-                        key: 'Name',
-                        label: 'Name',
+                        key: 'MainCurrencyAbbrv',
+                        label: 'Main Currency',
                         sortable: true
                     },
                     {
-                        key: 'Abbreviation',
-                        label: 'Abbreviation',
+                        key: 'CounterCurrencyAbbrv',
+                        label: 'Counter Currency',
                         sortable: true
                     },
                     {
-                        key: 'APIDocsURL',
-                        label: 'API Docs URL',
+                        key: 'CurrencyPairType',
+                        label: 'Currency Pair Type',
                         sortable: true
+                    },
+                    {
+                        key: 'ApiUrl',
+                        label: 'API URL',
+                        sortable: true
+                    },
+                    {
+                        key: 'SourceName',
+                        label: 'Source',
+                        sortable: false
+                    },
+                    {
+                        key: 'DefaultComponent',
+                        label: 'Default Component',
+                        sortable: false
                     },
                     {
                         key: 'IsEnabled',
@@ -158,40 +137,73 @@
                         sortable: false
                     }
                 ],
-                sourcesDataRowsPerPage: 20,
-                currentSourceDataPage: 1,
+                currencyPairs:
+                    @Html.Raw(JsonConvert.SerializeObject(@Model.CurrencyPairs, Formatting.Indented, new JsonSerializerSettings
+                    {
+                        ContractResolver = new CamelCasePropertyNamesContractResolver()
+                    })),
+                mainCurrencies:
+                    @Html.Raw(JsonConvert.SerializeObject(@Model.Currencies, Formatting.Indented, new JsonSerializerSettings
+                    {
+                        ContractResolver = new CamelCasePropertyNamesContractResolver()
+                    })),
+                counterCurrencies:
+                    @Html.Raw(JsonConvert.SerializeObject(@Model.Currencies, Formatting.Indented, new JsonSerializerSettings
+                    {
+                        ContractResolver = new CamelCasePropertyNamesContractResolver()
+                    })),
                 sources:
                     @Html.Raw(JsonConvert.SerializeObject(@Model.Sources, Formatting.Indented, new JsonSerializerSettings
                     {
-                        ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
-                        ContractResolver = new CamelCasePropertyNamesContractResolver() 
+                        ContractResolver = new CamelCasePropertyNamesContractResolver()
                     })),
                 createForm: {
-                    sourceName: '',
-                    abbreviation: '',
-                    apiDocsURL: '',
-                    isEnabled: Boolean
-                },
-                editForm: {
-                    id: Number,
-                    sourceName: '',
-                    abbreviation: '',
-                    apiDocsURL: '',
-                    isEnabled: Boolean
-                },
-                deleteModal: {
-                    id: Number,
-                    name: ''
+                    mainCurrency: {},
+                    counterCurrency: {},
+                    apiUrl: '',
+                    isEnabled: Boolean,
                 }
             },
+            mounted() {
+                this.convertMainCurrencyOption();
+                this.convertCounterCurrencyOption();
+            },
             methods: {
+                convertMainCurrencyOption() {
+                    const mainCurrenciesArr = [];
+                    for (let i = 0; i < this.mainCurrencies.length; i++) {
+                        const currency = {
+                            value: this.mainCurrencies[i],
+                            text: this.mainCurrencies[i].name
+                        };
+                        mainCurrenciesArr.push(currency);
+                    }
+                    this.mainCurrencies = mainCurrenciesArr;
+                },
+                convertCounterCurrencyOption() {
+                    const counterCurrenciesArr = [];
+                    for (let i = 0; i < this.counterCurrencies.length; i++) {
+                        const currency = {
+                            value: this.counterCurrencies[i],
+                            text: this.counterCurrencies[i].name
+                        };
+                        counterCurrenciesArr.push(currency);
+                    }
+                    this.counterCurrencies = counterCurrenciesArr;
+                },
+                getSourceName(id) {
+                    const sources = this.sources;
+                    for (let i = 0; i < this.sources.length; i++) {
+                        if (this.sources[i].id === id) {
+                            return this.sources[i].name;
+                        }
+                    }
+                },
                 showCreateModal() {
                     this.$refs['create-modal'].show();
                 },
                 handleCreateOk(bvModalEvt) {
-                    // Prevent modal from closing
                     bvModalEvt.preventDefault();
-                    // Trigger submit handler
                     this.onCreateSubmit();
                 },
                 async onCreateSubmit() {
@@ -214,7 +226,7 @@
                         const newRequest = data.item;
 
                         console.log(newRequest);
-                        
+
                         this.sources.push(newRequest);
                         // Put alert for now, change the ui later.
                         alert(data.message);
@@ -302,6 +314,7 @@
                     this.$refs['delete-modal'].hide();
                 }
             }
-        });
+        })
     </script>
+
 }

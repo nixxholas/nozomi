@@ -86,7 +86,7 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
                 return NotFound($"Unable to load user withID '{_userManager.GetUserId(User)}'.");
             }
 
-            var result = _requestService.Create(createRequest);
+            var result = _requestService.Create(createRequest, user.Id);
             
             if (result.ResultType.Equals(NozomiResultType.Success)) return Ok(result);
 
