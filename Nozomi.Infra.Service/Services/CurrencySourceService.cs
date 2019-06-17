@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data;
 using Nozomi.Data.Models.Currency;
@@ -21,6 +22,13 @@ namespace Nozomi.Service.Services
         {
             try
             {
+                if (_unitOfWork.GetRepository<CurrencySource>()
+                    .GetQueryable()
+                    .AsNoTracking()
+                    .Any(cs => cs.CurrencyId.Equals(currencySource.CurrencyId)
+                               && cs.SourceId.Equals(currencySource.SourceId)))
+                    return new NozomiResult<string>(NozomiResultType.Failed, "Source to currency binding already exists.");
+                
                 _unitOfWork.GetRepository<CurrencySource>().Add(new CurrencySource
                 {
                     CurrencyId = currencySource.CurrencyId,
