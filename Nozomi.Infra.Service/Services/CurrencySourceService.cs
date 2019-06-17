@@ -3,6 +3,7 @@ using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data;
+using Nozomi.Data.AreaModels.v1.CurrencySource;
 using Nozomi.Data.Models.Currency;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.BCL.Repository;
@@ -18,7 +19,7 @@ namespace Nozomi.Service.Services
         {
         }
 
-        public NozomiResult<string> Create(CurrencySource currencySource, long userId = 0)
+        public NozomiResult<string> Create(CreateCurrencySource currencySource, long userId = 0)
         {
             try
             {
