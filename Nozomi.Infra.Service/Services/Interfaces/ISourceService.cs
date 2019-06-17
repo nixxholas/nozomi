@@ -8,7 +8,7 @@ namespace Nozomi.Service.Services.Interfaces
 {
     public interface ISourceService
     {
-        NozomiResult<string> Create(CreateSource createSource);
+        NozomiResult<string> Create(CreateSource createSource, long userId = 0);
 
         bool Update(UpdateSource updateSource);
 

@@ -22,7 +22,7 @@ namespace Nozomi.Service.Services
         {
         }
 
-        public NozomiResult<string> Create(CreateSource createSource)
+        public NozomiResult<string> Create(CreateSource createSource, long userId = 0)
         {
             try
             {
@@ -34,7 +34,7 @@ namespace Nozomi.Service.Services
                 };
                 
                 _unitOfWork.GetRepository<Source>().Add(newSource);
-                _unitOfWork.Commit();
+                _unitOfWork.Commit(userId);
                 
                 return new NozomiResult<string>(NozomiResultType.Success, "Source successfully created!", newSource);
             }
