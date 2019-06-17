@@ -33,6 +33,8 @@ namespace Nozomi.Preprocessing
             EnumHelper.GetEnumValuesAndDescriptions<ResponseType>();
         public static List<KeyValuePair<string, int>> requestPropertyTypes =
             EnumHelper.GetEnumValuesAndDescriptions<RequestPropertyType>();
+        public static List<KeyValuePair<string, int>> currencyPairType =
+            EnumHelper.GetEnumValuesAndDescriptions<CurrencyPairType>();
         
         /// <summary>
         /// Let's say if an AnalysedComponent Updates every second,
