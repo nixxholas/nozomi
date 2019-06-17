@@ -31,13 +31,15 @@ namespace Nozomi.Service.Services
                     .AsNoTracking()
                     .Any(s => s.Abbreviation.Equals(createSource.Abbreviation)))
                     return new NozomiResult<string>(NozomiResultType.Failed, "An existing source already exists!");
-                
-                _unitOfWork.GetRepository<Source>().Add(new Source
+
+                var source = new Source
                 {
                     APIDocsURL = createSource.ApiDocsUrl,
                     Abbreviation = createSource.Abbreviation,
                     Name = createSource.Name
-                });
+                };
+                
+                _unitOfWork.GetRepository<Source>().Add(source);
                 _unitOfWork.Commit(userId);
                 
                 return new NozomiResult<string>(NozomiResultType.Success, "Source successfully created!");
