@@ -50,21 +50,42 @@
 <b-modal ref="create-modal" size="xl" title="Create Currency Pair" ok-title="Create" v-on:ok="handleCreateOk">
     <b-form v-on:submit.stop.prevent="onCreateSubmit">
         <b-form-group label="Main Currency">
-            <b-form-select v-model="createForm.mainCurrency" :options="mainCurrencies"></b-form-select>
+            <b-form-select v-model="createForm.mainCurrency">
+                <option v-for="currency in currencies"
+                        :key="currency.name"
+                        :value="currency">
+                    {{ currency.name}}
+                </option>
+            </b-form-select>
         </b-form-group>
 
         <b-form-group label="Counter Currency">
-            <b-form-select v-model="createForm.counterCurrency" :options="counterCurrencies"></b-form-select>
+            <b-form-select v-model="createForm.counterCurrency">
+                <option v-for="currency in currencies"
+                        :key="currency.name"
+                        :value="currency">
+                    {{currency.name}}
+                </option>
+            </b-form-select>
         </b-form-group>
-        
-        <b-form-group label="Sources">
-            <b-form-select v-model="createForm.source">
-                <option v-for="source in sources" 
+
+        <b-form-group label="Currency Pair Type">
+            <b-form-select v-model="createForm.currencyPairType">
+                <option v-for="currencyPairType in currencyPairTypes"
+                        :key="currencyPairType.key"
+                        :value="currencyPairType.value">
+                    {{currencyPairType.key}}
+                </option>
+            </b-form-select>
+        </b-form-group>
+
+        <b-form-group label="Source">
+            <b-form-select v-model="createForm.sourceId">
+                <option v-for="source in sources"
                         :key="source.name"
-                        :value="source.id"
-                    >
-                        {{ source.name }}
-                    </option>
+                        :value="source.id">
+                    {{ source.name }}
+                </option>
             </b-form-select>
         </b-form-group>
 
@@ -74,6 +95,15 @@
                 required
                 type="url"
                 placeholder="Enter Api Url ">
+            </b-form-input>
+        </b-form-group>
+
+        <b-form-group label="Default Component">
+            <b-form-input
+                v-model="createForm.defaultComponent"
+                required
+                type="url"
+                placeholder="Enter Defaullt Component ">
             </b-form-input>
         </b-form-group>
 
@@ -142,12 +172,7 @@
                     {
                         ContractResolver = new CamelCasePropertyNamesContractResolver()
                     })),
-                mainCurrencies:
-                    @Html.Raw(JsonConvert.SerializeObject(@Model.Currencies, Formatting.Indented, new JsonSerializerSettings
-                    {
-                        ContractResolver = new CamelCasePropertyNamesContractResolver()
-                    })),
-                counterCurrencies:
+                currencies:
                     @Html.Raw(JsonConvert.SerializeObject(@Model.Currencies, Formatting.Indented, new JsonSerializerSettings
                     {
                         ContractResolver = new CamelCasePropertyNamesContractResolver()
@@ -157,40 +182,21 @@
                     {
                         ContractResolver = new CamelCasePropertyNamesContractResolver()
                     })),
+                currencyPairTypes:
+                    @Html.Raw(JsonConvert.SerializeObject(@Model.CurrencyPairTypes, Formatting.Indented, new JsonSerializerSettings
+                    {
+                        ContractResolver = new CamelCasePropertyNamesContractResolver()
+                    })),
                 createForm: {
                     mainCurrency: {},
                     counterCurrency: {},
                     apiUrl: '',
+                    defaultComponent: '',
+                    sourceId: Number,
                     isEnabled: Boolean,
                 }
             },
-            mounted() {
-                this.convertMainCurrencyOption();
-                this.convertCounterCurrencyOption();
-            },
             methods: {
-                convertMainCurrencyOption() {
-                    const mainCurrenciesArr = [];
-                    for (let i = 0; i < this.mainCurrencies.length; i++) {
-                        const currency = {
-                            value: this.mainCurrencies[i],
-                            text: this.mainCurrencies[i].name
-                        };
-                        mainCurrenciesArr.push(currency);
-                    }
-                    this.mainCurrencies = mainCurrenciesArr;
-                },
-                convertCounterCurrencyOption() {
-                    const counterCurrenciesArr = [];
-                    for (let i = 0; i < this.counterCurrencies.length; i++) {
-                        const currency = {
-                            value: this.counterCurrencies[i],
-                            text: this.counterCurrencies[i].name
-                        };
-                        counterCurrenciesArr.push(currency);
-                    }
-                    this.counterCurrencies = counterCurrenciesArr;
-                },
                 getSourceName(id) {
                     const sources = this.sources;
                     for (let i = 0; i < this.sources.length; i++) {
@@ -207,34 +213,18 @@
                     this.onCreateSubmit();
                 },
                 async onCreateSubmit() {
-                    var formData = new FormData();
-                    formData.append('Id', this.createForm.id);
-                    formData.append('Name', this.createForm.sourceName);
-                    formData.append('Abbreviation', this.createForm.abbreviation);
-                    formData.append('ApiDocsURL', this.createForm.apiDocsURL);
-                    formData.append('IsEnabled', this.createForm.isEnabled);
-
-                    const response = await fetch('/Admin/Source/CreateSource',
-                        {
-                            method: 'POST',
-                            body: formData
+                    axios.post('/Admin/CurrencyPair/Create', this.createForm)
+                        .then(response => {
+                            console.log(response);
+                            this.currencyPairs.push(response.item);
+                        }).catch(error => {
+                            alert('Failed to create CurrencyPair');
+                            console.log(error);
+                        })
+                        .finally(() => {
+                            // Hide the modal manually
+                            this.$refs['create-modal'].hide();
                         });
-
-                    if (response.status === 200) {
-                        const data = await response.json();
-
-                        const newRequest = data.item;
-
-                        console.log(newRequest);
-
-                        this.sources.push(newRequest);
-                        // Put alert for now, change the ui later.
-                        alert(data.message);
-                    } else {
-                        alert("Create failed");
-                    }
-                    // Hide the modal manually
-                    this.$refs['create-modal'].hide();
                 },
                 // Methods for edit modal
                 showEditModal(id, sourceName, abbreviation, apiDocsURL, isEnabled) {
@@ -254,7 +244,7 @@
                 },
                 async onEditSubmit() {
                     var formData = new FormData();
-                    formData.append('Id', this.editForm.id);
+                    formData.append('', this.editForm.id);
                     formData.append('Name', this.editForm.sourceName);
                     formData.append('Abbreviation', this.editForm.abbreviation);
                     formData.append('ApiDocsURL', this.editForm.apiDocsURL);
