@@ -44,6 +44,8 @@ namespace Nozomi.Repo.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.ForNpgsqlUseIdentityColumns();
+            
             var analysedComponentMap = new AnalysedComponentMap(modelBuilder.Entity<AnalysedComponent>());
             var analysedHistoricItemMap = new AnalysedHistoricItemMap(modelBuilder.Entity<AnalysedHistoricItem>());
             var currencyMap = new CurrencyMap(modelBuilder.Entity<Currency>());
@@ -54,13 +56,17 @@ namespace Nozomi.Repo.Data
             var webSocketCommandPropertyMap = new WebsocketCommandPropertyMap(modelBuilder.Entity<WebsocketCommandProperty>());
             var requestComponentMap = new RequestComponentMap(modelBuilder.Entity<RequestComponent>());
             var rcdHistoricItemMap = new RcdHistoricItemMap(modelBuilder.Entity<RcdHistoricItem>());
-            var requestLogMap = new RequestLogMap(modelBuilder.Entity<RequestLog>());
+            var requestLogMap = new RequestLogMap(modelBuilder.HasPostgresExtension("uuid-ossp").Entity<RequestLog>());
             var requestPropertyMap = new RequestPropertyMap(modelBuilder.Entity<RequestProperty>());
-            var sourceMap = new SourceMap(modelBuilder.Entity<Source>());
             
+            var sourceMap = new SourceMap(modelBuilder.Entity<Source>());
+            modelBuilder.HasSequence<long>("Id")
+                .StartsAt(1000);
+                //.IncrementsBy(5);
+
             // MTM
             var currencySourceMap = new CurrencySourceMap(modelBuilder.Entity<CurrencySource>());
-            
+
             base.OnModelCreating(modelBuilder);
         }
         

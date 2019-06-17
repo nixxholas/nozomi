@@ -12,7 +12,8 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
         public AnalysedComponentMap(EntityTypeBuilder<AnalysedComponent> entityTypeBuilder) : base(entityTypeBuilder)
         {
             entityTypeBuilder.HasKey(ac => ac.Id).HasName("AnalysedComponent_PK_Id");
-            entityTypeBuilder.Property(ac => ac.Id).ValueGeneratedOnAdd();
+            entityTypeBuilder.Property(ac => ac.Id)
+                .HasDefaultValueSql("nextval('\"Id\"')");
 
             entityTypeBuilder.HasIndex(ac => new { ac.CurrencyId, ac.ComponentType })
                 .HasName("AnalysedComponent_Index_CurrencyId_ComponentType").IsUnique();
