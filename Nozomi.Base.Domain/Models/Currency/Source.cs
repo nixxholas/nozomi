@@ -7,7 +7,6 @@ namespace Nozomi.Data.Models.Currency
 {
     public class Source : BaseEntityModel
     {
-        [Key]
         public long Id { get; set; }
 
         // Short form for the currency source if needed.
