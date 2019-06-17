@@ -1,4 +1,4 @@
-using Nozomi.Data.AreaModels.v1.CurrencySource;
+using Nozomi.Data.AreaModels.v1.Source;
 using Swashbuckle.AspNetCore.Filters;
 
 namespace Nozomi.Preprocessing.Swagger.Examples.Requests.v1.CurrencySource

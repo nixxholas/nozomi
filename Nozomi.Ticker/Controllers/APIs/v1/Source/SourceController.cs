@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data;
-using Nozomi.Data.AreaModels.v1.CurrencySource;
+using Nozomi.Data.AreaModels.v1.Source;
 using Nozomi.Data.ResponseModels.Currency;
 using Nozomi.Service.Events.Interfaces;
 using Nozomi.Service.Identity.Managers;

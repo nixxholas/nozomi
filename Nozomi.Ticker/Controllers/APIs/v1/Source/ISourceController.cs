@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using Nozomi.Data;
-using Nozomi.Data.AreaModels.v1.CurrencySource;
+using Nozomi.Data.AreaModels.v1.Source;
 
 namespace Nozomi.Ticker.Controllers.APIs.v1.Source
  {
