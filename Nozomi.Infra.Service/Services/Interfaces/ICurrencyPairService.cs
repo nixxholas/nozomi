@@ -11,7 +11,7 @@ namespace Nozomi.Service.Services.Interfaces
 
         NozomiResult<string> Update(UpdateCurrencyPair updateCurrencyPair, long userId = 0);
 
-        bool Delete(long currencyPairId, long userId = 0, bool hardDelete = false);
+        NozomiResult<string> Delete(long currencyPairId, long userId = 0, bool hardDelete = false);
         
         long[][] GetCurrencySourceMappings();
         //IEnumerable<CurrencyPair> GetAvailCPairsForAdvType(long id);

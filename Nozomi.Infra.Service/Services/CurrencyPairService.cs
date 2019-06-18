@@ -73,7 +73,7 @@ namespace Nozomi.Service.Services
             return new NozomiResult<string>(NozomiResultType.Success, "CurrencyPair successfully updated!");
         }
 
-        public bool Delete(long currencyPairId, long userId = 0, bool hardDelete = false)
+        public NozomiResult<string> Delete(long currencyPairId, long userId = 0, bool hardDelete = false)
         {
             if (currencyPairId > 0)
             {
@@ -89,19 +89,20 @@ namespace Nozomi.Service.Services
                 {
                     cpToDel.DeletedAt = DateTime.UtcNow;
                     cpToDel.DeletedBy = userId;
+                    _unitOfWork.GetRepository<CurrencyPair>().Update(cpToDel);
                 }
                 else
                 {
                     // User has attempted to delete a deleted entity.
-                    return false;
+                    return new NozomiResult<string>(NozomiResultType.Failed, "Delete failed, the currency pair does not exist");
                 }
 
                 _unitOfWork.Commit(userId);
 
-                return true;
+                return new NozomiResult<string>(NozomiResultType.Success, "CurrencyPair has been successfully deleted!");
             }
 
-            return false;
+            return new NozomiResult<string>(NozomiResultType.Failed, "Delete failed.");
         }
 
         public IEnumerable<CurrencyPair> GetAllActive(int index = 0, bool includeNested = false)
