@@ -81,5 +81,29 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
         
         #endregion
         
+        #region Update Currency Pair
+        
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Update([FromBody] UpdateCurrencyPair updateCurrencyPair, long id)
+        {
+            var user = await GetCurrentUserAsync();
+            if (user == null)
+            {
+                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
+
+            if (!ModelState.IsValid)
+                return BadRequest(new NozomiResult<string>(NozomiResultType.Failed, "Invalid payload."));
+
+            var result = _currencyPairService.Update(updateCurrencyPair);
+
+            if (result.ResultType.Equals(NozomiResultType.Success)) return Ok(result);
+
+            // Create failed
+            return BadRequest(new NozomiResult<string>(NozomiResultType.Failed, "Invalid payload."));
+        }
+        
+        #endregion
+        
     }
 }
