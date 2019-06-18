@@ -25,7 +25,16 @@ namespace Nozomi.Service.Services
 
         public NozomiResult<string> Create(CreateCurrencyPair createCurrencyPair, long userId = 0)
         {
-            if (createCurrencyPair == null || !createCurrencyPair.IsValid()) 
+            if (createCurrencyPair == null || !createCurrencyPair.IsValid() ||
+                // Make sure the pair we're creating doesn't exist.
+                _unitOfWork.GetRepository<CurrencyPair>()
+                    .GetQueryable()
+                    .AsNoTracking()
+                    .Any(cp => cp.MainCurrencyAbbrv.Equals(createCurrencyPair.MainCurrencyAbbrv,
+                        StringComparison.InvariantCultureIgnoreCase)
+                               && cp.CounterCurrencyAbbrv.Equals(createCurrencyPair.CounterCurrencyAbbrv,
+                                   StringComparison.InvariantCultureIgnoreCase)
+                               && cp.SourceId.Equals(createCurrencyPair.SourceId))) 
                 return new NozomiResult<string>(
                     NozomiResultType.Failed, "Please ensure that the payload is valid");
             
