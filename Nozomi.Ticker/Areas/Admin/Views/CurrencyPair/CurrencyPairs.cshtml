@@ -22,7 +22,7 @@
                 {{ datum.item.currencyPairType }}
             </template>
             <template slot="ApiUrl" slot-scope="datum">
-                <a :href="datum.item.apiDocsURL">{{ datum.item.apiUrl }}</a>
+                <a :href="datum.item.apiUrl">{{ datum.item.apiUrl }}</a>
             </template>
             <template slot="SourceName" slot-scope="datum">
                 {{ getSourceName(datum.item.sourceId) }}
@@ -35,7 +35,8 @@
             </template>
             <template slot="Edit" slot-scope="datum">
                 <b-button variant="primary" b-modal.modal-xl
-                          v-on:click="showEditModal(datum.item.id, datum.item.name, datum.item.abbreviation, datum.item.apiDocsURL, datum.item.isEnabled)">
+                          v-on:click="showEditModal(datum.item.id, datum.item.mainCurrencyAbbrv, datum.item.counterCurrencyAbbrv, datum.item.currencyPairType,
+                          datum.item.apiUrl, datum.item.sourceId, datum.item.defaultComponent, datum.item.isEnabled)">
                     Edit
                 </b-button>
             </template>
@@ -50,21 +51,21 @@
 <b-modal ref="create-modal" size="xl" title="Create Currency Pair" ok-title="Create" v-on:ok="handleCreateOk">
     <b-form v-on:submit.stop.prevent="onCreateSubmit">
         <b-form-group label="Main Currency">
-            <b-form-select v-model="createForm.mainCurrency">
+            <b-form-select v-model="createForm.mainCurrencyAbbrv">
                 <option v-for="currency in currencies"
                         :key="currency.name"
-                        :value="currency">
-                    {{ currency.name}}
+                        :value="currency.abbreviation">
+                    {{ currency.name }}
                 </option>
             </b-form-select>
         </b-form-group>
 
         <b-form-group label="Counter Currency">
-            <b-form-select v-model="createForm.counterCurrency">
+            <b-form-select v-model="createForm.counterCurrencyAbbrv">
                 <option v-for="currency in currencies"
                         :key="currency.name"
-                        :value="currency">
-                    {{currency.name}}
+                        :value="currency.abbreviation">
+                    {{ currency.name }}
                 </option>
             </b-form-select>
         </b-form-group>
@@ -74,7 +75,7 @@
                 <option v-for="currencyPairType in currencyPairTypes"
                         :key="currencyPairType.key"
                         :value="currencyPairType.value">
-                    {{currencyPairType.key}}
+                    {{ currencyPairType.key }}
                 </option>
             </b-form-select>
         </b-form-group>
@@ -103,12 +104,79 @@
                 v-model="createForm.defaultComponent"
                 required
                 type="url"
-                placeholder="Enter Defaullt Component ">
+                placeholder="Enter Default Component ">
             </b-form-input>
         </b-form-group>
 
         <b-form-group>
             <b-form-checkbox v-model="createForm.isEnabled">Is Enabled</b-form-checkbox>
+        </b-form-group>
+    </b-form>
+</b-modal>
+
+<!-- EditModal -->
+<b-modal ref="edit-modal" size="xl" title="Edit Currency Pair" ok-title="Edit" v-on:ok="handleEditOk">
+    <b-form v-on:submit.stop.prevent="onEditSubmit">
+        <b-form-group label="Main Currency">
+            <b-form-select v-model="editForm.mainCurrencyAbbrv">
+                <option v-for="currency in currencies"
+                        :key="currency.name"
+                        :value="currency.abbreviation">
+                    {{ currency.name }}
+                </option>
+            </b-form-select>
+        </b-form-group>
+
+        <b-form-group label="Counter Currency">
+            <b-form-select v-model="editForm.counterCurrencyAbbrv">
+                <option v-for="currency in currencies"
+                        :key="currency.name"
+                        :value="currency.abbreviation">
+                    {{ currency.name }}
+                </option>
+            </b-form-select>
+        </b-form-group>
+
+        <b-form-group label="Currency Pair Type">
+            <b-form-select v-model="editForm.currencyPairType">
+                <option v-for="currencyPairType in currencyPairTypes"
+                        :key="currencyPairType.key"
+                        :value="currencyPairType.value">
+                    {{currencyPairType.key}}
+                </option>
+            </b-form-select>
+        </b-form-group>
+
+        <b-form-group label="Source">
+            <b-form-select v-model="editForm.sourceId">
+                <option v-for="source in sources"
+                        :key="source.name"
+                        :value="source.id">
+                    {{ source.name }}
+                </option>
+            </b-form-select>
+        </b-form-group>
+
+        <b-form-group label="API Url">
+            <b-form-input
+                v-model="editForm.apiUrl"
+                required
+                type="url"
+                placeholder="Enter Api Url ">
+            </b-form-input>
+        </b-form-group>
+
+        <b-form-group label="Default Component">
+            <b-form-input
+                v-model="editForm.defaultComponent"
+                required
+                type="url"
+                placeholder="Enter Defaullt Component ">
+            </b-form-input>
+        </b-form-group>
+
+        <b-form-group>
+            <b-form-checkbox v-model="editForm.isEnabled">Is Enabled</b-form-checkbox>
         </b-form-group>
     </b-form>
 </b-modal>
@@ -188,8 +256,17 @@
                         ContractResolver = new CamelCasePropertyNamesContractResolver()
                     })),
                 createForm: {
-                    mainCurrency: {},
-                    counterCurrency: {},
+                    mainCurrencyAbbrv: '',
+                    counterCurrencyAbbrv: '',
+                    apiUrl: '',
+                    defaultComponent: '',
+                    sourceId: Number,
+                    isEnabled: Boolean,
+                },
+                editForm: {
+                    id: Number,
+                    mainCurrencyAbbrv: '',
+                    counterCurrencyAbbrv: '',
                     apiUrl: '',
                     defaultComponent: '',
                     sourceId: Number,
@@ -213,25 +290,31 @@
                     this.onCreateSubmit();
                 },
                 async onCreateSubmit() {
-                    axios.post('/Admin/CurrencyPair/Create', this.createForm)
-                        .then(response => {
-                            console.log(response);
-                            this.currencyPairs.push(response.item);
-                        }).catch(error => {
-                            alert('Failed to create CurrencyPair');
-                            console.log(error);
-                        })
-                        .finally(() => {
-                            // Hide the modal manually
-                            this.$refs['create-modal'].hide();
-                        });
+                    axios({
+                        method: 'POST',
+                        url: '/Admin/CurrencyPair/Create',
+                        data: this.createForm
+                    }).then(response => {
+                        console.log(response);
+                        this.currencyPairs.push(response.item);
+                    }).catch(error => {
+                        alert('Failed to create CurrencyPair');
+                        console.log(error);
+                    }).finally(() => {
+                        // Hide the modal manually
+                        this.$refs['create-modal'].hide();
+                    });
                 },
                 // Methods for edit modal
-                showEditModal(id, sourceName, abbreviation, apiDocsURL, isEnabled) {
+                showEditModal(id, mainCurrencyAbbrv, counterCurrencyAbbrv, currencyPairType, apiUrl, sourceId,
+                defaultComponent, isEnabled) {
                     this.editForm.id = id;
-                    this.editForm.sourceName = sourceName;
-                    this.editForm.abbreviation = abbreviation;
-                    this.editForm.apiDocsURL = apiDocsURL;
+                    this.editForm.mainCurrencyAbbrv = mainCurrencyAbbrv;
+                    this.editForm.counterCurrencyAbbrv = counterCurrencyAbbrv;
+                    this.editForm.currencyPairType = currencyPairType;
+                    this.editForm.apiUrl = apiUrl;
+                    this.editForm.sourceId = sourceId;
+                    this.editForm.defaultComponent = defaultComponent;
                     this.editForm.isEnabled = isEnabled;
 
                     this.$refs['edit-modal'].show();
@@ -243,38 +326,29 @@
                     this.onEditSubmit();
                 },
                 async onEditSubmit() {
-                    var formData = new FormData();
-                    formData.append('', this.editForm.id);
-                    formData.append('Name', this.editForm.sourceName);
-                    formData.append('Abbreviation', this.editForm.abbreviation);
-                    formData.append('ApiDocsURL', this.editForm.apiDocsURL);
-                    formData.append('IsEnabled', this.editForm.isEnabled);
-
-                    const response = await fetch(`/Admin/Source/EditSource/${this.editForm.id}`,
-                        {
-                            method: 'PUT',
-                            body: formData
-                        });
-
-                    if (response.status === 200) {
-                        // Update the data table
-                        this.sources.find((element, index) => {
+                    axios({
+                        method: 'PUT',
+                        url: `/Admin/CurrencyPair/Update/${this.editForm.id}`,
+                        data: this.editForm
+                    }).then(response => {
+                        alert(response.data.message);
+                        this.currencyPairs.find((element, index) => {
                             if (element.Id === this.editForm.id) {
-                                this.sources[index].Name = this.editForm.sourceName;
-                                this.sources[index].Abbreviation = this.editForm.abbreviation;
-                                this.sources[index].ApiDocsURL = this.editForm.apiDocsURL;
-                                this.sources[index].IsEnabled = this.editForm.isEnabled;
+                                this.currencyPairs[index].mainCurrencyAbbrv = this.editForm.mainCurrencyAbbrv;
+                                this.currencyPairs[index].counterCurrencyAbbrv = this.editForm.counterCurrencyAbbrv;
+                                this.currencyPairs[index].currencyPairType = this.editForm.currencyPairType;
+                                this.currencyPairs[index].apiUrl = this.editForm.apiUrl;
+                                this.currencyPairs[index].sourceId = this.editForm.sourceId;
+                                this.currencyPairs[index].defaultComponent = this.editForm.defaultComponent;
+                                this.currencyPairs[index].isEnabled = this.editForm.isEnabled;
                             }
                         });
-
-                        // Put alert for now, change the ui later.
-                        alert("Successfully updated source");
-                    } else {
-                        alert("Update failed");
-                    }
-
-                    // Hide the modal manually
-                    this.$refs['edit-modal'].hide();
+                    }).catch(error => {
+                        alert('Failed to edit CurrencyPair');
+                    }).finally(() => {
+                        //Hide the modal manually
+                        this.$refs['edit-modal'].hide();
+                    });
                 },
                 // Methods for delete modal
                 showDeleteModal(id, sourceName) {
