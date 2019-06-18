@@ -105,5 +105,26 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
         
         #endregion
         
+        #region Delete CurrencyPairs
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(long id)
+        {
+            var user = await GetCurrentUserAsync();
+            if (user == null)
+            {
+                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
+
+            var result = _currencyPairService.Delete(id);
+
+            if (result.ResultType.Equals(NozomiResultType.Success)) return Ok(result);
+
+            // Create failed
+            return BadRequest(new NozomiResult<string>(NozomiResultType.Failed, "Invalid payload."));
+        }
+        
+        #endregion
+        
     }
 }
