@@ -1,8 +1,9 @@
 using System;
+using Nozomi.Data.AreaModels.v1.AnalysedComponent;
 
-namespace Nozomi.Data.AreaModels.v1.AnalysedComponent
+namespace Nozomi.Base.Admin.Domain.AreaModels.AnalysedComponent
 {
-    public class AdminAnalysedComponentDTO : AnalysedComponentDTO
+    public class AnalysedComponentDto : AnalysedComponentDTO
     {
         public bool IsEnabled { get; set; }
         
