@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Nozomi.Data;
 using Nozomi.Data.AreaModels.v1.CurrencyPair;
 using Nozomi.Data.Models.Currency;
@@ -9,6 +8,8 @@ namespace Nozomi.Service.Services.Interfaces
     public interface ICurrencyPairService
     {
         NozomiResult<string> Create(CreateCurrencyPair createCurrencyPair, long userId = 0);
+
+        NozomiResult<string> Update(UpdateCurrencyPair updateCurrencyPair, long userId = 0);
 
         bool Delete(long currencyPairId, long userId = 0, bool hardDelete = false);
         
