@@ -41,7 +41,7 @@
                 </b-button>
             </template>
             <template slot="Delete" slot-scope="datum">
-                <b-button variant="danger" v-on:click="showDeleteModal(datum.item.id, datum.item.name)">Delete</b-button>
+                <b-button variant="danger" v-on:click="showDeleteModal(datum.item.id, datum.item.mainCurrencyAbbrv, datum.item.counterCurrencyAbbrv)">Delete</b-button>
             </template>
         </b-table>
     </div>
@@ -181,6 +181,11 @@
     </b-form>
 </b-modal>
 
+<!-- DeleteModal -->
+<b-modal ref="delete-modal" title="Confirm Delete" ok-title="Yes" ok-variant="danger" cancel-title="No" v-on:ok="handleDeleteOk" centered>
+    <p>Are you sure that you want to delete {{ deleteModal.mainCurrencyAbbrv }}/{{ deleteModal.counterCurrencyAbbrv }}?</p>
+</b-modal>
+
 @section Scripts{
     <script>
         const vm = new Vue({
@@ -271,114 +276,134 @@
                     defaultComponent: '',
                     sourceId: Number,
                     isEnabled: Boolean,
-                }
-            },
-            methods: {
-                getSourceName(id) {
-                    const sources = this.sources;
-                    for (let i = 0; i < this.sources.length; i++) {
-                        if (this.sources[i].id === id) {
-                            return this.sources[i].name;
-                        }
-                    }
                 },
-                showCreateModal() {
-                    this.$refs['create-modal'].show();
+                deleteModal: {
+                    id: Number,
+                    mainCurrencyAbbrv: '',
+                    counterCurrencyAbbrv: ''
                 },
-                handleCreateOk(bvModalEvt) {
-                    bvModalEvt.preventDefault();
-                    this.onCreateSubmit();
-                },
-                async onCreateSubmit() {
-                    axios({
-                        method: 'POST',
-                        url: '/Admin/CurrencyPair/Create',
-                        data: this.createForm
-                    }).then(response => {
-                        console.log(response);
-                        this.currencyPairs.push(response.item);
-                    }).catch(error => {
-                        alert('Failed to create CurrencyPair');
-                        console.log(error);
-                    }).finally(() => {
-                        // Hide the modal manually
-                        this.$refs['create-modal'].hide();
-                    });
-                },
-                // Methods for edit modal
-                showEditModal(id, mainCurrencyAbbrv, counterCurrencyAbbrv, currencyPairType, apiUrl, sourceId,
-                defaultComponent, isEnabled) {
-                    this.editForm.id = id;
-                    this.editForm.mainCurrencyAbbrv = mainCurrencyAbbrv;
-                    this.editForm.counterCurrencyAbbrv = counterCurrencyAbbrv;
-                    this.editForm.currencyPairType = currencyPairType;
-                    this.editForm.apiUrl = apiUrl;
-                    this.editForm.sourceId = sourceId;
-                    this.editForm.defaultComponent = defaultComponent;
-                    this.editForm.isEnabled = isEnabled;
-
-                    this.$refs['edit-modal'].show();
-                },
-                handleEditOk(bvModalEvt) {
-                    // Prevent modal from closing
-                    bvModalEvt.preventDefault();
-                    // Trigger submit handler
-                    this.onEditSubmit();
-                },
-                async onEditSubmit() {
-                    axios({
-                        method: 'PUT',
-                        url: `/Admin/CurrencyPair/Update/${this.editForm.id}`,
-                        data: this.editForm
-                    }).then(response => {
-                        alert(response.data.message);
-                        this.currencyPairs.find((element, index) => {
-                            if (element.Id === this.editForm.id) {
-                                this.currencyPairs[index].mainCurrencyAbbrv = this.editForm.mainCurrencyAbbrv;
-                                this.currencyPairs[index].counterCurrencyAbbrv = this.editForm.counterCurrencyAbbrv;
-                                this.currencyPairs[index].currencyPairType = this.editForm.currencyPairType;
-                                this.currencyPairs[index].apiUrl = this.editForm.apiUrl;
-                                this.currencyPairs[index].sourceId = this.editForm.sourceId;
-                                this.currencyPairs[index].defaultComponent = this.editForm.defaultComponent;
-                                this.currencyPairs[index].isEnabled = this.editForm.isEnabled;
+                methods: {
+                    getSourceName(id) {
+                        const sources = this.sources;
+                        for (let i = 0; i < this.sources.length; i++) {
+                            if (this.sources[i].id === id) {
+                                return this.sources[i].name;
                             }
+                        }
+                    },
+                    showCreateModal() {
+                        this.$refs['create-modal'].show();
+                    },
+                    handleCreateOk(bvModalEvt) {
+                        bvModalEvt.preventDefault();
+                        this.onCreateSubmit();
+                    },
+                    async onCreateSubmit() {
+                        axios({
+                            method: 'POST',
+                            url: '/Admin/CurrencyPair/Create',
+                            data: this.createForm
+                        }).then(response => {
+                            console.log(response);
+                            this.currencyPairs.push(response.item);
+                        }).catch(error => {
+                            alert('Failed to create CurrencyPair');
+                            console.log(error);
+                        }).finally(() => {
+                            // Hide the modal manually
+                            this.$refs['create-modal'].hide();
                         });
-                    }).catch(error => {
-                        alert('Failed to edit CurrencyPair');
-                    }).finally(() => {
-                        //Hide the modal manually
-                        this.$refs['edit-modal'].hide();
-                    });
-                },
-                // Methods for delete modal
-                showDeleteModal(id, sourceName) {
-                    this.deleteModal.id = id;
-                    this.deleteModal.name = sourceName;
+                    },
+                    // Methods for edit modal
+                    showEditModal(id, mainCurrencyAbbrv, counterCurrencyAbbrv, currencyPairType, apiUrl, sourceId,
+                    defaultComponent, isEnabled) {
+                        this.editForm.id = id;
+                        this.editForm.mainCurrencyAbbrv = mainCurrencyAbbrv;
+                        this.editForm.counterCurrencyAbbrv = counterCurrencyAbbrv;
+                        this.editForm.currencyPairType = currencyPairType;
+                        this.editForm.apiUrl = apiUrl;
+                        this.editForm.sourceId = sourceId;
+                        this.editForm.defaultComponent = defaultComponent;
+                        this.editForm.isEnabled = isEnabled;
 
-                    this.$refs['delete-modal'].show();
-                },
-                async handleDeleteOk(bvModalEvt) {
-                    bvModalEvt.preventDefault();
+                        this.$refs['edit-modal'].show();
+                    },
+                    handleEditOk(bvModalEvt) {
+                        // Prevent modal from closing
+                        bvModalEvt.preventDefault();
+                        // Trigger submit handler
+                        this.onEditSubmit();
+                    },
+                    async onEditSubmit() {
+                        axios({
+                            method: 'PUT',
+                            url: `/Admin/CurrencyPair/Update/${this.editForm.id}`,
+                            data: this.editForm
+                        }).then(response => {
+                            alert(response.data.message);
+                            this.currencyPairs.find((element, index) => {
+                                if (element.Id === this.editForm.id) {
+                                    this.currencyPairs[index].mainCurrencyAbbrv = this.editForm.mainCurrencyAbbrv;
+                                    this.currencyPairs[index].counterCurrencyAbbrv = this.editForm.counterCurrencyAbbrv;
+                                    this.currencyPairs[index].currencyPairType = this.editForm.currencyPairType;
+                                    this.currencyPairs[index].apiUrl = this.editForm.apiUrl;
+                                    this.currencyPairs[index].sourceId = this.editForm.sourceId;
+                                    this.currencyPairs[index].defaultComponent = this.editForm.defaultComponent;
+                                    this.currencyPairs[index].isEnabled = this.editForm.isEnabled;
+                                }
+                            });
+                        }).catch(error => {
+                            alert('Failed to edit CurrencyPair');
+                        }).finally(() => {
+                            //Hide the modal manually
+                            this.$refs['edit-modal'].hide();
+                        });
+                    },
+                    // Methods for delete modal
+                    showDeleteModal(id, mainCurrencyAbbrv, counterCurrencyAbbrv) {
+                        this.deleteModal.id = id;
+                        this.deleteModal.mainCurrencyAbbrv = mainCurrencyAbbrv;
+                        this.deleteModal.counterCurrencyAbbrv = counterCurrencyAbbrv;
 
-                    const response = await fetch(`/Admin/Source/DeleteSource/${this.deleteModal.id}`,
-                        {
-                            method: 'DELETE'
+                        this.$refs['delete-modal'].show();
+                    },
+                    async handleDeleteOk(bvModalEvt) {
+                        bvModalEvt.preventDefault();
+
+                        axios({
+                            method: 'DELETE',
+                            url: `/Admin/CurrencyPair/Delete/${this.deleteForm.id}`
+                        }).then(response => {
+                            // Update the datatable
+                            const index = this.currencyPairs.findIndex(element => element.Id === this.deleteModal.Id);
+                            this.currencies.splice(index, 1);
+
+                            alert(response.data.message);
+                        }).catch(error => {
+                            console.log(error);
+                        }).finally(() => {
+                            this.$refs['delete-modal'].hide();
                         });
 
-                    if (response.status === 200) {
-                        // Update the datatable
-                        const index = this.sources.findIndex(element => element.Id === this.deleteModal.id);
-                        this.sources.splice(index, 1);
+                        const response = await fetch(`/Admin/Source/DeleteSource/${this.deleteModal.id}`,
+                            {
+                                method: 'DELETE'
+                            });
 
-                        alert(`Successfully deleted ${this.deleteModal.name}`);
-                    } else {
-                        alert("Delete failed");
+                        if (response.status === 200) {
+                            // Update the datatable
+                            const index = this.sources.findIndex(element => element.Id === this.deleteModal.id);
+                            this.sources.splice(index, 1);
+
+                            alert(`Successfully deleted ${this.deleteModal.name}`);
+                        } else {
+                            alert("Delete failed");
+                        }
+
+                        this.$refs['delete-modal'].hide();
                     }
-
-                    this.$refs['delete-modal'].hide();
                 }
-            }
-        })
+            })
     </script>
 
-}
+    }
