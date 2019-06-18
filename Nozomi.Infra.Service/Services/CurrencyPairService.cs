@@ -86,7 +86,19 @@ namespace Nozomi.Service.Services
 
         public NozomiResult<string> Update(UpdateCurrencyPair updateCurrencyPair, long userId = 0)
         {
-            if (updateCurrencyPair == null || !updateCurrencyPair.IsValid())
+            if (updateCurrencyPair == null || !updateCurrencyPair.IsValid()
+                || !_unitOfWork.GetRepository<CurrencySource>()
+                    .GetQueryable()
+                    .AsNoTracking()
+                    .Include(cs => cs.Currency)
+                    .Any(cs => cs.Currency.Abbreviation.Equals(updateCurrencyPair.MainCurrencyAbbrv)
+                        && cs.SourceId.Equals(updateCurrencyPair.SourceId))
+                || !_unitOfWork.GetRepository<CurrencySource>()
+                .GetQueryable()
+                .AsNoTracking()
+                .Include(cs => cs.Currency)
+                .Any(cs => cs.Currency.Abbreviation.Equals(updateCurrencyPair.CounterCurrencyAbbrv)
+                           && cs.SourceId.Equals(updateCurrencyPair.SourceId)))
                 return new NozomiResult<string>(
                     NozomiResultType.Failed, "Please ensure that the payload is valid");
 
@@ -94,9 +106,16 @@ namespace Nozomi.Service.Services
                 .Get(cp => cp.Id.Equals(updateCurrencyPair.Id) && cp.DeletedAt == null)
                 .SingleOrDefault();
 
-            if(cpToUpd == null)
+            if (cpToUpd == null || _unitOfWork.GetRepository<CurrencyPair>()
+                    .GetQueryable()
+                    .AsNoTracking()
+                    .Any(cp => !cp.Id.Equals(updateCurrencyPair.Id) 
+                               && cp.SourceId.Equals(updateCurrencyPair.SourceId)
+                               && cp.MainCurrencyAbbrv.Equals(cp.MainCurrencyAbbrv, StringComparison.InvariantCultureIgnoreCase)
+                               && cp.CounterCurrencyAbbrv.Equals(cp.CounterCurrencyAbbrv, StringComparison.InvariantCultureIgnoreCase)))
                 return new NozomiResult<string>(
-                    NozomiResultType.Failed, "Please ensure that the payload is valid");
+                    NozomiResultType.Failed, "Please ensure that the payload is valid and if the data you're " +
+                                             "submitting does not contain a pre-existing ticker pair.");
 
             cpToUpd.MainCurrencyAbbrv = updateCurrencyPair.MainCurrencyAbbrv;
             cpToUpd.CounterCurrencyAbbrv = updateCurrencyPair.CounterCurrencyAbbrv;
