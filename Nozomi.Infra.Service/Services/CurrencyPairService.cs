@@ -35,14 +35,42 @@ namespace Nozomi.Service.Services
                 APIUrl = createCurrencyPair.APIUrl,
                 DefaultComponent = createCurrencyPair.DefaultComponent,
                 SourceId = createCurrencyPair.SourceId,
-                MainCurrencyAbbrv = createCurrencyPair.MainCurrency.Abbreviation,
-                CounterCurrencyAbbrv = createCurrencyPair.CounterCurrency.Abbreviation
+                MainCurrencyAbbrv = createCurrencyPair.MainCurrencyAbbrv,
+                CounterCurrencyAbbrv = createCurrencyPair.CounterCurrencyAbbrv,
+                IsEnabled = createCurrencyPair.IsEnabled
             };
             
             _unitOfWork.GetRepository<CurrencyPair>().Add(currencyPair);
             _unitOfWork.Commit(userId);
 
             return new NozomiResult<string>(NozomiResultType.Success, "CurrencyPair successfully created");
+        }
+
+        public NozomiResult<string> Update(UpdateCurrencyPair updateCurrencyPair, long userId = 0)
+        {
+            if (updateCurrencyPair == null || !updateCurrencyPair.IsValid())
+                return new NozomiResult<string>(
+                    NozomiResultType.Failed, "Please ensure that the payload is valid");
+
+            var cpToUpd = _unitOfWork.GetRepository<CurrencyPair>()
+                .Get(cp => cp.Id.Equals(updateCurrencyPair.Id) && cp.DeletedAt == null)
+                .SingleOrDefault();
+
+            if(cpToUpd == null)
+                return new NozomiResult<string>(
+                    NozomiResultType.Failed, "Please ensure that the payload is valid");
+
+            cpToUpd.MainCurrencyAbbrv = updateCurrencyPair.MainCurrencyAbbrv;
+            cpToUpd.CounterCurrencyAbbrv = updateCurrencyPair.CounterCurrencyAbbrv;
+            cpToUpd.SourceId = updateCurrencyPair.SourceId;
+            cpToUpd.APIUrl = updateCurrencyPair.APIUrl;
+            cpToUpd.DefaultComponent = updateCurrencyPair.DefaultComponent;
+            cpToUpd.IsEnabled = updateCurrencyPair.IsEnabled;
+            
+            _unitOfWork.GetRepository<CurrencyPair>().Update(cpToUpd);
+            _unitOfWork.Commit(userId);
+            
+            return new NozomiResult<string>(NozomiResultType.Success, "CurrencyPair successfully updated!");
         }
 
         public bool Delete(long currencyPairId, long userId = 0, bool hardDelete = false)
