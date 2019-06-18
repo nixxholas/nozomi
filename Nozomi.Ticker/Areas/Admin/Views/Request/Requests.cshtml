@@ -208,7 +208,7 @@
                 },
                 getResponseTypeStr(val) {
                     if (this.responseTypes != null) {
-                        for (i = 0; i < this.responseTypes.length; i++) {
+                        for (let i = 0; i < this.responseTypes.length; i++) {
                             if (this.responseTypes[i].value === val) {
                                 return this.responseTypes[i].text;
                             }
