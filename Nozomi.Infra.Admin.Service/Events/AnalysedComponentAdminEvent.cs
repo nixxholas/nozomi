@@ -115,7 +115,48 @@ namespace Nozomi.Infra.Admin.Service.Events
 
         public ICollection<AnalysedComponentDto> GetAllByCurrencyType(long currencyTypeId, bool track = false)
         {
-            throw new System.NotImplementedException();
+            var query = _unitOfWork.GetRepository<AnalysedComponent>()
+                .GetQueryable()
+                .AsNoTracking()
+                .Where(ac => ac.CurrencyTypeId.Equals(currencyTypeId));
+
+            if (track)
+            {
+                query = query.Include(ac => ac.AnalysedHistoricItems);
+            }
+            
+            return query
+                .Select(ac => new AnalysedComponentDto
+                {
+                    Id = ac.Id,
+                    ComponentType = ac.ComponentType,
+                    Value = ac.Value,
+                    IsDenominated = ac.IsDenominated,
+                    Delay = ac.Delay,
+                    IsEnabled = ac.IsEnabled,
+                    CreatedAt = ac.CreatedAt,
+                    CreatedBy = ac.CreatedBy,
+                    ModifiedAt = ac.ModifiedAt,
+                    ModifiedBy = ac.ModifiedBy,
+                    DeletedAt = ac.DeletedAt,
+                    DeletedBy = ac.DeletedBy,
+                    AnalysedHistoricItems = ac.AnalysedHistoricItems
+                        .Select(ahi => new AnalysedHistoricItemDto
+                        {
+                            Id = ahi.Id,
+                            Value = ahi.Value,
+                            HistoricDateTime = ahi.HistoricDateTime,
+                            IsEnabled = ahi.IsEnabled,
+                            CreatedAt = ahi.CreatedAt,
+                            CreatedBy = ahi.CreatedBy,
+                            ModifiedAt = ahi.ModifiedAt,
+                            ModifiedBy = ahi.ModifiedBy,
+                            DeletedAt = ahi.DeletedAt,
+                            DeletedBy = ahi.DeletedBy
+                        })
+                        .ToList()
+                })
+                .ToList();
         }
     }
 }
