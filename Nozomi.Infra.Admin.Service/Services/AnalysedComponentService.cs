@@ -56,5 +56,28 @@ namespace Nozomi.Infra.Admin.Service.Services
             
             return long.MinValue;
         }
+
+        public bool Update(UpdateAnalysedComponent analysedComponent, long userId = 0)
+        {
+            var query = _unitOfWork.GetRepository<AnalysedComponent>()
+                .GetQueryable()
+                .AsTracking()
+                .SingleOrDefault(ac => ac.DeletedAt == null && ac.Id.Equals(analysedComponent.Id));
+
+            if (query != null)
+            {
+                query.ComponentType = analysedComponent.ComponentType;
+                query.IsDenominated = analysedComponent.IsDenominated;
+                query.Delay = analysedComponent.Delay;
+                query.IsEnabled = analysedComponent.IsEnabled;
+                query.UIFormatting = analysedComponent.UIFormatting;
+
+                _unitOfWork.Commit(userId);
+
+                return true;
+            }
+            
+            return false;
+        }
     }
 }

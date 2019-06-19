@@ -6,5 +6,7 @@ namespace Nozomi.Infra.Admin.Service.Services.Interfaces
     public interface IAnalysedComponentService
     {
         long Create(CreateAnalysedComponent analysedComponent, long userId = 0);
+
+        bool Update(UpdateAnalysedComponent analysedComponent, long userId = 0);
     }
 }
