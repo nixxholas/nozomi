@@ -10,12 +10,12 @@ using Nozomi.Repo.Data;
 
 namespace Nozomi.Infra.Analysis.Service.Services
 {
-    public class AnalysedComponentService : BaseService<AnalysedComponentService, NozomiDbContext>, 
-        IAnalysedComponentService
+    public class ProcessAnalysedComponentService : BaseService<ProcessAnalysedComponentService, NozomiDbContext>, 
+        IProcessAnalysedComponentService
     {
         private readonly IAnalysedHistoricItemService _analysedHistoricItemService;
         
-        public AnalysedComponentService(ILogger<AnalysedComponentService> logger, 
+        public ProcessAnalysedComponentService(ILogger<ProcessAnalysedComponentService> logger, 
             IAnalysedHistoricItemService analysedHistoricItemService, IUnitOfWork<NozomiDbContext> unitOfWork) 
             : base(logger, unitOfWork)
         {

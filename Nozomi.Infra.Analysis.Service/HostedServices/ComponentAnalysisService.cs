@@ -33,7 +33,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
         private const string ServiceName = "ComponentAnalysisService";
         private readonly IAnalysedComponentEvent _analysedComponentEvent;
         private readonly IAnalysedHistoricItemEvent _analysedHistoricItemEvent;
-        private readonly IAnalysedComponentService _analysedComponentService;
+        private readonly IProcessAnalysedComponentService _processAnalysedComponentService;
         private readonly IAnalysedHistoricItemService _analysedHistoricItemService;
         private readonly IXAnalysedComponentEvent _xAnalysedComponentEvent;
         private readonly ICurrencyEvent _currencyEvent;
@@ -45,7 +45,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
         {
             _analysedComponentEvent = _scope.ServiceProvider.GetRequiredService<IAnalysedComponentEvent>();
             _analysedHistoricItemEvent = _scope.ServiceProvider.GetRequiredService<IAnalysedHistoricItemEvent>();
-            _analysedComponentService = _scope.ServiceProvider.GetRequiredService<IAnalysedComponentService>();
+            _processAnalysedComponentService = _scope.ServiceProvider.GetRequiredService<IProcessAnalysedComponentService>();
             _xAnalysedComponentEvent = _scope.ServiceProvider.GetRequiredService<IXAnalysedComponentEvent>();
             _analysedHistoricItemService = _scope.ServiceProvider.GetRequiredService<IAnalysedHistoricItemService>();
             _currencyEvent = _scope.ServiceProvider.GetRequiredService<ICurrencyEvent>();
@@ -153,7 +153,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                 {
                                     var marketCap = marketCapByCurrencies.Sum(item => item.Value);
 
-                                    return _analysedComponentService.UpdateValue(component.Id,
+                                    return _processAnalysedComponentService.UpdateValue(component.Id,
                                         marketCap.ToString(CultureInfo.InvariantCulture));
                                 }
                             }
@@ -187,7 +187,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
 
                                     if (!decimal.Zero.Equals(marketCap))
                                     {
-                                        return _analysedComponentService.UpdateValue(component.Id, marketCap.ToString());
+                                        return _processAnalysedComponentService.UpdateValue(component.Id, marketCap.ToString());
                                     }
                                 }
                             }
@@ -213,7 +213,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
 
                                 if (!decimal.Zero.Equals(marketCap))
                                 {
-                                    return _analysedComponentService.UpdateValue(component.Id, marketCap.ToString());
+                                    return _processAnalysedComponentService.UpdateValue(component.Id, marketCap.ToString());
                                 }
                             }
                         }
@@ -256,7 +256,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
 
                                 if (!decimal.Zero.Equals(avgPrice))
                                 {
-                                    return _analysedComponentService.UpdateValue(component.Id, 
+                                    return _processAnalysedComponentService.UpdateValue(component.Id, 
                                         avgPrice.ToString(CultureInfo.InvariantCulture));
                                 }
                             }
@@ -283,7 +283,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
 
                                 if (!decimal.Zero.Equals(avgPrice))
                                 {
-                                    return _analysedComponentService.UpdateValue(component.Id, 
+                                    return _processAnalysedComponentService.UpdateValue(component.Id, 
                                         avgPrice.ToString(CultureInfo.InvariantCulture));
                                 }
                             }
@@ -323,7 +323,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
 
                                     if (!(currAvgPrice <= decimal.Zero))
                                     {
-                                        return _analysedComponentService.UpdateValue(component.Id,
+                                        return _processAnalysedComponentService.UpdateValue(component.Id,
                                             currAvgPrice.ToString(CultureInfo.InvariantCulture));
                                     }
                                 }
@@ -354,7 +354,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
 
                                     if (!(avgPrice <= decimal.Zero))
                                     {
-                                        return _analysedComponentService.UpdateValue(component.Id, avgPrice.ToString());
+                                        return _processAnalysedComponentService.UpdateValue(component.Id, avgPrice.ToString());
                                     }
                                 }
                             }
@@ -385,7 +385,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                         .DefaultIfEmpty()
                                         .Average(ahi => decimal.Parse(ahi.Value)));
 
-                                return _analysedComponentService.UpdateValue(component.Id,
+                                return _processAnalysedComponentService.UpdateValue(component.Id,
                                     currAvgPrice.ToString(CultureInfo.InvariantCulture));
                             }
                         }
@@ -410,7 +410,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                         .DefaultIfEmpty()
                                         .Average(ahi => decimal.Parse(ahi.Value)));
 
-                                return _analysedComponentService.UpdateValue(component.Id, avgPrice
+                                return _processAnalysedComponentService.UpdateValue(component.Id, avgPrice
                                     .ToString(CultureInfo.InvariantCulture));
                             }
                         }
@@ -441,7 +441,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                         .DefaultIfEmpty()
                                         .Average(ahi => decimal.Parse(ahi.Value)));
 
-                                return _analysedComponentService.UpdateValue(component.Id,
+                                return _processAnalysedComponentService.UpdateValue(component.Id,
                                     currAvgPrice.ToString(CultureInfo.InvariantCulture));
                             }
                         }
@@ -466,7 +466,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                         .DefaultIfEmpty()
                                         .Average(ahi => decimal.Parse(ahi.Value)));
 
-                                return _analysedComponentService.UpdateValue(component.Id, avgPrice
+                                return _processAnalysedComponentService.UpdateValue(component.Id, avgPrice
                                     .ToString(CultureInfo.InvariantCulture));
                             }
                         }
@@ -497,7 +497,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                         .DefaultIfEmpty()
                                         .Average(ahi => decimal.Parse(ahi.Value)));
 
-                                return _analysedComponentService.UpdateValue(component.Id,
+                                return _processAnalysedComponentService.UpdateValue(component.Id,
                                     currAvgPrice.ToString(CultureInfo.InvariantCulture));
                             }
                         }
@@ -522,7 +522,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                         .DefaultIfEmpty()
                                         .Average(ahi => decimal.Parse(ahi.Value)));
 
-                                return _analysedComponentService.UpdateValue(component.Id, avgPrice
+                                return _processAnalysedComponentService.UpdateValue(component.Id, avgPrice
                                     .ToString(CultureInfo.InvariantCulture));
                             }
                         }
@@ -568,7 +568,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                         // Now we can aggregate this
                                         if (increase != decimal.Zero)
                                         {
-                                            return _analysedComponentService.UpdateValue(component.Id,
+                                            return _processAnalysedComponentService.UpdateValue(component.Id,
                                                 increase.ToString(CultureInfo.InvariantCulture));
                                         }
                                     }
@@ -613,7 +613,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                         // Now we can aggregate this
                                         if (increase != decimal.Zero)
                                         {
-                                            return _analysedComponentService.UpdateValue(component.Id,
+                                            return _processAnalysedComponentService.UpdateValue(component.Id,
                                                 increase.ToString(CultureInfo.InvariantCulture));
                                         }
                                     }
@@ -661,7 +661,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                         // Now we can aggregate this
                                         if (increase != decimal.Zero)
                                         {
-                                            return _analysedComponentService.UpdateValue(component.Id,
+                                            return _processAnalysedComponentService.UpdateValue(component.Id,
                                                 increase.ToString(CultureInfo.InvariantCulture));
                                         }
                                     }
@@ -706,7 +706,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                         // Now we can aggregate this
                                         if (increase != decimal.Zero)
                                         {
-                                            return _analysedComponentService.UpdateValue(component.Id,
+                                            return _processAnalysedComponentService.UpdateValue(component.Id,
                                                 increase.ToString(CultureInfo.InvariantCulture));
                                         }
                                     }
@@ -753,7 +753,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
 
                                 if (!(currAvgVol <= decimal.Zero))
                                 {
-                                    return _analysedComponentService.UpdateValue(component.Id,
+                                    return _processAnalysedComponentService.UpdateValue(component.Id,
                                         currAvgVol.ToString(CultureInfo.InvariantCulture));
                                 }
                             }
@@ -784,7 +784,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
 
                                 if (!decimal.Zero.Equals(avgVol))
                                 {
-                                    return _analysedComponentService.UpdateValue(component.Id, avgVol
+                                    return _processAnalysedComponentService.UpdateValue(component.Id, avgVol
                                         .ToString(CultureInfo.InvariantCulture));
                                 }
                             }
@@ -796,7 +796,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                 }
                 
                 // Pop
-                _analysedComponentService.Checked(component.Id);
+                _processAnalysedComponentService.Checked(component.Id);
             }
 
             return false;

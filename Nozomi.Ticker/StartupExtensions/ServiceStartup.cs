@@ -22,6 +22,7 @@ using Nozomi.Service.Services.Enumerators.Interfaces;
 using Nozomi.Service.Services.Interfaces;
 using Nozomi.Service.Services.Requests;
 using Nozomi.Service.Services.Requests.Interfaces;
+using AnalysedComponentService = Nozomi.Infra.Admin.Service.Services.AnalysedComponentService;
 
 namespace Nozomi.Ticker.StartupExtensions
 {
@@ -61,7 +62,7 @@ namespace Nozomi.Ticker.StartupExtensions
             
             // TODO: Microservice
             // Nozomi.Analysis Service injections
-            services.AddTransient<IAnalysedComponentService, AnalysedComponentService>();
+            services.AddTransient<IProcessAnalysedComponentService, ProcessAnalysedComponentService>();
             services.AddTransient<IAnalysedHistoricItemService, AnalysedHistoricItemService>();
         }
     }

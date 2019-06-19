@@ -30,7 +30,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
         private readonly ICurrencyPairEvent _currencyPairEvent;
         private readonly IRequestComponentEvent _requestComponentEvent;
         private readonly IXAnalysedComponentEvent _xAnalysedComponentEvent;
-        private readonly IAnalysedComponentService _analysedComponentService;
+        private readonly IProcessAnalysedComponentService _processAnalysedComponentService;
 
         public AcAnalysisHostedService(IServiceProvider serviceProvider) : base(serviceProvider)
         {
@@ -40,7 +40,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
             _currencyPairEvent = _scope.ServiceProvider.GetRequiredService<ICurrencyPairEvent>();
             _requestComponentEvent = _scope.ServiceProvider.GetRequiredService<IRequestComponentEvent>();
             _xAnalysedComponentEvent = _scope.ServiceProvider.GetRequiredService<IXAnalysedComponentEvent>();
-            _analysedComponentService = _scope.ServiceProvider.GetRequiredService<IAnalysedComponentService>();
+            _processAnalysedComponentService = _scope.ServiceProvider.GetRequiredService<IProcessAnalysedComponentService>();
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -126,7 +126,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                                 Value = obtainedComponent.Value
                                             });
 
-                                        return _analysedComponentService.UpdateValue(entity.Id,
+                                        return _processAnalysedComponentService.UpdateValue(entity.Id,
                                             obtainedComponent.AnalysedHistoricItems
                                                 .Select(ahi => decimal.Parse(ahi.Value))
                                                 .ToList()
@@ -181,7 +181,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                         {
                                             var marketCap = marketCapByCurrencies.Sum(item => item.Value);
 
-                                            return _analysedComponentService.UpdateValue(entity.Id,
+                                            return _processAnalysedComponentService.UpdateValue(entity.Id,
                                                 marketCap.ToString(CultureInfo.InvariantCulture));
                                         }
                                     }
@@ -215,7 +215,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
 
                                     if (!decimal.Zero.Equals(marketCap))
                                     {
-                                        return _analysedComponentService.UpdateValue(entity.Id, marketCap
+                                        return _processAnalysedComponentService.UpdateValue(entity.Id, marketCap
                                             .ToString(CultureInfo.InvariantCulture));
                                     }
                                 }
@@ -243,7 +243,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
 
                                 if (!decimal.Zero.Equals(marketCap))
                                 {
-                                    return _analysedComponentService.UpdateValue(entity.Id, marketCap
+                                    return _processAnalysedComponentService.UpdateValue(entity.Id, marketCap
                                         .ToString(CultureInfo.InvariantCulture));
                                 }
                             }
@@ -317,7 +317,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                             // Update!
                             if (!decimal.Zero.Equals(avgPrice))
                             {
-                                return _analysedComponentService.UpdateValue(entity.Id,
+                                return _processAnalysedComponentService.UpdateValue(entity.Id,
                                     avgPrice.ToString(CultureInfo.InvariantCulture));
                             }
 
@@ -372,7 +372,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
 
                             if (!decimal.Zero.Equals(avgPrice))
                             {
-                                return _analysedComponentService.UpdateValue(entity.Id,
+                                return _processAnalysedComponentService.UpdateValue(entity.Id,
                                     avgPrice.ToString(CultureInfo.InvariantCulture));
                             }
 
@@ -442,7 +442,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                             // Update!
                             if (!decimal.Zero.Equals(avgPrice))
                             {
-                                return _analysedComponentService.UpdateValue(entity.Id,
+                                return _processAnalysedComponentService.UpdateValue(entity.Id,
                                     avgPrice.ToString(CultureInfo.InvariantCulture));
                             }
 
@@ -510,7 +510,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
 
                             if (!decimal.Zero.Equals(avgPrice))
                             {
-                                return _analysedComponentService.UpdateValue(entity.Id,
+                                return _processAnalysedComponentService.UpdateValue(entity.Id,
                                     avgPrice.ToString(CultureInfo.InvariantCulture));
                             }
 
@@ -580,7 +580,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                             // Update!
                             if (!decimal.Zero.Equals(avgPrice))
                             {
-                                return _analysedComponentService.UpdateValue(entity.Id,
+                                return _processAnalysedComponentService.UpdateValue(entity.Id,
                                     avgPrice.ToString(CultureInfo.InvariantCulture));
                             }
 
@@ -648,7 +648,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
 
                             if (!decimal.Zero.Equals(avgPrice))
                             {
-                                return _analysedComponentService.UpdateValue(entity.Id,
+                                return _processAnalysedComponentService.UpdateValue(entity.Id,
                                     avgPrice.ToString(CultureInfo.InvariantCulture));
                             }
 
@@ -756,7 +756,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                         // Update!
                                         if (!decimal.Zero.Equals(compute))
                                         {
-                                            return _analysedComponentService.UpdateValue(entity.Id,
+                                            return _processAnalysedComponentService.UpdateValue(entity.Id,
                                                 compute.ToString(CultureInfo.InvariantCulture));
                                         }
                                     }
@@ -802,7 +802,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                         // Update!
                                         if (!decimal.Zero.Equals(compute))
                                         {
-                                            return _analysedComponentService.UpdateValue(entity.Id,
+                                            return _processAnalysedComponentService.UpdateValue(entity.Id,
                                                 compute.ToString(CultureInfo.InvariantCulture));
                                         }
                                     }
@@ -824,7 +824,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                         break;
                 }
 
-                _analysedComponentService.Checked(entity.Id);
+                _processAnalysedComponentService.Checked(entity.Id);
             }
 
             _logger.LogCritical($"[{ServiceName}] Analyse: Critical error here. Wow.");

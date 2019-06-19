@@ -43,7 +43,7 @@ namespace Nozomi.Analysis.StartupExtensions
             services.AddTransient<INozomiUserStore, NozomiUserStore>();
             
             // Nozomi.Analysis Service injections
-            services.AddTransient<IAnalysedComponentService, AnalysedComponentService>();
+            services.AddTransient<IProcessAnalysedComponentService, ProcessAnalysedComponentService>();
             services.AddTransient<IAnalysedHistoricItemService, AnalysedHistoricItemService>();
         }
     }
