@@ -53,6 +53,7 @@ namespace Nozomi.Ticker.StartupExtensions
             services.AddScoped<IStripeService, StripeService>();
             
             // Admin Service Injections
+            services.AddTransient<IAnalysedComponentService, AnalysedComponentService>();
             services.AddScoped<ICurrencyAdminEvent, CurrencyAdminEvent>();
             services.AddTransient<ICurrencyPropertyService, CurrencyPropertyService>();
             services.AddScoped<ICurrencyPairSourceCurrencyAdminEvent, CurrencyPairSourceCurrencyAdminEvent>();
