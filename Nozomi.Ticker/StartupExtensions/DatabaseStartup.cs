@@ -142,7 +142,7 @@ namespace Nozomi.Ticker.StartupExtensions
 
                         context.Database.EnsureCreated();
                     }
-                    else
+                    else if (context.Database.GetPendingMigrations().Any())
                     {
                         context.Database.Migrate();
                     }
