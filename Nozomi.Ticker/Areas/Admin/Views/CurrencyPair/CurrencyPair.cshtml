@@ -1,0 +1,164 @@
+@using Newtonsoft.Json
+@using Newtonsoft.Json.Serialization
+@model Nozomi.Base.Identity.ViewModels.Manage.CurrencyPair.CurrencyPairViewModel
+
+<!-- Content Section -->
+<div class="bg-light">
+    <div class="container space-2">
+        <h3 class="mb-6">Currency Pair</h3>
+
+        <b-form v-on:submit.stop.prevent="onCPEditSubmit">
+            <b-form-group label="Main Currency">
+                <b-form-select v-model="editForm.mainCurrencyAbbrv">
+                    <option v-for="currency in currencies"
+                            :key="currency.name"
+                            :value="currency.abbreviation">
+                        {{ currency.name }}
+                    </option>
+                </b-form-select>
+            </b-form-group>
+
+            <b-form-group label="Counter Currency">
+                <b-form-select v-model="editForm.counterCurrencyAbbrv">
+                    <option v-for="currency in currencies"
+                            :key="currency.name"
+                            :value="currency.abbreviation">
+                        {{ currency.name }}
+                    </option>
+                </b-form-select>
+            </b-form-group>
+
+            <b-form-group label="Currency Pair Type">
+                <b-form-select v-model="editForm.currencyPairType">
+                    <option v-for="currencyPairType in currencyPairTypes"
+                            :key="currencyPairType.key"
+                            :value="currencyPairType.value">
+                        {{ currencyPairType.key}}
+                    </option>
+                </b-form-select>
+            </b-form-group>
+
+            <b-form-group label="Source">
+                <b-form-select v-model="editForm.sourceId">
+                    <option v-for="source in sources"
+                            :key="source.name"
+                            :value="source.id">
+                        {{ source.name }}
+                    </option>
+                </b-form-select>
+            </b-form-group>
+
+            <b-form-group label="API Url">
+                <b-form-input
+                    v-model="editForm.apiUrl"
+                    required
+                    type="url"
+                    placeholder="Enter Api Url ">
+                </b-form-input>
+            </b-form-group>
+
+            <b-form-group label="Default Component">
+                <b-form-input
+                    v-model="editForm.defaultComponent"
+                    required
+                    type="url"
+                    placeholder="Enter Default Component ">
+                </b-form-input>
+            </b-form-group>
+
+            <b-form-group>
+                <b-form-checkbox v-model="editForm.isEnabled">Is Enabled</b-form-checkbox>
+            </b-form-group>
+            <b-button variant="primary" class="mb-3" type="submit">Save Changes</b-button>
+        </b-form>
+
+        <hr/>
+
+        <h3 class="mb-6">Analysed Component</h3>
+        @* Table for analysedComponent *@
+        <b-table :items="currencyPair.AnalysedComponents" :fields="analysedComponentsDataFields">
+            <template slot="AnalysedComponentType" slot-scope="datum">
+                {{ getAnalysedComponentTypeStr(datum.item.ComponentType) }}
+            </template>
+            <template slot="Delay" slot-scope="datum">
+                {{ datum.item.Delay }}
+            </template>
+            <template slot="IsDenominated" slot-scope="datum">
+                {{ datum.item.IsDenominated }}
+            </template>
+            <template slot="AnalysedComponentValue" slot-scope="datum">
+                {{ datum.item.Value }}
+            </template>
+        </b-table>
+    </div>
+</div>
+
+@section Scripts
+{
+    <script>
+        const vm = new Vue({
+            el: '#content',
+            data: {
+                analysedComponentsDataFields: [
+                    {
+                        key: 'AnalysedComponentType',
+                        label: 'Component Type',
+                        sortable: true,
+                    },
+                    {
+                        key: 'Delay',
+                        label: 'Delay',
+                        sortable: true,
+                    },
+                    {
+                        key: 'IsDenominated',
+                        label: 'Denominated',
+                        sortable: true,
+                    },
+                    {
+                        key: 'AnalysedComponentValue',
+                        label: 'Value',
+                        sortable: true,
+                    }
+                ],
+                currencyPair:
+                    @Html.Raw(JsonConvert.SerializeObject(@Model.CurrencyPair, Formatting.Indented, new JsonSerializerSettings
+                    {
+                        ContractResolver = new CamelCasePropertyNamesContractResolver()
+                    })),
+                editCPForm: {
+                    id: @Model.CurrencyPair.Id,
+                    mainCurrencyAbbrv: '@Model.CurrencyPair.MainCurrencyAbbrv',
+                    counterCurrencyAbbrv: '@Model.CurrencyPair.CounterCurrencyAbbrv',
+                    apiUrl: '@Model.CurrencyPair.APIUrl',
+                    defaultComponent: '@Model.CurrencyPair.DefaultComponent',
+                    sourceId: @Model.CurrencyPair.SourceId,
+                    isEnabled: @Model.CurrencyPair.IsEnabled,
+                },
+            },
+            methods: {
+                onCPEditSubmit() {
+                    axios({
+                        method: 'PUT',
+                        url: `/Admin/CurrencyPair/Update/${this.editCPForm.id}`,
+                        data: this.editCPForm
+                    }).then(response => {
+                        alert(response.data.message);
+                    }).catch(error => {
+                        alert('Failed to edit CurrencyPair');
+                    });
+                },
+                getAnalysedComponentTypeStr(val) {
+                    if (this.analysedComponentTypes != null) {
+                        for (let i = 0; i < this.analysedComponentTypes.length; i++) {
+                            if (this.analysedComponentTypes[i].value === val) {
+                                return this.analysedComponentTypes[i].key;
+                            }
+                        }
+                    }
+                    return null;
+                },
+            }
+        })
+    </script>
+}
