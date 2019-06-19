@@ -11,7 +11,7 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
         public CurrencyPairMap(EntityTypeBuilder<CurrencyPair> entityTypeBuilder) : base(entityTypeBuilder)
         {
             entityTypeBuilder.HasKey(cp => cp.Id).HasName("CurrencyPair_PK_Id");
-            entityTypeBuilder.Property(cp => cp.Id).ValueGeneratedOnAdd();
+            entityTypeBuilder.Property(cp => cp.Id).HasDefaultValueSql("nextval('\"Id\"')");
 
             entityTypeBuilder.HasAlternateKey(cp => new
             {

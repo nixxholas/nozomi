@@ -40,7 +40,9 @@ namespace Nozomi.Analysis
                 // Postgres DB Setup
                 var str = Configuration.GetConnectionString("Local:" + @Environment.MachineName);
 
-                services.AddDbContext<NozomiDbContext>(options =>
+                services
+                    .AddEntityFrameworkNpgsql()
+                    .AddDbContext<NozomiDbContext>(options =>
                     {
                         options.UseNpgsql(str);
                         options.EnableSensitiveDataLogging();
@@ -48,7 +50,9 @@ namespace Nozomi.Analysis
                     },
                     ServiceLifetime.Transient);
 
-                services.AddDbContext<NozomiAuthContext>(options =>
+                services
+                    .AddEntityFrameworkNpgsql()
+                    .AddDbContext<NozomiAuthContext>(options =>
                 {
                     options.UseNpgsql(Configuration.GetConnectionString("LocalAuth:" + Environment.MachineName));
                     options.EnableSensitiveDataLogging(false);

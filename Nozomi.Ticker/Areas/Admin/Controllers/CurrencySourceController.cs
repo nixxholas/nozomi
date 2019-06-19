@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data;
+using Nozomi.Data.AreaModels.v1.CurrencySource;
 using Nozomi.Data.Models.Currency;
 using Nozomi.Service.Identity.Managers;
 using Nozomi.Service.Services.Interfaces;
@@ -26,7 +27,7 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
         #region POST Create
 
         [HttpPost]
-        public async Task<IActionResult> Create(CurrencySource currencySource)
+        public async Task<IActionResult> Create(CreateCurrencySource currencySource)
         {
             var user = await GetCurrentUserAsync();
             if (user == null)
@@ -34,7 +35,10 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
                 return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
 
-            var result = _currencySourceService.Create(currencySource);
+            if (!ModelState.IsValid)
+                return BadRequest("Please submit proper request data.");
+
+            var result = _currencySourceService.Create(currencySource, user.Id);
 
             if (result.ResultType.Equals(NozomiResultType.Success)) return Ok(result);
 

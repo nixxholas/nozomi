@@ -9,6 +9,9 @@ namespace Nozomi.Service.Events.Interfaces
     {
         ICollection<CurrencyPair> GetAllByCounterCurrency(
             string counterCurrencyAbbrv = CoreConstants.GenericCounterCurrency);
+        
+        ICollection<CurrencyPair> GetAllByMainCurrency(
+            string mainCurrencyAbbrv = CoreConstants.GenericCurrency);
 
         ICollection<CurrencyPair> GetAllByTickerPairAbbreviation(string tickerPairAbbreviation, bool track = false);
 
@@ -23,5 +26,8 @@ namespace Nozomi.Service.Events.Interfaces
         AnalysedComponent GetRelatedAnalysedComponent(long analysedComponentId, AnalysedComponentType type, bool track = false);
 
         ICollection<AnalysedComponent> GetAnalysedComponents(long analysedComponentId, bool track = false);
+        ICollection<CurrencyPair> GetAll();
+
+        CurrencyPair Get(long id, long userId = 0);
     }
 }

@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Nozomi.Base.Identity.ViewModels.Manage;
 using Nozomi.Data;
-using Nozomi.Data.AreaModels.v1.CurrencySource;
+using Nozomi.Data.AreaModels.v1.Source;
 using Nozomi.Service.Events.Interfaces;
 using Nozomi.Service.Identity.Managers;
 using Nozomi.Service.Services.Interfaces;
@@ -77,11 +77,14 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
                 return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
 
-            var result = _sourceService.Create(createSource);
+            if (!ModelState.IsValid)
+                return BadRequest("Invalid payload, please provide the missing properties.");
+
+            var result = _sourceService.Create(createSource, user.Id);
             
             if (result.ResultType.Equals(NozomiResultType.Success)) return Ok(result);
 
-            return NotFound();
+            return BadRequest(result);
         }
         
         #endregion

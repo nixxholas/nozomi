@@ -1,7 +1,9 @@
 using System;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data;
+using Nozomi.Data.AreaModels.v1.CurrencySource;
 using Nozomi.Data.Models.Currency;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.BCL.Repository;
@@ -17,10 +19,17 @@ namespace Nozomi.Service.Services
         {
         }
 
-        public NozomiResult<string> Create(CurrencySource currencySource, long userId = 0)
+        public NozomiResult<string> Create(CreateCurrencySource currencySource, long userId = 0)
         {
             try
             {
+                if (_unitOfWork.GetRepository<CurrencySource>()
+                    .GetQueryable()
+                    .AsNoTracking()
+                    .Any(cs => cs.CurrencyId.Equals(currencySource.CurrencyId)
+                               && cs.SourceId.Equals(currencySource.SourceId)))
+                    return new NozomiResult<string>(NozomiResultType.Failed, "Source to currency binding already exists.");
+                
                 _unitOfWork.GetRepository<CurrencySource>().Add(new CurrencySource
                 {
                     CurrencyId = currencySource.CurrencyId,

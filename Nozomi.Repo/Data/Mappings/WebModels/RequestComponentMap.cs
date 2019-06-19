@@ -13,7 +13,7 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
         public RequestComponentMap(EntityTypeBuilder<RequestComponent> entityTypeBuilder) : base(entityTypeBuilder)
         {
             entityTypeBuilder.HasKey(rc => rc.Id).HasName("RequestComponent_PK_Id");
-            entityTypeBuilder.Property(rc => rc.Id).ValueGeneratedOnAdd();
+            entityTypeBuilder.Property(rc => rc.Id).HasDefaultValueSql("nextval('\"Id\"')");
 
             entityTypeBuilder.HasIndex(rc => new {rc.RequestId, rc.ComponentType})
                 .HasName("RequestComponent_AK_RequestId_ComponentType").IsUnique();

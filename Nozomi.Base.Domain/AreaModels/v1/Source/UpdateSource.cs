@@ -1,9 +1,8 @@
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
-namespace Nozomi.Data.AreaModels.v1.CurrencySource
+namespace Nozomi.Data.AreaModels.v1.Source
 {
     public class UpdateSource : CreateSource
     {

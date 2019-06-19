@@ -1,7 +1,4 @@
-using System;
-using System.Linq.Expressions;
-
-namespace Nozomi.Data.AreaModels.v1.CurrencySource
+namespace Nozomi.Data.AreaModels.v1.Source
 {
     public class DeleteSource
     {

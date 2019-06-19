@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using Nozomi.Data;
-using Nozomi.Data.AreaModels.v1.CurrencySource;
+using Nozomi.Data.AreaModels.v1.Source;
 
 namespace Nozomi.Service.Services.Interfaces
 {
     public interface ISourceService
     {
-        NozomiResult<string> Create(CreateSource createSource);
+        NozomiResult<string> Create(CreateSource createSource, long userId = 0);
 
         bool Update(UpdateSource updateSource);
 
