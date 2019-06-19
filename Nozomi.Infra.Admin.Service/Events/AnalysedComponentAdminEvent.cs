@@ -17,17 +17,17 @@ namespace Nozomi.Infra.Admin.Service.Events
         {
         }
 
-        public ICollection<AnalysedComponentDto> GetAllByCurrency(long currencyId)
+        public ICollection<AnalysedComponentDto> GetAllByCurrency(long currencyId, bool track = false)
         {
             throw new System.NotImplementedException();
         }
 
-        public ICollection<AnalysedComponentDto> GetAllByCurrencyPair(long currencyPairId)
+        public ICollection<AnalysedComponentDto> GetAllByCurrencyPair(long currencyPairId, bool track = false)
         {
             throw new System.NotImplementedException();
         }
 
-        public ICollection<AnalysedComponentDto> GetAllByCurrencyType(long currencyTypeId)
+        public ICollection<AnalysedComponentDto> GetAllByCurrencyType(long currencyTypeId, bool track = false)
         {
             throw new System.NotImplementedException();
         }
