@@ -152,5 +152,14 @@ namespace Nozomi.Service.Events
                 .Where(cp => cp.DeletedAt == null)
                 .ToList();
         }
+
+        public CurrencyPair Get(long id, long userId = 0)
+        {
+            return _unitOfWork
+                .GetRepository<CurrencyPair>()
+                .GetQueryable()
+                .AsNoTracking()
+                .SingleOrDefault(cp => cp.Id.Equals(id) && cp.DeletedAt == null);
+        }
     }
 }
