@@ -52,27 +52,6 @@
             <b-button variant="primary" class="mb-3" type="submit">Save Changes</b-button>
         </b-form>
 
-        <hr/>
-
-        <h3 class="mb-6">Analysed Component</h3>
-        @* Table for analysedComponent *@
-        <b-table :items="request.AnalysedComponents" :fields="analysedComponentsDataFields">
-            <template slot="AnalysedComponentType" slot-scope="datum">
-                {{ getAnalysedComponentTypeStr(datum.item.ComponentType) }}
-            </template>
-            <template slot="Delay" slot-scope="datum">
-                {{ datum.item.Delay }}
-            </template>
-            <template slot="IsDenominated" slot-scope="datum">
-                {{ datum.item.IsDenominated }}
-            </template>
-            <template slot="AnalysedComponentValue" slot-scope="datum">
-                {{ datum.item.Value }}
-            </template>
-        </b-table>
-
-        <hr/>
-
         <h3 class="mb-6">Request Components</h3>
 
         <b-button variant="primary" class="mb-3" v-on:click="showRCCreateModal">Create RC</b-button>
@@ -201,28 +180,6 @@
         const vm = new Vue({
             el: '#content',
             data: {
-                analysedComponentsDataFields: [
-                    {
-                        key: 'AnalysedComponentType',
-                        label: 'Component Type',
-                        sortable: true,
-                    },
-                    {
-                        key: 'Delay',
-                        label: 'Delay',
-                        sortable: true,
-                    },
-                    {
-                        key: 'IsDenominated',
-                        label: 'Denominated',
-                        sortable: true,
-                    },
-                    {
-                        key: 'AnalysedComponentValue',
-                        label: 'Value',
-                        sortable: true,
-                    }
-                ],
                 requestComponentsDataFields: [
                     //Request Components
                     {
@@ -537,16 +494,6 @@
                         for (let i = 0; i < this.responseTypes.length; i++) {
                             if (this.responseTypes[i].value == val) {
                                 return this.responseTypes[i].key;
-                            }
-                        }
-                    }
-                    return null;
-                },
-                getAnalysedComponentTypeStr(val) {
-                    if (this.analysedComponentTypes != null) {
-                        for (let i = 0; i < this.analysedComponentTypes.length; i++) {
-                            if (this.analysedComponentTypes[i].value === val) {
-                                return this.analysedComponentTypes[i].key;
                             }
                         }
                     }

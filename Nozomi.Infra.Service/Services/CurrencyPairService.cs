@@ -120,6 +120,7 @@ namespace Nozomi.Service.Services
             cpToUpd.MainCurrencyAbbrv = updateCurrencyPair.MainCurrencyAbbrv;
             cpToUpd.CounterCurrencyAbbrv = updateCurrencyPair.CounterCurrencyAbbrv;
             cpToUpd.SourceId = updateCurrencyPair.SourceId;
+            cpToUpd.CurrencyPairType = updateCurrencyPair.CurrencyPairType;
             cpToUpd.APIUrl = updateCurrencyPair.APIUrl;
             cpToUpd.DefaultComponent = updateCurrencyPair.DefaultComponent;
             cpToUpd.IsEnabled = updateCurrencyPair.IsEnabled;

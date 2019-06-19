@@ -27,7 +27,7 @@
             <template slot="FailureDelay" slot-scope="datum">
                 {{ moment.duration(datum.item.FailureDelay, 'SSS').humanize() }}
             </template>
-            <template slot="Edit" slot-scope="datum">
+            <template slot="View" slot-scope="datum">
                 <b-button variant="primary" :href="'request/' + datum.item.Id">Edit</b-button>
             </template>
             <template slot="Delete" slot-scope="datum">
@@ -105,7 +105,7 @@
                         sortable: true
                     },
                     {
-                        key: 'Edit',
+                        key: 'View',
                         label: '',
                         sortable: false
                     },

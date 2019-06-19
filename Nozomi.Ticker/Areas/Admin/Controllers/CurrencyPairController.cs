@@ -44,7 +44,7 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
                 return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
 
-            var vm = new CurrencyPairViewModel
+            var vm = new CurrencyPairsViewModel
             {
                 CurrencyPairs = _currencyPairEvent.GetAll(),
                 Currencies = _currencyEvent.GetAllActive(),
@@ -55,6 +55,30 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
             return View(vm);
         }
 
+        #endregion
+        
+        #region Get CurrencyPair
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> CurrencyPair(long id)
+        {
+            var user = await GetCurrentUserAsync();
+            if (user == null)
+            {
+                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
+
+            var vm = new CurrencyPairViewModel
+            {
+                CurrencyPair = _currencyPairEvent.Get(id),
+                Currencies = _currencyEvent.GetAllActive(),
+                Sources = _sourceEvent.GetAllActive(),
+                CurrencyPairTypes = NozomiServiceConstants.currencyPairType
+            };
+
+            return View(vm);
+        }
+        
         #endregion
         
         #region Post CurrencyPairs
