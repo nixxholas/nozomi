@@ -26,18 +26,15 @@ namespace Nozomi.Infra.Admin.Service.Services
                 .AsNoTracking()
                 .Any(ac =>
                     // Case 1, currency
-                    (ac.CurrencyId != null && analysedComponent.CurrencyId != null
-                                           && ac.CurrencyId.Equals(analysedComponent.CurrencyId)
+                    (ac.CurrencyId != null && ac.CurrencyId.Equals(analysedComponent.CurrencyId)
                                            && !ac.ComponentType.Equals(analysedComponent.ComponentType))
                     ||
                     // Case 2, currency pair
-                    (ac.CurrencyPairId != null && analysedComponent.CurrencyPairId != null
-                                               && ac.CurrencyPairId.Equals(analysedComponent.CurrencyPairId)
+                    (ac.CurrencyPairId != null && ac.CurrencyPairId.Equals(analysedComponent.CurrencyPairId)
                                                && !ac.ComponentType.Equals(analysedComponent.ComponentType))
                     ||
                     // Case 3, currency type
-                    (ac.CurrencyTypeId != null && analysedComponent.CurrencyTypeId != null
-                                               && ac.CurrencyTypeId.Equals(analysedComponent.CurrencyTypeId)
+                    (ac.CurrencyTypeId != null && ac.CurrencyTypeId.Equals(analysedComponent.CurrencyTypeId)
                                                && !ac.ComponentType.Equals(analysedComponent.ComponentType))
                 ))
             {
