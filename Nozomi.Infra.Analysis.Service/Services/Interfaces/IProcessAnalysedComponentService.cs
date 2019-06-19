@@ -2,7 +2,7 @@ using Nozomi.Data.Models.Web.Analytical;
 
 namespace Nozomi.Infra.Analysis.Service.Services.Interfaces
 {
-    public interface IAnalysedComponentService
+    public interface IProcessAnalysedComponentService
     {
         long Create(AnalysedComponent analysedComponent, long userId = 0);
 
