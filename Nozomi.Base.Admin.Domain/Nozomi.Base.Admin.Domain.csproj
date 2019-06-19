@@ -8,4 +8,8 @@
       <ProjectReference Include="..\Nozomi.Base.Domain\Nozomi.Base.Domain.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="AreaModels\Request" />
+    </ItemGroup>
+
 </Project>
