@@ -29,6 +29,35 @@ namespace Nozomi.Service.Services
                 return new NozomiResult<string>(
                     NozomiResultType.Failed, "Please ensure that the payload is valid");
             
+            // Check the main ticker
+            if (!_unitOfWork.GetRepository<CurrencySource>()
+                .GetQueryable()
+                .AsNoTracking()
+                .Include(cs => cs.Currency)
+                .Any(cs => cs.Currency.Abbreviation
+                               .Equals(createCurrencyPair.MainCurrencyAbbrv,
+                                   StringComparison.InvariantCultureIgnoreCase)
+                           && cs.SourceId.Equals(createCurrencyPair.SourceId)))
+            {
+                // Since this doesn't exist, beep the user.
+                return new NozomiResult<string>(
+                    NozomiResultType.Failed, "Please ensure that the main ticker is valid, that it exists in that source.");
+            }
+
+            // Check the counter ticker
+            if (!_unitOfWork.GetRepository<CurrencySource>()
+                .GetQueryable()
+                .AsNoTracking()
+                .Include(cs => cs.Currency)
+                .Any(cs => cs.Currency.Abbreviation.Equals(createCurrencyPair.CounterCurrencyAbbrv,
+                               StringComparison.InvariantCultureIgnoreCase)
+                           && cs.SourceId.Equals(createCurrencyPair.SourceId)))
+            {
+                // Since this doesn't exist, beep the user.
+                return new NozomiResult<string>(
+                    NozomiResultType.Failed, "Please ensure that the main ticker is valid, that it exists in that source.");
+            }
+            
             var currencyPair = new CurrencyPair()
             {
                 CurrencyPairType = createCurrencyPair.CurrencyPairType,
