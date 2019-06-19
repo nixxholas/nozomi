@@ -70,7 +70,10 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
 
             var vm = new CurrencyPairViewModel
             {
-                CurrencyPair = _currencyPairEvent.Get(id)
+                CurrencyPair = _currencyPairEvent.Get(id),
+                Currencies = _currencyEvent.GetAllActive(),
+                Sources = _sourceEvent.GetAllActive(),
+                CurrencyPairTypes = NozomiServiceConstants.currencyPairType
             };
 
             return View(vm);
@@ -113,7 +116,7 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
                 return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
 
-            if (!ModelState.IsVali)
+            if (!ModelState.IsValid)
                 return BadRequest(new NozomiResult<string>(NozomiResultType.Failed, "Invalid payload."));
 
             var result = _currencyPairService.Update(updateCurrencyPair);
