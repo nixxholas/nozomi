@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -77,6 +78,36 @@ namespace Nozomi.Infra.Admin.Service.Services
                 return true;
             }
             
+            return false;
+        }
+
+        public bool Delete(long analysedComponentId, bool hardDelete = false, long userId = 0)
+        {
+            if (analysedComponentId > 0)
+            {
+                var query = _unitOfWork.GetRepository<AnalysedComponent>()
+                    .GetQueryable()
+                    .AsTracking()
+                    .SingleOrDefault(ac => ac.DeletedAt == null && ac.Id.Equals(analysedComponentId));
+
+                if (query != null)
+                {
+                    if (hardDelete)
+                    {
+                        _unitOfWork.GetRepository<AnalysedComponent>().Delete(query);
+                    }
+                    else
+                    {
+                        query.DeletedAt = DateTime.UtcNow;
+                        query.DeletedBy = userId;
+                    }
+
+                    _unitOfWork.Commit(userId);
+
+                    return true;
+                }
+            }
+
             return false;
         }
     }
