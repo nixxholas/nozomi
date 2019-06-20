@@ -390,7 +390,7 @@
                 async onSourceAddSubmit() {
                     let formData = new FormData();
                     formData.append('CurrencyId', @Model.Currency.Id);
-                    formData.append('SourceId', this.addSourceForm.id);
+                    formData.append('SourceId', this.addSourceForm.currencySourceId);
 
                     const response = await fetch('/Admin/CurrencySource/Create',
                         {
