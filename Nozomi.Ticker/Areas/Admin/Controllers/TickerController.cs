@@ -25,7 +25,7 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
         
         [HttpGet]
         [Authorize(Roles = "Owner, Administrator, Staff")]
-        public async Task<IActionResult> CreateTicker()
+        public async Task<IActionResult> Create()
         {
             var user = await GetCurrentUserAsync();
             if (user == null)
@@ -39,7 +39,7 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateTicker(CreateTickerInputModel vm)
+        public async Task<IActionResult> Create(CreateTickerInputModel vm)
         {   
             var user = await GetCurrentUserAsync();
             if (user == null)
@@ -57,7 +57,7 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
 
             // TODO: Implementation of error messages
             vm.StatusMessage = "There was something erroneous with your submission.";
-            return RedirectToAction("CreateTicker");
+            return RedirectToAction("Create");
         }
     }
 }
