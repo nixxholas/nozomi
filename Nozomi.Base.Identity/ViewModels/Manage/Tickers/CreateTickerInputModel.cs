@@ -46,13 +46,15 @@ namespace Nozomi.Base.Identity.ViewModels.Manage.Tickers
         [DisplayName("The entity this API is provided from.")]
         public long CurrencySourceId { get; set; }
         
-        [Required]
         [DisplayName("The type of the main currency.")]
         public long MainCurrencyTypeId { get; set; }
         
-        [Required]
         [DisplayName("The abbreviation of the main currency.")]
         public string MainCurrencyAbbrv { get; set; }
+        
+        [Required]
+        [DisplayName("The unique abbreviation of the main currency.")]
+        public string MainCurrencySlug { get; set; }
         
         [DisplayName("The name of the main currency. (Optional if a ticker from this source already has this currency)")]
         public string MainCurrencyName { get; set; }
@@ -64,6 +66,10 @@ namespace Nozomi.Base.Identity.ViewModels.Manage.Tickers
         [Required]
         [DisplayName("The abbreviation of the counter currency.")]
         public string CounterCurrencyAbbrv { get; set; }
+        
+        [Required]
+        [DisplayName("The unique abbreviation of the counter currency.")]
+        public string CounterCurrencySlug { get; set; }
         
         [DisplayName("The name of the counter currency. (Optional if a ticker from this source already has this currency)")]
         public string CounterCurrencyName { get; set; }
