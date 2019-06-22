@@ -1,7 +1,7 @@
 using System.ComponentModel;
 using Nozomi.Data.Models.Web.Analytical;
 
-namespace Nozomi.Base.Admin.Domain.AreaModels.AnalysedComponents
+namespace Nozomi.Base.Admin.Domain.AreaModels.AnalysedComponent
 {
     public class CreateAnalysedComponent
     {

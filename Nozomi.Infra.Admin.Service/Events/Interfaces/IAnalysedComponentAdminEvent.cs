@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using Nozomi.Base.Admin.Domain.AreaModels.AnalysedComponents;
+using Nozomi.Base.Admin.Domain.AreaModels.AnalysedComponent;
 
 namespace Nozomi.Infra.Admin.Service.Events.Interfaces
 {
