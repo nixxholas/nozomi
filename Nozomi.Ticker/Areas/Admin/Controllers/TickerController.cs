@@ -2,6 +2,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Nozomi.Base.Admin.Domain.AreaModels.Exchange;
 using Nozomi.Base.Identity.ViewModels.Manage.Tickers;
 using Nozomi.Service.Identity.Managers;
 using Nozomi.Service.Services.Interfaces;
@@ -58,6 +59,20 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
             // TODO: Implementation of error messages
             vm.StatusMessage = "There was something erroneous with your submission.";
             return RedirectToAction("Create");
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> SeedExchange()
+        {
+            var user = await GetCurrentUserAsync();
+            if (user == null)
+            {
+                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
+
+            var vm = new CreateExchange();
+            
+            return View(vm);
         }
     }
 }
