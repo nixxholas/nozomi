@@ -52,18 +52,19 @@ namespace Nozomi.Service.Services
             {
                 CurrencyTypeId = createTickerInputModel.MainCurrencyTypeId,
                 Abbreviation = createTickerInputModel.MainCurrencyAbbrv,
-                Name = createTickerInputModel.MainCurrencyName
+                Name = createTickerInputModel.MainCurrencyName,
+                Slug = createTickerInputModel.MainCurrencySlug
             };
             
             // Main
             // Make sure the currency exists
             if (_unitOfWork.GetRepository<Currency>().GetQueryable()
-                .Any(c => c.Abbreviation.Equals(mainCurrency.Abbreviation, StringComparison.InvariantCultureIgnoreCase)
+                .Any(c => c.Abbreviation.Equals(mainCurrency.Slug, StringComparison.InvariantCultureIgnoreCase)
                           && c.DeletedAt == null))
             {
                 // Currency already exists
                 mainCurrency = _unitOfWork.GetRepository<Currency>()
-                    .Get(c => c.Abbreviation.Equals(mainCurrency.Abbreviation, StringComparison.InvariantCultureIgnoreCase))
+                    .Get(c => c.Abbreviation.Equals(mainCurrency.Slug, StringComparison.InvariantCultureIgnoreCase))
                     .SingleOrDefault();
             }
             else
@@ -74,12 +75,13 @@ namespace Nozomi.Service.Services
                     CurrencySourceId = createTickerInputModel.CurrencySourceId,
                     CurrencyTypeId = mainCurrency.CurrencyTypeId,
                     Abbreviation = mainCurrency.Abbreviation,
-                    Name = mainCurrency.Name
+                    Name = mainCurrency.Name,
+                    Slug = mainCurrency.Slug
                 });
                 
                 // Retrieve it
                 mainCurrency = _unitOfWork.GetRepository<Currency>()
-                    .Get(c => c.Abbreviation.Equals(mainCurrency.Abbreviation, StringComparison.InvariantCultureIgnoreCase))
+                    .Get(c => c.Abbreviation.Equals(mainCurrency.Slug, StringComparison.InvariantCultureIgnoreCase))
                     .SingleOrDefault();
                 
                 _logger.LogInformation($"Currency {mainCurrency.Name} created.");
@@ -89,17 +91,18 @@ namespace Nozomi.Service.Services
             {
                 CurrencyTypeId = createTickerInputModel.CounterCurrencyTypeId,
                 Abbreviation = createTickerInputModel.CounterCurrencyAbbrv,
-                Name = createTickerInputModel.CounterCurrencyName
+                Name = createTickerInputModel.CounterCurrencyName,
+                Slug = createTickerInputModel.CounterCurrencySlug
             };
             
             // Counter
             if (_unitOfWork.GetRepository<Currency>().GetQueryable()
-                .Any(c => c.Abbreviation.Equals(counterCurrency.Abbreviation, StringComparison.InvariantCultureIgnoreCase)
+                .Any(c => c.Abbreviation.Equals(counterCurrency.Slug, StringComparison.InvariantCultureIgnoreCase)
                           && c.DeletedAt == null))
             {
                 // Currency already exists
                 counterCurrency = _unitOfWork.GetRepository<Currency>()
-                    .Get(c => c.Abbreviation.Equals(counterCurrency.Abbreviation, StringComparison.InvariantCultureIgnoreCase))
+                    .Get(c => c.Abbreviation.Equals(counterCurrency.Slug, StringComparison.InvariantCultureIgnoreCase))
                     .SingleOrDefault();
             }
             else
@@ -110,12 +113,13 @@ namespace Nozomi.Service.Services
                     CurrencySourceId = createTickerInputModel.CurrencySourceId,
                     CurrencyTypeId = counterCurrency.CurrencyTypeId,
                     Abbreviation = counterCurrency.Abbreviation,
-                    Name = counterCurrency.Name
+                    Name = counterCurrency.Name,
+                    Slug = counterCurrency.Slug
                 });
                 
                 // Retrieve it
                 counterCurrency = _unitOfWork.GetRepository<Currency>()
-                    .Get(c => c.Abbreviation.Equals(counterCurrency.Abbreviation, StringComparison.InvariantCultureIgnoreCase))
+                    .Get(c => c.Abbreviation.Equals(counterCurrency.Slug, StringComparison.InvariantCultureIgnoreCase))
                     .SingleOrDefault();
                 
                 _logger.LogInformation($"Currency {counterCurrency.Name} created.");
