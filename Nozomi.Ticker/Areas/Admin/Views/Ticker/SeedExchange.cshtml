@@ -49,7 +49,6 @@
                     <label class="input-group-text" asp-for="QueryComponents"></label>
                 </div>
                 <textarea class="form-control" asp-for="QueryComponents"></textarea>
-                @* <small class="form-text text-muted">We'll never share your email with anyone else.</small> *@
             </div>
             
             <div class="alert alert-info" role="alert">
@@ -79,11 +78,7 @@
 
 @section Scripts {
     <script>
-        $(document).ready(function() {
-            
+        let vm = new Vue({
+            el: '#content'
         });
-        
-        function updateCurrencies() {
-            
-        }
     </script>
