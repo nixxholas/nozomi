@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -1371,15 +1372,79 @@ namespace Nozomi.Ticker.StartupExtensions
                             });
                     }
 
+                    if (!context.Sources.Any())
+                    {
+                        context.Sources.AddRange(
+                            new Source()
+                            {
+                                Abbreviation = "BFX",
+                                Name = "Bitfinex",
+                                APIDocsURL = "https://docs.bitfinex.com/docs/introduction"
+                            },
+                            new Source()
+                            {
+                                Abbreviation = "HAKO",
+                                Name = "Coinhako",
+                                APIDocsURL = "None"
+                            },
+                            new Source()
+                            {
+                                Abbreviation = "BNA",
+                                Name = "Binance",
+                                APIDocsURL =
+                                    "https://github.com/binance-exchange/binance-official-api-docs/blob/master/rest-api.md"
+                            },
+                            new Source()
+                            { 
+                                Abbreviation = "ECB",
+                                Name = "European Central Bank",
+                                APIDocsURL =
+                                    "https://www.ecb.europa.eu/stats/policy_and_exchange_rates/euro_reference_exchange_rates/html/index.en.html"
+                            },
+                            new Source()
+                            {
+                                Abbreviation = "AVG",
+                                Name = "AlphaVantage",
+                                APIDocsURL = "https://www.alphavantage.co/documentation/"
+                            },
+                            new Source
+                            {
+                                Abbreviation = "POLO",
+                                Name = "Poloniex",
+                                APIDocsURL = "https://docs.poloniex.com/#public-http-api-methods"
+                            });
+                    }
+                    
                     if (!context.CurrencyPairs.Any() && context.Sources.Any())
                     {
+                        var bfx = context.Sources
+                            .SingleOrDefault(s =>
+                                s.Abbreviation.Equals("BFX", StringComparison.InvariantCultureIgnoreCase));
+                        var hako = context.Sources
+                            .SingleOrDefault(s =>
+                                s.Abbreviation.Equals("HAKO", StringComparison.InvariantCultureIgnoreCase));
+                        var bna = context.Sources
+                            .SingleOrDefault(s =>
+                                s.Abbreviation.Equals("BNA", StringComparison.InvariantCultureIgnoreCase));
+                        var ecb = context.Sources
+                            .SingleOrDefault(s =>
+                                s.Abbreviation.Equals("ECB", StringComparison.InvariantCultureIgnoreCase));
+                        var avg = context.Sources
+                            .SingleOrDefault(s =>
+                                s.Abbreviation.Equals("AVG", StringComparison.InvariantCultureIgnoreCase));
+                        var polo = context.Sources
+                            .SingleOrDefault(s =>
+                                s.Abbreviation.Equals("POLO", StringComparison.InvariantCultureIgnoreCase));
+
+                        Debug.Assert(bfx != null, nameof(bfx) + " != null");
+                        
                         context.CurrencyPairs.AddRange(
                             new CurrencyPair()
                             {
                                 CurrencyPairType = CurrencyPairType.TRADEABLE,
                                 APIUrl = "https://api.ethfinex.com/v2/ticker/tETHUSD",
                                 DefaultComponent = "0",
-                                SourceId = 1,
+                                SourceId = bfx.Id,
                                 MainCurrencyAbbrv = "ETH",
                                 CounterCurrencyAbbrv = "USD"
                             },
@@ -1388,7 +1453,7 @@ namespace Nozomi.Ticker.StartupExtensions
                                 CurrencyPairType = CurrencyPairType.TRADEABLE,
                                 APIUrl = "https://api.ethfinex.com/v2/ticker/tKNCUSD",
                                 DefaultComponent = "0",
-                                SourceId = 1,
+                                SourceId = bfx.Id,
                                 MainCurrencyAbbrv = "KNC",
                                 CounterCurrencyAbbrv = "USD"
                             },
@@ -1397,7 +1462,7 @@ namespace Nozomi.Ticker.StartupExtensions
                                 CurrencyPairType = CurrencyPairType.TRADEABLE,
                                 APIUrl = "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml",
                                 DefaultComponent = "Cube",
-                                SourceId = 4,
+                                SourceId = ecb.Id,
                                 MainCurrencyAbbrv = "EUR",
                                 CounterCurrencyAbbrv = "USD"
                             },
@@ -1406,7 +1471,7 @@ namespace Nozomi.Ticker.StartupExtensions
                                 CurrencyPairType = CurrencyPairType.TRADEABLE,
                                 APIUrl = "https://www.alphavantage.co/query",
                                 DefaultComponent = "Realtime Currency Exchange Rate/5. Exchange Rate",
-                                SourceId = 5,
+                                SourceId = avg.Id,
                                 MainCurrencyAbbrv = "EUR",
                                 CounterCurrencyAbbrv = "USD"
                             },
@@ -1415,7 +1480,7 @@ namespace Nozomi.Ticker.StartupExtensions
                                 CurrencyPairType = CurrencyPairType.EXCHANGEABLE,
                                 APIUrl = "https://poloniex.com/public?command=returnTicker",
                                 DefaultComponent = "BTC_BCN/lowestAsk",
-                                SourceId = 6,
+                                SourceId = polo.Id,
                                 MainCurrencyAbbrv = "BTC",
                                 CounterCurrencyAbbrv = "BCN"
                             },
@@ -1424,7 +1489,7 @@ namespace Nozomi.Ticker.StartupExtensions
                                 CurrencyPairType = CurrencyPairType.EXCHANGEABLE,
                                 APIUrl = "https://poloniex.com/public?command=returnTicker",
                                 DefaultComponent = "BTC_BTS/lowestAsk",
-                                SourceId = 6,
+                                SourceId = polo.Id,
                                 MainCurrencyAbbrv = "BTC",
                                 CounterCurrencyAbbrv = "BTS"
                             },
@@ -1433,7 +1498,7 @@ namespace Nozomi.Ticker.StartupExtensions
                                 CurrencyPairType = CurrencyPairType.TRADEABLE,
                                 APIUrl = "https://api.bitfinex.com/v1/pubticker/etheur",
                                 DefaultComponent = "0",
-                                SourceId = 1,
+                                SourceId = bfx.Id,
                                 MainCurrencyAbbrv = "ETH",
                                 CounterCurrencyAbbrv = "EUR"
                             },
@@ -1442,7 +1507,7 @@ namespace Nozomi.Ticker.StartupExtensions
                                 CurrencyPairType = CurrencyPairType.EXCHANGEABLE,
                                 APIUrl = "https://poloniex.com/public?command=returnTicker",
                                 DefaultComponent = "USDT_BTC/lowestAsk",
-                                SourceId = 6,
+                                SourceId = polo.Id,
                                 MainCurrencyAbbrv = "BTC",
                                 CounterCurrencyAbbrv = "USDT"
                             },
@@ -1451,7 +1516,7 @@ namespace Nozomi.Ticker.StartupExtensions
                                 CurrencyPairType = CurrencyPairType.EXCHANGEABLE,
                                 APIUrl = "wss://stream.binance.com:9443/stream?streams=!ticker@arr",
                                 DefaultComponent = "b",
-                                SourceId = 3,
+                                SourceId = bna.Id,
                                 MainCurrencyAbbrv = "ETH",
                                 CounterCurrencyAbbrv = "BTC"
                             },
@@ -1460,7 +1525,7 @@ namespace Nozomi.Ticker.StartupExtensions
                                 CurrencyPairType = CurrencyPairType.EXCHANGEABLE,
                                 APIUrl = "wss://stream.binance.com:9443/stream?streams=!ticker@arr",
                                 DefaultComponent = "b",
-                                SourceId = 3,
+                                SourceId = bna.Id,
                                 MainCurrencyAbbrv = "KNC",
                                 CounterCurrencyAbbrv = "ETH"
                             },
@@ -1469,7 +1534,7 @@ namespace Nozomi.Ticker.StartupExtensions
                                 CurrencyPairType = CurrencyPairType.EXCHANGEABLE,
                                 APIUrl = "https://www.coinhako.com/api/v1/price/currency/BTCSGD",
                                 DefaultComponent = "data/buy_price",
-                                SourceId = 3,
+                                SourceId = hako.Id,
                                 MainCurrencyAbbrv = "BTC",
                                 CounterCurrencyAbbrv = "SGD"
                             },
@@ -1478,7 +1543,7 @@ namespace Nozomi.Ticker.StartupExtensions
                                 CurrencyPairType = CurrencyPairType.EXCHANGEABLE,
                                 APIUrl = "https://www.coinhako.com/api/v1/price/currency/BTCUSD",
                                 DefaultComponent = "data/buy_price",
-                                SourceId = 3,
+                                SourceId = hako.Id,
                                 MainCurrencyAbbrv = "BTC",
                                 CounterCurrencyAbbrv = "USD"
                             },
@@ -1487,7 +1552,7 @@ namespace Nozomi.Ticker.StartupExtensions
                                 CurrencyPairType = CurrencyPairType.EXCHANGEABLE,
                                 APIUrl = "https://www.coinhako.com/api/v1/price/currency/ETHSGD",
                                 DefaultComponent = "data/buy_price",
-                                SourceId = 3,
+                                SourceId = hako.Id,
                                 MainCurrencyAbbrv = "ETH",
                                 CounterCurrencyAbbrv = "SGD"
                             },
@@ -1496,7 +1561,7 @@ namespace Nozomi.Ticker.StartupExtensions
                                 CurrencyPairType = CurrencyPairType.EXCHANGEABLE,
                                 APIUrl = "https://www.coinhako.com/api/v1/price/currency/ETHUSD",
                                 DefaultComponent = "data/buy_price",
-                                SourceId = 3,
+                                SourceId = hako.Id,
                                 MainCurrencyAbbrv = "ETH",
                                 CounterCurrencyAbbrv = "USD"
                             },
@@ -1505,7 +1570,7 @@ namespace Nozomi.Ticker.StartupExtensions
                                 CurrencyPairType = CurrencyPairType.EXCHANGEABLE,
                                 APIUrl = "https://www.coinhako.com/api/v1/price/currency/LTCSGD",
                                 DefaultComponent = "data/buy_price",
-                                SourceId = 3,
+                                SourceId = hako.Id,
                                 MainCurrencyAbbrv = "LTC",
                                 CounterCurrencyAbbrv = "SGD"
                             },
@@ -1514,7 +1579,7 @@ namespace Nozomi.Ticker.StartupExtensions
                                 CurrencyPairType = CurrencyPairType.EXCHANGEABLE,
                                 APIUrl = "https://www.coinhako.com/api/v1/price/currency/LTCUSD",
                                 DefaultComponent = "data/buy_price",
-                                SourceId = 3,
+                                SourceId = hako.Id,
                                 MainCurrencyAbbrv = "LTC",
                                 CounterCurrencyAbbrv = "USD"
                             });
