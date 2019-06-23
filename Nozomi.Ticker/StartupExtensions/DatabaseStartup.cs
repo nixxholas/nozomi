@@ -1632,7 +1632,7 @@ namespace Nozomi.Ticker.StartupExtensions
                                         ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                                         DeletedAt = null,
                                         CurrencyId = usd.Id,
-                                        SourceId = 1
+                                        SourceId = bfx.Id
                                     },
                                     // Bitfinex EUR
                                     new CurrencySource
@@ -1641,7 +1641,7 @@ namespace Nozomi.Ticker.StartupExtensions
                                         ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                                         DeletedAt = null,
                                         CurrencyId = eur.Id,
-                                        SourceId = 1
+                                        SourceId = bfx.Id
                                     },
                                     // Bitfinex ETH
                                     new CurrencySource
@@ -1650,7 +1650,7 @@ namespace Nozomi.Ticker.StartupExtensions
                                         ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                                         DeletedAt = null,
                                         CurrencyId = eth.Id,
-                                        SourceId = 1
+                                        SourceId = bfx.Id
                                     },
                                     // Bitfinex KNC
                                     new CurrencySource
@@ -1659,13 +1659,13 @@ namespace Nozomi.Ticker.StartupExtensions
                                         ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                                         DeletedAt = null,
                                         CurrencyId = knc.Id,
-                                        SourceId = 1
+                                        SourceId = bfx.Id
                                     },
                                     // Binance KNC
                                     new CurrencySource
                                     {
                                         CurrencyId = knc.Id,
-                                        SourceId = 3
+                                        SourceId = bna.Id
                                     },
                                     // Binance ETH
                                     new CurrencySource
@@ -1674,7 +1674,7 @@ namespace Nozomi.Ticker.StartupExtensions
                                         ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                                         DeletedAt = null,
                                         CurrencyId = eth.Id,
-                                        SourceId = 3
+                                        SourceId = bna.Id
                                     },
                                     // Binance BTC
                                     new CurrencySource
@@ -1683,7 +1683,7 @@ namespace Nozomi.Ticker.StartupExtensions
                                         ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                                         DeletedAt = null,
                                         CurrencyId = btc.Id,
-                                        SourceId = 3
+                                        SourceId = bna.Id
                                     },
                                     // European Central Bank EUR
                                     new CurrencySource
@@ -1692,7 +1692,7 @@ namespace Nozomi.Ticker.StartupExtensions
                                         ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                                         DeletedAt = null,
                                         CurrencyId = eur.Id,
-                                        SourceId = 4
+                                        SourceId = ecb.Id
                                     },
                                     // European Central Bank USD
                                     new CurrencySource
@@ -1701,7 +1701,7 @@ namespace Nozomi.Ticker.StartupExtensions
                                         ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                                         DeletedAt = null,
                                         CurrencyId = usd.Id,
-                                        SourceId = 4
+                                        SourceId = ecb.Id
                                     },
                                     // AlphaVantage EUR
                                     new CurrencySource
@@ -1710,7 +1710,7 @@ namespace Nozomi.Ticker.StartupExtensions
                                         ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                                         DeletedAt = null,
                                         CurrencyId = eur.Id,
-                                        SourceId = 5
+                                        SourceId = avg.Id
                                     },
                                     // AlphaVantage USD
                                     new CurrencySource
@@ -1719,7 +1719,7 @@ namespace Nozomi.Ticker.StartupExtensions
                                         ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                                         DeletedAt = null,
                                         CurrencyId = usd.Id,
-                                        SourceId = 5
+                                        SourceId = avg.Id
                                     },
                                     // Poloniex BTC
                                     new CurrencySource
@@ -1728,7 +1728,7 @@ namespace Nozomi.Ticker.StartupExtensions
                                         ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                                         DeletedAt = null,
                                         CurrencyId = btc.Id,
-                                        SourceId = 6
+                                        SourceId = polo.Id
                                     },
                                     // Poloniex BCN
                                     new CurrencySource
@@ -1737,7 +1737,7 @@ namespace Nozomi.Ticker.StartupExtensions
                                         ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                                         DeletedAt = null,
                                         CurrencyId = bcn.Id,
-                                        SourceId = 6
+                                        SourceId = polo.Id
                                     },
                                     // Poloniex BTS
                                     new CurrencySource
@@ -1746,7 +1746,7 @@ namespace Nozomi.Ticker.StartupExtensions
                                         ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                                         DeletedAt = null,
                                         CurrencyId = bts.Id,
-                                        SourceId = 6
+                                        SourceId = polo.Id
                                     },
                                     // Poloniex USDT
                                     new CurrencySource
@@ -1755,7 +1755,7 @@ namespace Nozomi.Ticker.StartupExtensions
                                         ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                                         DeletedAt = null,
                                         CurrencyId = usdt.Id,
-                                        SourceId = 6
+                                        SourceId = polo.Id
                                     },
                                     // Coinhako BTC
                                     new CurrencySource
@@ -1764,7 +1764,7 @@ namespace Nozomi.Ticker.StartupExtensions
                                         ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                                         DeletedAt = null,
                                         CurrencyId = btc.Id,
-                                        SourceId = 2
+                                        SourceId = hako.Id
                                     },
                                     // Coinhako SGD
                                     new CurrencySource
@@ -1773,7 +1773,7 @@ namespace Nozomi.Ticker.StartupExtensions
                                         ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                                         DeletedAt = null,
                                         CurrencyId = sgd.Id,
-                                        SourceId = 2
+                                        SourceId = hako.Id
                                     },
                                     // Coinhako ETH
                                     new CurrencySource
@@ -1782,7 +1782,7 @@ namespace Nozomi.Ticker.StartupExtensions
                                         ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                                         DeletedAt = null,
                                         CurrencyId = bcn.Id,
-                                        SourceId = 2
+                                        SourceId = hako.Id
                                     },
                                     // Coinhako USD
                                     new CurrencySource
@@ -1791,7 +1791,7 @@ namespace Nozomi.Ticker.StartupExtensions
                                         ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                                         DeletedAt = null,
                                         CurrencyId = usd.Id,
-                                        SourceId = 2
+                                        SourceId = hako.Id
                                     },
                                     // Coinhako LTC
                                     new CurrencySource
@@ -1800,7 +1800,7 @@ namespace Nozomi.Ticker.StartupExtensions
                                         ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                                         DeletedAt = null,
                                         CurrencyId = ltc.Id,
-                                        SourceId = 2
+                                        SourceId = hako.Id
                                     });
                             }
                         }
