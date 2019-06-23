@@ -67,11 +67,14 @@ namespace Nozomi.Preprocessing.Abstracts
                                         #endif
 
                                         // If this is an array
-                                        if (int.TryParse(comArrElArr[0], out var index))
+                                        if (token.Type.Equals(JTokenType.Array) 
+                                            && int.TryParse(comArrElArr[0], out var index))
                                         {
-                                            var array = token.Children()
-                                                .Where(tok => tok[index].Equals(comArrElArr[1]))
-                                                .ToArray();
+                                            token = token
+                                                    // Apparently, .ToString() matters alot so take note.
+                                                .FirstOrDefault(tok => tok[index].ToString()
+                                                    .Equals(comArrElArr[1],
+                                                        StringComparison.InvariantCultureIgnoreCase));
                                         }
                                         else
                                         {
@@ -82,12 +85,12 @@ namespace Nozomi.Preprocessing.Abstracts
                                         }
 
                                         // Null check
-//                                        if (correctEl == null)
-//                                        {
-//                                            _logger.LogError("[BaseProcessingService] " +
-//                                                             $"Invalid key value pair {identifierEl}");
-//                                            return false;
-//                                        }
+                                        if (token == null)
+                                        {
+                                            _logger.LogError("[BaseProcessingService] " +
+                                                             $"Invalid key value pair {identifierEl}");
+                                            return false;
+                                        }
                                     }
                                     // A standard array
                                     else if (comArrElArr.Length == 1)
