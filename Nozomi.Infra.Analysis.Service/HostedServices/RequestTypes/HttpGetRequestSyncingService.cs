@@ -42,7 +42,7 @@ using StackExchange.Redis;
  */
 namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
 {
-    public class HttpGetRequestSyncingService : BaseHostedService<HttpGetRequestSyncingService>,
+    public class HttpGetRequestSyncingService : BaseProcessingService<HttpGetRequestSyncingService>,
         IHttpGetRequestSyncingService, IHostedService, IDisposable
     {
         private readonly NozomiDbContext _nozomiDbContext;
@@ -420,7 +420,15 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
                                 // Pull the components wanted
                                 var requestComponents = currentRequests
                                     .SelectMany(r => r.RequestComponents
-                                        .Where(rc => rc.DeletedAt == null && rc.IsEnabled));
+                                        .Where(rc => rc.DeletedAt == null && rc.IsEnabled))
+                                    .ToList();
+                                      
+#if DEBUG
+                                if (requestComponents.Any(rc => rc.Identifier.StartsWith("0=>t")))
+                                {
+                                    Console.WriteLine("Hit");
+                                }
+#endif
 
                                 // Parse the content
                                 if (payload.Content.Headers.ContentType.MediaType.Equals(ResponseType.Json
@@ -470,17 +478,20 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
             return false;
         }
 
-        public bool Update(JToken token, ResponseType resType, IEnumerable<RequestComponent> requestComponents)
+        public bool Update(JToken token, ResponseType resType, ICollection<RequestComponent> components)
         {
             // Save it first
             var currToken = token;
 
             // For each component we're checking
-            foreach (var component in requestComponents)
+            foreach (var component in components)
             {
                 // Always reset
                 currToken = token;
 
+                if (!string.IsNullOrEmpty(component.Identifier))
+                    currToken = ProcessIdentifier(currToken, component.Identifier);
+                
                 var comArr = component.QueryComponent.Split("/"); // Split the string if its nesting
                 var last = comArr.LastOrDefault(); // get the last to identify if its the last
 

@@ -15,12 +15,12 @@ namespace Nozomi.Preprocessing.Abstracts
         {
         }
 
-        public JToken ProcessIdentifier(JToken token, string Identifier)
+        public JToken ProcessIdentifier(JToken token, string identifier)
         {
             // Identifier processing
-            if (!string.IsNullOrEmpty(Identifier))
+            if (!string.IsNullOrEmpty(identifier))
             {
-                var identifierArr = Identifier.Split("/"); // Split the string if its nesting
+                var identifierArr = identifier.Split("/"); // Split the string if its nesting
                 var lastIdentifier = identifierArr.LastOrDefault(); // get the last to identify if its the last
 
                 foreach (var identifierEl in identifierArr)
@@ -62,23 +62,32 @@ namespace Nozomi.Preprocessing.Abstracts
                                     // the value equals comArrElArr[1]
                                     if (comArrElArr.Length == 2)
                                     {
-                                        // https://stackoverflow.com/questions/7216917/json-net-has-key-method
-                                        var correctEl = token.Children()
-                                            .FirstOrDefault(tok => tok.SelectToken(comArrElArr[0]).ToString()
-                                                .Equals(comArrElArr[1]));
+                                        #if DEBUG
+                                        var childrensTest = token.Children();
+                                        #endif
 
-                                        // Null check
-                                        if (correctEl == null)
+                                        // If this is an array
+                                        if (int.TryParse(comArrElArr[0], out var index))
                                         {
-                                            _logger.LogError("[WebsocketCurrencyPairRequestSyncingService] " +
-                                                             $"Invalid key value pair {identifierEl}");
-                                            return false;
+                                            var array = token.Children()
+                                                .Where(tok => tok[index].Equals(comArrElArr[1]))
+                                                .ToArray();
                                         }
                                         else
                                         {
-                                            // We found it
-                                            token = correctEl;
+                                            // https://stackoverflow.com/questions/7216917/json-net-has-key-method
+                                            token = token.Children()
+                                                .FirstOrDefault(tok => tok.SelectToken(comArrElArr[0]).ToString()
+                                                    .Equals(comArrElArr[1]));
                                         }
+
+                                        // Null check
+//                                        if (correctEl == null)
+//                                        {
+//                                            _logger.LogError("[BaseProcessingService] " +
+//                                                             $"Invalid key value pair {identifierEl}");
+//                                            return false;
+//                                        }
                                     }
                                     // A standard array
                                     else if (comArrElArr.Length == 1)
@@ -100,7 +109,7 @@ namespace Nozomi.Preprocessing.Abstracts
                                         }
                                         else
                                         {
-                                            _logger.LogError("[WebsocketCurrencyPairRequestSyncingService]" +
+                                            _logger.LogError("[BaseProcessingService]" +
                                                              $" Update: Invalid array element {identifierEl}");
                                             return false;
                                         }
