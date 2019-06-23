@@ -147,26 +147,53 @@ namespace Nozomi.Ticker.StartupExtensions
                         context.Database.Migrate();
                     }
 
-                    if (!context.Currencies.Any())
+                    if (!context.CurrencyTypes.Any())
+                    {
+                        context.CurrencyTypes.AddRange(
+                            new CurrencyType()
+                            {
+                                TypeShortForm = "FIAT",
+                                Name = "FIAT Cash"
+                            },
+                            new CurrencyType()
+                            {
+                                TypeShortForm = "CRYPTO",
+                                Name = "Cryptocurrency"
+                            });
+                    }
+
+                    if (!context.Currencies.Any() && context.CurrencyTypes.Any())
                     {
                         context.Currencies.AddRange(
                             new Currency
                             {
-                                CurrencyTypeId = 1,
+                                CurrencyTypeId = context.CurrencyTypes
+                                    .Where(ct => ct.TypeShortForm.Equals("FIAT", 
+                                        StringComparison.InvariantCultureIgnoreCase))
+                                    .Select(ct => ct.Id)
+                                    .SingleOrDefault(),
                                 Abbreviation = "USD",
                                 Slug = "USD",
                                 Name = "United States Dollar"
                             },
                             new Currency
                             {
-                                CurrencyTypeId = 1,
+                                CurrencyTypeId = context.CurrencyTypes
+                                    .Where(ct => ct.TypeShortForm.Equals("FIAT", 
+                                        StringComparison.InvariantCultureIgnoreCase))
+                                    .Select(ct => ct.Id)
+                                    .SingleOrDefault(),
                                 Abbreviation = "EUR",
                                 Slug = "EUR",
                                 Name = "Euro"
                             },
                             new Currency
                             {
-                                CurrencyTypeId = 2,
+                                CurrencyTypeId = context.CurrencyTypes
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                        StringComparison.InvariantCultureIgnoreCase))
+                                    .Select(ct => ct.Id)
+                                    .SingleOrDefault(),
                                 Abbreviation = "ETH",
                                 Slug = "ETH",
                                 Name = "Ethereum",
@@ -175,7 +202,11 @@ namespace Nozomi.Ticker.StartupExtensions
                             },
                             new Currency
                             {
-                                CurrencyTypeId = 2,
+                                CurrencyTypeId = context.CurrencyTypes
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                        StringComparison.InvariantCultureIgnoreCase))
+                                    .Select(ct => ct.Id)
+                                    .SingleOrDefault(),
                                 Abbreviation = "KNC",
                                 Slug = "KNC",
                                 Name = "Kyber Network Crystal",
@@ -183,7 +214,11 @@ namespace Nozomi.Ticker.StartupExtensions
                             },
                             new Currency
                             {
-                                CurrencyTypeId = 2,
+                                CurrencyTypeId = context.CurrencyTypes
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                        StringComparison.InvariantCultureIgnoreCase))
+                                    .Select(ct => ct.Id)
+                                    .SingleOrDefault(),
                                 Abbreviation = "BTC",
                                 Slug = "BTC",
                                 Name = "Bitcoin",
@@ -192,728 +227,1144 @@ namespace Nozomi.Ticker.StartupExtensions
                             },
                             new Currency
                             {
-                                CurrencyTypeId = 2,
+                                CurrencyTypeId = context.CurrencyTypes
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                        StringComparison.InvariantCultureIgnoreCase))
+                                    .Select(ct => ct.Id)
+                                    .SingleOrDefault(),
                                 Abbreviation = "BCN",
                                 Slug = "BCN",
                                 Name = "Bytecoin"
                             },
                             new Currency
                             {
-                                CurrencyTypeId = 2,
+                                CurrencyTypeId = context.CurrencyTypes
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                        StringComparison.InvariantCultureIgnoreCase))
+                                    .Select(ct => ct.Id)
+                                    .SingleOrDefault(),
                                 Abbreviation = "BTS",
                                 Slug = "BTS",
                                 Name = "BitShares"
                             },
                             new Currency
                             {
-                                CurrencyTypeId = 2,
+                                CurrencyTypeId = context.CurrencyTypes
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                        StringComparison.InvariantCultureIgnoreCase))
+                                    .Select(ct => ct.Id)
+                                    .SingleOrDefault(),
                                 Abbreviation = "USDT",
                                 Slug = "USDT",
                                 Name = "Tether"
                             },
                             new Currency
                             {
-                                CurrencyTypeId = 1,
+                                CurrencyTypeId = context.CurrencyTypes
+                                    .Where(ct => ct.TypeShortForm.Equals("FIAT", 
+                                        StringComparison.InvariantCultureIgnoreCase))
+                                    .Select(ct => ct.Id)
+                                    .SingleOrDefault(),
                                 Abbreviation = "SGD",
                                 Slug = "SGD",
                                 Name = "Singapore Dollar"
                             },
                             new Currency
                             {
-                                CurrencyTypeId = 2,
+                                CurrencyTypeId = context.CurrencyTypes
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                        StringComparison.InvariantCultureIgnoreCase))
+                                    .Select(ct => ct.Id)
+                                    .SingleOrDefault(),
                                 Abbreviation = "LTC",
                                 Slug = "LTC",
                                 Name = "Litecoin"
                             },
                             new Currency
                             {
-                                CurrencyTypeId = 2,
+                                CurrencyTypeId = context.CurrencyTypes
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                        StringComparison.InvariantCultureIgnoreCase))
+                                    .Select(ct => ct.Id)
+                                    .SingleOrDefault(),
                                 Name = "XRP",
                                 Abbreviation = "XRP",
                                 Slug = "XRP"
                             },
                             new Currency
                             {
-                                CurrencyTypeId = 2,
+                                CurrencyTypeId = context.CurrencyTypes
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                        StringComparison.InvariantCultureIgnoreCase))
+                                    .Select(ct => ct.Id)
+                                    .SingleOrDefault(),
                                 Name = "Bitcoin Cash",
                                 Abbreviation = "BCH",
                                 Slug = "BCH"
                             },
                             new Currency
                             {
-                                CurrencyTypeId = 2,
+                                CurrencyTypeId = context.CurrencyTypes
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                        StringComparison.InvariantCultureIgnoreCase))
+                                    .Select(ct => ct.Id)
+                                    .SingleOrDefault(),
                                 Name = "EOS",
                                 Abbreviation = "EOS",
                                 Slug = "EOS"
                             },
                             new Currency
                             {
-                                CurrencyTypeId = 2,
+                                CurrencyTypeId = context.CurrencyTypes
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                        StringComparison.InvariantCultureIgnoreCase))
+                                    .Select(ct => ct.Id)
+                                    .SingleOrDefault(),
                                 Name = "Binance Coin",
                                 Abbreviation = "BNB",
                                 Slug = "BNB"
                             },
                             new Currency
                             {
-                                CurrencyTypeId = 2,
+                                CurrencyTypeId = context.CurrencyTypes
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                        StringComparison.InvariantCultureIgnoreCase))
+                                    .Select(ct => ct.Id)
+                                    .SingleOrDefault(),
                                 Name = "Stellar",
                                 Abbreviation = "XLM",
                                 Slug = "XLM"
                             },
                             new Currency
                             {
-                                CurrencyTypeId = 2,
+                                CurrencyTypeId = context.CurrencyTypes
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                        StringComparison.InvariantCultureIgnoreCase))
+                                    .Select(ct => ct.Id)
+                                    .SingleOrDefault(),
                                 Name = "Cardano",
                                 Abbreviation = "ADA",
                                 Slug = "ADA"
                             },
                             new Currency
                             {
-                                CurrencyTypeId = 2,
+                                CurrencyTypeId = context.CurrencyTypes
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                        StringComparison.InvariantCultureIgnoreCase))
+                                    .Select(ct => ct.Id)
+                                    .SingleOrDefault(),
                                 Name = "TRON",
                                 Abbreviation = "TRX",
                                 Slug = "TRX"
                             },
                             new Currency
                             {
-                                CurrencyTypeId = 2,
+                                CurrencyTypeId = context.CurrencyTypes
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                        StringComparison.InvariantCultureIgnoreCase))
+                                    .Select(ct => ct.Id)
+                                    .SingleOrDefault(),
                                 Name = "Bitcoin SV",
                                 Abbreviation = "BSV",
                                 Slug = "BSV"
                             },
                             new Currency
                             {
-                                CurrencyTypeId = 2,
+                                CurrencyTypeId = context.CurrencyTypes
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                        StringComparison.InvariantCultureIgnoreCase))
+                                    .Select(ct => ct.Id)
+                                    .SingleOrDefault(),
                                 Name = "Monero",
                                 Abbreviation = "XMR",
                                 Slug = "XMR"
                             },
                             new Currency
                             {
-                                CurrencyTypeId = 2,
+                                CurrencyTypeId = context.CurrencyTypes
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                        StringComparison.InvariantCultureIgnoreCase))
+                                    .Select(ct => ct.Id)
+                                    .SingleOrDefault(),
                                 Name = "Dash",
                                 Abbreviation = "DASH",
                                 Slug = "DASH"
                             },
                             new Currency
                             {
-                                CurrencyTypeId = 2,
+                                CurrencyTypeId = context.CurrencyTypes
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                        StringComparison.InvariantCultureIgnoreCase))
+                                    .Select(ct => ct.Id)
+                                    .SingleOrDefault(),
                                 Name = "IOTA",
                                 Abbreviation = "MIOTA",
                                 Slug = "MIOTA"
                             },
                             new Currency
                             {
-                                CurrencyTypeId = 2,
+                                CurrencyTypeId = context.CurrencyTypes
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                        StringComparison.InvariantCultureIgnoreCase))
+                                    .Select(ct => ct.Id)
+                                    .SingleOrDefault(),
                                 Name = "Tezos",
                                 Abbreviation = "XTZ",
                                 Slug = "XTZ"
                             },
                             new Currency
                             {
-                                CurrencyTypeId = 2,
+                                CurrencyTypeId = context.CurrencyTypes
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                        StringComparison.InvariantCultureIgnoreCase))
+                                    .Select(ct => ct.Id)
+                                    .SingleOrDefault(),
                                 Name = "Cosmos",
                                 Abbreviation = "ATOM",
                                 Slug = "ATOM"
                             },
                             new Currency
                             {
-                                CurrencyTypeId = 2,
+                                CurrencyTypeId = context.CurrencyTypes
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                        StringComparison.InvariantCultureIgnoreCase))
+                                    .Select(ct => ct.Id)
+                                    .SingleOrDefault(),
                                 Name = "Ethereum Classic",
                                 Abbreviation = "ETC",
                                 Slug = "ETC"
                             },
                             new Currency
                             {
-                                CurrencyTypeId = 2,
+                                CurrencyTypeId = context.CurrencyTypes
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                        StringComparison.InvariantCultureIgnoreCase))
+                                    .Select(ct => ct.Id)
+                                    .SingleOrDefault(),
                                 Name = "NEM",
                                 Abbreviation = "XEM",
                                 Slug = "XEM"
                             },
                             new Currency
                             {
-                                CurrencyTypeId = 2,
+                                CurrencyTypeId = context.CurrencyTypes
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                        StringComparison.InvariantCultureIgnoreCase))
+                                    .Select(ct => ct.Id)
+                                    .SingleOrDefault(),
                                 Name = "NEO",
                                 Abbreviation = "NEO",
                                 Slug = "NEO"
                             },
                             new Currency
                             {
-                                CurrencyTypeId = 2,
+                                CurrencyTypeId = context.CurrencyTypes
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                        StringComparison.InvariantCultureIgnoreCase))
+                                    .Select(ct => ct.Id)
+                                    .SingleOrDefault(),
                                 Name = "Maker",
                                 Abbreviation = "MKR",
                                 Slug = "MKR"
                             },
                             new Currency
                             {
-                                CurrencyTypeId = 2,
+                                CurrencyTypeId = context.CurrencyTypes
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                        StringComparison.InvariantCultureIgnoreCase))
+                                    .Select(ct => ct.Id)
+                                    .SingleOrDefault(),
                                 Name = "Ontology",
                                 Abbreviation = "ONT",
                                 Slug = "ONT"
                             },
                             new Currency
                             {
-                                CurrencyTypeId = 2,
+                                CurrencyTypeId = context.CurrencyTypes
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                        StringComparison.InvariantCultureIgnoreCase))
+                                    .Select(ct => ct.Id)
+                                    .SingleOrDefault(),
                                 Name = "Zcash",
                                 Abbreviation = "ZEC",
                                 Slug = "ZEC"
                             },
                             new Currency
                             {
-                                CurrencyTypeId = 2,
+                                CurrencyTypeId = context.CurrencyTypes
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                        StringComparison.InvariantCultureIgnoreCase))
+                                    .Select(ct => ct.Id)
+                                    .SingleOrDefault(),
                                 Name = "Basic Attention Token",
                                 Abbreviation = "BAT",
                                 Slug = "BAT"
                             },
                             new Currency
                             {
-                                CurrencyTypeId = 2,
+                                CurrencyTypeId = context.CurrencyTypes
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                        StringComparison.InvariantCultureIgnoreCase))
+                                    .Select(ct => ct.Id)
+                                    .SingleOrDefault(),
                                 Name = "Crypto.com Chain",
                                 Abbreviation = "CRO",
                                 Slug = "CRO"
                             },
                             new Currency
                             {
-                                CurrencyTypeId = 2,
+                                CurrencyTypeId = context.CurrencyTypes
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                        StringComparison.InvariantCultureIgnoreCase))
+                                    .Select(ct => ct.Id)
+                                    .SingleOrDefault(),
                                 Name = "Bitcoin Gold",
                                 Abbreviation = "BTG",
                                 Slug = "BTG"
                             },
                             new Currency
                             {
-                                CurrencyTypeId = 2,
+                                CurrencyTypeId = context.CurrencyTypes
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                        StringComparison.InvariantCultureIgnoreCase))
+                                    .Select(ct => ct.Id)
+                                    .SingleOrDefault(),
                                 Name = "VeChain",
                                 Abbreviation = "VET",
                                 Slug = "VET"
                             },
                             new Currency
                             {
-                                CurrencyTypeId = 2,
+                                CurrencyTypeId = context.CurrencyTypes
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                        StringComparison.InvariantCultureIgnoreCase))
+                                    .Select(ct => ct.Id)
+                                    .SingleOrDefault(),
                                 Name = "Chainlink",
                                 Abbreviation = "LINK",
                                 Slug = "LINK"
                             },
                             new Currency
                             {
-                                CurrencyTypeId = 2,
+                                CurrencyTypeId = context.CurrencyTypes
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                        StringComparison.InvariantCultureIgnoreCase))
+                                    .Select(ct => ct.Id)
+                                    .SingleOrDefault(),
                                 Name = "USD Coin",
                                 Abbreviation = "USDC",
                                 Slug = "USDC"
                             },
                             new Currency
                             {
-                                CurrencyTypeId = 2,
+                                CurrencyTypeId = context.CurrencyTypes
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                        StringComparison.InvariantCultureIgnoreCase))
+                                    .Select(ct => ct.Id)
+                                    .SingleOrDefault(),
                                 Name = "Dogecoin",
                                 Abbreviation = "DOGE",
                                 Slug = "DOGE"
                             },
                             new Currency
                             {
-                                CurrencyTypeId = 2,
+                                CurrencyTypeId = context.CurrencyTypes
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                        StringComparison.InvariantCultureIgnoreCase))
+                                    .Select(ct => ct.Id)
+                                    .SingleOrDefault(),
                                 Name = "Aurora",
                                 Abbreviation = "AOA",
                                 Slug = "AOA"
                             },
                             new Currency
                             {
-                                CurrencyTypeId = 2,
+                                CurrencyTypeId = context.CurrencyTypes
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                        StringComparison.InvariantCultureIgnoreCase))
+                                    .Select(ct => ct.Id)
+                                    .SingleOrDefault(),
                                 Name = "OmiseGO",
                                 Abbreviation = "OMG",
                                 Slug = "OMG"
                             },
                             new Currency
                             {
-                                CurrencyTypeId = 2,
+                                CurrencyTypeId = context.CurrencyTypes
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                        StringComparison.InvariantCultureIgnoreCase))
+                                    .Select(ct => ct.Id)
+                                    .SingleOrDefault(),
                                 Name = "Qtum",
                                 Abbreviation = "QTUM",
                                 Slug = "QTUM"
                             },
                             new Currency
                             {
-                                CurrencyTypeId = 2,
+                                CurrencyTypeId = context.CurrencyTypes
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                        StringComparison.InvariantCultureIgnoreCase))
+                                    .Select(ct => ct.Id)
+                                    .SingleOrDefault(),
                                 Name = "Decred",
                                 Abbreviation = "DCR",
                                 Slug = "DCR"
                             },
                             new Currency
                             {
-                                CurrencyTypeId = 2,
+                                CurrencyTypeId = context.CurrencyTypes
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                        StringComparison.InvariantCultureIgnoreCase))
+                                    .Select(ct => ct.Id)
+                                    .SingleOrDefault(),
                                 Name = "Waves",
                                 Abbreviation = "WAVES",
                                 Slug = "WAVES"
                             },
                             new Currency
                             {
-                                CurrencyTypeId = 2,
+                                CurrencyTypeId = context.CurrencyTypes
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                        StringComparison.InvariantCultureIgnoreCase))
+                                    .Select(ct => ct.Id)
+                                    .SingleOrDefault(),
                                 Name = "BitTorrent",
                                 Abbreviation = "BTT",
                                 Slug = "BTT"
                             },
                             new Currency
                             {
-                                CurrencyTypeId = 2,
+                                CurrencyTypeId = context.CurrencyTypes
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                        StringComparison.InvariantCultureIgnoreCase))
+                                    .Select(ct => ct.Id)
+                                    .SingleOrDefault(),
                                 Name = "Holo",
                                 Abbreviation = "HOT",
                                 Slug = "HOT"
                             },
                             new Currency
                             {
-                                CurrencyTypeId = 2,
+                                CurrencyTypeId = context.CurrencyTypes
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                        StringComparison.InvariantCultureIgnoreCase))
+                                    .Select(ct => ct.Id)
+                                    .SingleOrDefault(),
                                 Name = "TrueUSD",
                                 Abbreviation = "TUSD",
                                 Slug = "TUSD"
                             },
                             new Currency
                             {
-                                CurrencyTypeId = 2,
+                                CurrencyTypeId = context.CurrencyTypes
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                        StringComparison.InvariantCultureIgnoreCase))
+                                    .Select(ct => ct.Id)
+                                    .SingleOrDefault(),
                                 Name = "Lisk",
                                 Abbreviation = "LSK",
                                 Slug = "LSK"
                             },
                             new Currency
                             {
-                                CurrencyTypeId = 2,
+                                CurrencyTypeId = context.CurrencyTypes
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                        StringComparison.InvariantCultureIgnoreCase))
+                                    .Select(ct => ct.Id)
+                                    .SingleOrDefault(),
                                 Name = "Nano",
                                 Abbreviation = "NANO",
                                 Slug = "NANO"
                             },
                             new Currency
                             {
-                                CurrencyTypeId = 2,
+                                CurrencyTypeId = context.CurrencyTypes
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                        StringComparison.InvariantCultureIgnoreCase))
+                                    .Select(ct => ct.Id)
+                                    .SingleOrDefault(),
                                 Name = "Augur",
                                 Abbreviation = "REP",
                                 Slug = "REP"
                             },
                             new Currency
                             {
-                                CurrencyTypeId = 2,
+                                CurrencyTypeId = context.CurrencyTypes
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                        StringComparison.InvariantCultureIgnoreCase))
+                                    .Select(ct => ct.Id)
+                                    .SingleOrDefault(),
                                 Name = "Bitcoin Diamond",
                                 Abbreviation = "BCD",
                                 Slug = "BCD"
                             },
                             new Currency
                             {
-                                CurrencyTypeId = 2,
+                                CurrencyTypeId = context.CurrencyTypes
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                        StringComparison.InvariantCultureIgnoreCase))
+                                    .Select(ct => ct.Id)
+                                    .SingleOrDefault(),
                                 Name = "0x",
                                 Abbreviation = "ZRX",
                                 Slug = "ZRX"
                             },
                             new Currency
                             {
-                                CurrencyTypeId = 2,
+                                CurrencyTypeId = context.CurrencyTypes
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                        StringComparison.InvariantCultureIgnoreCase))
+                                    .Select(ct => ct.Id)
+                                    .SingleOrDefault(),
                                 Name = "Ravencoin",
                                 Abbreviation = "RVN",
                                 Slug = "RVN"
                             },
                             new Currency
                             {
-                                CurrencyTypeId = 2,
+                                CurrencyTypeId = context.CurrencyTypes
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                        StringComparison.InvariantCultureIgnoreCase))
+                                    .Select(ct => ct.Id)
+                                    .SingleOrDefault(),
                                 Name = "DigiByte",
                                 Abbreviation = "DGB",
                                 Slug = "DGB"
                             },
                             new Currency
                             {
-                                CurrencyTypeId = 2,
+                                CurrencyTypeId = context.CurrencyTypes
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                        StringComparison.InvariantCultureIgnoreCase))
+                                    .Select(ct => ct.Id)
+                                    .SingleOrDefault(),
                                 Name = "ICON",
                                 Abbreviation = "ICX",
                                 Slug = "ICX"
                             },
                             new Currency
                             {
-                                CurrencyTypeId = 2,
+                                CurrencyTypeId = context.CurrencyTypes
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                        StringComparison.InvariantCultureIgnoreCase))
+                                    .Select(ct => ct.Id)
+                                    .SingleOrDefault(),
                                 Name = "Verge",
                                 Abbreviation = "XVG",
                                 Slug = "XVG"
                             },
                             new Currency
                             {
-                                CurrencyTypeId = 2,
+                                CurrencyTypeId = context.CurrencyTypes
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                        StringComparison.InvariantCultureIgnoreCase))
+                                    .Select(ct => ct.Id)
+                                    .SingleOrDefault(),
                                 Name = "Paxos Standard Token",
                                 Abbreviation = "PAX",
                                 Slug = "PAX"
                             },
                             new Currency
                             {
-                                CurrencyTypeId = 2,
+                                CurrencyTypeId = context.CurrencyTypes
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                        StringComparison.InvariantCultureIgnoreCase))
+                                    .Select(ct => ct.Id)
+                                    .SingleOrDefault(),
                                 Name = "Pundi X",
                                 Abbreviation = "NPXS",
                                 Slug = "NPXS"
                             },
                             new Currency
                             {
-                                CurrencyTypeId = 2,
+                                CurrencyTypeId = context.CurrencyTypes
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                        StringComparison.InvariantCultureIgnoreCase))
+                                    .Select(ct => ct.Id)
+                                    .SingleOrDefault(),
                                 Name = "Zilliqa",
                                 Abbreviation = "ZIL",
                                 Slug = "ZIL"
                             },
                             new Currency
                             {
-                                CurrencyTypeId = 2,
+                                CurrencyTypeId = context.CurrencyTypes
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                        StringComparison.InvariantCultureIgnoreCase))
+                                    .Select(ct => ct.Id)
+                                    .SingleOrDefault(),
                                 Name = "Huobi Token",
                                 Abbreviation = "HT",
                                 Slug = "HT"
                             },
                             new Currency
                             {
-                                CurrencyTypeId = 2,
+                                CurrencyTypeId = context.CurrencyTypes
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                        StringComparison.InvariantCultureIgnoreCase))
+                                    .Select(ct => ct.Id)
+                                    .SingleOrDefault(),
                                 Name = "Aeternity",
                                 Abbreviation = "AE",
                                 Slug = "AE"
                             },
                             new Currency
                             {
-                                CurrencyTypeId = 2,
+                                CurrencyTypeId = context.CurrencyTypes
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                        StringComparison.InvariantCultureIgnoreCase))
+                                    .Select(ct => ct.Id)
+                                    .SingleOrDefault(),
                                 Name = "IOST",
                                 Abbreviation = "IOST",
                                 Slug = "IOST"
                             },
                             new Currency
                             {
-                                CurrencyTypeId = 2,
+                                CurrencyTypeId = context.CurrencyTypes
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                        StringComparison.InvariantCultureIgnoreCase))
+                                    .Select(ct => ct.Id)
+                                    .SingleOrDefault(),
                                 Name = "Siacoin",
                                 Abbreviation = "SC",
                                 Slug = "SC"
                             },
                             new Currency
                             {
-                                CurrencyTypeId = 2,
+                                CurrencyTypeId = context.CurrencyTypes
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                        StringComparison.InvariantCultureIgnoreCase))
+                                    .Select(ct => ct.Id)
+                                    .SingleOrDefault(),
                                 Name = "ABBC Coin",
                                 Abbreviation = "ABBC",
                                 Slug = "ABBC"
                             },
                             new Currency
                             {
-                                CurrencyTypeId = 2,
+                                CurrencyTypeId = context.CurrencyTypes
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                        StringComparison.InvariantCultureIgnoreCase))
+                                    .Select(ct => ct.Id)
+                                    .SingleOrDefault(),
                                 Name = "Komodo",
                                 Abbreviation = "KMD",
                                 Slug = "KMD"
                             },
                             new Currency
                             {
-                                CurrencyTypeId = 2,
+                                CurrencyTypeId = context.CurrencyTypes
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                        StringComparison.InvariantCultureIgnoreCase))
+                                    .Select(ct => ct.Id)
+                                    .SingleOrDefault(),
                                 Name = "Enjin Coin",
                                 Abbreviation = "ENJ",
                                 Slug = "ENJ"
                             },
                             new Currency
                             {
-                                CurrencyTypeId = 2,
+                                CurrencyTypeId = context.CurrencyTypes
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                        StringComparison.InvariantCultureIgnoreCase))
+                                    .Select(ct => ct.Id)
+                                    .SingleOrDefault(),
                                 Name = "Steem",
                                 Abbreviation = "STEEM",
                                 Slug = "STEEM"
                             },
                             new Currency
                             {
-                                CurrencyTypeId = 2,
+                                CurrencyTypeId = context.CurrencyTypes
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                        StringComparison.InvariantCultureIgnoreCase))
+                                    .Select(ct => ct.Id)
+                                    .SingleOrDefault(),
                                 Name = "Bytom",
                                 Abbreviation = "BTM",
                                 Slug = "BTM"
                             },
                             new Currency
                             {
-                                CurrencyTypeId = 2,
+                                CurrencyTypeId = context.CurrencyTypes
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                        StringComparison.InvariantCultureIgnoreCase))
+                                    .Select(ct => ct.Id)
+                                    .SingleOrDefault(),
                                 Name = "Qubitica",
                                 Abbreviation = "QBIT",
                                 Slug = "QBIT"
                             },
                             new Currency
                             {
-                                CurrencyTypeId = 2,
+                                CurrencyTypeId = context.CurrencyTypes
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                        StringComparison.InvariantCultureIgnoreCase))
+                                    .Select(ct => ct.Id)
+                                    .SingleOrDefault(),
                                 Name = "THETA",
                                 Abbreviation = "THETA",
                                 Slug = "THETA"
                             },
                             new Currency
                             {
-                                CurrencyTypeId = 2,
+                                CurrencyTypeId = context.CurrencyTypes
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                        StringComparison.InvariantCultureIgnoreCase))
+                                    .Select(ct => ct.Id)
+                                    .SingleOrDefault(),
                                 Name = "Stratis",
                                 Abbreviation = "STRAT",
                                 Slug = "STRAT"
                             },
                             new Currency
                             {
-                                CurrencyTypeId = 2,
+                                CurrencyTypeId = context.CurrencyTypes
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                        StringComparison.InvariantCultureIgnoreCase))
+                                    .Select(ct => ct.Id)
+                                    .SingleOrDefault(),
                                 Name = "ThoreCoin",
                                 Abbreviation = "THR",
                                 Slug = "THR"
                             },
                             new Currency
                             {
-                                CurrencyTypeId = 2,
+                                CurrencyTypeId = context.CurrencyTypes
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                        StringComparison.InvariantCultureIgnoreCase))
+                                    .Select(ct => ct.Id)
+                                    .SingleOrDefault(),
                                 Name = "MaidSafeCoin",
                                 Abbreviation = "MAID",
                                 Slug = "MAID"
                             },
                             new Currency
                             {
-                                CurrencyTypeId = 2,
+                                CurrencyTypeId = context.CurrencyTypes
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                        StringComparison.InvariantCultureIgnoreCase))
+                                    .Select(ct => ct.Id)
+                                    .SingleOrDefault(),
                                 Name = "Dent",
                                 Abbreviation = "DENT",
                                 Slug = "DENT"
                             },
                             new Currency
                             {
-                                CurrencyTypeId = 2,
+                                CurrencyTypeId = context.CurrencyTypes
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                        StringComparison.InvariantCultureIgnoreCase))
+                                    .Select(ct => ct.Id)
+                                    .SingleOrDefault(),
                                 Name = "Insight Chain",
                                 Abbreviation = "INB",
                                 Slug = "INB"
                             },
                             new Currency
                             {
-                                CurrencyTypeId = 2,
+                                CurrencyTypeId = context.CurrencyTypes
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                        StringComparison.InvariantCultureIgnoreCase))
+                                    .Select(ct => ct.Id)
+                                    .SingleOrDefault(),
                                 Name = "KuCoin Shares",
                                 Abbreviation = "KCS",
                                 Slug = "KCS"
                             },
                             new Currency
                             {
-                                CurrencyTypeId = 2,
+                                CurrencyTypeId = context.CurrencyTypes
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                        StringComparison.InvariantCultureIgnoreCase))
+                                    .Select(ct => ct.Id)
+                                    .SingleOrDefault(),
                                 Name = "SOLVE",
                                 Abbreviation = "SOLVE",
                                 Slug = "SOLVE"
                             },
                             new Currency
                             {
-                                CurrencyTypeId = 2,
+                                CurrencyTypeId = context.CurrencyTypes
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                        StringComparison.InvariantCultureIgnoreCase))
+                                    .Select(ct => ct.Id)
+                                    .SingleOrDefault(),
                                 Name = "Waltonchain",
                                 Abbreviation = "WTC",
                                 Slug = "WTC"
                             },
                             new Currency
                             {
-                                CurrencyTypeId = 2,
+                                CurrencyTypeId = context.CurrencyTypes
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                        StringComparison.InvariantCultureIgnoreCase))
+                                    .Select(ct => ct.Id)
+                                    .SingleOrDefault(),
                                 Name = "Golem",
                                 Abbreviation = "GNT",
                                 Slug = "GNT"
                             },
                             new Currency
                             {
-                                CurrencyTypeId = 2,
+                                CurrencyTypeId = context.CurrencyTypes
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                        StringComparison.InvariantCultureIgnoreCase))
+                                    .Select(ct => ct.Id)
+                                    .SingleOrDefault(),
                                 Name = "aelf",
                                 Abbreviation = "ELF",
                                 Slug = "ELF"
                             },
                             new Currency
                             {
-                                CurrencyTypeId = 2,
+                                CurrencyTypeId = context.CurrencyTypes
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                        StringComparison.InvariantCultureIgnoreCase))
+                                    .Select(ct => ct.Id)
+                                    .SingleOrDefault(),
                                 Name = "Status",
                                 Abbreviation = "SNT",
                                 Slug = "SNT"
                             },
                             new Currency
                             {
-                                CurrencyTypeId = 2,
+                                CurrencyTypeId = context.CurrencyTypes
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                        StringComparison.InvariantCultureIgnoreCase))
+                                    .Select(ct => ct.Id)
+                                    .SingleOrDefault(),
                                 Name = "Crypto.com",
                                 Abbreviation = "MCO",
                                 Slug = "MCO"
                             },
                             new Currency
                             {
-                                CurrencyTypeId = 2,
+                                CurrencyTypeId = context.CurrencyTypes
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                        StringComparison.InvariantCultureIgnoreCase))
+                                    .Select(ct => ct.Id)
+                                    .SingleOrDefault(),
                                 Name = "Mixin",
                                 Abbreviation = "XIN",
                                 Slug = "XIN"
                             },
                             new Currency
                             {
-                                CurrencyTypeId = 2,
+                                CurrencyTypeId = context.CurrencyTypes
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                        StringComparison.InvariantCultureIgnoreCase))
+                                    .Select(ct => ct.Id)
+                                    .SingleOrDefault(),
                                 Name = "Cryptonex",
                                 Abbreviation = "CNX",
                                 Slug = "CNX"
                             },
                             new Currency
                             {
-                                CurrencyTypeId = 2,
+                                CurrencyTypeId = context.CurrencyTypes
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                        StringComparison.InvariantCultureIgnoreCase))
+                                    .Select(ct => ct.Id)
+                                    .SingleOrDefault(),
                                 Name = "Theta Fuel",
                                 Abbreviation = "TFUEL",
                                 Slug = "TFUEL"
                             },
                             new Currency
                             {
-                                CurrencyTypeId = 2,
+                                CurrencyTypeId = context.CurrencyTypes
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                        StringComparison.InvariantCultureIgnoreCase))
+                                    .Select(ct => ct.Id)
+                                    .SingleOrDefault(),
                                 Name = "Ardor",
                                 Abbreviation = "ARDR",
                                 Slug = "ARDR"
                             },
                             new Currency
                             {
-                                CurrencyTypeId = 2,
+                                CurrencyTypeId = context.CurrencyTypes
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                        StringComparison.InvariantCultureIgnoreCase))
+                                    .Select(ct => ct.Id)
+                                    .SingleOrDefault(),
                                 Name = "VestChain",
                                 Abbreviation = "VEST",
                                 Slug = "VEST"
                             },
                             new Currency
                             {
-                                CurrencyTypeId = 2,
+                                CurrencyTypeId = context.CurrencyTypes
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                        StringComparison.InvariantCultureIgnoreCase))
+                                    .Select(ct => ct.Id)
+                                    .SingleOrDefault(),
                                 Name = "Dai",
                                 Abbreviation = "DAI",
                                 Slug = "DAI"
                             },
                             new Currency
                             {
-                                CurrencyTypeId = 2,
+                                CurrencyTypeId = context.CurrencyTypes
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                        StringComparison.InvariantCultureIgnoreCase))
+                                    .Select(ct => ct.Id)
+                                    .SingleOrDefault(),
                                 Name = "Factom",
                                 Abbreviation = "FCT",
                                 Slug = "FCT"
                             },
                             new Currency
                             {
-                                CurrencyTypeId = 2,
+                                CurrencyTypeId = context.CurrencyTypes
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                        StringComparison.InvariantCultureIgnoreCase))
+                                    .Select(ct => ct.Id)
+                                    .SingleOrDefault(),
                                 Name = "Project Pai",
                                 Abbreviation = "PAI",
                                 Slug = "PAI"
                             },
                             new Currency
                             {
-                                CurrencyTypeId = 2,
+                                CurrencyTypeId = context.CurrencyTypes
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                        StringComparison.InvariantCultureIgnoreCase))
+                                    .Select(ct => ct.Id)
+                                    .SingleOrDefault(),
                                 Name = "WAX",
                                 Abbreviation = "WAX",
                                 Slug = "WAX"
                             },
                             new Currency
                             {
-                                CurrencyTypeId = 2,
+                                CurrencyTypeId = context.CurrencyTypes
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                        StringComparison.InvariantCultureIgnoreCase))
+                                    .Select(ct => ct.Id)
+                                    .SingleOrDefault(),
                                 Name = "TrueChain",
                                 Abbreviation = "TRUE",
                                 Slug = "TRUE"
                             },
                             new Currency
                             {
-                                CurrencyTypeId = 2,
+                                CurrencyTypeId = context.CurrencyTypes
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                        StringComparison.InvariantCultureIgnoreCase))
+                                    .Select(ct => ct.Id)
+                                    .SingleOrDefault(),
                                 Name = "Ark",
                                 Abbreviation = "ARK",
                                 Slug = "ARK"
                             },
                             new Currency
                             {
-                                CurrencyTypeId = 2,
+                                CurrencyTypeId = context.CurrencyTypes
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                        StringComparison.InvariantCultureIgnoreCase))
+                                    .Select(ct => ct.Id)
+                                    .SingleOrDefault(),
                                 Name = "Horizen",
                                 Abbreviation = "ZEN",
                                 Slug = "ZEN"
                             },
                             new Currency
                             {
-                                CurrencyTypeId = 2,
+                                CurrencyTypeId = context.CurrencyTypes
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                        StringComparison.InvariantCultureIgnoreCase))
+                                    .Select(ct => ct.Id)
+                                    .SingleOrDefault(),
                                 Name = "DigixDAO",
                                 Abbreviation = "DGD",
                                 Slug = "DGD"
                             },
                             new Currency
                             {
-                                CurrencyTypeId = 2,
+                                CurrencyTypeId = context.CurrencyTypes
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                        StringComparison.InvariantCultureIgnoreCase))
+                                    .Select(ct => ct.Id)
+                                    .SingleOrDefault(),
                                 Name = "Clams",
                                 Abbreviation = "CLAM",
                                 Slug = "CLAM"
                             },
                             new Currency
                             {
-                                CurrencyTypeId = 2,
+                                CurrencyTypeId = context.CurrencyTypes
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                        StringComparison.InvariantCultureIgnoreCase))
+                                    .Select(ct => ct.Id)
+                                    .SingleOrDefault(),
                                 Name = "MonaCoin",
                                 Abbreviation = "MONA",
                                 Slug = "MONA"
                             },
                             new Currency
                             {
-                                CurrencyTypeId = 2,
+                                CurrencyTypeId = context.CurrencyTypes
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                        StringComparison.InvariantCultureIgnoreCase))
+                                    .Select(ct => ct.Id)
+                                    .SingleOrDefault(),
                                 Name = "GXChain",
                                 Abbreviation = "GXC",
                                 Slug = "GXC"
                             },
                             new Currency
                             {
-                                CurrencyTypeId = 2,
+                                CurrencyTypeId = context.CurrencyTypes
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                        StringComparison.InvariantCultureIgnoreCase))
+                                    .Select(ct => ct.Id)
+                                    .SingleOrDefault(),
                                 Name = "Decentraland",
                                 Abbreviation = "MANA",
                                 Slug = "MANA"
                             },
                             new Currency
                             {
-                                CurrencyTypeId = 2,
+                                CurrencyTypeId = context.CurrencyTypes
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                        StringComparison.InvariantCultureIgnoreCase))
+                                    .Select(ct => ct.Id)
+                                    .SingleOrDefault(),
                                 Name = "Orbs",
                                 Abbreviation = "ORBS",
                                 Slug = "ORBS"
                             },
                             new Currency
                             {
-                                CurrencyTypeId = 2,
+                                CurrencyTypeId = context.CurrencyTypes
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                        StringComparison.InvariantCultureIgnoreCase))
+                                    .Select(ct => ct.Id)
+                                    .SingleOrDefault(),
                                 Name = "Aion",
                                 Abbreviation = "AION",
                                 Slug = "AION"
                             },
                             new Currency
                             {
-                                CurrencyTypeId = 2,
+                                CurrencyTypeId = context.CurrencyTypes
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                        StringComparison.InvariantCultureIgnoreCase))
+                                    .Select(ct => ct.Id)
+                                    .SingleOrDefault(),
                                 Name = "Metaverse ETP",
                                 Abbreviation = "ETP",
                                 Slug = "ETP"
                             },
                             new Currency
                             {
-                                CurrencyTypeId = 2,
+                                CurrencyTypeId = context.CurrencyTypes
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                        StringComparison.InvariantCultureIgnoreCase))
+                                    .Select(ct => ct.Id)
+                                    .SingleOrDefault(),
                                 Name = "Elastos",
                                 Abbreviation = "ELA",
                                 Slug = "ELA"
                             },
                             new Currency
                             {
-                                CurrencyTypeId = 2,
+                                CurrencyTypeId = context.CurrencyTypes
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                        StringComparison.InvariantCultureIgnoreCase))
+                                    .Select(ct => ct.Id)
+                                    .SingleOrDefault(),
                                 Name = "Loopring",
                                 Abbreviation = "LRC",
                                 Slug = "LRC"
                             },
                             new Currency
                             {
-                                CurrencyTypeId = 2,
+                                CurrencyTypeId = context.CurrencyTypes
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                        StringComparison.InvariantCultureIgnoreCase))
+                                    .Select(ct => ct.Id)
+                                    .SingleOrDefault(),
                                 Name = "Loom Network",
                                 Abbreviation = "LOOM",
                                 Slug = "LOOM"
                             },
                             new Currency
                             {
-                                CurrencyTypeId = 2,
+                                CurrencyTypeId = context.CurrencyTypes
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                        StringComparison.InvariantCultureIgnoreCase))
+                                    .Select(ct => ct.Id)
+                                    .SingleOrDefault(),
                                 Name = "Santiment Network Token",
                                 Abbreviation = "SAN",
                                 Slug = "SAN"
                             },
                             new Currency
                             {
-                                CurrencyTypeId = 2,
+                                CurrencyTypeId = context.CurrencyTypes
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                        StringComparison.InvariantCultureIgnoreCase))
+                                    .Select(ct => ct.Id)
+                                    .SingleOrDefault(),
                                 Name = "Revain",
                                 Abbreviation = "R",
                                 Slug = "R"
                             },
                             new Currency
                             {
-                                CurrencyTypeId = 2,
+                                CurrencyTypeId = context.CurrencyTypes
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                        StringComparison.InvariantCultureIgnoreCase))
+                                    .Select(ct => ct.Id)
+                                    .SingleOrDefault(),
                                 Name = "NULS",
                                 Abbreviation = "NULS",
                                 Slug = "NULS"
                             },
                             new Currency
                             {
-                                CurrencyTypeId = 2,
+                                CurrencyTypeId = context.CurrencyTypes
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                        StringComparison.InvariantCultureIgnoreCase))
+                                    .Select(ct => ct.Id)
+                                    .SingleOrDefault(),
                                 Name = "Populous",
                                 Abbreviation = "PPT",
                                 Slug = "PPT"
                             },
                             new Currency
                             {
-                                CurrencyTypeId = 2,
+                                CurrencyTypeId = context.CurrencyTypes
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                        StringComparison.InvariantCultureIgnoreCase))
+                                    .Select(ct => ct.Id)
+                                    .SingleOrDefault(),
                                 Name = "Matic Network",
                                 Abbreviation = "MATIC",
                                 Slug = "MATIC"
                             },
                             new Currency
                             {
-                                CurrencyTypeId = 2,
+                                CurrencyTypeId = context.CurrencyTypes
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                        StringComparison.InvariantCultureIgnoreCase))
+                                    .Select(ct => ct.Id)
+                                    .SingleOrDefault(),
                                 Name = "LATOKEN",
                                 Abbreviation = "LA",
                                 Slug = "LA"
                             },
                             new Currency
                             {
-                                CurrencyTypeId = 2,
+                                CurrencyTypeId = context.CurrencyTypes
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                        StringComparison.InvariantCultureIgnoreCase))
+                                    .Select(ct => ct.Id)
+                                    .SingleOrDefault(),
                                 Name = "Zcoin",
                                 Abbreviation = "XZC",
                                 Slug = "XZC"
