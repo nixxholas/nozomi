@@ -19,7 +19,7 @@ namespace Nozomi.Analysis.StartupExtensions
 
                 using (var context = serviceScope.ServiceProvider.GetService<NozomiDbContext>())
                 {
-                    context.Database.Migrate();
+                    context.Database.EnsureCreated();
                 }
             }
         }
