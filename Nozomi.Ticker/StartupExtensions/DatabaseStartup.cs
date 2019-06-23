@@ -168,7 +168,7 @@ namespace Nozomi.Ticker.StartupExtensions
                             new Currency
                             {
                                 CurrencyTypeId = context.CurrencyTypes
-                                    .Where(ct => ct.TypeShortForm.Equals("FIAT", 
+                                    .Where(ct => ct.TypeShortForm.Equals("FIAT",
                                         StringComparison.InvariantCultureIgnoreCase))
                                     .Select(ct => ct.Id)
                                     .SingleOrDefault(),
@@ -179,7 +179,7 @@ namespace Nozomi.Ticker.StartupExtensions
                             new Currency
                             {
                                 CurrencyTypeId = context.CurrencyTypes
-                                    .Where(ct => ct.TypeShortForm.Equals("FIAT", 
+                                    .Where(ct => ct.TypeShortForm.Equals("FIAT",
                                         StringComparison.InvariantCultureIgnoreCase))
                                     .Select(ct => ct.Id)
                                     .SingleOrDefault(),
@@ -190,7 +190,7 @@ namespace Nozomi.Ticker.StartupExtensions
                             new Currency
                             {
                                 CurrencyTypeId = context.CurrencyTypes
-                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO",
                                         StringComparison.InvariantCultureIgnoreCase))
                                     .Select(ct => ct.Id)
                                     .SingleOrDefault(),
@@ -203,7 +203,7 @@ namespace Nozomi.Ticker.StartupExtensions
                             new Currency
                             {
                                 CurrencyTypeId = context.CurrencyTypes
-                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO",
                                         StringComparison.InvariantCultureIgnoreCase))
                                     .Select(ct => ct.Id)
                                     .SingleOrDefault(),
@@ -215,7 +215,7 @@ namespace Nozomi.Ticker.StartupExtensions
                             new Currency
                             {
                                 CurrencyTypeId = context.CurrencyTypes
-                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO",
                                         StringComparison.InvariantCultureIgnoreCase))
                                     .Select(ct => ct.Id)
                                     .SingleOrDefault(),
@@ -228,7 +228,7 @@ namespace Nozomi.Ticker.StartupExtensions
                             new Currency
                             {
                                 CurrencyTypeId = context.CurrencyTypes
-                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO",
                                         StringComparison.InvariantCultureIgnoreCase))
                                     .Select(ct => ct.Id)
                                     .SingleOrDefault(),
@@ -239,7 +239,7 @@ namespace Nozomi.Ticker.StartupExtensions
                             new Currency
                             {
                                 CurrencyTypeId = context.CurrencyTypes
-                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO",
                                         StringComparison.InvariantCultureIgnoreCase))
                                     .Select(ct => ct.Id)
                                     .SingleOrDefault(),
@@ -250,7 +250,7 @@ namespace Nozomi.Ticker.StartupExtensions
                             new Currency
                             {
                                 CurrencyTypeId = context.CurrencyTypes
-                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO",
                                         StringComparison.InvariantCultureIgnoreCase))
                                     .Select(ct => ct.Id)
                                     .SingleOrDefault(),
@@ -261,7 +261,7 @@ namespace Nozomi.Ticker.StartupExtensions
                             new Currency
                             {
                                 CurrencyTypeId = context.CurrencyTypes
-                                    .Where(ct => ct.TypeShortForm.Equals("FIAT", 
+                                    .Where(ct => ct.TypeShortForm.Equals("FIAT",
                                         StringComparison.InvariantCultureIgnoreCase))
                                     .Select(ct => ct.Id)
                                     .SingleOrDefault(),
@@ -272,7 +272,7 @@ namespace Nozomi.Ticker.StartupExtensions
                             new Currency
                             {
                                 CurrencyTypeId = context.CurrencyTypes
-                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO",
                                         StringComparison.InvariantCultureIgnoreCase))
                                     .Select(ct => ct.Id)
                                     .SingleOrDefault(),
@@ -283,7 +283,7 @@ namespace Nozomi.Ticker.StartupExtensions
                             new Currency
                             {
                                 CurrencyTypeId = context.CurrencyTypes
-                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO",
                                         StringComparison.InvariantCultureIgnoreCase))
                                     .Select(ct => ct.Id)
                                     .SingleOrDefault(),
@@ -294,7 +294,7 @@ namespace Nozomi.Ticker.StartupExtensions
                             new Currency
                             {
                                 CurrencyTypeId = context.CurrencyTypes
-                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO",
                                         StringComparison.InvariantCultureIgnoreCase))
                                     .Select(ct => ct.Id)
                                     .SingleOrDefault(),
@@ -305,7 +305,7 @@ namespace Nozomi.Ticker.StartupExtensions
                             new Currency
                             {
                                 CurrencyTypeId = context.CurrencyTypes
-                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO",
                                         StringComparison.InvariantCultureIgnoreCase))
                                     .Select(ct => ct.Id)
                                     .SingleOrDefault(),
@@ -316,7 +316,7 @@ namespace Nozomi.Ticker.StartupExtensions
                             new Currency
                             {
                                 CurrencyTypeId = context.CurrencyTypes
-                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO",
                                         StringComparison.InvariantCultureIgnoreCase))
                                     .Select(ct => ct.Id)
                                     .SingleOrDefault(),
@@ -327,7 +327,7 @@ namespace Nozomi.Ticker.StartupExtensions
                             new Currency
                             {
                                 CurrencyTypeId = context.CurrencyTypes
-                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO",
                                         StringComparison.InvariantCultureIgnoreCase))
                                     .Select(ct => ct.Id)
                                     .SingleOrDefault(),
@@ -338,7 +338,7 @@ namespace Nozomi.Ticker.StartupExtensions
                             new Currency
                             {
                                 CurrencyTypeId = context.CurrencyTypes
-                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO",
                                         StringComparison.InvariantCultureIgnoreCase))
                                     .Select(ct => ct.Id)
                                     .SingleOrDefault(),
@@ -349,7 +349,7 @@ namespace Nozomi.Ticker.StartupExtensions
                             new Currency
                             {
                                 CurrencyTypeId = context.CurrencyTypes
-                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO",
                                         StringComparison.InvariantCultureIgnoreCase))
                                     .Select(ct => ct.Id)
                                     .SingleOrDefault(),
@@ -360,7 +360,7 @@ namespace Nozomi.Ticker.StartupExtensions
                             new Currency
                             {
                                 CurrencyTypeId = context.CurrencyTypes
-                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO",
                                         StringComparison.InvariantCultureIgnoreCase))
                                     .Select(ct => ct.Id)
                                     .SingleOrDefault(),
@@ -371,7 +371,7 @@ namespace Nozomi.Ticker.StartupExtensions
                             new Currency
                             {
                                 CurrencyTypeId = context.CurrencyTypes
-                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO",
                                         StringComparison.InvariantCultureIgnoreCase))
                                     .Select(ct => ct.Id)
                                     .SingleOrDefault(),
@@ -382,7 +382,7 @@ namespace Nozomi.Ticker.StartupExtensions
                             new Currency
                             {
                                 CurrencyTypeId = context.CurrencyTypes
-                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO",
                                         StringComparison.InvariantCultureIgnoreCase))
                                     .Select(ct => ct.Id)
                                     .SingleOrDefault(),
@@ -393,7 +393,7 @@ namespace Nozomi.Ticker.StartupExtensions
                             new Currency
                             {
                                 CurrencyTypeId = context.CurrencyTypes
-                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO",
                                         StringComparison.InvariantCultureIgnoreCase))
                                     .Select(ct => ct.Id)
                                     .SingleOrDefault(),
@@ -404,7 +404,7 @@ namespace Nozomi.Ticker.StartupExtensions
                             new Currency
                             {
                                 CurrencyTypeId = context.CurrencyTypes
-                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO",
                                         StringComparison.InvariantCultureIgnoreCase))
                                     .Select(ct => ct.Id)
                                     .SingleOrDefault(),
@@ -415,7 +415,7 @@ namespace Nozomi.Ticker.StartupExtensions
                             new Currency
                             {
                                 CurrencyTypeId = context.CurrencyTypes
-                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO",
                                         StringComparison.InvariantCultureIgnoreCase))
                                     .Select(ct => ct.Id)
                                     .SingleOrDefault(),
@@ -426,7 +426,7 @@ namespace Nozomi.Ticker.StartupExtensions
                             new Currency
                             {
                                 CurrencyTypeId = context.CurrencyTypes
-                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO",
                                         StringComparison.InvariantCultureIgnoreCase))
                                     .Select(ct => ct.Id)
                                     .SingleOrDefault(),
@@ -437,7 +437,7 @@ namespace Nozomi.Ticker.StartupExtensions
                             new Currency
                             {
                                 CurrencyTypeId = context.CurrencyTypes
-                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO",
                                         StringComparison.InvariantCultureIgnoreCase))
                                     .Select(ct => ct.Id)
                                     .SingleOrDefault(),
@@ -448,7 +448,7 @@ namespace Nozomi.Ticker.StartupExtensions
                             new Currency
                             {
                                 CurrencyTypeId = context.CurrencyTypes
-                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO",
                                         StringComparison.InvariantCultureIgnoreCase))
                                     .Select(ct => ct.Id)
                                     .SingleOrDefault(),
@@ -459,7 +459,7 @@ namespace Nozomi.Ticker.StartupExtensions
                             new Currency
                             {
                                 CurrencyTypeId = context.CurrencyTypes
-                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO",
                                         StringComparison.InvariantCultureIgnoreCase))
                                     .Select(ct => ct.Id)
                                     .SingleOrDefault(),
@@ -470,7 +470,7 @@ namespace Nozomi.Ticker.StartupExtensions
                             new Currency
                             {
                                 CurrencyTypeId = context.CurrencyTypes
-                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO",
                                         StringComparison.InvariantCultureIgnoreCase))
                                     .Select(ct => ct.Id)
                                     .SingleOrDefault(),
@@ -481,7 +481,7 @@ namespace Nozomi.Ticker.StartupExtensions
                             new Currency
                             {
                                 CurrencyTypeId = context.CurrencyTypes
-                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO",
                                         StringComparison.InvariantCultureIgnoreCase))
                                     .Select(ct => ct.Id)
                                     .SingleOrDefault(),
@@ -492,7 +492,7 @@ namespace Nozomi.Ticker.StartupExtensions
                             new Currency
                             {
                                 CurrencyTypeId = context.CurrencyTypes
-                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO",
                                         StringComparison.InvariantCultureIgnoreCase))
                                     .Select(ct => ct.Id)
                                     .SingleOrDefault(),
@@ -503,7 +503,7 @@ namespace Nozomi.Ticker.StartupExtensions
                             new Currency
                             {
                                 CurrencyTypeId = context.CurrencyTypes
-                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO",
                                         StringComparison.InvariantCultureIgnoreCase))
                                     .Select(ct => ct.Id)
                                     .SingleOrDefault(),
@@ -514,7 +514,7 @@ namespace Nozomi.Ticker.StartupExtensions
                             new Currency
                             {
                                 CurrencyTypeId = context.CurrencyTypes
-                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO",
                                         StringComparison.InvariantCultureIgnoreCase))
                                     .Select(ct => ct.Id)
                                     .SingleOrDefault(),
@@ -525,7 +525,7 @@ namespace Nozomi.Ticker.StartupExtensions
                             new Currency
                             {
                                 CurrencyTypeId = context.CurrencyTypes
-                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO",
                                         StringComparison.InvariantCultureIgnoreCase))
                                     .Select(ct => ct.Id)
                                     .SingleOrDefault(),
@@ -536,7 +536,7 @@ namespace Nozomi.Ticker.StartupExtensions
                             new Currency
                             {
                                 CurrencyTypeId = context.CurrencyTypes
-                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO",
                                         StringComparison.InvariantCultureIgnoreCase))
                                     .Select(ct => ct.Id)
                                     .SingleOrDefault(),
@@ -547,7 +547,7 @@ namespace Nozomi.Ticker.StartupExtensions
                             new Currency
                             {
                                 CurrencyTypeId = context.CurrencyTypes
-                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO",
                                         StringComparison.InvariantCultureIgnoreCase))
                                     .Select(ct => ct.Id)
                                     .SingleOrDefault(),
@@ -558,7 +558,7 @@ namespace Nozomi.Ticker.StartupExtensions
                             new Currency
                             {
                                 CurrencyTypeId = context.CurrencyTypes
-                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO",
                                         StringComparison.InvariantCultureIgnoreCase))
                                     .Select(ct => ct.Id)
                                     .SingleOrDefault(),
@@ -569,7 +569,7 @@ namespace Nozomi.Ticker.StartupExtensions
                             new Currency
                             {
                                 CurrencyTypeId = context.CurrencyTypes
-                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO",
                                         StringComparison.InvariantCultureIgnoreCase))
                                     .Select(ct => ct.Id)
                                     .SingleOrDefault(),
@@ -580,7 +580,7 @@ namespace Nozomi.Ticker.StartupExtensions
                             new Currency
                             {
                                 CurrencyTypeId = context.CurrencyTypes
-                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO",
                                         StringComparison.InvariantCultureIgnoreCase))
                                     .Select(ct => ct.Id)
                                     .SingleOrDefault(),
@@ -591,7 +591,7 @@ namespace Nozomi.Ticker.StartupExtensions
                             new Currency
                             {
                                 CurrencyTypeId = context.CurrencyTypes
-                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO",
                                         StringComparison.InvariantCultureIgnoreCase))
                                     .Select(ct => ct.Id)
                                     .SingleOrDefault(),
@@ -602,7 +602,7 @@ namespace Nozomi.Ticker.StartupExtensions
                             new Currency
                             {
                                 CurrencyTypeId = context.CurrencyTypes
-                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO",
                                         StringComparison.InvariantCultureIgnoreCase))
                                     .Select(ct => ct.Id)
                                     .SingleOrDefault(),
@@ -613,7 +613,7 @@ namespace Nozomi.Ticker.StartupExtensions
                             new Currency
                             {
                                 CurrencyTypeId = context.CurrencyTypes
-                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO",
                                         StringComparison.InvariantCultureIgnoreCase))
                                     .Select(ct => ct.Id)
                                     .SingleOrDefault(),
@@ -624,7 +624,7 @@ namespace Nozomi.Ticker.StartupExtensions
                             new Currency
                             {
                                 CurrencyTypeId = context.CurrencyTypes
-                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO",
                                         StringComparison.InvariantCultureIgnoreCase))
                                     .Select(ct => ct.Id)
                                     .SingleOrDefault(),
@@ -635,7 +635,7 @@ namespace Nozomi.Ticker.StartupExtensions
                             new Currency
                             {
                                 CurrencyTypeId = context.CurrencyTypes
-                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO",
                                         StringComparison.InvariantCultureIgnoreCase))
                                     .Select(ct => ct.Id)
                                     .SingleOrDefault(),
@@ -646,7 +646,7 @@ namespace Nozomi.Ticker.StartupExtensions
                             new Currency
                             {
                                 CurrencyTypeId = context.CurrencyTypes
-                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO",
                                         StringComparison.InvariantCultureIgnoreCase))
                                     .Select(ct => ct.Id)
                                     .SingleOrDefault(),
@@ -657,7 +657,7 @@ namespace Nozomi.Ticker.StartupExtensions
                             new Currency
                             {
                                 CurrencyTypeId = context.CurrencyTypes
-                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO",
                                         StringComparison.InvariantCultureIgnoreCase))
                                     .Select(ct => ct.Id)
                                     .SingleOrDefault(),
@@ -668,7 +668,7 @@ namespace Nozomi.Ticker.StartupExtensions
                             new Currency
                             {
                                 CurrencyTypeId = context.CurrencyTypes
-                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO",
                                         StringComparison.InvariantCultureIgnoreCase))
                                     .Select(ct => ct.Id)
                                     .SingleOrDefault(),
@@ -679,7 +679,7 @@ namespace Nozomi.Ticker.StartupExtensions
                             new Currency
                             {
                                 CurrencyTypeId = context.CurrencyTypes
-                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO",
                                         StringComparison.InvariantCultureIgnoreCase))
                                     .Select(ct => ct.Id)
                                     .SingleOrDefault(),
@@ -690,7 +690,7 @@ namespace Nozomi.Ticker.StartupExtensions
                             new Currency
                             {
                                 CurrencyTypeId = context.CurrencyTypes
-                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO",
                                         StringComparison.InvariantCultureIgnoreCase))
                                     .Select(ct => ct.Id)
                                     .SingleOrDefault(),
@@ -701,7 +701,7 @@ namespace Nozomi.Ticker.StartupExtensions
                             new Currency
                             {
                                 CurrencyTypeId = context.CurrencyTypes
-                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO",
                                         StringComparison.InvariantCultureIgnoreCase))
                                     .Select(ct => ct.Id)
                                     .SingleOrDefault(),
@@ -712,7 +712,7 @@ namespace Nozomi.Ticker.StartupExtensions
                             new Currency
                             {
                                 CurrencyTypeId = context.CurrencyTypes
-                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO",
                                         StringComparison.InvariantCultureIgnoreCase))
                                     .Select(ct => ct.Id)
                                     .SingleOrDefault(),
@@ -723,7 +723,7 @@ namespace Nozomi.Ticker.StartupExtensions
                             new Currency
                             {
                                 CurrencyTypeId = context.CurrencyTypes
-                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO",
                                         StringComparison.InvariantCultureIgnoreCase))
                                     .Select(ct => ct.Id)
                                     .SingleOrDefault(),
@@ -734,7 +734,7 @@ namespace Nozomi.Ticker.StartupExtensions
                             new Currency
                             {
                                 CurrencyTypeId = context.CurrencyTypes
-                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO",
                                         StringComparison.InvariantCultureIgnoreCase))
                                     .Select(ct => ct.Id)
                                     .SingleOrDefault(),
@@ -745,7 +745,7 @@ namespace Nozomi.Ticker.StartupExtensions
                             new Currency
                             {
                                 CurrencyTypeId = context.CurrencyTypes
-                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO",
                                         StringComparison.InvariantCultureIgnoreCase))
                                     .Select(ct => ct.Id)
                                     .SingleOrDefault(),
@@ -756,7 +756,7 @@ namespace Nozomi.Ticker.StartupExtensions
                             new Currency
                             {
                                 CurrencyTypeId = context.CurrencyTypes
-                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO",
                                         StringComparison.InvariantCultureIgnoreCase))
                                     .Select(ct => ct.Id)
                                     .SingleOrDefault(),
@@ -767,7 +767,7 @@ namespace Nozomi.Ticker.StartupExtensions
                             new Currency
                             {
                                 CurrencyTypeId = context.CurrencyTypes
-                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO",
                                         StringComparison.InvariantCultureIgnoreCase))
                                     .Select(ct => ct.Id)
                                     .SingleOrDefault(),
@@ -778,7 +778,7 @@ namespace Nozomi.Ticker.StartupExtensions
                             new Currency
                             {
                                 CurrencyTypeId = context.CurrencyTypes
-                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO",
                                         StringComparison.InvariantCultureIgnoreCase))
                                     .Select(ct => ct.Id)
                                     .SingleOrDefault(),
@@ -789,7 +789,7 @@ namespace Nozomi.Ticker.StartupExtensions
                             new Currency
                             {
                                 CurrencyTypeId = context.CurrencyTypes
-                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO",
                                         StringComparison.InvariantCultureIgnoreCase))
                                     .Select(ct => ct.Id)
                                     .SingleOrDefault(),
@@ -800,7 +800,7 @@ namespace Nozomi.Ticker.StartupExtensions
                             new Currency
                             {
                                 CurrencyTypeId = context.CurrencyTypes
-                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO",
                                         StringComparison.InvariantCultureIgnoreCase))
                                     .Select(ct => ct.Id)
                                     .SingleOrDefault(),
@@ -811,7 +811,7 @@ namespace Nozomi.Ticker.StartupExtensions
                             new Currency
                             {
                                 CurrencyTypeId = context.CurrencyTypes
-                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO",
                                         StringComparison.InvariantCultureIgnoreCase))
                                     .Select(ct => ct.Id)
                                     .SingleOrDefault(),
@@ -822,7 +822,7 @@ namespace Nozomi.Ticker.StartupExtensions
                             new Currency
                             {
                                 CurrencyTypeId = context.CurrencyTypes
-                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO",
                                         StringComparison.InvariantCultureIgnoreCase))
                                     .Select(ct => ct.Id)
                                     .SingleOrDefault(),
@@ -833,7 +833,7 @@ namespace Nozomi.Ticker.StartupExtensions
                             new Currency
                             {
                                 CurrencyTypeId = context.CurrencyTypes
-                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO",
                                         StringComparison.InvariantCultureIgnoreCase))
                                     .Select(ct => ct.Id)
                                     .SingleOrDefault(),
@@ -844,7 +844,7 @@ namespace Nozomi.Ticker.StartupExtensions
                             new Currency
                             {
                                 CurrencyTypeId = context.CurrencyTypes
-                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO",
                                         StringComparison.InvariantCultureIgnoreCase))
                                     .Select(ct => ct.Id)
                                     .SingleOrDefault(),
@@ -855,7 +855,7 @@ namespace Nozomi.Ticker.StartupExtensions
                             new Currency
                             {
                                 CurrencyTypeId = context.CurrencyTypes
-                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO",
                                         StringComparison.InvariantCultureIgnoreCase))
                                     .Select(ct => ct.Id)
                                     .SingleOrDefault(),
@@ -866,7 +866,7 @@ namespace Nozomi.Ticker.StartupExtensions
                             new Currency
                             {
                                 CurrencyTypeId = context.CurrencyTypes
-                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO",
                                         StringComparison.InvariantCultureIgnoreCase))
                                     .Select(ct => ct.Id)
                                     .SingleOrDefault(),
@@ -877,7 +877,7 @@ namespace Nozomi.Ticker.StartupExtensions
                             new Currency
                             {
                                 CurrencyTypeId = context.CurrencyTypes
-                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO",
                                         StringComparison.InvariantCultureIgnoreCase))
                                     .Select(ct => ct.Id)
                                     .SingleOrDefault(),
@@ -888,7 +888,7 @@ namespace Nozomi.Ticker.StartupExtensions
                             new Currency
                             {
                                 CurrencyTypeId = context.CurrencyTypes
-                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO",
                                         StringComparison.InvariantCultureIgnoreCase))
                                     .Select(ct => ct.Id)
                                     .SingleOrDefault(),
@@ -899,7 +899,7 @@ namespace Nozomi.Ticker.StartupExtensions
                             new Currency
                             {
                                 CurrencyTypeId = context.CurrencyTypes
-                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO",
                                         StringComparison.InvariantCultureIgnoreCase))
                                     .Select(ct => ct.Id)
                                     .SingleOrDefault(),
@@ -910,7 +910,7 @@ namespace Nozomi.Ticker.StartupExtensions
                             new Currency
                             {
                                 CurrencyTypeId = context.CurrencyTypes
-                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO",
                                         StringComparison.InvariantCultureIgnoreCase))
                                     .Select(ct => ct.Id)
                                     .SingleOrDefault(),
@@ -921,7 +921,7 @@ namespace Nozomi.Ticker.StartupExtensions
                             new Currency
                             {
                                 CurrencyTypeId = context.CurrencyTypes
-                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO",
                                         StringComparison.InvariantCultureIgnoreCase))
                                     .Select(ct => ct.Id)
                                     .SingleOrDefault(),
@@ -932,7 +932,7 @@ namespace Nozomi.Ticker.StartupExtensions
                             new Currency
                             {
                                 CurrencyTypeId = context.CurrencyTypes
-                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO",
                                         StringComparison.InvariantCultureIgnoreCase))
                                     .Select(ct => ct.Id)
                                     .SingleOrDefault(),
@@ -943,7 +943,7 @@ namespace Nozomi.Ticker.StartupExtensions
                             new Currency
                             {
                                 CurrencyTypeId = context.CurrencyTypes
-                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO",
                                         StringComparison.InvariantCultureIgnoreCase))
                                     .Select(ct => ct.Id)
                                     .SingleOrDefault(),
@@ -954,7 +954,7 @@ namespace Nozomi.Ticker.StartupExtensions
                             new Currency
                             {
                                 CurrencyTypeId = context.CurrencyTypes
-                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO",
                                         StringComparison.InvariantCultureIgnoreCase))
                                     .Select(ct => ct.Id)
                                     .SingleOrDefault(),
@@ -965,7 +965,7 @@ namespace Nozomi.Ticker.StartupExtensions
                             new Currency
                             {
                                 CurrencyTypeId = context.CurrencyTypes
-                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO",
                                         StringComparison.InvariantCultureIgnoreCase))
                                     .Select(ct => ct.Id)
                                     .SingleOrDefault(),
@@ -976,7 +976,7 @@ namespace Nozomi.Ticker.StartupExtensions
                             new Currency
                             {
                                 CurrencyTypeId = context.CurrencyTypes
-                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO",
                                         StringComparison.InvariantCultureIgnoreCase))
                                     .Select(ct => ct.Id)
                                     .SingleOrDefault(),
@@ -987,7 +987,7 @@ namespace Nozomi.Ticker.StartupExtensions
                             new Currency
                             {
                                 CurrencyTypeId = context.CurrencyTypes
-                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO",
                                         StringComparison.InvariantCultureIgnoreCase))
                                     .Select(ct => ct.Id)
                                     .SingleOrDefault(),
@@ -998,7 +998,7 @@ namespace Nozomi.Ticker.StartupExtensions
                             new Currency
                             {
                                 CurrencyTypeId = context.CurrencyTypes
-                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO",
                                         StringComparison.InvariantCultureIgnoreCase))
                                     .Select(ct => ct.Id)
                                     .SingleOrDefault(),
@@ -1009,7 +1009,7 @@ namespace Nozomi.Ticker.StartupExtensions
                             new Currency
                             {
                                 CurrencyTypeId = context.CurrencyTypes
-                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO",
                                         StringComparison.InvariantCultureIgnoreCase))
                                     .Select(ct => ct.Id)
                                     .SingleOrDefault(),
@@ -1020,7 +1020,7 @@ namespace Nozomi.Ticker.StartupExtensions
                             new Currency
                             {
                                 CurrencyTypeId = context.CurrencyTypes
-                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO",
                                         StringComparison.InvariantCultureIgnoreCase))
                                     .Select(ct => ct.Id)
                                     .SingleOrDefault(),
@@ -1031,7 +1031,7 @@ namespace Nozomi.Ticker.StartupExtensions
                             new Currency
                             {
                                 CurrencyTypeId = context.CurrencyTypes
-                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO",
                                         StringComparison.InvariantCultureIgnoreCase))
                                     .Select(ct => ct.Id)
                                     .SingleOrDefault(),
@@ -1042,7 +1042,7 @@ namespace Nozomi.Ticker.StartupExtensions
                             new Currency
                             {
                                 CurrencyTypeId = context.CurrencyTypes
-                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO",
                                         StringComparison.InvariantCultureIgnoreCase))
                                     .Select(ct => ct.Id)
                                     .SingleOrDefault(),
@@ -1053,7 +1053,7 @@ namespace Nozomi.Ticker.StartupExtensions
                             new Currency
                             {
                                 CurrencyTypeId = context.CurrencyTypes
-                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO",
                                         StringComparison.InvariantCultureIgnoreCase))
                                     .Select(ct => ct.Id)
                                     .SingleOrDefault(),
@@ -1064,7 +1064,7 @@ namespace Nozomi.Ticker.StartupExtensions
                             new Currency
                             {
                                 CurrencyTypeId = context.CurrencyTypes
-                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO",
                                         StringComparison.InvariantCultureIgnoreCase))
                                     .Select(ct => ct.Id)
                                     .SingleOrDefault(),
@@ -1075,7 +1075,7 @@ namespace Nozomi.Ticker.StartupExtensions
                             new Currency
                             {
                                 CurrencyTypeId = context.CurrencyTypes
-                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO",
                                         StringComparison.InvariantCultureIgnoreCase))
                                     .Select(ct => ct.Id)
                                     .SingleOrDefault(),
@@ -1086,7 +1086,7 @@ namespace Nozomi.Ticker.StartupExtensions
                             new Currency
                             {
                                 CurrencyTypeId = context.CurrencyTypes
-                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO",
                                         StringComparison.InvariantCultureIgnoreCase))
                                     .Select(ct => ct.Id)
                                     .SingleOrDefault(),
@@ -1097,7 +1097,7 @@ namespace Nozomi.Ticker.StartupExtensions
                             new Currency
                             {
                                 CurrencyTypeId = context.CurrencyTypes
-                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO",
                                         StringComparison.InvariantCultureIgnoreCase))
                                     .Select(ct => ct.Id)
                                     .SingleOrDefault(),
@@ -1108,7 +1108,7 @@ namespace Nozomi.Ticker.StartupExtensions
                             new Currency
                             {
                                 CurrencyTypeId = context.CurrencyTypes
-                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO",
                                         StringComparison.InvariantCultureIgnoreCase))
                                     .Select(ct => ct.Id)
                                     .SingleOrDefault(),
@@ -1119,7 +1119,7 @@ namespace Nozomi.Ticker.StartupExtensions
                             new Currency
                             {
                                 CurrencyTypeId = context.CurrencyTypes
-                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO",
                                         StringComparison.InvariantCultureIgnoreCase))
                                     .Select(ct => ct.Id)
                                     .SingleOrDefault(),
@@ -1130,7 +1130,7 @@ namespace Nozomi.Ticker.StartupExtensions
                             new Currency
                             {
                                 CurrencyTypeId = context.CurrencyTypes
-                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO",
                                         StringComparison.InvariantCultureIgnoreCase))
                                     .Select(ct => ct.Id)
                                     .SingleOrDefault(),
@@ -1141,7 +1141,7 @@ namespace Nozomi.Ticker.StartupExtensions
                             new Currency
                             {
                                 CurrencyTypeId = context.CurrencyTypes
-                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO",
                                         StringComparison.InvariantCultureIgnoreCase))
                                     .Select(ct => ct.Id)
                                     .SingleOrDefault(),
@@ -1152,7 +1152,7 @@ namespace Nozomi.Ticker.StartupExtensions
                             new Currency
                             {
                                 CurrencyTypeId = context.CurrencyTypes
-                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO",
                                         StringComparison.InvariantCultureIgnoreCase))
                                     .Select(ct => ct.Id)
                                     .SingleOrDefault(),
@@ -1163,7 +1163,7 @@ namespace Nozomi.Ticker.StartupExtensions
                             new Currency
                             {
                                 CurrencyTypeId = context.CurrencyTypes
-                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO",
                                         StringComparison.InvariantCultureIgnoreCase))
                                     .Select(ct => ct.Id)
                                     .SingleOrDefault(),
@@ -1174,7 +1174,7 @@ namespace Nozomi.Ticker.StartupExtensions
                             new Currency
                             {
                                 CurrencyTypeId = context.CurrencyTypes
-                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO",
                                         StringComparison.InvariantCultureIgnoreCase))
                                     .Select(ct => ct.Id)
                                     .SingleOrDefault(),
@@ -1185,7 +1185,7 @@ namespace Nozomi.Ticker.StartupExtensions
                             new Currency
                             {
                                 CurrencyTypeId = context.CurrencyTypes
-                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO",
                                         StringComparison.InvariantCultureIgnoreCase))
                                     .Select(ct => ct.Id)
                                     .SingleOrDefault(),
@@ -1196,7 +1196,7 @@ namespace Nozomi.Ticker.StartupExtensions
                             new Currency
                             {
                                 CurrencyTypeId = context.CurrencyTypes
-                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO",
                                         StringComparison.InvariantCultureIgnoreCase))
                                     .Select(ct => ct.Id)
                                     .SingleOrDefault(),
@@ -1207,7 +1207,7 @@ namespace Nozomi.Ticker.StartupExtensions
                             new Currency
                             {
                                 CurrencyTypeId = context.CurrencyTypes
-                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO",
                                         StringComparison.InvariantCultureIgnoreCase))
                                     .Select(ct => ct.Id)
                                     .SingleOrDefault(),
@@ -1218,7 +1218,7 @@ namespace Nozomi.Ticker.StartupExtensions
                             new Currency
                             {
                                 CurrencyTypeId = context.CurrencyTypes
-                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO",
                                         StringComparison.InvariantCultureIgnoreCase))
                                     .Select(ct => ct.Id)
                                     .SingleOrDefault(),
@@ -1229,7 +1229,7 @@ namespace Nozomi.Ticker.StartupExtensions
                             new Currency
                             {
                                 CurrencyTypeId = context.CurrencyTypes
-                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO",
                                         StringComparison.InvariantCultureIgnoreCase))
                                     .Select(ct => ct.Id)
                                     .SingleOrDefault(),
@@ -1240,7 +1240,7 @@ namespace Nozomi.Ticker.StartupExtensions
                             new Currency
                             {
                                 CurrencyTypeId = context.CurrencyTypes
-                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO",
                                         StringComparison.InvariantCultureIgnoreCase))
                                     .Select(ct => ct.Id)
                                     .SingleOrDefault(),
@@ -1251,7 +1251,7 @@ namespace Nozomi.Ticker.StartupExtensions
                             new Currency
                             {
                                 CurrencyTypeId = context.CurrencyTypes
-                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO",
                                         StringComparison.InvariantCultureIgnoreCase))
                                     .Select(ct => ct.Id)
                                     .SingleOrDefault(),
@@ -1262,7 +1262,7 @@ namespace Nozomi.Ticker.StartupExtensions
                             new Currency
                             {
                                 CurrencyTypeId = context.CurrencyTypes
-                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO",
                                         StringComparison.InvariantCultureIgnoreCase))
                                     .Select(ct => ct.Id)
                                     .SingleOrDefault(),
@@ -1273,7 +1273,7 @@ namespace Nozomi.Ticker.StartupExtensions
                             new Currency
                             {
                                 CurrencyTypeId = context.CurrencyTypes
-                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO",
                                         StringComparison.InvariantCultureIgnoreCase))
                                     .Select(ct => ct.Id)
                                     .SingleOrDefault(),
@@ -1284,7 +1284,7 @@ namespace Nozomi.Ticker.StartupExtensions
                             new Currency
                             {
                                 CurrencyTypeId = context.CurrencyTypes
-                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO",
                                         StringComparison.InvariantCultureIgnoreCase))
                                     .Select(ct => ct.Id)
                                     .SingleOrDefault(),
@@ -1295,7 +1295,7 @@ namespace Nozomi.Ticker.StartupExtensions
                             new Currency
                             {
                                 CurrencyTypeId = context.CurrencyTypes
-                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO",
                                         StringComparison.InvariantCultureIgnoreCase))
                                     .Select(ct => ct.Id)
                                     .SingleOrDefault(),
@@ -1306,7 +1306,7 @@ namespace Nozomi.Ticker.StartupExtensions
                             new Currency
                             {
                                 CurrencyTypeId = context.CurrencyTypes
-                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO",
                                         StringComparison.InvariantCultureIgnoreCase))
                                     .Select(ct => ct.Id)
                                     .SingleOrDefault(),
@@ -1317,7 +1317,7 @@ namespace Nozomi.Ticker.StartupExtensions
                             new Currency
                             {
                                 CurrencyTypeId = context.CurrencyTypes
-                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO",
                                         StringComparison.InvariantCultureIgnoreCase))
                                     .Select(ct => ct.Id)
                                     .SingleOrDefault(),
@@ -1328,7 +1328,7 @@ namespace Nozomi.Ticker.StartupExtensions
                             new Currency
                             {
                                 CurrencyTypeId = context.CurrencyTypes
-                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO",
                                         StringComparison.InvariantCultureIgnoreCase))
                                     .Select(ct => ct.Id)
                                     .SingleOrDefault(),
@@ -1339,7 +1339,7 @@ namespace Nozomi.Ticker.StartupExtensions
                             new Currency
                             {
                                 CurrencyTypeId = context.CurrencyTypes
-                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO",
                                         StringComparison.InvariantCultureIgnoreCase))
                                     .Select(ct => ct.Id)
                                     .SingleOrDefault(),
@@ -1350,7 +1350,7 @@ namespace Nozomi.Ticker.StartupExtensions
                             new Currency
                             {
                                 CurrencyTypeId = context.CurrencyTypes
-                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO",
                                         StringComparison.InvariantCultureIgnoreCase))
                                     .Select(ct => ct.Id)
                                     .SingleOrDefault(),
@@ -1361,13 +1361,162 @@ namespace Nozomi.Ticker.StartupExtensions
                             new Currency
                             {
                                 CurrencyTypeId = context.CurrencyTypes
-                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO", 
+                                    .Where(ct => ct.TypeShortForm.Equals("CRYPTO",
                                         StringComparison.InvariantCultureIgnoreCase))
                                     .Select(ct => ct.Id)
                                     .SingleOrDefault(),
                                 Name = "Zcoin",
                                 Abbreviation = "XZC",
                                 Slug = "XZC"
+                            });
+                    }
+
+                    if (!context.CurrencyPairs.Any() && context.Sources.Any())
+                    {
+                        context.CurrencyPairs.AddRange(
+                            new CurrencyPair()
+                            {
+                                CurrencyPairType = CurrencyPairType.TRADEABLE,
+                                APIUrl = "https://api.ethfinex.com/v2/ticker/tETHUSD",
+                                DefaultComponent = "0",
+                                SourceId = 1,
+                                MainCurrencyAbbrv = "ETH",
+                                CounterCurrencyAbbrv = "USD"
+                            },
+                            new CurrencyPair
+                            {
+                                CurrencyPairType = CurrencyPairType.TRADEABLE,
+                                APIUrl = "https://api.ethfinex.com/v2/ticker/tKNCUSD",
+                                DefaultComponent = "0",
+                                SourceId = 1,
+                                MainCurrencyAbbrv = "KNC",
+                                CounterCurrencyAbbrv = "USD"
+                            },
+                            new CurrencyPair()
+                            {
+                                CurrencyPairType = CurrencyPairType.TRADEABLE,
+                                APIUrl = "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml",
+                                DefaultComponent = "Cube",
+                                SourceId = 4,
+                                MainCurrencyAbbrv = "EUR",
+                                CounterCurrencyAbbrv = "USD"
+                            },
+                            new CurrencyPair
+                            {
+                                CurrencyPairType = CurrencyPairType.TRADEABLE,
+                                APIUrl = "https://www.alphavantage.co/query",
+                                DefaultComponent = "Realtime Currency Exchange Rate/5. Exchange Rate",
+                                SourceId = 5,
+                                MainCurrencyAbbrv = "EUR",
+                                CounterCurrencyAbbrv = "USD"
+                            },
+                            new CurrencyPair
+                            {
+                                CurrencyPairType = CurrencyPairType.EXCHANGEABLE,
+                                APIUrl = "https://poloniex.com/public?command=returnTicker",
+                                DefaultComponent = "BTC_BCN/lowestAsk",
+                                SourceId = 6,
+                                MainCurrencyAbbrv = "BTC",
+                                CounterCurrencyAbbrv = "BCN"
+                            },
+                            new CurrencyPair
+                            {
+                                CurrencyPairType = CurrencyPairType.EXCHANGEABLE,
+                                APIUrl = "https://poloniex.com/public?command=returnTicker",
+                                DefaultComponent = "BTC_BTS/lowestAsk",
+                                SourceId = 6,
+                                MainCurrencyAbbrv = "BTC",
+                                CounterCurrencyAbbrv = "BTS"
+                            },
+                            new CurrencyPair
+                            {
+                                CurrencyPairType = CurrencyPairType.TRADEABLE,
+                                APIUrl = "https://api.bitfinex.com/v1/pubticker/etheur",
+                                DefaultComponent = "0",
+                                SourceId = 1,
+                                MainCurrencyAbbrv = "ETH",
+                                CounterCurrencyAbbrv = "EUR"
+                            },
+                            new CurrencyPair()
+                            {
+                                CurrencyPairType = CurrencyPairType.EXCHANGEABLE,
+                                APIUrl = "https://poloniex.com/public?command=returnTicker",
+                                DefaultComponent = "USDT_BTC/lowestAsk",
+                                SourceId = 6,
+                                MainCurrencyAbbrv = "BTC",
+                                CounterCurrencyAbbrv = "USDT"
+                            },
+                            new CurrencyPair
+                            {
+                                CurrencyPairType = CurrencyPairType.EXCHANGEABLE,
+                                APIUrl = "wss://stream.binance.com:9443/stream?streams=!ticker@arr",
+                                DefaultComponent = "b",
+                                SourceId = 3,
+                                MainCurrencyAbbrv = "ETH",
+                                CounterCurrencyAbbrv = "BTC"
+                            },
+                            new CurrencyPair
+                            {
+                                CurrencyPairType = CurrencyPairType.EXCHANGEABLE,
+                                APIUrl = "wss://stream.binance.com:9443/stream?streams=!ticker@arr",
+                                DefaultComponent = "b",
+                                SourceId = 3,
+                                MainCurrencyAbbrv = "KNC",
+                                CounterCurrencyAbbrv = "ETH"
+                            },
+                            new CurrencyPair
+                            {
+                                CurrencyPairType = CurrencyPairType.EXCHANGEABLE,
+                                APIUrl = "https://www.coinhako.com/api/v1/price/currency/BTCSGD",
+                                DefaultComponent = "data/buy_price",
+                                SourceId = 3,
+                                MainCurrencyAbbrv = "BTC",
+                                CounterCurrencyAbbrv = "SGD"
+                            },
+                            new CurrencyPair
+                            {
+                                CurrencyPairType = CurrencyPairType.EXCHANGEABLE,
+                                APIUrl = "https://www.coinhako.com/api/v1/price/currency/BTCUSD",
+                                DefaultComponent = "data/buy_price",
+                                SourceId = 3,
+                                MainCurrencyAbbrv = "BTC",
+                                CounterCurrencyAbbrv = "USD"
+                            },
+                            new CurrencyPair
+                            {
+                                CurrencyPairType = CurrencyPairType.EXCHANGEABLE,
+                                APIUrl = "https://www.coinhako.com/api/v1/price/currency/ETHSGD",
+                                DefaultComponent = "data/buy_price",
+                                SourceId = 3,
+                                MainCurrencyAbbrv = "ETH",
+                                CounterCurrencyAbbrv = "SGD"
+                            },
+                            new CurrencyPair
+                            {
+                                CurrencyPairType = CurrencyPairType.EXCHANGEABLE,
+                                APIUrl = "https://www.coinhako.com/api/v1/price/currency/ETHUSD",
+                                DefaultComponent = "data/buy_price",
+                                SourceId = 3,
+                                MainCurrencyAbbrv = "ETH",
+                                CounterCurrencyAbbrv = "USD"
+                            },
+                            new CurrencyPair
+                            {
+                                CurrencyPairType = CurrencyPairType.EXCHANGEABLE,
+                                APIUrl = "https://www.coinhako.com/api/v1/price/currency/LTCSGD",
+                                DefaultComponent = "data/buy_price",
+                                SourceId = 3,
+                                MainCurrencyAbbrv = "LTC",
+                                CounterCurrencyAbbrv = "SGD"
+                            },
+                            new CurrencyPair
+                            {
+                                CurrencyPairType = CurrencyPairType.EXCHANGEABLE,
+                                APIUrl = "https://www.coinhako.com/api/v1/price/currency/LTCUSD",
+                                DefaultComponent = "data/buy_price",
+                                SourceId = 3,
+                                MainCurrencyAbbrv = "LTC",
+                                CounterCurrencyAbbrv = "USD"
                             });
                     }
                 }
