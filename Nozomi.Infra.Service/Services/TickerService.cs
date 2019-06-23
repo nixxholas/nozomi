@@ -96,6 +96,18 @@ namespace Nozomi.Service.Services
                     .SingleOrDefault();
                 
                 _logger.LogInformation($"Currency {mainCurrency.Name} created.");
+                
+                // Bind it
+                _unitOfWork.GetRepository<CurrencySource>()
+                    .Add(new CurrencySource
+                    {
+                        CurrencyId = mainCurrency.Id,
+                        SourceId = createTickerInputModel.CurrencySourceId
+                    });
+                _unitOfWork.Commit();
+                
+                _logger.LogInformation($"Currency {mainCurrency.Name} binded with Source " +
+                                       $"{createTickerInputModel.CurrencySourceId}.");
             }
 
             var counterCurrency = new Currency
@@ -134,6 +146,18 @@ namespace Nozomi.Service.Services
                     .SingleOrDefault();
                 
                 _logger.LogInformation($"Currency {counterCurrency.Name} created.");
+                
+                // Bind it
+                _unitOfWork.GetRepository<CurrencySource>()
+                    .Add(new CurrencySource
+                    {
+                        CurrencyId = counterCurrency.Id,
+                        SourceId = createTickerInputModel.CurrencySourceId
+                    });
+                _unitOfWork.Commit();
+                
+                _logger.LogInformation($"Currency {counterCurrency.Name} binded with Source " +
+                                       $"{createTickerInputModel.CurrencySourceId}.");
             }
 
             // Currency check
