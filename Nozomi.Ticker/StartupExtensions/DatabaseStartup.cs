@@ -161,8 +161,23 @@ namespace Nozomi.Ticker.StartupExtensions
                                 new CurrencyType()
                                 {
                                     TypeShortForm = "CRYPTO",
-                                    Name = "Cryptocurrency"
+                                    Name = "Cryptocurrency",
+                                    AnalysedComponents = new List<AnalysedComponent>()
+                                    {
+                                        // Crypto Market Cap
+                                        new AnalysedComponent
+                                        {
+                                            ComponentType = AnalysedComponentType.MarketCap,
+                                            Delay = 3000,
+                                            UIFormatting = "$ 0 a",
+                                            CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                            ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                            DeletedAt = null
+                                        }
+                                    }
                                 });
+                            
+                            context.SaveChanges();
                         }
 
                         if (!context.Currencies.Any() && context.CurrencyTypes.Any())
@@ -202,6 +217,73 @@ namespace Nozomi.Ticker.StartupExtensions
                                     Name = "Ethereum",
                                     Denominations = 18,
                                     DenominationName = "Wei",
+                                    AnalysedComponents = new List<AnalysedComponent>()
+                                    {
+                                        // ============================ START OF ETHEREUM ============================ //
+                                        new AnalysedComponent
+                                        {
+                                            ComponentType = AnalysedComponentType.MarketCap,
+                                            Delay = 3000,
+                                            UIFormatting = "$ 0 a",
+                                            CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                            ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                            IsDenominated = true,
+                                            DeletedAt = null
+                                        },
+                                        new AnalysedComponent
+                                        {
+                                            ComponentType = AnalysedComponentType.MarketCapChange,
+                                            Delay = 3000,
+                                            UIFormatting = "$ 0 a",
+                                            CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                            ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                            IsDenominated = true,
+                                            DeletedAt = null
+                                        },
+                                        new AnalysedComponent
+                                        {
+                                            ComponentType = AnalysedComponentType.MarketCapPctChange,
+                                            Delay = 3000,
+                                            UIFormatting = "$ 0 a",
+                                            CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                            ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                            IsDenominated = true,
+                                            DeletedAt = null
+                                        },
+                                        new AnalysedComponent
+                                        {
+                                            ComponentType = AnalysedComponentType.MarketCapHourlyPctChange,
+                                            Delay = 3000,
+                                            UIFormatting = "$ 0 a",
+                                            CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                            ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                            IsDenominated = true,
+                                            DeletedAt = null
+                                        },
+                                        // ETH Current Average Price
+                                        new AnalysedComponent
+                                        {
+                                            ComponentType = AnalysedComponentType.CurrentAveragePrice,
+                                            Delay = 3000,
+                                            UIFormatting = "$ 0[.]00",
+                                            CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                            ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                            IsDenominated = true,
+                                            DeletedAt = null
+                                        },
+                                        // ETH Hourly Average Price
+                                        new AnalysedComponent
+                                        {
+                                            ComponentType = AnalysedComponentType.HourlyAveragePrice,
+                                            Delay = 3000,
+                                            UIFormatting = "$ 0[.]00",
+                                            CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                            ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                            IsDenominated = true,
+                                            DeletedAt = null
+                                        },
+                                        // ============================ END OF ETHEREUM ============================ //
+                                    },
                                     Requests = new List<Request>()
                                     {
                                         // ETH Etherscan Request
@@ -275,6 +357,73 @@ namespace Nozomi.Ticker.StartupExtensions
                                     Slug = "KNC",
                                     Name = "Kyber Network Crystal",
                                     Denominations = 18,
+                                    AnalysedComponents = new List<AnalysedComponent>()
+                                    {
+                                        // ============================ START OF KYBER ============================ //
+                                        new AnalysedComponent
+                                        {
+                                            ComponentType = AnalysedComponentType.MarketCap,
+                                            Delay = 3000,
+                                            UIFormatting = "$ 0 a",
+                                            CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                            ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                            IsDenominated = true,
+                                            DeletedAt = null
+                                        },
+                                        new AnalysedComponent
+                                        {
+                                            ComponentType = AnalysedComponentType.MarketCapChange,
+                                            Delay = 3000,
+                                            UIFormatting = "$ 0 a",
+                                            CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                            ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                            IsDenominated = true,
+                                            DeletedAt = null
+                                        },
+                                        new AnalysedComponent
+                                        {
+                                            ComponentType = AnalysedComponentType.MarketCapPctChange,
+                                            Delay = 3000,
+                                            UIFormatting = "$ 0 a",
+                                            CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                            ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                            IsDenominated = true,
+                                            DeletedAt = null
+                                        },
+                                        new AnalysedComponent
+                                        {
+                                            ComponentType = AnalysedComponentType.MarketCapHourlyPctChange,
+                                            Delay = 3000,
+                                            UIFormatting = "$ 0 a",
+                                            CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                            ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                            IsDenominated = true,
+                                            DeletedAt = null
+                                        },
+                                        // KNC Current Average Price
+                                        new AnalysedComponent
+                                        {
+                                            ComponentType = AnalysedComponentType.CurrentAveragePrice,
+                                            Delay = 3000,
+                                            UIFormatting = "$ 0[.]00",
+                                            CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                            ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                            IsDenominated = true,
+                                            DeletedAt = null
+                                        },
+                                        // KNC Hourly Average Price
+                                        new AnalysedComponent
+                                        {
+                                            ComponentType = AnalysedComponentType.HourlyAveragePrice,
+                                            Delay = 3000,
+                                            UIFormatting = "$ 0[.]00",
+                                            CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                            ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                            IsDenominated = true,
+                                            DeletedAt = null
+                                        },
+                                        // ============================ END OF KYBER ============================ //
+                                    },
                                     Requests = new List<Request>()
                                     {
                                         // KNC Etherscan Request
@@ -357,6 +506,73 @@ namespace Nozomi.Ticker.StartupExtensions
                                     Name = "Bitcoin",
                                     Denominations = 8,
                                     DenominationName = "Sat",
+                                    AnalysedComponents = new List<AnalysedComponent>()
+                                    {
+                                        // ============================ START OF BITCOIN ============================ //
+                                        // BTC Market Cap
+                                        new AnalysedComponent
+                                        {
+                                            ComponentType = AnalysedComponentType.MarketCap,
+                                            Delay = 3000,
+                                            UIFormatting = "$ 0 a",
+                                            CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                            ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                            DeletedAt = null
+                                        },
+                                        new AnalysedComponent
+                                        {
+                                            ComponentType = AnalysedComponentType.MarketCapChange,
+                                            Delay = 3000,
+                                            UIFormatting = "$ 0 a",
+                                            CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                            ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                            IsDenominated = true,
+                                            DeletedAt = null
+                                        },
+                                        new AnalysedComponent
+                                        {
+                                            ComponentType = AnalysedComponentType.MarketCapPctChange,
+                                            Delay = 3000,
+                                            UIFormatting = "$ 0 a",
+                                            CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                            ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                            IsDenominated = true,
+                                            DeletedAt = null
+                                        },
+                                        new AnalysedComponent
+                                        {
+                                            ComponentType = AnalysedComponentType.MarketCapHourlyPctChange,
+                                            Delay = 3000,
+                                            UIFormatting = "$ 0 a",
+                                            CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                            ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                            IsDenominated = true,
+                                            DeletedAt = null
+                                        },
+                                        // KNC Current Average Price
+                                        new AnalysedComponent
+                                        {
+                                            ComponentType = AnalysedComponentType.CurrentAveragePrice,
+                                            Delay = 3000,
+                                            UIFormatting = "$ 0[.]00",
+                                            CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                            ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                            IsDenominated = true,
+                                            DeletedAt = null
+                                        },
+                                        // KNC Hourly Average Price
+                                        new AnalysedComponent
+                                        {
+                                            ComponentType = AnalysedComponentType.HourlyAveragePrice,
+                                            Delay = 3000,
+                                            UIFormatting = "$ 0[.]00",
+                                            CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                            ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                            IsDenominated = true,
+                                            DeletedAt = null
+                                        },
+                                        // ============================ END OF BITCOIN ============================ //
+                                    },
                                     Requests = new List<Request>()
                                     {
                                         // BTC Bitpay Insight Request
@@ -1560,6 +1776,8 @@ namespace Nozomi.Ticker.StartupExtensions
                                     Abbreviation = "XZC",
                                     Slug = "XZC"
                                 });
+                            
+                            context.SaveChanges();
                         }
 
                         if (!context.Sources.Any())
@@ -1603,9 +1821,9 @@ namespace Nozomi.Ticker.StartupExtensions
                                     Name = "Poloniex",
                                     APIDocsURL = "https://docs.poloniex.com/#public-http-api-methods"
                                 });
+                            
+                            context.SaveChanges();
                         }
-
-                        context.SaveChanges();
 
                         if (context.Sources.Any())
                         {
@@ -1641,6 +1859,46 @@ namespace Nozomi.Ticker.StartupExtensions
                                         SourceId = bfx.Id,
                                         MainCurrencyAbbrv = "ETH",
                                         CounterCurrencyAbbrv = "USD",
+                                        AnalysedComponents = new List<AnalysedComponent>()
+                                        {
+                                            // Calculates volume ONLY for this exact Currency pair on this exchange.
+                                            new AnalysedComponent
+                                            {
+                                                ComponentType = AnalysedComponentType.DailyVolume,
+                                                Delay = 1000,
+                                                UIFormatting = "$ 0 a",
+                                                CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                                ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                                DeletedAt = null
+                                            },
+                                            new AnalysedComponent
+                                            {
+                                                ComponentType = AnalysedComponentType.CurrentAveragePrice,
+                                                Delay = 500,
+                                                UIFormatting = "$ 0[.]00",
+                                                CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                                ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                                DeletedAt = null
+                                            },
+                                            new AnalysedComponent
+                                            {
+                                                ComponentType = AnalysedComponentType.HourlyAveragePrice,
+                                                Delay = 10000,
+                                                UIFormatting = "$ 0[.]00",
+                                                CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                                ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                                DeletedAt = null
+                                            },
+                                            new AnalysedComponent()
+                                            {
+                                                ComponentType = AnalysedComponentType.DailyPricePctChange,
+                                                Delay = 500,
+                                                UIFormatting = "0[.]0",
+                                                CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                                ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                                DeletedAt = null
+                                            }  
+                                        },
                                         Requests = new List<Request>()
                                         {
                                             // BFX ETHUSD
@@ -1697,6 +1955,46 @@ namespace Nozomi.Ticker.StartupExtensions
                                         SourceId = bfx.Id,
                                         MainCurrencyAbbrv = "KNC",
                                         CounterCurrencyAbbrv = "USD",
+                                        AnalysedComponents = new List<AnalysedComponent>()
+                                        {
+                                            // Calculates volume ONLY for this exact Currency pair on this exchange.
+                                            new AnalysedComponent
+                                            {
+                                                ComponentType = AnalysedComponentType.DailyVolume,
+                                                Delay = 1000,
+                                                UIFormatting = "0 a",
+                                                CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                                ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                                DeletedAt = null
+                                            },
+                                            new AnalysedComponent
+                                            {
+                                                ComponentType = AnalysedComponentType.CurrentAveragePrice,
+                                                Delay = 500,
+                                                UIFormatting = "$ 0[.]00",
+                                                CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                                ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                                DeletedAt = null
+                                            },
+                                            new AnalysedComponent
+                                            {
+                                                ComponentType = AnalysedComponentType.HourlyAveragePrice,
+                                                Delay = 10000,
+                                                UIFormatting = "$ 0[.]00",
+                                                CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                                ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                                DeletedAt = null
+                                            },
+                                            new AnalysedComponent()
+                                            {
+                                                ComponentType = AnalysedComponentType.DailyPricePctChange,
+                                                Delay = 500,
+                                                UIFormatting = "0[.]0",
+                                                CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                                ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                                DeletedAt = null
+                                            }
+                                        },
                                         Requests = new List<Request>()
                                         {
                                             // BFX KNCUSD
@@ -1872,6 +2170,46 @@ namespace Nozomi.Ticker.StartupExtensions
                                         SourceId = polo.Id,
                                         MainCurrencyAbbrv = "BTC",
                                         CounterCurrencyAbbrv = "BCN",
+                                        AnalysedComponents = new List<AnalysedComponent>()
+                                        {
+                                            // Calculates volume ONLY for this exact Currency pair on this exchange.
+                                            new AnalysedComponent
+                                            {
+                                                ComponentType = AnalysedComponentType.DailyVolume,
+                                                Delay = 1000,
+                                                UIFormatting = "0 a",
+                                                CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                                ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                                DeletedAt = null
+                                            },
+                                            new AnalysedComponent
+                                            {
+                                                ComponentType = AnalysedComponentType.CurrentAveragePrice,
+                                                Delay = 500,
+                                                UIFormatting = "0[.]00",
+                                                CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                                ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                                DeletedAt = null
+                                            },
+                                            new AnalysedComponent
+                                            {
+                                                ComponentType = AnalysedComponentType.HourlyAveragePrice,
+                                                Delay = 10000,
+                                                UIFormatting = "0[.]00",
+                                                CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                                ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                                DeletedAt = null
+                                            },
+                                            new AnalysedComponent()
+                                            {
+                                                ComponentType = AnalysedComponentType.DailyPricePctChange,
+                                                Delay = 500,
+                                                UIFormatting = "0[.]0",
+                                                CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                                ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                                DeletedAt = null
+                                            }  
+                                        },
                                         Requests = new List<Request>()
                                         {
                                             // POLO BTCBCN
@@ -1929,6 +2267,46 @@ namespace Nozomi.Ticker.StartupExtensions
                                         SourceId = polo.Id,
                                         MainCurrencyAbbrv = "BTC",
                                         CounterCurrencyAbbrv = "BTS",
+                                        AnalysedComponents = new List<AnalysedComponent>()
+                                        {
+                                            // Calculates volume ONLY for this exact Currency pair on this exchange.
+                                            new AnalysedComponent
+                                            {
+                                                ComponentType = AnalysedComponentType.DailyVolume,
+                                                Delay = 1000,
+                                                UIFormatting = "0 a",
+                                                CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                                ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                                DeletedAt = null
+                                            },
+                                            new AnalysedComponent
+                                            {
+                                                ComponentType = AnalysedComponentType.CurrentAveragePrice,
+                                                Delay = 500,
+                                                UIFormatting = "0[.]00",
+                                                CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                                ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                                DeletedAt = null
+                                            },
+                                            new AnalysedComponent
+                                            {
+                                                ComponentType = AnalysedComponentType.HourlyAveragePrice,
+                                                Delay = 10000,
+                                                UIFormatting = "0[.]00",
+                                                CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                                ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                                DeletedAt = null
+                                            },
+                                            new AnalysedComponent()
+                                            {
+                                                ComponentType = AnalysedComponentType.DailyPricePctChange,
+                                                Delay = 500,
+                                                UIFormatting = "0[.]0",
+                                                CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                                ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                                DeletedAt = null
+                                            }
+                                        },
                                         Requests = new List<Request>()
                                         {
                                             // POLO BTCBTS
@@ -1986,6 +2364,46 @@ namespace Nozomi.Ticker.StartupExtensions
                                         SourceId = bfx.Id,
                                         MainCurrencyAbbrv = "ETH",
                                         CounterCurrencyAbbrv = "EUR",
+                                        AnalysedComponents = new List<AnalysedComponent>()
+                                        {
+                                            // Calculates volume ONLY for this exact Currency pair on this exchange.
+                                            new AnalysedComponent
+                                            {
+                                                ComponentType = AnalysedComponentType.DailyVolume,
+                                                Delay = 1000,
+                                                UIFormatting = "0 a",
+                                                CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                                ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                                DeletedAt = null
+                                            },
+                                            new AnalysedComponent
+                                            {
+                                                ComponentType = AnalysedComponentType.CurrentAveragePrice,
+                                                Delay = 500,
+                                                UIFormatting = "0[.]00",
+                                                CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                                ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                                DeletedAt = null
+                                            },
+                                            new AnalysedComponent
+                                            {
+                                                ComponentType = AnalysedComponentType.HourlyAveragePrice,
+                                                Delay = 10000,
+                                                UIFormatting = "0[.]00",
+                                                CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                                ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                                DeletedAt = null
+                                            },
+                                            new AnalysedComponent()
+                                            {
+                                                ComponentType = AnalysedComponentType.DailyPricePctChange,
+                                                Delay = 500,
+                                                UIFormatting = "0[.]0",
+                                                CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                                ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                                DeletedAt = null
+                                            }  
+                                        },
                                         Requests = new List<Request>()
                                         {
                                             // BFX ETHEUR
@@ -2089,6 +2507,46 @@ namespace Nozomi.Ticker.StartupExtensions
                                         SourceId = bna.Id,
                                         MainCurrencyAbbrv = "ETH",
                                         CounterCurrencyAbbrv = "BTC",
+                                        AnalysedComponents = new List<AnalysedComponent>()
+                                        {
+                                            // Calculates volume ONLY for this exact Currency pair on this exchange.
+                                            new AnalysedComponent
+                                            {
+                                                ComponentType = AnalysedComponentType.DailyVolume,
+                                                Delay = 1000,
+                                                UIFormatting = "0 a",
+                                                CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                                ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                                DeletedAt = null
+                                            },
+                                            new AnalysedComponent
+                                            {
+                                                ComponentType = AnalysedComponentType.CurrentAveragePrice,
+                                                Delay = 500,
+                                                UIFormatting = "$ 0[.]00",
+                                                CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                                ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                                DeletedAt = null
+                                            },
+                                            new AnalysedComponent
+                                            {
+                                                ComponentType = AnalysedComponentType.HourlyAveragePrice,
+                                                Delay = 10000,
+                                                UIFormatting = "$ 0[.]00",
+                                                CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                                ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                                DeletedAt = null
+                                            },
+                                            new AnalysedComponent()
+                                            {
+                                                ComponentType = AnalysedComponentType.DailyPricePctChange,
+                                                Delay = 500,
+                                                UIFormatting = "0[.]0",
+                                                CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                                ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                                DeletedAt = null
+                                            }
+                                        },
                                         Requests = new List<Request>()
                                         {
                                             // Binance's Websocket-based ticker data stream
@@ -2146,6 +2604,46 @@ namespace Nozomi.Ticker.StartupExtensions
                                         SourceId = bna.Id,
                                         MainCurrencyAbbrv = "KNC",
                                         CounterCurrencyAbbrv = "ETH",
+                                        AnalysedComponents = new List<AnalysedComponent>()
+                                        {
+                                            // Calculates volume ONLY for this exact Currency pair on this exchange.
+                                            new AnalysedComponent
+                                            {
+                                                ComponentType = AnalysedComponentType.DailyVolume,
+                                                Delay = 1000,
+                                                UIFormatting = "0 a",
+                                                CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                                ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                                DeletedAt = null
+                                            },
+                                            new AnalysedComponent
+                                            {
+                                                ComponentType = AnalysedComponentType.CurrentAveragePrice,
+                                                Delay = 500,
+                                                UIFormatting = "$ 0[.]00",
+                                                CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                                ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                                DeletedAt = null
+                                            },
+                                            new AnalysedComponent
+                                            {
+                                                ComponentType = AnalysedComponentType.HourlyAveragePrice,
+                                                Delay = 10000,
+                                                UIFormatting = "$ 0[.]00",
+                                                CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                                ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                                DeletedAt = null
+                                            },
+                                            new AnalysedComponent()
+                                            {
+                                                ComponentType = AnalysedComponentType.DailyPricePctChange,
+                                                Delay = 500,
+                                                UIFormatting = "0[.]0",
+                                                CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                                ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                                DeletedAt = null
+                                            }  
+                                        },
                                         Requests = new List<Request>()
                                         {
                                             new Request
@@ -2202,6 +2700,39 @@ namespace Nozomi.Ticker.StartupExtensions
                                         SourceId = hako.Id,
                                         MainCurrencyAbbrv = "BTC",
                                         CounterCurrencyAbbrv = "SGD",
+                                        AnalysedComponents = new List<AnalysedComponent>()
+                                        {
+                                            // Coinhako BTCSGD
+                                            new AnalysedComponent
+                                            {
+                                                ComponentType = AnalysedComponentType.CurrentAveragePrice,
+                                                Delay = 10000,
+                                                UIFormatting = "$ 0[.]00",
+                                                CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                                ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                                DeletedAt = null
+                                            },
+                                            // Coinhako BTCSGD
+                                            new AnalysedComponent
+                                            {
+                                                ComponentType = AnalysedComponentType.HourlyAveragePrice,
+                                                Delay = 10000,
+                                                UIFormatting = "$ 0[.]00",
+                                                CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                                ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                                DeletedAt = null
+                                            },
+                                            // Coinhako BTCSGD
+                                            new AnalysedComponent()
+                                            {
+                                                ComponentType = AnalysedComponentType.DailyPricePctChange,
+                                                Delay = 10000,
+                                                UIFormatting = "0[.]0",
+                                                CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                                ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                                DeletedAt = null
+                                            }
+                                        },
                                         Requests = new List<Request>()
                                         {
                                             // Coinhako BTCSGD
@@ -2249,6 +2780,39 @@ namespace Nozomi.Ticker.StartupExtensions
                                         SourceId = hako.Id,
                                         MainCurrencyAbbrv = "BTC",
                                         CounterCurrencyAbbrv = "USD",
+                                        AnalysedComponents = new List<AnalysedComponent>()
+                                        {
+                                            // Coinhako BTCUSD
+                                            new AnalysedComponent
+                                            {
+                                                ComponentType = AnalysedComponentType.CurrentAveragePrice,
+                                                Delay = 10000,
+                                                UIFormatting = "$ 0[.]00",
+                                                CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                                ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                                DeletedAt = null
+                                            },
+                                            // Coinhako BTCUSD
+                                            new AnalysedComponent
+                                            {
+                                                ComponentType = AnalysedComponentType.HourlyAveragePrice,
+                                                Delay = 10000,
+                                                UIFormatting = "$ 0[.]00",
+                                                CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                                ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                                DeletedAt = null
+                                            },
+                                            // Coinhako BTCUSD
+                                            new AnalysedComponent()
+                                            {
+                                                ComponentType = AnalysedComponentType.DailyPricePctChange,
+                                                Delay = 10000,
+                                                UIFormatting = "0[.]0",
+                                                CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                                ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                                DeletedAt = null
+                                            }
+                                        },
                                         Requests = new List<Request>()
                                         {
                                             // Coinhako BTCUSD
@@ -2296,6 +2860,39 @@ namespace Nozomi.Ticker.StartupExtensions
                                         SourceId = hako.Id,
                                         MainCurrencyAbbrv = "ETH",
                                         CounterCurrencyAbbrv = "SGD",
+                                        AnalysedComponents = new List<AnalysedComponent>()
+                                        {
+                                            // Coinhako ETHSGD
+                                            new AnalysedComponent
+                                            {
+                                                ComponentType = AnalysedComponentType.CurrentAveragePrice,
+                                                Delay = 10000,
+                                                UIFormatting = "$ 0[.]00",
+                                                CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                                ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                                DeletedAt = null
+                                            },
+                                            // Coinhako ETHSGD
+                                            new AnalysedComponent
+                                            {
+                                                ComponentType = AnalysedComponentType.HourlyAveragePrice,
+                                                Delay = 10000,
+                                                UIFormatting = "$ 0[.]00",
+                                                CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                                ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                                DeletedAt = null
+                                            },
+                                            // Coinhako ETHSGD
+                                            new AnalysedComponent()
+                                            {
+                                                ComponentType = AnalysedComponentType.DailyPricePctChange,
+                                                Delay = 10000,
+                                                UIFormatting = "0[.]0",
+                                                CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                                ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                                DeletedAt = null
+                                            }
+                                        },
                                         Requests = new List<Request>()
                                         {
                                             // Coinhako ETHSGD
@@ -2343,6 +2940,39 @@ namespace Nozomi.Ticker.StartupExtensions
                                         SourceId = hako.Id,
                                         MainCurrencyAbbrv = "ETH",
                                         CounterCurrencyAbbrv = "USD",
+                                        AnalysedComponents = new List<AnalysedComponent>()
+                                        {
+                                            // Coinhako ETHUSD
+                                            new AnalysedComponent
+                                            {
+                                                ComponentType = AnalysedComponentType.CurrentAveragePrice,
+                                                Delay = 10000,
+                                                UIFormatting = "$ 0[.]00",
+                                                CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                                ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                                DeletedAt = null
+                                            },
+                                            // Coinhako ETHUSD
+                                            new AnalysedComponent
+                                            {
+                                                ComponentType = AnalysedComponentType.HourlyAveragePrice,
+                                                Delay = 10000,
+                                                UIFormatting = "$ 0[.]00",
+                                                CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                                ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                                DeletedAt = null
+                                            },
+                                            // Coinhako ETHUSD
+                                            new AnalysedComponent()
+                                            {
+                                                ComponentType = AnalysedComponentType.DailyPricePctChange,
+                                                Delay = 10000,
+                                                UIFormatting = "0[.]0",
+                                                CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                                ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                                DeletedAt = null
+                                            }
+                                        },
                                         Requests = new List<Request>()
                                         {
                                             // Coinhako ETHUSD
@@ -2390,6 +3020,39 @@ namespace Nozomi.Ticker.StartupExtensions
                                         SourceId = hako.Id,
                                         MainCurrencyAbbrv = "LTC",
                                         CounterCurrencyAbbrv = "SGD",
+                                        AnalysedComponents = new List<AnalysedComponent>()
+                                        {
+                                            // Coinhako LTCSGD
+                                            new AnalysedComponent
+                                            {
+                                                ComponentType = AnalysedComponentType.CurrentAveragePrice,
+                                                Delay = 10000,
+                                                UIFormatting = "$ 0[.]00",
+                                                CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                                ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                                DeletedAt = null
+                                            },
+                                            // Coinhako LTCSGD
+                                            new AnalysedComponent
+                                            {
+                                                ComponentType = AnalysedComponentType.HourlyAveragePrice,
+                                                Delay = 10000,
+                                                UIFormatting = "$ 0[.]00",
+                                                CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                                ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                                DeletedAt = null
+                                            },
+                                            // Coinhako LTCSGD
+                                            new AnalysedComponent()
+                                            {
+                                                ComponentType = AnalysedComponentType.DailyPricePctChange,
+                                                Delay = 10000,
+                                                UIFormatting = "0[.]0",
+                                                CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                                ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                                DeletedAt = null
+                                            }
+                                        },
                                         Requests = new List<Request>()
                                         {
                                             // Coinhako LTCSGD
@@ -2437,6 +3100,39 @@ namespace Nozomi.Ticker.StartupExtensions
                                         SourceId = hako.Id,
                                         MainCurrencyAbbrv = "LTC",
                                         CounterCurrencyAbbrv = "USD",
+                                        AnalysedComponents = new List<AnalysedComponent>()
+                                        {
+                                            // Coinhako LTCUSD
+                                            new AnalysedComponent
+                                            {
+                                                ComponentType = AnalysedComponentType.CurrentAveragePrice,
+                                                Delay = 10000,
+                                                UIFormatting = "$ 0[.]00",
+                                                CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                                ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                                DeletedAt = null
+                                            },
+                                            // Coinhako LTCUSD
+                                            new AnalysedComponent
+                                            {
+                                                ComponentType = AnalysedComponentType.HourlyAveragePrice,
+                                                Delay = 10000,
+                                                UIFormatting = "$ 0[.]00",
+                                                CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                                ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                                DeletedAt = null
+                                            },
+                                            // Coinhako LTCUSD
+                                            new AnalysedComponent()
+                                            {
+                                                ComponentType = AnalysedComponentType.DailyPricePctChange,
+                                                Delay = 10000,
+                                                UIFormatting = "0[.]0",
+                                                CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                                ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                                DeletedAt = null
+                                            }
+                                        },
                                         Requests = new List<Request>()
                                         {
                                             // Coinhako LTCUSD
