@@ -11,7 +11,7 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
         public RequestMap(EntityTypeBuilder<Request> entityTypeBuilder) : base(entityTypeBuilder)
         {
             entityTypeBuilder.HasKey(r => r.Id).HasName("Request_PK_Id");
-            entityTypeBuilder.Property(r => r.Id).HasDefaultValueSql("nextval('\"Id\"')");
+            entityTypeBuilder.Property(r => r.Id).ValueGeneratedOnAdd();
 
             entityTypeBuilder.HasAlternateKey(r => r.Guid).HasName("Request_AK_Guid");
             entityTypeBuilder.Property(r => r.Guid).HasDefaultValueSql("uuid_generate_v4()");

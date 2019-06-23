@@ -11,7 +11,7 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
         public RequestPropertyMap(EntityTypeBuilder<RequestProperty> entityTypeBuilder) : base(entityTypeBuilder)
         {
             entityTypeBuilder.HasKey(rp => rp.Id).HasName("RequestProperty_PK_Id");
-            entityTypeBuilder.Property(rp => rp.Id).HasDefaultValueSql("nextval('\"Id\"')");
+            entityTypeBuilder.Property(rp => rp.Id).ValueGeneratedOnAdd();
 
             entityTypeBuilder.Property(rp => rp.RequestPropertyType).IsRequired();
 

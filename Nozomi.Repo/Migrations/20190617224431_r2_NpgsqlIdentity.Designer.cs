@@ -27,7 +27,7 @@ namespace Nozomi.Repo.Migrations
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasDefaultValueSql("nextval('\"Id\"')");
+                        .ValueGeneratedOnAdd();
 
                     b.Property<string>("Abbreviation")
                         .IsRequired();
@@ -1722,7 +1722,7 @@ namespace Nozomi.Repo.Migrations
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasDefaultValueSql("nextval('\"Id\"')");
+                        .ValueGeneratedOnAdd();
 
                     b.Property<string>("APIUrl")
                         .IsRequired();
@@ -2059,7 +2059,7 @@ namespace Nozomi.Repo.Migrations
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasDefaultValueSql("nextval('\"Id\"')");
+                        .ValueGeneratedOnAdd();
 
                     b.Property<DateTime>("CreatedAt");
 
@@ -2337,7 +2337,7 @@ namespace Nozomi.Repo.Migrations
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasDefaultValueSql("nextval('\"Id\"')");
+                        .ValueGeneratedOnAdd();
 
                     b.Property<DateTime>("CreatedAt");
 
@@ -2396,7 +2396,7 @@ namespace Nozomi.Repo.Migrations
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasDefaultValueSql("nextval('\"Id\"')");
+                        .ValueGeneratedOnAdd();
 
                     b.Property<string>("APIDocsURL");
 
@@ -2513,7 +2513,7 @@ namespace Nozomi.Repo.Migrations
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasDefaultValueSql("nextval('\"Id\"')");
+                        .ValueGeneratedOnAdd();
 
                     b.Property<int>("ComponentType")
                         .ValueGeneratedOnAdd()
@@ -3488,7 +3488,7 @@ namespace Nozomi.Repo.Migrations
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasDefaultValueSql("nextval('\"Id\"')");
+                        .ValueGeneratedOnAdd();
 
                     b.Property<long>("AnalysedComponentId");
 
@@ -3523,7 +3523,7 @@ namespace Nozomi.Repo.Migrations
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasDefaultValueSql("nextval('\"Id\"')");
+                        .ValueGeneratedOnAdd();
 
                     b.Property<DateTime>("CreatedAt");
 
@@ -3557,7 +3557,7 @@ namespace Nozomi.Repo.Migrations
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasDefaultValueSql("nextval('\"Id\"')");
+                        .ValueGeneratedOnAdd();
 
                     b.Property<DateTime>("CreatedAt");
 
@@ -3593,7 +3593,7 @@ namespace Nozomi.Repo.Migrations
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasDefaultValueSql("nextval('\"Id\"')");
+                        .ValueGeneratedOnAdd();
 
                     b.Property<DateTime>("CreatedAt");
 
@@ -3996,7 +3996,7 @@ namespace Nozomi.Repo.Migrations
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasDefaultValueSql("nextval('\"Id\"')");
+                        .ValueGeneratedOnAdd();
 
                     b.Property<bool>("AnomalyIgnorance")
                         .ValueGeneratedOnAdd()
@@ -4806,7 +4806,7 @@ namespace Nozomi.Repo.Migrations
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasDefaultValueSql("nextval('\"Id\"')");
+                        .ValueGeneratedOnAdd();
 
                     b.Property<DateTime>("CreatedAt");
 
@@ -4998,7 +4998,7 @@ namespace Nozomi.Repo.Migrations
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasDefaultValueSql("nextval('\"Id\"')");
+                        .ValueGeneratedOnAdd();
 
                     b.Property<int>("CommandType");
 
@@ -5036,7 +5036,7 @@ namespace Nozomi.Repo.Migrations
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasDefaultValueSql("nextval('\"Id\"')");
+                        .ValueGeneratedOnAdd();
 
                     b.Property<int>("CommandPropertyType");
 

@@ -11,7 +11,7 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.LoggingModels
         {
             entityTypeBuilder.HasKey(rl => rl.Id).HasName("RequestLog_PK_Id");
             entityTypeBuilder.Property(rl => rl.Id)
-                .HasDefaultValueSql("nextval('\"Id\"')");
+                .ValueGeneratedOnAdd();
 
             entityTypeBuilder.Property(rl => rl.Type).IsRequired();
             entityTypeBuilder.Property(rl => rl.RawPayload).IsRequired(false);

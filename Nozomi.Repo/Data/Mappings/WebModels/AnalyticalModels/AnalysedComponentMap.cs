@@ -13,7 +13,7 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
         {
             entityTypeBuilder.HasKey(ac => ac.Id).HasName("AnalysedComponent_PK_Id");
             entityTypeBuilder.Property(ac => ac.Id)
-                .HasDefaultValueSql("nextval('\"Id\"')");
+                .ValueGeneratedOnAdd();
 
             entityTypeBuilder.HasIndex(ac => new { ac.CurrencyId, ac.ComponentType })
                 .HasName("AnalysedComponent_Index_CurrencyId_ComponentType").IsUnique();

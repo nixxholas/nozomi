@@ -60,9 +60,6 @@ namespace Nozomi.Repo.Data
             var requestPropertyMap = new RequestPropertyMap(modelBuilder.Entity<RequestProperty>());
             
             var sourceMap = new SourceMap(modelBuilder.Entity<Source>());
-            modelBuilder.HasSequence<long>("Id")
-                .StartsAt(1000);
-                //.IncrementsBy(5);
 
             // MTM
             var currencySourceMap = new CurrencySourceMap(modelBuilder.Entity<CurrencySource>());
