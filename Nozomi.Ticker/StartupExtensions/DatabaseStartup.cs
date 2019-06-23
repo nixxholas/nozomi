@@ -2466,6 +2466,8 @@ namespace Nozomi.Ticker.StartupExtensions
                                             }
                                         }
                                     });
+
+                                context.SaveChanges();
                             }
 
                             if (!context.CurrencySources.Any() && context.Currencies.Any())
@@ -2680,6 +2682,8 @@ namespace Nozomi.Ticker.StartupExtensions
                                         SourceId = hako.Id
                                     });
                             }
+
+                            context.SaveChanges();
                         }
                     }
                     catch (Exception ex)
