@@ -245,6 +245,21 @@ namespace Nozomi.Ticker.StartupExtensions
                                                         new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                                                     DeletedAt = null
                                                 }
+                                            },
+                                            RequestComponents = new List<RequestComponent>()
+                                            {
+                                                // ETH BFX Etherscan Request for Circulating Supply
+                                                new RequestComponent
+                                                {
+                                                    ComponentType = ComponentType.Circulating_Supply,
+                                                    Identifier = null,
+                                                    IsDenominated = true,
+                                                    QueryComponent = "result",
+                                                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                                    ModifiedAt =
+                                                        new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                                    DeletedAt = null
+                                                }
                                             }
                                         }
                                     }
@@ -311,6 +326,21 @@ namespace Nozomi.Ticker.StartupExtensions
                                                         new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                                                     DeletedAt = null
                                                 }
+                                            },
+                                            RequestComponents = new List<RequestComponent>()
+                                            {
+                                                // KNC BFX Etherscan Request for Circulating Supply
+                                                new RequestComponent
+                                                {
+                                                    ComponentType = ComponentType.Circulating_Supply,
+                                                    Identifier = null,
+                                                    IsDenominated = true,
+                                                    QueryComponent = "result",
+                                                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                                    ModifiedAt =
+                                                        new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                                    DeletedAt = null,
+                                                }
                                             }
                                         }
                                     }
@@ -335,7 +365,32 @@ namespace Nozomi.Ticker.StartupExtensions
                                             Guid = Guid.Parse("31ceeb18-1d89-43d2-b215-0488d9417c67"),
                                             RequestType = RequestType.HttpGet,
                                             DataPath = "https://insight.bitpay.com/api/status?q=getBlockCount",
-                                            Delay = 90000
+                                            Delay = 90000,
+                                            RequestComponents = new List<RequestComponent>()
+                                            {
+                                                // POLO BTC Bitpay Insight for Blockcount
+                                                new RequestComponent
+                                                {
+                                                    ComponentType = ComponentType.BlockCount,
+                                                    Identifier = null,
+                                                    QueryComponent = "info/blocks",
+                                                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                                    ModifiedAt =
+                                                        new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                                    DeletedAt = null
+                                                },
+                                                // POLO BTC Bitpay Insight for network difficulty
+                                                new RequestComponent
+                                                {
+                                                    ComponentType = ComponentType.Difficulty,
+                                                    Identifier = null,
+                                                    QueryComponent = "info/difficulty",
+                                                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                                    ModifiedAt =
+                                                        new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                                    DeletedAt = null
+                                                },
+                                            }
                                         },
                                         // BTC Coinranking Request
                                         new Request
@@ -343,7 +398,21 @@ namespace Nozomi.Ticker.StartupExtensions
                                             Guid = Guid.Parse("7f10715f-b5cc-4e52-9fa8-011311a5a2ca"),
                                             RequestType = RequestType.HttpGet,
                                             DataPath = "https://api.coinranking.com/v1/public/coin/1?base=USD",
-                                            Delay = 90000
+                                            Delay = 90000,
+                                            RequestComponents = new List<RequestComponent>()
+                                            {
+                                                // BTC Coinranking for circulating supply
+                                                new RequestComponent
+                                                {
+                                                    ComponentType = ComponentType.Circulating_Supply,
+                                                    Identifier = null,
+                                                    QueryComponent = "data/coin/circulatingSupply",
+                                                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                                    ModifiedAt =
+                                                        new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                                    DeletedAt = null
+                                                }
+                                            }
                                         }
                                     }
                                 },
@@ -1579,8 +1648,44 @@ namespace Nozomi.Ticker.StartupExtensions
                                             {
                                                 Guid = Guid.Parse("096e9def-1c0f-4d1c-aa7b-273499f2cbda"),
                                                 RequestType = RequestType.HttpGet,
-                                                DataPath = "https://api.ethfinex.com/v2/ticker/tETHUSD",
-                                                Delay = 5000
+                                                DataPath = "https://api-pub.bitfinex.com/v2/tickers?symbols=ALL",
+                                                Delay = 5000,
+                                                RequestComponents = new List<RequestComponent>()
+                                                {
+                                                    new RequestComponent
+                                                    {
+                                                        ComponentType = ComponentType.VOLUME,
+                                                        Identifier = "0=>tETHUSD",
+                                                        QueryComponent = "8",
+                                                        CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0,
+                                                            DateTimeKind.Utc),
+                                                        ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0,
+                                                            DateTimeKind.Utc),
+                                                        DeletedAt = null
+                                                    },
+                                                    new RequestComponent
+                                                    {
+                                                        ComponentType = ComponentType.Ask,
+                                                        Identifier = "0=>tETHUSD",
+                                                        QueryComponent = "1",
+                                                        CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0,
+                                                            DateTimeKind.Utc),
+                                                        ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0,
+                                                            DateTimeKind.Utc),
+                                                        DeletedAt = null
+                                                    },
+                                                    new RequestComponent()
+                                                    {
+                                                        ComponentType = ComponentType.Bid,
+                                                        Identifier = "0=>tETHUSD",
+                                                        QueryComponent = "3",
+                                                        CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0,
+                                                            DateTimeKind.Utc),
+                                                        ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0,
+                                                            DateTimeKind.Utc),
+                                                        DeletedAt = null
+                                                    }
+                                                }
                                             }
                                         }
                                     },
@@ -1599,8 +1704,44 @@ namespace Nozomi.Ticker.StartupExtensions
                                             {
                                                 Guid = Guid.Parse("534ccff8-b6ff-4cce-961b-8458ef0ca5af"),
                                                 RequestType = RequestType.HttpGet,
-                                                DataPath = "https://api.ethfinex.com/v2/ticker/tKNCUSD",
-                                                Delay = 5000
+                                                DataPath = "https://api-pub.bitfinex.com/v2/tickers?symbols=ALL",
+                                                Delay = 5000,
+                                                RequestComponents = new List<RequestComponent>()
+                                                {
+                                                    new RequestComponent
+                                                    {
+                                                        ComponentType = ComponentType.VOLUME,
+                                                        Identifier = "0=>tKNCUSD",
+                                                        QueryComponent = "8",
+                                                        CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0,
+                                                            DateTimeKind.Utc),
+                                                        ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0,
+                                                            DateTimeKind.Utc),
+                                                        DeletedAt = null
+                                                    },
+                                                    new RequestComponent
+                                                    {
+                                                        ComponentType = ComponentType.Ask,
+                                                        Identifier = "0=>tKNCUSD",
+                                                        QueryComponent = "1",
+                                                        CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0,
+                                                            DateTimeKind.Utc),
+                                                        ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0,
+                                                            DateTimeKind.Utc),
+                                                        DeletedAt = null
+                                                    },
+                                                    new RequestComponent()
+                                                    {
+                                                        ComponentType = ComponentType.Bid,
+                                                        Identifier = "0=>tKNCUSD",
+                                                        QueryComponent = "3",
+                                                        CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0,
+                                                            DateTimeKind.Utc),
+                                                        ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0,
+                                                            DateTimeKind.Utc),
+                                                        DeletedAt = null
+                                                    }
+                                                }
                                             }
                                         }
                                     },
@@ -1622,7 +1763,21 @@ namespace Nozomi.Ticker.StartupExtensions
                                                 ResponseType = ResponseType.XML,
                                                 DataPath =
                                                     "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml",
-                                                Delay = 86400000
+                                                Delay = 86400000,
+                                                RequestComponents = new List<RequestComponent>()
+                                                {
+                                                    new RequestComponent()
+                                                    {
+                                                        ComponentType = ComponentType.Ask,
+                                                        Identifier = null,
+                                                        QueryComponent = "gesmes:Envelope/Cube/Cube/Cube/0=>@rate",
+                                                        CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0,
+                                                            DateTimeKind.Utc),
+                                                        ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0,
+                                                            DateTimeKind.Utc),
+                                                        DeletedAt = null
+                                                    }
+                                                }
                                             }
                                         }
                                     },
@@ -1644,6 +1799,21 @@ namespace Nozomi.Ticker.StartupExtensions
                                                 ResponseType = ResponseType.Json,
                                                 DataPath = "https://www.alphavantage.co/query",
                                                 Delay = 5000,
+                                                RequestComponents = new List<RequestComponent>()
+                                                {
+                                                    new RequestComponent()
+                                                    {
+                                                        ComponentType = ComponentType.Ask,
+                                                        Identifier = null,
+                                                        QueryComponent =
+                                                            "['Realtime Currency Exchange Rate']/['5. Exchange Rate']",
+                                                        CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0,
+                                                            DateTimeKind.Utc),
+                                                        ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0,
+                                                            DateTimeKind.Utc),
+                                                        DeletedAt = null
+                                                    }
+                                                },
                                                 RequestProperties = new List<RequestProperty>()
                                                 {
                                                     new RequestProperty()
@@ -1711,7 +1881,43 @@ namespace Nozomi.Ticker.StartupExtensions
                                                 RequestType = RequestType.HttpGet,
                                                 ResponseType = ResponseType.Json,
                                                 DataPath = "https://poloniex.com/public?command=returnTicker",
-                                                Delay = 5000
+                                                Delay = 5000,
+                                                RequestComponents = new List<RequestComponent>()
+                                                {
+                                                    new RequestComponent
+                                                    {
+                                                        ComponentType = ComponentType.VOLUME,
+                                                        Identifier = null,
+                                                        QueryComponent = "BTC_BCN/baseVolume",
+                                                        CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0,
+                                                            DateTimeKind.Utc),
+                                                        ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0,
+                                                            DateTimeKind.Utc),
+                                                        DeletedAt = null
+                                                    },
+                                                    new RequestComponent
+                                                    {
+                                                        ComponentType = ComponentType.Ask,
+                                                        Identifier = null,
+                                                        QueryComponent = "BTC_BCN/lowestAsk",
+                                                        CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0,
+                                                            DateTimeKind.Utc),
+                                                        ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0,
+                                                            DateTimeKind.Utc),
+                                                        DeletedAt = null
+                                                    },
+                                                    new RequestComponent
+                                                    {
+                                                        ComponentType = ComponentType.Bid,
+                                                        Identifier = null,
+                                                        QueryComponent = "BTC_BCN/highestBid",
+                                                        CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0,
+                                                            DateTimeKind.Utc),
+                                                        ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0,
+                                                            DateTimeKind.Utc),
+                                                        DeletedAt = null
+                                                    }
+                                                }
                                             }
                                         }
                                     },
@@ -1732,7 +1938,43 @@ namespace Nozomi.Ticker.StartupExtensions
                                                 RequestType = RequestType.HttpGet,
                                                 ResponseType = ResponseType.Json,
                                                 DataPath = "https://poloniex.com/public?command=returnTicker",
-                                                Delay = 5000
+                                                Delay = 5000,
+                                                RequestComponents = new List<RequestComponent>()
+                                                {
+                                                    new RequestComponent
+                                                    {
+                                                        ComponentType = ComponentType.VOLUME,
+                                                        Identifier = null,
+                                                        QueryComponent = "BTC_BTS/baseVolume",
+                                                        CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0,
+                                                            DateTimeKind.Utc),
+                                                        ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0,
+                                                            DateTimeKind.Utc),
+                                                        DeletedAt = null
+                                                    },
+                                                    new RequestComponent
+                                                    {
+                                                        ComponentType = ComponentType.Ask,
+                                                        Identifier = null,
+                                                        QueryComponent = "BTC_BTS/lowestAsk",
+                                                        CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0,
+                                                            DateTimeKind.Utc),
+                                                        ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0,
+                                                            DateTimeKind.Utc),
+                                                        DeletedAt = null
+                                                    },
+                                                    new RequestComponent
+                                                    {
+                                                        ComponentType = ComponentType.Bid,
+                                                        Identifier = null,
+                                                        QueryComponent = "BTC_BTS/highestBid",
+                                                        CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0,
+                                                            DateTimeKind.Utc),
+                                                        ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0,
+                                                            DateTimeKind.Utc),
+                                                        DeletedAt = null
+                                                    }
+                                                }
                                             }
                                         }
                                     },
@@ -1753,7 +1995,43 @@ namespace Nozomi.Ticker.StartupExtensions
                                                 RequestType = RequestType.HttpGet,
                                                 ResponseType = ResponseType.Json,
                                                 DataPath = "https://api.bitfinex.com/v1/pubticker/etheur",
-                                                Delay = 2000
+                                                Delay = 2000,
+                                                RequestComponents = new List<RequestComponent>()
+                                                {
+                                                    new RequestComponent
+                                                    {
+                                                        ComponentType = ComponentType.VOLUME,
+                                                        Identifier = null,
+                                                        QueryComponent = "volume",
+                                                        CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0,
+                                                            DateTimeKind.Utc),
+                                                        ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0,
+                                                            DateTimeKind.Utc),
+                                                        DeletedAt = null
+                                                    },
+                                                    new RequestComponent
+                                                    {
+                                                        ComponentType = ComponentType.Ask,
+                                                        Identifier = null,
+                                                        QueryComponent = "ask",
+                                                        CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0,
+                                                            DateTimeKind.Utc),
+                                                        ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0,
+                                                            DateTimeKind.Utc),
+                                                        DeletedAt = null
+                                                    },
+                                                    new RequestComponent()
+                                                    {
+                                                        ComponentType = ComponentType.Bid,
+                                                        Identifier = null,
+                                                        QueryComponent = "bid",
+                                                        CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0,
+                                                            DateTimeKind.Utc),
+                                                        ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0,
+                                                            DateTimeKind.Utc),
+                                                        DeletedAt = null
+                                                    }
+                                                }
                                             }
                                         }
                                     },
@@ -1774,7 +2052,32 @@ namespace Nozomi.Ticker.StartupExtensions
                                                 RequestType = RequestType.HttpGet,
                                                 ResponseType = ResponseType.Json,
                                                 DataPath = "https://poloniex.com/public?command=returnTicker",
-                                                Delay = 5000
+                                                Delay = 5000,
+                                                RequestComponents = new List<RequestComponent>()
+                                                {
+                                                    new RequestComponent
+                                                    {
+                                                        ComponentType = ComponentType.Ask,
+                                                        Identifier = null,
+                                                        QueryComponent = "USDT_BTC/lowestAsk",
+                                                        CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0,
+                                                            DateTimeKind.Utc),
+                                                        ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0,
+                                                            DateTimeKind.Utc),
+                                                        DeletedAt = null
+                                                    },
+                                                    new RequestComponent
+                                                    {
+                                                        ComponentType = ComponentType.Bid,
+                                                        Identifier = null,
+                                                        QueryComponent = "USDT_BTC/highestBid",
+                                                        CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0,
+                                                            DateTimeKind.Utc),
+                                                        ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0,
+                                                            DateTimeKind.Utc),
+                                                        DeletedAt = null
+                                                    }
+                                                }
                                             }
                                         }
                                     },
@@ -1795,7 +2098,43 @@ namespace Nozomi.Ticker.StartupExtensions
                                                 RequestType = RequestType.WebSocket,
                                                 ResponseType = ResponseType.Json,
                                                 DataPath = "wss://stream.binance.com:9443/stream?streams=!ticker@arr",
-                                                Delay = 0
+                                                Delay = 0,
+                                                RequestComponents = new List<RequestComponent>()
+                                                {
+                                                    new RequestComponent
+                                                    {
+                                                        ComponentType = ComponentType.VOLUME,
+                                                        Identifier = "data/s=>ETHBTC",
+                                                        QueryComponent = "v",
+                                                        CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0,
+                                                            DateTimeKind.Utc),
+                                                        ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0,
+                                                            DateTimeKind.Utc),
+                                                        DeletedAt = null
+                                                    },
+                                                    new RequestComponent
+                                                    {
+                                                        ComponentType = ComponentType.Ask,
+                                                        Identifier = "data/s=>ETHBTC",
+                                                        QueryComponent = "a",
+                                                        CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0,
+                                                            DateTimeKind.Utc),
+                                                        ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0,
+                                                            DateTimeKind.Utc),
+                                                        DeletedAt = null
+                                                    },
+                                                    new RequestComponent
+                                                    {
+                                                        ComponentType = ComponentType.Bid,
+                                                        Identifier = "data/s=>ETHBTC",
+                                                        QueryComponent = "b",
+                                                        CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0,
+                                                            DateTimeKind.Utc),
+                                                        ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0,
+                                                            DateTimeKind.Utc),
+                                                        DeletedAt = null
+                                                    }
+                                                }
                                             }
                                         }
                                     },
@@ -1815,7 +2154,43 @@ namespace Nozomi.Ticker.StartupExtensions
                                                 RequestType = RequestType.WebSocket,
                                                 ResponseType = ResponseType.Json,
                                                 DataPath = "wss://stream.binance.com:9443/stream?streams=!ticker@arr",
-                                                Delay = 0
+                                                Delay = 0,
+                                                RequestComponents = new List<RequestComponent>()
+                                                {
+                                                    new RequestComponent
+                                                    {
+                                                        ComponentType = ComponentType.VOLUME,
+                                                        Identifier = "data/s=>KNCETH",
+                                                        QueryComponent = "v",
+                                                        CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0,
+                                                            DateTimeKind.Utc),
+                                                        ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0,
+                                                            DateTimeKind.Utc),
+                                                        DeletedAt = null
+                                                    },
+                                                    new RequestComponent
+                                                    {
+                                                        ComponentType = ComponentType.Ask,
+                                                        Identifier = "data/s=>KNCETH",
+                                                        QueryComponent = "a",
+                                                        CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0,
+                                                            DateTimeKind.Utc),
+                                                        ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0,
+                                                            DateTimeKind.Utc),
+                                                        DeletedAt = null
+                                                    },
+                                                    new RequestComponent
+                                                    {
+                                                        ComponentType = ComponentType.Bid,
+                                                        Identifier = "data/s=>KNCETH",
+                                                        QueryComponent = "b",
+                                                        CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0,
+                                                            DateTimeKind.Utc),
+                                                        ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0,
+                                                            DateTimeKind.Utc),
+                                                        DeletedAt = null
+                                                    }
+                                                }
                                             }
                                         }
                                     },
@@ -1836,7 +2211,33 @@ namespace Nozomi.Ticker.StartupExtensions
                                                 RequestType = RequestType.HttpGet,
                                                 ResponseType = ResponseType.Json,
                                                 DataPath = "https://www.coinhako.com/api/v1/price/currency/BTCSGD",
-                                                Delay = 10000
+                                                Delay = 10000,
+                                                RequestComponents = new List<RequestComponent>()
+                                                {
+                                                    // Coinhako BTCSGD
+                                                    new RequestComponent
+                                                    {
+                                                        ComponentType = ComponentType.Bid,
+                                                        Identifier = null,
+                                                        QueryComponent = "data/buy_price",
+                                                        CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0,
+                                                            DateTimeKind.Utc),
+                                                        ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0,
+                                                            DateTimeKind.Utc),
+                                                        DeletedAt = null
+                                                    },
+                                                    new RequestComponent
+                                                    {
+                                                        ComponentType = ComponentType.Ask,
+                                                        Identifier = null,
+                                                        QueryComponent = "data/sell_price",
+                                                        CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0,
+                                                            DateTimeKind.Utc),
+                                                        ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0,
+                                                            DateTimeKind.Utc),
+                                                        DeletedAt = null
+                                                    }
+                                                }
                                             }
                                         }
                                     },
@@ -1857,7 +2258,33 @@ namespace Nozomi.Ticker.StartupExtensions
                                                 RequestType = RequestType.HttpGet,
                                                 ResponseType = ResponseType.Json,
                                                 DataPath = "https://www.coinhako.com/api/v1/price/currency/BTCUSD",
-                                                Delay = 10000
+                                                Delay = 10000,
+                                                RequestComponents = new List<RequestComponent>()
+                                                {
+                                                    // Coinhako BTCUSD
+                                                    new RequestComponent
+                                                    {
+                                                        ComponentType = ComponentType.Bid,
+                                                        Identifier = null,
+                                                        QueryComponent = "data/buy_price",
+                                                        CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0,
+                                                            DateTimeKind.Utc),
+                                                        ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0,
+                                                            DateTimeKind.Utc),
+                                                        DeletedAt = null
+                                                    },
+                                                    new RequestComponent
+                                                    {
+                                                        ComponentType = ComponentType.Ask,
+                                                        Identifier = null,
+                                                        QueryComponent = "data/sell_price",
+                                                        CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0,
+                                                            DateTimeKind.Utc),
+                                                        ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0,
+                                                            DateTimeKind.Utc),
+                                                        DeletedAt = null
+                                                    }
+                                                }
                                             }
                                         }
                                     },
@@ -1878,7 +2305,33 @@ namespace Nozomi.Ticker.StartupExtensions
                                                 RequestType = RequestType.HttpGet,
                                                 ResponseType = ResponseType.Json,
                                                 DataPath = "https://www.coinhako.com/api/v1/price/currency/ETHSGD",
-                                                Delay = 10000
+                                                Delay = 10000,
+                                                RequestComponents = new List<RequestComponent>()
+                                                {
+                                                    // Coinhako ETHSGD
+                                                    new RequestComponent
+                                                    {
+                                                        ComponentType = ComponentType.Bid,
+                                                        Identifier = null,
+                                                        QueryComponent = "data/buy_price",
+                                                        CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0,
+                                                            DateTimeKind.Utc),
+                                                        ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0,
+                                                            DateTimeKind.Utc),
+                                                        DeletedAt = null
+                                                    },
+                                                    new RequestComponent
+                                                    {
+                                                        ComponentType = ComponentType.Ask,
+                                                        Identifier = null,
+                                                        QueryComponent = "data/sell_price",
+                                                        CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0,
+                                                            DateTimeKind.Utc),
+                                                        ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0,
+                                                            DateTimeKind.Utc),
+                                                        DeletedAt = null
+                                                    }
+                                                }
                                             }
                                         }
                                     },
@@ -1899,7 +2352,33 @@ namespace Nozomi.Ticker.StartupExtensions
                                                 RequestType = RequestType.HttpGet,
                                                 ResponseType = ResponseType.Json,
                                                 DataPath = "https://www.coinhako.com/api/v1/price/currency/ETHUSD",
-                                                Delay = 10000
+                                                Delay = 10000,
+                                                RequestComponents = new List<RequestComponent>()
+                                                {
+                                                    // Coinhako ETHUSD
+                                                    new RequestComponent
+                                                    {
+                                                        ComponentType = ComponentType.Bid,
+                                                        Identifier = null,
+                                                        QueryComponent = "data/buy_price",
+                                                        CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0,
+                                                            DateTimeKind.Utc),
+                                                        ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0,
+                                                            DateTimeKind.Utc),
+                                                        DeletedAt = null
+                                                    },
+                                                    new RequestComponent
+                                                    {
+                                                        ComponentType = ComponentType.Ask,
+                                                        Identifier = null,
+                                                        QueryComponent = "data/sell_price",
+                                                        CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0,
+                                                            DateTimeKind.Utc),
+                                                        ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0,
+                                                            DateTimeKind.Utc),
+                                                        DeletedAt = null
+                                                    }
+                                                }
                                             }
                                         }
                                     },
@@ -1920,7 +2399,33 @@ namespace Nozomi.Ticker.StartupExtensions
                                                 RequestType = RequestType.HttpGet,
                                                 ResponseType = ResponseType.Json,
                                                 DataPath = "https://www.coinhako.com/api/v1/price/currency/LTCSGD",
-                                                Delay = 10000
+                                                Delay = 10000,
+                                                RequestComponents = new List<RequestComponent>()
+                                                {
+                                                    // Coinhako LTCSGD
+                                                    new RequestComponent
+                                                    {
+                                                        ComponentType = ComponentType.Bid,
+                                                        Identifier = null,
+                                                        QueryComponent = "data/buy_price",
+                                                        CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0,
+                                                            DateTimeKind.Utc),
+                                                        ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0,
+                                                            DateTimeKind.Utc),
+                                                        DeletedAt = null
+                                                    },
+                                                    new RequestComponent
+                                                    {
+                                                        ComponentType = ComponentType.Ask,
+                                                        Identifier = null,
+                                                        QueryComponent = "data/sell_price",
+                                                        CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0,
+                                                            DateTimeKind.Utc),
+                                                        ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0,
+                                                            DateTimeKind.Utc),
+                                                        DeletedAt = null
+                                                    }
+                                                }
                                             }
                                         }
                                     },
@@ -1941,7 +2446,23 @@ namespace Nozomi.Ticker.StartupExtensions
                                                 RequestType = RequestType.HttpGet,
                                                 ResponseType = ResponseType.Json,
                                                 DataPath = "https://www.coinhako.com/api/v1/price/currency/LTCUSD",
-                                                Delay = 10000
+                                                Delay = 10000,
+                                                RequestComponents = new List<RequestComponent>()
+                                                {
+                                                    // Coinhako LTCUSD
+                                                    new RequestComponent
+                                                    {
+                                                        ComponentType = ComponentType.Bid,
+                                                        Identifier = null,
+                                                        QueryComponent = "data/buy_price"
+                                                    },
+                                                    new RequestComponent
+                                                    {
+                                                        ComponentType = ComponentType.Ask,
+                                                        Identifier = null,
+                                                        QueryComponent = "data/sell_price"
+                                                    }
+                                                }
                                             }
                                         }
                                     });
