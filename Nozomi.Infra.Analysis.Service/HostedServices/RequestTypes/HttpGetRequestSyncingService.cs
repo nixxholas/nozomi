@@ -43,7 +43,7 @@ using StackExchange.Redis;
 namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
 {
     public class HttpGetRequestSyncingService : BaseProcessingService<HttpGetRequestSyncingService>,
-        IHttpGetRequestSyncingService, IHostedService, IDisposable
+        IHttpGetRequestSyncingService
     {
         private readonly NozomiDbContext _nozomiDbContext;
         private readonly HttpClient _httpClient = new HttpClient();
@@ -423,13 +423,6 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
                                         .Where(rc => rc.DeletedAt == null && rc.IsEnabled))
                                     .ToList();
                                       
-#if DEBUG
-                                if (requestComponents.Any(rc => rc.Identifier.StartsWith("0=>t")))
-                                {
-                                    Console.WriteLine("Hit");
-                                }
-#endif
-
                                 // Parse the content
                                 if (payload.Content.Headers.ContentType.MediaType.Equals(ResponseType.Json
                                     .GetDescription()))
