@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
@@ -212,8 +213,8 @@ namespace Nozomi.Service.Services
 
             foreach (var requestComponent in requestComponents)
             {
-                var requestComponentEl = requestComponent.Split(">");
-                if (requestComponentEl.Length !>= 2)
+                var requestComponentEl = Regex.Split(requestComponent, "(?<!=)>");
+                if (requestComponentEl.Length < 2)
                 {
                     return new NozomiResult<UniqueTickerResponse>(NozomiResultType.Failed,
                         $"Invalid request component. [{requestComponent}]");
