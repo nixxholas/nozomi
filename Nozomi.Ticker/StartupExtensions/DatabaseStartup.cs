@@ -201,7 +201,18 @@ namespace Nozomi.Ticker.StartupExtensions
                                     Slug = "ETH",
                                     Name = "Ethereum",
                                     Denominations = 18,
-                                    DenominationName = "Wei"
+                                    DenominationName = "Wei",
+                                    Requests = new List<Request>()
+                                    {
+                                        // ETH Etherscan Request
+                                        new Request
+                                        {
+                                            Guid = Guid.Parse("d13fc276-8077-49d2-ba38-998c58895df9"),
+                                            RequestType = RequestType.HttpGet,
+                                            DataPath = "https://api.etherscan.io/api",
+                                            Delay = 5000
+                                        }
+                                    }
                                 },
                                 new Currency
                                 {
@@ -214,6 +225,17 @@ namespace Nozomi.Ticker.StartupExtensions
                                     Slug = "KNC",
                                     Name = "Kyber Network Crystal",
                                     Denominations = 18,
+                                    Requests = new List<Request>()
+                                    {
+                                        // KNC Etherscan Request
+                                        new Request
+                                        {
+                                            Guid = Guid.Parse("b7b9642e-357a-451c-9741-bf5a7fcb0ad1"),
+                                            RequestType = RequestType.HttpGet,
+                                            DataPath = "https://api.etherscan.io/api",
+                                            Delay = 5000
+                                        }
+                                    }
                                 },
                                 new Currency
                                 {
@@ -226,7 +248,26 @@ namespace Nozomi.Ticker.StartupExtensions
                                     Slug = "BTC",
                                     Name = "Bitcoin",
                                     Denominations = 8,
-                                    DenominationName = "Sat"
+                                    DenominationName = "Sat",
+                                    Requests = new List<Request>()
+                                    {
+                                        // BTC Bitpay Insight Request
+                                        new Request
+                                        {
+                                            Guid = Guid.Parse("31ceeb18-1d89-43d2-b215-0488d9417c67"),
+                                            RequestType = RequestType.HttpGet,
+                                            DataPath = "https://insight.bitpay.com/api/status?q=getBlockCount",
+                                            Delay = 90000
+                                        },
+                                        // BTC Coinranking Request
+                                        new Request
+                                        {
+                                            Guid = Guid.Parse("7f10715f-b5cc-4e52-9fa8-011311a5a2ca"),
+                                            RequestType = RequestType.HttpGet,
+                                            DataPath = "https://api.coinranking.com/v1/public/coin/1?base=USD",
+                                            Delay = 90000
+                                        }
+                                    }
                                 },
                                 new Currency
                                 {
@@ -1452,7 +1493,18 @@ namespace Nozomi.Ticker.StartupExtensions
                                         DefaultComponent = "0",
                                         SourceId = bfx.Id,
                                         MainCurrencyAbbrv = "ETH",
-                                        CounterCurrencyAbbrv = "USD"
+                                        CounterCurrencyAbbrv = "USD",
+                                        Requests = new List<Request>()
+                                        {
+                                            // BFX ETHUSD
+                                            new Request()
+                                            {
+                                                Guid = Guid.Parse("096e9def-1c0f-4d1c-aa7b-273499f2cbda"),
+                                                RequestType = RequestType.HttpGet,
+                                                DataPath = "https://api.ethfinex.com/v2/ticker/tETHUSD",
+                                                Delay = 5000
+                                            }
+                                        }
                                     },
                                     new CurrencyPair
                                     {
@@ -1461,7 +1513,18 @@ namespace Nozomi.Ticker.StartupExtensions
                                         DefaultComponent = "0",
                                         SourceId = bfx.Id,
                                         MainCurrencyAbbrv = "KNC",
-                                        CounterCurrencyAbbrv = "USD"
+                                        CounterCurrencyAbbrv = "USD",
+                                        Requests = new List<Request>()
+                                        {
+                                            // BFX KNCUSD
+                                            new Request()
+                                            {
+                                                Guid = Guid.Parse("534ccff8-b6ff-4cce-961b-8458ef0ca5af"),
+                                                RequestType = RequestType.HttpGet,
+                                                DataPath = "https://api.ethfinex.com/v2/ticker/tKNCUSD",
+                                                Delay = 5000
+                                            }
+                                        }
                                     },
                                     new CurrencyPair()
                                     {
@@ -1470,7 +1533,19 @@ namespace Nozomi.Ticker.StartupExtensions
                                         DefaultComponent = "Cube",
                                         SourceId = ecb.Id,
                                         MainCurrencyAbbrv = "EUR",
-                                        CounterCurrencyAbbrv = "USD"
+                                        CounterCurrencyAbbrv = "USD",
+                                        Requests = new List<Request>()
+                                        {
+                                            // ECB EURUSD
+                                            new Request()
+                                            {
+                                                Guid = Guid.Parse("1d8ba5ea-9d3a-4b02-b2d8-84ccd0851e69"),
+                                                RequestType = RequestType.HttpGet,
+                                                ResponseType = ResponseType.XML,
+                                                DataPath = "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml",
+                                                Delay = 86400000
+                                            }
+                                        }
                                     },
                                     new CurrencyPair
                                     {
@@ -1479,7 +1554,19 @@ namespace Nozomi.Ticker.StartupExtensions
                                         DefaultComponent = "Realtime Currency Exchange Rate/5. Exchange Rate",
                                         SourceId = avg.Id,
                                         MainCurrencyAbbrv = "EUR",
-                                        CounterCurrencyAbbrv = "USD"
+                                        CounterCurrencyAbbrv = "USD",
+                                        Requests = new List<Request>()
+                                        {
+                                            // AlphaVantage EURUSD
+                                            new Request()
+                                            {
+                                                Guid = Guid.Parse("48ad7cb2-b2b7-41be-8540-64136b72883c"),
+                                                RequestType = RequestType.HttpGet,
+                                                ResponseType = ResponseType.Json,
+                                                DataPath = "https://www.alphavantage.co/query",
+                                                Delay = 5000
+                                            }
+                                        }
                                     },
                                     new CurrencyPair
                                     {
@@ -1488,7 +1575,19 @@ namespace Nozomi.Ticker.StartupExtensions
                                         DefaultComponent = "BTC_BCN/lowestAsk",
                                         SourceId = polo.Id,
                                         MainCurrencyAbbrv = "BTC",
-                                        CounterCurrencyAbbrv = "BCN"
+                                        CounterCurrencyAbbrv = "BCN",
+                                        Requests = new List<Request>()
+                                        {
+                                            // POLO BTCBCN
+                                            new Request()
+                                            {
+                                                Guid = Guid.Parse("419db9ee-0510-47d1-8b14-620e2c86dcb4"),
+                                                RequestType = RequestType.HttpGet,
+                                                ResponseType = ResponseType.Json,
+                                                DataPath = "https://poloniex.com/public?command=returnTicker",
+                                                Delay = 5000
+                                            }
+                                        }
                                     },
                                     new CurrencyPair
                                     {
@@ -1497,7 +1596,19 @@ namespace Nozomi.Ticker.StartupExtensions
                                         DefaultComponent = "BTC_BTS/lowestAsk",
                                         SourceId = polo.Id,
                                         MainCurrencyAbbrv = "BTC",
-                                        CounterCurrencyAbbrv = "BTS"
+                                        CounterCurrencyAbbrv = "BTS",
+                                        Requests = new List<Request>()
+                                        {
+                                            // POLO BTCBTS
+                                            new Request()
+                                            {
+                                                Guid = Guid.Parse("b729acf9-a83c-4e76-8af8-a2ac7efc28c2"),
+                                                RequestType = RequestType.HttpGet,
+                                                ResponseType = ResponseType.Json,
+                                                DataPath = "https://poloniex.com/public?command=returnTicker",
+                                                Delay = 5000
+                                            }
+                                        }
                                     },
                                     new CurrencyPair
                                     {
@@ -1506,7 +1617,19 @@ namespace Nozomi.Ticker.StartupExtensions
                                         DefaultComponent = "0",
                                         SourceId = bfx.Id,
                                         MainCurrencyAbbrv = "ETH",
-                                        CounterCurrencyAbbrv = "EUR"
+                                        CounterCurrencyAbbrv = "EUR",
+                                        Requests = new List<Request>()
+                                        {
+                                            // BFX ETHEUR
+                                            new Request()
+                                            {
+                                                Guid = Guid.Parse("ee593665-c6c5-454a-8831-b7e28265a1c8"),
+                                                RequestType = RequestType.HttpGet,
+                                                ResponseType = ResponseType.Json,
+                                                DataPath = "https://api.bitfinex.com/v1/pubticker/etheur",
+                                                Delay = 2000
+                                            }
+                                        }
                                     },
                                     new CurrencyPair()
                                     {
@@ -1515,7 +1638,19 @@ namespace Nozomi.Ticker.StartupExtensions
                                         DefaultComponent = "USDT_BTC/lowestAsk",
                                         SourceId = polo.Id,
                                         MainCurrencyAbbrv = "BTC",
-                                        CounterCurrencyAbbrv = "USDT"
+                                        CounterCurrencyAbbrv = "USDT",
+                                        Requests = new List<Request>()
+                                        {
+                                            // POLO BTCUSDT
+                                            new Request()
+                                            {
+                                                Guid = Guid.Parse("e47e6062-e727-41ed-a0c1-750b1a792dd7"),
+                                                RequestType = RequestType.HttpGet,
+                                                ResponseType = ResponseType.Json,
+                                                DataPath = "https://poloniex.com/public?command=returnTicker",
+                                                Delay = 5000
+                                            }
+                                        }
                                     },
                                     new CurrencyPair
                                     {
@@ -1524,7 +1659,19 @@ namespace Nozomi.Ticker.StartupExtensions
                                         DefaultComponent = "b",
                                         SourceId = bna.Id,
                                         MainCurrencyAbbrv = "ETH",
-                                        CounterCurrencyAbbrv = "BTC"
+                                        CounterCurrencyAbbrv = "BTC",
+                                        Requests = new List<Request>()
+                                        {
+                                            // Binance's Websocket-based ticker data stream
+                                            new Request
+                                            {
+                                                Guid = Guid.Parse("6f9d8fe7-71f4-42b8-ac31-526f559549a3"),
+                                                RequestType = RequestType.WebSocket,
+                                                ResponseType = ResponseType.Json,
+                                                DataPath = "wss://stream.binance.com:9443/stream?streams=!ticker@arr",
+                                                Delay = 0
+                                            }
+                                        }
                                     },
                                     new CurrencyPair
                                     {
@@ -1533,7 +1680,18 @@ namespace Nozomi.Ticker.StartupExtensions
                                         DefaultComponent = "b",
                                         SourceId = bna.Id,
                                         MainCurrencyAbbrv = "KNC",
-                                        CounterCurrencyAbbrv = "ETH"
+                                        CounterCurrencyAbbrv = "ETH",
+                                        Requests = new List<Request>()
+                                        {
+                                            new Request
+                                            {
+                                                Guid = Guid.Parse("dc33dc82-26e5-4eef-af44-78e1efce2d1f"),
+                                                RequestType = RequestType.WebSocket,
+                                                ResponseType = ResponseType.Json,
+                                                DataPath = "wss://stream.binance.com:9443/stream?streams=!ticker@arr",
+                                                Delay = 0
+                                            }
+                                        }
                                     },
                                     new CurrencyPair
                                     {
@@ -1542,7 +1700,19 @@ namespace Nozomi.Ticker.StartupExtensions
                                         DefaultComponent = "data/buy_price",
                                         SourceId = hako.Id,
                                         MainCurrencyAbbrv = "BTC",
-                                        CounterCurrencyAbbrv = "SGD"
+                                        CounterCurrencyAbbrv = "SGD",
+                                        Requests = new List<Request>()
+                                        {
+                                            // Coinhako BTCSGD
+                                            new Request()
+                                            {
+                                                Guid = Guid.Parse("c162e683-cceb-4a03-aa24-f095b4d9db1f"),
+                                                RequestType = RequestType.HttpGet,
+                                                ResponseType = ResponseType.Json,
+                                                DataPath = "https://www.coinhako.com/api/v1/price/currency/BTCSGD",
+                                                Delay = 10000
+                                            }
+                                        }
                                     },
                                     new CurrencyPair
                                     {
@@ -1551,7 +1721,19 @@ namespace Nozomi.Ticker.StartupExtensions
                                         DefaultComponent = "data/buy_price",
                                         SourceId = hako.Id,
                                         MainCurrencyAbbrv = "BTC",
-                                        CounterCurrencyAbbrv = "USD"
+                                        CounterCurrencyAbbrv = "USD",
+                                        Requests = new List<Request>()
+                                        {
+                                            // Coinhako BTCUSD
+                                            new Request()
+                                            {
+                                                Guid = Guid.Parse("fd199860-f699-4414-ba14-fdae9e856b5e"),
+                                                RequestType = RequestType.HttpGet,
+                                                ResponseType = ResponseType.Json,
+                                                DataPath = "https://www.coinhako.com/api/v1/price/currency/BTCUSD",
+                                                Delay = 10000
+                                            }
+                                        }
                                     },
                                     new CurrencyPair
                                     {
@@ -1560,7 +1742,19 @@ namespace Nozomi.Ticker.StartupExtensions
                                         DefaultComponent = "data/buy_price",
                                         SourceId = hako.Id,
                                         MainCurrencyAbbrv = "ETH",
-                                        CounterCurrencyAbbrv = "SGD"
+                                        CounterCurrencyAbbrv = "SGD",
+                                        Requests = new List<Request>()
+                                        {
+                                            // Coinhako ETHSGD
+                                            new Request()
+                                            {
+                                                Guid = Guid.Parse("49be3d33-d7b8-47aa-abf0-ee8765100b21"),
+                                                RequestType = RequestType.HttpGet,
+                                                ResponseType = ResponseType.Json,
+                                                DataPath = "https://www.coinhako.com/api/v1/price/currency/ETHSGD",
+                                                Delay = 10000
+                                            }
+                                        }
                                     },
                                     new CurrencyPair
                                     {
@@ -1569,7 +1763,19 @@ namespace Nozomi.Ticker.StartupExtensions
                                         DefaultComponent = "data/buy_price",
                                         SourceId = hako.Id,
                                         MainCurrencyAbbrv = "ETH",
-                                        CounterCurrencyAbbrv = "USD"
+                                        CounterCurrencyAbbrv = "USD",
+                                        Requests = new List<Request>()
+                                        {
+                                            // Coinhako ETHUSD
+                                            new Request()
+                                            {
+                                                Guid = Guid.Parse("ceb4e033-ebbb-45d9-9312-951f09228c30"),
+                                                RequestType = RequestType.HttpGet,
+                                                ResponseType = ResponseType.Json,
+                                                DataPath = "https://www.coinhako.com/api/v1/price/currency/ETHUSD",
+                                                Delay = 10000
+                                            }
+                                        }
                                     },
                                     new CurrencyPair
                                     {
@@ -1578,7 +1784,19 @@ namespace Nozomi.Ticker.StartupExtensions
                                         DefaultComponent = "data/buy_price",
                                         SourceId = hako.Id,
                                         MainCurrencyAbbrv = "LTC",
-                                        CounterCurrencyAbbrv = "SGD"
+                                        CounterCurrencyAbbrv = "SGD",
+                                        Requests = new List<Request>()
+                                        {
+                                            // Coinhako LTCSGD
+                                            new Request()
+                                            {
+                                                Guid = Guid.Parse("58bf3728-1887-4460-bf61-6b898be360f3"),
+                                                RequestType = RequestType.HttpGet,
+                                                ResponseType = ResponseType.Json,
+                                                DataPath = "https://www.coinhako.com/api/v1/price/currency/LTCSGD",
+                                                Delay = 10000
+                                            }
+                                        }
                                     },
                                     new CurrencyPair
                                     {
@@ -1587,7 +1805,19 @@ namespace Nozomi.Ticker.StartupExtensions
                                         DefaultComponent = "data/buy_price",
                                         SourceId = hako.Id,
                                         MainCurrencyAbbrv = "LTC",
-                                        CounterCurrencyAbbrv = "USD"
+                                        CounterCurrencyAbbrv = "USD",
+                                        Requests = new List<Request>()
+                                        {
+                                            // Coinhako LTCUSD
+                                            new Request()
+                                            {
+                                                Guid = Guid.Parse("92121fbb-8f01-45de-bfab-fe17aeac7174"),
+                                                RequestType = RequestType.HttpGet,
+                                                ResponseType = ResponseType.Json,
+                                                DataPath = "https://www.coinhako.com/api/v1/price/currency/LTCUSD",
+                                                Delay = 10000
+                                            }
+                                        }
                                     });
                             }
 
@@ -1623,7 +1853,7 @@ namespace Nozomi.Ticker.StartupExtensions
                                 var ltc = context.Currencies
                                     .SingleOrDefault(c =>
                                         c.Slug.Equals("LTC", StringComparison.InvariantCultureIgnoreCase));
-                                
+
                                 context.CurrencySources.AddRange(
                                     // Bitfinex USD
                                     new CurrencySource
