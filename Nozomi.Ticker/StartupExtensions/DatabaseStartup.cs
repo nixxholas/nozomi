@@ -210,7 +210,42 @@ namespace Nozomi.Ticker.StartupExtensions
                                             Guid = Guid.Parse("d13fc276-8077-49d2-ba38-998c58895df9"),
                                             RequestType = RequestType.HttpGet,
                                             DataPath = "https://api.etherscan.io/api",
-                                            Delay = 5000
+                                            Delay = 5000,
+                                            RequestProperties = new List<RequestProperty>()
+                                            {
+                                                // ETH BFX Etherscan Request Property
+                                                new RequestProperty
+                                                {
+                                                    RequestPropertyType = RequestPropertyType.HttpHeader_Custom,
+                                                    Key = "module",
+                                                    Value = "stats",
+                                                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                                    ModifiedAt =
+                                                        new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                                    DeletedAt = null
+                                                },
+                                                // ETH BFX Etherscan Request Property
+                                                new RequestProperty
+                                                {
+                                                    RequestPropertyType = RequestPropertyType.HttpHeader_Custom,
+                                                    Key = "action",
+                                                    Value = "ethsupply",
+                                                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                                    ModifiedAt =
+                                                        new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                                    DeletedAt = null
+                                                },
+                                                new RequestProperty
+                                                {
+                                                    RequestPropertyType = RequestPropertyType.HttpHeader_Custom,
+                                                    Key = "apikey",
+                                                    Value = "TGAFGMGDKHJ8W2EKI26MJRRWGH44AV9224",
+                                                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                                    ModifiedAt =
+                                                        new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                                    DeletedAt = null
+                                                }
+                                            }
                                         }
                                     }
                                 },
@@ -233,7 +268,50 @@ namespace Nozomi.Ticker.StartupExtensions
                                             Guid = Guid.Parse("b7b9642e-357a-451c-9741-bf5a7fcb0ad1"),
                                             RequestType = RequestType.HttpGet,
                                             DataPath = "https://api.etherscan.io/api",
-                                            Delay = 5000
+                                            Delay = 5000,
+                                            RequestProperties = new List<RequestProperty>()
+                                            {
+                                                new RequestProperty
+                                                {
+                                                    RequestPropertyType = RequestPropertyType.HttpHeader_Custom,
+                                                    Key = "module",
+                                                    Value = "stats",
+                                                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                                    ModifiedAt =
+                                                        new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                                    DeletedAt = null
+                                                },
+                                                new RequestProperty
+                                                {
+                                                    RequestPropertyType = RequestPropertyType.HttpHeader_Custom,
+                                                    Key = "action",
+                                                    Value = "tokensupply",
+                                                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                                    ModifiedAt =
+                                                        new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                                    DeletedAt = null
+                                                },
+                                                new RequestProperty
+                                                {
+                                                    RequestPropertyType = RequestPropertyType.HttpHeader_Custom,
+                                                    Key = "contractaddress",
+                                                    Value = "0xdd974d5c2e2928dea5f71b9825b8b646686bd200",
+                                                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                                    ModifiedAt =
+                                                        new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                                    DeletedAt = null
+                                                },
+                                                new RequestProperty
+                                                {
+                                                    RequestPropertyType = RequestPropertyType.HttpHeader_Custom,
+                                                    Key = "apikey",
+                                                    Value = "TGAFGMGDKHJ8W2EKI26MJRRWGH44AV9224",
+                                                    CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                                    ModifiedAt =
+                                                        new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                                                    DeletedAt = null
+                                                }
+                                            }
                                         }
                                     }
                                 },
@@ -1542,7 +1620,8 @@ namespace Nozomi.Ticker.StartupExtensions
                                                 Guid = Guid.Parse("1d8ba5ea-9d3a-4b02-b2d8-84ccd0851e69"),
                                                 RequestType = RequestType.HttpGet,
                                                 ResponseType = ResponseType.XML,
-                                                DataPath = "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml",
+                                                DataPath =
+                                                    "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml",
                                                 Delay = 86400000
                                             }
                                         }
@@ -1564,7 +1643,54 @@ namespace Nozomi.Ticker.StartupExtensions
                                                 RequestType = RequestType.HttpGet,
                                                 ResponseType = ResponseType.Json,
                                                 DataPath = "https://www.alphavantage.co/query",
-                                                Delay = 5000
+                                                Delay = 5000,
+                                                RequestProperties = new List<RequestProperty>()
+                                                {
+                                                    new RequestProperty()
+                                                    {
+                                                        RequestPropertyType = RequestPropertyType.HttpQuery,
+                                                        Key = "apikey",
+                                                        Value = "TV5HJJHNP8094BRO",
+                                                        CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0,
+                                                            DateTimeKind.Utc),
+                                                        ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0,
+                                                            DateTimeKind.Utc),
+                                                        DeletedAt = null
+                                                    },
+                                                    new RequestProperty()
+                                                    {
+                                                        RequestPropertyType = RequestPropertyType.HttpQuery,
+                                                        Key = "function",
+                                                        Value = "CURRENCY_EXCHANGE_RATE",
+                                                        CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0,
+                                                            DateTimeKind.Utc),
+                                                        ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0,
+                                                            DateTimeKind.Utc),
+                                                        DeletedAt = null
+                                                    },
+                                                    new RequestProperty()
+                                                    {
+                                                        RequestPropertyType = RequestPropertyType.HttpQuery,
+                                                        Key = "from_currency",
+                                                        Value = "EUR",
+                                                        CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0,
+                                                            DateTimeKind.Utc),
+                                                        ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0,
+                                                            DateTimeKind.Utc),
+                                                        DeletedAt = null
+                                                    },
+                                                    new RequestProperty()
+                                                    {
+                                                        RequestPropertyType = RequestPropertyType.HttpQuery,
+                                                        Key = "to_currency",
+                                                        Value = "USD",
+                                                        CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0,
+                                                            DateTimeKind.Utc),
+                                                        ModifiedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0,
+                                                            DateTimeKind.Utc),
+                                                        DeletedAt = null
+                                                    }
+                                                }
                                             }
                                         }
                                     },
