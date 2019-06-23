@@ -47,6 +47,16 @@ namespace Nozomi.Service.Services
                     "Invalid Source.");
             }
             
+            // Validate the tickers
+            if (_unitOfWork.GetRepository<CurrencyPair>()
+                    .GetQueryable()
+                    .Any(cp => cp.DeletedAt == null 
+                               && cp.MainCurrencyAbbrv.Equals(createTickerInputModel.MainCurrencyAbbrv)
+                               && cp.CounterCurrencyAbbrv.Equals(createTickerInputModel.CounterCurrencyAbbrv)
+                               && cp.SourceId.Equals(createTickerInputModel.CurrencySourceId)))
+                return new NozomiResult<UniqueTickerResponse>(NozomiResultType.Failed,
+                    "The currency pair already exists.");
+            
             // Aggregate the currencies
 
             var mainCurrency = new Currency
