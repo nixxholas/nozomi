@@ -213,7 +213,7 @@ namespace Nozomi.Service.Services
             foreach (var requestComponent in requestComponents)
             {
                 var requestComponentEl = requestComponent.Split(">");
-                if (requestComponentEl.Length != 2)
+                if (requestComponentEl.Length !>= 2)
                 {
                     return new NozomiResult<UniqueTickerResponse>(NozomiResultType.Failed,
                         $"Invalid request component. [{requestComponent}]");
@@ -233,12 +233,25 @@ namespace Nozomi.Service.Services
                         "There already is another component with the same component type.");
                 }
 
-                currencyPairRequest.RequestComponents.Add(new RequestComponent
+                if (requestComponentEl.Length == 3)
                 {
-                    ComponentType = componentType,
-                    QueryComponent = requestComponentEl[1],
-                    Value = "0"
-                });
+                    currencyPairRequest.RequestComponents.Add(new RequestComponent
+                    {
+                        ComponentType = componentType,
+                        QueryComponent = requestComponentEl[2],
+                        Identifier = requestComponentEl[1],
+                        Value = "0"
+                    });
+                }
+                else
+                {
+                    currencyPairRequest.RequestComponents.Add(new RequestComponent
+                    {
+                        ComponentType = componentType,
+                        QueryComponent = requestComponentEl[1],
+                        Value = "0"
+                    });
+                }
             }
 
             currencyPair.DefaultComponent = currencyPairRequest.RequestComponents
