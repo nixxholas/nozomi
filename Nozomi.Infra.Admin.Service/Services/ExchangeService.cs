@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Xml;
@@ -7,6 +8,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Nozomi.Base.Admin.Domain.AreaModels.Exchange;
 using Nozomi.Base.Core.Helpers.Enumerator;
+using Nozomi.Data.Models.Currency;
 using Nozomi.Data.Models.Web;
 using Nozomi.Infra.Admin.Service.Services.Interfaces;
 using Nozomi.Preprocessing.Abstracts;
@@ -27,6 +29,8 @@ namespace Nozomi.Infra.Admin.Service.Services
         ///
         /// This API assumes polling an API that returns a collection of the exchange's supporting ticker pairs
         /// and proceeds to process it according to the data given.
+        ///
+        /// TODO: Support for POST and Websocket requests.
         /// </summary>
         /// <param name="createExchange"></param>
         /// <param name="userId"></param>
@@ -36,9 +40,33 @@ namespace Nozomi.Infra.Admin.Service.Services
         {
             if (createExchange != null)
             {
+                // Setup the source first
+                var source = _unitOfWork.GetRepository<Source>()
+                    .GetQueryable()
+                    .SingleOrDefault(s => s.Abbreviation.Equals(createExchange.SourceAbbreviation));
+
+                // If the source doesn't exist
+                if (source == null)
+                {
+                    // Create it
+                    _unitOfWork.GetRepository<Source>().Add(new Source
+                    {
+                        Abbreviation = createExchange.SourceAbbreviation,
+                        Name = createExchange.SourceName,
+                        IsEnabled = true
+                    });
+                    _unitOfWork.Commit(userId);
+                    
+                    // Set it
+                    source = _unitOfWork.GetRepository<Source>()
+                        .GetQueryable()
+                        .SingleOrDefault(s => s.Abbreviation.Equals(createExchange.SourceAbbreviation));
+                }
+                
                 using (var httpClient = new HttpClient())
                 {
                     httpClient.BaseAddress = new Uri(createExchange.Endpoint);
+                    var payloadToken = JToken.Parse("");
 
                     switch (createExchange.RequestType)
                     {
@@ -65,20 +93,47 @@ namespace Nozomi.Infra.Admin.Service.Services
                                     content = JsonConvert.SerializeObject(xmlDoc);
                                 }
 
-                                var getToken = JToken.Parse(content);
-                                
-                                // Interact with the payload
+                                payloadToken = JToken.Parse(content);
                             }
 
                             // Failure
                             _logger.LogWarning($"[{_serviceName}] Initialise: Get request failed => " +
                                                $"{getResult.ReasonPhrase}");
                             return false;
+                        case RequestType.HttpPost:
+                            return false;
+                        case RequestType.WebSocket:
+                            return false;
+                    }
+                    
+                    // Interact with the payload
+                    if (payloadToken.HasValues)
+                    {
+                        // If its an array,
+                        if (payloadToken is JArray)
+                        {
+                            // Begin iterating
+                            foreach (var itemToken in payloadToken)
+                            {
+                                // 1. Identify the ticker pair
+                                
+                                // 2. Ensure the currencies exist for this source
+                                
+                                // 3. Create the ticker pair
+                                
+                                // 4. Create the components
+                            }
+                        } else
+                        {
+                            
+                        }
                     }
                 }
             }
             
-            throw new System.NotImplementedException();
+            // Failure
+            _logger.LogWarning($"[{_serviceName}] Initialise: empty payload or request.");
+            return false;
         }
     }
 }
