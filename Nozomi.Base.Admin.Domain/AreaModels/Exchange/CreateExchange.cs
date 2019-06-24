@@ -15,6 +15,9 @@ namespace Nozomi.Base.Admin.Domain.AreaModels.Exchange
     {
         public IEnumerable<RequestType> RequestTypes { get; }
             = Enum.GetValues(typeof(RequestType)).Cast<RequestType>();
+
+        public IEnumerable<ResponseType> ResponseTypes { get; }
+            = Enum.GetValues(typeof(ResponseType)).Cast<ResponseType>();
         
         public string SourceName { get; set; }
         
