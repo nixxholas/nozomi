@@ -9,6 +9,9 @@ namespace Nozomi.Base.Admin.Domain.AreaModels.Exchange
         [DisplayName("Defines the exchange's current request protocol.")]
         public RequestType RequestType { get; set; }
         
+        [DisplayName("Defines the exchange's default request payload type.")]
+        public ResponseType ResponseType { get; set; }
+        
         [DisplayName("The URL of the endpoint that stores the entire exchange's ticker pairs.")]
         public string Endpoint { get; set; }
         
