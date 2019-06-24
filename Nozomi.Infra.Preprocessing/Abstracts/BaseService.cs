@@ -10,11 +10,13 @@ namespace Nozomi.Preprocessing.Abstracts
     {
         protected ILogger<T> _logger;
         protected IUnitOfWork<TContext> _unitOfWork;
+        protected readonly string _serviceName;
 
         public BaseService(ILogger<T> logger, IUnitOfWork<TContext> unitOfWork)
         {
             _logger = logger;
             _unitOfWork = unitOfWork;
+            _serviceName = typeof(T).FullName;
         }
     }
 }
