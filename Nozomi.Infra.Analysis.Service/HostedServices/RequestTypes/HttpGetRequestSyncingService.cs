@@ -45,7 +45,6 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
     public class HttpGetRequestSyncingService : BaseProcessingService<HttpGetRequestSyncingService>,
         IHttpGetRequestSyncingService
     {
-        private readonly NozomiDbContext _nozomiDbContext;
         private readonly HttpClient _httpClient = new HttpClient();
         private readonly IRequestComponentService _requestComponentService;
         private readonly IRequestEvent _requestEvent;
@@ -54,7 +53,6 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
 
         public HttpGetRequestSyncingService(IServiceProvider serviceProvider) : base(serviceProvider)
         {
-            _nozomiDbContext = _scope.ServiceProvider.GetService<NozomiDbContext>();
             _requestComponentService = _scope.ServiceProvider.GetRequiredService<IRequestComponentService>();
             _requestEvent = _scope.ServiceProvider.GetRequiredService<IRequestEvent>();
             _requestService = _scope.ServiceProvider.GetRequiredService<IRequestService>();
