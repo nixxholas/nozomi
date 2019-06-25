@@ -116,11 +116,13 @@ namespace Nozomi.Infra.Admin.Service.Services
                             foreach (var itemToken in payloadToken)
                             {
                                 // 1. Identify the ticker pair
-                                
+                                var tickerPairStr = itemToken.SelectToken(createExchange.CurrencyPairIdentifier)
+                                    .ToString();
+
                                 // 2. Ensure the currencies exist for this source
-                                
+
                                 // 3. Create the ticker pair
-                                
+
                                 // 4. Create the components
                             }
                         } else
