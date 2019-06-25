@@ -31,7 +31,18 @@ namespace Nozomi.Base.Admin.Domain.AreaModels.Exchange
         public string SingularityApiUrl { get; set; }
         
         /// <summary>
+        /// This behaves like a header, allowing us to identify the ticker pair dynamically, without the
+        /// need of defining every single ticker pair to be seeded manually.
+        /// </summary>
+        [Required]
+        public string CurrencyPairIdentifier { get; set; }
+        
+        /// <summary>
         /// Defines the Query components that will be created per-ticker pair.
+        ///
+        /// Every line defines a new component, let's see how we can design the structure properly,
+        /// 1. Obtain the ticker pair from the payload
+        /// 
         /// </summary>
         [Required]
         public string QueryComponents { get; set; }
