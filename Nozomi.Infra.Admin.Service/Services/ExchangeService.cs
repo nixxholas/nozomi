@@ -19,7 +19,7 @@ namespace Nozomi.Infra.Admin.Service.Services
 {
     public class ExchangeService : BaseService<ExchangeService, NozomiDbContext>, IExchangeService
     {
-        public ExchangeService(ILogger<ExchangeService> logger, IUnitOfWork<NozomiDbContext> unitOfWork) 
+        public ExchangeService(ILogger<ExchangeService> logger, IUnitOfWork<NozomiDbContext> unitOfWork)
             : base(logger, unitOfWork)
         {
         }
@@ -56,13 +56,13 @@ namespace Nozomi.Infra.Admin.Service.Services
                         IsEnabled = true
                     });
                     _unitOfWork.Commit(userId);
-                    
+
                     // Set it
                     source = _unitOfWork.GetRepository<Source>()
                         .GetQueryable()
                         .SingleOrDefault(s => s.Abbreviation.Equals(createExchange.SourceAbbreviation));
                 }
-                
+
                 using (var httpClient = new HttpClient())
                 {
                     httpClient.BaseAddress = new Uri(createExchange.Endpoint);
@@ -73,39 +73,38 @@ namespace Nozomi.Infra.Admin.Service.Services
                         case RequestType.HttpGet:
                             var getResult = await httpClient.GetAsync("");
 
-                            if (getResult.IsSuccessStatusCode)
-                            {
-                                var content = await getResult.Content.ReadAsStringAsync();
-                                
-                                // Parse the content
-                                if (getResult.Content.Headers.ContentType.MediaType.Equals(ResponseType.Json
-                                    .GetDescription()))
-                                {
-                                    // No action needed
-                                }
-                                else if (getResult.Content.Headers.ContentType.MediaType.Equals(
-                                    ResponseType.XML.GetDescription()))
-                                {
-                                    // Load the XML
-                                    createExchange.ResponseType = ResponseType.XML;
-                                    var xmlDoc = new XmlDocument();
-                                    xmlDoc.LoadXml(content);
-                                    content = JsonConvert.SerializeObject(xmlDoc);
-                                }
+                            if (!getResult.IsSuccessStatusCode)
+                                // Failure
+                                _logger.LogWarning($"[{_serviceName}] Initialise: Get request failed => " +
+                                                   $"{getResult.ReasonPhrase}");
 
-                                payloadToken = JToken.Parse(content);
+                            var content = await getResult.Content.ReadAsStringAsync();
+
+                            // Parse the content
+                            if (getResult.Content.Headers.ContentType.MediaType.Equals(ResponseType.Json
+                                .GetDescription()))
+                            {
+                                // No action needed
+                            }
+                            else if (getResult.Content.Headers.ContentType.MediaType.Equals(
+                                ResponseType.XML.GetDescription()))
+                            {
+                                // Load the XML
+                                createExchange.ResponseType = ResponseType.XML;
+                                var xmlDoc = new XmlDocument();
+                                xmlDoc.LoadXml(content);
+                                content = JsonConvert.SerializeObject(xmlDoc);
                             }
 
-                            // Failure
-                            _logger.LogWarning($"[{_serviceName}] Initialise: Get request failed => " +
-                                               $"{getResult.ReasonPhrase}");
-                            return false;
+                            payloadToken = JToken.Parse(content);
+
+                            break;
                         case RequestType.HttpPost:
                             return false;
                         case RequestType.WebSocket:
                             return false;
                     }
-                    
+
                     // Interact with the payload
                     if (payloadToken.HasValues)
                     {
@@ -125,14 +124,14 @@ namespace Nozomi.Infra.Admin.Service.Services
 
                                 // 4. Create the components
                             }
-                        } else
+                        }
+                        else
                         {
-                            
                         }
                     }
                 }
             }
-            
+
             // Failure
             _logger.LogWarning($"[{_serviceName}] Initialise: empty payload or request.");
             return false;
