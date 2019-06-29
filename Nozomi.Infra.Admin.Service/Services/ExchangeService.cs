@@ -115,10 +115,26 @@ namespace Nozomi.Infra.Admin.Service.Services
                             foreach (var itemToken in payloadToken)
                             {
                                 // 1. Identify the ticker pair
-                                var tickerPairStr = itemToken.SelectToken(createExchange.CurrencyPairIdentifier)
-                                    .ToString();
+                                
+                                // What if the ticker pair has multiple properties for it to be successfully identified?
+                                var tickerPairIdentifiers = createExchange.CurrencyPairIdentifier
+                                    .Split(" && "); // Split via " && ".
+                                string tickerPairStr;
+                                 
+                                if (tickerPairIdentifiers.Length == 1)
+                                    tickerPairStr = itemToken.SelectToken(createExchange.CurrencyPairIdentifier).ToString();
+                                else if (tickerPairIdentifiers.Length > 1)
+                                {
+                                    // Let's loop through the collection and work out the data.
+                                    tickerPairStr = "";
+                                    foreach (var identifer in tickerPairIdentifiers)
+                                    {
+                                        tickerPairStr += itemToken.SelectToken(identifer).ToString();
+                                    }
+                                }
 
                                 // 2. Ensure the currencies exist for this source
+                                
 
                                 // 3. Create the ticker pair
 
