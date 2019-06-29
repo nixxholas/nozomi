@@ -60,19 +60,5 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
             vm.StatusMessage = "There was something erroneous with your submission.";
             return RedirectToAction("Create");
         }
-
-        [HttpGet]
-        public async Task<IActionResult> SeedExchange()
-        {
-            var user = await GetCurrentUserAsync();
-            if (user == null)
-            {
-                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
-            }
-
-            var vm = new CreateExchange();
-            
-            return View(vm);
-        }
     }
 }
