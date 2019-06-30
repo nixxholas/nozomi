@@ -66,7 +66,7 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
         [HttpGet("{slug}")]
         public IActionResult Currency([FromRoute] string slug)
         {
-            var currency = _currencyAdminEvent.GetCurrencyBySlug(slug);
+            var currency = _currencyAdminEvent.GetCurrencyBySlug(slug, true);
             var vm = new CurrencyViewModel
             {
                 Currency = currency,

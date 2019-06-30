@@ -114,6 +114,28 @@
                 <b-button variant="danger" v-on:click="showPropertyDeleteModal(datum.item.id, datum.item.type)">Remove</b-button>
             </template>
         </b-table>
+        
+        <hr/>
+        
+        <h3>Analysed Components</h3>
+        <!-- Currency AC table -->
+        <b-button variant="primary" class="mb-3" v-on:click="showAcAddModal">Create Analysed Component</b-button>
+        <b-table v-if="analysedComponents != null && analysedComponents.length > 0"
+                 :per-page="acDataRowsPerPage" :current-page="acCurrentPage"
+                 :items="analysedComponents" :fields="acDataFields">
+            <template slot="type" slot-scope="datum">
+                {{ getAcString(datum.item.componentType) }}
+            </template>
+            <template slot="value" slot-scope="datum">
+                {{ datum.item.value }}
+            </template>
+            <template slot="isEnabled" slot-scope="datum">
+                <b-form-checkbox v-model="datum.item.isEnabled" disabled/>
+            </template>
+            <template slot="Remove" slot-scope="datum">
+                <b-button variant="danger" v-on:click="showAcDeleteModal(datum.item.id, datum.item.type)">Remove</b-button>
+            </template>
+        </b-table>
     </div>
 </div>
 
@@ -129,6 +151,26 @@
 <!-- DeleteModal -->
 <b-modal ref="source-delete-modal" title="Confirm Delete" ok-title="Yes" ok-variant="danger" cancel-title="No" v-on:ok="handleSourceDeleteOk" centered>
     <p>Are you sure that you want to remove {{ deleteSourceModal.name }} source from this currency?</p>
+</b-modal>
+
+<!-- AnalysedComponent AddModal -->
+<b-modal ref="ac-add-modal" size="xl" title="Create an Analysed Component for @Model.Currency.Name" ok-title="Create" v-on:ok="handleAcAddOk">
+    <b-form v-on:submit.stop.prevent="onAcAddSubmit">
+        <b-form-group label="Type">
+            <b-form-select v-model="addAcForm.type">
+                <option v-for="acType in acTypes" :value="acType.value">{{ acType.key }}</option>
+            </b-form-select>
+        </b-form-group>
+        
+        <b-form-checkbox v-model="addAcForm.isEnabled" switch>
+            Enabled
+        </b-form-checkbox>
+    </b-form>
+</b-modal>
+
+<!-- Delete AnalysedComponent Modal -->
+<b-modal ref="ac-delete-modal" title="Confirm Delete" ok-title="Yes" ok-variant="danger" cancel-title="No" v-on:ok="handleAcDeleteOk" centered>
+    <p>Are you sure that you want to remove this analysed component from this currency?</p>
 </b-modal>
 
 <!-- Property AddModal -->
@@ -189,6 +231,8 @@
             data: {
                 sourceCurrentPage: 1,
                 propertiesCurrentPage: 1,
+                acCurrentPage: 1,
+                acDataRowsPerPage: 10,
                 sourceDataRowsPerPage: 10,
                 sourceDataFields: [
                     {
@@ -244,6 +288,39 @@
                         sortable: false
                     }
                 ],
+                acDataFields: [
+                    {
+                        key: 'type',
+                        label: 'Type',
+                        sortable: true
+                    },
+                    {
+                        key: 'value',
+                        label: 'Value',
+                        sortable: false
+                    },
+                    {
+                        key: 'isEnabled',
+                        label: 'Enabled',
+                        sortable: true
+                    },
+                    {
+                        key: 'Remove',
+                        label: '',
+                        sortable: false
+                    }
+                ],
+                acTypes:
+                    @Html.Raw(JsonConvert.SerializeObject(@NozomiServiceConstants.analysedComponentTypes, Formatting.Indented, new JsonSerializerSettings
+                    {
+                        ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+                        ContractResolver = new CamelCasePropertyNamesContractResolver()
+                    })),
+                analysedComponents: @Html.Raw(JsonConvert.SerializeObject(Model.Currency.AnalysedComponents, Formatting.Indented, new JsonSerializerSettings
+                                    {
+                                        ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+                                        ContractResolver = new CamelCasePropertyNamesContractResolver()
+                                    })),    
                 currencySources:
                     @Html.Raw(JsonConvert.SerializeObject(@Model.Currency.CurrencySources, Formatting.Indented, new JsonSerializerSettings
                     {
@@ -306,6 +383,16 @@
                     id: Number,
                     name: ''
                 },
+                addAcForm: {
+                    currencyId: @Model.Currency.Id,    
+                    type: 0,
+                    value: '',
+                    isEnabled: false
+                },
+                deleteAcModal: {
+                    id: Number,
+                    name: ''
+                },
             },
             mounted() {
                 this.convertCurrencyTypesOption();
@@ -338,6 +425,14 @@
                     for (let i = 0; i < this.currencyPropertyTypes.length; i++) {
                         if (this.currencyPropertyTypes[i].value == val)
                             return this.currencyPropertyTypes[i].key;
+                    }
+                    
+                    return "Unknown";
+                },
+                getAcString(val) {
+                    for (let i = 0; i < this.acTypes.length; i++) {
+                        if (this.acTypes[i].value === val)
+                            return this.acTypes[i].key;
                     }
                     
                     return "Unknown";
@@ -375,6 +470,9 @@
                 showPropertyAddModal() {
                     this.$refs['property-add-modal'].show();
                 },
+                showAcAddModal() {
+                    this.$refs['ac-add-modal'].show();
+                },
                 handleSourceAddOk(bvModalEvt) {
                     // Prevent modal from closing
                     bvModalEvt.preventDefault();
@@ -386,6 +484,12 @@
                     bvModalEvt.preventDefault();
                     // Trigger submit handler
                     this.onPropertyAddSubmit();
+                },
+                handleAcAddOk(bvModalEvt) {
+                    // Prevent modal from closing
+                    bvModalEvt.preventDefault();
+                    // Trigger submit handler
+                    this.onAcAddSubmit();
                 },
                 async onSourceAddSubmit() {
                     let formData = new FormData();
@@ -430,6 +534,25 @@
                     // Hide the modal manually
                     this.$refs['property-add-modal'].hide();
                 },
+                onAcAddSubmit() {
+                    // Send a POST request
+                    axios({
+                      method: 'post',
+                      responseType: 'application/json',
+                      url: '/Admin/AnalysedComponent/Create',
+                      data: this.addAcForm
+                    })
+                    .then(function (response) {
+                        // Put alert for now, change the ui later.
+                        alert(response.data.message);
+                    })
+                    .catch(function (error) {
+                        alert("Create failed");
+                    });
+                    
+                    // Hide the modal manually
+                    this.$refs['property-add-modal'].hide();
+                },
                 // Methods for delete modal
                 showSourceDeleteModal(id, sourceName) {
                     this.deleteSourceModal.id = id;
@@ -443,6 +566,13 @@
                     this.deletePropertyModal.name = propName;
 
                     this.$refs['property-delete-modal'].show();
+                },
+                // Methods for delete modal
+                showAcDeleteModal(id, propName) {
+                    this.deleteAcModal.id = id;
+                    this.deleteAcModal.name = propName;
+
+                    this.$refs['ac-delete-modal'].show();
                 },
                 async handleSourceDeleteOk(bvModalEvt) {
                     bvModalEvt.preventDefault();
@@ -489,6 +619,29 @@
                     
                     // Hide the modal manually
                     this.$refs['property-delete-modal'].hide();
+                },
+                async handleAcDeleteOk(bvModalEvt) {
+                    bvModalEvt.preventDefault();
+                    console.dir(this.deleteAcModal);
+                    
+                    // Send a POST request
+                    axios({
+                      method: 'delete',
+                      url: '/Admin/AnalysedComponent/Delete/' + this.deleteAcModal.id,
+                    })
+                    .then(function (response) {
+                        console.log(response);
+                        
+                        // Put alert for now, change the ui later.
+                        alert(response.data.message);
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                        alert("Delete failed");
+                    });
+                    
+                    // Hide the modal manually
+                    this.$refs['ac-delete-modal'].hide();
                 },
                 // Methods for property edit modal
                 showPropertyEditModal(property) {
