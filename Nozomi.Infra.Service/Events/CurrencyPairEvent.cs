@@ -153,8 +153,16 @@ namespace Nozomi.Service.Events
                 .ToList();
         }
 
-        public CurrencyPair Get(long id, long userId = 0)
+        public CurrencyPair Get(long id, bool track = false, long userId = 0)
         {
+            if (track)
+                return _unitOfWork.GetRepository<CurrencyPair>()
+                    .GetQueryable()
+                    .Include(cp => cp.Requests)
+                    .Include(cp => cp.Source)
+                    .Include(cp => cp.AnalysedComponents)
+                    .SingleOrDefault(cp => cp.Id.Equals(id) && cp.DeletedAt == null);
+            
             return _unitOfWork
                 .GetRepository<CurrencyPair>()
                 .GetQueryable()
