@@ -6,6 +6,7 @@ using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
 using Nozomi.Base.Core;
+using Nozomi.Base.Core.Helpers.Native.Numerals;
 using Nozomi.Data.Models.Currency;
 using Nozomi.Data.Models.Web;
 using Nozomi.Data.Models.Web.Analytical;
@@ -67,7 +68,7 @@ namespace Nozomi.Data.ResponseModels.Currency
                         {
                             AveragePriceHistory = ac.AnalysedHistoricItems
                                 .Where(ahi => !string.IsNullOrEmpty(ahi.Value)
-                                              && decimal.TryParse(ahi.Value, out var junk)
+                                              && NumberHelper.IsNumericDecimal(ahi.Value)
                                               && ahi.HistoricDateTime > DateTime.UtcNow.Subtract(TimeSpan.FromDays(7)))
                                 .Select(ahi => decimal.Parse(ahi.Value))
                                 .ToList();

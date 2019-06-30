@@ -2,7 +2,7 @@ using System;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Nozomi.Base.Admin.Domain.AreaModels.AnalysedComponents;
+using Nozomi.Base.Admin.Domain.AreaModels.AnalysedComponent;
 using Nozomi.Data.AreaModels.v1.AnalysedComponent;
 using Nozomi.Data.Models.Web.Analytical;
 using Nozomi.Infra.Admin.Service.Services.Interfaces;

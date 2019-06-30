@@ -22,7 +22,7 @@ using WebSocket = WebSocketSharp.WebSocket;
 namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
 {
     public class WebsocketCurrencyPairRequestSyncingService :
-        BaseHostedService<WebsocketCurrencyPairRequestSyncingService>,
+        BaseProcessingService<WebsocketCurrencyPairRequestSyncingService>,
         IWebsocketCurrencyPairRequestSyncingService
     {
         /// <summary>
@@ -227,147 +227,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
 
                 // Identifier processing
                 if (!string.IsNullOrEmpty(component.Identifier))
-                {
-                    var identifierArr = component.Identifier.Split("/"); // Split the string if its nesting
-                    var lastIdentifier = identifierArr.LastOrDefault(); // get the last to identify if its the last
-
-                    foreach (var identifierEl in identifierArr)
-                    {
-                        if (identifierEl != null)
-                        {
-                            // CHECK CURRENT TYPE
-                            // Identify if its an array or an object
-                            if (processingToken is JArray)
-                            {
-                                try
-                                {
-                                    // Is it the last?
-                                    if (identifierEl != lastIdentifier)
-                                    {
-                                        // Parse the identifierEl to an integer for index access
-                                        if (int.TryParse(identifierEl, out int index))
-                                        {
-                                            // Pump in the array, treat it as anonymous.
-                                            var dataList = processingToken.ToObject<List<JObject>>();
-
-                                            // let's work it out
-                                            // update the token
-                                            if (index >= 0 && index < dataList.Count)
-                                            {
-                                                // Traverse the array
-                                                processingToken =
-                                                    JToken.Parse(JsonConvert.SerializeObject(dataList[index]));
-                                            }
-                                        }
-                                    }
-                                    // Yes its the last
-                                    else
-                                    {
-                                        // See if there's any property we need to refer to.
-                                        var comArrElArr = identifierEl.Split("=>");
-
-                                        // An array of objects. Let's find the key comArrElArr[0] where
-                                        // the value equals comArrElArr[1]
-                                        if (comArrElArr.Length == 2)
-                                        {
-                                            // https://stackoverflow.com/questions/7216917/json-net-has-key-method
-                                            var correctEl = processingToken.Children()
-                                                .FirstOrDefault(tok => tok.SelectToken(comArrElArr[0]).ToString()
-                                                    .Equals(comArrElArr[1]));
-
-                                            // Null check
-                                            if (correctEl == null)
-                                            {
-                                                _logger.LogError("[WebsocketCurrencyPairRequestSyncingService] " +
-                                                                 $"Invalid key value pair {identifierEl}");
-                                                return false;
-                                            }
-                                            else
-                                            {
-                                                // We found it
-                                                processingToken = correctEl;
-                                            }
-                                        }
-                                        // A standard array
-                                        else if (comArrElArr.Length == 1)
-                                        {
-                                            // Parse the identifierEl to an integer for index access
-                                            if (int.TryParse(identifierEl, out int index))
-                                            {
-                                                // Pump in the array, treat it as anonymous.
-                                                var dataList = processingToken.ToObject<List<JObject>>();
-
-                                                // let's work it out
-                                                // update the token
-                                                if (index >= 0 && index < dataList.Count)
-                                                {
-                                                    // Traverse the array and move up to the parent
-                                                    processingToken =
-                                                        JToken.Parse(JsonConvert.SerializeObject(dataList[index])).Parent;
-                                                }
-                                            }
-                                            else
-                                            {
-                                                _logger.LogError("[WebsocketCurrencyPairRequestSyncingService]" +
-                                                                 $" Update: Invalid array element {identifierEl}");
-                                                return false;
-                                            }
-                                        }
-                                    }
-                                }
-                                catch (Exception ex)
-                                {
-                                    Console.WriteLine(ex);
-                                }
-                            }
-                            else if (processingToken is JObject)
-                            {
-                                // Pump in the object
-                                JObject obj = processingToken.ToObject<JObject>();
-
-                                // Is it the last?
-                                if (identifierEl != lastIdentifier)
-                                {
-                                    // let's work it out
-                                    // update the token
-                                    processingToken = obj.SelectToken(identifierEl);
-                                }
-                                // Yes its the last
-                                else
-                                {
-                                    // let's work it out
-                                    // update the token
-                                    processingToken = obj.SelectToken(identifierEl).Parent;
-                                }
-                            }
-                            // iterate JValue like a JObject
-                            else if (processingToken is JValue)
-                            {
-                                // Pump in the object
-                                JObject obj = processingToken.ToObject<JObject>();
-
-                                // Is it the last?
-                                if (identifierEl != lastIdentifier)
-                                {
-                                    // let's work it out
-                                    // update the token
-                                    processingToken = obj.SelectToken(identifierEl);
-                                }
-                                // Yes its the last
-                                else
-                                {
-                                    // let's work it out
-                                    // update the token
-                                    processingToken = obj.SelectToken(identifierEl).Parent;
-                                }
-                            }
-                        }
-                        else
-                        {
-                            return false;
-                        }
-                    }
-                }
+                    processingToken = ProcessIdentifier(processingToken, component.Identifier);
 
                 var comArr = component.QueryComponent.Split("/"); // Split the string if its nesting
                 var last = comArr.LastOrDefault(); // get the last to identify if its the last

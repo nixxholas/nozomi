@@ -76,6 +76,7 @@
     <_ContentIncludedByDefault Remove="Areas\Admin\Views\Manage\Profile.cshtml" />
     <_ContentIncludedByDefault Remove="Areas\Admin\Views\Manage\TwoFactorAuthentication.cshtml" />
     <_ContentIncludedByDefault Remove="Areas\Admin\Views\Manage\VerifyPhoneNumber.cshtml" />
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\Exchange\Create.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Nozomi.Infra.Admin.Service\Nozomi.Infra.Admin.Service.csproj" />

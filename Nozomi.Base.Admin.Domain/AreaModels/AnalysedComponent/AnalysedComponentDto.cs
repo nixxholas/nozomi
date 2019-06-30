@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Nozomi.Base.Admin.Domain.AreaModels.AnalysedHistoricItem;
 using Nozomi.Data.AreaModels.v1.AnalysedComponent;
 
-namespace Nozomi.Base.Admin.Domain.AreaModels.AnalysedComponents
+namespace Nozomi.Base.Admin.Domain.AreaModels.AnalysedComponent
 {
     public class AnalysedComponentDto : AnalysedComponentDTO
     {

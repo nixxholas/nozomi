@@ -104,6 +104,11 @@
                         <label asp-for="MainCurrencyAbbrv"></label>
                         <input type="text" class="form-control" asp-for="MainCurrencyAbbrv">
                     </div>
+                    
+                    <div class="js-focus-state form-group mb-2">
+                        <label asp-for="MainCurrencySlug"></label>
+                        <input type="text" class="form-control" asp-for="MainCurrencySlug">
+                    </div>
 
                     <div class="js-focus-state form-group mb-2">
                         <label asp-for="MainCurrencyName"></label>
@@ -127,6 +132,11 @@
                         <label asp-for="CounterCurrencyAbbrv"></label>
                         <input type="text" class="form-control" asp-for="CounterCurrencyAbbrv">
                     </div>
+                    
+                    <div class="js-focus-state form-group mb-2">
+                        <label asp-for="CounterCurrencySlug"></label>
+                        <input type="text" class="form-control" asp-for="CounterCurrencySlug">
+                    </div>
 
                     <div class="js-focus-state form-group mb-2">
                         <label asp-for="CounterCurrencyName"></label>
@@ -145,7 +155,11 @@
                     the 1st element of the array, assuming that the result is an array. <br />
                     <kbd>Bid>bidPrice</kbd> - This is a "Bid" component, obtaining the 
                     "bidPrice" property from the result, assuming that the result is an
-                    object.
+                    object. <br />
+                    <kbd>Bid>data/s=>KNCETH>B</kbd> - This is a "Bid" component, obtaining the
+                    target object in an array of objects "data" by using property "s" containing 
+                    "KNCETH" as its value and obtaining the "B" property from the result, assuming 
+                    that the result is an object.
                 </p>
             </div>
             <div class="input-group mb-6">
@@ -180,15 +194,3 @@
         </form>
     </div>
 </div>
-
-@section Scripts {
-    <script>
-        $(document).ready(function() {
-            
-        });
-        
-        function updateCurrencies() {
-            
-        }
-    </script>
-}

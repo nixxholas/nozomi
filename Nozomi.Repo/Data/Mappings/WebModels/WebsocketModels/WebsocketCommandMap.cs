@@ -10,7 +10,7 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.WebsocketModels
         public WebsocketCommandMap(EntityTypeBuilder<WebsocketCommand> entityTypeBuilder) : base(entityTypeBuilder)
         {
             entityTypeBuilder.HasKey(wsc => wsc.Id).HasName("WebsocketCommand_PK_Id");
-            entityTypeBuilder.Property(wsc => wsc.Id).HasDefaultValueSql("nextval('\"Id\"')");
+            entityTypeBuilder.Property(wsc => wsc.Id).ValueGeneratedOnAdd();
 
             entityTypeBuilder.Property(wsc => wsc.CommandType).IsRequired();
             entityTypeBuilder.Property(wsc => wsc.Name).IsRequired(false);

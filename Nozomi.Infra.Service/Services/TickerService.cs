@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
@@ -46,24 +47,35 @@ namespace Nozomi.Service.Services
                     "Invalid Source.");
             }
             
+            // Validate the tickers
+            if (_unitOfWork.GetRepository<CurrencyPair>()
+                    .GetQueryable()
+                    .Any(cp => cp.DeletedAt == null 
+                               && cp.MainCurrencyAbbrv.Equals(createTickerInputModel.MainCurrencyAbbrv)
+                               && cp.CounterCurrencyAbbrv.Equals(createTickerInputModel.CounterCurrencyAbbrv)
+                               && cp.SourceId.Equals(createTickerInputModel.CurrencySourceId)))
+                return new NozomiResult<UniqueTickerResponse>(NozomiResultType.Failed,
+                    "The currency pair already exists.");
+            
             // Aggregate the currencies
 
             var mainCurrency = new Currency
             {
                 CurrencyTypeId = createTickerInputModel.MainCurrencyTypeId,
                 Abbreviation = createTickerInputModel.MainCurrencyAbbrv,
-                Name = createTickerInputModel.MainCurrencyName
+                Name = createTickerInputModel.MainCurrencyName,
+                Slug = createTickerInputModel.MainCurrencySlug
             };
             
             // Main
             // Make sure the currency exists
             if (_unitOfWork.GetRepository<Currency>().GetQueryable()
-                .Any(c => c.Abbreviation.Equals(mainCurrency.Abbreviation, StringComparison.InvariantCultureIgnoreCase)
+                .Any(c => c.Abbreviation.Equals(mainCurrency.Slug, StringComparison.InvariantCultureIgnoreCase)
                           && c.DeletedAt == null))
             {
                 // Currency already exists
                 mainCurrency = _unitOfWork.GetRepository<Currency>()
-                    .Get(c => c.Abbreviation.Equals(mainCurrency.Abbreviation, StringComparison.InvariantCultureIgnoreCase))
+                    .Get(c => c.Abbreviation.Equals(mainCurrency.Slug, StringComparison.InvariantCultureIgnoreCase))
                     .SingleOrDefault();
             }
             else
@@ -74,32 +86,46 @@ namespace Nozomi.Service.Services
                     CurrencySourceId = createTickerInputModel.CurrencySourceId,
                     CurrencyTypeId = mainCurrency.CurrencyTypeId,
                     Abbreviation = mainCurrency.Abbreviation,
-                    Name = mainCurrency.Name
+                    Name = mainCurrency.Name,
+                    Slug = mainCurrency.Slug
                 });
                 
                 // Retrieve it
                 mainCurrency = _unitOfWork.GetRepository<Currency>()
-                    .Get(c => c.Abbreviation.Equals(mainCurrency.Abbreviation, StringComparison.InvariantCultureIgnoreCase))
+                    .Get(c => c.Abbreviation.Equals(mainCurrency.Slug, StringComparison.InvariantCultureIgnoreCase))
                     .SingleOrDefault();
                 
                 _logger.LogInformation($"Currency {mainCurrency.Name} created.");
+                
+                // Bind it
+                _unitOfWork.GetRepository<CurrencySource>()
+                    .Add(new CurrencySource
+                    {
+                        CurrencyId = mainCurrency.Id,
+                        SourceId = createTickerInputModel.CurrencySourceId
+                    });
+                _unitOfWork.Commit();
+                
+                _logger.LogInformation($"Currency {mainCurrency.Name} binded with Source " +
+                                       $"{createTickerInputModel.CurrencySourceId}.");
             }
 
             var counterCurrency = new Currency
             {
                 CurrencyTypeId = createTickerInputModel.CounterCurrencyTypeId,
                 Abbreviation = createTickerInputModel.CounterCurrencyAbbrv,
-                Name = createTickerInputModel.CounterCurrencyName
+                Name = createTickerInputModel.CounterCurrencyName,
+                Slug = createTickerInputModel.CounterCurrencySlug
             };
             
             // Counter
             if (_unitOfWork.GetRepository<Currency>().GetQueryable()
-                .Any(c => c.Abbreviation.Equals(counterCurrency.Abbreviation, StringComparison.InvariantCultureIgnoreCase)
+                .Any(c => c.Abbreviation.Equals(counterCurrency.Slug, StringComparison.InvariantCultureIgnoreCase)
                           && c.DeletedAt == null))
             {
                 // Currency already exists
                 counterCurrency = _unitOfWork.GetRepository<Currency>()
-                    .Get(c => c.Abbreviation.Equals(counterCurrency.Abbreviation, StringComparison.InvariantCultureIgnoreCase))
+                    .Get(c => c.Abbreviation.Equals(counterCurrency.Slug, StringComparison.InvariantCultureIgnoreCase))
                     .SingleOrDefault();
             }
             else
@@ -110,15 +136,28 @@ namespace Nozomi.Service.Services
                     CurrencySourceId = createTickerInputModel.CurrencySourceId,
                     CurrencyTypeId = counterCurrency.CurrencyTypeId,
                     Abbreviation = counterCurrency.Abbreviation,
-                    Name = counterCurrency.Name
+                    Name = counterCurrency.Name,
+                    Slug = counterCurrency.Slug
                 });
                 
                 // Retrieve it
                 counterCurrency = _unitOfWork.GetRepository<Currency>()
-                    .Get(c => c.Abbreviation.Equals(counterCurrency.Abbreviation, StringComparison.InvariantCultureIgnoreCase))
+                    .Get(c => c.Abbreviation.Equals(counterCurrency.Slug, StringComparison.InvariantCultureIgnoreCase))
                     .SingleOrDefault();
                 
                 _logger.LogInformation($"Currency {counterCurrency.Name} created.");
+                
+                // Bind it
+                _unitOfWork.GetRepository<CurrencySource>()
+                    .Add(new CurrencySource
+                    {
+                        CurrencyId = counterCurrency.Id,
+                        SourceId = createTickerInputModel.CurrencySourceId
+                    });
+                _unitOfWork.Commit();
+                
+                _logger.LogInformation($"Currency {counterCurrency.Name} binded with Source " +
+                                       $"{createTickerInputModel.CurrencySourceId}.");
             }
 
             // Currency check
@@ -208,8 +247,8 @@ namespace Nozomi.Service.Services
 
             foreach (var requestComponent in requestComponents)
             {
-                var requestComponentEl = requestComponent.Split(">");
-                if (requestComponentEl.Length != 2)
+                var requestComponentEl = Regex.Split(requestComponent, "(?<!=)>");
+                if (requestComponentEl.Length < 2)
                 {
                     return new NozomiResult<UniqueTickerResponse>(NozomiResultType.Failed,
                         $"Invalid request component. [{requestComponent}]");
@@ -229,12 +268,25 @@ namespace Nozomi.Service.Services
                         "There already is another component with the same component type.");
                 }
 
-                currencyPairRequest.RequestComponents.Add(new RequestComponent
+                if (requestComponentEl.Length == 3)
                 {
-                    ComponentType = componentType,
-                    QueryComponent = requestComponentEl[1],
-                    Value = "0"
-                });
+                    currencyPairRequest.RequestComponents.Add(new RequestComponent
+                    {
+                        ComponentType = componentType,
+                        QueryComponent = requestComponentEl[2],
+                        Identifier = requestComponentEl[1],
+                        Value = "0"
+                    });
+                }
+                else
+                {
+                    currencyPairRequest.RequestComponents.Add(new RequestComponent
+                    {
+                        ComponentType = componentType,
+                        QueryComponent = requestComponentEl[1],
+                        Value = "0"
+                    });
+                }
             }
 
             currencyPair.DefaultComponent = currencyPairRequest.RequestComponents

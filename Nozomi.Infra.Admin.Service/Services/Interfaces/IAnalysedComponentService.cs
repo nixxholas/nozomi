@@ -1,4 +1,4 @@
-using Nozomi.Base.Admin.Domain.AreaModels.AnalysedComponents;
+using Nozomi.Base.Admin.Domain.AreaModels.AnalysedComponent;
 using Nozomi.Data.AreaModels.v1.AnalysedComponent;
 
 namespace Nozomi.Infra.Admin.Service.Services.Interfaces

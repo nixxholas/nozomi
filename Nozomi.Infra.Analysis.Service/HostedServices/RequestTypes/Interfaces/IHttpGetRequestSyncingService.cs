@@ -9,6 +9,6 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes.Interfaces
     {
         Task<bool> ProcessRequest<T>(ICollection<T> requests) where T : Request;
 
-        bool Update(JToken currToken, ResponseType resType, IEnumerable<RequestComponent> requestComponents);
+        bool Update(JToken currToken, ResponseType resType, ICollection<RequestComponent> requestComponents);
     }
 }

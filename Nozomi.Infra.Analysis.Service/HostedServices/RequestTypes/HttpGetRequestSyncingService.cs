@@ -42,10 +42,9 @@ using StackExchange.Redis;
  */
 namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
 {
-    public class HttpGetRequestSyncingService : BaseHostedService<HttpGetRequestSyncingService>,
-        IHttpGetRequestSyncingService, IHostedService, IDisposable
+    public class HttpGetRequestSyncingService : BaseProcessingService<HttpGetRequestSyncingService>,
+        IHttpGetRequestSyncingService
     {
-        private readonly NozomiDbContext _nozomiDbContext;
         private readonly HttpClient _httpClient = new HttpClient();
         private readonly IRequestComponentService _requestComponentService;
         private readonly IRequestEvent _requestEvent;
@@ -54,7 +53,6 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
 
         public HttpGetRequestSyncingService(IServiceProvider serviceProvider) : base(serviceProvider)
         {
-            _nozomiDbContext = _scope.ServiceProvider.GetService<NozomiDbContext>();
             _requestComponentService = _scope.ServiceProvider.GetRequiredService<IRequestComponentService>();
             _requestEvent = _scope.ServiceProvider.GetRequiredService<IRequestEvent>();
             _requestService = _scope.ServiceProvider.GetRequiredService<IRequestService>();
@@ -420,8 +418,9 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
                                 // Pull the components wanted
                                 var requestComponents = currentRequests
                                     .SelectMany(r => r.RequestComponents
-                                        .Where(rc => rc.DeletedAt == null && rc.IsEnabled));
-
+                                        .Where(rc => rc.DeletedAt == null && rc.IsEnabled))
+                                    .ToList();
+                                      
                                 // Parse the content
                                 if (payload.Content.Headers.ContentType.MediaType.Equals(ResponseType.Json
                                     .GetDescription()))
@@ -470,17 +469,20 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
             return false;
         }
 
-        public bool Update(JToken token, ResponseType resType, IEnumerable<RequestComponent> requestComponents)
+        public bool Update(JToken token, ResponseType resType, ICollection<RequestComponent> components)
         {
             // Save it first
             var currToken = token;
 
             // For each component we're checking
-            foreach (var component in requestComponents)
+            foreach (var component in components)
             {
                 // Always reset
                 currToken = token;
 
+                if (!string.IsNullOrEmpty(component.Identifier))
+                    currToken = ProcessIdentifier(currToken, component.Identifier);
+                
                 var comArr = component.QueryComponent.Split("/"); // Split the string if its nesting
                 var last = comArr.LastOrDefault(); // get the last to identify if its the last
 

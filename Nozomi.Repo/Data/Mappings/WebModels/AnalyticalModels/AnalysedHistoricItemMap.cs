@@ -12,7 +12,7 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
         {
             entityTypeBuilder.HasKey(ahi => ahi.Id).HasName("AnalysedHistoricItem_PK_Id");
             entityTypeBuilder.Property(ahi => ahi.Id)
-                .HasDefaultValueSql("nextval('\"Id\"')");
+                .ValueGeneratedOnAdd();
 
             entityTypeBuilder.Property(ahi => ahi.Value).IsRequired();
             entityTypeBuilder.Property(ahi => ahi.HistoricDateTime).IsRequired();
