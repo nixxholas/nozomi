@@ -11,7 +11,6 @@ namespace Nozomi.Base.Admin.Domain.AreaModels.AnalysedComponent
         [DefaultValue(false)]
         public bool IsDenominated { get; set; }
 
-        [DefaultValue(10000)]
         public int Delay { get; set; }
         
         public string UIFormatting { get; set; }
