@@ -2,8 +2,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Nozomi.Base.Admin.Domain.AreaModels.Exchange;
 using Nozomi.Base.Identity.ViewModels.Manage.Tickers;
+using Nozomi.Data;
 using Nozomi.Service.Identity.Managers;
 using Nozomi.Service.Services.Interfaces;
 using Nozomi.Ticker.Controllers;
@@ -49,12 +49,19 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
             }
 
             // If it works
-            if (!ModelState.IsValid)
+            if (ModelState.IsValid)
             {
-                
-            }
+                var res = _tickerService.Create(vm);
 
-            var res = _tickerService.Create(vm);
+                if (res.ResultType.Equals(NozomiResultType.Success))
+                {
+                    return Ok();
+                }
+                else
+                {
+                    
+                }
+            }
 
             // TODO: Implementation of error messages
             vm.StatusMessage = "There was something erroneous with your submission.";
