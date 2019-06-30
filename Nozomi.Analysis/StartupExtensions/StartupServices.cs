@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.DependencyInjection;
+using Nozomi.Infra.Admin.Service.Services;
+using Nozomi.Infra.Admin.Service.Services.Interfaces;
 using Nozomi.Infra.Analysis.Service.Services;
 using Nozomi.Infra.Analysis.Service.Services.Interfaces;
 using Nozomi.Service.Identity.Handlers;

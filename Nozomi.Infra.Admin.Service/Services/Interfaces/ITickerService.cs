@@ -1,11 +1,10 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Nozomi.Base.Identity.ViewModels.Manage.Tickers;
+using Nozomi.Base.Admin.Domain.AreaModels.Tickers;
 using Nozomi.Data;
-using Nozomi.Data.ResponseModels;
 using Nozomi.Data.ResponseModels.Ticker;
 
-namespace Nozomi.Service.Services.Interfaces
+namespace Nozomi.Infra.Admin.Service.Services.Interfaces
 {
     /// <summary>
     /// A publicly forward-facing service interface.

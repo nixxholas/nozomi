@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using Nozomi.Data;
 using Nozomi.Data.ResponseModels.Ticker;
 using Nozomi.Data.ResponseModels.TickerPair;
+using Nozomi.Infra.Admin.Service.Services.Interfaces;
 using Nozomi.Service.Events.Interfaces;
 using Nozomi.Service.Identity.Managers;
 using Nozomi.Service.Services.Interfaces;

@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
@@ -8,7 +7,7 @@ using Nozomi.Base.Core;
 using Nozomi.Data.Models.Currency;
 using Nozomi.Data.Models.Web;
 
-namespace Nozomi.Base.Identity.ViewModels.Manage.Tickers
+namespace Nozomi.Base.Admin.Domain.AreaModels.Tickers
 {
     public class CreateTickerInputModel : BaseViewModel
     {
@@ -33,7 +32,6 @@ namespace Nozomi.Base.Identity.ViewModels.Manage.Tickers
         [DisplayName("Defines the response type of the request.")]
         public ResponseType ResponseType { get; set; }
         
-        [Url]
         [Required]
         [DisplayName("Defines the URL of the API.")]
         public string DataPath { get; set; }

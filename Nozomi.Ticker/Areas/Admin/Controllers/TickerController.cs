@@ -2,8 +2,9 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Nozomi.Base.Identity.ViewModels.Manage.Tickers;
+using Nozomi.Base.Admin.Domain.AreaModels.Tickers;
 using Nozomi.Data;
+using Nozomi.Infra.Admin.Service.Services.Interfaces;
 using Nozomi.Service.Identity.Managers;
 using Nozomi.Service.Services.Interfaces;
 using Nozomi.Ticker.Controllers;
@@ -33,7 +34,7 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
             {
                 return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
-
+                
             var vm = new CreateTickerViewModel();
 
             return View(vm);
@@ -55,17 +56,17 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
 
                 if (res.ResultType.Equals(NozomiResultType.Success))
                 {
-                    return Ok();
+                    return View();
                 }
                 else
                 {
-                    
+                    return View(new CreateTickerViewModel(vm));
                 }
             }
 
             // TODO: Implementation of error messages
             vm.StatusMessage = "There was something erroneous with your submission.";
-            return RedirectToAction("Create");
+            return View(new CreateTickerViewModel(vm));
         }
     }
 }

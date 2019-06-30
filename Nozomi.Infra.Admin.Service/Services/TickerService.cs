@@ -1,30 +1,23 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Logging;
-using Nozomi.Base.Core.Helpers.Native.Collections;
-using Nozomi.Base.Identity.ViewModels.Manage.Tickers;
+using Nozomi.Base.Admin.Domain.AreaModels.Tickers;
 using Nozomi.Data;
 using Nozomi.Data.AreaModels.v1.Currency;
 using Nozomi.Data.Models.Currency;
 using Nozomi.Data.Models.Web;
-using Nozomi.Data.ResponseModels;
 using Nozomi.Data.ResponseModels.Ticker;
-using Nozomi.Preprocessing;
+using Nozomi.Infra.Admin.Service.Services.Interfaces;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Data;
-using Nozomi.Repo.Data.Mappings.CurrencyModels;
-using Nozomi.Service.Events.Interfaces;
 using Nozomi.Service.Services.Interfaces;
 
-namespace Nozomi.Service.Services
+namespace Nozomi.Infra.Admin.Service.Services
 {
     public class TickerService : BaseService<TickerService, NozomiDbContext>, ITickerService
     {
