@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using Nozomi.Base.Identity.ViewModels.Manage.CurrencyPair;
 using Nozomi.Data;
 using Nozomi.Data.AreaModels.v1.CurrencyPair;
+using Nozomi.Infra.Admin.Service.Events.Interfaces;
 using Nozomi.Preprocessing;
 using Nozomi.Service.Events.Interfaces;
 using Nozomi.Service.Identity.Managers;
@@ -17,16 +18,19 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
     [Authorize(Roles = "Owner, Administrator, Staff")]
     public class CurrencyPairController : AreaBaseViewController<CurrencyPairController>
     {
+        private readonly ICurrencyPairAdminEvent _currencyPairAdminEvent;
         private readonly ICurrencyPairEvent _currencyPairEvent;
         private readonly ICurrencyPairService _currencyPairService;
         private readonly ICurrencyEvent _currencyEvent;
         private readonly ISourceEvent _sourceEvent;
 
         public CurrencyPairController(ILogger<CurrencyPairController> logger, NozomiSignInManager signInManager,
-            NozomiUserManager userManager, ICurrencyPairEvent currencyPairEvent,
-            ICurrencyPairService currencyPairService, ICurrencyEvent currencyEvent, ISourceEvent sourceEvent)
+            NozomiUserManager userManager, ICurrencyPairAdminEvent currencyPairAdminEvent, 
+            ICurrencyPairEvent currencyPairEvent, ICurrencyPairService currencyPairService, 
+            ICurrencyEvent currencyEvent, ISourceEvent sourceEvent)
             : base(logger, signInManager, userManager)
         {
+            _currencyPairAdminEvent = currencyPairAdminEvent;
             _currencyPairEvent = currencyPairEvent;
             _currencyPairService = currencyPairService;
             _currencyEvent = currencyEvent;
@@ -70,7 +74,7 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
 
             var vm = new CurrencyPairViewModel
             {
-                CurrencyPair = _currencyPairEvent.Get(id),
+                CurrencyPair = _currencyPairAdminEvent.Get(id, true),
                 Currencies = _currencyEvent.GetAllActive(),
                 Sources = _sourceEvent.GetAllActive(),
                 CurrencyPairTypes = NozomiServiceConstants.currencyPairType

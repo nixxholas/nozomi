@@ -1,5 +1,6 @@
 @using Newtonsoft.Json
 @using Newtonsoft.Json.Serialization
+@using Nozomi.Preprocessing
 @model Nozomi.Base.Identity.ViewModels.Manage.CurrencyPair.CurrencyPairViewModel
 
 @{
@@ -79,18 +80,18 @@
 
         <h3 class="mb-6">Analysed Component</h3>
         @* Table for analysedComponent *@
-        <b-table :items="currencyPair.AnalysedComponents" :fields="analysedComponentsDataFields">
+        <b-table :items="currencyPair.analysedComponents" :fields="analysedComponentsDataFields">
             <template slot="AnalysedComponentType" slot-scope="datum">
-                {{ getAnalysedComponentTypeStr(datum.item.ComponentType) }}
+                {{ getAnalysedComponentTypeStr(datum.item.componentType) }}
             </template>
             <template slot="Delay" slot-scope="datum">
-                {{ datum.item.Delay }}
+                {{ datum.item.delay }}
             </template>
             <template slot="IsDenominated" slot-scope="datum">
-                {{ datum.item.IsDenominated }}
+                {{ datum.item.isDenominated }}
             </template>
             <template slot="AnalysedComponentValue" slot-scope="datum">
-                {{ datum.item.Value }}
+                {{ datum.item.value }}
             </template>
         </b-table>
     </div>
@@ -124,10 +125,16 @@
                         sortable: true,
                     }
                 ],
+                analysedComponentTypes:
+                    @Html.Raw(JsonConvert.SerializeObject(NozomiServiceConstants.analysedComponentTypes,Formatting.Indented, new JsonSerializerSettings
+                    {
+                        ContractResolver = new CamelCasePropertyNamesContractResolver()
+                    })),
                 currencyPair:
                     @Html.Raw(JsonConvert.SerializeObject(@Model.CurrencyPair, Formatting.Indented, new JsonSerializerSettings
                     {
-                        ContractResolver = new CamelCasePropertyNamesContractResolver()
+                        ContractResolver = new CamelCasePropertyNamesContractResolver(),
+                        ReferenceLoopHandling = ReferenceLoopHandling.Ignore
                     })),
                 currencies:
                     @Html.Raw(JsonConvert.SerializeObject(@Model.Currencies, Formatting.Indented, new JsonSerializerSettings
@@ -154,6 +161,11 @@
                     sourceId: @Model.CurrencyPair.SourceId,
                     isEnabled: @Model.CurrencyPair.IsEnabled.ToString().ToLower(),
                 },
+                addAcForm: {
+                    componentType: 0,
+                    isDenominated: false,
+                            
+                }
             },
             methods: {
                 onCPEditSubmit() {
@@ -177,6 +189,25 @@
                     }
                     return null;
                 },
+                onAcAddSubmit() {
+                    // Send a POST request
+                    axios({
+                      method: 'post',
+                      responseType: 'application/json',
+                      url: '/Admin/AnalysedComponent/Create',
+                      data: this.addAcForm
+                    })
+                    .then(function (response) {
+                        // Put alert for now, change the ui later.
+                        alert(response.data.message);
+                    })
+                    .catch(function (error) {
+                        alert("Create failed");
+                    });
+                    
+                    // Hide the modal manually
+                    this.$refs['property-add-modal'].hide();
+                }
             }
         })
     </script>

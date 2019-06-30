@@ -41,6 +41,11 @@ namespace Nozomi.Ticker.StartupExtensions
             services.AddScoped<IAnalysedComponentEvent, AnalysedComponentEvent>();
             services.AddScoped<IAnalysedHistoricItemEvent, AnalysedHistoricItemEvent>();
             services.AddScoped<ICurrencyConversionEvent, CurrencyConversionEvent>();
+            
+            // Admin
+            services.AddScoped<ICurrencyAdminEvent, CurrencyAdminEvent>();
+            services.AddScoped<ICurrencyPairAdminEvent, CurrencyPairAdminEvent>();
+            services.AddScoped<ICurrencyPairSourceCurrencyAdminEvent, CurrencyPairSourceCurrencyAdminEvent>();
         }
     }
 }
