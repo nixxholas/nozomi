@@ -133,7 +133,8 @@
                 <b-form-checkbox v-model="datum.item.isEnabled" disabled/>
             </template>
             <template slot="Remove" slot-scope="datum">
-                <b-button variant="danger" v-on:click="showAcDeleteModal(datum.item.id, datum.item.type)">Remove</b-button>
+                <b-button variant="danger" v-on:click="showAcDeleteModal(datum.item.id)" 
+                          v-if="datum.item.deletedAt === null">Remove</b-button>
             </template>
         </b-table>
     </div>
@@ -586,9 +587,8 @@
                     this.$refs['property-delete-modal'].show();
                 },
                 // Methods for delete modal
-                showAcDeleteModal(id, propName) {
+                showAcDeleteModal(id) {
                     this.deleteAcModal.id = id;
-                    this.deleteAcModal.name = propName;
 
                     this.$refs['ac-delete-modal'].show();
                 },

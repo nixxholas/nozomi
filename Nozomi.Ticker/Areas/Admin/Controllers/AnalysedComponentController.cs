@@ -38,5 +38,22 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
 
             return BadRequest("Invalid component payload.");
         }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(long id)
+        {
+            var user = await GetCurrentUserAsync();
+            if (user == null)
+            {
+                return BadRequest("Invalid user.");
+            }
+
+            var res = _analysedComponentService.Delete(id, false, user.Id);
+
+            if (res)
+                return Ok("Analysed component successfully created!");
+            
+            return BadRequest("Invalid Analysed Component.");
+        }
     }
 }
