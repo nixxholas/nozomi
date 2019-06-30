@@ -20,13 +20,10 @@
                 {{ datum.item.slug }}
             </template>
             <template slot="CurrencyType" slot-scope="datum">
-                {{ datum.item.currencyType.name }}
+                {{ getCurrencyTypeName(datum.item.currencyTypeId) }}
             </template>
             <template slot="CurrencySource" slot-scope="datum">
-                {{ datum.item.sourceCount }}
-            </template>
-            <template slot="Description" slot-scope="datum">
-                {{ datum.item.description }}
+                @* {{ datum.item.sourceCount }} *@
             </template>
             <template slot="isEnabled" slot-scope="datum">
                 <b-form-checkbox v-model="datum.item.isEnabled" disabled/>
@@ -139,11 +136,6 @@
                     {
                         key: 'CurrencySource',
                         label: 'No. Of Sources',
-                        sortable: true
-                    }, 
-                    {
-                        key: 'Description',
-                        label: 'Description',
                         sortable: true
                     },
                     {
@@ -299,14 +291,14 @@
                 },
                 getCurrencyTypeName(id) {
                     for (let i = 0; i < this.currencyTypes.length; i++) {
-                        if (this.currencyTypes.value === id)
-                            return this.currencyTypes.text;
+                        if (this.currencyTypes[i].value === id)
+                            return this.currencyTypes[i].text;
                     }
                 },
                 getCurrencySourceName(id) {
                     for (let i = 0; i < this.currencySources.length; i++) {
-                        if (this.currencySources.value === id)
-                            return this.currencySources.text;
+                        if (this.currencySources[i].value === id)
+                            return this.currencySources[i].text;
                     }
                 },
             },
