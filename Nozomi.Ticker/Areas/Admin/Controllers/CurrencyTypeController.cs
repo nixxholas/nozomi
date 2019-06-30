@@ -44,7 +44,7 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
         [HttpGet("{id}")]
         public IActionResult Edit(long id)
         {
-            return View(_currencyTypeAdminEvent.Get(id));
+            return View(_currencyTypeAdminEvent.Get(id, true));
         }
         
         #endregion
