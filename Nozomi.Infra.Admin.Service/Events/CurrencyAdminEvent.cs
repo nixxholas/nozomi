@@ -52,5 +52,22 @@ namespace Nozomi.Infra.Admin.Service.Events
 
             return currency;
         }
+
+        public ICollection<Currency> GetAll(bool track = false)
+        {
+            if (!track)
+                return _unitOfWork.GetRepository<Currency>()
+                    .GetQueryable()
+                    .ToList();
+            
+            return _unitOfWork.GetRepository<Currency>()
+                .GetQueryable()
+                .Include(c => c.AnalysedComponents)
+                .Include(c => c.CurrencyProperties)
+                .Include(c => c.CurrencySources)
+                .Include(c => c.Requests)
+                .Include(c => c.CurrencyType)
+                .ToList();
+        }
     }
 }
