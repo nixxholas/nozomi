@@ -7,6 +7,7 @@ using Nozomi.Data;
 using Nozomi.Data.AreaModels.v1.Currency;
 using Nozomi.Data.ViewModels.Admin.Currency;
 using Nozomi.Infra.Admin.Service.Events.Interfaces;
+using Nozomi.Service.Events.Analysis.Interfaces;
 using Nozomi.Service.Events.Interfaces;
 using Nozomi.Service.Identity.Managers;
 using Nozomi.Service.Services.Interfaces;
@@ -18,7 +19,6 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
     [Authorize(Roles = "Owner, Administrator, Staff")]
     public class CurrencyController : AreaBaseViewController<CurrencyController>
     {
-        private readonly ICurrencyEvent _currencyEvent;
         private readonly ICurrencyAdminEvent _currencyAdminEvent;
         private readonly ICurrencyService _currencyService;
         private readonly ICurrencyTypeAdminEvent _currencyTypeAdminEvent;
@@ -27,12 +27,10 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
 
 
         public CurrencyController(ILogger<CurrencyController> logger, NozomiSignInManager signInManager,
-            NozomiUserManager userManager, ICurrencyEvent currencyEvent, ICurrencyAdminEvent currencyAdminEvent,
-            ICurrencyService currencyService, ICurrencyTypeAdminEvent currencyTypeAdminEvent, ISourceEvent sourceEvent,
-            ICurrencyPairEvent currencyPairEvent)
+            NozomiUserManager userManager, ICurrencyAdminEvent currencyAdminEvent, ICurrencyService currencyService, 
+            ICurrencyTypeAdminEvent currencyTypeAdminEvent, ISourceEvent sourceEvent, ICurrencyPairEvent currencyPairEvent)
             : base(logger, signInManager, userManager)
         {
-            _currencyEvent = currencyEvent;
             _currencyAdminEvent = currencyAdminEvent;
             _currencyService = currencyService;
             _currencyTypeAdminEvent = currencyTypeAdminEvent;
@@ -53,7 +51,7 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
 
             var vm = new CurrenciesViewModel
             {
-                Currencies = _currencyEvent.GetAllDTO(),
+                Currencies = _currencyAdminEvent.GetAll(),
                 CurrencyTypes = _currencyTypeAdminEvent.GetAllActive(),
                 CurrencySources = _sourceEvent.GetAllActive()
             };

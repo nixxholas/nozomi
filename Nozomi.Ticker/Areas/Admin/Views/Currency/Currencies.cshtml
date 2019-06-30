@@ -167,6 +167,7 @@
                     {
                         // Converts data to camelCase
                         ContractResolver = new CamelCasePropertyNamesContractResolver(),
+                        ReferenceLoopHandling = ReferenceLoopHandling.Ignore
                     })),
                 currencyTypes:
                     @Html.Raw(JsonConvert.SerializeObject(@Model.CurrencyTypes, Formatting.Indented, new JsonSerializerSettings

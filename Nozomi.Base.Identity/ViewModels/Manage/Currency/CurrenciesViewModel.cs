@@ -2,15 +2,18 @@ using System.Collections;
 using System.Collections.Generic;
 using Nozomi.Data.AreaModels.v1.Currency;
 using Nozomi.Data.Models.Currency;
+using Nozomi.Data.Models.Web.Analytical;
 
 namespace Nozomi.Base.Identity.ViewModels.Manage.Currency
 {
     public class CurrenciesViewModel
     {
-        public ICollection<CurrencyDTO> Currencies { get; set; }
+        public ICollection<Data.Models.Currency.Currency> Currencies { get; set; }
         
         public ICollection<CurrencyType> CurrencyTypes { get; set; }
         
         public IEnumerable<Source> CurrencySources { get; set; }
+        
+        public IEnumerable<AnalysedComponent> AnalysedComponents { get; set; }
     }
 }
