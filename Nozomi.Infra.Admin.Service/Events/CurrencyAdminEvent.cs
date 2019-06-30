@@ -27,30 +27,46 @@ namespace Nozomi.Infra.Admin.Service.Events
             _currencyPairSourceCurrencyAdminEvent = currencyPairSourceCurrencyAdminEvent;
         }
 
-        public Currency GetCurrencyBySlug(string slug)
+        public Currency GetCurrencyBySlug(string slug, bool track = false)
         {
             var currency = _unitOfWork.GetRepository<Currency>()
                 .GetQueryable()
                 .AsNoTracking()
-                .Where(c => c.Slug.Equals(slug, StringComparison.InvariantCultureIgnoreCase))
-                .Include(c => c.CurrencyProperties)
-                .Include(c => c.CurrencyType)
-                .Include(c => c.AnalysedComponents)
-                .Include(c => c.CurrencySources)
-                .ThenInclude(cs => cs.Source)
-                .Include(c => c.CurrencySources)
-                .ThenInclude(cs => cs.Source)
-                .ThenInclude(s => s.CurrencyPairs)
-                .Include(c => c.Requests)
-                .ThenInclude(cr => cr.RequestComponents)
-                .SingleOrDefault();
+                .Where(c => c.Slug.Equals(slug, StringComparison.InvariantCultureIgnoreCase));
 
-            if (currency != null)
+            if (track)
             {
-                currency.CurrencySources = currency.CurrencySources.Where(cs => cs.DeletedAt == null).ToList();
+                currency = currency
+                    .Include(c => c.CurrencyProperties)
+                    .Include(c => c.CurrencyType)
+                    .Include(c => c.AnalysedComponents)
+                    .Include(c => c.CurrencySources)
+                    .ThenInclude(cs => cs.Source)
+                    .Include(c => c.CurrencySources)
+                    .ThenInclude(cs => cs.Source)
+                    .ThenInclude(s => s.CurrencyPairs)
+                    .Include(c => c.Requests)
+                    .ThenInclude(cr => cr.RequestComponents);
             }
 
-            return currency;
+            return currency.SingleOrDefault();
+        }
+
+        public ICollection<Currency> GetAll(bool track = false)
+        {
+            if (!track)
+                return _unitOfWork.GetRepository<Currency>()
+                    .GetQueryable()
+                    .ToList();
+            
+            return _unitOfWork.GetRepository<Currency>()
+                .GetQueryable()
+                .Include(c => c.AnalysedComponents)
+                .Include(c => c.CurrencyProperties)
+                .Include(c => c.CurrencySources)
+                .Include(c => c.Requests)
+                .Include(c => c.CurrencyType)
+                .ToList();
         }
     }
 }
