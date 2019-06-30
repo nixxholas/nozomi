@@ -28,6 +28,6 @@ namespace Nozomi.Service.Events.Interfaces
         ICollection<AnalysedComponent> GetAnalysedComponents(long analysedComponentId, bool track = false);
         ICollection<CurrencyPair> GetAll();
 
-        CurrencyPair Get(long id, long userId = 0);
+        CurrencyPair Get(long id, bool track = false, long userId = 0);
     }
 }

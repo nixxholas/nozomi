@@ -38,7 +38,7 @@ namespace Nozomi.Base.Admin.Domain.AreaModels.Tickers
 
         [Required]
         [DisplayName("Frequency (In milliseconds)")]
-        public int Delay { get; set; } = 5000;
+        public int Delay { get; set; }
         
         [Required]
         [DisplayName("The entity this API is provided from.")]
