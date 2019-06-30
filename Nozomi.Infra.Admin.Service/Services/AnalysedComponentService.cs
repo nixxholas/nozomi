@@ -29,30 +29,31 @@ namespace Nozomi.Infra.Admin.Service.Services
                 .Any(ac =>
                     // Case 1, currency
                     (ac.CurrencyId != null && ac.CurrencyId.Equals(analysedComponent.CurrencyId)
-                                           && !ac.ComponentType.Equals(analysedComponent.ComponentType))
+                                           && ac.ComponentType.Equals(analysedComponent.ComponentType))
                     ||
                     // Case 2, currency pair
                     (ac.CurrencyPairId != null && ac.CurrencyPairId.Equals(analysedComponent.CurrencyPairId)
-                                               && !ac.ComponentType.Equals(analysedComponent.ComponentType))
+                                               && ac.ComponentType.Equals(analysedComponent.ComponentType))
                     ||
                     // Case 3, currency type
                     (ac.CurrencyTypeId != null && ac.CurrencyTypeId.Equals(analysedComponent.CurrencyTypeId)
-                                               && !ac.ComponentType.Equals(analysedComponent.ComponentType))
+                                               && ac.ComponentType.Equals(analysedComponent.ComponentType))
                 ))
             {
-                _unitOfWork.GetRepository<AnalysedComponent>().Add(new AnalysedComponent
+                var ac = new AnalysedComponent
                 {
                     ComponentType = analysedComponent.ComponentType,
                     Delay = analysedComponent.Delay,
                     IsDenominated = analysedComponent.IsDenominated,
                     UIFormatting = analysedComponent.UIFormatting,
-                    CurrencyId = analysedComponent.CurrencyId,
-                    CurrencyPairId = analysedComponent.CurrencyPairId,
-                    CurrencyTypeId = analysedComponent.CurrencyTypeId
-                });
-                var res = _unitOfWork.Commit(userId);
+                    CurrencyId = analysedComponent.CurrencyId > 0 ? analysedComponent.CurrencyId : (long?) null,
+                    CurrencyPairId = analysedComponent.CurrencyPairId > 0 ? analysedComponent.CurrencyPairId : (long?) null,
+                    CurrencyTypeId = analysedComponent.CurrencyTypeId > 0 ? analysedComponent.CurrencyTypeId : (long?) null
+                };
+                _unitOfWork.GetRepository<AnalysedComponent>().Add(ac);
+                _unitOfWork.Commit(userId);
 
-                return res;
+                return ac.Id;
             }
             
             return long.MinValue;

@@ -157,10 +157,26 @@
 <b-modal ref="ac-add-modal" size="xl" title="Create an Analysed Component for @Model.Currency.Name" ok-title="Create" v-on:ok="handleAcAddOk">
     <b-form v-on:submit.stop.prevent="onAcAddSubmit">
         <b-form-group label="Type">
-            <b-form-select v-model="addAcForm.type">
+            <b-form-select v-model="addAcForm.componentType">
                 <option v-for="acType in acTypes" :value="acType.value">{{ acType.key }}</option>
             </b-form-select>
         </b-form-group>
+        
+        <b-form-group label="UI Formatting">
+            <b-form-input
+                v-model="addPropertyForm.uiFormatting">
+            </b-form-input>
+        </b-form-group>
+        
+        <b-form-group label="Delay">
+            <b-form-input
+                v-model="addPropertyForm.delay">
+            </b-form-input>
+        </b-form-group>
+        
+        <b-form-checkbox v-model="addAcForm.isDenominated" switch>
+            Denominated
+        </b-form-checkbox>
         
         <b-form-checkbox v-model="addAcForm.isEnabled" switch>
             Enabled
@@ -385,8 +401,10 @@
                 },
                 addAcForm: {
                     currencyId: @Model.Currency.Id,    
-                    type: 0,
-                    value: '',
+                    componentType: 0,
+                    delay: 10000,
+                    uiFormatting: '',
+                    isDenominated: false,
                     isEnabled: false
                 },
                 deleteAcModal: {
