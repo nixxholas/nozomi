@@ -824,7 +824,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                         break;
                 }
 
-                _processAnalysedComponentService.Checked(entity.Id);
+                _processAnalysedComponentService.Checked(entity.Id, true);
             }
 
             _logger.LogCritical($"[{ServiceName}] Analyse: Critical error here. Wow.");
