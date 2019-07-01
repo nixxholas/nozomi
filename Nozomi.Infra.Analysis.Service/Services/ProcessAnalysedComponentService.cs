@@ -62,7 +62,7 @@ namespace Nozomi.Infra.Analysis.Service.Services
             return false;
         }
 
-        public bool Checked(long analysedComponentId, long userId = 0)
+        public bool Checked(long analysedComponentId, bool isFailing = false, long userId = 0)
         {
             var comp = _unitOfWork.GetRepository<AnalysedComponent>()
                 .GetQueryable()
@@ -71,6 +71,7 @@ namespace Nozomi.Infra.Analysis.Service.Services
 
             if (comp != null)
             {
+                comp.IsFailing = isFailing;
                 comp.ModifiedAt = DateTime.UtcNow;
                 
                 _unitOfWork.GetRepository<AnalysedComponent>().Update(comp);
