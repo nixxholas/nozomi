@@ -17,6 +17,8 @@ namespace Nozomi.Data.Models.Web.Analytical
 
         public bool IsDenominated { get; set; } = false;
         
+        public bool IsFailing { get; set; }
+        
         public int Delay { get; set; }
 
         /// <summary>

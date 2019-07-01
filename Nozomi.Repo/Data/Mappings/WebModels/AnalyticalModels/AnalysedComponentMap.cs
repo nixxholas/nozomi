@@ -22,6 +22,7 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
             entityTypeBuilder.HasIndex(ac => new { ac.CurrencyTypeId, ac.ComponentType })
                 .HasName("AnalysedComponent_Index_CurrencyTypeId_ComponentType").IsUnique();
 
+            entityTypeBuilder.Property(ac => ac.IsFailing).HasDefaultValue(false);
             entityTypeBuilder.Property(ac => ac.UIFormatting).IsRequired(false);
             entityTypeBuilder.Property(ac => ac.Value).IsRequired(false);
             entityTypeBuilder.Property(ac => ac.Delay).HasDefaultValue(86400000); // 24 hours
