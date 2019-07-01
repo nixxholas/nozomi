@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Nozomi.Data.Models.Web.Analytical;
 
 namespace Nozomi.Infra.Analysis.Service.Events.Interfaces
@@ -8,6 +9,6 @@ namespace Nozomi.Infra.Analysis.Service.Events.Interfaces
         /// Obtains the first component that is pending update.
         /// </summary>
         /// <returns></returns>
-        AnalysedComponent Top();
+        AnalysedComponent Top(ICollection<long> acsToFilter = null);
     }
 }
