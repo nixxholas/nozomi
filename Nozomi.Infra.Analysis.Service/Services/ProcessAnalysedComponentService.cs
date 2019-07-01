@@ -50,6 +50,9 @@ namespace Nozomi.Infra.Analysis.Service.Services
             {
                 if (_analysedHistoricItemService.Push(comp))
                 {
+                    if (comp.IsFailing)
+                        comp.IsFailing = false;
+                    
                     comp.Value = value;
                 
                     _unitOfWork.GetRepository<AnalysedComponent>().Update(comp);
