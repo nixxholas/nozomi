@@ -31,8 +31,10 @@ namespace Nozomi.Infra.Analysis.Service.Events
                                                           // Always give null ACs a chance
                                                           || string.IsNullOrEmpty(ac.Value))
                                                       && !acsToFilter.Contains(ac.Id))
+                    // Take those not failing yet first
+                    .OrderBy(ac => !ac.IsFailing)
                     // Order by ascending to the last modified time in addition to its delay
-                    .OrderBy(ac => ac.ModifiedAt)
+                    .ThenBy(ac => ac.ModifiedAt)
                     // Take in those null ones first
                     // TODO: Find out if this is efficient
                     //.ThenBy(ac => string.IsNullOrEmpty(ac.Value))
@@ -46,8 +48,10 @@ namespace Nozomi.Infra.Analysis.Service.Events
                              && (ac.ModifiedAt.Add(TimeSpan.FromMilliseconds(ac.Delay)) <= DateTime.UtcNow
                                  // Always give null ACs a chance
                                  || string.IsNullOrEmpty(ac.Value)))
+                // Take those not failing yet first
+                .OrderBy(ac => !ac.IsFailing)
                 // Order by ascending to the last modified time in addition to its delay
-                .OrderBy(ac => ac.ModifiedAt)
+                .ThenBy(ac => ac.ModifiedAt)
                 // Take in those null ones first
                 // TODO: Find out if this is efficient
                 //.ThenBy(ac => string.IsNullOrEmpty(ac.Value))
