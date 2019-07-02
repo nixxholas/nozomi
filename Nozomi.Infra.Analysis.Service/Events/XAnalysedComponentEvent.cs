@@ -49,7 +49,7 @@ namespace Nozomi.Infra.Analysis.Service.Events
                                  // Always give null ACs a chance
                                  || string.IsNullOrEmpty(ac.Value)))
                 // Take those not failing yet first
-                .OrderBy(ac => !ac.IsFailing)
+                .OrderBy(ac => ac.IsFailing)
                 // Order by ascending to the last modified time in addition to its delay
                 .ThenBy(ac => ac.ModifiedAt)
                 // Take in those null ones first
