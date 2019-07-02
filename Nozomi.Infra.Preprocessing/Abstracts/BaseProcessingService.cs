@@ -18,7 +18,7 @@ namespace Nozomi.Preprocessing.Abstracts
         public JToken ProcessIdentifier(JToken token, string identifier)
         {
             // Identifier processing
-            if (!string.IsNullOrEmpty(identifier))
+            if (!string.IsNullOrEmpty(identifier) && token != null && token.Type != JTokenType.Null)
             {
                 var identifierArr = identifier.Split("/"); // Split the string if its nesting
                 var lastIdentifier = identifierArr.LastOrDefault(); // get the last to identify if its the last
@@ -127,7 +127,7 @@ namespace Nozomi.Preprocessing.Abstracts
                         else if (token is JObject)
                         {
                             // Pump in the object
-                            JObject obj = token.ToObject<JObject>();
+                            var obj = token.ToObject<JObject>();
 
                             // Is it the last?
                             if (identifierEl != lastIdentifier)
@@ -171,6 +171,11 @@ namespace Nozomi.Preprocessing.Abstracts
                         return false;
                     }
                 }
+            }
+            else
+            {
+                _logger.LogCritical("[BaseProcessingService]" +
+                                    $" Update: Invalid token for {identifier}");
             }
 
             return token;
