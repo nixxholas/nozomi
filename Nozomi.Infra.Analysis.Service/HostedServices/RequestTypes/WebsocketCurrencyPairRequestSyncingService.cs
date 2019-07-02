@@ -342,7 +342,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
                         else if (processingToken is JObject)
                         {
                             // Pump in the object
-                            JObject obj = processingToken.ToObject<JObject>();
+                            var obj = processingToken.ToObject<JObject>();
 
                             // Is it the last?
                             if (comArrEl != last)
@@ -426,7 +426,8 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
                         else if (processingToken is JValue)
                         {
                             // Pump in the object
-                            JObject obj = processingToken.ToObject<JObject>();
+                            //JObject obj = processingToken.ToObject<JObject>();
+                            var obj = processingToken;
 
                             // Is it the last?
                             if (comArrEl != last)
