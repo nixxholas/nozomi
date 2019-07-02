@@ -65,6 +65,7 @@ namespace Nozomi.Preprocessing.Abstracts
                                         #if DEBUG
                                         var childrensTest = token.Children();
                                         #endif
+                                        var originalToken = token;
 
                                         // If this is an array
                                         if (token.Type.Equals(JTokenType.Array) 
@@ -88,7 +89,8 @@ namespace Nozomi.Preprocessing.Abstracts
                                         if (token == null)
                                         {
                                             _logger.LogError("[BaseProcessingService] " +
-                                                             $"Invalid key value pair {identifierEl}");
+                                                             $"Invalid key value pair {identifierEl} \n" + 
+                                                             $"Original Payload empty?: {originalToken != null}");
                                             return false;
                                         }
                                     }
