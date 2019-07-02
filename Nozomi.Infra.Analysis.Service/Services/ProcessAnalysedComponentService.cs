@@ -53,6 +53,8 @@ namespace Nozomi.Infra.Analysis.Service.Services
                     if (comp.IsFailing)
                         comp.IsFailing = false;
                     
+                    // Make sure we update the datetime as well.. 
+                    comp.ModifiedAt = DateTime.UtcNow;
                     comp.Value = value;
                 
                     _unitOfWork.GetRepository<AnalysedComponent>().Update(comp);
