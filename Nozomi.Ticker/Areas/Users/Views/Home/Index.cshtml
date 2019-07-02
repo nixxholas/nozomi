@@ -259,7 +259,7 @@
                 getAnalysedCompTypeStr(val) {
                   if (this.acTypes != null) {
                     for (i = 0; i < this.acTypes.length; i++) {
-                      if (this.acTypes[i].Value == val) {
+                      if (this.acTypes[i].Value === val) {
                         return this.acTypes[i].Key;
                       }
                     }
