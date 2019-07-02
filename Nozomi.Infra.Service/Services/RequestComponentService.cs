@@ -72,7 +72,7 @@ namespace Nozomi.Service.Services
 
                 // Anomaly Detection
                 // Let's make it more efficient by checking if the price has changed
-                if (lastCompVal != null && lastCompVal.HasAbnormalValue(val))
+                if (lastCompVal != null && !lastCompVal.HasAbnormalValue(val))
                 {
                     if (!string.IsNullOrEmpty(lastCompVal.Value))
                     {
@@ -97,17 +97,16 @@ namespace Nozomi.Service.Services
                     return new NozomiResult<string>
                         (NozomiResultType.Success, "Currency Pair Component successfully updated!");
                 }
-                else if (val.Equals(lastCompVal.Value))
+                else if (lastCompVal == null)
                 {
                     return new NozomiResult<string>
-                        (NozomiResultType.Success, "Value is the same!");
+                    (NozomiResultType.Failed,
+                        $"Invalid component datum id:{id}, val:{val}. Null payload!!!");
                 }
                 else
                 {
                     return new NozomiResult<string>
-                    (NozomiResultType.Failed,
-                        $"Invalid component datum id:{id}, val:{val}. Please make sure that the " +
-                        "RequestComponent is properly instantiated.");
+                        (NozomiResultType.Success, "Value is the same!");
                 }
             }
             catch (Exception ex)
