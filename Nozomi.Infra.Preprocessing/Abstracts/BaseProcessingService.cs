@@ -90,7 +90,7 @@ namespace Nozomi.Preprocessing.Abstracts
                                         {
                                             _logger.LogError("[BaseProcessingService] " +
                                                              $"Invalid key value pair {identifierEl} \n" + 
-                                                             $"Original Payload empty?: {originalToken != null}");
+                                                             $"Original Payload empty?: {originalToken == null}");
                                             return false;
                                         }
                                     }
