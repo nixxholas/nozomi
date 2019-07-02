@@ -12,6 +12,7 @@ namespace Nozomi.Preprocessing.Abstracts
         where T : class
         where TContext : IDbContext
     {
+        public const string EventName = nameof(T);
         protected ILogger<T> _logger;
         protected IUnitOfWork<TContext> _unitOfWork;
 
@@ -27,6 +28,7 @@ namespace Nozomi.Preprocessing.Abstracts
         where TEntity : class
         where TContext : IDbContext
     {
+        public const string EventName = nameof(T);
         protected ILogger<T> _logger;
         protected IUnitOfWork<TContext> _unitOfWork;
 
