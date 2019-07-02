@@ -397,6 +397,13 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                         // Currency-based Live Average Price
                         else if (entity.CurrencyId != null && entity.CurrencyId > 0)
                         {
+                            #if DEBUG
+                            var testComponentsToCompute = _analysedHistoricItemEvent.GetRelevantComponentQueryCount(
+                                entity.Id,
+                                ahi => ahi.DeletedAt == null && ahi.IsEnabled,
+                                true);
+                            #endif
+                            
                             // How many components we got
                             var componentsToCompute = _analysedHistoricItemEvent.GetRelevantComponentQueryCount(
                                 entity.Id,
@@ -825,6 +832,8 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                 }
 
                 _processAnalysedComponentService.Checked(entity.Id, true);
+                _logger.LogWarning($"[{ServiceName}] Analyse: Can't seem to process {entity.Id}.");
+                return true;
             }
 
             _logger.LogCritical($"[{ServiceName}] Analyse: Critical error here. Wow.");
