@@ -55,16 +55,13 @@ namespace Nozomi.Data.Models.Web
             if (decimal.TryParse(Value, out var currVal) && !AnomalyIgnorance)
             {
                 // Always return true if the value has not been propagated yet.
-                if (currVal.Equals(0)) return true;
+                if (currVal.Equals(0)) return false;
                 
-                // If the difference is > 50% or if the difference is less than -50%
-                // and if there is a difference
-                return (!((val / (currVal / 100)) - 100 > 50) || !((val / (currVal / 100)) - 100 < -50))
-                    && !currVal.Equals(val);
+                return !currVal.Equals(val);
             }
 
-            // Always return true if the value has not been propagated yet.
-            return true;
+            // Always return false if the value has not been propagated yet.
+            return false;
         }
     }
 }
