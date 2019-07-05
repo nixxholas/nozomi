@@ -94,6 +94,10 @@ namespace Nozomi.Service.Events.Analysis
                 // Obtain all correlated analysed components
                 var correlations = _analysedComponentEvent.GetAllByCorrelation(analysedComponentId);
                 
+                if (!correlations.Any())
+                    _logger.LogWarning($"[{EventName}] GetRelevantComponentQueryCount: No correlations for " +
+                                       $"analysed component {analysedComponentId}");
+                
                 // Inside?
                 var query = _unitOfWork.GetRepository<AnalysedHistoricItem>()
                     .GetQueryable()
@@ -115,6 +119,14 @@ namespace Nozomi.Service.Events.Analysis
                         .ThenInclude(ac => ac.CurrencyType)
                         .AsQueryable();
                 }
+                
+                #if DEBUG
+                var testResult = query
+                    .Where(predicate);
+                
+                if (!testResult.Any())
+                    Console.WriteLine($"[{EventName}] GetRelevantComponentQueryCount: BAD!");
+                #endif
 
                 return query
                     .Where(predicate)
