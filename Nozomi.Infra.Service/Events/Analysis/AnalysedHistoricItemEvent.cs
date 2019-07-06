@@ -93,16 +93,17 @@ namespace Nozomi.Service.Events.Analysis
             {
                 // Obtain all correlated analysed components
                 var correlations = _analysedComponentEvent.GetAllByCorrelation(analysedComponentId);
+                var correlationIds = correlations.Select(ac => ac.Id).ToList();
                 
+                // Make sure there are correlated analysed components
                 if (!correlations.Any())
                     _logger.LogWarning($"[{EventName}] GetRelevantComponentQueryCount: No correlations for " +
                                        $"analysed component {analysedComponentId}");
                 
-                // Inside?
+                // Obtain all Historic items for the correlated components.
                 var query = _unitOfWork.GetRepository<AnalysedHistoricItem>()
                     .GetQueryable()
-                    .AsNoTracking()
-                    .Where(ahi => correlations.Any(ac => ac.Id.Equals(ahi.AnalysedComponentId)))
+                    .Where(ahi => correlationIds.Contains(ahi.AnalysedComponentId))
                     .AsQueryable();
 
                 if (deepTrack)
@@ -122,9 +123,17 @@ namespace Nozomi.Service.Events.Analysis
                 
                 #if DEBUG
                 var testResult = query
-                    .Where(predicate);
+                    .Where(predicate)
+                    .ToList();
+
+                var currAc = _unitOfWork.GetRepository<AnalysedComponent>()
+                    .GetQueryable()
+                    .SingleOrDefault(ac => ac.Id.Equals(analysedComponentId));
+
+                var testCorrelations = correlations.ToList();
                 
-                if (!testResult.Any())
+                if ((!testResult.Any() || testResult.Count == 0) && (currAc?.CurrencyId != null && currAc.CurrencyId > 0
+                                                                       && currAc.ComponentType.Equals(AnalysedComponentType.HourlyAveragePrice)))
                     Console.WriteLine($"[{EventName}] GetRelevantComponentQueryCount: BAD!");
                 #endif
 
