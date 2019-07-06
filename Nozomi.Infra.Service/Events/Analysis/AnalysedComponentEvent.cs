@@ -469,6 +469,15 @@ namespace Nozomi.Service.Events.Analysis
                         Currency = ac.Currency
                     });
             }
+            
+            #if DEBUG
+            var testQ = query.ToList();
+            
+            if (predicate == null && !testQ.Any())
+                Console.Write("Bad!");
+            else if (predicate != null && !query.Where(predicate).Any())
+                Console.WriteLine("Bad!!!");
+            #endif
 
             if (predicate != null)
                 return query.Where(predicate).ToList();
