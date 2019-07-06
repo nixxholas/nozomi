@@ -385,7 +385,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                     case AnalysedComponentType.HourlyAveragePrice:
                         dataTimespan = TimeSpan.FromHours(1);
 
-                        // CurrencyType-based Live Average Price
+                        // CurrencyType-based Hourly Average Price
                         if (entity.CurrencyTypeId != null && entity.CurrencyTypeId > 0)
                         {
                             // This is not good lol
@@ -394,7 +394,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                                 $"based component is attempting to compute its HourlyAveragePrice.");
                         }
 
-                        // Currency-based Live Average Price
+                        // Currency-based Hourly Average Price
                         else if (entity.CurrencyId != null && entity.CurrencyId > 0)
                         {
                             #if DEBUG
@@ -457,7 +457,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                             _logger.LogWarning($"[{ServiceName}] Analyse ({entity.Id}): " +
                                                $"average price can't be computed.");
                         }
-                        // Request-based Live Average Price
+                        // Request-based Hourly Average Price
                         // 1. This came from a CurrencyPair
                         // 2. This came from a non-currency request
                         else
