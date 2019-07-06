@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
@@ -87,23 +88,48 @@ namespace Nozomi.Service.Events.Analysis
             throw new ArgumentOutOfRangeException("Invalid analysedComponentId.");
         }
 
-        public long GetRelevantComponentQueryCount(long analysedComponentId, Expression<Func<AnalysedHistoricItem, bool>> predicate, bool deepTrack = false)
+        /// <summary>
+        /// Obtains the Historic item count that is related to the AnalysedComponent in question
+        /// </summary>
+        /// <param name="analysedComponentId"></param>
+        /// <param name="predicate"></param>
+        /// <param name="deepTrack"></param>
+        /// <returns></returns>
+        public long GetRelevantComponentQueryCount(long analysedComponentId, 
+            Expression<Func<AnalysedHistoricItem, bool>> predicate, bool deepTrack = false)
         {
             if (analysedComponentId > 0 && predicate != null)
             {
-                // Obtain all correlated analysed components
-                var correlations = _analysedComponentEvent.GetAllByCorrelation(analysedComponentId);
-                var correlationIds = correlations.Select(ac => ac.Id).ToList();
+                // Obtain the base component to map
+                var correlator = _analysedComponentEvent.Get(analysedComponentId);
                 
-                // Make sure there are correlated analysed components
-                if (!correlations.Any())
-                    _logger.LogWarning($"[{EventName}] GetRelevantComponentQueryCount: No correlations for " +
+                if (correlator == null)
+                    _logger.LogWarning($"[{EventName}] GetRelevantComponentQueryCount: No correlator for " +
                                        $"analysed component {analysedComponentId}");
+                
+//                // Obtain all correlated analysed components
+//                var correlations = _analysedComponentEvent.GetAllByCorrelation(analysedComponentId);
+//                var correlationIds = correlations.Select(ac => ac.Id).ToList();
+//                
+//                // Make sure there are correlated analysed components
+//                if (!correlations.Any())
+//                    _logger.LogWarning($"[{EventName}] GetRelevantComponentQueryCount: No correlations for " +
+//                                       $"analysed component {analysedComponentId}");
+                
+                //Debug.Assert(correlator != null, nameof(correlator) + " != null");
                 
                 // Obtain all Historic items for the correlated components.
                 var query = _unitOfWork.GetRepository<AnalysedHistoricItem>()
                     .GetQueryable()
-                    .Where(ahi => correlationIds.Contains(ahi.AnalysedComponentId))
+                    .Include(ahi => ahi.AnalysedComponent)
+                    .Where(ahi => 
+                        // Currency-based check
+                        (correlator.CurrencyId != null && correlator.CurrencyId.Equals(ahi.AnalysedComponent.CurrencyId))
+                        // CurrencyPair-based check
+                        || (correlator.CurrencyPairId != null && correlator.CurrencyPairId.Equals(ahi.AnalysedComponent.CurrencyPairId))
+                        // Currency type-based check
+                        || (correlator.CurrencyTypeId != null && correlator.CurrencyTypeId.Equals(ahi.AnalysedComponent.CurrencyTypeId))
+                    )
                     .AsQueryable();
 
                 if (deepTrack)
@@ -122,6 +148,7 @@ namespace Nozomi.Service.Events.Analysis
                 }
                 
                 #if DEBUG
+                var testQuery = query.ToList();
                 var testResult = query
                     .Where(predicate)
                     .ToList();
@@ -129,8 +156,6 @@ namespace Nozomi.Service.Events.Analysis
                 var currAc = _unitOfWork.GetRepository<AnalysedComponent>()
                     .GetQueryable()
                     .SingleOrDefault(ac => ac.Id.Equals(analysedComponentId));
-
-                var testCorrelations = correlations.ToList();
                 
                 if ((!testResult.Any() || testResult.Count == 0) && (currAc?.CurrencyId != null && currAc.CurrencyId > 0
                                                                        && currAc.ComponentType.Equals(AnalysedComponentType.HourlyAveragePrice)))
