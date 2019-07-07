@@ -446,19 +446,28 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                                              // Time check
                                                              && ahi.HistoricDateTime >=
                                                              DateTime.UtcNow.Subtract(dataTimespan)
+                                                             // Relational checks
+                                                             && ahi.AnalysedComponent.CurrencyPair != null
+                                                             // Make sure the main currency matches this currency
+                                                             && ahi.AnalysedComponent.CurrencyPair.Source
+                                                                 .SourceCurrencies
+                                                                 .Any(sc => sc.Currency.Abbreviation
+                                                                     .Equals(ahi.AnalysedComponent.CurrencyPair
+                                                                         .MainCurrencyAbbrv))
                                                              // Make sure we only check for the CurrentAveragePrice component
                                                              && ahi.AnalysedComponent.ComponentType
                                                                  .Equals(AnalysedComponentType.CurrentAveragePrice),
                                 true);
-                            var componentPages =
+                            var compsPages =
                                 (componentsToCompute > NozomiServiceConstants.AnalysedHistoricItemTakeoutLimit)
-                                    ? componentsToCompute / NozomiServiceConstants.AnalysedHistoricItemTakeoutLimit
+                                    ? decimal.Divide(componentsToCompute,
+                                        NozomiServiceConstants.AnalysedHistoricItemTakeoutLimit)
                                     : 1;
 
                             // Aggregate it
                             var avgPrice = decimal.Zero;
 
-                            for (var i = 0; i < componentPages; i++)
+                            for (var i = 0; i < compsPages; i++)
                             {
                                 // Obtain all the historic items related to this AC.
                                 var analysedComponent = _currencyPairEvent.GetRelatedAnalysedComponent(entity.Id,
