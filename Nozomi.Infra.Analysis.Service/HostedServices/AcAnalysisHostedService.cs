@@ -397,52 +397,28 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                         // Currency-based Hourly Average Price
                         else if (entity.CurrencyId != null && entity.CurrencyId > 0)
                         {
-                            #if DEBUG
-                            var testComponentsToCompute = _analysedHistoricItemEvent.GetRelevantComponentQueryCount(
-                                entity.Id,
-                                ahi => ahi.DeletedAt == null && ahi.IsEnabled,
-                                true);
-                            #endif
-                            
-                            // How many components we got
-                            var componentsToCompute = _analysedHistoricItemEvent.GetRelevantComponentQueryCount(
-                                entity.Id,
-                                // Active checks
-                                ahi => ahi.DeletedAt == null && ahi.IsEnabled
-                                                             // Time check
-                                                             && ahi.HistoricDateTime >=
-                                                             DateTime.UtcNow.Subtract(dataTimespan)
-                                                             // Make sure we only check for the CurrentAveragePrice component
-                                                             && ahi.AnalysedComponent.ComponentType
-                                                                 .Equals(AnalysedComponentType.CurrentAveragePrice),
-                                true);
-                            var componentPages =
-                                (componentsToCompute > NozomiServiceConstants.AnalysedHistoricItemTakeoutLimit)
-                                    ? componentsToCompute / NozomiServiceConstants.AnalysedHistoricItemTakeoutLimit
-                                    : 1;
+                            var compData = _analysedHistoricItemEvent.TraverseRelatedHistory(entity.Id,
+                                AnalysedComponentType.CurrentAveragePrice);
 
+                            // Aggregate it
                             var avgPrice = decimal.Zero;
 
-                            // Iterate the page
-                            for (var i = 0; i < componentPages; i++)
+                            for (var i = 0; i < compData.Pages; i++)
                             {
-                                var historicData = _analysedHistoricItemEvent.GetAll(entity.Id, dataTimespan, i)
-                                    .Where(ahi => NumberHelper.IsNumericDecimal(ahi.Value))
-                                    .ToList();
-
-                                if (historicData.Count > 0)
+                                if (i > 0)
                                 {
-                                    // If its not zero, aggregate it.
-                                    if (!avgPrice.Equals(decimal.Zero))
-                                    {
-                                        // Aggregate it
-                                        avgPrice = decimal.Divide(decimal.Add(historicData
-                                            .Average(ahi => decimal.Parse(ahi.Value)), avgPrice), 2);
-                                    }
-                                    else
-                                    {
-                                        avgPrice = historicData.Average(ahi => decimal.Parse(ahi.Value));
-                                    }
+                                    var currData = _analysedHistoricItemEvent.TraverseRelatedHistory(entity.Id,
+                                        AnalysedComponentType.CurrentAveragePrice, i);
+                                    
+                                    if (currData.Data.Any())
+                                        avgPrice = decimal.Divide(
+                                            avgPrice + currData.Data.Average(ahi => decimal.Parse(ahi.Value))
+                                            , 2);
+                                }
+                                else // First page
+                                {
+                                    avgPrice = compData.Data
+                                        .Average(ahi => decimal.Parse(ahi.Value));
                                 }
                             }
 
@@ -470,28 +446,19 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                                              // Time check
                                                              && ahi.HistoricDateTime >=
                                                              DateTime.UtcNow.Subtract(dataTimespan)
-                                                             // Relational checks
-                                                             && ahi.AnalysedComponent.CurrencyPair != null
-                                                             // Make sure the main currency matches this currency
-                                                             && ahi.AnalysedComponent.CurrencyPair.Source
-                                                                 .SourceCurrencies
-                                                                 .Any(sc => sc.Currency.Abbreviation
-                                                                     .Equals(ahi.AnalysedComponent.CurrencyPair
-                                                                         .MainCurrencyAbbrv))
                                                              // Make sure we only check for the CurrentAveragePrice component
                                                              && ahi.AnalysedComponent.ComponentType
                                                                  .Equals(AnalysedComponentType.CurrentAveragePrice),
                                 true);
-                            var compsPages =
+                            var componentPages =
                                 (componentsToCompute > NozomiServiceConstants.AnalysedHistoricItemTakeoutLimit)
-                                    ? decimal.Divide(componentsToCompute,
-                                        NozomiServiceConstants.AnalysedHistoricItemTakeoutLimit)
+                                    ? componentsToCompute / NozomiServiceConstants.AnalysedHistoricItemTakeoutLimit
                                     : 1;
 
                             // Aggregate it
                             var avgPrice = decimal.Zero;
 
-                            for (var i = 0; i < compsPages; i++)
+                            for (var i = 0; i < componentPages; i++)
                             {
                                 // Obtain all the historic items related to this AC.
                                 var analysedComponent = _currencyPairEvent.GetRelatedAnalysedComponent(entity.Id,
