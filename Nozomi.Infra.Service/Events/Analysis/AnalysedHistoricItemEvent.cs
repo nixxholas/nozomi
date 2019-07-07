@@ -6,6 +6,7 @@ using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Logging;
+using Nozomi.Base.Core.Responses;
 using Nozomi.Data.Models.Web.Analytical;
 using Nozomi.Preprocessing;
 using Nozomi.Preprocessing.Abstracts;
@@ -204,6 +205,88 @@ namespace Nozomi.Service.Events.Analysis
             }
 
             return new List<AnalysedHistoricItem>();
+        }
+
+        public NozomiPaginatedResult<AnalysedHistoricItem> TraverseRelatedHistory(long analysedComponentId, 
+            AnalysedComponentType componentType, int page = 0)
+        {
+            // Safetynet
+            if (analysedComponentId > 0 && componentType > 0 && page >= 0)
+            {
+                var baseAC = _unitOfWork.GetRepository<AnalysedComponent>()
+                    .GetQueryable()
+                    .SingleOrDefault(ac => ac.Id.Equals(analysedComponentId));
+
+                if (baseAC == null)
+                {
+                    _logger.LogWarning($"[{EventName}] TraverseRelatedHistory: No base AC for " +
+                                       $"analysed component {analysedComponentId}");
+                    
+                    return null;
+                }
+                
+                var res = new NozomiPaginatedResult<AnalysedHistoricItem>()
+                {
+                    ElementsPerPage = NozomiServiceConstants.AnalysedHistoricItemTakeoutLimit
+                };
+                
+                // Look for the right one
+                // https://stackoverflow.com/questions/661028/how-can-i-divide-two-integers-to-get-a-double
+                var count = decimal.Divide(_unitOfWork.GetRepository<AnalysedHistoricItem>()
+                    .GetQueryable()
+                    .Include(ahi => ahi.AnalysedComponent)
+                    .Where(ahi => ahi.AnalysedComponent.ComponentType.Equals(componentType)
+                        && (
+                            // Currency-based matching
+                            (ahi.AnalysedComponent.CurrencyId != null && ahi.AnalysedComponent.CurrencyId.Equals(baseAC.CurrencyId))
+                            // Currencypair-based matching
+                            || (ahi.AnalysedComponent.CurrencyPairId != null && ahi.AnalysedComponent.CurrencyPairId.Equals(baseAC.CurrencyPairId))
+                            // Currency type-based matching
+                            || (ahi.AnalysedComponent.CurrencyTypeId != null && ahi.AnalysedComponent.CurrencyTypeId.Equals(baseAC.CurrencyTypeId))
+                            ))
+                    .LongCount(), res.ElementsPerPage); // 5000 is a page's maximum number of elements.
+                
+                // Math Safetynet
+                if (count < 1 && count > 0) // Make sure there's page 1 if the value is > 0.
+                    res.Pages = 1;
+                else if (count > 0) // if the count is way more than 1.
+                    res.Pages = (long) count;
+                else // Wow, bad.
+                    return null; // Bad response.
+
+                // If the user is trying to access beyond page 1,
+                if ((page > 0 && res.Pages >= page) ||
+                    // Or if the user is accessing page 1
+                    (page.Equals(0)))
+                {
+                    // Obtain the first page
+                    res.Data = _unitOfWork.GetRepository<AnalysedHistoricItem>()
+                        .GetQueryable()
+                        .Include(ahi => ahi.AnalysedComponent)
+                        .Where(ahi => ahi.AnalysedComponent.ComponentType.Equals(componentType)
+                                      && (
+                                          // Currency-based matching
+                                          (ahi.AnalysedComponent.CurrencyId != null &&
+                                           ahi.AnalysedComponent.CurrencyId.Equals(baseAC.CurrencyId))
+                                          // Currencypair-based matching
+                                          || (ahi.AnalysedComponent.CurrencyPairId != null &&
+                                              ahi.AnalysedComponent.CurrencyPairId.Equals(baseAC.CurrencyPairId))
+                                          // Currency type-based matching
+                                          || (ahi.AnalysedComponent.CurrencyTypeId != null &&
+                                              ahi.AnalysedComponent.CurrencyTypeId.Equals(baseAC.CurrencyTypeId))
+                                      ))
+                        .Skip((int) (page * res.ElementsPerPage))
+                        .Take((int) res.ElementsPerPage) // Take only ruled
+                        .ToList();
+
+                    return res;
+                }
+
+                _logger.LogWarning($"[{EventName}] TraverseRelatedHistory: Bad Request Data for " +
+                                   $"analysed component {analysedComponentId}");
+            }
+
+            return null;
         }
     }
 }
