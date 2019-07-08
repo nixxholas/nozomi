@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data.Models.Web.Analytical;
@@ -27,34 +28,29 @@ namespace Nozomi.Infra.Analysis.Service.Services
             return -1; // Failed..
         }
 
-        public bool Push(AnalysedComponent analysedComponent, long userId = 0)
+        public bool Push(long analysedComponentId, string incomingValue, DateTime historicalTime, 
+            bool ignoreSimilarityCheck = false, long userId = 0)
         {
-            if (analysedComponent != null)
+            if (analysedComponentId > 0 && !string.IsNullOrEmpty(incomingValue))
             {
-                // Value is null, its a new component
-                if (string.IsNullOrEmpty(analysedComponent.Value))
-                {
-                    return true;
-                }
-                
                 var lastHistoric = _unitOfWork.GetRepository<AnalysedHistoricItem>()
-                    .Get(ahi => ahi.AnalysedComponentId.Equals(analysedComponent.Id))
+                    .Get(ahi => ahi.AnalysedComponentId.Equals(analysedComponentId))
                     .OrderByDescending(ahi => ahi.CreatedAt)
                     .FirstOrDefault();
 
-                if (lastHistoric != null)
+                if (lastHistoric != null && 
+                    // Time check
+                    historicalTime > lastHistoric?.HistoricDateTime)
                 {
-                    var lastHistoricVal = decimal.Parse(lastHistoric.Value);
-                    var existingVal = decimal.Parse(analysedComponent.Value);
-
-                    if (lastHistoricVal != existingVal)
+                    // Either we ignore the similarity check, or we check
+                    if (ignoreSimilarityCheck || (lastHistoric.Value != incomingValue))
                     {
                         // Push it
                         _unitOfWork.GetRepository<AnalysedHistoricItem>().Add(new AnalysedHistoricItem
                         {
-                            AnalysedComponentId = analysedComponent.Id,
-                            Value = analysedComponent.Value,
-                            HistoricDateTime = analysedComponent.ModifiedAt
+                            AnalysedComponentId = analysedComponentId,
+                            Value = incomingValue,
+                            HistoricDateTime = historicalTime
                         });
                         _unitOfWork.Commit(userId); // done
                     }
@@ -66,9 +62,9 @@ namespace Nozomi.Infra.Analysis.Service.Services
                     // Push it
                     _unitOfWork.GetRepository<AnalysedHistoricItem>().Add(new AnalysedHistoricItem
                     {
-                        AnalysedComponentId = analysedComponent.Id,
-                        Value = analysedComponent.Value,
-                        HistoricDateTime = analysedComponent.ModifiedAt
+                        AnalysedComponentId = analysedComponentId,
+                        Value = incomingValue,
+                        HistoricDateTime = historicalTime
                     });
                     _unitOfWork.Commit(userId); // done
 
