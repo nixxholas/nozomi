@@ -91,7 +91,7 @@ namespace Nozomi.Preprocessing.Abstracts
                                             _logger.LogError("[BaseProcessingService] " +
                                                              $"Invalid key value pair {identifierEl} \n" + 
                                                              $"Original Payload empty?: {originalToken == null}");
-                                            return false;
+                                            return null;
                                         }
                                     }
                                     // A standard array
@@ -116,7 +116,7 @@ namespace Nozomi.Preprocessing.Abstracts
                                         {
                                             _logger.LogError("[BaseProcessingService]" +
                                                              $" Update: Invalid array element {identifierEl}");
-                                            return false;
+                                            return null;
                                         }
                                     }
                                 }
@@ -170,7 +170,7 @@ namespace Nozomi.Preprocessing.Abstracts
                     }
                     else
                     {
-                        return false;
+                        return null;
                     }
                 }
             }
