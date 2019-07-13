@@ -58,29 +58,19 @@ namespace Nozomi.Infra.Analysis.Service.Events
                 .FirstOrDefault();
         }
 
-        public ICollection<AnalysedComponent> GetNextWorkingSet(long biggestLastId)
+        public IEnumerable<AnalysedComponent> GetNextWorkingSet(int index = 0)
         {
-            // Safetynet
-            if (biggestLastId > 0 && 
-                _unitOfWork.GetRepository<AnalysedComponent>()
-                    .GetQueryable()
-                    .OrderBy(ac => ac.Id)
-                    .LastOrDefault()?.Id >= biggestLastId)
-            {
-                // Got in, let's grab em.
-                return _unitOfWork.GetRepository<AnalysedComponent>()
-                    .GetQueryable()
-                    .Where(ac => ac.DeletedAt == null
-                                 && ac.IsEnabled
-                                 && ac.Id > biggestLastId
-                                 && ac.ModifiedAt <= DateTime.UtcNow.Add(TimeSpan.FromMilliseconds(ac.Delay)))
-                    .OrderBy(ac => ac.Id)
-                    .ThenByDescending(ac => ac.IsFailing)
-                    .Take(50)
-                    .ToList();
-            }
-
-            return null;
+            // Got in, let's grab em.
+            return _unitOfWork.GetRepository<AnalysedComponent>()
+                .GetQueryable()
+                .Where(ac => ac.DeletedAt == null
+                             && ac.IsEnabled
+                             && ac.ModifiedAt <= DateTime.UtcNow.Add(TimeSpan.FromMilliseconds(ac.Delay)))
+                .OrderBy(ac => ac.Id)
+                .ThenBy(ac => ac.ModifiedAt)
+                .ThenByDescending(ac => ac.IsFailing)
+                .Skip(index * 100)
+                .Take(100);
         }
     }
 }

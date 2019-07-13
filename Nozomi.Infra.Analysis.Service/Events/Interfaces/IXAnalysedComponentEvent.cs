@@ -11,6 +11,6 @@ namespace Nozomi.Infra.Analysis.Service.Events.Interfaces
         /// <returns></returns>
         AnalysedComponent Top(ICollection<long> acsToFilter = null);
 
-        ICollection<AnalysedComponent> GetNextWorkingSet(long biggestLastId);
+        IEnumerable<AnalysedComponent> GetNextWorkingSet(int index = 0);
     }
 }
