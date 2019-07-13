@@ -96,7 +96,7 @@ namespace Nozomi.Service.Identity.Services
             
             // Create the card binding
             var cardOptions = new CardCreateOptions {
-                SourceToken = cardToken
+                Source = cardToken
             };
 
             var cardService = new CardService();
