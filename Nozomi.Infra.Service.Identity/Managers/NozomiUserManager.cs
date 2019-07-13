@@ -34,30 +34,24 @@ namespace Nozomi.Service.Identity.Managers
 
         public override async Task<IdentityResult> CreateAsync(User user)
         {
-            user.StripeCustomerId = await _stripeService.CreateStripeCustomer(user);
-
-            if (string.IsNullOrEmpty(user.StripeCustomerId))
-            {
+            if (!string.IsNullOrEmpty(user.StripeCustomerId))
+                user.StripeCustomerId = await _stripeService.CreateStripeCustomer(user);
+            else
                 return IdentityResult.Failed(new IdentityError
                 {
                     Code = IdentityErrorType.CreateAccountStripeCustomerIdIssue.ToString(),
                     Description = IdentityErrorType.CreateAccountStripeCustomerIdIssue.GetDescription()
-                });   
-            }
+                });
 
             var createUserResult = await base.CreateAsync(user);
             if (createUserResult.Succeeded)
-            {
                 return createUserResult;
-            }
             else
-            {
                 return IdentityResult.Failed(new IdentityError
                 {
                     Code = IdentityErrorType.CreateAccountStripeIssue.ToString(),
                     Description = IdentityErrorType.CreateAccountStripeIssue.GetDescription()
-                });   
-            }
+                });
         }
 
         public async Task<User> FindAsync(string id, string password)
