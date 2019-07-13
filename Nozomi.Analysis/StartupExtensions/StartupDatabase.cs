@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Nozomi.Repo.Data;
+using Nozomi.Repo.Identity.Data;
 
 namespace Nozomi.Analysis.StartupExtensions
 {
@@ -19,7 +20,12 @@ namespace Nozomi.Analysis.StartupExtensions
 
                 using (var context = serviceScope.ServiceProvider.GetService<NozomiDbContext>())
                 {
-                    context.Database.EnsureCreated();
+                    context.Database.Migrate();
+                }
+                
+                using (var context = serviceScope.ServiceProvider.GetService<NozomiAuthContext>())
+                {
+                    context.Database.Migrate();
                 }
             }
         }
