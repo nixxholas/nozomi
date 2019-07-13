@@ -53,16 +53,40 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
             {
                 try
                 {
-                    var top = _xAnalysedComponentEvent.Top();
+                    // Dynamic
+                    var currentBatch = _xAnalysedComponentEvent.GetNextWorkingSet().ToList();
 
-                    if (Analyse(top))
+                    if (currentBatch.Count > 0)
                     {
-                        _logger.LogInformation($"[{ServiceName}] AnalysedComponent {top.Id}: Successfully to updated");
+                        foreach (var batchItem in currentBatch)
+                        {
+                            if (Analyse(batchItem))
+                            {
+                                _logger.LogInformation($"[{ServiceName}] AnalysedComponent {batchItem.Id}: " +
+                                                       $"Successfully to updated");
+                            }
+                            else
+                            {   
+                                _logger.LogCritical("[ComponentAnalysisService]: Invalid top AC.");
+                            }
+                        }
                     }
-                    else
-                    {
-                        _logger.LogWarning($"[{ServiceName}] AnalysedComponent {top.Id}: Failed to update");
-                    }
+                    // Monolithic way
+//                    var top = _xAnalysedComponentEvent.Top();
+//
+//                    if (Analyse(top))
+//                    {
+//                        _logger.LogInformation($"[{ServiceName}] AnalysedComponent {top.Id}: Successfully to updated");
+//                    }
+//                    else if (top != null)
+//                    {
+//                        _processAnalysedComponentService.Checked(top.Id);
+//                        _logger.LogWarning($"[{ServiceName}] AnalysedComponent {top.Id}: Failed to update");
+//                    }
+//                    else
+//                    {
+//                        _logger.LogCritical("[ComponentAnalysisService]: Invalid top AC.");
+//                    }
                 }
                 catch (Exception ex)
                 {

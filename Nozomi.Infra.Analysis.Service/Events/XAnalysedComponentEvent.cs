@@ -57,5 +57,20 @@ namespace Nozomi.Infra.Analysis.Service.Events
                 //.ThenBy(ac => string.IsNullOrEmpty(ac.Value))
                 .FirstOrDefault();
         }
+
+        public IEnumerable<AnalysedComponent> GetNextWorkingSet(int index = 0)
+        {
+            // Got in, let's grab em.
+            return _unitOfWork.GetRepository<AnalysedComponent>()
+                .GetQueryable()
+                .Where(ac => ac.DeletedAt == null
+                             && ac.IsEnabled
+                             && ac.ModifiedAt <= DateTime.UtcNow.Add(TimeSpan.FromMilliseconds(ac.Delay)))
+                .OrderBy(ac => ac.Id)
+                .ThenBy(ac => ac.ModifiedAt)
+                .ThenByDescending(ac => ac.IsFailing)
+                .Skip(index * 100)
+                .Take(100);
+        }
     }
 }
