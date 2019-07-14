@@ -72,6 +72,7 @@ namespace Nozomi.Service.Services
                 {
                     entity.ModifiedAt = DateTime.UtcNow;
 
+                    _unitOfWork.GetRepository<RequestComponent>().Update(entity);
                     _unitOfWork.Commit(userId);
                     return true;
                 }
