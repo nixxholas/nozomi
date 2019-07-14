@@ -484,8 +484,22 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
                 // Always reset
                 currToken = token;
 
+                // Identifier processing
                 if (!string.IsNullOrEmpty(component.Identifier))
-                    currToken = ProcessIdentifier(currToken, component.Identifier);
+                {
+                    var res = ProcessIdentifier(currToken, component.Identifier);
+
+                    if (res.ResultType.Equals(NozomiResultType.Success))
+                    {
+                        currToken = res.Data;
+                    }
+                    else
+                    {
+                        // Failed
+                        _requestComponentService.Checked(component.Id);
+                        currToken = null; // Set it to fail for the next statement
+                    }
+                }
                 
                 // Identifier & Resetting null checks
                 if (currToken != null)
@@ -783,6 +797,10 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
                             // return false;
                         }
                     }
+                } else if (string.IsNullOrEmpty(component.Identifier))
+                {
+                    _logger.LogInformation($"Marking Request Component as checked: {component.Id}");
+                    return _requestComponentService.Checked(component.Id);
                 }
             }
 

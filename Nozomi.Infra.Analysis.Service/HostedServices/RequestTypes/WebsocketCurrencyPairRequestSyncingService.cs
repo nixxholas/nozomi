@@ -10,6 +10,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Nozomi.Base.Core.Helpers.Exponent;
+using Nozomi.Data;
 using Nozomi.Data.Models.Web;
 using Nozomi.Data.Models.Web.Websocket;
 using Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes.Interfaces;
@@ -236,7 +237,20 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
 
                 // Identifier processing
                 if (!string.IsNullOrEmpty(component.Identifier))
-                    processingToken = ProcessIdentifier(processingToken, component.Identifier);
+                {
+                    var res = ProcessIdentifier(processingToken, component.Identifier);
+
+                    if (res.ResultType.Equals(NozomiResultType.Success))
+                    {
+                        processingToken = res.Data;
+                    }
+                    else
+                    {
+                        // Failed
+                        _requestComponentService.Checked(component.Id);
+                        processingToken = null; // Set it to fail for the next statement
+                    }
+                }
 
                 // Identifier & Resetting null checks
                 if (processingToken != null)
@@ -483,7 +497,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
                         }
                     }
                 }
-                else
+                else if (string.IsNullOrEmpty(component.Identifier))
                 {
                     _logger.LogInformation($"Marking Request Component as checked: {component.Id}");
                     return _requestComponentService.Checked(component.Id);
