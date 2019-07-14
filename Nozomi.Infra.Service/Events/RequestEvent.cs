@@ -338,6 +338,12 @@ namespace Nozomi.Service.Events
         public IDictionary<string, ICollection<Request>> GetAllByRequestTypeUniqueToURL(RequestType requestType)
         {
             var dict = new Dictionary<string, ICollection<Request>>();
+            
+            #if DEBUG
+            // Check the context
+            var testRequestsFromContext = _unitOfWork.Context.Requests.ToList();
+            #endif
+            
             var requests = CompiledGetAllByRequestType(_unitOfWork.Context, requestType);
 
             foreach (var request in requests)
