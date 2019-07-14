@@ -67,12 +67,22 @@ namespace Nozomi.Preprocessing.Abstracts
                                         var lastElementProp = comArrElArr.Last();
 
                                         // Pump in the array, treat it as anonymous.
-                                        var dataList = token.ToObject<List<JObject>>();
+                                        var dataList = token.ToList();
 
-                                        token = dataList
-                                            .FirstOrDefault(obj => obj.ContainsKey(comArrElArr[0])
-                                                                   && obj.SelectToken(comArrElArr[0]).ToString()
-                                                                       .Equals(comArrElArr[1]));
+                                        if (int.TryParse(comArrElArr[0], out var targetEl))
+                                        {
+                                            token = dataList
+                                                .FirstOrDefault(obj => obj[targetEl] != null
+                                                                       && obj[targetEl].ToString()
+                                                                           .Equals(comArrElArr[1]));
+                                        }
+                                        else
+                                        {
+                                            token = dataList
+                                                .FirstOrDefault(obj => obj[comArrElArr[0]] != null
+                                                                       && obj[comArrElArr[0]].ToString()
+                                                                           .Equals(comArrElArr[1]));
+                                        }
 
                                         // let's work it out
                                         // update the token
@@ -91,7 +101,7 @@ namespace Nozomi.Preprocessing.Abstracts
                                             // Not a proper identifier
                                             _logger.LogWarning("[BaseProcessingService] " +
                                                              $"Can't parse array element {identifierEl} \n" +
-                                                             $"Invalid element property {comArrElArr[0]}" +
+                                                             $"Invalid element property {comArrElArr[0]} \n" +
                                                              $"Original Payload empty?: {false}");
                                             
                                             return new NozomiResult<JToken>()
