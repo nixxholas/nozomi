@@ -59,6 +59,27 @@ namespace Nozomi.Service.Services
             }
         }
 
+        public bool Checked(long id, long userId = 0)
+        {
+            if (id > 0)
+            {
+                var entity = _unitOfWork.GetRepository<RequestComponent>()
+                    .GetQueryable()
+                    .AsTracking()
+                    .SingleOrDefault(rc => rc.Id.Equals(id));
+
+                if (entity != null)
+                {
+                    entity.ModifiedAt = DateTime.UtcNow;
+
+                    _unitOfWork.Commit(userId);
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         public NozomiResult<string> UpdatePairValue(long id, decimal val)
         {
             try
