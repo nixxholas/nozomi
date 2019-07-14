@@ -39,6 +39,8 @@ namespace Nozomi.Analysis.StartupExtensions
             services.AddScoped<ICurrencyPairTypeService, CurrencyPairTypeService>();
             services.AddScoped<IRequestPropertyTypeService, RequestPropertyTypeService>();
             services.AddScoped<IRequestTypeService, RequestTypeService>();
+            
+            // Stripe
             services.AddScoped<IStripeService, StripeService>();
             
             // Identity-related service injections
