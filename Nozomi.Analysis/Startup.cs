@@ -13,6 +13,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Nozomi.Analysis.StartupExtensions;
+using Nozomi.Base.Core.Configurations;
 using Nozomi.Repo.Data;
 using Nozomi.Repo.Identity.Data;
 using VaultSharp;
@@ -73,11 +74,11 @@ namespace Nozomi.Analysis
                 var vaultClientSettings = new VaultClientSettings("http://165.22.250.169:8200", authMethod);
                 var vaultClient = new VaultClient(vaultClientSettings);
 
-                var vault = vaultClient.V1.Secrets.Cubbyhole.ReadSecretAsync("nozomi")
+                var nozomiVault = vaultClient.V1.Secrets.Cubbyhole.ReadSecretAsync("nozomi")
                     .GetAwaiter()
                     .GetResult().Data;
                 
-                var mainDb = (string) vault["main"];
+                var mainDb = (string) nozomiVault["main"];
                 if (string.IsNullOrEmpty(mainDb))
                     throw new SystemException("Invalid main database configuration");
                 // Database
@@ -96,7 +97,7 @@ namespace Nozomi.Analysis
                     options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
                 }, ServiceLifetime.Transient);
 
-                var authDb = (string) vault["auth"];
+                var authDb = (string) nozomiVault["auth"];
                 if (string.IsNullOrEmpty(authDb))
                     throw new SystemException("Invalid auth database configuration");
                 services.AddDbContext<NozomiAuthContext>(options =>
@@ -111,6 +112,23 @@ namespace Nozomi.Analysis
 //                    }
                         );
                     options.EnableSensitiveDataLogging(false);
+                });
+
+                var stripeVault = vaultClient.V1.Secrets.Cubbyhole.ReadSecretAsync("stripe")
+                    .GetAwaiter()
+                    .GetResult().Data;
+                
+                var stripePriv = (string) stripeVault["testpriv"];
+                if (string.IsNullOrEmpty(stripePriv))
+                    throw new SystemException("Invalid main database configuration");
+                var stripePub = (string) stripeVault["testpub"];
+                if (string.IsNullOrEmpty(stripePub))
+                    throw new SystemException("Invalid main database configuration");
+                
+                services.Configure<StripeSettings>(ss =>
+                {
+                    ss.SecretKey = stripePriv;
+                    ss.PublishableKey = stripePub;
                 });
             }
             

@@ -55,111 +55,116 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
                 // We will need to resync the Request collection to make sure we're polling only the ones we want to poll
                 var dataEndpoints = _websocketRequestEvent.GetAllByRequestTypeUniqueToURL(RequestType.WebSocket);
 
-                // Iterate the requests
-                foreach (var dataEndpoint in dataEndpoints)
+                if (dataEndpoints.Count > 0)
                 {
-                    var dataEndpointItem = dataEndpoint.Value.FirstOrDefault();
-
-                    if (dataEndpointItem != null && dataEndpointItem.DeletedAt == null
-                                                 && dataEndpointItem.IsEnabled)
+                    // Iterate the requests
+                    foreach (var dataEndpoint in dataEndpoints)
                     {
-                        // Add new crap
-                        if (!_wsrWebsockets.ContainsKey(dataEndpointItem.DataPath)
-                            && !string.IsNullOrEmpty(dataEndpointItem.DataPath))
+                        var dataEndpointItem = dataEndpoint.Value.FirstOrDefault();
+
+                        if (dataEndpointItem != null && dataEndpointItem.DeletedAt == null
+                                                     && dataEndpointItem.IsEnabled)
                         {
-                            // Start the websockets here
-                            var newSocket = new WebSocket(dataEndpointItem.DataPath)
+                            // Add new crap
+                            if (!_wsrWebsockets.ContainsKey(dataEndpointItem.DataPath)
+                                && !string.IsNullOrEmpty(dataEndpointItem.DataPath))
                             {
-                                Compression = CompressionMethod.Deflate,
-                                EmitOnPing = true,
-                                EnableRedirection = false
-                            };
-
-                            // Pre-request processing
-                            newSocket.OnOpen += (sender, args) =>
-                            {
-                                var wsCommands = dataEndpoint.Value.SelectMany(de => de.WebsocketCommands).ToList();
-
-                                foreach (var wsCommand in wsCommands)
+                                // Start the websockets here
+                                var newSocket = new WebSocket(dataEndpointItem.DataPath)
                                 {
-                                    if (wsCommand.Delay.Equals(0))
+                                    Compression = CompressionMethod.Deflate,
+                                    EmitOnPing = true,
+                                    EnableRedirection = false
+                                };
+
+                                // Pre-request processing
+                                newSocket.OnOpen += (sender, args) =>
+                                {
+                                    var wsCommands = dataEndpoint.Value.SelectMany(de => de.WebsocketCommands).ToList();
+
+                                    foreach (var wsCommand in wsCommands)
                                     {
-                                        // One-time command
+                                        if (wsCommand.Delay.Equals(0))
+                                        {
+                                            // One-time command
+                                        }
+                                        else
+                                        {
+                                            // Run a repeated task
+                                        }
+                                    }
+                                };
+
+                                // Incoming processing
+                                newSocket.OnMessage += async (sender, args) =>
+                                {
+                                    if (args.IsPing)
+                                    {
+                                        newSocket.Ping();
+                                    }
+
+                                    // Process the incoming data
+                                    if (!string.IsNullOrEmpty(args.Data))
+                                    {
+                                        try
+                                        {
+                                            if (await Process(dataEndpoint.Value, args.Data))
+                                            {
+                                                _logger.LogInformation(
+                                                    $"[WebsocketCurrencyPairRequestSyncingService] " +
+                                                    $"RequestId: {dataEndpointItem.DataPath} successfully updated");
+                                            }
+                                        }
+                                        catch (Exception ex)
+                                        {
+                                            _logger.LogCritical(
+                                                $"[WebsocketCurrencyPairRequestSyncingService] OnMessage: " +
+                                                ex);
+                                        }
                                     }
                                     else
                                     {
-                                        // Run a repeated task
+                                        _logger.LogError($"[WebsocketCurrencyPairRequestSyncingService] OnMessage: " +
+                                                         $"RequestId:{dataEndpointItem.DataPath} has an empty payload incoming.");
                                     }
-                                }
-                            };
+                                };
 
-                            // Incoming processing
-                            newSocket.OnMessage += async (sender, args) =>
-                            {
-                                if (args.IsPing)
+                                // Error processing
+                                newSocket.OnError += (sender, args) =>
                                 {
-                                    newSocket.Ping();
-                                }
+                                    _logger.LogError($"[WebsocketCurrencyPairRequestSyncingService] OnError:" +
+                                                     $" {args.Message}");
+                                };
 
-                                // Process the incoming data
-                                if (!string.IsNullOrEmpty(args.Data))
-                                {
-                                    try
-                                    {
-                                        if (await Process(dataEndpoint.Value, args.Data))
-                                        {
-                                            _logger.LogInformation($"[WebsocketCurrencyPairRequestSyncingService] " +
-                                                                   $"RequestId: {dataEndpointItem.DataPath} successfully updated");
-                                        }
-                                    }
-                                    catch (Exception ex)
-                                    {
-                                        _logger.LogCritical(
-                                            $"[WebsocketCurrencyPairRequestSyncingService] OnMessage: " + 
-                                            ex);
-                                    }
-                                }
-                                else
-                                {
-                                    _logger.LogError($"[WebsocketCurrencyPairRequestSyncingService] OnMessage: " +
-                                                     $"RequestId:{dataEndpointItem.DataPath} has an empty payload incoming.");
-                                }
-                            };
-
-                            // Error processing
-                            newSocket.OnError += (sender, args) =>
-                            {
-                                _logger.LogError($"[WebsocketCurrencyPairRequestSyncingService] OnError:" +
-                                                 $" {args.Message}");
-                            };
-
-                            newSocket.Connect();
-                            _wsrWebsockets.Add(dataEndpointItem.DataPath, newSocket);
-                        }
-                    }
-                    else
-                        // Remove old crap
-                    if (dataEndpointItem != null && (!dataEndpointItem.IsEnabled || dataEndpointItem.DeletedAt != null)
-                                                 && _wsrWebsockets.ContainsKey(dataEndpointItem.DataPath))
-                    {
-                        _logger.LogInformation("[WebsocketCurrencyPairRequestSyncingService] Removing " +
-                                               "Request: " + dataEndpointItem.Id);
-
-                        // Stop the websocket from polling
-                        _wsrWebsockets[dataEndpointItem.DataPath].Close();
-
-                        // Remove the websocket from the dictionary
-                        if (!_wsrWebsockets.Remove(dataEndpointItem.DataPath))
-                        {
-                            _logger.LogInformation(
-                                "[WebsocketCurrencyPairRequestSyncingService] Error Removing Request: "
-                                + dataEndpointItem.DataPath);
+                                newSocket.Connect();
+                                _wsrWebsockets.Add(dataEndpointItem.DataPath, newSocket);
+                            }
                         }
                         else
+                            // Remove old crap
+                        if (dataEndpointItem != null && (!dataEndpointItem.IsEnabled ||
+                                                         dataEndpointItem.DeletedAt != null)
+                                                     && _wsrWebsockets.ContainsKey(dataEndpointItem.DataPath))
                         {
-                            _logger.LogInformation(
-                                "[WebsocketCurrencyPairRequestSyncingService] Removed Request: "
-                                + dataEndpointItem.DataPath);
+                            _logger.LogInformation("[WebsocketCurrencyPairRequestSyncingService] Removing " +
+                                                   "Request: " + dataEndpointItem.Id);
+
+                            // Stop the websocket from polling
+                            _wsrWebsockets[dataEndpointItem.DataPath].Close();
+
+                            // Remove the websocket from the dictionary
+                            if (!_wsrWebsockets.Remove(dataEndpointItem.DataPath))
+                            {
+                                _logger.LogInformation(
+                                    "[WebsocketCurrencyPairRequestSyncingService] Error Removing Request: "
+                                    + dataEndpointItem.DataPath);
+                            }
+                            else
+                            {
+                                _logger.LogInformation(
+                                    "[WebsocketCurrencyPairRequestSyncingService] Removed Request: "
+                                    + dataEndpointItem.DataPath);
+                            }
                         }
                     }
                 }
@@ -220,7 +225,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
             // Null Checks
             if (token == null)
                 return false;
-                
+
             var processingToken = token;
 
             // For each component we're checking
@@ -477,6 +482,11 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
                             //return false;
                         }
                     }
+                }
+                else
+                {
+                    _logger.LogInformation($"Marking Request Component as checked: {component.Id}");
+                    return _requestComponentService.Checked(component.Id);
                 }
             }
 

@@ -424,6 +424,13 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                             var compData = _analysedHistoricItemEvent.TraverseRelatedHistory(entity.Id,
                                 AnalysedComponentType.CurrentAveragePrice);
 
+                            // Safetynet
+                            if (compData.Data == null)
+                            {
+                                _processAnalysedComponentService.Checked(entity.Id);
+                                return true;
+                            }
+                            
                             // Aggregate it
                             var avgPrice = decimal.Zero;
 

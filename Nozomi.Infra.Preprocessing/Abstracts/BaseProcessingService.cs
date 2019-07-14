@@ -62,34 +62,33 @@ namespace Nozomi.Preprocessing.Abstracts
                                     // the value equals comArrElArr[1]
                                     if (comArrElArr.Length == 2)
                                     {
-                                        #if DEBUG
+#if DEBUG
                                         var childrensTest = token.Children();
-                                        #endif
+#endif
                                         var originalToken = token;
 
-                                        // If this is an array
-                                        if (token.Type.Equals(JTokenType.Array) 
-                                            && int.TryParse(comArrElArr[0], out var index))
+                                        var lastElementProp = comArrElArr.Last();
+
+                                        // Pump in the array, treat it as anonymous.
+                                        var dataList = token.ToObject<List<JObject>>();
+
+                                        token = dataList
+                                            .FirstOrDefault(obj => obj.ContainsKey(comArrElArr[0])
+                                                                   && obj.SelectToken(comArrElArr[0]).ToString()
+                                                                       .Equals(comArrElArr[1]));
+
+                                        // let's work it out
+                                        // update the token
+                                        if (token != null)
                                         {
-                                            token = token
-                                                    // Apparently, .ToString() matters alot so take note.
-                                                .FirstOrDefault(tok => tok[index].ToString()
-                                                    .Equals(comArrElArr[1],
-                                                        StringComparison.InvariantCultureIgnoreCase));
+                                            return token;
                                         }
                                         else
                                         {
-                                            // https://stackoverflow.com/questions/7216917/json-net-has-key-method
-                                            token = token.Children()
-                                                .FirstOrDefault(tok => tok.SelectToken(comArrElArr[0]).ToString()
-                                                    .Equals(comArrElArr[1]));
-                                        }
-
-                                        // Null check
-                                        if (token == null)
-                                        {
+                                            // Not a proper index/array
                                             _logger.LogError("[BaseProcessingService] " +
-                                                             $"Invalid key value pair {identifierEl} \n" + 
+                                                             $"Can't parse array element {identifierEl} \n" +
+                                                             $"Invalid element property {comArrElArr[0]}" +
                                                              $"Original Payload empty?: {originalToken == null}");
                                             return null;
                                         }

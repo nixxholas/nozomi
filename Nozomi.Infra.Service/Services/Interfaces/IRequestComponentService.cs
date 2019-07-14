@@ -7,7 +7,9 @@ namespace Nozomi.Service.Services.Interfaces
     public interface IRequestComponentService
     {
         NozomiResult<string> Create(CreateRequestComponent createRequestComponent, long userId = 0);
-        
+
+        bool Checked(long id, long userId = 0);
+
         NozomiResult<string> UpdatePairValue(long id, decimal val);
         NozomiResult<string> UpdatePairValue(long id, string val);
 
