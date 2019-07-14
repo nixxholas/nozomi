@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Nozomi.Data;
 
 namespace Nozomi.Preprocessing.Abstracts
 {
@@ -15,7 +16,7 @@ namespace Nozomi.Preprocessing.Abstracts
         {
         }
 
-        public JToken ProcessIdentifier(JToken token, string identifier)
+        public NozomiResult<JToken> ProcessIdentifier(JToken token, string identifier)
         {
             // Identifier processing
             if (!string.IsNullOrEmpty(identifier) && token != null && token.Type != JTokenType.Null)
@@ -60,13 +61,9 @@ namespace Nozomi.Preprocessing.Abstracts
 
                                     // An array of objects. Let's find the key comArrElArr[0] where
                                     // the value equals comArrElArr[1]
+                                    JToken originalToken = token;
                                     if (comArrElArr.Length == 2)
                                     {
-#if DEBUG
-                                        var childrensTest = token.Children();
-#endif
-                                        var originalToken = token;
-
                                         var lastElementProp = comArrElArr.Last();
 
                                         // Pump in the array, treat it as anonymous.
@@ -81,16 +78,28 @@ namespace Nozomi.Preprocessing.Abstracts
                                         // update the token
                                         if (token != null)
                                         {
-                                            return token;
+                                            return new NozomiResult<JToken>()
+                                            {
+                                                ResultType = NozomiResultType.Success,
+                                                Data = token
+                                            };
                                         }
                                         else
+                                        // May or may not have been a proper lookup.
+                                        // Sometimes the collection may or may not appear for this current request.
                                         {
-                                            // Not a proper index/array
-                                            _logger.LogError("[BaseProcessingService] " +
+                                            // Not a proper identifier
+                                            _logger.LogWarning("[BaseProcessingService] " +
                                                              $"Can't parse array element {identifierEl} \n" +
                                                              $"Invalid element property {comArrElArr[0]}" +
-                                                             $"Original Payload empty?: {originalToken == null}");
-                                            return null;
+                                                             $"Original Payload empty?: {false}");
+                                            
+                                            return new NozomiResult<JToken>()
+                                            {
+                                                ResultType = NozomiResultType.Failed,
+                                                Message = "Could not locate target.",
+                                                Data = null
+                                            };
                                         }
                                     }
                                     // A standard array
@@ -115,14 +124,20 @@ namespace Nozomi.Preprocessing.Abstracts
                                         {
                                             _logger.LogError("[BaseProcessingService]" +
                                                              $" Update: Invalid array element {identifierEl}");
-                                            return null;
+                                            return new NozomiResult<JToken>(NozomiResultType.Failed,
+                                                "Invalid index.");
                                         }
                                     }
                                 }
                             }
                             catch (Exception ex)
                             {
-                                Console.WriteLine(ex);
+                                _logger.LogError("[BaseProcessingService]: " +
+                                                 " An un-captured error " +
+                                                 $"occurred: {ex}");
+                                return new NozomiResult<JToken>(NozomiResultType.Failed, "[BaseProcessingService]: " +
+                                                                                         " An un-captured error " +
+                                                                                         $"occurred: {ex}");
                             }
                         }
                         else if (token is JObject)
@@ -169,7 +184,7 @@ namespace Nozomi.Preprocessing.Abstracts
                     }
                     else
                     {
-                        return null;
+                        return new NozomiResult<JToken>(NozomiResultType.Failed, "Null identifier.");
                     }
                 }
             }
@@ -179,7 +194,11 @@ namespace Nozomi.Preprocessing.Abstracts
                                     $" Update: Invalid token for {identifier}");
             }
 
-            return token;
+            return new NozomiResult<JToken>()
+            {
+                ResultType = NozomiResultType.Success,
+                Data = token
+            };
         }
     }
 }
