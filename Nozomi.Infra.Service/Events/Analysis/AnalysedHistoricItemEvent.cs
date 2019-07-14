@@ -251,8 +251,12 @@ namespace Nozomi.Service.Events.Analysis
                     res.Pages = 1;
                 else if (count > 0) // if the count is way more than 1.
                     res.Pages = (long) count;
-                else // Wow, bad.
-                    return null; // Bad response.
+                else
+                {
+                    // Wow, bad.
+                    res.Data = new List<AnalysedHistoricItem>(); // Empty it.
+                    return res; // Bad response.
+                }
 
                 // If the user is trying to access beyond page 1,
                 if ((page > 0 && res.Pages >= page) ||
