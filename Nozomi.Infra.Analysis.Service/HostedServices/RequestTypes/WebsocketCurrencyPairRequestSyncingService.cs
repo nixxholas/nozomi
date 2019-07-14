@@ -384,7 +384,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
                                     var comArrElArr = comArrEl.Split("=>");
 
                                     // Traverse first
-                                    var rawData = (string) obj.SelectToken(comArrElArr[0]);
+                                    var rawData = (string) obj.GetValue(comArrElArr[0]);
 
                                     if (rawData != null)
                                     {
