@@ -93,7 +93,7 @@ namespace Nozomi.Service.Services.Requests
         {
             var req = _unitOfWork.GetRepository<Request>()
                 .GetQueryable()
-                .AsNoTracking()
+                .AsTracking()
                 .SingleOrDefault(r => r.Id.Equals(request.Id)
                                       && r.DeletedAt == null
                                       && r.IsEnabled);
@@ -101,7 +101,7 @@ namespace Nozomi.Service.Services.Requests
             if (req != null)
             {
                 req.ModifiedAt = req.ModifiedAt.Add(duration);
-
+                
                 _unitOfWork.GetRepository<Request>().Update(req);
                 _unitOfWork.Commit();
 
