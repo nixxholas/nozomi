@@ -45,6 +45,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
     public class HttpGetRequestSyncingService : BaseProcessingService<HttpGetRequestSyncingService>,
         IHttpGetRequestSyncingService
     {
+        private readonly string _name = "HttpGetCurrencyPairRequestSyncingService";
         private readonly HttpClient _httpClient = new HttpClient();
         private readonly IRequestComponentService _requestComponentService;
         private readonly IRequestEvent _requestEvent;
@@ -74,6 +75,11 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
                     // the ones we want to poll
                     var requests = _requestEvent
                         .GetAllByRequestTypeUniqueToURL(RequestType.HttpGet);
+                    
+                    #if DEBUG
+                    // Check all this crap bro
+                    var testRequests = requests.Values.ToList();
+                    #endif
 
                     // Iterate the requests
                     // NOTE: Let's not call a parallel loop since HttpClients might tend to result in memory leaks.
@@ -83,12 +89,17 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
                         if (await ProcessRequest(cpRequest.Value))
                         {
                             // TODO: Broadcasting
+                            _logger.LogInformation($"[{_name}] GET requested processed successfully: {cpRequest.Key}");
+                        }
+                        else
+                        {
+                            _logger.LogInformation($"[{_name}] Unable to process: {cpRequest.Key}");
                         }
                     }
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogCritical("[HttpGetCurrencyPairRequestSyncingService]: " + ex);
+                    _logger.LogCritical($"[{_name}]: " + ex);
                 }
 
                 // No naps taken
@@ -111,6 +122,8 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
         {
             if (requests != null && requests.Count > 0)
             {
+                // Prepare a collection to store all the requests where
+                // every list contains the same details
                 var requestCollection = new List<List<T>>();
                 
                 // Let's group the requests again, by the property

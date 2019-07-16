@@ -113,7 +113,6 @@ namespace Nozomi.Service.Services
 
                     lastCompVal.Value = val.ToString(CultureInfo.InvariantCulture);
 
-                    _unitOfWork.GetRepository<RequestComponent>().Update(lastCompVal);
                     _unitOfWork.Commit();
 
                     return new NozomiResult<string>
