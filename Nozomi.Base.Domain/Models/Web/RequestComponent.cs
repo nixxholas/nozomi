@@ -48,20 +48,18 @@ namespace Nozomi.Data.Models.Web
         /// </summary>
         /// <param name="val"></param>
         /// <returns>true if the value is abnormal, false if not.</returns>
-        public bool HasAbnormalValue(decimal val)
+        public bool HasAbnormalNumericalValue(decimal val)
         {
-            // Make sure the current value in the db is parse-able
-            // and that anomaly ignorance is disabled.
-            if (decimal.TryParse(Value, out var currVal) && !AnomalyIgnorance)
-            {
+            if (AnomalyIgnorance 
                 // Always return true if the value has not been propagated yet.
-                if (currVal.Equals(0)) return false;
+                || Value.Equals(0))
+                return false;
+        
+            // Make sure the current value in the db is parse-able
+            if (!decimal.TryParse(Value, out var currVal)) return true;
                 
-                return !currVal.Equals(val);
-            }
-
-            // Always return false if the value has not been propagated yet.
-            return false;
+            // Return true if they match, 
+            return currVal.Equals(val);
         }
     }
 }

@@ -94,7 +94,7 @@ namespace Nozomi.Service.Services
 
                 // Anomaly Detection
                 // Let's make it more efficient by checking if the price has changed
-                if (lastCompVal != null && !lastCompVal.HasAbnormalValue(val))
+                if (lastCompVal != null && !lastCompVal.HasAbnormalNumericalValue(val))
                 {
                     if (!string.IsNullOrEmpty(lastCompVal.Value))
                     {
