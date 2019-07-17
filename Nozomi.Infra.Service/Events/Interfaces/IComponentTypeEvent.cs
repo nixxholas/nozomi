@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 
-namespace Nozomi.Service.Services.Enumerators.Interfaces
+namespace Nozomi.Service.Events.Interfaces
 {
-    public interface IComponentTypeService
+    public interface IComponentTypeEvent
     {
         ICollection<KeyValuePair<string, int>> All();
     }

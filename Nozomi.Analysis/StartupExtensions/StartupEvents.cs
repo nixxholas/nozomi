@@ -14,6 +14,7 @@ namespace Nozomi.Analysis.StartupExtensions
     {
         public static void ConfigureEvents(this IServiceCollection services)
         {
+            services.AddScoped<IComponentTypeEvent, ComponentTypeEvent>();
             services.AddScoped<ICurrencyEvent, CurrencyEvent>();
             services.AddScoped<ICurrencyPairEvent, CurrencyPairEvent>();
             services.AddScoped<ICurrencyTypeAdminEvent, CurrencyTypeAdminEvent>();

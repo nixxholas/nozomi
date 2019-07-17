@@ -5,15 +5,15 @@ using Nozomi.Data.Models.Currency;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Data;
-using Nozomi.Service.Services.Enumerators.Interfaces;
+using Nozomi.Service.Events.Interfaces;
 
-namespace Nozomi.Service.Services.Enumerators
+namespace Nozomi.Service.Events
 {
-    public class ComponentTypeService : BaseService<ComponentTypeService, NozomiDbContext>, IComponentTypeService
+    public class ComponentTypeEvent : BaseService<ComponentTypeEvent, NozomiDbContext>, IComponentTypeEvent
     {
         private readonly ICollection<KeyValuePair<string, int>> _componentTypeMap;
 
-        public ComponentTypeService(ILogger<ComponentTypeService> logger,
+        public ComponentTypeEvent(ILogger<ComponentTypeEvent> logger,
             IUnitOfWork<NozomiDbContext> unitOfWork) : base(logger, unitOfWork)
         {
             _componentTypeMap = new List<KeyValuePair<string, int>>();

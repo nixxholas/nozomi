@@ -4,6 +4,8 @@ using Nozomi.Infra.Admin.Service.Services;
 using Nozomi.Infra.Admin.Service.Services.Interfaces;
 using Nozomi.Infra.Analysis.Service.Services;
 using Nozomi.Infra.Analysis.Service.Services.Interfaces;
+using Nozomi.Service.Events;
+using Nozomi.Service.Events.Interfaces;
 using Nozomi.Service.Identity.Handlers;
 using Nozomi.Service.Identity.Services;
 using Nozomi.Service.Identity.Services.Interfaces;
@@ -35,7 +37,6 @@ namespace Nozomi.Analysis.StartupExtensions
             services.AddTransient<ICurrencySourceService, CurrencySourceService>();
 
             // Singleton service injections for in-memory-related processes.
-            services.AddScoped<IComponentTypeService, ComponentTypeService>();
             services.AddScoped<ICurrencyPairTypeService, CurrencyPairTypeService>();
             services.AddScoped<IRequestPropertyTypeService, RequestPropertyTypeService>();
             services.AddScoped<IRequestTypeService, RequestTypeService>();
