@@ -25,6 +25,7 @@
     "axios": "^0.18.0",
     "buefy": "^0.7.10",
     "core-js": "^2.5.3",
+    "lightweight-charts": "^1.0.1",
     "vue": "^2.6.10",
     "vue-router": "^3.0.3",
     "vue-server-renderer": "^2.6.10",
