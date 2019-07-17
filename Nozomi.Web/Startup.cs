@@ -1,9 +1,13 @@
+using System;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SpaServices.Webpack;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Nozomi.Repo.Data;
+using Nozomi.Repo.Identity.Data;
 using Nozomi.Web.Providers;
 
 namespace Nozomi.Web
@@ -20,6 +24,52 @@ namespace Nozomi.Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+             // Environment Inclusion
+            var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+
+            if (!string.IsNullOrEmpty(env) && !env.Equals("production", StringComparison.OrdinalIgnoreCase))
+            {
+                // Greet the beloved dev
+                Console.WriteLine(@"Welcome to the dev environment, your machine is named: " + Environment.MachineName);
+
+                // Postgres DB Setup
+                var str = Configuration.GetConnectionString("Local:" + @Environment.MachineName);
+
+                services
+                    .AddEntityFrameworkNpgsql()
+                    .AddDbContext<NozomiDbContext>(options =>
+                {
+                    options.UseNpgsql(str);
+                    options.EnableSensitiveDataLogging(false);
+                    options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
+                },
+                    ServiceLifetime.Transient);
+
+                services
+                    .AddEntityFrameworkNpgsql()
+                    .AddDbContext<NozomiAuthContext>(options =>
+                {
+                    options.UseNpgsql(Configuration.GetConnectionString("LocalAuth:" + Environment.MachineName));
+                    options.EnableSensitiveDataLogging(false);
+                });
+            }
+            else
+            {
+                // Database
+                services.AddDbContext<NozomiDbContext>(options =>
+                {
+                    options.UseNpgsql(Configuration["NozomiDb"]);
+                    options.EnableSensitiveDataLogging(false);
+                    options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
+                }, ServiceLifetime.Transient);
+
+                services.AddDbContext<NozomiAuthContext>(options =>
+                {
+                    options.UseNpgsql(Configuration["NozomiAuthDb"]);
+                    options.EnableSensitiveDataLogging(false);
+                });
+            }
+
             // Add framework services.
             services.AddMvc()
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
