@@ -1,4 +1,6 @@
 import Vue from 'vue'
+import Buefy from 'buefy'
+import 'buefy/dist/buefy.css'
 import axios from 'axios'
 import router from './router/index'
 import store from './store'
@@ -7,17 +9,20 @@ import App from 'components/app-root'
 import { FontAwesomeIcon } from './icons'
 
 // Registration of global components
-Vue.component('icon', FontAwesomeIcon)
+Vue.component('icon', FontAwesomeIcon);
 
-Vue.prototype.$http = axios
+// Registration of Buefy
+Vue.use(Buefy);
 
-sync(store, router)
+Vue.prototype.$http = axios;
+
+sync(store, router);
 
 const app = new Vue({
   store,
   router,
   ...App
-})
+});
 
 export {
   app,
