@@ -1,4 +1,4 @@
-namespace Nozomi.Ticker.Controllers
+namespace Nozomi.Preprocessing
 {
     public static class GlobalApiVariables
     {
