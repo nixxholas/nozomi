@@ -21,7 +21,9 @@
     "update-packages": "npx npm-check -u"
   },
   "dependencies": {
+    "aspnet-webpack": "^3.0.0",
     "axios": "^0.18.0",
+    "buefy": "^0.7.10",
     "core-js": "^2.5.3",
     "vue": "^2.6.10",
     "vue-router": "^3.0.3",
@@ -50,7 +52,6 @@
     "@fortawesome/free-brands-svg-icons": "^5.7.0",
     "@fortawesome/free-solid-svg-icons": "^5.7.0",
     "@fortawesome/vue-fontawesome": "^0.1.5",
-    "aspnet-webpack": "^3.0.0",
     "babel-eslint": "^10.0.1",
     "babel-loader": "^8.0.5",
     "bootstrap": "^4.0.0",
