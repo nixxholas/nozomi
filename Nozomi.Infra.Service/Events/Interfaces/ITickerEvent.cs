@@ -13,6 +13,8 @@ namespace Nozomi.Service.Events.Interfaces
     {   
         ICollection<CurrencyTickerPair> GetCurrencyTickerPairs(string currencyAbbrv);
         
+        Task<NozomiResult<ICollection<UniqueTickerResponse>>> GetAll(int index);
+        
         Task<NozomiResult<TickerByExchangeResponse>> GetById(long id);
 
         ICollection<TickerPairResponse> GetAllTickerPairSources();
