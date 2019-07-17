@@ -21,7 +21,7 @@ library.add(
   faFontAwesome,
   faMicrosoft,
   faVuejs
-)
+);
 
 export {
   FontAwesomeIcon

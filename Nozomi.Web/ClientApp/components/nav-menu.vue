@@ -18,36 +18,18 @@
 
     <div id="navbarMenu" class="navbar-menu">
       <div class="navbar-start">
-        <a class="navbar-item" href="https://bulma.io/">
-          Home
+        <a class="navbar-item" href="https://nozomi.one/docs/">
+          API
         </a>
+
         <div class="navbar-item has-dropdown is-hoverable">
           <a class="navbar-link" href="https://bulma.io/documentation/overview/start/">
-            Docs
+            Metrics
           </a>
           <div class="navbar-dropdown is-boxed">
-            <a class="navbar-item" href="https://bulma.io/documentation/overview/start/">
-              Overview
-            </a>
-            <a class="navbar-item" href="https://bulma.io/documentation/modifiers/syntax/">
-              Modifiers
-            </a>
-            <a class="navbar-item" href="https://bulma.io/documentation/columns/basics/">
-              Columns
-            </a>
-            <a class="navbar-item" href="https://bulma.io/documentation/layout/container/">
-              Layout
-            </a>
-            <a class="navbar-item" href="https://bulma.io/documentation/form/general/">
-              Form
-            </a>
-            <hr class="navbar-divider">
-            <a class="navbar-item" href="https://bulma.io/documentation/elements/box/">
-              Elements
-            </a>
-            <a class="navbar-item is-active" href="https://bulma.io/documentation/components/breadcrumb/">
-              Components
-            </a>
+            <router-link class="navbar-item" :to="route.path" v-for="(route, index) in routes" :key="index">
+              <icon :icon="route.icon" class="mr-2 menu-icon" /><span>{{ route.display }}</span>
+            </router-link>
           </div>
         </div>
       </div>
@@ -60,7 +42,7 @@
               <span class="icon">
                 <i class="fab fa-twitter"></i>
               </span>
-                <span>
+              <span>
                 Tweet
               </span>
               </a>
@@ -99,14 +81,4 @@
 </script>
 
 <style scoped>
-    .slide-enter-active, .slide-leave-active {
-    transition: max-height .35s
-    }
-    .slide-enter, .slide-leave-to {
-    max-height: 0px;
-    }
-
-    .slide-enter-to, .slide-leave {
-    max-height: 20em;
-    }
 </style>
