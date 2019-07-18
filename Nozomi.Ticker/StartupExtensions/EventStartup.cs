@@ -14,6 +14,8 @@ using Nozomi.Service.Identity.Events;
 using Nozomi.Service.Identity.Events.Auth;
 using Nozomi.Service.Identity.Events.Auth.Interfaces;
 using Nozomi.Service.Identity.Events.Interfaces;
+using Nozomi.Service.Services.Enumerators;
+using Nozomi.Service.Services.Enumerators.Interfaces;
 
 namespace Nozomi.Ticker.StartupExtensions
 {
@@ -30,6 +32,7 @@ namespace Nozomi.Ticker.StartupExtensions
             services.AddScoped<IComponentTypeEvent, ComponentTypeEvent>();
             services.AddScoped<ICurrencyEvent, CurrencyEvent>();
             services.AddScoped<ICurrencyPairEvent, CurrencyPairEvent>();
+            services.AddScoped<ICurrencyPairTypeEvent, CurrencyPairTypeEvent>();
             services.AddScoped<ICurrencyPropertyAdminEvent, CurrencyPropertyAdminEvent>();
             services.AddScoped<ICurrencyTypeAdminEvent, CurrencyTypeAdminEvent>();
             services.AddScoped<IRequestEvent, RequestEvent>();

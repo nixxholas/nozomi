@@ -9,11 +9,11 @@ using Nozomi.Service.Services.Enumerators.Interfaces;
 
 namespace Nozomi.Service.Services.Enumerators
 {
-    public class CurrencyPairTypeService : BaseService<CurrencyPairTypeService, NozomiDbContext>, ICurrencyPairTypeService
+    public class CurrencyPairTypeEvent : BaseService<CurrencyPairTypeEvent, NozomiDbContext>, ICurrencyPairTypeEvent
     {
         private readonly ICollection<KeyValuePair<string, int>> _currencyPairTypeMap;
 
-        public CurrencyPairTypeService(ILogger<CurrencyPairTypeService> logger,
+        public CurrencyPairTypeEvent(ILogger<CurrencyPairTypeEvent> logger,
             IUnitOfWork<NozomiDbContext> unitOfWork) : base(logger, unitOfWork)
         {
             _currencyPairTypeMap = new List<KeyValuePair<string, int>>();
