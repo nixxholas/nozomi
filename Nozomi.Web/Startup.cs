@@ -8,6 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Nozomi.Repo.Data;
 using Nozomi.Repo.Identity.Data;
+using Nozomi.Web.StartupExtensions;
 
 namespace Nozomi.Web
 {
@@ -73,7 +74,8 @@ namespace Nozomi.Web
             services.AddMvc()
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
-
+            // Service layer injections
+            services.ConfigureEvents();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
