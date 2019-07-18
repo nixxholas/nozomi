@@ -5,11 +5,12 @@ using Nozomi.Base.Identity.Models.Identity;
 using Nozomi.Preprocessing;
 using Nozomi.Service.Identity.Managers;
 
-namespace Nozomi.Ticker.Controllers.APIs.v1
+namespace Nozomi.Web.Controllers.APIs.v1
 {
-    [Route("/api/[controller]/[action]")]
+    [Area("api")]
+    [Route("[controller]/[action]")]
     [ApiVersion(GlobalApiVariables.V1_MAJOR_VERSION, Deprecated = false)]
-    public class BaseController<T> : ControllerBase where T : class
+    public class BaseController<T> : Controller where T : class
     {
         private readonly NozomiUserManager _userManager;
         protected readonly ILogger<T> _logger;

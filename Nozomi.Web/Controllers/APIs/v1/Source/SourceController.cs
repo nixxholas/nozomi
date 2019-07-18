@@ -1,17 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data;
-using Nozomi.Data.AreaModels.v1.Source;
 using Nozomi.Data.ResponseModels.Currency;
 using Nozomi.Service.Events.Interfaces;
 using Nozomi.Service.Identity.Managers;
-using Nozomi.Service.Services.Interfaces;
 
-namespace Nozomi.Ticker.Controllers.APIs.v1.Source
+namespace Nozomi.Web.Controllers.APIs.v1.Source
 {
     public class SourceController : BaseController<SourceController>, ISourceController
     {

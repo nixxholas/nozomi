@@ -3,9 +3,8 @@ using Microsoft.Extensions.Logging;
 using Nozomi.Data;
 using Nozomi.Service.Events.Interfaces;
 using Nozomi.Service.Identity.Managers;
-using Nozomi.Service.Services.Enumerators.Interfaces;
 
-namespace Nozomi.Ticker.Controllers.APIs.v1.ComponentType
+namespace Nozomi.Web.Controllers.APIs.v1.ComponentType
 {
     public class ComponentTypeController : BaseController<ComponentTypeController>, IComponentTypeController
     {

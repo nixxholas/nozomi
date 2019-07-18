@@ -1,17 +1,10 @@
-using System.Linq;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data;
-using Nozomi.Data.AreaModels.v1.CurrencyPairRequest;
-using Nozomi.Data.AreaModels.v1.RequestComponent;
-using Nozomi.Data.AreaModels.v1.Requests;
-using Nozomi.Data.Models.Web;
 using Nozomi.Service.Events.Interfaces;
 using Nozomi.Service.Identity.Managers;
-using Nozomi.Service.Services.Requests.Interfaces;
 
-namespace Nozomi.Ticker.Controllers.APIs.v1.Request
+namespace Nozomi.Web.Controllers.APIs.v1.Request
 {
     [ApiController]
     public class RequestController : BaseController<RequestController>, IRequestController

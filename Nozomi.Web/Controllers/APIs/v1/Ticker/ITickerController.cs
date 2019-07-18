@@ -4,7 +4,7 @@ using Nozomi.Data;
 using Nozomi.Data.ResponseModels.Ticker;
 using Nozomi.Data.ResponseModels.TickerPair;
 
-namespace Nozomi.Ticker.Controllers.APIs.v1.Ticker
+namespace Nozomi.Web.Controllers.APIs.v1.Ticker
 {
     public interface ITickerController
     {

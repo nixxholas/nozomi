@@ -1,18 +1,13 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data;
-using Nozomi.Data.AreaModels.v1.CurrencyPair;
 using Nozomi.Service.Events.Interfaces;
-using Nozomi.Service.Hubs;
 using Nozomi.Service.Identity.Managers;
-using Nozomi.Service.Services.Interfaces;
 
-namespace Nozomi.Ticker.Controllers.APIs.v1.CurrencyPair
+namespace Nozomi.Web.Controllers.APIs.v1.CurrencyPair
 {
     [ApiController]
     public class CurrencyPairController : BaseController<CurrencyPairController>, ICurrencyPairController

@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -8,14 +7,14 @@ using Nozomi.Data;
 using Nozomi.Service.Events.Analysis.Interfaces;
 using Nozomi.Service.Identity.Managers;
 
-namespace Nozomi.Ticker.Controllers.APIs.v1.AnalysedHistoricItem
+namespace Nozomi.Web.Controllers.APIs.v1.AnalysedHistoricItem
 {
     public class AnalysedHistoricItemController : BaseController<AnalysedHistoricItemController>, IAnalysedHistoricItemController
     {
         private readonly IAnalysedHistoricItemEvent _analysedHistoricItemEvent;
-        
-        public AnalysedHistoricItemController(ILogger<AnalysedHistoricItemController> logger, 
-            NozomiUserManager nozomiUserManager, IAnalysedHistoricItemEvent analysedHistoricItemEvent) 
+
+        public AnalysedHistoricItemController(ILogger<AnalysedHistoricItemController> logger,
+            NozomiUserManager nozomiUserManager, IAnalysedHistoricItemEvent analysedHistoricItemEvent)
             : base(logger, nozomiUserManager)
         {
             _analysedHistoricItemEvent = analysedHistoricItemEvent;
