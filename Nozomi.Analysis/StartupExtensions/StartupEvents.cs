@@ -7,6 +7,8 @@ using Nozomi.Service.Events;
 using Nozomi.Service.Events.Analysis;
 using Nozomi.Service.Events.Analysis.Interfaces;
 using Nozomi.Service.Events.Interfaces;
+using Nozomi.Service.Services.Enumerators;
+using Nozomi.Service.Services.Enumerators.Interfaces;
 
 namespace Nozomi.Analysis.StartupExtensions
 {
@@ -17,6 +19,7 @@ namespace Nozomi.Analysis.StartupExtensions
             services.AddScoped<IComponentTypeEvent, ComponentTypeEvent>();
             services.AddScoped<ICurrencyEvent, CurrencyEvent>();
             services.AddScoped<ICurrencyPairEvent, CurrencyPairEvent>();
+            services.AddScoped<ICurrencyPairTypeEvent, CurrencyPairTypeEvent>();
             services.AddScoped<ICurrencyTypeAdminEvent, CurrencyTypeAdminEvent>();
             services.AddScoped<IRequestEvent, RequestEvent>();
             services.AddScoped<IRequestComponentEvent, RequestComponentEvent>();
