@@ -1,11 +1,15 @@
 using System;
+using System.Net;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SpaServices.Webpack;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Nozomi.Preprocessing;
 using Nozomi.Repo.Data;
 using Nozomi.Repo.Identity.Data;
 using Nozomi.Web.StartupExtensions;
@@ -79,6 +83,9 @@ namespace Nozomi.Web
 
             // Service layer injections
             services.ConfigureEvents();
+
+            // Swashbuckle Swagger
+            services.ConfigureSwagger();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -92,6 +99,27 @@ namespace Nozomi.Web
                 app.UseWebpackDevMiddleware(new WebpackDevMiddlewareOptions
                 {
                     HotModuleReplacement = true,
+                });
+
+                app.UseExceptionHandler(appError =>
+                {
+                    appError.Run(async context =>
+                    {
+                        context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                        context.Response.ContentType = "application/json";
+
+                        var contextFeature = context.Features.Get<IExceptionHandlerFeature>();
+                        if(contextFeature != null)
+                        {
+                            Console.WriteLine($"Something went wrong: {contextFeature.Error}");
+
+                            await context.Response.WriteAsync(new
+                            {
+                                StatusCode = context.Response.StatusCode,
+                                Message = "Internal Server Error."
+                            }.ToString());
+                        }
+                    });
                 });
             }
             else
@@ -118,6 +146,18 @@ namespace Nozomi.Web
                 routes.MapRoute(
                     name: "Areas",
                     template: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
+            });
+
+            // Enable middleware to serve generated Swagger as a JSON endpoint.
+            app.UseSwagger();
+
+            // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.),
+            // specifying the Swagger JSON endpoint.
+            app.UseSwaggerUI(c =>
+            {
+                // https://stackoverflow.com/questions/39116047/how-to-change-base-url-of-swagger-in-asp-net-core
+                c.RoutePrefix = "docs";
+                c.SwaggerEndpoint("/swagger/" + GlobalApiVariables.CURRENT_API_VERSION + "/swagger.json", "Nozomi API");
             });
         }
     }
