@@ -43,12 +43,12 @@ namespace Nozomi.Ticker.StartupExtensions
             services.AddTransient<IRequestService, RequestService>();
             services.AddTransient<IRcdHistoricItemService, RcdHistoricItemService>();
             services.AddTransient<IRequestLogService, RequestLogService>();
+            services.AddScoped<IRequestTypeEvent, RequestTypeEvent>();
             services.AddTransient<ISourceService, SourceService>();
             services.AddTransient<ITickerService, TickerService>();
             services.AddTransient<ICurrencySourceService, CurrencySourceService>();
 
             // Singleton service injections for in-memory-related processes.
-            services.AddScoped<IRequestTypeService, RequestTypeService>();
             services.AddScoped<IStripeService, StripeService>();
             
             // Admin Service Injections

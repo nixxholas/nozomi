@@ -9,11 +9,11 @@ using Nozomi.Service.Services.Enumerators.Interfaces;
 
 namespace Nozomi.Service.Services.Enumerators
 {
-    public class RequestTypeService : BaseService<RequestTypeService, NozomiDbContext>, IRequestTypeService
+    public class RequestTypeEvent : BaseService<RequestTypeEvent, NozomiDbContext>, IRequestTypeEvent
     {
         private readonly ICollection<KeyValuePair<string, int>> _requestTypeMap;
 
-        public RequestTypeService(ILogger<RequestTypeService> logger,
+        public RequestTypeEvent(ILogger<RequestTypeEvent> logger,
             IUnitOfWork<NozomiDbContext> unitOfWork) : base(logger, unitOfWork)
         {
             _requestTypeMap = new List<KeyValuePair<string, int>>();

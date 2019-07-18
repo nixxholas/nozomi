@@ -24,6 +24,7 @@ namespace Nozomi.Analysis.StartupExtensions
             services.AddScoped<IRequestEvent, RequestEvent>();
             services.AddScoped<IRequestComponentEvent, RequestComponentEvent>();
             services.AddScoped<IRequestPropertyTypeEvent, RequestPropertyTypeEvent>();
+            services.AddScoped<IRequestTypeEvent, RequestTypeEvent>();
             services.AddScoped<ISourceEvent, SourceEvent>();
             services.AddScoped<ITickerEvent, TickerEvent>();
             
