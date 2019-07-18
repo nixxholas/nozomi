@@ -8,7 +8,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Nozomi.Repo.Data;
 using Nozomi.Repo.Identity.Data;
-using Nozomi.Web.Providers;
 
 namespace Nozomi.Web
 {
@@ -74,8 +73,7 @@ namespace Nozomi.Web
             services.AddMvc()
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
-            // Simple example with dependency injection for a data provider.
-            services.AddSingleton<IWeatherProvider, WeatherProviderFake>();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
