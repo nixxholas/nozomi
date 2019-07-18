@@ -74,6 +74,9 @@ namespace Nozomi.Web
             services.AddMvc()
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
+            // UoW-Repository injection
+            services.ConfigureRepoLayer();
+
             // Service layer injections
             services.ConfigureEvents();
         }
