@@ -37,7 +37,6 @@ namespace Nozomi.Analysis.StartupExtensions
             services.AddTransient<ICurrencySourceService, CurrencySourceService>();
 
             // Singleton service injections for in-memory-related processes.
-            services.AddScoped<IRequestPropertyTypeService, RequestPropertyTypeService>();
             services.AddScoped<IRequestTypeService, RequestTypeService>();
             
             // Stripe

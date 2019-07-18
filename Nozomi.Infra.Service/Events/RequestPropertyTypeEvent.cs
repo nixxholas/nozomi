@@ -9,12 +9,12 @@ using Nozomi.Service.Services.Enumerators.Interfaces;
 
 namespace Nozomi.Service.Services.Enumerators
 {
-    public class RequestPropertyTypeService : BaseService<RequestPropertyTypeService, NozomiDbContext>, 
-        IRequestPropertyTypeService
+    public class RequestPropertyTypeEvent : BaseService<RequestPropertyTypeEvent, NozomiDbContext>, 
+        IRequestPropertyTypeEvent
     {
         private readonly ICollection<KeyValuePair<string, int>> _requestPropertyTypeMap;
 
-        public RequestPropertyTypeService(ILogger<RequestPropertyTypeService> logger,
+        public RequestPropertyTypeEvent(ILogger<RequestPropertyTypeEvent> logger,
             IUnitOfWork<NozomiDbContext> unitOfWork) : base(logger, unitOfWork)
         {
             _requestPropertyTypeMap = new List<KeyValuePair<string, int>>();

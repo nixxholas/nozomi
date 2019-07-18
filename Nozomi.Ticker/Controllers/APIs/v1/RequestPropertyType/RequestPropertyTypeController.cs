@@ -8,18 +8,18 @@ namespace Nozomi.Ticker.Controllers.APIs.v1.RequestPropertyType
 {
     public class RequestPropertyTypeController : BaseController<RequestPropertyTypeController>, IRequestPropertyTypeController
     {
-        private readonly IRequestPropertyTypeService _requestPropertyTypeService;
+        private readonly IRequestPropertyTypeEvent _requestPropertyTypeEvent;
         
         public RequestPropertyTypeController(ILogger<RequestPropertyTypeController> logger, NozomiUserManager userManager,
-            IRequestPropertyTypeService requestPropertyTypeService) : base(logger, userManager)
+            IRequestPropertyTypeEvent requestPropertyTypeEvent) : base(logger, userManager)
         {
-            _requestPropertyTypeService = requestPropertyTypeService;
+            _requestPropertyTypeEvent = requestPropertyTypeEvent;
         }
 
         [HttpGet]
         public NozomiResult<JsonResult> All()
         {
-            return new NozomiResult<JsonResult>(new JsonResult(_requestPropertyTypeService.All()));
+            return new NozomiResult<JsonResult>(new JsonResult(_requestPropertyTypeEvent.All()));
         }
     }
 }
