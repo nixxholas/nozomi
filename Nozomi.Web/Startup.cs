@@ -86,6 +86,9 @@ namespace Nozomi.Web
 
             // Swashbuckle Swagger
             services.ConfigureSwagger();
+
+            // Auth
+            services.ConfigureNozomiAuth();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
