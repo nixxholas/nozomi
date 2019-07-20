@@ -8,11 +8,11 @@ using Nozomi.Service.Services.Enumerators.Interfaces;
 
 namespace Nozomi.Web.Controllers.APIs.v1.RequestType
 {
-    public class RequestTypeApiController : BaseApiController<RequestTypeApiController>, IRequestTypeController
+    public class RequestTypeController : BaseApiController<RequestTypeController>, IRequestTypeController
     {
         private readonly IRequestTypeEvent _requestTypeEvent;
 
-        public RequestTypeApiController(ILogger<RequestTypeApiController> logger, UserManager<User> userManager,
+        public RequestTypeController(ILogger<RequestTypeController> logger, UserManager<User> userManager,
             IRequestTypeEvent requestTypeEvent) : base(logger, userManager)
         {
             _requestTypeEvent = requestTypeEvent;

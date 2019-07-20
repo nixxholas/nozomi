@@ -12,11 +12,11 @@ using Nozomi.Service.Identity.Managers;
 
 namespace Nozomi.Web.Controllers.APIs.v1.Ticker
 {
-    public class TickerApiController : BaseApiController<TickerApiController>, ITickerController
+    public class TickerController : BaseApiController<TickerController>, ITickerController
     {
         private readonly ITickerEvent _tickerEvent;
 
-        public TickerApiController(ILogger<TickerApiController> logger, UserManager<User> userManager,
+        public TickerController(ILogger<TickerController> logger, UserManager<User> userManager,
             ITickerEvent tickerEvent) : base(logger, userManager)
         {
             _tickerEvent = tickerEvent;
