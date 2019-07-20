@@ -1,18 +1,19 @@
-const path = require('path')
-const webpack = require('webpack')
+const path = require('path');
+const webpack = require('webpack');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const OptimizeCSSPlugin = require('optimize-css-assets-webpack-plugin')
-const bundleOutputDir = './wwwroot/dist'
-const VueLoaderPlugin = require('vue-loader/lib/plugin')
+const OptimizeCSSPlugin = require('optimize-css-assets-webpack-plugin');
+const bundleOutputDir = './wwwroot/dist';
+const VueLoaderPlugin = require('vue-loader/lib/plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = () => {
-  console.log('Building for \x1b[33m%s\x1b[0m', process.env.NODE_ENV)
+  console.log('Building for \x1b[33m%s\x1b[0m', process.env.NODE_ENV);
 
-  const isDevBuild = !(process.env.NODE_ENV && process.env.NODE_ENV === 'production')
-  
+  const isDevBuild = !(process.env.NODE_ENV && process.env.NODE_ENV === 'production');
+
   const extractCSS = new MiniCssExtractPlugin({
     filename: 'style.css'
-  })
+  });
 
   return [{
     mode: (isDevBuild ? 'development' :'production'  ),
@@ -48,6 +49,10 @@ module.exports = () => {
     },
     plugins: [
       new VueLoaderPlugin(),
+      // https://github.com/webpack-contrib/copy-webpack-plugin
+      new CopyWebpackPlugin([
+        { from: 'ClientApp/assets', to: '../assets' }
+      ]),
       new webpack.DllReferencePlugin({
         context: __dirname,
         manifest: require('./wwwroot/dist/vendor-manifest.json')
@@ -68,4 +73,4 @@ module.exports = () => {
       })
     ])
   }]
-}
+};

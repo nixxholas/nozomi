@@ -15,7 +15,8 @@
         aria-current-label="Current page">
         <template slot-scope="props">
           <b-table-column field="name" label="Name" sortable>
-<!--            <img :src="props.row.logoPath" class="mr-1" style="width: 24px; height: 24px; vertical-align: bottom;"/>-->
+            <img v-if="props.row.logoPath != null"
+                 :src="props.row.logoPath" class="mr-1" style="width: 24px; height: 24px; vertical-align: bottom;"/>
             {{ props.row.name }}
           </b-table-column>
           <b-table-column field="marketCap" label="Market Cap" sortable>
@@ -25,7 +26,6 @@
             {{ props.row.averagePrice | numeralFormat('$0[.]00') }}
           </b-table-column>
           <b-table-column field="chart" label="Trend" sortable>
-            {{props.row}}
             <trend
               :data="props.row.historical"
               :gradient="['#6fa8dc', '#42b983', '#2c3e50']"

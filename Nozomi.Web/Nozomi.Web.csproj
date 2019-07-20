@@ -23,6 +23,14 @@
   <ItemGroup>
     <ProjectReference Include="..\Nozomi.Infra.Service\Nozomi.Infra.Service.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="ClientApp\assets\include\ajax\autocomplete-data-for-documentation-search.json" />
+    <_ContentIncludedByDefault Remove="ClientApp\assets\include\ajax\autocomplete-data-for-starter-search.json" />
+    <_ContentIncludedByDefault Remove="ClientApp\assets\vendor\jquery-ui\.bower.json" />
+    <_ContentIncludedByDefault Remove="ClientApp\assets\vendor\jquery-ui\bower.json" />
+    <_ContentIncludedByDefault Remove="ClientApp\assets\vendor\jquery-ui\component.json" />
+    <_ContentIncludedByDefault Remove="ClientApp\assets\vendor\jquery-ui\composer.json" />
+  </ItemGroup>
 
   <Target Name="RunWebpack" AfterTargets="ComputeFilesToPublish">
     <!-- As part of publishing, ensure the JS resources are freshly built in production mode -->

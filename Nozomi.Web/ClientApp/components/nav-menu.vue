@@ -18,16 +18,18 @@
 
     <div id="navbarMenu" class="navbar-menu">
       <div class="navbar-start">
-        <a class="navbar-item" href="https://nozomi.one/docs/">
-          API
-        </a>
-
         <div class="navbar-item has-dropdown is-hoverable">
-          <a class="navbar-link" href="https://bulma.io/documentation/overview/start/">
+          <span class="navbar-link">
             Metrics
-          </a>
+          </span>
           <div class="navbar-dropdown is-boxed">
-            <router-link class="navbar-item" :to="route.path" v-for="(route, index) in routes" :key="index">
+            <a class="navbar-item" href="/docs">
+              <icon :icon="['fa', 'atlas']" class="mr-2 menu-icon" />
+              <span>Documentation</span>
+            </a>
+            <router-link class="navbar-item" :to="route.path" v-for="(route, index) in routes"
+                         v-if="index > 0"
+                         :key="index">
               <icon :icon="route.icon" class="mr-2 menu-icon" /><span>{{ route.display }}</span>
             </router-link>
           </div>
@@ -35,28 +37,28 @@
       </div>
 
       <div class="navbar-end">
-        <div class="navbar-item">
-          <div class="field is-grouped">
-            <p class="control">
-              <a class="bd-tw-button button" data-social-network="Twitter" data-social-action="tweet" data-social-target="http://localhost:4000" target="_blank" href="https://twitter.com/intent/tweet?text=Bulma: a modern CSS framework based on Flexbox&amp;hashtags=bulmaio&amp;url=http://localhost:4000&amp;via=jgthms">
-              <span class="icon">
-                <i class="fab fa-twitter"></i>
-              </span>
-              <span>
-                Tweet
-              </span>
-              </a>
-            </p>
-            <p class="control">
-              <a class="button is-primary" href="https://github.com/jgthms/bulma/releases/download/0.7.5/bulma-0.7.5.zip">
-              <span class="icon">
-                <i class="fas fa-download"></i>
-              </span>
-                <span>Download</span>
-              </a>
-            </p>
-          </div>
-        </div>
+<!--        <div class="navbar-item">-->
+<!--          <div class="field is-grouped">-->
+<!--            <p class="control">-->
+<!--              <a class="bd-tw-button button" data-social-network="Twitter" data-social-action="tweet" data-social-target="http://localhost:4000" target="_blank" href="https://twitter.com/intent/tweet?text=Bulma: a modern CSS framework based on Flexbox&amp;hashtags=bulmaio&amp;url=http://localhost:4000&amp;via=jgthms">-->
+<!--              <span class="icon">-->
+<!--                <i class="fab fa-twitter"></i>-->
+<!--              </span>-->
+<!--              <span>-->
+<!--                Tweet-->
+<!--              </span>-->
+<!--              </a>-->
+<!--            </p>-->
+<!--            <p class="control">-->
+<!--              <a class="button is-primary" href="https://github.com/jgthms/bulma/releases/download/0.7.5/bulma-0.7.5.zip">-->
+<!--              <span class="icon">-->
+<!--                <i class="fas fa-download"></i>-->
+<!--              </span>-->
+<!--                <span>Download</span>-->
+<!--              </a>-->
+<!--            </p>-->
+<!--          </div>-->
+<!--        </div>-->
       </div>
     </div>
   </nav>
