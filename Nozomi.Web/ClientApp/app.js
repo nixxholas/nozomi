@@ -2,6 +2,7 @@ import Vue from 'vue';
 import Buefy from 'buefy';
 import 'buefy/dist/buefy.css';
 import axios from 'axios';
+import VueNumerals from 'vue-numerals';
 import router from './router/index';
 import store from './store';
 import { sync } from 'vuex-router-sync';
@@ -13,6 +14,8 @@ Vue.component('icon', FontAwesomeIcon);
 
 // Registration of Buefy
 Vue.use(Buefy);
+// Registration of Vue Numerals
+Vue.use(VueNumerals); // default locale is 'en'
 
 // Registration of Axios
 // https://stackoverflow.com/questions/51374367/axios-is-not-defined-in-vue-js-cli
