@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Nozomi.Base.Identity.Models.Identity;
@@ -11,13 +12,13 @@ namespace Nozomi.Web.Controllers.APIs.v1
     [ApiVersion(GlobalApiVariables.V1_MAJOR_VERSION, Deprecated = false)]
     public class BaseApiController<T> : Controller where T : class
     {
-        private readonly NozomiUserManager _userManager;
+        private readonly UserManager<User> _userManager;
         protected readonly ILogger<T> _logger;
 
-        public BaseApiController(ILogger<T> logger, NozomiUserManager nozomiUserManager)
+        public BaseApiController(ILogger<T> logger, UserManager<User> userManager)
         {
             _logger = logger;
-            _userManager = nozomiUserManager;
+            _userManager = userManager;
         }
 
         protected Task<User> GetCurrentUserAsync()

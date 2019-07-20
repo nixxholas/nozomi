@@ -1,6 +1,8 @@
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Nozomi.Base.Identity.Models.Identity;
 using Nozomi.Data;
 using Nozomi.Data.Models.Web;
 using Nozomi.Service.Events.Interfaces;
@@ -9,12 +11,13 @@ using Swashbuckle.AspNetCore.Annotations;
 
 namespace Nozomi.Web.Controllers.APIs.v1.CurrencyPairComponent
 {
-    public class CurrencyPairComponentApiController : BaseApiController<CurrencyPairComponentApiController>, ICurrencyPairComponentController
+    public class CurrencyPairComponentApiController : BaseApiController<CurrencyPairComponentApiController>,
+        ICurrencyPairComponentController
     {
         private readonly IRequestComponentEvent _requestComponentEvent;
 
-        public CurrencyPairComponentApiController(ILogger<CurrencyPairComponentApiController> logger, NozomiUserManager userManager,
-            IRequestComponentEvent requestComponentEvent)
+        public CurrencyPairComponentApiController(ILogger<CurrencyPairComponentApiController> logger,
+            UserManager<User> userManager, IRequestComponentEvent requestComponentEvent)
             : base(logger, userManager)
         {
             _requestComponentEvent = requestComponentEvent;

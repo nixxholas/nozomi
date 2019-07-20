@@ -15,8 +15,8 @@ namespace Nozomi.Web.StartupExtensions
         {
             services.AddIdentity<User, Role>()
                 .AddEntityFrameworkStores<NozomiAuthContext>()
-                .AddUserManager<NozomiUserManager>()
-                .AddSignInManager<NozomiSignInManager>()
+                .AddUserManager<UserManager<User>>()
+                .AddSignInManager<SignInManager<User>>()
                 .AddDefaultTokenProviders();
 
             services.ConfigureApplicationCookie(options =>

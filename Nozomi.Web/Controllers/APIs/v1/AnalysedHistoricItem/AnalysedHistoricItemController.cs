@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Nozomi.Base.Identity.Models.Identity;
 using Nozomi.Data;
 using Nozomi.Service.Events.Analysis.Interfaces;
 using Nozomi.Service.Identity.Managers;
@@ -14,8 +16,8 @@ namespace Nozomi.Web.Controllers.APIs.v1.AnalysedHistoricItem
         private readonly IAnalysedHistoricItemEvent _analysedHistoricItemEvent;
 
         public AnalysedHistoricItemApiController(ILogger<AnalysedHistoricItemApiController> logger,
-            NozomiUserManager nozomiUserManager, IAnalysedHistoricItemEvent analysedHistoricItemEvent)
-            : base(logger, nozomiUserManager)
+            UserManager<User> userManager, IAnalysedHistoricItemEvent analysedHistoricItemEvent)
+            : base(logger, userManager)
         {
             _analysedHistoricItemEvent = analysedHistoricItemEvent;
         }

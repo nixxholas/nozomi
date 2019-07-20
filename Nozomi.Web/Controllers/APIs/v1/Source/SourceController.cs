@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Nozomi.Base.Identity.Models.Identity;
 using Nozomi.Data;
 using Nozomi.Data.ResponseModels.Currency;
 using Nozomi.Service.Events.Interfaces;
@@ -14,7 +16,7 @@ namespace Nozomi.Web.Controllers.APIs.v1.Source
     {
         private readonly ISourceEvent _sourceEvent;
 
-        public SourceApiController(ILogger<SourceApiController> logger, NozomiUserManager userManager,
+        public SourceApiController(ILogger<SourceApiController> logger, UserManager<User> userManager,
             ISourceEvent sourceEvent)
             : base(logger, userManager)
         {

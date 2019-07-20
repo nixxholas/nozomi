@@ -1,5 +1,7 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Nozomi.Base.Identity.Models.Identity;
 using Nozomi.Data;
 using Nozomi.Service.Identity.Managers;
 using Nozomi.Service.Services.Enumerators.Interfaces;
@@ -10,7 +12,7 @@ namespace Nozomi.Web.Controllers.APIs.v1.RequestPropertyType
     {
         private readonly IRequestPropertyTypeEvent _requestPropertyTypeEvent;
 
-        public RequestPropertyTypeApiController(ILogger<RequestPropertyTypeApiController> logger, NozomiUserManager userManager,
+        public RequestPropertyTypeApiController(ILogger<RequestPropertyTypeApiController> logger, UserManager<User> userManager,
             IRequestPropertyTypeEvent requestPropertyTypeEvent) : base(logger, userManager)
         {
             _requestPropertyTypeEvent = requestPropertyTypeEvent;
