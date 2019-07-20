@@ -7,11 +7,11 @@ using Nozomi.Service.Identity.Managers;
 namespace Nozomi.Web.Controllers.APIs.v1.Request
 {
     [ApiController]
-    public class RequestController : BaseController<RequestController>, IRequestController
+    public class RequestApiController : BaseApiController<RequestApiController>, IRequestController
     {
         private readonly IRequestEvent _requestEvent;
 
-        public RequestController(ILogger<RequestController> logger, NozomiUserManager userManager,
+        public RequestApiController(ILogger<RequestApiController> logger, NozomiUserManager userManager,
             IRequestEvent requestEvent) : base(logger, userManager)
         {
             _requestEvent = requestEvent;

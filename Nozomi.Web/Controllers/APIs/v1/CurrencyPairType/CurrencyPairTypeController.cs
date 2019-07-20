@@ -7,11 +7,11 @@ using Nozomi.Service.Services.Enumerators.Interfaces;
 namespace Nozomi.Web.Controllers.APIs.v1.CurrencyPairType
 {
     [ApiController]
-    public class CurrencyPairTypeController : BaseController<CurrencyPairTypeController>, ICurrencyPairTypeController
+    public class CurrencyPairTypeApiController : BaseApiController<CurrencyPairTypeApiController>, ICurrencyPairTypeController
     {
         private readonly ICurrencyPairTypeEvent _currencyPairTypeEvent;
 
-        public CurrencyPairTypeController(ILogger<CurrencyPairTypeController> logger, NozomiUserManager userManager,
+        public CurrencyPairTypeApiController(ILogger<CurrencyPairTypeApiController> logger, NozomiUserManager userManager,
             ICurrencyPairTypeEvent currencyPairTypeEvent) : base(logger, userManager)
         {
             _currencyPairTypeEvent = currencyPairTypeEvent;

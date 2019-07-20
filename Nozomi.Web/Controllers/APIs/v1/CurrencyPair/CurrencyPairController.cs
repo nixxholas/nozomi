@@ -10,14 +10,14 @@ using Nozomi.Service.Identity.Managers;
 namespace Nozomi.Web.Controllers.APIs.v1.CurrencyPair
 {
     [ApiController]
-    public class CurrencyPairController : BaseController<CurrencyPairController>, ICurrencyPairController
+    public class CurrencyPairApiController : BaseApiController<CurrencyPairApiController>, ICurrencyPairController
     {
         private readonly ICurrencyPairEvent _currencyPairEvent;
         private readonly ITickerEvent _tickerEvent;
 
-        public CurrencyPairController(NozomiUserManager userManager,
+        public CurrencyPairApiController(NozomiUserManager userManager,
             ICurrencyPairEvent currencyPairEvent, ITickerEvent tickerEvent,
-            ILogger<CurrencyPairController> logger)
+            ILogger<CurrencyPairApiController> logger)
             : base(logger, userManager)
         {
             _currencyPairEvent = currencyPairEvent;

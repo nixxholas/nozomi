@@ -9,11 +9,11 @@ using Nozomi.Service.Identity.Managers;
 
 namespace Nozomi.Web.Controllers.APIs.v1.AnalysedHistoricItem
 {
-    public class AnalysedHistoricItemController : BaseController<AnalysedHistoricItemController>, IAnalysedHistoricItemController
+    public class AnalysedHistoricItemApiController : BaseApiController<AnalysedHistoricItemApiController>, IAnalysedHistoricItemController
     {
         private readonly IAnalysedHistoricItemEvent _analysedHistoricItemEvent;
 
-        public AnalysedHistoricItemController(ILogger<AnalysedHistoricItemController> logger,
+        public AnalysedHistoricItemApiController(ILogger<AnalysedHistoricItemApiController> logger,
             NozomiUserManager nozomiUserManager, IAnalysedHistoricItemEvent analysedHistoricItemEvent)
             : base(logger, nozomiUserManager)
         {

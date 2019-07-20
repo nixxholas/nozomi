@@ -9,11 +9,11 @@ using Swashbuckle.AspNetCore.Annotations;
 
 namespace Nozomi.Web.Controllers.APIs.v1.CurrencyPairComponent
 {
-    public class CurrencyPairComponentController : BaseController<CurrencyPairComponentController>, ICurrencyPairComponentController
+    public class CurrencyPairComponentApiController : BaseApiController<CurrencyPairComponentApiController>, ICurrencyPairComponentController
     {
         private readonly IRequestComponentEvent _requestComponentEvent;
 
-        public CurrencyPairComponentController(ILogger<CurrencyPairComponentController> logger, NozomiUserManager userManager,
+        public CurrencyPairComponentApiController(ILogger<CurrencyPairComponentApiController> logger, NozomiUserManager userManager,
             IRequestComponentEvent requestComponentEvent)
             : base(logger, userManager)
         {

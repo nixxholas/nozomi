@@ -6,11 +6,11 @@ using Nozomi.Service.Services.Enumerators.Interfaces;
 
 namespace Nozomi.Web.Controllers.APIs.v1.RequestPropertyType
 {
-    public class RequestPropertyTypeController : BaseController<RequestPropertyTypeController>, IRequestPropertyTypeController
+    public class RequestPropertyTypeApiController : BaseApiController<RequestPropertyTypeApiController>, IRequestPropertyTypeController
     {
         private readonly IRequestPropertyTypeEvent _requestPropertyTypeEvent;
 
-        public RequestPropertyTypeController(ILogger<RequestPropertyTypeController> logger, NozomiUserManager userManager,
+        public RequestPropertyTypeApiController(ILogger<RequestPropertyTypeApiController> logger, NozomiUserManager userManager,
             IRequestPropertyTypeEvent requestPropertyTypeEvent) : base(logger, userManager)
         {
             _requestPropertyTypeEvent = requestPropertyTypeEvent;

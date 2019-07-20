@@ -6,11 +6,11 @@ using Nozomi.Service.Identity.Managers;
 
 namespace Nozomi.Web.Controllers.APIs.v1.ComponentType
 {
-    public class ComponentTypeController : BaseController<ComponentTypeController>, IComponentTypeController
+    public class ComponentTypeApiController : BaseApiController<ComponentTypeApiController>, IComponentTypeController
     {
         private readonly IComponentTypeEvent _componentTypeEvent;
 
-        public ComponentTypeController(ILogger<ComponentTypeController> logger, NozomiUserManager userManager,
+        public ComponentTypeApiController(ILogger<ComponentTypeApiController> logger, NozomiUserManager userManager,
             IComponentTypeEvent componentTypeEvent) : base(logger, userManager)
         {
             _componentTypeEvent = componentTypeEvent;

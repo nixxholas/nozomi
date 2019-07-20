@@ -10,11 +10,11 @@ using Nozomi.Service.Identity.Managers;
 
 namespace Nozomi.Web.Controllers.APIs.v1.Source
 {
-    public class SourceController : BaseController<SourceController>, ISourceController
+    public class SourceApiController : BaseApiController<SourceApiController>, ISourceController
     {
         private readonly ISourceEvent _sourceEvent;
 
-        public SourceController(ILogger<SourceController> logger, NozomiUserManager userManager,
+        public SourceApiController(ILogger<SourceApiController> logger, NozomiUserManager userManager,
             ISourceEvent sourceEvent)
             : base(logger, userManager)
         {
