@@ -8,7 +8,7 @@
 @model Nozomi.Base.Identity.ViewModels.Manage.IndexViewModel
 
 @inject ICurrencyEvent CurrencyEvent
-@inject ITickerService TickerService
+@inject ITickerEvent TickerEvent
 @inject NozomiUserManager UserManager
 @{
     ViewData["Title"] = "Profile";
@@ -108,7 +108,7 @@
           </div>
           @if (User.IsInRole(RoleEnum.Administrator.GetDescription()) || isOwner)
           {
-            var tickers = await TickerService.GetAll(0);
+            var tickers = await TickerEvent.GetAll(0);
             <div class="tab-pane fade" id="pills-tickers" 
                  role="tabpanel" aria-labelledby="pills-tickers-tab">
               <table class="table table-light force-full-width">
