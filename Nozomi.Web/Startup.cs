@@ -133,21 +133,6 @@ namespace Nozomi.Web
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
-            app.UseMvc(routes =>
-            {
-                routes.MapRoute(
-                    name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
-
-                routes.MapSpaFallbackRoute(
-                    name: "spa-fallback",
-                    defaults: new { controller = "Home", action = "Index" });
-
-                routes.MapRoute(
-                    name: "Areas",
-                    template: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
-            });
-
             // Enable middleware to serve generated Swagger as a JSON endpoint.
             app.UseSwagger();
 
@@ -158,6 +143,21 @@ namespace Nozomi.Web
                 // https://stackoverflow.com/questions/39116047/how-to-change-base-url-of-swagger-in-asp-net-core
                 c.RoutePrefix = "docs";
                 c.SwaggerEndpoint("/swagger/" + GlobalApiVariables.CURRENT_API_VERSION + "/swagger.json", "Nozomi API");
+            });
+
+            app.UseMvc(routes =>
+            {
+                routes.MapRoute(
+                    name: "default",
+                    template: "{controller=Home}/{action=Index}/{id?}");
+
+                routes.MapRoute(
+                    name: "Areas",
+                    template: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
+
+                routes.MapSpaFallbackRoute(
+                    name: "spa-fallback",
+                    defaults: new { controller = "Home", action = "Index" });
             });
         }
     }
