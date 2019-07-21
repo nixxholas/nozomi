@@ -2,7 +2,7 @@
   <nav class="navbar is-transparent">
     <div class="navbar-brand">
       <router-link class="navbar-item" to="/">
-        <img src="/assets/logo.svg" alt="Nozomi: Data, real quick.">
+        <img src="/assets/logo.png" alt="Nozomi: Data, real quick." style="width: 112px; height: 28px;">
       </router-link >
       <div class="navbar-burger burger" data-target="navbarMenu">
         <span></span>
