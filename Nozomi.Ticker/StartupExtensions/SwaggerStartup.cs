@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel;
 using Microsoft.Extensions.DependencyInjection;
+using Nozomi.Preprocessing;
 using Nozomi.Preprocessing.Swagger.Examples.Requests.v1.Currency;
 using Nozomi.Preprocessing.Swagger.Examples.Requests.v1.CurrencyPair;
 using Nozomi.Preprocessing.Swagger.Examples.Requests.v1.CurrencyPairComponent;

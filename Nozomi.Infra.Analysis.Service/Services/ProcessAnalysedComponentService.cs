@@ -48,20 +48,19 @@ namespace Nozomi.Infra.Analysis.Service.Services
 
             if (comp != null)
             {
-                if (_analysedHistoricItemService.Push(comp.Id, comp.Value, comp.ModifiedAt))
-                {
-                    if (comp.IsFailing)
-                        comp.IsFailing = false;
-                    
-                    // Make sure we update the datetime as well.. 
-                    comp.ModifiedAt = DateTime.UtcNow;
-                    comp.Value = value;
+                if (!string.IsNullOrEmpty(comp.Value))
+                    _analysedHistoricItemService.Push(comp.Id, comp.Value, comp.ModifiedAt);
                 
-                    _unitOfWork.GetRepository<AnalysedComponent>().Update(comp);
-                    _unitOfWork.Commit(userId);
+                if (comp.IsFailing)
+                    comp.IsFailing = false;
+                    
+                // Make sure we update the datetime as well.. 
+                comp.ModifiedAt = DateTime.UtcNow;
+                comp.Value = value;
+                
+                _unitOfWork.Commit(userId);
 
-                    return true;
-                }
+                return true;
             }
 
             return false;

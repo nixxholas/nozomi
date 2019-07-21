@@ -9,18 +9,18 @@ namespace Nozomi.Ticker.Controllers.APIs.v1.CurrencyPairType
     [ApiController]
     public class CurrencyPairTypeController : BaseController<CurrencyPairTypeController>, ICurrencyPairTypeController
     {
-        private ICurrencyPairTypeService _currencyPairTypeService;
+        private ICurrencyPairTypeEvent _currencyPairTypeEvent;
         
         public CurrencyPairTypeController(ILogger<CurrencyPairTypeController> logger, NozomiUserManager userManager,
-            ICurrencyPairTypeService currencyPairTypeService) : base(logger, userManager)
+            ICurrencyPairTypeEvent currencyPairTypeEvent) : base(logger, userManager)
         {
-            _currencyPairTypeService = currencyPairTypeService;
+            _currencyPairTypeEvent = currencyPairTypeEvent;
         }
 
         [HttpGet]
         public NozomiResult<JsonResult> All()
         {
-            return new NozomiResult<JsonResult>(new JsonResult(_currencyPairTypeService.All()));
+            return new NozomiResult<JsonResult>(new JsonResult(_currencyPairTypeEvent.All()));
         }
     }
 }

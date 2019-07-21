@@ -11,7 +11,7 @@ namespace Nozomi.Analysis.StartupExtensions
         {
             // RequestComponent Asyncs
             services.AddHostedService<HttpGetRequestSyncingService>();
-            services.AddHostedService<HttpPostCurrencyPairRequestSyncingService>();
+            // services.AddHostedService<HttpPostCurrencyPairRequestSyncingService>();
             services.AddHostedService<WebsocketCurrencyPairRequestSyncingService>();
             
             services.AddHostedService<AcAnalysisHostedService>();

@@ -20,8 +20,6 @@ namespace Nozomi.Infra.Admin.Service.Services.Interfaces
         NozomiResult<UniqueTickerResponse> Create(CreateTickerInputModel createTickerInputModel);
 
         NozomiResult<string> Delete(string ticker, string exchangeAbbrv);
-        
-        Task<NozomiResult<ICollection<UniqueTickerResponse>>> GetAll(int index);
 
         NozomiResult<ICollection<TickerByExchangeResponse>> GetAllActive();
     }

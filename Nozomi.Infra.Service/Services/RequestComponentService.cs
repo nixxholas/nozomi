@@ -72,6 +72,7 @@ namespace Nozomi.Service.Services
                 {
                     entity.ModifiedAt = DateTime.UtcNow;
 
+                    _unitOfWork.GetRepository<RequestComponent>().Update(entity);
                     _unitOfWork.Commit(userId);
                     return true;
                 }
@@ -93,7 +94,7 @@ namespace Nozomi.Service.Services
 
                 // Anomaly Detection
                 // Let's make it more efficient by checking if the price has changed
-                if (lastCompVal != null && !lastCompVal.HasAbnormalValue(val))
+                if (lastCompVal != null && !lastCompVal.HasAbnormalNumericalValue(val))
                 {
                     if (!string.IsNullOrEmpty(lastCompVal.Value))
                     {
@@ -112,7 +113,6 @@ namespace Nozomi.Service.Services
 
                     lastCompVal.Value = val.ToString(CultureInfo.InvariantCulture);
 
-                    _unitOfWork.GetRepository<RequestComponent>().Update(lastCompVal);
                     _unitOfWork.Commit();
 
                     return new NozomiResult<string>

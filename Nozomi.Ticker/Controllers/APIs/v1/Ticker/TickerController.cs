@@ -50,7 +50,7 @@ namespace Nozomi.Ticker.Controllers.APIs.v1.Ticker
             if (index < 0) return new NozomiResult<ICollection<UniqueTickerResponse>>(
                 NozomiResultType.Failed, "Please enter a proper index.");
             
-            return await _tickerService.GetAll(index);
+            return await _tickerEvent.GetAll(index);
         }
 
         [HttpGet]
