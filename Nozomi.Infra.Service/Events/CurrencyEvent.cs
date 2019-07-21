@@ -368,10 +368,11 @@ namespace Nozomi.Service.Events
 
             if (query == null) return null;
 
-            // https://github.com/aspnet/EntityFrameworkCore/issues/1833
-            query.AnalysedComponents = query.AnalysedComponents
-                .Where(ac => componentTypes.Contains(ac.ComponentType))
-                .ToList();
+            if (componentTypes != null)
+                // https://github.com/aspnet/EntityFrameworkCore/issues/1833
+                query.AnalysedComponents = query.AnalysedComponents
+                    .Where(ac => componentTypes.Contains(ac.ComponentType))
+                    .ToList();
 
             return new DetailedCurrencyResponse(query, 
                 _tickerEvent.GetCurrencyTickerPairs(query.Abbreviation));
