@@ -7,13 +7,14 @@ ENV ASPNETCORE_ENVIRONMENT Production
 FROM microsoft/dotnet:2.2-sdk AS build
 WORKDIR /src
 COPY . .
-RUN ls
+RUN apk add --update nodejs nodejs-npm yarn
 RUN dotnet restore Nozomi.Web/Nozomi.Web.csproj
 WORKDIR "/src/Nozomi.Web"
 RUN dotnet build "Nozomi.Web.csproj" -c Release -o /app
 
 FROM build AS publish
 WORKDIR "/src/Nozomi.Web"
+RUN apk add --update nodejs nodejs-npm yarn
 RUN dotnet publish "Nozomi.Web.csproj" -c Release -o /app
 
 FROM base AS final
