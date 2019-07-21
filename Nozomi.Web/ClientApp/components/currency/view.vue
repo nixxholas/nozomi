@@ -6,7 +6,10 @@
           <div class="level-left">
             <div class="level-item">
               <h1 class="title">
+                <img v-if="data.logoPath != null"
+                     :src="'/' + data.logoPath" class="mr-1" style="vertical-align: bottom;"/>
                 {{ data.name }}
+                <b-tag type="is-info">{{ data.abbreviation }}</b-tag>
               </h1>
             </div>
           </div>
@@ -19,16 +22,49 @@
             </div>
           </div>
         </nav>
-        <div class="container">
+        <div class="tile is-ancestor notification">
+          <div class="tile is-vertical is-3">
+            <div class="tile is-child">
+              <p class="heading">Market Cap</p>
+              <p class="title">{{ data.marketCap | numeralFormat('$0[.]00 a') }}</p>
+            </div>
+            <div class="tile is-child">
+              <p class="heading">Market Cap</p>
+              <p class="title">{{ data.marketCap | numeralFormat('$0[.]00 a') }}</p>
+            </div>
+            <div class="tile is-child">
+              <p class="heading">Market Cap</p>
+              <p class="title">{{ data.marketCap | numeralFormat('$0[.]00 a') }}</p>
+            </div>
+            <div class="tile is-child">
+              <p class="heading">Market Cap</p>
+              <p class="title">{{ data.marketCap | numeralFormat('$0[.]00 a') }}</p>
+            </div>
+          </div>
+          <div class="tile is-parent">
+            <div class="tile is-vertical">
+              <div class="tile is-child">
+                <b-tabs type="is-toggle" v-model="activeTab">
+                  <b-tab-item label="Chart">
+                    <apexchart width="100%" type="line" :options="options" :series="series"></apexchart>
+                  </b-tab-item>
+
+                  <b-tab-item label="Markets">
+                    Soon
+                  </b-tab-item>
+
+                  <b-tab-item label="Historical Data">
+                    Soon
+                  </b-tab-item>
+                </b-tabs>
+              </div>
+            </div>
+          </div>
           <h2 class="subtitle" v-if="data.description != null">
-            {{ data.description }}
           </h2>
         </div>
       </div>
     </section>
-
-    {{ this.slug }}
-    {{ this.data }}
   </div>
 </template>
 
@@ -52,10 +88,27 @@
         throw error;
       }
     },
+    created: function () {
+
+    },
     data () {
       return {
+        activeTab: 0,
         isLoading: false,
-        data: {}
+        data: {},
+        // Chart data
+        options: {
+          chart: {
+            id: 'vuechart-example'
+          },
+          xaxis: {
+            categories: [1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998]
+          }
+        },
+        series: [{
+          name: 'series-1',
+          data: [30, 40, 45, 50, 49, 60, 70, 91]
+        }]
       }
     }
   }

@@ -15,9 +15,11 @@
         aria-current-label="Current page">
         <template slot-scope="props">
           <b-table-column field="name" label="Name" sortable>
-            <img v-if="props.row.logoPath != null"
-                 :src="props.row.logoPath" class="mr-1" style="width: 24px; height: 24px; vertical-align: bottom;"/>
-            {{ props.row.name }}
+            <router-link :to="`/currency/${props.row.slug}`">
+              <img v-if="props.row.logoPath != null"
+                              :src="props.row.logoPath" class="mr-1" style="width: 24px; height: 24px; vertical-align: bottom;"/>
+              {{ props.row.name }}
+            </router-link>
           </b-table-column>
           <b-table-column field="marketCap" label="Market Cap" sortable>
             {{ props.row.marketCap | numeralFormat('$0 a') }}
@@ -27,11 +29,11 @@
           </b-table-column>
           <b-table-column field="chart" label="Trend" sortable>
             <trend
-              :data="props.row.historical"
+              :data="props.row.averagePriceHistory"
               :gradient="['#6fa8dc', '#42b983', '#2c3e50']"
               auto-draw
               smooth
-              v-if="props.row.historical != null"
+              v-if="props.row.averagePriceHistory != null"
             >
             </trend>
             <b-tag type="is-danger" size="is-medium" v-else>No data available</b-tag>

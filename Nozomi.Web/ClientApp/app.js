@@ -4,6 +4,7 @@ import 'buefy/dist/buefy.css';
 import Trend from "vuetrend";
 import axios from 'axios';
 import VueNumerals from 'vue-numerals';
+import VueApexCharts from 'vue-apexcharts';
 import router from './router/index';
 import store from './store';
 import { sync } from 'vuex-router-sync';
@@ -12,6 +13,8 @@ import { FontAwesomeIcon } from './icons';
 
 // Registration of global components
 Vue.component('icon', FontAwesomeIcon);
+// Registration of Vue apexcharts
+Vue.component('apexchart', VueApexCharts);
 
 // Registration of Buefy
 Vue.use(Buefy);
@@ -19,6 +22,8 @@ Vue.use(Buefy);
 Vue.use(VueNumerals); // default locale is 'en'
 // Registration of vue-trend
 Vue.use(Trend);
+// Registration of Vue apexcharts
+Vue.use(VueApexCharts);
 
 // Registration of Axios
 // https://stackoverflow.com/questions/51374367/axios-is-not-defined-in-vue-js-cli
