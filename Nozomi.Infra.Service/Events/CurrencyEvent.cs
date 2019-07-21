@@ -364,6 +364,8 @@ namespace Nozomi.Service.Events
                 .Where(c => c.Slug.Equals(slug, StringComparison.InvariantCultureIgnoreCase))
                 .Include(cp => cp.AnalysedComponents)
                 .ThenInclude(ac => ac.AnalysedHistoricItems)
+                .Include(ac => ac.Requests)
+                .ThenInclude(r => r.RequestComponents)
                 .SingleOrDefault();
 
             if (query == null) return null;
