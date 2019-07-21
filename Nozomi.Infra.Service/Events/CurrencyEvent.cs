@@ -362,12 +362,16 @@ namespace Nozomi.Service.Events
                 .GetQueryable()
                 .AsNoTracking()
                 .Where(c => c.Slug.Equals(slug, StringComparison.InvariantCultureIgnoreCase))
-                .Include(cp => cp.AnalysedComponents
-                    .Where(ac => componentTypes.Contains(ac.ComponentType)))
+                .Include(cp => cp.AnalysedComponents)
                 .ThenInclude(ac => ac.AnalysedHistoricItems)
                 .SingleOrDefault();
 
             if (query == null) return null;
+
+            // https://github.com/aspnet/EntityFrameworkCore/issues/1833
+            query.AnalysedComponents = query.AnalysedComponents
+                .Where(ac => componentTypes.Contains(ac.ComponentType))
+                .ToList();
 
             return new DetailedCurrencyResponse(query, 
                 _tickerEvent.GetCurrencyTickerPairs(query.Abbreviation));
