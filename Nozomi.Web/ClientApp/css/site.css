@@ -1,4 +1,10 @@
 /* This file should be reviewed. It's not optimal, but it works for now. */
+#app {
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
+}
+
 .navbar {
     display: list-item;
     background: #1e0e40;
@@ -61,15 +67,6 @@ li.nav-item {
 
 .menu-icon {
     min-width: 30px;
-}
-
-.trilon-logo {
-    max-width: 600px;
-    height: auto;
-}
-.trilon-mini {
-    max-width: 300px;
-    height: auto;
 }
 
 @media (max-width: 767px) {

@@ -5,10 +5,17 @@
         <nav class="level">
           <div class="level-left">
             <div class="level-item">
+              <figure class="image is-64x64" v-if="data.logoPath != null">
+                <img :src="'/' + data.logoPath"/>
+              </figure>
+            </div>
+            <div class="level-item">
               <h1 class="title">
-                <img v-if="data.logoPath != null"
-                     :src="'/' + data.logoPath" class="mr-1" style="vertical-align: bottom;"/>
                 {{ data.name }}
+              </h1>
+            </div>
+            <div class="level-item">
+              <h1 class="title">
                 <b-tag type="is-info">{{ data.abbreviation }}</b-tag>
               </h1>
             </div>

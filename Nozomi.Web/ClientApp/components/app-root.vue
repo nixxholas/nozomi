@@ -2,11 +2,11 @@
   <div id="app">
     <nav-menu params="route: route"></nav-menu>
 
-    <div class="container is-fullhd">
+    <div class="container is-fullhd" style="flex: 1; width: 100%">
       <router-view></router-view>
     </div>
 
-    <footer class="footer" style="position: absolute; bottom: 0; width: 100%;">
+    <footer class="footer" style="bottom: 0; width: 100%;">
       <div class="content container">
         <div class="columns is-desktop">
         <div class="column">
