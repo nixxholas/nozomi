@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
@@ -31,7 +32,7 @@ namespace Nozomi.Data.ResponseModels.Currency
 
         public decimal MarketCap { get; set; }
 
-        public Dictionary<ComponentType, List<ComponentHistoricalDatum>> Historical { get; set; }
+        public Dictionary<AnalysedComponentType, List<ComponentHistoricalDatum>> Historical { get; set; }
 
         public List<decimal> AveragePriceHistory { get; set; }
         
@@ -76,6 +77,32 @@ namespace Nozomi.Data.ResponseModels.Currency
                         break;
                     case AnalysedComponentType.DailyPricePctChange:
                         DailyAvgPctChange = decimal.Parse(ac.Value ?? "0");
+                        break;
+                    default:
+                        if (Historical == null)
+                            Historical = new Dictionary<AnalysedComponentType, List<ComponentHistoricalDatum>>();
+
+                        Historical.Add(ac.ComponentType, new List<ComponentHistoricalDatum>());
+                        
+                        Historical[ac.ComponentType].Add(new ComponentHistoricalDatum()
+                        {
+                            CreatedAt = ac.ModifiedAt,
+                            Value = ac.Value
+                        });
+                        
+                        if (ac.AnalysedHistoricItems != null && ac.AnalysedHistoricItems.Count > 0)
+                        {
+                            Historical[ac.ComponentType].AddRange(ac.AnalysedHistoricItems
+                                .Select(ahi => new ComponentHistoricalDatum()
+                                {
+                                    CreatedAt = ahi.HistoricDateTime,
+                                    Value = ahi.Value
+                                }));
+                        }
+
+                        Historical[ac.ComponentType] = Historical[ac.ComponentType]
+                            .OrderByDescending(chd => chd.CreatedAt)
+                            .ToList();
                         break;
                 }
             }
