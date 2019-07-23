@@ -65,7 +65,7 @@ namespace Nozomi.Analysis
             }
             else
             {
-                var vaultToken = Configuration.GetConnectionString("vaultToken");
+                var vaultToken = Configuration["vaultToken"];
 
                 if (string.IsNullOrEmpty(vaultToken))
                     throw new SystemException("Invalid vault token.");
