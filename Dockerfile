@@ -7,7 +7,7 @@ RUN dotnet restore Nozomi.Analysis/Nozomi.Analysis.csproj
 
 # Copy everything else and build
 COPY . ./
-RUN dotnet publish Nozomi.Analysis.csproj -c Release -o out
+RUN dotnet publish Nozomi.Analysis/Nozomi.Analysis.csproj -c Release -o out
 
 # Build runtime image
 FROM mcr.microsoft.com/dotnet/core/aspnet:2.2
