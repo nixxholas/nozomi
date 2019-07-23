@@ -13,4 +13,5 @@ RUN dotnet publish Nozomi.Analysis/Nozomi.Analysis.csproj -c Release -o out
 FROM mcr.microsoft.com/dotnet/core/aspnet:2.2
 WORKDIR /app
 COPY --from=build-env /app/Nozomi.Analysis/out .
+RUN ls
 ENTRYPOINT ["dotnet", "Nozomi.Analysis.dll"]
