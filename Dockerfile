@@ -1,11 +1,15 @@
 FROM mcr.microsoft.com/dotnet/core/sdk:2.2 AS build-env
 WORKDIR /app
 
+# Copy csproj
+COPY . .
+
+# Copy the certificates
+# RUN ls -la
 ADD ca-certificate.crt /usr/local/share/ca-certificates/ca.crt
 RUN chmod 644 /usr/local/share/ca-certificates/ca.crt && update-ca-certificates
 
-# Copy csproj and restore as distinct layers
-COPY . .
+# restore as distinct layers
 RUN dotnet restore Nozomi.Analysis/Nozomi.Analysis.csproj
 
 # Copy everything else and build
