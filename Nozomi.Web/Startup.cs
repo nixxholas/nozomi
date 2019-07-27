@@ -1,5 +1,6 @@
 using System;
 using System.Net;
+using System.Security.Cryptography.X509Certificates;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
@@ -13,6 +14,8 @@ using Nozomi.Preprocessing;
 using Nozomi.Repo.Data;
 using Nozomi.Repo.Identity.Data;
 using Nozomi.Web.StartupExtensions;
+using VaultSharp;
+using VaultSharp.V1.AuthMethods.Token;
 
 namespace Nozomi.Web
 {
@@ -59,17 +62,56 @@ namespace Nozomi.Web
             }
             else
             {
+                var vaultToken = Configuration["vaultToken"];
+
+                if (string.IsNullOrEmpty(vaultToken))
+                    throw new SystemException("Invalid vault token.");
+
+                var authMethod = new TokenAuthMethodInfo(vaultToken);
+                var vaultClientSettings = new VaultClientSettings("http://165.22.250.169:8200", authMethod);
+                var vaultClient = new VaultClient(vaultClientSettings);
+
+                var nozomiVault = vaultClient.V1.Secrets.Cubbyhole.ReadSecretAsync("nozomi")
+                    .GetAwaiter()
+                    .GetResult().Data;
+
+                var mainDb = (string) nozomiVault["main"];
+                if (string.IsNullOrEmpty(mainDb))
+                    throw new SystemException("Invalid main database configuration");
                 // Database
                 services.AddDbContext<NozomiDbContext>(options =>
                 {
-                    options.UseNpgsql(Configuration["NozomiDb"]);
+                    options.UseNpgsql(mainDb
+                        , builder =>
+                        {
+                            builder.EnableRetryOnFailure();
+                            builder.ProvideClientCertificatesCallback(certificates =>
+                            {
+                                var cert = new X509Certificate2("ca-certificate.crt");
+                                certificates.Add(cert);
+                            });
+                        }
+                    );
                     options.EnableSensitiveDataLogging(false);
                     options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
                 }, ServiceLifetime.Transient);
 
+                var authDb = (string) nozomiVault["auth"];
+                if (string.IsNullOrEmpty(authDb))
+                    throw new SystemException("Invalid auth database configuration");
                 services.AddDbContext<NozomiAuthContext>(options =>
                 {
-                    options.UseNpgsql(Configuration["NozomiAuthDb"]);
+                    options.UseNpgsql(authDb
+                        , builder =>
+                        {
+                            builder.EnableRetryOnFailure();
+                            builder.ProvideClientCertificatesCallback(certificates =>
+                            {
+                                var cert = new X509Certificate2("ca-certificate.crt");
+                                certificates.Add(cert);
+                            });
+                        }
+                    );
                     options.EnableSensitiveDataLogging(false);
                 });
             }

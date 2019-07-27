@@ -12,6 +12,9 @@
     <PackageReference Include="Swashbuckle.AspNetCore">
       <Version>4.0.1</Version>
     </PackageReference>
+    <PackageReference Include="VaultSharp">
+      <Version>0.11.1002</Version>
+    </PackageReference>
   </ItemGroup>
   <ItemGroup>
     <!-- Files not to show in IDE -->

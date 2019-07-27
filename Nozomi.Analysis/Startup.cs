@@ -31,7 +31,7 @@ namespace Nozomi.Analysis
         }
 
         public IConfiguration Configuration { get; }
-        
+
         public IHostingEnvironment HostingEnvironment { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
@@ -41,27 +41,27 @@ namespace Nozomi.Analysis
             {
                 // Greet the beloved dev
                 Console.WriteLine(@"Welcome to the dev environment, your machine is named: " + Environment.MachineName);
-                
+
                 // Postgres DB Setup
                 var str = Configuration.GetConnectionString("Local:" + @Environment.MachineName);
 
                 services
                     .AddEntityFrameworkNpgsql()
                     .AddDbContext<NozomiDbContext>(options =>
-                    {
-                        options.UseNpgsql(str);
-                        options.EnableSensitiveDataLogging();
-                        options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
-                    },
-                    ServiceLifetime.Transient);
+                        {
+                            options.UseNpgsql(str);
+                            options.EnableSensitiveDataLogging();
+                            options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
+                        },
+                        ServiceLifetime.Transient);
 
                 services
                     .AddEntityFrameworkNpgsql()
                     .AddDbContext<NozomiAuthContext>(options =>
-                {
-                    options.UseNpgsql(Configuration.GetConnectionString("LocalAuth:" + Environment.MachineName));
-                    options.EnableSensitiveDataLogging(false);
-                });
+                    {
+                        options.UseNpgsql(Configuration.GetConnectionString("LocalAuth:" + Environment.MachineName));
+                        options.EnableSensitiveDataLogging(false);
+                    });
             }
             else
             {
@@ -69,7 +69,7 @@ namespace Nozomi.Analysis
 
                 if (string.IsNullOrEmpty(vaultToken))
                     throw new SystemException("Invalid vault token.");
-                
+
                 var authMethod = new TokenAuthMethodInfo(vaultToken);
                 var vaultClientSettings = new VaultClientSettings("http://165.22.250.169:8200", authMethod);
                 var vaultClient = new VaultClient(vaultClientSettings);
@@ -77,7 +77,7 @@ namespace Nozomi.Analysis
                 var nozomiVault = vaultClient.V1.Secrets.Cubbyhole.ReadSecretAsync("nozomi")
                     .GetAwaiter()
                     .GetResult().Data;
-                
+
                 var mainDb = (string) nozomiVault["main"];
                 if (string.IsNullOrEmpty(mainDb))
                     throw new SystemException("Invalid main database configuration");
@@ -88,12 +88,13 @@ namespace Nozomi.Analysis
                         , builder =>
                         {
                             builder.EnableRetryOnFailure();
-//                        builder.ProvideClientCertificatesCallback(certificates => { 
-//                            var cert = new X509Certificate2("ca-certificate.crt");
-//                            certificates.Add(cert); 
-//                        });
+                            builder.ProvideClientCertificatesCallback(certificates =>
+                            {
+                                var cert = new X509Certificate2("ca-certificate.crt");
+                                certificates.Add(cert);
+                            });
                         }
-                        );
+                    );
                     options.EnableSensitiveDataLogging(false);
                     options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
                 }, ServiceLifetime.Transient);
@@ -107,35 +108,36 @@ namespace Nozomi.Analysis
                         , builder =>
                         {
                             builder.EnableRetryOnFailure();
-//                        builder.ProvideClientCertificatesCallback(certificates => { 
-//                            var cert = new X509Certificate2("ca-certificate.crt");
-//                            certificates.Add(cert); 
-//                        });
+                            builder.ProvideClientCertificatesCallback(certificates =>
+                            {
+                                var cert = new X509Certificate2("ca-certificate.crt");
+                                certificates.Add(cert);
+                            });
                         }
-                        );
+                    );
                     options.EnableSensitiveDataLogging(false);
                 });
 
                 var stripeVault = vaultClient.V1.Secrets.Cubbyhole.ReadSecretAsync("stripe")
                     .GetAwaiter()
                     .GetResult().Data;
-                
+
                 var stripePriv = (string) stripeVault["testpriv"];
                 if (string.IsNullOrEmpty(stripePriv))
                     throw new SystemException("Invalid main database configuration");
                 var stripePub = (string) stripeVault["testpub"];
                 if (string.IsNullOrEmpty(stripePub))
                     throw new SystemException("Invalid main database configuration");
-                
+
                 services.Configure<StripeSettings>(ss =>
                 {
                     ss.SecretKey = stripePriv;
                     ss.PublishableKey = stripePub;
                 });
             }
-            
+
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
-            
+
             services.ConfigureRepoLayer();
             services.ConfigureEvents();
             services.ConfigureServiceLayer();
@@ -158,7 +160,7 @@ namespace Nozomi.Analysis
 
             app.UseHttpsRedirection();
             app.UseMvc();
-            
+
             app.UseAutoDbMigration(env);
         }
     }
