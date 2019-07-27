@@ -84,14 +84,15 @@ namespace Nozomi.Analysis
                 // Database
                 services.AddDbContext<NozomiDbContext>(options =>
                 {
-                    options.UseNpgsql(mainDb 
-//                        ,builder =>
-//                    {
+                    options.UseNpgsql(mainDb
+                        , builder =>
+                        {
+                            builder.EnableRetryOnFailure();
 //                        builder.ProvideClientCertificatesCallback(certificates => { 
 //                            var cert = new X509Certificate2("ca-certificate.crt");
 //                            certificates.Add(cert); 
 //                        });
-//                    }
+                        }
                         );
                     options.EnableSensitiveDataLogging(false);
                     options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
@@ -103,13 +104,14 @@ namespace Nozomi.Analysis
                 services.AddDbContext<NozomiAuthContext>(options =>
                 {
                     options.UseNpgsql(authDb
-//                        , builder =>
-//                    {
+                        , builder =>
+                        {
+                            builder.EnableRetryOnFailure();
 //                        builder.ProvideClientCertificatesCallback(certificates => { 
 //                            var cert = new X509Certificate2("ca-certificate.crt");
 //                            certificates.Add(cert); 
 //                        });
-//                    }
+                        }
                         );
                     options.EnableSensitiveDataLogging(false);
                 });

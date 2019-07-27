@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Nozomi.Repo.Data;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
@@ -9,9 +10,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Nozomi.Repo.Migrations
 {
     [DbContext(typeof(NozomiDbContext))]
-    partial class NozomiDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190727094626_r3_RequestLogCleanup")]
+    partial class r3_RequestLogCleanup
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -62,11 +64,6 @@ namespace Nozomi.Repo.Migrations
                     b.Property<string>("Slug")
                         .IsRequired();
 
-                    b.Property<uint>("xmin")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("xid");
-
                     b.HasKey("Id")
                         .HasName("Currency_PK_Id");
 
@@ -113,11 +110,6 @@ namespace Nozomi.Repo.Migrations
                     b.Property<long>("ModifiedBy");
 
                     b.Property<long>("SourceId");
-
-                    b.Property<uint>("xmin")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("xid");
 
                     b.HasKey("Id")
                         .HasName("CurrencyPair_PK_Id");
@@ -185,11 +177,6 @@ namespace Nozomi.Repo.Migrations
 
                     b.Property<long>("SourceId");
 
-                    b.Property<uint>("xmin")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("xid");
-
                     b.HasKey("Id")
                         .HasName("CurrencySource_PK_Id");
 
@@ -228,11 +215,6 @@ namespace Nozomi.Repo.Migrations
                         .IsRequired()
                         .HasMaxLength(12);
 
-                    b.Property<uint>("xmin")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("xid");
-
                     b.HasKey("Id")
                         .HasName("CurrencyType_PK_Id");
 
@@ -265,11 +247,6 @@ namespace Nozomi.Repo.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired();
-
-                    b.Property<uint>("xmin")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("xid");
 
                     b.HasKey("Id")
                         .HasName("Source_PK_Id");
@@ -323,11 +300,6 @@ namespace Nozomi.Repo.Migrations
 
                     b.Property<string>("Value");
 
-                    b.Property<uint>("xmin")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("xid");
-
                     b.HasKey("Id")
                         .HasName("AnalysedComponent_PK_Id");
 
@@ -372,11 +344,6 @@ namespace Nozomi.Repo.Migrations
                     b.Property<string>("Value")
                         .IsRequired();
 
-                    b.Property<uint>("xmin")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("xid");
-
                     b.HasKey("Id")
                         .HasName("AnalysedHistoricItem_PK_Id");
 
@@ -411,11 +378,6 @@ namespace Nozomi.Repo.Migrations
                     b.Property<string>("Value")
                         .ValueGeneratedOnAdd()
                         .HasDefaultValue("");
-
-                    b.Property<uint>("xmin")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("xid");
 
                     b.HasKey("Id")
                         .HasName("RcdHistoricItem_PK_Id");
@@ -470,11 +432,6 @@ namespace Nozomi.Repo.Migrations
                         .ValueGeneratedOnAdd()
                         .HasDefaultValue(1);
 
-                    b.Property<uint>("xmin")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("xid");
-
                     b.HasKey("Id")
                         .HasName("Request_PK_Id");
 
@@ -527,11 +484,6 @@ namespace Nozomi.Repo.Migrations
 
                     b.Property<string>("Value");
 
-                    b.Property<uint>("xmin")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("xid");
-
                     b.HasKey("Id")
                         .HasName("RequestComponent_PK_Id");
 
@@ -568,11 +520,6 @@ namespace Nozomi.Repo.Migrations
                     b.Property<int>("RequestPropertyType");
 
                     b.Property<string>("Value");
-
-                    b.Property<uint>("xmin")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("xid");
 
                     b.HasKey("Id")
                         .HasName("RequestProperty_PK_Id");
@@ -611,11 +558,6 @@ namespace Nozomi.Repo.Migrations
 
                     b.Property<long>("RequestId");
 
-                    b.Property<uint>("xmin")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("xid");
-
                     b.HasKey("Id")
                         .HasName("WebsocketCommand_PK_Id");
 
@@ -653,11 +595,6 @@ namespace Nozomi.Repo.Migrations
                         .IsRequired();
 
                     b.Property<long>("WebsocketCommandId");
-
-                    b.Property<uint>("xmin")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("xid");
 
                     b.HasKey("Id")
                         .HasName("WebsocketCommandProperty_PK_Id");

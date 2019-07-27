@@ -8,7 +8,6 @@ using Nozomi.Data.AreaModels.v1.RequestProperty;
 using Nozomi.Data.AreaModels.v1.Requests;
 using Nozomi.Data.Models.Currency;
 using Nozomi.Data.Models.Web.Analytical;
-using Nozomi.Data.Models.Web.Logging;
 using Nozomi.Data.Models.Web.Websocket;
 
 namespace Nozomi.Data.Models.Web
@@ -48,7 +47,6 @@ namespace Nozomi.Data.Models.Web
         public CurrencyType CurrencyType { get; set; }
 
         public ICollection<RequestComponent> RequestComponents { get; set; }
-        public ICollection<RequestLog> RequestLogs { get; set; }
         public ICollection<RequestProperty> RequestProperties { get; set; }
         
         // Websocket-based Entities

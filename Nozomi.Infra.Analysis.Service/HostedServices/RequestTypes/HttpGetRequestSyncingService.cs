@@ -50,14 +50,12 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
         private readonly IRequestComponentService _requestComponentService;
         private readonly IRequestEvent _requestEvent;
         private readonly IRequestService _requestService;
-        private readonly IRequestLogService _requestLogService;
 
         public HttpGetRequestSyncingService(IServiceProvider serviceProvider) : base(serviceProvider)
         {
             _requestComponentService = _scope.ServiceProvider.GetRequiredService<IRequestComponentService>();
             _requestEvent = _scope.ServiceProvider.GetRequiredService<IRequestEvent>();
             _requestService = _scope.ServiceProvider.GetRequiredService<IRequestService>();
-            _requestLogService = _scope.ServiceProvider.GetRequiredService<IRequestLogService>();
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -466,6 +464,9 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
 
                             break;
                         case HttpStatusCode.TooManyRequests:
+                            _logger.LogWarning("[HttpGetCurrencyPairRequestSyncingService] " +
+                                               $"{currentRequests.FirstOrDefault().DataPath} Too many request");
+                            
                             // Rate limited. Push back update timings
                             _requestService.Delay(firstRequest,
                                 TimeSpan.FromMilliseconds(firstRequest.FailureDelay));

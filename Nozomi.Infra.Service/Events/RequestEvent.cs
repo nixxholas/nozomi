@@ -40,7 +40,6 @@ namespace Nozomi.Service.Events
             if (track)
             {
                 query.Include(r => r.RequestComponents)
-                    .Include(r => r.RequestLogs)
                     .Include(r => r.RequestProperties);
             }
             
@@ -56,7 +55,6 @@ namespace Nozomi.Service.Events
             if (includeNested)
             {
                 query = query.Include(r => r.RequestComponents)
-                    .Include(r => r.RequestLogs)
                     .Include(r => r.RequestProperties);
             }
 

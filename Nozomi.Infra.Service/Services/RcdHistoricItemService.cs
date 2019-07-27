@@ -24,9 +24,9 @@ namespace Nozomi.Service.Services
             if (!string.IsNullOrEmpty(rc.Value))
             {
                 var lastHistoric = _unitOfWork.GetRepository<RcdHistoricItem>()
-                    .Get(rcdhi => rcdhi.RequestComponentId.Equals(rc.Id))
+                    .GetQueryable()
                     .OrderByDescending(rcdhi => rcdhi.CreatedAt)
-                    .FirstOrDefault();
+                    .FirstOrDefault(rcdhi => rcdhi.RequestComponentId.Equals(rc.Id));
 
                 if (lastHistoric != null)
                 {

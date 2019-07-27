@@ -112,7 +112,8 @@ namespace Nozomi.Service.Services
                     }
 
                     lastCompVal.Value = val.ToString(CultureInfo.InvariantCulture);
-
+                    _unitOfWork.GetRepository<RequestComponent>().Update(lastCompVal);
+                    
                     _unitOfWork.Commit();
 
                     return new NozomiResult<string>
@@ -120,6 +121,8 @@ namespace Nozomi.Service.Services
                 }
                 else if (lastCompVal == null)
                 {
+                    _logger.LogWarning($"Invalid component datum id:{id}. Null payload");
+                    
                     return new NozomiResult<string>
                     (NozomiResultType.Failed,
                         $"Invalid component datum id:{id}, val:{val}. Null payload!!!");
