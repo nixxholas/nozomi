@@ -5,7 +5,6 @@ using Nozomi.Base.Core;
 using Nozomi.Data.AreaModels.v1.CurrencyPairComponent;
 using Nozomi.Data.AreaModels.v1.RequestProperty;
 using Nozomi.Data.Models.Web;
-using Nozomi.Data.Models.Web.Logging;
 
 namespace Nozomi.Data.AreaModels.v1.Requests
 {

@@ -42,7 +42,6 @@ namespace Nozomi.Ticker.StartupExtensions
             services.AddTransient<IRequestComponentService, RequestComponentService>();
             services.AddTransient<IRequestService, RequestService>();
             services.AddTransient<IRcdHistoricItemService, RcdHistoricItemService>();
-            services.AddTransient<IRequestLogService, RequestLogService>();
             services.AddScoped<IRequestTypeEvent, RequestTypeEvent>();
             services.AddTransient<ISourceService, SourceService>();
             services.AddTransient<ITickerService, TickerService>();
