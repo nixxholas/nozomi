@@ -27,13 +27,11 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
         private readonly HttpClient _httpClient = new HttpClient();
         private readonly IRequestComponentService _requestComponentService;
         private readonly IRequestEvent _requestEvent;
-        private readonly IRequestLogService _requestLogService;
         
         public HttpPostCurrencyPairRequestSyncingService(IServiceProvider serviceProvider) : base(serviceProvider)
         {
             _requestComponentService = _scope.ServiceProvider.GetRequiredService<IRequestComponentService>();
             _requestEvent = _scope.ServiceProvider.GetRequiredService<IRequestEvent>();
-            _requestLogService = _scope.ServiceProvider.GetRequiredService<IRequestLogService>();
         }
 
         public async Task<bool> Process(Request req)
