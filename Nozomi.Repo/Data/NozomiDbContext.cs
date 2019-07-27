@@ -10,13 +10,11 @@ using Nozomi.Data;
 using Nozomi.Data.Models.Currency;
 using Nozomi.Data.Models.Web;
 using Nozomi.Data.Models.Web.Analytical;
-using Nozomi.Data.Models.Web.Logging;
 using Nozomi.Data.Models.Web.Websocket;
 using Nozomi.Repo.BCL.Context;
 using Nozomi.Repo.Data.Mappings.CurrencyModels;
 using Nozomi.Repo.Data.Mappings.WebModels;
 using Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels;
-using Nozomi.Repo.Data.Mappings.WebModels.LoggingModels;
 using Nozomi.Repo.Data.Mappings.WebModels.WebsocketModels;
 
 namespace Nozomi.Repo.Data
@@ -32,7 +30,6 @@ namespace Nozomi.Repo.Data
         public DbSet<Request> Requests { get; set; }
         public DbSet<RequestComponent> RequestComponents { get; set; }
         public DbSet<RcdHistoricItem> RcdHistoricItems { get; set; }
-        public DbSet<RequestLog> RequestLogs { get; set; }
         public DbSet<RequestProperty> RequestProperties { get; set; }
         public DbSet<Source> Sources { get; set; }
         public DbSet<WebsocketCommand> WebsocketCommands { get; set; }
@@ -56,7 +53,6 @@ namespace Nozomi.Repo.Data
             var webSocketCommandPropertyMap = new WebsocketCommandPropertyMap(modelBuilder.Entity<WebsocketCommandProperty>());
             var requestComponentMap = new RequestComponentMap(modelBuilder.Entity<RequestComponent>());
             var rcdHistoricItemMap = new RcdHistoricItemMap(modelBuilder.Entity<RcdHistoricItem>());
-            var requestLogMap = new RequestLogMap(modelBuilder.HasPostgresExtension("uuid-ossp").Entity<RequestLog>());
             var requestPropertyMap = new RequestPropertyMap(modelBuilder.Entity<RequestProperty>());
             
             var sourceMap = new SourceMap(modelBuilder.Entity<Source>());

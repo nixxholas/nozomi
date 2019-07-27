@@ -13,7 +13,6 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Nozomi.Base.Core.Helpers.Exponent;
 using Nozomi.Data.Models.Web;
-using Nozomi.Data.Models.Web.Logging;
 using Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes.Interfaces;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Service.Events.Interfaces;
@@ -342,28 +341,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
                 }
                 else
                 {
-                    // Log the failure
-                    if (_requestLogService.Create(new RequestLog()
-                    {
-                        Type = RequestLogType.Failure,
-                        RawPayload = JsonConvert.SerializeObject(payload),
-                        RequestId = req.Id
-                    }) <= 0)
-                    {
-                        // Logging Failure!!!!
-                    }
                 }
-            }
-            
-            // Log the failure
-            if (_requestLogService.Create(new RequestLog()
-            {
-                Type = RequestLogType.Failure,
-                RawPayload = null,
-                RequestId = req?.Id ?? 0
-            }) <= 0)
-            {
-                // Logging Failure!!!!
             }
  
             return false;
