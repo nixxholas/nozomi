@@ -90,7 +90,7 @@ namespace Nozomi.Analysis
                             builder.EnableRetryOnFailure();
                             builder.ProvideClientCertificatesCallback(certificates =>
                             {
-                                var cert = new X509Certificate2("ca-certificate.crt");
+                                var cert = new X509Certificate2("/usr/local/share/ca-certificates/ca.crt");
                                 certificates.Add(cert);
                             });
                         }
@@ -110,7 +110,7 @@ namespace Nozomi.Analysis
                             builder.EnableRetryOnFailure();
                             builder.ProvideClientCertificatesCallback(certificates =>
                             {
-                                var cert = new X509Certificate2("ca-certificate.crt");
+                                var cert = new X509Certificate2("/usr/local/share/ca-certificates/ca.crt");
                                 certificates.Add(cert);
                             });
                         }
