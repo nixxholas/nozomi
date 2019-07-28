@@ -50,7 +50,7 @@ namespace Nozomi.Data.Models.Web
         /// <returns>true if the value is abnormal, false if not.</returns>
         public bool HasAbnormalNumericalValue(decimal val)
         {
-            if (AnomalyIgnorance)
+            if (AnomalyIgnorance || string.IsNullOrEmpty(Value))
                 return false;
         
             // Make sure the current value in the db is parse-able
