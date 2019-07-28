@@ -112,8 +112,6 @@ namespace Nozomi.Service.Services
                     }
 
                     lastCompVal.Value = val.ToString(CultureInfo.InvariantCulture);
-                    _unitOfWork.GetRepository<RequestComponent>().Update(lastCompVal);
-                    
                     _unitOfWork.Commit();
 
                     return new NozomiResult<string>
@@ -121,7 +119,7 @@ namespace Nozomi.Service.Services
                 }
                 else if (lastCompVal == null)
                 {
-                    _logger.LogWarning($"Invalid component datum id:{id}. Null payload");
+                    _logger.LogWarning($"[{serviceName}]: Invalid component datum id:{id}. Null payload");
                     
                     return new NozomiResult<string>
                     (NozomiResultType.Failed,
@@ -129,6 +127,8 @@ namespace Nozomi.Service.Services
                 }
                 else
                 {
+                    _logger.LogWarning($"[{serviceName}]: datum id:{id}. Value is the same.");
+                    
                     return new NozomiResult<string>
                         (NozomiResultType.Success, "Value is the same!");
                 }

@@ -25,6 +25,7 @@ namespace Nozomi.Service.Services
             {
                 var lastHistoric = _unitOfWork.GetRepository<RcdHistoricItem>()
                     .GetQueryable()
+                    .AsNoTracking()
                     .OrderByDescending(rcdhi => rcdhi.CreatedAt)
                     .FirstOrDefault(rcdhi => rcdhi.RequestComponentId.Equals(rc.Id));
 
