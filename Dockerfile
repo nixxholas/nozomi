@@ -6,8 +6,8 @@ COPY . .
 
 # Copy the certificates
 # RUN ls -la
-ADD ca-certificate.crt /usr/local/share/ca-certificates/ca.crt
-RUN chmod 644 /usr/local/share/ca-certificates/ca.crt && update-ca-certificates
+# ADD ca-certificate.crt /usr/local/share/ca-certificates/ca.crt
+# RUN chmod 644 /usr/local/share/ca-certificates/ca.crt && update-ca-certificates
 
 # restore as distinct layers
 RUN dotnet restore Nozomi.Analysis/Nozomi.Analysis.csproj
