@@ -88,11 +88,11 @@ namespace Nozomi.Analysis
                         , builder =>
                         {
                             builder.EnableRetryOnFailure();
-                            builder.ProvideClientCertificatesCallback(certificates =>
-                            {
-                                var cert = new X509Certificate2("ca-certificate.crt");
-                                certificates.Add(cert);
-                            });
+//                            builder.ProvideClientCertificatesCallback(certificates =>
+//                            {
+//                                var cert = new X509Certificate2("ca-certificate.crt");
+//                                certificates.Add(cert);
+//                            });
                         }
                     );
                     options.EnableSensitiveDataLogging(false);
@@ -108,11 +108,11 @@ namespace Nozomi.Analysis
                         , builder =>
                         {
                             builder.EnableRetryOnFailure();
-                            builder.ProvideClientCertificatesCallback(certificates =>
-                            {
-                                var cert = new X509Certificate2("ca-certificate.crt");
-                                certificates.Add(cert);
-                            });
+//                            builder.ProvideClientCertificatesCallback(certificates =>
+//                            {
+//                                var cert = new X509Certificate2("ca-certificate.crt");
+//                                certificates.Add(cert);
+//                            });
                         }
                     );
                     options.EnableSensitiveDataLogging(false);
