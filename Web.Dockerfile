@@ -5,6 +5,10 @@ WORKDIR /app
 COPY . .
 RUN dotnet restore Nozomi.Web/Nozomi.Web.csproj
 
+# Required libraries in Unix
+RUN apt-get update && apt-get upgrade -y && \
+    apt-get install -y curl
+
 # Node Bash Script for Debian
 # https://github.com/nodesource/distributions#deb
 curl -sL https://deb.nodesource.com/setup_12.x | bash -
