@@ -6,8 +6,8 @@ COPY . .
 RUN dotnet restore Nozomi.Web/Nozomi.Web.csproj
 
 # Required libraries in Unix
-RUN apt-get update && apt-get upgrade -y && \
-    apt-get install -y curl
+RUN apt-get update -q && apt-get install -q -y \
+        curl apt-transport-https apt-utils dialog
 
 # Node Bash Script for Debian
 # https://github.com/nodesource/distributions#deb
