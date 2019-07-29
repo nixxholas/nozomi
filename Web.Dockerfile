@@ -5,6 +5,10 @@ WORKDIR /app
 COPY . .
 RUN dotnet restore Nozomi.Web/Nozomi.Web.csproj
 
+# Node Bash Script for Debian
+# https://github.com/nodesource/distributions#deb
+curl -sL https://deb.nodesource.com/setup_12.x | bash -
+
 # Propagate Node for Docker
 RUN apt-get update && apt-get upgrade -y && \
     apt-get install -y nodejs \
