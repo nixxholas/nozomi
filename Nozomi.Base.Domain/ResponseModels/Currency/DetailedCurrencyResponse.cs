@@ -70,6 +70,7 @@ namespace Nozomi.Data.ResponseModels.Currency
                             AveragePriceHistory = ac.AnalysedHistoricItems
                                 .Where(ahi => NumberHelper.IsNumericDecimal(ahi.Value)
                                               && ahi.HistoricDateTime > DateTime.UtcNow.Subtract(TimeSpan.FromDays(7)))
+                                .OrderBy(ahi => ahi.HistoricDateTime)
                                 .Select(ahi => decimal.Parse(ahi.Value))
                                 .ToList();
                         }
