@@ -114,21 +114,6 @@ namespace Nozomi.Web
                     );
                     options.EnableSensitiveDataLogging(false);
                 });
-
-                services.AddHsts(options =>
-                {
-                    options.Preload = true;
-                    options.IncludeSubDomains = true;
-                    options.MaxAge = TimeSpan.FromDays(60);
-                    options.ExcludedHosts.Add("nozomi.one");
-                    options.ExcludedHosts.Add("www.nozomi.one");
-                });
-
-                services.AddHttpsRedirection(options =>
-                {
-                    options.RedirectStatusCode = StatusCodes.Status308PermanentRedirect;
-                    options.HttpsPort = 443;
-                });
             }
 
             // Add framework services.
