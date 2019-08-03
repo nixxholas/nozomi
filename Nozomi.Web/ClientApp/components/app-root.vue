@@ -1,5 +1,9 @@
 <template>
   <div id="app">
+    <b-message type="is-info" has-icon>
+      <b>We're currently in the test line phase.</b> Major design and layout changes will be made frequently and will not be fixed
+      until beta which will help us to develop rapidly.
+    </b-message>
     <nav-menu params="route: route"></nav-menu>
 
     <div class="container is-fullhd" style="flex: 1; width: 100%">
