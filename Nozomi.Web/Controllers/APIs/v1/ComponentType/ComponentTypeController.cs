@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -18,6 +19,7 @@ namespace Nozomi.Web.Controllers.APIs.v1.ComponentType
             _componentTypeEvent = componentTypeEvent;
         }
 
+        [Authorize(Roles = "Staff")]
         [HttpGet]
         public NozomiResult<JsonResult> All()
         {
