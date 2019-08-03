@@ -192,6 +192,18 @@ namespace Nozomi.Service.Events
 
         public IEnumerable<Source> GetCurrencySources(string slug)
         {
+            #if DEBUG
+            var testRes = _unitOfWork.GetRepository<CurrencySource>()
+                .GetQueryable()
+                .AsNoTracking()
+                .Where(cs => cs.DeletedAt == null && cs.IsEnabled)
+                .Include(cs => cs.Currency)
+                .Where(cs => cs.Currency.Slug.Equals(slug, StringComparison.OrdinalIgnoreCase))
+                .Include(cs => cs.Source)
+                .Select(cs => cs.Source)
+                .ToList();
+            #endif
+            
             return _unitOfWork.GetRepository<CurrencySource>()
                 .GetQueryable()
                 .AsNoTracking()
