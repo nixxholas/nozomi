@@ -7,6 +7,6 @@ namespace Nozomi.Web.Controllers.APIs.v1.Source
      {
          NozomiResult<ICollection<Data.Models.Currency.Source>> All();
 
-         NozomiResult<ICollection<Data.Models.Currency.Source>> GetCurrencySources(string slug);
+         NozomiResult<ICollection<Data.Models.Currency.Source>> GetCurrencySources(string slug, int page = 0);
      }
  }
