@@ -83,7 +83,6 @@
 
       try {
         const response = await this.$axios.get('/api/Currency/Detailed/' + this.slug);
-        console.log(response);
 
         this.data = response.data.data;
 
