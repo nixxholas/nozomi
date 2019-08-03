@@ -29,7 +29,8 @@ namespace Nozomi.Web.Controllers.APIs.v1.Currency
                 new List<AnalysedComponentType>()
                 {
                     AnalysedComponentType.MarketCap,
-                    AnalysedComponentType.CurrentAveragePrice
+                    AnalysedComponentType.CurrentAveragePrice,
+                    AnalysedComponentType.HourlyAveragePrice
                 }));
         }
 
