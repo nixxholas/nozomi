@@ -23,6 +23,6 @@ namespace Nozomi.Service.Events.Interfaces
 
         IEnumerable<Source> GetAllCurrencySourceOptions(IEnumerable<CurrencySource> currencySources);
 
-        IEnumerable<Source> GetCurrencySources(string slug);
+        IEnumerable<Source> GetCurrencySources(string slug, int page = 0);
     }
 }

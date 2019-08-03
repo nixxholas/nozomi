@@ -190,7 +190,7 @@ namespace Nozomi.Service.Events
 
         }
 
-        public IEnumerable<Source> GetCurrencySources(string slug)
+        public IEnumerable<Source> GetCurrencySources(string slug, int page = 0)
         {
             #if DEBUG
             var testRes = _unitOfWork.GetRepository<CurrencySource>()
@@ -211,6 +211,8 @@ namespace Nozomi.Service.Events
                 .Include(cs => cs.Currency)
                 .Where(cs => cs.Currency.Slug.Equals(slug))
                 .Include(cs => cs.Source)
+                .Skip(page * 20)
+                .Take(20)
                 .Select(cs => cs.Source);
         }
 
