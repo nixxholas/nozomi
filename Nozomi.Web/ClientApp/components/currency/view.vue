@@ -57,7 +57,28 @@
                   </b-tab-item>
 
                   <b-tab-item label="Markets">
-                    Soon
+                    <b-table
+                      :data="marketData"
+                      :loading="isMarketDataLoading"
+
+                      paginated
+                      backend-pagination
+                      :total="totalMarketDataCount"
+                      :per-page="perPage"
+                      @page-change="onMarketDataPageChange"
+                      aria-next-label="Next page"
+                      aria-previous-label="Previous page"
+                      aria-page-label="Page"
+                      aria-current-label="Current page">
+                      <template slot-scope="props">
+                        <b-table-column field="name" label="Name" sortable>
+                          {{ props.row.name }}
+                        </b-table-column>
+                        <b-table-column field="abbreviation" label="Abbreviation" sortable>
+                          {{ props.row.abbreviation }}
+                        </b-table-column>
+                      </template>
+                    </b-table>
                   </b-tab-item>
 
                   <b-tab-item label="Historical Data">
@@ -99,14 +120,42 @@
         throw error;
       }
     },
-    created: function () {
+    mounted: function () {
+      this.loadMarketData();
+    },
+    methods: {
+      async loadMarketData() {
+        this.loading = true;
 
+        try {
+          const response = await this.$axios.get('/api/Source/GetCurrencySources/BTC?page=' + (this.marketDataPage - 1));
+          console.log(response);
+
+          this.marketData = response.data.data;
+          this.isMarketDataLoading = false;
+        } catch (error) {
+          console.error(error);
+          this.marketData = [];
+          this.totalMarketDataCount = 0;
+          this.isMarketDataLoading = false;
+          throw error;
+        }
+      },
+      onMarketDataPageChange(page) {
+        this.marketDataPage = page;
+        this.loadData()
+      }
     },
     data () {
       return {
         activeTab: 0,
         isLoading: false,
         data: {},
+        isMarketDataLoading: false,
+        marketDataPage: 1,
+        marketData: [],
+        totalMarketDataCount: 0,
+        perPage: 20,
         // Chart data
         options: {
           chart: {
