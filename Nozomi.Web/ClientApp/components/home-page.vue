@@ -1,25 +1,25 @@
 <template>
     <div>
-<!--      <section class="hero is-medium is-bold">-->
-<!--        <div class="hero-body">-->
-<!--          <div class="container">-->
-<!--            <div v-for="datum in currencyTypeData">-->
-<!--              <h1 class="title">-->
-<!--                {{ datum.componentType }}-->
-<!--              </h1>-->
-<!--              <h2 class="subtitle">-->
-<!--                <trend-->
-<!--                  :data="datum.historical"-->
-<!--                  :gradient="['#6fa8dc', '#42b983', '#2c3e50']"-->
-<!--                  auto-draw-->
-<!--                  smooth-->
-<!--                  v-if="datum.historical != null"-->
-<!--                />-->
-<!--              </h2>-->
-<!--            </div>-->
-<!--          </div>-->
-<!--        </div>-->
-<!--      </section>-->
+      <section class="hero is-medium is-bold">
+        <div class="hero-body">
+          <div class="container">
+            <div v-for="datum in currencyTypeData">
+              <h1 class="title">
+                {{ datum.componentType }}
+              </h1>
+              <h2 class="subtitle">
+                <trend
+                  :data="datum.historical"
+                  :gradient="['#6fa8dc', '#42b983', '#2c3e50']"
+                  auto-draw
+                  smooth
+                  v-if="datum.historical != null"
+                />
+              </h2>
+            </div>
+          </div>
+        </div>
+      </section>
 
       <section class="section">
         <b-table
@@ -92,10 +92,10 @@ export default {
           this.data = currenciesResponse.data;
 
         // Load Currency Type data
-        // const currencyTypesResponse = await this.$axios.get('/api/CurrencyType/GetAll/0');
-        //
-        // if (currencyTypesResponse.status === 200)
-        //   this.currencyTypeData = currencyTypesResponse.data;
+        const currencyTypesResponse = await this.$axios.get('/api/CurrencyType/GetAll/0');
+
+        if (currencyTypesResponse.status === 200)
+          this.currencyTypeData = currencyTypesResponse.data;
 
         this.loading = false;
       } catch (error) {

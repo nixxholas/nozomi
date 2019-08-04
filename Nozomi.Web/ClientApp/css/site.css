@@ -1,4 +1,3 @@
-/* This file should be reviewed. It's not optimal, but it works for now. */
 #app {
     display: flex;
     min-height: 100vh;
