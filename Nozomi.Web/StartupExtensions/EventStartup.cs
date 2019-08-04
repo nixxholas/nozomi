@@ -26,6 +26,7 @@ namespace Nozomi.Web.StartupExtensions
             services.AddScoped<ICurrencyEvent, CurrencyEvent>();
             services.AddScoped<ICurrencyPairEvent, CurrencyPairEvent>();
             services.AddScoped<ICurrencyPairTypeEvent, CurrencyPairTypeEvent>();
+            services.AddScoped<ICurrencyTypeEvent, CurrencyTypeEvent>();
             services.AddScoped<IRequestEvent, RequestEvent>();
             services.AddScoped<IRequestComponentEvent, RequestComponentEvent>();
             services.AddScoped<IRequestPropertyTypeEvent, RequestPropertyTypeEvent>();
