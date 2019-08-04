@@ -23,9 +23,9 @@ namespace Nozomi.Web.Controllers.APIs.v1.Currency
         }
 
         [HttpGet("{slug}")]
-        public NozomiResult<GeneralisedCurrencyResponse> Detailed(string slug)
+        public NozomiResult<DetailedCurrencyResponse> Detailed(string slug)
         {
-            return new NozomiResult<GeneralisedCurrencyResponse>(_currencyEvent.GetDetailedBySlug(slug,
+            return new NozomiResult<DetailedCurrencyResponse>(_currencyEvent.GetDetailedBySlug(slug,
                 new List<AnalysedComponentType>()
                 {
                     AnalysedComponentType.MarketCap,
