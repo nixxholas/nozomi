@@ -332,7 +332,7 @@ namespace Nozomi.Service.Events
             return res.OrderByDescending(dcr => dcr.MarketCap).ToList();
         }
 
-        public GeneralisedCurrencyResponse GetDetailedById(long currencyId, ICollection<AnalysedComponentType> componentTypes)
+        public DetailedCurrencyResponse GetDetailedById(long currencyId, ICollection<AnalysedComponentType> componentTypes)
         {
             var query = _unitOfWork.GetRepository<Currency>()
                 .GetQueryable()
@@ -345,7 +345,7 @@ namespace Nozomi.Service.Events
 
             if (query == null) return null;
 
-            return new GeneralisedCurrencyResponse(query, 
+            return new DetailedCurrencyResponse(query, 
                 _tickerEvent.GetCurrencyTickerPairs(query.Abbreviation));
         }
 
@@ -355,7 +355,7 @@ namespace Nozomi.Service.Events
         /// <param name="slug"></param>
         /// <param name="componentTypes"></param>
         /// <returns></returns>
-        public GeneralisedCurrencyResponse GetDetailedBySlug(string slug,
+        public DetailedCurrencyResponse GetDetailedBySlug(string slug,
             ICollection<AnalysedComponentType> componentTypes)
         {
             var query = _unitOfWork.GetRepository<Currency>()
@@ -376,7 +376,7 @@ namespace Nozomi.Service.Events
                     .Where(ac => componentTypes.Contains(ac.ComponentType))
                     .ToList();
 
-            return new GeneralisedCurrencyResponse(query, 
+            return new DetailedCurrencyResponse(query, 
                 _tickerEvent.GetCurrencyTickerPairs(query.Abbreviation));
         }
 
