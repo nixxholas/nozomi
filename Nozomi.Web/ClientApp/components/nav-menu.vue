@@ -9,11 +9,6 @@
           >
       </b-navbar-item>
     </template>
-<!--    <li class="nav-item" v-for="(route, index) in routes" :key="index">-->
-<!--      <router-link :to="route.path" exact-active-class="active">-->
-<!--        <icon :icon="route.icon" class="mr-2 menu-icon" /><span>{{ route.display }}</span>-->
-<!--      </router-link>-->
-<!--    </li>-->
 
     <template slot="start">
       <b-navbar-item href="/docs">
@@ -31,41 +26,12 @@
     <template slot="end">
       <b-navbar-item tag="div">
         <div class="buttons">
-          <a class="button is-light">
+          <a class="button is-light" @click="login">
             Log in
           </a>
         </div>
       </b-navbar-item>
     </template>
-<!--    <div id="navbarMenu" class="navbar-menu">-->
-<!--      <div class="navbar-start">-->
-<!--      </div>-->
-
-<!--      <div class="navbar-end">-->
-<!--        <div class="navbar-item">-->
-<!--          <div class="field is-grouped">-->
-<!--            <p class="control">-->
-<!--              <a class="bd-tw-button button" data-social-network="Twitter" data-social-action="tweet" data-social-target="http://localhost:4000" target="_blank" href="https://twitter.com/intent/tweet?text=Bulma: a modern CSS framework based on Flexbox&amp;hashtags=bulmaio&amp;url=http://localhost:4000&amp;via=jgthms">-->
-<!--              <span class="icon">-->
-<!--                <i class="fab fa-twitter"></i>-->
-<!--              </span>-->
-<!--              <span>-->
-<!--                Tweet-->
-<!--              </span>-->
-<!--              </a>-->
-<!--            </p>-->
-<!--            <p class="control">-->
-<!--              <a class="button is-primary" href="https://github.com/jgthms/bulma/releases/download/0.7.5/bulma-0.7.5.zip">-->
-<!--              <span class="icon">-->
-<!--                <i class="fas fa-download"></i>-->
-<!--              </span>-->
-<!--                <span>Download</span>-->
-<!--              </a>-->
-<!--            </p>-->
-<!--          </div>-->
-<!--        </div>-->
-<!--      </div>-->
-<!--    </div>-->
   </b-navbar>
 </template>
 
@@ -105,6 +71,15 @@
       },
       methods: {
         toggleCollapsed: function () {
+        },
+        login() {
+          this.$buefy.notification.open({
+            duration: 5000,
+            message: `Authentication functionality is coming soon!`,
+            position: 'is-bottom-right',
+            type: 'is-warning',
+            hasIcon: true
+          })
         }
       }
     }
