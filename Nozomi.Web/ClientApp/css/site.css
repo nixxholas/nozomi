@@ -117,9 +117,7 @@ li.nav-item {
     }
 
     .navbar a {
-
         /* If a menu item's text is too long, truncate it */
-        width: 95%; /* Bug to fix here. Width 100% overflow. */
         white-space: nowrap;
         /* overflow: hidden; */
         text-overflow: ellipsis;
