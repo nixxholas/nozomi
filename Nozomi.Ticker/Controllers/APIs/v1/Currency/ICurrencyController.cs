@@ -10,9 +10,9 @@ namespace Nozomi.Ticker.Controllers.APIs.v1.Currency
     {
         ActionResult<NozomiResult<string>> Create(CreateCurrency createCurrency);
 
-        NozomiResult<DetailedCurrencyResponse> Detailed(string abbreviation);
+        NozomiResult<GeneralisedCurrencyResponse> Detailed(string abbreviation);
 
-        ICollection<DetailedCurrencyResponse> GetAllDetailed(string currencyType = "CRYPTO", int index = 0);
+        ICollection<GeneralisedCurrencyResponse> GetAllDetailed(string currencyType = "CRYPTO", int index = 0);
 
         NozomiResult<string> Update(UpdateCurrency updateCurrency);
     }

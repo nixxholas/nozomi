@@ -62,9 +62,9 @@ namespace Nozomi.Service.Hubs
 //            channel.Writer.Complete();
 //        }
 
-        public async Task<NozomiResult<ICollection<DetailedCurrencyResponse>>> Currencies(string currencyType = "CRYPTO")
+        public async Task<NozomiResult<ICollection<GeneralisedCurrencyResponse>>> Currencies(string currencyType = "CRYPTO")
         {
-            return new NozomiResult<ICollection<DetailedCurrencyResponse>>(_currencyEvent.GetAllDetailed(currencyType));
+            return new NozomiResult<ICollection<GeneralisedCurrencyResponse>>(_currencyEvent.GetAllDetailed(currencyType));
         }
 
         /// <summary>

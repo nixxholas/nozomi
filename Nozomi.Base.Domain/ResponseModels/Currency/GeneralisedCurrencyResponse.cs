@@ -19,7 +19,7 @@ namespace Nozomi.Data.ResponseModels.Currency
     /// <summary>
     /// Detailed Currency Response specific to a currency.
     /// </summary>
-    public class DetailedCurrencyResponse : CurrencyResponse
+    public class GeneralisedCurrencyResponse : CurrencyResponse
     {
         /// <summary>
         /// Obtain the live average price, averaged across ALL sources.
@@ -38,11 +38,11 @@ namespace Nozomi.Data.ResponseModels.Currency
         
         public DateTime LastUpdated { get; set; }
 
-        public DetailedCurrencyResponse()
+        public GeneralisedCurrencyResponse()
         {
         }
 
-        public DetailedCurrencyResponse(Models.Currency.Currency currency, ICollection<CurrencyTickerPair> currencyTickerPairs)
+        public GeneralisedCurrencyResponse(Models.Currency.Currency currency, ICollection<CurrencyTickerPair> currencyTickerPairs)
         {
             // Aggregate non-compounded properties first
             Name = currency.Name;

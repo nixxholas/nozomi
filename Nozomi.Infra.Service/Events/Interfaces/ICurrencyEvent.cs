@@ -31,7 +31,7 @@ namespace Nozomi.Service.Events.Interfaces
         /// </summary>
         /// <param name="currencyTypeId"></param>
         /// <returns></returns>
-        ICollection<DetailedCurrencyResponse> GetAllDetailed(string typeShortForm = "CRYPTO", int index = 0, int daysOfData = 7);
+        ICollection<GeneralisedCurrencyResponse> GetAllDetailed(string typeShortForm = "CRYPTO", int index = 0, int daysOfData = 7);
 
         /// <summary>
         /// Enables to caller to obtained a detailed about regarding a currency,
@@ -41,9 +41,9 @@ namespace Nozomi.Service.Events.Interfaces
         /// <param name="componentTypes">The components that the caller wants to obtain historical
         /// data about.</param>
         /// <returns></returns>
-        DetailedCurrencyResponse GetDetailedById(long currencyId, ICollection<AnalysedComponentType> componentTypes);
+        GeneralisedCurrencyResponse GetDetailedById(long currencyId, ICollection<AnalysedComponentType> componentTypes);
         
-        DetailedCurrencyResponse GetDetailedBySlug(string slug, ICollection<AnalysedComponentType> componentTypes);
+        GeneralisedCurrencyResponse GetDetailedBySlug(string slug, ICollection<AnalysedComponentType> componentTypes);
          
         bool Any(CreateCurrency currency);
         
