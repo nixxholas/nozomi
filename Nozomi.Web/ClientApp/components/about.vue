@@ -39,50 +39,52 @@
       </article>
 
       <div class="row">
-        <div class="col-md-3">
-          <div class="card">
-            <div class="card-image">
-              <figure class="image is-4by4">
-              </figure>
-            </div>
-            <div class="card-content">
-              <div class="media">
-                <div class="media-content">
-                  <p class="title is-4">Jasper Chua</p>
-                  <p class="subtitle is-6">Co-founder & CEO</p>
+        <div class="columns is-desktop">
+          <div class="column">
+            <div class="card">
+              <div class="card-image">
+                <figure class="image is-4by4">
+                </figure>
+              </div>
+              <div class="card-content">
+                <div class="media">
+                  <div class="media-content">
+                    <p class="title is-4">Jasper Chua</p>
+                    <p class="subtitle is-6">Co-founder & CEO</p>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-        <div class="col-md-3">
-          <div class="card">
-            <div class="card-image">
-              <figure class="image is-4by4">
-                <img src="/assets/img/people/nicholas.jpg">
-              </figure>
-            </div>
-            <div class="card-content">
-              <div class="media">
-                <div class="media-content">
-                  <p class="title is-4">Nicholas Chen</p>
-                  <p class="subtitle is-6">Founder & Product Architect</p>
+          <div class="column">
+            <div class="card">
+              <div class="card-image">
+                <figure class="image is-4by4">
+                  <img src="/assets/img/people/nicholas.jpg">
+                </figure>
+              </div>
+              <div class="card-content">
+                <div class="media">
+                  <div class="media-content">
+                    <p class="title is-4">Nicholas Chen</p>
+                    <p class="subtitle is-6">Founder & Product Architect</p>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-        <div class="col-md-3">
-          <div class="card">
-            <div class="card-image">
-              <figure class="image is-4by4">
-              </figure>
-            </div>
-            <div class="card-content">
-              <div class="media">
-                <div class="media-content">
-                  <p class="title is-4">Elvis Yong</p>
-                  <p class="subtitle is-6">Software Engineer</p>
+          <div class="column">
+            <div class="card">
+              <div class="card-image">
+                <figure class="image is-4by4">
+                </figure>
+              </div>
+              <div class="card-content">
+                <div class="media">
+                  <div class="media-content">
+                    <p class="title is-4">Elvis Yong</p>
+                    <p class="subtitle is-6">Software Engineer</p>
+                  </div>
                 </div>
               </div>
             </div>
