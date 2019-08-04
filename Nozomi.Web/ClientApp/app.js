@@ -3,6 +3,7 @@ import Buefy from 'buefy';
 import 'buefy/dist/buefy.css';
 import Trend from "vuetrend";
 import axios from 'axios';
+import * as numeral from 'numeral';
 import VueNumerals from 'vue-numerals';
 import VueApexCharts from 'vue-apexcharts';
 import router from './router/index';
@@ -11,11 +12,13 @@ import { sync } from 'vuex-router-sync';
 import App from 'components/app-root';
 import { FontAwesomeIcon } from './icons';
 import * as moment from 'moment';
+import TvLwChart from 'components/chart/tv-lw-chart';
 
 // Registration of global components
 Vue.component('icon', FontAwesomeIcon);
 // Registration of Vue apexcharts
 Vue.component('apexchart', VueApexCharts);
+Vue.component('tv-lw-chart', TvLwChart);
 
 // Registration of Buefy
 Vue.use(Buefy);
@@ -31,6 +34,7 @@ Vue.use(VueApexCharts);
 Vue.prototype.$http = axios;
 Vue.prototype.$axios = axios;
 Vue.prototype.$moment = moment;
+Vue.prototype.$numeral = numeral;
 
 sync(store, router);
 

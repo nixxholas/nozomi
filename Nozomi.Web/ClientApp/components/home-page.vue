@@ -8,13 +8,9 @@
                 {{ datum.componentType }}
               </h1>
               <h2 class="subtitle">
-                <trend
-                  :data="datum.historical"
-                  :gradient="['#6fa8dc', '#42b983', '#2c3e50']"
-                  auto-draw
-                  smooth
-                  v-if="datum.historical != null"
-                />
+                <tv-lw-chart :payload="datum.historical" magnetTip="true"
+                             lockTimeScale="true"
+                             :data-name="datum.componentType"></tv-lw-chart>
               </h2>
             </div>
           </div>
@@ -67,8 +63,6 @@
 </template>
 
 <script>
-import { createChart } from 'lightweight-charts';
-
 export default {
   data () {
     return {
