@@ -53,7 +53,7 @@
               <div class="tile is-child">
                 <b-tabs type="is-toggle" v-model="activeTab">
                   <b-tab-item label="Chart">
-                    <apexchart width="100%" type="line" :options="options" :series="series"></apexchart>
+                    <div class="chart" ref="chart"></div>
                   </b-tab-item>
 
                   <b-tab-item label="Markets">
@@ -97,6 +97,8 @@
 </template>
 
 <script>
+  import { createChart, isBusinessDay } from 'lightweight-charts';
+
   export default {
     props: ['slug'],
     beforeMount: async function () {
@@ -109,6 +111,42 @@
 
         if (response.data.data.averagePriceHistory !== null) {
           this.series[0].data = response.data.data.averagePriceHistory;
+
+          // Chart setup
+          let chart = createChart(this.$refs.chart, {
+            width: this.$refs.chart.offsetWidth,
+            height: this.$refs.chart.offsetHeight
+          });
+          let areaSeries = chart.addAreaSeries();
+          areaSeries.setData(this.series[0].data);
+          chart.timeScale().fitContent();
+
+          // Chart watermarking
+          chart.applyOptions({
+            priceScale: {
+              autoScale: false,
+              scaleMargins: {
+                top: 0.1,
+                bottom: 0.1,
+              },
+            },
+            timeScale: {
+              lockVisibleTimeRangeOnResize: true,
+              rightBarStaysOnScroll: true,
+              borderVisible: false,
+              borderColor: '#fff000',
+              timeVisible: true,
+              secondsVisible: false,
+            },
+            watermark: {
+              color: 'black',
+              visible: true,
+              text: '7 Day Chart',
+              fontSize: 16,
+              horzAlign: 'left',
+              vertAlign: 'bottom',
+            },
+          });
         }
 
         this.loading = false;
@@ -129,7 +167,6 @@
 
         try {
           const response = await this.$axios.get('/api/Source/GetCurrencySources/BTC?page=' + (this.marketDataPage - 1));
-          console.log(response);
 
           this.marketData = response.data.data;
           this.isMarketDataLoading = false;
