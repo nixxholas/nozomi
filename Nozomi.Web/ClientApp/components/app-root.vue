@@ -17,6 +17,7 @@
           © 2019 Nozomi One Pte. Ltd. All rights reserved.
         </div>
         <div class="column has-text-right">
+          <p class="small text-primary">Nozomi Alpha Build - {{ $moment(buildTime).fromNow() }}</p>
           <strong>Nozomi</strong> by <a href="https://nixholas.com">Nicholas Chen</a>.
         </div>
         </div>
@@ -32,9 +33,20 @@
       components: {
         'nav-menu': NavMenu
       },
+      async beforeMount() {
+        try {
+          let buildTimeApi = await this.$axios.get('/api/Core/GetCurrentBuildTime');
 
+          if (buildTimeApi.status === 200)
+            this.buildTime = buildTimeApi.data;
+        } catch (e) {
+          console.dir("Couldn't get the build time.");
+        }
+      },
       data () {
-        return {}
+        return {
+          buildTime: ''
+        }
       }
     }
 </script>
