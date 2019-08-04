@@ -10,6 +10,7 @@ import store from './store';
 import { sync } from 'vuex-router-sync';
 import App from 'components/app-root';
 import { FontAwesomeIcon } from './icons';
+import * as moment from 'moment';
 
 // Registration of global components
 Vue.component('icon', FontAwesomeIcon);
@@ -29,6 +30,7 @@ Vue.use(VueApexCharts);
 // https://stackoverflow.com/questions/51374367/axios-is-not-defined-in-vue-js-cli
 Vue.prototype.$http = axios;
 Vue.prototype.$axios = axios;
+Vue.prototype.$moment = moment;
 
 sync(store, router);
 

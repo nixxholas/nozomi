@@ -28,6 +28,7 @@
     "copy-webpack-plugin": "^5.0.3",
     "core-js": "^2.5.3",
     "lightweight-charts": "^1.0.1",
+    "moment": "^2.24.0",
     "vue": "^2.6.10",
     "vue-apexcharts": "^1.4.0",
     "vue-numerals": "^3.0.1",
