@@ -3,7 +3,8 @@
       <section class="hero is-medium is-bold">
         <div class="hero-body">
           <div class="container">
-              <carousel class="tile is-ancestor" :autoplay="true" :paginationEnabled="false">
+              <carousel class="tile is-ancestor" :autoplay="true" :paginationEnabled="false"
+                        :perPage="1" :perPageCustom="[[768, 2]]">
                 <slide class="tile is-parent" v-for="datum in currencyTypeData">
                   <article class="tile is-child" style="width: 100%">
                     <p class="title" v-if="datum.parentName">{{ datum.parentName + ' ' + datum.componentType }}</p>
@@ -23,7 +24,6 @@
       <section class="section">
         <b-table
           :data="data"
-          :loading="loading"
 
           paginated
           backend-pagination
@@ -61,6 +61,7 @@
             </b-table-column>
           </template>
         </b-table>
+        <b-loading :is-full-page="false" :active.sync="loading" :can-cancel="false"></b-loading>
       </section>
     </div>
 </template>
