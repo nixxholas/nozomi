@@ -9,7 +9,7 @@
 
   export default {
         name: "tv-lw-chart",
-        props: ['dataName', 'payload', 'height', 'intradayData', 'showGrid', 'showTimeScale', 'lockTimeScale',
+        props: ['dataName', 'payload', 'height', 'fitContent', 'intradayData', 'showGrid', 'showTimeScale', 'lockTimeScale',
           'showPriceScale', 'legend', 'magnetTip'],
         data: function () {
           return {
@@ -27,18 +27,23 @@
             width: this.$refs.chart.offsetWidth,
             height: this.$refs.chart.offsetHeight
           });
-          let areaSeries = chart.addAreaSeries();
-          areaSeries.setData(this.payload);
-
-          chart.timeScale().setVisibleRange(chart.timeScale().getVisibleRange());
 
           if (this.intradayData) {
             chart.applyOptions({
               timeScale: {
                 timeVisible: true,
-                secondsVisible: false,
+                secondsVisible: true,
               }
             });
+          }
+
+          let areaSeries = chart.addAreaSeries();
+          areaSeries.setData(this.payload);
+
+          chart.timeScale().setVisibleRange(chart.timeScale().getVisibleRange());
+
+          if (this.fitContent) {
+            chart.timeScale().fitContent();
           }
 
           if (!this.showGrid) {
@@ -98,7 +103,7 @@
             function setLB(toolTip) {
               toolTip.innerHTML =	'<div style="font-size: 24px; margin: 4px 0px; color: #20262E"> ' + chartName + '</div>'+
                 '<div style="font-size: 22px; margin: 4px 0px; color: #20262E">' + numeral(currPayload[currPayload.length-1].value).format('$0,00') + '</div>' +
-                '<div>' + moment(currPayload[currPayload.length - 1].time).format('ll') + '</div>';
+                '<div>' + moment.unix(param.time).format("MMMM Do YYYY, h:mm:ss a") + '</div>';
             }
 
             chart.subscribeCrosshairMove(function(param) {
@@ -115,7 +120,7 @@
                   '<div style="font-size: 22px; margin: 4px 0px; color: #20262E">'
                   + numeral(price).format('$0,00') +
                   '</div>' +
-                  '<div>' + moment(param.time).format('ll') + '</div>';
+                  '<div>' + param.time + '</div>';
               }
             });
           }
@@ -131,13 +136,9 @@
 
             // Runtime props
             let currPayload = this.payload;
+            console.dir(currPayload);
             let width = this.$refs.chart.offsetWidth;
             let height = this.$refs.chart.offsetHeight;
-            let dateStr = '';
-
-            function businessDayToString(businessDay) {
-              return businessDay.year + '-' + businessDay.month + '-' + businessDay.day;
-            }
 
             // update tooltip
             chart.subscribeCrosshairMove(function(param) {
@@ -147,19 +148,19 @@
               }
 
               toolTip.style.display = 'block';
-              var price = param.seriesPrices.get(areaSeries);
+              let price = param.seriesPrices.get(areaSeries);
               toolTip.innerHTML = '<div style="color: rgba(255, 70, 70, 1)">' + chartName + '</div>' +
                 '<b style="font-size: 24px; margin: 4px 0px">' + numeral(price).format('$0.00 a') + '</b>' +
-                '<div>' + moment(param.time).format('ll') + '</div>';
+                '<div>' + moment.unix(param.time).format("MMMM Do YYYY, h:mm:ss a") + '</div>';
 
-              var y = param.point.y;
+              let y = param.point.y;
 
-              var left = param.point.x + toolTipMargin;
+              let left = param.point.x + toolTipMargin;
               if (left > width - toolTipWidth) {
                 left = param.point.x - toolTipMargin - toolTipWidth;
               }
 
-              var top = y + toolTipMargin;
+              let top = y + toolTipMargin;
               if (top > height - toolTipHeight) {
                 top = y - toolTipHeight - toolTipMargin;
               }
