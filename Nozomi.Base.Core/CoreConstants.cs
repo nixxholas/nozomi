@@ -10,5 +10,6 @@ namespace Nozomi.Base.Core
         public const string GenericCounterCurrency = "USD";
 
         public static readonly DateTime BuildDateTime = DateTime.UtcNow;
+        public static readonly DateTime Epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
     }
 }
