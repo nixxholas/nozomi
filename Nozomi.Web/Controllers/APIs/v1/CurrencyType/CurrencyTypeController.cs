@@ -1,8 +1,10 @@
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Nozomi.Base.Core;
 using Nozomi.Base.Identity.Models.Identity;
 using Nozomi.Data.ResponseModels;
 using Nozomi.Data.ResponseModels.AnalysedComponent;
@@ -24,18 +26,18 @@ namespace Nozomi.Web.Controllers.APIs.v1.CurrencyType
         }
 
         [HttpGet("{page}")]
-        public ICollection<ExtendedAnalysedComponentResponse<string>> GetAll(int page = 0)
+        public ICollection<ExtendedAnalysedComponentResponse<EpochValuePair<string>>> GetAll(int page = 0)
         {
             #if DEBUG
             var testRes = _analysedComponentEvent.GetAllCurrencyTypeAnalysedComponents(page, true, true)
-                .Select(ac => new ExtendedAnalysedComponentResponse<string>
+                .Select(ac => new ExtendedAnalysedComponentResponse<EpochValuePair<string>>
                 {
                     ComponentType = NozomiServiceConstants.analysedComponentTypes
                         .SingleOrDefault(act => act.Value.Equals((int) ac.ComponentType)).Key,
                     Historical = ac.AnalysedHistoricItems
-                        .Select(ahi => new DateValuePair<string>
+                        .Select(ahi => new EpochValuePair<string>
                         {
-                            Time = ahi.HistoricDateTime,
+                            Time = (ahi.HistoricDateTime.ToUniversalTime() - CoreConstants.Epoch).TotalSeconds,
                             Value = ahi.Value
                         })
                         .OrderBy(dvp => dvp.Time)
@@ -46,14 +48,14 @@ namespace Nozomi.Web.Controllers.APIs.v1.CurrencyType
             #endif
 
             return _analysedComponentEvent.GetAllCurrencyTypeAnalysedComponents(page, true, true)
-                .Select(ac => new ExtendedAnalysedComponentResponse<string>
+                .Select(ac => new ExtendedAnalysedComponentResponse<EpochValuePair<string>>
                 {
                     ComponentType = NozomiServiceConstants.analysedComponentTypes
                         .SingleOrDefault(act => act.Value.Equals((int) ac.ComponentType)).Key,
                     Historical = ac.AnalysedHistoricItems
-                        .Select(ahi => new DateValuePair<string>
+                        .Select(ahi => new EpochValuePair<string>
                         {
-                            Time = ahi.HistoricDateTime,
+                            Time = (ahi.HistoricDateTime.ToUniversalTime() - CoreConstants.Epoch).TotalSeconds,
                             Value = ahi.Value
                         })
                         .OrderBy(dvp => dvp.Time)
