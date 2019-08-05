@@ -135,8 +135,6 @@
             this.$refs.chart.appendChild(toolTip);
 
             // Runtime props
-            let currPayload = this.payload;
-            console.dir(currPayload);
             let width = this.$refs.chart.offsetWidth;
             let height = this.$refs.chart.offsetHeight;
 
