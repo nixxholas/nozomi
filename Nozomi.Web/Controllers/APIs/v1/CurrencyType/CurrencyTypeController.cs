@@ -26,6 +26,25 @@ namespace Nozomi.Web.Controllers.APIs.v1.CurrencyType
         [HttpGet("{page}")]
         public ICollection<ExtendedAnalysedComponentResponse<string>> GetAll(int page = 0)
         {
+            #if DEBUG
+            var testRes = _analysedComponentEvent.GetAllCurrencyTypeAnalysedComponents(page, true, true)
+                .Select(ac => new ExtendedAnalysedComponentResponse<string>
+                {
+                    ComponentType = NozomiServiceConstants.analysedComponentTypes
+                        .SingleOrDefault(act => act.Value.Equals((int) ac.ComponentType)).Key,
+                    Historical = ac.AnalysedHistoricItems
+                        .Select(ahi => new DateValuePair<string>
+                        {
+                            Time = ahi.HistoricDateTime,
+                            Value = ahi.Value
+                        })
+                        .OrderBy(dvp => dvp.Time)
+                        .ToList(),
+                    Value = ac.Value
+                })
+                .ToList();
+            #endif
+
             return _analysedComponentEvent.GetAllCurrencyTypeAnalysedComponents(page, true, true)
                 .Select(ac => new ExtendedAnalysedComponentResponse<string>
                 {
@@ -37,6 +56,7 @@ namespace Nozomi.Web.Controllers.APIs.v1.CurrencyType
                             Time = ahi.HistoricDateTime,
                             Value = ahi.Value
                         })
+                        .OrderBy(dvp => dvp.Time)
                         .ToList(),
                     Value = ac.Value
                 })
