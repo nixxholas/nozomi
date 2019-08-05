@@ -35,9 +35,9 @@
               <p class="heading">Market Cap</p>
               <p class="title">{{ data.marketCap | numeralFormat('$0[.]00 a') }}</p>
             </div>
-            <div class="tile is-child">
-              <p class="heading">Market Cap</p>
-              <p class="title">{{ data.marketCap | numeralFormat('$0[.]00 a') }}</p>
+            <div class="tile is-child" v-for="rComp in data.requestComponents">
+              <p class="heading">{{ rComp.name }}</p>
+              <p class="title">{{ rComp.value }}</p>
             </div>
             <div class="tile is-child">
               <p class="heading">Market Cap</p>
@@ -165,7 +165,7 @@
     },
     methods: {
       async loadMarketData() {
-        this.loading = true;
+        this.isMarketDataLoading = true;
 
         try {
           const response = await this.$axios.get('/api/Source/GetCurrencySources/BTC?page=' + (this.marketDataPage - 1));
@@ -182,7 +182,7 @@
       },
       onMarketDataPageChange(page) {
         this.marketDataPage = page;
-        this.loadData()
+        this.loadMarketData()
       }
     },
     data () {
