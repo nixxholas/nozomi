@@ -6,6 +6,6 @@ namespace Nozomi.Data.ResponseModels.AnalysedComponent
     {
         public new string ComponentType { get; set; }
         
-        public new ICollection<DateValuePair<T>> Historical { get; set; }
+        public new ICollection<T> Historical { get; set; }
     }
 }
