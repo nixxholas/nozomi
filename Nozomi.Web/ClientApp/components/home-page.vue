@@ -3,16 +3,16 @@
       <section class="hero is-medium is-bold">
         <div class="hero-body">
           <div class="container">
-            <div class="tile is-ancestor">
-                <article class="tile is-6" v-for="datum in currencyTypeData">
-                  <p class="title" style="width: 100%">
-                    {{ datum.componentType }}
-                    <tv-lw-chart :payload="datum.historical" magnetTip="true" fit-content="true"
-                                 lockTimeScale="true" :height="'30vh'" intradayData="true"
-                                 :data-name="datum.componentType"></tv-lw-chart>
-                  </p>
-                </article>
-            </div>
+              <carousel class="tile is-ancestor" :autoplay="true" :paginationEnabled="false">
+                <slide class="tile is-parent" v-for="datum in currencyTypeData">
+                  <article class="tile is-child" style="width: 100%">
+                      <p class="title">{{ datum.componentType }}</p>
+                      <tv-lw-chart :payload="datum.historical" magnetTip="true" fit-content="true"
+                                   :showTimeScale="false" :height="'30vh'" intradayData="true"
+                                   :data-name="datum.componentType"></tv-lw-chart>
+                  </article>
+                </slide>
+              </carousel>
           </div>
         </div>
       </section>
@@ -63,6 +63,8 @@
 </template>
 
 <script>
+import { Carousel, Slide } from 'vue-carousel';
+
 export default {
   data () {
     return {
@@ -73,6 +75,10 @@ export default {
       page: 1,
       perPage: 20
     }
+  },
+  components: {
+    Carousel,
+    Slide
   },
   methods: {
     async loadData() {
