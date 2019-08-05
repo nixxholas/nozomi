@@ -6,8 +6,10 @@
               <carousel class="tile is-ancestor" :autoplay="true" :paginationEnabled="false">
                 <slide class="tile is-parent" v-for="datum in currencyTypeData">
                   <article class="tile is-child" style="width: 100%">
-                      <p class="title">{{ datum.parentName + ' ' + datum.componentType }}</p>
-                      <tv-lw-chart :payload="datum.historical" magnetTip="true" fit-content="true"
+                    <p class="title" v-if="datum.parentName">{{ datum.parentName + ' ' + datum.componentType }}</p>
+                    <p class="title" v-else>{{datum.componentType }}</p>
+
+                    <tv-lw-chart :payload="datum.historical" magnetTip="true" fit-content="true"
                                    :showTimeScale="false" :height="'30vh'" intradayData="true"
                                    :data-name="datum.componentType"></tv-lw-chart>
                   </article>
@@ -15,6 +17,7 @@
               </carousel>
           </div>
         </div>
+        <b-loading :is-full-page="false" :active.sync="currencyTypeData.length === 0" :can-cancel="false"></b-loading>
       </section>
 
       <section class="section">
@@ -47,7 +50,7 @@
             </b-table-column>
             <b-table-column field="chart" label="Trend" sortable>
               <trend
-                :data="props.row.averagePriceHistory"
+                :data="props.row.averagePriceHistory" :radius="24"
                 :gradient="['#6fa8dc', '#42b983', '#2c3e50']"
                 auto-draw
                 smooth
@@ -70,6 +73,7 @@ export default {
     return {
       data: [],
       currencyTypeData: [],
+      currencyTypeLoading: false,
       total: 0,
       loading: false,
       page: 1,
@@ -83,6 +87,7 @@ export default {
   methods: {
     async loadData() {
       this.loading = true;
+      this.currencyTypeLoading = true;
 
       try {
         // Load all currencies
@@ -91,13 +96,15 @@ export default {
         if (currenciesResponse.status === 200)
           this.data = currenciesResponse.data;
 
+        this.loading = false;
+
         // Load Currency Type data
         const currencyTypesResponse = await this.$axios.get('/api/CurrencyType/GetAll/0');
 
         if (currencyTypesResponse.status === 200)
           this.currencyTypeData = currencyTypesResponse.data;
 
-        this.loading = false;
+        this.currencyTypeLoading = false;
       } catch (error) {
         console.error(error);
         this.data = [];
