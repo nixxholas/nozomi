@@ -44,7 +44,7 @@ namespace Nozomi.Ticker.Controllers.APIs.v1.Currency
         [HttpGet("{slug}")]
         public NozomiResult<GeneralisedCurrencyResponse> Detailed(string slug)
         {
-            return new NozomiResult<GeneralisedCurrencyResponse>(_currencyEvent.GetDetailedBySlug(slug, 
+            return new NozomiResult<GeneralisedCurrencyResponse>(_currencyEvent.GetDetailedBySlug(slug, null,
                 new List<AnalysedComponentType>()
                 {
                     AnalysedComponentType.CurrentAveragePrice
