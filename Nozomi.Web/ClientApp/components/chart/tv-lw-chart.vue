@@ -3,19 +3,25 @@
 </template>
 
 <script>
-  import { createChart, isBusinessDay } from 'lightweight-charts';
+  import { createChart } from 'lightweight-charts';
   import * as numeral from 'numeral';
   import * as moment from 'moment';
 
   export default {
         name: "tv-lw-chart",
-        props: ['dataName', 'payload', 'showGrid', 'showTimeScale', 'lockTimeScale', 'showPriceScale', 'legend', 'magnetTip'],
+        props: ['dataName', 'payload', 'height', 'intradayData', 'showGrid', 'showTimeScale', 'lockTimeScale',
+          'showPriceScale', 'legend', 'magnetTip'],
         data: function () {
           return {
           }
         },
         mounted() {
           const chartName = this.dataName;
+
+          if (this.height) {
+            this.$refs.chart.style.height = this.height;
+          }
+
           // Chart setup
           let chart = createChart(this.$refs.chart, {
             width: this.$refs.chart.offsetWidth,
@@ -23,7 +29,17 @@
           });
           let areaSeries = chart.addAreaSeries();
           areaSeries.setData(this.payload);
-          chart.timeScale().fitContent();
+
+          chart.timeScale().setVisibleRange(chart.timeScale().getVisibleRange());
+
+          if (this.intradayData) {
+            chart.applyOptions({
+              timeScale: {
+                timeVisible: true,
+                secondsVisible: false,
+              }
+            });
+          }
 
           if (!this.showGrid) {
             chart.applyOptions({
@@ -49,6 +65,7 @@
           if (this.lockTimeScale) {
             chart.applyOptions({
               timeScale: {
+                fixLeftEdge: true,
                 lockVisibleTimeRangeOnResize: true,
               }
             });
@@ -132,7 +149,7 @@
               toolTip.style.display = 'block';
               var price = param.seriesPrices.get(areaSeries);
               toolTip.innerHTML = '<div style="color: rgba(255, 70, 70, 1)">' + chartName + '</div>' +
-                '<div style="font-size: 24px; margin: 4px 0px">' + numeral(price).format('$0.00 a') + '</div>' +
+                '<b style="font-size: 24px; margin: 4px 0px">' + numeral(price).format('$0.00 a') + '</b>' +
                 '<div>' + moment(param.time).format('ll') + '</div>';
 
               var y = param.point.y;
