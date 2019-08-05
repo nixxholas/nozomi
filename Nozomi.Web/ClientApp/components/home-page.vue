@@ -6,7 +6,7 @@
               <carousel class="tile is-ancestor" :autoplay="true" :paginationEnabled="false">
                 <slide class="tile is-parent" v-for="datum in currencyTypeData">
                   <article class="tile is-child" style="width: 100%">
-                      <p class="title">{{ datum.componentType }}</p>
+                      <p class="title">{{ datum.parentName + ' ' + datum.componentType }}</p>
                       <tv-lw-chart :payload="datum.historical" magnetTip="true" fit-content="true"
                                    :showTimeScale="false" :height="'30vh'" intradayData="true"
                                    :data-name="datum.componentType"></tv-lw-chart>

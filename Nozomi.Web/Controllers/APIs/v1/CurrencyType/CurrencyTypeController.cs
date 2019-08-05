@@ -32,6 +32,7 @@ namespace Nozomi.Web.Controllers.APIs.v1.CurrencyType
             var testRes = _analysedComponentEvent.GetAllCurrencyTypeAnalysedComponents(page, true, true)
                 .Select(ac => new ExtendedAnalysedComponentResponse<EpochValuePair<string>>
                 {
+                    ParentName = ac.CurrencyType.Name,
                     ComponentType = NozomiServiceConstants.analysedComponentTypes
                         .SingleOrDefault(act => act.Value.Equals((int) ac.ComponentType)).Key,
                     Historical = ac.AnalysedHistoricItems
@@ -50,6 +51,7 @@ namespace Nozomi.Web.Controllers.APIs.v1.CurrencyType
             return _analysedComponentEvent.GetAllCurrencyTypeAnalysedComponents(page, true, true)
                 .Select(ac => new ExtendedAnalysedComponentResponse<EpochValuePair<string>>
                 {
+                    ParentName = ac.CurrencyType.Name,
                     ComponentType = NozomiServiceConstants.analysedComponentTypes
                         .SingleOrDefault(act => act.Value.Equals((int) ac.ComponentType)).Key,
                     Historical = ac.AnalysedHistoricItems
