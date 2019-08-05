@@ -390,6 +390,15 @@ namespace Nozomi.Service.Events
                     .ThenInclude(ac => ac.AnalysedHistoricItems)
                     .SelectMany(c => c.AnalysedComponents.Where(ac =>
                         analysedComponentTypes.Contains(ac.ComponentType)))
+                    .Select(ac => new AnalysedComponent
+                    {
+                        Id = ac.Id,
+                        ComponentType = ac.ComponentType,
+                        Value = ac.Value,
+                        IsDenominated = ac.IsDenominated,
+                        UIFormatting = ac.UIFormatting,
+                        AnalysedHistoricItems = ac.AnalysedHistoricItems
+                    })
                     .Skip(analysedComponentTypesIndex * NozomiServiceConstants.AnalysedComponentTakeoutLimit)
                     .Take(NozomiServiceConstants.AnalysedComponentTakeoutLimit)
                     .ToList();
