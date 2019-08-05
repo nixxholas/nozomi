@@ -3,15 +3,15 @@
       <section class="hero is-medium is-bold">
         <div class="hero-body">
           <div class="container">
-            <div v-for="datum in currencyTypeData">
-              <h1 class="title">
-                {{ datum.componentType }}
-              </h1>
-              <h2 class="subtitle">
-                <tv-lw-chart :payload="datum.historical" magnetTip="true"
-                             lockTimeScale="true"
-                             :data-name="datum.componentType"></tv-lw-chart>
-              </h2>
+            <div class="tile is-ancestor">
+                <article class="tile is-6" v-for="datum in currencyTypeData">
+                  <p class="title" style="width: 100%">
+                    {{ datum.componentType }}
+                    <tv-lw-chart :payload="datum.historical" magnetTip="true" fit-content="true"
+                                 lockTimeScale="true" :height="'30vh'" intradayData="true"
+                                 :data-name="datum.componentType"></tv-lw-chart>
+                  </p>
+                </article>
             </div>
           </div>
         </div>
