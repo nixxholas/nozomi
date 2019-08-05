@@ -93,6 +93,7 @@
         </div>
       </div>
     </section>
+    <b-loading :is-full-page="false" :active.sync="loading" :can-cancel="false"></b-loading>
   </div>
 </template>
 
@@ -108,6 +109,7 @@
         const response = await this.$axios.get('/api/Currency/Detailed/' + this.slug);
 
         this.data = response.data.data;
+        console.dir(this.data);
 
         if (response.data.data.averagePriceHistory !== null) {
           this.series[0].data = response.data.data.averagePriceHistory;
