@@ -42,9 +42,9 @@ namespace Nozomi.Ticker.Controllers.APIs.v1.Currency
         }
 
         [HttpGet("{slug}")]
-        public NozomiResult<DetailedCurrencyResponse> Detailed(string slug)
+        public NozomiResult<GeneralisedCurrencyResponse> Detailed(string slug)
         {
-            return new NozomiResult<DetailedCurrencyResponse>(_currencyEvent.GetDetailedBySlug(slug, 
+            return new NozomiResult<GeneralisedCurrencyResponse>(_currencyEvent.GetDetailedBySlug(slug, null,
                 new List<AnalysedComponentType>()
                 {
                     AnalysedComponentType.CurrentAveragePrice
@@ -52,7 +52,7 @@ namespace Nozomi.Ticker.Controllers.APIs.v1.Currency
         }
 
         [HttpGet("{index}")]
-        public ICollection<DetailedCurrencyResponse> GetAllDetailed([FromQuery]string currencyType = "CRYPTO", int index = 0)
+        public ICollection<GeneralisedCurrencyResponse> GetAllDetailed([FromQuery]string currencyType = "CRYPTO", int index = 0)
         {
             return _currencyEvent.GetAllDetailed(currencyType, index);
         }

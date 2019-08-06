@@ -33,8 +33,10 @@ namespace Nozomi.Web
         {
              // Environment Inclusion
             var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+            var webEnv = Environment.GetEnvironmentVariable("WEB_ENVIRONMENT") ?? string.Empty;
 
-            if (!string.IsNullOrEmpty(env) && !env.Equals("production", StringComparison.OrdinalIgnoreCase))
+            if (!string.IsNullOrEmpty(env) && (!env.Equals("production", StringComparison.OrdinalIgnoreCase)
+                && !webEnv.Equals("Production", StringComparison.OrdinalIgnoreCase)))
             {
                 // Greet the beloved dev
                 Console.WriteLine(@"Welcome to the dev environment, your machine is named: " + Environment.MachineName);

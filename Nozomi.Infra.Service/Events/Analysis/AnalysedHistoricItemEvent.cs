@@ -7,6 +7,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Logging;
 using Nozomi.Base.Core.Responses;
+using Nozomi.Data;
+using Nozomi.Data.Models.Currency;
 using Nozomi.Data.Models.Web.Analytical;
 using Nozomi.Preprocessing;
 using Nozomi.Preprocessing.Abstracts;
@@ -291,6 +293,57 @@ namespace Nozomi.Service.Events.Analysis
             }
 
             return null;
+        }
+
+        public NozomiPaginatedResult<AnalysedHistoricItem> GetCurrencyPriceHistory(string slug, int index = 0, int perPage = 0)
+        {
+            if (index >= 0 && !string.IsNullOrEmpty(slug))
+            {
+                var history = _unitOfWork.GetRepository<Currency>()
+                    .GetQueryable()
+                    .AsNoTracking()
+                    .Where(c => c.DeletedAt == null && c.IsEnabled
+                                                    && c.Slug.Equals(slug,
+                                                        StringComparison.InvariantCultureIgnoreCase));
+
+                if (history.Any())
+                {
+                    var result = history
+                        .Include(c => c.AnalysedComponents)
+                        .ThenInclude(ac => ac.AnalysedHistoricItems)
+                        .SelectMany(c => c.AnalysedComponents
+                            .Where(ac => ac.DeletedAt == null && ac.IsEnabled
+                                                              && ac.ComponentType
+                                                                  .Equals(AnalysedComponentType
+                                                                      .CurrentAveragePrice)))
+                        .SelectMany(ac => ac.AnalysedHistoricItems
+                            .Where(ahi => ahi.DeletedAt == null && ahi.IsEnabled)
+                            .OrderBy(ahi => ahi.HistoricDateTime));
+                    
+                    if (perPage > 0)
+                        return new NozomiPaginatedResult<AnalysedHistoricItem>
+                        {
+                            Pages = result.LongCount() / perPage,
+                            ElementsPerPage = perPage,
+                            Data = result
+                                .Skip(index * perPage)
+                                .Take(perPage)
+                                .ToList()
+                        };
+                    
+                    return new NozomiPaginatedResult<AnalysedHistoricItem>
+                    {
+                        Pages = result.LongCount() / perPage,
+                        ElementsPerPage = NozomiServiceConstants.AnalysedHistoricItemTakeoutLimit,
+                        Data = result
+                            .Skip(index * NozomiServiceConstants.AnalysedHistoricItemTakeoutLimit)
+                            .Take(NozomiServiceConstants.AnalysedHistoricItemTakeoutLimit)
+                            .ToList()
+                    };
+                }
+            }
+
+            return new NozomiPaginatedResult<AnalysedHistoricItem>();
         }
     }
 }

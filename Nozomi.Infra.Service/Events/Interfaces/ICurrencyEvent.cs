@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Nozomi.Data.AreaModels.v1.Currency;
 using Nozomi.Data.Models.Currency;
+using Nozomi.Data.Models.Web;
 using Nozomi.Data.Models.Web.Analytical;
 using Nozomi.Data.ResponseModels.Currency;
 
@@ -31,7 +32,7 @@ namespace Nozomi.Service.Events.Interfaces
         /// </summary>
         /// <param name="currencyTypeId"></param>
         /// <returns></returns>
-        ICollection<DetailedCurrencyResponse> GetAllDetailed(string typeShortForm = "CRYPTO", int index = 0, int daysOfData = 7);
+        ICollection<GeneralisedCurrencyResponse> GetAllDetailed(string typeShortForm = "CRYPTO", int index = 0, int daysOfData = 7);
 
         /// <summary>
         /// Enables to caller to obtained a detailed about regarding a currency,
@@ -43,7 +44,9 @@ namespace Nozomi.Service.Events.Interfaces
         /// <returns></returns>
         DetailedCurrencyResponse GetDetailedById(long currencyId, ICollection<AnalysedComponentType> componentTypes);
         
-        DetailedCurrencyResponse GetDetailedBySlug(string slug, ICollection<AnalysedComponentType> componentTypes);
+        DetailedCurrencyResponse GetDetailedBySlug(string slug,
+            ICollection<ComponentType> componentTypes, ICollection<AnalysedComponentType> analysedComponentTypes, 
+            int componentTypesIndex = 0, int analysedComponentTypesIndex = 0);
          
         bool Any(CreateCurrency currency);
         

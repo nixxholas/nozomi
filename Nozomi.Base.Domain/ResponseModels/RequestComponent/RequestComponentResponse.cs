@@ -5,7 +5,7 @@ namespace Nozomi.Data.ResponseModels.RequestComponent
 {
     public class RequestComponentResponse
     {
-        public ComponentType ComponentType { get; set; }
+        public string Name { get; set; }
         
         public DateTime Timestamp { get; set; }
         

@@ -43,14 +43,14 @@ namespace Nozomi.Preprocessing
         /// i.e. 1 hour of data, NozomiServiceConstants.AnalysedComponentTakeoutLimit is 1000 = 3600 rows. You need 4 queries to do that.
         /// 4000 rows will cover 3.6k
         /// </summary>
-        public const int AnalysedComponentTakeoutLimit = 5000;
+        public const int AnalysedComponentTakeoutLimit = 100;
         
-        public const int AnalysedHistoricItemTakeoutLimit = 5000;
+        public const int AnalysedHistoricItemTakeoutLimit = 500;
 
         public const int CurrencyTypeTakeoutLimit = 20;
 
-        public const int CurrencyPropertyTakeoutLimit = 500;
+        public const int CurrencyPropertyTakeoutLimit = 100;
         
-        public const int RequestComponentTakeoutLimit = 10000;
+        public const int RequestComponentTakeoutLimit = 1000;
     }
 }

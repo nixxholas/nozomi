@@ -48,5 +48,12 @@ namespace Nozomi.Web.Controllers.APIs.v1.Source
         {
             return new NozomiResult<ICollection<Data.Models.Currency.Source>>(_sourceEvent.GetAllActive(true).ToList());
         }
+
+        [HttpGet("{slug}")]
+        public NozomiResult<ICollection<Data.Models.Currency.Source>> GetCurrencySources(string slug, int page = 0)
+        {
+            return new NozomiResult<ICollection<Data.Models.Currency.Source>>(
+                _sourceEvent.GetCurrencySources(slug, page).ToList());
+        }
     }
 }

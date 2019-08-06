@@ -190,6 +190,32 @@ namespace Nozomi.Service.Events
 
         }
 
+        public IEnumerable<Source> GetCurrencySources(string slug, int page = 0)
+        {
+            #if DEBUG
+            var testRes = _unitOfWork.GetRepository<CurrencySource>()
+                .GetQueryable()
+                .AsNoTracking()
+                .Where(cs => cs.DeletedAt == null && cs.IsEnabled)
+                .Include(cs => cs.Currency)
+                .Where(cs => cs.Currency.Slug.Equals(slug, StringComparison.OrdinalIgnoreCase))
+                .Include(cs => cs.Source)
+                .Select(cs => cs.Source)
+                .ToList();
+            #endif
+            
+            return _unitOfWork.GetRepository<CurrencySource>()
+                .GetQueryable()
+                .AsNoTracking()
+                .Where(cs => cs.DeletedAt == null && cs.IsEnabled)
+                .Include(cs => cs.Currency)
+                .Where(cs => cs.Currency.Slug.Equals(slug))
+                .Include(cs => cs.Source)
+                .Skip(page * 20)
+                .Take(20)
+                .Select(cs => cs.Source);
+        }
+
         public XSourceResponse Get(string abbreviation)
         {
             return _unitOfWork.GetRepository<Source>()

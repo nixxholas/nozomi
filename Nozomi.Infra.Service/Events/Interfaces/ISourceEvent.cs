@@ -22,5 +22,7 @@ namespace Nozomi.Service.Events.Interfaces
         IEnumerable<dynamic> GetAllActiveObsc(bool includeNested = false);
 
         IEnumerable<Source> GetAllCurrencySourceOptions(IEnumerable<CurrencySource> currencySources);
+
+        IEnumerable<Source> GetCurrencySources(string slug, int page = 0);
     }
 }

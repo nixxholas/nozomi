@@ -21,4 +21,4 @@ FROM mcr.microsoft.com/dotnet/core/aspnet:2.2
 WORKDIR /app
 COPY --from=build-env /app/Nozomi.Ticker/out .
 RUN ls
-ENTRYPOINT ["dotnet", "Nozomi.Analysis.dll"]
+ENTRYPOINT ["dotnet", "Nozomi.Ticker.dll"]

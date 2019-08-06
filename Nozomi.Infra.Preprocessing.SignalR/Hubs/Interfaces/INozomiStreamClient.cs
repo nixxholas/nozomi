@@ -12,7 +12,7 @@ namespace Nozomi.Infra.Preprocessing.SignalR.Hubs.Interfaces
 {
     public interface INozomiStreamClient
     {
-        Task Currencies(ICollection<DetailedCurrencyResponse> currencies);
+        Task Currencies(ICollection<GeneralisedCurrencyResponse> currencies);
         /// <summary>
         /// Dispatches 
         /// </summary>

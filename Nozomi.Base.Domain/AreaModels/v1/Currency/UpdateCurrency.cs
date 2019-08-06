@@ -14,6 +14,8 @@ namespace Nozomi.Data.AreaModels.v1.Currency
         [Required]
         public string Abbreviation { get; set; } // USD? MYR? IND?
         
+        public string LogoPath { get; set; }
+        
         [Required]
         public string Slug { get; set; }
         
