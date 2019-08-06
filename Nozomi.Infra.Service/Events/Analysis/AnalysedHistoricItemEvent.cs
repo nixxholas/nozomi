@@ -295,7 +295,7 @@ namespace Nozomi.Service.Events.Analysis
             return null;
         }
 
-        public NozomiPaginatedResult<AnalysedHistoricItem> GetCurrencyPriceHistory(string slug, int index = 0)
+        public NozomiPaginatedResult<AnalysedHistoricItem> GetCurrencyPriceHistory(string slug, int index = 0, int perPage = 0)
         {
             if (index >= 0 && !string.IsNullOrEmpty(slug))
             {
@@ -320,9 +320,20 @@ namespace Nozomi.Service.Events.Analysis
                             .Where(ahi => ahi.DeletedAt == null && ahi.IsEnabled)
                             .OrderBy(ahi => ahi.HistoricDateTime));
                     
+                    if (perPage > 0)
+                        return new NozomiPaginatedResult<AnalysedHistoricItem>
+                        {
+                            Pages = result.LongCount() / perPage,
+                            ElementsPerPage = perPage,
+                            Data = result
+                                .Skip(index * perPage)
+                                .Take(perPage)
+                                .ToList()
+                        };
+                    
                     return new NozomiPaginatedResult<AnalysedHistoricItem>
                     {
-                        Pages = result.LongCount(),
+                        Pages = result.LongCount() / perPage,
                         ElementsPerPage = NozomiServiceConstants.AnalysedHistoricItemTakeoutLimit,
                         Data = result
                             .Skip(index * NozomiServiceConstants.AnalysedHistoricItemTakeoutLimit)

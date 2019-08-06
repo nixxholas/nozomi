@@ -32,6 +32,6 @@ namespace Nozomi.Service.Events.Analysis.Interfaces
         NozomiPaginatedResult<AnalysedHistoricItem> TraverseRelatedHistory(long analysedComponentId,
             AnalysedComponentType componentType, int page = 0);
 
-        NozomiPaginatedResult<AnalysedHistoricItem> GetCurrencyPriceHistory(string slug, int index = 0);
+        NozomiPaginatedResult<AnalysedHistoricItem> GetCurrencyPriceHistory(string slug, int index = 0, int perPage = 0);
     }
 }
