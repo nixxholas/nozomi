@@ -2,56 +2,62 @@
   <div>
     <section class="hero">
       <div class="hero-body">
-        <nav class="level">
-          <div class="level-left">
-            <div class="level-item">
-              <figure class="image is-64x64" v-if="data.logoPath != null">
-                <img :src="'/' + data.logoPath"/>
-              </figure>
-            </div>
-            <div class="level-item">
-              <h1 class="title">
-                {{ data.name }}
-              </h1>
-            </div>
-            <div class="level-item">
-              <h1 class="title">
-                <b-tag type="is-info">{{ data.abbreviation }}</b-tag>
-              </h1>
-            </div>
+        <div class="columns is-desktop is-multiline">
+          <div class="column">
+            <nav class="level is-full">
+              <div class="level-left">
+                <div class="level-item">
+                  <figure class="image is-64x64" v-if="data.logoPath != null">
+                    <img :src="'/' + data.logoPath"/>
+                  </figure>
+                </div>
+                <div class="level-item">
+                  <h1 class="title">
+                    {{ data.name }}
+                  </h1>
+                </div>
+                <div class="level-item">
+                  <h1 class="title">
+                    <b-tag type="is-info">{{ data.abbreviation }}</b-tag>
+                  </h1>
+                </div>
+              </div>
+
+              <div class="level-right">
+                <div class="level-item">
+                  <h1 class="subtitle">
+                    {{ data.averagePrice | numeralFormat('$0[.]00') }}
+                  </h1>
+                </div>
+              </div>
+            </nav>
           </div>
 
-          <div class="level-right">
-            <div class="level-item">
-              <h1 class="subtitle">
-                {{ data.averagePrice | numeralFormat('$0[.]00') }}
-              </h1>
-            </div>
+          <div class="column is-full" v-if="data.description !== null">
+            <b-message>
+              {{ data.description }}
+            </b-message>
           </div>
-        </nav>
+        </div>
+
         <div class="tile is-ancestor notification">
-          <div class="tile is-vertical is-3">
+          <div class="tile is-parent is-vertical is-3">
             <div class="tile is-child">
               <p class="heading">Market Cap</p>
-              <p class="title">{{ data.marketCap | numeralFormat('$0[.]00 a') }}</p>
+              <p class="title is-4">{{ data.marketCap | numeralFormat('$0[.]00 a') }}</p>
             </div>
             <div class="tile is-child" v-for="rComp in data.requestComponents">
               <p class="heading">{{ rComp.name }}</p>
-              <p class="title">{{ rComp.value }}</p>
+              <p class="title is-4">{{ rComp.value }}</p>
             </div>
-            <div class="tile is-child">
-              <p class="heading">Market Cap</p>
-              <p class="title">{{ data.marketCap | numeralFormat('$0[.]00 a') }}</p>
-            </div>
-            <div class="tile is-child">
-              <p class="heading">Market Cap</p>
-              <p class="title">{{ data.marketCap | numeralFormat('$0[.]00 a') }}</p>
+            <div class="tile is-child" v-for="property in data.properties" v-if="property.type !== null">
+              <p class="heading">{{ property.type }}</p>
+              <p class="title is-6">{{ property.value }}</p>
             </div>
           </div>
           <div class="tile is-parent">
-            <div class="tile is-vertical">
-              <div class="tile is-child">
-                <b-tabs type="is-toggle" v-model="activeTab">
+            <div class="tile is-child is-vertical">
+                <b-tabs type="is-toggle" v-model="activeTab" @change="onTabChange">
                   <b-tab-item label="Chart">
                     <div class="chart" ref="chart"></div>
                   </b-tab-item>
@@ -85,11 +91,8 @@
                     Soon
                   </b-tab-item>
                 </b-tabs>
-              </div>
             </div>
           </div>
-          <h2 class="subtitle" v-if="data.description != null">
-          </h2>
         </div>
       </div>
     </section>
@@ -98,7 +101,7 @@
 </template>
 
 <script>
-  import { createChart, isBusinessDay } from 'lightweight-charts';
+  import { createChart } from 'lightweight-charts';
 
   export default {
     props: ['slug'],
@@ -183,6 +186,12 @@
       onMarketDataPageChange(page) {
         this.marketDataPage = page;
         this.loadMarketData()
+      },
+      onTabChange(index) {
+        // Historical data
+        if (index === 2) {
+
+        }
       }
     },
     data () {
