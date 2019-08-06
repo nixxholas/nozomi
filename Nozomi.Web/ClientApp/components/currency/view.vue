@@ -67,6 +67,7 @@
                       :data="marketData"
                       :loading="isMarketDataLoading"
 
+                      :mobile-cards="true"
                       paginated
                       backend-pagination
                       :total="totalMarketDataCount"
@@ -76,6 +77,19 @@
                       aria-previous-label="Previous page"
                       aria-page-label="Page"
                       aria-current-label="Current page">
+                      <template slot="empty">
+                        <section class="section">
+                          <div class="content has-text-grey has-text-centered">
+                            <p>
+                              <b-icon
+                                icon="emoticon-sad"
+                                size="is-large">
+                              </b-icon>
+                            </p>
+                            <p>No FIAT data yet.</p>
+                          </div>
+                        </section>
+                      </template>
                       <template slot-scope="props">
                         <b-table-column field="name" label="Name" sortable>
                           {{ props.row.name }}
@@ -91,21 +105,35 @@
                       <b-table
                         :data="historic.data"
 
+                        :mobile-cards="true"
                         paginated
                         backend-pagination
                         :total="historic.dataCount"
                         :per-page="historic.perPage"
-                        @page-change="onMarketDataPageChange"
+                        @page-change="onHistoricalDataPageChange"
                         aria-next-label="Next page"
                         aria-previous-label="Previous page"
                         aria-page-label="Page"
                         aria-current-label="Current page">
+                        <template slot="empty">
+                          <section class="section">
+                            <div class="content has-text-grey has-text-centered">
+                              <p>
+                                <b-icon
+                                  icon="emoticon-sad"
+                                  size="is-large">
+                                </b-icon>
+                              </p>
+                              <p>No FIAT data yet.</p>
+                            </div>
+                          </section>
+                        </template>
                         <template slot-scope="props">
                           <b-table-column field="time" label="Timestamp" sortable>
-                            {{ props.row.time }}
+                            {{ $moment.unix(props.row.time).format('MMMM Do YYYY, h:mm:ss a') }}
                           </b-table-column>
-                          <b-table-column field="price" label="Price" sortable>
-                            {{ props.row.value }}
+                          <b-table-column field="price" label="Price">
+                            {{ props.row.value | numeralFormat('$0[.]00') }}
                           </b-table-column>
                         </template>
                       </b-table>
@@ -183,9 +211,8 @@
         throw error;
       }
     },
-    mounted: function () {
-      this.loadMarketData();
-    },
+    // mounted: function () {
+    // },
     methods: {
       async loadMarketData() {
         this.isMarketDataLoading = true;
@@ -211,8 +238,6 @@
           const response = await this.$axios.get('/api/Currency/Historical/' + this.data.slug + '/'
             + (this.historic.page - 1) + '/' + this.historic.perPage);
 
-          console.dir(response.data);
-
           this.historic.perPage = response.data.elementsPerPage;
           this.historic.data = response.data.data;
           this.historic.dataCount = response.data.pages * this.historic.perPage;
@@ -229,10 +254,18 @@
         this.marketDataPage = page;
         this.loadMarketData()
       },
+      onHistoricalDataPageChange(page) {
+        this.historic.page = page;
+        this.loadHistoricalData();
+      },
       onTabChange(index) {
-        // Historical data
-        if (index === 2) {
-          this.loadHistoricalData();
+        switch (index) {
+          case 1:
+            this.loadMarketData();
+            break;
+          case 2:
+            this.loadHistoricalData();
+            break;
         }
       }
     },

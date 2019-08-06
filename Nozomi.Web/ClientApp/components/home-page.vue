@@ -98,6 +98,19 @@
               aria-previous-label="Previous page"
               aria-page-label="Page"
               aria-current-label="Current page">
+              <template slot="empty">
+                <section class="section">
+                  <div class="content has-text-grey has-text-centered">
+                    <p>
+                      <b-icon
+                        icon="emoticon-sad"
+                        size="is-large">
+                      </b-icon>
+                    </p>
+                    <p>No FIAT data yet.</p>
+                  </div>
+                </section>
+              </template>
               <template slot-scope="props">
                 <b-table-column field="name" label="Name" sortable>
                   <router-link :to="`/currency/${props.row.slug}`">
