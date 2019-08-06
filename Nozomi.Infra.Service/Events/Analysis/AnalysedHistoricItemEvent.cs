@@ -318,7 +318,7 @@ namespace Nozomi.Service.Events.Analysis
                                                                       .CurrentAveragePrice)))
                         .SelectMany(ac => ac.AnalysedHistoricItems
                             .Where(ahi => ahi.DeletedAt == null && ahi.IsEnabled)
-                            .OrderBy(ahi => ahi.HistoricDateTime));
+                            .OrderByDescending(ahi => ahi.HistoricDateTime));
                     
                     if (perPage > 0)
                         return new NozomiPaginatedResult<AnalysedHistoricItem>
