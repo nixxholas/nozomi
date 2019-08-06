@@ -51,12 +51,30 @@ namespace Nozomi.Data.ResponseModels.Currency
             LastUpdated = currency.ModifiedAt;
             LogoPath = currency.LogoPath;
 
+            if (currency.Requests != null && currency.Requests.Count > 0)
+            {
+                var reqComps = currency.Requests
+                    .SelectMany(r => r.RequestComponents)
+                    .ToList();
+
+                foreach (var reqComp in reqComps)
+                {
+                    switch (reqComp.ComponentType)
+                    {
+                        case ComponentType.VOLUME:
+                            DailyVolume = decimal.Parse(reqComp.Value ?? "0");
+                            break;
+                    }
+                }
+            }
+
             foreach (var ac in currency.AnalysedComponents)
             {
                 switch (ac.ComponentType)
                 {
                     case AnalysedComponentType.DailyVolume:
-                        DailyVolume = decimal.Parse(ac.Value ?? "0");
+                        if (DailyVolume <= 0)
+                            DailyVolume = decimal.Parse(ac.Value ?? "0");
                         break;
                     case AnalysedComponentType.MarketCap:
                         MarketCap = decimal.Parse(ac.Value ?? "0");
