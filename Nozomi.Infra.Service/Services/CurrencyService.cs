@@ -112,13 +112,15 @@ namespace Nozomi.Service.Services
             if (currency != null && currency.IsValid())
             {
                 var currToUpd = _unitOfWork.GetRepository<Currency>()
-                    .Get(c => c.Id.Equals(currency.Id) && c.DeletedAt == null)
-                    .SingleOrDefault();
+                    .GetQueryable()
+                    .AsTracking()
+                    .SingleOrDefault(c => c.Id.Equals(currency.Id) && c.DeletedAt == null);
 
                 if (currToUpd != null)
                 {
                     currToUpd.Abbreviation = currency.Abbreviation;
                     currToUpd.Slug = currency.Slug;
+                    currToUpd.LogoPath = currency.LogoPath;
                     currToUpd.CurrencyTypeId = currency.CurrencyTypeId;
                     currToUpd.Description = currency.Description;
                     currToUpd.Denominations = currency.Denominations;
