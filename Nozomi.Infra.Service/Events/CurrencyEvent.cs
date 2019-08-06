@@ -280,14 +280,18 @@ namespace Nozomi.Service.Events
                 .Include(ct => ct.Currencies)
                 .ThenInclude(c => c.AnalysedComponents)
                 .ThenInclude(ac => ac.AnalysedHistoricItems)
+                .Include(ct => ct.Currencies)
+                .ThenInclude(c => c.Requests)
+                .ThenInclude(r => r.RequestComponents)
                 .SelectMany(ct => ct.Currencies
                     .Where(c => c.DeletedAt == null && c.IsEnabled
-                                                    && c.AnalysedComponents.Any(ac =>
-                                                        ac.ComponentType.Equals(AnalysedComponentType.MarketCap)
-                                                        && !string.IsNullOrEmpty(ac.Value)
-                                                        && NumberHelper.IsNumericDecimal(ac.Value)))
-                    .OrderByDescending(c => decimal.Parse(c.AnalysedComponents
-                        .SingleOrDefault(ac => ac.ComponentType == AnalysedComponentType.MarketCap).Value))
+//                                                    && c.AnalysedComponents.Any(ac =>
+//                                                        ac.ComponentType.Equals(AnalysedComponentType.MarketCap)
+//                                                        && !string.IsNullOrEmpty(ac.Value)
+//                                                        && NumberHelper.IsNumericDecimal(ac.Value))
+                                                    )
+//                    .OrderByDescending(c => decimal.Parse(c.AnalysedComponents
+//                        .SingleOrDefault(ac => ac.ComponentType == AnalysedComponentType.MarketCap).Value))
                     .Skip(index * 100)
                     .Take(100)
                     .Select(c => new Currency
@@ -322,6 +326,16 @@ namespace Nozomi.Service.Events
                                     .OrderByDescending(ahi => ahi.HistoricDateTime)
                                     .Skip(index * NozomiServiceConstants.AnalysedComponentTakeoutLimit)
                                     .Take(NozomiServiceConstants.AnalysedComponentTakeoutLimit)
+                                    .ToList()
+                            })
+                            .ToList(),
+                        Requests = c.Requests
+                            .Where(r => r.DeletedAt == null && r.IsEnabled)
+                            .Select(r => new Request
+                            {
+                                Guid = r.Guid,
+                                RequestComponents = r.RequestComponents
+                                    .Where(rc => rc.DeletedAt == null && rc.IsEnabled)
                                     .ToList()
                             })
                             .ToList()
