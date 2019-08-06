@@ -58,10 +58,10 @@ namespace Nozomi.Web.Controllers.APIs.v1.Currency
         ///
         /// We'll integrate time scale as soon as possible.
         /// </summary>
-        [HttpGet("{slug}/{index}")]
-        public NozomiPaginatedResult<EpochValuePair<decimal>> Historical(string slug, int index = 0)
+        [HttpGet("{slug}/{index}/{perPage}")]
+        public NozomiPaginatedResult<EpochValuePair<decimal>> Historical(string slug, int index = 0, int perPage = 0)
         {
-            var res = _analysedHistoricItemEvent.GetCurrencyPriceHistory(slug, index);
+            var res = _analysedHistoricItemEvent.GetCurrencyPriceHistory(slug, index, perPage);
 
             if (!res.Data.Any()) return new NozomiPaginatedResult<EpochValuePair<decimal>>();
 
