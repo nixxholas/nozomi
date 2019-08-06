@@ -6,6 +6,11 @@
 
 .chart {
     width: 100%;
+    height: 50vh;
+}
+
+.trend {
+    width: 100%;
     height: 10vh;
 }
 

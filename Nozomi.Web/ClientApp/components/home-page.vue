@@ -120,7 +120,7 @@
                 </b-table-column>
                 <b-table-column field="chart" label="Trend" sortable>
                   <trend
-                    class="chart"
+                    class="trend"
                     :data="props.row.averagePriceHistory" :radius="24"
                     :gradient="['#6fa8dc', '#42b983', '#2c3e50']"
                     auto-draw
