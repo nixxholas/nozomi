@@ -388,7 +388,8 @@ namespace Nozomi.Service.Events
                 .GetQueryable()
                 .AsNoTracking()
                 .Where(c => c.DeletedAt == null && c.IsEnabled
-                                                && c.Slug.Equals(slug, StringComparison.InvariantCultureIgnoreCase));
+                                                && c.Slug.Equals(slug, StringComparison.InvariantCultureIgnoreCase))
+                .Include(c => c.CurrencyProperties);
 
             if (!query.Any() || componentTypesIndex < 0 || analysedComponentTypesIndex < 0) return null;
 
