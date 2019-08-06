@@ -290,6 +290,8 @@ namespace Nozomi.Service.Events
 //                                                        && !string.IsNullOrEmpty(ac.Value)
 //                                                        && NumberHelper.IsNumericDecimal(ac.Value))
                                                     )
+                    .Where(c => c.AnalysedComponents
+                        .Any(ac => ac.DeletedAt == null && ac.IsEnabled))
 //                    .OrderByDescending(c => decimal.Parse(c.AnalysedComponents
 //                        .SingleOrDefault(ac => ac.ComponentType == AnalysedComponentType.MarketCap).Value))
                     .Skip(index * 100)
@@ -346,11 +348,8 @@ namespace Nozomi.Service.Events
 
             foreach (var currency in currencies)
             {
-                if (currency.AnalysedComponents != null && currency.AnalysedComponents.Count > 0)
-                {
-                    res.Add(new GeneralisedCurrencyResponse(currency,
-                        _tickerEvent.GetCurrencyTickerPairs(currency.Abbreviation)));
-                }
+                res.Add(new GeneralisedCurrencyResponse(currency,
+                    _tickerEvent.GetCurrencyTickerPairs(currency.Abbreviation)));
             }
 
             return res.OrderByDescending(dcr => dcr.MarketCap).ToList();
