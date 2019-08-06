@@ -31,6 +31,8 @@ using Nozomi.Ticker.Areas;
 using Nozomi.Ticker.Controllers;
 using Nozomi.Ticker.StartupExtensions;
 using StackExchange.Redis;
+using VaultSharp;
+using VaultSharp.V1.AuthMethods.Token;
 using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 
 namespace Nozomi.Ticker
@@ -92,17 +94,57 @@ namespace Nozomi.Ticker
             }
             else
             {
+                var vaultToken = Configuration["vaultToken"];
+
+                if (string.IsNullOrEmpty(vaultToken))
+                    throw new SystemException("Invalid vault token.");
+
+                var authMethod = new TokenAuthMethodInfo(vaultToken);
+                var vaultClientSettings = new VaultClientSettings("http://165.22.250.169:8200", authMethod);
+                var vaultClient = new VaultClient(vaultClientSettings);
+
+                var nozomiVault = vaultClient.V1.Secrets.Cubbyhole.ReadSecretAsync("nozomi")
+                    .GetAwaiter()
+                    .GetResult().Data;
+
+                var mainDb = (string) nozomiVault["main"];
+                if (string.IsNullOrEmpty(mainDb))
+                    throw new SystemException("Invalid main database configuration");
+                
                 // Database
                 services.AddDbContext<NozomiDbContext>(options =>
                 {
-                    options.UseNpgsql(Configuration["NozomiDb"]);
+                    options.UseNpgsql(mainDb
+                        , builder =>
+                        {
+                            builder.EnableRetryOnFailure();
+//                            builder.ProvideClientCertificatesCallback(certificates =>
+//                            {
+//                                var cert = new X509Certificate2("ca-certificate.crt");
+//                                certificates.Add(cert);
+//                            });
+                        }
+                    );
                     options.EnableSensitiveDataLogging(false);
                     options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
                 }, ServiceLifetime.Transient);
 
+                var authDb = (string) nozomiVault["auth"];
+                if (string.IsNullOrEmpty(authDb))
+                    throw new SystemException("Invalid auth database configuration");
                 services.AddDbContext<NozomiAuthContext>(options =>
                 {
-                    options.UseNpgsql(Configuration["NozomiAuthDb"]);
+                    options.UseNpgsql(authDb
+                        , builder =>
+                        {
+                            builder.EnableRetryOnFailure();
+//                            builder.ProvideClientCertificatesCallback(certificates =>
+//                            {
+//                                var cert = new X509Certificate2("ca-certificate.crt");
+//                                certificates.Add(cert);
+//                            });
+                        }
+                    );
                     options.EnableSensitiveDataLogging(false);
                 });
             
@@ -112,12 +154,21 @@ namespace Nozomi.Ticker
 //                    option.Configuration = Configuration.GetConnectionString("RedisConfiguration");
 //                    option.InstanceName = "nozomi-cache";
 //                });
+                
+                var stripeVault = vaultClient.V1.Secrets.Cubbyhole.ReadSecretAsync("stripe")
+                    .GetAwaiter()
+                    .GetResult().Data;
+                
+                var stripePrivConf = (string) stripeVault["testpriv"];
+                var stripePubConf = (string) stripeVault["testpub"];
+                if (string.IsNullOrEmpty(stripePrivConf) || string.IsNullOrEmpty(stripePubConf))
+                    throw new SystemException("Invalid stripe configuration");
             
                 // Stripe
                 services.Configure<StripeSettings>(ss =>
                 {
-                    ss.SecretKey = Configuration.GetConnectionString("StripePrivate");
-                    ss.PublishableKey = Configuration["StripePublic"];
+                    ss.SecretKey = stripePrivConf;
+                    ss.PublishableKey = stripePubConf;
                 });
             }
             
