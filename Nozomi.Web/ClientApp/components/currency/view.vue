@@ -88,7 +88,28 @@
                   </b-tab-item>
 
                   <b-tab-item label="Historical Data">
-                    Soon
+                      <b-table
+                        :data="historic.data"
+
+                        paginated
+                        backend-pagination
+                        :total="historic.dataCount"
+                        :per-page="historic.perPage"
+                        @page-change="onMarketDataPageChange"
+                        aria-next-label="Next page"
+                        aria-previous-label="Previous page"
+                        aria-page-label="Page"
+                        aria-current-label="Current page">
+                        <template slot-scope="props">
+                          <b-table-column field="time" label="Timestamp" sortable>
+                            {{ props.row.time }}
+                          </b-table-column>
+                          <b-table-column field="price" label="Price" sortable>
+                            {{ props.row.value }}
+                          </b-table-column>
+                        </template>
+                      </b-table>
+                      <b-loading :is-full-page="false" :active.sync="historic.loading" :can-cancel="false"></b-loading>
                   </b-tab-item>
                 </b-tabs>
             </div>
@@ -112,7 +133,6 @@
         const response = await this.$axios.get('/api/Currency/Detailed/' + this.slug);
 
         this.data = response.data.data;
-        console.dir(this.data);
 
         if (response.data.data.averagePriceHistory !== null) {
           this.series[0].data = response.data.data.averagePriceHistory;
@@ -171,7 +191,8 @@
         this.isMarketDataLoading = true;
 
         try {
-          const response = await this.$axios.get('/api/Source/GetCurrencySources/BTC?page=' + (this.marketDataPage - 1));
+          const response = await this.$axios.get('/api/Source/GetCurrencySources/' + this.data.slug
+            +'?page=' + (this.marketDataPage - 1));
 
           this.marketData = response.data.data;
           this.isMarketDataLoading = false;
@@ -183,6 +204,27 @@
           throw error;
         }
       },
+      async loadHistoricalData() {
+        this.historic.loading = true;
+
+        try {
+          const response = await this.$axios.get('/api/Currency/Historical/' + this.data.slug + '/'
+            + (this.historic.page - 1) + '/' + this.historic.perPage);
+
+          console.dir(response.data);
+
+          this.historic.perPage = response.data.elementsPerPage;
+          this.historic.data = response.data.data;
+          this.historic.dataCount = response.data.pages * this.historic.perPage;
+          this.historic.loading = false;
+        } catch (error) {
+          console.error(error);
+          this.historic.data = [];
+          this.historic.dataCount = 0;
+          this.historic.loading = false;
+          throw error;
+        }
+      },
       onMarketDataPageChange(page) {
         this.marketDataPage = page;
         this.loadMarketData()
@@ -190,7 +232,7 @@
       onTabChange(index) {
         // Historical data
         if (index === 2) {
-
+          this.loadHistoricalData();
         }
       }
     },
@@ -204,6 +246,13 @@
         marketData: [],
         totalMarketDataCount: 0,
         perPage: 20,
+        historic: {
+          loading: false,
+          data: [],
+          dataCount: 0,
+          page: 1,
+          perPage: 25
+        },
         // Chart data
         options: {
           chart: {
