@@ -131,7 +131,7 @@
                 <b-table-column field="dailyAvgPctChange" label="Change" sortable>
                   {{ props.row.dailyAvgPctChange | numeralFormat('0[.]0%') }}
                 </b-table-column>
-                <b-table-column field="chart" label="Trend" sortable>
+                <b-table-column field="chart" label="Trend">
                   <trend
                     class="trend"
                     :data="props.row.averagePriceHistory" :radius="24"
