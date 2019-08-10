@@ -61,7 +61,7 @@ namespace Nozomi.Data.ResponseModels.Currency
                 {
                     switch (reqComp.ComponentType)
                     {
-                        case ComponentType.VOLUME:
+                        case ComponentType.DailyVolume:
                             DailyVolume = decimal.Parse(reqComp.Value ?? "0");
                             break;
                     }

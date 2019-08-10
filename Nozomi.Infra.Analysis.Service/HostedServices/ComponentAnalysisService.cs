@@ -767,13 +767,13 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                             var correlatedReqComps = _requestComponentEvent.GetAllByCorrelation(component.Id, true);
 
                             if (correlatedReqComps != null && correlatedReqComps
-                                    .Any(rc => rc.ComponentType.Equals(ComponentType.VOLUME)
+                                    .Any(rc => rc.ComponentType.Equals(ComponentType.DailyVolume)
                                                && rc.RcdHistoricItems != null
                                                && rc.RcdHistoricItems.Count > 0))
                             {
                                 // Aggregate it
                                 var avgVol = correlatedReqComps
-                                    .Where(rc => rc.ComponentType.Equals(ComponentType.VOLUME))
+                                    .Where(rc => rc.ComponentType.Equals(ComponentType.DailyVolume))
                                     .DefaultIfEmpty()
                                     .Average(rc => rc.RcdHistoricItems
                                         .Where(rcdhi => rcdhi.CreatedAt >

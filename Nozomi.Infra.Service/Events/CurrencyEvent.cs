@@ -119,7 +119,7 @@ namespace Nozomi.Service.Events
                     // Obtain only the circulating supply
                     .SelectMany(cpr => cpr.RequestComponents
                         .Where(rc => rc.DeletedAt == null && rc.IsEnabled
-                                                          && rc.ComponentType.Equals(ComponentType.Circulating_Supply)
+                                                          && rc.ComponentType.Equals(ComponentType.CirculatingSupply)
                                                           && !string.IsNullOrEmpty(rc.Value)))
                     .FirstOrDefault();
 
@@ -160,7 +160,7 @@ namespace Nozomi.Service.Events
                                                                                          && cr.RequestComponents.Any(
                                                                                              rc => rc.ComponentType
                                                                                                  .Equals(ComponentType
-                                                                                                     .Circulating_Supply)))
+                                                                                                     .CirculatingSupply)))
                                                         .Select(cr => cr.RequestComponents
                                                             .FirstOrDefault(rc => rc.DeletedAt == null && rc.IsEnabled))
                                                         .FirstOrDefault()
@@ -197,7 +197,7 @@ namespace Nozomi.Service.Events
                                                                                      && cr.RequestComponents.Any(rc =>
                                                                                          rc.ComponentType
                                                                                              .Equals(ComponentType
-                                                                                                 .Circulating_Supply)))
+                                                                                                 .CirculatingSupply)))
                                                     .Select(cr => cr.RequestComponents
                                                         .FirstOrDefault(rc => rc.DeletedAt == null && rc.IsEnabled))
                                                     .FirstOrDefault()
