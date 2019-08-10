@@ -67,7 +67,7 @@
                   {{ props.row.dailyVolume | numeralFormat('$0[.]00') }}
                 </b-table-column>
                 <b-table-column field="dailyAvgPctChange" label="Change" sortable>
-                  {{ props.row.dailyAvgPctChange | numeralFormat('0[.]0%') }}
+                  {{ props.row.dailyAvgPctChange | numeralFormat('0[.]0') }}%
                 </b-table-column>
                 <b-table-column field="chart" label="Trend" sortable>
                   <trend
@@ -107,7 +107,7 @@
                         size="is-large">
                       </b-icon>
                     </p>
-                    <p>No FIAT data yet.</p>
+                    <p>No Crypto data available yet.</p>
                   </div>
                 </section>
               </template>
@@ -129,7 +129,7 @@
                   {{ props.row.dailyVolume | numeralFormat('$0[.]00') }}
                 </b-table-column>
                 <b-table-column field="dailyAvgPctChange" label="Change" sortable>
-                  {{ props.row.dailyAvgPctChange | numeralFormat('0[.]0%') }}
+                  {{ props.row.dailyAvgPctChange | numeralFormat('0[.]0') }}%
                 </b-table-column>
                 <b-table-column field="chart" label="Trend">
                   <trend
