@@ -831,6 +831,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                         break;
                     // TODO:
                     case AnalysedComponentType.DailyVolume:
+                        _processAnalysedComponentService.Checked(entity.Id, false);
                         break;
                     default:
                         // If it winds up here, it needs help lol...
