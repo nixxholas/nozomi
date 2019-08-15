@@ -21,14 +21,14 @@ using Nozomi.Service.Services.Requests.Interfaces;
 
 namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
 {
-    public class HttpPostCurrencyPairRequestSyncingService : BaseProcessingService<HttpPostCurrencyPairRequestSyncingService>, 
-        IHttpPostCurrencyPairRequestSyncingService
+    public class HttpPostRequestSyncingService : BaseProcessingService<HttpPostRequestSyncingService>, 
+        IHttpPostRequestSyncingService
     {
         private readonly HttpClient _httpClient = new HttpClient();
         private readonly IRequestComponentService _requestComponentService;
         private readonly IRequestEvent _requestEvent;
         
-        public HttpPostCurrencyPairRequestSyncingService(IServiceProvider serviceProvider) : base(serviceProvider)
+        public HttpPostRequestSyncingService(IServiceProvider serviceProvider) : base(serviceProvider)
         {
             _requestComponentService = _scope.ServiceProvider.GetRequiredService<IRequestComponentService>();
             _requestEvent = _scope.ServiceProvider.GetRequiredService<IRequestEvent>();
