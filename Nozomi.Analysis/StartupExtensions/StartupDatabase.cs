@@ -319,7 +319,7 @@ namespace Nozomi.Analysis.StartupExtensions
                                                 // ETH BFX Etherscan Request for Circulating Supply
                                                 new RequestComponent
                                                 {
-                                                    ComponentType = ComponentType.Circulating_Supply,
+                                                    ComponentType = ComponentType.CirculatingSupply,
                                                     Identifier = null,
                                                     IsDenominated = true,
                                                     QueryComponent = "result",
@@ -467,7 +467,7 @@ namespace Nozomi.Analysis.StartupExtensions
                                                 // KNC BFX Etherscan Request for Circulating Supply
                                                 new RequestComponent
                                                 {
-                                                    ComponentType = ComponentType.Circulating_Supply,
+                                                    ComponentType = ComponentType.CirculatingSupply,
                                                     Identifier = null,
                                                     IsDenominated = true,
                                                     QueryComponent = "result",
@@ -606,7 +606,7 @@ namespace Nozomi.Analysis.StartupExtensions
                                                 // BTC Coinranking for circulating supply
                                                 new RequestComponent
                                                 {
-                                                    ComponentType = ComponentType.Circulating_Supply,
+                                                    ComponentType = ComponentType.CirculatingSupply,
                                                     Identifier = null,
                                                     QueryComponent = "data/coin/circulatingSupply",
                                                     CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
@@ -1898,7 +1898,7 @@ namespace Nozomi.Analysis.StartupExtensions
                                                 {
                                                     new RequestComponent
                                                     {
-                                                        ComponentType = ComponentType.VOLUME,
+                                                        ComponentType = ComponentType.DailyVolume,
                                                         Identifier = "0=>tETHUSD",
                                                         QueryComponent = "8",
                                                         CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0,
@@ -1994,7 +1994,7 @@ namespace Nozomi.Analysis.StartupExtensions
                                                 {
                                                     new RequestComponent
                                                     {
-                                                        ComponentType = ComponentType.VOLUME,
+                                                        ComponentType = ComponentType.DailyVolume,
                                                         Identifier = "0=>tKNCUSD",
                                                         QueryComponent = "8",
                                                         CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0,
@@ -2210,7 +2210,7 @@ namespace Nozomi.Analysis.StartupExtensions
                                                 {
                                                     new RequestComponent
                                                     {
-                                                        ComponentType = ComponentType.VOLUME,
+                                                        ComponentType = ComponentType.DailyVolume,
                                                         Identifier = null,
                                                         QueryComponent = "BTC_BCN/baseVolume",
                                                         CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0,
@@ -2307,7 +2307,7 @@ namespace Nozomi.Analysis.StartupExtensions
                                                 {
                                                     new RequestComponent
                                                     {
-                                                        ComponentType = ComponentType.VOLUME,
+                                                        ComponentType = ComponentType.DailyVolume,
                                                         Identifier = null,
                                                         QueryComponent = "BTC_BTS/baseVolume",
                                                         CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0,
@@ -2404,7 +2404,7 @@ namespace Nozomi.Analysis.StartupExtensions
                                                 {
                                                     new RequestComponent
                                                     {
-                                                        ComponentType = ComponentType.VOLUME,
+                                                        ComponentType = ComponentType.DailyVolume,
                                                         Identifier = null,
                                                         QueryComponent = "volume",
                                                         CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0,
@@ -2547,7 +2547,7 @@ namespace Nozomi.Analysis.StartupExtensions
                                                 {
                                                     new RequestComponent
                                                     {
-                                                        ComponentType = ComponentType.VOLUME,
+                                                        ComponentType = ComponentType.DailyVolume,
                                                         Identifier = "data/s=>ETHBTC",
                                                         QueryComponent = "v",
                                                         CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0,
@@ -2643,7 +2643,7 @@ namespace Nozomi.Analysis.StartupExtensions
                                                 {
                                                     new RequestComponent
                                                     {
-                                                        ComponentType = ComponentType.VOLUME,
+                                                        ComponentType = ComponentType.DailyVolume,
                                                         Identifier = "data/s=>KNCETH",
                                                         QueryComponent = "v",
                                                         CreatedAt = new DateTime(2019, 5, 20, 0, 0, 0, 0,

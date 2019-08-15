@@ -37,7 +37,7 @@ namespace Nozomi.Web.Controllers.APIs.v1.Currency
             return new NozomiResult<DetailedCurrencyResponse>(_currencyEvent.GetDetailedBySlug(slug,
                 new List<Data.Models.Currency.ComponentType>()
                 {
-                    Data.Models.Currency.ComponentType.Circulating_Supply
+                    Data.Models.Currency.ComponentType.CirculatingSupply
                 },
                 new List<AnalysedComponentType>()
                 {

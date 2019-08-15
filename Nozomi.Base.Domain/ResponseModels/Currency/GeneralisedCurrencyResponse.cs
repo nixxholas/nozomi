@@ -61,7 +61,7 @@ namespace Nozomi.Data.ResponseModels.Currency
                 {
                     switch (reqComp.ComponentType)
                     {
-                        case ComponentType.VOLUME:
+                        case ComponentType.DailyVolume:
                             DailyVolume = decimal.Parse(reqComp.Value ?? "0");
                             break;
                     }
@@ -93,6 +93,14 @@ namespace Nozomi.Data.ResponseModels.Currency
                                 .ToList();
                         }
 
+                        break;
+                    case AnalysedComponentType.DailyAveragePrice:
+                        AveragePriceHistory = ac.AnalysedHistoricItems
+                            .Where(ahi => NumberHelper.IsNumericDecimal(ahi.Value)
+                                          && ahi.HistoricDateTime > DateTime.UtcNow.Subtract(TimeSpan.FromDays(31)))
+                            .OrderBy(ahi => ahi.HistoricDateTime)
+                            .Select(ahi => decimal.Parse(ahi.Value))
+                            .ToList();
                         break;
                     case AnalysedComponentType.DailyPricePctChange:
                         DailyAvgPctChange = decimal.Parse(ac.Value ?? "0");

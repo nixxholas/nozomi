@@ -110,6 +110,8 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                     case AnalysedComponentType.Unknown:
                         // If it winds up here, its fine
                         _logger.LogWarning($"[{ServiceName}] Analyse ({entity.Id}): Skipping, Unknown type.");
+                        _processAnalysedComponentService.Checked(entity.Id, false);
+                        return true;
                         break;
                     case AnalysedComponentType.HourlyMarketCap:
                         dataTimespan = TimeSpan.FromHours(1);
@@ -831,10 +833,14 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                         break;
                     // TODO:
                     case AnalysedComponentType.DailyVolume:
+                        _processAnalysedComponentService.Checked(entity.Id, false);
+                        return true;
                         break;
                     default:
                         // If it winds up here, it needs help lol...
                         _logger.LogWarning($"[{ServiceName}] Analyse ({entity.Id}): Unable to execute analysis.");
+                        _processAnalysedComponentService.Checked(entity.Id, false);
+                        return true;
                         break;
                 }
 
