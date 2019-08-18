@@ -210,12 +210,8 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
                 // Are we processing anything?
                 if (wsrComponents.Any())
                 {
-                    if (Update(payloadToken, wsr.FirstOrDefault().ResponseType, wsrComponents))
-                    {
-                        
-                    }
-                    
-                    if (_requestService.HasUpdated(wsr))
+                    if (Update(payloadToken, wsr.FirstOrDefault().ResponseType, wsrComponents)
+                        && _requestService.HasUpdated(wsr))
                     {
                         _logger.LogInformation($"[{_name}] Process: Request object updated!");
                         return Task.FromResult(true);
