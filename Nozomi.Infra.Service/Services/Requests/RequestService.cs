@@ -134,6 +134,33 @@ namespace Nozomi.Service.Services.Requests
             return false;
         }
 
+        public bool HasUpdated(ICollection<Request> requests)
+        {
+            if (requests != null && requests.Any())
+            {
+                var reqs = _unitOfWork.GetRepository<Request>()
+                    .GetQueryable()
+                    .AsTracking()
+                    .Where(r => r.DeletedAt == null && r.IsEnabled
+                                                              && requests.Any(obj => obj.Id.Equals(r.Id)))
+                    .ToList();
+
+                if (reqs.Any())
+                {
+                    reqs.ForEach(item =>
+                    {
+                        item.ModifiedAt = DateTime.UtcNow;
+                    });
+                    
+                    _unitOfWork.GetRepository<Request>().Update(reqs);
+                    _unitOfWork.Commit();
+                }
+            }
+
+            _logger.LogCritical($"[{_serviceName}] HasUpdated: Incorrect Request collection.");
+            return false;
+        }
+
         public NozomiResult<string> Update(UpdateRequest updateRequest, long userId = 0)
         {
             try

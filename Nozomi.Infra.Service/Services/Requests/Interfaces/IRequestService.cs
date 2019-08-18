@@ -17,6 +17,8 @@ namespace Nozomi.Service.Services.Requests.Interfaces
 
         bool HasUpdated(long requestId);
 
+        bool HasUpdated(ICollection<Request> requests);
+
         NozomiResult<string> Update(UpdateRequest updateRequest, long userId = 0);
 
         NozomiResult<string> Delete(long reqId, bool hardDelete = false, long userId = 0);
