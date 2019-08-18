@@ -324,9 +324,10 @@ namespace Nozomi.Service.Events
                     .Include(r => r.WebsocketCommands)
                     .ThenInclude(wsc => wsc.WebsocketCommandProperties)
                     .Where(r => r.IsEnabled && r.DeletedAt == null
-                                            && r.RequestType == type
                                             && r.RequestComponents
-                                                .Any(rc => (DateTime.UtcNow > (rc.ModifiedAt.Add(TimeSpan.FromMilliseconds(r.Delay)))))));
+                                                .Any(rc => rc.DeletedAt == null && rc.IsEnabled)
+                                            && r.RequestType == type
+                                            && DateTime.UtcNow >= r.ModifiedAt.Add(TimeSpan.FromMilliseconds(r.Delay)))); 
 
         public ICollection<Request> GetAllByRequestType(RequestType requestType)
         {
