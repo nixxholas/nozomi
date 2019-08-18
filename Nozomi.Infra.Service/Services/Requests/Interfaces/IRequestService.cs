@@ -15,6 +15,8 @@ namespace Nozomi.Service.Services.Requests.Interfaces
         
         bool Delay(Request request, TimeSpan duration);
 
+        bool HasUpdated(long requestId);
+
         NozomiResult<string> Update(UpdateRequest updateRequest, long userId = 0);
 
         NozomiResult<string> Delete(long reqId, bool hardDelete = false, long userId = 0);

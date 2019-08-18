@@ -111,6 +111,29 @@ namespace Nozomi.Service.Services.Requests
             return false;
         }
 
+        public bool HasUpdated(long requestId)
+        {
+            if (requestId > 0)
+            {
+                var req = _unitOfWork.GetRepository<Request>()
+                    .GetQueryable()
+                    .AsTracking()
+                    .SingleOrDefault(r => r.DeletedAt == null && r.IsEnabled
+                                          && r.Id.Equals(requestId));
+
+                if (req != null)
+                {
+                    req.ModifiedAt = DateTime.UtcNow;
+
+                    _unitOfWork.GetRepository<Request>().Update(req);
+                    _unitOfWork.Commit();
+                }
+            }
+
+            _logger.LogCritical($"[{_serviceName}] HasUpdated: Incorrect Request ID.");
+            return false;
+        }
+
         public NozomiResult<string> Update(UpdateRequest updateRequest, long userId = 0)
         {
             try
