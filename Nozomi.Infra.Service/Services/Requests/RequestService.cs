@@ -127,6 +127,8 @@ namespace Nozomi.Service.Services.Requests
 
                     _unitOfWork.GetRepository<Request>().Update(req);
                     _unitOfWork.Commit();
+
+                    return true;
                 }
             }
 
@@ -154,6 +156,8 @@ namespace Nozomi.Service.Services.Requests
                     
                     _unitOfWork.GetRepository<Request>().Update(reqs);
                     _unitOfWork.Commit();
+
+                    return true;
                 }
             }
 
