@@ -102,10 +102,8 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
                                     if (args.IsPing)
                                     {
                                         newSocket.Ping();
-                                    }
-
-                                    // Process the incoming data
-                                    if (!string.IsNullOrEmpty(args.Data))
+                                    } 
+                                    else if (!string.IsNullOrEmpty(args.Data)) // Process the incoming data
                                     {
                                         try
                                         {
