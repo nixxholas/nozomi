@@ -60,10 +60,10 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            _logger.LogInformation("HttpGetCurrencyPairRequestSyncingService is starting.");
+            _logger.LogInformation($"{_name} is starting.");
 
             stoppingToken.Register(
-                () => _logger.LogInformation("HttpGetCurrencyPairRequestSyncingService is stopping."));
+                () => _logger.LogInformation($"{_name} is stopping."));
 
             while (!stoppingToken.IsCancellationRequested)
             {
