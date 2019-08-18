@@ -65,8 +65,12 @@ namespace Nozomi.Service.Services
             {
                 var entity = _unitOfWork.GetRepository<RequestComponent>()
                     .GetQueryable()
+                    .Include(rc => rc.Request)
                     .AsTracking()
-                    .SingleOrDefault(rc => rc.Id.Equals(id));
+                    .SingleOrDefault(rc => rc.DeletedAt == null && rc.IsEnabled
+                                                                && rc.ModifiedAt.AddMilliseconds(rc.Request.Delay) 
+                                                                >= DateTime.UtcNow
+                                                                && rc.Id.Equals(id));
 
                 if (entity != null)
                 {
@@ -89,8 +93,10 @@ namespace Nozomi.Service.Services
                     .GetRepository<RequestComponent>()
                     .GetQueryable()
                     .AsTracking()
-                    .Where(cp => cp.Id.Equals(id))
-                    .SingleOrDefault(cp => cp.DeletedAt == null && cp.IsEnabled);
+                    .Include(rc => rc.Request)
+                    .Where(rc => rc.DeletedAt == null && rc.IsEnabled
+                                 && rc.ModifiedAt.AddMilliseconds(rc.Request.Delay) >= DateTime.UtcNow)
+                    .SingleOrDefault(cp => cp.Id.Equals(id));
 
                 // Anomaly Detection
                 // Let's make it more efficient by checking if the price has changed
@@ -152,8 +158,10 @@ namespace Nozomi.Service.Services
                     .GetRepository<RequestComponent>()
                     .GetQueryable()
                     .AsTracking()
-                    .Where(cp => cp.Id.Equals(id))
-                    .SingleOrDefault(cp => cp.DeletedAt == null && cp.IsEnabled);
+                    .Include(rc => rc.Request)
+                    .Where(rc => rc.DeletedAt == null && rc.IsEnabled
+                                                      && rc.ModifiedAt.AddMilliseconds(rc.Request.Delay) >= DateTime.UtcNow)
+                    .SingleOrDefault(rc => rc.Id.Equals(id));
 
                 if (lastCompVal != null)
                 {
