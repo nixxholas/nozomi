@@ -7,7 +7,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes.Interfaces
 {
     public interface IHttpGetRequestSyncingService
     {
-        Task<bool> ProcessRequest<T>(ICollection<T> requests) where T : Request;
+        Task<bool> ProcessRequest<T>(IEnumerable<T> requests) where T : Request;
 
         bool Update(JToken currToken, ResponseType resType, ICollection<RequestComponent> requestComponents);
     }

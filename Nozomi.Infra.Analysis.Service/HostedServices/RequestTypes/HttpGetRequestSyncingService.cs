@@ -116,9 +116,9 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
         /// <param name="requests"></param>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        public async Task<bool> ProcessRequest<T>(ICollection<T> requests) where T : Request
+        public async Task<bool> ProcessRequest<T>(IEnumerable<T> requests) where T : Request
         {
-            if (requests != null && requests.Count > 0)
+            if (requests != null && requests.Any())
             {
                 // Prepare a collection to store all the requests where
                 // every list contains the same details
@@ -471,6 +471,15 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
                             _requestService.Delay(firstRequest,
                                 TimeSpan.FromMilliseconds(firstRequest.FailureDelay));
                             return false;
+                    }
+
+                    if (_requestService.HasUpdated(requests.ToList<Request>()))
+                    {
+                        _logger.LogInformation($"[{_name}] ProcessRequest: Request objects updated!");
+                    }
+                    else
+                    {
+                        _logger.LogCritical($"[{_name}] ProcessRequest: Couldn't update all the Request objects.");
                     }
                 }
 

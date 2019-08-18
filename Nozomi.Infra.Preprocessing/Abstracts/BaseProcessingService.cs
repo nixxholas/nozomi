@@ -12,6 +12,8 @@ namespace Nozomi.Preprocessing.Abstracts
 {
     public abstract class BaseProcessingService<T> : BaseHostedService<T> where T : class
     {
+        public const string _name = nameof(T);
+        
         public BaseProcessingService(IServiceProvider serviceProvider) : base(serviceProvider)
         {
         }
