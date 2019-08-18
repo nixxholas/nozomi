@@ -17,6 +17,7 @@ using Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes.Interfaces;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Service.Events.Interfaces;
 using Nozomi.Service.Services.Interfaces;
+using Nozomi.Service.Services.Requests.Interfaces;
 using WebSocketSharp;
 using WebSocket = WebSocketSharp.WebSocket;
 
@@ -34,12 +35,14 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
 
         private readonly IRequestEvent _websocketRequestEvent;
         private readonly IRequestComponentService _requestComponentService;
+        private readonly IRequestService _requestService;
 
         public WebsocketCurrencyPairRequestSyncingService(IServiceProvider serviceProvider) : base(serviceProvider)
         {
             _wsrWebsockets = new Dictionary<string, WebSocket>();
             _requestComponentService = _scope.ServiceProvider.GetRequiredService<IRequestComponentService>();
             _websocketRequestEvent = _scope.ServiceProvider.GetRequiredService<IRequestEvent>();
+            _requestService = _scope.ServiceProvider.GetRequiredService<IRequestService>();
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -207,7 +210,20 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
                 // Are we processing anything?
                 if (wsrComponents.Any())
                 {
-                    return Task.FromResult(Update(payloadToken, wsr.FirstOrDefault().ResponseType, wsrComponents));
+                    if (Update(payloadToken, wsr.FirstOrDefault().ResponseType, wsrComponents))
+                    {
+                        
+                    }
+                    
+                    if (_requestService.HasUpdated(wsr))
+                    {
+                        _logger.LogInformation($"[{_name}] Process: Request object updated!");
+                        return Task.FromResult(true);
+                    }
+                    else
+                    {
+                        _logger.LogCritical($"[{_name}] Process: Couldn't update the Request object.");
+                    }
                 }
                 else
                 {

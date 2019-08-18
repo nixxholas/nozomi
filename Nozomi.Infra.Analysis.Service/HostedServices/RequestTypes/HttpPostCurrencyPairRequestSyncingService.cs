@@ -27,11 +27,13 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
         private readonly HttpClient _httpClient = new HttpClient();
         private readonly IRequestComponentService _requestComponentService;
         private readonly IRequestEvent _requestEvent;
+        private readonly IRequestService _requestService;
         
         public HttpPostCurrencyPairRequestSyncingService(IServiceProvider serviceProvider) : base(serviceProvider)
         {
             _requestComponentService = _scope.ServiceProvider.GetRequiredService<IRequestComponentService>();
             _requestEvent = _scope.ServiceProvider.GetRequiredService<IRequestEvent>();
+            _requestService = _scope.ServiceProvider.GetRequiredService<IRequestService>();
         }
 
         public async Task<bool> Process(Request req)
@@ -332,6 +334,15 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
                                     }
                                 }
                             }
+                        }
+
+                        if (_requestService.HasUpdated(req.Id))
+                        {
+                            _logger.LogInformation($"[{_name}] Process: Request object updated!");
+                        }
+                        else
+                        {
+                            _logger.LogCritical($"[{_name}] Process: Couldn't update the Request object.");
                         }
 
                         return true;

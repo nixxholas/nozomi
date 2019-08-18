@@ -45,7 +45,6 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
     public class HttpGetRequestSyncingService : BaseProcessingService<HttpGetRequestSyncingService>,
         IHttpGetRequestSyncingService
     {
-        private readonly string _name = "HttpGetCurrencyPairRequestSyncingService";
         private readonly HttpClient _httpClient = new HttpClient();
         private readonly IRequestComponentService _requestComponentService;
         private readonly IRequestEvent _requestEvent;
