@@ -22,6 +22,7 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
             entityTypeBuilder.Property(rc => rc.QueryComponent).IsRequired(false);
             entityTypeBuilder.Property(rc => rc.IsDenominated).HasDefaultValue(false).IsRequired();
             entityTypeBuilder.Property(rc => rc.AnomalyIgnorance).HasDefaultValue(false).IsRequired();
+            entityTypeBuilder.Property(rc => rc.StoreHistoricals).HasDefaultValue(false).IsRequired();
             
             entityTypeBuilder.HasOne(rc => rc.Request).WithMany(r => r.RequestComponents)
                 .HasForeignKey(rc => rc.RequestId).OnDelete(DeleteBehavior.Restrict);

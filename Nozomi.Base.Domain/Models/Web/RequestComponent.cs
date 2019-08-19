@@ -35,6 +35,8 @@ namespace Nozomi.Data.Models.Web
         public bool IsDenominated { get; set; } = false;
 
         public bool AnomalyIgnorance { get; set; } = false;
+        
+        public bool StoreHistoricals { get; set; }
 
         public string Value { get; set; }
 
