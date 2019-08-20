@@ -54,7 +54,8 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                 try
                 {
                     // Dynamic
-                    var currentBatch = _xAnalysedComponentEvent.GetNextWorkingSet().ToList();
+                    var currentBatch = _xAnalysedComponentEvent.GetNextWorkingSet(0, true)
+                        .ToList();
 
                     if (currentBatch.Count > 0)
                     {
