@@ -294,7 +294,7 @@ namespace Nozomi.Service.Events
             var dict = new Dictionary<string, ICollection<Request>>();
             var currencyRequests = GetActiveCurrencyRequests(_unitOfWork.Context, requestType);
 
-            if (includeNonHistorical)
+            if (!includeNonHistorical)
                 currencyRequests = currencyRequests.Select(r => new Request
                 {
                     Id = r.Id,
@@ -358,7 +358,7 @@ namespace Nozomi.Service.Events
 
         public ICollection<Request> GetAllByRequestType(RequestType requestType, bool includeNonHistorical = false)
         {
-            if (includeNonHistorical)
+            if (!includeNonHistorical)
                 return CompiledGetAllByRequestType(_unitOfWork.Context, requestType).Select(r => new Request
                 {
                     Id = r.Id,
@@ -400,7 +400,7 @@ namespace Nozomi.Service.Events
             
             var requests = CompiledGetAllByRequestType(_unitOfWork.Context, requestType);
             
-            if (includeNonHistorical)
+            if (!includeNonHistorical)
                 requests = requests.Select(r => new Request
                 {
                     Id = r.Id,
