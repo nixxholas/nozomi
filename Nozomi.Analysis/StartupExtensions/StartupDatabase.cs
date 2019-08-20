@@ -134,15 +134,6 @@ namespace Nozomi.Analysis.StartupExtensions
                     if (env.IsProduction()) {
                         if (context.Database.GetPendingMigrations().Any())
                         {
-                            context.Database.EnsureDeleted();
-                            context.Database.EnsureCreated();
-                            //context.Database.Migrate();
-                        }
-                    }
-                    else
-                    {
-                        if (context.Database.GetPendingMigrations().Any())
-                        {
                             context.Database.Migrate();
                         }
                     }
