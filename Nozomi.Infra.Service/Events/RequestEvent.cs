@@ -289,10 +289,37 @@ namespace Nozomi.Service.Events
                         .Include(cr => cr.RequestProperties));
         
         public IDictionary<string, ICollection<Request>> GetAllByRequestTypeUniqueToUrl(
-            NozomiDbContext nozomiDbContext, RequestType requestType)
+            NozomiDbContext nozomiDbContext, RequestType requestType, bool includeNonHistorical = false)
         {
             var dict = new Dictionary<string, ICollection<Request>>();
             var currencyRequests = GetActiveCurrencyRequests(_unitOfWork.Context, requestType);
+
+            if (includeNonHistorical)
+                currencyRequests = currencyRequests.Select(r => new Request
+                {
+                    Id = r.Id,
+                    Guid = r.Guid,
+                    RequestType = r.RequestType,
+                    ResponseType = r.ResponseType,
+                    DataPath = r.DataPath,
+                    Delay = r.Delay,
+                    FailureDelay = r.FailureDelay,
+                    CurrencyId = r.CurrencyId,
+                    Currency = r.Currency,
+                    CurrencyPairId = r.CurrencyPairId,
+                    CurrencyPair = r.CurrencyPair,
+                    CurrencyTypeId = r.CurrencyTypeId,
+                    CurrencyType = r.CurrencyType,
+                    CreatedAt = r.CreatedAt,
+                    CreatedBy = r.CreatedBy,
+                    ModifiedAt = r.ModifiedAt,
+                    ModifiedBy = r.ModifiedBy,
+                    IsEnabled = r.IsEnabled,
+                    RequestComponents = r.RequestComponents
+                        .Where(rc => rc.StoreHistoricals).ToList(),
+                    RequestProperties = r.RequestProperties,
+                    WebsocketCommands = r.WebsocketCommands
+                });
 
             foreach (var cReq in currencyRequests)
             {
@@ -329,12 +356,40 @@ namespace Nozomi.Service.Events
                                             && r.RequestType == type
                                             && DateTime.UtcNow >= r.ModifiedAt.Add(TimeSpan.FromMilliseconds(r.Delay)))); 
 
-        public ICollection<Request> GetAllByRequestType(RequestType requestType)
+        public ICollection<Request> GetAllByRequestType(RequestType requestType, bool includeNonHistorical = false)
         {
+            if (includeNonHistorical)
+                return CompiledGetAllByRequestType(_unitOfWork.Context, requestType).Select(r => new Request
+                {
+                    Id = r.Id,
+                    Guid = r.Guid,
+                    RequestType = r.RequestType,
+                    ResponseType = r.ResponseType,
+                    DataPath = r.DataPath,
+                    Delay = r.Delay,
+                    FailureDelay = r.FailureDelay,
+                    CurrencyId = r.CurrencyId,
+                    Currency = r.Currency,
+                    CurrencyPairId = r.CurrencyPairId,
+                    CurrencyPair = r.CurrencyPair,
+                    CurrencyTypeId = r.CurrencyTypeId,
+                    CurrencyType = r.CurrencyType,
+                    CreatedAt = r.CreatedAt,
+                    CreatedBy = r.CreatedBy,
+                    ModifiedAt = r.ModifiedAt,
+                    ModifiedBy = r.ModifiedBy,
+                    IsEnabled = r.IsEnabled,
+                    RequestComponents = r.RequestComponents
+                        .Where(rc => rc.StoreHistoricals).ToList(),
+                    RequestProperties = r.RequestProperties,
+                    WebsocketCommands = r.WebsocketCommands
+                }).ToList();
+            
             return CompiledGetAllByRequestType(_unitOfWork.Context, requestType).ToList();
         }
 
-        public IDictionary<string, ICollection<Request>> GetAllByRequestTypeUniqueToURL(RequestType requestType)
+        public IDictionary<string, ICollection<Request>> GetAllByRequestTypeUniqueToURL(RequestType requestType
+            , bool includeNonHistorical = false)
         {
             var dict = new Dictionary<string, ICollection<Request>>();
             
@@ -344,6 +399,33 @@ namespace Nozomi.Service.Events
             #endif
             
             var requests = CompiledGetAllByRequestType(_unitOfWork.Context, requestType);
+            
+            if (includeNonHistorical)
+                requests = requests.Select(r => new Request
+                {
+                    Id = r.Id,
+                    Guid = r.Guid,
+                    RequestType = r.RequestType,
+                    ResponseType = r.ResponseType,
+                    DataPath = r.DataPath,
+                    Delay = r.Delay,
+                    FailureDelay = r.FailureDelay,
+                    CurrencyId = r.CurrencyId,
+                    Currency = r.Currency,
+                    CurrencyPairId = r.CurrencyPairId,
+                    CurrencyPair = r.CurrencyPair,
+                    CurrencyTypeId = r.CurrencyTypeId,
+                    CurrencyType = r.CurrencyType,
+                    CreatedAt = r.CreatedAt,
+                    CreatedBy = r.CreatedBy,
+                    ModifiedAt = r.ModifiedAt,
+                    ModifiedBy = r.ModifiedBy,
+                    IsEnabled = r.IsEnabled,
+                    RequestComponents = r.RequestComponents
+                        .Where(rc => rc.StoreHistoricals).ToList(),
+                    RequestProperties = r.RequestProperties,
+                    WebsocketCommands = r.WebsocketCommands
+                });
 
             foreach (var request in requests)
             {
