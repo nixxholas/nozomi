@@ -89,13 +89,20 @@ namespace Nozomi.Service.Services
         {
             try
             {
+                if (id <= 0)
+                {
+                    _logger.LogWarning($"[{serviceName}]: Invalid component datum id:{id}. Null payload");
+                    return new NozomiResult<string>(NozomiResultType.Failed, $"[{serviceName}]: " +
+                                                                             $"Invalid component datum id:{id}. Null payload");
+                }
+                    
                 var lastCompVal = _unitOfWork
                     .GetRepository<RequestComponent>()
                     .GetQueryable()
                     .AsTracking()
                     .Include(rc => rc.Request)
                     .Where(rc => rc.DeletedAt == null && rc.IsEnabled
-                                 && rc.ModifiedAt.AddMilliseconds(rc.Request.Delay) >= DateTime.UtcNow)
+                                 && rc.ModifiedAt.AddMilliseconds(rc.Request.Delay) <= DateTime.UtcNow)
                     .SingleOrDefault(cp => cp.Id.Equals(id));
 
                 // Anomaly Detection
@@ -127,11 +134,12 @@ namespace Nozomi.Service.Services
                 }
                 else if (lastCompVal == null)
                 {
-                    _logger.LogWarning($"[{serviceName}]: Invalid component datum id:{id}. Null payload");
+                    _logger.LogWarning($"[{serviceName}]: RequestComponent {id} is either deleted, " +
+                                       $"disabled or has been updated recently.");
                     
                     return new NozomiResult<string>
-                    (NozomiResultType.Failed,
-                        $"Invalid component datum id:{id}, val:{val}. Null payload!!!");
+                    (NozomiResultType.Limbo, $"[{serviceName}]: RequestComponent {id} is either deleted, " +
+                                             $"disabled or has been updated recently.");
                 }
                 else
                 {
@@ -162,7 +170,7 @@ namespace Nozomi.Service.Services
                     .AsTracking()
                     .Include(rc => rc.Request)
                     .Where(rc => rc.DeletedAt == null && rc.IsEnabled
-                                                      && rc.ModifiedAt.AddMilliseconds(rc.Request.Delay) >= DateTime.UtcNow)
+                                                      && rc.ModifiedAt.AddMilliseconds(rc.Request.Delay) <= DateTime.UtcNow)
                     .SingleOrDefault(rc => rc.Id.Equals(id));
 
                 if (lastCompVal != null)
