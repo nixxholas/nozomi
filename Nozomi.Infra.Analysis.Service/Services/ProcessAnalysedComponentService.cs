@@ -48,7 +48,7 @@ namespace Nozomi.Infra.Analysis.Service.Services
 
             if (comp != null)
             {
-                if (!string.IsNullOrEmpty(comp.Value))
+                if (comp.StoreHistoricals && !string.IsNullOrEmpty(comp.Value))
                     _analysedHistoricItemService.Push(comp.Id, comp.Value, comp.ModifiedAt);
                 
                 if (comp.IsFailing)
