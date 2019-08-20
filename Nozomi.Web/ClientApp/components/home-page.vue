@@ -5,7 +5,8 @@
           <div class="container">
               <carousel class="tile is-ancestor" :autoplay="true" :paginationEnabled="false"
                         :perPage="1" :perPageCustom="[[768, 2]]">
-                <slide class="tile is-parent" v-for="datum in currencyTypeTable.data">
+                <slide class="tile is-parent" v-for="datum in currencyTypeTable.data"
+                       v-if="datum.historical != null && datum.count > 0">
                   <article class="tile is-child" style="width: 100%">
                     <p class="title" v-if="datum.parentName">{{ datum.parentName + ' ' + datum.componentType }}</p>
                     <p class="title" v-else>{{datum.componentType }}</p>
