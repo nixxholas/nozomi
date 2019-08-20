@@ -65,8 +65,12 @@ namespace Nozomi.Service.Services
             {
                 var entity = _unitOfWork.GetRepository<RequestComponent>()
                     .GetQueryable()
+                    .Include(rc => rc.Request)
                     .AsTracking()
-                    .SingleOrDefault(rc => rc.Id.Equals(id));
+                    .SingleOrDefault(rc => rc.DeletedAt == null && rc.IsEnabled
+                                                                && rc.ModifiedAt.AddMilliseconds(rc.Request.Delay) 
+                                                                >= DateTime.UtcNow
+                                                                && rc.Id.Equals(id));
 
                 if (entity != null)
                 {
@@ -85,28 +89,39 @@ namespace Nozomi.Service.Services
         {
             try
             {
+                if (id <= 0)
+                {
+                    _logger.LogWarning($"[{serviceName}]: Invalid component datum id:{id}. Null payload");
+                    return new NozomiResult<string>(NozomiResultType.Failed, $"[{serviceName}]: " +
+                                                                             $"Invalid component datum id:{id}. Null payload");
+                }
+                    
                 var lastCompVal = _unitOfWork
                     .GetRepository<RequestComponent>()
                     .GetQueryable()
                     .AsTracking()
-                    .Where(cp => cp.Id.Equals(id))
-                    .SingleOrDefault(cp => cp.DeletedAt == null && cp.IsEnabled);
+                    .Include(rc => rc.Request)
+                    .Where(rc => rc.DeletedAt == null && rc.IsEnabled
+                                 && rc.ModifiedAt.AddMilliseconds(rc.Request.Delay) <= DateTime.UtcNow)
+                    .SingleOrDefault(cp => cp.Id.Equals(id));
 
                 // Anomaly Detection
                 // Let's make it more efficient by checking if the price has changed
                 if (lastCompVal != null && !lastCompVal.HasAbnormalNumericalValue(val))
                 {
-                    if (!string.IsNullOrEmpty(lastCompVal.Value))
+                    if (lastCompVal.StoreHistoricals && !string.IsNullOrEmpty(lastCompVal.Value))
                     {
                         // Save old data first
                         if (_rcdHistoricItemService.Push(lastCompVal))
                         {
+                            _logger.LogInformation($"[{serviceName}]: UpdatePairValue successfully saved " +
+                                                   $"the current RCD value.");
                         }
                         // Old data failed to save. Something along the lines between the old data being new
                         // or the old data having a similarity with the latest rcdhi.
                         else
                         {
-                            _logger.LogInformation($"[{serviceName}]: UpdatePairValue failed to save " +
+                            _logger.LogWarning($"[{serviceName}]: UpdatePairValue failed to save " +
                                                    $"the current RCD value.");
                         }
                     }
@@ -119,11 +134,12 @@ namespace Nozomi.Service.Services
                 }
                 else if (lastCompVal == null)
                 {
-                    _logger.LogWarning($"[{serviceName}]: Invalid component datum id:{id}. Null payload");
+                    _logger.LogWarning($"[{serviceName}]: RequestComponent {id} is either deleted, " +
+                                       $"disabled or has been updated recently.");
                     
                     return new NozomiResult<string>
-                    (NozomiResultType.Failed,
-                        $"Invalid component datum id:{id}, val:{val}. Null payload!!!");
+                    (NozomiResultType.Limbo, $"[{serviceName}]: RequestComponent {id} is either deleted, " +
+                                             $"disabled or has been updated recently.");
                 }
                 else
                 {
@@ -152,22 +168,26 @@ namespace Nozomi.Service.Services
                     .GetRepository<RequestComponent>()
                     .GetQueryable()
                     .AsTracking()
-                    .Where(cp => cp.Id.Equals(id))
-                    .SingleOrDefault(cp => cp.DeletedAt == null && cp.IsEnabled);
+                    .Include(rc => rc.Request)
+                    .Where(rc => rc.DeletedAt == null && rc.IsEnabled
+                                                      && rc.ModifiedAt.AddMilliseconds(rc.Request.Delay) <= DateTime.UtcNow)
+                    .SingleOrDefault(rc => rc.Id.Equals(id));
 
                 if (lastCompVal != null)
                 {
-                    if (!string.IsNullOrEmpty(lastCompVal.Value))
+                    if (lastCompVal.StoreHistoricals && !string.IsNullOrEmpty(lastCompVal.Value))
                     {
                         // Save old data first
                         if (_rcdHistoricItemService.Push(lastCompVal))
                         {
+                            _logger.LogInformation($"[{serviceName}]: UpdatePairValue successfully saved " +
+                                                   $"the current RCD value.");
                         }
                         // Old data failed to save. Something along the lines between the old data being new
                         // or the old data having a similarity with the latest rcdhi.
                         else
                         {
-                            _logger.LogInformation($"[{serviceName}]: UpdatePairValue failed to save " +
+                            _logger.LogWarning($"[{serviceName}]: UpdatePairValue failed to save " +
                                                    $"the current RCD value.");
                         }
                     }

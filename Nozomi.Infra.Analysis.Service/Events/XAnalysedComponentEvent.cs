@@ -58,8 +58,21 @@ namespace Nozomi.Infra.Analysis.Service.Events
                 .FirstOrDefault();
         }
 
-        public IEnumerable<AnalysedComponent> GetNextWorkingSet(int index = 0)
+        public IEnumerable<AnalysedComponent> GetNextWorkingSet(int index = 0, bool includeNonHistoricals = false)
         {
+            if (!includeNonHistoricals)
+                return _unitOfWork.GetRepository<AnalysedComponent>()
+                    .GetQueryable()
+                    .Where(ac => ac.DeletedAt == null
+                                 && ac.IsEnabled
+                                 && ac.ModifiedAt <= DateTime.UtcNow.Add(TimeSpan.FromMilliseconds(ac.Delay))
+                                 && !ac.StoreHistoricals)
+                    .OrderBy(ac => ac.Id)
+                    .ThenBy(ac => ac.ModifiedAt)
+                    .ThenByDescending(ac => ac.IsFailing)
+                    .Skip(index * 100)
+                    .Take(100);
+            
             // Got in, let's grab em.
             return _unitOfWork.GetRepository<AnalysedComponent>()
                 .GetQueryable()

@@ -62,6 +62,12 @@ namespace Nozomi.Analysis
                         options.UseNpgsql(Configuration.GetConnectionString("LocalAuth:" + Environment.MachineName));
                         options.EnableSensitiveDataLogging(false);
                     });
+                
+                services.Configure<StripeSettings>(ss =>
+                {
+                    ss.SecretKey = "sk_test_rnlKG1tOlB0d4DlZgONFnVO300wCCutjx4";
+                    ss.PublishableKey = "pk_test_XziapDdDCWhkxmIgjldplFaF00L7FSFhvi";
+                });
             }
             else
             {

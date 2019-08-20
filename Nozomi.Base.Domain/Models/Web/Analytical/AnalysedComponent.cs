@@ -19,6 +19,8 @@ namespace Nozomi.Data.Models.Web.Analytical
         
         public bool IsFailing { get; set; }
         
+        public bool StoreHistoricals { get; set; }
+        
         public int Delay { get; set; }
 
         /// <summary>

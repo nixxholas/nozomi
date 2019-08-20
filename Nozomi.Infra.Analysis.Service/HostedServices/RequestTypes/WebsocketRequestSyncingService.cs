@@ -17,14 +17,15 @@ using Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes.Interfaces;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Service.Events.Interfaces;
 using Nozomi.Service.Services.Interfaces;
+using Nozomi.Service.Services.Requests.Interfaces;
 using WebSocketSharp;
 using WebSocket = WebSocketSharp.WebSocket;
 
 namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
 {
-    public class WebsocketCurrencyPairRequestSyncingService :
-        BaseProcessingService<WebsocketCurrencyPairRequestSyncingService>,
-        IWebsocketCurrencyPairRequestSyncingService
+    public class WebsocketRequestSyncingService :
+        BaseProcessingService<WebsocketRequestSyncingService>,
+        IWebsocketRequestSyncingService
     {
         /// <summary>
         /// 
@@ -34,12 +35,14 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
 
         private readonly IRequestEvent _websocketRequestEvent;
         private readonly IRequestComponentService _requestComponentService;
+        private readonly IRequestService _requestService;
 
-        public WebsocketCurrencyPairRequestSyncingService(IServiceProvider serviceProvider) : base(serviceProvider)
+        public WebsocketRequestSyncingService(IServiceProvider serviceProvider) : base(serviceProvider)
         {
             _wsrWebsockets = new Dictionary<string, WebSocket>();
             _requestComponentService = _scope.ServiceProvider.GetRequiredService<IRequestComponentService>();
             _websocketRequestEvent = _scope.ServiceProvider.GetRequiredService<IRequestEvent>();
+            _requestService = _scope.ServiceProvider.GetRequiredService<IRequestService>();
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -54,7 +57,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
                 //============================= Update Sockets to keep =============================// 
 
                 // We will need to resync the Request collection to make sure we're polling only the ones we want to poll
-                var dataEndpoints = _websocketRequestEvent.GetAllByRequestTypeUniqueToURL(RequestType.WebSocket);
+                var dataEndpoints = _websocketRequestEvent.GetAllByRequestTypeUniqueToURL(RequestType.WebSocket, true);
 
                 if (dataEndpoints.Count > 0)
                 {
@@ -102,10 +105,8 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
                                     if (args.IsPing)
                                     {
                                         newSocket.Ping();
-                                    }
-
-                                    // Process the incoming data
-                                    if (!string.IsNullOrEmpty(args.Data))
+                                    } 
+                                    else if (!string.IsNullOrEmpty(args.Data)) // Process the incoming data
                                     {
                                         try
                                         {
@@ -209,7 +210,16 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
                 // Are we processing anything?
                 if (wsrComponents.Any())
                 {
-                    return Task.FromResult(Update(payloadToken, wsr.FirstOrDefault().ResponseType, wsrComponents));
+                    if (Update(payloadToken, wsr.FirstOrDefault().ResponseType, wsrComponents)
+                        && _requestService.HasUpdated(wsr))
+                    {
+                        _logger.LogInformation($"[{_name}] Process: Request object updated!");
+                        return Task.FromResult(true);
+                    }
+                    else
+                    {
+                        _logger.LogCritical($"[{_name}] Process: Couldn't update the Request object.");
+                    }
                 }
                 else
                 {

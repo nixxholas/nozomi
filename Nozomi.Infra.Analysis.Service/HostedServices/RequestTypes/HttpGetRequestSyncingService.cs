@@ -45,7 +45,6 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
     public class HttpGetRequestSyncingService : BaseProcessingService<HttpGetRequestSyncingService>,
         IHttpGetRequestSyncingService
     {
-        private readonly string _name = "HttpGetCurrencyPairRequestSyncingService";
         private readonly HttpClient _httpClient = new HttpClient();
         private readonly IRequestComponentService _requestComponentService;
         private readonly IRequestEvent _requestEvent;
@@ -60,10 +59,10 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            _logger.LogInformation("HttpGetCurrencyPairRequestSyncingService is starting.");
+            _logger.LogInformation($"{_name} is starting.");
 
             stoppingToken.Register(
-                () => _logger.LogInformation("HttpGetCurrencyPairRequestSyncingService is stopping."));
+                () => _logger.LogInformation($"{_name} is stopping."));
 
             while (!stoppingToken.IsCancellationRequested)
             {
@@ -72,7 +71,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
                     // We will need to re-synchronize the Request collection to make sure we're polling only
                     // the ones we want to poll
                     var requests = _requestEvent
-                        .GetAllByRequestTypeUniqueToURL(RequestType.HttpGet);
+                        .GetAllByRequestTypeUniqueToURL(RequestType.HttpGet, true);
                     
                     #if DEBUG
                     // Check all this crap bro
@@ -116,9 +115,9 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
         /// <param name="requests"></param>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        public async Task<bool> ProcessRequest<T>(ICollection<T> requests) where T : Request
+        public async Task<bool> ProcessRequest<T>(IEnumerable<T> requests) where T : Request
         {
-            if (requests != null && requests.Count > 0)
+            if (requests != null && requests.Any())
             {
                 // Prepare a collection to store all the requests where
                 // every list contains the same details
@@ -471,6 +470,15 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
                             _requestService.Delay(firstRequest,
                                 TimeSpan.FromMilliseconds(firstRequest.FailureDelay));
                             return false;
+                    }
+
+                    if (_requestService.HasUpdated(requests.ToList<Request>()))
+                    {
+                        _logger.LogInformation($"[{_name}] ProcessRequest: Request objects updated!");
+                    }
+                    else
+                    {
+                        _logger.LogCritical($"[{_name}] ProcessRequest: Couldn't update all the Request objects.");
                     }
                 }
 
