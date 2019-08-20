@@ -71,7 +71,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
                     // We will need to re-synchronize the Request collection to make sure we're polling only
                     // the ones we want to poll
                     var requests = _requestEvent
-                        .GetAllByRequestTypeUniqueToURL(RequestType.HttpGet);
+                        .GetAllByRequestTypeUniqueToURL(RequestType.HttpGet, true);
                     
                     #if DEBUG
                     // Check all this crap bro

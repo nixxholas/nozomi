@@ -365,7 +365,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
             while (!stoppingToken.IsCancellationRequested)
             {
                 // We will need to resync the Request collection to make sure we're polling only the ones we want to poll
-                var requests = _requestEvent.GetAllByRequestType(RequestType.HttpPost);
+                var requests = _requestEvent.GetAllByRequestType(RequestType.HttpPost, true);
 
                 // Iterate the requests
                 // NOTE: Let's not call a parallel loop since HttpClients might tend to result in memory leaks.
