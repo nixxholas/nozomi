@@ -29,11 +29,11 @@ namespace Nozomi.Analysis.StartupExtensions
                 .GetRequiredService<IServiceScopeFactory>()
                 .CreateScope())
             {
-                if (env.IsProduction())
-                {
+//                if (env.IsProduction())
+//                {
                     var stripeService = serviceScope.ServiceProvider.GetService<IStripeService>();
                     stripeService.ConfigureStripePlans();
-                }
+//                }
                 
                 var logger = serviceScope.ServiceProvider.GetService<ILogger<Startup>>();
                 
@@ -131,8 +131,21 @@ namespace Nozomi.Analysis.StartupExtensions
 
                 using (var context = serviceScope.ServiceProvider.GetService<NozomiDbContext>())
                 {
-                    if (context.Database.GetPendingMigrations().Any())
-                        context.Database.Migrate();
+                    if (env.IsProduction()) {
+                        if (context.Database.GetPendingMigrations().Any())
+                        {
+                            context.Database.EnsureDeleted();
+                            context.Database.EnsureCreated();
+                            //context.Database.Migrate();
+                        }
+                    }
+                    else
+                    {
+                        if (context.Database.GetPendingMigrations().Any())
+                        {
+                            context.Database.Migrate();
+                        }
+                    }
 
                     try
                     {
