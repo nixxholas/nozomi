@@ -409,7 +409,7 @@ namespace Nozomi.Service.Events
                     ResponseType = r.ResponseType,
                     DataPath = r.DataPath,
                     Delay = r.Delay,
-                    FailureDelay = r.FailureDelay,
+                    FailureDelay = r.FailureDelay,    
                     CurrencyId = r.CurrencyId,
                     Currency = r.Currency,
                     CurrencyPairId = r.CurrencyPairId,
