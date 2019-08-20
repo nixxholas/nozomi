@@ -102,17 +102,19 @@ namespace Nozomi.Service.Services
                 // Let's make it more efficient by checking if the price has changed
                 if (lastCompVal != null && !lastCompVal.HasAbnormalNumericalValue(val))
                 {
-                    if (!string.IsNullOrEmpty(lastCompVal.Value))
+                    if (lastCompVal.StoreHistoricals && !string.IsNullOrEmpty(lastCompVal.Value))
                     {
                         // Save old data first
                         if (_rcdHistoricItemService.Push(lastCompVal))
                         {
+                            _logger.LogInformation($"[{serviceName}]: UpdatePairValue successfully saved " +
+                                                   $"the current RCD value.");
                         }
                         // Old data failed to save. Something along the lines between the old data being new
                         // or the old data having a similarity with the latest rcdhi.
                         else
                         {
-                            _logger.LogInformation($"[{serviceName}]: UpdatePairValue failed to save " +
+                            _logger.LogWarning($"[{serviceName}]: UpdatePairValue failed to save " +
                                                    $"the current RCD value.");
                         }
                     }
