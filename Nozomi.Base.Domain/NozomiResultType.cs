@@ -5,5 +5,6 @@
         Unknown = 0,
         Success = 1,
         Failed = -1,
+        Limbo = -2
     }
 }
