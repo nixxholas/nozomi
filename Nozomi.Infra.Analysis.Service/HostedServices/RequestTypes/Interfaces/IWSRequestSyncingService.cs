@@ -6,7 +6,7 @@ using Nozomi.Data.Models.Web.Websocket;
 
 namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes.Interfaces
 {
-    public interface IWebsocketRequestSyncingService
+    public interface IWSRequestSyncingService
     {
         Task<bool> Process(ICollection<Request> cpr, string payload);
 

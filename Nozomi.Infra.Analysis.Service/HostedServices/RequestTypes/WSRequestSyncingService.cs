@@ -23,9 +23,9 @@ using WebSocket = WebSocketSharp.WebSocket;
 
 namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
 {
-    public class WebsocketRequestSyncingService :
-        BaseProcessingService<WebsocketRequestSyncingService>,
-        IWebsocketRequestSyncingService
+    public class WSRequestSyncingService :
+        BaseProcessingService<WSRequestSyncingService>,
+        IWSRequestSyncingService
     {
         /// <summary>
         /// 
@@ -37,7 +37,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
         private readonly IRequestComponentService _requestComponentService;
         private readonly IRequestService _requestService;
 
-        public WebsocketRequestSyncingService(IServiceProvider serviceProvider) : base(serviceProvider)
+        public WSRequestSyncingService(IServiceProvider serviceProvider) : base(serviceProvider)
         {
             _wsrWebsockets = new Dictionary<string, WebSocket>();
             _requestComponentService = _scope.ServiceProvider.GetRequiredService<IRequestComponentService>();
