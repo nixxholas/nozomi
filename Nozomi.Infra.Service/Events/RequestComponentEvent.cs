@@ -187,6 +187,7 @@ namespace Nozomi.Service.Events
                                     Identifier = rc.Identifier,
                                     QueryComponent = rc.QueryComponent,
                                     IsDenominated = rc.IsDenominated,
+                                    StoreHistoricals = rc.StoreHistoricals,
                                     AnomalyIgnorance = rc.AnomalyIgnorance,
                                     Value = rc.Value,
                                     RequestId = rc.RequestId,
@@ -208,6 +209,7 @@ namespace Nozomi.Service.Events
                                     QueryComponent = rc.QueryComponent,
                                     IsDenominated = rc.IsDenominated,
                                     AnomalyIgnorance = rc.AnomalyIgnorance,
+                                    StoreHistoricals = rc.StoreHistoricals,
                                     Value = rc.Value,
                                     RequestId = rc.RequestId,
                                     RcdHistoricItems = rc.RcdHistoricItems
@@ -245,6 +247,7 @@ namespace Nozomi.Service.Events
                                     QueryComponent = rc.QueryComponent,
                                     IsDenominated = rc.IsDenominated,
                                     AnomalyIgnorance = rc.AnomalyIgnorance,
+                                    StoreHistoricals = rc.StoreHistoricals,
                                     Value = rc.Value,
                                     RequestId = rc.RequestId,
                                     RcdHistoricItems = rc.RcdHistoricItems
@@ -265,6 +268,7 @@ namespace Nozomi.Service.Events
                                 QueryComponent = rc.QueryComponent,
                                 IsDenominated = rc.IsDenominated,
                                 AnomalyIgnorance = rc.AnomalyIgnorance,
+                                StoreHistoricals = rc.StoreHistoricals,
                                 Value = rc.Value,
                                 RequestId = rc.RequestId,
                                 RcdHistoricItems = rc.RcdHistoricItems
@@ -314,6 +318,7 @@ namespace Nozomi.Service.Events
                         ComponentType = rc.ComponentType,
                         Identifier = rc.Identifier,
                         IsDenominated = rc.IsDenominated,
+                        StoreHistoricals = rc.StoreHistoricals,
                         QueryComponent = rc.QueryComponent,
                         Value = rc.Value,
                         RcdHistoricItems = rc.RcdHistoricItems
@@ -375,6 +380,7 @@ namespace Nozomi.Service.Events
                                     QueryComponent = rc.QueryComponent,
                                     IsDenominated = rc.IsDenominated,
                                     AnomalyIgnorance = rc.AnomalyIgnorance,
+                                    StoreHistoricals = rc.StoreHistoricals,
                                     Value = rc.Value,
                                     RequestId = rc.RequestId,
                                     RcdHistoricItems = rc.RcdHistoricItems
