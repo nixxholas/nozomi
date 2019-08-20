@@ -354,7 +354,10 @@ namespace Nozomi.Service.Events
                                             && r.RequestComponents
                                                 .Any(rc => rc.DeletedAt == null && rc.IsEnabled)
                                             && r.RequestType == type
-                                            && DateTime.UtcNow >= r.ModifiedAt.Add(TimeSpan.FromMilliseconds(r.Delay)))); 
+                                            && (DateTime.UtcNow >= r.ModifiedAt.Add(TimeSpan.FromMilliseconds(r.Delay))
+                                                // This means the request has been recently created and requires syncing
+                                                || r.CreatedAt.Equals(r.ModifiedAt))
+                                            )); 
 
         public ICollection<Request> GetAllByRequestType(RequestType requestType, bool includeNonHistorical = false)
         {
