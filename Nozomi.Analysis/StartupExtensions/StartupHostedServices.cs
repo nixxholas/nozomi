@@ -9,10 +9,7 @@ namespace Nozomi.Analysis.StartupExtensions
     {
         public static void ConfigureHostedServices(this IServiceCollection services)
         {
-            // RequestComponent Asyncs
-            services.AddHostedService<HttpGetRequestSyncingService>();
-            //services.AddHostedService<HttpPostRequestSyncingService>();
-            
+            // RequestComponent Asyncs            
             services.AddHostedService<AcAnalysisHostedService>();
         }
     }
