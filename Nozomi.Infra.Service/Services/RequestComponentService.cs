@@ -24,7 +24,7 @@ namespace Nozomi.Service.Services
 
         public RequestComponentService(ILogger<RequestComponentService> logger,
             IRcdHistoricItemService rcdHistoricItemService,
-            IUnitOfWork<NozomiDbContext> unitOfWork, IDistributedCache distributedCache) : base(logger, unitOfWork)
+            IUnitOfWork<NozomiDbContext> unitOfWork) : base(logger, unitOfWork)
         {
             _rcdHistoricItemService = rcdHistoricItemService;
         }
