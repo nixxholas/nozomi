@@ -36,10 +36,10 @@ namespace Nozomi.Analysis.StartupExtensions
             services.AddTransient<ICurrencySourceService, CurrencySourceService>();
             
             // Stripe
-            services.AddScoped<IStripeService, StripeService>();
+            //services.AddScoped<IStripeService, StripeService>();
             
             // Identity-related service injections
-            services.AddTransient<INozomiUserStore, NozomiUserStore>();
+            //services.AddTransient<INozomiUserStore, NozomiUserStore>();
             
             // Nozomi.Analysis Service injections
             services.AddTransient<IProcessAnalysedComponentService, ProcessAnalysedComponentService>();

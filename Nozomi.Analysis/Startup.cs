@@ -54,20 +54,6 @@ namespace Nozomi.Analysis
                             options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
                         },
                         ServiceLifetime.Transient);
-
-                services
-                    .AddEntityFrameworkNpgsql()
-                    .AddDbContext<NozomiAuthContext>(options =>
-                    {
-                        options.UseNpgsql(Configuration.GetConnectionString("LocalAuth:" + Environment.MachineName));
-                        options.EnableSensitiveDataLogging(false);
-                    });
-                
-                services.Configure<StripeSettings>(ss =>
-                {
-                    ss.SecretKey = "sk_test_rnlKG1tOlB0d4DlZgONFnVO300wCCutjx4";
-                    ss.PublishableKey = "pk_test_XziapDdDCWhkxmIgjldplFaF00L7FSFhvi";
-                });
             }
             else
             {
@@ -104,51 +90,12 @@ namespace Nozomi.Analysis
                     options.EnableSensitiveDataLogging(false);
                     options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
                 }, ServiceLifetime.Transient);
-
-                var authDb = (string) nozomiVault["auth"];
-                if (string.IsNullOrEmpty(authDb))
-                    throw new SystemException("Invalid auth database configuration");
-                services.AddDbContext<NozomiAuthContext>(options =>
-                {
-                    options.UseNpgsql(authDb
-                        , builder =>
-                        {
-                            builder.EnableRetryOnFailure();
-//                            builder.ProvideClientCertificatesCallback(certificates =>
-//                            {
-//                                var cert = new X509Certificate2("ca-certificate.crt");
-//                                certificates.Add(cert);
-//                            });
-                        }
-                    );
-                    options.EnableSensitiveDataLogging(false);
-                });
-
-                var stripeVault = vaultClient.V1.Secrets.Cubbyhole.ReadSecretAsync("stripe")
-                    .GetAwaiter()
-                    .GetResult().Data;
-
-                var stripePriv = (string) stripeVault["testpriv"];
-                if (string.IsNullOrEmpty(stripePriv))
-                    throw new SystemException("Invalid main database configuration");
-                var stripePub = (string) stripeVault["testpub"];
-                if (string.IsNullOrEmpty(stripePub))
-                    throw new SystemException("Invalid main database configuration");
-
-                services.Configure<StripeSettings>(ss =>
-                {
-                    ss.SecretKey = stripePriv;
-                    ss.PublishableKey = stripePub;
-                });
             }
-
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             services.ConfigureRepoLayer();
             services.ConfigureEvents();
             services.ConfigureServiceLayer();
             services.ConfigureHostedServices();
-            services.ConfigureNozomiAuth();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -158,14 +105,6 @@ namespace Nozomi.Analysis
             {
                 app.UseDeveloperExceptionPage();
             }
-            else
-            {
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-                app.UseHsts();
-            }
-
-            app.UseHttpsRedirection();
-            app.UseMvc();
 
             app.UseAutoDbMigration(env);
         }

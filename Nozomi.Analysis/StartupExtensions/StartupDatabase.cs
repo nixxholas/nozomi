@@ -31,103 +31,103 @@ namespace Nozomi.Analysis.StartupExtensions
             {
 //                if (env.IsProduction())
 //                {
-                    var stripeService = serviceScope.ServiceProvider.GetService<IStripeService>();
-                    stripeService.ConfigureStripePlans();
+//                    var stripeService = serviceScope.ServiceProvider.GetService<IStripeService>();
+//                    stripeService.ConfigureStripePlans();
 //                }
                 
                 var logger = serviceScope.ServiceProvider.GetService<ILogger<Startup>>();
                 
-                using (var context = serviceScope.ServiceProvider.GetService<NozomiAuthContext>())
-                {
-                    if (context.Database.GetPendingMigrations().Any())
-                        context.Database.Migrate();
-                    
-                    using (var roleManager = serviceScope.ServiceProvider.GetService<RoleManager<Role>>())
-                    {
-                        // Iterating Enumerator values.
-                        // https://stackoverflow.com/questions/972307/how-to-loop-through-all-enum-values-in-c
-                        var roles = Enum.GetValues(typeof(RoleEnum)).Cast<RoleEnum>();
-
-                        foreach (var role in roles)
-                        {
-                            var roleStr = role.GetDescription();
-
-                            if (roleManager.FindByNameAsync(roleStr).Result == null)
-                            {
-                                var newRole = new Role
-                                {
-                                    Name = roleStr
-                                };
-
-                                var res = roleManager.CreateAsync(newRole).Result;
-
-                                if (!res.Succeeded)
-                                {
-                                    logger.LogCritical($"Error seeding role {newRole.Name}.");
-                                }
-                            }
-                        }
-                    }
-
-                    // Seed users
-                    using (var userManager = serviceScope.ServiceProvider.GetService<NozomiUserManager>())
-                    {
-                        // Seed big brother
-                        if (userManager.FindByEmailAsync("nixholas@outlook.com").Result == null)
-                        {
-                            var boss = new User
-                            {
-                                UserName = "nixholas",
-                                NormalizedUserName = "NIXHOLAS",
-                                NormalizedEmail = "NIXHOLAS@OUTLOOK.COM",
-                                Email = "nixholas@outlook.com",
-                                StripeCustomerId = "cus_ELCsKKBzzjNc2I",
-                                EmailConfirmed = true
-                            };
-
-                            var res = userManager.CreateAsync(boss, "P@ssw0rd").Result;
-
-                            if (!res.Succeeded)
-                            {
-                                logger.LogCritical($"Error seeding da boss!!!");
-                            }
-
-                            var roleRes = userManager.AddToRoleAsync(boss, RoleEnum.Owner.GetDescription()).Result;
-
-                            if (!roleRes.Succeeded)
-                            {
-                                logger.LogCritical($"Error seeding da boss role!!!");
-                            }
-                        }
-
-                        if (userManager.FindByEmailAsync("nicholas@counter.network").Result == null)
-                        {
-                            var boss = new User
-                            {
-                                UserName = "nicholas",
-                                NormalizedUserName = "NICHOLAS",
-                                NormalizedEmail = "NICHOLAS@NOZOMI.ONE",
-                                Email = "nicholas@nozomi.one",
-                                StripeCustomerId = "cus_ELCsKKBzzjNc2I",
-                                EmailConfirmed = true
-                            };
-
-                            var res = userManager.CreateAsync(boss, "P@ssw0rd").Result;
-
-                            if (!res.Succeeded)
-                            {
-                                logger.LogCritical($"Error seeding da boss!!!");
-                            }
-
-                            var roleRes = userManager.AddToRoleAsync(boss, RoleEnum.Owner.GetDescription()).Result;
-
-                            if (!roleRes.Succeeded)
-                            {
-                                logger.LogCritical($"Error seeding da boss role!!!");
-                            }
-                        }
-                    }
-                }
+//                using (var context = serviceScope.ServiceProvider.GetService<NozomiAuthContext>())
+//                {
+//                    if (context.Database.GetPendingMigrations().Any())
+//                        context.Database.Migrate();
+//                    
+//                    using (var roleManager = serviceScope.ServiceProvider.GetService<RoleManager<Role>>())
+//                    {
+//                        // Iterating Enumerator values.
+//                        // https://stackoverflow.com/questions/972307/how-to-loop-through-all-enum-values-in-c
+//                        var roles = Enum.GetValues(typeof(RoleEnum)).Cast<RoleEnum>();
+//
+//                        foreach (var role in roles)
+//                        {
+//                            var roleStr = role.GetDescription();
+//
+//                            if (roleManager.FindByNameAsync(roleStr).Result == null)
+//                            {
+//                                var newRole = new Role
+//                                {
+//                                    Name = roleStr
+//                                };
+//
+//                                var res = roleManager.CreateAsync(newRole).Result;
+//
+//                                if (!res.Succeeded)
+//                                {
+//                                    logger.LogCritical($"Error seeding role {newRole.Name}.");
+//                                }
+//                            }
+//                        }
+//                    }
+//
+//                    // Seed users
+//                    using (var userManager = serviceScope.ServiceProvider.GetService<NozomiUserManager>())
+//                    {
+//                        // Seed big brother
+//                        if (userManager.FindByEmailAsync("nixholas@outlook.com").Result == null)
+//                        {
+//                            var boss = new User
+//                            {
+//                                UserName = "nixholas",
+//                                NormalizedUserName = "NIXHOLAS",
+//                                NormalizedEmail = "NIXHOLAS@OUTLOOK.COM",
+//                                Email = "nixholas@outlook.com",
+//                                StripeCustomerId = "cus_ELCsKKBzzjNc2I",
+//                                EmailConfirmed = true
+//                            };
+//
+//                            var res = userManager.CreateAsync(boss, "P@ssw0rd").Result;
+//
+//                            if (!res.Succeeded)
+//                            {
+//                                logger.LogCritical($"Error seeding da boss!!!");
+//                            }
+//
+//                            var roleRes = userManager.AddToRoleAsync(boss, RoleEnum.Owner.GetDescription()).Result;
+//
+//                            if (!roleRes.Succeeded)
+//                            {
+//                                logger.LogCritical($"Error seeding da boss role!!!");
+//                            }
+//                        }
+//
+//                        if (userManager.FindByEmailAsync("nicholas@counter.network").Result == null)
+//                        {
+//                            var boss = new User
+//                            {
+//                                UserName = "nicholas",
+//                                NormalizedUserName = "NICHOLAS",
+//                                NormalizedEmail = "NICHOLAS@NOZOMI.ONE",
+//                                Email = "nicholas@nozomi.one",
+//                                StripeCustomerId = "cus_ELCsKKBzzjNc2I",
+//                                EmailConfirmed = true
+//                            };
+//
+//                            var res = userManager.CreateAsync(boss, "P@ssw0rd").Result;
+//
+//                            if (!res.Succeeded)
+//                            {
+//                                logger.LogCritical($"Error seeding da boss!!!");
+//                            }
+//
+//                            var roleRes = userManager.AddToRoleAsync(boss, RoleEnum.Owner.GetDescription()).Result;
+//
+//                            if (!roleRes.Succeeded)
+//                            {
+//                                logger.LogCritical($"Error seeding da boss role!!!");
+//                            }
+//                        }
+//                    }
+//                }
 
                 using (var context = serviceScope.ServiceProvider.GetService<NozomiDbContext>())
                 {

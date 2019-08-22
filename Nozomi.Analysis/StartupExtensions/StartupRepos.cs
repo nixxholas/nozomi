@@ -13,8 +13,8 @@ namespace Nozomi.Analysis.StartupExtensions
             // Database
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 
-            services.AddTransient<IUnitOfWork<NozomiAuthContext>, UnitOfWork<NozomiAuthContext>>();
-            services.AddTransient<IDbContext, NozomiAuthContext>();
+//            services.AddTransient<IUnitOfWork<NozomiAuthContext>, UnitOfWork<NozomiAuthContext>>();
+//            services.AddTransient<IDbContext, NozomiAuthContext>();
             services.AddTransient<IUnitOfWork<NozomiDbContext>, UnitOfWork<NozomiDbContext>>();
             services.AddTransient<IDbContext, NozomiDbContext>();
         }
