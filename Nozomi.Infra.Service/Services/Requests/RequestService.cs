@@ -149,10 +149,10 @@ namespace Nozomi.Service.Services.Requests
 
                 if (reqs.Any())
                 {
-                    reqs.ForEach(item =>
+                    foreach (var req in reqs)
                     {
-                        item.ModifiedAt = DateTime.UtcNow;
-                    });
+                        req.ModifiedAt = DateTime.UtcNow;
+                    }
                     
                     _unitOfWork.GetRepository<Request>().Update(reqs);
                     _unitOfWork.Commit();
