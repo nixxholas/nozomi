@@ -32,8 +32,10 @@ namespace Nozomi.Infra.Analysis.Service.Events
                                                           // Always give null ACs a chance
                                                           || string.IsNullOrEmpty(ac.Value))
                                                       && !acsToFilter.Contains(ac.Id))
-                    // Order by ascending to the last modified time in addition to its delay
-                    .OrderBy(ac => ac.ModifiedAt)
+                    // Order by asecnding to the last checked time
+                    .OrderBy(ac => ac.LastChecked)
+                    // Order by ascending to the last modified time
+                    .ThenBy(ac => ac.ModifiedAt)
                     // Take those not failing yet first
                     .ThenBy(ac => ac.IsFailing)
                     // Take in those null ones first
@@ -49,8 +51,10 @@ namespace Nozomi.Infra.Analysis.Service.Events
                              && (ac.ModifiedAt.Add(TimeSpan.FromMilliseconds(ac.Delay)) <= DateTime.UtcNow
                                  // Always give null ACs a chance
                                  || string.IsNullOrEmpty(ac.Value)))
-                // Order by ascending to the last modified time in addition to its delay
-                .OrderBy(ac => ac.ModifiedAt)
+                // Order by asecnding to the last checked time
+                .OrderBy(ac => ac.LastChecked)
+                // Order by ascending to the last modified time
+                .ThenBy(ac => ac.ModifiedAt)
                 // Take those not failing yet first
                 .ThenBy(ac => ac.IsFailing)
                 // Take in those null ones first
@@ -69,7 +73,10 @@ namespace Nozomi.Infra.Analysis.Service.Events
                                  && ac.IsEnabled
                                  && ac.ModifiedAt <= DateTime.UtcNow.Add(TimeSpan.FromMilliseconds(ac.Delay))
                                  && !ac.StoreHistoricals)
-                    .OrderBy(ac => ac.ModifiedAt)
+                    // Order by asecnding to the last checked time
+                    .OrderBy(ac => ac.LastChecked)
+                    // Order by ascending to the last modified time
+                    .ThenBy(ac => ac.ModifiedAt)
                     .ThenByDescending(ac => ac.IsFailing)
                     .Skip(index * NozomiServiceConstants.AnalysedComponentTakeoutLimit)
                     .Take(NozomiServiceConstants.AnalysedComponentTakeoutLimit);
@@ -81,7 +88,10 @@ namespace Nozomi.Infra.Analysis.Service.Events
                 .Where(ac => ac.DeletedAt == null
                              && ac.IsEnabled
                              && ac.ModifiedAt <= DateTime.UtcNow.Add(TimeSpan.FromMilliseconds(ac.Delay)))
-                .OrderBy(ac => ac.ModifiedAt)
+                // Order by asecnding to the last checked time
+                .OrderBy(ac => ac.LastChecked)
+                // Order by ascending to the last modified time
+                .ThenBy(ac => ac.ModifiedAt)
                 .ThenByDescending(ac => ac.IsFailing)
                 .Skip(index * NozomiServiceConstants.AnalysedComponentTakeoutLimit)
                 .Take(NozomiServiceConstants.AnalysedComponentTakeoutLimit);

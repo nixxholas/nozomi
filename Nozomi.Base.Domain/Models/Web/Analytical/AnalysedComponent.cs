@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Nozomi.Base.Core;
 using Nozomi.Data.Models.Currency;
@@ -16,6 +17,8 @@ namespace Nozomi.Data.Models.Web.Analytical
         public string Value { get; set; }
 
         public bool IsDenominated { get; set; } = false;
+        
+        public DateTime? LastChecked { get; set; }
         
         public bool IsFailing { get; set; }
         
