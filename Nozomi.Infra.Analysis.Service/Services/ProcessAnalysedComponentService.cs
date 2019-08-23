@@ -56,6 +56,7 @@ namespace Nozomi.Infra.Analysis.Service.Services
                     
                 // Make sure we update the datetime as well.. 
                 comp.ModifiedAt = DateTime.UtcNow;
+                comp.LastChecked = DateTime.UtcNow;
                 comp.Value = value;
                 
                 _unitOfWork.GetRepository<AnalysedComponent>().Update(comp);
@@ -77,7 +78,7 @@ namespace Nozomi.Infra.Analysis.Service.Services
             if (comp != null)
             {
                 comp.IsFailing = isFailing;
-                comp.ModifiedAt = DateTime.UtcNow;
+                comp.LastChecked = DateTime.UtcNow;
                 
                 _unitOfWork.GetRepository<AnalysedComponent>().Update(comp);
                 _unitOfWork.Commit(userId);
@@ -100,6 +101,7 @@ namespace Nozomi.Infra.Analysis.Service.Services
             if (comp != null)
             {
                 comp.IsEnabled = false;
+                comp.ModifiedAt = DateTime.UtcNow;
 
                 _unitOfWork.GetRepository<AnalysedComponent>().Update(comp);
                 _unitOfWork.Commit();
