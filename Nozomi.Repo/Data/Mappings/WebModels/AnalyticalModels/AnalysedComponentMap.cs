@@ -23,6 +23,7 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                 .HasName("AnalysedComponent_Index_CurrencyTypeId_ComponentType").IsUnique();
 
             entityTypeBuilder.Property(ac => ac.IsFailing).HasDefaultValue(false);
+            entityTypeBuilder.Property(ac => ac.LastChecked).IsRequired(false);
             entityTypeBuilder.Property(ac => ac.StoreHistoricals).HasDefaultValue(false);
             entityTypeBuilder.Property(ac => ac.UIFormatting).IsRequired(false);
             entityTypeBuilder.Property(ac => ac.Value).IsRequired(false);
