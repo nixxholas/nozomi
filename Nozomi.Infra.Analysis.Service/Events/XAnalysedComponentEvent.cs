@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data.Models.Web.Analytical;
 using Nozomi.Infra.Analysis.Service.Events.Interfaces;
+using Nozomi.Preprocessing;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Data;
@@ -63,27 +64,27 @@ namespace Nozomi.Infra.Analysis.Service.Events
             if (!includeNonHistoricals)
                 return _unitOfWork.GetRepository<AnalysedComponent>()
                     .GetQueryable()
+                    .AsNoTracking()
                     .Where(ac => ac.DeletedAt == null
                                  && ac.IsEnabled
                                  && ac.ModifiedAt <= DateTime.UtcNow.Add(TimeSpan.FromMilliseconds(ac.Delay))
                                  && !ac.StoreHistoricals)
-                    .OrderBy(ac => ac.Id)
-                    .ThenBy(ac => ac.ModifiedAt)
+                    .OrderBy(ac => ac.ModifiedAt)
                     .ThenByDescending(ac => ac.IsFailing)
-                    .Skip(index * 100)
-                    .Take(100);
+                    .Skip(index * NozomiServiceConstants.AnalysedComponentTakeoutLimit)
+                    .Take(NozomiServiceConstants.AnalysedComponentTakeoutLimit);
             
             // Got in, let's grab em.
             return _unitOfWork.GetRepository<AnalysedComponent>()
                 .GetQueryable()
+                .AsNoTracking()
                 .Where(ac => ac.DeletedAt == null
                              && ac.IsEnabled
                              && ac.ModifiedAt <= DateTime.UtcNow.Add(TimeSpan.FromMilliseconds(ac.Delay)))
-                .OrderBy(ac => ac.Id)
-                .ThenBy(ac => ac.ModifiedAt)
+                .OrderBy(ac => ac.ModifiedAt)
                 .ThenByDescending(ac => ac.IsFailing)
-                .Skip(index * 100)
-                .Take(100);
+                .Skip(index * NozomiServiceConstants.AnalysedComponentTakeoutLimit)
+                .Take(NozomiServiceConstants.AnalysedComponentTakeoutLimit);
         }
     }
 }
