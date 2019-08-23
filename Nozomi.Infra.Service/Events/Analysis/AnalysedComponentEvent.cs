@@ -106,7 +106,8 @@ namespace Nozomi.Service.Events.Analysis
         {
             var query = _unitOfWork.GetRepository<AnalysedComponent>()
                 .GetQueryable()
-                .AsNoTracking();
+                .AsNoTracking()
+                .OrderBy(ac => ac.Id);
 
             if (filter)
             {
@@ -257,6 +258,7 @@ namespace Nozomi.Service.Events.Analysis
                 .Include(cp => cp.Source)
                 .ThenInclude(s => s.SourceCurrencies)
                 .ThenInclude(sc => sc.Currency)
+                .OrderBy(cp => cp.Id)
                 // Make sure the source has such currency
                 .Where(cp => cp.Source.SourceCurrencies.Any(sc => sc.CurrencyId.Equals(currencyId)
                                                                   // And that the main currency abbreviation matches

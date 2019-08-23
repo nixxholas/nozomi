@@ -413,6 +413,7 @@ namespace Nozomi.Service.Events
                         UIFormatting = ac.UIFormatting,
                         AnalysedHistoricItems = ac.AnalysedHistoricItems
                     })
+                    .OrderBy(item => item.Id)
                     .Skip(analysedComponentTypesIndex * NozomiServiceConstants.AnalysedComponentTakeoutLimit)
                     .Take(NozomiServiceConstants.AnalysedComponentTakeoutLimit)
                     .ToList();
@@ -426,6 +427,7 @@ namespace Nozomi.Service.Events
                     .SelectMany(r => r.RequestComponents)
                     .Where(rc => rc.DeletedAt == null && rc.IsEnabled
                                  && componentTypes.Contains(rc.ComponentType))
+                    .OrderBy(rc => rc.Id)
                     .Skip(componentTypesIndex * NozomiServiceConstants.RequestComponentTakeoutLimit)
                     .Take(NozomiServiceConstants.RequestComponentTakeoutLimit)
                     .ToList();
