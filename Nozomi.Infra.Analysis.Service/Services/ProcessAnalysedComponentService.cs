@@ -58,6 +58,7 @@ namespace Nozomi.Infra.Analysis.Service.Services
                 comp.ModifiedAt = DateTime.UtcNow;
                 comp.Value = value;
                 
+                _unitOfWork.GetRepository<AnalysedComponent>().Update(comp);
                 _unitOfWork.Commit(userId);
 
                 return true;
@@ -78,11 +79,32 @@ namespace Nozomi.Infra.Analysis.Service.Services
                 comp.IsFailing = isFailing;
                 comp.ModifiedAt = DateTime.UtcNow;
                 
+                _unitOfWork.GetRepository<AnalysedComponent>().Update(comp);
                 _unitOfWork.Commit(userId);
 
                 return true;
             }
             
+            return false;
+        }
+
+        public bool Disable(long analysedComponentId, long userId = 0)
+        {
+            var comp = _unitOfWork.GetRepository<AnalysedComponent>()
+                .GetQueryable()
+                .AsTracking()
+                .SingleOrDefault(ac => ac.DeletedAt == null
+                                       && ac.IsEnabled
+                                       && ac.Id.Equals(analysedComponentId));
+
+            if (comp != null)
+            {
+                comp.IsEnabled = false;
+
+                _unitOfWork.GetRepository<AnalysedComponent>().Update(comp);
+                _unitOfWork.Commit();
+            }
+
             return false;
         }
     }

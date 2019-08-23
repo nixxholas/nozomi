@@ -9,5 +9,7 @@ namespace Nozomi.Infra.Analysis.Service.Services.Interfaces
         bool UpdateValue(long analysedComponentId, string value, long userId = 0);
 
         bool Checked(long analysedComponentId, bool isFailing = false, long userId = 0);
+        
+        bool Disable(long analysedComponentId, long userId = 0);
     }
 }
