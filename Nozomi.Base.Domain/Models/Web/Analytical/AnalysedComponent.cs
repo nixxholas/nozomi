@@ -18,7 +18,7 @@ namespace Nozomi.Data.Models.Web.Analytical
 
         public bool IsDenominated { get; set; } = false;
         
-        public DateTime LastChecked { get; set; }
+        public DateTime? LastChecked { get; set; }
         
         public bool IsFailing { get; set; }
         
