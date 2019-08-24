@@ -2,7 +2,7 @@ using Nozomi.Data.Models.Web.Analytical;
 
 namespace Nozomi.Data.AreaModels.v1.AnalysedComponent
 {
-    public class AnalysedComponentDTO
+    public class AnalysedComponentDto
     {
         public long Id { get; set; }
         

@@ -20,7 +20,6 @@ using Nozomi.Service.Identity.Stores;
 using Nozomi.Service.Identity.Stores.Interfaces;
 using Nozomi.Service.Services;
 using Nozomi.Service.Services.Enumerators;
-using Nozomi.Service.Services.Enumerators.Interfaces;
 using Nozomi.Service.Services.Interfaces;
 using Nozomi.Service.Services.Requests;
 using Nozomi.Service.Services.Requests.Interfaces;

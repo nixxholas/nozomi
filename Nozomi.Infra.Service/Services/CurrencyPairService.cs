@@ -70,7 +70,7 @@ namespace Nozomi.Service.Services
             var currencyPair = new CurrencyPair()
             {
                 CurrencyPairType = createCurrencyPair.CurrencyPairType,
-                APIUrl = createCurrencyPair.APIUrl,
+                APIUrl = createCurrencyPair.ApiUrl,
                 DefaultComponent = createCurrencyPair.DefaultComponent,
                 SourceId = createCurrencyPair.SourceId,
                 MainCurrencyAbbrv = createCurrencyPair.MainCurrencyAbbrv,
@@ -121,7 +121,7 @@ namespace Nozomi.Service.Services
             cpToUpd.CounterCurrencyAbbrv = updateCurrencyPair.CounterCurrencyAbbrv;
             cpToUpd.SourceId = updateCurrencyPair.SourceId;
             cpToUpd.CurrencyPairType = updateCurrencyPair.CurrencyPairType;
-            cpToUpd.APIUrl = updateCurrencyPair.APIUrl;
+            cpToUpd.APIUrl = updateCurrencyPair.ApiUrl;
             cpToUpd.DefaultComponent = updateCurrencyPair.DefaultComponent;
             cpToUpd.IsEnabled = updateCurrencyPair.IsEnabled;
             

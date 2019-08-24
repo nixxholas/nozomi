@@ -1,13 +1,9 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Logging;
-using Nozomi.Data;
 using Nozomi.Data.Models.Currency;
-using Nozomi.Data.ResponseModels;
 using Nozomi.Data.ResponseModels.Currency;
 using Nozomi.Data.ResponseModels.Source;
 using Nozomi.Preprocessing.Abstracts;
@@ -46,10 +42,6 @@ namespace Nozomi.Service.Events
                     .ThenInclude(s => s.SourceCurrencies)
                     .ThenInclude(sc => sc.Currency);
             }
-            
-            #if DEBUG
-            var testCol = query.ToList();
-            #endif
 
             return query.ToList();
         }
@@ -102,10 +94,6 @@ namespace Nozomi.Service.Events
                     .ThenInclude(s => s.SourceCurrencies)
                     .ThenInclude(sc => sc.Currency);
             }
-            
-#if DEBUG
-            var testCol = query.ToList();
-#endif
 
             return query;
         }
@@ -191,19 +179,7 @@ namespace Nozomi.Service.Events
         }
 
         public IEnumerable<Source> GetCurrencySources(string slug, int page = 0)
-        {
-            #if DEBUG
-            var testRes = _unitOfWork.GetRepository<CurrencySource>()
-                .GetQueryable()
-                .AsNoTracking()
-                .Where(cs => cs.DeletedAt == null && cs.IsEnabled)
-                .Include(cs => cs.Currency)
-                .Where(cs => cs.Currency.Slug.Equals(slug, StringComparison.OrdinalIgnoreCase))
-                .Include(cs => cs.Source)
-                .Select(cs => cs.Source)
-                .ToList();
-            #endif
-            
+        {            
             return _unitOfWork.GetRepository<CurrencySource>()
                 .GetQueryable()
                 .AsNoTracking()

@@ -111,9 +111,8 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                     case AnalysedComponentType.Unknown:
                         // If it winds up here, its fine
                         _logger.LogWarning($"[{ServiceName}] Analyse ({entity.Id}): Skipping, Unknown type.");
-                        _processAnalysedComponentService.Checked(entity.Id, false);
+                        _processAnalysedComponentService.Checked(entity.Id);
                         return true;
-                        break;
                     case AnalysedComponentType.HourlyMarketCap:
                         dataTimespan = TimeSpan.FromHours(1);
                         // https://stackoverflow.com/questions/3108888/why-does-c-sharp-have-break-if-its-not-optional
@@ -170,7 +169,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                 case AnalysedComponentType.MarketCap:
                                     // Obtain all sub components (Components in the currencies)
                                     analysedComponents = _analysedComponentEvent.GetAllCurrencyComponentsByType(
-                                            (long) entity.CurrencyTypeId, false)
+                                            (long) entity.CurrencyTypeId)
                                         .Where(ac => ac.ComponentType.Equals(entity.ComponentType))
                                         .ToList();
 
@@ -183,7 +182,8 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                         foreach (var ac in analysedComponents)
                                         {
                                             // Value check first
-                                            if (decimal.TryParse(ac.Value, out var val) && val > decimal.Zero)
+                                            if (decimal.TryParse(ac.Value, out var val) && val > decimal.Zero
+                                                && ac.Currency != null)
                                             {
                                                 // Does this ticker exist on the list of market caps yet?
                                                 if (marketCapByCurrencies.ContainsKey(ac.Currency.Abbreviation))
@@ -834,15 +834,13 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                         break;
                     // TODO:
                     case AnalysedComponentType.DailyVolume:
-                        _processAnalysedComponentService.Checked(entity.Id, false);
+                        _processAnalysedComponentService.Checked(entity.Id);
                         return true;
-                        break;
                     default:
                         // If it winds up here, it needs help lol...
                         _logger.LogWarning($"[{ServiceName}] Analyse ({entity.Id}): Unable to execute analysis.");
-                        _processAnalysedComponentService.Checked(entity.Id, false);
+                        _processAnalysedComponentService.Checked(entity.Id);
                         return true;
-                        break;
                 }
 
                 _processAnalysedComponentService.Checked(entity.Id, true);

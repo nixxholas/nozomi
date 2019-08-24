@@ -5,9 +5,9 @@ using Nozomi.Data.Models.Web;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Data;
-using Nozomi.Service.Services.Enumerators.Interfaces;
+using Nozomi.Service.Events.Interfaces;
 
-namespace Nozomi.Service.Services.Enumerators
+namespace Nozomi.Service.Events
 {
     public class RequestTypeEvent : BaseService<RequestTypeEvent, NozomiDbContext>, IRequestTypeEvent
     {

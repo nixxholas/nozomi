@@ -23,6 +23,10 @@ namespace Nozomi.Data.Models.Web.Analytical
         {
             Id = component.Id;
             ComponentType = component.ComponentType;
+            Currency = component.Currency;
+            CurrencyId = component.CurrencyId;
+            CurrencyPair = component.CurrencyPair;
+            CurrencyPairId = component.CurrencyPairId;
             CurrencyType = component.CurrencyType;
             CurrencyTypeId = component.CurrencyTypeId;
             LastChecked = component.LastChecked;
@@ -32,11 +36,13 @@ namespace Nozomi.Data.Models.Web.Analytical
             IsDenominated = component.IsDenominated;
             Delay = component.Delay;
             UIFormatting = component.UIFormatting;
-            AnalysedHistoricItems = component.AnalysedHistoricItems
+            AnalysedHistoricItems = component.AnalysedHistoricItems != null 
+                ? component.AnalysedHistoricItems
                 .OrderByDescending(ahi => ahi.HistoricDateTime)
                 .Skip(index * items)
                 .Take(items)
-                .ToList();
+                .ToList() 
+                : new List<AnalysedHistoricItem>();
         }
 
         /// <summary>
@@ -51,6 +57,10 @@ namespace Nozomi.Data.Models.Web.Analytical
         {
             Id = component.Id;
             ComponentType = component.ComponentType;
+            Currency = component.Currency;
+            CurrencyId = component.CurrencyId;
+            CurrencyPair = component.CurrencyPair;
+            CurrencyPairId = component.CurrencyPairId;
             CurrencyType = component.CurrencyType;
             CurrencyTypeId = component.CurrencyTypeId;
             LastChecked = component.LastChecked;
@@ -61,21 +71,28 @@ namespace Nozomi.Data.Models.Web.Analytical
             Delay = component.Delay;
             UIFormatting = component.UIFormatting;
 
-            if (orderingExpr != null)
+            if (component.AnalysedHistoricItems == null)
             {
-                AnalysedHistoricItems = component.AnalysedHistoricItems
-                    .OrderByDescending(orderingExpr)
-                    .Skip(index * items)
-                    .Take(items)
-                    .ToList();
+                AnalysedHistoricItems = new List<AnalysedHistoricItem>();
             }
             else
             {
-                AnalysedHistoricItems = component.AnalysedHistoricItems
-                    .OrderByDescending(ahi => ahi.HistoricDateTime)
-                    .Skip(index * items)
-                    .Take(items)
-                    .ToList();
+                if (orderingExpr != null)
+                {
+                    AnalysedHistoricItems = component.AnalysedHistoricItems
+                        .OrderByDescending(orderingExpr)
+                        .Skip(index * items)
+                        .Take(items)
+                        .ToList();
+                }
+                else
+                {
+                    AnalysedHistoricItems = component.AnalysedHistoricItems
+                        .OrderByDescending(ahi => ahi.HistoricDateTime)
+                        .Skip(index * items)
+                        .Take(items)
+                        .ToList();
+                }
             }
         }
         
@@ -91,6 +108,10 @@ namespace Nozomi.Data.Models.Web.Analytical
         {
             Id = component.Id;
             ComponentType = component.ComponentType;
+            Currency = component.Currency;
+            CurrencyId = component.CurrencyId;
+            CurrencyPair = component.CurrencyPair;
+            CurrencyPairId = component.CurrencyPairId;
             CurrencyType = component.CurrencyType;
             CurrencyTypeId = component.CurrencyTypeId;
             LastChecked = component.LastChecked;
@@ -101,22 +122,29 @@ namespace Nozomi.Data.Models.Web.Analytical
             Delay = component.Delay;
             UIFormatting = component.UIFormatting;
 
-            if (whereExpr != null)
+            if (component.AnalysedHistoricItems == null)
             {
-                AnalysedHistoricItems = component.AnalysedHistoricItems
-                    .Where(whereExpr)
-                    .OrderBy(ahi => ahi.HistoricDateTime)
-                    .Skip(index * items)
-                    .Take(items)
-                    .ToList();
+                AnalysedHistoricItems = new List<AnalysedHistoricItem>();
             }
             else
             {
-                AnalysedHistoricItems = component.AnalysedHistoricItems
-                    .OrderBy(ahi => ahi.HistoricDateTime)
-                    .Skip(index * items)
-                    .Take(items)
-                    .ToList();
+                if (whereExpr != null)
+                {
+                    AnalysedHistoricItems = component.AnalysedHistoricItems
+                        .Where(whereExpr)
+                        .OrderBy(ahi => ahi.HistoricDateTime)
+                        .Skip(index * items)
+                        .Take(items)
+                        .ToList();
+                }
+                else
+                {
+                    AnalysedHistoricItems = component.AnalysedHistoricItems
+                        .OrderBy(ahi => ahi.HistoricDateTime)
+                        .Skip(index * items)
+                        .Take(items)
+                        .ToList();
+                }   
             }
         }
         
@@ -133,6 +161,10 @@ namespace Nozomi.Data.Models.Web.Analytical
         {
             Id = component.Id;
             ComponentType = component.ComponentType;
+            Currency = component.Currency;
+            CurrencyId = component.CurrencyId;
+            CurrencyPair = component.CurrencyPair;
+            CurrencyPairId = component.CurrencyPairId;
             CurrencyType = component.CurrencyType;
             CurrencyTypeId = component.CurrencyTypeId;
             LastChecked = component.LastChecked;
@@ -143,38 +175,45 @@ namespace Nozomi.Data.Models.Web.Analytical
             Delay = component.Delay;
             UIFormatting = component.UIFormatting;
 
-            if (orderingExpr != null && whereExpr != null)
+            if (component.AnalysedHistoricItems == null)
             {
-                AnalysedHistoricItems = component.AnalysedHistoricItems
-                    .Where(whereExpr)
-                    .OrderByDescending(orderingExpr)
-                    .Skip(index * items)
-                    .Take(items)
-                    .ToList();
-            }
-            else if (orderingExpr != null)
-            {
-                AnalysedHistoricItems = component.AnalysedHistoricItems
-                    .OrderByDescending(orderingExpr)
-                    .Skip(index * items)
-                    .Take(items)
-                    .ToList();
-            }
-            else if (whereExpr != null)
-            {
-                AnalysedHistoricItems = component.AnalysedHistoricItems
-                    .Where(whereExpr)
-                    .Skip(index * items)
-                    .Take(items)
-                    .ToList();
+                AnalysedHistoricItems = new List<AnalysedHistoricItem>();
             }
             else
             {
-                AnalysedHistoricItems = component.AnalysedHistoricItems
-                    .OrderByDescending(ahi => ahi.HistoricDateTime)
-                    .Skip(index * items)
-                    .Take(items)
-                    .ToList();
+                if (orderingExpr != null && whereExpr != null)
+                {
+                    AnalysedHistoricItems = component.AnalysedHistoricItems
+                        .Where(whereExpr)
+                        .OrderByDescending(orderingExpr)
+                        .Skip(index * items)
+                        .Take(items)
+                        .ToList();
+                }
+                else if (orderingExpr != null)
+                {
+                    AnalysedHistoricItems = component.AnalysedHistoricItems
+                        .OrderByDescending(orderingExpr)
+                        .Skip(index * items)
+                        .Take(items)
+                        .ToList();
+                }
+                else if (whereExpr != null)
+                {
+                    AnalysedHistoricItems = component.AnalysedHistoricItems
+                        .Where(whereExpr)
+                        .Skip(index * items)
+                        .Take(items)
+                        .ToList();
+                }
+                else
+                {
+                    AnalysedHistoricItems = component.AnalysedHistoricItems
+                        .OrderByDescending(ahi => ahi.HistoricDateTime)
+                        .Skip(index * items)
+                        .Take(items)
+                        .ToList();
+                }
             }
         }
         

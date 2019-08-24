@@ -13,13 +13,14 @@ namespace Nozomi.Base.Core.Helpers.Enumerator
             if (e is Enum)
             {
                 Type type = e.GetType();
-                Array values = System.Enum.GetValues(type);
+                Array values = Enum.GetValues(type);
 
                 foreach (int val in values)
                 {
                     if (val == e.ToInt32(CultureInfo.InvariantCulture))
                     {
-                        var memInfo = type.GetMember(type.GetEnumName(val));
+                        var memInfo = type.GetMember(type.GetEnumName(val) 
+                                                     ?? throw new FormatException("Invalid enumerator name."));
                         var descriptionAttribute = memInfo[0]
                             .GetCustomAttributes(typeof(DescriptionAttribute), false)
                             .FirstOrDefault() as DescriptionAttribute;

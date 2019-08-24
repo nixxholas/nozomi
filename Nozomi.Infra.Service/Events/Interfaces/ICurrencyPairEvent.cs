@@ -21,6 +21,7 @@ namespace Nozomi.Service.Events.Interfaces
         /// a null value will be returned of course.
         /// </summary>
         /// <param name="analysedComponentId"></param>
+        /// <param name="type"></param>
         /// <param name="track"></param>
         /// <returns></returns>
         AnalysedComponent GetRelatedAnalysedComponent(long analysedComponentId, AnalysedComponentType type, bool track = false);

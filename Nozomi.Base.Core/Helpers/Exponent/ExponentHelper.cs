@@ -4,8 +4,7 @@ namespace Nozomi.Base.Core.Helpers.Exponent
     {
         public static bool IsExponentialFormat(string str)
         {
-            double result;
-            return (str.Contains("E") || str.Contains("e")) && double.TryParse(str, out result);
+            return (str.Contains("E") || str.Contains("e")) && double.TryParse(str, out _);
         }
     }
 }
