@@ -291,6 +291,7 @@ namespace Nozomi.Service.Events
                         .Any(ac => ac.DeletedAt == null && ac.IsEnabled))
 //                    .OrderByDescending(c => decimal.Parse(c.AnalysedComponents
 //                        .SingleOrDefault(ac => ac.ComponentType == AnalysedComponentType.MarketCap).Value))
+                    .OrderBy(c => c.Id)
                     .Skip(index * 100)
                     .Take(100)
                     .Select(c => new Currency
@@ -410,6 +411,7 @@ namespace Nozomi.Service.Events
                         UIFormatting = ac.UIFormatting,
                         AnalysedHistoricItems = ac.AnalysedHistoricItems
                     })
+                    .OrderBy(ac => ac.Id)
                     .Skip(analysedComponentTypesIndex * NozomiServiceConstants.AnalysedComponentTakeoutLimit)
                     .Take(NozomiServiceConstants.AnalysedComponentTakeoutLimit)
                     .ToList();
@@ -423,6 +425,7 @@ namespace Nozomi.Service.Events
                     .SelectMany(r => r.RequestComponents)
                     .Where(rc => rc.DeletedAt == null && rc.IsEnabled
                                  && componentTypes.Contains(rc.ComponentType))
+                    .OrderBy(rc => rc.Id)
                     .Skip(componentTypesIndex * NozomiServiceConstants.RequestComponentTakeoutLimit)
                     .Take(NozomiServiceConstants.RequestComponentTakeoutLimit)
                     .ToList();
