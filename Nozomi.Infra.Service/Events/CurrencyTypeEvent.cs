@@ -63,6 +63,7 @@ namespace Nozomi.Service.Events
                 }
 
                 return cTypes
+                    .OrderBy(ct => ct.Id)
                     .Skip(index * NozomiServiceConstants.CurrencyTypeTakeoutLimit)
                     .Take(NozomiServiceConstants.CurrencyTypeTakeoutLimit)
                     .ToList();
