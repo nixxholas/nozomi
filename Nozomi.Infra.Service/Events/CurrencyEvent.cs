@@ -26,14 +26,11 @@ namespace Nozomi.Service.Events
 {
     public class CurrencyEvent : BaseEvent<CurrencyEvent, NozomiDbContext>, ICurrencyEvent
     {
-        private readonly ICurrencyPairEvent _currencyPairEvent;
         private readonly ITickerEvent _tickerEvent;
 
-        public CurrencyEvent(ILogger<CurrencyEvent> logger, IUnitOfWork<NozomiDbContext> unitOfWork,
-            ICurrencyPairEvent currencyPairEvent, ITickerEvent tickerEvent)
+        public CurrencyEvent(ILogger<CurrencyEvent> logger, IUnitOfWork<NozomiDbContext> unitOfWork, ITickerEvent tickerEvent)
             : base(logger, unitOfWork)
         {
-            _currencyPairEvent = currencyPairEvent;
             _tickerEvent = tickerEvent;
         }
 
