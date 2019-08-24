@@ -307,27 +307,13 @@ namespace Nozomi.Service.Events
                         LogoPath = c.LogoPath,
                         AnalysedComponents = c.AnalysedComponents
                             .Where(ac => ac.DeletedAt == null && ac.IsEnabled)
-                            .Select(ac => new AnalysedComponent
-                            {
-                                Id = ac.Id,
-                                ComponentType = ac.ComponentType,
-                                CurrencyType = ac.CurrencyType,
-                                CurrencyTypeId = ac.CurrencyTypeId,
-                                Value = ac.Value,
-                                IsDenominated = ac.IsDenominated,
-                                Delay = ac.Delay,
-                                UIFormatting = ac.UIFormatting,
-                                AnalysedHistoricItems = ac.AnalysedHistoricItems
-                                    .Where(ahi => ahi.DeletedAt == null && ahi.IsEnabled
-                                                                        && ahi.HistoricDateTime >=
-                                                                        DateTime.UtcNow.Subtract(
-                                                                            TimeSpan.FromDays(daysOfData))
-                                                                        && NumberHelper.IsNumericDecimal(ahi.Value))
-                                    .OrderByDescending(ahi => ahi.HistoricDateTime)
-                                    .Skip(index * NozomiServiceConstants.AnalysedComponentTakeoutLimit)
-                                    .Take(NozomiServiceConstants.AnalysedComponentTakeoutLimit)
-                                    .ToList()
-                            })
+                            .Select(ac => new AnalysedComponent(ac, index, 
+                                NozomiServiceConstants.AnalysedComponentTakeoutLimit, 
+                                ahi => ahi.DeletedAt == null && ahi.IsEnabled
+                                                             && ahi.HistoricDateTime >=
+                                                             DateTime.UtcNow.Subtract(
+                                                                 TimeSpan.FromDays(daysOfData))
+                                                             && NumberHelper.IsNumericDecimal(ahi.Value)))
                             .ToList(),
                         Requests = c.Requests
                             .Where(r => r.DeletedAt == null && r.IsEnabled)
@@ -457,8 +443,7 @@ namespace Nozomi.Service.Events
             {
                 return _unitOfWork.GetRepository<Currency>().GetQueryable()
                     .AsNoTracking()
-                    .Where(c => c.DeletedAt == null)
-                    .Where(c => c.IsEnabled)
+                    .Where(c => c.DeletedAt == null && c.IsEnabled)
                     .Include(c => c.AnalysedComponents)
                     .Include(c => c.Requests)
                     .Include(c => c.CurrencySources)
@@ -469,8 +454,7 @@ namespace Nozomi.Service.Events
             {
                 return _unitOfWork.GetRepository<Currency>().GetQueryable()
                     .AsNoTracking()
-                    .Where(c => c.DeletedAt == null)
-                    .Where(c => c.IsEnabled);
+                    .Where(c => c.DeletedAt == null && c.IsEnabled);
             }
         }
 
