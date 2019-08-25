@@ -111,8 +111,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                     case AnalysedComponentType.Unknown:
                         // If it winds up here, its fine
                         _logger.LogWarning($"[{ServiceName}] Analyse ({entity.Id}): Skipping, Unknown type.");
-                        _processAnalysedComponentService.Checked(entity.Id);
-                        return true;
+                        return _processAnalysedComponentService.Checked(entity.Id);
                     case AnalysedComponentType.HourlyMarketCap:
                         dataTimespan = TimeSpan.FromHours(1);
                         // https://stackoverflow.com/questions/3108888/why-does-c-sharp-have-break-if-its-not-optional
@@ -122,6 +121,10 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                         // https://stackoverflow.com/questions/3108888/why-does-c-sharp-have-break-if-its-not-optional
                         goto case AnalysedComponentType.MarketCap;
                     case AnalysedComponentType.MarketCap:
+                        return _processAnalysedComponentService.Checked(entity.Id);
+                        
+                        // Hold up for now
+                        
                         // CurrencyType-based market cap
                         if (entity.CurrencyTypeId != null && entity.CurrencyTypeId > 0)
                         {
@@ -279,7 +282,6 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                     case AnalysedComponentType.MarketCapDailyChange:
                         // Disable
                         return _processAnalysedComponentService.Disable(entity.Id);
-                        break;
                     case AnalysedComponentType.CurrentAveragePrice:
                         // CurrencyType-based Live Average Price
                         if (entity.CurrencyTypeId != null && entity.CurrencyTypeId > 0)
@@ -420,6 +422,10 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
 
                         break;
                     case AnalysedComponentType.HourlyAveragePrice:
+                        return _processAnalysedComponentService.Checked(entity.Id);
+                        
+                        // Hold up for now
+                        
                         dataTimespan = TimeSpan.FromHours(1);
 
                         // CurrencyType-based Hourly Average Price
@@ -551,6 +557,10 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
 
                         break;
                     case AnalysedComponentType.DailyAveragePrice:
+                        return _processAnalysedComponentService.Checked(entity.Id);
+                        
+                        // Hold up for now
+                        
                         dataTimespan = TimeSpan.FromHours(24);
 
                         // CurrencyType-based Live Average Price
@@ -705,6 +715,9 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                     case AnalysedComponentType.MarketCapDailyPctChange:
                     case AnalysedComponentType.HourlyPricePctChange:
                     case AnalysedComponentType.DailyPricePctChange:
+                        return _processAnalysedComponentService.Checked(entity.Id);
+                        
+                        // Hold up for now
                         // CurrencyType-based PricePctChange
                         if (entity.CurrencyTypeId != null && entity.CurrencyTypeId > 0)
                         {
@@ -862,8 +875,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                         return _processAnalysedComponentService.Checked(entity.Id);
                     // TODO:
                     case AnalysedComponentType.DailyVolume:
-                        _processAnalysedComponentService.Checked(entity.Id);
-                        return true;
+                        return _processAnalysedComponentService.Checked(entity.Id);
                     default:
                         // If it winds up here, it needs help lol...
                         _logger.LogWarning($"[{ServiceName}] Analyse ({entity.Id}): Analysis for this type " +
