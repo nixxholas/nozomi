@@ -478,7 +478,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
 
                             // Hitting here? Sum ting wong
                             _logger.LogWarning($"[{ServiceName}] Analyse ({entity.Id}): " +
-                                               $"average price can't be computed.");
+                                               $"hourly average price can't be computed.");
                         }
                         // Request-based Hourly Average Price
                         // 1. This came from a CurrencyPair
@@ -546,7 +546,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
 
                             // Hitting here? Sum ting wong
                             _logger.LogWarning($"[{ServiceName}] Analyse ({entity.Id}): " +
-                                               $"average price can't be computed.");
+                                               $"hourly average price can't be computed.");
                         }
 
                         break;
@@ -695,14 +695,12 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                     case AnalysedComponentType.MarketCapPctChange:
                         // Disable
                         return _processAnalysedComponentService.Disable(entity.Id);
-                        break;
                     // TODO:
                     case AnalysedComponentType.DailyPriceChange:
                     case AnalysedComponentType.WeeklyPriceChange:
                     case AnalysedComponentType.MonthlyPriceChange:
                         // Disable
                         return _processAnalysedComponentService.Disable(entity.Id);
-                        break;
                     case AnalysedComponentType.MarketCapHourlyPctChange:
                     case AnalysedComponentType.MarketCapDailyPctChange:
                     case AnalysedComponentType.HourlyPricePctChange:
@@ -866,7 +864,6 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
 
                         // Disable
                         return _processAnalysedComponentService.Disable(entity.Id);
-                        return true;
                 }
 
                 _processAnalysedComponentService.Checked(entity.Id, true);
