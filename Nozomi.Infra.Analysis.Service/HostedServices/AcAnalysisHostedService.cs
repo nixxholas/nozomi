@@ -127,7 +127,6 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                         {
                             switch (entity.ComponentType)
                             {
-                                // TODO: TEST
                                 case AnalysedComponentType.HourlyMarketCap:
                                 case AnalysedComponentType.DailyMarketCap:
                                     // Obtain the computed market cap.
@@ -161,10 +160,10 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                     }
 
                                     // Hitting here? nothing to process.
-                                    _logger.LogWarning($"[{ServiceName}] Analyse ({entity.Id}): " +
-                                                       $"nothing to log yet.");
+                                    _logger.LogInformation($"[{ServiceName}] Analyse Hourly/Daily Type Market " +
+                                                           $"Cap({entity.Id}): nothing to log yet.");
 
-                                    break;
+                                    return _processAnalysedComponentService.Checked(entity.Id);
                                 // Default market cap function
                                 case AnalysedComponentType.MarketCap:
                                     // Obtain all sub components (Components in the currencies)
@@ -213,7 +212,11 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                         }
                                     }
 
-                                    break;
+                                    // Hitting here? nothing to process.
+                                    _logger.LogInformation($"[{ServiceName}] Analyse Hourly/Daily Type Market " +
+                                                           $"Cap({entity.Id}): nothing to log yet.");
+
+                                    return _processAnalysedComponentService.Checked(entity.Id);
                             }
                         }
                         // Currency-based Market Cap
