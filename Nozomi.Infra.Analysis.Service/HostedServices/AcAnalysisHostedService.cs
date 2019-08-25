@@ -362,60 +362,41 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                         // 2. This came from a non-currency request
                         else
                         {
-                            var reqCompCount = _requestComponentEvent.GetCorrelationPredicateCount(entity.Id,
-                                rc => rc.DeletedAt == null && rc.IsEnabled
-                                                           && (rc.ComponentType.Equals(ComponentType.Ask)
-                                                               || rc.ComponentType.Equals(ComponentType.Bid))
-                                                           && !string.IsNullOrEmpty(rc.Value)
-                                                           && NumberHelper.IsNumericDecimal(rc.Value));
-
-                            // Send off if there's nothing yet
-                            if (reqCompCount <= decimal.Zero)
-                                return _processAnalysedComponentService.Checked(entity.Id);
-                            
-                            var reqCompsPages = (reqCompCount > NozomiServiceConstants.RequestComponentTakeoutLimit)
-                                ? decimal.Divide(reqCompCount, NozomiServiceConstants.RequestComponentTakeoutLimit)
-                                : 1;
-
-                            // Aggregate it
                             var avgPrice = decimal.Zero;
+                            var index = 0;
+                            var components = _requestComponentEvent.GetAllByCorrelation(entity.Id, true,
+                                    index, rc => rc.DeletedAt == null && rc.IsEnabled
+                                                                  && (rc.ComponentType.Equals(ComponentType.Ask)
+                                                                      || rc.ComponentType.Equals(ComponentType.Bid))
+                                                                  && !string.IsNullOrEmpty(rc.Value)
+                                                                  && NumberHelper.IsNumericDecimal(rc.Value));
 
-                            for (var i = 0; i < reqCompsPages; i++)
+                            if (components.Any())
                             {
-                                // Obtain all of the req components that are related to this AC.
-                                var correlatedReqComps = _requestComponentEvent.GetAllByCorrelation(entity.Id, true,
-                                        i, rc => rc.DeletedAt == null && rc.IsEnabled
-                                                                      && (rc.ComponentType.Equals(ComponentType.Ask)
-                                                                          || rc.ComponentType.Equals(ComponentType.Bid))
-                                                                      && !string.IsNullOrEmpty(rc.Value)
-                                                                      && NumberHelper.IsNumericDecimal(rc.Value))
-                                    .ToList();
-
-                                if (correlatedReqComps.Count > 0)
+                                // Aggregate it
+                                if (avgPrice > 0)
                                 {
-                                    // Aggregate it
-                                    if (avgPrice > 0)
-                                    {
-                                        avgPrice = decimal.Divide(decimal.Add(avgPrice, correlatedReqComps
-                                            .Average(rc => decimal.Parse(rc.Value))), 2);
-                                    }
-                                    else
-                                    {
-                                        avgPrice = correlatedReqComps
-                                            .Average(rc => decimal.Parse(rc.Value));
-                                    }
+                                    avgPrice = decimal.Divide(decimal.Add(avgPrice, components
+                                        .Average(rc => decimal.Parse(rc.Value))), 2);
+                                }
+                                else
+                                {
+                                    avgPrice = components
+                                        .Average(rc => decimal.Parse(rc.Value));
+                                }
+
+                                // Now that's its computed, check again
+                                if (avgPrice > 0)
+                                {
+                                    return _processAnalysedComponentService.UpdateValue(entity.Id,
+                                        avgPrice.ToString(CultureInfo.InvariantCulture));
                                 }
                             }
-
-                            if (avgPrice > 0)
-                            {
-                                return _processAnalysedComponentService.UpdateValue(entity.Id,
-                                    avgPrice.ToString(CultureInfo.InvariantCulture));
-                            }
-
+                            
                             // Hitting here? Sum ting wong
                             _logger.LogWarning($"[{ServiceName}] Analyse ({entity.Id}): " +
                                                $"average price can't be computed.");
+                            return _processAnalysedComponentService.Checked(entity.Id, true);
                         }
 
                         break;
