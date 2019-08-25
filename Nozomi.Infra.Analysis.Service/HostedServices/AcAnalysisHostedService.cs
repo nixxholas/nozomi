@@ -798,11 +798,14 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                                 compute.ToString(CultureInfo.InvariantCulture));
                                         }
                                     }
+                                    
+                                    return _processAnalysedComponentService.Checked(entity.Id);
                                 }
 
                                 // Hitting here? Sum ting wong
                                 _logger.LogWarning($"[{ServiceName}] Analyse ({entity.Id}): " +
                                                    $"PricePctChange can't be computed.");
+                                return _processAnalysedComponentService.Checked(entity.Id, true);
                             }
                             // Request-based PricePctChange
                             else
@@ -844,15 +847,19 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                                 compute.ToString(CultureInfo.InvariantCulture));
                                         }
                                     }
+                                    
+                                    return _processAnalysedComponentService.Checked(entity.Id);
                                 }
 
                                 // Hitting here? Sum ting wong
                                 _logger.LogWarning($"[{ServiceName}] Analyse ({entity.Id}): " +
                                                    $"PricePctChange can't be computed.");
+                                return _processAnalysedComponentService.Checked(entity.Id, true);
                             }
                         }
-
-                        break;
+                        
+                        // Nothing to check, nothing much i guess.
+                        return _processAnalysedComponentService.Checked(entity.Id);
                     // TODO:
                     case AnalysedComponentType.DailyVolume:
                         _processAnalysedComponentService.Checked(entity.Id);
