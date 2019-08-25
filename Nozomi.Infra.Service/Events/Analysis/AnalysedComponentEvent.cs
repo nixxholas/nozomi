@@ -203,7 +203,8 @@ namespace Nozomi.Service.Events.Analysis
                 .ThenInclude(s => s.SourceCurrencies)
                 .ThenInclude(sc => sc.Currency)
                 // Make sure the source has such currency
-                .Where(cp => cp.Source.SourceCurrencies.Any(sc => sc.CurrencyId.Equals(currencyId)
+                .Where(cp => cp.Source != null && cp.Source.SourceCurrencies != null
+                                               && cp.Source.SourceCurrencies.Any(sc => sc.CurrencyId.Equals(currencyId)
                                                                   // And that the main currency abbreviation matches
                                                                   // the currency's abbreviation
                                                                   && sc.Currency.Abbreviation.Equals(cp.MainCurrencyAbbrv)));
@@ -225,17 +226,18 @@ namespace Nozomi.Service.Events.Analysis
             if (predicate != null)
             {
                 return cPairs
+                    .OrderBy(cp => cp.Id)
                     .Skip(index * NozomiServiceConstants.AnalysedComponentTakeoutLimit)
                     .Take(NozomiServiceConstants.AnalysedComponentTakeoutLimit)
-                    .SelectMany(cp => cp.AnalysedComponents
-                        .AsQueryable()
-                        .Where(predicate))
+                    .SelectMany(cp => cp.AnalysedComponents)
+                    .Where(predicate)
                     .Select(ac => new AnalysedComponent(ac, index, 
                         NozomiServiceConstants.AnalysedComponentTakeoutLimit))
                     .ToList();
             }
 
             return cPairs
+                .OrderBy(cp => cp.Id)
                 .Skip(index * NozomiServiceConstants.AnalysedComponentTakeoutLimit)
                 .Take(NozomiServiceConstants.AnalysedComponentTakeoutLimit)
                 .SelectMany(cp => cp.AnalysedComponents)
