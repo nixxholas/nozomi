@@ -429,6 +429,9 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                             _logger.LogCritical($"[{ServiceName} / ID: {entity.Id}] " +
                                                 $"Analyse/HourlyAveragePrice: A CurrencyType-" +
                                                 $"based component is attempting to compute its HourlyAveragePrice.");
+
+                            // Disable
+                            return _processAnalysedComponentService.Disable(entity.Id);
                         }
 
                         // Currency-based Hourly Average Price
@@ -557,6 +560,9 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                             _logger.LogCritical($"[{ServiceName} / ID: {entity.Id}] " +
                                                 $"Analyse/DailyAveragePrice: A CurrencyType-" +
                                                 $"based component is attempting to compute its DailyAveragePrice.");
+
+                            // Disable
+                            return _processAnalysedComponentService.Disable(entity.Id);
                         }
 
                         // Currency-based Live Average Price
@@ -687,11 +693,15 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                         break;
                     // TODO:
                     case AnalysedComponentType.MarketCapPctChange:
+                        // Disable
+                        return _processAnalysedComponentService.Disable(entity.Id);
                         break;
                     // TODO:
                     case AnalysedComponentType.DailyPriceChange:
                     case AnalysedComponentType.WeeklyPriceChange:
                     case AnalysedComponentType.MonthlyPriceChange:
+                        // Disable
+                        return _processAnalysedComponentService.Disable(entity.Id);
                         break;
                     case AnalysedComponentType.MarketCapHourlyPctChange:
                     case AnalysedComponentType.MarketCapDailyPctChange:
@@ -704,6 +714,9 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                             _logger.LogCritical($"[{ServiceName} / ID: {entity.Id}] " +
                                                 $"Analyse/PricePctChange: A CurrencyType-" +
                                                 $"based component is attempting to compute its PricePctChange.");
+
+                            // Disable
+                            return _processAnalysedComponentService.Disable(entity.Id);
                         }
 
                         var pctChangeComponentType = AnalysedComponentType.Unknown;
@@ -848,8 +861,11 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                         return true;
                     default:
                         // If it winds up here, it needs help lol...
-                        _logger.LogWarning($"[{ServiceName}] Analyse ({entity.Id}): Unable to execute analysis.");
-                        _processAnalysedComponentService.Checked(entity.Id);
+                        _logger.LogWarning($"[{ServiceName}] Analyse ({entity.Id}): Analysis for this type " +
+                                           "is not available yet.");
+
+                        // Disable
+                        return _processAnalysedComponentService.Disable(entity.Id);
                         return true;
                 }
 
