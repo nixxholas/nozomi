@@ -301,51 +301,44 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                         // 3. Just one pair that doesn't have the generic counter currency
                         else if (entity.CurrencyId != null && entity.CurrencyId > 0)
                         {
-                            // How many components we got
-                            var componentsToCompute = _analysedComponentEvent.GetTickerPairComponentsByCurrencyCount(
-                                (long) entity.CurrencyId, cp => (cp.IsEnabled && cp.DeletedAt == null
-                                                                              && cp.AnalysedComponents
-                                                                                  .Any(ac => ac.ComponentType
-                                                                                      .Equals(AnalysedComponentType
-                                                                                          .CurrentAveragePrice))));
+                            var avgPrice = decimal.Zero; // Stored value for final average price
+                            var index = 0; // Indexer for iterator
+                            var components =  _analysedComponentEvent.GetTickerPairComponentsByCurrency(
+                                (long) entity.CurrencyId,
+                                // Ensure that all components used are valid, no historical values are being tapped on.
+                                true, index, false, ac => // Make sure its the generic counter currency
+                                    // since we can't convert yet
+                                    ac.CurrencyPair.CounterCurrencyAbbrv
+                                        .Equals(CoreConstants.GenericCounterCurrency,
+                                            StringComparison.InvariantCultureIgnoreCase)
+                                    && ac.ComponentType.Equals(AnalysedComponentType.CurrentAveragePrice)
+                                    && NumberHelper.IsNumericDecimal(ac.Value));
 
-                            // Send off if there's nothing yet
-                            if (componentsToCompute <= decimal.Zero)
-                                return _processAnalysedComponentService.Checked(entity.Id);
-                            
-                            var componentPages =
-                                (componentsToCompute > NozomiServiceConstants.AnalysedComponentTakeoutLimit)
-                                    ? componentsToCompute / NozomiServiceConstants.AnalysedComponentTakeoutLimit
-                                    : 1;
-
-                            var avgPrice = decimal.Zero;
-
-                            // Iterate the page
-                            for (var i = 0; i < componentPages; i++)
+                            // While there's something within the current page,
+                            while (components.Any()) // iterate
                             {
-                                var analysedComps =
-                                    _analysedComponentEvent.GetTickerPairComponentsByCurrency((long) entity.CurrencyId,
-                                            true, i, true, ac => // Make sure its the generic counter currency
-                                                // since we can't convert yet
-                                                ac.CurrencyPair.CounterCurrencyAbbrv
-                                                    .Equals(CoreConstants.GenericCounterCurrency,
-                                                        StringComparison.InvariantCultureIgnoreCase)
-                                                && ac.ComponentType.Equals(AnalysedComponentType.CurrentAveragePrice)
-                                                && NumberHelper.IsNumericDecimal(ac.Value));
-
-                                if (analysedComps.Count > 0)
+                                if (!avgPrice.Equals(decimal.Zero))
                                 {
-                                    if (!avgPrice.Equals(decimal.Zero))
-                                    {
-                                        // Aggregate it
-                                        avgPrice = decimal.Divide(decimal.Add(analysedComps
-                                            .Average(ac => decimal.Parse(ac.Value)), avgPrice), 2);
-                                    }
-                                    else
-                                    {
-                                        avgPrice = analysedComps.Average(ac => decimal.Parse(ac.Value));
-                                    }
+                                    // Aggregate it
+                                    avgPrice = decimal.Divide(decimal.Add(components
+                                        .Average(ac => decimal.Parse(ac.Value)), avgPrice), 2);
                                 }
+                                else
+                                {
+                                    avgPrice = components.Average(ac => decimal.Parse(ac.Value));
+                                }
+                                
+                                // Index Increment and iterate
+                                components =  _analysedComponentEvent.GetTickerPairComponentsByCurrency(
+                                    (long) entity.CurrencyId,
+                                    // Ensure that all components used are valid, no historical values are being tapped on.
+                                    true, ++index, false, ac => // Make sure its the generic counter currency
+                                        // since we can't convert yet
+                                        ac.CurrencyPair.CounterCurrencyAbbrv
+                                            .Equals(CoreConstants.GenericCounterCurrency,
+                                                StringComparison.InvariantCultureIgnoreCase)
+                                        && ac.ComponentType.Equals(AnalysedComponentType.CurrentAveragePrice)
+                                        && NumberHelper.IsNumericDecimal(ac.Value));
                             }
 
                             // Update!
@@ -353,6 +346,11 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                             {
                                 return _processAnalysedComponentService.UpdateValue(entity.Id,
                                     avgPrice.ToString(CultureInfo.InvariantCulture));
+                            }
+                            else if (avgPrice.Equals(decimal.Zero))
+                            {
+                                // Send off if there's nothing yet
+                                return _processAnalysedComponentService.Checked(entity.Id);
                             }
 
                             // Hitting here? Sum ting wong
