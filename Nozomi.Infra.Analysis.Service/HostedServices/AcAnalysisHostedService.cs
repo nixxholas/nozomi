@@ -233,29 +233,24 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                             if (currencyAveragePrice != null)
                             {
                                 // Obtain the circulating supply
-                                var circuSupply = _currencyEvent.GetCirculatingSupply(entity);
-
-                                // Average everything
-                                var averagePrice = decimal.Parse(currencyAveragePrice.Value);
+                                var circulatingSupply = _currencyEvent.GetCirculatingSupply(entity);
 
                                 // Parsable average?
-                                if (circuSupply > 0 && averagePrice > decimal.Zero)
+                                if (circulatingSupply > 0 
+                                    && decimal.TryParse(currencyAveragePrice.Value, out var avgPrice) && avgPrice > 0)
                                 {
-                                    var marketCap = decimal.Multiply(circuSupply, averagePrice);
-
-                                    if (!decimal.Zero.Equals(marketCap))
-                                    {
-                                        return _processAnalysedComponentService.UpdateValue(entity.Id, marketCap
-                                            .ToString(CultureInfo.InvariantCulture));
-                                    }
+                                    // Market Cap Formula
+                                    var marketCap = decimal.Multiply(circulatingSupply, avgPrice);
+                                    
+                                    return _processAnalysedComponentService.UpdateValue(entity.Id, marketCap
+                                        .ToString(CultureInfo.InvariantCulture));
                                 }
                             }
                         }
                         // Request-based Market Cap
-                        // TODO: TEST
                         else
                         {
-                            var circuSupply = _currencyEvent.GetCirculatingSupply(entity);
+                            var circulatingSupply = _currencyEvent.GetCirculatingSupply(entity);
                             analysedComponents = _analysedComponentEvent.GetAllByCorrelation(entity.Id,
                                     ac => ac.ComponentType
                                               .Equals(AnalysedComponentType.CurrentAveragePrice)
@@ -263,19 +258,17 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                 .ToList();
 
                             // Parsable average?
-                            if (circuSupply > 0
+                            if (circulatingSupply > 0
                                 // Parsable average?
                                 && decimal.TryParse(analysedComponents
                                                         .Select(ac => ac.Value)
-                                                        .FirstOrDefault() ?? "0", out var mCapAvgPrice))
+                                                        .FirstOrDefault() ?? "0", out var mCapAvgPrice)
+                                && mCapAvgPrice > 0)
                             {
-                                var marketCap = decimal.Multiply(circuSupply, mCapAvgPrice);
+                                var marketCap = decimal.Multiply(circulatingSupply, mCapAvgPrice);
 
-                                if (!decimal.Zero.Equals(marketCap))
-                                {
-                                    return _processAnalysedComponentService.UpdateValue(entity.Id, marketCap
-                                        .ToString(CultureInfo.InvariantCulture));
-                                }
+                                return _processAnalysedComponentService.UpdateValue(entity.Id, marketCap
+                                    .ToString(CultureInfo.InvariantCulture));
                             }
                         }
 
@@ -284,6 +277,8 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                     case AnalysedComponentType.MarketCapChange:
                     case AnalysedComponentType.MarketCapHourlyChange:
                     case AnalysedComponentType.MarketCapDailyChange:
+                        // Disable
+                        return _processAnalysedComponentService.Disable(entity.Id);
                         break;
                     case AnalysedComponentType.CurrentAveragePrice:
                         // CurrencyType-based Live Average Price
@@ -293,6 +288,9 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                             _logger.LogCritical($"[{ServiceName} / ID: {entity.Id}] " +
                                                 $"Analyse/CurrentAveragePrice: A CurrencyType-" +
                                                 $"based component is attempting to compute its CurrentAveragePrice.");
+
+                            // Disable
+                            return _processAnalysedComponentService.Disable(entity.Id);
                         }
 
                         // Currency-based Live Average Price
@@ -308,6 +306,11 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                                                                   .Any(ac => ac.ComponentType
                                                                                       .Equals(AnalysedComponentType
                                                                                           .CurrentAveragePrice))));
+
+                            // Send off if there's nothing yet
+                            if (componentsToCompute <= decimal.Zero)
+                                return _processAnalysedComponentService.Checked(entity.Id);
+                            
                             var componentPages =
                                 (componentsToCompute > NozomiServiceConstants.AnalysedComponentTakeoutLimit)
                                     ? componentsToCompute / NozomiServiceConstants.AnalysedComponentTakeoutLimit
@@ -326,8 +329,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                                     .Equals(CoreConstants.GenericCounterCurrency,
                                                         StringComparison.InvariantCultureIgnoreCase)
                                                 && ac.ComponentType.Equals(AnalysedComponentType.CurrentAveragePrice)
-                                                && NumberHelper.IsNumericDecimal(ac.Value))
-                                        .ToList();
+                                                && NumberHelper.IsNumericDecimal(ac.Value));
 
                                 if (analysedComps.Count > 0)
                                 {
@@ -345,7 +347,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                             }
 
                             // Update!
-                            if (!decimal.Zero.Equals(avgPrice))
+                            if (avgPrice > 0)
                             {
                                 return _processAnalysedComponentService.UpdateValue(entity.Id,
                                     avgPrice.ToString(CultureInfo.InvariantCulture));
@@ -366,6 +368,11 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                                                || rc.ComponentType.Equals(ComponentType.Bid))
                                                            && !string.IsNullOrEmpty(rc.Value)
                                                            && NumberHelper.IsNumericDecimal(rc.Value));
+
+                            // Send off if there's nothing yet
+                            if (reqCompCount <= decimal.Zero)
+                                return _processAnalysedComponentService.Checked(entity.Id);
+                            
                             var reqCompsPages = (reqCompCount > NozomiServiceConstants.RequestComponentTakeoutLimit)
                                 ? decimal.Divide(reqCompCount, NozomiServiceConstants.RequestComponentTakeoutLimit)
                                 : 1;
@@ -387,7 +394,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                 if (correlatedReqComps.Count > 0)
                                 {
                                     // Aggregate it
-                                    if (!avgPrice.Equals(decimal.Zero))
+                                    if (avgPrice > 0)
                                     {
                                         avgPrice = decimal.Divide(decimal.Add(avgPrice, correlatedReqComps
                                             .Average(rc => decimal.Parse(rc.Value))), 2);
@@ -400,7 +407,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                 }
                             }
 
-                            if (!decimal.Zero.Equals(avgPrice))
+                            if (avgPrice > 0)
                             {
                                 return _processAnalysedComponentService.UpdateValue(entity.Id,
                                     avgPrice.ToString(CultureInfo.InvariantCulture));
