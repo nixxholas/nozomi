@@ -301,10 +301,6 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                         // 3. Just one pair that doesn't have the generic counter currency
                         else if (entity.CurrencyId != null && entity.CurrencyId > 0)
                         {
-                            return _processAnalysedComponentService.Checked(entity.Id);
-                        
-                            // Hold up for now
-
                             var avgPrice = decimal.Zero; // Stored value for final average price
                             var index = 0; // Indexer for iterator
                             var components =  _analysedComponentEvent.GetTickerPairComponentsByCurrency(
