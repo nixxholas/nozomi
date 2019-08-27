@@ -102,7 +102,6 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
         {
             if (entity != null)
             {
-                Console.WriteLine("Running Analysis..");
                 var dataTimespan = TimeSpan.Zero;
                 ICollection<AnalysedComponent> analysedComponents;
 

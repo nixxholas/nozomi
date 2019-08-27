@@ -27,8 +27,12 @@ namespace Nozomi.Infra.Analysis.Service.Events
                     .GetQueryable()
                     .AsNoTracking()
                     // Enabled?
-                    .Where(ac => ac.DeletedAt == null && ac.IsEnabled
-                                                      && (ac.ModifiedAt.Add(TimeSpan.FromMilliseconds(ac.Delay)) <= DateTime.UtcNow
+                    .Where(ac => ac.DeletedAt == null && ac.IsEnabled 
+                                                      // Make sure LastChecked is null
+                                                      && (ac.LastChecked == null 
+                                                          // Or is older than the current time in conjunction with the delay
+                                                          || ac.LastChecked.Value.Add(TimeSpan.FromMilliseconds(ac.Delay)) 
+                                                          <= DateTime.UtcNow
                                                           // Always give null ACs a chance
                                                           || string.IsNullOrEmpty(ac.Value))
                                                       && !acsToFilter.Contains(ac.Id))
@@ -47,10 +51,15 @@ namespace Nozomi.Infra.Analysis.Service.Events
                 .GetQueryable()
                 .AsNoTracking()
                 // Enabled?
-                .Where(ac => ac.DeletedAt == null && ac.IsEnabled
-                             && (ac.ModifiedAt.Add(TimeSpan.FromMilliseconds(ac.Delay)) <= DateTime.UtcNow
-                                 // Always give null ACs a chance
-                                 || string.IsNullOrEmpty(ac.Value)))
+                .Where(ac => ac.DeletedAt == null && ac.IsEnabled 
+                                                  // Make sure LastChecked is null
+                                                  && (ac.LastChecked == null 
+                                                      // Or is older than the current time in conjunction with the delay
+                                                      || ac.LastChecked.Value.Add(TimeSpan.FromMilliseconds(ac.Delay)) 
+                                                      <= DateTime.UtcNow
+                                                      // Always give null ACs a chance
+                                                      || string.IsNullOrEmpty(ac.Value))
+                             && !acsToFilter.Contains(ac.Id))
                 // Order by asecnding to the last checked time
                 .OrderBy(ac => ac.LastChecked)
                 // Order by ascending to the last modified time
@@ -71,7 +80,13 @@ namespace Nozomi.Infra.Analysis.Service.Events
                     .AsNoTracking()
                     .Where(ac => ac.DeletedAt == null
                                  && ac.IsEnabled
-                                 && ac.ModifiedAt <= DateTime.UtcNow.Add(TimeSpan.FromMilliseconds(ac.Delay))
+                                 // Make sure LastChecked is null
+                                 && (ac.LastChecked == null 
+                                     // Or is older than the current time in conjunction with the delay
+                                     || ac.LastChecked.Value.Add(TimeSpan.FromMilliseconds(ac.Delay)) 
+                                     <= DateTime.UtcNow
+                                     // Always give null ACs a chance
+                                     || string.IsNullOrEmpty(ac.Value))
                                  && !ac.StoreHistoricals)
                     // Order by asecnding to the last checked time
                     .OrderBy(ac => ac.LastChecked)
@@ -87,7 +102,13 @@ namespace Nozomi.Infra.Analysis.Service.Events
                 .AsNoTracking()
                 .Where(ac => ac.DeletedAt == null
                              && ac.IsEnabled
-                             && ac.ModifiedAt <= DateTime.UtcNow.Add(TimeSpan.FromMilliseconds(ac.Delay)))
+                             // Make sure LastChecked is null
+                             && (ac.LastChecked == null 
+                                 // Or is older than the current time in conjunction with the delay
+                                 || ac.LastChecked.Value.Add(TimeSpan.FromMilliseconds(ac.Delay)) 
+                                 <= DateTime.UtcNow
+                                 // Always give null ACs a chance
+                                 || string.IsNullOrEmpty(ac.Value)))
                 // Order by asecnding to the last checked time
                 .OrderBy(ac => ac.LastChecked)
                 // Order by ascending to the last modified time
