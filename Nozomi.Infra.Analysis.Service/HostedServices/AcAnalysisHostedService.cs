@@ -153,9 +153,9 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
 
                                         return _processAnalysedComponentService.UpdateValue(entity.Id,
                                             obtainedComponent.AnalysedHistoricItems
-                                                .Select(ahi => decimal.Parse(ahi.Value))
-                                                .ToList()
-                                                .Average()
+                                                .Where(ahi => !string.IsNullOrEmpty(ahi.Value) 
+                                                              && NumberHelper.IsNumericDecimal(ahi.Value))
+                                                .Average(ahi => decimal.Parse(ahi.Value))
                                                 .ToString(CultureInfo.InvariantCulture));
                                     }
 
@@ -227,7 +227,8 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                     (long) entity.CurrencyId,
                                     true, true)
                                 .SingleOrDefault(ac =>
-                                    ac.ComponentType.Equals(AnalysedComponentType.CurrentAveragePrice)
+                                    !string.IsNullOrEmpty(ac.Value)
+                                    && ac.ComponentType.Equals(AnalysedComponentType.CurrentAveragePrice)
                                     && NumberHelper.IsNumericDecimal(ac.Value));
 
                             if (currencyAveragePrice != null)
@@ -252,8 +253,8 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                         {
                             var circulatingSupply = _currencyEvent.GetCirculatingSupply(entity);
                             analysedComponents = _analysedComponentEvent.GetAllByCorrelation(entity.Id,
-                                    ac => ac.ComponentType
-                                              .Equals(AnalysedComponentType.CurrentAveragePrice)
+                                    ac => !string.IsNullOrEmpty(ac.Value)
+                                          && ac.ComponentType.Equals(AnalysedComponentType.CurrentAveragePrice)
                                           && NumberHelper.IsNumericDecimal(ac.Value))
                                 .ToList();
 
