@@ -70,7 +70,7 @@ namespace Nozomi.WSS
                     .GetAwaiter()
                     .GetResult().Data;
 
-                var mainDb = (string) nozomiVault["main"];
+                var mainDb = (string) nozomiVault["az-main"];
                 if (string.IsNullOrEmpty(mainDb))
                     throw new SystemException("Invalid main database configuration");
                 // Database
