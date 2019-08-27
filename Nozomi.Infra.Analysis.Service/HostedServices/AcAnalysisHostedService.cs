@@ -102,6 +102,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
         {
             if (entity != null)
             {
+                Console.WriteLine("Running Analysis..");
                 var dataTimespan = TimeSpan.Zero;
                 ICollection<AnalysedComponent> analysedComponents;
 
@@ -121,10 +122,6 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                         // https://stackoverflow.com/questions/3108888/why-does-c-sharp-have-break-if-its-not-optional
                         goto case AnalysedComponentType.MarketCap;
                     case AnalysedComponentType.MarketCap:
-                        return _processAnalysedComponentService.Checked(entity.Id);
-                        
-                        // Hold up for now
-                        
                         // CurrencyType-based market cap
                         if (entity.CurrencyTypeId != null && entity.CurrencyTypeId > 0)
                         {
@@ -401,10 +398,6 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
 
                         break;
                     case AnalysedComponentType.HourlyAveragePrice:
-                        return _processAnalysedComponentService.Checked(entity.Id);
-                        
-                        // Hold up for now
-                        
                         dataTimespan = TimeSpan.FromHours(1);
 
                         // CurrencyType-based Hourly Average Price
@@ -536,10 +529,6 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
 
                         break;
                     case AnalysedComponentType.DailyAveragePrice:
-                        return _processAnalysedComponentService.Checked(entity.Id);
-                        
-                        // Hold up for now
-                        
                         dataTimespan = TimeSpan.FromHours(24);
 
                         // CurrencyType-based Live Average Price
@@ -694,9 +683,6 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                     case AnalysedComponentType.MarketCapDailyPctChange:
                     case AnalysedComponentType.HourlyPricePctChange:
                     case AnalysedComponentType.DailyPricePctChange:
-                        return _processAnalysedComponentService.Checked(entity.Id);
-                        
-                        // Hold up for now
                         // CurrencyType-based PricePctChange
                         if (entity.CurrencyTypeId != null && entity.CurrencyTypeId > 0)
                         {
