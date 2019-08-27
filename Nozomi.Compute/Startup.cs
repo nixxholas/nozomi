@@ -83,7 +83,9 @@ namespace Nozomi.Compute
                 if (string.IsNullOrEmpty(mainDb))
                     throw new SystemException("Invalid main database configuration");
                 // Database
-                services.AddDbContext<NozomiDbContext>(options =>
+                services
+                    .AddEntityFrameworkNpgsql()
+                    .AddDbContext<NozomiDbContext>(options =>
                 {
                     options.UseNpgsql(mainDb
                         , builder =>
@@ -91,7 +93,7 @@ namespace Nozomi.Compute
                             builder.EnableRetryOnFailure();
                         }
                     );
-                    options.EnableSensitiveDataLogging(false);
+                    options.EnableSensitiveDataLogging();
                     options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
                 }, ServiceLifetime.Transient);
             }
