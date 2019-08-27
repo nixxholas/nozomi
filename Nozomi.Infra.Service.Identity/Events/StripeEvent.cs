@@ -1,9 +1,7 @@
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using Nozomi.Base.Core.Configurations;
-using Nozomi.Base.Core.Helpers.Enumerator;
 using Nozomi.Service.Identity.Events.Interfaces;
 using Stripe;
 using Plan = Stripe.Plan;
@@ -18,7 +16,7 @@ namespace Nozomi.Service.Identity.Events
         {
             _options = options;
             
-            StripeConfiguration.SetApiKey(options.Value.SecretKey);
+            StripeConfiguration.ApiKey = _options.Value.SecretKey;
         }
 
         public async Task<Card> Card(string stripeCustomerId, string stripeCardId)

@@ -45,7 +45,7 @@ namespace Nozomi.Infra.Admin.Service.Services
                     ComponentType = analysedComponent.ComponentType,
                     Delay = analysedComponent.Delay,
                     IsDenominated = analysedComponent.IsDenominated,
-                    UIFormatting = analysedComponent.UIFormatting,
+                    UIFormatting = analysedComponent.UiFormatting,
                     CurrencyId = analysedComponent.CurrencyId > 0 ? analysedComponent.CurrencyId : (long?) null,
                     CurrencyPairId = analysedComponent.CurrencyPairId > 0 ? analysedComponent.CurrencyPairId : (long?) null,
                     CurrencyTypeId = analysedComponent.CurrencyTypeId > 0 ? analysedComponent.CurrencyTypeId : (long?) null
@@ -72,7 +72,7 @@ namespace Nozomi.Infra.Admin.Service.Services
                 query.IsDenominated = analysedComponent.IsDenominated;
                 query.Delay = analysedComponent.Delay;
                 query.IsEnabled = analysedComponent.IsEnabled;
-                query.UIFormatting = analysedComponent.UIFormatting;
+                query.UIFormatting = analysedComponent.UiFormatting;
 
                 _unitOfWork.Commit(userId);
 

@@ -1,24 +1,13 @@
 using System;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.IdentityModel.Tokens;
-using Nozomi.Base.Identity;
 using Nozomi.Base.Identity.Models.Identity;
 using Nozomi.Repo.Identity.Data;
-using Nozomi.Service.Identity;
 using Nozomi.Service.Identity.Managers;
 using Nozomi.Service.Identity.Requirements;
-using Nozomi.Service.Identity.Stores;
-using Nozomi.Service.Identity.Stores.Interfaces;
 
 namespace Nozomi.Ticker.StartupExtensions
 {

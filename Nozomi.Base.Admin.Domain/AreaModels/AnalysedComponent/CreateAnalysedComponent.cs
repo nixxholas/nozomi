@@ -13,7 +13,7 @@ namespace Nozomi.Base.Admin.Domain.AreaModels.AnalysedComponent
 
         public int Delay { get; set; }
         
-        public string UIFormatting { get; set; }
+        public string UiFormatting { get; set; }
         
         public long CurrencyId { get; set; }
         

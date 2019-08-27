@@ -15,7 +15,6 @@ using Nozomi.Service.Identity.Events.Auth;
 using Nozomi.Service.Identity.Events.Auth.Interfaces;
 using Nozomi.Service.Identity.Events.Interfaces;
 using Nozomi.Service.Services.Enumerators;
-using Nozomi.Service.Services.Enumerators.Interfaces;
 
 namespace Nozomi.Ticker.StartupExtensions
 {

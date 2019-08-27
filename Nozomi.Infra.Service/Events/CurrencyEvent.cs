@@ -26,14 +26,11 @@ namespace Nozomi.Service.Events
 {
     public class CurrencyEvent : BaseEvent<CurrencyEvent, NozomiDbContext>, ICurrencyEvent
     {
-        private readonly ICurrencyPairEvent _currencyPairEvent;
         private readonly ITickerEvent _tickerEvent;
 
-        public CurrencyEvent(ILogger<CurrencyEvent> logger, IUnitOfWork<NozomiDbContext> unitOfWork,
-            ICurrencyPairEvent currencyPairEvent, ITickerEvent tickerEvent)
+        public CurrencyEvent(ILogger<CurrencyEvent> logger, IUnitOfWork<NozomiDbContext> unitOfWork, ITickerEvent tickerEvent)
             : base(logger, unitOfWork)
         {
-            _currencyPairEvent = currencyPairEvent;
             _tickerEvent = tickerEvent;
         }
 
@@ -294,6 +291,7 @@ namespace Nozomi.Service.Events
                         .Any(ac => ac.DeletedAt == null && ac.IsEnabled))
 //                    .OrderByDescending(c => decimal.Parse(c.AnalysedComponents
 //                        .SingleOrDefault(ac => ac.ComponentType == AnalysedComponentType.MarketCap).Value))
+                    .OrderBy(c => c.Id)
                     .Skip(index * 100)
                     .Take(100)
                     .Select(c => new Currency
@@ -309,27 +307,13 @@ namespace Nozomi.Service.Events
                         LogoPath = c.LogoPath,
                         AnalysedComponents = c.AnalysedComponents
                             .Where(ac => ac.DeletedAt == null && ac.IsEnabled)
-                            .Select(ac => new AnalysedComponent
-                            {
-                                Id = ac.Id,
-                                ComponentType = ac.ComponentType,
-                                CurrencyType = ac.CurrencyType,
-                                CurrencyTypeId = ac.CurrencyTypeId,
-                                Value = ac.Value,
-                                IsDenominated = ac.IsDenominated,
-                                Delay = ac.Delay,
-                                UIFormatting = ac.UIFormatting,
-                                AnalysedHistoricItems = ac.AnalysedHistoricItems
-                                    .Where(ahi => ahi.DeletedAt == null && ahi.IsEnabled
-                                                                        && ahi.HistoricDateTime >=
-                                                                        DateTime.UtcNow.Subtract(
-                                                                            TimeSpan.FromDays(daysOfData))
-                                                                        && NumberHelper.IsNumericDecimal(ahi.Value))
-                                    .OrderByDescending(ahi => ahi.HistoricDateTime)
-                                    .Skip(index * NozomiServiceConstants.AnalysedComponentTakeoutLimit)
-                                    .Take(NozomiServiceConstants.AnalysedComponentTakeoutLimit)
-                                    .ToList()
-                            })
+                            .Select(ac => new AnalysedComponent(ac, index, 
+                                NozomiServiceConstants.AnalysedComponentTakeoutLimit, 
+                                ahi => ahi.DeletedAt == null && ahi.IsEnabled
+                                                             && ahi.HistoricDateTime >=
+                                                             DateTime.UtcNow.Subtract(
+                                                                 TimeSpan.FromDays(daysOfData))
+                                                             && NumberHelper.IsNumericDecimal(ahi.Value)))
                             .ToList(),
                         Requests = c.Requests
                             .Where(r => r.DeletedAt == null && r.IsEnabled)
@@ -404,16 +388,9 @@ namespace Nozomi.Service.Events
                     .ThenInclude(ac => ac.AnalysedHistoricItems)
                     .SelectMany(c => c.AnalysedComponents.Where(ac =>
                         analysedComponentTypes.Contains(ac.ComponentType)))
-                    .Select(ac => new AnalysedComponent
-                    {
-                        Id = ac.Id,
-                        ComponentType = ac.ComponentType,
-                        Value = ac.Value,
-                        IsDenominated = ac.IsDenominated,
-                        UIFormatting = ac.UIFormatting,
-                        AnalysedHistoricItems = ac.AnalysedHistoricItems
-                    })
-                    .OrderBy(item => item.Id)
+                    .Select(ac => new AnalysedComponent(ac, 0, 
+                        NozomiServiceConstants.AnalysedHistoricItemTakeoutLimit))
+                    .OrderBy(ac => ac.Id)
                     .Skip(analysedComponentTypesIndex * NozomiServiceConstants.AnalysedComponentTakeoutLimit)
                     .Take(NozomiServiceConstants.AnalysedComponentTakeoutLimit)
                     .ToList();
@@ -459,8 +436,7 @@ namespace Nozomi.Service.Events
             {
                 return _unitOfWork.GetRepository<Currency>().GetQueryable()
                     .AsNoTracking()
-                    .Where(c => c.DeletedAt == null)
-                    .Where(c => c.IsEnabled)
+                    .Where(c => c.DeletedAt == null && c.IsEnabled)
                     .Include(c => c.AnalysedComponents)
                     .Include(c => c.Requests)
                     .Include(c => c.CurrencySources)
@@ -471,8 +447,7 @@ namespace Nozomi.Service.Events
             {
                 return _unitOfWork.GetRepository<Currency>().GetQueryable()
                     .AsNoTracking()
-                    .Where(c => c.DeletedAt == null)
-                    .Where(c => c.IsEnabled);
+                    .Where(c => c.DeletedAt == null && c.IsEnabled);
             }
         }
 

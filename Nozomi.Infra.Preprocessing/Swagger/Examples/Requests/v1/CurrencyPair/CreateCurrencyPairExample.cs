@@ -17,7 +17,7 @@ namespace Nozomi.Preprocessing.Swagger.Examples.Requests.v1.CurrencyPair
             return new CreateCurrencyPair()
             {
                 CurrencyPairType = CurrencyPairType.EXCHANGEABLE,
-                APIUrl = "https://api.ethfinex.com/v2/ticker/tETHUSD",
+                ApiUrl = "https://api.ethfinex.com/v2/ticker/tETHUSD",
                 DefaultComponent = "0",
                 SourceId = 1,
 //                PartialCurrencyPairs = new List<CreatePartialCurrencyPair>()

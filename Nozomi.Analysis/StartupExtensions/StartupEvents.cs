@@ -8,7 +8,6 @@ using Nozomi.Service.Events.Analysis;
 using Nozomi.Service.Events.Analysis.Interfaces;
 using Nozomi.Service.Events.Interfaces;
 using Nozomi.Service.Services.Enumerators;
-using Nozomi.Service.Services.Enumerators.Interfaces;
 
 namespace Nozomi.Analysis.StartupExtensions
 {

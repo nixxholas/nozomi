@@ -37,22 +37,8 @@ namespace Nozomi.Service.Events.Analysis
                     .Include(ac => ac.AnalysedHistoricItems);
 
                 return query
-                    .Select(ac => new AnalysedComponent
-                    {
-                        Id = ac.Id,
-                        ComponentType = ac.ComponentType,
-                        CurrencyType = ac.CurrencyType,
-                        CurrencyTypeId = ac.CurrencyTypeId,
-                        Value = ac.Value,
-                        IsDenominated = ac.IsDenominated,
-                        Delay = ac.Delay,
-                        UIFormatting = ac.UIFormatting,
-                        AnalysedHistoricItems = ac.AnalysedHistoricItems
-                            .OrderByDescending(ahi => ahi.HistoricDateTime)
-                            .Skip(index * NozomiServiceConstants.AnalysedComponentTakeoutLimit)
-                            .Take(NozomiServiceConstants.AnalysedComponentTakeoutLimit)
-                            .ToList()
-                    })
+                    .Select(ac => new AnalysedComponent(ac, index, 
+                        NozomiServiceConstants.AnalysedComponentTakeoutLimit))
                     .SingleOrDefault();
             }
 
@@ -81,22 +67,8 @@ namespace Nozomi.Service.Events.Analysis
                     .Include(ac => ac.CurrencyType);
                 
                 return query
-                    .Select(ac => new AnalysedComponent
-                    {
-                        Id = ac.Id,
-                        ComponentType = ac.ComponentType,
-                        CurrencyType = ac.CurrencyType,
-                        CurrencyTypeId = ac.CurrencyTypeId,
-                        Value = ac.Value,
-                        IsDenominated = ac.IsDenominated,
-                        Delay = ac.Delay,
-                        UIFormatting = ac.UIFormatting,
-                        AnalysedHistoricItems = ac.AnalysedHistoricItems
-                            .OrderByDescending(ahi => ahi.HistoricDateTime)
-                            .Skip(index * NozomiServiceConstants.AnalysedComponentTakeoutLimit)
-                            .Take(NozomiServiceConstants.AnalysedComponentTakeoutLimit)
-                            .ToList()
-                    });
+                    .Select(ac => new AnalysedComponent(ac, index, 
+                        NozomiServiceConstants.AnalysedComponentTakeoutLimit));
             }
 
             return query;
@@ -126,6 +98,7 @@ namespace Nozomi.Service.Events.Analysis
             }
 
             return query
+                .OrderBy(ac => ac.Id)
                 .Skip(index * NozomiServiceConstants.AnalysedComponentTakeoutLimit)
                 .Take(NozomiServiceConstants.AnalysedComponentTakeoutLimit);
         }
@@ -154,23 +127,9 @@ namespace Nozomi.Service.Events.Analysis
             return query
                 .SelectMany(ct => ct.AnalysedComponents
                     .Where(ac => ac.IsEnabled && ac.DeletedAt == null))
-                .Select(ac => new AnalysedComponent
-                {
-                    Id = ac.Id,
-                    ComponentType = ac.ComponentType,
-                    CurrencyType = ac.CurrencyType,
-                    CurrencyTypeId = ac.CurrencyTypeId,
-                    Value = ac.Value,
-                    IsDenominated = ac.IsDenominated,
-                    Delay = ac.Delay,
-                    UIFormatting = ac.UIFormatting,
-                    AnalysedHistoricItems = ac.AnalysedHistoricItems
-                        .Where(ahi => ahi.DeletedAt == null && ahi.IsEnabled)
-                        .OrderByDescending(ahi => ahi.HistoricDateTime)
-                        .Skip(index * NozomiServiceConstants.AnalysedComponentTakeoutLimit)
-                        .Take(NozomiServiceConstants.AnalysedComponentTakeoutLimit)
-                        .ToList()
-                })
+                .Select(ac => new AnalysedComponent(ac, index, 
+                    NozomiServiceConstants.AnalysedComponentTakeoutLimit, 
+                    ahi => ahi.DeletedAt == null && ahi.IsEnabled))
                 .ToList();
         }
 
@@ -208,22 +167,8 @@ namespace Nozomi.Service.Events.Analysis
 
             return qCurrency
                 .SelectMany(c => c.AnalysedComponents)
-                .Select(ac => new AnalysedComponent
-                {
-                    Id = ac.Id,
-                    ComponentType = ac.ComponentType,
-                    CurrencyType = ac.CurrencyType,
-                    CurrencyTypeId = ac.CurrencyTypeId,
-                    Value = ac.Value,
-                    IsDenominated = ac.IsDenominated,
-                    Delay = ac.Delay,
-                    UIFormatting = ac.UIFormatting,
-                    AnalysedHistoricItems = ac.AnalysedHistoricItems
-                        .OrderByDescending(ahi => ahi.HistoricDateTime)
-                        .Skip(index * NozomiServiceConstants.AnalysedComponentTakeoutLimit)
-                        .Take(NozomiServiceConstants.AnalysedComponentTakeoutLimit)
-                        .ToList()
-                })
+                .Select(ac => new AnalysedComponent(ac, index, 
+                    NozomiServiceConstants.AnalysedComponentTakeoutLimit))
                 .ToList();
         }
 
@@ -260,7 +205,8 @@ namespace Nozomi.Service.Events.Analysis
                 .ThenInclude(sc => sc.Currency)
                 .OrderBy(cp => cp.Id)
                 // Make sure the source has such currency
-                .Where(cp => cp.Source.SourceCurrencies.Any(sc => sc.CurrencyId.Equals(currencyId)
+                .Where(cp => cp.Source != null && cp.Source.SourceCurrencies != null
+                                               && cp.Source.SourceCurrencies.Any(sc => sc.CurrencyId.Equals(currencyId)
                                                                   // And that the main currency abbreviation matches
                                                                   // the currency's abbreviation
                                                                   && sc.Currency.Abbreviation.Equals(cp.MainCurrencyAbbrv)));
@@ -282,50 +228,23 @@ namespace Nozomi.Service.Events.Analysis
             if (predicate != null)
             {
                 return cPairs
+                    .OrderBy(cp => cp.Id)
                     .Skip(index * NozomiServiceConstants.AnalysedComponentTakeoutLimit)
                     .Take(NozomiServiceConstants.AnalysedComponentTakeoutLimit)
-                    .SelectMany(cp => cp.AnalysedComponents
-                        .AsQueryable()
-                        .Where(predicate))
-                    .Select(ac => new AnalysedComponent
-                    {
-                        ComponentType = ac.ComponentType,
-                        Id = ac.Id,
-                        Value = ac.Value,
-                        IsDenominated = ac.IsDenominated,
-                        Delay = ac.Delay,
-                        UIFormatting = ac.UIFormatting,
-                        AnalysedHistoricItems = ac.AnalysedHistoricItems
-                            .OrderByDescending(ahi => ahi.HistoricDateTime)
-                            .Skip(historicItemIndex * NozomiServiceConstants.AnalysedHistoricItemTakeoutLimit)
-                            .Take(NozomiServiceConstants.AnalysedHistoricItemTakeoutLimit)
-                            .ToList(),
-                        CurrencyPairId = ac.CurrencyPairId,
-                        CurrencyPair = ac.CurrencyPair
-                    })
+                    .SelectMany(cp => cp.AnalysedComponents)
+                    .Where(predicate)
+                    .Select(ac => new AnalysedComponent(ac, index, 
+                        NozomiServiceConstants.AnalysedComponentTakeoutLimit))
                     .ToList();
             }
 
             return cPairs
+                .OrderBy(cp => cp.Id)
                 .Skip(index * NozomiServiceConstants.AnalysedComponentTakeoutLimit)
                 .Take(NozomiServiceConstants.AnalysedComponentTakeoutLimit)
                 .SelectMany(cp => cp.AnalysedComponents)
-                .Select(ac => new AnalysedComponent
-                {
-                    ComponentType = ac.ComponentType,
-                    Id = ac.Id,
-                    Value = ac.Value,
-                    IsDenominated = ac.IsDenominated,
-                    Delay = ac.Delay,
-                    UIFormatting = ac.UIFormatting,
-                    AnalysedHistoricItems = ac.AnalysedHistoricItems
-                        .OrderByDescending(ahi => ahi.HistoricDateTime)
-                        .Skip(historicItemIndex * NozomiServiceConstants.AnalysedHistoricItemTakeoutLimit)
-                        .Take(NozomiServiceConstants.AnalysedHistoricItemTakeoutLimit)
-                        .ToList(),
-                    CurrencyPairId = ac.CurrencyPairId,
-                    CurrencyPair = ac.CurrencyPair
-                })
+                .Select(ac => new AnalysedComponent(ac, index, 
+                    NozomiServiceConstants.AnalysedComponentTakeoutLimit))
                 .ToList();
         }
 
@@ -350,43 +269,14 @@ namespace Nozomi.Service.Events.Analysis
                 if (ago > 0)
                 {
                     return components
-                        .Select(ac => new AnalysedComponent
-                        {
-                            Id = ac.Id,
-                            ComponentType = ac.ComponentType,
-                            Value = ac.Value,
-                            IsDenominated = ac.IsDenominated,
-                            Delay = ac.Delay,
-                            UIFormatting = ac.UIFormatting,
-                            AnalysedHistoricItems = ac.AnalysedHistoricItems
-                                .OrderByDescending(ahi => ahi.HistoricDateTime)
-                                .Where(ahi => ahi.HistoricDateTime >= DateTime.UtcNow.Subtract(TimeSpan.FromMilliseconds(ago)))
-                                .Skip(index * NozomiServiceConstants.AnalysedComponentTakeoutLimit)
-                                .Take(NozomiServiceConstants.AnalysedComponentTakeoutLimit)
-                                .ToList(),
-                            CurrencyPairId = ac.CurrencyPairId,
-                            CurrencyPair = ac.CurrencyPair
-                        })
+                        .Select(ac => new AnalysedComponent(ac, index, 
+                            NozomiServiceConstants.AnalysedComponentTakeoutLimit))
                         .ToList();
                 }
 
                 return components
-                    .Select(ac => new AnalysedComponent
-                    {
-                        Id = ac.Id,
-                        ComponentType = ac.ComponentType,
-                        Value = ac.Value,
-                        IsDenominated = ac.IsDenominated,
-                        Delay = ac.Delay,
-                        UIFormatting = ac.UIFormatting,
-                        AnalysedHistoricItems = ac.AnalysedHistoricItems
-                            .OrderByDescending(ahi => ahi.HistoricDateTime)
-                            .Skip(index * NozomiServiceConstants.AnalysedComponentTakeoutLimit)
-                            .Take(NozomiServiceConstants.AnalysedComponentTakeoutLimit)
-                            .ToList(),
-                        CurrencyPairId = ac.CurrencyPairId,
-                        CurrencyPair = ac.CurrencyPair
-                    })
+                    .Select(ac => new AnalysedComponent(ac, index, 
+                        NozomiServiceConstants.AnalysedComponentTakeoutLimit))
                     .ToList();
             }
 
@@ -410,22 +300,8 @@ namespace Nozomi.Service.Events.Analysis
 
                 return components
                     .SelectMany(c => c.AnalysedComponents)
-                    .Select(ac => new AnalysedComponent
-                    {
-                        Id = ac.Id,
-                        ComponentType = ac.ComponentType,
-                        Value = ac.Value,
-                        IsDenominated = ac.IsDenominated,
-                        Delay = ac.Delay,
-                        UIFormatting = ac.UIFormatting,
-                        AnalysedHistoricItems = ac.AnalysedHistoricItems
-                            .OrderByDescending(ahi => ahi.HistoricDateTime)
-                            .Skip(index * NozomiServiceConstants.AnalysedComponentTakeoutLimit)
-                            .Take(NozomiServiceConstants.AnalysedComponentTakeoutLimit)
-                            .ToList(),
-                        CurrencyId = ac.CurrencyId,
-                        Currency = ac.Currency
-                    })
+                    .Select(ac => new AnalysedComponent(ac, index, 
+                        NozomiServiceConstants.AnalysedComponentTakeoutLimit))
                     .ToList();
             }
 
@@ -454,32 +330,9 @@ namespace Nozomi.Service.Events.Analysis
                 query = query.Include(ac => ac.AnalysedHistoricItems);
                 
                 query = query
-                    .Select(ac => new AnalysedComponent
-                    {
-                        Id = ac.Id,
-                        ComponentType = ac.ComponentType,
-                        Value = ac.Value,
-                        IsDenominated = ac.IsDenominated,
-                        Delay = ac.Delay,
-                        UIFormatting = ac.UIFormatting,
-                        AnalysedHistoricItems = ac.AnalysedHistoricItems
-                            .OrderByDescending(ahi => ahi.HistoricDateTime)
-                            .Skip(index * NozomiServiceConstants.AnalysedComponentTakeoutLimit)
-                            .Take(NozomiServiceConstants.AnalysedComponentTakeoutLimit)
-                            .ToList(),
-                        CurrencyId = ac.CurrencyId,
-                        Currency = ac.Currency
-                    });
+                    .Select(ac => new AnalysedComponent(ac, index, 
+                        NozomiServiceConstants.AnalysedComponentTakeoutLimit));
             }
-            
-            #if DEBUG
-            var testQ = query.ToList();
-            
-            if (predicate == null && !testQ.Any())
-                Console.Write("Bad!");
-            else if (predicate != null && !query.Where(predicate).Any())
-                Console.WriteLine("Bad!!!");
-            #endif
 
             if (predicate != null)
                 return query.Where(predicate).ToList();
@@ -496,32 +349,12 @@ namespace Nozomi.Service.Events.Analysis
                 .Where(r => r.Id.Equals(currencyPairId))
                 .Include(r => r.AnalysedComponents);
 
-            if (track)
-            {
-                 query.ThenInclude(ac => ac.AnalysedHistoricItems);
-                 
-                 return query.SelectMany(r => r.AnalysedComponents)
-                     .Select(ac => new AnalysedComponent
-                     {
-                         Id = ac.Id,
-                         ComponentType = ac.ComponentType,
-                         Value = ac.Value,
-                         IsDenominated = ac.IsDenominated,
-                         Delay = ac.Delay,
-                         UIFormatting = ac.UIFormatting,
-                         AnalysedHistoricItems = ac.AnalysedHistoricItems
-                             .OrderByDescending(ahi => ahi.HistoricDateTime)
-                             .Skip(index * NozomiServiceConstants.AnalysedComponentTakeoutLimit)
-                             .Take(NozomiServiceConstants.AnalysedComponentTakeoutLimit)
-                             .ToList(),
-                         CurrencyId = ac.CurrencyId,
-                         Currency = ac.Currency
-                     })
-                     .ToList();
-            }
-
+            if (!track)
+                query.ThenInclude(ac => ac.AnalysedHistoricItems);
+            
             return query
                 .SelectMany(r => r.AnalysedComponents)
+                .Select(ac => new AnalysedComponent(ac, index, NozomiServiceConstants.AnalysedComponentTakeoutLimit))
                 .ToList();
         }
 

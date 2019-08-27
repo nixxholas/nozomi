@@ -7,7 +7,7 @@ namespace Nozomi.Data.AreaModels.v1.CurrencyPair
     {
         public CurrencyPairType CurrencyPairType { get; set; }
         
-        public string APIUrl { get; set; }
+        public string ApiUrl { get; set; }
         
         public string DefaultComponent { get; set; }
         
@@ -21,7 +21,7 @@ namespace Nozomi.Data.AreaModels.v1.CurrencyPair
 
         public bool IsValid()
         {
-            return CurrencyPairType >= 0 && !string.IsNullOrEmpty(APIUrl) && SourceId > 0
+            return CurrencyPairType >= 0 && !string.IsNullOrEmpty(ApiUrl) && SourceId > 0
                    && !MainCurrencyAbbrv.IsNullOrEmpty() && !CounterCurrencyAbbrv.IsNullOrEmpty();
         }
     }
