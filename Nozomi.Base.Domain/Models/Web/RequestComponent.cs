@@ -6,6 +6,31 @@ namespace Nozomi.Data.Models.Web
 {
     public class RequestComponent : BaseEntityModel
     {
+        // Default Constructor
+        public RequestComponent() {}
+
+        public RequestComponent(RequestComponent component)
+        {
+            Id = component.Id;
+            ComponentType = component.ComponentType;
+            IsEnabled = component.IsEnabled;
+            CreatedAt = component.CreatedAt;
+            ModifiedAt = component.ModifiedAt;
+            DeletedAt = component.DeletedAt;
+            CreatedBy = component.CreatedBy;
+            ModifiedBy = component.ModifiedBy;
+            DeletedBy = component.DeletedBy;
+            Identifier = component.Identifier;
+            QueryComponent = component.QueryComponent;
+            IsDenominated = component.IsDenominated;
+            AnomalyIgnorance = component.AnomalyIgnorance;
+            StoreHistoricals = component.StoreHistoricals;
+            Value = component.Value;
+            RequestId = component.RequestId;
+            Request = component.Request;
+            RcdHistoricItems = component.RcdHistoricItems;
+        }
+        
         public long Id { get; set; }
 
         public ComponentType ComponentType { get; set; } = ComponentType.Unknown;
