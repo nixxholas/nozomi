@@ -3,6 +3,9 @@ using Nozomi.Base.Core.Helpers.Attributes;
 
 namespace Nozomi.Data.Models.Currency
 {
+    /// <summary>
+    /// Reminder to everyone that this component type is only for RequestComponents.
+    /// </summary>
     public enum ComponentType
     {
         [Comparable(false)]
