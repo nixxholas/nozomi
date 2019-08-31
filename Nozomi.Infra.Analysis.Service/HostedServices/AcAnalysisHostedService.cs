@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
 using System.Threading;
@@ -362,11 +363,12 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                             var avgPrice = decimal.Zero;
                             var index = 0;
                             var components = _requestComponentEvent.GetAllByCorrelation(entity.Id, true,
-                                    index, rc => rc.DeletedAt == null && rc.IsEnabled
-                                                                  && (rc.ComponentType.Equals(ComponentType.Ask)
-                                                                      || rc.ComponentType.Equals(ComponentType.Bid))
-                                                                  && !string.IsNullOrEmpty(rc.Value)
-                                                                  && NumberHelper.IsNumericDecimal(rc.Value));
+                                    index, true, new List<ComponentType>()
+                                    {
+                                        ComponentType.Ask, ComponentType.Bid
+                                    })
+                                    .Where(rc => NumberHelper.IsNumericDecimal(rc.Value))
+                                    .ToList();
 
                             if (components.Any())
                             {

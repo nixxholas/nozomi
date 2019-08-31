@@ -51,6 +51,8 @@ namespace Nozomi.Preprocessing
 
         public const int CurrencyPropertyTakeoutLimit = 100;
         
-        public const int RequestComponentTakeoutLimit = 1000;
+        public const int RequestComponentTakeoutLimit = 100;
+        
+        public const int RcdHistoricItemTakeoutLimit = 1000;
     }
 }
