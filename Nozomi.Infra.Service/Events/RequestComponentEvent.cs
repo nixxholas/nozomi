@@ -174,19 +174,31 @@ namespace Nozomi.Service.Events
                 {
                     query = query
                         .Where(r => r.CurrencyPairId.Equals(analysedComponent.CurrencyPairId));
-
-                    return query
-                        .SelectMany(r => r.RequestComponents
-                                .Select(rc => new RequestComponent(rc,
-                                    index, NozomiServiceConstants.RcdHistoricItemTakeoutLimit)))
-                        .ToList();
                 } 
                 // Currency-based tracking
                 else if (analysedComponent.CurrencyId != null && analysedComponent.CurrencyId > 0)
                 {
                     query = query
                         .Where(r => r.CurrencyId.Equals(analysedComponent.CurrencyId));
-                    
+                }
+                else
+                {
+                    _logger.LogInformation($"No related components..");
+                    return null;
+                }
+
+                if (query.Any() && componentTypes != null && componentTypes.Any())
+                {
+                    return query
+                        .SelectMany(cr => cr.RequestComponents
+                            .Where(rc => componentTypes.Contains(rc.ComponentType))
+                            .Select(rc => new RequestComponent(rc,
+                                index, NozomiServiceConstants.RcdHistoricItemTakeoutLimit)))
+                        .ToList();
+                } 
+                
+                if (query.Any())
+                {
                     return query
                         .SelectMany(cr => cr.RequestComponents
                             .Select(rc => new RequestComponent(rc,
