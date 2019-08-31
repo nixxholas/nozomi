@@ -12,29 +12,34 @@ namespace Nozomi.Data.Models.Web
 
         public RequestComponent(RequestComponent component, int historicIndex, int historicItemAmount)
         {
-            Id = component.Id;
-            ComponentType = component.ComponentType;
-            IsEnabled = component.IsEnabled;
-            CreatedAt = component.CreatedAt;
-            ModifiedAt = component.ModifiedAt;
-            DeletedAt = component.DeletedAt;
-            CreatedBy = component.CreatedBy;
-            ModifiedBy = component.ModifiedBy;
-            DeletedBy = component.DeletedBy;
-            Identifier = component.Identifier;
-            QueryComponent = component.QueryComponent;
-            IsDenominated = component.IsDenominated;
-            AnomalyIgnorance = component.AnomalyIgnorance;
-            StoreHistoricals = component.StoreHistoricals;
-            Value = component.Value;
-            RequestId = component.RequestId;
-            Request = component.Request;
-            RcdHistoricItems = component.RcdHistoricItems
-                .Where(rhi => rhi.DeletedAt == null)
-                .OrderBy(rhi => rhi.HistoricDateTime)
-                .Skip(historicIndex * historicItemAmount)
-                .Take(historicItemAmount)
-                .ToList();
+            if (component != null)
+            {
+                Id = component.Id;
+                ComponentType = component.ComponentType;
+                IsEnabled = component.IsEnabled;
+                CreatedAt = component.CreatedAt;
+                ModifiedAt = component.ModifiedAt;
+                DeletedAt = component.DeletedAt;
+                CreatedBy = component.CreatedBy;
+                ModifiedBy = component.ModifiedBy;
+                DeletedBy = component.DeletedBy;
+                Identifier = component.Identifier;
+                QueryComponent = component.QueryComponent;
+                IsDenominated = component.IsDenominated;
+                AnomalyIgnorance = component.AnomalyIgnorance;
+                StoreHistoricals = component.StoreHistoricals;
+                Value = component.Value;
+                RequestId = component.RequestId;
+                Request = component.Request;
+            
+                if (component.RcdHistoricItems != null)
+                    RcdHistoricItems = component.RcdHistoricItems
+                        .Where(rhi => rhi.DeletedAt == null)
+                        .OrderBy(rhi => rhi.HistoricDateTime)
+                        .Skip(historicIndex * historicItemAmount)
+                        .Take(historicItemAmount)
+                        .ToList();
+            }
         }
         
         public long Id { get; set; }
