@@ -190,19 +190,19 @@ namespace Nozomi.Service.Events
                 if (query.Any() && componentTypes != null && componentTypes.Any())
                 {
                     return query
-                        .SelectMany(cr => cr.RequestComponents
-                            .Where(rc => componentTypes.Contains(rc.ComponentType))
-                            .Select(rc => new RequestComponent(rc,
-                                index, NozomiServiceConstants.RcdHistoricItemTakeoutLimit)))
+                        .SelectMany(cr => cr.RequestComponents)
+                        .Where(rc => componentTypes.Contains(rc.ComponentType))
+                        .Select(rc => new RequestComponent(rc,
+                            index, NozomiServiceConstants.RcdHistoricItemTakeoutLimit))
                         .ToList();
                 } 
                 
                 if (query.Any())
                 {
                     return query
-                        .SelectMany(cr => cr.RequestComponents
-                            .Select(rc => new RequestComponent(rc,
-                                index, NozomiServiceConstants.RcdHistoricItemTakeoutLimit)))
+                        .SelectMany(cr => cr.RequestComponents)
+                        .Select(rc => new RequestComponent(rc,
+                            index, NozomiServiceConstants.RcdHistoricItemTakeoutLimit))
                         .ToList();
                 }
             }
