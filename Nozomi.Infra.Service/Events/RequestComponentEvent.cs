@@ -157,6 +157,7 @@ namespace Nozomi.Service.Events
             {
                 var query = _unitOfWork.GetRepository<Request>()
                     .GetQueryable()
+                    .Include(r => r.RequestComponents)
                     .AsNoTracking();
 
                 if (track)
@@ -172,9 +173,7 @@ namespace Nozomi.Service.Events
                 if (analysedComponent.CurrencyPairId != null && analysedComponent.CurrencyPairId > 0)
                 {
                     query = query
-                        .Where(r => r.DeletedAt == null && r.IsEnabled
-                                                          && r.CurrencyPairId.Equals(analysedComponent.CurrencyPairId))
-                        .Include(cpr => cpr.RequestComponents);
+                        .Where(r => r.CurrencyPairId.Equals(analysedComponent.CurrencyPairId));
 
                     return query
                         .SelectMany(r => r.RequestComponents
@@ -186,8 +185,7 @@ namespace Nozomi.Service.Events
                 else if (analysedComponent.CurrencyId != null && analysedComponent.CurrencyId > 0)
                 {
                     query = query
-                        .Where(r => r.CurrencyId.Equals(analysedComponent.CurrencyId))
-                        .Include(cr => cr.RequestComponents);
+                        .Where(r => r.CurrencyId.Equals(analysedComponent.CurrencyId));
                     
                     return query
                         .SelectMany(cr => cr.RequestComponents
