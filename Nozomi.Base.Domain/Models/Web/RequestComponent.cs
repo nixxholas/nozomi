@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Nozomi.Base.Core;
 using Nozomi.Data.Models.Currency;
 
@@ -9,7 +10,7 @@ namespace Nozomi.Data.Models.Web
         // Default Constructor
         public RequestComponent() {}
 
-        public RequestComponent(RequestComponent component)
+        public RequestComponent(RequestComponent component, int historicIndex, int historicItemAmount)
         {
             Id = component.Id;
             ComponentType = component.ComponentType;
@@ -28,7 +29,12 @@ namespace Nozomi.Data.Models.Web
             Value = component.Value;
             RequestId = component.RequestId;
             Request = component.Request;
-            RcdHistoricItems = component.RcdHistoricItems;
+            RcdHistoricItems = component.RcdHistoricItems
+                .Where(rhi => rhi.DeletedAt == null)
+                .OrderBy(rhi => rhi.HistoricDateTime)
+                .Skip(historicIndex * historicItemAmount)
+                .Take(historicItemAmount)
+                .ToList();
         }
         
         public long Id { get; set; }
