@@ -56,14 +56,14 @@ namespace Nozomi.Service.Events
                     .GetQueryable(rc => rc.DeletedAt == null && rc.IsEnabled)
                     .AsNoTracking()
                     .Include(rc => rc.Request)
-                    .Skip(index * 20)
-                    .Take(20)
+                    .Skip(index * NozomiServiceConstants.RequestComponentTakeoutLimit)
+                    .Take(NozomiServiceConstants.RequestComponentTakeoutLimit)
                     .ToList()
                 : _unitOfWork.GetRepository<RequestComponent>()
                     .GetQueryable(rc => rc.DeletedAt == null && rc.IsEnabled)
                     .AsNoTracking()
-                    .Skip(index * 20)
-                    .Take(20)
+                    .Skip(index * NozomiServiceConstants.RequestComponentTakeoutLimit)
+                    .Take(NozomiServiceConstants.RequestComponentTakeoutLimit)
                     .ToList();
         }
 
@@ -233,25 +233,12 @@ namespace Nozomi.Service.Events
             }
             
             return qCurrency
-                .Where(c => c.Requests.Count > 0 
-                            && c.Requests.Any(cr => cr.RequestComponents
+                .Where(c => c.Requests.Any(r => r.RequestComponents
                                    .Any(rc => rc.DeletedAt == null && rc.IsEnabled)))
                 .SelectMany(cpr => cpr.Requests
                     .SelectMany(cr => cr.RequestComponents
-                    .Select(rc => new RequestComponent
-                    {
-                        Id = rc.Id,
-                        ComponentType = rc.ComponentType,
-                        Identifier = rc.Identifier,
-                        IsDenominated = rc.IsDenominated,
-                        StoreHistoricals = rc.StoreHistoricals,
-                        QueryComponent = rc.QueryComponent,
-                        Value = rc.Value,
-                        RcdHistoricItems = rc.RcdHistoricItems
-                            .Skip(index * NozomiServiceConstants.RequestComponentTakeoutLimit)
-                            .Take(NozomiServiceConstants.RequestComponentTakeoutLimit)
-                            .ToList()
-                    })))
+                    .Select(rc => new RequestComponent(rc, index, 
+                        NozomiServiceConstants.RcdHistoricItemTakeoutLimit))))
                 .ToList();
         }
 
@@ -298,23 +285,8 @@ namespace Nozomi.Service.Events
                             .Where(cpr => cpr.IsEnabled && cpr.DeletedAt == null)
                             .SelectMany(cpr => cpr.RequestComponents
                                 .Where(rc => rc.IsEnabled && rc.DeletedAt == null)
-                                .Select(rc => new RequestComponent
-                                {
-                                    Id = rc.Id,
-                                    ComponentType = rc.ComponentType,
-                                    Identifier = rc.Identifier,
-                                    QueryComponent = rc.QueryComponent,
-                                    IsDenominated = rc.IsDenominated,
-                                    AnomalyIgnorance = rc.AnomalyIgnorance,
-                                    StoreHistoricals = rc.StoreHistoricals,
-                                    Value = rc.Value,
-                                    RequestId = rc.RequestId,
-                                    RcdHistoricItems = rc.RcdHistoricItems
-                                        .Where(rcdhi => rcdhi.IsEnabled && rcdhi.DeletedAt == null)
-                                        .Skip(index * NozomiServiceConstants.RequestComponentTakeoutLimit)
-                                        .Take(NozomiServiceConstants.RequestComponentTakeoutLimit)
-                                        .ToList()
-                                })))))
+                                .Select(rc => new RequestComponent(rc, index, 
+                                    NozomiServiceConstants.RequestComponentTakeoutLimit))))))
                 .ToList();
         }
 
