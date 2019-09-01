@@ -11,6 +11,6 @@ namespace Nozomi.Infra.Analysis.Service.Events.Interfaces
         /// <returns></returns>
         AnalysedComponent Top(ICollection<long> acsToFilter = null);
 
-        IEnumerable<AnalysedComponent> GetNextWorkingSet(int index = 0, bool includeNonHistoricals = false);
+        ICollection<AnalysedComponent> GetNextWorkingSet(int index = 0, bool includeNonHistoricals = false);
     }
 }

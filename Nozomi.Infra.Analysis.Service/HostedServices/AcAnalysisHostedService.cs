@@ -55,22 +55,19 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                 try
                 {
                     // Dynamic
-                    var currentBatch = _xAnalysedComponentEvent.GetNextWorkingSet(0, true)
-                        .ToList();
+                    var currentBatch = _xAnalysedComponentEvent.GetNextWorkingSet(0, true);
 
-                    if (currentBatch.Count > 0)
+                    if (!currentBatch.Any()) continue;
+                    foreach (var batchItem in currentBatch)
                     {
-                        foreach (var batchItem in currentBatch)
+                        if (Analyse(batchItem))
                         {
-                            if (Analyse(batchItem))
-                            {
-                                _logger.LogInformation($"[{ServiceName}] AnalysedComponent {batchItem.Id}: " +
-                                                       $"Successfully to updated");
-                            }
-                            else
-                            {   
-                                _logger.LogCritical("[ComponentAnalysisService]: Invalid top AC.");
-                            }
+                            _logger.LogInformation($"[{ServiceName}] AnalysedComponent {batchItem.Id}: " +
+                                                   $"Successfully to updated");
+                        }
+                        else
+                        {   
+                            _logger.LogCritical("[ComponentAnalysisService]: Invalid top AC.");
                         }
                     }
                     // Monolithic way
@@ -104,7 +101,6 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
             if (entity != null)
             {
                 var dataTimespan = TimeSpan.Zero;
-                ICollection<AnalysedComponent> analysedComponents;
 
                 // Logic here once again
                 switch (entity.ComponentType)
@@ -167,7 +163,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                 // Default market cap function
                                 case AnalysedComponentType.MarketCap:
                                     // Obtain all sub components (Components in the currencies)
-                                    analysedComponents = _analysedComponentEvent.GetAllCurrencyComponentsByType(
+                                    var analysedComponents = _analysedComponentEvent.GetAllCurrencyComponentsByType(
                                             (long) entity.CurrencyTypeId)
                                         .Where(ac => ac.ComponentType.Equals(entity.ComponentType))
                                         .ToList();
@@ -252,7 +248,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                         else
                         {
                             var circulatingSupply = _currencyEvent.GetCirculatingSupply(entity);
-                            analysedComponents = _analysedComponentEvent.GetAllByCorrelation(entity.Id,
+                            var analysedComponents = _analysedComponentEvent.GetAllByCorrelation(entity.Id,
                                     ac => !string.IsNullOrEmpty(ac.Value)
                                           && ac.ComponentType.Equals(AnalysedComponentType.CurrentAveragePrice)
                                           && NumberHelper.IsNumericDecimal(ac.Value))

@@ -78,7 +78,6 @@ namespace Nozomi.Infra.Analysis.Service.Services
             if (comp != null)
             {
                 comp.IsFailing = isFailing;
-                comp.LastChecked = DateTime.UtcNow;
                 
                 _unitOfWork.GetRepository<AnalysedComponent>().Update(comp);
                 _unitOfWork.Commit(userId);

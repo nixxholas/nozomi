@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -36,10 +37,8 @@ namespace Nozomi.Infra.Analysis.Service.Events
                                                           // Always give null ACs a chance
                                                           || string.IsNullOrEmpty(ac.Value))
                                                       && !acsToFilter.Contains(ac.Id))
-                    // Order by asecnding to the last checked time
-                    .OrderBy(ac => ac.LastChecked)
                     // Order by ascending to the last modified time
-                    .ThenBy(ac => ac.ModifiedAt)
+                    .OrderBy(ac => ac.ModifiedAt)
                     // Take those not failing yet first
                     .ThenBy(ac => ac.IsFailing)
                     // Take in those null ones first
@@ -60,10 +59,8 @@ namespace Nozomi.Infra.Analysis.Service.Events
                                                       // Always give null ACs a chance
                                                       || string.IsNullOrEmpty(ac.Value))
                              && !acsToFilter.Contains(ac.Id))
-                // Order by asecnding to the last checked time
-                .OrderBy(ac => ac.LastChecked)
                 // Order by ascending to the last modified time
-                .ThenBy(ac => ac.ModifiedAt)
+                .OrderBy(ac => ac.ModifiedAt)
                 // Take those not failing yet first
                 .ThenBy(ac => ac.IsFailing)
                 // Take in those null ones first
@@ -72,7 +69,7 @@ namespace Nozomi.Infra.Analysis.Service.Events
                 .FirstOrDefault();
         }
 
-        public IEnumerable<AnalysedComponent> GetNextWorkingSet(int index = 0, bool includeNonHistoricals = false)
+        public ICollection<AnalysedComponent> GetNextWorkingSet(int index = 0, bool includeNonHistoricals = false)
         {
             if (!includeNonHistoricals)
                 return _unitOfWork.GetRepository<AnalysedComponent>()
@@ -83,39 +80,36 @@ namespace Nozomi.Infra.Analysis.Service.Events
                                  // Make sure LastChecked is null
                                  && (ac.LastChecked == null 
                                      // Or is older than the current time in conjunction with the delay
-                                     || ac.LastChecked.Value.Add(TimeSpan.FromMilliseconds(ac.Delay)) 
-                                     <= DateTime.UtcNow
+                                     || (ac.LastChecked.Value.Add(TimeSpan.FromMilliseconds(ac.Delay)).ToUniversalTime() 
+                                     <= DateTime.UtcNow)
                                      // Always give null ACs a chance
                                      || string.IsNullOrEmpty(ac.Value))
-                                 && !ac.StoreHistoricals)
-                    // Order by asecnding to the last checked time
-                    .OrderBy(ac => ac.LastChecked)
+                                 && ac.StoreHistoricals == includeNonHistoricals)
                     // Order by ascending to the last modified time
-                    .ThenBy(ac => ac.ModifiedAt)
+                    .OrderBy(ac => ac.ModifiedAt)
                     .ThenByDescending(ac => ac.IsFailing)
                     .Skip(index * NozomiServiceConstants.AnalysedComponentTakeoutLimit)
-                    .Take(NozomiServiceConstants.AnalysedComponentTakeoutLimit);
+                    .Take(NozomiServiceConstants.AnalysedComponentTakeoutLimit)
+                    .ToList();
             
             // Got in, let's grab em.
             return _unitOfWork.GetRepository<AnalysedComponent>()
                 .GetQueryable()
                 .AsNoTracking()
-                .Where(ac => ac.DeletedAt == null
-                             && ac.IsEnabled
-                             // Make sure LastChecked is null
-                             && (ac.LastChecked == null 
-                                 // Or is older than the current time in conjunction with the delay
-                                 || ac.LastChecked.Value.Add(TimeSpan.FromMilliseconds(ac.Delay)) 
-                                 <= DateTime.UtcNow
-                                 // Always give null ACs a chance
-                                 || string.IsNullOrEmpty(ac.Value)))
-                // Order by asecnding to the last checked time
-                .OrderBy(ac => ac.LastChecked)
+                .Where(ac => ac.DeletedAt == null && ac.IsEnabled)
+                // Make sure LastChecked is null
+                .Where(ac => ac.LastChecked == null 
+                       // Or is older than the current time in conjunction with the delay
+                       || (ac.LastChecked.Value.Add(TimeSpan.FromMilliseconds(ac.Delay)) 
+                           <= DateTime.UtcNow)
+                       // Always give null ACs a chance
+                       || string.IsNullOrEmpty(ac.Value))
                 // Order by ascending to the last modified time
-                .ThenBy(ac => ac.ModifiedAt)
+                .OrderBy(ac => ac.ModifiedAt)
                 .ThenByDescending(ac => ac.IsFailing)
                 .Skip(index * NozomiServiceConstants.AnalysedComponentTakeoutLimit)
-                .Take(NozomiServiceConstants.AnalysedComponentTakeoutLimit);
+                .Take(NozomiServiceConstants.AnalysedComponentTakeoutLimit)
+                .ToList();
         }
     }
 }
