@@ -84,7 +84,6 @@ namespace Nozomi.Compute
                     throw new SystemException("Invalid main database configuration");
                 // Database
                 services
-                    .AddEntityFrameworkNpgsql()
                     .AddDbContext<NozomiDbContext>(options =>
                 {
                     options.UseNpgsql(mainDb
