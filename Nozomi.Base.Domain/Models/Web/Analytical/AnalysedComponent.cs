@@ -29,7 +29,6 @@ namespace Nozomi.Data.Models.Web.Analytical
             CurrencyPairId = component.CurrencyPairId;
             CurrencyType = component.CurrencyType;
             CurrencyTypeId = component.CurrencyTypeId;
-            LastChecked = component.LastChecked;
             Value = component.Value;
             IsFailing = component.IsFailing;
             StoreHistoricals = component.StoreHistoricals;
@@ -63,7 +62,6 @@ namespace Nozomi.Data.Models.Web.Analytical
             CurrencyPairId = component.CurrencyPairId;
             CurrencyType = component.CurrencyType;
             CurrencyTypeId = component.CurrencyTypeId;
-            LastChecked = component.LastChecked;
             Value = component.Value;
             IsFailing = component.IsFailing;
             StoreHistoricals = component.StoreHistoricals;
@@ -114,7 +112,6 @@ namespace Nozomi.Data.Models.Web.Analytical
             CurrencyPairId = component.CurrencyPairId;
             CurrencyType = component.CurrencyType;
             CurrencyTypeId = component.CurrencyTypeId;
-            LastChecked = component.LastChecked;
             Value = component.Value;
             IsFailing = component.IsFailing;
             StoreHistoricals = component.StoreHistoricals;
@@ -167,7 +164,6 @@ namespace Nozomi.Data.Models.Web.Analytical
             CurrencyPairId = component.CurrencyPairId;
             CurrencyType = component.CurrencyType;
             CurrencyTypeId = component.CurrencyTypeId;
-            LastChecked = component.LastChecked;
             Value = component.Value;
             IsFailing = component.IsFailing;
             StoreHistoricals = component.StoreHistoricals;
@@ -224,8 +220,6 @@ namespace Nozomi.Data.Models.Web.Analytical
         public string Value { get; set; }
 
         public bool IsDenominated { get; set; } = false;
-        
-        public DateTime? LastChecked { get; set; }
         
         public bool IsFailing { get; set; }
         
