@@ -240,9 +240,15 @@ export default {
     }
   },
   mounted() {
-    this.loadData();
+    //this.loadData();
     this.loadFiatData();
     this.loadCryptoData();
+
+    try {
+        let web3 = new this.$Web3(this.$Web3.givenProvider);
+    } catch (e) {
+        console.dir("oops: " + e.toString());
+    }
   }
 
 }
