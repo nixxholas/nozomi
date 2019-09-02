@@ -13,6 +13,7 @@ import App from 'components/app-root';
 import { FontAwesomeIcon } from './icons';
 import * as moment from 'moment';
 import TvLwChart from 'components/chart/tv-lw-chart';
+import * as Web3 from 'web3';
 
 // Registration of global components
 Vue.component('icon', FontAwesomeIcon);
@@ -35,6 +36,7 @@ Vue.prototype.$http = axios;
 Vue.prototype.$axios = axios;
 Vue.prototype.$moment = moment;
 Vue.prototype.$numeral = numeral;
+Vue.prototype.$Web3 = Web3;
 
 sync(store, router);
 
