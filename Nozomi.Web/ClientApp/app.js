@@ -14,6 +14,7 @@ import { FontAwesomeIcon } from './icons';
 import * as moment from 'moment';
 import TvLwChart from 'components/chart/tv-lw-chart';
 import * as Web3 from 'web3';
+import * as VueWeb3 from 'vue-web3';
 
 // Registration of global components
 Vue.component('icon', FontAwesomeIcon);
@@ -29,6 +30,8 @@ Vue.use(VueNumerals); // default locale is 'en'
 Vue.use(Trend);
 // Registration of Vue apexcharts
 Vue.use(VueApexCharts);
+// Registration of Vue-based Web3
+Vue.use(VueWeb3, { web3: new Web3(web3.currentProvider) });
 
 // Registration of Axios
 // https://stackoverflow.com/questions/51374367/axios-is-not-defined-in-vue-js-cli
@@ -36,7 +39,6 @@ Vue.prototype.$http = axios;
 Vue.prototype.$axios = axios;
 Vue.prototype.$moment = moment;
 Vue.prototype.$numeral = numeral;
-Vue.prototype.$Web3 = Web3;
 
 sync(store, router);
 
