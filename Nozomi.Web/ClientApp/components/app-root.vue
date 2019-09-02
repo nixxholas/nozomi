@@ -1,7 +1,9 @@
 <template>
   <div id="app">
     <b-message type="is-warning" has-icon>
-      <b>We're currently in the beta test line phase.</b> Major backend changes are still ongoing and may disrupt consistent uptime.
+      <b>We're currently in the Release Candidate phase.</b> General UI and Major Features will be constantly updated.
+      <br>
+      <b v-if="!hasWeb3">Your browser is incompatible with our authentication engine.</b>
     </b-message>
     <nav-menu params="route: route"></nav-menu>
 
@@ -44,9 +46,12 @@
       },
       data () {
         return {
-          buildTime: ''
+          buildTime: '',
+          hasWeb3: window.ethereum || window.web3,
         }
-      }
+      },
+      methods: {
+      },
     }
 </script>
 
