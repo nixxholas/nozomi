@@ -56,7 +56,6 @@ namespace Nozomi.Infra.Analysis.Service.Services
                     
                 // Make sure we update the datetime as well.. 
                 comp.ModifiedAt = DateTime.UtcNow;
-                comp.LastChecked = DateTime.UtcNow;
                 comp.Value = value;
                 
                 _unitOfWork.GetRepository<AnalysedComponent>().Update(comp);
