@@ -19,6 +19,6 @@ namespace Nozomi.Base.Admin.Domain.AreaModels.AnalysedComponent
         [DefaultValue(false)]
         public bool IsEnabled { get; set; }
         
-        public string UIFormatting { get; set; }
+        public string UiFormatting { get; set; }
     }
 }

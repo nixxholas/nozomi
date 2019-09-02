@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data;
+using Nozomi.Service.Events.Interfaces;
 using Nozomi.Service.Identity.Managers;
-using Nozomi.Service.Services.Enumerators.Interfaces;
 
 namespace Nozomi.Ticker.Controllers.APIs.v1.CurrencyPairType
 {

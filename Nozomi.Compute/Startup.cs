@@ -1,41 +1,49 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using Nozomi.Analysis.StartupExtensions;
-using Nozomi.Base.Core.Configurations;
+using Nozomi.Infra.Analysis.Service.Events;
+using Nozomi.Infra.Analysis.Service.Events.Interfaces;
+using Nozomi.Infra.Analysis.Service.HostedServices;
+using Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes;
+using Nozomi.Infra.Analysis.Service.Services;
+using Nozomi.Infra.Analysis.Service.Services.Interfaces;
+using Nozomi.Repo.BCL.Context;
+using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Data;
-using Nozomi.Repo.Identity.Data;
+using Nozomi.Service.Events;
+using Nozomi.Service.Events.Analysis;
+using Nozomi.Service.Events.Analysis.Interfaces;
+using Nozomi.Service.Events.Interfaces;
+using Nozomi.Service.Services;
+using Nozomi.Service.Services.Interfaces;
+using Nozomi.Service.Services.Requests;
+using Nozomi.Service.Services.Requests.Interfaces;
 using VaultSharp;
-using VaultSharp.V1.AuthMethods;
 using VaultSharp.V1.AuthMethods.Token;
 
-namespace Nozomi.Analysis
+namespace Nozomi.Compute
 {
     public class Startup
     {
+        public IConfiguration Configuration { get; }
+
+        public IHostingEnvironment HostingEnvironment { get; }
+        
         public Startup(IConfiguration configuration, IHostingEnvironment hostingEnvironment)
         {
             Configuration = configuration;
             HostingEnvironment = hostingEnvironment;
         }
-
-        public IConfiguration Configuration { get; }
-
-        public IHostingEnvironment HostingEnvironment { get; }
-
+        
         // This method gets called by the runtime. Use this method to add services to the container.
+        // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
             if (HostingEnvironment.IsDevelopment())
@@ -75,28 +83,39 @@ namespace Nozomi.Analysis
                 if (string.IsNullOrEmpty(mainDb))
                     throw new SystemException("Invalid main database configuration");
                 // Database
-                services.AddDbContext<NozomiDbContext>(options =>
+                services
+                    .AddDbContext<NozomiDbContext>(options =>
                 {
                     options.UseNpgsql(mainDb
                         , builder =>
                         {
                             builder.EnableRetryOnFailure();
-//                            builder.ProvideClientCertificatesCallback(certificates =>
-//                            {
-//                                var cert = new X509Certificate2("ca-certificate.crt");
-//                                certificates.Add(cert);
-//                            });
                         }
                     );
-                    options.EnableSensitiveDataLogging(false);
+                    options.EnableSensitiveDataLogging();
                     options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
                 }, ServiceLifetime.Transient);
             }
+            
+            services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 
-            services.ConfigureRepoLayer();
-            services.ConfigureEvents();
-            services.ConfigureServiceLayer();
-            services.ConfigureHostedServices();
+            services.AddTransient<IUnitOfWork<NozomiDbContext>, UnitOfWork<NozomiDbContext>>();
+            services.AddTransient<IDbContext, NozomiDbContext>();
+
+            services.AddScoped<IAnalysedComponentEvent, AnalysedComponentEvent>();
+            services.AddScoped<IAnalysedHistoricItemEvent, AnalysedHistoricItemEvent>();
+            services.AddScoped<ICurrencyEvent, CurrencyEvent>();
+            services.AddScoped<ICurrencyPairEvent, CurrencyPairEvent>();
+            services.AddScoped<IProcessAnalysedComponentService, ProcessAnalysedComponentService>();
+            services.AddScoped<IRequestEvent, RequestEvent>();
+            services.AddScoped<IRequestComponentEvent, RequestComponentEvent>();
+            services.AddScoped<ITickerEvent, TickerEvent>();
+            services.AddScoped<IXAnalysedComponentEvent, XAnalysedComponentEvent>();
+            services.AddTransient<IAnalysedHistoricItemService, AnalysedHistoricItemService>();
+            services.AddTransient<IRcdHistoricItemService, RcdHistoricItemService>();
+            services.AddTransient<IRequestComponentService, RequestComponentService>();
+            services.AddTransient<IRequestService, RequestService>();
+            services.AddHostedService<AcAnalysisHostedService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -107,8 +126,6 @@ namespace Nozomi.Analysis
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseAutoDbMigration(env);
-            
             app.Run(async (context) => { await context.Response.WriteAsync("Hello World!"); });
         }
     }

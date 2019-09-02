@@ -1,8 +1,7 @@
 <template>
   <div id="app">
-    <b-message type="is-info" has-icon>
-      <b>We're currently in the test line phase.</b> Major design and layout changes will be made frequently and will not be fixed
-      until beta which will help us to develop rapidly.
+    <b-message type="is-warning" has-icon>
+      <b>We're currently in the beta test line phase.</b> Major backend changes are still ongoing and may disrupt consistent uptime.
     </b-message>
     <nav-menu params="route: route"></nav-menu>
 

@@ -25,6 +25,7 @@ namespace Nozomi.Infra.Admin.Service.Events
                 var query = _unitOfWork.GetRepository<CurrencyProperty>()
                     .GetQueryable()
                     .AsNoTracking()
+                    .OrderBy(cp => cp.Id)
                     .Skip(index * NozomiServiceConstants.CurrencyPropertyTakeoutLimit)
                     .Take(NozomiServiceConstants.CurrencyPropertyTakeoutLimit);
 

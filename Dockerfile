@@ -10,16 +10,16 @@ COPY . .
 # RUN chmod 644 /usr/local/share/ca-certificates/ca.crt && update-ca-certificates
 
 # restore as distinct layers
-RUN dotnet restore Nozomi.Analysis/Nozomi.Analysis.csproj
+RUN dotnet restore Nozomi.Compute/Nozomi.Compute.csproj
 
 # Copy everything else and build
 COPY . ./
-RUN dotnet publish Nozomi.Analysis/Nozomi.Analysis.csproj -c Release -o out
+RUN dotnet publish Nozomi.Compute/Nozomi.Compute.csproj -c Release -o out
 
 # Build runtime image
 FROM mcr.microsoft.com/dotnet/core/aspnet:2.2
 WORKDIR /app
-COPY --from=build-env /app/Nozomi.Analysis/out .
-COPY --from=build-env /app/Nozomi.Analysis/ca-certificate.crt .
+COPY --from=build-env /app/Nozomi.Compute/out .
+# COPY --from=build-env /app/Nozomi.Compute/ca-certificate.crt .
 RUN ls
-ENTRYPOINT ["dotnet", "Nozomi.Analysis.dll"]
+ENTRYPOINT ["dotnet", "Nozomi.Compute.dll"]

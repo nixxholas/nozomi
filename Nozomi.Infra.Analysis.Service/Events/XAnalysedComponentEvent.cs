@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data.Models.Web.Analytical;
 using Nozomi.Infra.Analysis.Service.Events.Interfaces;
+using Nozomi.Preprocessing;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Data;
@@ -26,12 +28,14 @@ namespace Nozomi.Infra.Analysis.Service.Events
                     .GetQueryable()
                     .AsNoTracking()
                     // Enabled?
-                    .Where(ac => ac.DeletedAt == null && ac.IsEnabled
-                                                      && (ac.ModifiedAt.Add(TimeSpan.FromMilliseconds(ac.Delay)) <= DateTime.UtcNow
+                    .Where(ac => ac.DeletedAt == null && ac.IsEnabled 
+                                                      && (// Last modified time is older than the current time in conjunction with the delay
+                                                          ac.ModifiedAt.Add(TimeSpan.FromMilliseconds(ac.Delay)) 
+                                                          <= DateTime.UtcNow
                                                           // Always give null ACs a chance
                                                           || string.IsNullOrEmpty(ac.Value))
                                                       && !acsToFilter.Contains(ac.Id))
-                    // Order by ascending to the last modified time in addition to its delay
+                    // Order by ascending to the last modified time
                     .OrderBy(ac => ac.ModifiedAt)
                     // Take those not failing yet first
                     .ThenBy(ac => ac.IsFailing)
@@ -44,11 +48,14 @@ namespace Nozomi.Infra.Analysis.Service.Events
                 .GetQueryable()
                 .AsNoTracking()
                 // Enabled?
-                .Where(ac => ac.DeletedAt == null && ac.IsEnabled
-                             && (ac.ModifiedAt.Add(TimeSpan.FromMilliseconds(ac.Delay)) <= DateTime.UtcNow
-                                 // Always give null ACs a chance
-                                 || string.IsNullOrEmpty(ac.Value)))
-                // Order by ascending to the last modified time in addition to its delay
+                .Where(ac => ac.DeletedAt == null && ac.IsEnabled 
+                                                  && (// Last modified time is older than the current time in conjunction with the delay
+                                                      ac.ModifiedAt.Add(TimeSpan.FromMilliseconds(ac.Delay)) 
+                                                      <= DateTime.UtcNow
+                                                      // Always give null ACs a chance
+                                                      || string.IsNullOrEmpty(ac.Value))
+                             && !acsToFilter.Contains(ac.Id))
+                // Order by ascending to the last modified time
                 .OrderBy(ac => ac.ModifiedAt)
                 // Take those not failing yet first
                 .ThenBy(ac => ac.IsFailing)
@@ -58,32 +65,43 @@ namespace Nozomi.Infra.Analysis.Service.Events
                 .FirstOrDefault();
         }
 
-        public IEnumerable<AnalysedComponent> GetNextWorkingSet(int index = 0, bool includeNonHistoricals = false)
+        public ICollection<AnalysedComponent> GetNextWorkingSet(int index = 0, bool includeNonHistoricals = false)
         {
             if (!includeNonHistoricals)
                 return _unitOfWork.GetRepository<AnalysedComponent>()
                     .GetQueryable()
+                    .AsNoTracking()
                     .Where(ac => ac.DeletedAt == null
                                  && ac.IsEnabled
-                                 && ac.ModifiedAt <= DateTime.UtcNow.Add(TimeSpan.FromMilliseconds(ac.Delay))
-                                 && !ac.StoreHistoricals)
-                    .OrderBy(ac => ac.Id)
-                    .ThenBy(ac => ac.ModifiedAt)
+                                 && (// Last modified time is older than the current time in conjunction with the delay
+                                     ac.ModifiedAt.Add(TimeSpan.FromMilliseconds(ac.Delay)) 
+                                     <= DateTime.UtcNow
+                                     // Always give null ACs a chance
+                                     || string.IsNullOrEmpty(ac.Value))
+                                 && ac.StoreHistoricals == includeNonHistoricals)
+                    // Order by ascending to the last modified time
+                    .OrderBy(ac => ac.ModifiedAt)
                     .ThenByDescending(ac => ac.IsFailing)
-                    .Skip(index * 100)
-                    .Take(100);
+                    .Skip(index * NozomiServiceConstants.AnalysedComponentTakeoutLimit)
+                    .Take(NozomiServiceConstants.AnalysedComponentTakeoutLimit)
+                    .ToList();
             
             // Got in, let's grab em.
             return _unitOfWork.GetRepository<AnalysedComponent>()
                 .GetQueryable()
-                .Where(ac => ac.DeletedAt == null
-                             && ac.IsEnabled
-                             && ac.ModifiedAt <= DateTime.UtcNow.Add(TimeSpan.FromMilliseconds(ac.Delay)))
-                .OrderBy(ac => ac.Id)
-                .ThenBy(ac => ac.ModifiedAt)
+                .AsNoTracking()
+                .Where(ac => ac.DeletedAt == null && ac.IsEnabled)
+                // Make sure LastChecked is null
+                .Where(ac => // Last modified time is older than the current time in conjunction with the delay
+                       ac.ModifiedAt.Add(TimeSpan.FromMilliseconds(ac.Delay)) <= DateTime.UtcNow
+                       // Always give null ACs a chance
+                       || string.IsNullOrEmpty(ac.Value))
+                // Order by ascending to the last modified time
+                .OrderBy(ac => ac.ModifiedAt)
                 .ThenByDescending(ac => ac.IsFailing)
-                .Skip(index * 100)
-                .Take(100);
+                .Skip(index * NozomiServiceConstants.AnalysedComponentTakeoutLimit)
+                .Take(NozomiServiceConstants.AnalysedComponentTakeoutLimit)
+                .ToList();
         }
     }
 }

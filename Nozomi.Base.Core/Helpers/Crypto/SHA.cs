@@ -3,19 +3,19 @@ using System.Text;
 
 namespace Nozomi.Base.Core.Helpers.Crypto
 {
-    public static class SHA
+    public static class Sha
     {
-        public static string GenerateSHA256String(string inputString)
+        public static string GenerateSha256String(string inputString)
         {
-            var sha256 = SHA256Managed.Create();
+            var sha256 = SHA256.Create();
             var bytes = Encoding.UTF8.GetBytes(inputString);
             var hash = sha256.ComputeHash(bytes);
             return GetStringFromHash(hash);
         }
 
-        public static string GenerateSHA512String(string inputString)
+        public static string GenerateSha512String(string inputString)
         {
-            var sha512 = SHA512Managed.Create();
+            var sha512 = SHA512.Create();
             var bytes = Encoding.UTF8.GetBytes(inputString);
             var hash = sha512.ComputeHash(bytes);
             return GetStringFromHash(hash);
