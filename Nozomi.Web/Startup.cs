@@ -138,38 +138,38 @@ namespace Nozomi.Web
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            if (env.IsDevelopment())
+            #if DEBUG
+            app.UseDeveloperExceptionPage();
+
+            // Webpack initialization with hot-reload.
+            app.UseWebpackDevMiddleware(new WebpackDevMiddlewareOptions
             {
-                app.UseDeveloperExceptionPage();
+                HotModuleReplacement = true,
+            });
 
-                // Webpack initialization with hot-reload.
-                app.UseWebpackDevMiddleware(new WebpackDevMiddlewareOptions
+            app.UseExceptionHandler(appError =>
+            {
+                appError.Run(async context =>
                 {
-                    HotModuleReplacement = true,
-                });
+                    context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                    context.Response.ContentType = "application/json";
 
-                app.UseExceptionHandler(appError =>
-                {
-                    appError.Run(async context =>
+                    var contextFeature = context.Features.Get<IExceptionHandlerFeature>();
+                    if(contextFeature != null)
                     {
-                        context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-                        context.Response.ContentType = "application/json";
+                        Console.WriteLine($"Something went wrong: {contextFeature.Error}");
 
-                        var contextFeature = context.Features.Get<IExceptionHandlerFeature>();
-                        if(contextFeature != null)
+                        await context.Response.WriteAsync(new
                         {
-                            Console.WriteLine($"Something went wrong: {contextFeature.Error}");
-
-                            await context.Response.WriteAsync(new
-                            {
-                                StatusCode = context.Response.StatusCode,
-                                Message = "Internal Server Error."
-                            }.ToString());
-                        }
-                    });
+                            StatusCode = context.Response.StatusCode,
+                            Message = "Internal Server Error."
+                        }.ToString());
+                    }
                 });
-            }
-            else
+            });
+            #endif
+
+            if (!env.IsDevelopment())
             {
                 app.UseExceptionHandler("/Home/Error");
 
