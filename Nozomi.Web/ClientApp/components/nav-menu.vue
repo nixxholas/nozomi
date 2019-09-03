@@ -25,11 +25,14 @@
 
     <template slot="end">
       <b-navbar-item tag="div">
-        <div class="buttons">
-          <a class="button is-light" @click="login">
-            Log in
-          </a>
-        </div>
+        <b-button type="is-primary" v-if="hasWeb3" @click="login()">
+          <span>Sign in with</span>
+          <b-icon
+            icon="ethereum"
+            size="is-small">
+          </b-icon>
+        </b-button>
+        <b-button type="is-warning" v-else @click="login()">Login</b-button>
       </b-navbar-item>
     </template>
   </b-navbar>
@@ -102,16 +105,34 @@
                   console.log('Non-Ethereum browser detected. You should consider trying MetaMask!');
               }
           },
+          hasWeb3() {
+              try {
+                  return window.ethereum || window.web3;
+              } catch (e) {
+                  // User does not have a Web3-supportive Plugin/Browser.
+                  return false;
+              }
+          },
         async login() {
-          this.$buefy.notification.open({
-            duration: 5000,
-            message: `Authentication functionality is coming soon!`,
-            position: 'is-bottom-right',
-            type: 'is-warning',
-            hasIcon: true
-          });
+            if (this.hasWeb3()) {
+                this.$buefy.notification.open({
+                    duration: 5000,
+                    message: `Authentication functionality is coming soon!`,
+                    position: 'is-bottom-right',
+                    type: 'is-warning',
+                    hasIcon: true
+                });
 
-          await this.authWeb3();
+                await this.authWeb3();
+            } else {
+                this.$buefy.notification.open({
+                    duration: 5000,
+                    message: `Your browser does not support Web3!`,
+                    position: 'is-bottom-right',
+                    type: 'is-danger',
+                    hasIcon: true
+                });
+            }
         }
       }
     }
