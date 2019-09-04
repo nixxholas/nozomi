@@ -80,21 +80,20 @@
               if (window.ethereum) {
                   try {
                       window.web3 = new Web3(ethereum);
-                      await ethereum.enable();
+                      await window.ethereum.enable();
                       let accounts = await window.web3.eth.getAccounts();
-                      console.dir(accounts);
-                      let option = { from: accounts[0] };
-                      console.dir("running");
-                      let myContract = new web3.eth.Contract(abi, contractAddress);
-                      myContract.methods.RegisterInstructor('11','Ali')
-                          .send(option,function(error,result){
-                              if (!error)
-                                  console.log(result);
-                              else
-                                  console.log(error);
-                          });
+                      //let option = { from: accounts[0] };
+
+
                   } catch (error) {
                       // User denied account access...
+                      this.$buefy.notification.open({
+                          duration: 5000,
+                          message: `Your browser may not be supporting Web3 properly.`,
+                          position: 'is-bottom-right',
+                          type: 'is-danger',
+                          hasIcon: true
+                      });
                   }
               }
               // Legacy dapp browsers...
@@ -105,7 +104,13 @@
               }
               // Non-dapp browsers...
               else {
-                  console.log('Non-Ethereum browser detected. You should consider trying MetaMask!');
+                  this.$buefy.notification.open({
+                      duration: 5000,
+                      message: `Non-Ethereum browser detected. You should consider trying MetaMask!`,
+                      position: 'is-bottom-right',
+                      type: 'is-warning',
+                      hasIcon: true
+                  });
               }
           },
           hasWeb3() {
@@ -118,14 +123,6 @@
           },
         async login() {
             if (this.hasWeb3()) {
-                this.$buefy.notification.open({
-                    duration: 5000,
-                    message: `Authentication functionality is coming soon!`,
-                    position: 'is-bottom-right',
-                    type: 'is-warning',
-                    hasIcon: true
-                });
-
                 await this.authWeb3();
             } else {
                 this.$buefy.notification.open({
