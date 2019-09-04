@@ -39,7 +39,8 @@
 </template>
 
 <script>
-    import { routes } from '../router/routes'
+    import { routes } from '../router/routes';
+    import Web3 from 'web3';
 
     export default {
       data () {
@@ -80,12 +81,14 @@
                   try {
                       window.web3 = new Web3(ethereum);
                       await ethereum.enable();
-                      let accounts = await web3.eth.getAccounts();
+                      let accounts = await window.web3.eth.getAccounts();
+                      console.dir(accounts);
                       let option = { from: accounts[0] };
+                      console.dir("running");
                       let myContract = new web3.eth.Contract(abi, contractAddress);
                       myContract.methods.RegisterInstructor('11','Ali')
                           .send(option,function(error,result){
-                              if (! error)
+                              if (!error)
                                   console.log(result);
                               else
                                   console.log(error);
