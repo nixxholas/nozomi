@@ -79,9 +79,15 @@
               // Modern dapp browsers...
               if (window.ethereum) {
                   try {
+                      // Propagate Web3
                       window.web3 = new Web3(ethereum);
                       await window.ethereum.enable();
+                      window.ethereum.autoRefreshOnNetworkChange = false;
+
+                      // Obtain the user accounts
                       let accounts = await window.web3.eth.getAccounts();
+
+                      // Solid, now let's obtain all of its data
                       //let option = { from: accounts[0] };
 
 
