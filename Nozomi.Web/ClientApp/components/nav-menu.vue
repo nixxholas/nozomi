@@ -85,6 +85,7 @@
                       window.ethereum.autoRefreshOnNetworkChange = false;
 
                       // Obtain the user accounts
+                      let authMsg = 'This is a Nozomi auth message';
                       let accounts = await window.web3.eth.getAccounts();
 
                       // Ensure that the user is holding the wallet/s by asking him to unlock his
@@ -92,8 +93,11 @@
                       // https://ethereum.stackexchange.com/questions/48489/how-to-prove-that-a-user-owns-their-public-key-for-free=
                       if (accounts != null && accounts.length > 0) {
                           accounts.forEach(function (account) {
-                              console.log(account);
-                              window.web3.eth.accounts.sign(account, "Message");
+                              let shaMsg = window.web3.utils.sha3(authMsg);
+                              window.web3.eth.accounts.sign(account, shaMsg,
+                              function (err, sig) {
+                                  console.dir(sig);
+                              });
                           });
                       }
 
