@@ -90,6 +90,10 @@
                       // Solid, now let's obtain all of its data
                       //let option = { from: accounts[0] };
 
+                      // Ensure that the user is holding the wallet/s by asking him to unlock his
+                      // account with a random message.
+                      // https://ethereum.stackexchange.com/questions/48489/how-to-prove-that-a-user-owns-their-public-key-for-free=
+                      window.web3.eth.accounts.sign();
 
                   } catch (error) {
                       // User denied account access...
