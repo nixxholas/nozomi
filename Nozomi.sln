@@ -51,7 +51,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nozomi.HttpSyncing", "Nozom
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nozomi.Compute", "Nozomi.Compute\Nozomi.Compute.csproj", "{DA615BA1-1DBD-49ED-A8D2-F131083401CE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nozomi.Infra.Web3.Auth", "Nozomi.Infra.Web3.Auth\Nozomi.Infra.Web3.Auth.csproj", "{CD1B9980-2FF7-44C3-9631-DCC08A002DA4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nozomi.Infra.Blockchain.Auth", "Nozomi.Infra.Blockchain.Auth\Nozomi.Infra.Blockchain.Auth.csproj", "{CD1B9980-2FF7-44C3-9631-DCC08A002DA4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
