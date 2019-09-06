@@ -6,6 +6,11 @@
 
     <ItemGroup>
       <PackageReference Include="Nethereum.Signer" Version="3.4.0" />
+      <PackageReference Include="Nethereum.Util" Version="3.4.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Nozomi.Infra.Preprocessing\Nozomi.Infra.Preprocessing.csproj" />
     </ItemGroup>
 
 </Project>
