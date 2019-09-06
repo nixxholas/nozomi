@@ -25,14 +25,14 @@
 
     <template slot="end">
       <b-navbar-item tag="div">
-        <b-button type="is-primary" v-if="hasWeb3" @click="login()">
+        <b-button type="is-primary" v-if="hasWeb3" @click="login()" :loading="loginLoading">
           <span>Sign in with</span>
           <b-icon
             icon="ethereum"
             size="is-small">
           </b-icon>
         </b-button>
-        <b-button type="is-warning" v-else @click="login()">Login</b-button>
+        <b-button type="is-warning" v-else @click="login()" :loading="loginLoading">Login</b-button>
       </b-navbar-item>
     </template>
   </b-navbar>
@@ -46,6 +46,7 @@
       data () {
         return {
           routes,
+          loginLoading: false,
           collapsed: true
         }
       },
@@ -76,9 +77,11 @@
         toggleCollapsed: function () {
         },
           async authWeb3() {
-              // Modern dapp browsers...
-              if (window.ethereum) {
-                  try {
+              this.loginLoading = true;
+
+              try {
+                  // Modern dapp browsers...
+                  if (window.ethereum) {
                       // Propagate Web3
                       window.web3 = new Web3(ethereum);
                       await window.ethereum.enable();
@@ -94,40 +97,50 @@
                       if (accounts != null && accounts.length > 0) {
                           accounts.forEach(function (account) {
                               let shaMsg = window.web3.utils.sha3(authMsg);
-                              window.web3.eth.accounts.sign(account, shaMsg,
-                              function (err, sig) {
-                                  console.dir(sig);
-                              });
+                              let signed = window.web3.eth.accounts.sign(account, shaMsg,
+                                  function (err, sig) {
+                                      this.$buefy.notification.open({
+                                          duration: 5000,
+                                          message: `There was an error validating your account.`,
+                                          position: 'is-bottom-right',
+                                          type: 'is-danger',
+                                          hasIcon: true
+                                      });
+                                  });
+
+                              // Validate the signed object on server side and provide an auth
+
                           });
                       }
-
-                  } catch (error) {
-                      // User denied account access...
+                  }
+                  // Legacy dapp browsers...
+                  else if (window.web3) {
+                      window.web3 = new Web3(web3.currentProvider);
+                      // Acccounts always exposed
+                      web3.eth.sendTransaction({/* ... */});
+                  }
+                  // Non-dapp browsers...
+                  else {
                       this.$buefy.notification.open({
                           duration: 5000,
-                          message: `Your browser may not be supporting Web3 properly.`,
+                          message: `Non-Ethereum browser detected. You should consider trying MetaMask!`,
                           position: 'is-bottom-right',
-                          type: 'is-danger',
+                          type: 'is-warning',
                           hasIcon: true
                       });
                   }
-              }
-              // Legacy dapp browsers...
-              else if (window.web3) {
-                  window.web3 = new Web3(web3.currentProvider);
-                  // Acccounts always exposed
-                  web3.eth.sendTransaction({/* ... */});
-              }
-              // Non-dapp browsers...
-              else {
+              } catch (error) {
+                  // User denied account access...
                   this.$buefy.notification.open({
                       duration: 5000,
-                      message: `Non-Ethereum browser detected. You should consider trying MetaMask!`,
+                      message: `Your browser may not be supporting Web3 properly.`,
                       position: 'is-bottom-right',
-                      type: 'is-warning',
+                      type: 'is-danger',
                       hasIcon: true
                   });
               }
+
+              this.loginLoading = false;
           },
           hasWeb3() {
               try {
@@ -138,7 +151,7 @@
               }
           },
         async login() {
-            if (this.hasWeb3()) {
+            if (this.hasWeb3() && !this.loginLoading) {
                 await this.authWeb3();
             } else {
                 this.$buefy.notification.open({
