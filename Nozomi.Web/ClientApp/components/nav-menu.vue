@@ -108,6 +108,9 @@
                                       });
                                   });
 
+                              console.dir("User signed data: ");
+                              console.dir(signed);
+
                               // Validate the signed object on server side and provide an auth
 
                           });
