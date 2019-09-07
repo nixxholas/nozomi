@@ -41,6 +41,7 @@
 <script>
     import { routes } from '../router/routes';
     import Web3 from 'web3';
+    import axios from 'axios';
 
     export default {
       data () {
@@ -112,7 +113,20 @@
                               console.dir(signed);
 
                               // Validate the signed object on server side and provide an auth
+                              let result = axios.post('/api/auth/ethauth',
+                                  JSON.stringify({
+                                      claimerAddress: account,
+                                      signature: signed,
+                                      rawMessage: authMsg
+                                  }),
+                                  {
+                                      headers: {
+                                          "Content-type": "application/json",
+                                      }
+                                  }
+                              );
 
+                              console.dir("result: " + result);
                           });
                       }
                   }
@@ -133,6 +147,8 @@
                       });
                   }
               } catch (error) {
+                  console.dir(error);
+
                   // User denied account access...
                   this.$buefy.notification.open({
                       duration: 5000,
