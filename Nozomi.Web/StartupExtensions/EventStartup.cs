@@ -1,4 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
+using Nozomi.Infra.Blockchain.Auth.Events;
+using Nozomi.Infra.Blockchain.Auth.Events.Interfaces;
 using Nozomi.Preprocessing.Events;
 using Nozomi.Preprocessing.Events.Interfaces;
 using Nozomi.Service.Events;
@@ -17,6 +19,9 @@ namespace Nozomi.Web.StartupExtensions
         {
             services.AddTransient<IEmailSender, EmailSender>();
             services.AddTransient<ISmsSender, SmsSender>();
+
+            // Auth Events
+            services.AddScoped<IValidatingEvent, ValidatingEvent>();
 
             services.AddScoped<IAnalysedComponentEvent, AnalysedComponentEvent>();
             services.AddScoped<IAnalysedHistoricItemEvent, AnalysedHistoricItemEvent>();

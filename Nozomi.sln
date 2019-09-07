@@ -53,6 +53,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nozomi.Compute", "Nozomi.Co
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nozomi.Infra.Blockchain.Auth", "Nozomi.Infra.Blockchain.Auth\Nozomi.Infra.Blockchain.Auth.csproj", "{CD1B9980-2FF7-44C3-9631-DCC08A002DA4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nozomi.Base.Blockchain.Auth", "Nozomi.Base.Blockchain.Auth\Nozomi.Base.Blockchain.Auth.csproj", "{457A55DC-934D-4FD9-9F34-E2A510F54237}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -143,6 +145,10 @@ Global
 		{CD1B9980-2FF7-44C3-9631-DCC08A002DA4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CD1B9980-2FF7-44C3-9631-DCC08A002DA4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CD1B9980-2FF7-44C3-9631-DCC08A002DA4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{457A55DC-934D-4FD9-9F34-E2A510F54237}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{457A55DC-934D-4FD9-9F34-E2A510F54237}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{457A55DC-934D-4FD9-9F34-E2A510F54237}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{457A55DC-934D-4FD9-9F34-E2A510F54237}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{08B57962-9841-4DFA-8DC3-E95042220750} = {AE1F223F-EF2C-4237-81CE-435DCE9DF913}
@@ -166,5 +172,6 @@ Global
 		{6C7FF0F8-DD27-4055-B0CA-FD438B663EAA} = {67D06790-261E-455B-BA5C-1033C2EC4A09}
 		{DA615BA1-1DBD-49ED-A8D2-F131083401CE} = {67D06790-261E-455B-BA5C-1033C2EC4A09}
 		{CD1B9980-2FF7-44C3-9631-DCC08A002DA4} = {D54DB59C-EB6F-4CBD-9FC0-EF423F88248E}
+		{457A55DC-934D-4FD9-9F34-E2A510F54237} = {AE1F223F-EF2C-4237-81CE-435DCE9DF913}
 	EndGlobalSection
 EndGlobal
