@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Logging;
 using Nethereum.Signer;
 using Nethereum.Util;
+using Nozomi.Base.Blockchain.Auth.Query.Validating;
 using Nozomi.Infra.Blockchain.Auth.Events.Interfaces;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.BCL.Repository;
@@ -25,20 +26,21 @@ namespace Nozomi.Infra.Blockchain.Auth.Events
         /// </summary>
         /// <param name="claimerAddress"></param>
         /// <param name="signature"></param>
-        /// <param name="signedMessage"></param>
+        /// <param name="rawMessage"></param>
         /// <returns></returns>
-        public bool ValidateOwner(string claimerAddress, string signature, string rawMessage)
+        public bool ValidateOwner(ValidateOwnerQuery request)
         {
             // Null Checks
             var addrValidator = new AddressUtil();
-            if (string.IsNullOrEmpty(rawMessage) || addrValidator.IsAnEmptyAddress(claimerAddress)
-                || !addrValidator.IsValidEthereumAddressHexFormat(claimerAddress))
+            if (request == null || string.IsNullOrEmpty(request.RawMessage) || string.IsNullOrEmpty(request.Signature) 
+                || addrValidator.IsAnEmptyAddress(request.ClaimerAddress)
+                || !addrValidator.IsValidEthereumAddressHexFormat(request.ClaimerAddress))
                 return false;
             
             // Check for validity
             var signer = new EthereumMessageSigner();
-            var resultantAddr = signer.EncodeUTF8AndEcRecover(rawMessage, signature);
-            return addrValidator.IsAnEmptyAddress(resultantAddr) && resultantAddr.Equals(claimerAddress);
+            var resultantAddr = signer.EncodeUTF8AndEcRecover(request.RawMessage, request.Signature);
+            return addrValidator.IsAnEmptyAddress(resultantAddr) && resultantAddr.Equals(request.ClaimerAddress);
         }
     }
 }
