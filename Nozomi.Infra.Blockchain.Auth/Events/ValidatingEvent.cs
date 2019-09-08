@@ -1,3 +1,4 @@
+using System.Text;
 using Microsoft.Extensions.Logging;
 using Nethereum.Signer;
 using Nethereum.Util;
@@ -39,8 +40,9 @@ namespace Nozomi.Infra.Blockchain.Auth.Events
             
             // Check for validity
             var signer = new EthereumMessageSigner();
+            
             var resultantAddr = signer.EncodeUTF8AndEcRecover(request.RawMessage, request.Signature);
-            return addrValidator.IsAnEmptyAddress(resultantAddr) && resultantAddr.Equals(request.ClaimerAddress);
+            return !addrValidator.IsAnEmptyAddress(resultantAddr) && resultantAddr.Equals(request.ClaimerAddress);
         }
     }
 }
