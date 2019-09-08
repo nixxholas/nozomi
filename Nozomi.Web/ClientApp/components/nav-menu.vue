@@ -96,25 +96,23 @@
                       // account with a random message.
                       // https://ethereum.stackexchange.com/questions/48489/how-to-prove-that-a-user-owns-their-public-key-for-free=
                       if (accounts != null && accounts.length > 0) {
+                          let self = this;
+
                           // https://stackoverflow.com/questions/37576685/using-async-await-with-a-foreach-loop
                           // await Promise.all(accounts.map(async (account) => {
                           // }));
 
                           // let shaMsg = window.web3.utils.sha3(authMsg);
-                          let signed = await window.web3.eth.accounts.sign(authMsg, accounts[0],
+                          let signed = await window.web3.eth.personal.sign(authMsg, accounts[0],
                               function (err, sig) {
-                                  console.dir("Signature: " + sig);
-                                  this.$buefy.notification.open({
-                                      duration: 5000,
-                                      message: `There was an error signing the validation request.`,
+                                  self.$buefy.notification.open({
+                                      duration: 3000,
+                                      message: `Hey! Don't manipulate any authentication data!`,
                                       position: 'is-bottom-right',
                                       type: 'is-danger',
                                       hasIcon: true
                                   });
                               });
-
-                          console.dir("User signed data: ");
-                          console.dir(signed);
 
                           // Validate the signed object on server side and provide an auth
                           let result = await axios({
@@ -123,16 +121,26 @@
                               url: '/api/auth/ethauth',
                               data: {
                                   "claimerAddress": accounts[0],
-                                  "signature": signed.signature,
+                                  "signature": signed,
                                   "rawMessage": authMsg
                               }
                           }).then(function (response) {
-                              console.log(response);
+                              self.$buefy.notification.open({
+                                  duration: 3000,
+                                  message: `Logging you in, hang in there..`,
+                                  position: 'is-bottom-right',
+                                  type: 'is-success',
+                                  hasIcon: true
+                              });
                           }).catch(function (error) {
-                              console.log(error);
+                              self.$buefy.notification.open({
+                                  duration: 3000,
+                                  message: `We couldn't reach our servers for an authentication request.. Please try again!`,
+                                  position: 'is-bottom-right',
+                                  type: 'is-danger',
+                                  hasIcon: true
+                              });
                           });
-
-                          console.dir("result: " + result);
                       }
                   }
                   // Legacy dapp browsers...
