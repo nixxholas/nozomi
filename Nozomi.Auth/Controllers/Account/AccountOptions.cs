@@ -23,5 +23,8 @@ namespace Nozomi.Auth.Controllers.Account
         public static bool IncludeWindowsGroups = false;
 
         public static string InvalidCredentialsErrorMessage = "Invalid username or password";
+
+        public static string CredentialsAlreadyTaken =
+            "These credentials have been used for another account. Please try again.";
     }
 }
