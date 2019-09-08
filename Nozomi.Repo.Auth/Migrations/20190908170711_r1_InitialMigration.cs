@@ -1,10 +1,9 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
-using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
-namespace Nozomi.Repo.Identity.Migrations
+namespace Nozomi.Repo.Auth.Migrations
 {
-    public partial class r1_InitialMigrations : Migration
+    public partial class r1_InitialMigration : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -12,8 +11,7 @@ namespace Nozomi.Repo.Identity.Migrations
                 name: "Roles",
                 columns: table => new
                 {
-                    Id = table.Column<long>(nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn),
+                    Id = table.Column<string>(nullable: false),
                     Name = table.Column<string>(maxLength: 256, nullable: true),
                     NormalizedName = table.Column<string>(maxLength: 256, nullable: true),
                     ConcurrencyStamp = table.Column<string>(nullable: true)
@@ -27,8 +25,7 @@ namespace Nozomi.Repo.Identity.Migrations
                 name: "Users",
                 columns: table => new
                 {
-                    Id = table.Column<long>(nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn),
+                    Id = table.Column<string>(nullable: false, defaultValueSql: "uuid_generate_v4()"),
                     UserName = table.Column<string>(maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(maxLength: 256, nullable: true),
                     Email = table.Column<string>(maxLength: 256, nullable: true),
@@ -43,8 +40,6 @@ namespace Nozomi.Repo.Identity.Migrations
                     LockoutEnd = table.Column<DateTimeOffset>(nullable: true),
                     LockoutEnabled = table.Column<bool>(nullable: false),
                     AccessFailedCount = table.Column<int>(nullable: false),
-                    StripeCustomerId = table.Column<string>(nullable: true),
-                    StripeSourceId = table.Column<string>(nullable: true),
                     xmin = table.Column<uint>(type: "xid", nullable: false)
                 },
                 constraints: table =>
@@ -57,8 +52,8 @@ namespace Nozomi.Repo.Identity.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn),
-                    RoleId = table.Column<long>(nullable: false),
+                        .Annotation("Sqlite:Autoincrement", true),
+                    RoleId = table.Column<string>(nullable: false),
                     ClaimType = table.Column<string>(nullable: true),
                     ClaimValue = table.Column<string>(nullable: true)
                 },
@@ -74,28 +69,18 @@ namespace Nozomi.Repo.Identity.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ApiTokens",
+                name: "Addresses",
                 columns: table => new
                 {
-                    Guid = table.Column<Guid>(nullable: false, defaultValue: new Guid("8a2a6ee9-c841-4aa9-ad94-2f30851ebd27")),
-                    IsEnabled = table.Column<bool>(nullable: false),
-                    CreatedAt = table.Column<DateTime>(nullable: false),
-                    ModifiedAt = table.Column<DateTime>(nullable: false),
-                    DeletedAt = table.Column<DateTime>(nullable: true),
-                    CreatedBy = table.Column<long>(nullable: false),
-                    ModifiedBy = table.Column<long>(nullable: false),
-                    DeletedBy = table.Column<long>(nullable: false),
-                    Label = table.Column<string>(nullable: true),
-                    LastAccessed = table.Column<DateTime>(nullable: false, defaultValue: new DateTime(2019, 1, 18, 16, 17, 56, 810, DateTimeKind.Local).AddTicks(110)),
-                    Secret = table.Column<string>(nullable: false),
-                    Key = table.Column<string>(nullable: false),
-                    UserId = table.Column<long>(nullable: false)
+                    Hash = table.Column<string>(nullable: false),
+                    Type = table.Column<int>(nullable: false),
+                    UserId = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("ApiToken_PK_Guid", x => x.Guid);
+                    table.PrimaryKey("Address_CK_Hash_Type", x => new { x.Hash, x.Type });
                     table.ForeignKey(
-                        name: "FK_ApiTokens_Users_UserId",
+                        name: "FK_Addresses_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "Id",
@@ -107,8 +92,8 @@ namespace Nozomi.Repo.Identity.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn),
-                    UserId = table.Column<long>(nullable: false),
+                        .Annotation("Sqlite:Autoincrement", true),
+                    UserId = table.Column<string>(nullable: false),
                     ClaimType = table.Column<string>(nullable: true),
                     ClaimValue = table.Column<string>(nullable: true)
                 },
@@ -130,7 +115,7 @@ namespace Nozomi.Repo.Identity.Migrations
                     LoginProvider = table.Column<string>(nullable: false),
                     ProviderKey = table.Column<string>(nullable: false),
                     ProviderDisplayName = table.Column<string>(nullable: true),
-                    UserId = table.Column<long>(nullable: false)
+                    UserId = table.Column<string>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -147,8 +132,8 @@ namespace Nozomi.Repo.Identity.Migrations
                 name: "UserRoles",
                 columns: table => new
                 {
-                    UserId = table.Column<long>(nullable: false),
-                    RoleId = table.Column<long>(nullable: false)
+                    UserId = table.Column<string>(nullable: false),
+                    RoleId = table.Column<string>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -168,38 +153,10 @@ namespace Nozomi.Repo.Identity.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "UserSubscriptions",
-                columns: table => new
-                {
-                    Id = table.Column<long>(nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn),
-                    IsEnabled = table.Column<bool>(nullable: false),
-                    CreatedAt = table.Column<DateTime>(nullable: false),
-                    ModifiedAt = table.Column<DateTime>(nullable: false),
-                    DeletedAt = table.Column<DateTime>(nullable: true),
-                    CreatedBy = table.Column<long>(nullable: false),
-                    ModifiedBy = table.Column<long>(nullable: false),
-                    DeletedBy = table.Column<long>(nullable: false),
-                    SubscriptionId = table.Column<string>(nullable: true),
-                    PlanType = table.Column<int>(nullable: false, defaultValue: 0),
-                    UserId = table.Column<long>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("UserSubscription_PK_Id", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_UserSubscriptions_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "UserTokens",
                 columns: table => new
                 {
-                    UserId = table.Column<long>(nullable: false),
+                    UserId = table.Column<string>(nullable: false),
                     LoginProvider = table.Column<string>(nullable: false),
                     Name = table.Column<string>(nullable: false),
                     Value = table.Column<string>(nullable: true)
@@ -215,42 +172,10 @@ namespace Nozomi.Repo.Identity.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateTable(
-                name: "DevKeys",
-                columns: table => new
-                {
-                    Id = table.Column<long>(nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn),
-                    IsEnabled = table.Column<bool>(nullable: false),
-                    CreatedAt = table.Column<DateTime>(nullable: false, defaultValue: new DateTime(2019, 1, 18, 8, 17, 56, 814, DateTimeKind.Utc).AddTicks(9620)),
-                    ModifiedAt = table.Column<DateTime>(nullable: false, defaultValue: new DateTime(2019, 1, 18, 8, 17, 56, 815, DateTimeKind.Utc).AddTicks(70)),
-                    DeletedAt = table.Column<DateTime>(nullable: true),
-                    CreatedBy = table.Column<long>(nullable: false),
-                    ModifiedBy = table.Column<long>(nullable: false),
-                    DeletedBy = table.Column<long>(nullable: false),
-                    UserSubscriptionId = table.Column<long>(nullable: false),
-                    Key = table.Column<string>(nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("DevKey_PK_Id", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_DevKeys_UserSubscriptions_UserSubscriptionId",
-                        column: x => x.UserSubscriptionId,
-                        principalTable: "UserSubscriptions",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
             migrationBuilder.CreateIndex(
-                name: "IX_ApiTokens_UserId",
-                table: "ApiTokens",
+                name: "IX_Addresses_UserId",
+                table: "Addresses",
                 column: "UserId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_DevKeys_UserSubscriptionId",
-                table: "DevKeys",
-                column: "UserSubscriptionId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_RoleClaims_RoleId",
@@ -301,27 +226,12 @@ namespace Nozomi.Repo.Identity.Migrations
                 table: "Users",
                 column: "UserName",
                 unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "UserSubscription_Index_UserId_DeletedAt",
-                table: "UserSubscriptions",
-                columns: new[] { "UserId", "DeletedAt" },
-                unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "UserSubscription_Index_UserId_SubscriptionId",
-                table: "UserSubscriptions",
-                columns: new[] { "UserId", "SubscriptionId" },
-                unique: true);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "ApiTokens");
-
-            migrationBuilder.DropTable(
-                name: "DevKeys");
+                name: "Addresses");
 
             migrationBuilder.DropTable(
                 name: "RoleClaims");
@@ -337,9 +247,6 @@ namespace Nozomi.Repo.Identity.Migrations
 
             migrationBuilder.DropTable(
                 name: "UserTokens");
-
-            migrationBuilder.DropTable(
-                name: "UserSubscriptions");
 
             migrationBuilder.DropTable(
                 name: "Roles");
