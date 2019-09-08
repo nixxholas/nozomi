@@ -115,7 +115,7 @@
                               });
 
                           // Validate the signed object on server side and provide an auth
-                          let result = await axios({
+                          await axios({
                               method: 'post',
                               headers: { "Content-Type": "application/json"},
                               url: '/api/auth/ethauth',
