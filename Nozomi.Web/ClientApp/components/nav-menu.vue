@@ -96,38 +96,43 @@
                       // account with a random message.
                       // https://ethereum.stackexchange.com/questions/48489/how-to-prove-that-a-user-owns-their-public-key-for-free=
                       if (accounts != null && accounts.length > 0) {
-                          accounts.forEach(function (account) {
-                              let shaMsg = window.web3.utils.sha3(authMsg);
-                              let signed = window.web3.eth.accounts.sign(account, shaMsg,
-                                  function (err, sig) {
-                                      this.$buefy.notification.open({
-                                          duration: 5000,
-                                          message: `There was an error validating your account.`,
-                                          position: 'is-bottom-right',
-                                          type: 'is-danger',
-                                          hasIcon: true
-                                      });
+                          // https://stackoverflow.com/questions/37576685/using-async-await-with-a-foreach-loop
+                          // await Promise.all(accounts.map(async (account) => {
+                          // }));
+
+                          // let shaMsg = window.web3.utils.sha3(authMsg);
+                          let signed = await window.web3.eth.accounts.sign(authMsg, accounts[0],
+                              function (err, sig) {
+                                  console.dir("Signature: " + sig);
+                                  this.$buefy.notification.open({
+                                      duration: 5000,
+                                      message: `There was an error signing the validation request.`,
+                                      position: 'is-bottom-right',
+                                      type: 'is-danger',
+                                      hasIcon: true
                                   });
+                              });
 
-                              console.dir("User signed data: ");
-                              console.dir(signed);
+                          console.dir("User signed data: ");
+                          console.dir(signed);
 
-                              // Validate the signed object on server side and provide an auth
-                              let result = axios.post('/api/auth/ethauth',
-                                  JSON.stringify({
-                                      claimerAddress: account,
-                                      signature: signed,
-                                      rawMessage: authMsg
-                                  }),
-                                  {
-                                      headers: {
-                                          "Content-type": "application/json",
-                                      }
-                                  }
-                              );
-
-                              console.dir("result: " + result);
+                          // Validate the signed object on server side and provide an auth
+                          let result = await axios({
+                              method: 'post',
+                              headers: { "Content-Type": "application/json"},
+                              url: '/api/auth/ethauth',
+                              data: {
+                                  "claimerAddress": accounts[0],
+                                  "signature": signed.signature,
+                                  "rawMessage": authMsg
+                              }
+                          }).then(function (response) {
+                              console.log(response);
+                          }).catch(function (error) {
+                              console.log(error);
                           });
+
+                          console.dir("result: " + result);
                       }
                   }
                   // Legacy dapp browsers...
