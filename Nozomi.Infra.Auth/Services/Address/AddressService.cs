@@ -1,13 +1,13 @@
 using Microsoft.Extensions.Logging;
 using Nozomi.Preprocessing.Abstracts;
+using Nozomi.Repo.Auth.Data;
 using Nozomi.Repo.BCL.Repository;
-using Nozomi.Repo.Data;
 
 namespace Nozomi.Infra.Auth.Services.Address
 {
-    public class AddressService : BaseService<AddressService, NozomiDbContext>, IAddressService
+    public class AddressService : BaseService<AddressService, AuthDbContext>, IAddressService
     {
-        public AddressService(ILogger<AddressService> logger, IUnitOfWork<NozomiDbContext> unitOfWork) 
+        public AddressService(ILogger<AddressService> logger, IUnitOfWork<AuthDbContext> unitOfWork) 
             : base(logger, unitOfWork)
         {
         }
