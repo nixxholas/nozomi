@@ -10,6 +10,8 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using Nozomi.Base.Auth.Models;
 using Nozomi.Repo.Auth.Data;
+using Nozomi.Repo.BCL.Context;
+using Nozomi.Repo.BCL.Repository;
 
 namespace Nozomi.Auth
 {
@@ -81,6 +83,12 @@ namespace Nozomi.Auth
                     // options.ClientSecret = "copy client secret from Google here";
                 // })
                 ;
+            
+            // Database
+            services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+
+            services.AddTransient<IUnitOfWork<AuthDbContext>, UnitOfWork<AuthDbContext>>();
+            services.AddTransient<IDbContext, AuthDbContext>();
         }
 
         public void Configure(IApplicationBuilder app)
