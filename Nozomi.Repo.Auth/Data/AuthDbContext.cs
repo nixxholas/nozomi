@@ -1,13 +1,17 @@
 ﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Nozomi.Base.Auth.Models;
 using Nozomi.Base.Auth.Models.Wallet;
 using Nozomi.Repo.Auth.Data.Mappings;
+using Nozomi.Repo.BCL.Context;
 
 namespace Nozomi.Repo.Auth.Data
 {
-    public class AuthDbContext : IdentityDbContext<User, Role, string, UserClaim, UserRole, UserLogin, RoleClaim, UserToken>
+    public class AuthDbContext : IdentityDbContext<User, Role, string, UserClaim, UserRole, UserLogin, RoleClaim, UserToken>,
+        IDbContext
     {
         public DbSet<Address> Addresses { get; set; }
         
@@ -37,6 +41,21 @@ namespace Nozomi.Repo.Auth.Data
             var userMap = new UserMap(builder.Entity<User>());
             var userRoleMap = new UserRoleMap(builder.Entity<UserRole>());
             var userTokenMap = new UserTokenMap(builder.Entity<UserToken>());
+        }
+
+        public int SaveChanges(long userId = 0)
+        {
+            return base.SaveChanges();
+        }
+
+        public async Task<int> SaveChangesAsync(long userId, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            return await base.SaveChangesAsync(cancellationToken);
+        }
+
+        public void AddTimestamps(long userId = 0)
+        {
+            throw new NotImplementedException();
         }
     }
 }
