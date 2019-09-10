@@ -10,6 +10,7 @@ namespace Nozomi.Repo.Auth.Data.Mappings
         public AddressMap(EntityTypeBuilder<Address> entityTypeBuilder) : base(entityTypeBuilder)
         {
             entityTypeBuilder.HasKey(addr => new { addr.Hash, addr.Type }).HasName("Address_CK_Hash_Type");
+            entityTypeBuilder.HasAlternateKey(addr => addr.Id).HasName("Address_AK_Id");
             
             entityTypeBuilder.HasOne(addr => addr.User).WithMany(u => u.Addresses)
                 .HasForeignKey(addr => addr.UserId);

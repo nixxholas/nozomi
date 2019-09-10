@@ -33,6 +33,12 @@ namespace Nozomi.Repo.Auth.Data
                 .Property(u => u.Id)
                 .HasDefaultValueSql("uuid_generate_v4()");
             
+            builder
+                .HasPostgresExtension("uuid-ossp")
+                .Entity<Address>()
+                .Property(addr => addr.Id)
+                .HasDefaultValueSql("uuid_generate_v4()");
+            
             var addressMap = new AddressMap(builder.Entity<Address>());
             var roleClaimMap = new RoleClaimMap(builder.Entity<RoleClaim>());
             var roleMap = new RoleMap(builder.Entity<Role>());
