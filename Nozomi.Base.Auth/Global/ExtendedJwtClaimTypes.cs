@@ -1,7 +1,7 @@
 namespace Nozomi.Base.Auth.Global
 {
-    public class ExtendedJwtClaimTypes
+    public static class ExtendedJwtClaimTypes
     {
-        
+        public const string DefaultWallet = "default_wallet_hash";
     }
 }
