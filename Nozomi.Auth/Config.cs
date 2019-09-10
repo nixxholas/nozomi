@@ -4,6 +4,8 @@
 
 using IdentityServer4.Models;
 using System.Collections.Generic;
+using IdentityModel;
+using Nozomi.Base.Auth.Global;
 
 namespace Nozomi.Auth
 {
@@ -31,7 +33,35 @@ namespace Nozomi.Auth
         {
             return new ApiResource[]
             {
-                new ApiResource("api1", "My API #1")
+                new ApiResource()
+                {
+                    Name = "nozomiapi", 
+                    DisplayName = "Nozomi Web API",
+                    
+                    // secret for using introspection endpoint
+                    ApiSecrets =
+                    {
+                        new Secret("secret".Sha256())
+                    },
+
+                    // include the following using claims in access token (in addition to subject id)
+                    UserClaims = { JwtClaimTypes.Name, JwtClaimTypes.Email, ExtendedJwtClaimTypes.DefaultWallet },
+
+                    // this API defines two scopes
+                    Scopes =
+                    {
+                        new Scope()
+                        {
+                            Name = "nozomiapi.full_access",
+                            DisplayName = "Full access to Nozomi API",
+                        },
+                        new Scope
+                        {
+                            Name = "nozomiapi.read_only",
+                            DisplayName = "Read only access to Nozomi API"
+                        }
+                    }
+                }
             };
         }
 
