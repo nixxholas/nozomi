@@ -11,10 +11,19 @@ namespace Nozomi.Auth
     {
         public static IEnumerable<IdentityResource> GetIdentityResources()
         {
+            // Defining a custom identity resource
+            // http://docs.identityserver.io/en/latest/topics/resources.html#defining-custom-identity-resources
+            var walletAddressProfile = new IdentityResource(
+                name: "nozomi.address",
+                displayName: "Wallet address",
+                claimTypes: new[] { "walletHash" });
+            
             return new IdentityResource[]
             {
                 new IdentityResources.OpenId(),
                 new IdentityResources.Profile(),
+                new IdentityResources.Email(), 
+                walletAddressProfile
             };
         }
 
