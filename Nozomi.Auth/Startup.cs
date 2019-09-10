@@ -9,6 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using Nozomi.Base.Auth.Models;
+using Nozomi.Infra.Auth.Services.Address;
 using Nozomi.Repo.Auth.Data;
 using Nozomi.Repo.BCL.Context;
 using Nozomi.Repo.BCL.Repository;
@@ -89,6 +90,8 @@ namespace Nozomi.Auth
 
             services.AddTransient<IUnitOfWork<AuthDbContext>, UnitOfWork<AuthDbContext>>();
             services.AddTransient<IDbContext, AuthDbContext>();
+
+            services.AddTransient<IAddressService, AddressService>();
         }
 
         public void Configure(IApplicationBuilder app)
