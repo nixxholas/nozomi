@@ -90,3 +90,6 @@ fabric.properties
 
 # Webpack
 **/node_modules
+
+# Logs
+Nozomi.Auth/identityserver4_log.txt
