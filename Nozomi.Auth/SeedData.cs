@@ -6,16 +6,78 @@ using System;
 using System.Linq;
 using System.Security.Claims;
 using IdentityModel;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Nozomi.Base.Auth.Models;
 using Nozomi.Repo.Auth.Data;
 
 namespace Nozomi.Auth
 {
-    public class SeedData
+    public static class SeedData
     {
+        public static void UseAutoDbMigration(this IApplicationBuilder app, IHostingEnvironment env)
+        {
+            using (var serviceScope = app.ApplicationServices
+                .GetRequiredService<IServiceScopeFactory>()
+                .CreateScope())
+            {
+                var logger = serviceScope.ServiceProvider.GetService<ILogger<Startup>>();
+
+                using (var context = serviceScope.ServiceProvider.GetService<AuthDbContext>())
+                {
+                    // Auto wipe
+                    if (env.IsDevelopment())
+                    {
+                        context.Database.EnsureDeleted();
+                    }
+
+                    context.Database.Migrate();
+                    
+                    var userMgr = serviceScope.ServiceProvider.GetRequiredService<UserManager<User>>();
+                    var alice = userMgr.FindByNameAsync("alice").Result;
+                    if (alice == null)
+                    {
+                        alice = new User
+                        {
+                            UserName = "alice"
+                        };
+                        var result = userMgr.CreateAsync(alice, "Pass123$").Result;
+                        if (!result.Succeeded)
+                        {
+                            throw new Exception(result.Errors.First().Description);
+                        }
+
+                        result = userMgr.AddClaimsAsync(alice, new Claim[]
+                        {
+                            new Claim(JwtClaimTypes.Name, "Alice Smith"),
+                            new Claim(JwtClaimTypes.GivenName, "Alice"),
+                            new Claim(JwtClaimTypes.FamilyName, "Smith"),
+                            new Claim(JwtClaimTypes.Email, "AliceSmith@email.com"),
+                            new Claim(JwtClaimTypes.EmailVerified, "true", ClaimValueTypes.Boolean),
+                            new Claim(JwtClaimTypes.WebSite, "http://alice.com"),
+                            new Claim(JwtClaimTypes.Address,
+                                @"{ 'street_address': 'One Hacker Way', 'locality': 'Heidelberg', 'postal_code': 69118, 'country': 'Germany' }",
+                                IdentityServer4.IdentityServerConstants.ClaimValueTypes.Json)
+                        }).Result;
+                        if (!result.Succeeded)
+                        {
+                            throw new Exception(result.Errors.First().Description);
+                        }
+
+                        Console.WriteLine("alice created");
+                    }
+                    else
+                    {
+                        Console.WriteLine("alice already exists");
+                    }
+                }
+            }
+        }
+        
         public static void EnsureSeedData(string connectionString)
         {
             var services = new ServiceCollection();
