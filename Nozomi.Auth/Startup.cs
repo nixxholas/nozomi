@@ -53,7 +53,8 @@ namespace Nozomi.Auth
 
             services.AddMvc().SetCompatibilityVersion(Microsoft.AspNetCore.Mvc.CompatibilityVersion.Version_2_2);
 
-            var builder = services.AddIdentityServer(options =>
+            var builder = services
+                .AddIdentityServer(options =>
                 {
                     options.Events.RaiseErrorEvents = true;
                     options.Events.RaiseInformationEvents = true;
@@ -63,7 +64,8 @@ namespace Nozomi.Auth
                 .AddInMemoryIdentityResources(Config.GetIdentityResources())
                 .AddInMemoryApiResources(Config.GetApis())
                 .AddInMemoryClients(Config.GetClients())
-                .AddAspNetIdentity<User>();
+                .AddAspNetIdentity<User>()
+                .AddDeveloperSigningCredential();
 
             if (HostingEnvironment.IsDevelopment())
             {
@@ -105,6 +107,8 @@ namespace Nozomi.Auth
             {
                 app.UseExceptionHandler("/Home/Error");
             }
+            
+            app.UseAutoDbMigration(HostingEnvironment);
 
             app.UseStaticFiles();
             app.UseIdentityServer();
