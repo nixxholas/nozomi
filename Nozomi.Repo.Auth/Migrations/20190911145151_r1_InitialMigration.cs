@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace Nozomi.Repo.Auth.Migrations
 {
@@ -25,7 +26,7 @@ namespace Nozomi.Repo.Auth.Migrations
                 name: "Users",
                 columns: table => new
                 {
-                    Id = table.Column<string>(nullable: false, defaultValueSql: "uuid_generate_v4()"),
+                    Id = table.Column<string>(nullable: false),
                     UserName = table.Column<string>(maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(maxLength: 256, nullable: true),
                     Email = table.Column<string>(maxLength: 256, nullable: true),
@@ -52,7 +53,7 @@ namespace Nozomi.Repo.Auth.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn),
                     RoleId = table.Column<string>(nullable: false),
                     ClaimType = table.Column<string>(nullable: true),
                     ClaimValue = table.Column<string>(nullable: true)
@@ -74,11 +75,13 @@ namespace Nozomi.Repo.Auth.Migrations
                 {
                     Hash = table.Column<string>(nullable: false),
                     Type = table.Column<int>(nullable: false),
+                    Id = table.Column<string>(nullable: false),
                     UserId = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("Address_CK_Hash_Type", x => new { x.Hash, x.Type });
+                    table.UniqueConstraint("Address_AK_Id", x => x.Id);
                     table.ForeignKey(
                         name: "FK_Addresses_Users_UserId",
                         column: x => x.UserId,
@@ -92,7 +95,7 @@ namespace Nozomi.Repo.Auth.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn),
                     UserId = table.Column<string>(nullable: false),
                     ClaimType = table.Column<string>(nullable: true),
                     ClaimValue = table.Column<string>(nullable: true)

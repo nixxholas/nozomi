@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Nozomi.Repo.Auth.Data;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace Nozomi.Repo.Auth.Migrations
 {
@@ -14,8 +15,9 @@ namespace Nozomi.Repo.Auth.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("Npgsql:PostgresExtension:uuid-ossp", ",,")
-                .HasAnnotation("ProductVersion", "2.2.6-servicing-10079");
+                .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn)
+                .HasAnnotation("ProductVersion", "2.2.6-servicing-10079")
+                .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             modelBuilder.Entity("Nozomi.Base.Auth.Models.Role", b =>
                 {
@@ -62,8 +64,7 @@ namespace Nozomi.Repo.Auth.Migrations
             modelBuilder.Entity("Nozomi.Base.Auth.Models.User", b =>
                 {
                     b.Property<string>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasDefaultValueSql("uuid_generate_v4()");
+                        .ValueGeneratedOnAdd();
 
                     b.Property<int>("AccessFailedCount");
 
@@ -196,10 +197,17 @@ namespace Nozomi.Repo.Auth.Migrations
 
                     b.Property<int>("Type");
 
+                    b.Property<string>("Id")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd();
+
                     b.Property<string>("UserId");
 
                     b.HasKey("Hash", "Type")
                         .HasName("Address_CK_Hash_Type");
+
+                    b.HasAlternateKey("Id")
+                        .HasName("Address_AK_Id");
 
                     b.HasIndex("UserId");
 
