@@ -10,7 +10,8 @@ namespace Nozomi.Repo.Auth.Data.Mappings
         public UserMap(EntityTypeBuilder<User> entityTypeBuilder) : base(entityTypeBuilder)
         {
             entityTypeBuilder.HasKey(u => u.Id).HasName("User_PK_Id");
-
+            entityTypeBuilder.Property(u => u.Id).ValueGeneratedOnAdd();
+    
             entityTypeBuilder.HasIndex(u => u.UserName).IsUnique().HasName("User_Index_UserName");
             entityTypeBuilder.HasIndex(u => u.NormalizedUserName).IsUnique()
                 .HasName("User_Index_NormalizedUserName");
