@@ -77,9 +77,16 @@ namespace Nozomi.Auth
                 throw new Exception("need to configure key material");
             }
 
+            services.AddAuthorization();
+
             if (HostingEnvironment.IsDevelopment())
             {
-                services.AddAuthentication()
+                services.AddAuthentication("Bearer")
+                    .AddIdentityServerAuthentication("Bearer", opt =>
+                    {
+                        opt.Authority = "https://localhost:5001";
+                        opt.ApiName = "nozomiapi";
+                    });
                     // .AddGoogle(options =>
                     // {
                     // register your IdentityServer with Google at https://console.developers.google.com
@@ -92,8 +99,8 @@ namespace Nozomi.Auth
             }
             else
             {
-                services.AddAuthentication()
-                    .AddIdentityServerAuthentication(opt =>
+                services.AddAuthentication("Bearer")
+                    .AddIdentityServerAuthentication("Bearer", opt =>
                     {
                         opt.Authority = "https://auth.nozomi.one";
                         opt.ApiName = "nozomiapi";
