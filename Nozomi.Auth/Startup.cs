@@ -132,7 +132,10 @@ namespace Nozomi.Auth
             app.UseHttpsRedirection();
 
             app.UseStaticFiles();
+            app.UseCookiePolicy();
             app.UseIdentityServer();
+            
+            // "default", "{controller=Home}/{action=Index}/{id?}"
             app.UseMvcWithDefaultRoute();
         }
     }
