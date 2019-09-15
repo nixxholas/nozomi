@@ -41,11 +41,16 @@ namespace Nozomi.Auth
                 var str = Configuration.GetConnectionString("Local:" + Environment.MachineName);
                 services.AddDbContext<AuthDbContext>(options =>
                     options.UseNpgsql(str));
+                var coreStr = Configuration.GetConnectionString("LocalCore:" + Environment.MachineName);
+                services.AddDbContext<NozomiDbContext>(options =>
+                    options.UseNpgsql(coreStr));
             }
             else
             {
                 services.AddDbContext<AuthDbContext>(options =>
                     options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
+                services.AddDbContext<NozomiDbContext>(options =>
+                    options.UseNpgsql(Configuration.GetConnectionString("DefaultCoreConnection")));
             }
 
             services
