@@ -105,13 +105,15 @@
                           // let shaMsg = window.web3.utils.sha3(authMsg);
                           let signed = await window.web3.eth.personal.sign(authMsg, accounts[0],
                               function (err, sig) {
-                                  self.$buefy.notification.open({
-                                      duration: 3000,
-                                      message: `Hey! Don't manipulate any authentication data!`,
-                                      position: 'is-bottom-right',
-                                      type: 'is-danger',
-                                      hasIcon: true
-                                  });
+                                  if (err) {
+                                      self.$buefy.notification.open({
+                                          duration: 3000,
+                                          message: `Hey! Don't manipulate any authentication data!`,
+                                          position: 'is-bottom-right',
+                                          type: 'is-danger',
+                                          hasIcon: true
+                                      });
+                                  }
                               });
 
                           // Validate the signed object on server side and provide an auth
