@@ -15,6 +15,7 @@ using Nozomi.Infra.Blockchain.Auth.Events.Interfaces;
 using Nozomi.Repo.Auth.Data;
 using Nozomi.Repo.BCL.Context;
 using Nozomi.Repo.BCL.Repository;
+using Nozomi.Repo.Data;
 
 namespace Nozomi.Auth
 {
@@ -113,6 +114,8 @@ namespace Nozomi.Auth
 
             services.AddTransient<IUnitOfWork<AuthDbContext>, UnitOfWork<AuthDbContext>>();
             services.AddTransient<IDbContext, AuthDbContext>();
+            services.AddTransient<IUnitOfWork<NozomiDbContext>, UnitOfWork<NozomiDbContext>>();
+            services.AddTransient<IDbContext, NozomiDbContext>();
 
             services.AddScoped<IValidatingEvent, ValidatingEvent>();
             
