@@ -65,8 +65,7 @@ namespace Nozomi.Auth
                 .AddInMemoryIdentityResources(Config.GetIdentityResources())
                 .AddInMemoryApiResources(Config.GetApis())
                 .AddInMemoryClients(Config.GetClients())
-                .AddAspNetIdentity<User>()
-                .AddDeveloperSigningCredential();
+                .AddAspNetIdentity<User>();
 
             if (HostingEnvironment.IsDevelopment())
             {
