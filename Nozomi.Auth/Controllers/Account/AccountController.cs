@@ -16,35 +16,46 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Nozomi.Base.Auth.Models;
+using Nozomi.Base.Auth.Models.Wallet;
+using Nozomi.Base.Blockchain.Auth.Query.Validating;
+using Nozomi.Infra.Auth.Services.Address;
+using Nozomi.Infra.Blockchain.Auth.Events.Interfaces;
 
 namespace Nozomi.Auth.Controllers.Account
 {
     [SecurityHeaders]
     [AllowAnonymous]
-    public class AccountController : Controller
+    public class AccountController : BaseController<AccountController>
     {
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
         private readonly IIdentityServerInteractionService _interaction;
         private readonly IClientStore _clientStore;
         private readonly IAuthenticationSchemeProvider _schemeProvider;
+        private readonly IValidatingEvent _validatingEvent;
         private readonly IEventService _events;
+        private readonly IAddressService _addressService;
 
         public AccountController(
+            ILogger<AccountController> logger,
             UserManager<User> userManager,
             SignInManager<User> signInManager,
             IIdentityServerInteractionService interaction,
             IClientStore clientStore,
             IAuthenticationSchemeProvider schemeProvider,
-            IEventService events)
+            IValidatingEvent validatingEvent,
+            IEventService events, IAddressService addressService) : base(logger)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _interaction = interaction;
             _clientStore = clientStore;
             _schemeProvider = schemeProvider;
+            _validatingEvent = validatingEvent;
             _events = events;
+            _addressService = addressService;
         }
         
         //
@@ -85,7 +96,10 @@ namespace Nozomi.Auth.Controllers.Account
         public async Task<IActionResult> Web3Register([FromBody]Web3InputModel model, string returnUrl = null)
         {
             ViewData["ReturnUrl"] = returnUrl;
-            if (ModelState.IsValid)
+            if (ModelState.IsValid && _validatingEvent.ValidateOwner(new ValidateOwnerQuery
+            {
+                ClaimerAddress = model.Address, RawMessage = model.Message, Signature = model.Signature
+            }))
             {
                 var fakeUser = new Faker<User>()
                     //Basic rules using built-in generators
@@ -100,7 +114,24 @@ namespace Nozomi.Auth.Controllers.Account
                     });
 
                 var generatedFakeUser = fakeUser.Generate();
-                var user = new User { };
+                var user = new User { UserName = generatedFakeUser.UserName, Email = generatedFakeUser.Email };
+                var result = await _userManager.CreateAsync(user, model.Address);
+                var createdAddress = _addressService.Create(user.Id, model.Address, AddressType.Ethereum);
+                if (result.Succeeded && !string.IsNullOrEmpty(createdAddress))
+                {
+                    // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=532713
+                    // Send an email with this link
+//                    var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+//                    var callbackUrl = Url.Action("ConfirmEmail", "Account", 
+//                        new { userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
+//                    await _emailSender.SendEmailAsync(model.Email, "Confirm your account",
+//                        "Please confirm your account by clicking this link: <a href=\"" + callbackUrl + "\">link</a>");
+                    await _signInManager.SignInAsync(user, isPersistent: false);
+                    _logger.LogInformation(3, "User created a new account with password.");
+                    
+                    //return Redirect(model.ReturnUrl);
+                    return Ok();
+                }
             }
 
             return BadRequest(model);

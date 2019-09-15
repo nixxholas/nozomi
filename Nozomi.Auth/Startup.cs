@@ -10,6 +10,8 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using Nozomi.Base.Auth.Models;
 using Nozomi.Infra.Auth.Services.Address;
+using Nozomi.Infra.Blockchain.Auth.Events;
+using Nozomi.Infra.Blockchain.Auth.Events.Interfaces;
 using Nozomi.Repo.Auth.Data;
 using Nozomi.Repo.BCL.Context;
 using Nozomi.Repo.BCL.Repository;
@@ -112,6 +114,8 @@ namespace Nozomi.Auth
             services.AddTransient<IUnitOfWork<AuthDbContext>, UnitOfWork<AuthDbContext>>();
             services.AddTransient<IDbContext, AuthDbContext>();
 
+            services.AddScoped<IValidatingEvent, ValidatingEvent>();
+            
             services.AddTransient<IAddressService, AddressService>();
         }
 
