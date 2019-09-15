@@ -5,6 +5,7 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Bogus;
 using IdentityModel;
 using IdentityServer4.Events;
 using IdentityServer4.Extensions;
@@ -76,6 +77,32 @@ namespace Nozomi.Auth.Controllers.Account
             }
 
             // If we got this far, something failed, redisplay form
+            return BadRequest(model);
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<IActionResult> Web3Register([FromBody]Web3InputModel model, string returnUrl = null)
+        {
+            ViewData["ReturnUrl"] = returnUrl;
+            if (ModelState.IsValid)
+            {
+                var fakeUser = new Faker<User>()
+                    //Basic rules using built-in generators
+                    .RuleFor(u => u.UserName, (f, u) => f.Internet.UserName(f.Name.FirstName(), f.Name.LastName()))
+                    .RuleFor(u => u.NormalizedUserName, (f, u) => u.UserName.ToUpper())
+                    //.RuleFor(u => u.Avatar, f => f.Internet.Avatar())
+                    .RuleFor(u => u.Email, (f, u) => f.Internet.Email(f.Name.FirstName(), f.Name.LastName()))
+                    //.RuleFor(u => u.SomethingUnique, f => $"Value {f.UniqueIndex}")
+                    .FinishWith((f, u) =>
+                    {
+                        Console.WriteLine("User Created! Id={0}", u.Id);
+                    });
+
+                var generatedFakeUser = fakeUser.Generate();
+                var user = new User { };
+            }
+
             return BadRequest(model);
         }
 
