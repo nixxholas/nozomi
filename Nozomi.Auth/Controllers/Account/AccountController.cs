@@ -61,7 +61,6 @@ namespace Nozomi.Auth.Controllers.Account
         //
         // POST: /Account/Register
         [HttpPost]
-        [AllowAnonymous]
         public async Task<IActionResult> Register([FromBody]RegisterInputModel model, string returnUrl = null)
         {
             ViewData["ReturnUrl"] = returnUrl;
@@ -92,7 +91,6 @@ namespace Nozomi.Auth.Controllers.Account
         }
 
         [HttpPost]
-        [AllowAnonymous]
         public async Task<IActionResult> Web3Register([FromBody]Web3InputModel model, string returnUrl = null)
         {
             ViewData["ReturnUrl"] = returnUrl;
@@ -115,7 +113,7 @@ namespace Nozomi.Auth.Controllers.Account
 
                 var generatedFakeUser = fakeUser.Generate();
                 var user = new User { UserName = generatedFakeUser.UserName, Email = generatedFakeUser.Email };
-                var result = await _userManager.CreateAsync(user, model.Address);
+                var result = await _userManager.CreateAsync(user, model.Signature);
                 var createdAddress = _addressService.Create(user.Id, model.Address, AddressType.Ethereum);
                 if (result.Succeeded && !string.IsNullOrEmpty(createdAddress))
                 {
