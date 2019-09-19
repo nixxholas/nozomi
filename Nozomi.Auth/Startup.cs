@@ -8,6 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Security.Cryptography.X509Certificates;
+using Microsoft.IdentityModel.Tokens;
 using Nozomi.Base.Auth.Models;
 using Nozomi.Infra.Auth.Services.Address;
 using Nozomi.Infra.Blockchain.Auth.Events;
@@ -81,6 +83,7 @@ namespace Nozomi.Auth
             }
             else
             {
+                //builder.AddSigningCredential();
                 throw new Exception("need to configure key material");
             }
 
