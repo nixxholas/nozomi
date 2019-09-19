@@ -125,6 +125,7 @@ namespace Nozomi.Auth
             services.AddTransient<IUnitOfWork<NozomiDbContext>, UnitOfWork<NozomiDbContext>>();
             services.AddTransient<IDbContext, NozomiDbContext>();
 
+            services.AddScoped<IAddressEvent, AddressEvent>();
             services.AddScoped<IValidatingEvent, ValidatingEvent>();
             
             services.AddTransient<IAddressService, AddressService>();
