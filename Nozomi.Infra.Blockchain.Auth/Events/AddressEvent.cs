@@ -5,16 +5,17 @@ using Nozomi.Base.Auth.Models.Wallet;
 using Nozomi.Base.Blockchain.Auth.Query.Validating;
 using Nozomi.Infra.Blockchain.Auth.Events.Interfaces;
 using Nozomi.Preprocessing.Abstracts;
+using Nozomi.Repo.Auth.Data;
 using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Data;
 
 namespace Nozomi.Infra.Blockchain.Auth.Events
 {
-    public class AddressEvent : BaseEvent<AddressEvent, NozomiDbContext>, IAddressEvent
+    public class AddressEvent : BaseEvent<AddressEvent, AuthDbContext>, IAddressEvent
     {
         private readonly IValidatingEvent _validatingEvent;
         
-        public AddressEvent(ILogger<AddressEvent> logger, IUnitOfWork<NozomiDbContext> unitOfWork,
+        public AddressEvent(ILogger<AddressEvent> logger, IUnitOfWork<AuthDbContext> unitOfWork,
             IValidatingEvent validatingEvent) 
             : base(logger, unitOfWork)
         {
