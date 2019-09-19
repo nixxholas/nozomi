@@ -57,7 +57,13 @@ namespace Nozomi.Auth
 
             services
                 .AddEntityFrameworkNpgsql()
-                .AddIdentity<User, Role>()
+                .AddIdentity<User, Role>(options =>
+                {
+                    options.Password.RequireLowercase = false;
+                    options.Password.RequireUppercase = false;
+                    options.Password.RequireNonAlphanumeric = false;
+                    options.Password.RequireDigit = false;
+                })
                 .AddEntityFrameworkStores<AuthDbContext>()
                 .AddDefaultTokenProviders();
 
