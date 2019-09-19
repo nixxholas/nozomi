@@ -34,6 +34,7 @@ namespace Nozomi.Auth.Controllers.Account
         private readonly IIdentityServerInteractionService _interaction;
         private readonly IClientStore _clientStore;
         private readonly IAuthenticationSchemeProvider _schemeProvider;
+        private readonly IAddressEvent _addressEvent;
         private readonly IValidatingEvent _validatingEvent;
         private readonly IEventService _events;
         private readonly IAddressService _addressService;
@@ -45,6 +46,7 @@ namespace Nozomi.Auth.Controllers.Account
             IIdentityServerInteractionService interaction,
             IClientStore clientStore,
             IAuthenticationSchemeProvider schemeProvider,
+            IAddressEvent addressEvent,
             IValidatingEvent validatingEvent,
             IEventService events, IAddressService addressService) : base(logger)
         {
@@ -53,6 +55,7 @@ namespace Nozomi.Auth.Controllers.Account
             _interaction = interaction;
             _clientStore = clientStore;
             _schemeProvider = schemeProvider;
+            _addressEvent = addressEvent;
             _validatingEvent = validatingEvent;
             _events = events;
             _addressService = addressService;
@@ -239,6 +242,67 @@ namespace Nozomi.Auth.Controllers.Account
             return View(vm);
         }
 
+        /// <summary>
+        /// Handle postback from web3 login
+        /// </summary>
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Web3Login([FromBody]Web3LoginInputModel model, string returnUrl)
+        {
+            // check if we are in the context of an authorization request
+            var context = await _interaction.GetAuthorizationContextAsync(returnUrl);
+
+            if (ModelState.IsValid)
+            {
+                var addrEntity = _addressEvent.Authenticate(model.Address, model.Signature, model.Message);
+
+                if (addrEntity != null)
+                {
+                    // Sign in
+                    var user = await _userManager.FindByIdAsync(addrEntity.UserId);
+                    await _signInManager.SignInAsync(user, true);
+                    
+                    // Raise an event to say that the sign in is successful
+                    await _events.RaiseAsync(new UserLoginSuccessEvent(user.UserName, user.Id, user.UserName,
+                        clientId: context?.ClientId));
+
+                    if (context != null)
+                    {
+                        if (await _clientStore.IsPkceClientAsync(context.ClientId))
+                        {
+                            // if the client is PKCE then we assume it's native, so this change in how to
+                            // return the response is for better UX for the end user.
+                            return View("Redirect", new RedirectViewModel {RedirectUrl = returnUrl});
+                        }
+
+                        // we can trust model.ReturnUrl since GetAuthorizationContextAsync returned non-null
+                        return Redirect(returnUrl);
+                    }
+
+                    // request for a local page
+                    if (Url.IsLocalUrl(returnUrl))
+                    {
+                        return Redirect(returnUrl);
+                    }
+                    else if (string.IsNullOrEmpty(returnUrl))
+                    {
+                        return Redirect("~/");
+                    }
+                    else
+                    {
+                        // user might have clicked on a malicious link - should be logged
+                        throw new Exception("invalid return URL");
+                    }
+                }
+
+                await _events.RaiseAsync(new UserLoginFailureEvent(model.Address, "invalid credentials",
+                    clientId: context?.ClientId));
+                ModelState.AddModelError(string.Empty, AccountOptions.InvalidCredentialsErrorMessage);
+            }
+
+            // something went wrong
+            return BadRequest();
+        }
 
         /// <summary>
         /// Show logout page
