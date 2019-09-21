@@ -246,7 +246,6 @@ namespace Nozomi.Auth.Controllers.Account
         /// Handle postback from web3 login
         /// </summary>
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Web3Login([FromBody]Web3LoginInputModel model, string returnUrl)
         {
             // check if we are in the context of an authorization request
