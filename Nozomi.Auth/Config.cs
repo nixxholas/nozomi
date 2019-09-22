@@ -37,9 +37,10 @@ namespace Nozomi.Auth
         {
             return new ApiResource[]
             {
+                // Nozomi.Web
                 new ApiResource()
                 {
-                    Name = "nozomiapi", 
+                    Name = "nozomi.web", 
                     DisplayName = "Nozomi Web API",
                     
                     // secret for using introspection endpoint
@@ -49,19 +50,20 @@ namespace Nozomi.Auth
                     },
 
                     // include the following using claims in access token (in addition to subject id)
-                    UserClaims = { JwtClaimTypes.Name, JwtClaimTypes.Email, ExtendedJwtClaimTypes.DefaultWallet },
+                    UserClaims = { JwtClaimTypes.Id, JwtClaimTypes.Name, JwtClaimTypes.Email, 
+                        ExtendedJwtClaimTypes.DefaultWallet },
 
                     // this API defines two scopes
                     Scopes =
                     {
                         new Scope()
                         {
-                            Name = "nozomiapi.full_access",
+                            Name = "nozomi.web.full_access",
                             DisplayName = "Full access to Nozomi API",
                         },
                         new Scope
                         {
-                            Name = "nozomiapi.read_only",
+                            Name = "nozomi.web.read_only",
                             DisplayName = "Read only access to Nozomi API"
                         }
                     }
@@ -74,16 +76,18 @@ namespace Nozomi.Auth
             return new[]
             {
                 // client credentials flow client
-//                new Client
-//                {
-//                    ClientId = "client",
-//                    ClientName = "Client Credentials Client",
-//
-//                    AllowedGrantTypes = GrantTypes.ClientCredentials,
-//                    ClientSecrets = {new Secret("511536EF-F270-4058-80CA-1C89C192F69A".Sha256())},
-//
-//                    AllowedScopes = {"api1"}
-//                },
+                new Client
+                {
+                    ClientId = "client",
+                    ClientName = "Nozomi Client Credentials Client",
+
+                    AllowedGrantTypes = GrantTypes.ClientCredentials,
+                    ClientSecrets = {new Secret("511536EF-F270-4058-80CA-1C89C192F69A".Sha256())},
+
+                    AllowedScopes = {
+                        "nozomi.web.read_only"
+                    }
+                },
 
                 // MVC client using hybrid flow
 //                new Client
@@ -146,7 +150,7 @@ namespace Nozomi.Auth
                         IdentityServerConstants.StandardScopes.Profile,
                         IdentityServerConstants.StandardScopes.Email,
 
-                        "nozomiapi.read_only"
+                        "nozomi.web.read_only"
                     }
                 }
             };

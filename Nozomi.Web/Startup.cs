@@ -1,6 +1,8 @@
 using System;
 using System.Net;
 using System.Security.Cryptography.X509Certificates;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
@@ -121,6 +123,21 @@ namespace Nozomi.Web
             // Add framework services.
             services.AddMvc()
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+
+            services.AddAuthentication()
+                .AddJwtBearer(options =>
+                {
+                    options.Audience = "auth.web.api";
+                    options.Authority = "https://localhost:44364";
+                });
+
+            services.AddAuthorization(options =>
+            {
+                options.DefaultPolicy =
+                    new AuthorizationPolicyBuilder(JwtBearerDefaults.AuthenticationScheme)
+                        .RequireAuthenticatedUser()
+                        .Build();
+            });
 
             // UoW-Repository injection
             services.ConfigureRepoLayer();
