@@ -91,23 +91,20 @@ namespace Nozomi.Auth
                 },
                 new Client
                 {
-                    ClientId = "nozweb",
-                    ClientName = "Nozomi Web Client",
+                    ClientId = "nozomi.vue",
+                    ClientName = "Nozomi Web Vue Client",
                     ClientUri = "https://nozomi.one",
+                    ClientSecrets = {new Secret("secret".Sha256())},
 
-                    AllowedGrantTypes = GrantTypes.Implicit,
+                    AllowedGrantTypes = GrantTypes.ResourceOwnerPassword,
                     AllowAccessTokensViaBrowser = true,
 
-                    RedirectUris =           { "http://localhost:5001/index.html" },
-                    PostLogoutRedirectUris = { "http://localhost:5001/index.html" },
-                    AllowedCorsOrigins =     { "http://localhost:5001" },
+                    RedirectUris =           { "http://localhost:5001/index.html", "https://nozomi.one/index.html" },
+                    PostLogoutRedirectUris = { "http://localhost:5001/index.html", "https://nozomi.one/index.html" },
+                    AllowedCorsOrigins =     { "https://localhost:5001", "https://nozomi.one" },
 
                     AllowedScopes =
                     {
-                        IdentityServerConstants.StandardScopes.OpenId,
-                        IdentityServerConstants.StandardScopes.Profile,
-                        IdentityServerConstants.StandardScopes.Email,
-
                         "nozomi.web.read_only"
                     }
                 },
