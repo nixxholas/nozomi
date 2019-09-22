@@ -93,35 +93,24 @@ namespace Nozomi.Auth
                 throw new Exception("need to configure key material");
             }
 
-            services.AddAuthorization();
-
-            if (HostingEnvironment.IsDevelopment())
-            {
-                services.AddAuthentication("Bearer")
-                    .AddIdentityServerAuthentication("Bearer", opt =>
-                    {
-                        opt.Authority = "https://localhost:5001";
-                        opt.ApiName = "nozomiapi";
-                    });
-                    // .AddGoogle(options =>
-                    // {
-                    // register your IdentityServer with Google at https://console.developers.google.com
-                    // enable the Google+ API
-                    // set the redirect URI to http://localhost:5000/signin-google
-                    // options.ClientId = "copy client ID from Google here";
-                    // options.ClientSecret = "copy client secret from Google here";
-                    // })
-                    ;
-            }
-            else
-            {
-                services.AddAuthentication("Bearer")
-                    .AddIdentityServerAuthentication("Bearer", opt =>
-                    {
-                        opt.Authority = "https://auth.nozomi.one";
-                        opt.ApiName = "nozomiapi";
-                    });
-            }
+//            if (HostingEnvironment.IsDevelopment())
+//            {
+//                services.AddAuthentication()
+//                    .AddIdentityServerAuthentication(opt =>
+//                    {
+//                        opt.Authority = "https://localhost:6001";
+//                        opt.ApiName = "nozomiapi";
+//                    });
+//            }
+//            else
+//            {
+//                services.AddAuthentication()
+//                    .AddIdentityServerAuthentication(opt =>
+//                    {
+//                        opt.Authority = "https://auth.nozomi.one";
+//                        opt.ApiName = "nozomiapi";
+//                    });
+//            }
 
             // Database
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));

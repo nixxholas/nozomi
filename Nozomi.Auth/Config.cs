@@ -78,13 +78,36 @@ namespace Nozomi.Auth
                 // client credentials flow client
                 new Client
                 {
-                    ClientId = "client",
+                    ClientId = "nozomi.web",
                     ClientName = "Nozomi Client Credentials Client",
 
                     AllowedGrantTypes = GrantTypes.ClientCredentials,
                     ClientSecrets = {new Secret("511536EF-F270-4058-80CA-1C89C192F69A".Sha256())},
 
                     AllowedScopes = {
+                        "nozomi.web.read_only",
+                        "nozomi.web.full_access"
+                    }
+                },
+                new Client
+                {
+                    ClientId = "nozweb",
+                    ClientName = "Nozomi Web Client",
+                    ClientUri = "https://nozomi.one",
+
+                    AllowedGrantTypes = GrantTypes.Implicit,
+                    AllowAccessTokensViaBrowser = true,
+
+                    RedirectUris =           { "http://localhost:5001/index.html" },
+                    PostLogoutRedirectUris = { "http://localhost:5001/index.html" },
+                    AllowedCorsOrigins =     { "http://localhost:5001" },
+
+                    AllowedScopes =
+                    {
+                        IdentityServerConstants.StandardScopes.OpenId,
+                        IdentityServerConstants.StandardScopes.Profile,
+                        IdentityServerConstants.StandardScopes.Email,
+
                         "nozomi.web.read_only"
                     }
                 },
@@ -109,9 +132,9 @@ namespace Nozomi.Auth
                 // SPA client using code flow + pkce
 //                new Client
 //                {
-//                    ClientId = "spa",
-//                    ClientName = "SPA Client",
-//                    ClientUri = "http://identityserver.io",
+//                    ClientId = "nozomi.spa",
+//                    ClientName = "Nozomi SPA Client",
+//                    ClientUri = "https://nozomi.one",
 //
 //                    AllowedGrantTypes = GrantTypes.Code,
 //                    RequirePkce = true,
@@ -130,29 +153,6 @@ namespace Nozomi.Auth
 //
 //                    AllowedScopes = {"openid", "profile", "api1"}
 //                }
-
-                new Client
-                {
-                    ClientId = "nozweb",
-                    ClientName = "Nozomi Web Client",
-                    ClientUri = "https://nozomi.one",
-
-                    AllowedGrantTypes = GrantTypes.Implicit,
-                    AllowAccessTokensViaBrowser = true,
-
-                    RedirectUris =           { "http://localhost:5001/index.html" },
-                    PostLogoutRedirectUris = { "http://localhost:5001/index.html" },
-                    AllowedCorsOrigins =     { "http://localhost:5001" },
-
-                    AllowedScopes =
-                    {
-                        IdentityServerConstants.StandardScopes.OpenId,
-                        IdentityServerConstants.StandardScopes.Profile,
-                        IdentityServerConstants.StandardScopes.Email,
-
-                        "nozomi.web.read_only"
-                    }
-                }
             };
         }
             

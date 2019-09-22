@@ -127,8 +127,8 @@ namespace Nozomi.Web
             services.AddAuthentication()
                 .AddJwtBearer(options =>
                 {
-                    options.Audience = "auth.web.api";
-                    options.Authority = "https://localhost:44364";
+                    options.Audience = "nozomi.web.api";
+                    options.Authority = "https://localhost:6001";
                 });
 
             services.AddAuthorization(options =>
@@ -195,6 +195,7 @@ namespace Nozomi.Web
             }
 
             app.UseHttpsRedirection();
+            app.UseAuthentication();
             app.UseStaticFiles();
 
             // Enable middleware to serve generated Swagger as a JSON endpoint.
