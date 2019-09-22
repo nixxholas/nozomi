@@ -96,17 +96,21 @@ namespace Nozomi.Auth
                     ClientUri = "https://nozomi.one",
                     RequireClientSecret = false, // We don't really need this
 
-                    AllowedGrantTypes = GrantTypes.ResourceOwnerPassword,
+                    AllowedGrantTypes = GrantTypes.Hybrid,
                     AllowAccessTokensViaBrowser = true,
 
-                    RedirectUris =           { "http://localhost:5001/index.html", "https://nozomi.one/index.html" },
-                    PostLogoutRedirectUris = { "http://localhost:5001/index.html", "https://nozomi.one/index.html" },
+                    RedirectUris =           { "http://localhost:5001/signin-oidc", "https://nozomi.one/signin-oidc" },
+                    PostLogoutRedirectUris = { "http://localhost:5001/signout-callback-oidc", 
+                        "https://nozomi.one/signout-callback-oidc" },
                     AllowedCorsOrigins =     { "https://localhost:5001", "https://nozomi.one" },
 
                     AllowedScopes =
                     {
+                        IdentityServerConstants.StandardScopes.OpenId,
+                        IdentityServerConstants.StandardScopes.Profile,
                         "nozomi.web.read_only"
-                    }
+                    },
+                    AllowOfflineAccess = true // Refresh tokens activated
                 },
 
                 // MVC client using hybrid flow
