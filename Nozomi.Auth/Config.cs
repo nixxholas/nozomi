@@ -94,7 +94,7 @@ namespace Nozomi.Auth
                     ClientId = "nozomi.vue",
                     ClientName = "Nozomi Web Vue Client",
                     ClientUri = "https://nozomi.one",
-                    ClientSecrets = {new Secret("secret".Sha256())},
+                    RequireClientSecret = false, // We don't really need this
 
                     AllowedGrantTypes = GrantTypes.ResourceOwnerPassword,
                     AllowAccessTokensViaBrowser = true,
