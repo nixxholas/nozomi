@@ -1,17 +1,27 @@
 {
+  "Kestrel": {
+    "EndPoints": {
+      "Http": {
+        "Url": "http://localhost:6000"
+      },
+      "Https": {
+        "Url": "https://localhost:6001"
+      }
+    }
+  },
   "iisSettings": {
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
     "iisExpress": {
-      "applicationUrl": "http://localhost:5000",
-      "sslPort": 0
+      "applicationUrl": "http://localhost:6000",
+      "sslPort": 6001
     }
   },
   "profiles": {
     "IIS Express": {
       "commandName": "IISExpress",
       "launchBrowser": true,
-      "launchUrl": "http://localhost:5000",
+      "launchUrl": "http://localhost:6000",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
@@ -22,7 +32,7 @@
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
-      "applicationUrl": "http://localhost:5000"
+      "applicationUrl": "https://localhost:6001;http://localhost:6000"
     }
   }
 }
