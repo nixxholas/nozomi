@@ -8,6 +8,8 @@ using Nozomi.Service.Identity.Managers;
 
 namespace Nozomi.Web.Controllers.APIs.v1
 {
+    [Area("api")]
+    [ApiController]
     [Route("api/[controller]/[action]")]
     [ApiVersion(GlobalApiVariables.V1_MAJOR_VERSION, Deprecated = false)]
     public class BaseApiController<T> : Controller where T : class
