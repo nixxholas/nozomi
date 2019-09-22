@@ -127,7 +127,7 @@ namespace Nozomi.Web
             services.AddAuthentication()
                 .AddJwtBearer(options =>
                 {
-                    options.Audience = "nozomi.web.api";
+                    options.Audience = "nozomi.web";
                     options.Authority = "https://localhost:6001";
                 });
 
