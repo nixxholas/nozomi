@@ -37,6 +37,7 @@ namespace Nozomi.Infra.Auth.Services.Address
             };
             
             _unitOfWork.GetRepository<Base.Auth.Models.Wallet.Address>().Add(addr);
+            _unitOfWork.Commit();
 
             return addr.Id;
         }
