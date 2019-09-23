@@ -94,10 +94,10 @@ namespace Nozomi.Auth
                     ClientId = "nozomi.vue",
                     ClientName = "Nozomi Web Vue Client",
                     ClientUri = "https://nozomi.one",
-                    RequireClientSecret = false, // We don't really need this
 
                     AllowedGrantTypes = GrantTypes.Hybrid,
                     AllowAccessTokensViaBrowser = true,
+                    ClientSecrets = {new Secret("super-secret".Sha256())},
 
                     RedirectUris =           { "http://localhost:5001/signin-oidc", "https://nozomi.one/signin-oidc" },
                     PostLogoutRedirectUris = { "http://localhost:5001/signout-callback-oidc", 
