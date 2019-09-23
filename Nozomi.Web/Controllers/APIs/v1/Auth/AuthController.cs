@@ -2,6 +2,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -24,6 +25,7 @@ namespace Nozomi.Web.Controllers.APIs.v1.Auth
             _validatingEvent = validatingEvent;
         }
 
+        [Authorize]
         [HttpGet]
         public async Task<object> CallApi()
         {
