@@ -18,9 +18,8 @@ namespace Nozomi.Web.Controllers.APIs.v1.Auth
     {
         private readonly IValidatingEvent _validatingEvent;
 
-        public AuthController(ILogger<AuthController> logger, UserManager<User> userManager,
-            IValidatingEvent validatingEvent)
-            : base(logger, userManager)
+        public AuthController(ILogger<AuthController> logger, IValidatingEvent validatingEvent)
+            : base(logger)
         {
             _validatingEvent = validatingEvent;
         }

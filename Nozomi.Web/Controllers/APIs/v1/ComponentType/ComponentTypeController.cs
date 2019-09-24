@@ -13,8 +13,8 @@ namespace Nozomi.Web.Controllers.APIs.v1.ComponentType
     {
         private readonly IComponentTypeEvent _componentTypeEvent;
 
-        public ComponentTypeController(ILogger<ComponentTypeController> logger, UserManager<User> userManager,
-            IComponentTypeEvent componentTypeEvent) : base(logger, userManager)
+        public ComponentTypeController(ILogger<ComponentTypeController> logger,
+            IComponentTypeEvent componentTypeEvent) : base(logger)
         {
             _componentTypeEvent = componentTypeEvent;
         }

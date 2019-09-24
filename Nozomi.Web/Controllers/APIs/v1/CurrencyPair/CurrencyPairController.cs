@@ -17,9 +17,9 @@ namespace Nozomi.Web.Controllers.APIs.v1.CurrencyPair
         private readonly ICurrencyPairEvent _currencyPairEvent;
         private readonly ITickerEvent _tickerEvent;
 
-        public CurrencyPairController(UserManager<User> userManager, ICurrencyPairEvent currencyPairEvent,
+        public CurrencyPairController(ICurrencyPairEvent currencyPairEvent,
             ITickerEvent tickerEvent, ILogger<CurrencyPairController> logger)
-            : base(logger, userManager)
+            : base(logger)
         {
             _currencyPairEvent = currencyPairEvent;
             _tickerEvent = tickerEvent;

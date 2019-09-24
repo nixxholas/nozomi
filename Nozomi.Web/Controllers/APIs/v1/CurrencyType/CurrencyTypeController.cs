@@ -18,9 +18,9 @@ namespace Nozomi.Web.Controllers.APIs.v1.CurrencyType
     {
         private readonly IAnalysedComponentEvent _analysedComponentEvent;
 
-        public CurrencyTypeController(ILogger<CurrencyTypeController> logger, UserManager<User> userManager,
+        public CurrencyTypeController(ILogger<CurrencyTypeController> logger,
             IAnalysedComponentEvent analysedComponentEvent)
-            : base(logger, userManager)
+            : base(logger)
         {
             _analysedComponentEvent = analysedComponentEvent;
         }

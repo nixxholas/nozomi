@@ -16,9 +16,9 @@ namespace Nozomi.Web.Controllers.APIs.v1.Source
     {
         private readonly ISourceEvent _sourceEvent;
 
-        public SourceController(ILogger<SourceController> logger, UserManager<User> userManager,
+        public SourceController(ILogger<SourceController> logger,
             ISourceEvent sourceEvent)
-            : base(logger, userManager)
+            : base(logger)
         {
             _sourceEvent = sourceEvent;
         }

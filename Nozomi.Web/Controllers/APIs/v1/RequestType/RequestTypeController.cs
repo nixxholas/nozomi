@@ -13,8 +13,8 @@ namespace Nozomi.Web.Controllers.APIs.v1.RequestType
     {
         private readonly IRequestTypeEvent _requestTypeEvent;
 
-        public RequestTypeController(ILogger<RequestTypeController> logger, UserManager<User> userManager,
-            IRequestTypeEvent requestTypeEvent) : base(logger, userManager)
+        public RequestTypeController(ILogger<RequestTypeController> logger,
+            IRequestTypeEvent requestTypeEvent) : base(logger)
         {
             _requestTypeEvent = requestTypeEvent;
         }

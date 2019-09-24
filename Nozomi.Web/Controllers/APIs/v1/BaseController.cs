@@ -14,18 +14,11 @@ namespace Nozomi.Web.Controllers.APIs.v1
     [ApiVersion(GlobalApiVariables.V1_MAJOR_VERSION, Deprecated = false)]
     public class BaseApiController<T> : Controller where T : class
     {
-        private readonly UserManager<User> _userManager;
         protected readonly ILogger<T> _logger;
 
-        public BaseApiController(ILogger<T> logger, UserManager<User> userManager)
+        public BaseApiController(ILogger<T> logger)
         {
             _logger = logger;
-            _userManager = userManager;
-        }
-
-        protected Task<User> GetCurrentUserAsync()
-        {
-            return _userManager.GetUserAsync(HttpContext.User);
         }
     }
 }

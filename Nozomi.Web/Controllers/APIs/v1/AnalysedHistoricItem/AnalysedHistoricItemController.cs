@@ -16,8 +16,8 @@ namespace Nozomi.Web.Controllers.APIs.v1.AnalysedHistoricItem
         private readonly IAnalysedHistoricItemEvent _analysedHistoricItemEvent;
 
         public AnalysedHistoricItemController(ILogger<AnalysedHistoricItemController> logger,
-            UserManager<User> userManager, IAnalysedHistoricItemEvent analysedHistoricItemEvent)
-            : base(logger, userManager)
+            IAnalysedHistoricItemEvent analysedHistoricItemEvent)
+            : base(logger)
         {
             _analysedHistoricItemEvent = analysedHistoricItemEvent;
         }

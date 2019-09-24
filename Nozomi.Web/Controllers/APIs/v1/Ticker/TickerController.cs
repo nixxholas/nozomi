@@ -16,8 +16,8 @@ namespace Nozomi.Web.Controllers.APIs.v1.Ticker
     {
         private readonly ITickerEvent _tickerEvent;
 
-        public TickerController(ILogger<TickerController> logger, UserManager<User> userManager,
-            ITickerEvent tickerEvent) : base(logger, userManager)
+        public TickerController(ILogger<TickerController> logger,
+            ITickerEvent tickerEvent) : base(logger)
         {
             _tickerEvent = tickerEvent;
         }
