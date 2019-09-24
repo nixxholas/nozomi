@@ -1,5 +1,7 @@
 using System;
+using System.IdentityModel.Tokens.Jwt;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
@@ -11,43 +13,54 @@ namespace Nozomi.Web.StartupExtensions
 {
     public static class StartupIdentity
     {
-        public static void ConfigureNozomiAuth(this IServiceCollection services)
+        public static void ConfigureNozomiAuth(this IServiceCollection services, string env)
         {
-            services.AddIdentity<User, Role>()
-                .AddEntityFrameworkStores<NozomiAuthContext>()
-                .AddUserManager<UserManager<User>>()
-                .AddSignInManager<SignInManager<User>>()
-                .AddDefaultTokenProviders();
+            // Turn off the JWT claim type mapping to allow well-known claims (e.g. ‘sub’ and ‘idp’) to flow through unmolested
+            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 
-            services.ConfigureApplicationCookie(options =>
-            {
-                options.Cookie.Name = "NozomiCookie";
-                options.Cookie.HttpOnly = false;
-                options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
-                options.LoginPath = "/account/login";
-                options.LogoutPath = "/account/logout";
-                options.AccessDeniedPath = "/account/accessDenied";
-                // ReturnUrlParameter requires
-                //using Microsoft.AspNetCore.Authentication.Cookies;
-                options.ReturnUrlParameter = CookieAuthenticationDefaults.ReturnUrlParameter;
-                options.SlidingExpiration = true;
-            });
+            services.AddAuthentication(options =>
+                {
+                    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                    options.DefaultChallengeScheme = "oidc";
+                })
+                .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
+                {
+                    options.SlidingExpiration = false;
+                    options.ExpireTimeSpan = TimeSpan.FromHours(2);
+                })
+//                .AddJwtBearer(options =>
+//                {
+//                    options.Audience = "nozomi.web";
+//                    options.Authority = "https://localhost:6001";
+//                })
+                .AddOpenIdConnect("oidc", options =>
+                {
+                    options.SignInScheme = "Cookies";
 
-            services.Configure<IdentityOptions>(options =>
-            {
-                // Password settings.
-                options.Password.RequireDigit = true;
-                options.Password.RequireLowercase = true;
-                options.Password.RequireNonAlphanumeric = true;
-                options.Password.RequireUppercase = true;
-                options.Password.RequiredLength = 6;
-                options.Password.RequiredUniqueChars = 1;
+                    if (env.Equals("production", StringComparison.OrdinalIgnoreCase))
+                    {
+                        options.Authority = "https://auth.nozomi.one";
+                        options.RequireHttpsMetadata = true;
+                    }
+                    else // Even if it is null, just do localhost..
+                    {
+                        options.Authority = "https://localhost:6001";
+                        options.RequireHttpsMetadata = true;
+                    }
 
-                // User settings.
-                options.User.AllowedUserNameCharacters =
-                    "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-                options.User.RequireUniqueEmail = true;
-            });
+                    options.CallbackPath = "/auth-oidc";
+
+                    options.ClientId = "nozomi.vue";
+                    //options.ClientSecret = "super-secret";
+                    options.ResponseType = "code id_token";
+
+                    options.SaveTokens = true;
+                    options.GetClaimsFromUserInfoEndpoint = true;
+
+                    options.Scope.Add("nozomi.web.read_only");
+                    options.Scope.Add("offline_access");
+                    //options.ClaimActions.MapJsonKey("website", "website");
+                });
         }
     }
 }

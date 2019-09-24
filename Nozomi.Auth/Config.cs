@@ -93,24 +93,25 @@ namespace Nozomi.Auth
                 {
                     ClientId = "nozomi.vue",
                     ClientName = "Nozomi Web Vue Client",
-                    ClientUri = "https://nozomi.one",
+                    //ClientUri = "https://nozomi.one",
 
                     AllowedGrantTypes = GrantTypes.Hybrid,
-                    AllowAccessTokensViaBrowser = true,
-                    ClientSecrets = {new Secret("super-secret".Sha256())},
+                    //AllowAccessTokensViaBrowser = true,
+                    //ClientSecrets = {new Secret("super-secret".Sha256())},
 
-                    RedirectUris =           { "http://localhost:5001/signin-oidc", "https://nozomi.one/signin-oidc" },
-                    PostLogoutRedirectUris = { "http://localhost:5001/signout-callback-oidc", 
-                        "https://nozomi.one/signout-callback-oidc" },
-                    AllowedCorsOrigins =     { "https://localhost:5001", "https://nozomi.one" },
+                    // where to redirect to after login
+                    RedirectUris = { "http://localhost:5000/auth-oidc", "https://localhost:5001/auth-oidc" },
 
+                    // where to redirect to after logout
+                    PostLogoutRedirectUris = { "http://localhost:5000/signout-callback-oidc", "https://localhost:5001/signout-callback-oidc" },
+                    
                     AllowedScopes =
                     {
                         IdentityServerConstants.StandardScopes.OpenId,
                         IdentityServerConstants.StandardScopes.Profile,
                         "nozomi.web.read_only"
                     },
-                    AllowOfflineAccess = true // Refresh tokens activated
+                    //AllowOfflineAccess = true // Refresh tokens activated
                 },
 
                 // MVC client using hybrid flow
