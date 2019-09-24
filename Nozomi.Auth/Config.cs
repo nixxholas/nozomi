@@ -97,13 +97,16 @@ namespace Nozomi.Auth
 
                     AllowedGrantTypes = GrantTypes.Hybrid,
                     //AllowAccessTokensViaBrowser = true,
-                    //ClientSecrets = {new Secret("super-secret".Sha256())},
+                    ClientSecrets = {new Secret("super-secret".Sha256())}, // Hybrid requires a secret
 
                     // where to redirect to after login
-                    RedirectUris = { "http://localhost:5000/auth-oidc", "https://localhost:5001/auth-oidc" },
+                    RedirectUris = { "https://localhost:5001/auth-oidc" },
 
                     // where to redirect to after logout
-                    PostLogoutRedirectUris = { "http://localhost:5000/signout-callback-oidc", "https://localhost:5001/signout-callback-oidc" },
+                    PostLogoutRedirectUris = { "https://localhost:5001/signout-callback-oidc" },
+                    
+                    // Fuxk consent
+                    RequireConsent = false,
                     
                     AllowedScopes =
                     {
@@ -111,7 +114,7 @@ namespace Nozomi.Auth
                         IdentityServerConstants.StandardScopes.Profile,
                         "nozomi.web.read_only"
                     },
-                    //AllowOfflineAccess = true // Refresh tokens activated
+                    AllowOfflineAccess = true // Refresh tokens activated
                 },
 
                 // MVC client using hybrid flow

@@ -51,7 +51,7 @@ namespace Nozomi.Web.StartupExtensions
                     options.CallbackPath = "/auth-oidc";
 
                     options.ClientId = "nozomi.vue";
-                    //options.ClientSecret = "super-secret";
+                    options.ClientSecret = "super-secret";
                     options.ResponseType = "code id_token";
 
                     options.SaveTokens = true;
