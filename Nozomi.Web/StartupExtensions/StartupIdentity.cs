@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Logging;
 using Nozomi.Base.Identity.Models.Identity;
 using Nozomi.Repo.Identity.Data;
 using Nozomi.Service.Identity.Managers;
@@ -17,6 +18,9 @@ namespace Nozomi.Web.StartupExtensions
         {
             // Turn off the JWT claim type mapping to allow well-known claims (e.g. ‘sub’ and ‘idp’) to flow through unmolested
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
+
+            if (!env.Equals("production", StringComparison.OrdinalIgnoreCase))
+                IdentityModelEventSource.ShowPII = true;
 
             services.AddAuthentication(options =>
                 {
