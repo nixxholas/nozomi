@@ -2,6 +2,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -29,13 +30,24 @@ namespace Nozomi.Web.Controllers.APIs.v1.Auth
         public async Task<object> CallApi()
         {
             var accessToken = await HttpContext.GetTokenAsync("access_token");
+            var idtok = await HttpContext.GetTokenAsync("id_token");
+            var cookies = HttpContext.Request.Cookies;
 
             var client = new HttpClient();
+            //client.SetToken(CookieAuthenticationDefaults.AuthenticationScheme, accessToken);
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-            var content = await client.GetStringAsync("http://localhost:6001/identity");
+            var res = await client.GetStringAsync("https://localhost:6001/connect/userinfo");
+            //var content = await res.RequestMessage.Content.ReadAsStringAsync();
 
-            ViewBag.Json = JArray.Parse(content).ToString();
-            return Ok(JArray.Parse(content).ToString());
+            ViewBag.Json = JToken.Parse(res).ToString();
+            return Ok(JToken.Parse(res).ToString());
+        }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<object> SignOut()
+        {
+            return SignOut(CookieAuthenticationDefaults.AuthenticationScheme);
         }
 
         /// <summary>
