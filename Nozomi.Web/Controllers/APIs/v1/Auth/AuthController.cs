@@ -47,6 +47,7 @@ namespace Nozomi.Web.Controllers.APIs.v1.Auth
         [HttpGet]
         public async Task<object> SignOut()
         {
+            await HttpContext.SignOutAsync();
             return SignOut(CookieAuthenticationDefaults.AuthenticationScheme);
         }
 
