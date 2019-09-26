@@ -116,6 +116,19 @@ namespace Nozomi.Auth
                     },
                     AllowOfflineAccess = true // Refresh tokens activated
                 },
+                new Client {
+                    ClientId = "nozomi.spa",
+                    ClientName = "Nozomi Vue SPA",
+                    
+                    AllowAccessTokensViaBrowser = true,
+                    AllowedGrantTypes = GrantTypes.Implicit,
+                    
+                    AllowedScopes = { "openid", "profile", "email", "nozomi.web.read_only" },
+                    RedirectUris = {"https://localhost:5001/auth-callback"},
+                    PostLogoutRedirectUris = {"https://localhost:5001/"},
+                    AllowedCorsOrigins = {"https://localhost:5001"},
+                    AccessTokenLifetime = 3600
+                }
 
                 // MVC client using hybrid flow
 //                new Client
