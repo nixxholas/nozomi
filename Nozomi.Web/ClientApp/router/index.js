@@ -1,29 +1,30 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+import store from '../store/index';
 import { routes } from './routes'
-
-Vue.use(VueRouter);
 
 let router = new VueRouter({
   mode: 'history',
   routes
-})
-// Before each route is accessed,
-.beforeEach(async (to, from, next) => {
-  let app = router.app.$data || {isAuthenticated: false} ;
-  if (app.isAuthenticated) {
-    // already signed in, we can navigate anywhere
-    next()
-  } else if (to.matched.some(record => record.meta.requiresAuth)) {
-    // authentication is required. Trigger the sign in process, including the return URI
-    router.app.authenticate(to.path).then(() => {
-      console.log('authenticating a protected url:' + to.path);
-      next();
-    });
-  } else {
-    //No auth required. We can navigate
-    next()
-  }
 });
+
+// This shouldn't be together with the router's initialisation
+// https://router.vuejs.org/guide/advanced/navigation-guards.html#in-component-guard
+// Before each route is accessed,
+router.beforeEach((to, from, next) => {
+    console.dir(to);
+    console.dir(from);
+    if(to.matched.some(record => record.meta.requiresAuth)) {
+      if (store.getters.isLoggedIn) {
+        next();
+        return
+      }
+      next('/login')
+    } else {
+      next()
+    }
+  });
+
+Vue.use(VueRouter);
 
 export default router
