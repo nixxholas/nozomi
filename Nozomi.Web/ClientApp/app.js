@@ -28,6 +28,8 @@ Vue.use(VueNumerals); // default locale is 'en'
 Vue.use(Trend);
 // Registration of Vue apexcharts
 Vue.use(VueApexCharts);
+// Registration of Vuex
+Vue.use(Vuex);
 
 // Registration of Axios
 // https://stackoverflow.com/questions/51374367/axios-is-not-defined-in-vue-js-cli
