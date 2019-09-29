@@ -23,7 +23,8 @@ namespace Nozomi.Web.StartupExtensions
                 {
                     options.Authority = "https://localhost:6001/";
                     options.RequireHttpsMetadata = true;
-                    options.ApiName = "nozomi.web";
+                    options.ApiName = "nozomi.spa";
+                    options.ApiSecret = "super-secret";
                 });
 
             // Turn off the JWT claim type mapping to allow well-known claims (e.g. ‘sub’ and ‘idp’) to flow through unmolested

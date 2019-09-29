@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
-import { NotificationProgrammatic as Notification } from 'buefy'
+import { NotificationProgrammatic as Notification } from 'buefy';
 import store from '../store/index';
 import { routes } from './routes';
 

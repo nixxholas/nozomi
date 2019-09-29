@@ -40,6 +40,7 @@
 
 <script>
     import { routes } from '../router/routes';
+    import store from '../store';
     import Web3 from 'web3';
     import axios from 'axios';
 
@@ -75,8 +76,7 @@
         }
       },
       methods: {
-        toggleCollapsed: function () {
-        },
+          toggleCollapsed: function () {},
           async authWeb3() {
               this.loginLoading = true;
 
@@ -116,33 +116,41 @@
                                   }
                               });
 
+                          let web3Payload = {
+                              "claimerAddress": accounts[0],
+                              "signature": signed,
+                              "rawMessage": authMsg
+                          };
+
+                          store.dispatch('login', web3Payload);
+
                           // Validate the signed object on server side and provide an auth
-                          await axios({
-                              method: 'post',
-                              headers: { "Content-Type": "application/json"},
-                              url: '/api/auth/ethauth',
-                              data: {
-                                  "claimerAddress": accounts[0],
-                                  "signature": signed,
-                                  "rawMessage": authMsg
-                              }
-                          }).then(function (response) {
-                              self.$buefy.notification.open({
-                                  duration: 3000,
-                                  message: `Logging you in, hang in there..`,
-                                  position: 'is-bottom-right',
-                                  type: 'is-success',
-                                  hasIcon: true
-                              });
-                          }).catch(function (error) {
-                              self.$buefy.notification.open({
-                                  duration: 3000,
-                                  message: `We couldn't reach our servers for an authentication request.. Please try again!`,
-                                  position: 'is-bottom-right',
-                                  type: 'is-danger',
-                                  hasIcon: true
-                              });
-                          });
+                          // await axios({
+                          //     method: 'post',
+                          //     headers: { "Content-Type": "application/json"},
+                          //     url: '/api/auth/ethauth',
+                          //     data: {
+                          //         "claimerAddress": accounts[0],
+                          //         "signature": signed,
+                          //         "rawMessage": authMsg
+                          //     }
+                          // }).then(function (response) {
+                          //     self.$buefy.notification.open({
+                          //         duration: 3000,
+                          //         message: `Logging you in, hang in there..`,
+                          //         position: 'is-bottom-right',
+                          //         type: 'is-success',
+                          //         hasIcon: true
+                          //     });
+                          // }).catch(function (error) {
+                          //     self.$buefy.notification.open({
+                          //         duration: 3000,
+                          //         message: `We couldn't reach our servers for an authentication request.. Please try again!`,
+                          //         position: 'is-bottom-right',
+                          //         type: 'is-danger',
+                          //         hasIcon: true
+                          //     });
+                          // });
                       }
                   }
                   // Legacy dapp browsers...
@@ -161,6 +169,9 @@
                           hasIcon: true
                       });
                   }
+
+                  // Then run it
+                  // store.dispatch('login');
               } catch (error) {
                   console.dir(error);
 
