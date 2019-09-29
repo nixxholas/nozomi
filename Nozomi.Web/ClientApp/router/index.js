@@ -1,7 +1,8 @@
-import Vue from 'vue'
-import VueRouter from 'vue-router'
+import Vue from 'vue';
+import VueRouter from 'vue-router';
+import { NotificationProgrammatic as Notification } from 'buefy'
 import store from '../store/index';
-import { routes } from './routes'
+import { routes } from './routes';
 
 let router = new VueRouter({
   mode: 'history',
@@ -12,14 +13,23 @@ let router = new VueRouter({
 // https://router.vuejs.org/guide/advanced/navigation-guards.html#in-component-guard
 // Before each route is accessed,
 router.beforeEach((to, from, next) => {
-    console.dir(to);
-    console.dir(from);
-    if(to.matched.some(record => record.meta.requiresAuth)) {
+  console.dir(from);
+    // If the target is demanding auth,
+    if (to.matched.some(record => record.meta.requiresAuth)) {
+      // And if he is already auth'ed,
       if (store.getters.isLoggedIn) {
-        next();
+        next(); // Let him go
         return
       }
-      next('/login')
+
+      Notification.open({
+        duration: 3000,
+        message: `Please login first.`,
+        position: 'is-bottom-right',
+        type: 'is-danger',
+        hasIcon: true
+      });
+      next(from.fullPath); // Send him back
     } else {
       next()
     }
