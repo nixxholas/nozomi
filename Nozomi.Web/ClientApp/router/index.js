@@ -13,7 +13,6 @@ let router = new VueRouter({
 // https://router.vuejs.org/guide/advanced/navigation-guards.html#in-component-guard
 // Before each route is accessed,
 router.beforeEach((to, from, next) => {
-  console.dir(from);
     // If the target is demanding auth,
     if (to.matched.some(record => record.meta.requiresAuth)) {
       // And if he is already auth'ed,

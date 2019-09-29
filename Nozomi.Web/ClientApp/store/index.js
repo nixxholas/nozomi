@@ -1,5 +1,6 @@
-import Vue from 'vue'
-import Vuex from 'vuex'
+import Vue from 'vue';
+import Vuex from 'vuex';
+import { NotificationProgrammatic as Notification } from 'buefy';
 
 Vue.use(Vuex);
 
@@ -51,6 +52,33 @@ const actions = ({
 
       console.dir("logging in");
       console.dir(user);
+
+      // Validate the signed object on server side and provide an auth
+      axios({
+          method: 'post',
+          headers: { "Content-Type": "application/json"},
+          url: '/api/auth/ethauth',
+          data: user
+      }).then(function (response) {
+        console.dir(response);
+        Notification.open({
+              duration: 3000,
+              message: `Logging you in, hang in there..`,
+              position: 'is-bottom-right',
+              type: 'is-success',
+              hasIcon: true
+          });
+      }).catch(function (error) {
+        console.dir(error);
+        Notification.open({
+              duration: 3000,
+              message: `We couldn't reach our servers for an authentication request.. Please try again!`,
+              position: 'is-bottom-right',
+              type: 'is-danger',
+              hasIcon: true
+          });
+      });
+
       commit('auth_error');
 
       // axios({url: 'http://localhost:3000/login', data: user, method: 'POST' })
