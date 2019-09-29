@@ -30,6 +30,7 @@
     "lightweight-charts": "^1.0.1",
     "moment": "^2.24.0",
     "numeral": "^2.0.6",
+    "oidc-client": "^1.9.1",
     "vue": "^2.6.10",
     "vue-apexcharts": "^1.4.0",
     "vue-carousel": "^0.18.0",
