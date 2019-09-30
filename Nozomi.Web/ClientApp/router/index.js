@@ -14,7 +14,7 @@ let router = new VueRouter({
 // Before each route is accessed,
 router.beforeEach((to, from, next) => {
     // If the target is demanding auth,
-    if (to.matched.some(record => record.meta.requiresAuth)) {
+    if (to.matched.some(record => !record.meta.isPublic)) {
       // And if he is already auth'ed,
       if (store.getters.isLoggedIn) {
         next(); // Let him go

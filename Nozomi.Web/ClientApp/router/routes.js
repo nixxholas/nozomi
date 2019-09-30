@@ -7,7 +7,9 @@ import ViewCurrency from 'components/currency/view';
 
 export const routes = [
   { name: 'home', path: '/', component: HomePage, display: 'Home', icon: 'home' },
-  { name: 'about', path: '/about', component: About, display: 'About', icon: 'info', meta: { requiresAuth: true }},
+  { name: 'about', path: '/about', component: About, display: 'About', icon: 'info', meta: {
+    isPublic: false
+  }},
   { name: 'counter', path: '/counter', component: CounterExample, display: 'Counter', icon: 'graduation-cap' },
   { name: 'fetch-data', path: '/fetch-data', component: FetchData, display: 'Data', icon: 'list' },
   // Currency-specific routing
