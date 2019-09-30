@@ -1,57 +1,64 @@
 ﻿@model Nozomi.Auth.Controllers.Account.LoginViewModel
 
-<div class="login-page">
-    <div class="page-header">
-        <h1>Login</h1>
-    </div>
+<section class="hero login-page">
+    <div class="hero-body">
+    <div class="container has-text-centered">
+    <partial name="_ValidationSummary"/>
 
-    <partial name="_ValidationSummary" />
-
-    <div class="row">
+    <div class="box columns is-centered is-vcentered">
 
         @if (Model.EnableLocalLogin)
         {
-            <div class="col-sm-6">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h3 class="panel-title">Local Login</h3>
+            <div class="column is-5-tablet is-4-desktop is-3-widescreen">
+                <form asp-route="Login">
+                    <input type="hidden" asp-for="ReturnUrl"/>
+
+                    <h2 class="title">Login</h2>
+
+                    <div class="field">
+                        <p class="control has-icons-left has-icons-right">
+                            <input class="input" placeholder="Username" asp-for="Username" autofocus>
+                            <span class="icon is-small is-left">
+                                <i class="fas fa-envelope"></i>
+                            </span>
+                            <span class="icon is-small is-right">
+                                <i class="fas fa-check"></i>
+                            </span>
+                        </p>
                     </div>
-                    <div class="panel-body">
-
-                        <form asp-route="Login">
-                            <input type="hidden" asp-for="ReturnUrl" />
-
-                            <fieldset>
-                                <div class="form-group">
-                                    <label asp-for="Username"></label>
-                                    <input class="form-control" placeholder="Username" asp-for="Username" autofocus>
-                                </div>
-                                <div class="form-group">
-                                    <label asp-for="Password"></label>
-                                    <input type="password" class="form-control" placeholder="Password" asp-for="Password" autocomplete="off">
-                                </div>
-                                @if (Model.AllowRememberLogin)
-                                {
-                                    <div class="form-group login-remember">
-                                        <label asp-for="RememberLogin">
-                                            <input asp-for="RememberLogin">
-                                            <strong>Remember My Login</strong>
-                                        </label>
-                                    </div>
-                                }
-
-                                <div>
-                                    <p>The default users are alice/bob, password: Pass123$</p>
-                                </div>
-
-                                <div class="form-group">
-                                    <button class="btn btn-primary" name="button" value="login">Login</button>
-                                    <button class="btn btn-default" name="button" value="cancel">Cancel</button>
-                                </div>
-                            </fieldset>
-                        </form>
+                    <div class="field">
+                        <p class="control has-icons-left has-icons-right">
+                            <input type="password" class="input" placeholder="Password" asp-for="Password" autofocus>
+                            <span class="icon is-small is-left"><i class="fas fa-lock"></i></span>
+                        </p>
                     </div>
-                </div>
+                    @if (Model.AllowRememberLogin)
+                    {
+                        <div class="field login-remember">
+                            <label class="checkbox" asp-for="RememberLogin">
+                                <input asp-for="RememberLogin" type="checkbox">
+                                Remember My Login
+                            </label>
+                        </div>
+                    }
+
+                    <div>
+                        <p>The default users are alice/bob, password: Pass123$</p>
+                    </div>
+
+                    <div class="field is-grouped">
+                        <p class="control">
+                            <a class="button is-primary" value="login">
+                                Login
+                            </a>
+                        </p>
+                        <p class="control">
+                            <a class="button is-light" value="cancel">
+                                Cancel
+                            </a>
+                        </p>
+                    </div>
+                </form>
             </div>
         }
 
@@ -89,5 +96,12 @@
                 There are no login schemes configured for this client.
             </div>
         }
+
+        <div class="column is-5-tablet is-4-desktop is-3-widescreen">
+            <button class="button">Login with Metamask</button>
+        </div>
+
     </div>
-</div>
+    </div>
+    </div>
+</section>

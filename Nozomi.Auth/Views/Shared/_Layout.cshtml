@@ -24,16 +24,16 @@
               <a class="navbar-item" href="~/">
                   <img src="~/icon.png" class="icon-banner" width="32" height="200">
               </a>
-
-            <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
-              <span aria-hidden="true"></span>
-              <span aria-hidden="true"></span>
-              <span aria-hidden="true"></span>
-            </a>
           </div>
 
             @if (!string.IsNullOrWhiteSpace(name))
             {
+                <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbarEl">
+                    <span aria-hidden="true"></span>
+                    <span aria-hidden="true"></span>
+                    <span aria-hidden="true"></span>
+                </a>
+                
                 <div id="navbarEl" class="navbar-menu">
                     <div class="navbar-end">
                         <div class="navbar-item has-dropdown is-hoverable">
@@ -58,5 +58,18 @@
 
     <script src="~/lib/jquery/jquery.js"></script>
     @RenderSection("scripts", required: false)
+<script>
+$(document).ready(function() {
+
+  // Check for click events on the navbar burger icon
+  $(".navbar-burger").click(function() {
+
+      // Toggle the "is-active" class on both the "navbar-burger" and the "navbar-menu"
+      $(".navbar-burger").toggleClass("is-active");
+      $(".navbar-menu").toggleClass("is-active");
+
+  });
+});
+</script>
 </body>
 </html>
