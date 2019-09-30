@@ -124,7 +124,7 @@ namespace Nozomi.Auth
                     AllowedGrantTypes = GrantTypes.Implicit,
                     
                     AllowedScopes = { "openid", "profile", "email", "nozomi.web.read_only" },
-                    RedirectUris = {"https://localhost:5001/auth-callback"},
+                    RedirectUris = {"https://localhost:5001/oidc-callback"},
                     PostLogoutRedirectUris = {"https://localhost:5001/"},
                     AllowedCorsOrigins = {"https://localhost:5001"},
                     AccessTokenLifetime = 3600
