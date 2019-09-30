@@ -1,5 +1,7 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
+import { vuexOidcCreateStoreModule } from 'vuex-oidc';
+import { oidcSettings } from './config';
 import mgr from '../security';
 import { NotificationProgrammatic as Notification } from 'buefy';
 
@@ -148,5 +150,8 @@ export default new Vuex.Store({
   state,
   mutations,
   actions,
-  getters
+  getters,
+  modules: {
+    oidcStore: vuexOidcCreateStoreModule(oidcSettings)
+  }
 })
