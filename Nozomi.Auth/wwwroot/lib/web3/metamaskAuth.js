@@ -1,6 +1,8 @@
-document.getElementById("metamaskBtn").addEventListener("click", metamaskAuth());
+document.getElementById("metamaskBtn").addEventListener('click', (e) => metamaskAuth(e), false);
 
-async function metamaskAuth() {
+async function metamaskAuth(e) {
+    e.preventDefault();
+    
     try {
         // Modern dapp browsers...
         if (window.ethereum) {
@@ -34,7 +36,7 @@ async function metamaskAuth() {
                 // Validate the signed object on server side and provide an auth
                 await axios({
                     method: 'post',
-                    headers: { "Content-Type": "application/json"},
+                    headers: {"Content-Type": "application/json"},
                     url: '/api/auth/ethauth',
                     data: {
                         "claimerAddress": accounts[0],
