@@ -268,6 +268,7 @@ namespace Nozomi.Auth.Controllers.Account
             {
                 var addrEntity = _addressEvent.Authenticate(model.Address, model.Signature, model.Message);
 
+                // Is this address already registered?
                 if (addrEntity != null)
                 {
                     // Sign in
@@ -304,6 +305,48 @@ namespace Nozomi.Auth.Controllers.Account
                     {
                         // user might have clicked on a malicious link - should be logged
                         throw new Exception("invalid return URL");
+                    }
+                }
+                else
+                {
+                    // Nope, let's try to get this shit registered.
+                    var user = await Web3Create(model.Signature, model.Address, model.Message);
+
+                    if (user != null && !string.IsNullOrWhiteSpace(user.UserName))
+                    {
+                        await _signInManager.SignInAsync(user, true);
+                        
+                        // Raise an event to say that the sign in is successful
+                        await _events.RaiseAsync(new UserLoginSuccessEvent(user.UserName, user.Id, user.UserName,
+                            clientId: context?.ClientId));
+                        
+                        if (context != null)
+                        {
+                            if (await _clientStore.IsPkceClientAsync(context.ClientId))
+                            {
+                                // if the client is PKCE then we assume it's native, so this change in how to
+                                // return the response is for better UX for the end user.
+                                return View("Redirect", new RedirectViewModel {RedirectUrl = returnUrl});
+                            }
+
+                            // we can trust model.ReturnUrl since GetAuthorizationContextAsync returned non-null
+                            return Redirect(returnUrl);
+                        }
+
+                        // request for a local page
+                        if (Url.IsLocalUrl(returnUrl))
+                        {
+                            return Redirect(returnUrl);
+                        }
+                        else if (string.IsNullOrEmpty(returnUrl))
+                        {
+                            return Redirect("~/");
+                        }
+                        else
+                        {
+                            // user might have clicked on a malicious link - should be logged
+                            throw new Exception("invalid return URL");
+                        }
                     }
                 }
 
