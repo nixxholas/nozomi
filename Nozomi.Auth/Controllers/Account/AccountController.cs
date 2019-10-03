@@ -93,6 +93,34 @@ namespace Nozomi.Auth.Controllers.Account
             return BadRequest(model);
         }
 
+        public async Task<User> Web3Create(string signature, string address, string message)
+        {
+            var fakeUser = new Faker<User>()
+                //Basic rules using built-in generators
+                .RuleFor(u => u.UserName, (f, u) => f.Internet.UserName(f.Name.FirstName(), f.Name.LastName()))
+                .RuleFor(u => u.NormalizedUserName, (f, u) => u.UserName.ToUpper())
+                //.RuleFor(u => u.Avatar, f => f.Internet.Avatar())
+                .RuleFor(u => u.Email, (f, u) => f.Internet.Email(f.Name.FirstName(), f.Name.LastName()))
+                //.RuleFor(u => u.SomethingUnique, f => $"Value {f.UniqueIndex}")
+                .FinishWith((f, u) =>
+                {
+                    Console.WriteLine("User Created! Id={0}", u.Id);
+                });
+
+            var generatedFakeUser = fakeUser.Generate();
+            var user = new User { UserName = generatedFakeUser.UserName, Email = generatedFakeUser.Email };
+            var result = await _userManager.CreateAsync(user, signature);
+
+            if (result.Succeeded)
+            {
+                var createdAddress = _addressService.Create(user.Id, address, AddressType.Ethereum);
+
+                return !string.IsNullOrWhiteSpace(createdAddress) ? user : null;
+            }
+
+            return null;
+        }
+        
         [HttpPost]
         public async Task<IActionResult> Web3Register([FromBody]Web3InputModel model, string returnUrl = null)
         {
@@ -102,23 +130,8 @@ namespace Nozomi.Auth.Controllers.Account
                 ClaimerAddress = model.Address, RawMessage = model.Message, Signature = model.Signature
             }))
             {
-                var fakeUser = new Faker<User>()
-                    //Basic rules using built-in generators
-                    .RuleFor(u => u.UserName, (f, u) => f.Internet.UserName(f.Name.FirstName(), f.Name.LastName()))
-                    .RuleFor(u => u.NormalizedUserName, (f, u) => u.UserName.ToUpper())
-                    //.RuleFor(u => u.Avatar, f => f.Internet.Avatar())
-                    .RuleFor(u => u.Email, (f, u) => f.Internet.Email(f.Name.FirstName(), f.Name.LastName()))
-                    //.RuleFor(u => u.SomethingUnique, f => $"Value {f.UniqueIndex}")
-                    .FinishWith((f, u) =>
-                    {
-                        Console.WriteLine("User Created! Id={0}", u.Id);
-                    });
-
-                var generatedFakeUser = fakeUser.Generate();
-                var user = new User { UserName = generatedFakeUser.UserName, Email = generatedFakeUser.Email };
-                var result = await _userManager.CreateAsync(user, model.Signature);
-                var createdAddress = _addressService.Create(user.Id, model.Address, AddressType.Ethereum);
-                if (result.Succeeded && !string.IsNullOrEmpty(createdAddress))
+                var user = await Web3Create(model.Signature, model.Address, model.Message);
+                if (user != null && !string.IsNullOrWhiteSpace(user.UserName))
                 {
                     // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=532713
                     // Send an email with this link
