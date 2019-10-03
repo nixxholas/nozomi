@@ -22,6 +22,15 @@ namespace Nozomi.Infra.Blockchain.Auth.Events
             _validatingEvent = validatingEvent;
         }
 
+        public bool IsBinded(string address)
+        {
+            return !string.IsNullOrWhiteSpace(address) &&
+                   _unitOfWork.GetRepository<Address>()
+                       .GetQueryable()
+                       .AsNoTracking()
+                       .Any(addr => addr.Hash.Equals(address));
+        }
+
         public Address Authenticate(string address, string signature, string message)
         {
             // Null check
