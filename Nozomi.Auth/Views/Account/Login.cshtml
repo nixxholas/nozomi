@@ -98,10 +98,15 @@
         }
 
         <div class="column is-5-tablet is-4-desktop is-3-widescreen">
-            <button class="button">Login with Metamask</button>
+            <button class="button" id="metamaskBtn">Login with Metamask</button>
         </div>
 
     </div>
     </div>
     </div>
 </section>
+
+@section Scripts {
+    <script src="~/lib/web3/web3.min.js"></script>
+    <script src="~/lib/web3/metamaskAuth.js"></script>
+}
