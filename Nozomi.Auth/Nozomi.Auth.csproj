@@ -19,4 +19,8 @@
       <ProjectReference Include="..\Nozomi.Infra.Auth\Nozomi.Infra.Auth.csproj" />
       <ProjectReference Include="..\Nozomi.Infra.Blockchain.Auth\Nozomi.Infra.Blockchain.Auth.csproj" />
     </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="wwwroot\css\webfonts" />
+    </ItemGroup>
 </Project>
