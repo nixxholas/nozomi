@@ -2,6 +2,7 @@ document.getElementById("metamaskBtn").addEventListener('click', (e) => metamask
 
 async function metamaskAuth(e) {
     e.preventDefault();
+    let returnUrl = document.getElementById('ReturnUrl').value;
     
     try {
         // Modern dapp browsers...
@@ -37,7 +38,8 @@ async function metamaskAuth(e) {
                 await axios({
                     method: 'post',
                     headers: {"Content-Type": "application/json"},
-                    url: '/api/auth/ethauth',
+                    url: '/account/Web3Login?ReturnUrl=' 
+                        + returnUrl,
                     data: {
                         "claimerAddress": accounts[0],
                         "signature": signed,
@@ -46,7 +48,7 @@ async function metamaskAuth(e) {
                 }).then(function (response) {
                     console.dir(response);
                 }).catch(function (error) {
-                    console.dir(response);
+                    console.dir(error);
                 });
             }
         }
