@@ -29,10 +29,12 @@ async function metamaskAuth(e) {
                     });
 
                 let web3Payload = {
-                    "claimerAddress": accounts[0],
+                    "address": accounts[0],
                     "signature": signed,
-                    "rawMessage": authMsg
+                    "message": authMsg
                 };
+                
+                console.dir("web3payload: " + web3Payload);
 
                 // Validate the signed object on server side and provide an auth
                 await axios({
@@ -40,11 +42,7 @@ async function metamaskAuth(e) {
                     headers: {"Content-Type": "application/json"},
                     url: '/account/Web3Login?ReturnUrl=' 
                         + returnUrl,
-                    data: {
-                        "claimerAddress": accounts[0],
-                        "signature": signed,
-                        "rawMessage": authMsg
-                    }
+                    data: web3Payload
                 }).then(function (response) {
                     console.dir(response);
                 }).catch(function (error) {

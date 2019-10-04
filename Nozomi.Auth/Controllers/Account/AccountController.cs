@@ -95,6 +95,8 @@ namespace Nozomi.Auth.Controllers.Account
 
         public async Task<User> Web3Create(string signature, string address, string message)
         {
+            if (_addressEvent.IsBinded(address)) return null;
+            
             var fakeUser = new Faker<User>()
                 //Basic rules using built-in generators
                 .RuleFor(u => u.UserName, (f, u) => f.Internet.UserName(f.Name.FirstName(), f.Name.LastName()))
