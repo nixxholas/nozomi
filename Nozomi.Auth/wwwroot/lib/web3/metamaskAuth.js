@@ -28,26 +28,31 @@ async function metamaskAuth(e) {
                         }
                     });
 
-                let web3Payload = {
-                    "address": accounts[0],
-                    "signature": signed,
-                    "message": authMsg
-                };
+                document.getElementById('Message').value = authMsg;
+                document.getElementById('Signature').value = signed;
+                document.getElementById('Address').value = accounts[0];
                 
-                console.dir("web3payload: " + web3Payload);
+                document.getElementById('web3login').submit();
+
+                // let web3Payload = {
+                //     "address": accounts[0],
+                //     "signature": signed,
+                //     "message": authMsg
+                // };
+                
+                //console.dir("web3payload: " + web3Payload);
 
                 // Validate the signed object on server side and provide an auth
-                await axios({
-                    method: 'post',
-                    headers: {"Content-Type": "application/json"},
-                    url: '/account/Web3Login?ReturnUrl=' 
-                        + returnUrl,
-                    data: web3Payload
-                }).then(function (response) {
-                    console.dir(response);
-                }).catch(function (error) {
-                    console.dir(error);
-                });
+                // await axios({
+                //     method: 'post',
+                //     headers: {"Content-Type": "application/json"},
+                //     url: '/account/Web3Login?ReturnUrl=' 
+                //         + returnUrl,
+                //     data: web3Payload
+                // }).then(function (response) {
+                // }).catch(function (error) {
+                //     console.dir(error);
+                // });
             }
         }
         // Legacy dapp browsers...
