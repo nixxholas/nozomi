@@ -9,6 +9,7 @@ let mgr = new Oidc.UserManager({
   scope: 'openid profile nozomi.api',
   post_logout_redirect_uri: process.env.NODE_ENV === "production" ? "https://nozomi.one" : 'https://localhost:5001/',
   userStore: new Oidc.WebStorageStateStore({ store: window.localStorage }),
+  loadUserInfo: true
 });
 
 export default mgr;
