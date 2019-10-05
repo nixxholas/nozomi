@@ -98,7 +98,12 @@
         }
 
         <div class="column is-5-tablet is-4-desktop is-3-widescreen">
-            <button class="button" id="metamaskBtn">Login with Metamask</button>
+            <form id="web3login" asp-route="login">
+                <input type="hidden" asp-for="Message"/>
+                <input type="hidden" asp-for="Address"/>
+                <input type="hidden" asp-for="Signature"/>
+                <button class="button" id="metamaskBtn" value="metamask">Login with Metamask</button>
+            </form>
         </div>
 
     </div>

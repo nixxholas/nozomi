@@ -171,6 +171,90 @@ namespace Nozomi.Auth.Controllers.Account
             return View(vm);
         }
 
+        // Backed up Login
+//        [HttpPost]
+//        [ValidateAntiForgeryToken]
+//        public async Task<IActionResult> Login(LoginInputModel model, string button)
+//        {
+//            // check if we are in the context of an authorization request
+//            var context = await _interaction.GetAuthorizationContextAsync(model.ReturnUrl);
+//
+//            // the user clicked the "cancel" button
+//            if (button != "login")
+//            {
+//                if (context != null)
+//                {
+//                    // if the user cancels, send a result back into IdentityServer as if they 
+//                    // denied the consent (even if this client does not require consent).
+//                    // this will send back an access denied OIDC error response to the client.
+//                    await _interaction.GrantConsentAsync(context, ConsentResponse.Denied);
+//
+//                    // we can trust model.ReturnUrl since GetAuthorizationContextAsync returned non-null
+//                    if (await _clientStore.IsPkceClientAsync(context.ClientId))
+//                    {
+//                        // if the client is PKCE then we assume it's native, so this change in how to
+//                        // return the response is for better UX for the end user.
+//                        return View("Redirect", new RedirectViewModel {RedirectUrl = model.ReturnUrl});
+//                    }
+//
+//                    return Redirect(model.ReturnUrl);
+//                }
+//                else
+//                {
+//                    // since we don't have a valid context, then we just go back to the home page
+//                    return Redirect("~/");
+//                }
+//            }
+//
+//            if (ModelState.IsValid)
+//            {
+//                var result = await _signInManager.PasswordSignInAsync(model.Username, model.Password,
+//                    model.RememberLogin, lockoutOnFailure: true);
+//                if (result.Succeeded)
+//                {
+//                    var user = await _userManager.FindByNameAsync(model.Username);
+//                    await _events.RaiseAsync(new UserLoginSuccessEvent(user.UserName, user.Id, user.UserName,
+//                        clientId: context?.ClientId));
+//
+//                    if (context != null)
+//                    {
+//                        if (await _clientStore.IsPkceClientAsync(context.ClientId))
+//                        {
+//                            // if the client is PKCE then we assume it's native, so this change in how to
+//                            // return the response is for better UX for the end user.
+//                            return View("Redirect", new RedirectViewModel {RedirectUrl = model.ReturnUrl});
+//                        }
+//
+//                        // we can trust model.ReturnUrl since GetAuthorizationContextAsync returned non-null
+//                        return Redirect(model.ReturnUrl);
+//                    }
+//
+//                    // request for a local page
+//                    if (Url.IsLocalUrl(model.ReturnUrl))
+//                    {
+//                        return Redirect(model.ReturnUrl);
+//                    }
+//                    else if (string.IsNullOrEmpty(model.ReturnUrl))
+//                    {
+//                        return Redirect("~/");
+//                    }
+//                    else
+//                    {
+//                        // user might have clicked on a malicious link - should be logged
+//                        throw new Exception("invalid return URL");
+//                    }
+//                }
+//
+//                await _events.RaiseAsync(new UserLoginFailureEvent(model.Username, "invalid credentials",
+//                    clientId: context?.ClientId));
+//                ModelState.AddModelError(string.Empty, AccountOptions.InvalidCredentialsErrorMessage);
+//            }
+//
+//            // something went wrong, show form with error
+//            var vm = await BuildLoginViewModelAsync(model);
+//            return View(vm);
+//        }
+        
         /// <summary>
         /// Handle postback from username/password login
         /// </summary>
@@ -182,7 +266,8 @@ namespace Nozomi.Auth.Controllers.Account
             var context = await _interaction.GetAuthorizationContextAsync(model.ReturnUrl);
 
             // the user clicked the "cancel" button
-            if (button != "login")
+            if (!string.IsNullOrWhiteSpace(button) 
+                && button.Equals("cancel", StringComparison.InvariantCultureIgnoreCase))
             {
                 if (context != null)
                 {
@@ -208,7 +293,8 @@ namespace Nozomi.Auth.Controllers.Account
                 }
             }
 
-            if (ModelState.IsValid)
+            if (ModelState.IsValid && !string.IsNullOrWhiteSpace(model.Username)
+                && !string.IsNullOrWhiteSpace(model.Password))
             {
                 var result = await _signInManager.PasswordSignInAsync(model.Username, model.Password,
                     model.RememberLogin, lockoutOnFailure: true);
@@ -250,23 +336,9 @@ namespace Nozomi.Auth.Controllers.Account
                 await _events.RaiseAsync(new UserLoginFailureEvent(model.Username, "invalid credentials",
                     clientId: context?.ClientId));
                 ModelState.AddModelError(string.Empty, AccountOptions.InvalidCredentialsErrorMessage);
-            }
-
-            // something went wrong, show form with error
-            var vm = await BuildLoginViewModelAsync(model);
-            return View(vm);
-        }
-
-        /// <summary>
-        /// Handle postback from web3 login
-        /// </summary>
-        [HttpPost]
-        public async Task<IActionResult> Web3Login([FromBody]Web3LoginInputModel model, string returnUrl)
-        {
-            // check if we are in the context of an authorization request
-            var context = await _interaction.GetAuthorizationContextAsync(returnUrl);
-
-            if (ModelState.IsValid)
+            } else if (ModelState.IsValid && !string.IsNullOrWhiteSpace(model.Message) 
+                                   && !string.IsNullOrWhiteSpace(model.Address) 
+                                   && !string.IsNullOrWhiteSpace(model.Signature))
             {
                 var addrEntity = _addressEvent.Authenticate(model.Address, model.Signature, model.Message);
 
@@ -287,19 +359,19 @@ namespace Nozomi.Auth.Controllers.Account
                         {
                             // if the client is PKCE then we assume it's native, so this change in how to
                             // return the response is for better UX for the end user.
-                            return View("Redirect", new RedirectViewModel {RedirectUrl = returnUrl});
+                            return View("Redirect", new RedirectViewModel {RedirectUrl = model.ReturnUrl});
                         }
 
                         // we can trust model.ReturnUrl since GetAuthorizationContextAsync returned non-null
-                        return Redirect(returnUrl);
+                        return Redirect(model.ReturnUrl);
                     }
 
                     // request for a local page
-                    if (Url.IsLocalUrl(returnUrl))
+                    if (Url.IsLocalUrl(model.ReturnUrl))
                     {
-                        return Redirect(returnUrl);
+                        return Redirect(model.ReturnUrl);
                     }
-                    else if (string.IsNullOrEmpty(returnUrl))
+                    else if (string.IsNullOrEmpty(model.ReturnUrl))
                     {
                         return Redirect("~/");
                     }
@@ -328,19 +400,19 @@ namespace Nozomi.Auth.Controllers.Account
                             {
                                 // if the client is PKCE then we assume it's native, so this change in how to
                                 // return the response is for better UX for the end user.
-                                return View("Redirect", new RedirectViewModel {RedirectUrl = returnUrl});
+                                return View("Redirect", new RedirectViewModel {RedirectUrl = model.ReturnUrl});
                             }
 
                             // we can trust model.ReturnUrl since GetAuthorizationContextAsync returned non-null
-                            return Redirect(returnUrl);
+                            return Redirect(model.ReturnUrl);
                         }
 
                         // request for a local page
-                        if (Url.IsLocalUrl(returnUrl))
+                        if (Url.IsLocalUrl(model.ReturnUrl))
                         {
-                            return Redirect(returnUrl);
+                            return Redirect(model.ReturnUrl);
                         }
-                        else if (string.IsNullOrEmpty(returnUrl))
+                        else if (string.IsNullOrEmpty(model.ReturnUrl))
                         {
                             return Redirect("~/");
                         }
@@ -352,13 +424,14 @@ namespace Nozomi.Auth.Controllers.Account
                     }
                 }
 
-                await _events.RaiseAsync(new UserLoginFailureEvent(model.Address, "invalid credentials",
+                await _events.RaiseAsync(new UserLoginFailureEvent(model.Address, "invalid web3 credentials",
                     clientId: context?.ClientId));
                 ModelState.AddModelError(string.Empty, AccountOptions.InvalidCredentialsErrorMessage);
             }
 
-            // something went wrong
-            return BadRequest();
+            // something went wrong, show form with error
+            var vm = await BuildLoginViewModelAsync(model);
+            return View(vm);
         }
 
         /// <summary>

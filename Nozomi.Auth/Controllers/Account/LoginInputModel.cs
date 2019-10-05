@@ -8,9 +8,24 @@ namespace Nozomi.Auth.Controllers.Account
 {
     public class LoginInputModel
     {
-        [Required] public string Username { get; set; }
-        [Required] public string Password { get; set; }
+        public string Username { get; set; }
+        public string Password { get; set; }
         public bool RememberLogin { get; set; }
         public string ReturnUrl { get; set; }
+        
+        /// <summary>
+        /// The user-claimed address
+        /// </summary>
+        public string Address { get; set; }
+        
+        /// <summary>
+        /// The raw hash of the user-signed message
+        /// </summary>
+        public string Signature { get; set; }
+
+        /// <summary>
+        /// The raw message
+        /// </summary>
+        public string Message { get; set; }
     }
 }
