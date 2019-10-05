@@ -24,15 +24,18 @@
     </template>
 
     <template slot="end">
-      <b-navbar-item tag="div">
-        <b-button type="is-primary" v-if="hasWeb3" @click="login()" :loading="loginLoading">
+      <b-navbar-item tag="div" v-if="!oidcIsAuthenticated">
+        <b-button type="is-primary" v-if="hasWeb3" @click="store.login()" :loading="loginLoading">
           <span>Sign in with</span>
           <b-icon
             icon="ethereum"
             size="is-small">
           </b-icon>
         </b-button>
-        <b-button type="is-warning" v-else @click="login()" :loading="loginLoading">Login</b-button>
+        <b-button type="is-warning" v-else @click="store.login()" :loading="loginLoading">Login</b-button>
+      </b-navbar-item>
+      <b-navbar-item tag="div" v-else>
+
       </b-navbar-item>
     </template>
   </b-navbar>
@@ -40,7 +43,7 @@
 
 <script>
     import { routes } from '../router/routes';
-    import store from '../store';
+    import { mapGetters } from 'vuex'
     import Web3 from 'web3';
     import axios from 'axios';
 
@@ -52,6 +55,11 @@
           collapsed: true
         }
       },
+        computed: {
+            ...mapGetters([
+                'oidcIsAuthenticated'
+            ])
+        },
       mounted: function() {
         // Get all "navbar-burger" elements
         const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
