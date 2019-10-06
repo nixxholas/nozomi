@@ -18,7 +18,7 @@ Oidc.Log.level = Oidc.Log.INFO;
 
 mgr.events.addUserLoaded(function (user) {
   console.log('New User Loaded：', arguments);
-  console.log('Acess_token: ', user.access_token)
+  console.log('Access_token: ', user.access_token)
 });
 
 mgr.events.addAccessTokenExpiring(function () {
@@ -109,7 +109,18 @@ const getters = ({
       }, err => {
         console.log(err)
       })
-  }
+  },
+  // Get the user who is logged in
+  getUserExplicitly: () => {
+    return new Promise((resolve, reject) => {
+      mgr.getUser().then(function (user) {
+        return user;
+      }).catch(function (err) {
+        console.log(err);
+        return null;
+      });
+    })
+  },
 });
 
 // ACTIONS

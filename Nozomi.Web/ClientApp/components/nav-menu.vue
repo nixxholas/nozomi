@@ -41,12 +41,13 @@
         </b-button>
       </b-navbar-item>
     </template>
+    {{ this.getUserExplicitly() }}
   </b-navbar>
 </template>
 
 <script>
-    import {routes} from '../router/routes';
-    import {mapActions, mapGetters} from 'vuex';
+    import { routes } from '../router/routes';
+    import { mapActions, mapGetters } from 'vuex';
     import Web3 from 'web3';
 
     export default {
@@ -58,7 +59,7 @@
             }
         },
         computed: {
-            ...mapGetters(['isLoggedIn']),
+            ...mapGetters(['isLoggedIn', 'getUserExplicitly']),
             ...mapActions(['signIn'])
         },
         mounted: function () {
