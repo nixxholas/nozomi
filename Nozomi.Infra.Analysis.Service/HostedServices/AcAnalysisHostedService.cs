@@ -364,6 +364,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                         ComponentType.Ask, ComponentType.Bid
                                     })
                                     .Where(rc => NumberHelper.IsNumericDecimal(rc.Value))
+                                    .DefaultIfEmpty()
                                     .ToList();
 
                             if (components.Any())
