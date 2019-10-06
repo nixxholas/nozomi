@@ -1,10 +1,16 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
+import VuexPersist from 'vuex-persist'
 import {NotificationProgrammatic as Notification} from 'buefy';
 import Oidc from 'oidc-client';
-import {oidcSettings} from "./config";
+import { oidcSettings } from "./config";
 import 'babel-polyfill';
 import axios from "axios";
+
+const vuexPersist = new VuexPersist({
+  key: 'nozomi-spa',
+  storage: window.localStorage
+});
 
 Vue.use(Vuex);
 
@@ -374,5 +380,6 @@ export default new Vuex.Store({
   state,
   mutations,
   actions,
-  getters
+  getters,
+  plugins: [vuexPersist.plugin]
 })
