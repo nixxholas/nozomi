@@ -1,11 +1,12 @@
-import CounterExample from 'components/counter-example';
-import FetchData from 'components/fetch-data';
-import HomePage from 'components/home-page';
-import About from 'components/about';
+import CounterExample from '../components/counter-example';
+import FetchData from '../components/fetch-data';
+import HomePage from '../components/home-page';
+import About from '../components/about';
 
 import ViewCurrency from 'components/currency/view';
 
-import OidcCallback from 'components/auth/oidc-callback';
+import OidcCallback from '../components/auth/oidc-callback';
+import OidcCallbackError from '../components/auth/oidc-callback-error';
 
 export const routes = [
   { name: 'home', path: '/', component: HomePage, display: 'Home', icon: 'home',
@@ -29,6 +30,15 @@ export const routes = [
     path: '/oidc-callback', // Needs to match redirectUri (redirect_uri if you use snake case) in you oidcSettings
     name: 'oidcCallback',
     display: 'OIDC Callback',
-    component: OidcCallback
+    component: OidcCallback,
+    meta: { isPublic: true }
+  },
+  // Authentication-specific routing
+  {
+    path: '/oidc-callback-error', // Needs to match redirectUri (redirect_uri if you use snake case) in you oidcSettings
+    name: 'oidcCallbackError',
+    display: 'Nozomi Auth Error',
+    component: OidcCallbackError,
+    meta: { isPublic: true }
   }
 ];

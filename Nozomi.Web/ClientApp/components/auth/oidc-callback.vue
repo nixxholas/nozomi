@@ -17,6 +17,7 @@
         mounted () {
             this.oidcSignInCallback()
                 .then((redirectPath) => {
+                    console.dir("Redirecting path: " + redirectPath);
                     this.$router.push(redirectPath);
                 })
                 .catch((err) => {
