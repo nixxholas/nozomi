@@ -17,8 +17,8 @@ namespace Nozomi.Web.Controllers.APIs.v1.CurrencyPairComponent
         private readonly IRequestComponentEvent _requestComponentEvent;
 
         public CurrencyPairComponentController(ILogger<CurrencyPairComponentController> logger,
-            UserManager<User> userManager, IRequestComponentEvent requestComponentEvent)
-            : base(logger, userManager)
+            IRequestComponentEvent requestComponentEvent)
+            : base(logger)
         {
             _requestComponentEvent = requestComponentEvent;
         }

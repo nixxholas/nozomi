@@ -9,7 +9,7 @@ namespace Nozomi.Web.Controllers.APIs.v1.Core
 {
     public class CoreController : BaseApiController<CoreController>, ICoreController
     {
-        public CoreController(ILogger<CoreController> logger, UserManager<User> userManager) : base(logger, userManager)
+        public CoreController(ILogger<CoreController> logger) : base(logger)
         {
         }
 

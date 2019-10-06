@@ -13,8 +13,8 @@ namespace Nozomi.Web.Controllers.APIs.v1.RequestPropertyType
     {
         private readonly IRequestPropertyTypeEvent _requestPropertyTypeEvent;
 
-        public RequestPropertyTypeController(ILogger<RequestPropertyTypeController> logger, UserManager<User> userManager,
-            IRequestPropertyTypeEvent requestPropertyTypeEvent) : base(logger, userManager)
+        public RequestPropertyTypeController(ILogger<RequestPropertyTypeController> logger,
+            IRequestPropertyTypeEvent requestPropertyTypeEvent) : base(logger)
         {
             _requestPropertyTypeEvent = requestPropertyTypeEvent;
         }

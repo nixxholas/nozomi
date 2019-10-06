@@ -2,85 +2,227 @@
   <b-navbar :transparent="true">
     <template slot="brand">
       <b-navbar-item tag="router-link" to="/">
-          <img
-            src="/assets/logo.png"
-            alt="Nozomi: Data, real quick."
-            style="width: 112px; height: 28px;"
-          >
+        <img
+          src="/assets/logo.png"
+          alt="Nozomi: Data, real quick."
+          style="width: 112px; height: 28px;"
+        >
       </b-navbar-item>
     </template>
 
     <template slot="start">
       <b-navbar-item href="/docs">
-        <icon :icon="['fa', 'atlas']" class="mr-2 menu-icon" />
+        <icon :icon="['fa', 'atlas']" class="mr-2 menu-icon"/>
         <span>Documentation</span>
       </b-navbar-item>
       <b-navbar-item tag="router-link" :to="route.path" v-for="(route, index) in routes"
-                   v-if="index > 0 && index < 2"
-                   :key="index">
-        <icon :icon="route.icon" class="mr-2 menu-icon" />
+                     v-if="index > 0 && index < 2"
+                     :key="index">
+        <icon :icon="route.icon" class="mr-2 menu-icon"/>
         <span>{{ route.display }}</span>
       </b-navbar-item>
     </template>
 
     <template slot="end">
-      <b-navbar-item tag="div">
-        <div class="buttons">
-          <a class="button is-light" @click="login">
-            Log in
-          </a>
-        </div>
+      <b-navbar-item tag="div" v-if="!this.isLoggedIn">
+        <b-button type="is-primary" v-if="hasWeb3" @click="login" :loading="loginLoading">
+          <span>Sign in with</span>
+          <b-icon
+            icon="ethereum"
+            size="is-small">
+          </b-icon>
+        </b-button>
+        <b-button type="is-warning" v-else @click="login" :loading="loginLoading">Login</b-button>
+      </b-navbar-item>
+      <b-navbar-item tag="div" v-else>
+        <b-button type="is-info"
+         icon-left="view-dashboard">
+          <span>Dashboard</span>
+        </b-button>
       </b-navbar-item>
     </template>
+<!--    {{ this.getUserExplicitly() }}-->
   </b-navbar>
 </template>
 
 <script>
-    import { routes } from '../router/routes'
+    import { routes } from '../router/routes';
+    import { mapActions, mapGetters } from 'vuex';
+    import Web3 from 'web3';
 
     export default {
-      data () {
-        return {
-          routes,
-          collapsed: true
-        }
-      },
-      mounted: function() {
-        // Get all "navbar-burger" elements
-        const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
-
-        // Check if there are any navbar burgers
-        if ($navbarBurgers.length > 0) {
-
-          // Add a click event on each of them
-          $navbarBurgers.forEach( el => {
-            el.addEventListener('click', () => {
-
-              // Get the target from the "data-target" attribute
-              const target = el.dataset.target;
-              const $target = document.getElementById(target);
-
-              // Toggle the "is-active" class on both the "navbar-burger" and the "navbar-menu"
-              el.classList.toggle('is-active');
-              $target.classList.toggle('is-active');
-
-            });
-          });
-        }
-      },
-      methods: {
-        toggleCollapsed: function () {
+        data() {
+            return {
+                routes,
+                loginLoading: false,
+                collapsed: true
+            }
         },
-        login() {
-          this.$buefy.notification.open({
-            duration: 5000,
-            message: `Authentication functionality is coming soon!`,
-            position: 'is-bottom-right',
-            type: 'is-warning',
-            hasIcon: true
-          })
+        computed: {
+            ...mapGetters(['isLoggedIn'
+                // , 'getUserExplicitly'
+            ]),
+            ...mapActions(['signIn'])
+        },
+        mounted: function () {
+            // Get all "navbar-burger" elements
+            const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
+
+            // Check if there are any navbar burgers
+            if ($navbarBurgers.length > 0) {
+
+                // Add a click event on each of them
+                $navbarBurgers.forEach(el => {
+                    el.addEventListener('click', () => {
+
+                        // Get the target from the "data-target" attribute
+                        const target = el.dataset.target;
+                        const $target = document.getElementById(target);
+
+                        // Toggle the "is-active" class on both the "navbar-burger" and the "navbar-menu"
+                        el.classList.toggle('is-active');
+                        $target.classList.toggle('is-active');
+
+                    });
+                });
+            }
+        },
+        methods: {
+            login: function () {
+                this.signIn();
+            },
+            async authWeb3() {
+                this.loginLoading = true;
+
+                try {
+                    // Modern dapp browsers...
+                    if (window.ethereum) {
+                        // Propagate Web3
+                        window.web3 = new Web3(ethereum);
+                        await window.ethereum.enable();
+                        window.ethereum.autoRefreshOnNetworkChange = false;
+
+                        // Obtain the user accounts
+                        let authMsg = 'This is a Nozomi auth message';
+                        let accounts = await window.web3.eth.getAccounts();
+
+                        // Ensure that the user is holding the wallet/s by asking him to unlock his
+                        // account with a random message.
+                        // https://ethereum.stackexchange.com/questions/48489/how-to-prove-that-a-user-owns-their-public-key-for-free=
+                        if (accounts != null && accounts.length > 0) {
+                            let self = this;
+
+                            // https://stackoverflow.com/questions/37576685/using-async-await-with-a-foreach-loop
+                            // await Promise.all(accounts.map(async (account) => {
+                            // }));
+
+                            // let shaMsg = window.web3.utils.sha3(authMsg);
+                            let signed = await window.web3.eth.personal.sign(authMsg, accounts[0],
+                                function (err, sig) {
+                                    if (err) {
+                                        self.$buefy.notification.open({
+                                            duration: 3000,
+                                            message: `Hey! Don't manipulate any authentication data!`,
+                                            position: 'is-bottom-right',
+                                            type: 'is-danger',
+                                            hasIcon: true
+                                        });
+                                    }
+                                });
+
+                            let web3Payload = {
+                                "claimerAddress": accounts[0],
+                                "signature": signed,
+                                "rawMessage": authMsg
+                            };
+
+                            store.dispatch('login', web3Payload);
+
+                            // Validate the signed object on server side and provide an auth
+                            // await axios({
+                            //     method: 'post',
+                            //     headers: { "Content-Type": "application/json"},
+                            //     url: '/api/auth/ethauth',
+                            //     data: {
+                            //         "claimerAddress": accounts[0],
+                            //         "signature": signed,
+                            //         "rawMessage": authMsg
+                            //     }
+                            // }).then(function (response) {
+                            //     self.$buefy.notification.open({
+                            //         duration: 3000,
+                            //         message: `Logging you in, hang in there..`,
+                            //         position: 'is-bottom-right',
+                            //         type: 'is-success',
+                            //         hasIcon: true
+                            //     });
+                            // }).catch(function (error) {
+                            //     self.$buefy.notification.open({
+                            //         duration: 3000,
+                            //         message: `We couldn't reach our servers for an authentication request.. Please try again!`,
+                            //         position: 'is-bottom-right',
+                            //         type: 'is-danger',
+                            //         hasIcon: true
+                            //     });
+                            // });
+                        }
+                    }
+                    // Legacy dapp browsers...
+                    else if (window.web3) {
+                        window.web3 = new Web3(web3.currentProvider);
+                        // Acccounts always exposed
+                        web3.eth.sendTransaction({/* ... */});
+                    }
+                    // Non-dapp browsers...
+                    else {
+                        this.$buefy.notification.open({
+                            duration: 5000,
+                            message: `Non-Ethereum browser detected. You should consider trying MetaMask!`,
+                            position: 'is-bottom-right',
+                            type: 'is-warning',
+                            hasIcon: true
+                        });
+                    }
+
+                    // Then run it
+                    // store.dispatch('login');
+                } catch (error) {
+                    console.dir(error);
+
+                    // User denied account access...
+                    this.$buefy.notification.open({
+                        duration: 5000,
+                        message: `Your browser may not be supporting Web3 properly.`,
+                        position: 'is-bottom-right',
+                        type: 'is-danger',
+                        hasIcon: true
+                    });
+                }
+
+                this.loginLoading = false;
+            },
+            hasWeb3() {
+                try {
+                    return window.ethereum || window.web3;
+                } catch (e) {
+                    // User does not have a Web3-supportive Plugin/Browser.
+                    return false;
+                }
+            },
+            // async login() {
+            //     if (this.hasWeb3() && !this.loginLoading) {
+            //         await this.authWeb3();
+            //     } else {
+            //         this.$buefy.notification.open({
+            //             duration: 5000,
+            //             message: `Your browser does not support Web3!`,
+            //             position: 'is-bottom-right',
+            //             type: 'is-danger',
+            //             hasIcon: true
+            //         });
+            //     }
+            // }
         }
-      }
     }
 </script>
 

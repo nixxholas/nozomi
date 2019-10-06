@@ -14,8 +14,8 @@ namespace Nozomi.Web.Controllers.APIs.v1.Request
     {
         private readonly IRequestEvent _requestEvent;
 
-        public RequestController(ILogger<RequestController> logger, UserManager<User> userManager,
-            IRequestEvent requestEvent) : base(logger, userManager)
+        public RequestController(ILogger<RequestController> logger,
+            IRequestEvent requestEvent) : base(logger)
         {
             _requestEvent = requestEvent;
         }

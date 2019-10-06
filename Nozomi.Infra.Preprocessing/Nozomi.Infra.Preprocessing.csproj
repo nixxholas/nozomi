@@ -10,6 +10,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Nozomi.Repo.Auth\Nozomi.Repo.Auth.csproj" />
       <ProjectReference Include="..\Nozomi.Repo.Identity\Nozomi.Repo.Identity.csproj" />
       <ProjectReference Include="..\Nozomi.Repo\Nozomi.Repo.csproj" />
     </ItemGroup>

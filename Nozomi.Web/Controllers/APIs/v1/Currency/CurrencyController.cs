@@ -23,9 +23,9 @@ namespace Nozomi.Web.Controllers.APIs.v1.Currency
         private readonly IAnalysedHistoricItemEvent _analysedHistoricItemEvent;
         private readonly ICurrencyEvent _currencyEvent;
 
-        public CurrencyController(ILogger<CurrencyController> logger, UserManager<User> userManager,
+        public CurrencyController(ILogger<CurrencyController> logger,
             IAnalysedHistoricItemEvent analysedHistoricItemEvent, ICurrencyEvent currencyEvent)
-            : base(logger, userManager)
+            : base(logger)
         {
             _analysedHistoricItemEvent = analysedHistoricItemEvent;
             _currencyEvent = currencyEvent;

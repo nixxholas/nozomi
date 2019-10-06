@@ -1,6 +1,7 @@
 <template>
     <div>
-      <section class="hero is-medium is-bold">
+      <section class="hero is-medium is-bold"
+               v-if="currencyTypeTable !== null && currencyTypeTable.data !== null && currencyTypeTable.data.length > 0">
         <div class="hero-body">
           <div class="container">
               <carousel class="tile is-ancestor" :autoplay="true" :paginationEnabled="false"
@@ -240,7 +241,7 @@ export default {
     }
   },
   mounted() {
-    this.loadData();
+    //this.loadData();
     this.loadFiatData();
     this.loadCryptoData();
   }
