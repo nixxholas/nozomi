@@ -1,4 +1,4 @@
-import Oidc from 'oidc-client';
+import { WebStorageStateStore } from 'oidc-client';
 
 export const oidcSettings = {
   authority: process.env.NODE_ENV === "production" ? "https://auth.nozomi.one" : 'https://localhost:6001',
@@ -11,5 +11,6 @@ export const oidcSettings = {
   accessTokenExpiringNotificationTime: 10,
   automaticSilentRenew: true,
   filterProtocolClaims: true,
+  //userStore: new WebStorageStateStore(),
   loadUserInfo: true
 };

@@ -41,7 +41,7 @@
         </b-button>
       </b-navbar-item>
     </template>
-    {{ this.getUserExplicitly() }}
+<!--    {{ this.getUserExplicitly() }}-->
   </b-navbar>
 </template>
 
@@ -59,7 +59,9 @@
             }
         },
         computed: {
-            ...mapGetters(['isLoggedIn', 'getUserExplicitly']),
+            ...mapGetters(['isLoggedIn'
+                // , 'getUserExplicitly'
+            ]),
             ...mapActions(['signIn'])
         },
         mounted: function () {
