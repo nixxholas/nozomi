@@ -44,6 +44,11 @@ namespace Nozomi.Data.Models.Web.Analytical
         HourlyPricePctChange = 71,
         
         [Description("Volume")]
-        DailyVolume = 80
+        DailyVolume = 80,
+        
+        [Description("Borrow % Interest Rate")]
+        BorrowRate = 100, // This is normalised
+        [Description("Supply % Interest Rate")]
+        SupplyRate = 101, // This is normalised
     }
 }
