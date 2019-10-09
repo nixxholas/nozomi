@@ -16,6 +16,7 @@ using Nozomi.Base.Core.Configurations;
 using Nozomi.Base.Core.Helpers.Routing;
 using Nozomi.Preprocessing;
 using Nozomi.Preprocessing.Options;
+using Nozomi.Repo.Auth.Data;
 using Nozomi.Repo.Data;
 using Nozomi.Repo.Identity.Data;
 using Nozomi.Service.HostedServices;
@@ -57,14 +58,12 @@ namespace Nozomi.Ticker
                 // Greet the beloved dev
                 Console.WriteLine(@"Welcome to the dev environment, your machine is named: " + Environment.MachineName);
                 
-                // Postgres DB Setup
-                var str = Configuration.GetConnectionString("Local:" + @Environment.MachineName);
-
+                // Postgres DB Setup                
                 services
                     .AddEntityFrameworkNpgsql()
                     .AddDbContext<NozomiDbContext>(options =>
                 {
-                    options.UseNpgsql(str);
+                    options.UseNpgsql(Configuration.GetConnectionString("Local:" + @Environment.MachineName));
                     options.EnableSensitiveDataLogging(false);
                     options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
                 },
@@ -72,7 +71,7 @@ namespace Nozomi.Ticker
 
                 services
                     .AddEntityFrameworkNpgsql()
-                    .AddDbContext<NozomiAuthContext>(options =>
+                    .AddDbContext<AuthDbContext>(options =>
                 {
                     options.UseNpgsql(Configuration.GetConnectionString("LocalAuth:" + Environment.MachineName));
                     options.EnableSensitiveDataLogging(false);
@@ -132,7 +131,7 @@ namespace Nozomi.Ticker
                 var authDb = (string) nozomiVault["auth"];
                 if (string.IsNullOrEmpty(authDb))
                     throw new SystemException("Invalid auth database configuration");
-                services.AddDbContext<NozomiAuthContext>(options =>
+                services.AddDbContext<AuthDbContext>(options =>
                 {
                     options.UseNpgsql(authDb
                         , builder =>

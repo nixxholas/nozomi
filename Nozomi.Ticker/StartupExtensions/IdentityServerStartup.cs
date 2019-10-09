@@ -24,10 +24,9 @@ namespace Nozomi.Ticker.StartupExtensions
 //            {
 //            }
 
-            services.AddIdentity<User, Role>()
+            services
+                .AddIdentity<User, Role>()
                 .AddEntityFrameworkStores<AuthDbContext>()
-                .AddUserManager<NozomiUserManager>()
-                .AddSignInManager<NozomiSignInManager>()
                 .AddDefaultTokenProviders();
             
             services.ConfigureApplicationCookie(options =>
