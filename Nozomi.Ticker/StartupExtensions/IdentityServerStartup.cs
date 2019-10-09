@@ -4,10 +4,8 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Nozomi.Base.Identity.Models.Identity;
+using Nozomi.Base.Auth.Models;
 using Nozomi.Repo.Auth.Data;
-using Nozomi.Service.Identity.Managers;
-using Nozomi.Service.Identity.Requirements;
 
 namespace Nozomi.Ticker.StartupExtensions
 {
@@ -27,6 +25,8 @@ namespace Nozomi.Ticker.StartupExtensions
             services
                 .AddIdentity<User, Role>()
                 .AddEntityFrameworkStores<AuthDbContext>()
+                .AddUserManager<NozomiUserManager>()
+                .AddSignInManager<NozomiSignInManager>()
                 .AddDefaultTokenProviders();
             
             services.ConfigureApplicationCookie(options =>
@@ -61,27 +61,27 @@ namespace Nozomi.Ticker.StartupExtensions
 //            });
             
             // Configure Authorization
-            services.AddAuthorization(options =>
-            {
-                options.AddPolicy(ApiTokenRequirement.ApiTokenRequirementName, policy 
-                => policy.AddRequirements(new ApiTokenRequirement()));
-            });
+//            services.AddAuthorization(options =>
+//            {
+//                options.AddPolicy(ApiTokenRequirement.ApiTokenRequirementName, policy 
+//                => policy.AddRequirements(new ApiTokenRequirement()));
+//            });
             
-            services.Configure<IdentityOptions>(options =>
-            {
-                // Password settings.
-                options.Password.RequireDigit = true;
-                options.Password.RequireLowercase = true;
-                options.Password.RequireNonAlphanumeric = true;
-                options.Password.RequireUppercase = true;
-                options.Password.RequiredLength = 6;
-                options.Password.RequiredUniqueChars = 1;
-
-                // User settings.
-                options.User.AllowedUserNameCharacters =
-                    "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-                options.User.RequireUniqueEmail = true;
-            });
+//            services.Configure<IdentityOptions>(options =>
+//            {
+//                // Password settings.
+//                options.Password.RequireDigit = true;
+//                options.Password.RequireLowercase = true;
+//                options.Password.RequireNonAlphanumeric = true;
+//                options.Password.RequireUppercase = true;
+//                options.Password.RequiredLength = 6;
+//                options.Password.RequiredUniqueChars = 1;
+//
+//                // User settings.
+//                options.User.AllowedUserNameCharacters =
+//                    "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+//                options.User.RequireUniqueEmail = true;
+//            });
         }
         
         public static void UseNozomiAuth(this IApplicationBuilder app)
