@@ -236,7 +236,6 @@ namespace Nozomi.Ticker
             app.UseStaticFiles();
             app.UseNozomiAuth();
             app.UseCookiePolicy();
-            app.UseAutoDbMigration(env);
             
             // Setup the hot collections
             app.ConfigureStatics();
