@@ -1,18 +1,18 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Nozomi.Base.Identity.ViewModels.Manage.CurrencyPair;
+using Nozomi.Base.Auth.Models;
 using Nozomi.Data;
 using Nozomi.Data.AreaModels.v1.CurrencyPair;
 using Nozomi.Infra.Admin.Service.Events.Interfaces;
 using Nozomi.Preprocessing;
 using Nozomi.Service.Events.Interfaces;
-using Nozomi.Service.Identity.Managers;
 using Nozomi.Service.Services.Interfaces;
 using Nozomi.Ticker.Controllers;
 
-namespace Nozomi.Ticker.Areas.Admin.Controllers
+namespace Nozomi.Ticker.Areas.Admin.Controllers.CurrencyPair
 {
     [Area("Admin")]
     [Authorize(Roles = "Owner, Administrator, Staff")]
@@ -24,10 +24,10 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
         private readonly ICurrencyEvent _currencyEvent;
         private readonly ISourceEvent _sourceEvent;
 
-        public CurrencyPairController(ILogger<CurrencyPairController> logger, NozomiSignInManager signInManager,
-            NozomiUserManager userManager, ICurrencyPairAdminEvent currencyPairAdminEvent, 
+        public CurrencyPairController(ILogger<CurrencyPairController> logger, ICurrencyPairAdminEvent currencyPairAdminEvent, 
             ICurrencyPairEvent currencyPairEvent, ICurrencyPairService currencyPairService, 
-            ICurrencyEvent currencyEvent, ISourceEvent sourceEvent)
+            ICurrencyEvent currencyEvent, ISourceEvent sourceEvent, SignInManager<User> signInManager,
+            UserManager<User> userManager)
             : base(logger, signInManager, userManager)
         {
             _currencyPairAdminEvent = currencyPairAdminEvent;

@@ -8,43 +8,29 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using Nozomi.Base.Identity.Models.Identity;
-using Nozomi.Base.Identity.Models.Subscription;
-using Nozomi.Base.Identity.ViewModels.Manage;
-using Nozomi.Base.Identity.ViewModels.Manage.ApiTokens;
-using Nozomi.Base.Identity.ViewModels.Manage.PaymentMethods;
-using Nozomi.Base.Identity.ViewModels.Manage.TwoFactorAuthentication;
+using Nozomi.Base.Auth.Models;
 using Nozomi.Preprocessing.Events.Interfaces;
 using Nozomi.Service.Events.Interfaces;
-using Nozomi.Service.Identity.Events.Auth.Interfaces;
-using Nozomi.Service.Identity.Events.Interfaces;
-using Nozomi.Service.Identity.Managers;
-using Nozomi.Service.Identity.Services.Interfaces;
 using Nozomi.Service.Services.Interfaces;
+using Nozomi.Ticker.Areas.Users.Controllers.Manage.PaymentMethods;
+using Nozomi.Ticker.Areas.Users.Controllers.Manage.TwoFactorAuthentication;
 using Nozomi.Ticker.Controllers;
 
-namespace Nozomi.Ticker.Areas.Admin.Controllers
+namespace Nozomi.Ticker.Areas.Users.Controllers.Manage
 {
     [Area("Users")]
     public class ManageController : BaseViewController<ManageController>
     {
-        private readonly IApiTokenEvent _apiTokenEvent;
         private readonly ISourceEvent _sourceEvent;
-        private readonly IStripeEvent _stripeEvent;
-        private readonly IStripeService _stripeService;
         private readonly ISmsSender _smsSender;
         private readonly UrlEncoder _urlEncoder;
         
-        public ManageController(ILogger<ManageController> logger, NozomiSignInManager signInManager, 
-            NozomiUserManager userManager, ISmsSender smsSender, 
-            IStripeService stripeService, IStripeEvent stripeEvent, IApiTokenEvent apiTokenEvent, 
+        public ManageController(ILogger<ManageController> logger, SignInManager<User> signInManager, 
+            UserManager<User> userManager, ISmsSender smsSender, 
             ISourceEvent sourceEvent, ISourceService sourceService, UrlEncoder urlEncoder) 
             : base(logger, signInManager, userManager)
         {
             _smsSender = smsSender;
-            _apiTokenEvent = apiTokenEvent;
-            _stripeEvent = stripeEvent;
-            _stripeService = stripeService;
             _sourceEvent = sourceEvent;
             _urlEncoder = urlEncoder;
         }
@@ -596,159 +582,6 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
             var result = await _userManager.AddLoginAsync(user, info);
             var message = result.Succeeded ? EditProfileMessageId.AddLoginSuccess : EditProfileMessageId.Error;
             return RedirectToAction(nameof(ManageLogins), new { Message = message });
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> Plans()
-        {
-            var user = await GetCurrentUserAsync();
-            
-            return View();
-        }
-
-        //
-        // GET: /Manage/PaymentMethods
-        [HttpGet]
-        public async Task<IActionResult> PaymentMethods(PaymentMethodsViewModel vm) // TODO: Success obj
-        {
-            if (vm == null) vm = new PaymentMethodsViewModel();
-
-            // Auth checks
-            var user = await GetCurrentUserAsync();
-            if (user == null)
-            {
-                await _signInManager.SignOutAsync();
-                return RedirectToAction("Index", "Home");
-            }
-
-            vm.Cards = await _stripeEvent.Cards(user.StripeCustomerId);
-            vm.Customer = await _stripeEvent.User(user.StripeCustomerId);
-            
-            return View(vm);
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> PostNewCard([FromForm]AddNewCardInputModel vm)
-        {
-            if (!ModelState.IsValid)
-            {
-                return RedirectToAction("PaymentMethods"); // TODO: Failure obj
-            }
-
-            var user = await GetCurrentUserAsync();
-            
-            if (user == null) 
-            {
-                return RedirectToAction("PaymentMethods", 
-                new PaymentMethodsViewModel()
-                {
-                    CardholderName = vm.CardholderName,
-                    CardToken = vm.CardToken
-                });
-            }
-            
-            await _stripeService.AddCard(user, vm.CardToken);
-            
-            return RedirectToAction("PaymentMethods"); // TODO: Success obj
-        }
-
-        public async Task<IActionResult> SetNewDefaultCard(string cardId)
-        {
-            if (string.IsNullOrEmpty(cardId))
-            {
-                return RedirectToAction("PaymentMethods"); // TODO: Failure obj
-            }
-
-            var user = await GetCurrentUserAsync();
-
-            if (user == null || string.IsNullOrEmpty(user.StripeCustomerId))
-            {
-                return RedirectToAction("PaymentMethods"); // TODO: Failure obj
-            }
-
-            if (await _stripeService.SetDefaultCard(user.StripeCustomerId, cardId))
-            {
-                return RedirectToAction("PaymentMethods"); // TODO: Success obj
-            }
-            
-            return RedirectToAction("PaymentMethods"); // TODO: Failure obj
-        }
-
-        public async Task<IActionResult> RemoveCard(string cardId)
-        {
-            if (string.IsNullOrEmpty(cardId))
-            {
-                return RedirectToAction("PaymentMethods"); // TODO: Failure obj
-            }
-            
-            var user = await GetCurrentUserAsync();
-
-            if (user == null || string.IsNullOrEmpty(user.StripeCustomerId))
-            {
-                return RedirectToAction("PaymentMethods"); // TODO: Failure obj
-            }
-
-            if (await _stripeService.RemoveCard(user.StripeCustomerId, cardId))
-            {
-                return RedirectToAction("PaymentMethods"); // TODO: Success obj
-            }
-            
-            return RedirectToAction("PaymentMethods"); // TODO: Failure obj
-        }
-
-        [HttpGet("planType")]
-        public async Task<IActionResult> Subscribe(PlanType planType)
-        {
-            var user = await GetCurrentUserAsync();
-
-            if (user == null || string.IsNullOrEmpty(user.StripeCustomerId))
-            {
-                return BadRequest("Are you logged in?");
-            }
-
-            var res = await _stripeService.Subscribe(user.StripeCustomerId, planType);
-
-            if (!string.IsNullOrEmpty(res.Id))
-            {
-                return Ok("Subscription successful!");
-            }
-
-            return BadRequest("Something unexpected happened with the subscription.");
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> Unsubscribe(PlanType planType)
-        {
-            var user = await GetCurrentUserAsync();
-            
-            if (user == null || string.IsNullOrEmpty(user.StripeCustomerId))
-            {
-                return BadRequest("Are you logged in?");
-            }
-
-            var res = await _stripeService.CancelSubscription(user.StripeCustomerId, planType);
-
-            if (res) return Ok();
-
-            return BadRequest();
-        }
-
-        public async Task<IActionResult> ApiTokens()
-        {
-            var user = await GetCurrentUserAsync();
-            
-            if (user == null)
-            {
-                return BadRequest("Are you logged in?");
-            }
-            
-            var model = new ApiTokensViewModel
-            {
-                ApiTokens = (await _apiTokenEvent.ApiTokensByUserId(user.Id, true))
-                    .Select(tok => tok.ToApiTokenResult()).ToList()
-            };
-            
-            return View(model);
         }
 
         #region Helpers

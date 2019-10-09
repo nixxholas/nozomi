@@ -2,16 +2,15 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Logging;
-using Nozomi.Base.Identity.Models.Identity;
-using Nozomi.Base.Identity.ViewModels.Account;
+using Nozomi.Base.Auth.Models;
 using Nozomi.Preprocessing.Events.Interfaces;
-using Nozomi.Service.Identity.Managers;
 using Nozomi.Ticker.Controllers;
 
-namespace Nozomi.Ticker.Areas.Users.Controllers
+namespace Nozomi.Ticker.Areas.Users.Controllers.Account
 {
     [Area("Users")]
     [Authorize]
@@ -20,9 +19,9 @@ namespace Nozomi.Ticker.Areas.Users.Controllers
         private readonly IEmailSender _emailSender;
         private readonly ISmsSender _smsSender;
 
-        public AccountController(ILogger<AccountController> logger, NozomiSignInManager signInManager, 
+        public AccountController(ILogger<AccountController> logger, SignInManager<User> signInManager, 
             IEmailSender emailSender, ISmsSender smsSender,
-            NozomiUserManager userManager) : base(logger, signInManager, userManager)
+            UserManager<User> userManager) : base(logger, signInManager, userManager)
         {
             _emailSender = emailSender;
             _smsSender = smsSender;
@@ -50,7 +49,8 @@ namespace Nozomi.Ticker.Areas.Users.Controllers
             {
                 // This doesn't count login failures towards account lockout
                 // To enable password failures to trigger account lockout, set lockoutOnFailure: true
-                var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberLogin, lockoutOnFailure: false);
+                var result = await _signInManager.PasswordSignInAsync(model.Username, model.Password, 
+                    model.RememberLogin, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
                     _logger.LogInformation(1, "User logged in.");

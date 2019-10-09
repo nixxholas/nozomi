@@ -11,13 +11,6 @@ using Nozomi.Preprocessing.Events;
 using Nozomi.Preprocessing.Events.Interfaces;
 using Nozomi.Service.Events;
 using Nozomi.Service.Events.Interfaces;
-using Nozomi.Service.Identity.Events;
-using Nozomi.Service.Identity.Events.Interfaces;
-using Nozomi.Service.Identity.Handlers;
-using Nozomi.Service.Identity.Services;
-using Nozomi.Service.Identity.Services.Interfaces;
-using Nozomi.Service.Identity.Stores;
-using Nozomi.Service.Identity.Stores.Interfaces;
 using Nozomi.Service.Services;
 using Nozomi.Service.Services.Enumerators;
 using Nozomi.Service.Services.Interfaces;
@@ -31,10 +24,7 @@ namespace Nozomi.Ticker.StartupExtensions
     {
         public static void ConfigureServiceLayer(this IServiceCollection services)
         {
-            services.AddScoped<IAuthorizationHandler, ApiTokenHandler>();
-            
             // Service Injections
-            services.AddTransient<IApiTokenService, ApiTokenService>();
             services.AddTransient<ICurrencyService, CurrencyService>();
             services.AddTransient<ICurrencyPairService, CurrencyPairService>();
             services.AddTransient<ICurrencyTypeService, CurrencyTypeService>();
@@ -46,15 +36,9 @@ namespace Nozomi.Ticker.StartupExtensions
             services.AddTransient<ITickerService, TickerService>();
             services.AddTransient<ICurrencySourceService, CurrencySourceService>();
 
-            // Singleton service injections for in-memory-related processes.
-            services.AddScoped<IStripeService, StripeService>();
-            
             // Admin Service Injections
             services.AddTransient<IAnalysedComponentService, AnalysedComponentService>();
             services.AddTransient<ICurrencyPropertyService, CurrencyPropertyService>();
-            
-            // Identity-related service injections
-            services.AddTransient<INozomiUserStore, NozomiUserStore>();
             
             // TODO: Microservice
             // Nozomi.Analysis Service injections

@@ -1,10 +1,8 @@
 ﻿@using Microsoft.AspNetCore.Identity
+@using Nozomi.Base.Auth.Models
 @using Nozomi.Base.Core.Helpers.Enumerator
-@using Nozomi.Base.Identity.Models.Identity
-@using Nozomi.Service.Identity.Managers
-@using Nozomi.Ticker.Views.Manage
-@inject NozomiSignInManager SignInManager
-@inject NozomiUserManager UserManager
+@inject SignInManager<User> SignInManager
+@inject UserManager<User> UserManager
 @{
     var hasExternalLogins = (await SignInManager.GetExternalAuthenticationSchemesAsync()).Any();
 
@@ -211,12 +209,6 @@
                                         <li>
                                             <a class="nav-link u-header__sub-menu-nav-link" href="activity.html">Activity</a>
                                         </li>
-                                        <li>
-                                            <a class="nav-link u-header__sub-menu-nav-link"
-                                               asp-controller="Manage" asp-action="PaymentMethods">
-                                                Payment methods
-                                            </a>
-                                        </li>
                                     </ul>
                                 </li>
                                 <!-- Billing -->
@@ -234,24 +226,9 @@
                                         <li>
                                             <a class="nav-link u-header__sub-menu-nav-link" href="invite-friends.html">Invite friends</a>
                                         </li>
-                                        <li>
-                                            <a class="nav-link u-header__sub-menu-nav-link"
-                                               asp-controller="Manage" asp-action="ApiTokens">
-                                                API Token
-                                            </a>
-                                        </li>
                                     </ul>
                                 </li>
                                 <!-- Accessibility -->
-
-                                <!-- Others -->
-                                <li class="nav-item u-header__nav-item">
-                                    <a class="nav-link u-header__nav-link" asp-controller="Manage"
-                                       asp-action="Plans">
-                                        Plans
-                                    </a>
-                                </li>
-                                <!-- Others -->
                             </ul>
                         </div>
                     </nav>

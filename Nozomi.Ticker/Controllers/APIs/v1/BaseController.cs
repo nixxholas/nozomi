@@ -1,9 +1,9 @@
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Nozomi.Base.Identity.Models.Identity;
+using Nozomi.Base.Auth.Models;
 using Nozomi.Preprocessing;
-using Nozomi.Service.Identity.Managers;
 
 namespace Nozomi.Ticker.Controllers.APIs.v1
 {
@@ -11,13 +11,13 @@ namespace Nozomi.Ticker.Controllers.APIs.v1
     [ApiVersion(GlobalApiVariables.V1_MAJOR_VERSION, Deprecated = false)]
     public class BaseController<T> : ControllerBase where T : class
     {
-        private readonly NozomiUserManager _userManager;
+        private readonly UserManager<User> _userManager;
         protected readonly ILogger<T> _logger;
         
-        public BaseController(ILogger<T> logger, NozomiUserManager nozomiUserManager)
+        public BaseController(ILogger<T> logger, UserManager<User> userManager)
         {
             _logger = logger;
-            _userManager = nozomiUserManager;
+            _userManager = userManager;
         }
 
         protected Task<User> GetCurrentUserAsync()

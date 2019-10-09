@@ -17,7 +17,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Nozomi.Preprocessing;
 using Nozomi.Repo.Data;
-using Nozomi.Repo.Identity.Data;
 using Nozomi.Web.StartupExtensions;
 using VaultSharp;
 using VaultSharp.V1.AuthMethods.Token;
@@ -58,14 +57,6 @@ namespace Nozomi.Web
                     options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
                 },
                     ServiceLifetime.Transient);
-
-                services
-                    .AddEntityFrameworkNpgsql()
-                    .AddDbContext<NozomiAuthContext>(options =>
-                {
-                    options.UseNpgsql(Configuration.GetConnectionString("LocalAuth:" + Environment.MachineName));
-                    options.EnableSensitiveDataLogging(false);
-                });
             }
             else
             {
@@ -102,25 +93,6 @@ namespace Nozomi.Web
                     options.EnableSensitiveDataLogging(false);
                     options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
                 }, ServiceLifetime.Transient);
-
-                var authDb = (string) nozomiVault["auth"];
-                if (string.IsNullOrEmpty(authDb))
-                    throw new SystemException("Invalid auth database configuration");
-                services.AddDbContext<NozomiAuthContext>(options =>
-                {
-                    options.UseNpgsql(authDb
-                        , builder =>
-                        {
-                            builder.EnableRetryOnFailure();
-//                            builder.ProvideClientCertificatesCallback(certificates =>
-//                            {
-//                                var cert = new X509Certificate2("ca-certificate.crt");
-//                                certificates.Add(cert);
-//                            });
-                        }
-                    );
-                    options.EnableSensitiveDataLogging(false);
-                });
             }
 
             // Add framework services.

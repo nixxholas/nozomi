@@ -1,17 +1,17 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Nozomi.Base.Identity.ViewModels.Manage;
+using Nozomi.Base.Auth.Models;
 using Nozomi.Data;
 using Nozomi.Data.AreaModels.v1.Source;
 using Nozomi.Service.Events.Interfaces;
-using Nozomi.Service.Identity.Managers;
 using Nozomi.Service.Services.Interfaces;
 using Nozomi.Ticker.Controllers;
 
-namespace Nozomi.Ticker.Areas.Admin.Controllers
+namespace Nozomi.Ticker.Areas.Admin.Controllers.Source
 {
     [Area("Admin")]
     [Authorize(Roles = "Owner, Administrator, Staff")]
@@ -20,8 +20,8 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
         private readonly ISourceEvent _sourceEvent;
         private readonly ISourceService _sourceService;
         
-        public SourceController(ILogger<SourceController> logger, NozomiSignInManager signInManager, 
-            NozomiUserManager userManager, ISourceEvent sourceEvent, ISourceService sourceService) 
+        public SourceController(ILogger<SourceController> logger, ISourceEvent sourceEvent, ISourceService sourceService, 
+            SignInManager<User> signInManager, UserManager<User> userManager)
             : base(logger, signInManager, userManager)
         {
             _sourceEvent = sourceEvent;
@@ -80,7 +80,7 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
             if (!ModelState.IsValid)
                 return BadRequest("Invalid payload, please provide the missing properties.");
 
-            var result = _sourceService.Create(createSource, user.Id);
+            var result = _sourceService.Create(createSource, 0);
             
             if (result.ResultType.Equals(NozomiResultType.Success)) return Ok(result);
 

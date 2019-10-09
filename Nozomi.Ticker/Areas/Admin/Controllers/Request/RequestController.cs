@@ -1,17 +1,17 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Nozomi.Base.Identity.ViewModels.Manage.Request;
+using Nozomi.Base.Auth.Models;
 using Nozomi.Data;
 using Nozomi.Data.AreaModels.v1.Requests;
 using Nozomi.Preprocessing;
 using Nozomi.Service.Events.Interfaces;
-using Nozomi.Service.Identity.Managers;
 using Nozomi.Service.Services.Requests.Interfaces;
 using Nozomi.Ticker.Controllers;
 
-namespace Nozomi.Ticker.Areas.Admin.Controllers
+namespace Nozomi.Ticker.Areas.Admin.Controllers.Request
 {
     [Area("Admin")]
     [Authorize(Roles = "Owner, Administrator, Staff")]
@@ -21,9 +21,10 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
         private readonly IRequestComponentEvent _requestComponentEvent;
         private readonly IRequestService _requestService;
 
-        public RequestController(ILogger<RequestController> logger, NozomiSignInManager signInManager,
-            NozomiUserManager userManager, IRequestEvent requestEvent, IRequestService requestService,
-            IRequestComponentEvent requestComponentEvent)
+        public RequestController(ILogger<RequestController> logger, IRequestEvent requestEvent,
+            IRequestService requestService, IRequestComponentEvent requestComponentEvent,
+            SignInManager<User> signInManager,
+            UserManager<User> userManager)
             : base(logger, signInManager, userManager)
         {
             _requestEvent = requestEvent;
@@ -32,7 +33,7 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
         }
 
         #region GET Requests
-        
+
         [HttpGet]
         public async Task<IActionResult> Requests()
         {
@@ -50,11 +51,11 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
                 }
             );
         }
-        
+
         #endregion
 
         #region GET Request by Id
-        
+
         [HttpGet("{id}")]
         public async Task<IActionResult> Request([FromRoute] long id)
         {
@@ -63,7 +64,7 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
             {
                 return NotFound($"Unable to load user withID '{_userManager.GetUserId(User)}'.");
             }
-                      
+
             return View(new RequestViewModel
             {
                 Request = _requestEvent.GetActive(id, true).ToDTO(),
@@ -72,9 +73,9 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
                 RequestComponentTypes = NozomiServiceConstants.requestComponentTypes
             });
         }
-        
+
         #endregion
-        
+
         #region POST Request
 
         [HttpPost]
@@ -86,15 +87,15 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
                 return NotFound($"Unable to load user withID '{_userManager.GetUserId(User)}'.");
             }
 
-            var result = _requestService.Create(createRequest, user.Id);
-            
+            var result = _requestService.Create(createRequest, 0);
+
             if (result.ResultType.Equals(NozomiResultType.Success)) return Ok(result);
 
             return NotFound();
         }
-        
+
         #endregion
-        
+
         #region PUT Request
 
         [HttpPut("{id}")]
@@ -105,23 +106,23 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
             {
                 return NotFound($"Unable to load user withID '{_userManager.GetUserId(User)}'.");
             }
-            
+
             if (id != updateRequest.Id)
             {
                 return BadRequest();
             }
 
             var result = _requestService.Update(updateRequest);
-            
+
             if (result.ResultType.Equals(NozomiResultType.Success)) return Ok(result);
 
             return NotFound();
         }
-        
+
         #endregion
-        
+
         #region DELETE Request
-        
+
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteRequest(long id)
         {
@@ -130,14 +131,14 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
             {
                 return NotFound($"Unable to load user withID '{_userManager.GetUserId(User)}'.");
             }
-            
+
             var result = _requestService.Delete(id);
-            
+
             if (result.ResultType.Equals(NozomiResultType.Success)) return Ok(result);
 
             return NotFound();
         }
-        
+
         #endregion
     }
 }

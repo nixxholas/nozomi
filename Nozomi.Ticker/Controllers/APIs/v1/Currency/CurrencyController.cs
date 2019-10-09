@@ -1,13 +1,14 @@
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Nozomi.Base.Auth.Models;
 using Nozomi.Data;
 using Nozomi.Data.AreaModels.v1.Currency;
 using Nozomi.Data.Models.Web.Analytical;
 using Nozomi.Data.ResponseModels.Currency;
 using Nozomi.Service.Events.Interfaces;
-using Nozomi.Service.Identity.Managers;
 using Nozomi.Service.Services.Interfaces;
 
 namespace Nozomi.Ticker.Controllers.APIs.v1.Currency
@@ -18,7 +19,7 @@ namespace Nozomi.Ticker.Controllers.APIs.v1.Currency
         private readonly ICurrencyEvent _currencyEvent;
         private readonly ICurrencyService _currencyService;
         
-        public CurrencyController(ILogger<CurrencyController> logger, NozomiUserManager userManager,
+        public CurrencyController(ILogger<CurrencyController> logger, UserManager<User> userManager,
             ICurrencyEvent currencyEvent, ICurrencyService currencyService) : base(logger, userManager)
         {
             _currencyEvent = currencyEvent;

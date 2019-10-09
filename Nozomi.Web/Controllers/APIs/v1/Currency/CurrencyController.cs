@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Nozomi.Base.Core;
 using Nozomi.Base.Core.Responses;
-using Nozomi.Base.Identity.Models.Identity;
 using Nozomi.Data;
 using Nozomi.Data.Models.Web.Analytical;
 using Nozomi.Data.ResponseModels;
@@ -13,7 +12,6 @@ using Nozomi.Data.ResponseModels.Currency;
 using Nozomi.Preprocessing;
 using Nozomi.Service.Events.Analysis.Interfaces;
 using Nozomi.Service.Events.Interfaces;
-using Nozomi.Service.Identity.Managers;
 
 namespace Nozomi.Web.Controllers.APIs.v1.Currency
 {

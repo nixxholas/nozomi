@@ -10,7 +10,6 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Nozomi.Base.Blockchain.Auth.Query.Validating;
-using Nozomi.Base.Identity.Models.Identity;
 using Nozomi.Infra.Blockchain.Auth.Events.Interfaces;
 
 namespace Nozomi.Web.Controllers.APIs.v1.Auth

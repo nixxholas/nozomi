@@ -10,10 +10,6 @@ using Nozomi.Service.Events;
 using Nozomi.Service.Events.Analysis;
 using Nozomi.Service.Events.Analysis.Interfaces;
 using Nozomi.Service.Events.Interfaces;
-using Nozomi.Service.Identity.Events;
-using Nozomi.Service.Identity.Events.Auth;
-using Nozomi.Service.Identity.Events.Auth.Interfaces;
-using Nozomi.Service.Identity.Events.Interfaces;
 using Nozomi.Service.Services.Enumerators;
 
 namespace Nozomi.Ticker.StartupExtensions
@@ -24,9 +20,6 @@ namespace Nozomi.Ticker.StartupExtensions
         {
             services.AddTransient<IEmailSender, EmailSender>();
             services.AddTransient<ISmsSender, SmsSender>();
-            services.AddTransient<IStripeEvent, StripeEvent>();
-
-            services.AddScoped<IApiTokenEvent, ApiTokenEvent>();
 
             services.AddScoped<IAnalysedComponentEvent, AnalysedComponentEvent>();
             services.AddScoped<IComponentTypeEvent, ComponentTypeEvent>();

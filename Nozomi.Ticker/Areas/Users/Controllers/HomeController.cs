@@ -1,7 +1,8 @@
 ﻿using System.Diagnostics;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Nozomi.Service.Identity.Managers;
+using Nozomi.Base.Auth.Models;
 using Nozomi.Ticker.Controllers;
 using Nozomi.Ticker.Models;
 
@@ -12,8 +13,8 @@ namespace Nozomi.Ticker.Areas.Users.Controllers
     [ApiExplorerSettings(IgnoreApi = true)]
     public class HomeController : BaseViewController<HomeController>
     {
-        public HomeController(ILogger<HomeController> logger, NozomiSignInManager signInManager, 
-            NozomiUserManager userManager) 
+        public HomeController(ILogger<HomeController> logger, SignInManager<User> signInManager, 
+            UserManager<User> userManager) 
             : base(logger, signInManager, userManager)
         {
         }

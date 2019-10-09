@@ -2,11 +2,9 @@ using System.Collections.Generic;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Nozomi.Base.Identity.Models.Identity;
 using Nozomi.Data;
 using Nozomi.Data.Models.Web;
 using Nozomi.Service.Events.Interfaces;
-using Nozomi.Service.Identity.Managers;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace Nozomi.Web.Controllers.APIs.v1.CurrencyPairComponent
