@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Nozomi.Base.Identity.Models.Identity;
-using Nozomi.Repo.Identity.Data;
+using Nozomi.Repo.Auth.Data;
 using Nozomi.Service.Identity.Managers;
 using Nozomi.Service.Identity.Requirements;
 
@@ -25,7 +25,7 @@ namespace Nozomi.Ticker.StartupExtensions
 //            }
 
             services.AddIdentity<User, Role>()
-                .AddEntityFrameworkStores<NozomiAuthContext>()
+                .AddEntityFrameworkStores<AuthDbContext>()
                 .AddUserManager<NozomiUserManager>()
                 .AddSignInManager<NozomiSignInManager>()
                 .AddDefaultTokenProviders();

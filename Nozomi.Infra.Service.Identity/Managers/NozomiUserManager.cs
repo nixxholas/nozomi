@@ -19,39 +19,26 @@ namespace Nozomi.Service.Identity.Managers
 {
     public class NozomiUserManager : UserManager<User>, INozomiUserManager
     {
-        private readonly IStripeService _stripeService;
-        
         public NozomiUserManager(IUserStore<User> store, IOptions<IdentityOptions> optionsAccessor, 
             IPasswordHasher<User> passwordHasher, IEnumerable<IUserValidator<User>> userValidators,
             IEnumerable<IPasswordValidator<User>> passwordValidators, ILookupNormalizer keyNormalizer, 
-            IdentityErrorDescriber errors, IServiceProvider services, ILogger<UserManager<User>> logger,
-            IStripeService stripeService)
+            IdentityErrorDescriber errors, IServiceProvider services, ILogger<UserManager<User>> logger)
             : base(store, optionsAccessor, passwordHasher, userValidators, passwordValidators, keyNormalizer, 
                 errors, services, logger)
         {
-            _stripeService = stripeService;
         }
 
         public override async Task<IdentityResult> CreateAsync(User user)
         {
-            if (!string.IsNullOrEmpty(user.StripeCustomerId))
-                user.StripeCustomerId = await _stripeService.CreateStripeCustomer(user);
-            else
-                return IdentityResult.Failed(new IdentityError
-                {
-                    Code = IdentityErrorType.CreateAccountStripeCustomerIdIssue.ToString(),
-                    Description = IdentityErrorType.CreateAccountStripeCustomerIdIssue.GetDescription()
-                });
-
             var createUserResult = await base.CreateAsync(user);
             if (createUserResult.Succeeded)
                 return createUserResult;
-            else
-                return IdentityResult.Failed(new IdentityError
-                {
-                    Code = IdentityErrorType.CreateAccountStripeIssue.ToString(),
-                    Description = IdentityErrorType.CreateAccountStripeIssue.GetDescription()
-                });
+            
+            return IdentityResult.Failed(new IdentityError
+            {
+                Code = IdentityErrorType.InvalidCredentials.ToString(),
+                Description = IdentityErrorType.InvalidCredentials.GetDescription()
+            });
         }
 
         public async Task<User> FindAsync(string id, string password)
