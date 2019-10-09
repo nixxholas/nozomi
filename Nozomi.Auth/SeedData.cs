@@ -13,6 +13,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Nozomi.Base.Auth.Models;
+using Nozomi.Base.Core.Helpers.Enumerator;
 using Nozomi.Repo.Auth.Data;
 
 namespace Nozomi.Auth
@@ -36,6 +37,72 @@ namespace Nozomi.Auth
                     }
 
                     context.Database.Migrate();
+
+                    var roleMgr = serviceScope.ServiceProvider.GetRequiredService<RoleManager<Role>>();
+                    
+                    var adminExists = roleMgr.RoleExistsAsync(RoleEnum.Administrator.GetDescription());
+                    if (!adminExists.Result)
+                    {
+                        var adminRole = new Role
+                        {
+                            Name = RoleEnum.Administrator.GetDescription(),
+                            NormalizedName = RoleEnum.Administrator.GetDescription().ToUpperInvariant()
+                        };
+
+                        var result = roleMgr.CreateAsync(adminRole).Result;
+                        if (!result.Succeeded)
+                        {
+                            throw new Exception(result.Errors.First().Description);
+                        }
+                    }
+
+                    var ownerExists = roleMgr.RoleExistsAsync(RoleEnum.Owner.GetDescription());
+                    if (!ownerExists.Result)
+                    {
+                        var ownerRole = new Role
+                        {
+                            Name = RoleEnum.Owner.GetDescription(),
+                            NormalizedName = RoleEnum.Owner.GetDescription().ToUpperInvariant()
+                        };
+
+                        var result = roleMgr.CreateAsync(ownerRole).Result;
+                        if (!result.Succeeded)
+                        {
+                            throw new Exception(result.Errors.First().Description);
+                        }
+                    }
+                    
+                    var staffExists = roleMgr.RoleExistsAsync(RoleEnum.Staff.GetDescription());
+                    if (!staffExists.Result)
+                    {
+                        var staffRole = new Role
+                        {
+                            Name = RoleEnum.Staff.GetDescription(),
+                            NormalizedName = RoleEnum.Staff.GetDescription().ToUpperInvariant()
+                        };
+
+                        var result = roleMgr.CreateAsync(staffRole).Result;
+                        if (!result.Succeeded)
+                        {
+                            throw new Exception(result.Errors.First().Description);
+                        }
+                    }
+                    
+                    var corpUserExists = roleMgr.RoleExistsAsync(RoleEnum.CorporateUser.GetDescription());
+                    if (!corpUserExists.Result)
+                    {
+                        var corpUserRole = new Role
+                        {
+                            Name = RoleEnum.CorporateUser.GetDescription(),
+                            NormalizedName = RoleEnum.CorporateUser.GetDescription().ToUpperInvariant()
+                        };
+
+                        var result = roleMgr.CreateAsync(corpUserRole).Result;
+                        if (!result.Succeeded)
+                        {
+                            throw new Exception(result.Errors.First().Description);
+                        }
+                    }
                     
                     var userMgr = serviceScope.ServiceProvider.GetRequiredService<UserManager<User>>();
                     var alice = userMgr.FindByNameAsync("alice").Result;
