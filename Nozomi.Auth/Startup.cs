@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using Microsoft.IdentityModel.Tokens;
 using Nozomi.Base.Auth.Models;
@@ -18,6 +19,8 @@ using Nozomi.Repo.Auth.Data;
 using Nozomi.Repo.BCL.Context;
 using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Data;
+using VaultSharp;
+using VaultSharp.V1.AuthMethods.Token;
 
 namespace Nozomi.Auth
 {
@@ -49,10 +52,50 @@ namespace Nozomi.Auth
             }
             else
             {
-                services.AddDbContext<AuthDbContext>(options =>
-                    options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
+                var vaultToken = Configuration["vaultToken"];
+
+                if (string.IsNullOrEmpty(vaultToken))
+                    throw new SystemException("Invalid vault token.");
+
+                var authMethod = new TokenAuthMethodInfo(vaultToken);
+                var vaultClientSettings = new VaultClientSettings("http://165.22.250.169:8200", authMethod);
+                var vaultClient = new VaultClient(vaultClientSettings);
+
+                var nozomiVault = vaultClient.V1.Secrets.Cubbyhole.ReadSecretAsync("nozomi")
+                    .GetAwaiter()
+                    .GetResult().Data;
+
+                var mainDb = (string) nozomiVault["main"];
+                if (string.IsNullOrEmpty(mainDb))
+                    throw new SystemException("Invalid main database configuration");
+                // Database
                 services.AddDbContext<NozomiDbContext>(options =>
-                    options.UseNpgsql(Configuration.GetConnectionString("DefaultCoreConnection")));
+                {
+                    options.UseNpgsql(mainDb
+                        , nozomiDbContextBuilder =>
+                        {
+                            nozomiDbContextBuilder.EnableRetryOnFailure();
+                        }
+                    );
+                    options.EnableSensitiveDataLogging(false);
+                    options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
+                }, ServiceLifetime.Transient);
+
+                var authDb = (string) nozomiVault["coreauth"];
+                if (string.IsNullOrEmpty(authDb))
+                    throw new SystemException("Invalid main database configuration");
+                // Database
+                services.AddDbContext<AuthDbContext>(options =>
+                {
+                    options.UseNpgsql(authDb
+                        , authDbContextBuilder =>
+                        {
+                            authDbContextBuilder.EnableRetryOnFailure();
+                        }
+                    );
+                    options.EnableSensitiveDataLogging(false);
+                    options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
+                }, ServiceLifetime.Transient);
             }
 
             services
@@ -70,6 +113,8 @@ namespace Nozomi.Auth
             services.AddMvc()
                 .SetCompatibilityVersion(Microsoft.AspNetCore.Mvc.CompatibilityVersion.Version_2_2);
 
+            var identityConfig = new IdentityConfig(HostingEnvironment);
+
             var builder = services
                 .AddIdentityServer(options =>
                 {
@@ -78,9 +123,9 @@ namespace Nozomi.Auth
                     options.Events.RaiseFailureEvents = true;
                     options.Events.RaiseSuccessEvents = true;
                 })
-                .AddInMemoryIdentityResources(Config.GetIdentityResources())
-                .AddInMemoryApiResources(Config.GetApis())
-                .AddInMemoryClients(Config.GetClients())
+                .AddInMemoryIdentityResources(identityConfig.GetIdentityResources())
+                .AddInMemoryApiResources(identityConfig.GetApis())
+                .AddInMemoryClients(identityConfig.GetClients())
                 .AddAspNetIdentity<User>();
 
             if (HostingEnvironment.IsDevelopment())
@@ -89,28 +134,9 @@ namespace Nozomi.Auth
             }
             else
             {
-                //builder.AddSigningCredential();
-                throw new Exception("need to configure key material");
+                // https://stackoverflow.com/questions/49042474/addsigningcredential-for-identityserver4
+                builder.AddSigningCredential(CreateSigningCredential());
             }
-
-//            if (HostingEnvironment.IsDevelopment())
-//            {
-//                services.AddAuthentication()
-//                    .AddIdentityServerAuthentication(opt =>
-//                    {
-//                        opt.Authority = "https://localhost:6001";
-//                        opt.ApiName = "nozomiapi";
-//                    });
-//            }
-//            else
-//            {
-//                services.AddAuthentication()
-//                    .AddIdentityServerAuthentication(opt =>
-//                    {
-//                        opt.Authority = "https://auth.nozomi.one";
-//                        opt.ApiName = "nozomiapi";
-//                    });
-//            }
 
             // Database
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
@@ -147,6 +173,22 @@ namespace Nozomi.Auth
             
             // "default", "{controller=Home}/{action=Index}/{id?}"
             app.UseMvcWithDefaultRoute();
+        }
+        
+        private SigningCredentials CreateSigningCredential()
+        {
+            var credentials = new SigningCredentials(GetSecurityKey(), SecurityAlgorithms.RsaSha256Signature);
+
+            return credentials;
+        }
+        private RSA GetRSACryptoServiceProvider()
+        {
+            // https://stackoverflow.com/questions/54180171/cspkeycontainerinfo-requires-windows-cryptographic-api-capi-which-is-not-av
+            return RSA.Create(4096);
+        }
+        private SecurityKey GetSecurityKey()
+        {
+            return new RsaSecurityKey(GetRSACryptoServiceProvider());
         }
     }
 }

@@ -8,14 +8,23 @@ using System.Collections.Generic;
 using System.Security.Claims;
 using IdentityModel;
 using IdentityServer4;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Hosting.Internal;
 using Nozomi.Base.Auth.Global;
 using Nozomi.Base.Auth.Models;
 
 namespace Nozomi.Auth
 {
-    public static class Config
+    public class IdentityConfig
     {
-        public static IEnumerable<IdentityResource> GetIdentityResources()
+        private readonly IHostingEnvironment _hostingEnvironment;
+        
+        public IdentityConfig(IHostingEnvironment hostingEnvironment)
+        {
+            _hostingEnvironment = hostingEnvironment;
+        }
+        
+        public IEnumerable<IdentityResource> GetIdentityResources()
         {
             // Defining a custom identity resource
             // http://docs.identityserver.io/en/latest/topics/resources.html#defining-custom-identity-resources
@@ -23,7 +32,7 @@ namespace Nozomi.Auth
                 name: "nozomi.address",
                 displayName: "Wallet address",
                 claimTypes: new[] { "walletHash" });
-            
+                    
             return new IdentityResource[]
             {
                 new IdentityResources.OpenId(),
@@ -33,7 +42,7 @@ namespace Nozomi.Auth
             };
         }
 
-        public static IEnumerable<ApiResource> GetApis()
+        public IEnumerable<ApiResource> GetApis()
         {
             return new ApiResource[]
             {
@@ -71,8 +80,26 @@ namespace Nozomi.Auth
             };
         }
 
-        public static IEnumerable<Client> GetClients()
+        public IEnumerable<Client> GetClients()
         {
+            if (_hostingEnvironment.IsProduction())
+                return new[]
+                {
+                    new Client {
+                        ClientId = "nozomi.spa",
+                        ClientName = "Nozomi Vue SPA",
+                    
+                        AllowAccessTokensViaBrowser = true,
+                        AllowedGrantTypes = GrantTypes.Implicit,
+                    
+                        AllowedScopes = { "openid", "profile", "email", "nozomi.web.read_only" },
+                        RedirectUris = {"https://nozomi.one/oidc-callback"},
+                        PostLogoutRedirectUris = {"https://nozomi.one/"},
+                        AllowedCorsOrigins = {"https://nozomi.one"},
+                        AccessTokenLifetime = 3600
+                    }
+                };
+            
             return new[]
             {
                 // client credentials flow client
@@ -89,33 +116,6 @@ namespace Nozomi.Auth
                         "nozomi.web.full_access"
                     }
                 },
-                new Client
-                {
-                    ClientId = "nozomi.vue",
-                    ClientName = "Nozomi Web Vue Client",
-                    //ClientUri = "https://nozomi.one",
-
-                    AllowedGrantTypes = GrantTypes.Hybrid,
-                    //AllowAccessTokensViaBrowser = true,
-                    ClientSecrets = {new Secret("super-secret".Sha256())}, // Hybrid requires a secret
-
-                    // where to redirect to after login
-                    RedirectUris = { "https://localhost:5001/auth-oidc" },
-
-                    // where to redirect to after logout
-                    PostLogoutRedirectUris = { "https://localhost:5001/signout-callback-oidc" },
-                    
-                    // Fuxk consent
-                    RequireConsent = false,
-                    
-                    AllowedScopes =
-                    {
-                        IdentityServerConstants.StandardScopes.OpenId,
-                        IdentityServerConstants.StandardScopes.Profile,
-                        "nozomi.web.read_only"
-                    },
-                    AllowOfflineAccess = true // Refresh tokens activated
-                },
                 new Client {
                     ClientId = "nozomi.spa",
                     ClientName = "Nozomi Vue SPA",
@@ -129,48 +129,6 @@ namespace Nozomi.Auth
                     AllowedCorsOrigins = {"https://localhost:5001"},
                     AccessTokenLifetime = 3600
                 }
-
-                // MVC client using hybrid flow
-//                new Client
-//                {
-//                    ClientId = "mvc",
-//                    ClientName = "MVC Client",
-//
-//                    AllowedGrantTypes = GrantTypes.HybridAndClientCredentials,
-//                    ClientSecrets = {new Secret("49C1A7E1-0C79-4A89-A3D6-A37998FB86B0".Sha256())},
-//
-//                    RedirectUris = {"http://localhost:5001/signin-oidc"},
-//                    FrontChannelLogoutUri = "http://localhost:5001/signout-oidc",
-//                    PostLogoutRedirectUris = {"http://localhost:5001/signout-callback-oidc"},
-//
-//                    AllowOfflineAccess = true,
-//                    AllowedScopes = {"openid", "profile", "api1"}
-//                },
-
-                // SPA client using code flow + pkce
-//                new Client
-//                {
-//                    ClientId = "nozomi.spa",
-//                    ClientName = "Nozomi SPA Client",
-//                    ClientUri = "https://nozomi.one",
-//
-//                    AllowedGrantTypes = GrantTypes.Code,
-//                    RequirePkce = true,
-//                    RequireClientSecret = false,
-//
-//                    RedirectUris =
-//                    {
-//                        "http://localhost:5002/index.html",
-//                        "http://localhost:5002/callback.html",
-//                        "http://localhost:5002/silent.html",
-//                        "http://localhost:5002/popup.html",
-//                    },
-//
-//                    PostLogoutRedirectUris = {"http://localhost:5002/index.html"},
-//                    AllowedCorsOrigins = {"http://localhost:5002"},
-//
-//                    AllowedScopes = {"openid", "profile", "api1"}
-//                }
             };
         }
             
