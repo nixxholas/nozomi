@@ -58,7 +58,6 @@ namespace Nozomi.Infra.Analysis.Service.Services
                 comp.ModifiedAt = DateTime.UtcNow;
                 comp.Value = value;
                 
-                _unitOfWork.GetRepository<AnalysedComponent>().Update(comp);
                 _unitOfWork.Commit(userId);
 
                 return true;
@@ -78,7 +77,6 @@ namespace Nozomi.Infra.Analysis.Service.Services
             {
                 comp.IsFailing = isFailing;
                 
-                _unitOfWork.GetRepository<AnalysedComponent>().Update(comp);
                 _unitOfWork.Commit(userId);
 
                 return true;
@@ -101,7 +99,6 @@ namespace Nozomi.Infra.Analysis.Service.Services
                 comp.IsEnabled = false;
                 comp.ModifiedAt = DateTime.UtcNow;
 
-                _unitOfWork.GetRepository<AnalysedComponent>().Update(comp);
                 _unitOfWork.Commit();
             }
 
