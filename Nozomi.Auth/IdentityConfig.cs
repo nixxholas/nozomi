@@ -87,7 +87,7 @@ namespace Nozomi.Auth
                 {
                     new Client {
                         ClientId = "nozomi.spa",
-                        ClientName = "Nozomi Vue SPA",
+                        ClientName = "Nozomi",
                     
                         AllowAccessTokensViaBrowser = true,
                         AllowedGrantTypes = GrantTypes.Implicit,
