@@ -71,6 +71,8 @@ namespace Nozomi.Auth
             services.AddMvc()
                 .SetCompatibilityVersion(Microsoft.AspNetCore.Mvc.CompatibilityVersion.Version_2_2);
 
+            var identityConfig = new IdentityConfig(HostingEnvironment);
+
             var builder = services
                 .AddIdentityServer(options =>
                 {
@@ -79,9 +81,9 @@ namespace Nozomi.Auth
                     options.Events.RaiseFailureEvents = true;
                     options.Events.RaiseSuccessEvents = true;
                 })
-                .AddInMemoryIdentityResources(Config.GetIdentityResources())
-                .AddInMemoryApiResources(Config.GetApis())
-                .AddInMemoryClients(Config.GetClients())
+                .AddInMemoryIdentityResources(identityConfig.GetIdentityResources())
+                .AddInMemoryApiResources(identityConfig.GetApis())
+                .AddInMemoryClients(identityConfig.GetClients())
                 .AddAspNetIdentity<User>();
 
             if (HostingEnvironment.IsDevelopment())
@@ -93,25 +95,6 @@ namespace Nozomi.Auth
                 builder.AddSigningCredential(CreateSigningCredential());
                 //throw new Exception("need to configure key material");
             }
-
-//            if (HostingEnvironment.IsDevelopment())
-//            {
-//                services.AddAuthentication()
-//                    .AddIdentityServerAuthentication(opt =>
-//                    {
-//                        opt.Authority = "https://localhost:6001";
-//                        opt.ApiName = "nozomiapi";
-//                    });
-//            }
-//            else
-//            {
-//                services.AddAuthentication()
-//                    .AddIdentityServerAuthentication(opt =>
-//                    {
-//                        opt.Authority = "https://auth.nozomi.one";
-//                        opt.ApiName = "nozomiapi";
-//                    });
-//            }
 
             // Database
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
