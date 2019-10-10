@@ -19,6 +19,8 @@ using Nozomi.Repo.Auth.Data;
 using Nozomi.Repo.BCL.Context;
 using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Data;
+using VaultSharp;
+using VaultSharp.V1.AuthMethods.Token;
 
 namespace Nozomi.Auth
 {
@@ -50,10 +52,50 @@ namespace Nozomi.Auth
             }
             else
             {
-                services.AddDbContext<AuthDbContext>(options =>
-                    options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
+                var vaultToken = Configuration["vaultToken"];
+
+                if (string.IsNullOrEmpty(vaultToken))
+                    throw new SystemException("Invalid vault token.");
+
+                var authMethod = new TokenAuthMethodInfo(vaultToken);
+                var vaultClientSettings = new VaultClientSettings("http://165.22.250.169:8200", authMethod);
+                var vaultClient = new VaultClient(vaultClientSettings);
+
+                var nozomiVault = vaultClient.V1.Secrets.Cubbyhole.ReadSecretAsync("nozomi")
+                    .GetAwaiter()
+                    .GetResult().Data;
+
+                var mainDb = (string) nozomiVault["main"];
+                if (string.IsNullOrEmpty(mainDb))
+                    throw new SystemException("Invalid main database configuration");
+                // Database
                 services.AddDbContext<NozomiDbContext>(options =>
-                    options.UseNpgsql(Configuration.GetConnectionString("DefaultCoreConnection")));
+                {
+                    options.UseNpgsql(mainDb
+                        , nozomiDbContextBuilder =>
+                        {
+                            nozomiDbContextBuilder.EnableRetryOnFailure();
+                        }
+                    );
+                    options.EnableSensitiveDataLogging(false);
+                    options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
+                }, ServiceLifetime.Transient);
+
+                var authDb = (string) nozomiVault["coreauth"];
+                if (string.IsNullOrEmpty(authDb))
+                    throw new SystemException("Invalid main database configuration");
+                // Database
+                services.AddDbContext<AuthDbContext>(options =>
+                {
+                    options.UseNpgsql(authDb
+                        , authDbContextBuilder =>
+                        {
+                            authDbContextBuilder.EnableRetryOnFailure();
+                        }
+                    );
+                    options.EnableSensitiveDataLogging(false);
+                    options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
+                }, ServiceLifetime.Transient);
             }
 
             services

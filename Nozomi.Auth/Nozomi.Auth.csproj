@@ -13,6 +13,7 @@
             <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
         </PackageReference>
         <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.3" PrivateAssets="All" />
+        <PackageReference Include="VaultSharp" Version="0.11.1002" />
     </ItemGroup>
 
     <ItemGroup>
