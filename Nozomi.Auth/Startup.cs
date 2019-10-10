@@ -162,6 +162,7 @@ namespace Nozomi.Auth
             else
             {
                 app.UseExceptionHandler("/Home/Error");
+                app.UseHsts();
             }
             
             app.UseAutoDbMigration(HostingEnvironment);
