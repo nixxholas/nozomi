@@ -136,6 +136,14 @@ namespace Nozomi.Auth
                         }
 
                         Console.WriteLine("alice created");
+
+                        var ownerAddResult = userMgr.AddToRoleAsync(alice, RoleEnum.Owner.GetDescription()).Result;
+                        if (!ownerAddResult.Succeeded)
+                        {
+                            throw new Exception(result.Errors.First().Description);
+                        }
+                        
+                        Console.WriteLine("alice added to owners");
                     }
                     else
                     {
