@@ -128,7 +128,6 @@ namespace Nozomi.Service.Services
                     currToUpd.Name = currency.Name;
                     currToUpd.IsEnabled = currency.IsEnabled;
 
-                    _unitOfWork.GetRepository<Currency>().Update(currToUpd);
                     _unitOfWork.Commit(userId);
 
                     return new NozomiResult<string>(NozomiResultType.Success, "Currency successfully updated!");
