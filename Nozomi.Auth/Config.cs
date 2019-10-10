@@ -89,33 +89,33 @@ namespace Nozomi.Auth
                         "nozomi.web.full_access"
                     }
                 },
-                new Client
-                {
-                    ClientId = "nozomi.vue",
-                    ClientName = "Nozomi Web Vue Client",
-                    //ClientUri = "https://nozomi.one",
-
-                    AllowedGrantTypes = GrantTypes.Hybrid,
-                    //AllowAccessTokensViaBrowser = true,
-                    ClientSecrets = {new Secret("super-secret".Sha256())}, // Hybrid requires a secret
-
-                    // where to redirect to after login
-                    RedirectUris = { "https://localhost:5001/auth-oidc" },
-
-                    // where to redirect to after logout
-                    PostLogoutRedirectUris = { "https://localhost:5001/signout-callback-oidc" },
-                    
-                    // Fuxk consent
-                    RequireConsent = false,
-                    
-                    AllowedScopes =
-                    {
-                        IdentityServerConstants.StandardScopes.OpenId,
-                        IdentityServerConstants.StandardScopes.Profile,
-                        "nozomi.web.read_only"
-                    },
-                    AllowOfflineAccess = true // Refresh tokens activated
-                },
+//                new Client
+//                {
+//                    ClientId = "nozomi.vue",
+//                    ClientName = "Nozomi Web Vue Client",
+//                    //ClientUri = "https://nozomi.one",
+//
+//                    AllowedGrantTypes = GrantTypes.Hybrid,
+//                    //AllowAccessTokensViaBrowser = true,
+//                    ClientSecrets = {new Secret("super-secret".Sha256())}, // Hybrid requires a secret
+//
+//                    // where to redirect to after login
+//                    RedirectUris = { "https://localhost:5001/auth-oidc" },
+//
+//                    // where to redirect to after logout
+//                    PostLogoutRedirectUris = { "https://localhost:5001/signout-callback-oidc" },
+//                    
+//                    // Fuxk consent
+//                    RequireConsent = false,
+//                    
+//                    AllowedScopes =
+//                    {
+//                        IdentityServerConstants.StandardScopes.OpenId,
+//                        IdentityServerConstants.StandardScopes.Profile,
+//                        "nozomi.web.read_only"
+//                    },
+//                    AllowOfflineAccess = true // Refresh tokens activated
+//                },
                 new Client {
                     ClientId = "nozomi.spa",
                     ClientName = "Nozomi Vue SPA",
