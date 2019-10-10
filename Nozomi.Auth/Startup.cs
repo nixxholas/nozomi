@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using Microsoft.IdentityModel.Tokens;
 using Nozomi.Base.Auth.Models;
@@ -89,8 +90,8 @@ namespace Nozomi.Auth
             }
             else
             {
-                //builder.AddSigningCredential();
-                throw new Exception("need to configure key material");
+                builder.AddSigningCredential(CreateSigningCredential());
+                //throw new Exception("need to configure key material");
             }
 
 //            if (HostingEnvironment.IsDevelopment())
@@ -147,6 +148,21 @@ namespace Nozomi.Auth
             
             // "default", "{controller=Home}/{action=Index}/{id?}"
             app.UseMvcWithDefaultRoute();
+        }
+        
+        private SigningCredentials CreateSigningCredential()
+        {
+            var credentials = new SigningCredentials(GetSecurityKey(), SecurityAlgorithms.RsaSha256Signature);
+
+            return credentials;
+        }
+        private RSACryptoServiceProvider GetRSACryptoServiceProvider()
+        {
+            return new RSACryptoServiceProvider(4096);
+        }
+        private SecurityKey GetSecurityKey()
+        {
+            return new RsaSecurityKey(GetRSACryptoServiceProvider());
         }
     }
 }
