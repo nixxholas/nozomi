@@ -134,8 +134,8 @@ namespace Nozomi.Auth
             }
             else
             {
+                // https://stackoverflow.com/questions/49042474/addsigningcredential-for-identityserver4
                 builder.AddSigningCredential(CreateSigningCredential());
-                //throw new Exception("need to configure key material");
             }
 
             // Database
@@ -181,9 +181,10 @@ namespace Nozomi.Auth
 
             return credentials;
         }
-        private RSACryptoServiceProvider GetRSACryptoServiceProvider()
+        private RSA GetRSACryptoServiceProvider()
         {
-            return new RSACryptoServiceProvider(4096);
+            // https://stackoverflow.com/questions/54180171/cspkeycontainerinfo-requires-windows-cryptographic-api-capi-which-is-not-av
+            return RSA.Create(4096);
         }
         private SecurityKey GetSecurityKey()
         {
