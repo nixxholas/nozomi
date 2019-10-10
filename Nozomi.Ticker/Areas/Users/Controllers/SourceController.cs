@@ -1,8 +1,9 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Nozomi.Base.Auth.Models;
 using Nozomi.Data.ViewModels.Source;
 using Nozomi.Service.Events.Interfaces;
-using Nozomi.Service.Identity.Managers;
 using Nozomi.Ticker.Controllers;
 
 namespace Nozomi.Ticker.Areas.Users.Controllers
@@ -12,8 +13,8 @@ namespace Nozomi.Ticker.Areas.Users.Controllers
     {
         private ISourceEvent _sourceEvent { get; set; }
         
-        public SourceController(ILogger<SourceController> logger, NozomiSignInManager signInManager, 
-            NozomiUserManager userManager, ISourceEvent sourceEvent) : base(logger, signInManager, userManager)
+        public SourceController(ILogger<SourceController> logger, SignInManager<User> signInManager, 
+            UserManager<User> userManager, ISourceEvent sourceEvent) : base(logger, signInManager, userManager)
         {
             _sourceEvent = sourceEvent;
         }

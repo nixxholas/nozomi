@@ -7,8 +7,6 @@ using Nozomi.Service.Events;
 using Nozomi.Service.Events.Analysis;
 using Nozomi.Service.Events.Analysis.Interfaces;
 using Nozomi.Service.Events.Interfaces;
-using Nozomi.Service.Identity.Events.Auth;
-using Nozomi.Service.Identity.Events.Auth.Interfaces;
 using Nozomi.Service.Services.Enumerators;
 
 namespace Nozomi.Web.StartupExtensions
@@ -25,7 +23,6 @@ namespace Nozomi.Web.StartupExtensions
 
             services.AddScoped<IAnalysedComponentEvent, AnalysedComponentEvent>();
             services.AddScoped<IAnalysedHistoricItemEvent, AnalysedHistoricItemEvent>();
-            services.AddScoped<IApiTokenEvent, ApiTokenEvent>();
             services.AddScoped<IComponentTypeEvent, ComponentTypeEvent>();
             services.AddScoped<ICurrencyEvent, CurrencyEvent>();
             services.AddScoped<ICurrencyPairEvent, CurrencyPairEvent>();

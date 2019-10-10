@@ -362,13 +362,14 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                     index, true, new List<ComponentType>()
                                     {
                                         ComponentType.Ask, ComponentType.Bid
-                                    })
-                                    .Where(rc => NumberHelper.IsNumericDecimal(rc.Value))
-                                    .DefaultIfEmpty()
-                                    .ToList();
+                                    });
 
-                            if (components.Any())
+                            if (components != null && components.Any())
                             {
+                                components = components
+                                    .Where(rc => NumberHelper.IsNumericDecimal(rc.Value))
+                                    .ToList();
+                                
                                 // Aggregate it
                                 if (avgPrice > 0)
                                 {

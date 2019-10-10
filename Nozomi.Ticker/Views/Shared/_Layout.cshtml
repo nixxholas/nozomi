@@ -1,8 +1,7 @@
-@using System.IO
-@using System.Reflection
+@using Nozomi.Base.Auth.Models
+@using Microsoft.AspNetCore.Identity
 @using Nozomi.Base.Core
-@using Nozomi.Service.Identity.Managers
-@inject NozomiSignInManager SignInManager
+@inject SignInManager<User> signInManager
 <!DOCTYPE html>
 <html>
 <head>

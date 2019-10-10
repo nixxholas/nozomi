@@ -1,4 +1,4 @@
-@model Nozomi.Base.Identity.ViewModels.Account.LoginViewModel
+@model Nozomi.Ticker.Areas.Users.Controllers.Account.LoginViewModel
 @{
     ViewData["Title"] = "Log in";
 }
@@ -115,10 +115,10 @@
               </div>
 
               <div class="js-form-message form-group">
-                <label class="form-label" asp-for="Email">Email address</label>
-                <input type="email" class="form-control" asp-for="Email" placeholder="Email address" 
-                       aria-label="Email address" required
-                       data-msg="Please enter a valid email address."
+                <label class="form-label" asp-for="Username">Username</label>
+                <input class="form-control" asp-for="Username" placeholder="Username" 
+                       aria-label="Username" required
+                       data-msg="Please enter a valid username."
                        data-error-class="u-has-error"
                        data-success-class="u-has-success">
               </div>

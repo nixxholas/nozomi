@@ -1,0 +1,630 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Text.Encodings.Web;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
+using Nozomi.Base.Auth.Models;
+using Nozomi.Preprocessing.Events.Interfaces;
+using Nozomi.Service.Events.Interfaces;
+using Nozomi.Service.Services.Interfaces;
+using Nozomi.Ticker.Areas.Users.Controllers.Manage.PaymentMethods;
+using Nozomi.Ticker.Areas.Users.Controllers.Manage.TwoFactorAuthentication;
+using Nozomi.Ticker.Controllers;
+
+namespace Nozomi.Ticker.Areas.Users.Controllers.Manage
+{
+    [Area("Users")]
+    public class ManageController : BaseViewController<ManageController>
+    {
+        private readonly ISourceEvent _sourceEvent;
+        private readonly ISmsSender _smsSender;
+        private readonly UrlEncoder _urlEncoder;
+        
+        public ManageController(ILogger<ManageController> logger, SignInManager<User> signInManager, 
+            UserManager<User> userManager, ISmsSender smsSender, 
+            ISourceEvent sourceEvent, ISourceService sourceService, UrlEncoder urlEncoder) 
+            : base(logger, signInManager, userManager)
+        {
+            _smsSender = smsSender;
+            _sourceEvent = sourceEvent;
+            _urlEncoder = urlEncoder;
+        }
+        
+        //
+        // GET: /Manage/Index
+        [HttpGet]
+        [Route("")]
+        [Route("/[controller]")]
+        public async Task<IActionResult> Index(ManageIndexMessageId? message = null)
+        {
+            var user = await GetCurrentUserAsync();
+            if (user == null)
+            {
+                _logger.LogWarning($"Bad session with '{User}'");
+                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
+
+            var model = new IndexViewModel
+            {
+                Sources = _sourceEvent.GetAllActive(true, true).ToList(),
+                StatusMessage = message == ManageIndexMessageId.Error ? "An error has occured."
+                    : "",
+            };
+            return View(model);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> EditProfile(EditProfileMessageId? message = null)
+        {
+            var user = await GetCurrentUserAsync();
+            if (user == null)
+            {
+                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
+            
+            var vm = new EditProfileViewModel
+            {
+                Email = user.Email,
+                HasPassword = await _userManager.HasPasswordAsync(user),
+                PhoneNumber = await _userManager.GetPhoneNumberAsync(user),
+                TwoFactor = await _userManager.GetTwoFactorEnabledAsync(user),
+                Logins = await _userManager.GetLoginsAsync(user),
+                BrowserRemembered = await _signInManager.IsTwoFactorClientRememberedAsync(user),
+                AuthenticatorKey = await _userManager.GetAuthenticatorKeyAsync(user),
+                EmailConfirmed = user.EmailConfirmed,
+                Username = user.UserName,
+                StatusMessage = 
+                    message == EditProfileMessageId.SetPasswordSuccess ? "Your password has been set."
+                    : message == EditProfileMessageId.SetTwoFactorSuccess ? "Your two-factor authentication provider has been set."
+                    : message == EditProfileMessageId.Error ? "An error has occurred."
+                    : message == EditProfileMessageId.AddPhoneSuccess ? "Your phone number was added."
+                    : message == EditProfileMessageId.RemovePhoneSuccess ? "Your phone number was removed."
+                    : ""
+            };
+
+            return View(vm);
+        }
+        
+        //
+        // POST: /Manage/RemoveLogin
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RemoveLogin(RemoveLoginViewModel account)
+        {
+            EditProfileMessageId? message = EditProfileMessageId.Error;
+            var user = await GetCurrentUserAsync();
+            if (user != null)
+            {
+                var result = await _userManager.RemoveLoginAsync(user, account.LoginProvider, account.ProviderKey);
+                if (result.Succeeded)
+                {
+                    await _signInManager.SignInAsync(user, isPersistent: false);
+                    message = EditProfileMessageId.RemoveLoginSuccess;
+                }
+            }
+            return RedirectToAction(nameof(ManageLogins), new { Message = message });
+        }
+
+        //
+        // GET: /Manage/AddPhoneNumber
+        public IActionResult AddPhoneNumber()
+        {
+            return View();
+        }
+
+        //
+        // POST: /Manage/AddPhoneNumber
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddPhoneNumber(AddPhoneNumberViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+            // Generate the token and send it
+            var user = await GetCurrentUserAsync();
+            var code = await _userManager.GenerateChangePhoneNumberTokenAsync(user, model.PhoneNumber);
+            await _smsSender.SendSmsAsync(model.PhoneNumber, "Your security code is: " + code);
+            return RedirectToAction(nameof(VerifyPhoneNumber), new { PhoneNumber = model.PhoneNumber });
+        }
+
+        [HttpPost]
+        [Produces("text/json")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DownloadPersonalData()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
+
+            _logger.LogInformation("User with ID '{UserId}' asked for their personal data.", _userManager.GetUserId(User));
+
+            // Only include personal data for download
+            var personalData = new Dictionary<string, string>();
+            var personalDataProps = typeof(User).GetProperties().Where(
+                prop => Attribute.IsDefined(prop, typeof(PersonalDataAttribute)));
+            foreach (var p in personalDataProps)
+            {
+                personalData.Add(p.Name, p.GetValue(user)?.ToString() ?? "null");
+            }
+
+            Response.Headers.Add("Content-Disposition", "attachment; filename=PersonalData.json");
+            return new FileContentResult(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(personalData)), 
+                "text/json");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeletePersonalData(DeletePersonalDataInputModel model)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
+
+            if (await _userManager.HasPasswordAsync(user))
+            {
+                if (!await _userManager.CheckPasswordAsync(user, model.Password))
+                {
+                    ModelState.AddModelError(string.Empty, "Password not correct.");
+                    
+                    return Redirect("~/");
+                }
+            }
+
+            var result = await _userManager.DeleteAsync(user);
+            if (!result.Succeeded)
+            {
+                throw new InvalidOperationException($"Unexpected error occurred deleting user with ID " +
+                                                    $"'{user.Id}'.");
+            }
+
+            await _signInManager.SignOutAsync();
+
+            _logger.LogInformation("User with ID '{UserId}' deleted themselves.", user.Id);
+
+            return Redirect("~/");
+        }
+
+        //
+        // POST: /Manage/ResetAuthenticatorKey
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ResetAuthenticatorKey()
+        {
+            var user = await GetCurrentUserAsync();
+            if (user != null)
+            {
+                await _userManager.ResetAuthenticatorKeyAsync(user);
+                _logger.LogInformation(1, "User reset authenticator key.");
+            }
+            return RedirectToAction(nameof(Index), "Manage");
+        }
+
+        //
+        // POST: /Manage/GenerateRecoveryCode
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> GenerateRecoveryCode()
+        {
+            var user = await GetCurrentUserAsync();
+            if (user != null)
+            {
+                var codes = await _userManager.GenerateNewTwoFactorRecoveryCodesAsync(user, 5);
+                _logger.LogInformation(1, "User generated new recovery code.");
+                return View("DisplayRecoveryCodes", new DisplayRecoveryCodesViewModel { Codes = codes });
+            }
+            return View("Error");
+        }
+        
+        //
+        // GET: /Manage/TwoFactorAuthentication
+        [HttpGet]
+        public async Task<IActionResult> TwoFactorAuthentication(TwoFactorAuthenticationMessageId? message = null,
+            string[] recoveryCodes = null)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
+
+            var vm = new TwoFAViewModel
+            {
+                HasAuthenticator = await _userManager.GetAuthenticatorKeyAsync(user) != null,
+                Is2faEnabled = await _userManager.GetTwoFactorEnabledAsync(user),
+                IsMachineRemembered = await _signInManager.IsTwoFactorClientRememberedAsync(user),
+                StatusMessage = 
+                    message == TwoFactorAuthenticationMessageId.Enable2FASuccess ? "2FA is now enabled on your account."
+                    : message == TwoFactorAuthenticationMessageId.Enable2FAInvalidCode ? "Invalid 2FA auth code."
+                    : message == TwoFactorAuthenticationMessageId.Enable2FAError ? "There was a problem enabling 2FA on your account."
+                    : message == TwoFactorAuthenticationMessageId.Disable2FASuccess ? "Your 2FA configuration has been successfully disabled."    
+                    : message == TwoFactorAuthenticationMessageId.Disable2FAError ? "There was a problem disabling 2FA on your account."
+                    : message == TwoFactorAuthenticationMessageId.Error ? "An unknown error has occurred. Please contact our administrator."
+                    : ""
+            };
+            
+            // If 2fa is not enabled
+            if (!vm.Is2faEnabled)
+            {
+                // Load the authenticator key & QR code URI to display on the form
+                var unformattedKey = await _userManager.GetAuthenticatorKeyAsync(user);
+                
+                // If there isn't any unformatted key
+                if (string.IsNullOrEmpty(unformattedKey))
+                {
+                    // Regenerate
+                    await _userManager.ResetAuthenticatorKeyAsync(user);
+                    unformattedKey = await _userManager.GetAuthenticatorKeyAsync(user);
+                }
+
+                vm.SharedKey = GenerateSharedKey(unformattedKey);
+                vm.AuthenticatorUri = GenerateAuthenticatorUri(user.Email, unformattedKey);
+            } else if (vm.Is2faEnabled)
+            {
+                if (recoveryCodes != null)
+                {
+                    vm.RecoveryCodes = recoveryCodes;
+                }
+                
+                vm.RecoveryCodesLeft = await _userManager.CountRecoveryCodesAsync(user);
+            }
+            
+            return View(vm);
+        }
+
+        //
+        // POST: /Manage/TwoFactorAuthentication
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> TwoFactorAuthentication(TwoFAViewModel model)
+        {
+            var user = await GetCurrentUserAsync();
+            if (user != null && ModelState.IsValid)
+            {
+                // Strip spaces and hypens
+                var verificationCode = model.Code
+                    .Replace(" ", string.Empty)
+                    .Replace("-", string.Empty);
+
+                var is2faTokenValid = await _userManager.VerifyTwoFactorTokenAsync(
+                    user, _userManager.Options.Tokens.AuthenticatorTokenProvider, verificationCode);
+
+                if (!is2faTokenValid)
+                {
+                    return RedirectToAction(nameof(TwoFactorAuthentication), 
+                        new { Message = TwoFactorAuthenticationMessageId.Enable2FAInvalidCode});
+                }
+                
+                await _userManager.SetTwoFactorEnabledAsync(user, true);
+                await _signInManager.SignInAsync(user, isPersistent: false);
+                _logger.LogInformation(1, "User enabled two-factor authentication.");
+                
+                if (await _userManager.CountRecoveryCodesAsync(user) == 0)
+                {
+                    var recoveryCodes = await _userManager.GenerateNewTwoFactorRecoveryCodesAsync(user, 10);
+                    return RedirectToAction(nameof(TwoFactorAuthentication), 
+                        new
+                        {
+                            Message = TwoFactorAuthenticationMessageId.Enable2FASuccess,
+                            RecoveryCodes = recoveryCodes
+                        });
+                }
+                else
+                {
+                    return RedirectToAction(nameof(TwoFactorAuthentication), 
+                        new { Message = TwoFactorAuthenticationMessageId.Enable2FASuccess});
+                }
+            }
+            
+            return RedirectToAction(nameof(TwoFactorAuthentication), 
+                new { Message = TwoFactorAuthenticationMessageId.Enable2FAError});
+        }
+        
+        #region 2FA Helpers
+        private const string AuthenticatorUriFormat = "otpauth://totp/{0}:{1}?secret={2}&issuer={0}&digits=6";
+        
+        private string GenerateSharedKey(string unformattedKey)
+        {
+            return FormatKey(unformattedKey);
+        }
+
+        private string GenerateAuthenticatorUri(string email, string unformattedKey)
+        {
+            return GenerateQrCodeUri(email, unformattedKey);
+        }
+
+        private string FormatKey(string unformattedKey)
+        {
+            var result = new StringBuilder();
+            int currentPosition = 0;
+            while (currentPosition + 4 < unformattedKey.Length)
+            {
+                result.Append(unformattedKey.Substring(currentPosition, 4)).Append(" ");
+                currentPosition += 4;
+            }
+            if (currentPosition < unformattedKey.Length)
+            {
+                result.Append(unformattedKey.Substring(currentPosition));
+            }
+
+            return result.ToString().ToLowerInvariant();
+        }
+
+        private string GenerateQrCodeUri(string email, string unformattedKey)
+        {
+            return string.Format(
+                AuthenticatorUriFormat,
+                _urlEncoder.Encode("Nozomi.Ticker"),
+                _urlEncoder.Encode(email),
+                unformattedKey);
+        }
+        #endregion
+
+        //
+        // POST: /Manage/DisableTwoFactorAuthentication
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DisableTwoFactorAuthentication()
+        {
+            var user = await GetCurrentUserAsync();
+            if (user != null)
+            {
+                await _userManager.SetTwoFactorEnabledAsync(user, false);
+                await _userManager.ResetAuthenticatorKeyAsync(user);
+                await _signInManager.RefreshSignInAsync(user);
+                _logger.LogInformation(2, "User disabled two-factor authentication.");
+                return RedirectToAction(nameof(TwoFactorAuthentication), 
+                    new { Message = TwoFactorAuthenticationMessageId.Disable2FASuccess});
+            }
+            return RedirectToAction(nameof(TwoFactorAuthentication), 
+                new { Message = TwoFactorAuthenticationMessageId.Disable2FAError});
+        }
+
+        //
+        // GET: /Manage/VerifyPhoneNumber
+        [HttpGet]
+        public async Task<IActionResult> VerifyPhoneNumber(string phoneNumber)
+        {
+            var code = await _userManager.GenerateChangePhoneNumberTokenAsync(await GetCurrentUserAsync(), phoneNumber);
+            // Send an SMS to verify the phone number
+            return phoneNumber == null ? View("Error") : View(new VerifyPhoneNumberViewModel { PhoneNumber = phoneNumber });
+        }
+
+        //
+        // POST: /Manage/VerifyPhoneNumber
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> VerifyPhoneNumber(VerifyPhoneNumberViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+            var user = await GetCurrentUserAsync();
+            if (user != null)
+            {
+                var result = await _userManager.ChangePhoneNumberAsync(user, model.PhoneNumber, model.Code);
+                if (result.Succeeded)
+                {
+                    await _signInManager.SignInAsync(user, isPersistent: false);
+                    return RedirectToAction(nameof(Index), new { Message = EditProfileMessageId.AddPhoneSuccess });
+                }
+            }
+            // If we got this far, something failed, redisplay the form
+            ModelState.AddModelError(string.Empty, "Failed to verify phone number");
+            return View(model);
+        }
+
+        //
+        // GET: /Manage/RemovePhoneNumber
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RemovePhoneNumber()
+        {
+            var user = await GetCurrentUserAsync();
+            if (user != null)
+            {
+                var result = await _userManager.SetPhoneNumberAsync(user, null);
+                if (result.Succeeded)
+                {
+                    await _signInManager.SignInAsync(user, isPersistent: false);
+                    return RedirectToAction(nameof(Index), new { Message = EditProfileMessageId.RemovePhoneSuccess });
+                }
+            }
+            return RedirectToAction(nameof(Index), new { Message = EditProfileMessageId.Error });
+        }
+        
+        //
+        // GET: /Manage/Profile
+        [HttpGet]
+        public IActionResult Profile()
+        {
+            return View();
+        }
+
+        //
+        // GET: /Manage/ChangePassword
+        [HttpGet]
+        public IActionResult ChangePassword(ChangePasswordMessageId? message = null)
+        {
+            return View(new ChangePasswordViewModel
+            {
+                StatusMessage = 
+                    message == ChangePasswordMessageId.ChangePasswordSuccess ? "Your password has been changed." 
+                    : message == ChangePasswordMessageId.Error ? "An error has occurred"
+                    : ""
+            });
+        }
+
+        //
+        // POST: /Manage/ChangePassword
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+            var user = await GetCurrentUserAsync();
+            if (user != null)
+            {
+                var result = await _userManager.ChangePasswordAsync(user, model.OldPassword, model.NewPassword);
+                if (result.Succeeded)
+                {
+                    await _signInManager.SignInAsync(user, isPersistent: false);
+                    _logger.LogInformation(3, "User changed their password successfully.");
+                    return RedirectToAction(nameof(ChangePassword), new { Message = 
+                        ChangePasswordMessageId.ChangePasswordSuccess });
+                }
+                AddErrors(result);
+                return View(model);
+            }
+            return RedirectToAction(nameof(ChangePassword), new { Message = ChangePasswordMessageId.Error });
+        }
+
+//        //
+//        // GET: /Manage/SetPassword
+//        [HttpGet]
+//        public IActionResult SetPassword()
+//        {
+//            return View();
+//        }
+//
+//        //
+//        // POST: /Manage/SetPassword
+//        [HttpPost]
+//        [ValidateAntiForgeryToken]
+//        public async Task<IActionResult> SetPassword(SetPasswordViewModel model)
+//        {
+//            if (!ModelState.IsValid)
+//            {
+//                return View(model);
+//            }
+//
+//            var user = await GetCurrentUserAsync();
+//            if (user != null)
+//            {
+//                var result = await _userManager.AddPasswordAsync(user, model.NewPassword);
+//                if (result.Succeeded)
+//                {
+//                    await _signInManager.SignInAsync(user, isPersistent: false);
+//                    return RedirectToAction(nameof(Index), new { Message = EditProfileMessageId.SetPasswordSuccess });
+//                }
+//                AddErrors(result);
+//                return View(model);
+//            }
+//            return RedirectToAction(nameof(Index), new { Message = EditProfileMessageId.Error });
+//        }
+
+        //GET: /Manage/ManageLogins
+        [HttpGet]
+        public async Task<IActionResult> ManageLogins(EditProfileMessageId? message = null)
+        {
+            ViewData["StatusMessage"] =
+                message == EditProfileMessageId.RemoveLoginSuccess ? "The external login was removed."
+                : message == EditProfileMessageId.AddLoginSuccess ? "The external login was added."
+                : message == EditProfileMessageId.Error ? "An error has occurred."
+                : "";
+            var user = await GetCurrentUserAsync();
+            if (user == null)
+            {
+                return View("Error");
+            }
+            var userLogins = await _userManager.GetLoginsAsync(user);
+            var schemes = await _signInManager.GetExternalAuthenticationSchemesAsync();
+            var otherLogins = schemes.Where(auth => userLogins.All(ul => auth.Name != ul.LoginProvider)).ToList();
+            ViewData["ShowRemoveButton"] = user.PasswordHash != null || userLogins.Count > 1;
+            return View(new ManageLoginsViewModel
+            {
+                CurrentLogins = userLogins,
+                OtherLogins = otherLogins
+            });
+        }
+
+        //
+        // POST: /Manage/LinkLogin
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult LinkLogin(string provider)
+        {
+            // Request a redirect to the external login provider to link a login for the current user
+            var redirectUrl = Url.Action("LinkLoginCallback", "Manage");
+            var properties = _signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl, _userManager.GetUserId(User));
+            return Challenge(properties, provider);
+        }
+
+        //
+        // GET: /Manage/LinkLoginCallback
+        [HttpGet]
+        public async Task<ActionResult> LinkLoginCallback()
+        {
+            var user = await GetCurrentUserAsync();
+            if (user == null)
+            {
+                return View("Error");
+            }
+            var info = await _signInManager.GetExternalLoginInfoAsync(await _userManager.GetUserIdAsync(user));
+            if (info == null)
+            {
+                return RedirectToAction(nameof(ManageLogins), new { Message = EditProfileMessageId.Error });
+            }
+            var result = await _userManager.AddLoginAsync(user, info);
+            var message = result.Succeeded ? EditProfileMessageId.AddLoginSuccess : EditProfileMessageId.Error;
+            return RedirectToAction(nameof(ManageLogins), new { Message = message });
+        }
+
+        #region Helpers
+
+        private void AddErrors(IdentityResult result)
+        {
+            foreach (var error in result.Errors)
+            {
+                ModelState.AddModelError(string.Empty, error.Description);
+            }
+        }
+
+        public enum ChangePasswordMessageId
+        {
+            ChangePasswordSuccess,
+            Error
+        }
+
+        public enum EditProfileMessageId
+        {
+            AddPhoneSuccess,
+            AddLoginSuccess,
+            SetTwoFactorSuccess,
+            SetPasswordSuccess,
+            RemoveLoginSuccess,
+            RemovePhoneSuccess,
+            Error
+        }
+
+        public enum ManageIndexMessageId
+        {
+            Error
+        }
+
+        public enum TwoFactorAuthenticationMessageId
+        {
+            Enable2FASuccess,
+            Enable2FAError,
+            Enable2FAInvalidCode,
+            Disable2FASuccess,
+            Disable2FAError,
+            Error
+        }
+        #endregion
+    }
+}

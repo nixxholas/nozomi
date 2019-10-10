@@ -1,11 +1,11 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Nozomi.Base.Auth.Models;
 using Nozomi.Data;
 using Nozomi.Data.AreaModels.v1.CurrencySource;
-using Nozomi.Data.Models.Currency;
-using Nozomi.Service.Identity.Managers;
 using Nozomi.Service.Services.Interfaces;
 using Nozomi.Ticker.Controllers;
 
@@ -17,8 +17,9 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
     {
         private readonly ICurrencySourceService _currencySourceService;
 
-        public CurrencySourceController(ILogger<CurrencySourceController> logger, NozomiSignInManager signInManager,
-            NozomiUserManager userManager, ICurrencySourceService currencySourceService) 
+        public CurrencySourceController(ILogger<CurrencySourceController> logger, 
+            ICurrencySourceService currencySourceService, SignInManager<User> signInManager,
+            UserManager<User> userManager)
             : base(logger, signInManager, userManager)
         {
             _currencySourceService = currencySourceService;
@@ -38,7 +39,7 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
             if (!ModelState.IsValid)
                 return BadRequest("Please submit proper request data.");
 
-            var result = _currencySourceService.Create(currencySource, user.Id);
+            var result = _currencySourceService.Create(currencySource, 0);
 
             if (result.ResultType.Equals(NozomiResultType.Success)) return Ok(result);
 

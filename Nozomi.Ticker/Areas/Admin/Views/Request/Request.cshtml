@@ -2,7 +2,7 @@
 @using Newtonsoft.Json.Serialization
 @using Nozomi.Base.Core.Helpers.Enumerator
 @using Nozomi.Preprocessing
-@model Nozomi.Base.Identity.ViewModels.Manage.Request.RequestViewModel
+@model Nozomi.Ticker.Areas.Admin.Controllers.Request.RequestViewModel
 
 @{
     int requestType = (int) Model.Request.RequestType;
@@ -371,6 +371,7 @@
                     formData.append('RequestId', @Model.Request.Id);
                     formData.append('ComponentType', this.createRCForm.componentType);
                     formData.append('QueryComponent', this.createRCForm.queryComponent);
+                    formData.append('Identifier', this.createRCForm.identifier);
                     formData.append('IsDenominated', this.createRCForm.isDenominated);
                     formData.append('AnomalyIgnorance', this.createRCForm.anomalyIgnorance);
 

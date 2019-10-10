@@ -3,7 +3,6 @@ using Nozomi.Infra.Analysis.Service.HostedServices;
 using Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes;
 using Nozomi.Service.HostedServices;
 using Nozomi.Service.HostedServices.StaticUpdater;
-using Nozomi.Service.Identity.HostedServices;
 
 namespace Nozomi.Ticker.StartupExtensions
 {
@@ -12,10 +11,8 @@ namespace Nozomi.Ticker.StartupExtensions
         public static void ConfigureHostedServices(this IServiceCollection services)
         {
             // Auth Hosted Services
-            services.AddHostedService<ApiTokenCachingService>();
-            
-            services.AddHostedService<NozomiStreamHubHostedService>();
-            services.AddHostedService<SourceSyncingService>();
+            // services.AddHostedService<NozomiStreamHubHostedService>();
+            // services.AddHostedService<SourceSyncingService>();
         }
     }
 }

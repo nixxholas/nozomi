@@ -1,8 +1,9 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Nozomi.Base.Auth.Models;
 using Nozomi.Data;
 using Nozomi.Service.Events.Interfaces;
-using Nozomi.Service.Identity.Managers;
 
 namespace Nozomi.Ticker.Controllers.APIs.v1.CurrencyPairType
 {
@@ -11,7 +12,7 @@ namespace Nozomi.Ticker.Controllers.APIs.v1.CurrencyPairType
     {
         private ICurrencyPairTypeEvent _currencyPairTypeEvent;
         
-        public CurrencyPairTypeController(ILogger<CurrencyPairTypeController> logger, NozomiUserManager userManager,
+        public CurrencyPairTypeController(ILogger<CurrencyPairTypeController> logger, UserManager<User> userManager,
             ICurrencyPairTypeEvent currencyPairTypeEvent) : base(logger, userManager)
         {
             _currencyPairTypeEvent = currencyPairTypeEvent;

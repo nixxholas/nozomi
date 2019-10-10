@@ -1,11 +1,12 @@
 using System;
 using System.Linq;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Nozomi.Base.Auth.Models;
 using Nozomi.Data.Models.Web.Analytical;
 using Nozomi.Service.Events.Analysis.Interfaces;
 using Nozomi.Service.Events.Interfaces;
-using Nozomi.Service.Identity.Managers;
 using Nozomi.Ticker.Controllers;
 
 namespace Nozomi.Ticker.Areas.Users.Controllers
@@ -16,8 +17,8 @@ namespace Nozomi.Ticker.Areas.Users.Controllers
         private IAnalysedHistoricItemEvent _analysedHistoricItemEvent;
         private ICurrencyEvent _currencyEvent;
         
-        public CurrencyController(ILogger<CurrencyController> logger, NozomiSignInManager signInManager, 
-            NozomiUserManager userManager, IAnalysedHistoricItemEvent analysedHistoricItemEvent, 
+        public CurrencyController(ILogger<CurrencyController> logger, SignInManager<User> signInManager, 
+            UserManager<User> userManager, IAnalysedHistoricItemEvent analysedHistoricItemEvent, 
             ICurrencyEvent currencyEvent) 
             : base(logger, signInManager, userManager)
         {

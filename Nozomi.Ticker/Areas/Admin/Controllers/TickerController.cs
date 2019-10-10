@@ -1,11 +1,12 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Nozomi.Base.Admin.Domain.AreaModels.Tickers;
+using Nozomi.Base.Auth.Models;
 using Nozomi.Data;
 using Nozomi.Infra.Admin.Service.Services.Interfaces;
-using Nozomi.Service.Identity.Managers;
 using Nozomi.Service.Services.Interfaces;
 using Nozomi.Ticker.Controllers;
 
@@ -18,8 +19,8 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
     {
         private readonly ITickerService _tickerService;
         
-        public TickerController(ILogger<TickerController> logger, NozomiSignInManager signInManager,
-            NozomiUserManager userManager, ITickerService tickerService)
+        public TickerController(ILogger<TickerController> logger, SignInManager<User> signInManager,
+            UserManager<User> userManager, ITickerService tickerService)
             : base(logger, signInManager, userManager)
         {
             _tickerService = tickerService;

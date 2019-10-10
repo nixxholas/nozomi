@@ -6,10 +6,6 @@ using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.IdentityModel.Logging;
-using Nozomi.Base.Identity.Models.Identity;
-using Nozomi.Repo.Identity.Data;
-using Nozomi.Service.Identity.Managers;
 
 namespace Nozomi.Web.StartupExtensions
 {

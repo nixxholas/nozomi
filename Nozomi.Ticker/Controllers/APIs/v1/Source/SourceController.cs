@@ -2,13 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Nozomi.Base.Auth.Models;
 using Nozomi.Data;
 using Nozomi.Data.AreaModels.v1.Source;
 using Nozomi.Data.ResponseModels.Currency;
 using Nozomi.Service.Events.Interfaces;
-using Nozomi.Service.Identity.Managers;
 using Nozomi.Service.Services.Interfaces;
 
 namespace Nozomi.Ticker.Controllers.APIs.v1.Source
@@ -18,7 +19,7 @@ namespace Nozomi.Ticker.Controllers.APIs.v1.Source
         private readonly ISourceEvent _sourceEvent;
         private readonly ISourceService _sourceService;
         
-        public SourceController(ILogger<SourceController> logger, NozomiUserManager userManager,
+        public SourceController(ILogger<SourceController> logger, UserManager<User> userManager,
             ISourceEvent sourceEvent, ISourceService sourceService) 
             : base(logger, userManager)
         {

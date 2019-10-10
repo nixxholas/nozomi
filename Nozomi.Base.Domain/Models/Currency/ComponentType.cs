@@ -56,6 +56,11 @@ namespace Nozomi.Data.Models.Currency
         [Description("Price of the last successfully closed order")]
         LastPrice = 101, // float
         
+        [Description("Supply % interest")]
+        SupplyRate = 200,
+        [Description("Borrow % interest")]
+        BorrowRate = 201,
+        
         [Comparable(false)]
         [Description("The current circulating supply of this asset.")]
         CirculatingSupply = 1000,

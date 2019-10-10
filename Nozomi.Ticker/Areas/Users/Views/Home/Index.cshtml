@@ -1,10 +1,11 @@
-﻿@using Newtonsoft.Json
+﻿@using Microsoft.AspNetCore.Identity
+@using Newtonsoft.Json
+@using Nozomi.Base.Auth.Models
 @using Nozomi.Data.Models.Web.Analytical
 @using Nozomi.Preprocessing
 @using Nozomi.Service.Events.Analysis.Interfaces
-@using Nozomi.Service.Identity.Managers
 @inject IAnalysedComponentEvent AnalysedComponentEvent
-@inject NozomiSignInManager SignInManager
+@inject SignInManager<User> signInManager
 @{
     ViewData["Title"] = "Home Page";
 }

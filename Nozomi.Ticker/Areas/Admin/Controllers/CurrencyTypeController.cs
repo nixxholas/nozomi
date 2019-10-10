@@ -1,14 +1,12 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Nozomi.Data;
+using Nozomi.Base.Auth.Models;
 using Nozomi.Data.Models.Currency;
 using Nozomi.Infra.Admin.Service.Events.Interfaces;
 using Nozomi.Infra.Admin.Service.Services.Interfaces;
-using Nozomi.Service.Events.Interfaces;
-using Nozomi.Service.Identity.Managers;
-using Nozomi.Service.Services.Interfaces;
 using Nozomi.Ticker.Controllers;
 
 namespace Nozomi.Ticker.Areas.Admin.Controllers
@@ -20,9 +18,9 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
         private readonly ICurrencyTypeAdminEvent _currencyTypeAdminEvent;
         private readonly ICurrencyTypeService _currencyTypeService;
 
-        public CurrencyTypeController(ILogger<CurrencyTypeController> logger, NozomiSignInManager signInManager,
-            NozomiUserManager userManager, ICurrencyTypeAdminEvent currencyTypeAdminEvent, 
-            ICurrencyTypeService currencyTypeService) 
+        public CurrencyTypeController(ILogger<CurrencyTypeController> logger, ICurrencyTypeAdminEvent currencyTypeAdminEvent, 
+            ICurrencyTypeService currencyTypeService, SignInManager<User> signInManager,
+            UserManager<User> userManager)
             : base(logger, signInManager, userManager)
         {
             _currencyTypeAdminEvent = currencyTypeAdminEvent;
@@ -96,7 +94,7 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
             }
 
             // TODO: Make full use of the hard delete option.
-            var result = _currencyTypeService.Delete(id, false, user.Id);
+            var result = _currencyTypeService.Delete(id, false, 0);
 
             if (result) return Ok("Currency Type successfully deleted!");
 

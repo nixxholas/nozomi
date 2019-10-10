@@ -1,10 +1,11 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Nozomi.Base.Admin.Domain.AreaModels.AnalysedComponent;
+using Nozomi.Base.Auth.Models;
 using Nozomi.Infra.Admin.Service.Services.Interfaces;
-using Nozomi.Service.Identity.Managers;
 using Nozomi.Ticker.Controllers;
 
 namespace Nozomi.Ticker.Areas.Admin.Controllers
@@ -15,8 +16,8 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
     {
         private readonly IAnalysedComponentService _analysedComponentService;
         public AnalysedComponentController(ILogger<AnalysedComponentController> logger, 
-            IAnalysedComponentService analysedComponentService, 
-            NozomiSignInManager signInManager, NozomiUserManager userManager) 
+            IAnalysedComponentService analysedComponentService, SignInManager<User> signInManager,
+            UserManager<User> userManager)
             : base(logger, signInManager, userManager)
         {
             _analysedComponentService = analysedComponentService;
@@ -31,7 +32,7 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
                 return BadRequest("Invalid user.");
             }
 
-            var res = _analysedComponentService.Create(createAnalysedComponent, user.Id);
+            var res = _analysedComponentService.Create(createAnalysedComponent, 0);
 
             if (res > 0)
                 return Ok("Analysed component successfully created!");
@@ -48,7 +49,7 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
                 return BadRequest("Invalid user.");
             }
 
-            var res = _analysedComponentService.Delete(id, false, user.Id);
+            var res = _analysedComponentService.Delete(id, false, 0);
 
             if (res)
                 return Ok("Analysed component successfully created!");

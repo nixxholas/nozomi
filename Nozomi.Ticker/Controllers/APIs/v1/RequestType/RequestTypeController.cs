@@ -1,8 +1,9 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Nozomi.Base.Auth.Models;
 using Nozomi.Data;
 using Nozomi.Service.Events.Interfaces;
-using Nozomi.Service.Identity.Managers;
 
 namespace Nozomi.Ticker.Controllers.APIs.v1.RequestType
 {
@@ -10,7 +11,7 @@ namespace Nozomi.Ticker.Controllers.APIs.v1.RequestType
     {
         private readonly IRequestTypeEvent _requestTypeEvent;
         
-        public RequestTypeController(ILogger<RequestTypeController> logger, NozomiUserManager userManager,
+        public RequestTypeController(ILogger<RequestTypeController> logger, UserManager<User> userManager,
             IRequestTypeEvent requestTypeEvent) : base(logger, userManager)
         {
             _requestTypeEvent = requestTypeEvent;

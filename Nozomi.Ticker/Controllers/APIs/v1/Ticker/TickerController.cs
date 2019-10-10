@@ -1,15 +1,15 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Nozomi.Base.Auth.Models;
 using Nozomi.Data;
 using Nozomi.Data.ResponseModels.Ticker;
 using Nozomi.Data.ResponseModels.TickerPair;
 using Nozomi.Infra.Admin.Service.Services.Interfaces;
 using Nozomi.Service.Events.Interfaces;
-using Nozomi.Service.Identity.Managers;
-using Nozomi.Service.Services.Interfaces;
 
 namespace Nozomi.Ticker.Controllers.APIs.v1.Ticker
 {
@@ -18,7 +18,7 @@ namespace Nozomi.Ticker.Controllers.APIs.v1.Ticker
         private readonly ITickerEvent _tickerEvent;
         private readonly ITickerService _tickerService;
         
-        public TickerController(ILogger<TickerController> logger, NozomiUserManager userManager,
+        public TickerController(ILogger<TickerController> logger, UserManager<User> userManager,
             ITickerEvent tickerEvent, ITickerService tickerService) : base(logger, userManager)
         {
             _tickerEvent = tickerEvent;
