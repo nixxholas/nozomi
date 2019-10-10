@@ -125,7 +125,6 @@ namespace Nozomi.Service.Services.Requests
                 {
                     req.ModifiedAt = DateTime.UtcNow;
 
-                    _unitOfWork.GetRepository<Request>().Update(req);
                     _unitOfWork.Commit();
 
                     return true;
@@ -154,7 +153,6 @@ namespace Nozomi.Service.Services.Requests
                         req.ModifiedAt = DateTime.UtcNow;
                     }
                     
-                    _unitOfWork.GetRepository<Request>().Update(reqs);
                     _unitOfWork.Commit();
 
                     return true;
