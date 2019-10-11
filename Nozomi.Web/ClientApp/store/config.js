@@ -1,7 +1,9 @@
 import { WebStorageStateStore } from 'oidc-client';
 
+const identityAuthority = process.env.NODE_ENV === "production" ? "https://auth.nozomi.one" : 'https://localhost:6001';
+
 export const oidcSettings = {
-  authority: process.env.NODE_ENV === "production" ? "https://auth.nozomi.one" : 'https://localhost:6001',
+  authority: identityAuthority,
   client_id: 'nozomi.spa',
   redirect_uri: process.env.NODE_ENV === "production" ? "https://nozomi.one/oidc-callback"
     : window.location.origin + "/oidc-callback",
@@ -14,5 +16,11 @@ export const oidcSettings = {
   automaticSilentRenew: true,
   filterProtocolClaims: true,
   //userStore: new WebStorageStateStore(),
-  loadUserInfo: true
+  loadUserInfo: true,
+  metadata: {
+    issuer: identityAuthority,
+    jwks_uri: identityAuthority + "/.well-known/openid-configuration/jwks",
+    end_session_endpoint: identityAuthority + "/connect/endsession",
+    authorization_endpoint: identityAuthority + "/connect/authorize"
+  }
 };

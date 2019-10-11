@@ -52,7 +52,8 @@ mgr.events.addUserSignedOut(function () {
   alert('Going out!');
   console.log('UserSignedOut：', arguments);
   mgr.signoutRedirect().then(function (resp) {
-    console.log('signed out', resp);
+    context.commit('unsetOidcAuth');
+    // console.log('signed out', resp);
   }).catch(function (err) {
     console.log(err)
   })
@@ -179,6 +180,8 @@ const actions = ({
   getUser() {
     let self = this;
     return new Promise((resolve, reject) => {
+      // TODO: Should we comply with this?
+      // https://github.com/IdentityModel/oidc-client-js/issues/689
       mgr.getUser().then(function (user) {
         if (user == null) {
           self.signIn();
