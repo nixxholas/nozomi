@@ -12,7 +12,6 @@ using Nozomi.Base.Auth.Models;
 using Nozomi.Preprocessing.Events.Interfaces;
 using Nozomi.Service.Events.Interfaces;
 using Nozomi.Service.Services.Interfaces;
-using Nozomi.Ticker.Areas.Users.Controllers.Manage.PaymentMethods;
 using Nozomi.Ticker.Areas.Users.Controllers.Manage.TwoFactorAuthentication;
 using Nozomi.Ticker.Controllers;
 
