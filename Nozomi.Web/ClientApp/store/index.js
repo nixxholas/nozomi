@@ -376,6 +376,13 @@ const actions = ({
   }
 });
 
+const errorPayload = (context, error) => {
+  return {
+    context,
+    error: error && error.message ? error.message : error
+  }
+};
+
 export default new Vuex.Store({
   state,
   mutations,
