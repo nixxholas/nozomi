@@ -23,8 +23,10 @@ Oidc.Log.logger = console;
 Oidc.Log.level = Oidc.Log.INFO;
 
 mgr.events.addUserLoaded(function (user) {
-  console.log('New User Loaded：', arguments);
-  console.log('Access_token: ', user.access_token)
+  // console.log('New User Loaded：', arguments);
+  // console.log('Access_token: ', user.access_token)
+  
+  context.commit('setOidcAuth', user);
 });
 
 mgr.events.addAccessTokenExpiring(function () {
@@ -56,6 +58,10 @@ mgr.events.addUserSignedOut(function () {
   }).catch(function (err) {
     console.log(err)
   })
+});
+
+mgr.events.removeUserUnloaded(function () {
+  context.commit('unsetOidcAuth');
 });
 
 // TYPES
@@ -206,7 +212,6 @@ const actions = ({
       context.dispatch('oidcWasAuthenticated', user);
     })
       .catch(err => {
-        context.commit('setOidcError', errorPayload('signInSilent', err));
         context.commit('setOidcAuthIsChecked');
       })
   },
@@ -227,14 +232,21 @@ const actions = ({
   // Redirect of the sign in from the authorization endpoint.
   oidcSignInCallback (context, url) {
     return new Promise((resolve, reject) => {
-      mgr.signinRedirectCallback(url)
+      if (url) {
+        mgr.signinRedirectCallback(url)
+          .then(user => {
+            resolve(sessionStorage.getItem('vuex_oidc_active_route') || '/')
+          })
+          .catch(err => {
+            reject(err)
+          })
+      }
+
+      mgr.signinRedirectCallback()
         .then(user => {
-          context.dispatch('oidcWasAuthenticated', user);
           resolve(sessionStorage.getItem('vuex_oidc_active_route') || '/')
         })
         .catch(err => {
-          context.commit('setOidcError', errorPayload('oidcSignInCallback', err));
-          context.commit('setOidcAuthIsChecked');
           reject(err)
         })
     })
@@ -365,13 +377,6 @@ const actions = ({
     })
   }
 });
-
-const errorPayload = (context, error) => {
-  return {
-    context,
-    error: error && error.message ? error.message : error
-  }
-};
 
 export default new Vuex.Store({
   state,

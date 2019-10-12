@@ -25,23 +25,27 @@
 
     <template slot="end">
       <b-navbar-item tag="div" v-if="!this.isLoggedIn">
-        <b-button type="is-primary" v-if="hasWeb3" @click="this.signIn()" :loading="loginLoading">
+        <b-button type="is-primary" v-if="hasWeb3" @click="signIn()" :loading="loginLoading">
           <span>Sign in with</span>
           <b-icon
             icon="ethereum"
             size="is-small">
           </b-icon>
         </b-button>
-        <b-button type="is-warning" v-else @click="this.signIn()" :loading="loginLoading">Login</b-button>
+        <b-button type="is-warning" v-else @click="signIn()" :loading="loginLoading">Login</b-button>
       </b-navbar-item>
-      <b-navbar-item tag="div" v-else>
+      <b-navbar-item tag="div" class="buttons" v-else>
         <b-button type="is-info"
-         icon-left="view-dashboard">
+                  icon-left="view-dashboard">
           <span>Dashboard</span>
+        </b-button>
+        <b-button type="is-danger"
+                  icon-left=""
+                  @click="logout()">
+          <span>Logout</span>
         </b-button>
       </b-navbar-item>
     </template>
-<!--    {{ this.getUserExplicitly() }}-->
   </b-navbar>
 </template>
 
@@ -62,9 +66,15 @@
             ...mapGetters(['isLoggedIn'
                 // , 'getUserExplicitly'
             ]),
-            ...mapActions(['signIn'])
+            ...mapActions(['signIn', 'signOut'])
         },
         methods: {
+            authenticate() {
+                this.signIn();
+            },
+            logout() {
+                this.signOut();
+            },
             async authWeb3() {
                 this.loginLoading = true;
 
