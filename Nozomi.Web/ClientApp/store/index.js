@@ -202,7 +202,7 @@ const actions = ({
     return new Promise((resolve, reject) => {
       mgr.getUser().then(function (user) {
         if (user == null) {
-          self.signIn();
+          self.signinRedirectCallback();
           return resolve(false) // Not authenticated yet lol
         } else {
           return resolve(true)
@@ -240,17 +240,31 @@ const actions = ({
   // Redirect of the sign in from the authorization endpoint.
   oidcSignInCallback (context, url) {
     return new Promise((resolve, reject) => {
-      console.dir("Requested URL: " + url);
-      mgr.signinRedirectCallback(url)
-        .then(user => {
-          context.dispatch('oidcWasAuthenticated', user);
-          resolve(sessionStorage.getItem('vuex_oidc_active_route') || '/')
-        })
-        .catch(err => {
-          context.commit('setOidcError', errorPayload('oidcSignInCallback', err));
-          context.commit('setOidcAuthIsChecked');
-          reject(err)
-        })
+      if (url) {
+        mgr.signinRedirectCallback(url)
+          .then(user => {
+            context.dispatch('oidcWasAuthenticated', user);
+            resolve(sessionStorage.getItem('vuex_oidc_active_route') || '/')
+          })
+          .catch(err => {
+            context.commit('setOidcError', errorPayload('oidcSignInCallback', err));
+            context.commit('setOidcAuthIsChecked');
+            reject(err)
+          })
+      } else {
+        // Else perform a non-url callback request
+        console.dir("Processing non-url callback");
+        mgr.signinRedirectCallback()
+          .then(user => {
+            context.dispatch('oidcWasAuthenticated', user);
+            resolve(sessionStorage.getItem('vuex_oidc_active_route') || '/')
+          })
+          .catch(err => {
+            context.commit('setOidcError', errorPayload('oidcSignInCallback', err));
+            context.commit('setOidcAuthIsChecked');
+            reject(err)
+          })
+      }
     })
   },
 
