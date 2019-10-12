@@ -240,6 +240,7 @@ const actions = ({
   // Redirect of the sign in from the authorization endpoint.
   oidcSignInCallback (context, url) {
     return new Promise((resolve, reject) => {
+      console.dir("Requested URL: " + url);
       mgr.signinRedirectCallback(url)
         .then(user => {
           context.dispatch('oidcWasAuthenticated', user);
