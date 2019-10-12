@@ -25,14 +25,14 @@
 
     <template slot="end">
       <b-navbar-item tag="div" v-if="!this.isLoggedIn">
-        <b-button type="is-primary" v-if="hasWeb3" @click="login" :loading="loginLoading">
+        <b-button type="is-primary" v-if="hasWeb3" @click="this.signIn()" :loading="loginLoading">
           <span>Sign in with</span>
           <b-icon
             icon="ethereum"
             size="is-small">
           </b-icon>
         </b-button>
-        <b-button type="is-warning" v-else @click="login" :loading="loginLoading">Login</b-button>
+        <b-button type="is-warning" v-else @click="this.signIn()" :loading="loginLoading">Login</b-button>
       </b-navbar-item>
       <b-navbar-item tag="div" v-else>
         <b-button type="is-info"
@@ -88,9 +88,6 @@
             }
         },
         methods: {
-            login: function () {
-                this.signIn();
-            },
             async authWeb3() {
                 this.loginLoading = true;
 
