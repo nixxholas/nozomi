@@ -52,8 +52,7 @@ mgr.events.addUserSignedOut(function () {
   alert('Going out!');
   console.log('UserSignedOut：', arguments);
   mgr.signoutRedirect().then(function (resp) {
-    context.commit('unsetOidcAuth');
-    // console.log('signed out', resp);
+    console.log('signed out', resp);
   }).catch(function (err) {
     console.log(err)
   })
@@ -79,6 +78,7 @@ const state = {
 const mutations = {
   // Transfer all user payload to current state
   setOidcAuth (state, user) {
+    console.dir("Settings OIDC Auth: " + user);
     state.id_token = user.id_token;
     state.access_token = user.access_token;
     state.user = user.profile;
@@ -116,17 +116,6 @@ const getters = ({
       }, err => {
         console.log(err)
       })
-  },
-  // Get the user who is logged in
-  getUserExplicitly: () => {
-    return new Promise((resolve, reject) => {
-      mgr.getUser().then(function (user) {
-        return user;
-      }).catch(function (err) {
-        console.log(err);
-        return null;
-      });
-    })
   },
 });
 
@@ -180,8 +169,6 @@ const actions = ({
   getUser() {
     let self = this;
     return new Promise((resolve, reject) => {
-      // TODO: Should we comply with this?
-      // https://github.com/IdentityModel/oidc-client-js/issues/689
       mgr.getUser().then(function (user) {
         if (user == null) {
           self.signIn();
@@ -197,13 +184,13 @@ const actions = ({
   },
 
   // Check if there is any user logged in
-  getSignedIn() {
+  getSignedIn(context) {
     let self = this;
     return new Promise((resolve, reject) => {
       mgr.getUser().then(function (user) {
         if (user == null) {
-          self.signinRedirectCallback();
-          return resolve(false) // Not authenticated yet lol
+          self.signIn();
+          return resolve(false)
         } else {
           return resolve(true)
         }
@@ -229,7 +216,7 @@ const actions = ({
     let self = this;
     mgr.signinRedirect()
       .then(function (resp) {
-        // console.log('signed in!', resp);
+        console.log('signed in!', resp);
         state.user = self.getSignedIn();
       })
       .catch(function (err) {
@@ -240,31 +227,16 @@ const actions = ({
   // Redirect of the sign in from the authorization endpoint.
   oidcSignInCallback (context, url) {
     return new Promise((resolve, reject) => {
-      if (url) {
-        mgr.signinRedirectCallback(url)
-          .then(user => {
-            context.dispatch('oidcWasAuthenticated', user);
-            resolve(sessionStorage.getItem('vuex_oidc_active_route') || '/')
-          })
-          .catch(err => {
-            context.commit('setOidcError', errorPayload('oidcSignInCallback', err));
-            context.commit('setOidcAuthIsChecked');
-            reject(err)
-          })
-      } else {
-        // Else perform a non-url callback request
-        console.dir("Processing non-url callback");
-        mgr.signinRedirectCallback()
-          .then(user => {
-            context.dispatch('oidcWasAuthenticated', user);
-            resolve(sessionStorage.getItem('vuex_oidc_active_route') || '/')
-          })
-          .catch(err => {
-            context.commit('setOidcError', errorPayload('oidcSignInCallback', err));
-            context.commit('setOidcAuthIsChecked');
-            reject(err)
-          })
-      }
+      mgr.signinRedirectCallback(url)
+        .then(user => {
+          context.dispatch('oidcWasAuthenticated', user);
+          resolve(sessionStorage.getItem('vuex_oidc_active_route') || '/')
+        })
+        .catch(err => {
+          context.commit('setOidcError', errorPayload('oidcSignInCallback', err));
+          context.commit('setOidcAuthIsChecked');
+          reject(err)
+        })
     })
   },
 
@@ -393,6 +365,13 @@ const actions = ({
     })
   }
 });
+
+const errorPayload = (context, error) => {
+  return {
+    context,
+    error: error && error.message ? error.message : error
+  }
+};
 
 export default new Vuex.Store({
   state,
