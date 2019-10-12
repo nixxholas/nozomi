@@ -197,13 +197,13 @@ const actions = ({
   },
 
   // Check if there is any user logged in
-  getSignedIn(context) {
+  getSignedIn() {
     let self = this;
     return new Promise((resolve, reject) => {
       mgr.getUser().then(function (user) {
         if (user == null) {
           self.signIn();
-          return resolve(false)
+          return resolve(false) // Not authenticated yet lol
         } else {
           return resolve(true)
         }
@@ -229,7 +229,7 @@ const actions = ({
     let self = this;
     mgr.signinRedirect()
       .then(function (resp) {
-        console.log('signed in!', resp);
+        // console.log('signed in!', resp);
         state.user = self.getSignedIn();
       })
       .catch(function (err) {
