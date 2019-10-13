@@ -10,6 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
+using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using Nozomi.Base.Auth.Models;
 using Nozomi.Infra.Auth.Services.Address;
@@ -146,8 +147,9 @@ namespace Nozomi.Auth
                 var nozomiVault = vaultClient.V1.Secrets.Cubbyhole.ReadSecretAsync("nozomi")
                     .GetAwaiter()
                     .GetResult().Data;
-                
-                var cert = new X509Certificate2("noz-web.pfx", (string) nozomiVault["auth-signing-key"]);
+
+                var cert = new X509Certificate2(Encoding.UTF8.GetBytes((string) nozomiVault["auth-signing-cert"])
+                    , (string) nozomiVault["auth-signing-key"]);
                 
                 // https://stackoverflow.com/questions/49042474/addsigningcredential-for-identityserver4
                 builder.AddSigningCredential(cert);
