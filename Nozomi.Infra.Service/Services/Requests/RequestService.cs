@@ -137,27 +137,12 @@ namespace Nozomi.Service.Services.Requests
         {
             if (requests != null && requests.Any())
             {
-                if (requests.Any(r => r.DeletedAt == null && r.IsEnabled
-                                                      && requests.Any(obj => obj.Id.Equals(r.Id))))
+                foreach (var req in requests)
                 {
-                    foreach (var req in requests)
-                    {
-                        var currReq = _unitOfWork.GetRepository<Request>()
-                            .GetQueryable()
-                            .AsTracking()
-                            .SingleOrDefault(r => r.Id.Equals(req.Id));
-
-                        if (currReq != null)
-                        {
-                            currReq.ModifiedAt = DateTime.UtcNow;
-                            _unitOfWork.GetRepository<Request>().Update(req);
-                    
-                            _unitOfWork.Commit();
-                        }
-                    }
-
-                    return true;
+                    HasUpdated(req.Id);
                 }
+
+                return true;
             }
 
             _logger.LogCritical($"[{_serviceName}] HasUpdated: Incorrect Request collection.");
