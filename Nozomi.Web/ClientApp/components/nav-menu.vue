@@ -24,15 +24,15 @@
     </template>
 
     <template slot="end">
-      <b-navbar-item tag="div" v-if="!this.isLoggedIn">
-        <b-button type="is-primary" v-if="hasWeb3" @click="signIn()" :loading="loginLoading">
+      <b-navbar-item tag="div" v-if="!oidcIsAuthenticated">
+        <b-button type="is-primary" v-if="hasWeb3" @click="authenticateOidc()" :loading="loginLoading">
           <span>Sign in with</span>
           <b-icon
             icon="ethereum"
             size="is-small">
           </b-icon>
         </b-button>
-        <b-button type="is-warning" v-else @click="signIn()" :loading="loginLoading">Login</b-button>
+        <b-button type="is-warning" v-else @click="authenticateOidc()" :loading="loginLoading">Login</b-button>
       </b-navbar-item>
       <b-navbar-item tag="div" class="buttons" v-else>
         <b-button type="is-info"
@@ -41,7 +41,7 @@
         </b-button>
         <b-button type="is-danger"
                   icon-left=""
-                  @click="logout()">
+                  @click="signOutOidc()">
           <span>Logout</span>
         </b-button>
       </b-navbar-item>
@@ -63,18 +63,19 @@
             }
         },
         computed: {
-            ...mapGetters(['isLoggedIn'
-                // , 'getUserExplicitly'
+            ...mapGetters('oidcStore', [
+                'oidcIsAuthenticated',
+                'oidcAuthenticationIsChecked',
+                'oidcUser',
+                'oidcIdToken',
+                'oidcIdTokenExp'
             ]),
-            ...mapActions(['signIn', 'signOut'])
+            hasAccess: function() {
+                return this.oidcIsAuthenticated || this.$route.meta.isPublic
+            }
         },
         methods: {
-            authenticate() {
-                this.signIn();
-            },
-            logout() {
-                this.signOut();
-            },
+            ...mapActions('oidcStore', ['authenticateOidc', 'signOutOidc']),
             async authWeb3() {
                 this.loginLoading = true;
 
