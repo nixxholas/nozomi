@@ -83,7 +83,7 @@ const state = {
 const mutations = {
   // Transfer all user payload to current state
   setOidcAuth (state, user) {
-    console.dir("Settings OIDC Auth: " + user);
+    console.dir("Setting OIDC Auth: " + user);
     state.id_token = user.id_token;
     state.access_token = user.access_token;
     state.user = user.profile;
@@ -237,6 +237,7 @@ const actions = ({
             resolve(sessionStorage.getItem('vuex_oidc_active_route') || '/')
           })
           .catch(err => {
+            console.dir("Store.oidcSignInCallback: " + err);
             reject(err)
           })
       }
@@ -246,6 +247,7 @@ const actions = ({
           resolve(sessionStorage.getItem('vuex_oidc_active_route') || '/')
         })
         .catch(err => {
+          console.dir("Store.oidcSignInCallback: " + err);
           reject(err)
         })
     })
