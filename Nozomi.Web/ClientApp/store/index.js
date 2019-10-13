@@ -1,7 +1,6 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
-import VuexPersist from 'vuex-persist'
-import {NotificationProgrammatic as Notification} from 'buefy';
+import VuexPersist from 'vuex-persist';
 import Oidc from 'oidc-client';
 import { oidcSettings } from "./config";
 import 'babel-polyfill';
@@ -25,7 +24,7 @@ Oidc.Log.level = Oidc.Log.INFO;
 mgr.events.addUserLoaded(function (user) {
   // console.log('New User Loaded：', arguments);
   // console.log('Access_token: ', user.access_token)
-  
+
   context.commit('setOidcAuth', user);
 });
 
