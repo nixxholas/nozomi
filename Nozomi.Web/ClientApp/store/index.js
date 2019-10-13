@@ -2,6 +2,7 @@ import Vue from 'vue';
 import Vuex from 'vuex';
 import VuexPersist from 'vuex-persist';
 import { vuexOidcCreateStoreModule } from 'vuex-oidc';
+import { NotificationProgrammatic as Notification } from 'buefy'
 import { oidcSettings } from "./config";
 import 'babel-polyfill';
 //import axios from "axios";
@@ -31,7 +32,16 @@ export default new Vuex.Store({
       },
       // Optional OIDC event listeners
       {
-        userLoaded: (user) => console.log('OIDC user is loaded:', user),
+        userLoaded: (user) =>  {
+          // console.log('OIDC user is loaded:', user)
+          Notification.open({
+            duration: 3000,
+            message: 'Successfully authenticated!',
+            position: 'is-bottom-right',
+            type: 'is-success',
+            hasIcon: true
+          })
+        },
         userUnloaded: () => console.log('OIDC user is unloaded'),
         accessTokenExpiring: () => console.log('Access token will expire'),
         accessTokenExpired: () => console.log('Access token did expire'),
