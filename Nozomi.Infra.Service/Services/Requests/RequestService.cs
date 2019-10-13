@@ -142,11 +142,19 @@ namespace Nozomi.Service.Services.Requests
                 {
                     foreach (var req in requests)
                     {
-                        req.ModifiedAt = DateTime.UtcNow;
-                        _unitOfWork.GetRepository<Request>().Update(req);
-                    }
+                        var currReq = _unitOfWork.GetRepository<Request>()
+                            .GetQueryable()
+                            .AsTracking()
+                            .SingleOrDefault(r => r.Id.Equals(req.Id));
+
+                        if (currReq != null)
+                        {
+                            currReq.ModifiedAt = DateTime.UtcNow;
+                            _unitOfWork.GetRepository<Request>().Update(req);
                     
-                    _unitOfWork.Commit();
+                            _unitOfWork.Commit();
+                        }
+                    }
 
                     return true;
                 }
