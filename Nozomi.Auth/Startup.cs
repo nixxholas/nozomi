@@ -134,8 +134,23 @@ namespace Nozomi.Auth
             }
             else
             {
+                var vaultToken = Configuration["vaultToken"];
+
+                if (string.IsNullOrEmpty(vaultToken))
+                    throw new SystemException("Invalid vault token.");
+
+                var authMethod = new TokenAuthMethodInfo(vaultToken);
+                var vaultClientSettings = new VaultClientSettings("http://165.22.250.169:8200", authMethod);
+                var vaultClient = new VaultClient(vaultClientSettings);
+
+                var nozomiVault = vaultClient.V1.Secrets.Cubbyhole.ReadSecretAsync("nozomi")
+                    .GetAwaiter()
+                    .GetResult().Data;
+                
+                var cert = new X509Certificate2("noz-web.pfx", (string) nozomiVault["auth-signing-key"]);
+                
                 // https://stackoverflow.com/questions/49042474/addsigningcredential-for-identityserver4
-                builder.AddSigningCredential(CreateSigningCredential());
+                builder.AddSigningCredential(cert);
             }
 
             // Database
