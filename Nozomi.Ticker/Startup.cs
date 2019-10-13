@@ -178,7 +178,11 @@ namespace Nozomi.Ticker
             
             services.AddMvc()
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
-                .AddSessionStateTempDataProvider();
+                .AddSessionStateTempDataProvider()
+                .AddRazorPagesOptions(o=>
+                {
+                    o.Conventions.ConfigureFilter(new IgnoreAntiforgeryTokenAttribute());
+                });
             
             // https://stackoverflow.com/questions/36358751/how-do-you-enforce-lowercase-routing-in-asp-net-core
             services.AddRouting(option =>
