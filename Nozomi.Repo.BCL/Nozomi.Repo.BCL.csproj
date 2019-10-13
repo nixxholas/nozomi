@@ -7,7 +7,6 @@
     <ItemGroup>
       <ProjectReference Include="..\Nozomi.Base.Core\Nozomi.Base.Core.csproj" />
       <ProjectReference Include="..\Nozomi.Base.Domain\Nozomi.Base.Domain.csproj" />
-      <ProjectReference Include="..\Nozomi.Base.Identity\Nozomi.Base.Identity.csproj" />
     </ItemGroup>
 
 </Project>
