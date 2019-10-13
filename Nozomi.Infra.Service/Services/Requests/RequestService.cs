@@ -139,7 +139,7 @@ namespace Nozomi.Service.Services.Requests
             {
                 var reqs = _unitOfWork.GetRepository<Request>()
                     .GetQueryable()
-                    .AsTracking()
+                    .AsNoTracking()
                     .Where(r => r.DeletedAt == null && r.IsEnabled
                                                               && requests.Any(obj => obj.Id.Equals(r.Id)))
                     .ToList();
@@ -151,6 +151,7 @@ namespace Nozomi.Service.Services.Requests
                         req.ModifiedAt = DateTime.UtcNow;
                     }
                     
+                    _unitOfWork.GetRepository<Request>().Update(reqs);
                     _unitOfWork.Commit();
 
                     return true;
