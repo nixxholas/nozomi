@@ -137,21 +137,15 @@ namespace Nozomi.Service.Services.Requests
         {
             if (requests != null && requests.Any())
             {
-                var reqs = _unitOfWork.GetRepository<Request>()
-                    .GetQueryable()
-                    .AsNoTracking()
-                    .Where(r => r.DeletedAt == null && r.IsEnabled
-                                                              && requests.Any(obj => obj.Id.Equals(r.Id)))
-                    .ToList();
-
-                if (reqs.Any())
+                if (requests.Any(r => r.DeletedAt == null && r.IsEnabled
+                                                      && requests.Any(obj => obj.Id.Equals(r.Id))))
                 {
-                    foreach (var req in reqs)
+                    foreach (var req in requests)
                     {
                         req.ModifiedAt = DateTime.UtcNow;
+                        _unitOfWork.GetRepository<Request>().Update(req);
                     }
                     
-                    _unitOfWork.GetRepository<Request>().Update(reqs);
                     _unitOfWork.Commit();
 
                     return true;
