@@ -21,6 +21,7 @@ export const oidcSettings = {
     issuer: identityAuthority,
     jwks_uri: identityAuthority + "/.well-known/openid-configuration/jwks",
     end_session_endpoint: identityAuthority + "/connect/endsession",
-    authorization_endpoint: identityAuthority + "/connect/authorize"
+    authorization_endpoint: identityAuthority + "/connect/authorize",
+    userinfo_endpoint: identityAuthority + "/connect/userinfo"
   }
 };

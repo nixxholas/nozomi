@@ -1,7 +1,6 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
-import VuexPersist from 'vuex-persist'
-import {NotificationProgrammatic as Notification} from 'buefy';
+import VuexPersist from 'vuex-persist';
 import Oidc from 'oidc-client';
 import { oidcSettings } from "./config";
 import 'babel-polyfill';
@@ -23,8 +22,10 @@ Oidc.Log.logger = console;
 Oidc.Log.level = Oidc.Log.INFO;
 
 mgr.events.addUserLoaded(function (user) {
-  console.log('New User Loaded：', arguments);
-  console.log('Access_token: ', user.access_token)
+  // console.log('New User Loaded：', arguments);
+  // console.log('Access_token: ', user.access_token)
+
+  context.commit('setOidcAuth', user);
 });
 
 mgr.events.addAccessTokenExpiring(function () {
@@ -52,11 +53,14 @@ mgr.events.addUserSignedOut(function () {
   alert('Going out!');
   console.log('UserSignedOut：', arguments);
   mgr.signoutRedirect().then(function (resp) {
-    context.commit('unsetOidcAuth');
-    // console.log('signed out', resp);
+    console.log('signed out', resp);
   }).catch(function (err) {
     console.log(err)
   })
+});
+
+mgr.events.removeUserUnloaded(function () {
+  context.commit('unsetOidcAuth');
 });
 
 // TYPES
@@ -79,6 +83,7 @@ const state = {
 const mutations = {
   // Transfer all user payload to current state
   setOidcAuth (state, user) {
+    console.dir("Setting OIDC Auth: " + user);
     state.id_token = user.id_token;
     state.access_token = user.access_token;
     state.user = user.profile;
@@ -116,17 +121,6 @@ const getters = ({
       }, err => {
         console.log(err)
       })
-  },
-  // Get the user who is logged in
-  getUserExplicitly: () => {
-    return new Promise((resolve, reject) => {
-      mgr.getUser().then(function (user) {
-        return user;
-      }).catch(function (err) {
-        console.log(err);
-        return null;
-      });
-    })
   },
 });
 
@@ -180,8 +174,6 @@ const actions = ({
   getUser() {
     let self = this;
     return new Promise((resolve, reject) => {
-      // TODO: Should we comply with this?
-      // https://github.com/IdentityModel/oidc-client-js/issues/689
       mgr.getUser().then(function (user) {
         if (user == null) {
           self.signIn();
@@ -197,13 +189,13 @@ const actions = ({
   },
 
   // Check if there is any user logged in
-  getSignedIn() {
+  getSignedIn(context) {
     let self = this;
     return new Promise((resolve, reject) => {
       mgr.getUser().then(function (user) {
         if (user == null) {
-          self.signinRedirectCallback();
-          return resolve(false) // Not authenticated yet lol
+          self.signIn();
+          return resolve(false)
         } else {
           return resolve(true)
         }
@@ -219,7 +211,6 @@ const actions = ({
       context.dispatch('oidcWasAuthenticated', user);
     })
       .catch(err => {
-        context.commit('setOidcError', errorPayload('signInSilent', err));
         context.commit('setOidcAuthIsChecked');
       })
   },
@@ -229,7 +220,7 @@ const actions = ({
     let self = this;
     mgr.signinRedirect()
       .then(function (resp) {
-        // console.log('signed in!', resp);
+        console.log('signed in!', resp);
         state.user = self.getSignedIn();
       })
       .catch(function (err) {
@@ -243,28 +234,22 @@ const actions = ({
       if (url) {
         mgr.signinRedirectCallback(url)
           .then(user => {
-            context.dispatch('oidcWasAuthenticated', user);
             resolve(sessionStorage.getItem('vuex_oidc_active_route') || '/')
           })
           .catch(err => {
-            context.commit('setOidcError', errorPayload('oidcSignInCallback', err));
-            context.commit('setOidcAuthIsChecked');
-            reject(err)
-          })
-      } else {
-        // Else perform a non-url callback request
-        console.dir("Processing non-url callback");
-        mgr.signinRedirectCallback()
-          .then(user => {
-            context.dispatch('oidcWasAuthenticated', user);
-            resolve(sessionStorage.getItem('vuex_oidc_active_route') || '/')
-          })
-          .catch(err => {
-            context.commit('setOidcError', errorPayload('oidcSignInCallback', err));
-            context.commit('setOidcAuthIsChecked');
+            console.dir("Store.oidcSignInCallback: " + err);
             reject(err)
           })
       }
+
+      mgr.signinRedirectCallback()
+        .then(user => {
+          resolve(sessionStorage.getItem('vuex_oidc_active_route') || '/')
+        })
+        .catch(err => {
+          console.dir("Store.oidcSignInCallback: " + err);
+          reject(err)
+        })
     })
   },
 

@@ -1,5 +1,4 @@
 import CounterExample from '../components/counter-example';
-import FetchData from '../components/fetch-data';
 import HomePage from '../components/home-page';
 import About from '../components/about';
 
@@ -16,9 +15,6 @@ export const routes = [
     meta: { isPublic: false }
   },
   { name: 'counter', path: '/counter', component: CounterExample, display: 'Counter', icon: 'graduation-cap',
-    meta: { isPublic: true }
-  },
-  { name: 'fetch-data', path: '/fetch-data', component: FetchData, display: 'Data', icon: 'list',
     meta: { isPublic: true }
   },
   // Currency-specific routing
