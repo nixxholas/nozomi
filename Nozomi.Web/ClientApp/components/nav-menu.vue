@@ -24,24 +24,28 @@
     </template>
 
     <template slot="end">
-      <b-navbar-item tag="div" v-if="!this.isLoggedIn">
-        <b-button type="is-primary" v-if="hasWeb3" @click="login" :loading="loginLoading">
+      <b-navbar-item tag="div" v-if="!oidcIsAuthenticated">
+        <b-button type="is-primary" v-if="hasWeb3" @click="authenticateOidc()" :loading="loginLoading">
           <span>Sign in with</span>
           <b-icon
             icon="ethereum"
             size="is-small">
           </b-icon>
         </b-button>
-        <b-button type="is-warning" v-else @click="login" :loading="loginLoading">Login</b-button>
+        <b-button type="is-warning" v-else @click="authenticateOidc()" :loading="loginLoading">Login</b-button>
       </b-navbar-item>
-      <b-navbar-item tag="div" v-else>
+      <b-navbar-item tag="div" class="buttons" v-else>
         <b-button type="is-info"
-         icon-left="view-dashboard">
+                  icon-left="view-dashboard">
           <span>Dashboard</span>
+        </b-button>
+        <b-button type="is-danger"
+                  icon-left=""
+                  @click="signOutOidc()">
+          <span>Logout</span>
         </b-button>
       </b-navbar-item>
     </template>
-<!--    {{ this.getUserExplicitly() }}-->
   </b-navbar>
 </template>
 
@@ -59,38 +63,19 @@
             }
         },
         computed: {
-            ...mapGetters(['isLoggedIn'
-                // , 'getUserExplicitly'
+            ...mapGetters('oidcStore', [
+                'oidcIsAuthenticated',
+                'oidcAuthenticationIsChecked',
+                'oidcUser',
+                'oidcIdToken',
+                'oidcIdTokenExp'
             ]),
-            ...mapActions(['signIn'])
-        },
-        mounted: function () {
-            // Get all "navbar-burger" elements
-            const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
-
-            // Check if there are any navbar burgers
-            if ($navbarBurgers.length > 0) {
-
-                // Add a click event on each of them
-                $navbarBurgers.forEach(el => {
-                    el.addEventListener('click', () => {
-
-                        // Get the target from the "data-target" attribute
-                        const target = el.dataset.target;
-                        const $target = document.getElementById(target);
-
-                        // Toggle the "is-active" class on both the "navbar-burger" and the "navbar-menu"
-                        el.classList.toggle('is-active');
-                        $target.classList.toggle('is-active');
-
-                    });
-                });
+            hasAccess: function() {
+                return this.oidcIsAuthenticated || this.$route.meta.isPublic
             }
         },
         methods: {
-            login: function () {
-                this.signIn();
-            },
+            ...mapActions('oidcStore', ['authenticateOidc', 'signOutOidc']),
             async authWeb3() {
                 this.loginLoading = true;
 
@@ -137,34 +122,6 @@
                             };
 
                             store.dispatch('login', web3Payload);
-
-                            // Validate the signed object on server side and provide an auth
-                            // await axios({
-                            //     method: 'post',
-                            //     headers: { "Content-Type": "application/json"},
-                            //     url: '/api/auth/ethauth',
-                            //     data: {
-                            //         "claimerAddress": accounts[0],
-                            //         "signature": signed,
-                            //         "rawMessage": authMsg
-                            //     }
-                            // }).then(function (response) {
-                            //     self.$buefy.notification.open({
-                            //         duration: 3000,
-                            //         message: `Logging you in, hang in there..`,
-                            //         position: 'is-bottom-right',
-                            //         type: 'is-success',
-                            //         hasIcon: true
-                            //     });
-                            // }).catch(function (error) {
-                            //     self.$buefy.notification.open({
-                            //         duration: 3000,
-                            //         message: `We couldn't reach our servers for an authentication request.. Please try again!`,
-                            //         position: 'is-bottom-right',
-                            //         type: 'is-danger',
-                            //         hasIcon: true
-                            //     });
-                            // });
                         }
                     }
                     // Legacy dapp browsers...
@@ -208,20 +165,7 @@
                     // User does not have a Web3-supportive Plugin/Browser.
                     return false;
                 }
-            },
-            // async login() {
-            //     if (this.hasWeb3() && !this.loginLoading) {
-            //         await this.authWeb3();
-            //     } else {
-            //         this.$buefy.notification.open({
-            //             duration: 5000,
-            //             message: `Your browser does not support Web3!`,
-            //             position: 'is-bottom-right',
-            //             type: 'is-danger',
-            //             hasIcon: true
-            //         });
-            //     }
-            // }
+            }
         }
     }
 </script>

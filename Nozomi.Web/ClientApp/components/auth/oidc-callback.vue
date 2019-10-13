@@ -10,15 +10,15 @@
     export default {
         name: 'OidcCallback',
         methods: {
-            ...mapActions([
+            ...mapActions('oidcStore', [
                 'oidcSignInCallback'
             ])
         },
         mounted () {
             this.oidcSignInCallback()
                 .then((redirectPath) => {
-                    console.dir("Redirecting path: " + redirectPath);
-                    this.$router.push(redirectPath);
+                    // https://stackoverflow.com/questions/2647867/how-to-determine-if-variable-is-undefined-or-null
+                    this.$router.push(redirectPath == null ? redirectPath : "/");
                 })
                 .catch((err) => {
                     console.error(err);

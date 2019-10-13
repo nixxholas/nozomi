@@ -93,7 +93,7 @@ namespace Nozomi.Auth
                         AllowedGrantTypes = GrantTypes.Implicit,
                     
                         AllowedScopes = { "openid", "profile", "email", "nozomi.web.read_only" },
-                        RedirectUris = {"https://nozomi.one/oidc-callback"},
+                        RedirectUris = {"https://nozomi.one/oidc-callback", "https://nozomi.one/oidc-silent-renew" },
                         PostLogoutRedirectUris = {"https://nozomi.one/"},
                         AllowedCorsOrigins = {"https://nozomi.one"},
                         AccessTokenLifetime = 3600
@@ -124,7 +124,7 @@ namespace Nozomi.Auth
                     AllowedGrantTypes = GrantTypes.Implicit,
                     
                     AllowedScopes = { "openid", "profile", "email", "nozomi.web.read_only" },
-                    RedirectUris = {"https://localhost:5001/oidc-callback"},
+                    RedirectUris = {"https://localhost:5001/oidc-callback", "https://localhost:5001/oidc-silent-renew"},
                     PostLogoutRedirectUris = {"https://localhost:5001/"},
                     AllowedCorsOrigins = {"https://localhost:5001"},
                     AccessTokenLifetime = 3600
