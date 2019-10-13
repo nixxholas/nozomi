@@ -135,24 +135,25 @@ namespace Nozomi.Auth
             }
             else
             {
-                var vaultToken = Configuration["vaultToken"];
-
-                if (string.IsNullOrEmpty(vaultToken))
-                    throw new SystemException("Invalid vault token.");
-
-                var authMethod = new TokenAuthMethodInfo(vaultToken);
-                var vaultClientSettings = new VaultClientSettings("http://165.22.250.169:8200", authMethod);
-                var vaultClient = new VaultClient(vaultClientSettings);
-
-                var nozomiVault = vaultClient.V1.Secrets.Cubbyhole.ReadSecretAsync("nozomi")
-                    .GetAwaiter()
-                    .GetResult().Data;
-
-                var cert = new X509Certificate2(Encoding.UTF8.GetBytes((string) nozomiVault["auth-signing-cert"])
-                    , (string) nozomiVault["auth-signing-key"]);
-                
-                // https://stackoverflow.com/questions/49042474/addsigningcredential-for-identityserver4
-                builder.AddSigningCredential(cert);
+//                var vaultToken = Configuration["vaultToken"];
+//
+//                if (string.IsNullOrEmpty(vaultToken))
+//                    throw new SystemException("Invalid vault token.");
+//
+//                var authMethod = new TokenAuthMethodInfo(vaultToken);
+//                var vaultClientSettings = new VaultClientSettings("http://165.22.250.169:8200", authMethod);
+//                var vaultClient = new VaultClient(vaultClientSettings);
+//
+//                var nozomiVault = vaultClient.V1.Secrets.Cubbyhole.ReadSecretAsync("nozomi")
+//                    .GetAwaiter()
+//                    .GetResult().Data;
+//
+//                var cert = new X509Certificate2(Encoding.UTF8.GetBytes((string) nozomiVault["auth-signing-cert"])
+//                    , (string) nozomiVault["auth-signing-key"]);
+//                
+//                // https://stackoverflow.com/questions/49042474/addsigningcredential-for-identityserver4
+//                builder.AddSigningCredential(cert);
+                builder.AddSigningCredential(CreateSigningCredential());
             }
 
             // Database
@@ -202,7 +203,7 @@ namespace Nozomi.Auth
         private RSA GetRSACryptoServiceProvider()
         {
             // https://stackoverflow.com/questions/54180171/cspkeycontainerinfo-requires-windows-cryptographic-api-capi-which-is-not-av
-            return RSA.Create(4096);
+            return RSA.Create(2048);
         }
         private SecurityKey GetSecurityKey()
         {
