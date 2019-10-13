@@ -65,7 +65,7 @@ namespace Nozomi.HttpSyncing
                     throw new SystemException("Invalid vault token.");
 
                 var authMethod = new TokenAuthMethodInfo(vaultToken);
-                var vaultClientSettings = new VaultClientSettings("http://vault.nozomi.one:8200", authMethod);
+                var vaultClientSettings = new VaultClientSettings("https://vault.nozomi.one:8200", authMethod);
                 var vaultClient = new VaultClient(vaultClientSettings);
 
                 var nozomiVault = vaultClient.V1.Secrets.Cubbyhole.ReadSecretAsync("nozomi")

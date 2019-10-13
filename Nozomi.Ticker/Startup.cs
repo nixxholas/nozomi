@@ -66,20 +66,6 @@ namespace Nozomi.Ticker
                     options.UseNpgsql(Configuration.GetConnectionString("LocalAuth:" + Environment.MachineName));
                     options.EnableSensitiveDataLogging(false);
                 });
-            
-                // Redis
-//                services.AddDistributedRedisCache(option =>
-//                {
-//                    option.Configuration = "127.0.0.1:6379";
-//                    option.InstanceName = "nozomi-cache";
-//                });
-            
-                // Stripe
-                services.Configure<StripeSettings>(ss =>
-                {
-                    ss.SecretKey = Configuration.GetConnectionString("Stripe:TestPriv");
-                    ss.PublishableKey = Configuration.GetConnectionString("Stripe:TestPub");
-                });
             }
             else
             {
@@ -89,7 +75,7 @@ namespace Nozomi.Ticker
                     throw new SystemException("Invalid vault token.");
 
                 var authMethod = new TokenAuthMethodInfo(vaultToken);
-                var vaultClientSettings = new VaultClientSettings("http://165.22.250.169:8200", authMethod);
+                var vaultClientSettings = new VaultClientSettings("https://vault.nozomi.one:8200", authMethod);
                 var vaultClient = new VaultClient(vaultClientSettings);
 
                 var nozomiVault = vaultClient.V1.Secrets.Cubbyhole.ReadSecretAsync("nozomi")
@@ -107,11 +93,6 @@ namespace Nozomi.Ticker
                         , builder =>
                         {
                             builder.EnableRetryOnFailure();
-//                            builder.ProvideClientCertificatesCallback(certificates =>
-//                            {
-//                                var cert = new X509Certificate2("ca-certificate.crt");
-//                                certificates.Add(cert);
-//                            });
                         }
                     );
                     options.EnableSensitiveDataLogging(false);
@@ -127,37 +108,9 @@ namespace Nozomi.Ticker
                         , builder =>
                         {
                             builder.EnableRetryOnFailure();
-//                            builder.ProvideClientCertificatesCallback(certificates =>
-//                            {
-//                                var cert = new X509Certificate2("ca-certificate.crt");
-//                                certificates.Add(cert);
-//                            });
                         }
                     );
                     options.EnableSensitiveDataLogging(false);
-                });
-            
-                // Redis
-//                services.AddDistributedRedisCache(option =>
-//                {
-//                    option.Configuration = Configuration.GetConnectionString("RedisConfiguration");
-//                    option.InstanceName = "nozomi-cache";
-//                });
-                
-                var stripeVault = vaultClient.V1.Secrets.Cubbyhole.ReadSecretAsync("stripe")
-                    .GetAwaiter()
-                    .GetResult().Data;
-                
-                var stripePrivConf = (string) stripeVault["testpriv"];
-                var stripePubConf = (string) stripeVault["testpub"];
-                if (string.IsNullOrEmpty(stripePrivConf) || string.IsNullOrEmpty(stripePubConf))
-                    throw new SystemException("Invalid stripe configuration");
-            
-                // Stripe
-                services.Configure<StripeSettings>(ss =>
-                {
-                    ss.SecretKey = stripePrivConf;
-                    ss.PublishableKey = stripePubConf;
                 });
             }
             
