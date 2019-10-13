@@ -185,7 +185,7 @@ namespace Nozomi.Auth
         private RSA GetRSACryptoServiceProvider()
         {
             // https://stackoverflow.com/questions/54180171/cspkeycontainerinfo-requires-windows-cryptographic-api-capi-which-is-not-av
-            return RSA.Create(4096);
+            return RSA.Create(2048);
         }
         private SecurityKey GetSecurityKey()
         {
