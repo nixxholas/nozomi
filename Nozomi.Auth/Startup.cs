@@ -134,7 +134,7 @@ namespace Nozomi.Auth
             {
                 builder.AddDeveloperSigningCredential();
             }
-            else if (HostingEnvironment.IsStaging())
+            else
             {
                 var vaultToken = Configuration["vaultToken"];
 
@@ -159,10 +159,6 @@ namespace Nozomi.Auth
                 
                 // https://stackoverflow.com/questions/49042474/addsigningcredential-for-identityserver4
                 builder.AddSigningCredential(certificate);
-            }
-            else
-            {
-                builder.AddSigningCredential(CreateSigningCredential());
             }
 
             // Database
