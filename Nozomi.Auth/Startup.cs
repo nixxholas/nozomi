@@ -145,15 +145,17 @@ namespace Nozomi.Auth
                 var vaultClientSettings = new VaultClientSettings("http://165.22.250.169:8200", authMethod);
                 var vaultClient = new VaultClient(vaultClientSettings);
 
-                var nozomiVault = vaultClient.V1.Secrets.Cubbyhole.ReadSecretAsync("nozomi")
+                var authSigningKey = (string) vaultClient.V1.Secrets.Cubbyhole.ReadSecretAsync("nozomi")
                     .GetAwaiter()
-                    .GetResult().Data;
+                    .GetResult().Data["auth-signing-key"];
 
                 // Obtain the raw certificate encoded in base64str
                 var rawCertificate = File.ReadAllText("noz-web.raw");
 
-                var certificate = new X509Certificate2(Convert.FromBase64String(rawCertificate)
-                    , (string) nozomiVault["auth-signing-key"]);
+                var certificate = new X509Certificate2(
+                    // https://stackoverflow.com/questions/25919387/converting-file-into-base64string-and-back-again
+                Convert.FromBase64String(rawCertificate)
+                    , authSigningKey);
                 
                 // https://stackoverflow.com/questions/49042474/addsigningcredential-for-identityserver4
                 builder.AddSigningCredential(certificate);
