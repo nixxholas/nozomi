@@ -38,7 +38,7 @@
       "commandName": "Project",
       "launchBrowser": false,
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Production"
+        "ASPNETCORE_ENVIRONMENT": "Staging"
       },
       "applicationUrl": "https://localhost:6001;http://localhost:6000"
     }

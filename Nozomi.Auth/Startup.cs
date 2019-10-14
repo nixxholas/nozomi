@@ -38,7 +38,7 @@ namespace Nozomi.Auth
 
         public void ConfigureServices(IServiceCollection services)
         {
-            if (HostingEnvironment.IsDevelopment())
+            if (HostingEnvironment.IsDevelopment() || HostingEnvironment.IsStaging())
             {
                 // Greet the beloved dev
                 Console.WriteLine(@"Welcome to the dev environment, your machine is named: " + Environment.MachineName);
