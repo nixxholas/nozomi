@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.IO;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
@@ -133,26 +134,32 @@ namespace Nozomi.Auth
             {
                 builder.AddDeveloperSigningCredential();
             }
+            else if (HostingEnvironment.IsStaging())
+            {
+                var vaultToken = Configuration["vaultToken"];
+
+                if (string.IsNullOrEmpty(vaultToken))
+                    throw new SystemException("Invalid vault token.");
+
+                var authMethod = new TokenAuthMethodInfo(vaultToken);
+                var vaultClientSettings = new VaultClientSettings("http://165.22.250.169:8200", authMethod);
+                var vaultClient = new VaultClient(vaultClientSettings);
+
+                var nozomiVault = vaultClient.V1.Secrets.Cubbyhole.ReadSecretAsync("nozomi")
+                    .GetAwaiter()
+                    .GetResult().Data;
+
+                // Obtain the raw certificate encoded in base64str
+                var rawCertificate = File.ReadAllText("noz-web.raw");
+
+                var certificate = new X509Certificate2(Convert.FromBase64String(rawCertificate)
+                    , (string) nozomiVault["auth-signing-key"]);
+                
+                // https://stackoverflow.com/questions/49042474/addsigningcredential-for-identityserver4
+                builder.AddSigningCredential(certificate);
+            }
             else
             {
-//                var vaultToken = Configuration["vaultToken"];
-//
-//                if (string.IsNullOrEmpty(vaultToken))
-//                    throw new SystemException("Invalid vault token.");
-//
-//                var authMethod = new TokenAuthMethodInfo(vaultToken);
-//                var vaultClientSettings = new VaultClientSettings("http://165.22.250.169:8200", authMethod);
-//                var vaultClient = new VaultClient(vaultClientSettings);
-//
-//                var nozomiVault = vaultClient.V1.Secrets.Cubbyhole.ReadSecretAsync("nozomi")
-//                    .GetAwaiter()
-//                    .GetResult().Data;
-//
-//                var cert = new X509Certificate2(Encoding.UTF8.GetBytes((string) nozomiVault["auth-signing-cert"])
-//                    , (string) nozomiVault["auth-signing-key"]);
-//                
-//                // https://stackoverflow.com/questions/49042474/addsigningcredential-for-identityserver4
-//                builder.AddSigningCredential(cert);
                 builder.AddSigningCredential(CreateSigningCredential());
             }
 
