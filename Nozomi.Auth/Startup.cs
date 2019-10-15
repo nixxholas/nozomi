@@ -157,7 +157,9 @@ namespace Nozomi.Auth
                 }
                 else
                 {
-                    rawCertificate = File.ReadAllText("/usr/local/share/ca-certificates/noz-web.raw");
+                    rawCertificate = (string) vaultClient.V1.Secrets.Cubbyhole.ReadSecretAsync("nozomi")
+                        .GetAwaiter()
+                        .GetResult().Data["auth-signing-cert"];
                 }
                 
 
