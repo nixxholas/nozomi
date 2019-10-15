@@ -149,8 +149,17 @@ namespace Nozomi.Auth
                     .GetAwaiter()
                     .GetResult().Data["auth-signing-key"];
 
+                string rawCertificate;
                 // Obtain the raw certificate encoded in base64str
-                var rawCertificate = File.ReadAllText("noz-web.raw");
+                if (HostingEnvironment.IsStaging())
+                {
+                    rawCertificate = File.ReadAllText("noz-web.raw");
+                }
+                else
+                {
+                    rawCertificate = File.ReadAllText("/usr/local/share/ca-certificates/noz-web.raw");
+                }
+                
 
                 var certificate = new X509Certificate2(
                     // https://stackoverflow.com/questions/25919387/converting-file-into-base64string-and-back-again
