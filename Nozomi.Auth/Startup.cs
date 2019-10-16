@@ -8,9 +8,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.IO;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.IdentityModel.Tokens;
 using Nozomi.Base.Auth.Models;
 using Nozomi.Infra.Auth.Services.Address;
@@ -135,25 +137,44 @@ namespace Nozomi.Auth
             }
             else
             {
-//                var vaultToken = Configuration["vaultToken"];
-//
-//                if (string.IsNullOrEmpty(vaultToken))
-//                    throw new SystemException("Invalid vault token.");
-//
-//                var authMethod = new TokenAuthMethodInfo(vaultToken);
-//                var vaultClientSettings = new VaultClientSettings("http://165.22.250.169:8200", authMethod);
-//                var vaultClient = new VaultClient(vaultClientSettings);
-//
-//                var nozomiVault = vaultClient.V1.Secrets.Cubbyhole.ReadSecretAsync("nozomi")
-//                    .GetAwaiter()
-//                    .GetResult().Data;
-//
-//                var cert = new X509Certificate2(Encoding.UTF8.GetBytes((string) nozomiVault["auth-signing-cert"])
-//                    , (string) nozomiVault["auth-signing-key"]);
-//                
-//                // https://stackoverflow.com/questions/49042474/addsigningcredential-for-identityserver4
-//                builder.AddSigningCredential(cert);
-                builder.AddSigningCredential(CreateSigningCredential());
+                var vaultToken = Configuration["vaultToken"];
+
+                if (string.IsNullOrEmpty(vaultToken))
+                    throw new SystemException("Invalid vault token.");
+
+                var authMethod = new TokenAuthMethodInfo(vaultToken);
+                var vaultClientSettings = new VaultClientSettings("http://165.22.250.169:8200", authMethod);
+                var vaultClient = new VaultClient(vaultClientSettings);
+
+                var authSigningKey = (string) vaultClient.V1.Secrets.Cubbyhole.ReadSecretAsync("nozomi")
+                    .GetAwaiter()
+                    .GetResult().Data["auth-signing-key"];
+                if (string.IsNullOrWhiteSpace(authSigningKey))
+                    throw new Exception("Null auth signing key.");
+
+                string rawCertificate;
+                // Obtain the raw certificate encoded in base64str
+                if (HostingEnvironment.IsStaging())
+                {
+                    rawCertificate = File.ReadAllText("noz-web.raw");
+                }
+                else
+                {
+                    rawCertificate = (string) vaultClient.V1.Secrets.Cubbyhole.ReadSecretAsync("nozomi")
+                        .GetAwaiter()
+                        .GetResult().Data["auth-signing-cert"];
+                }
+                
+                if (string.IsNullOrWhiteSpace(rawCertificate))
+                    throw new Exception("Null auth signing cert.");
+
+                var certificate = new X509Certificate2(
+                    // https://stackoverflow.com/questions/25919387/converting-file-into-base64string-and-back-again
+                Convert.FromBase64String(rawCertificate)
+                    , authSigningKey);
+                
+                // https://stackoverflow.com/questions/49042474/addsigningcredential-for-identityserver4
+                builder.AddSigningCredential(certificate);
             }
 
             // Database
@@ -184,6 +205,21 @@ namespace Nozomi.Auth
             }
             
             app.UseAutoDbMigration(HostingEnvironment);
+            
+            // Reverse proxy bypass for OpenID compatibility
+            // https://github.com/IdentityServer/IdentityServer4/issues/1331#issuecomment-317049214
+            var forwardOptions = new ForwardedHeadersOptions
+            {
+                ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto,
+                RequireHeaderSymmetry = false
+            };
+
+            forwardOptions.KnownNetworks.Clear();
+            forwardOptions.KnownProxies.Clear();
+
+            // ref: https://github.com/aspnet/Docs/issues/2384
+            app.UseForwardedHeaders(forwardOptions);
+            
             app.UseHttpsRedirection();
 
             app.UseStaticFiles();
