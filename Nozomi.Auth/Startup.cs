@@ -148,6 +148,8 @@ namespace Nozomi.Auth
                 var authSigningKey = (string) vaultClient.V1.Secrets.Cubbyhole.ReadSecretAsync("nozomi")
                     .GetAwaiter()
                     .GetResult().Data["auth-signing-key"];
+                if (string.IsNullOrWhiteSpace(authSigningKey))
+                    throw new Exception("Null auth signing key.");
 
                 string rawCertificate;
                 // Obtain the raw certificate encoded in base64str
@@ -157,9 +159,13 @@ namespace Nozomi.Auth
                 }
                 else
                 {
-                    rawCertificate = File.ReadAllText("/usr/local/share/ca-certificates/noz-web.raw");
+                    rawCertificate = (string) vaultClient.V1.Secrets.Cubbyhole.ReadSecretAsync("nozomi")
+                        .GetAwaiter()
+                        .GetResult().Data["auth-signing-cert"];
                 }
                 
+                if (string.IsNullOrWhiteSpace(rawCertificate))
+                    throw new Exception("Null auth signing cert.");
 
                 var certificate = new X509Certificate2(
                     // https://stackoverflow.com/questions/25919387/converting-file-into-base64string-and-back-again
