@@ -70,5 +70,22 @@ namespace Nozomi.Data.Models.Currency
         [Comparable(false)]
         [Description("The current mining difficulty of this asset.")]
         Difficulty = 1010,
+        
+        // Includes currency in circulation, though not currency held in the treasury, Reserve banks, and bank vaults.
+        // It includes all traveler's checks and domestic checking account deposits, including those that pay interest.
+        // However, it does not count checking deposits held in government accounts and in foreign banks. 
+        [Description("Money Supply (M1)")]
+        MoneySupplyM1 = 2000,
+        // Includes everything in M1. adds savings accounts, money market accounts, and money market mutual funds,
+        // along with time deposits under $100,000.
+        [Description("Money Supply (M2)")]
+        MoneySupplyM2 = 2001,
+        // Includes everything in M2 as well as some longer-term time deposits and money market funds.
+        [Description("Money Supply (M3)")]
+        MoneySupplyM3 = 2002,
+        // Includes everything in M3 as well as some additional deposits
+        [Description("Money Supply (M4)")]
+        MoneySupplyM4 = 2003,
+        
     }
 }
