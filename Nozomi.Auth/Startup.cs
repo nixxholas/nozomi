@@ -12,6 +12,7 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.IdentityModel.Tokens;
 using Nozomi.Base.Auth.Models;
 using Nozomi.Infra.Auth.Services.Address;
@@ -204,6 +205,21 @@ namespace Nozomi.Auth
             }
             
             app.UseAutoDbMigration(HostingEnvironment);
+            
+            // Reverse proxy bypass for OpenID compatibility
+            // https://github.com/IdentityServer/IdentityServer4/issues/1331#issuecomment-317049214
+            var forwardOptions = new ForwardedHeadersOptions
+            {
+                ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto,
+                RequireHeaderSymmetry = false
+            };
+
+            forwardOptions.KnownNetworks.Clear();
+            forwardOptions.KnownProxies.Clear();
+
+            // ref: https://github.com/aspnet/Docs/issues/2384
+            app.UseForwardedHeaders(forwardOptions);
+            
             app.UseHttpsRedirection();
 
             app.UseStaticFiles();
