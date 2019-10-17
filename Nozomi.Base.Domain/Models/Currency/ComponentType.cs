@@ -60,7 +60,13 @@ namespace Nozomi.Data.Models.Currency
         SupplyRate = 200,
         [Description("Borrow % interest")]
         BorrowRate = 201,
-        
+        [Description("Supply reserve amount")]
+        SupplyReserve = 209,
+        [Description("Borrowing collateral factor")]
+        CollateralFactor = 210,
+        [Description("Total supply amount for loans")]
+        TotalLoanSupply = 211,
+
         [Comparable(false)]
         [Description("The current circulating supply of this asset.")]
         CirculatingSupply = 1000,
