@@ -86,6 +86,8 @@ namespace Nozomi.Data.Models.Currency
         // Includes everything in M3 as well as some additional deposits
         [Description("Money Supply (M4)")]
         MoneySupplyM4 = 2003,
-        
+        [Description("Quasi-money consists of highly liquid assets which are not cash but can easily be converted " +
+                     "into cash")]
+        QuasiMoneySupply = 2040,
     }
 }
