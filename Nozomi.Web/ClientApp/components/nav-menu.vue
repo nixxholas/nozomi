@@ -36,7 +36,9 @@
       </b-navbar-item>
       <b-navbar-item tag="div" class="buttons" v-else>
         <b-button type="is-info"
-                  icon-left="view-dashboard">
+                  icon-left="view-dashboard"
+                  tag="router-link"
+                  to="/dashboard">
           <span>Dashboard</span>
         </b-button>
         <b-button type="is-danger"
