@@ -4,6 +4,8 @@ import About from '../components/about';
 
 import ViewCurrency from 'components/currency/view';
 
+import DashboardHome from 'components/dashboard/index';
+
 import OidcCallback from '../components/auth/oidc-callback';
 import OidcCallbackError from '../components/auth/oidc-callback-error';
 
@@ -12,9 +14,6 @@ export const routes = [
     meta: { isPublic: true }
   },
   { name: 'about', path: '/about', component: About, display: 'About', icon: 'info',
-    meta: { isPublic: false }
-  },
-  { name: 'counter', path: '/counter', component: CounterExample, display: 'Counter', icon: 'graduation-cap',
     meta: { isPublic: true }
   },
   // Currency-specific routing
@@ -36,5 +35,9 @@ export const routes = [
     display: 'Nozomi Auth Error',
     component: OidcCallbackError,
     meta: { isPublic: true }
-  }
+  },
+  // Dashboard home routing
+  { name: 'dashboard', path: '/dashboard', props: true, component: DashboardHome,
+    meta: { isPublic: false }
+  },
 ];
