@@ -102,20 +102,6 @@ namespace Nozomi.Auth
             
             return new[]
             {
-                // client credentials flow client
-                new Client
-                {
-                    ClientId = "nozomi.web",
-                    ClientName = "Nozomi Client Credentials Client",
-
-                    AllowedGrantTypes = GrantTypes.ClientCredentials,
-                    ClientSecrets = {new Secret("511536EF-F270-4058-80CA-1C89C192F69A".Sha256())},
-
-                    AllowedScopes = {
-                        "nozomi.web.read_only",
-                        "nozomi.web.full_access"
-                    }
-                },
                 new Client {
                     ClientId = "nozomi.spa",
                     ClientName = "Nozomi Vue SPA",
