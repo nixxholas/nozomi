@@ -6,8 +6,15 @@
           <b-menu-list label="Menu">
             <b-menu-item icon="information-outline" label="Info"></b-menu-item>
             <b-menu-item icon="account" label="My Account">
-              <b-menu-item label="Account data"></b-menu-item>
-              <b-menu-item label="Addresses"></b-menu-item>
+              <b-menu-item
+                label="Account data"
+                icon="account-edit"
+                tag="router-link"
+                to="/dashboard/modify-account"></b-menu-item>
+              <b-menu-item
+                label="Addresses"
+                icon="pound">
+              </b-menu-item>
             </b-menu-item>
           </b-menu-list>
           <b-menu-list>
