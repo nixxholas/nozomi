@@ -1,10 +1,10 @@
-import CounterExample from '../components/counter-example';
 import HomePage from '../components/home-page';
 import About from '../components/about';
 
 import ViewCurrency from 'components/currency/view';
 
 import DashboardHome from 'components/dashboard/index';
+import ModifyProfile from 'components/dashboard/account/modify-profile';
 
 import OidcCallback from '../components/auth/oidc-callback';
 import OidcCallbackError from '../components/auth/oidc-callback-error';
@@ -38,6 +38,9 @@ export const routes = [
   },
   // Dashboard home routing
   { name: 'dashboard', path: '/dashboard', props: true, component: DashboardHome,
+    meta: { isPublic: false }
+  },
+  { name: 'modify-account', path: '/dashboard/modify-account', props: true, component: ModifyProfile,
     meta: { isPublic: false }
   },
 ];
