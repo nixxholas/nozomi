@@ -11,7 +11,7 @@
       <router-view></router-view>
     </div>
 
-    <footer class="footer" style="bottom: 0; width: 100%;">
+    <footer class="footer mt-4" style="bottom: 0; width: 100%;">
       <div class="content container">
         <div class="columns is-desktop">
         <div class="column">
