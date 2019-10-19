@@ -80,6 +80,7 @@ namespace Nozomi.Service.Events
 
         public decimal GetCirculatingSupply(AnalysedComponent analysedComponent)
         {
+            var circulatingSupplyEnum = ComponentType.CirculatingSupply; 
             // If its a currency-based ac
             if (analysedComponent.CurrencyId != null && analysedComponent.CurrencyId > 0)
             {
@@ -116,7 +117,7 @@ namespace Nozomi.Service.Events
                     // Obtain only the circulating supply
                     .SelectMany(cpr => cpr.RequestComponents
                         .Where(rc => rc.DeletedAt == null && rc.IsEnabled
-                                                          && rc.ComponentType.Equals(ComponentType.CirculatingSupply)
+                                                          && rc.ComponentType.Equals(circulatingSupplyEnum)
                                                           && !string.IsNullOrEmpty(rc.Value)))
                     .FirstOrDefault();
 
@@ -169,62 +170,61 @@ namespace Nozomi.Service.Events
                     Console.WriteLine(ex.ToString());
                 }
 #endif
-
-                if (_unitOfWork.GetRepository<CurrencyPair>()
+                // Obtain the main ticker first
+                var mainTicker = _unitOfWork.GetRepository<CurrencyPair>()
                     .GetQueryable()
                     .AsNoTracking()
-                    .Where(cp => cp.Id.Equals(analysedComponent.CurrencyPairId)
-                                 && cp.DeletedAt == null && cp.IsEnabled)
-                    .Include(cp => cp.Source)
-                    .ThenInclude(s => s.SourceCurrencies)
-                    .ThenInclude(sc => sc.Currency)
-                    .ThenInclude(c => c.Requests)
-                    .ThenInclude(cr => cr.RequestComponents)
-                    .Any(cp => cp.Source.SourceCurrencies
-                                   .Any(sc =>
-                                       sc.Currency.Abbreviation.Equals(cp.MainCurrencyAbbrv)
-                                       && sc.Currency.Requests != null)
-                               && cp.Source.SourceCurrencies.Any(sc => sc.Currency
-                                   // Traverse to the request
-                                   .Requests
-                                   .Any(cr =>
-                                       cr.RequestComponents != null && cr.IsEnabled
-                                                                    && cr.RequestComponents.Count > 0
-                                                                    && cr.RequestComponents.Any(rc => rc.ComponentType
-                                                                        .Equals(ComponentType
-                                                                            .CirculatingSupply))))))
-                {
-                    return _unitOfWork.GetRepository<CurrencyPair>()
-                        .GetQueryable()
-                        .AsNoTracking()
-                        .Where(cp => cp.Id.Equals(analysedComponent.CurrencyPairId)
-                                     && cp.DeletedAt == null && cp.IsEnabled)
-                        .Include(cp => cp.Source)
-                        .ThenInclude(s => s.SourceCurrencies)
-                        .ThenInclude(sc => sc.Currency)
-                        .ThenInclude(c => c.Requests)
-                        .ThenInclude(cr => cr.RequestComponents)
-                        // Obtain the main currency
-                        .Select(cp => decimal.Parse(cp.Source
-                                                        .SourceCurrencies
-                                                        .SingleOrDefault(sc =>
-                                                            sc.Currency.Abbreviation.Equals(cp.MainCurrencyAbbrv)
-                                                            && sc.Currency.Requests != null)
-                                                        .Currency
-                                                        // Traverse to the request
-                                                        .Requests
-                                                        .Where(cr =>
-                                                            cr.RequestComponents != null && cr.RequestComponents.Count > 0
-                                                                                         && cr.RequestComponents.Any(rc =>
-                                                                                             rc.ComponentType
-                                                                                                 .Equals(ComponentType
-                                                                                                     .CirculatingSupply)))
-                                                        .Select(cr => cr.RequestComponents
-                                                            .FirstOrDefault(rc => rc.DeletedAt == null && rc.IsEnabled))
-                                                        .FirstOrDefault()
-                                                        .Value ?? "-1"))
-                        .FirstOrDefault();
-                }
+                    .SingleOrDefault(cp => cp.DeletedAt == null && cp.IsEnabled 
+                                                                && cp.Id.Equals(analysedComponent.CurrencyPairId))
+                    ?.MainCurrencyAbbrv;
+                if (string.IsNullOrWhiteSpace(mainTicker))
+                    return decimal.MinusOne;
+
+                // We need to make sure that no null exceptions will appear here
+                return _unitOfWork.GetRepository<RequestComponent>()
+                    .GetQueryable()
+                    .AsNoTracking()
+                    .Where(rc => rc.DeletedAt == null && rc.IsEnabled
+                                                      && rc.ComponentType.Equals(circulatingSupplyEnum)
+                                                      && NumberHelper.IsNumericDecimal(rc.Value))
+                    .Include(rc => rc.Request)
+                    .ThenInclude(r => r.Currency)
+                    .Where(rc => rc.Request.DeletedAt == null && rc.Request.Currency.DeletedAt == null
+                                 && rc.Request.Currency.Abbreviation.Equals(mainTicker, 
+                                     StringComparison.InvariantCultureIgnoreCase))
+                    .Select(rc => decimal.Parse(rc.Value))
+                    .DefaultIfEmpty(decimal.MinusOne) // Give it -1
+                    .FirstOrDefault();
+//                    return _unitOfWork.GetRepository<CurrencyPair>()
+//                        .GetQueryable()
+//                        .AsNoTracking()
+//                        .Where(cp => cp.Id.Equals(analysedComponent.CurrencyPairId)
+//                                     && cp.DeletedAt == null && cp.IsEnabled)
+//                        .Include(cp => cp.Source)
+//                        .ThenInclude(s => s.SourceCurrencies)
+//                        .ThenInclude(sc => sc.Currency)
+//                        .ThenInclude(c => c.Requests)
+//                        .ThenInclude(cr => cr.RequestComponents)
+//                        // Obtain the main currency
+//                        .Select(cp => decimal.Parse(cp.Source
+//                                                        .SourceCurrencies
+//                                                        .SingleOrDefault(sc =>
+//                                                            sc.Currency.Abbreviation.Equals(cp.MainCurrencyAbbrv)
+//                                                            && sc.Currency.Requests != null)
+//                                                        .Currency
+//                                                        // Traverse to the request
+//                                                        .Requests
+//                                                        .Where(cr =>
+//                                                            cr.RequestComponents != null && cr.RequestComponents.Count > 0
+//                                                                                         && cr.RequestComponents.Any(rc =>
+//                                                                                             rc.ComponentType
+//                                                                                                 .Equals(ComponentType
+//                                                                                                     .CirculatingSupply)))
+//                                                        .Select(cr => cr.RequestComponents
+//                                                            .FirstOrDefault(rc => rc.DeletedAt == null && rc.IsEnabled))
+//                                                        .FirstOrDefault()
+//                                                        .Value ?? "-1"))
+//                        .FirstOrDefault();
             }
 
             return decimal.MinusOne;
