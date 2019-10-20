@@ -25,7 +25,7 @@ namespace Nozomi.Service.Services.Requests
             try
             {
                 _unitOfWork.GetRepository<Request>().Add(request);
-                _unitOfWork.SaveChanges(userId);
+                _unitOfWork.Commit(userId);
 
                 return request.Id;
             }
