@@ -50,6 +50,8 @@ export default new Vuex.Store({
         oidcError: (payload) => console.log('OIDC error', payload)
       })
   },
+  getters: {
+  },
   state: {
 
   },
