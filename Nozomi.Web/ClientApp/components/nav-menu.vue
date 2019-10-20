@@ -62,7 +62,7 @@
                 routes,
                 loginLoading: false,
                 collapsed: true,
-                currentRoute: window.location.href
+                currentRoute: window.location.href // https://forum.vuejs.org/t/how-to-get-path-from-route-instance/26934/2
             }
         },
         computed: {
