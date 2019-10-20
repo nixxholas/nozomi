@@ -103,6 +103,19 @@ namespace Nozomi.Web
             services.AddMvc()
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
+            services.AddHsts(opt =>
+            {
+                opt.Preload = true;
+                opt.IncludeSubDomains = true;
+                opt.MaxAge = TimeSpan.FromDays(60);
+            });
+
+            services.AddHttpsRedirection(options =>
+            {
+                options.RedirectStatusCode = StatusCodes.Status307TemporaryRedirect;
+                // options.HttpsPort = 5001;
+            });
+
             // UoW-Repository injection
             services.ConfigureRepoLayer();
 
@@ -175,6 +188,8 @@ namespace Nozomi.Web
             app.UseHttpsRedirection();
             app.UseAuthentication();
             app.UseStaticFiles();
+
+
 
             // Enable middleware to serve generated Swagger as a JSON endpoint.
             app.UseSwagger();
