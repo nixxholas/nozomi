@@ -15,13 +15,15 @@ namespace Nozomi.Web.StartupExtensions
         public static void ConfigureNozomiAuth(this IServiceCollection services, IHostingEnvironment env)
         {
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
+            var authority = env.IsProduction() ? "https://auth.nozomi.one" : "https://localhost:6001/";
+
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddIdentityServerAuthentication(options =>
+                .AddJwtBearer(options =>
                 {
-                    options.Authority = env.IsProduction() ? "https://auth.nozomi.one" : "https://localhost:6001/";
+                    options.Authority = authority;
                     options.RequireHttpsMetadata = true;
-                    options.ApiName = "nozomi.spa";
-                    options.ApiSecret = "super-secret";
+                    options.Audience = "nozomi.web";
+                    //options.ApiSecret = "super-secret";
                 });
 
             // Turn off the JWT claim type mapping to allow well-known claims (e.g. ‘sub’ and ‘idp’) to flow through unmolested
