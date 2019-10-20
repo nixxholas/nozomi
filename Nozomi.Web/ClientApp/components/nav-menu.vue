@@ -25,14 +25,14 @@
 
     <template slot="end">
       <b-navbar-item tag="div" v-if="!oidcIsAuthenticated">
-        <b-button type="is-primary" v-if="hasWeb3" @click="authenticateOidc()" :loading="loginLoading">
+        <b-button type="is-primary" v-if="hasWeb3" @click="authenticateOidc(currentRoute)" :loading="loginLoading">
           <span>Sign in with</span>
           <b-icon
             icon="ethereum"
             size="is-small">
           </b-icon>
         </b-button>
-        <b-button type="is-warning" v-else @click="authenticateOidc()" :loading="loginLoading">Login</b-button>
+        <b-button type="is-warning" v-else @click="authenticateOidc(currentRoute)" :loading="loginLoading">Login</b-button>
       </b-navbar-item>
       <b-navbar-item tag="div" class="buttons" v-else>
         <b-button type="is-info"
@@ -61,7 +61,8 @@
             return {
                 routes,
                 loginLoading: false,
-                collapsed: true
+                collapsed: true,
+                currentRoute: window.location.href
             }
         },
         computed: {
