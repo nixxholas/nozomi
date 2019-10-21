@@ -1,10 +1,12 @@
 <template>
   <b-field label="Request Type">
-    <b-select placeholder="Pick a request type" :loading="isLoading">
+    <b-select placeholder="Pick a request type" :loading="isLoading"
+              v-model="computedValue">
       <option
         v-for="option in requestTypes"
         :value="option.value"
-        :key="option.value">
+        :key="option.value"
+        @click="computedValue(option.value)">
         {{ option.key }}
       </option>
     </b-select>
@@ -16,6 +18,17 @@
 
     export default {
         name: "request-type-dropdown",
+        computed: {
+            // This is required to get v-model working at the component level.
+            computedValue: {
+                get() {
+                    return this.value
+                },
+                set(val) {
+                    this.$emit('input', val)
+                }
+            }
+        },
         beforeCreate: function () {
             // https://github.com/perarnborg/vuex-oidc/wiki#6-optional-use-access-token-in-ajax-requests
             // console.log(store.state.oidcStore.access_token);
@@ -28,9 +41,6 @@
                 }
             })
                 .then(function (response) {
-                    // handle success
-                    //console.log(response);
-
                     self.requestTypes = response.data.data.value;
                 })
                 .catch(function (error) {
@@ -46,8 +56,12 @@
             return {
                 isLoading: true,
                 requestTypes: [],
-                currentRoute: window.location.href // https://forum.vuejs.org/t/how-to-get-path-from-route-instance/26934/2
+                currentRoute: window.location.href, // https://forum.vuejs.org/t/how-to-get-path-from-route-instance/26934/2
             }
+        },
+        props: {
+            // General property for data binding.
+            value: null,
         }
     }
 </script>
