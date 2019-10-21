@@ -20,6 +20,9 @@
         name: "request-type-dropdown",
         computed: {
             // This is required to get v-model working at the component level.
+            // Sources:
+            // https://github.com/buefy/buefy/blob/dev/src/components/select/Select.vue
+            // https://scotch.io/tutorials/add-v-model-support-to-custom-vuejs-component
             computedValue: {
                 get() {
                     return this.value
