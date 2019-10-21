@@ -12,7 +12,6 @@
           </header>
           <section class="modal-card-body">
             <form action="">
-              {{ form.type }}
               <RequestTypeDrowdown v-model="form.type"></RequestTypeDrowdown>
             <b-field label="URL">
               <b-input
