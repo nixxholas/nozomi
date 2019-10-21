@@ -44,7 +44,6 @@
                 }
             })
                 .then(function (response) {
-                    console.dir(response);
                     self.responseTypes = response.data.data.value;
                 })
                 .catch(function (error) {
