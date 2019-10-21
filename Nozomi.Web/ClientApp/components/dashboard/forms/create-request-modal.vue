@@ -13,6 +13,7 @@
           <section class="modal-card-body">
             <form action="">
               <RequestTypeDrowdown v-model="form.type"></RequestTypeDrowdown>
+              <ResponseTypeDropdown v-model="form.responseType"></ResponseTypeDropdown>
             <b-field label="URL">
               <b-input
                 type="url"
@@ -59,10 +60,11 @@
 
 <script>
     import RequestTypeDrowdown from '../../elements/request-type-dropdown';
+    import ResponseTypeDropdown from "../../elements/response-type-dropdown";
 
     export default {
         name: "create-request-modal",
-        components: { RequestTypeDrowdown },
+        components: { ResponseTypeDropdown, RequestTypeDrowdown },
         props: {
             // Nothing yet
         },
@@ -71,6 +73,7 @@
                 isCreateRequestModalActive: false,
                 form: {
                     type: 0,
+                    responseType: 0,
                     apiUrl: '',
                     delay: 0,
                     failureDelay: 0,
