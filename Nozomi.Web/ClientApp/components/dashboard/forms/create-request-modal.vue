@@ -12,6 +12,7 @@
           </header>
           <section class="modal-card-body">
             <form action="">
+              <RequestTypeDrowdown></RequestTypeDrowdown>
             <b-field label="URL">
               <b-input
                 type="url"
@@ -57,8 +58,11 @@
 </template>
 
 <script>
+    import RequestTypeDrowdown from '@/elements/request-type-dropdown';
+
     export default {
         name: "create-request-modal",
+        components: { RequestTypeDrowdown },
         props: {
             // Nothing yet
         },
