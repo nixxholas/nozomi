@@ -14,6 +14,8 @@ namespace Nozomi.Web.Controllers.APIs.v1.Currency
 
         ICollection<GeneralisedCurrencyResponse> GetAllDetailed(string currencyType = "CRYPTO", int index = 0);
 
+        NozomiResult<IReadOnlyDictionary<string, long>> GetSlugToIdMap();
+
         NozomiPaginatedResult<EpochValuePair<decimal>> Historical(string slug, int index = 0, int perPage = 0);
     }
 }
