@@ -40,14 +40,14 @@
                 want to process and that's it!</p>
             </b-notification>
             <article class="tile is-child notification is-warning">
-              <p class="title">...tiles</p>
-              <p class="subtitle">Bottom tile</p>
+              <p class="title">Favourites</p>
+              <p class="subtitle is-italic">Coding in progress..</p>
             </article>
           </div>
           <div class="tile is-parent">
             <article class="tile is-child notification is-info">
-              <p class="title">Middle tile</p>
-              <p class="subtitle">With an image</p>
+              <p class="title"></p>
+              <p class="subtitle">What more should we do?</p>
               <figure class="image is-4by3">
                 <img src="https://bulma.io/images/placeholders/640x480.png">
               </figure>
@@ -56,8 +56,18 @@
         </div>
         <div class="tile is-parent">
           <article class="tile is-child notification is-danger">
-            <p class="title">Requests</p>
+            <b-field group-multiline positon="is-left">
+              <div class="control">
+                <p class="title">Requests</p>
+              </div>
+            </b-field>
+            <b-field position="is-right">
+              <div class="control">
+                <CreateRequestComponent></CreateRequestComponent>
+              </div>
+            </b-field>
             <div class="content">
+
               <b-table :data="requestData" :columns="requestColumns">
                 <template slot="empty">
                   <section class="section">
@@ -82,10 +92,14 @@
 </template>
 
 <script>
+  import CreateRequestComponent from '../dashboard/forms/create-request-modal';
+
     export default {
         name: "Dashboard",
+        components: { CreateRequestComponent },
         data: function() {
             return {
+                isCreateRequestModalActive: false,
                 requestData: [
                     {
                         'id': 1,
