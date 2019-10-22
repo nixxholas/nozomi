@@ -55,5 +55,7 @@ namespace Nozomi.Service.Events.Interfaces
         IEnumerable<dynamic> GetAllActiveDistinctObsc(bool includeNested = false);
 
         ICollection<string> ListAll();
+
+        IReadOnlyDictionary<string, long> ListAllMapped();
     }
 }

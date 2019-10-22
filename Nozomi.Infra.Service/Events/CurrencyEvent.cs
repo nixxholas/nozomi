@@ -573,8 +573,18 @@ namespace Nozomi.Service.Events
             return _unitOfWork.GetRepository<Currency>()
                 .GetQueryable()
                 .AsNoTracking()
+                .Where(c => c.DeletedAt == null && c.IsEnabled)
                 .Select(c => c.Slug)
                 .ToList();
+        }
+
+        public IReadOnlyDictionary<string, long> ListAllMapped()
+        {
+            return _unitOfWork.GetRepository<Currency>()
+                .GetQueryable()
+                .AsNoTracking()
+                .Where(c => c.DeletedAt == null && c.IsEnabled)
+                .ToDictionary(c => c.Slug, c => c.Id);
         }
     }
 }
