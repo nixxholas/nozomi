@@ -57,6 +57,7 @@ namespace Nozomi.Web.Controllers.APIs.v1.Currency
             return _currencyEvent.GetAllDetailed(currencyType, index);
         }
 
+        [HttpGet]
         public NozomiResult<IReadOnlyDictionary<string, long>> GetSlugToIdMap()
         {
             return new NozomiResult<IReadOnlyDictionary<string, long>>(_currencyEvent.ListAllMapped());
