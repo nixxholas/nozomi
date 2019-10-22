@@ -567,5 +567,14 @@ namespace Nozomi.Service.Events
                     });
             }
         }
+
+        public ICollection<string> ListAll()
+        {
+            return _unitOfWork.GetRepository<Currency>()
+                .GetQueryable()
+                .AsNoTracking()
+                .Select(c => c.Slug)
+                .ToList();
+        }
     }
 }

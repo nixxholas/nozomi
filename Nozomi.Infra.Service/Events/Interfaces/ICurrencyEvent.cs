@@ -53,5 +53,7 @@ namespace Nozomi.Service.Events.Interfaces
         IEnumerable<Currency> GetAllActive(bool includeNested = false);
         IEnumerable<dynamic> GetAllActiveObsc(bool includeNested = false);
         IEnumerable<dynamic> GetAllActiveDistinctObsc(bool includeNested = false);
+
+        ICollection<string> ListAll();
     }
 }
