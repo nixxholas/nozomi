@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data;
+using Nozomi.Data.ResponseModels.CurrencyPair;
 using Nozomi.Service.Events.Interfaces;
 
 namespace Nozomi.Web.Controllers.APIs.v1.CurrencyPair
@@ -27,6 +28,13 @@ namespace Nozomi.Web.Controllers.APIs.v1.CurrencyPair
         public Task Get(long id)
         {
             return _tickerEvent.GetById(id);
+        }
+
+        [Authorize]
+        [HttpGet]
+        public ICollection<DistinctCurrencyPairResponse> ListAll()
+        {
+            return _currencyPairEvent.ListAll();
         }
 
         [Authorize(Roles = "Owner")]
