@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using Nozomi.Base.Core;
 using Nozomi.Data.Models.Currency;
 using Nozomi.Data.Models.Web.Analytical;
+using Nozomi.Data.ResponseModels.CurrencyPair;
 using Nozomi.Preprocessing;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.BCL.Repository;
@@ -150,6 +151,26 @@ namespace Nozomi.Service.Events
                 .GetQueryable()
                 .AsNoTracking()
                 .SingleOrDefault(cp => cp.Id.Equals(id) && cp.DeletedAt == null);
+        }
+
+        public ICollection<DistinctCurrencyPairResponse> ListAll()
+        {
+            return _unitOfWork.GetRepository<CurrencyPair>()
+                .GetQueryable()
+                .AsNoTracking()
+                .Where(cp => cp.DeletedAt == null && cp.IsEnabled)
+                .Include(cp => cp.Source)
+                .Select(cp => new DistinctCurrencyPairResponse()
+                {
+                    MainTicker = cp.MainCurrencyAbbrv,
+                    CounterTicker = cp.CounterCurrencyAbbrv,
+                    CurrencyPairType = cp.CurrencyPairType,
+                    Id = cp.Id,
+                    SourceAbbreviation = cp.Source.Abbreviation,
+                    SourceName = cp.Source.Name
+                })
+                .DefaultIfEmpty()
+                .ToList();
         }
     }
 }

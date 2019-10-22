@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using Nozomi.Base.Core;
 using Nozomi.Data.Models.Currency;
 using Nozomi.Data.Models.Web.Analytical;
+using Nozomi.Data.ResponseModels.CurrencyPair;
 
 namespace Nozomi.Service.Events.Interfaces
 {
@@ -30,5 +31,7 @@ namespace Nozomi.Service.Events.Interfaces
         ICollection<CurrencyPair> GetAll();
 
         CurrencyPair Get(long id, bool track = false, long userId = 0);
+
+        ICollection<DistinctCurrencyPairResponse> ListAll();
     }
 }
