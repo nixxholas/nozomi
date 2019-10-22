@@ -29,6 +29,7 @@ namespace Nozomi.Web.Controllers.APIs.v1.Currency
             _currencyEvent = currencyEvent;
         }
 
+        [HttpGet]
         public NozomiResult<ICollection<string>> ListAll()
         {
             return new NozomiResult<ICollection<string>>(_currencyEvent.ListAll());
