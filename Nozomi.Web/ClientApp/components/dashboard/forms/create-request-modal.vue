@@ -50,7 +50,17 @@
             <b-tabs v-model="form.requestParentType" expanded class="has-text-dark">
               <b-tab-item label="Currency">
                 <b-field>
-
+                  <b-field label="Find a currency">
+                    <b-autocomplete
+                      rounded
+                      v-model="form.currencySlug"
+                      :data="currencies"
+                      placeholder="e.g. EUR"
+                      icon="magnify"
+                      @select="option => form.currencySlug = option">
+                      <template slot="empty">No results found</template>
+                    </b-autocomplete>
+                  </b-field>
                 </b-field>
               </b-tab-item>
               <b-tab-item label="Currency Pair"></b-tab-item>
@@ -77,8 +87,22 @@
         props: {
             // Nothing yet
         },
-        beforeCreate: {
+        beforeCreate: function () {
+            let self = this;
 
+            // Synchronously call for data
+            this.$axios.get('/api/Currency/ListAll')
+                .then(function (response) {
+                    self.currencies = response.data.data;
+                })
+                .catch(function (error) {
+                    // handle error
+                    console.log(error);
+                })
+                .finally(function () {
+                    // always executed
+                    self.isLoading = false;
+                });
         },
         data: function () {
             return {
@@ -90,7 +114,8 @@
                     apiUrl: '',
                     delay: 0,
                     failureDelay: 0,
-                    requestParentType: 0
+                    requestParentType: 0,
+                    currencySlug: ''
                 },
                 formHelper: {},
                 currencies: []
