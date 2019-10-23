@@ -63,7 +63,27 @@
                   </b-field>
                 </b-field>
               </b-tab-item>
-              <b-tab-item label="Currency Pair"></b-tab-item>
+              <b-tab-item label="Currency Pair">
+                <b-autocomplete
+                  :data="currencyPairs"
+                  placeholder="e.g. EURUSD"
+                  field="id"
+                  :custom-formatter="getCurrencyPairTickerPairStr"
+                  :loading="currencyPairsIsLoading"
+                  @select="option => form.currencyPair = option">
+
+                  <template slot-scope="props">
+                    <b-taglist attached>
+                      <b-tag type="is-dark">
+                        {{ props.mainTicker }}{{ props.counterTicker }}
+                      </b-tag>
+                      <b-tag type="is-info">
+                        <b>{{ props.sourceName }}</b>
+                      </b-tag>
+                    </b-taglist>
+                  </template>
+                </b-autocomplete>
+              </b-tab-item>
               <b-tab-item label="Currency Type"></b-tab-item>
             </b-tabs>
           </form>
@@ -78,6 +98,7 @@
 </template>
 
 <script>
+    import store from '../../../store/index';
     import RequestTypeDrowdown from '../../elements/request-type-dropdown';
     import ResponseTypeDropdown from "../../elements/response-type-dropdown";
 
@@ -103,6 +124,26 @@
                     // always executed
                     self.isLoading = false;
                 });
+
+
+            // Synchronously call for data
+            self.currencyPairsIsLoading = true;
+            this.$axios.get('/api/CurrencyPair/ListAll', {
+                headers: {
+                    Authorization: "Bearer " + store.state.oidcStore.access_token
+                }
+            })
+                .then(function (response) {
+                    self.currencyPairs = response.data;
+                })
+                .catch(function (error) {
+                    // handle error
+                    console.log(error);
+                })
+                .finally(function () {
+                    // always executed
+                    self.currencyPairsIsLoading = false;
+                });
         },
         data: function () {
             return {
@@ -115,10 +156,18 @@
                     delay: 0,
                     failureDelay: 0,
                     requestParentType: 0,
-                    currencySlug: ''
+                    currencySlug: '',
+                    currencyPair: {}
                 },
                 formHelper: {},
-                currencies: []
+                currencies: [],
+                currencyPairs: [],
+                currencyPairsIsLoading: false,
+            }
+        },
+        methods: {
+            getCurrencyPairTickerPairStr: function(obj) {
+                return obj.mainTicker + obj.counterTicker + " (" + obj.sourceName + ")";
             }
         }
     }
