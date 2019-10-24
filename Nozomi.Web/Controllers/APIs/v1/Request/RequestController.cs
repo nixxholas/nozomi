@@ -31,5 +31,11 @@ namespace Nozomi.Web.Controllers.APIs.v1.Request
                     new JsonResult("We're currently unable to obtain all of the Currency Pair Requests.")
             };
         }
+
+        [HttpPost]
+        public IActionResult Create([FromForm]string payload)
+        {
+            return Ok();
+        }
     }
 }
