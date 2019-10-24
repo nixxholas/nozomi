@@ -47,6 +47,7 @@
                 expanded>
               </b-input>
             </b-field>
+
             <b-tabs v-model="form.requestParentType" expanded class="has-text-dark">
               <b-tab-item label="Currency">
                 <b-field label="Find a currency">
@@ -92,6 +93,56 @@
                 </b-field>
               </b-tab-item>
             </b-tabs>
+
+            <b-field label="Components">
+              <b-table
+                :data="form.requestComponents">
+                <template slot-scope="props">
+                  <b-table-column field="type" label="Type" sortable centered>
+                    <span class="tag is-success">
+                        {{ props.row.type }}
+                    </span>
+                  </b-table-column>
+
+                  <b-table-column field="identifier" label="Identifier" sortable>
+                    <a @click="toggle(props.row)">
+                      {{ props.row.identifier }}
+                    </a>
+                  </b-table-column>
+
+                  <b-table-column field="queryComponent" label="Query Component" sortable>
+                    {{ props.row.queryComponent }}
+                  </b-table-column>
+
+                  <b-table-column field="storeHistorical" label="Store History">
+                    <span>
+<!--                        <b-icon pack="fas"-->
+<!--                                :icon="props.row.storeHistorical === 'Male' ? 'mars' : 'venus'">-->
+<!--                        </b-icon>-->
+                        {{ props.row.storeHistorical }}
+                    </span>
+                  </b-table-column>
+
+                  <b-table-column field="isDenominated" label="Denominated">
+                    <span>
+<!--                        <b-icon pack="fas"-->
+                      <!--                                :icon="props.row.storeHistorical === 'Male' ? 'mars' : 'venus'">-->
+                      <!--                        </b-icon>-->
+                        {{ props.row.isDenominated }}
+                    </span>
+                  </b-table-column>
+
+                  <b-table-column field="anomalyIgnorance" label="Ignore Anomalies">
+                    <span>
+<!--                        <b-icon pack="fas"-->
+                      <!--                                :icon="props.row.storeHistorical === 'Male' ? 'mars' : 'venus'">-->
+                      <!--                        </b-icon>-->
+                        {{ props.row.anomalyIgnorance }}
+                    </span>
+                  </b-table-column>
+                </template>
+              </b-table>
+            </b-field>
           </form>
         </section>
         <footer class="modal-card-foot">
@@ -183,7 +234,8 @@
                     requestParentType: 0,
                     currencySlug: '',
                     currencyPair: {},
-                    currencyType: 0
+                    currencyType: 0,
+                    requestComponents: []
                 },
                 formHelper: {},
                 currencies: [],
