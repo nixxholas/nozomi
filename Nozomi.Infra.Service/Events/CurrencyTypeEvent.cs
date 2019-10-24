@@ -3,6 +3,7 @@ using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data.Models.Currency;
+using Nozomi.Data.ResponseModels.CurrencyType;
 using Nozomi.Preprocessing;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.BCL.Repository;
@@ -70,6 +71,21 @@ namespace Nozomi.Service.Events
             }
 
             return null;
+        }
+
+        public ICollection<DistinctCurrencyTypeResponse> ListAll()
+        {
+            return _unitOfWork.GetRepository<CurrencyType>()
+                .GetQueryable()
+                .AsNoTracking()
+                .Where(ct => ct.DeletedAt == null && ct.IsEnabled)
+                .Select(ct => new DistinctCurrencyTypeResponse()
+                {
+                    Id = ct.Id,
+                    Name = ct.Name,
+                    ShortForm = ct.TypeShortForm
+                })
+                .ToList();
         }
     }
 }
