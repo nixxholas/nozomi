@@ -1,7 +1,7 @@
 <template>
   <b-field label="Response Type">
     <b-select placeholder="Pick a response type" :loading="isLoading"
-              v-model="computedValue">
+              v-model="computedValue" required>
       <option
         v-for="option in responseTypes"
         :value="option.value"

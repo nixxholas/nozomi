@@ -1,7 +1,7 @@
 <template>
-  <b-field label="Request Type">
+  <b-field label="Request Type" v-if="requestTypes.length > 0">
     <b-select placeholder="Pick a request type" :loading="isLoading"
-              v-model="computedValue">
+              v-model="computedValue" required>
       <option
         v-for="option in requestTypes"
         :value="option.value"
