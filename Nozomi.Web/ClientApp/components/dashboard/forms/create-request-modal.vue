@@ -49,42 +49,48 @@
             </b-field>
             <b-tabs v-model="form.requestParentType" expanded class="has-text-dark">
               <b-tab-item label="Currency">
-                <b-field>
-                  <b-field label="Find a currency">
-                    <b-autocomplete
-                      rounded
-                      v-model="form.currencySlug"
-                      :data="currencies"
-                      placeholder="e.g. EUR"
-                      icon="magnify"
-                      @select="option => form.currencySlug = option">
-                      <template slot="empty">No results found</template>
-                    </b-autocomplete>
-                  </b-field>
+                <b-field label="Find a currency">
+                  <b-autocomplete
+                    rounded
+                    v-model="form.currencySlug"
+                    :data="currencies"
+                    placeholder="e.g. EUR"
+                    icon="magnify"
+                    @select="option => form.currencySlug = option">
+                    <template slot="empty">No results found</template>
+                  </b-autocomplete>
                 </b-field>
               </b-tab-item>
               <b-tab-item label="Currency Pair">
-                <b-autocomplete
-                  :data="currencyPairs"
-                  placeholder="e.g. EURUSD"
-                  field="id"
-                  :custom-formatter="getCurrencyPairTickerPairStr"
-                  :loading="currencyPairsIsLoading"
-                  @select="option => form.currencyPair = option">
+                <b-field>
+                  <b-autocomplete
+                    :data="currencyPairs"
+                    placeholder="e.g. EURUSD"
+                    field="id"
+                    :custom-formatter="getCurrencyPairTickerPairStr"
+                    :loading="currencyPairsIsLoading"
+                    @select="option => form.currencyPair = option">
 
-                  <template slot-scope="props">
-                    <b-taglist attached>
-                      <b-tag type="is-dark">
-                        {{ props.option.mainTicker }}{{ props.option.counterTicker }}
-                      </b-tag>
-                      <b-tag type="is-info">
-                        <b>{{ props.option.sourceName }}</b>
-                      </b-tag>
-                    </b-taglist>
-                  </template>
-                </b-autocomplete>
+                    <template slot-scope="props">
+                      <b-taglist attached>
+                        <b-tag type="is-dark">
+                          {{ props.option.mainTicker }}{{ props.option.counterTicker }}
+                        </b-tag>
+                        <b-tag type="is-info">
+                          <b>{{ props.option.sourceName }}</b>
+                        </b-tag>
+                      </b-taglist>
+                    </template>
+                  </b-autocomplete>
+                </b-field>
               </b-tab-item>
-              <b-tab-item label="Currency Type"></b-tab-item>
+              <b-tab-item label="Currency Type">
+                <b-field v-if="currencyTypes !== null && currencyTypes.length > 0">
+                  <b-select placeholder="Select a currency type" v-model="form.currencyType">
+                    <option v-for="ct in currencyTypes" :value="ct.id">{{ ct.name }}</option>
+                  </b-select>
+                </b-field>
+              </b-tab-item>
             </b-tabs>
           </form>
         </section>
@@ -144,6 +150,25 @@
                     // always executed
                     self.currencyPairsIsLoading = false;
                 });
+
+            // Synchronously call for data
+            self.currencyTypesIsLoading = true;
+            this.$axios.get('/api/CurrencyType/ListAll', {
+                headers: {
+                    Authorization: "Bearer " + store.state.oidcStore.access_token
+                }
+            })
+                .then(function (response) {
+                    self.currencyTypes = response.data;
+                })
+                .catch(function (error) {
+                    // handle error
+                    console.log(error);
+                })
+                .finally(function () {
+                    // always executed
+                    self.currencyTypesIsLoading = false;
+                });
         },
         data: function () {
             return {
@@ -157,12 +182,15 @@
                     failureDelay: 0,
                     requestParentType: 0,
                     currencySlug: '',
-                    currencyPair: {}
+                    currencyPair: {},
+                    currencyType: 0
                 },
                 formHelper: {},
                 currencies: [],
                 currencyPairs: [],
                 currencyPairsIsLoading: false,
+                currencyTypes: [],
+                currencyTypesIsLoading: false,
             }
         },
         methods: {
