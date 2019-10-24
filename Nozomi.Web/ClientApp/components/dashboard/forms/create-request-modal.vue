@@ -75,10 +75,10 @@
                   <template slot-scope="props">
                     <b-taglist attached>
                       <b-tag type="is-dark">
-                        {{ props.mainTicker }}{{ props.counterTicker }}
+                        {{ props.option.mainTicker }}{{ props.option.counterTicker }}
                       </b-tag>
                       <b-tag type="is-info">
-                        <b>{{ props.sourceName }}</b>
+                        <b>{{ props.option.sourceName }}</b>
                       </b-tag>
                     </b-taglist>
                   </template>
