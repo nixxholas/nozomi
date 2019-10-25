@@ -32,8 +32,9 @@ namespace Nozomi.Web.Controllers.APIs.v1.Request
             };
         }
 
+        [Authorize]
         [HttpPost]
-        public IActionResult Create([FromForm]string payload)
+        public IActionResult Create([FromBody]CreateRequestViewModel vm)
         {
             return Ok();
         }
