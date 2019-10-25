@@ -89,7 +89,7 @@
                 </b-tab-item>
                 <b-tab-item label="Currency Type">
                   <b-field v-if="currencyTypes !== null && currencyTypes.length > 0">
-                    <b-select placeholder="Select a currency type" v-model="form.currencyType">
+                    <b-select placeholder="Select a currency type" v-model="form.currencyTypeId">
                       <option v-for="ct in currencyTypes" :value="ct.id">{{ ct.name }}</option>
                     </b-select>
                   </b-field>
@@ -133,17 +133,17 @@
                         // Reset the rest just incase
                         this.form.currencyPair = null;
                         this.form.currencyPairStr = null;
-                        this.form.currencyType = 0;
+                        this.form.currencyTypeId = 0;
                         break;
                     case 1: // Currency Pair
                         // Reset the rest just incase
                         this.form.currencySlug = '';
-                        this.form.currencyType = 0;
+                        this.form.currencyTypeId = 0;
                         break;
                     case 2: // Currency Type
                         // Reset the rest just incase
                         console.dir("resetting non-currency type variables");
-                        console.dir(this.form.currencyType);
+                        console.dir(this.form.currencyTypeId);
                         this.form.currencySlug = '';
                         this.form.currencyPair = null;
                         this.form.currencyPairStr = null;
@@ -170,7 +170,7 @@
                             currencySlug: '',
                             currencyPair: null,
                             currencyPairStr: null,
-                            currencyType: 0
+                            currencyTypeId: 0
                         };
                     })
                     .catch(function (error) {
@@ -252,7 +252,7 @@
                     currencySlug: '',
                     currencyPair: null,
                     currencyPairStr: null,
-                    currencyType: 0
+                    currencyTypeId: 0
                 },
                 formHelper: {},
                 currencies: [],
