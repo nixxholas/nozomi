@@ -17,6 +17,14 @@ namespace Nozomi.Web.Controllers.APIs.v1.Request
         /// </summary>
         public string DataPath { get; set; }
 
+        /// <summary>
+        /// The delay between each poll.
+        /// </summary>
+        public int Delay { get; set; }
 
+        /// <summary>
+        /// The delay after a failed poll attempt
+        /// </summary>
+        public int FailureDelay { get; set; }
     }
 }
