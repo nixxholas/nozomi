@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Nozomi.Base.Core.Helpers.Mapping;
 using Nozomi.Data.Models.Currency;
+using Nozomi.Repo.BCL;
 
 namespace Nozomi.Repo.Data.Mappings.CurrencyModels
 {
@@ -11,6 +11,9 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
         {
             entityTypeBuilder.HasKey(cp => cp.Id).HasName("CurrencyProperty_PK_Id");
             entityTypeBuilder.Property(cp => cp.Id).ValueGeneratedOnAdd();
+
+            entityTypeBuilder.HasAlternateKey(r => r.Guid);
+            entityTypeBuilder.Property(r => r.Guid).HasDefaultValueSql("uuid_generate_v4()");
 
             entityTypeBuilder.Property(c => c.Type).IsRequired().HasDefaultValue(CurrencyPropertyType.Generic);
             entityTypeBuilder.Property(c => c.Value).IsRequired(false);
