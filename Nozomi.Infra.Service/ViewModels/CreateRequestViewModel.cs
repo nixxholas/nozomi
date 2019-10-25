@@ -1,3 +1,4 @@
+using Nozomi.Data.Models;
 using Nozomi.Data.ResponseModels.CurrencyPair;
 
 namespace Nozomi.Service.ViewModels
@@ -7,12 +8,12 @@ namespace Nozomi.Service.ViewModels
         /// <summary>
         /// Request Type. GET? PUT?
         /// </summary>
-        public long Type { get; set; }
+        public RequestType Type { get; set; }
 
         /// <summary>
         /// JSON? XML?
         /// </summary>
-        public long ResponseType { get; set; }
+        public ResponseType ResponseType { get; set; }
 
         /// <summary>
         /// URL to the endpoint
