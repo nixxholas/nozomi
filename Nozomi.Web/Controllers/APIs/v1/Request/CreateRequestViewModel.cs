@@ -1,3 +1,5 @@
+using Nozomi.Data.ResponseModels.CurrencyPair;
+
 namespace Nozomi.Web.Controllers.APIs.v1.Request
 {
     public class CreateRequestViewModel
@@ -26,5 +28,33 @@ namespace Nozomi.Web.Controllers.APIs.v1.Request
         /// The delay after a failed poll attempt
         /// </summary>
         public int FailureDelay { get; set; }
+
+        /// <summary>
+        /// This will deduce what type of request this is for
+        /// i.e. CurrencyType, CurrencyPair or Currency.
+        /// </summary>
+        public RequestParentType ParentType { get; set; }
+
+        public enum RequestParentType
+        {
+            Currency = 0,
+            CurrencyPair = 1,
+            CurrencyType = 2
+        }
+
+        /// <summary>
+        /// The unique abbreviation of a currency.
+        /// </summary>
+        public string CurrencySlug { get; set; }
+
+        /// <summary>
+        /// The distinct response of the currency pair selected.
+        /// </summary>
+        public DistinctCurrencyPairResponse CurrencyPair { get; set; }
+
+        /// <summary>
+        /// The ID of the Currency Type selected.
+        /// </summary>
+        public long CurrencyTypeId { get; set; }
     }
 }
