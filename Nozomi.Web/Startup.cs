@@ -1,6 +1,7 @@
 using System;
 using System.Net;
 using System.Security.Cryptography.X509Certificates;
+using MediatR;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -115,6 +116,9 @@ namespace Nozomi.Web
                 options.RedirectStatusCode = StatusCodes.Status307TemporaryRedirect;
                 // options.HttpsPort = 5001;
             });
+
+            // Adding MediatR for Domain Events and Notifications
+            services.AddMediatR(typeof(Startup));
 
             // UoW-Repository injection
             services.ConfigureRepoLayer();
