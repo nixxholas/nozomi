@@ -17,7 +17,7 @@ namespace Nozomi.Data.Models
         public Request() {}
 
         public Request(RequestType type, ResponseType responseType, string dataPath, int delay, int failureDelay,
-            long currencyId, long currencyPairId, long currencyTypeId)
+            long? currencyId, long? currencyPairId, long? currencyTypeId)
         {
             RequestType = type;
             ResponseType = responseType;
