@@ -67,8 +67,10 @@
               </div>
             </b-field>
             <div class="content">
-
               <b-table :data="requestData" :columns="requestColumns">
+                <template slot="props">
+
+                </template>
                 <template slot="empty">
                   <section class="section">
                     <div class="content has-text-grey has-text-centered">
