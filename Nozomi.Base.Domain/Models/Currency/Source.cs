@@ -2,10 +2,11 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Nozomi.Base.Core;
+using Nozomi.Base.Core.Models;
 
 namespace Nozomi.Data.Models.Currency
 {
-    public class Source : BaseEntityModel
+    public class Source : Entity
     {
         public long Id { get; set; }
 

@@ -5,12 +5,13 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Microsoft.EntityFrameworkCore.Internal;
 using Nozomi.Base.Core;
+using Nozomi.Base.Core.Models;
 using Nozomi.Data.Models.Web;
 using Nozomi.Data.Models.Web.Analytical;
 
 namespace Nozomi.Data.Models.Currency
 {
-    public class Currency : BaseEntityModel
+    public class Currency : Entity
     {
         [Key]
         public long Id { get; set; }

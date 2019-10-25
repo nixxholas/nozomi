@@ -1,8 +1,9 @@
 using Nozomi.Base.Core;
+using Nozomi.Base.Core.Models;
 
 namespace Nozomi.Data.Models.Currency
 {
-    public class CurrencyProperty : BaseEntityModel
+    public class CurrencyProperty : Entity
     {
         public long Id { get; set; }
         

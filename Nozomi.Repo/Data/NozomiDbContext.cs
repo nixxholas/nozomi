@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Nozomi.Base.Core;
+using Nozomi.Base.Core.Models;
 using Nozomi.Data;
 using Nozomi.Data.Interfaces;
 using Nozomi.Data.Models.Currency;
@@ -118,24 +119,24 @@ namespace Nozomi.Repo.Data
             try
             {
                 var entities = ChangeTracker.Entries().Where(x =>
-                    x.Entity is BaseEntityModel && (x.State == EntityState.Added || x.State == EntityState.Modified));
+                    x.Entity is Entity && (x.State == EntityState.Added || x.State == EntityState.Modified));
 
                 foreach (var entity in entities)
                 {
                     switch (entity.State)
                     {
                         case EntityState.Added:
-                            ((BaseEntityModel) entity.Entity).CreatedAt = DateTime.UtcNow;
-                            ((BaseEntityModel) entity.Entity).CreatedBy = userId;
+                            ((Entity) entity.Entity).CreatedAt = DateTime.UtcNow;
+                            ((Entity) entity.Entity).CreatedBy = userId;
                             break;
                         case EntityState.Deleted:
-                            ((BaseEntityModel) entity.Entity).DeletedAt = DateTime.UtcNow;
-                            ((BaseEntityModel) entity.Entity).DeletedBy = userId;
+                            ((Entity) entity.Entity).DeletedAt = DateTime.UtcNow;
+                            ((Entity) entity.Entity).DeletedBy = userId;
                             break;
                     }
 
-                    ((BaseEntityModel) entity.Entity).ModifiedAt = DateTime.UtcNow;
-                    ((BaseEntityModel) entity.Entity).ModifiedBy = userId;
+                    ((Entity) entity.Entity).ModifiedAt = DateTime.UtcNow;
+                    ((Entity) entity.Entity).ModifiedBy = userId;
                 }
             }
             catch (Exception ex)

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Nozomi.Base.Core;
+using Nozomi.Base.Core.Models;
 using Nozomi.Data.Models.Currency;
 
 namespace Nozomi.Data.Models.Web.Analytical
@@ -9,7 +10,7 @@ namespace Nozomi.Data.Models.Web.Analytical
     /// <summary>
     /// Component made only in runtime.
     /// </summary>
-    public class AnalysedComponent : BaseEntityModel
+    public class AnalysedComponent : Entity
     {
         public AnalysedComponent() {}
         

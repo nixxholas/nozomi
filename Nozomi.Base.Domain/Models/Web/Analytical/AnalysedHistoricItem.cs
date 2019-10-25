@@ -1,9 +1,10 @@
 using System;
 using Nozomi.Base.Core;
+using Nozomi.Base.Core.Models;
 
 namespace Nozomi.Data.Models.Web.Analytical
 {
-    public class AnalysedHistoricItem : BaseEntityModel
+    public class AnalysedHistoricItem : Entity
     {
         public long Id { get; set; }
         
