@@ -66,11 +66,11 @@
                 </b-tab-item>
                 <b-tab-item label="Currency Pair">
                   <b-field>
+                    {{ form.currencyPair }}
                     <b-autocomplete
                       :data="currencyPairs"
-                      v-model="form.currencyPairId"
+                      v-model="form.currencyPairStr"
                       placeholder="e.g. EURUSD"
-                      field="id"
                       :custom-formatter="getCurrencyPairTickerPairStr"
                       :loading="currencyPairsIsLoading"
                       @select="option => form.currencyPair = option">
@@ -156,7 +156,6 @@
                 })
                 .catch(function (error) {
                     // handle error
-                    console.dir(self.methods);
                     self.methods.authenticateOidc(self.currentRoute);
                 })
                 .finally(function () {
@@ -173,7 +172,6 @@
                 }
             })
                 .then(function (response) {
-                    console.dir(response.data);
                     self.currencyPairs = response.data;
                 })
                 .catch(function (error) {
@@ -217,8 +215,8 @@
                     failureDelay: 0,
                     requestParentType: 0,
                     currencySlug: '',
-                    currencyPair: {},
-                    currencyPairId: null,
+                    currencyPair: null,
+                    currencyPairStr: null,
                     currencyType: 0
                 },
                 formHelper: {},
