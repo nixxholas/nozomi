@@ -1,5 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
-using Nozomi.Repo.BCL.Context;
+using Nozomi.Data.Interfaces;
 using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Data;
 

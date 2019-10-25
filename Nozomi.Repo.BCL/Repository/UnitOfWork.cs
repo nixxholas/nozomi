@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
-using Nozomi.Repo.BCL.Context;
+using Nozomi.Data.Interfaces;
 
 namespace Nozomi.Repo.BCL.Repository
 {
@@ -33,7 +33,7 @@ namespace Nozomi.Repo.BCL.Repository
             return (IRepository<TEntity>) _repositories[type];
         }
 
-        public int Commit(long userId = 0)
+        public bool Commit(long userId = 0)
         {
             bool saveFailed;
             do
@@ -54,7 +54,7 @@ namespace Nozomi.Repo.BCL.Repository
 
             } while (saveFailed);
 
-            return 1;
+            return true;
         }
 
         public void Dispose()

@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using Nethereum.Signer;
 using Nethereum.Util;
 using Nozomi.Base.Blockchain.Auth.Query.Validating;
+using Nozomi.Data.Interfaces;
 using Nozomi.Infra.Blockchain.Auth.Events.Interfaces;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.BCL.Repository;

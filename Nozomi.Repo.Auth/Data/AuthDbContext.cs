@@ -5,8 +5,8 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Nozomi.Base.Auth.Models;
 using Nozomi.Base.Auth.Models.Wallet;
+using Nozomi.Data.Interfaces;
 using Nozomi.Repo.Auth.Data.Mappings;
-using Nozomi.Repo.BCL.Context;
 
 namespace Nozomi.Repo.Auth.Data
 {

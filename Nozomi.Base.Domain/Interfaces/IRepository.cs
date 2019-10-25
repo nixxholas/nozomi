@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 
-namespace Nozomi.Repo.BCL.Repository
+namespace Nozomi.Data.Interfaces
 {
-    public interface IRepository<T> where T : class
+    public interface IRepository<T> : IDisposable where T : class
     {
         IEnumerable<T> Get();
         IQueryable<T> GetQueryable();
