@@ -1,8 +1,7 @@
 using System;
-using Nozomi.Base.Core;
 using Nozomi.Base.Core.Models;
 
-namespace Nozomi.Data.Models.Web.Analytical
+namespace Nozomi.Data.Models.Analytical
 {
     public class AnalysedHistoricItem : Entity
     {

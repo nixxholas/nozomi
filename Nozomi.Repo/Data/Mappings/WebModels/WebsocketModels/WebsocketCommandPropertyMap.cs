@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Nozomi.Base.Core.Helpers.Mapping;
-using Nozomi.Data.Models.Web.Websocket;
+using Nozomi.Data.Models.Websocket;
 
 namespace Nozomi.Repo.Data.Mappings.WebModels.WebsocketModels
 {

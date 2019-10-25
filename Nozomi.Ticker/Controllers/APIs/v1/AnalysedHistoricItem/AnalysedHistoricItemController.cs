@@ -29,10 +29,10 @@ namespace Nozomi.Ticker.Controllers.APIs.v1.AnalysedHistoricItem
         }
 
         [HttpGet]
-        public Task<NozomiResult<ICollection<Data.Models.Web.Analytical.AnalysedHistoricItem>>> GetAll(
+        public Task<NozomiResult<ICollection<Data.Models.Analytical.AnalysedHistoricItem>>> GetAll(
             long analysedComponentId, int index = 0)
         {
-            return Task.FromResult(new NozomiResult<ICollection<Data.Models.Web.Analytical.AnalysedHistoricItem>>(
+            return Task.FromResult(new NozomiResult<ICollection<Data.Models.Analytical.AnalysedHistoricItem>>(
                 _analysedHistoricItemEvent.GetAll(analysedComponentId, TimeSpan.Zero, index)));
         }
     }

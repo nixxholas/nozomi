@@ -8,9 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
 using Nozomi.Base.Core;
 using Nozomi.Base.Core.Helpers.Native.Numerals;
+using Nozomi.Data.Models.Analytical;
 using Nozomi.Data.Models.Currency;
-using Nozomi.Data.Models.Web;
-using Nozomi.Data.Models.Web.Analytical;
 using Nozomi.Data.ResponseModels.RequestComponent;
 using Nozomi.Data.ResponseModels.TickerPair;
 

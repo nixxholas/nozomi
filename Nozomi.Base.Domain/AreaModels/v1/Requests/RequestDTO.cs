@@ -5,7 +5,7 @@ using System.Globalization;
 using Nozomi.Data.AreaModels.v1.AnalysedComponent;
 using Nozomi.Data.AreaModels.v1.RequestComponent;
 using Nozomi.Data.AreaModels.v1.RequestProperty;
-using Nozomi.Data.Models.Web;
+using Nozomi.Data.Models;
 
 namespace Nozomi.Data.AreaModels.v1.Requests
 {

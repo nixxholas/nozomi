@@ -1,17 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Nozomi.Base.Core;
 using Nozomi.Base.Core.Models;
-using Nozomi.Data.AreaModels.v1.AnalysedComponent;
 using Nozomi.Data.AreaModels.v1.RequestComponent;
 using Nozomi.Data.AreaModels.v1.RequestProperty;
 using Nozomi.Data.AreaModels.v1.Requests;
 using Nozomi.Data.Models.Currency;
-using Nozomi.Data.Models.Web.Analytical;
-using Nozomi.Data.Models.Web.Websocket;
+using Nozomi.Data.Models.Websocket;
 
-namespace Nozomi.Data.Models.Web
+namespace Nozomi.Data.Models
 {
     public class Request : Entity
     {

@@ -2,8 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using Nozomi.Base.Core;
 using Nozomi.Base.Core.Models;
-using Nozomi.Data.Models.Web;
-using Nozomi.Data.Models.Web.Analytical;
+using Nozomi.Data.Models.Analytical;
 
 namespace Nozomi.Data.Models.Currency
 {

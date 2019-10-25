@@ -1,4 +1,4 @@
-using Nozomi.Data.Models.Web.Analytical;
+using Nozomi.Data.Models.Analytical;
 
 namespace Nozomi.Data.AreaModels.v1.AnalysedComponent
 {

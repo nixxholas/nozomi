@@ -1,7 +1,6 @@
-using Nozomi.Base.Core;
 using Nozomi.Base.Core.Models;
 
-namespace Nozomi.Data.Models.Web.Websocket
+namespace Nozomi.Data.Models.Websocket
 {
     public class WebsocketCommandProperty : Entity
     {

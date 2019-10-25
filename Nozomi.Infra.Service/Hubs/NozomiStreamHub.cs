@@ -9,7 +9,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
 using Nozomi.Base.Core.Helpers.Enumerator;
 using Nozomi.Data;
-using Nozomi.Data.Models.Web.Analytical;
+using Nozomi.Data.Models.Analytical;
 using Nozomi.Data.ResponseModels.AnalysedComponent;
 using Nozomi.Data.ResponseModels.Currency;
 using Nozomi.Data.ResponseModels.CurrencyType;

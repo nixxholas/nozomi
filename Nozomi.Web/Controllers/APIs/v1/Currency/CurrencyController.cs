@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging;
 using Nozomi.Base.Core;
 using Nozomi.Base.Core.Responses;
 using Nozomi.Data;
-using Nozomi.Data.Models.Web.Analytical;
+using Nozomi.Data.Models.Analytical;
 using Nozomi.Data.ResponseModels;
 using Nozomi.Data.ResponseModels.Currency;
 using Nozomi.Preprocessing;

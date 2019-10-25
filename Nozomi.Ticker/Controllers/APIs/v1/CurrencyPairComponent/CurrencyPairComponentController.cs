@@ -7,7 +7,7 @@ using Nozomi.Base.Auth.Models;
 using Nozomi.Data;
 using Nozomi.Data.AreaModels.v1.CurrencyPairComponent;
 using Nozomi.Data.AreaModels.v1.RequestComponent;
-using Nozomi.Data.Models.Web;
+using Nozomi.Data.Models;
 using Nozomi.Service.Events.Interfaces;
 using Nozomi.Service.Services.Interfaces;
 using Swashbuckle.AspNetCore.Annotations;

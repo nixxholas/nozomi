@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data;
-using Nozomi.Data.Models.Web;
+using Nozomi.Data.Models;
 using Nozomi.Service.Events.Interfaces;
 using Swashbuckle.AspNetCore.Annotations;
 

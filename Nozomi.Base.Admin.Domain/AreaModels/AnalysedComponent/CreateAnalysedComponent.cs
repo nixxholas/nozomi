@@ -1,5 +1,5 @@
 using System.ComponentModel;
-using Nozomi.Data.Models.Web.Analytical;
+using Nozomi.Data.Models.Analytical;
 
 namespace Nozomi.Base.Admin.Domain.AreaModels.AnalysedComponent
 {

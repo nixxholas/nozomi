@@ -1,4 +1,4 @@
-﻿namespace Nozomi.Data.Models.Web
+﻿namespace Nozomi.Data.Models
 {
     public enum RequestPropertyType
     {

@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using Nozomi.Base.Core.Responses;
-using Nozomi.Data.Models.Web.Analytical;
+using Nozomi.Data.Models.Analytical;
 
 namespace Nozomi.Service.Events.Analysis.Interfaces
 {

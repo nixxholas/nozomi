@@ -1,7 +1,6 @@
-﻿using Nozomi.Base.Core;
-using Nozomi.Base.Core.Models;
+﻿using Nozomi.Base.Core.Models;
 
-namespace Nozomi.Data.Models.Web
+namespace Nozomi.Data.Models
 {
     public class RequestProperty : Entity
     {

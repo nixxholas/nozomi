@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging;
 using Nozomi.Base.Auth.Models;
 using Nozomi.Data;
 using Nozomi.Data.AreaModels.v1.Currency;
-using Nozomi.Data.Models.Web.Analytical;
+using Nozomi.Data.Models.Analytical;
 using Nozomi.Data.ResponseModels.Currency;
 using Nozomi.Service.Events.Interfaces;
 using Nozomi.Service.Services.Interfaces;

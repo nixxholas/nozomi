@@ -1,6 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
-using Nozomi.Data.Models.Web.Analytical;
+using Nozomi.Data.Models.Analytical;
 
 namespace Nozomi.Preprocessing
 {

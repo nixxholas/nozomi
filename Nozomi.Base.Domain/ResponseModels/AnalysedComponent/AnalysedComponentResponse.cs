@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
+using Nozomi.Data.Models.Analytical;
 using Nozomi.Data.Models.Currency;
-using Nozomi.Data.Models.Web.Analytical;
 
 namespace Nozomi.Data.ResponseModels.AnalysedComponent
 {

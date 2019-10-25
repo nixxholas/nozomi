@@ -1,4 +1,4 @@
-using Nozomi.Data.Models.Web;
+using Nozomi.Data.Models;
 
 namespace Nozomi.Data.AreaModels.v1.RequestProperty
 {

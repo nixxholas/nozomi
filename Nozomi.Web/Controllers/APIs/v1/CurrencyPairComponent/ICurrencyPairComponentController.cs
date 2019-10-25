@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using Nozomi.Data;
-using Nozomi.Data.Models.Web;
+using Nozomi.Data.Models;
 
 namespace Nozomi.Web.Controllers.APIs.v1.CurrencyPairComponent
 {
