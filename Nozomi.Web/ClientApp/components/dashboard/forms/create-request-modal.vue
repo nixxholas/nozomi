@@ -50,7 +50,7 @@
                 </b-input>
               </b-field>
 
-              <b-tabs v-model="form.requestParentType" expanded class="has-text-dark">
+              <b-tabs v-model="form.parentType" expanded class="has-text-dark">
                 <b-tab-item label="Currency">
                   <b-field label="Find a currency">
                     <b-autocomplete
@@ -66,7 +66,6 @@
                 </b-tab-item>
                 <b-tab-item label="Currency Pair">
                   <b-field>
-                    {{ form.currencyPair }}
                     <b-autocomplete
                       :data="currencyPairs"
                       v-model="form.currencyPairStr"
@@ -128,14 +127,51 @@
             create: function() {
                 this.isModalLoading = true;
 
+                // Process the parent type first
+                switch (this.form.parentType) {
+                    case 0: // Currency
+                        // Reset the rest just incase
+                        this.form.currencyPair = null;
+                        this.form.currencyPairStr = null;
+                        this.form.currencyType = 0;
+                        break;
+                    case 1: // Currency Pair
+                        // Reset the rest just incase
+                        this.form.currencySlug = '';
+                        this.form.currencyType = 0;
+                        break;
+                    case 2: // Currency Type
+                        // Reset the rest just incase
+                        console.dir("resetting non-currency type variables");
+                        console.dir(this.form.currencyType);
+                        this.form.currencySlug = '';
+                        this.form.currencyPair = null;
+                        this.form.currencyPairStr = null;
+                        break;
+                }
+
                 let self = this;
-                this.$axios.post('/api/Request/Create', this.form, {
+                this.$axios.post('/api/Request/Create', self.form, {
                     headers: {
                         Authorization: "Bearer " + store.state.oidcStore.access_token
                     }
                 })
                     .then(function (response) {
                         console.log(response);
+
+                        // Reset the form data
+                        self.form = {
+                            type: 0,
+                            responseType: 1,
+                            dataPath: "",
+                            delay: 0,
+                            failureDelay: 0,
+                            parentType: 0,
+                            currencySlug: '',
+                            currencyPair: null,
+                            currencyPairStr: null,
+                            currencyType: 0
+                        };
                     })
                     .catch(function (error) {
                         console.log(error);
@@ -207,13 +243,12 @@
                 isCreateRequestModalActive: false,
                 isModalLoading: false,
                 form: {
-                    activeTab: 0, // For requestParentType
                     type: 0,
                     responseType: 1,
                     dataPath: "",
                     delay: 0,
                     failureDelay: 0,
-                    requestParentType: 0,
+                    parentType: 0,
                     currencySlug: '',
                     currencyPair: null,
                     currencyPairStr: null,
