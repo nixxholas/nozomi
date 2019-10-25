@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data;
 using Nozomi.Service.Events.Interfaces;
+using Nozomi.Service.Services.Interfaces;
+using Nozomi.Service.ViewModels;
 
 namespace Nozomi.Web.Controllers.APIs.v1.Request
 {
@@ -11,11 +13,13 @@ namespace Nozomi.Web.Controllers.APIs.v1.Request
     public class RequestController : BaseApiController<RequestController>, IRequestController
     {
         private readonly IRequestEvent _requestEvent;
+        private readonly INewRequestService _newRequestService;
 
         public RequestController(ILogger<RequestController> logger,
-            IRequestEvent requestEvent) : base(logger)
+            IRequestEvent requestEvent, INewRequestService newRequestService) : base(logger)
         {
             _requestEvent = requestEvent;
+            _newRequestService = newRequestService;
         }
 
         [Authorize(Roles = "Staff")]
@@ -36,6 +40,7 @@ namespace Nozomi.Web.Controllers.APIs.v1.Request
         [HttpPost]
         public IActionResult Create([FromBody]CreateRequestViewModel vm)
         {
+            _newRequestService.Create(vm);
             return Ok();
         }
     }

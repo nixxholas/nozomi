@@ -19,6 +19,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Nozomi.Preprocessing;
 using Nozomi.Repo.Data;
+using Nozomi.Repo.Store;
 using Nozomi.Web.StartupExtensions;
 using VaultSharp;
 using VaultSharp.V1.AuthMethods.Token;
@@ -62,6 +63,17 @@ namespace Nozomi.Web
                     options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
                 },
                     ServiceLifetime.Transient);
+
+                var esStr = Configuration.GetConnectionString("LocalES:" + @Environment.MachineName);
+                services
+                    .AddEntityFrameworkNpgsql()
+                    .AddDbContext<EventStoreContext>(options =>
+                        {
+                            options.UseNpgsql(str);
+                            options.EnableSensitiveDataLogging(false);
+                            options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
+                        },
+                        ServiceLifetime.Transient);
             }
             else
             {
@@ -117,8 +129,14 @@ namespace Nozomi.Web
                 // options.HttpsPort = 5001;
             });
 
+            // ASP.NET HttpContext dependency
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
             // Adding MediatR for Domain Events and Notifications
             services.AddMediatR(typeof(Startup));
+
+            // AutoMapper Injection
+            services.AddAutoMapperSetup();
 
             // UoW-Repository injection
             services.ConfigureRepoLayer();

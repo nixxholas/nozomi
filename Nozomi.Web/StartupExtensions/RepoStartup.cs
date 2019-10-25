@@ -1,14 +1,19 @@
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Nozomi.Base.Core.Bus;
+using Nozomi.Base.Core.Events;
+using Nozomi.Base.Core.Interfaces;
+using Nozomi.Base.Core.Models;
 using Nozomi.Base.Core.Notifications;
 using Nozomi.Data.CommandHandlers;
 using Nozomi.Data.Commands;
 using Nozomi.Data.EventHandlers;
 using Nozomi.Data.Events;
 using Nozomi.Data.Interfaces;
+using Nozomi.Data.Interfaces.Repositories;
 using Nozomi.Repo.BCL;
 using Nozomi.Repo.Data;
+using Nozomi.Repo.Store;
 
 namespace Nozomi.Web.StartupExtensions
 {
@@ -31,6 +36,14 @@ namespace Nozomi.Web.StartupExtensions
 
             services.AddScoped<IUnitOfWork<NozomiDbContext>, UnitOfWork<NozomiDbContext>>();
             services.AddScoped<IDbContext, NozomiDbContext>();
+
+            // Infra - Data EventSourcing
+            services.AddScoped<IEventStoreRepository, EventStoreRepository>();
+            services.AddScoped<IEventStore, EventStore>();
+            services.AddScoped<EventStoreContext>();
+
+            // Infra - Identity
+            services.AddScoped<IUser, WebUser>();
         }
     }
 }

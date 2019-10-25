@@ -7,7 +7,9 @@ using Nozomi.Service.Events;
 using Nozomi.Service.Events.Analysis;
 using Nozomi.Service.Events.Analysis.Interfaces;
 using Nozomi.Service.Events.Interfaces;
+using Nozomi.Service.Services;
 using Nozomi.Service.Services.Enumerators;
+using Nozomi.Service.Services.Interfaces;
 
 namespace Nozomi.Web.StartupExtensions
 {
@@ -15,6 +17,8 @@ namespace Nozomi.Web.StartupExtensions
     {
         public static void ConfigureEvents(this IServiceCollection services)
         {
+            services.AddScoped<INewRequestService, NewRequestService>();
+
             services.AddTransient<IEmailSender, EmailSender>();
             services.AddTransient<ISmsSender, SmsSender>();
 
