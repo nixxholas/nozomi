@@ -14,7 +14,6 @@ using Nozomi.Data.Models.Currency;
 using Nozomi.Data.ResponseModels.Ticker;
 using Nozomi.Infra.Admin.Service.Services.Interfaces;
 using Nozomi.Preprocessing.Abstracts;
-using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Data;
 using Nozomi.Service.Services.Interfaces;
 

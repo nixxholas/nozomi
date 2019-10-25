@@ -1,6 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using Nozomi.Data.Interfaces;
-using Nozomi.Repo.BCL.Repository;
+using Nozomi.Repo.BCL;
 using Nozomi.Repo.Data;
 
 namespace Nozomi.Web.StartupExtensions

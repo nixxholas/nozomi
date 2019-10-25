@@ -8,7 +8,6 @@ using Nozomi.Data.AreaModels.v1.Requests;
 using Nozomi.Data.Interfaces;
 using Nozomi.Data.Models;
 using Nozomi.Preprocessing.Abstracts;
-using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Data;
 using Nozomi.Service.Services.Requests.Interfaces;
 

@@ -10,7 +10,6 @@ using Nozomi.Data.AreaModels.v1.Source;
 using Nozomi.Data.Interfaces;
 using Nozomi.Data.Models.Currency;
 using Nozomi.Preprocessing.Abstracts;
-using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Data;
 using Nozomi.Service.Services.Interfaces;
 

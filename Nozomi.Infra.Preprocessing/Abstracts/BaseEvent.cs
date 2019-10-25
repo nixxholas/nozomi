@@ -4,7 +4,6 @@ using System.Linq.Expressions;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data.Interfaces;
 using Nozomi.Preprocessing.Abstracts.Interfaces;
-using Nozomi.Repo.BCL.Repository;
 
 namespace Nozomi.Preprocessing.Abstracts
 {

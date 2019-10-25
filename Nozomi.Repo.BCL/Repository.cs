@@ -5,7 +5,7 @@ using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using Nozomi.Data.Interfaces;
 
-namespace Nozomi.Repo.BCL.Repository
+namespace Nozomi.Repo.BCL
 {
     public class Repository<T> : IRepository<T> where T : class
     {
@@ -69,6 +69,7 @@ namespace Nozomi.Repo.BCL.Repository
         public void Dispose()
         {
             _dbContext?.Dispose();
+            GC.SuppressFinalize(this);
         }
     }
 }

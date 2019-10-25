@@ -8,7 +8,6 @@ using Nozomi.Data.Interfaces;
 using Nozomi.Data.Models.Analytical;
 using Nozomi.Infra.Admin.Service.Events.Interfaces;
 using Nozomi.Preprocessing.Abstracts;
-using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Data;
 
 namespace Nozomi.Infra.Admin.Service.Events

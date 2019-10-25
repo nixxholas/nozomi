@@ -7,7 +7,6 @@ using Nozomi.Data.Models.Currency;
 using Nozomi.Data.ResponseModels.CurrencyType;
 using Nozomi.Preprocessing;
 using Nozomi.Preprocessing.Abstracts;
-using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Data;
 using Nozomi.Service.Events.Interfaces;
 
