@@ -13,6 +13,7 @@ using Nozomi.Data.Models.Analytical;
 using Nozomi.Data.Models.Currency;
 using Nozomi.Preprocessing;
 using Nozomi.Preprocessing.Abstracts;
+using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Data;
 using Nozomi.Service.Events.Analysis.Interfaces;
 

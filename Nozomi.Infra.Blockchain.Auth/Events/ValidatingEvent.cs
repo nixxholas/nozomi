@@ -6,6 +6,7 @@ using Nozomi.Base.Blockchain.Auth.Query.Validating;
 using Nozomi.Data.Interfaces;
 using Nozomi.Infra.Blockchain.Auth.Events.Interfaces;
 using Nozomi.Preprocessing.Abstracts;
+using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Data;
 
 namespace Nozomi.Infra.Blockchain.Auth.Events

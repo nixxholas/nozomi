@@ -15,7 +15,7 @@ using Nozomi.Infra.Analysis.Service.HostedServices;
 using Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes;
 using Nozomi.Infra.Analysis.Service.Services;
 using Nozomi.Infra.Analysis.Service.Services.Interfaces;
-using Nozomi.Repo.BCL;
+using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Data;
 using Nozomi.Service.Events;
 using Nozomi.Service.Events.Analysis;

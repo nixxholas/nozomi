@@ -20,7 +20,7 @@ using Nozomi.Infra.Auth.Services.Address;
 using Nozomi.Infra.Blockchain.Auth.Events;
 using Nozomi.Infra.Blockchain.Auth.Events.Interfaces;
 using Nozomi.Repo.Auth.Data;
-using Nozomi.Repo.BCL;
+using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Data;
 using VaultSharp;
 using VaultSharp.V1.AuthMethods.Token;

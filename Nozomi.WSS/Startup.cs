@@ -8,7 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Nozomi.Base.Core.Configurations;
 using Nozomi.Data.Interfaces;
 using Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes;
-using Nozomi.Repo.BCL;
+using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Data;
 using Nozomi.Service.Events;
 using Nozomi.Service.Events.Interfaces;

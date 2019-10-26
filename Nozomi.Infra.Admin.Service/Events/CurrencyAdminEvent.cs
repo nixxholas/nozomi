@@ -11,6 +11,7 @@ using Nozomi.Data.ResponseModels.PartialCurrencyPair;
 using Nozomi.Data.ResponseModels.Source;
 using Nozomi.Infra.Admin.Service.Events.Interfaces;
 using Nozomi.Preprocessing.Abstracts;
+using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Data;
 using Nozomi.Service.Events;
 

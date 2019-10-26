@@ -6,6 +6,7 @@ using Nozomi.Base.Auth.Models.Wallet;
 using Nozomi.Data.Interfaces;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.Auth.Data;
+using Nozomi.Repo.BCL.Repository;
 
 namespace Nozomi.Infra.Auth.Services.Address
 {

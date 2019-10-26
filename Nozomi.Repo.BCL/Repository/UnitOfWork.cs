@@ -4,9 +4,10 @@ using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Nozomi.Data.Interfaces;
 
-namespace Nozomi.Repo.BCL
+namespace Nozomi.Repo.BCL.Repository
 {
-    public class UnitOfWork<TContext>  : IUnitOfWork<TContext> where TContext : IDbContext
+    public class UnitOfWork<TContext>  : IRepositoryFactory, IUnitOfWork<TContext>
+        where TContext : IDbContext
     {
         private Dictionary<Type, object> _repositories;
 
