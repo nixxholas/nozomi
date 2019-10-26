@@ -1,7 +1,6 @@
-using Nozomi.Data.Interfaces;
 using Nozomi.Data.Models;
 
-namespace Nozomi.Data.Repositories
+namespace Nozomi.Data.Interfaces.Repositories
 {
     public interface IRequestRepository : IRepository<Request>
     {

@@ -8,6 +8,7 @@ namespace Nozomi.Service.AutoMapper
     {
         public DomainToViewModelMappingProfile()
         {
+            //CreateMap<Request, RequestViewModel>();
         }
     }
 }

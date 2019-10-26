@@ -11,13 +11,11 @@ namespace Nozomi.Web.StartupExtensions
         {
             if (services == null) throw new ArgumentNullException(nameof(services));
 
-            // https://stackoverflow.com/questions/40275195/how-to-set-up-automapper-in-asp-net-core
-//            var mapperConfiguration = AutoMapperConfig.RegisterMappings();
-//            var mapper = mapperConfiguration.CreateMapper();
-//            services.AddSingleton(mapper);
+            services.AddAutoMapper(typeof(Startup));
 
-            //services.AddAutoMapper(typeof(Startup));
-            services.AddAutoMapper(typeof(DomainToViewModelMappingProfile), typeof(ViewModelToDomainMappingProfile));
+            // Registering Mappings automatically only works if the
+            // Automapper Profile classes are in ASP.NET project
+            AutoMapperConfig.RegisterMappings();
         }
     }
 }

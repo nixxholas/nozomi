@@ -18,8 +18,6 @@ namespace Nozomi.Data.Commands
         
         public long? CurrencyId { get; set; }
         
-        public string CurrencySlug { get; set; }
-        
         public long? CurrencyPairId { get; set; }
         
         public long? CurrencyTypeId { get; set; }

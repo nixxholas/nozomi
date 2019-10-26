@@ -17,6 +17,8 @@ namespace Nozomi.Web.StartupExtensions
     {
         public static void ConfigureEvents(this IServiceCollection services)
         {
+            services.AddScoped<INewRequestService, NewRequestService>();
+
             services.AddTransient<IEmailSender, EmailSender>();
             services.AddTransient<ISmsSender, SmsSender>();
 
