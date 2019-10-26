@@ -6,20 +6,12 @@ namespace Nozomi.Data.Commands
 {
     public abstract class RequestCommand : Command
     {
-        public RequestType RequestType { get; set; }
+        public Guid Guid { get; protected set; }
 
-        public ResponseType ResponseType { get; set; }
+        public string DataPath { get; protected set; }
 
-        public string DataPath { get; set; }
-
-        public int Delay { get; set; }
-
-        public int FailureDelay { get; set; }
+        public RequestType Type { get; protected set; }
         
-        public long? CurrencyId { get; set; }
-        
-        public long? CurrencyPairId { get; set; }
-        
-        public long? CurrencyTypeId { get; set; }
+        public ResponseType ResponseType { get; protected set; }
     }
 }
