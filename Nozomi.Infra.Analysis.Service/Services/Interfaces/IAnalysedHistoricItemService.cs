@@ -1,5 +1,5 @@
 using System;
-using Nozomi.Data.Models.Analytical;
+using Nozomi.Data.Models.Web.Analytical;
 
 namespace Nozomi.Infra.Analysis.Service.Services.Interfaces
 {

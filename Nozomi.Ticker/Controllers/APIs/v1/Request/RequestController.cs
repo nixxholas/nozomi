@@ -8,6 +8,7 @@ using Nozomi.Data;
 using Nozomi.Data.AreaModels.v1.CurrencyPairRequest;
 using Nozomi.Data.AreaModels.v1.RequestComponent;
 using Nozomi.Data.AreaModels.v1.Requests;
+using Nozomi.Data.Models.Web;
 using Nozomi.Service.Events.Interfaces;
 using Nozomi.Service.Services.Requests.Interfaces;
 

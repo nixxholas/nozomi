@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Nozomi.Base.Auth.Models;
+using Nozomi.Data.Models.Web.Analytical;
 using Nozomi.Service.Events.Analysis.Interfaces;
 using Nozomi.Service.Events.Interfaces;
 using Nozomi.Ticker.Controllers;

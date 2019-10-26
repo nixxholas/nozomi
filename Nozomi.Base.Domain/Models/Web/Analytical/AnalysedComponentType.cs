@@ -1,6 +1,6 @@
 using System.ComponentModel;
 
-namespace Nozomi.Data.Models.Analytical
+namespace Nozomi.Data.Models.Web.Analytical
 {
     public enum AnalysedComponentType
     {

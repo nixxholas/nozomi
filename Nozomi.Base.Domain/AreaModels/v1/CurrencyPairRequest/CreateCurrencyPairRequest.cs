@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Nozomi.Data.AreaModels.v1.CurrencyPairComponent;
 using Nozomi.Data.AreaModels.v1.RequestProperty;
-using Nozomi.Data.Models;
+using Nozomi.Data.Models.Web;
 
 namespace Nozomi.Data.AreaModels.v1.CurrencyPairRequest
 {

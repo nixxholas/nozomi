@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using Nozomi.Data;
 using Nozomi.Data.AreaModels.v1.Requests;
-using Nozomi.Data.Models;
+using Nozomi.Data.Models.Web;
 
 namespace Nozomi.Service.Services.Requests.Interfaces
 {

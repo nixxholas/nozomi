@@ -1,6 +1,6 @@
 using System.ComponentModel;
 
-namespace Nozomi.Data.Models
+namespace Nozomi.Data.Models.Web
 {
     public enum ResponseType
     {

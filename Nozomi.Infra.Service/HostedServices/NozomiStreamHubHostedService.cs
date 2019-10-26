@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Nozomi.Base.Core.Helpers.Enumerator;
-using Nozomi.Data.Models.Analytical;
+using Nozomi.Data.Models.Web.Analytical;
 using Nozomi.Data.ResponseModels.AnalysedComponent;
 using Nozomi.Data.ResponseModels.CurrencyType;
 using Nozomi.Infra.Preprocessing.SignalR;

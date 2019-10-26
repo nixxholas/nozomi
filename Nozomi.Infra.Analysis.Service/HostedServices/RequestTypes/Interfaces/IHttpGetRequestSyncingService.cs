@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
-using Nozomi.Data.Models;
+using Nozomi.Data.Models.Web;
 
 namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes.Interfaces
 {

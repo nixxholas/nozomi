@@ -3,8 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using Nozomi.Data;
-using Nozomi.Data.Models;
 using Nozomi.Data.Models.Currency;
+using Nozomi.Data.Models.Web;
 
 namespace Nozomi.Service.Events.Interfaces
 {
@@ -32,7 +32,7 @@ namespace Nozomi.Service.Events.Interfaces
         /// </summary>
         /// <param name="currencyId">The unique identifier of the base currency</param>
         /// <returns>Collection of request components related to the currency</returns>
-        ICollection<RequestComponent> GetAllByCurrency(long currencyId, bool track = false, int index = 0);
+        ICollection<Data.Models.Web.RequestComponent> GetAllByCurrency(long currencyId, bool track = false, int index = 0);
 
         ICollection<RequestComponent> GetAllTickerPairCompsByCurrency(long currencyId, bool track = false, int index = 0);
 

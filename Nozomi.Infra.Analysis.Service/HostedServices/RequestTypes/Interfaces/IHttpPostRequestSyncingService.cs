@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using Nozomi.Data.Models;
+using Nozomi.Data.Models.Web;
 
 namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes.Interfaces
 {

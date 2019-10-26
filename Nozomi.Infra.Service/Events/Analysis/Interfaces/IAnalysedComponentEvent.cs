@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
-using Nozomi.Data.Models.Analytical;
 using Nozomi.Data.Models.Currency;
+using Nozomi.Data.Models.Web.Analytical;
 using Nozomi.Preprocessing.Abstracts.Interfaces;
 
 namespace Nozomi.Service.Events.Analysis.Interfaces

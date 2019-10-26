@@ -7,7 +7,9 @@ using System.Linq;
 using Microsoft.EntityFrameworkCore.Internal;
 using Nozomi.Base.Core;
 using Nozomi.Base.Core.Models;
-using Nozomi.Data.Models.Analytical;
+using Nozomi.Data.Models.Web;
+using Nozomi.Data.Models.Web.Analytical;
+using Nozomi.Data.Models.Web.Websocket;
 
 namespace Nozomi.Data.Models.Currency
 {

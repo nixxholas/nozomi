@@ -19,7 +19,7 @@ using Newtonsoft.Json.Linq;
 using Nozomi.Base.Core.Helpers.Enumerator;
 using Nozomi.Base.Core.Helpers.Exponent;
 using Nozomi.Data;
-using Nozomi.Data.Models;
+using Nozomi.Data.Models.Web;
 using Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes.Interfaces;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.Data;

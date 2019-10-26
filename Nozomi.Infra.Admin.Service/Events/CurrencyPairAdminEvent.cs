@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using Nozomi.Base.Core;
 using Nozomi.Data.Interfaces;
 using Nozomi.Data.Models.Currency;
+using Nozomi.Data.Models.Web.Analytical;
 using Nozomi.Infra.Admin.Service.Events.Interfaces;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.BCL.Repository;

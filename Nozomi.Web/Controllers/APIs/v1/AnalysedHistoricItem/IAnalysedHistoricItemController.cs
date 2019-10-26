@@ -8,6 +8,6 @@ namespace Nozomi.Web.Controllers.APIs.v1.AnalysedHistoricItem
     {
         Task<long> Count(long analysedComponentId);
         
-        Task<NozomiResult<ICollection<Data.Models.Analytical.AnalysedHistoricItem>>> GetAll(long analysedComponentId, int index = 0);
+        Task<NozomiResult<ICollection<Data.Models.Web.Analytical.AnalysedHistoricItem>>> GetAll(long analysedComponentId, int index = 0);
     }
 }

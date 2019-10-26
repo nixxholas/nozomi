@@ -4,7 +4,7 @@ using System.Linq;
 using Nozomi.Base.Core.Helpers.Enumerator;
 using Nozomi.Base.Core.Helpers.Native.Numerals;
 using Nozomi.Data.AreaModels.v1.RequestComponent;
-using Nozomi.Data.Models.Analytical;
+using Nozomi.Data.Models.Web.Analytical;
 using Nozomi.Data.ResponseModels.CurrencyProperty;
 using Nozomi.Data.ResponseModels.RequestComponent;
 using Nozomi.Data.ResponseModels.TickerPair;
@@ -93,7 +93,7 @@ namespace Nozomi.Data.ResponseModels.Currency
         }
         
         public DetailedCurrencyResponse(Models.Currency.Currency currency, 
-            ICollection<Models.RequestComponent> requestComponents)
+            ICollection<Models.Web.RequestComponent> requestComponents)
         {
             // Aggregate non-compounded properties first
             Name = currency.Name;

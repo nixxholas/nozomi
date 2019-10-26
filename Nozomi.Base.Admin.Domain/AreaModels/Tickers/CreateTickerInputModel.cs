@@ -4,8 +4,8 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Nozomi.Base.Core;
-using Nozomi.Data.Models;
 using Nozomi.Data.Models.Currency;
+using Nozomi.Data.Models.Web;
 
 namespace Nozomi.Base.Admin.Domain.AreaModels.Tickers
 {

@@ -1,5 +1,5 @@
 using Nozomi.Data.AreaModels.v1.RequestProperty;
-using Nozomi.Data.Models;
+using Nozomi.Data.Models.Web;
 using Swashbuckle.AspNetCore.Filters;
 
 namespace Nozomi.Preprocessing.Swagger.Examples.Requests.v1.RequestProperty

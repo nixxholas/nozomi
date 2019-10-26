@@ -1,8 +1,9 @@
 using System;
 using System.Collections.Generic;
 using Nozomi.Data.AreaModels.v1.Currency;
-using Nozomi.Data.Models.Analytical;
 using Nozomi.Data.Models.Currency;
+using Nozomi.Data.Models.Web;
+using Nozomi.Data.Models.Web.Analytical;
 using Nozomi.Data.ResponseModels.Currency;
 
 namespace Nozomi.Service.Events.Interfaces

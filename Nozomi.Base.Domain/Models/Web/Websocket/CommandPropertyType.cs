@@ -1,6 +1,6 @@
 using System.ComponentModel;
 
-namespace Nozomi.Data.Models.Websocket
+namespace Nozomi.Data.Models.Web.Websocket
 {
     public enum CommandPropertyType
     {

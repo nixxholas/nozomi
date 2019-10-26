@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 using Nozomi.Base.Admin.Domain.AreaModels.AnalysedComponent;
 using Nozomi.Data.AreaModels.v1.AnalysedComponent;
 using Nozomi.Data.Interfaces;
-using Nozomi.Data.Models.Analytical;
+using Nozomi.Data.Models.Web.Analytical;
 using Nozomi.Infra.Admin.Service.Services.Interfaces;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.BCL.Repository;
