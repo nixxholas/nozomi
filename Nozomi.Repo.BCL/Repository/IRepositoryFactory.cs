@@ -1,6 +1,4 @@
-﻿using Nozomi.Data.Interfaces;
-
-namespace Nozomi.Repo.BCL.Repository
+﻿namespace Nozomi.Repo.BCL.Repository
 {
     public interface IRepositoryFactory
     {

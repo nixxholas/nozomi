@@ -5,7 +5,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data;
 using Nozomi.Data.AreaModels.v1.Requests;
-using Nozomi.Data.Interfaces;
 using Nozomi.Data.Models.Web;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.BCL.Repository;

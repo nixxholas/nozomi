@@ -4,7 +4,6 @@ using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data;
-using Nozomi.Data.Interfaces;
 using Nozomi.Data.Models.Currency;
 using Nozomi.Data.Models.Web.Analytical;
 using Nozomi.Infra.Analysis.Service.Events.Interfaces;

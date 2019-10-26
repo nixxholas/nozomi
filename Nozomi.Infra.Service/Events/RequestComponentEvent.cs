@@ -11,7 +11,6 @@ using Microsoft.Extensions.Logging;
 using Nozomi.Base.Core;
 using Nozomi.Base.Core.Helpers.Enumerable;
 using Nozomi.Data;
-using Nozomi.Data.Interfaces;
 using Nozomi.Data.Models.Currency;
 using Nozomi.Data.Models.Web;
 using Nozomi.Data.Models.Web.Analytical;

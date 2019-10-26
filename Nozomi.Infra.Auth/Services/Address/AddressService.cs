@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Nozomi.Base.Auth.Models;
 using Nozomi.Base.Auth.Models.Wallet;
-using Nozomi.Data.Interfaces;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.Auth.Data;
 using Nozomi.Repo.BCL.Repository;

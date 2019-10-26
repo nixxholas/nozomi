@@ -1,7 +1,6 @@
 using System;
 using System.Linq;
 using Microsoft.Extensions.Logging;
-using Nozomi.Data.Interfaces;
 using Nozomi.Data.Models.Currency;
 using Nozomi.Infra.Admin.Service.Services.Interfaces;
 using Nozomi.Preprocessing.Abstracts;

@@ -4,7 +4,6 @@ using System.Collections.Immutable;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Nozomi.Data.Interfaces;
 using Nozomi.Data.Models.Web.Analytical;
 using Nozomi.Infra.Analysis.Service.Events.Interfaces;
 using Nozomi.Preprocessing;

@@ -3,7 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 
-namespace Nozomi.Data.Interfaces
+namespace Nozomi.Repo.BCL.Context
 {
     public interface IDbContext : IDisposable
     {

@@ -6,7 +6,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Nozomi.Base.Core.Helpers.UI;
 using Nozomi.Data;
-using Nozomi.Data.Interfaces;
 using Nozomi.Data.Models.Currency;
 using Nozomi.Data.ResponseModels;
 using Nozomi.Data.ResponseModels.Source;

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
-using Nozomi.Data.Interfaces;
+using Nozomi.Repo.BCL.Context;
 
 namespace Nozomi.Repo.BCL.Repository
 {
@@ -66,9 +66,5 @@ namespace Nozomi.Repo.BCL.Repository
 
         public void Update(IEnumerable<T> entities) => _dbSet.UpdateRange(entities);
 
-        public void Dispose()
-        {
-            _dbContext?.Dispose();
-        }
     }
 }

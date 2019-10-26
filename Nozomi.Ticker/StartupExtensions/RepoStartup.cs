@@ -1,6 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
-using Nozomi.Data.Interfaces;
 using Nozomi.Repo.Auth.Data;
+using Nozomi.Repo.BCL.Context;
 using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Data;
 

@@ -9,8 +9,4 @@
       <ProjectReference Include="..\Nozomi.Base.Domain\Nozomi.Base.Domain.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Context" />
-    </ItemGroup>
-
 </Project>
