@@ -1,13 +1,12 @@
 using System.Collections.Generic;
 using Nozomi.Base.Core;
-using Nozomi.Base.Core.Models;
 
 namespace Nozomi.Data.Models.Currency
 {
     /// <summary>
     /// The best way to peg currencies to sources.
     /// </summary>
-    public class CurrencySource : Entity
+    public class CurrencySource : BaseEntityModel
     {
         public long Id { get; set; }
         

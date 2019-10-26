@@ -1,10 +1,9 @@
 using System;
 using Nozomi.Base.Core;
-using Nozomi.Base.Core.Models;
 
 namespace Nozomi.Data.Models.Web
 {
-    public class RcdHistoricItem : Entity
+    public class RcdHistoricItem : BaseEntityModel
     {
         public long Id { get; set; }
         

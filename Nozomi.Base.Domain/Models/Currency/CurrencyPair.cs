@@ -6,14 +6,13 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using Microsoft.EntityFrameworkCore.Internal;
 using Nozomi.Base.Core;
-using Nozomi.Base.Core.Models;
 using Nozomi.Data.Models.Web;
 using Nozomi.Data.Models.Web.Analytical;
 using Nozomi.Data.Models.Web.Websocket;
 
 namespace Nozomi.Data.Models.Currency
 {
-    public class CurrencyPair : Entity
+    public class CurrencyPair : BaseEntityModel
     {
         [Key]
         public long Id { get; set; }

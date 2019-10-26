@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using Nozomi.Base.Core;
-using Nozomi.Base.Core.Models;
 using Nozomi.Data.AreaModels.v1.AnalysedComponent;
 using Nozomi.Data.AreaModels.v1.RequestComponent;
 using Nozomi.Data.AreaModels.v1.RequestProperty;
@@ -13,7 +12,7 @@ using Nozomi.Data.Models.Web.Websocket;
 
 namespace Nozomi.Data.Models.Web
 {
-    public class Request : Entity
+    public class Request : BaseEntityModel
     {
         public long Id { get; set; }
 

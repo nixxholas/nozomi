@@ -1,9 +1,8 @@
 using Nozomi.Base.Core;
-using Nozomi.Base.Core.Models;
 
 namespace Nozomi.Data.Models.Web.Websocket
 {
-    public class WebsocketCommandProperty : Entity
+    public class WebsocketCommandProperty : BaseEntityModel
     {
         public long Id { get; set; }
 

@@ -1,9 +1,8 @@
 ﻿using Nozomi.Base.Core;
-using Nozomi.Base.Core.Models;
 
 namespace Nozomi.Data.Models.Web
 {
-    public class RequestProperty : Entity
+    public class RequestProperty : BaseEntityModel
     {
         public long Id { get; set; }
 

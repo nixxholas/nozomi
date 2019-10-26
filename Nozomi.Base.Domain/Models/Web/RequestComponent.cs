@@ -1,12 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Nozomi.Base.Core;
-using Nozomi.Base.Core.Models;
 using Nozomi.Data.Models.Currency;
 
 namespace Nozomi.Data.Models.Web
 {
-    public class RequestComponent : Entity
+    public class RequestComponent : BaseEntityModel
     {
         // Default Constructor
         public RequestComponent() {}
