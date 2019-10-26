@@ -7,28 +7,11 @@ using Nozomi.Data.AreaModels.v1.RequestProperty;
 using Nozomi.Data.AreaModels.v1.Requests;
 using Nozomi.Data.Models.Currency;
 using Nozomi.Data.Models.Websocket;
-using Swashbuckle.AspNetCore.Swagger;
 
 namespace Nozomi.Data.Models
 {
     public class Request : Entity
     {
-        // Empty constructor for EF
-        public Request() {}
-
-        public Request(RequestType type, ResponseType responseType, string dataPath, int delay, int failureDelay,
-            long currencyId, long currencyPairId, long currencyTypeId)
-        {
-            RequestType = type;
-            ResponseType = responseType;
-            DataPath = dataPath;
-            Delay = delay;
-            FailureDelay = failureDelay;
-            CurrencyId = currencyId;
-            CurrencyPairId = currencyPairId;
-            CurrencyTypeId = currencyTypeId;
-        }
-        
         public long Id { get; set; }
 
         public Guid Guid { get; set; }
