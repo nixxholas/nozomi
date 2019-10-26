@@ -7,32 +7,19 @@ using Microsoft.Extensions.Logging;
 using Nozomi.Data;
 using Nozomi.Data.ResponseModels.Currency;
 using Nozomi.Service.Events.Interfaces;
-using Nozomi.Service.Services.Interfaces;
 
 namespace Nozomi.Web.Controllers.APIs.v1.Source
 {
     public class SourceController : BaseApiController<SourceController>, ISourceController
     {
         private readonly ISourceEvent _sourceEvent;
-        private readonly ISourceService _sourceService;
 
         public SourceController(ILogger<SourceController> logger,
-            ISourceEvent sourceEvent, ISourceService sourceService)
+            ISourceEvent sourceEvent)
             : base(logger)
         {
             _sourceEvent = sourceEvent;
-            _sourceService = sourceService;
         }
-
-        #if DEBUG
-        [HttpGet]
-        public IActionResult Bamf()
-        {
-            _sourceService.Bamf();
-
-            return Ok();
-        }
-        #endif
 
         [HttpGet]
         public NozomiResult<ICollection<CurrencyResponse>> History(long sourceId, long days = 7)

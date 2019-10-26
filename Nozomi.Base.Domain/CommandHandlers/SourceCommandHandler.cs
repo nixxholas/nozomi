@@ -25,15 +25,15 @@ namespace Nozomi.Data.CommandHandlers
             _sourceRepository = sourceRepository;
         }
 
-        public Task<bool> Handle(CreateSourceCommand message, CancellationToken cancellationToken)
+        public Task<bool> Handle(CreateSourceCommand request, CancellationToken cancellationToken)
         {
-            if (!message.IsValid())
+            if (!request.IsValid())
             {
-                NotifyValidationErrors(message);
+                NotifyValidationErrors(request);
                 return Task.FromResult(false);
             }
 
-            var source = new Source(message.Abbreviation, message.Name, message.APIDocsURL);
+            var source = new Source(request.Abbreviation, request.Name, request.APIDocsURL);
             
             _sourceRepository.Add(source);
 
