@@ -1,9 +1,9 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Nozomi.Base.Core.Helpers.Mapping;
 using Nozomi.Data.Models.Analytical;
 using Nozomi.Data.Models.Currency;
-using Nozomi.Repo.BCL;
 
 namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
 {
@@ -14,9 +14,6 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
             entityTypeBuilder.HasKey(ac => ac.Id).HasName("AnalysedComponent_PK_Id");
             entityTypeBuilder.Property(ac => ac.Id)
                 .ValueGeneratedOnAdd();
-
-            entityTypeBuilder.HasAlternateKey(r => r.Guid);
-            entityTypeBuilder.Property(r => r.Guid).HasDefaultValueSql("uuid_generate_v4()");
 
             entityTypeBuilder.HasIndex(ac => new { ac.CurrencyId, ac.ComponentType })
                 .HasName("AnalysedComponent_Index_CurrencyId_ComponentType").IsUnique();

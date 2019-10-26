@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Nozomi.Base.Core.Helpers.Mapping;
 using Nozomi.Data.Models;
 using Nozomi.Data.Models.Currency;
-using Nozomi.Repo.BCL;
 
 namespace Nozomi.Repo.Data.Mappings.WebModels
 {
@@ -14,9 +14,6 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
         {
             entityTypeBuilder.HasKey(rc => rc.Id).HasName("RequestComponent_PK_Id");
             entityTypeBuilder.Property(rc => rc.Id).ValueGeneratedOnAdd();
-
-            entityTypeBuilder.HasAlternateKey(r => r.Guid);
-            entityTypeBuilder.Property(r => r.Guid).HasDefaultValueSql("uuid_generate_v4()");
 
             entityTypeBuilder.HasIndex(rc => new {rc.RequestId, rc.ComponentType})
                 .HasName("RequestComponent_AK_RequestId_ComponentType").IsUnique();

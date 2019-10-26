@@ -1,8 +1,8 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Nozomi.Base.Core.Helpers.Mapping;
 using Nozomi.Data.Models;
-using Nozomi.Repo.BCL;
 
 namespace Nozomi.Repo.Data.Mappings.WebModels
 {
@@ -13,7 +13,7 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
             entityTypeBuilder.HasKey(r => r.Id).HasName("Request_PK_Id");
             entityTypeBuilder.Property(r => r.Id).ValueGeneratedOnAdd();
 
-            entityTypeBuilder.HasAlternateKey(r => r.Guid);
+            entityTypeBuilder.HasAlternateKey(r => r.Guid).HasName("Request_AK_Guid");
             entityTypeBuilder.Property(r => r.Guid).HasDefaultValueSql("uuid_generate_v4()");
 
             entityTypeBuilder.Property(r => r.Delay).HasDefaultValue(0).IsRequired();

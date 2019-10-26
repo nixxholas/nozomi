@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Nozomi.Base.Core.Models;
 
-namespace Nozomi.Repo.BCL
+namespace Nozomi.Base.Core.Helpers.Mapping
 {
     public abstract class BaseMap<T> where T : class
     {

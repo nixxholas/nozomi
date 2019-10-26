@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Nozomi.Base.Core.Helpers.Mapping;
 using Nozomi.Data.Models.Analytical;
-using Nozomi.Repo.BCL;
 
 namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
 {
@@ -13,9 +13,6 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
             entityTypeBuilder.HasKey(ahi => ahi.Id).HasName("AnalysedHistoricItem_PK_Id");
             entityTypeBuilder.Property(ahi => ahi.Id)
                 .ValueGeneratedOnAdd();
-
-            entityTypeBuilder.HasAlternateKey(r => r.Guid);
-            entityTypeBuilder.Property(r => r.Guid).HasDefaultValueSql("uuid_generate_v4()");
 
             entityTypeBuilder.Property(ahi => ahi.Value).IsRequired();
             entityTypeBuilder.Property(ahi => ahi.HistoricDateTime).IsRequired();
