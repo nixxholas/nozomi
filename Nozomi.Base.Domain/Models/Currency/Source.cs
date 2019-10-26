@@ -8,15 +8,6 @@ namespace Nozomi.Data.Models.Currency
 {
     public class Source : Entity
     {
-        public Source () {}
-
-        public Source(string abbreviation, string name, string apiDocsUrl)
-        {
-            Abbreviation = abbreviation;
-            Name = name;
-            APIDocsURL = apiDocsUrl;
-        }
-        
         public long Id { get; set; }
 
         // Short form for the currency source if needed.
