@@ -6,8 +6,10 @@ using Nozomi.Data.AreaModels.v1.Source;
 
 namespace Nozomi.Service.Services.Interfaces
 {
-    public interface ISourceService
+    public interface ISourceService : IDisposable
     {
+        void Bamf();
+        
         NozomiResult<string> Create(CreateSource createSource, long userId = 0);
 
         bool Update(UpdateSource updateSource);

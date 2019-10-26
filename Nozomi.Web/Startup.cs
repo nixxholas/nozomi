@@ -112,9 +112,15 @@ namespace Nozomi.Web
                 }, ServiceLifetime.Transient);
             }
 
+            // AutoMapper Injection
+            services.AddAutoMapperSetup();
+
             // Add framework services.
             services.AddMvc()
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+
+            // Adding MediatR for Domain Events and Notifications
+            services.AddMediatR(typeof(Startup));
 
             services.AddHsts(opt =>
             {
@@ -131,12 +137,6 @@ namespace Nozomi.Web
 
             // ASP.NET HttpContext dependency
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-
-            // Adding MediatR for Domain Events and Notifications
-            services.AddMediatR(typeof(Startup));
-
-            // AutoMapper Injection
-            services.AddAutoMapperSetup();
 
             // UoW-Repository injection
             services.ConfigureRepoLayer();

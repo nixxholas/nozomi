@@ -2,24 +2,44 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Logging;
+using Nozomi.Base.Core.Bus;
 using Nozomi.Data;
 using Nozomi.Data.AreaModels.v1.Source;
+using Nozomi.Data.Commands.Sources;
 using Nozomi.Data.Interfaces;
 using Nozomi.Data.Models.Currency;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.Data;
 using Nozomi.Service.Services.Interfaces;
+using Nozomi.Service.ViewModels.Sources;
 
 namespace Nozomi.Service.Services
 {
     public class SourceService : BaseService<SourceService, NozomiDbContext>, ISourceService
     {
+        private readonly IMapper _mapper;
+        private readonly IMediatorHandler _bus;
+        
         public SourceService(ILogger<SourceService> logger, 
-            IUnitOfWork<NozomiDbContext> unitOfWork) : base(logger, unitOfWork)
+            IUnitOfWork<NozomiDbContext> unitOfWork, IMapper mapper, IMediatorHandler bus) : base(logger, unitOfWork)
         {
+            _mapper = mapper;
+            _bus = bus;
+        }
+
+        public void Bamf()
+        {
+            var source = _mapper.Map<CreateSourceCommand>(new CreateSourceViewModel
+            {
+                Abbreviation = Guid.NewGuid().ToString(),
+                Name = "poof",
+                ApiDocsUrl = "lols"
+            });
+            _bus.SendCommand(source);
         }
 
         public NozomiResult<string> Create(CreateSource createSource, long userId = 0)
@@ -403,6 +423,11 @@ namespace Nozomi.Service.Services
             }
 
             return false;
+        }
+
+        public void Dispose()
+        {
+            GC.SuppressFinalize(this);
         }
     }
 }

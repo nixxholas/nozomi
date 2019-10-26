@@ -1,6 +1,8 @@
 using AutoMapper;
 using Nozomi.Data.Commands;
+using Nozomi.Data.Commands.Sources;
 using Nozomi.Service.ViewModels;
+using Nozomi.Service.ViewModels.Sources;
 
 namespace Nozomi.Service.AutoMapper
 {
@@ -8,6 +10,8 @@ namespace Nozomi.Service.AutoMapper
     {
         public ViewModelToDomainMappingProfile()
         {
+            CreateMap<CreateSourceViewModel, CreateSourceCommand>()
+                .ConstructUsing(c => new CreateSourceCommand(c.Abbreviation, c.Name, c.ApiDocsUrl));
             CreateMap<CreateRequestViewModel, CreateRequestCommand>()
                 .ForMember(dest => dest.RequestType, 
                     opt => opt.MapFrom(src => src.Type))
