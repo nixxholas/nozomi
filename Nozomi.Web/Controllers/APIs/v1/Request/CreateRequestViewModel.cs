@@ -1,6 +1,6 @@
 using Nozomi.Data.ResponseModels.CurrencyPair;
 
-namespace Nozomi.Service.ViewModels
+namespace Nozomi.Web.Controllers.APIs.v1.Request
 {
     public class CreateRequestViewModel
     {
