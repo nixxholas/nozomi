@@ -10,10 +10,12 @@ using Nozomi.Data.Commands;
 using Nozomi.Data.EventHandlers;
 using Nozomi.Data.Events;
 using Nozomi.Data.Interfaces;
-using Nozomi.Data.Interfaces.Repositories;
+using Nozomi.Data.Repositories;
 using Nozomi.Repo.BCL;
 using Nozomi.Repo.Data;
 using Nozomi.Repo.Store;
+using Nozomi.Service.Services;
+using Nozomi.Service.Services.Interfaces;
 
 namespace Nozomi.Web.StartupExtensions
 {
@@ -30,6 +32,8 @@ namespace Nozomi.Web.StartupExtensions
 
             // Domain - Commands
             services.AddScoped<IRequestHandler<CreateRequestCommand, bool>, RequestCommandHandler>();
+
+            services.AddScoped<INewRequestService, NewRequestService>();
 
             // Database
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));

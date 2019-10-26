@@ -7,8 +7,8 @@ using Nozomi.Base.Core.Notifications;
 using Nozomi.Data.Commands;
 using Nozomi.Data.Events;
 using Nozomi.Data.Interfaces;
-using Nozomi.Data.Interfaces.Repositories;
 using Nozomi.Data.Models;
+using Nozomi.Data.Repositories;
 
 namespace Nozomi.Data.CommandHandlers
 {

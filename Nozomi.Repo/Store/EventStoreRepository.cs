@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Nozomi.Base.Core.Events;
-using Nozomi.Data.Interfaces.Repositories;
+using Nozomi.Data.Repositories;
 
 namespace Nozomi.Repo.Store
 {

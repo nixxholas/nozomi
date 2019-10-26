@@ -69,7 +69,7 @@ namespace Nozomi.Web
                     .AddEntityFrameworkNpgsql()
                     .AddDbContext<EventStoreContext>(options =>
                         {
-                            options.UseNpgsql(str);
+                            options.UseNpgsql(esStr);
                             options.EnableSensitiveDataLogging(false);
                             options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
                         },

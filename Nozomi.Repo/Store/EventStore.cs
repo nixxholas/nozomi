@@ -1,7 +1,7 @@
 using Newtonsoft.Json;
 using Nozomi.Base.Core.Events;
 using Nozomi.Base.Core.Interfaces;
-using Nozomi.Data.Interfaces.Repositories;
+using Nozomi.Data.Repositories;
 
 namespace Nozomi.Repo.Store
 {

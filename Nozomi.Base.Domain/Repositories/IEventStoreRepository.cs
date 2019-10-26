@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using Nozomi.Base.Core.Events;
 
-namespace Nozomi.Data.Interfaces.Repositories
+namespace Nozomi.Data.Repositories
 {
     public interface IEventStoreRepository : IDisposable
     {

@@ -31,8 +31,6 @@ namespace Nozomi.Data.Commands
             CurrencyTypeId = currencyTypeId;
         }
         
-        public string CurrencySlug { get; private set; }
-        
         public override bool IsValid()
         {
             ValidationResult = new CreateRequestValidation().Validate(this);
