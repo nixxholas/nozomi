@@ -33,7 +33,7 @@ namespace Nozomi.Repo.BCL.Repository
             return (IRepository<TEntity>) _repositories[type];
         }
 
-        public int Commit(long userId = 0)
+        public int Commit(string userId = null)
         {
             bool saveFailed;
             do
