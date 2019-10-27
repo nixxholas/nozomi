@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data.AreaModels.v1.Requests;
 using Nozomi.Data.Models.Web;
+using Nozomi.Data.ResponseModels.Request;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Data;
@@ -60,6 +61,16 @@ namespace Nozomi.Service.Events
 
             return query?
                 .SingleOrDefault(r => r.Id.Equals(id) && r.DeletedAt == null);
+        }
+
+        public IQueryable<RequestViewModel> GetAll(long userId)
+        {
+            return _unitOfWork.GetRepository<Request>()
+                .GetQueryable()
+                .AsNoTracking()
+                .Where(r => r.IsEnabled && r.DeletedAt == null && r.CreatedBy.Equals(userId))
+                .Select(r => new RequestViewModel(r.Guid, r.RequestType, r.ResponseType, r.DataPath, r.Delay,
+                    r.FailureDelay, r.IsEnabled));
         }
 
         public ICollection<RequestDTO> GetAllDTO(int index)
