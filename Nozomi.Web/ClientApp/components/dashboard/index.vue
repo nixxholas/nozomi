@@ -94,7 +94,9 @@
 </template>
 
 <script>
-  import CreateRequestComponent from '../dashboard/forms/create-request-modal';
+    import store from '../../store/index';
+    import { mapActions } from 'vuex';
+    import CreateRequestComponent from '../dashboard/forms/create-request-modal';
 
     export default {
         name: "Dashboard",
@@ -102,69 +104,63 @@
         data: function() {
             return {
                 isCreateRequestModalActive: false,
-                requestData: [
-                    {
-                        'id': 1,
-                        'first_name': 'Jesse',
-                        'last_name': 'Simmons',
-                        'date': '2016-10-15 13:43:27',
-                        'gender': 'Male'
-                    },
-                    {
-                        'id': 2,
-                        'first_name': 'John',
-                        'last_name': 'Jacobs',
-                        'date': '2016-12-15 06:00:53',
-                        'gender': 'Male'
-                    },
-                    {
-                        'id': 3,
-                        'first_name': 'Tina',
-                        'last_name': 'Gilbert',
-                        'date': '2016-04-26 06:26:28',
-                        'gender': 'Female'
-                    },
-                    {
-                        'id': 4,
-                        'first_name': 'Clarence',
-                        'last_name': 'Flores',
-                        'date': '2016-04-10 10:28:46',
-                        'gender': 'Male'
-                    },
-                    {
-                        'id': 5,
-                        'first_name': 'Anne',
-                        'last_name': 'Lee',
-                        'date': '2016-12-06 14:38:38',
-                        'gender': 'Female'
-                    }
-                ],
+                requestData: [],
                 requestColumns: [
                     {
-                        field: 'id',
+                        field: 'guid',
                         label: 'ID',
                         width: '40',
+                    },
+                    {
+                        field: 'requestType',
+                        label: 'Type',
+                    },
+                    {
+                        field: 'responseType',
+                        label: 'Response Type',
+                    },
+                    {
+                        field: 'dataPath',
+                        label: 'URL',
+                    },
+                    {
+                        field: 'delay',
+                        label: 'Delay',
+                        centered: true,
                         numeric: true
                     },
                     {
-                        field: 'first_name',
-                        label: 'First Name',
-                    },
-                    {
-                        field: 'last_name',
-                        label: 'Last Name',
-                    },
-                    {
-                        field: 'date',
-                        label: 'Date',
-                        centered: true
-                    },
-                    {
-                        field: 'gender',
-                        label: 'Gender',
+                        field: 'failureDelay',
+                        label: 'Failure Delay',
+                        centered: true,
+                        numeric: true
                     }
                 ]
             }
+        },
+        methods: {
+            ...mapActions('oidcStore', ['authenticateOidc', 'signOutOidc'])
+        },
+        beforeMount: function() {
+            let self = this;
+
+            // Synchronously call for data
+            this.$axios.get('/api/Request/GetAll', {
+                headers: {
+                    Authorization: "Bearer " + store.state.oidcStore.access_token
+                }
+            })
+                .then(function (response) {
+                    self.requestData = response.data;
+                })
+                .catch(function (error) {
+                    // handle error
+                    self.methods.authenticateOidc(self.currentRoute);
+                })
+                .finally(function () {
+                    // always executed
+                    self.isLoading = false;
+                });
         }
     }
 </script>
