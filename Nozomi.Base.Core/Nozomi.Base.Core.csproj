@@ -17,6 +17,7 @@
       <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
       <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="2.2.4" />
       <PackageReference Include="NuGet.Build.Packaging" Version="0.2.2" />
+      <PackageReference Include="Polly" Version="7.1.1" />
       <PackageReference Include="Swashbuckle.AspNetCore" Version="4.0.1" />
       <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="4.0.1" />
       <PackageReference Include="Swashbuckle.AspNetCore.Filters" Version="4.5.5" />
