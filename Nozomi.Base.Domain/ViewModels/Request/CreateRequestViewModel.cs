@@ -1,18 +1,20 @@
+using FluentValidation;
+using Nozomi.Data.Models.Web;
 using Nozomi.Data.ResponseModels.CurrencyPair;
 
-namespace Nozomi.Web.Controllers.APIs.v1.Request
+namespace Nozomi.Data.ViewModels.Request
 {
     public class CreateRequestViewModel
     {
         /// <summary>
         /// Request Type. GET? PUT?
         /// </summary>
-        public long Type { get; set; }
+        public RequestType RequestType { get; set; }
 
         /// <summary>
         /// JSON? XML?
         /// </summary>
-        public long ResponseType { get; set; }
+        public ResponseType ResponseType { get; set; }
 
         /// <summary>
         /// URL to the endpoint
@@ -56,5 +58,25 @@ namespace Nozomi.Web.Controllers.APIs.v1.Request
         /// The ID of the Currency Type selected.
         /// </summary>
         public long CurrencyTypeId { get; set; }
+
+        public class CreateRequestValidator : AbstractValidator<CreateRequestViewModel>
+        {
+            public CreateRequestValidator()
+            {
+                RuleFor(r => r.RequestType).IsInEnum();
+                RuleFor(r => r.ResponseType).IsInEnum();
+                RuleFor(r => r.DataPath).NotEmpty();
+                RuleFor(r => r.Delay).GreaterThan(-1);
+                RuleFor(r => r.FailureDelay).GreaterThan(-1);
+                RuleFor(r => r.ParentType).IsInEnum();
+
+                RuleFor(r => r.CurrencySlug).NotNull().Unless(r => r.CurrencyPair != null
+                                                                   || r.CurrencyTypeId > 0);
+                RuleFor(r => r.CurrencyPair).NotNull().Unless(r =>
+                    !string.IsNullOrEmpty(r.CurrencySlug) || r.CurrencyTypeId > 0);
+                RuleFor(r => r.CurrencyTypeId).GreaterThan(0).Unless(r =>
+                    !string.IsNullOrEmpty(r.CurrencySlug) || r.CurrencyPair != null);
+            }
+        }
     }
 }
