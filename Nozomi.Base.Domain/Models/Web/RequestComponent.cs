@@ -20,9 +20,9 @@ namespace Nozomi.Data.Models.Web
                 CreatedAt = component.CreatedAt;
                 ModifiedAt = component.ModifiedAt;
                 DeletedAt = component.DeletedAt;
-                CreatedBy = component.CreatedBy;
-                ModifiedBy = component.ModifiedBy;
-                DeletedBy = component.DeletedBy;
+                CreatedById = component.CreatedById;
+                ModifiedById = component.ModifiedById;
+                DeletedById = component.DeletedById;
                 Identifier = component.Identifier;
                 QueryComponent = component.QueryComponent;
                 IsDenominated = component.IsDenominated;

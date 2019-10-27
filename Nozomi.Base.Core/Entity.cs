@@ -12,12 +12,6 @@ namespace Nozomi.Base.Core
         public DateTime ModifiedAt { get; set; }
 
         public DateTime? DeletedAt { get; set; }
-
-        public User CreatedBy { get; set; }
-
-        public User ModifiedBy { get; set; }
-
-        public User DeletedBy { get; set; }
         
         public string CreatedById { get; set; }
         

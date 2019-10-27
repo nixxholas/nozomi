@@ -68,7 +68,7 @@ namespace Nozomi.Service.Events
             return _unitOfWork.GetRepository<Request>()
                 .GetQueryable()
                 .AsNoTracking()
-                .Where(r => r.IsEnabled && r.DeletedAt == null && r.CreatedBy.Equals(userId))
+                .Where(r => r.IsEnabled && r.DeletedAt == null && r.CreatedById.Equals(userId))
                 .Select(r => new RequestViewModel(r.Guid, r.RequestType, r.ResponseType, r.DataPath, r.Delay,
                     r.FailureDelay, r.IsEnabled));
         }
@@ -127,9 +127,9 @@ namespace Nozomi.Service.Events
                         guid = r.Guid,
                         requestType = r.RequestType,
                         createdAt = r.CreatedAt,
-                        createdBy = r.CreatedBy,
+                        createdBy = r.CreatedById,
                         modifiedAt = r.ModifiedAt,
-                        modifiedBy = r.ModifiedBy
+                        modifiedBy = r.ModifiedById
                     });
             }
 
@@ -150,9 +150,9 @@ namespace Nozomi.Service.Events
                     guid = r.Guid,
                     requestType = r.RequestType,
                     createdAt = r.CreatedAt,
-                    createdBy = r.CreatedBy,
+                    createdBy = r.CreatedById,
                     modifiedAt = r.ModifiedAt,
-                    modifiedBy = r.ModifiedBy,
+                    modifiedBy = r.ModifiedById,
                     requestComponents = r.RequestComponents
                         .Select(rc => new
                         {
@@ -161,9 +161,9 @@ namespace Nozomi.Service.Events
                             value = rc.Value,
                             isEnabled = rc.IsEnabled,
                             createdAt = rc.CreatedAt,
-                            createdBy = rc.CreatedBy,
+                            createdBy = rc.CreatedById,
                             modifiedAt = rc.ModifiedAt,
-                            modifiedBy = rc.ModifiedBy
+                            modifiedBy = rc.ModifiedById
                         }),
                     requestProperties = r.RequestProperties
                         .Select(rp => new
@@ -173,9 +173,9 @@ namespace Nozomi.Service.Events
                             key = rp.Key,
                             value = rp.Value,
                             createdAt = rp.CreatedAt,
-                            createdBy = rp.CreatedBy,
+                            createdBy = rp.CreatedById,
                             modifiedAt = rp.ModifiedAt,
-                            modifiedBy = rp.ModifiedBy
+                            modifiedBy = rp.ModifiedById
                         })
                 });
         }
@@ -229,11 +229,11 @@ namespace Nozomi.Service.Events
                         requestType = r.RequestType,
                         isEnabled = r.IsEnabled,
                         createdAt = r.CreatedAt,
-                        createdBy = r.CreatedBy,
+                        createdBy = r.CreatedById,
                         modifiedAt = r.ModifiedAt,
-                        modifiedBy = r.ModifiedBy,
+                        modifiedBy = r.ModifiedById,
                         deletedAt = r.DeletedAt,
-                        deletedBy = r.DeletedBy
+                        deletedBy = r.DeletedById
                     });
             }
 
@@ -250,11 +250,11 @@ namespace Nozomi.Service.Events
                     requestType = r.RequestType,
                     isEnabled = r.IsEnabled,
                     createdAt = r.CreatedAt,
-                    createdBy = r.CreatedBy,
+                    createdBy = r.CreatedById,
                     modifiedAt = r.ModifiedAt,
-                    modifiedBy = r.ModifiedBy,
+                    modifiedBy = r.ModifiedById,
                     deletedAt = r.DeletedAt,
-                    deletedBy = r.DeletedBy,
+                    deletedBy = r.DeletedById,
                     requestComponents = r.RequestComponents
                         .Select(rc => new
                         {
@@ -263,11 +263,11 @@ namespace Nozomi.Service.Events
                             value = rc.Value,
                             isEnabled = rc.IsEnabled,
                             createdAt = rc.CreatedAt,
-                            createdBy = rc.CreatedBy,
+                            createdBy = rc.CreatedById,
                             modifiedAt = rc.ModifiedAt,
-                            modifiedBy = rc.ModifiedBy,
+                            modifiedBy = rc.ModifiedById,
                             deletedAt = rc.DeletedAt,
-                            deletedBy = rc.DeletedBy
+                            deletedBy = rc.DeletedById
                         }),
                     requestProperties = r.RequestProperties
                         .Select(rp => new
@@ -278,11 +278,11 @@ namespace Nozomi.Service.Events
                             value = rp.Value,
                             isEnabled = rp.IsEnabled,
                             createdAt = rp.CreatedAt,
-                            createdBy = rp.CreatedBy,
+                            createdBy = rp.CreatedById,
                             modifiedAt = rp.ModifiedAt,
-                            modifiedBy = rp.ModifiedBy,
+                            modifiedBy = rp.ModifiedById,
                             deletedAt = rp.DeletedAt,
-                            deletedBy = rp.DeletedBy
+                            deletedBy = rp.DeletedById
                         })
                 });
         }
@@ -322,9 +322,9 @@ namespace Nozomi.Service.Events
                     CurrencyTypeId = r.CurrencyTypeId,
                     CurrencyType = r.CurrencyType,
                     CreatedAt = r.CreatedAt,
-                    CreatedBy = r.CreatedBy,
+                    CreatedById = r.CreatedById,
                     ModifiedAt = r.ModifiedAt,
-                    ModifiedBy = r.ModifiedBy,
+                    ModifiedById = r.ModifiedById,
                     IsEnabled = r.IsEnabled,
                     RequestComponents = r.RequestComponents
                         .Where(rc => rc.StoreHistoricals).ToList(),
@@ -389,9 +389,9 @@ namespace Nozomi.Service.Events
                     CurrencyTypeId = r.CurrencyTypeId,
                     CurrencyType = r.CurrencyType,
                     CreatedAt = r.CreatedAt,
-                    CreatedBy = r.CreatedBy,
+                    CreatedById = r.CreatedById,
                     ModifiedAt = r.ModifiedAt,
-                    ModifiedBy = r.ModifiedBy,
+                    ModifiedById = r.ModifiedById,
                     IsEnabled = r.IsEnabled,
                     RequestComponents = r.RequestComponents
                         .Where(rc => rc.StoreHistoricals).ToList(),
@@ -431,9 +431,9 @@ namespace Nozomi.Service.Events
                     CurrencyTypeId = r.CurrencyTypeId,
                     CurrencyType = r.CurrencyType,
                     CreatedAt = r.CreatedAt,
-                    CreatedBy = r.CreatedBy,
+                    CreatedById = r.CreatedById,
                     ModifiedAt = r.ModifiedAt,
-                    ModifiedBy = r.ModifiedBy,
+                    ModifiedById = r.ModifiedById,
                     IsEnabled = r.IsEnabled,
                     RequestComponents = r.RequestComponents
                         .Where(rc => rc.StoreHistoricals).ToList(),

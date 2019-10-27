@@ -46,6 +46,8 @@ namespace Nozomi.Repo.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder);
+            
             modelBuilder.ForNpgsqlUseIdentityColumns();
             
             var analysedComponentMap = new AnalysedComponentMap(modelBuilder.Entity<AnalysedComponent>());
@@ -88,9 +90,6 @@ namespace Nozomi.Repo.Data
             // MTM
             var currencySourceMap = new CurrencySourceMap(modelBuilder.Entity<CurrencySource>());
             modelBuilder.Entity<CurrencySource>().ForNpgsqlUseXminAsConcurrencyToken();
-
-
-            base.OnModelCreating(modelBuilder);
         }
         
         public int SaveChanges(string userId)
