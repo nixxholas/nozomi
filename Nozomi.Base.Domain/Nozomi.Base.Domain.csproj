@@ -12,13 +12,11 @@
     <RootNamespace>Nozomi.Data</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="FluentValidation.AspNetCore" Version="8.5.0" />
     <PackageReference Include="NuGet.Build.Packaging" Version="0.2.2" />
     <PackageReference Include="System.Threading.Channels" Version="4.5.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Nozomi.Base.Core\Nozomi.Base.Core.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="ViewModels\Manage" />
   </ItemGroup>
 </Project>
