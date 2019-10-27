@@ -5,9 +5,9 @@ namespace Nozomi.Infra.Analysis.Service.Services.Interfaces
 {
     public interface IAnalysedHistoricItemService
     {
-        long Create(AnalysedHistoricItem item, long userId = 0);
+        long Create(AnalysedHistoricItem item, string userId = null);
 
         bool Push(long analysedComponentId, string incomingValue, DateTime historicalTime, 
-            bool ignoreSimilarityCheck = false, long userId = 0);
+            bool ignoreSimilarityCheck = false, string userId = null);
     }
 }

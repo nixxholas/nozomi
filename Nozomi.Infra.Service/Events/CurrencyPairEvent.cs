@@ -136,7 +136,7 @@ namespace Nozomi.Service.Events
                 .ToList();
         }
 
-        public CurrencyPair Get(long id, bool track = false, long userId = 0)
+        public CurrencyPair Get(long id, bool track = false, string userId = null)
         {
             if (track)
                 return _unitOfWork.GetRepository<CurrencyPair>()

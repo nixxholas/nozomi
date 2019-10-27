@@ -80,7 +80,7 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers.Source
             if (!ModelState.IsValid)
                 return BadRequest("Invalid payload, please provide the missing properties.");
 
-            var result = _sourceService.Create(createSource, 0);
+            var result = _sourceService.Create(createSource);
             
             if (result.ResultType.Equals(NozomiResultType.Success)) return Ok(result);
 

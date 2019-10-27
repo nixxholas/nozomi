@@ -16,6 +16,6 @@ namespace Nozomi.Ticker.Controllers.APIs.v1.CurrencyPairComponent
 
         NozomiResult<string> Update(UpdateRequestComponent updateRequestComponent);
 
-        NozomiResult<string> Delete(long id, long userId = 0, bool hardDelete = false);
+        NozomiResult<string> Delete(long id, string userId = null, bool hardDelete = false);
     }
 }

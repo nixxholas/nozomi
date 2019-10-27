@@ -32,7 +32,7 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
                 return BadRequest("Invalid user.");
             }
 
-            var res = _analysedComponentService.Create(createAnalysedComponent, 0);
+            var res = _analysedComponentService.Create(createAnalysedComponent);
 
             if (res > 0)
                 return Ok("Analysed component successfully created!");
@@ -49,7 +49,7 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
                 return BadRequest("Invalid user.");
             }
 
-            var res = _analysedComponentService.Delete(id, false, 0);
+            var res = _analysedComponentService.Delete(id, false);
 
             if (res)
                 return Ok("Analysed component successfully created!");

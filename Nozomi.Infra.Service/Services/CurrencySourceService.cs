@@ -19,7 +19,7 @@ namespace Nozomi.Service.Services
         {
         }
 
-        public NozomiResult<string> Create(CreateCurrencySource currencySource, long userId = 0)
+        public NozomiResult<string> Create(CreateCurrencySource currencySource, string userId = null)
         {
             try
             {
@@ -46,7 +46,7 @@ namespace Nozomi.Service.Services
             }
         }
 
-        public NozomiResult<string> Delete(long id, long userId = 0)
+        public NozomiResult<string> Delete(long id, string userId = null)
         {
             try
             {
@@ -58,7 +58,8 @@ namespace Nozomi.Service.Services
                     return new NozomiResult<string>(NozomiResultType.Failed, "Unable to delete currency source");
                 
                 csToDelete.DeletedAt = DateTime.UtcNow;
-                csToDelete.DeletedBy = userId;
+                if (!string.IsNullOrWhiteSpace(userId))
+                    csToDelete.DeletedBy = Guid.Parse(userId);
 
                 _unitOfWork.GetRepository<CurrencySource>().Update(csToDelete);
                 _unitOfWork.Commit(userId);

@@ -17,7 +17,7 @@ namespace Nozomi.Infra.Analysis.Service.Services
         {
         }
 
-        public long Create(AnalysedHistoricItem item, long userId = 0)
+        public long Create(AnalysedHistoricItem item, string userId = null)
         {
             if (item != null)
             {
@@ -29,7 +29,7 @@ namespace Nozomi.Infra.Analysis.Service.Services
         }
 
         public bool Push(long analysedComponentId, string incomingValue, DateTime historicalTime, 
-            bool ignoreSimilarityCheck = false, long userId = 0)
+            bool ignoreSimilarityCheck = false, string userId = null)
         {
             if (analysedComponentId > 0 && !string.IsNullOrEmpty(incomingValue))
             {

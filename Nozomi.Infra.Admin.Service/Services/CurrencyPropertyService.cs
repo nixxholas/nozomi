@@ -16,7 +16,7 @@ namespace Nozomi.Infra.Admin.Service.Services
         {
         }
 
-        public long Create(CurrencyProperty currencyProperty, long userId = 0)
+        public long Create(CurrencyProperty currencyProperty, string userId = null)
         {
             if (currencyProperty != null && currencyProperty.IsValid())
             {
@@ -29,7 +29,7 @@ namespace Nozomi.Infra.Admin.Service.Services
             return long.MinValue;
         }
 
-        public bool Update(CurrencyProperty currencyProperty, long userId = 0)
+        public bool Update(CurrencyProperty currencyProperty, string userId = null)
         {
             if (currencyProperty != null && currencyProperty.Id > 0)
             {
@@ -53,7 +53,7 @@ namespace Nozomi.Infra.Admin.Service.Services
             return false;
         }
 
-        public bool Delete(long currencyPropertyId, bool hardDelete = false, long userId = 0)
+        public bool Delete(long currencyPropertyId, bool hardDelete = false, string userId = null)
         {
             if (currencyPropertyId > 0)
             {

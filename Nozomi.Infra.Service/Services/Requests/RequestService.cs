@@ -20,7 +20,7 @@ namespace Nozomi.Service.Services.Requests
         {
         }
 
-        public long Create(Request request, long userId = 0)
+        public long Create(Request request, string userId = null)
         {
             try
             {
@@ -35,7 +35,7 @@ namespace Nozomi.Service.Services.Requests
             }
         }
 
-        public NozomiResult<string> Create(CreateRequest createRequest, long userId = 0)
+        public NozomiResult<string> Create(CreateRequest createRequest, string userId = null)
         {
             try
             {
@@ -149,7 +149,7 @@ namespace Nozomi.Service.Services.Requests
             return false;
         }
 
-        public NozomiResult<string> Update(UpdateRequest updateRequest, long userId = 0)
+        public NozomiResult<string> Update(UpdateRequest updateRequest, string userId = null)
         {
             try
             {
@@ -186,7 +186,8 @@ namespace Nozomi.Service.Services.Requests
                         if (ucpc.ToBeDeleted())
                         {
                             cpc.DeletedAt = DateTime.UtcNow;
-                            cpc.DeletedBy = userId;
+                            if (!string.IsNullOrWhiteSpace(userId))
+                                cpc.DeletedBy = Guid.Parse(userId);
 
                             _unitOfWork.GetRepository<RequestComponent>().Update(cpc);
                         }
@@ -215,7 +216,8 @@ namespace Nozomi.Service.Services.Requests
                         if (urp.ToBeDeleted())
                         {
                             requestProperty.DeletedAt = DateTime.UtcNow;
-                            requestProperty.DeletedBy = userId;
+                            if (!string.IsNullOrWhiteSpace(userId))
+                                requestProperty.DeletedBy = Guid.Parse(userId);
 
                             _unitOfWork.GetRepository<RequestProperty>().Update(requestProperty);
                         }
@@ -243,11 +245,11 @@ namespace Nozomi.Service.Services.Requests
             }
         }
 
-        public NozomiResult<string> Delete(long reqId, bool hardDelete = false, long userId = 0)
+        public NozomiResult<string> Delete(long reqId, bool hardDelete = false, string userId = null)
         {
             try
             {
-                if (reqId > 0 && userId >= 0)
+                if (reqId > 0 && !string.IsNullOrWhiteSpace(userId))
                 {
                     var reqToDel = _unitOfWork.GetRepository<Request>()
                         .Get(r => r.Id.Equals(reqId) && r.DeletedAt == null)
@@ -258,7 +260,7 @@ namespace Nozomi.Service.Services.Requests
                         if (!hardDelete)
                         {
                             reqToDel.DeletedAt = DateTime.UtcNow;
-                            reqToDel.DeletedBy = userId;
+                            reqToDel.DeletedBy = Guid.Parse(userId);
                             _unitOfWork.GetRepository<Request>().Update(reqToDel);
                         }
                         else
@@ -280,7 +282,7 @@ namespace Nozomi.Service.Services.Requests
             }
         }
 
-        public bool ManualPoll(long id, long userId = 0)
+        public bool ManualPoll(long id, string userId = null)
         {
             return false;
         }

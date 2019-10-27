@@ -27,7 +27,7 @@ namespace Nozomi.Service.Services
         {
         }
 
-        public NozomiResult<string> Create(CreateCurrency createCurrency, long userId = 0)
+        public NozomiResult<string> Create(CreateCurrency createCurrency, string userId = null)
         {
             try
             {
@@ -107,7 +107,7 @@ namespace Nozomi.Service.Services
             }
         }
 
-        public NozomiResult<string> Update(UpdateCurrency currency, long userId = 0)
+        public NozomiResult<string> Update(UpdateCurrency currency, string userId = null)
         {
             if (currency != null && currency.IsValid())
             {
@@ -139,9 +139,9 @@ namespace Nozomi.Service.Services
                 " payload contains valid entries.");
         }
 
-        public NozomiResult<string> Delete(long currencyId, bool hardDelete = false, long userId = 0)
+        public NozomiResult<string> Delete(long currencyId, bool hardDelete = false, string userId = null)
         {
-            if (currencyId > 0 && userId >= 0)
+            if (currencyId > 0 && !string.IsNullOrWhiteSpace(userId))
             {
                 var currToDel = _unitOfWork.GetRepository<Currency>()
                     .Get(c => c.Id.Equals(currencyId) && c.DeletedAt == null)
@@ -150,7 +150,7 @@ namespace Nozomi.Service.Services
                 if (currToDel != null)
                 {
                     currToDel.DeletedAt = DateTime.UtcNow;
-                    currToDel.DeletedBy = userId;
+                    currToDel.DeletedBy = Guid.Parse(userId);
 
                     _unitOfWork.GetRepository<Currency>().Update(currToDel);
                     _unitOfWork.Commit(userId);

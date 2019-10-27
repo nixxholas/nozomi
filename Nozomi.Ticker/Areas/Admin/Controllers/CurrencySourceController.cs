@@ -39,7 +39,7 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
             if (!ModelState.IsValid)
                 return BadRequest("Please submit proper request data.");
 
-            var result = _currencySourceService.Create(currencySource, 0);
+            var result = _currencySourceService.Create(currencySource);
 
             if (result.ResultType.Equals(NozomiResultType.Success)) return Ok(result);
 

@@ -22,7 +22,7 @@ namespace Nozomi.Service.Services
         {
         }
 
-        public NozomiResult<string> Create(CreateSource createSource, long userId = 0)
+        public NozomiResult<string> Create(CreateSource createSource, string userId = null)
         {
             try
             {
@@ -192,7 +192,7 @@ namespace Nozomi.Service.Services
             return false;
         }
 
-        public bool Delete(long id, bool hardDelete = false, long userId = 0)
+        public bool Delete(long id, bool hardDelete = false, string userId = null)
         {
             var source = _unitOfWork.GetRepository<Source>()
                 .GetQueryable()
@@ -217,7 +217,7 @@ namespace Nozomi.Service.Services
 
                 source.DeletedAt = DateTime.UtcNow;
 
-                if (userId > 0) source.DeletedBy = userId;
+                if (!string.IsNullOrWhiteSpace(userId)) source.DeletedBy = Guid.Parse(userId);
                     
                 _unitOfWork.GetRepository<Source>().Update(source);
                 _unitOfWork.Commit();

@@ -20,7 +20,7 @@ namespace Nozomi.Infra.Admin.Service.Services
         {
         }
 
-        public long Create(CreateAnalysedComponent analysedComponent, long userId = 0)
+        public long Create(CreateAnalysedComponent analysedComponent, string userId = null)
         {
             // Make sure the analysed component that is going to be created doesn't exist yet
             if (!_unitOfWork.GetRepository<AnalysedComponent>()
@@ -59,7 +59,7 @@ namespace Nozomi.Infra.Admin.Service.Services
             return long.MinValue;
         }
 
-        public bool Update(UpdateAnalysedComponent analysedComponent, long userId = 0)
+        public bool Update(UpdateAnalysedComponent analysedComponent, string userId = null)
         {
             var query = _unitOfWork.GetRepository<AnalysedComponent>()
                 .GetQueryable()
@@ -82,7 +82,7 @@ namespace Nozomi.Infra.Admin.Service.Services
             return false;
         }
 
-        public bool Delete(long analysedComponentId, bool hardDelete = false, long userId = 0)
+        public bool Delete(long analysedComponentId, bool hardDelete = false, string userId = null)
         {
             if (analysedComponentId > 0)
             {
@@ -100,7 +100,9 @@ namespace Nozomi.Infra.Admin.Service.Services
                     else
                     {
                         query.DeletedAt = DateTime.UtcNow;
-                        query.DeletedBy = userId;
+                        
+                        if (!string.IsNullOrWhiteSpace(userId))
+                            query.DeletedBy = Guid.Parse(userId);
                     }
 
                     _unitOfWork.Commit(userId);

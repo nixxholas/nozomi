@@ -5,10 +5,10 @@ namespace Nozomi.Infra.Admin.Service.Services.Interfaces
 {
     public interface IAnalysedComponentService
     {
-        long Create(CreateAnalysedComponent analysedComponent, long userId = 0);
+        long Create(CreateAnalysedComponent analysedComponent, string userId = null);
 
-        bool Update(UpdateAnalysedComponent analysedComponent, long userId = 0);
+        bool Update(UpdateAnalysedComponent analysedComponent, string userId = null);
 
-        bool Delete(long analysedComponentId, bool hardDelete = false, long userId = 0);
+        bool Delete(long analysedComponentId, bool hardDelete = false, string userId = null);
     }
 }

@@ -9,9 +9,9 @@ namespace Nozomi.Service.Services.Requests.Interfaces
 {
     public interface IRequestService
     {
-        long Create(Request request, long userId = 0);
+        long Create(Request request, string userId = null);
         
-        NozomiResult<string> Create(CreateRequest createRequest, long userId = 0);
+        NozomiResult<string> Create(CreateRequest createRequest, string userId = null);
         
         bool Delay(Request request, TimeSpan duration);
 
@@ -19,10 +19,10 @@ namespace Nozomi.Service.Services.Requests.Interfaces
 
         bool HasUpdated(ICollection<Request> requests);
 
-        NozomiResult<string> Update(UpdateRequest updateRequest, long userId = 0);
+        NozomiResult<string> Update(UpdateRequest updateRequest, string userId = null);
 
-        NozomiResult<string> Delete(long reqId, bool hardDelete = false, long userId = 0);
+        NozomiResult<string> Delete(long reqId, bool hardDelete = false, string userId = null);
 
-        bool ManualPoll(long id, long userId = 0);
+        bool ManualPoll(long id, string userId = null);
     } 
 }

@@ -42,27 +42,27 @@ namespace Nozomi.Ticker.Controllers.APIs.v1.Request
 
         [Authorize]
         [HttpPost("{userId}")]
-        public NozomiResult<string> Create([FromBody]CreateRequest obj, long userId = 0)
+        public NozomiResult<string> Create([FromBody]CreateRequest obj, string userId = null)
         {
             return _requestService.Create(obj);
         }
 
         [Authorize]
         [HttpPost("{userId}")]
-        public NozomiResult<string> Update([FromBody]UpdateRequest obj, long userId = 0)
+        public NozomiResult<string> Update([FromBody]UpdateRequest obj, string userId = null)
         {
             return _requestService.Update(obj, userId);
         }
 
         [Authorize]
         [HttpDelete("{id}")]
-        public NozomiResult<string> Delete(long id, bool hardDelete = false, long userId = 0)
+        public NozomiResult<string> Delete(long id, bool hardDelete = false, string userId = null)
         {
             return _requestService.Delete(id, hardDelete, userId);
         }                                                 
 
         [HttpPost("{requestId}")]
-        public NozomiResult<JsonResult> ManualPoll(long requestId, long userId = 0)
+        public NozomiResult<JsonResult> ManualPoll(long requestId, string userId = null)
         {
             return new NozomiResult<JsonResult>()
             {

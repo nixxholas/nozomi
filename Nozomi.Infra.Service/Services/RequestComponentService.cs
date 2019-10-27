@@ -29,11 +29,11 @@ namespace Nozomi.Service.Services
             _rcdHistoricItemService = rcdHistoricItemService;
         }
 
-        public NozomiResult<string> Create(CreateRequestComponent createRequestComponent, long userId = 0)
+        public NozomiResult<string> Create(CreateRequestComponent createRequestComponent, string userId = null)
         {
             try
             {
-                if (createRequestComponent == null || userId < 0)
+                if (createRequestComponent == null || !string.IsNullOrWhiteSpace(userId))
                     return new NozomiResult<string>
                         (NozomiResultType.Failed, "Invalid payload or userId.");
 
@@ -59,7 +59,7 @@ namespace Nozomi.Service.Services
             }
         }
 
-        public bool Checked(long id, long userId = 0)
+        public bool Checked(long id, string userId = null)
         {
             if (id > 0)
             {
@@ -216,11 +216,11 @@ namespace Nozomi.Service.Services
             }
         }
 
-        public NozomiResult<string> Update(UpdateRequestComponent updateRequestComponent, long userId = 0)
+        public NozomiResult<string> Update(UpdateRequestComponent updateRequestComponent, string userId = null)
         {
             try
             {
-                if (updateRequestComponent == null || userId < 0)
+                if (updateRequestComponent == null || !string.IsNullOrWhiteSpace(userId))
                     return new NozomiResult<string>
                         (NozomiResultType.Failed, "Invalid payload or userId.");
 
@@ -253,9 +253,9 @@ namespace Nozomi.Service.Services
             }
         }
 
-        public NozomiResult<string> Delete(long id, long userId = 0, bool hardDelete = false)
+        public NozomiResult<string> Delete(long id, string userId = null, bool hardDelete = false)
         {
-            if (id < 1 || userId < 0)
+            if (id < 1 || string.IsNullOrWhiteSpace(userId))
                 return new NozomiResult<string>
                     (NozomiResultType.Failed, "Invalid payload or userId.");
 
@@ -272,7 +272,7 @@ namespace Nozomi.Service.Services
                 else
                 {
                     cpcToDel.DeletedAt = DateTime.UtcNow;
-                    cpcToDel.DeletedBy = userId;
+                    cpcToDel.DeletedBy = Guid.Parse(userId);
 
                     _unitOfWork.GetRepository<RequestComponent>().Update(cpcToDel);
                 }
