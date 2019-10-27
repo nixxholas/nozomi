@@ -93,7 +93,7 @@ namespace Nozomi.Repo.Data
             base.OnModelCreating(modelBuilder);
         }
         
-        public int SaveChanges(long userId = 0)
+        public int SaveChanges(string userId)
         {
             AddTimestamps(userId);
             return base.SaveChanges();
@@ -102,18 +102,18 @@ namespace Nozomi.Repo.Data
         public override async Task<int> SaveChangesAsync(
             CancellationToken cancellationToken = default(CancellationToken))
         {
-            AddTimestamps(0);
+            AddTimestamps(string.Empty);
             return await base.SaveChangesAsync(cancellationToken);
         }
 
-        public async Task<int> SaveChangesAsync(long userId = 0,
+        public async Task<int> SaveChangesAsync(string userId,
             CancellationToken cancellationToken = default(CancellationToken))
         {
             AddTimestamps(userId);
             return await base.SaveChangesAsync(cancellationToken);
         }
 
-        public void AddTimestamps(long userId = 0)
+        public void AddTimestamps(string userId)
         {
             try
             {
@@ -126,16 +126,19 @@ namespace Nozomi.Repo.Data
                     {
                         case EntityState.Added:
                             ((Entity) entity.Entity).CreatedAt = DateTime.UtcNow;
-                            ((Entity) entity.Entity).CreatedBy = userId;
+                            if (!string.IsNullOrWhiteSpace(userId))
+                                ((Entity) entity.Entity).CreatedBy = Guid.Parse(userId);
                             break;
                         case EntityState.Deleted:
                             ((Entity) entity.Entity).DeletedAt = DateTime.UtcNow;
-                            ((Entity) entity.Entity).DeletedBy = userId;
+                            if (!string.IsNullOrWhiteSpace(userId))
+                                ((Entity) entity.Entity).DeletedBy = Guid.Parse(userId);
                             break;
                     }
 
                     ((Entity) entity.Entity).ModifiedAt = DateTime.UtcNow;
-                    ((Entity) entity.Entity).ModifiedBy = userId;
+                    if (!string.IsNullOrWhiteSpace(userId))
+                        ((Entity) entity.Entity).ModifiedBy = Guid.Parse(userId);
                 }
             }
             catch (Exception ex)
