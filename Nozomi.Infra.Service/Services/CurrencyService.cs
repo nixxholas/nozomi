@@ -150,7 +150,7 @@ namespace Nozomi.Service.Services
                 if (currToDel != null)
                 {
                     currToDel.DeletedAt = DateTime.UtcNow;
-                    currToDel.DeletedBy = Guid.Parse(userId);
+                    currToDel.DeletedById = userId;
 
                     _unitOfWork.GetRepository<Currency>().Update(currToDel);
                     _unitOfWork.Commit(userId);

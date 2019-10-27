@@ -127,18 +127,18 @@ namespace Nozomi.Repo.Data
                         case EntityState.Added:
                             ((Entity) entity.Entity).CreatedAt = DateTime.UtcNow;
                             if (!string.IsNullOrWhiteSpace(userId))
-                                ((Entity) entity.Entity).CreatedBy = Guid.Parse(userId);
+                                ((Entity) entity.Entity).CreatedById = userId;
                             break;
                         case EntityState.Deleted:
                             ((Entity) entity.Entity).DeletedAt = DateTime.UtcNow;
                             if (!string.IsNullOrWhiteSpace(userId))
-                                ((Entity) entity.Entity).DeletedBy = Guid.Parse(userId);
+                                ((Entity) entity.Entity).DeletedById = userId;
                             break;
                     }
 
                     ((Entity) entity.Entity).ModifiedAt = DateTime.UtcNow;
                     if (!string.IsNullOrWhiteSpace(userId))
-                        ((Entity) entity.Entity).ModifiedBy = Guid.Parse(userId);
+                        ((Entity) entity.Entity).ModifiedById = userId;
                 }
             }
             catch (Exception ex)

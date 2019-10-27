@@ -272,7 +272,7 @@ namespace Nozomi.Service.Services
                 else
                 {
                     cpcToDel.DeletedAt = DateTime.UtcNow;
-                    cpcToDel.DeletedBy = Guid.Parse(userId);
+                    cpcToDel.DeletedById = userId;
 
                     _unitOfWork.GetRepository<RequestComponent>().Update(cpcToDel);
                 }

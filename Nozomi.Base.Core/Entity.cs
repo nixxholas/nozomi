@@ -1,4 +1,5 @@
 using System;
+using Nozomi.Base.Auth.Models;
 
 namespace Nozomi.Base.Core
 {
@@ -12,10 +13,16 @@ namespace Nozomi.Base.Core
 
         public DateTime? DeletedAt { get; set; }
 
-        public Guid CreatedBy { get; set; }
+        public User CreatedBy { get; set; }
 
-        public Guid ModifiedBy { get; set; }
+        public User ModifiedBy { get; set; }
 
-        public Guid DeletedBy { get; set; }
+        public User DeletedBy { get; set; }
+        
+        public string CreatedById { get; set; }
+        
+        public string ModifiedById { get; set; }
+        
+        public string DeletedById { get; set; }
     }
 }

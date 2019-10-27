@@ -147,7 +147,7 @@ namespace Nozomi.Service.Services
                 {
                     cpToDel.DeletedAt = DateTime.UtcNow;
                     if (string.IsNullOrWhiteSpace(userId))
-                        cpToDel.DeletedBy = Guid.Parse(userId);
+                        cpToDel.DeletedById = userId;
                     
                     _unitOfWork.GetRepository<CurrencyPair>().Update(cpToDel);
                 }

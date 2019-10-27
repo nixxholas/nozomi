@@ -102,7 +102,7 @@ namespace Nozomi.Infra.Admin.Service.Services
                         query.DeletedAt = DateTime.UtcNow;
                         
                         if (!string.IsNullOrWhiteSpace(userId))
-                            query.DeletedBy = Guid.Parse(userId);
+                            query.DeletedById = userId;
                     }
 
                     _unitOfWork.Commit(userId);

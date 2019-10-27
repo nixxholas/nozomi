@@ -187,7 +187,7 @@ namespace Nozomi.Service.Services.Requests
                         {
                             cpc.DeletedAt = DateTime.UtcNow;
                             if (!string.IsNullOrWhiteSpace(userId))
-                                cpc.DeletedBy = Guid.Parse(userId);
+                                cpc.DeletedById = userId;
 
                             _unitOfWork.GetRepository<RequestComponent>().Update(cpc);
                         }
@@ -217,7 +217,7 @@ namespace Nozomi.Service.Services.Requests
                         {
                             requestProperty.DeletedAt = DateTime.UtcNow;
                             if (!string.IsNullOrWhiteSpace(userId))
-                                requestProperty.DeletedBy = Guid.Parse(userId);
+                                requestProperty.DeletedById = userId;
 
                             _unitOfWork.GetRepository<RequestProperty>().Update(requestProperty);
                         }
@@ -260,7 +260,7 @@ namespace Nozomi.Service.Services.Requests
                         if (!hardDelete)
                         {
                             reqToDel.DeletedAt = DateTime.UtcNow;
-                            reqToDel.DeletedBy = Guid.Parse(userId);
+                            reqToDel.DeletedById = userId;
                             _unitOfWork.GetRepository<Request>().Update(reqToDel);
                         }
                         else

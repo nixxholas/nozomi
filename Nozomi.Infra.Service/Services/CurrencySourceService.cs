@@ -59,7 +59,7 @@ namespace Nozomi.Service.Services
                 
                 csToDelete.DeletedAt = DateTime.UtcNow;
                 if (!string.IsNullOrWhiteSpace(userId))
-                    csToDelete.DeletedBy = Guid.Parse(userId);
+                    csToDelete.DeletedById = userId;
 
                 _unitOfWork.GetRepository<CurrencySource>().Update(csToDelete);
                 _unitOfWork.Commit(userId);

@@ -72,7 +72,7 @@ namespace Nozomi.Infra.Admin.Service.Services
                         cTypeToDel.DeletedAt = DateTime.UtcNow;
                         
                         if (!string.IsNullOrWhiteSpace(userId))
-                            cTypeToDel.DeletedBy = Guid.Parse(userId);
+                            cTypeToDel.DeletedById = userId;
                     }
 
                     _unitOfWork.Commit(userId);

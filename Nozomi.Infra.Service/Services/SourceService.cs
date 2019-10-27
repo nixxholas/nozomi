@@ -217,7 +217,7 @@ namespace Nozomi.Service.Services
 
                 source.DeletedAt = DateTime.UtcNow;
 
-                if (!string.IsNullOrWhiteSpace(userId)) source.DeletedBy = Guid.Parse(userId);
+                if (!string.IsNullOrWhiteSpace(userId)) source.DeletedById = userId;
                     
                 _unitOfWork.GetRepository<Source>().Update(source);
                 _unitOfWork.Commit();
