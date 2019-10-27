@@ -20,10 +20,10 @@ namespace Nozomi.Base.Admin.Domain.AreaModels.AnalysedHistoricItem
 
         public DateTime? DeletedAt { get; set; }
 
-        public long CreatedBy { get; set; }
+        public string CreatedBy { get; set; }
 
-        public long ModifiedBy { get; set; }
+        public string ModifiedBy { get; set; }
 
-        public long DeletedBy { get; set; }
+        public string DeletedBy { get; set; }
     }
 }
