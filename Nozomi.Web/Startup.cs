@@ -17,6 +17,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Nozomi.Preprocessing;
+using Nozomi.Preprocessing.Filters;
 using Nozomi.Repo.Data;
 using Nozomi.Web.StartupExtensions;
 using VaultSharp;
@@ -100,7 +101,10 @@ namespace Nozomi.Web
             }
 
             // Add framework services.
-            services.AddMvc()
+            services.AddMvc(options =>
+                {
+                    options.Filters.Add(typeof(HttpGlobalExceptionFilter));
+                })
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             services.AddHsts(opt =>
