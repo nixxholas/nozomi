@@ -63,7 +63,7 @@ namespace Nozomi.Service.Events
                 .SingleOrDefault(r => r.Id.Equals(id) && r.DeletedAt == null);
         }
 
-        public IQueryable<RequestViewModel> GetAll(long userId)
+        public IQueryable<RequestViewModel> GetAll(string userId)
         {
             return _unitOfWork.GetRepository<Request>()
                 .GetQueryable()
