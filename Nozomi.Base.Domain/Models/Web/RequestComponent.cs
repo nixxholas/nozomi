@@ -5,7 +5,7 @@ using Nozomi.Data.Models.Currency;
 
 namespace Nozomi.Data.Models.Web
 {
-    public class RequestComponent : BaseEntityModel
+    public class RequestComponent : Entity
     {
         // Default Constructor
         public RequestComponent() {}

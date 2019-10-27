@@ -12,7 +12,7 @@ using Nozomi.Data.Models.Web.Websocket;
 
 namespace Nozomi.Data.Models.Web
 {
-    public class Request : BaseEntityModel
+    public class Request : Entity
     {
         public long Id { get; set; }
 

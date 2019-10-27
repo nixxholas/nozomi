@@ -5,7 +5,7 @@ using Nozomi.Base.Core;
 
 namespace Nozomi.Data.Models.Currency
 {
-    public class Source : BaseEntityModel
+    public class Source : Entity
     {
         public long Id { get; set; }
 

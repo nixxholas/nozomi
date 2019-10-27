@@ -10,7 +10,7 @@ using Nozomi.Data.Models.Web.Analytical;
 
 namespace Nozomi.Data.Models.Currency
 {
-    public class Currency : BaseEntityModel
+    public class Currency : Entity
     {
         [Key]
         public long Id { get; set; }

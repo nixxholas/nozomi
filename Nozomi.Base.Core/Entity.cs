@@ -2,7 +2,7 @@ using System;
 
 namespace Nozomi.Base.Core
 {
-    public abstract class BaseEntityModel
+    public abstract class Entity
     {
         public bool IsEnabled { get; set; } = true;
 
@@ -12,10 +12,10 @@ namespace Nozomi.Base.Core
 
         public DateTime? DeletedAt { get; set; }
 
-        public long CreatedBy { get; set; }
+        public Guid CreatedBy { get; set; }
 
-        public long ModifiedBy { get; set; }
+        public Guid ModifiedBy { get; set; }
 
-        public long DeletedBy { get; set; }
+        public Guid DeletedBy { get; set; }
     }
 }

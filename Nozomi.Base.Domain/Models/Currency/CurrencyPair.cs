@@ -12,7 +12,7 @@ using Nozomi.Data.Models.Web.Websocket;
 
 namespace Nozomi.Data.Models.Currency
 {
-    public class CurrencyPair : BaseEntityModel
+    public class CurrencyPair : Entity
     {
         [Key]
         public long Id { get; set; }

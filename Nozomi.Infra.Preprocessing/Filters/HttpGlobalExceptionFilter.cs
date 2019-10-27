@@ -26,7 +26,7 @@ namespace Nozomi.Preprocessing.Filters
                 context.Exception,
                 context.Exception.Message);
 
-            if (context.Exception.GetType() == typeof(BaseEntityModel))
+            if (context.Exception.GetType() == typeof(Entity))
             {
                 var problemDetails = new ValidationProblemDetails()
                 {

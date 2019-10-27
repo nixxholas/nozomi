@@ -3,7 +3,7 @@ using Nozomi.Base.Core;
 
 namespace Nozomi.Data.Models.Web.Analytical
 {
-    public class AnalysedHistoricItem : BaseEntityModel
+    public class AnalysedHistoricItem : Entity
     {
         public long Id { get; set; }
         

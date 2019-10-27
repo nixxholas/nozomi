@@ -6,7 +6,7 @@ namespace Nozomi.Data.Models.Currency
     /// <summary>
     /// The best way to peg currencies to sources.
     /// </summary>
-    public class CurrencySource : BaseEntityModel
+    public class CurrencySource : Entity
     {
         public long Id { get; set; }
         
