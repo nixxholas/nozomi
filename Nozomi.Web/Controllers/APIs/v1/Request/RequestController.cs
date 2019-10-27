@@ -1,5 +1,7 @@
+using System.Linq;
+using System.Security.Claims;
+using IdentityModel;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data;
@@ -31,6 +33,21 @@ namespace Nozomi.Web.Controllers.APIs.v1.Request
                 Data = res != null ? new JsonResult(res) :
                     new JsonResult("We're currently unable to obtain all of the Currency Pair Requests.")
             };
+        }
+
+        [Authorize]
+        [HttpGet]
+        public IActionResult GetAll()
+        {
+            var identity = (ClaimsIdentity) User.Identity;
+
+            // Since we get the sub,
+            if (identity.Claims.Any(c => c.Type.Equals(JwtClaimTypes.Subject)))
+            {
+                return Ok(_requestEvent.GetAll(identity.Claims.SingleOrDefault(c => c.Type.Equals(JwtClaimTypes.Subject))?.Value));
+            }
+
+            return BadRequest("Please re-authenticate again");
         }
 
         [Authorize]
