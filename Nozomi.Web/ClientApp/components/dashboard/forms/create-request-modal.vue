@@ -183,6 +183,7 @@
                             });
 
                             // Inform the parent that a new request has been created
+                            // https://forum.vuejs.org/t/passing-data-back-to-parent/1201
                             self.$emit('created', true);
                         }
                     })
