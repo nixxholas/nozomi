@@ -1,24 +1,35 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data;
 using Nozomi.Data.AreaModels.v1.Requests;
+using Nozomi.Data.Models.Currency;
 using Nozomi.Data.Models.Web;
 using Nozomi.Data.ViewModels.Request;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Data;
+using Nozomi.Service.Events.Interfaces;
 using Nozomi.Service.Services.Requests.Interfaces;
 
 namespace Nozomi.Service.Services.Requests
 {
     public class RequestService : BaseService<RequestService, NozomiDbContext>, IRequestService
     {
-        public RequestService(ILogger<RequestService> logger, IUnitOfWork<NozomiDbContext> unitOfWork)
+        private readonly ICurrencyEvent _currencyEvent;
+        private readonly ICurrencyPairEvent _currencyPairEvent;
+        private readonly ICurrencyTypeEvent _currencyTypeEvent;
+        
+        public RequestService(ILogger<RequestService> logger, IUnitOfWork<NozomiDbContext> unitOfWork,
+            ICurrencyEvent currencyEvent, ICurrencyPairEvent currencyPairEvent, ICurrencyTypeEvent currencyTypeEvent)
             : base(logger, unitOfWork)
         {
+            _currencyEvent = currencyEvent;
+            _currencyPairEvent = currencyPairEvent;
+            _currencyTypeEvent = currencyTypeEvent;
         }
 
         public long Create(Request request, string userId = null)
@@ -38,7 +49,51 @@ namespace Nozomi.Service.Services.Requests
 
         public void Create(CreateRequestViewModel vm, string userId = null)
         {
-            
+            if (vm.IsValid())
+            {
+                var request = new Request(vm.RequestType, vm.ResponseType, vm.DataPath, vm.Delay, vm.FailureDelay);
+
+                switch (vm.ParentType)
+                {
+                    // Validate it at the db end
+                    case CreateRequestViewModel.RequestParentType.Currency:
+                        var currency = _currencyEvent.GetBySlug(vm.CurrencySlug);
+
+                        if (currency == null)
+                            throw new KeyNotFoundException("[RequestService/Create/CreateRequestViewModel]: " +
+                                                           "Currency not found.");
+
+                        request.CurrencyId = currency.Id;
+                        break;
+                    case CreateRequestViewModel.RequestParentType.CurrencyPair:
+                        var currencyPair = _currencyPairEvent.Get(vm.CurrencyPair.Id);
+                        
+                        if (currencyPair == null)
+                            throw new KeyNotFoundException("[RequestService/Create/CreateRequestViewModel]: " +
+                                                           "Currency pair not found.");
+                        
+                        request.CurrencyPairId = vm.CurrencyPair.Id;
+                        break;
+                    case CreateRequestViewModel.RequestParentType.CurrencyType:
+                        var currencyType = _currencyTypeEvent.Get(vm.CurrencyTypeId);
+                        
+                        if (currencyType == null)
+                            throw new KeyNotFoundException("[RequestService/Create/CreateRequestViewModel]: " +
+                                                           "Currency type not found.");
+                        
+                        request.CurrencyTypeId = vm.CurrencyTypeId;
+                        break;
+                    default:
+                        throw new InvalidEnumArgumentException("[RequestService/Create/CreateRequestViewModel]: "
+                                                               + "Invalid parent type.");
+                }
+                
+                _unitOfWork.GetRepository<Request>().Add(request);
+                _unitOfWork.Commit(userId);
+            }
+
+            throw new InvalidCastException(
+                "[RequestService/Create/CreateRequestViewModel]: Invalid input given.");
         }
 
         public NozomiResult<string> Create(CreateRequest createRequest, string userId = null)
