@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using Nozomi.Data;
+﻿using Nozomi.Data;
 using Nozomi.Data.AreaModels.v1.Currency;
-using Nozomi.Data.Models.Currency;
 
-namespace Nozomi.Service.Services.Interfaces
+namespace Nozomi.Infra.Admin.Service.Services.Interfaces
 {
     public interface ICurrencyService
     {

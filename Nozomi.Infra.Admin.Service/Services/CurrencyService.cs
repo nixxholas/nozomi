@@ -1,24 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Logging;
-using Nozomi.Base.Core.Helpers.Enumerable;
 using Nozomi.Data;
 using Nozomi.Data.AreaModels.v1.Currency;
 using Nozomi.Data.Models.Currency;
+using Nozomi.Infra.Admin.Service.Services.Interfaces;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Data;
-using Nozomi.Service.Services;
-using Nozomi.Service.Services.Interfaces;
 
-namespace Nozomi.Service.Services
+namespace Nozomi.Infra.Admin.Service.Services
 {
     public class CurrencyService : BaseService<CurrencyService, NozomiDbContext>, ICurrencyService
     {

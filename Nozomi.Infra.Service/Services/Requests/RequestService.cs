@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using Nozomi.Data;
 using Nozomi.Data.AreaModels.v1.Requests;
 using Nozomi.Data.Models.Web;
+using Nozomi.Data.ViewModels.Request;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Data;
@@ -33,6 +34,11 @@ namespace Nozomi.Service.Services.Requests
             {
                 return long.MinValue;
             }
+        }
+
+        public void Create(CreateRequestViewModel vm, string userId = null)
+        {
+            
         }
 
         public NozomiResult<string> Create(CreateRequest createRequest, string userId = null)

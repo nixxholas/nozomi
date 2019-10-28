@@ -4,12 +4,15 @@ using System.Linq.Expressions;
 using Nozomi.Data;
 using Nozomi.Data.AreaModels.v1.Requests;
 using Nozomi.Data.Models.Web;
+using Nozomi.Data.ViewModels.Request;
 
 namespace Nozomi.Service.Services.Requests.Interfaces
 {
     public interface IRequestService
     {
         long Create(Request request, string userId = null);
+
+        void Create(CreateRequestViewModel vm, string userId = null);
         
         NozomiResult<string> Create(CreateRequest createRequest, string userId = null);
         

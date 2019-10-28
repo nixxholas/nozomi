@@ -15,7 +15,6 @@ using Nozomi.Infra.Admin.Service.Services.Interfaces;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Data;
-using Nozomi.Service.Services.Interfaces;
 
 namespace Nozomi.Infra.Admin.Service.Services
 {
