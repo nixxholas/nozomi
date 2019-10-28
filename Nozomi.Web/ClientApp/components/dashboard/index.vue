@@ -63,7 +63,7 @@
             </b-field>
             <b-field position="is-right">
               <div class="control">
-                <CreateRequestComponent></CreateRequestComponent>
+                <CreateRequestComponent @created="createdNewRequest"></CreateRequestComponent>
               </div>
             </b-field>
             <div class="content">
@@ -103,7 +103,6 @@
         components: { CreateRequestComponent },
         data: function() {
             return {
-                hasNewRequest: false,
                 requestData: [],
                 requestColumns: [
                     {
@@ -138,36 +137,37 @@
                 ]
             }
         },
-        watch: {
-            'hasNewRequest': function (val, oldVal) {
-                if (!oldVal && val) {
-                    this.hasNewRequest = oldVal; // reset
-                }
+        methods: {
+            ...mapActions('oidcStore', ['authenticateOidc', 'signOutOidc']),
+            createdNewRequest: function (value) {
+                if (value)
+                    this.updateRequests();
+            },
+            updateRequests: function () {
+                let self = this;
+
+                // Synchronously call for data
+                this.$axios.get('/api/Request/GetAll', {
+                    headers: {
+                        Authorization: "Bearer " + store.state.oidcStore.access_token
+                    }
+                })
+                    .then(function (response) {
+                        self.requestData = response.data;
+                        console.dir(response.data);
+                    })
+                    .catch(function (error) {
+                        // handle error
+                        self.methods.authenticateOidc(self.currentRoute);
+                    })
+                    .finally(function () {
+                        // always executed
+                        self.isLoading = false;
+                    });
             }
         },
-        methods: {
-            ...mapActions('oidcStore', ['authenticateOidc', 'signOutOidc'])
-        },
         beforeMount: function() {
-            let self = this;
-
-            // Synchronously call for data
-            this.$axios.get('/api/Request/GetAll', {
-                headers: {
-                    Authorization: "Bearer " + store.state.oidcStore.access_token
-                }
-            })
-                .then(function (response) {
-                    self.requestData = response.data;
-                })
-                .catch(function (error) {
-                    // handle error
-                    self.methods.authenticateOidc(self.currentRoute);
-                })
-                .finally(function () {
-                    // always executed
-                    self.isLoading = false;
-                });
+            this.updateRequests();
         }
     }
 </script>

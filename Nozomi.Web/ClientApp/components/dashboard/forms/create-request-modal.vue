@@ -181,6 +181,9 @@
                                 type: 'is-success',
                                 hasIcon: true
                             });
+
+                            // Inform the parent that a new request has been created
+                            self.$emit('created', true);
                         }
                     })
                     .catch(function (error) {
