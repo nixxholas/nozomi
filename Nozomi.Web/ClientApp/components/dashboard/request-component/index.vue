@@ -1,14 +1,12 @@
 <template>
     <div>
-
-
       <b-field>
         <b-navbar>
           <template slot="brand">
             <b class="has-text-dark">Components</b>
           </template>
           <template slot="end">
-            <CreateRequestComponentModal></CreateRequestComponentModal>
+            <CreateRequestComponentModal v-if="showCreateFeature"></CreateRequestComponentModal>
           </template>
         </b-navbar>
         <b-table
@@ -73,8 +71,14 @@
 </template>
 
 <script>
+  import CreateRequestComponentModal from '../forms/create-request-component-modal';
+
     export default {
-        name: ""
+        name: "",
+        components: { CreateRequestComponentModal },
+        props: {
+            showCreateFeature: false
+        }
     }
 </script>
 
