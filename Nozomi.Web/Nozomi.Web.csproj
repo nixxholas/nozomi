@@ -38,9 +38,6 @@
     <_ContentIncludedByDefault Remove="ClientApp\assets\vendor\jquery-ui\component.json" />
     <_ContentIncludedByDefault Remove="ClientApp\assets\vendor\jquery-ui\composer.json" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="ClientApp\components\elements\tables" />
-  </ItemGroup>
 
   <Target Name="RunWebpack" AfterTargets="ComputeFilesToPublish">
     <!-- As part of publishing, ensure the JS resources are freshly built in production mode -->

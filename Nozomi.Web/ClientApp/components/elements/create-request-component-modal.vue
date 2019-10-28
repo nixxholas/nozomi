@@ -12,7 +12,7 @@
 
 <script>
     export default {
-        name: "create-request-component-modal",
+        name: "create-rc-modal",
         data: function() {
             return {
                 isCreateModalActive: false
