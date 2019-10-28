@@ -91,9 +91,11 @@ namespace Nozomi.Service.Services.Requests
                 _unitOfWork.GetRepository<Request>().Add(request);
                 _unitOfWork.Commit(userId);
             }
-
-            throw new InvalidCastException(
-                "[RequestService/Create/CreateRequestViewModel]: Invalid input given.");
+            else
+            {
+                throw new InvalidCastException(
+                    "[RequestService/Create/CreateRequestViewModel]: Invalid input given.");   
+            }
         }
 
         public NozomiResult<string> Create(CreateRequest createRequest, string userId = null)
