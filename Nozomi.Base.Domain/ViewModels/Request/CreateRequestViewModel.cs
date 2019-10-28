@@ -59,6 +59,12 @@ namespace Nozomi.Data.ViewModels.Request
         /// </summary>
         public long CurrencyTypeId { get; set; }
 
+        public bool IsValid()
+        {
+            var validator = new CreateRequestValidator();
+            return validator.Validate(this).IsValid;
+        }
+
         public class CreateRequestValidator : AbstractValidator<CreateRequestViewModel>
         {
             public CreateRequestValidator()
