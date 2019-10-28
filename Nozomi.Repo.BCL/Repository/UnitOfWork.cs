@@ -41,7 +41,7 @@ namespace Nozomi.Repo.BCL.Repository
                 saveFailed = false;
                 try
                 {
-                    Context.SaveChanges();
+                    Context.SaveChanges(userId);
                 }
                 catch (DbUpdateConcurrencyException ex)
                 {
