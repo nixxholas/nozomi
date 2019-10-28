@@ -124,7 +124,7 @@ namespace Nozomi.Web
             services.ConfigureRepoLayer();
 
             // Service layer injections
-            services.ConfigureEvents();
+            services.ConfigureInfra();
 
             // Swashbuckle Swagger
             services.ConfigureSwagger();

@@ -8,12 +8,14 @@ using Nozomi.Service.Events.Analysis;
 using Nozomi.Service.Events.Analysis.Interfaces;
 using Nozomi.Service.Events.Interfaces;
 using Nozomi.Service.Services.Enumerators;
+using Nozomi.Service.Services.Requests;
+using Nozomi.Service.Services.Requests.Interfaces;
 
 namespace Nozomi.Web.StartupExtensions
 {
-    public static class EventStartup
+    public static class InfraStartup
     {
-        public static void ConfigureEvents(this IServiceCollection services)
+        public static void ConfigureInfra(this IServiceCollection services)
         {
             services.AddTransient<IEmailSender, EmailSender>();
             services.AddTransient<ISmsSender, SmsSender>();
@@ -34,6 +36,9 @@ namespace Nozomi.Web.StartupExtensions
             services.AddScoped<IRequestTypeEvent, RequestTypeEvent>();
             services.AddScoped<ISourceEvent, SourceEvent>();
             services.AddScoped<ITickerEvent, TickerEvent>();
+
+            // Services
+            services.AddScoped<IRequestService, RequestService>();
         }
     }
 }
