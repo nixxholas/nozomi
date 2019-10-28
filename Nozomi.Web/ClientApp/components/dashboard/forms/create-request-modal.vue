@@ -112,6 +112,7 @@
     import { mapActions } from 'vuex';
     import RequestTypeDrowdown from '../../elements/request-type-dropdown';
     import ResponseTypeDropdown from "../../elements/response-type-dropdown";
+    import { NotificationProgrammatic as Notification } from 'buefy';
 
     export default {
         name: "create-request-modal",
@@ -157,9 +158,7 @@
                     }
                 })
                     .then(function (response) {
-                        console.log(response);
-
-                        // Reset the form data
+                        // Reset the form data regardless
                         self.form = {
                             type: 0,
                             responseType: 1,
@@ -172,9 +171,27 @@
                             currencyPairStr: null,
                             currencyTypeId: 0
                         };
+
+                        if (response.status === 200) {
+                            self.isCreateRequestModalActive = false; // Close the modal
+                            Notification.open({
+                                duration: 2500,
+                                message: `Request successfully created!`,
+                                position: 'is-bottom-right',
+                                type: 'is-success',
+                                hasIcon: true
+                            });
+                        }
                     })
                     .catch(function (error) {
-                        console.log(error);
+                        //console.log(error);
+                        Notification.open({
+                            duration: 2500,
+                            message: `Please make sure your entry is correctly filled!`,
+                            position: 'is-bottom-right',
+                            type: 'is-success',
+                            hasIcon: true
+                        });
                     })
                     .finally(function () {
                     // always executed

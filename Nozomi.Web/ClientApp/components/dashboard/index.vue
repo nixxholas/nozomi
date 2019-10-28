@@ -103,7 +103,7 @@
         components: { CreateRequestComponent },
         data: function() {
             return {
-                isCreateRequestModalActive: false,
+                hasNewRequest: false,
                 requestData: [],
                 requestColumns: [
                     {
@@ -136,6 +136,13 @@
                         numeric: true
                     }
                 ]
+            }
+        },
+        watch: {
+            'hasNewRequest': function (val, oldVal) {
+                if (!oldVal && val) {
+                    this.hasNewRequest = oldVal; // reset
+                }
             }
         },
         methods: {
