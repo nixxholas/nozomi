@@ -71,7 +71,7 @@
 </template>
 
 <script>
-  import CreateRequestComponentModal from '../forms/create-request-component-modal';
+  import CreateRequestComponentModal from '../../elements/create-request-component-modal';
 
     export default {
         name: "",
