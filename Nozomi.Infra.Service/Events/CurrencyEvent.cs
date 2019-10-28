@@ -78,6 +78,18 @@ namespace Nozomi.Service.Events
                 .SingleOrDefault(c => c.Abbreviation.Equals(abbreviation, StringComparison.InvariantCultureIgnoreCase));
         }
 
+        public Currency GetBySlug(string slug)
+        {
+            if (string.IsNullOrEmpty(slug))
+                throw new ArgumentNullException("Invalid slug.");
+
+            return _unitOfWork.GetRepository<Currency>()
+                .GetQueryable()
+                .AsNoTracking()
+                .SingleOrDefault(c => c.DeletedAt == null && c.IsEnabled
+                                                          && c.Slug.Equals(slug));
+        }
+
         public decimal GetCirculatingSupply(AnalysedComponent analysedComponent)
         {
             var circulatingSupplyEnum = ComponentType.CirculatingSupply; 

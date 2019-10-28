@@ -13,6 +13,8 @@ namespace Nozomi.Service.Events.Interfaces
         Currency Get(long id, bool track = false);
         
         Currency GetCurrencyByAbbreviation(string abbreviation, bool track = false);
+
+        Currency GetBySlug(string slug);
         
         /// <summary>
         /// Provides the caller the total amount of currency currently circulating
