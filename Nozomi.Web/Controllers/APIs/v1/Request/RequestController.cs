@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using Nozomi.Data;
 using Nozomi.Data.ViewModels.Request;
 using Nozomi.Service.Events.Interfaces;
+using Nozomi.Service.Services.Requests.Interfaces;
 
 namespace Nozomi.Web.Controllers.APIs.v1.Request
 {
@@ -14,11 +15,13 @@ namespace Nozomi.Web.Controllers.APIs.v1.Request
     public class RequestController : BaseApiController<RequestController>, IRequestController
     {
         private readonly IRequestEvent _requestEvent;
+        private readonly IRequestService _requestService;
 
         public RequestController(ILogger<RequestController> logger,
-            IRequestEvent requestEvent) : base(logger)
+            IRequestEvent requestEvent, IRequestService requestService) : base(logger)
         {
             _requestEvent = requestEvent;
+            _requestService = requestService;
         }
 
         [Authorize(Roles = "Staff")]
@@ -54,7 +57,17 @@ namespace Nozomi.Web.Controllers.APIs.v1.Request
         [HttpPost]
         public IActionResult Create([FromBody]CreateRequestViewModel vm)
         {
-            return Ok();
+            var sub = ((ClaimsIdentity) User.Identity)
+                .Claims.SingleOrDefault(c => c.Type.Equals(JwtClaimTypes.Subject))?.Value;
+
+            if (!string.IsNullOrWhiteSpace(sub))
+            {
+                _requestService.Create(vm, sub);
+
+                return Ok();
+            }
+
+            return BadRequest("Please login again. Your session may have expired!");
         }
     }
 }
