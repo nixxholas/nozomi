@@ -80,6 +80,8 @@ namespace Nozomi.Data.ViewModels.Request
                                                                    || r.CurrencyTypeId > 0);
                 RuleFor(r => r.CurrencyPair).NotNull().Unless(r =>
                     !string.IsNullOrEmpty(r.CurrencySlug) || r.CurrencyTypeId > 0);
+                RuleFor(r => r.CurrencyPair.Id).Must(v => v > 0).Unless(r =>
+                    !string.IsNullOrEmpty(r.CurrencySlug) || r.CurrencyTypeId > 0);
                 RuleFor(r => r.CurrencyTypeId).GreaterThan(0).Unless(r =>
                     !string.IsNullOrEmpty(r.CurrencySlug) || r.CurrencyPair != null);
             }
