@@ -15,9 +15,16 @@ namespace Nozomi.Data.Models.Web
     public class Request : Entity
     {
         public Request() {}
-        
-        public Request(RequestType requestType, ResponseType responseType, string dataPath, int delay, 
-            long failureDelay) {}
+
+        public Request(RequestType requestType, ResponseType responseType, string dataPath, int delay,
+            long failureDelay)
+        {
+            RequestType = requestType;
+            ResponseType = responseType;
+            DataPath = dataPath;
+            Delay = delay;
+            FailureDelay = failureDelay;
+        }
         
         public long Id { get; set; }
 
