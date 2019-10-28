@@ -49,7 +49,7 @@
 
 <script>
     import { mapActions } from 'vuex';
-    import CreateRequestComponent from '../dashboard/forms/create-request-modal';
+    import CreateRequestComponent from '../elements/modals/create-request-modal';
     import RequestsTable from'../elements/tables/requests-table';
 
     export default {
