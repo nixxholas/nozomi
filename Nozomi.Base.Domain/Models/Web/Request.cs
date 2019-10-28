@@ -14,6 +14,11 @@ namespace Nozomi.Data.Models.Web
 {
     public class Request : Entity
     {
+        public Request() {}
+        
+        public Request(RequestType requestType, ResponseType responseType, string dataPath, int delay, 
+            long failureDelay) {}
+        
         public long Id { get; set; }
 
         public Guid Guid { get; set; }
