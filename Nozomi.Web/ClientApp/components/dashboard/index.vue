@@ -1,36 +1,7 @@
 <template>
   <div class="container is-fluid">
     <div class="tile is-ancestor">
-      <div class="tile is-parent">
-        <b-menu class="tile is-child">
-          <b-menu-list label="Menu">
-            <b-menu-item icon="information-outline" label="Info"></b-menu-item>
-            <b-menu-item icon="account" label="My Account">
-              <b-menu-item
-                label="Account data"
-                icon="account-edit"
-                tag="router-link"
-                to="/dashboard/modify-account"></b-menu-item>
-              <b-menu-item
-                label="Addresses"
-                icon="pound">
-              </b-menu-item>
-            </b-menu-item>
-          </b-menu-list>
-          <b-menu-list>
-            <b-menu-item
-              label="Expo"
-              icon="link"
-              tag="router-link"
-              to="/expo">
-            </b-menu-item>
-          </b-menu-list>
-          <b-menu-list label="Actions">
-            <b-menu-item label="Logout"></b-menu-item>
-          </b-menu-list>
-        </b-menu>
-      </div>
-      <div class="tile is-vertical is-10">
+      <div class="tile is-vertical">
         <div class="tile">
           <div class="tile is-parent is-vertical">
             <b-notification aria-close-label="Close notification">
@@ -67,9 +38,79 @@
               </div>
             </b-field>
             <div class="content">
-              <b-table :data="requestData" :columns="requestColumns">
-                <template slot="props">
-
+              <b-table
+                :data="requestData"
+                :columns="requestColumns"
+                detailed
+                detail-key="guid">
+                <template slot-scope="props">
+                  <b-table-column field="requestType" label="Type">
+                    <b-tag type="is-dark">
+                      {{ getRequestType(props.row.requestType) }}
+                    </b-tag>
+                  </b-table-column>
+                  <b-table-column field="responseType" label="Response Type">
+                    <b-tag type="is-dark">
+                      {{ getResponseType(props.row.responseType) }}
+                    </b-tag>
+                  </b-table-column>
+                  <b-table-column field="dataPath" label="API Url">
+                    <a class="has-text-info" :href="props.row.dataPath">{{ props.row.dataPath }}</a>
+                  </b-table-column>
+                  <b-table-column field="delay" label="Delay">
+                    <b-tag type="is-info">
+                      {{ props.row.delay }} ms
+                    </b-tag>
+                  </b-table-column>
+                  <b-table-column field="failureDelay" label="Failure Delay">
+                    <b-tag type="is-warning">
+                      {{ props.row.failureDelay }} ms
+                    </b-tag>
+                  </b-table-column>
+                  <b-table-column field="actions" label="">
+                    <div class="buttons">
+                      <b-button type="is-danger"
+                                icon-left="delete">
+                        Delete
+                      </b-button>
+                    </div>
+                  </b-table-column>
+                </template>
+                <template slot="detail" slot-scope="props">
+                  <b-taglist attached>
+                    <b-tag type="is-dark">Unique ID</b-tag>
+                    <b-tag type="is-info">{{ props.row.guid }}</b-tag>
+                  </b-taglist>
+                  <nav class="level is-mobile">
+                    <div class="level-item has-text-centered">
+                      <div>
+                        <p class="heading">Status</p>
+                        <p class="title"
+                           v-bind:class="{ 'has-text-danger': !props.row.isEnabled,
+                           'has-text-success': props.row.isEnabled }">
+                          {{ props.row.isEnabled ? "Active" : "Disabled" }}
+                        </p>
+                      </div>
+                    </div>
+<!--                    <div class="level-item has-text-centered">-->
+<!--                      <div>-->
+<!--                        <p class="heading">Following</p>-->
+<!--                        <p class="title">123</p>-->
+<!--                      </div>-->
+<!--                    </div>-->
+<!--                    <div class="level-item has-text-centered">-->
+<!--                      <div>-->
+<!--                        <p class="heading">Followers</p>-->
+<!--                        <p class="title">456K</p>-->
+<!--                      </div>-->
+<!--                    </div>-->
+<!--                    <div class="level-item has-text-centered">-->
+<!--                      <div>-->
+<!--                        <p class="heading">Likes</p>-->
+<!--                        <p class="title">789</p>-->
+<!--                      </div>-->
+<!--                    </div>-->
+                  </nav>
                 </template>
                 <template slot="empty">
                   <section class="section">
@@ -103,6 +144,8 @@
         components: { CreateRequestComponent },
         data: function() {
             return {
+                requestTypes: [],
+                responseTypes: [],
                 requestData: [],
                 requestColumns: [
                     {
@@ -154,7 +197,6 @@
                 })
                     .then(function (response) {
                         self.requestData = response.data;
-                        console.dir(response.data);
                     })
                     .catch(function (error) {
                         // handle error
@@ -164,10 +206,70 @@
                         // always executed
                         self.isLoading = false;
                     });
+            },
+            getRequestType: function(val) {
+                let result = "-";
+
+                this.requestTypes.forEach(function(item){
+                    if (item.value === val) {
+                        result = item.key;
+                    }
+                });
+
+                return result;
+            },
+            getResponseType: function(val) {
+                let result = "-";
+
+                this.responseTypes.forEach(function(item){
+                    if (item.value === val) {
+                        result = item.key;
+                    }
+                });
+
+                return result;
             }
         },
         beforeMount: function() {
             this.updateRequests();
+
+            let self = this;
+
+            // Setup Request types
+            this.$axios.get('/api/RequestType/All', {
+                headers: {
+                    Authorization: "Bearer " + store.state.oidcStore.access_token
+                }
+            })
+                .then(function (response) {
+                    self.requestTypes = response.data.data.value;
+                })
+                .catch(function (error) {
+                    // handle error
+                    self.methods.authenticateOidc(self.currentRoute);
+                })
+                .finally(function () {
+                    // always executed
+                    self.isLoading = false;
+                });
+
+            // Setup Response types
+            this.$axios.get('/api/ResponseType/All', {
+                headers: {
+                    Authorization: "Bearer " + store.state.oidcStore.access_token
+                }
+            })
+                .then(function (response) {
+                    self.responseTypes = response.data.data.value;
+                })
+                .catch(function (error) {
+                    // handle error
+                    self.methods.authenticateOidc(self.currentRoute);
+                })
+                .finally(function () {
+                    // always executed
+                    self.isLoading = false;
+                });
         }
     }
 </script>
