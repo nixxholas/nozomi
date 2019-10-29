@@ -203,7 +203,8 @@
                     failureDelay: 0,
                     isDenominated: false,
                     anomalyIgnorance: false,
-                    storeHistoricals: false
+                    storeHistoricals: false,
+                    requestId: ""
                 },
                 componentTypes: [],
                 componentTypesIsLoading: false
