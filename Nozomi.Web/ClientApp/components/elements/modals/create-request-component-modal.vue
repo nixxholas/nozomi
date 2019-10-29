@@ -39,7 +39,6 @@
                 type="text"
                 placeholder=""
                 v-model="form.queryComponent"
-                required
                 expanded>
               </b-input>
             </b-field>
