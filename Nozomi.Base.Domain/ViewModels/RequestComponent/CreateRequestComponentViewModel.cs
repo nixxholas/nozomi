@@ -28,6 +28,12 @@ namespace Nozomi.Data.ViewModels.RequestComponent
         
         public bool StoreHistoricals { get; set; }
 
+        public bool IsValid()
+        {
+            var validator = new CreateRequestComponentValidator();
+            return validator.Validate(this).IsValid;
+        }
+        
         protected class CreateRequestComponentValidator : AbstractValidator<CreateRequestComponentViewModel>
         {
             public CreateRequestComponentValidator()
