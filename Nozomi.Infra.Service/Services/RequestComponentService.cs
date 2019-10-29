@@ -8,6 +8,7 @@ using Nozomi.Data;
 using Nozomi.Data.AreaModels.v1.CurrencyPairComponent;
 using Nozomi.Data.AreaModels.v1.RequestComponent;
 using Nozomi.Data.Models.Web;
+using Nozomi.Data.ViewModels.RequestComponent;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Data;
@@ -27,6 +28,17 @@ namespace Nozomi.Service.Services
             IUnitOfWork<NozomiDbContext> unitOfWork) : base(logger, unitOfWork)
         {
             _rcdHistoricItemService = rcdHistoricItemService;
+        }
+
+        public void Create(CreateRequestComponentViewModel vm, string userId = null)
+        {
+            if (vm.IsValid())
+            {
+                
+                
+            }
+            
+            throw new InvalidOperationException("Invalid payload, fill up the model properly.");
         }
 
         public NozomiResult<string> Create(CreateRequestComponent createRequestComponent, string userId = null)

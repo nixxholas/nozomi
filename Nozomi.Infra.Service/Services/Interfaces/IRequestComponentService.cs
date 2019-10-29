@@ -1,11 +1,14 @@
 ﻿using Nozomi.Data;
 using Nozomi.Data.AreaModels.v1.CurrencyPairComponent;
 using Nozomi.Data.AreaModels.v1.RequestComponent;
+using Nozomi.Data.ViewModels.RequestComponent;
 
 namespace Nozomi.Service.Services.Interfaces
 {
     public interface IRequestComponentService
     {
+        void Create(CreateRequestComponentViewModel vm, string userId = null);
+        
         NozomiResult<string> Create(CreateRequestComponent createRequestComponent, string userId = null);
 
         bool Checked(long id, string userId = null);
