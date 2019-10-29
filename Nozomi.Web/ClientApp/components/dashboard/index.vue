@@ -49,6 +49,7 @@
 
 <script>
     import { mapActions } from 'vuex';
+    // Request imports
     import CreateRequestComponent from '../elements/modals/create-request-modal';
     import RequestsTable from'../elements/tables/requests-table';
 

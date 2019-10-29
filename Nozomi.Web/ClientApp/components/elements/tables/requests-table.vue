@@ -73,6 +73,7 @@
         <!--                      </div>-->
         <!--                    </div>-->
       </nav>
+      <CreateRCComponent></CreateRCComponent>
     </template>
     <template slot="empty">
       <section class="section">
@@ -92,9 +93,12 @@
 
 <script>
     import store from '../../../store/index';
+    // Request Component imports
+    import CreateRCComponent from '../modals/create-request-component-modal';
 
     export default {
         name: "requests-table",
+        components: { CreateRCComponent },
         data: function () {
             return {
                 isLoading: true,
