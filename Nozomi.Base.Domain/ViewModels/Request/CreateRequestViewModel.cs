@@ -65,7 +65,7 @@ namespace Nozomi.Data.ViewModels.Request
             return validator.Validate(this).IsValid;
         }
 
-        public class CreateRequestValidator : AbstractValidator<CreateRequestViewModel>
+        protected class CreateRequestValidator : AbstractValidator<CreateRequestViewModel>
         {
             public CreateRequestValidator()
             {
