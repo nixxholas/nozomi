@@ -38,7 +38,8 @@ namespace Nozomi.Ticker.StartupExtensions
             services.AddTransient<ICurrencySourceService, CurrencySourceService>();
 
             // Admin Service Injections
-            services.AddTransient<IAnalysedComponentService, AnalysedComponentService>();
+            services.AddTransient<Nozomi.Infra.Admin.Service.Services.Interfaces.IAnalysedComponentService, 
+                Nozomi.Infra.Admin.Service.Services.AnalysedComponentService>();
             services.AddTransient<ICurrencyPropertyService, CurrencyPropertyService>();
             
             // TODO: Microservice
