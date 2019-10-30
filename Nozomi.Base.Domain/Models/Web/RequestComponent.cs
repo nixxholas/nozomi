@@ -10,6 +10,17 @@ namespace Nozomi.Data.Models.Web
         // Default Constructor
         public RequestComponent() {}
 
+        public RequestComponent(ComponentType componentType, string identifier, string queryComponent,
+            bool anomalyIgnorance, bool isDenominated, bool storeHistoricals)
+        {
+            ComponentType = componentType;
+            Identifier = identifier;
+            QueryComponent = queryComponent;
+            AnomalyIgnorance = anomalyIgnorance;
+            IsDenominated = isDenominated;
+            StoreHistoricals = storeHistoricals;
+        }
+
         public RequestComponent(RequestComponent component, int historicIndex, int historicItemAmount)
         {
             if (component != null)
