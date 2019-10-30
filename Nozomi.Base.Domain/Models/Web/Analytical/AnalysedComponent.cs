@@ -12,6 +12,19 @@ namespace Nozomi.Data.Models.Web.Analytical
     public class AnalysedComponent : Entity
     {
         public AnalysedComponent() {}
+
+        public AnalysedComponent(AnalysedComponentType type, int delay, string uiFormatting, bool isDenominated,
+            bool storeHistoricals, long currencyId, long currencyPairId, long currencyTypeId)
+        {
+            ComponentType = type;
+            Delay = delay;
+            UIFormatting = uiFormatting;
+            IsDenominated = isDenominated;
+            StoreHistoricals = storeHistoricals;
+            CurrencyId = currencyId;
+            CurrencyPairId = currencyPairId;
+            CurrencyTypeId = currencyTypeId;
+        }
         
         /// <summary>
         /// Constructor that defines the object with pagination
