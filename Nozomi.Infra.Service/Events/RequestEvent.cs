@@ -42,6 +42,18 @@ namespace Nozomi.Service.Events
                                                 && rc.Request.Guid.Equals(Guid.Parse(requestGuid)));
         }
 
+        public long GetId(string guid)
+        {
+            return _unitOfWork.GetRepository<RequestComponent>()
+                .GetQueryable()
+                .AsNoTracking()
+                .Where(rc => rc.DeletedAt == null && rc.IsEnabled)
+                .Include(rc => rc.Request)
+                .Where(rc => rc.Request.Guid.Equals(Guid.Parse(guid)))
+                .Select(rc => rc.RequestId)
+                .FirstOrDefault();
+        }
+
         public Request Get(Expression<Func<Request, bool>> predicate)
         {
             return _unitOfWork.GetRepository<Request>()
