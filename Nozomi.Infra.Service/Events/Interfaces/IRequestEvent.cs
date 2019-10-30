@@ -14,6 +14,8 @@ namespace Nozomi.Service.Events.Interfaces
     {
         bool Exists(ComponentType type, long requestId);
         
+        bool Exists(ComponentType type, string requestGuid);
+        
         Request Get(Expression<Func<Request, bool>> predicate);
         
         Request GetByGuid(Guid guid, bool track = false);

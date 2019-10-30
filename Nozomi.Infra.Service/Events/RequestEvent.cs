@@ -31,6 +31,17 @@ namespace Nozomi.Service.Events
                     && rc.ComponentType.Equals(type) && rc.RequestId.Equals(requestId));
         }
 
+        public bool Exists(ComponentType type, string requestGuid)
+        {
+            return _unitOfWork.GetRepository<RequestComponent>()
+                .GetQueryable()
+                .AsNoTracking()
+                .Include(rc => rc.Request)
+                .Any(rc => rc.DeletedAt == null && rc.IsEnabled 
+                                                && rc.ComponentType.Equals(type) 
+                                                && rc.Request.Guid.Equals(Guid.Parse(requestGuid)));
+        }
+
         public Request Get(Expression<Func<Request, bool>> predicate)
         {
             return _unitOfWork.GetRepository<Request>()
