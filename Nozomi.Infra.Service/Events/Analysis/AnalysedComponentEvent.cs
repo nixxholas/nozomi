@@ -20,6 +20,35 @@ namespace Nozomi.Service.Events.Analysis
             : base(logger, unitOfWork)
         {
         }
+        
+        public bool Exists(AnalysedComponentType type, long currencyId = 0, long currencyPairId = 0, long currencyTypeId = 0)
+        {
+            if (currencyId > 0)
+                return _unitOfWork.GetRepository<AnalysedComponent>()
+                    .GetQueryable()
+                    .AsNoTracking()
+                    .Any(ac => ac.DeletedAt == null && ac.IsEnabled 
+                                                    && ac.CurrencyId.Equals(currencyId)
+                                                    && ac.ComponentType.Equals(type));
+            
+            if (currencyPairId > 0)
+                return _unitOfWork.GetRepository<AnalysedComponent>()
+                    .GetQueryable()
+                    .AsNoTracking()
+                    .Any(ac => ac.DeletedAt == null && ac.IsEnabled 
+                                                    && ac.CurrencyPairId.Equals(currencyPairId)
+                                                    && ac.ComponentType.Equals(type));
+            
+            if (currencyTypeId > 0)
+                return _unitOfWork.GetRepository<AnalysedComponent>()
+                    .GetQueryable()
+                    .AsNoTracking()
+                    .Any(ac => ac.DeletedAt == null && ac.IsEnabled 
+                                                    && ac.CurrencyTypeId.Equals(currencyTypeId)
+                                                    && ac.ComponentType.Equals(type));
+            
+            throw new ArgumentOutOfRangeException("Foreign key out of range for logic.");
+        }
 
         public AnalysedComponent Get(long id, bool track = false, int index = 0)
         {
