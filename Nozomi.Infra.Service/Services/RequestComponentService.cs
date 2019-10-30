@@ -34,8 +34,11 @@ namespace Nozomi.Service.Services
         {
             if (vm.IsValid())
             {
+                var requestComponent = new RequestComponent(vm.Type, vm.Identifier, 
+                    vm.QueryComponent, vm.AnomalyIgnorance, vm.IsDenominated, vm.StoreHistoricals);
                 
-                
+                _unitOfWork.GetRepository<RequestComponent>().Add(requestComponent);
+                _unitOfWork.Commit(userId);
             }
             
             throw new InvalidOperationException("Invalid payload, fill up the model properly.");
