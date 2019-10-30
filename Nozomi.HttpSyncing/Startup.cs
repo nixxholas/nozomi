@@ -93,7 +93,10 @@ namespace Nozomi.HttpSyncing
 
             services.AddTransient<IUnitOfWork<NozomiDbContext>, UnitOfWork<NozomiDbContext>>();
             services.AddTransient<IDbContext, NozomiDbContext>();
-            
+
+            services.AddScoped<ICurrencyEvent, CurrencyEvent>();
+            services.AddScoped<ICurrencyPairEvent, CurrencyPairEvent>();
+            services.AddScoped<ICurrencyTypeEvent, CurrencyTypeEvent>();
             services.AddScoped<IRequestEvent, RequestEvent>();
             services.AddTransient<IRcdHistoricItemService, RcdHistoricItemService>();
             services.AddTransient<IRequestComponentService, RequestComponentService>();
