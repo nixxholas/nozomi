@@ -113,6 +113,11 @@ namespace Nozomi.HttpSyncing
             {
                 app.UseDeveloperExceptionPage();
             }
+            
+            using (var scope = 
+                app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
+            using (var context = scope.ServiceProvider.GetService<NozomiDbContext>())
+                context.Database.Migrate();
 
             app.Run(async (context) => { await context.Response.WriteAsync("Hello World!"); });
         }
