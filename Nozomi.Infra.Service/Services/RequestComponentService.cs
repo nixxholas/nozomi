@@ -38,7 +38,7 @@ namespace Nozomi.Service.Services
             if (vm.IsValid() && !_requestEvent.Exists(vm.Type, vm.RequestId))
             {
                 var requestId = _requestEvent.GetId(vm.RequestId);
-                if (requestId <= 0) 
+                if (requestId <= 0)
                     throw new ArgumentException("Request not found.");
                 
                 var requestComponent = new RequestComponent(vm.Type, vm.Identifier, 
@@ -46,6 +46,8 @@ namespace Nozomi.Service.Services
                 
                 _unitOfWork.GetRepository<RequestComponent>().Add(requestComponent);
                 _unitOfWork.Commit(userId);
+
+                return; // Done
             }
             
             throw new InvalidOperationException("Invalid payload, fill up the model properly.");
