@@ -35,7 +35,7 @@ namespace Nozomi.Service.Services
 
         public void Create(CreateRequestComponentViewModel vm, string userId = null)
         {
-            if (vm.IsValid() && _requestEvent.Exists(vm.Type, vm.RequestId))
+            if (vm.IsValid() && !_requestEvent.Exists(vm.Type, vm.RequestId))
             {
                 var requestId = _requestEvent.GetId(vm.RequestId);
                 if (requestId <= 0) 
