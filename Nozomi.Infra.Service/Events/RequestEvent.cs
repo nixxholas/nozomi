@@ -5,6 +5,7 @@ using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data.AreaModels.v1.Requests;
+using Nozomi.Data.Models.Currency;
 using Nozomi.Data.Models.Web;
 using Nozomi.Data.ResponseModels.Request;
 using Nozomi.Preprocessing.Abstracts;
@@ -20,7 +21,16 @@ namespace Nozomi.Service.Events
             : base(logger, unitOfWork)
         {
         }
-        
+
+        public bool Exists(ComponentType type, long requestId)
+        {
+            return _unitOfWork.GetRepository<RequestComponent>()
+                .GetQueryable()
+                .AsNoTracking()
+                .Any(rc => rc.DeletedAt == null && rc.IsEnabled 
+                    && rc.ComponentType.Equals(type) && rc.RequestId.Equals(requestId));
+        }
+
         public Request Get(Expression<Func<Request, bool>> predicate)
         {
             return _unitOfWork.GetRepository<Request>()

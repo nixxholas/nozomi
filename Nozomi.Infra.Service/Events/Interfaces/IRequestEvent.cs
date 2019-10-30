@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using Nozomi.Data.AreaModels.v1.Requests;
+using Nozomi.Data.Models.Currency;
 using Nozomi.Data.Models.Web;
 using Nozomi.Data.ResponseModels.Request;
 using Nozomi.Repo.Data;
@@ -11,6 +12,8 @@ namespace Nozomi.Service.Events.Interfaces
 {
     public interface IRequestEvent
     {
+        bool Exists(ComponentType type, long requestId);
+        
         Request Get(Expression<Func<Request, bool>> predicate);
         
         Request GetByGuid(Guid guid, bool track = false);
