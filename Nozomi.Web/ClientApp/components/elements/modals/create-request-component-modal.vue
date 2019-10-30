@@ -43,32 +43,6 @@
               </b-input>
             </b-field>
 
-            <b-field>
-              <template slot="label">
-                Delay <span class="has-text-primary is-italic">(In milliseconds)</span>
-              </template>
-              <b-input
-                type="number"
-                placeholder="Delay between each update in milliseconds"
-                v-model="form.delay"
-                expanded
-                required>
-              </b-input>
-            </b-field>
-
-            <b-field>
-              <template slot="label">
-                Retry Delay <span class="has-text-primary is-italic">(In milliseconds)</span>
-              </template>
-              <b-input
-                type="number"
-                placeholder="Retry attempt delay in milliseconds"
-                v-model="form.failureDelay"
-                required
-                expanded>
-              </b-input>
-            </b-field>
-
             <b-field grouped>
               <b-field label="Denominated Value">
                 <b-switch v-model="form.isDenominated"
@@ -131,8 +105,6 @@
                             type: 0,
                             identifier: "",
                             queryComponent: "",
-                            delay: 0,
-                            failureDelay: 0,
                             isDenominated: false,
                             anomalyIgnorance: false,
                             storeHistoricals: false
@@ -199,8 +171,6 @@
                     type: 0,
                     identifier: "",
                     queryComponent: "",
-                    delay: 0,
-                    failureDelay: 0,
                     isDenominated: false,
                     anomalyIgnorance: false,
                     storeHistoricals: false,
