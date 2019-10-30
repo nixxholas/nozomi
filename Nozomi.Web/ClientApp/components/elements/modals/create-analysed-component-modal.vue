@@ -104,7 +104,6 @@
                         self.form = {
                             type: 0,
                             uiFormatting: "",
-                            queryComponent: "",
                             isDenominated: false,
                             storeHistoricals: false,
                             currencyId: 0,
@@ -172,7 +171,6 @@
                 form: {
                     type: 0,
                     uiFormatting: "",
-                    queryComponent: "",
                     isDenominated: false,
                     storeHistoricals: false,
                     currencyId: this.currencyId,
