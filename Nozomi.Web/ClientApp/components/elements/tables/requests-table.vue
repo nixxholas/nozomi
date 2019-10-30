@@ -54,12 +54,14 @@
             </p>
           </div>
         </div>
-        <!--                    <div class="level-item has-text-centered">-->
-        <!--                      <div>-->
-        <!--                        <p class="heading">Following</p>-->
-        <!--                        <p class="title">123</p>-->
-        <!--                      </div>-->
-        <!--                    </div>-->
+        <div class="level-item has-text-centered">
+          <div>
+            <p class="heading">Request Component</p>
+            <p>
+              <CreateRCComponent v-bind:guid="props.row.guid"></CreateRCComponent>
+            </p>
+          </div>
+        </div>
         <!--                    <div class="level-item has-text-centered">-->
         <!--                      <div>-->
         <!--                        <p class="heading">Followers</p>-->
@@ -73,7 +75,6 @@
         <!--                      </div>-->
         <!--                    </div>-->
       </nav>
-      <CreateRCComponent v-bind:guid="props.row.guid"></CreateRCComponent>
     </template>
     <template slot="empty">
       <section class="section">
