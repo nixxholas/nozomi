@@ -96,6 +96,7 @@ namespace Nozomi.WSS
             services.AddScoped<ICurrencyPairEvent, CurrencyPairEvent>();
             services.AddScoped<ICurrencyTypeEvent, CurrencyTypeEvent>();
             services.AddScoped<IRequestEvent, RequestEvent>();
+            services.AddScoped<ITickerEvent, TickerEvent>();
             services.AddTransient<IRcdHistoricItemService, RcdHistoricItemService>();
             services.AddTransient<IRequestComponentService, RequestComponentService>();
             services.AddTransient<IRequestService, RequestService>();
