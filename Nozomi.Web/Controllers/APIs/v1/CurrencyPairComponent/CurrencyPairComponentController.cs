@@ -27,16 +27,16 @@ namespace Nozomi.Web.Controllers.APIs.v1.CurrencyPairComponent
         [SwaggerOperation(
             Summary = "Obtains all Request Components related to the specific Request ID."
         )]
-        public NozomiResult<ICollection<RequestComponent>> AllByRequestId(long requestId, bool includeNested = false)
+        public NozomiResult<ICollection<Data.Models.Web.RequestComponent>> AllByRequestId(long requestId, bool includeNested = false)
         {
-            return new NozomiResult<ICollection<RequestComponent>>
+            return new NozomiResult<ICollection<Data.Models.Web.RequestComponent>>
                 (_requestComponentEvent.GetAllByRequest(requestId, includeNested));
         }
 
         [HttpGet]
-        public NozomiResult<ICollection<RequestComponent>> All(int index = 0, bool includeNested = false)
+        public NozomiResult<ICollection<Data.Models.Web.RequestComponent>> All(int index = 0, bool includeNested = false)
         {
-            return new NozomiResult<ICollection<RequestComponent>>
+            return new NozomiResult<ICollection<Data.Models.Web.RequestComponent>>
                 (_requestComponentEvent.All(index, includeNested));
         }
     }
