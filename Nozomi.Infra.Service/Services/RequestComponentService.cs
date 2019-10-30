@@ -12,6 +12,7 @@ using Nozomi.Data.ViewModels.RequestComponent;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Data;
+using Nozomi.Service.Events.Interfaces;
 using Nozomi.Service.Services.Interfaces;
 
 namespace Nozomi.Service.Services
@@ -21,21 +22,27 @@ namespace Nozomi.Service.Services
     {
         private const string serviceName = "[CurrencyPairComponentService]";
 
-        private IRcdHistoricItemService _rcdHistoricItemService { get; set; }
+        private IRequestEvent _requestEvent;
+        private IRcdHistoricItemService _rcdHistoricItemService;
 
-        public RequestComponentService(ILogger<RequestComponentService> logger,
+        public RequestComponentService(ILogger<RequestComponentService> logger, IRequestEvent requestEvent,
             IRcdHistoricItemService rcdHistoricItemService,
             IUnitOfWork<NozomiDbContext> unitOfWork) : base(logger, unitOfWork)
         {
+            _requestEvent = requestEvent;
             _rcdHistoricItemService = rcdHistoricItemService;
         }
 
         public void Create(CreateRequestComponentViewModel vm, string userId = null)
         {
-            if (vm.IsValid())
+            if (vm.IsValid() && _requestEvent.Exists(vm.Type, vm.RequestId))
             {
+                var requestId = _requestEvent.GetId(vm.RequestId);
+                if (requestId <= 0) 
+                    throw new ArgumentException("Request not found.");
+                
                 var requestComponent = new RequestComponent(vm.Type, vm.Identifier, 
-                    vm.QueryComponent, vm.AnomalyIgnorance, vm.IsDenominated, vm.StoreHistoricals);
+                    vm.QueryComponent, vm.AnomalyIgnorance, vm.IsDenominated, vm.StoreHistoricals, requestId);
                 
                 _unitOfWork.GetRepository<RequestComponent>().Add(requestComponent);
                 _unitOfWork.Commit(userId);
