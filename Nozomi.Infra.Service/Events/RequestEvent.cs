@@ -44,13 +44,12 @@ namespace Nozomi.Service.Events
 
         public long GetId(string guid)
         {
-            return _unitOfWork.GetRepository<RequestComponent>()
+            return _unitOfWork.GetRepository<Request>()
                 .GetQueryable()
                 .AsNoTracking()
-                .Where(rc => rc.DeletedAt == null && rc.IsEnabled)
-                .Include(rc => rc.Request)
-                .Where(rc => rc.Request.Guid.Equals(Guid.Parse(guid)))
-                .Select(rc => rc.RequestId)
+                .Where(r => r.DeletedAt == null && r.IsEnabled
+                            && r.Guid.Equals(Guid.Parse(guid)))
+                .Select(r => r.Id)
                 .FirstOrDefault();
         }
 
