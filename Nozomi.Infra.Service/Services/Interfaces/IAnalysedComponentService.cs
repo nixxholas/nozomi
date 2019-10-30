@@ -1,7 +1,9 @@
+using Nozomi.Data.ViewModels.AnalysedComponent;
+
 namespace Nozomi.Service.Services.Interfaces
 {
     public interface IAnalysedComponentService
     {
-        void Create(string userId);
+        void Create(CreateAnalysedComponentViewModel vm, string userId);
     }
 }
