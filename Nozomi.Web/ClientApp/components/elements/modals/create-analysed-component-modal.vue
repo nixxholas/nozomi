@@ -84,7 +84,9 @@
         name: "create-ac-modal",
         props: {
             currentRoute: window.location.href, // https://forum.vuejs.org/t/how-to-get-path-from-route-instance/26934/2
-            guid: ""
+            currencyId: 0,
+            currencyPairId : 0,
+            currencyTypeId: 0
         },
         methods: {
             ...mapActions('oidcStore', ['authenticateOidc', 'signOutOidc']),
@@ -104,7 +106,10 @@
                             uiFormatting: "",
                             queryComponent: "",
                             isDenominated: false,
-                            storeHistoricals: false
+                            storeHistoricals: false,
+                            currencyId: 0,
+                            currencyPairId : 0,
+                            currencyTypeId: 0
                         };
 
                         if (response.status === 200) {
@@ -170,7 +175,9 @@
                     queryComponent: "",
                     isDenominated: false,
                     storeHistoricals: false,
-                    requestId: this.guid
+                    currencyId: this.currencyId,
+                    currencyPairId : this.currencyPairId,
+                    currencyTypeId: this.currencyTypeId
                 },
                 componentTypes: [],
                 componentTypesIsLoading: false
