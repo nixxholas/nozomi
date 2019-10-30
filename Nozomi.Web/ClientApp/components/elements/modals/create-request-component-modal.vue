@@ -132,7 +132,7 @@
                             duration: 2500,
                             message: `Please make sure your entry is correctly filled!`,
                             position: 'is-bottom-right',
-                            type: 'is-success',
+                            type: 'is-danger',
                             hasIcon: true
                         });
                     })
