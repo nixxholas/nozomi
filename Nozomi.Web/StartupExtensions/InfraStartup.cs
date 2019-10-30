@@ -41,6 +41,7 @@ namespace Nozomi.Web.StartupExtensions
             services.AddScoped<ITickerEvent, TickerEvent>();
 
             // Services
+            services.AddScoped<IAnalysedComponentService, AnalysedComponentService>();
             services.AddScoped<IRequestService, RequestService>();
             services.AddScoped<IRequestComponentService, RequestComponentService>();
             services.AddScoped<IRcdHistoricItemService, RcdHistoricItemService>();
