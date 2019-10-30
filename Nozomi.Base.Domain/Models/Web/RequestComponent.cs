@@ -11,7 +11,7 @@ namespace Nozomi.Data.Models.Web
         public RequestComponent() {}
 
         public RequestComponent(ComponentType componentType, string identifier, string queryComponent,
-            bool anomalyIgnorance, bool isDenominated, bool storeHistoricals)
+            bool anomalyIgnorance, bool isDenominated, bool storeHistoricals, long requestId)
         {
             ComponentType = componentType;
             Identifier = identifier;
@@ -19,6 +19,7 @@ namespace Nozomi.Data.Models.Web
             AnomalyIgnorance = anomalyIgnorance;
             IsDenominated = isDenominated;
             StoreHistoricals = storeHistoricals;
+            RequestId = requestId;
         }
 
         public RequestComponent(RequestComponent component, int historicIndex, int historicItemAmount)
