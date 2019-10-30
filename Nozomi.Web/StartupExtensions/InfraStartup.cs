@@ -1,4 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
+using Nozomi.Data.Models.Web;
 using Nozomi.Infra.Blockchain.Auth.Events;
 using Nozomi.Infra.Blockchain.Auth.Events.Interfaces;
 using Nozomi.Preprocessing.Events;
@@ -7,7 +8,9 @@ using Nozomi.Service.Events;
 using Nozomi.Service.Events.Analysis;
 using Nozomi.Service.Events.Analysis.Interfaces;
 using Nozomi.Service.Events.Interfaces;
+using Nozomi.Service.Services;
 using Nozomi.Service.Services.Enumerators;
+using Nozomi.Service.Services.Interfaces;
 using Nozomi.Service.Services.Requests;
 using Nozomi.Service.Services.Requests.Interfaces;
 
@@ -39,6 +42,8 @@ namespace Nozomi.Web.StartupExtensions
 
             // Services
             services.AddScoped<IRequestService, RequestService>();
+            services.AddScoped<IRequestComponentService, RequestComponentService>();
+            services.AddScoped<IRcdHistoricItemService, RcdHistoricItemService>();
         }
     }
 }
