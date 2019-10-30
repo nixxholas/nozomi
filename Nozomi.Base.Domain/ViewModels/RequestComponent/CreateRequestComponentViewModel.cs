@@ -36,7 +36,7 @@ namespace Nozomi.Data.ViewModels.RequestComponent
                 RuleFor(e => e.IsDenominated).NotNull();
                 RuleFor(e => e.AnomalyIgnorance).NotNull();
                 RuleFor(e => e.StoreHistoricals).NotNull();
-                RuleFor(e => e.RequestId).NotNull();
+                RuleFor(e => e.RequestId).NotNull().NotEmpty();
             }
         }
     }
