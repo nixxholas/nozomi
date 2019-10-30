@@ -32,6 +32,7 @@ namespace Nozomi.Service.Services
                 
                 _unitOfWork.GetRepository<AnalysedComponent>().Add(analysedComponent);
                 _unitOfWork.Commit(userId);
+                return;
             }
         
             throw new InvalidOperationException("Invalid model data.");
