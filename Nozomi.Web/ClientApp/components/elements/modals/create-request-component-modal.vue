@@ -86,7 +86,8 @@
     export default {
         name: "create-rc-modal",
         props: {
-            currentRoute: window.location.href // https://forum.vuejs.org/t/how-to-get-path-from-route-instance/26934/2
+            currentRoute: window.location.href, // https://forum.vuejs.org/t/how-to-get-path-from-route-instance/26934/2
+            guid: ""
         },
         methods: {
             ...mapActions('oidcStore', ['authenticateOidc', 'signOutOidc']),
@@ -174,7 +175,7 @@
                     isDenominated: false,
                     anomalyIgnorance: false,
                     storeHistoricals: false,
-                    requestId: ""
+                    requestId: this.guid
                 },
                 componentTypes: [],
                 componentTypesIsLoading: false

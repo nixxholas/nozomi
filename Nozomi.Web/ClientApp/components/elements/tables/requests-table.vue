@@ -73,7 +73,7 @@
         <!--                      </div>-->
         <!--                    </div>-->
       </nav>
-      <CreateRCComponent></CreateRCComponent>
+      <CreateRCComponent v-bind:guid="props.row.guid"></CreateRCComponent>
     </template>
     <template slot="empty">
       <section class="section">
