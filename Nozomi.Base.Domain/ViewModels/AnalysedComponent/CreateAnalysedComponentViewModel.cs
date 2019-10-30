@@ -15,13 +15,31 @@ namespace Nozomi.Data.ViewModels.AnalysedComponent
         
         public bool StoreHistoricals { get; set; }
         
-        public class CreateAnalysedComponentValidator : AbstractValidator<CreateAnalysedComponentViewModel>
+        public long CurrencyId { get; set; }
+        
+        public long CurrencyPairId { get; set; }
+        
+        public long CurrencyTypeId { get; set; }
+
+        public bool IsValid()
+        {
+            var validator = new CreateAnalysedComponentValidator();
+            return validator.Validate(this).IsValid;
+        }
+        
+        protected class CreateAnalysedComponentValidator : AbstractValidator<CreateAnalysedComponentViewModel>
         {
             public CreateAnalysedComponentValidator()
             {
                 RuleFor(e => e.Type).IsInEnum();
                 RuleFor(e => e.Delay).GreaterThanOrEqualTo(0);
                 RuleFor(e => e.UiFormatting).NotNull().NotEmpty();
+                RuleFor(e => e.CurrencyId).GreaterThan(0)
+                    .Unless(e => e.CurrencyPairId > 0 || e.CurrencyTypeId > 0);
+                RuleFor(e => e.CurrencyPairId).GreaterThan(0)
+                    .Unless(e => e.CurrencyId > 0 || e.CurrencyTypeId > 0);
+                RuleFor(e => e.CurrencyTypeId).GreaterThan(0)
+                    .Unless(e => e.CurrencyId > 0 || e.CurrencyPairId > 0);
             }
         }
     }
