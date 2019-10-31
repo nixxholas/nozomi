@@ -96,8 +96,8 @@
             create: function() {
                 this.isModalLoading = true;
 
-                if (self.form.currencyId > 0 || self.form.currencyPairId > 0 || self.form.currencyTypeId > 0) {
-                    let self = this;
+                let self = this;
+                if (self.currencyId > 0 || self.currencyPairId > 0 || self.currencyTypeId > 0) {
                     this.$axios.post('/api/AnalysedComponent/Create', self.form, {
                         headers: {
                             Authorization: "Bearer " + store.state.oidcStore.access_token
@@ -142,6 +142,7 @@
                             self.isModalLoading = false;
                         });
                 } else {
+                    console.dir(self.form);
                     Notification.open({
                         duration: 2500,
                         message: `The modal was incorrectly instantiated! You might have to contact our staff :(.`,
@@ -149,6 +150,7 @@
                         type: 'is-danger',
                         hasIcon: true
                     });
+                    this.isModalLoading = false;
                 }
             }
         },
