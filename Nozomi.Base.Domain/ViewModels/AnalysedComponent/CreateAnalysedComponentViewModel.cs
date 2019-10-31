@@ -33,7 +33,9 @@ namespace Nozomi.Data.ViewModels.AnalysedComponent
             {
                 RuleFor(e => e.Type).IsInEnum();
                 RuleFor(e => e.Delay).GreaterThanOrEqualTo(0);
-                RuleFor(e => e.UiFormatting).NotNull().NotEmpty();
+                // RuleFor(e => e.UiFormatting); // No rules yet
+                RuleFor(e => e.IsDenominated).NotNull();
+                RuleFor(e => e.StoreHistoricals).NotNull();
                 RuleFor(e => e.CurrencyId).GreaterThan(0)
                     .Unless(e => e.CurrencyPairId > 0 || e.CurrencyTypeId > 0);
                 RuleFor(e => e.CurrencyPairId).GreaterThan(0)
