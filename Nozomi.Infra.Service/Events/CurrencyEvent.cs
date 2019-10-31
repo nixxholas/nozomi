@@ -242,6 +242,24 @@ namespace Nozomi.Service.Events
             return decimal.MinusOne;
         }
 
+        public long GetCountByType(string typeShortForm = "CRYPTO")
+        {
+            return _unitOfWork.GetRepository<CurrencyType>()
+                .GetQueryable()
+                .AsNoTracking()
+                .Where(ct => ct.TypeShortForm.Equals(typeShortForm, StringComparison.InvariantCultureIgnoreCase))
+                .Include(ct => ct.Currencies)
+                .ThenInclude(c => c.AnalysedComponents)
+                .ThenInclude(ac => ac.AnalysedHistoricItems)
+                .Include(ct => ct.Currencies)
+                .ThenInclude(c => c.Requests)
+                .ThenInclude(r => r.RequestComponents)
+                .SelectMany(ct => ct.Currencies
+                    .Where(c => c.DeletedAt == null && c.IsEnabled)
+                    .OrderBy(c => c.Id))
+                .LongCount();
+        }
+
         public ICollection<Currency> GetAll(bool includeNested = false)
         {
             var query = _unitOfWork.GetRepository<Currency>()
