@@ -27,6 +27,7 @@ namespace Nozomi.Web.StartupExtensions
             services.AddScoped<IValidatingEvent, ValidatingEvent>();
 
             services.AddScoped<IAnalysedComponentEvent, AnalysedComponentEvent>();
+            services.AddScoped<IAnalysedComponentTypeEvent, AnalysedComponentTypeEvent>();
             services.AddScoped<IAnalysedHistoricItemEvent, AnalysedHistoricItemEvent>();
             services.AddScoped<IComponentTypeEvent, ComponentTypeEvent>();
             services.AddScoped<ICurrencyEvent, CurrencyEvent>();
