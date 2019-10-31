@@ -45,7 +45,7 @@
             <div class="tile is-child" v-if="hasAccess">
               <p class="heading">Have a component to add?</p>
               <p class="is-4">
-                <CreateAcComponentModal v-bind:currency-id="this.data.id"></CreateAcComponentModal>
+                <CreateAcComponentModal v-bind:currency-id="data.id"></CreateAcComponentModal>
               </p>
             </div>
             <div class="tile is-child">
