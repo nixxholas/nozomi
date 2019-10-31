@@ -87,9 +87,9 @@
         name: "create-ac-modal",
         props: {
             currentRoute: window.location.href, // https://forum.vuejs.org/t/how-to-get-path-from-route-instance/26934/2
-            currencyId: 0,
-            currencyPairId : 0,
-            currencyTypeId: 0
+            currencyId: Number,
+            currencyPairId : Number,
+            currencyTypeId: Number
         },
         methods: {
             ...mapActions('oidcStore', ['authenticateOidc', 'signOutOidc']),
