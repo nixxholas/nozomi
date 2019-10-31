@@ -324,8 +324,8 @@ namespace Nozomi.Service.Events
 //                                                        && !string.IsNullOrEmpty(ac.Value)
 //                                                        && NumberHelper.IsNumericDecimal(ac.Value))
                                                     )
-                    .Where(c => c.AnalysedComponents
-                        .Any(ac => ac.DeletedAt == null && ac.IsEnabled))
+//                    .Where(c => c.AnalysedComponents
+//                        .Any(ac => ac.DeletedAt == null && ac.IsEnabled))
 //                    .OrderByDescending(c => decimal.Parse(c.AnalysedComponents
 //                        .SingleOrDefault(ac => ac.ComponentType == AnalysedComponentType.MarketCap).Value))
                     .OrderBy(c => c.Id)
