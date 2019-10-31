@@ -63,52 +63,6 @@
                 </b-switch>
               </b-field>
             </b-field>
-
-            <b-tabs v-model="form.parentType" expanded class="has-text-dark">
-              <b-tab-item label="Currency">
-                <b-field label="Find a currency">
-                  <b-autocomplete
-                    rounded
-                    v-model="form.currencySlug"
-                    :data="currencies"
-                    placeholder="e.g. EUR"
-                    icon="magnify"
-                    @select="option => form.currencySlug = option">
-                    <template slot="empty">No results found</template>
-                  </b-autocomplete>
-                </b-field>
-              </b-tab-item>
-              <b-tab-item label="Currency Pair">
-                <b-field>
-                  <b-autocomplete
-                    :data="currencyPairs"
-                    v-model="form.currencyPairId"
-                    placeholder="e.g. EURUSD"
-                    :custom-formatter="getCurrencyPairTickerPairStr"
-                    :loading="currencyPairs == null"
-                    @select="option => form.currencyPair.id = option.id">
-
-                    <template slot-scope="props">
-                      <b-taglist attached>
-                        <b-tag type="is-dark">
-                          {{ props.option.mainTicker }}{{ props.option.counterTicker }}
-                        </b-tag>
-                        <b-tag type="is-info">
-                          <b>{{ props.option.sourceName }}</b>
-                        </b-tag>
-                      </b-taglist>
-                    </template>
-                  </b-autocomplete>
-                </b-field>
-              </b-tab-item>
-              <b-tab-item label="Currency Type">
-                <b-field v-if="currencyTypes !== null && currencyTypes.length > 0">
-                  <b-select placeholder="Select a currency type" v-model="form.currencyTypeId">
-                    <option v-for="ct in currencyTypes" :value="ct.id">{{ ct.name }}</option>
-                  </b-select>
-                </b-field>
-              </b-tab-item>
-            </b-tabs>
           </section>
 
           <footer class="modal-card-foot">
@@ -130,13 +84,12 @@
         name: "create-ac-modal",
         props: {
             currentRoute: window.location.href, // https://forum.vuejs.org/t/how-to-get-path-from-route-instance/26934/2
-            currencyPairs: null
+            currencyId: 0,
+            currencyPairId : 0,
+            currencyTypeId: 0
         },
         methods: {
             ...mapActions('oidcStore', ['authenticateOidc', 'signOutOidc']),
-            getCurrencyPairTickerPairStr: function(obj) {
-                return obj.mainTicker + obj.counterTicker + " (" + obj.sourceName + ")";
-            },
             create: function() {
                 this.isModalLoading = true;
 
@@ -153,9 +106,6 @@
                             uiFormatting: "",
                             isDenominated: false,
                             storeHistoricals: false,
-                            currencyId: 0,
-                            currencyPairId : 0,
-                            currencyTypeId: 0
                         };
 
                         if (response.status === 200) {
@@ -210,22 +160,6 @@
                     // always executed
                     self.componentTypesIsLoading = false;
                 });
-
-            this.$axios.get('/api/CurrencyPair/ListAll', {
-                headers: {
-                    Authorization: "Bearer " + store.state.oidcStore.access_token
-                }
-            })
-                .then(function (response) {
-                    self.currencyPairs = response.data;
-                })
-                .catch(function (error) {
-                    // handle error
-                    self.authenticateOidc(self.currentRoute);
-                })
-                .finally(function () {
-                    // always executed
-                });
         },
         data: function () {
             return {
@@ -237,9 +171,9 @@
                     uiFormatting: "",
                     isDenominated: false,
                     storeHistoricals: false,
-                    currencyId: 0,
-                    currencyPairId : 0,
-                    currencyTypeId: 0
+                    currencyId: this.currencyId,
+                    currencyPairId : this.currencyPairId,
+                    currencyTypeId: this.currencyTypeId
                 },
                 componentTypes: [],
                 componentTypesIsLoading: false
