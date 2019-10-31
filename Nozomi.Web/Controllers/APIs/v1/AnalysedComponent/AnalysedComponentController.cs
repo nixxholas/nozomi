@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data.ViewModels.AnalysedComponent;
+using Nozomi.Service.Events.Analysis.Interfaces;
 using Nozomi.Service.Services.Interfaces;
 
 namespace Nozomi.Web.Controllers.APIs.v1.AnalysedComponent
@@ -12,11 +13,26 @@ namespace Nozomi.Web.Controllers.APIs.v1.AnalysedComponent
     public class AnalysedComponentController : BaseApiController<AnalysedComponentController>,
         IAnalysedComponentController
     {
+        private readonly IAnalysedComponentTypeEvent _analysedComponentTypeEvent;
         private readonly IAnalysedComponentService _analysedComponentService;
         public AnalysedComponentController(ILogger<AnalysedComponentController> logger,
+            IAnalysedComponentTypeEvent analysedComponentTypeEvent,
             IAnalysedComponentService analysedComponentService) : base(logger)
         {
+            _analysedComponentTypeEvent = analysedComponentTypeEvent;
             _analysedComponentService = analysedComponentService;
+        }
+
+        [Authorize]
+        [HttpGet]
+        public IActionResult AllTypes()
+        {
+            var payload = _analysedComponentTypeEvent.GetAllKeyValuePairs();
+
+            if (payload == null)
+                return StatusCode(500);
+
+            return Ok(payload);
         }
 
         [Authorize]
