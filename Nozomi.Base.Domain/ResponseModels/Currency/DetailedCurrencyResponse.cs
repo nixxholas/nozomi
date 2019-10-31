@@ -96,12 +96,14 @@ namespace Nozomi.Data.ResponseModels.Currency
             ICollection<Models.Web.RequestComponent> requestComponents)
         {
             // Aggregate non-compounded properties first
+            Id = currency.Id;
             Name = currency.Name;
             Abbreviation = currency.Abbreviation;
             Description = currency.Description;
             Slug = currency.Slug;
             LastUpdated = currency.ModifiedAt;
             LogoPath = currency.LogoPath;
+            // CurrencyType = currency.CurrencyType.GetDescription();
 
             foreach (var ac in currency.AnalysedComponents)
             {
