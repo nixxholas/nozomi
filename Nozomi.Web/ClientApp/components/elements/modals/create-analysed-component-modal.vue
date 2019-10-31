@@ -154,7 +154,7 @@
                 })
                 .catch(function (error) {
                     // handle error
-                    self.authenticateOidc(self.currentRoute);
+                    self.authenticateOidc(window.location.href);
                 })
                 .finally(function () {
                     // always executed
