@@ -24,7 +24,7 @@ namespace Nozomi.Service.Services
 
         public void Create(CreateAnalysedComponentViewModel vm, string userId)
         {
-            if (vm.IsValid() && _analysedComponentEvent.Exists(vm.Type, vm.CurrencyId, vm.CurrencyPairId, 
+            if (vm.IsValid() && !_analysedComponentEvent.Exists(vm.Type, vm.CurrencyId, vm.CurrencyPairId, 
                     vm.CurrencyTypeId))
             {
                 var analysedComponent = new AnalysedComponent(vm.Type, vm.Delay, vm.UiFormatting, vm.IsDenominated,
