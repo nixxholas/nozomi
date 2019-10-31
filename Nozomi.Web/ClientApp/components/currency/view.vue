@@ -42,6 +42,12 @@
 
         <div class="tile is-ancestor notification">
           <div class="tile is-parent is-vertical is-3">
+            <div class="tile is-child" v-if="hasAccess">
+              <p class="heading">Have a component to add?</p>
+              <p class="is-4">
+                <CreateAcComponentModal v-bind:currency-id="this.data.id"></CreateAcComponentModal>
+              </p>
+            </div>
             <div class="tile is-child">
               <p class="heading">Market Cap</p>
               <p class="title is-4">{{ data.marketCap | numeralFormat('$0[.]00 a') }}</p>
@@ -151,16 +157,29 @@
 
 <script>
   import { createChart } from 'lightweight-charts';
+  import { mapGetters } from 'vuex';
+  import CreateAcComponentModal from '../elements/modals/create-analysed-component-modal';
 
   export default {
-    props: ['slug'],
-    beforeMount: async function () {
+      computed: {
+          ...mapGetters('oidcStore', [
+              'oidcIsAuthenticated',
+              'oidcIdTokenExp'
+          ]),
+          hasAccess: function() {
+              return this.oidcIsAuthenticated
+          },
+      },
+      props: ['slug'],
+      components: { CreateAcComponentModal },
+      beforeMount: async function () {
       this.loading = true;
 
       try {
         const response = await this.$axios.get('/api/Currency/Detailed/' + this.slug);
 
         this.data = response.data.data;
+        console.dir(this.data);
 
         if (response.data.data.averagePriceHistory !== null) {
           this.series[0].data = response.data.data.averagePriceHistory;
