@@ -45,7 +45,7 @@
             <div class="tile is-child" v-if="hasAccess">
               <p class="heading">Have a component to add?</p>
               <p class="is-4">
-                <CreateAcComponentModal v-bind:currency-id="data.id"></CreateAcComponentModal>
+                <CreateAcComponentModal :currency-id="data.id"></CreateAcComponentModal>
               </p>
             </div>
             <div class="tile is-child">
@@ -179,7 +179,6 @@
         const response = await this.$axios.get('/api/Currency/Detailed/' + this.slug);
 
         this.data = response.data.data;
-        console.dir(this.data);
 
         if (response.data.data.averagePriceHistory !== null) {
           this.series[0].data = response.data.data.averagePriceHistory;

@@ -110,6 +110,9 @@
                                 uiFormatting: "",
                                 isDenominated: false,
                                 storeHistoricals: false,
+                                currencyId: self.form.currencyId,
+                                currencyPairId : self.form.currencyPairId,
+                                currencyTypeId: self.form.currencyTypeId
                             };
 
                             if (response.status === 200) {
@@ -142,7 +145,7 @@
                             self.isModalLoading = false;
                         });
                 } else {
-                    console.dir(self.form);
+                    //console.dir(self.form);
                     Notification.open({
                         duration: 2500,
                         message: `The modal was incorrectly instantiated! You might have to contact our staff :(.`,
