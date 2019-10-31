@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Identity;
@@ -27,6 +28,16 @@ namespace Nozomi.Web.Controllers.APIs.v1.Currency
         {
             _analysedHistoricItemEvent = analysedHistoricItemEvent;
             _currencyEvent = currencyEvent;
+        }
+
+        public IActionResult GetCountByType(string currencyType = "CRYPTO")
+        {
+            var count = _currencyEvent.GetCountByType(currencyType);
+
+            if (count > 0)
+                return Ok(count);
+
+            throw new ArgumentNullException("Invalid or empty currency type.");
         }
 
         [HttpGet]
