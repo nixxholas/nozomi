@@ -21,9 +21,15 @@ namespace Nozomi.Data.Models.Web.Analytical
             UIFormatting = uiFormatting;
             IsDenominated = isDenominated;
             StoreHistoricals = storeHistoricals;
-            CurrencyId = currencyId;
-            CurrencyPairId = currencyPairId;
-            CurrencyTypeId = currencyTypeId;
+            
+            if (currencyId > 0)
+                CurrencyId = currencyId;
+            
+            if (currencyPairId > 0)
+                CurrencyPairId = currencyPairId;
+            
+            if (currencyTypeId > 0)
+                CurrencyTypeId = currencyTypeId;
         }
         
         /// <summary>
