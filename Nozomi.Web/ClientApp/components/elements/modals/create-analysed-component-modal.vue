@@ -25,7 +25,10 @@
               </b-select>
             </b-field>
 
-            <b-field label="UI Formatting">
+            <b-field>
+              <template slot="label">
+                UI Formatting
+              </template>
               <b-input
                 type="text"
                 placeholder=""
@@ -93,50 +96,60 @@
             create: function() {
                 this.isModalLoading = true;
 
-                let self = this;
-                this.$axios.post('/api/AnalysedComponent/Create', self.form, {
-                    headers: {
-                        Authorization: "Bearer " + store.state.oidcStore.access_token
-                    }
-                })
-                    .then(function (response) {
-                        // Reset the form data regardless
-                        self.form = {
-                            type: 0,
-                            uiFormatting: "",
-                            isDenominated: false,
-                            storeHistoricals: false,
-                        };
-
-                        if (response.status === 200) {
-                            self.isModalActive = false; // Close the modal
-                            Notification.open({
-                                duration: 2500,
-                                message: `Component successfully created!`,
-                                position: 'is-bottom-right',
-                                type: 'is-success',
-                                hasIcon: true
-                            });
-
-                            // Inform the parent that a new request has been created
-                            // https://forum.vuejs.org/t/passing-data-back-to-parent/1201
-                            self.$emit('created', true);
+                if (self.form.currencyId > 0 || self.form.currencyPairId > 0 || self.form.currencyTypeId > 0) {
+                    let self = this;
+                    this.$axios.post('/api/AnalysedComponent/Create', self.form, {
+                        headers: {
+                            Authorization: "Bearer " + store.state.oidcStore.access_token
                         }
                     })
-                    .catch(function (error) {
-                        //console.log(error);
-                        Notification.open({
-                            duration: 2500,
-                            message: `Please make sure your entry is correctly filled!`,
-                            position: 'is-bottom-right',
-                            type: 'is-danger',
-                            hasIcon: true
+                        .then(function (response) {
+                            // Reset the form data regardless
+                            self.form = {
+                                type: 0,
+                                uiFormatting: "",
+                                isDenominated: false,
+                                storeHistoricals: false,
+                            };
+
+                            if (response.status === 200) {
+                                self.isModalActive = false; // Close the modal
+                                Notification.open({
+                                    duration: 2500,
+                                    message: `Component successfully created!`,
+                                    position: 'is-bottom-right',
+                                    type: 'is-success',
+                                    hasIcon: true
+                                });
+
+                                // Inform the parent that a new request has been created
+                                // https://forum.vuejs.org/t/passing-data-back-to-parent/1201
+                                self.$emit('created', true);
+                            }
+                        })
+                        .catch(function (error) {
+                            //console.log(error);
+                            Notification.open({
+                                duration: 2500,
+                                message: `Please make sure your entry is correctly filled!`,
+                                position: 'is-bottom-right',
+                                type: 'is-danger',
+                                hasIcon: true
+                            });
+                        })
+                        .finally(function () {
+                            // always executed
+                            self.isModalLoading = false;
                         });
-                    })
-                    .finally(function () {
-                        // always executed
-                        self.isModalLoading = false;
+                } else {
+                    Notification.open({
+                        duration: 2500,
+                        message: `The modal was incorrectly instantiated! You might have to contact our staff :(.`,
+                        position: 'is-bottom-right',
+                        type: 'is-danger',
+                        hasIcon: true
                     });
+                }
             }
         },
         beforeCreate: function () {
@@ -150,9 +163,11 @@
                 }
             })
                 .then(function (response) {
-                    self.componentTypes = response.data.data.value;
+                    // console.dir(response);
+                    self.componentTypes = response.data;
                 })
                 .catch(function (error) {
+                    //console.dir(error);
                     // handle error
                     self.authenticateOidc(window.location.href);
                 })
