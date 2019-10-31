@@ -103,7 +103,7 @@ namespace Nozomi.Data.ResponseModels.Currency
             Slug = currency.Slug;
             LastUpdated = currency.ModifiedAt;
             LogoPath = currency.LogoPath;
-            // CurrencyType = currency.CurrencyType.GetDescription();
+            // CurrencyType = currency.CurrencyType.Name; // Omitted for brevity
 
             foreach (var ac in currency.AnalysedComponents)
             {
@@ -169,7 +169,7 @@ namespace Nozomi.Data.ResponseModels.Currency
             {
                 RequestComponents = requestComponents.Select(rc => new RequestComponentResponse()
                     {
-                        Name = EnumHelper.GetDescription(rc.ComponentType),
+                        Name = rc.ComponentType.GetDescription(),
                         Timestamp = rc.ModifiedAt,
                         Value = rc.Value
                     })
