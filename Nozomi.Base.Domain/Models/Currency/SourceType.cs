@@ -1,3 +1,4 @@
+using System;
 using Nozomi.Base.Core;
 
 namespace Nozomi.Data.Models.Currency
@@ -11,6 +12,10 @@ namespace Nozomi.Data.Models.Currency
             Abbreviation = abbreviation;
             Name = name;
         }
+        
+        public long Id { get; set; }
+        
+        public Guid Guid { get; set; }
     
         public string Abbreviation { get; set; }
         
