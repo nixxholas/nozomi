@@ -10,7 +10,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Nozomi.Repo.Migrations
 {
     [DbContext(typeof(NozomiDbContext))]
-    [Migration("20191101094042_r11_SourceTypeBinding")]
+    [Migration("20191101094435_r11_SourceTypeBinding")]
     partial class r11_SourceTypeBinding
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -338,7 +338,7 @@ namespace Nozomi.Repo.Migrations
                             Id = 1L,
                             Abbreviation = "UNK",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Guid = new Guid("00000000-0000-0000-0000-000000000000"),
+                            Guid = new Guid("05b6457d-059c-458c-8774-0811e4d59ea8"),
                             IsEnabled = true,
                             ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Name = "Unknown"

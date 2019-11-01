@@ -25,6 +25,10 @@ namespace Nozomi.Data.Models.Currency
         }
 
         // =========== RELATIONS ============ //
+        public long SourceTypeId { get; set; }
+        
+        public SourceType SourceType { get; set; }
+        
         public ICollection<CurrencySource> SourceCurrencies { get; set; }
         public ICollection<CurrencyPair> CurrencyPairs { get; set; }
 

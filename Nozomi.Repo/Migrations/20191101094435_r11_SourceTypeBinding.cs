@@ -19,8 +19,8 @@ namespace Nozomi.Repo.Migrations
 
             migrationBuilder.InsertData(
                 table: "SourceTypes",
-                columns: new[] { "Id", "Abbreviation", "CreatedAt", "CreatedById", "DeletedAt", "DeletedById", "IsEnabled", "ModifiedAt", "ModifiedById", "Name" },
-                values: new object[] { 1L, "UNK", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, "Unknown" });
+                columns: new[] { "Id", "Abbreviation", "CreatedAt", "CreatedById", "DeletedAt", "DeletedById", "Guid", "IsEnabled", "ModifiedAt", "ModifiedById", "Name" },
+                values: new object[] { 1L, "UNK", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, null, new Guid("05b6457d-059c-458c-8774-0811e4d59ea8"), true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, "Unknown" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_SourceTypes_Guid",

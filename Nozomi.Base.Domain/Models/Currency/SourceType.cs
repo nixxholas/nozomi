@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Nozomi.Base.Core;
 
 namespace Nozomi.Data.Models.Currency
@@ -20,5 +21,7 @@ namespace Nozomi.Data.Models.Currency
         public string Abbreviation { get; set; }
         
         public string Name { get; set; }
+        
+        public ICollection<Source> Sources { get; set; }
     }
 }

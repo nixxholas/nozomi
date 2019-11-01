@@ -266,6 +266,10 @@ namespace Nozomi.Repo.Migrations
                     b.Property<string>("Name")
                         .IsRequired();
 
+                    b.Property<long>("SourceTypeId")
+                        .ValueGeneratedOnAdd()
+                        .HasDefaultValue(1L);
+
                     b.Property<uint>("xmin")
                         .IsConcurrencyToken()
                         .ValueGeneratedOnAddOrUpdate()
@@ -277,7 +281,66 @@ namespace Nozomi.Repo.Migrations
                     b.HasIndex("Abbreviation")
                         .HasName("Source_Index_Abbreviation");
 
+                    b.HasIndex("SourceTypeId");
+
                     b.ToTable("Sources");
+                });
+
+            modelBuilder.Entity("Nozomi.Data.Models.Currency.SourceType", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("Abbreviation")
+                        .IsRequired();
+
+                    b.Property<DateTime>("CreatedAt");
+
+                    b.Property<string>("CreatedById");
+
+                    b.Property<DateTime?>("DeletedAt");
+
+                    b.Property<string>("DeletedById");
+
+                    b.Property<Guid>("Guid")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<bool>("IsEnabled");
+
+                    b.Property<DateTime>("ModifiedAt");
+
+                    b.Property<string>("ModifiedById");
+
+                    b.Property<string>("Name")
+                        .IsRequired();
+
+                    b.Property<uint>("xmin")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid");
+
+                    b.HasKey("Id")
+                        .HasName("SourceType_Id_PK");
+
+                    b.HasIndex("Abbreviation")
+                        .IsUnique();
+
+                    b.HasIndex("Guid")
+                        .IsUnique();
+
+                    b.ToTable("SourceTypes");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1L,
+                            Abbreviation = "UNK",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Guid = new Guid("05b6457d-059c-458c-8774-0811e4d59ea8"),
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "Unknown"
+                        });
                 });
 
             modelBuilder.Entity("Nozomi.Data.Models.Web.Analytical.AnalysedComponent", b =>
@@ -714,6 +777,14 @@ namespace Nozomi.Repo.Migrations
                         .HasForeignKey("SourceId")
                         .HasConstraintName("CurrencySource_Source_Constraint")
                         .OnDelete(DeleteBehavior.Restrict);
+                });
+
+            modelBuilder.Entity("Nozomi.Data.Models.Currency.Source", b =>
+                {
+                    b.HasOne("Nozomi.Data.Models.Currency.SourceType", "SourceType")
+                        .WithMany("Sources")
+                        .HasForeignKey("SourceTypeId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("Nozomi.Data.Models.Web.Analytical.AnalysedComponent", b =>
