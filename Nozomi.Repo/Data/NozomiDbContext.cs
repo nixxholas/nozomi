@@ -35,6 +35,7 @@ namespace Nozomi.Repo.Data
         public DbSet<RcdHistoricItem> RcdHistoricItems { get; set; }
         public DbSet<RequestProperty> RequestProperties { get; set; }
         public DbSet<Source> Sources { get; set; }
+        public DbSet<SourceType> SourceTypes { get; set; }
         public DbSet<WebsocketCommand> WebsocketCommands { get; set; }
         public DbSet<WebsocketCommandProperty> WebsocketCommandProperties { get; set; }
         
@@ -86,6 +87,8 @@ namespace Nozomi.Repo.Data
             var sourceMap = new SourceMap(modelBuilder.Entity<Source>());
             modelBuilder.Entity<Source>().ForNpgsqlUseXminAsConcurrencyToken();
 
+            var sourceTypeMap = new SourceTypeMap(modelBuilder.Entity<SourceType>());
+            modelBuilder.Entity<SourceType>().ForNpgsqlUseXminAsConcurrencyToken();
 
             // MTM
             var currencySourceMap = new CurrencySourceMap(modelBuilder.Entity<CurrencySource>());
