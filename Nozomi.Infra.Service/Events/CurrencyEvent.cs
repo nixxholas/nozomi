@@ -54,7 +54,7 @@ namespace Nozomi.Service.Events
                 .AsNoTracking()
                 .Include(c => c.CurrencyType)
                 .Where(c => c.DeletedAt == null && c.IsEnabled 
-                                                && c.CurrencyType.Name.Equals(currencyType, 
+                                                && c.CurrencyType.TypeShortForm.Equals(currencyType, 
                                                     StringComparison.InvariantCultureIgnoreCase))
                 .Include(c => c.AnalysedComponents);
 
