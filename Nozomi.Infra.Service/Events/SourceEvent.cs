@@ -89,30 +89,30 @@ namespace Nozomi.Service.Events
         }
         
         // Get all including disabled sources.
-        public IEnumerable<Source> GetAll(bool countPairs = false, bool includeNested = false)
-        {
-            var query = _unitOfWork.GetRepository<Source>()
-                .GetQueryable();
-
-            if (countPairs)
-            {
-                query = query
-                    .Include(s => s.CurrencyPairs);
-            }
-
-            if (includeNested)
-            {
-                query = query
-                    .Include(s => s.SourceCurrencies)
-                    .ThenInclude(sc => sc.Currency)
-                    .Include(s => s.CurrencyPairs)
-                    .ThenInclude(cp => cp.Source)
-                    .ThenInclude(s => s.SourceCurrencies)
-                    .ThenInclude(sc => sc.Currency);
-            }
-
-            return query;
-        }
+//        public IEnumerable<Source> GetAll(bool countPairs = false, bool includeNested = false)
+//        {
+//            var query = _unitOfWork.GetRepository<Source>()
+//                .GetQueryable();
+//
+//            if (countPairs)
+//            {
+//                query = query
+//                    .Include(s => s.CurrencyPairs);
+//            }
+//
+//            if (includeNested)
+//            {
+//                query = query
+//                    .Include(s => s.SourceCurrencies)
+//                    .ThenInclude(sc => sc.Currency)
+//                    .Include(s => s.CurrencyPairs)
+//                    .ThenInclude(cp => cp.Source)
+//                    .ThenInclude(s => s.SourceCurrencies)
+//                    .ThenInclude(sc => sc.Currency);
+//            }
+//
+//            return query;
+//        }
 
         public IEnumerable<dynamic> GetAllActiveObsc(bool includeNested = false)
         {

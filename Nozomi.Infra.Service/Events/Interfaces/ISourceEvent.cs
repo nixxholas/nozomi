@@ -17,7 +17,7 @@ namespace Nozomi.Service.Events.Interfaces
 
         IEnumerable<Source> GetAllActive(bool countPairs = false, bool includeNested = false);
 
-        IEnumerable<Source> GetAll(bool countPairs = false, bool includeNested = false);
+        //IEnumerable<Source> GetAll(bool countPairs = false, bool includeNested = false);
         
         IEnumerable<Source> GetAllNonDeleted(bool countPairs = false, bool includeNested = false);
 
