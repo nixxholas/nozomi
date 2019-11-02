@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Nozomi.Base.Core;
 using Nozomi.Data.Models.Currency;
@@ -55,6 +56,8 @@ namespace Nozomi.Data.Models.Web
         }
         
         public long Id { get; set; }
+        
+        public Guid Guid { get; set; }
 
         public ComponentType ComponentType { get; set; } = ComponentType.Unknown;
         
