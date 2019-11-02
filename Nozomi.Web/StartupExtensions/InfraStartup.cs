@@ -47,6 +47,7 @@ namespace Nozomi.Web.StartupExtensions
             services.AddScoped<IRequestService, RequestService>();
             services.AddScoped<IRequestComponentService, RequestComponentService>();
             services.AddScoped<IRcdHistoricItemService, RcdHistoricItemService>();
+            services.AddScoped<ISourceService, SourceService>();
             services.AddScoped<ISourceTypeService, SourceTypeService>();
         }
     }
