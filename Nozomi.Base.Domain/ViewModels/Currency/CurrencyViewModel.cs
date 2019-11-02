@@ -1,8 +1,12 @@
+using System;
+using System.Collections.Generic;
+using Nozomi.Data.ViewModels.AnalysedComponent;
+
 namespace Nozomi.Data.ViewModels.Currency
 {
     public class CurrencyViewModel
     {
-        public string CurrencyTypeGuid { get; set; }
+        public Guid CurrencyTypeGuid { get; set; }
         
         public string Abbreviation { get; set; }
         
@@ -17,5 +21,7 @@ namespace Nozomi.Data.ViewModels.Currency
         public int Denominations { get; set; } = 0;
         
         public string DenominationName { get; set; }
+        
+        public IEnumerable<AnalysedComponentViewModel> Components { get; set; }
     }
 }
