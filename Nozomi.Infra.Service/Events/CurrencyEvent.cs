@@ -16,6 +16,7 @@ using Nozomi.Data.Models.Web.Websocket;
 using Nozomi.Data.ResponseModels.Currency;
 using Nozomi.Data.ResponseModels.PartialCurrencyPair;
 using Nozomi.Data.ResponseModels.Source;
+using Nozomi.Data.ViewModels.Currency;
 using Nozomi.Preprocessing;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.BCL.Repository;
@@ -32,6 +33,27 @@ namespace Nozomi.Service.Events
             : base(logger, unitOfWork)
         {
             _tickerEvent = tickerEvent;
+        }
+
+        public IEnumerable<CurrencyViewModel> All()
+        {
+            return _unitOfWork.GetRepository<Currency>()
+                .GetQueryable()
+                .AsNoTracking()
+                .Where(c => c.DeletedAt == null && c.IsEnabled)
+                .Include(c => c.CurrencyType)
+                .Include(c => c.AnalysedComponents)
+                .Select(c => new CurrencyViewModel
+                {
+                    CurrencyTypeGuid = c.CurrencyType.Guid,
+                    Abbreviation = c.Abbreviation,
+                    Slug = c.Slug,
+                    Name = c.Name,
+                    LogoPath = c.LogoPath,
+                    Description = c.Description,
+                    Denominations = c.Denominations,
+                    DenominationName = c.DenominationName
+                });
         }
 
         public Currency Get(long id, bool track = false)

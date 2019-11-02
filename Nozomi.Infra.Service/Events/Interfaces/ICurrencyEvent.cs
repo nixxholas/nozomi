@@ -5,11 +5,14 @@ using Nozomi.Data.Models.Currency;
 using Nozomi.Data.Models.Web;
 using Nozomi.Data.Models.Web.Analytical;
 using Nozomi.Data.ResponseModels.Currency;
+using Nozomi.Data.ViewModels.Currency;
 
 namespace Nozomi.Service.Events.Interfaces
 {
     public interface ICurrencyEvent
     {
+        IEnumerable<CurrencyViewModel> All();
+        
         Currency Get(long id, bool track = false);
         
         Currency GetCurrencyByAbbreviation(string abbreviation, bool track = false);
@@ -25,6 +28,7 @@ namespace Nozomi.Service.Events.Interfaces
         decimal GetCirculatingSupply(AnalysedComponent analysedComponent);
 
         long GetCountByType(string typeShortForm = "CRYPTO");
+        
         ICollection<Currency> GetAll(bool includeNested = false);
         ICollection<Currency> GetAllNonDeleted(bool includeNested = false);
         
