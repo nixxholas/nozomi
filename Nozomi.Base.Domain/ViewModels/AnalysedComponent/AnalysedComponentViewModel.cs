@@ -14,6 +14,6 @@ namespace Nozomi.Data.ViewModels.AnalysedComponent
         
         public bool IsDenominated { get; set; }
         
-        public ICollection<AnalysedHistoricItemViewModel> History { get; set; }
+        public IEnumerable<AnalysedHistoricItemViewModel> History { get; set; }
     }
 }
