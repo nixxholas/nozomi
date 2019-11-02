@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Nozomi.Data.ViewModels.AnalysedComponent;
+using Nozomi.Data.ViewModels.Component;
 
 namespace Nozomi.Data.ViewModels.Currency
 {
@@ -23,5 +24,7 @@ namespace Nozomi.Data.ViewModels.Currency
         public string DenominationName { get; set; }
         
         public IEnumerable<AnalysedComponentViewModel> Components { get; set; }
+        
+        public IEnumerable<ComponentViewModel> RawComponents { get; set; }
     }
 }
