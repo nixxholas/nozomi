@@ -39,6 +39,7 @@ namespace Nozomi.Web.StartupExtensions
             services.AddScoped<IRequestPropertyTypeEvent, RequestPropertyTypeEvent>();
             services.AddScoped<IRequestTypeEvent, RequestTypeEvent>();
             services.AddScoped<ISourceEvent, SourceEvent>();
+            services.AddScoped<ISourceTypeEvent, SourceTypeEvent>();
             services.AddScoped<ITickerEvent, TickerEvent>();
 
             // Services
@@ -46,6 +47,7 @@ namespace Nozomi.Web.StartupExtensions
             services.AddScoped<IRequestService, RequestService>();
             services.AddScoped<IRequestComponentService, RequestComponentService>();
             services.AddScoped<IRcdHistoricItemService, RcdHistoricItemService>();
+            services.AddScoped<ISourceTypeService, SourceTypeService>();
         }
     }
 }
