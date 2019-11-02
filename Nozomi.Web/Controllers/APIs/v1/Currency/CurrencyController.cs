@@ -33,10 +33,11 @@ namespace Nozomi.Web.Controllers.APIs.v1.Currency
         [HttpGet]
         public IActionResult All([FromQuery]string currencyType = "CRYPTO", [FromQuery]int itemsPerIndex = 20,
             [FromQuery]int index = 0, [FromQuery]AnalysedComponentType sortType = AnalysedComponentType.MarketCap,
-            [FromQuery]bool orderDescending = true,
-            [FromQuery]ICollection<AnalysedComponentType> typesToTake = null)
+            [FromQuery]bool orderDescending = true, [FromQuery]ICollection<AnalysedComponentType> typesToTake = null,
+            [FromQuery]ICollection<AnalysedComponentType> typesToDeepen = null)
         {
-            return Ok(_currencyEvent.All(currencyType, itemsPerIndex, index, sortType, orderDescending, typesToTake));
+            return Ok(_currencyEvent.All(currencyType, itemsPerIndex, index, sortType, orderDescending, typesToTake,
+                typesToDeepen));
         }
 
         [HttpGet]

@@ -12,7 +12,7 @@ namespace Nozomi.Web.Controllers.APIs.v1.Currency
     {
         IActionResult All(string currencyType = "CRYPTO", int itemsPerIndex = 20, int index = 0,
             AnalysedComponentType sortType = AnalysedComponentType.Unknown, bool orderDescending = true,
-            ICollection<AnalysedComponentType> typesToTake = null);
+            ICollection<AnalysedComponentType> typesToTake = null, ICollection<AnalysedComponentType> typesToDeepen = null);
 
         IActionResult GetCountByType(string currencyType = "CRYPTO");
 

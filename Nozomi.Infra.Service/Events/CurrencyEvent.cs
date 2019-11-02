@@ -17,6 +17,7 @@ using Nozomi.Data.ResponseModels.Currency;
 using Nozomi.Data.ResponseModels.PartialCurrencyPair;
 using Nozomi.Data.ResponseModels.Source;
 using Nozomi.Data.ViewModels.AnalysedComponent;
+using Nozomi.Data.ViewModels.AnalysedHistoricItem;
 using Nozomi.Data.ViewModels.Currency;
 using Nozomi.Preprocessing;
 using Nozomi.Preprocessing.Abstracts;
@@ -38,7 +39,8 @@ namespace Nozomi.Service.Events
 
         public IEnumerable<CurrencyViewModel> All(string currencyType = "CRYPTO", int itemsPerIndex = 20, int index = 0,
             AnalysedComponentType sortType = AnalysedComponentType.Unknown, bool orderDescending = true, 
-            ICollection<AnalysedComponentType> typesToTake = null)
+            ICollection<AnalysedComponentType> typesToTake = null,
+            ICollection<AnalysedComponentType> typesToDeepen = null)
         {
             if (itemsPerIndex <= 0 || itemsPerIndex > 100)
                 itemsPerIndex = 20;
@@ -48,7 +50,7 @@ namespace Nozomi.Service.Events
             
             if (string.IsNullOrWhiteSpace(currencyType))
                 throw new ArgumentNullException("Parameter 'currencyType' is supposed to contain a valid string.");
-            
+
             var query = _unitOfWork.GetRepository<Currency>()
                 .GetQueryable()
                 .AsNoTracking()
@@ -56,7 +58,8 @@ namespace Nozomi.Service.Events
                 .Where(c => c.DeletedAt == null && c.IsEnabled 
                                                 && c.CurrencyType.TypeShortForm.Equals(currencyType, 
                                                     StringComparison.InvariantCultureIgnoreCase))
-                .Include(c => c.AnalysedComponents);
+                .Include(c => c.AnalysedComponents)
+                .ThenInclude(ac => ac.AnalysedHistoricItems);
 
             if (orderDescending && sortType != AnalysedComponentType.Unknown)
             {
@@ -71,7 +74,39 @@ namespace Nozomi.Service.Events
                     .Skip(itemsPerIndex * index)
                     .Take(itemsPerIndex);
 
-                if (typesToTake != null && typesToTake.Any())
+                if (typesToTake != null && typesToTake.Any() && typesToDeepen != null && typesToDeepen.Any())
+                    return descendingQuery
+                        .Select(c => new CurrencyViewModel
+                        {
+                            CurrencyTypeGuid = c.CurrencyType.Guid,
+                            Abbreviation = c.Abbreviation,
+                            Slug = c.Slug,
+                            Name = c.Name,
+                            LogoPath = c.LogoPath,
+                            Description = c.Description,
+                            Denominations = c.Denominations,
+                            DenominationName = c.DenominationName,
+                            Components = c.AnalysedComponents
+                                .Where(ac => typesToTake.Contains(ac.ComponentType))
+                                .Select(ac => new AnalysedComponentViewModel
+                                {
+                                    Type = ac.ComponentType,
+                                    UiFormatting = ac.UIFormatting,
+                                    Value = ac.Value,
+                                    IsDenominated = ac.IsDenominated,
+                                    History = typesToDeepen.Contains(ac.ComponentType)
+                                        ? ac.AnalysedHistoricItems
+                                            .Where(ahi => ahi.DeletedAt == null && ahi.IsEnabled)
+                                            .OrderByDescending(ahi => ahi.HistoricDateTime)
+                                            .Select(ahi => new AnalysedHistoricItemViewModel
+                                            {
+                                                Timestamp = ahi.HistoricDateTime,
+                                                Value = ahi.Value
+                                            })
+                                        : null
+                                })
+                        });
+                else if (typesToTake != null && typesToTake.Any())
                     return descendingQuery
                         .Select(c => new CurrencyViewModel
                         {
@@ -119,7 +154,39 @@ namespace Nozomi.Service.Events
                     .Skip(itemsPerIndex * index)
                     .Take(itemsPerIndex);
 
-                if (typesToTake != null && typesToTake.Any())
+                if (typesToTake != null && typesToTake.Any() && typesToDeepen != null && typesToDeepen.Any())
+                    return ascendingQuery
+                        .Select(c => new CurrencyViewModel
+                        {
+                            CurrencyTypeGuid = c.CurrencyType.Guid,
+                            Abbreviation = c.Abbreviation,
+                            Slug = c.Slug,
+                            Name = c.Name,
+                            LogoPath = c.LogoPath,
+                            Description = c.Description,
+                            Denominations = c.Denominations,
+                            DenominationName = c.DenominationName,
+                            Components = c.AnalysedComponents
+                                .Where(ac => typesToTake.Contains(ac.ComponentType))
+                                .Select(ac => new AnalysedComponentViewModel
+                                {
+                                    Type = ac.ComponentType,
+                                    UiFormatting = ac.UIFormatting,
+                                    Value = ac.Value,
+                                    IsDenominated = ac.IsDenominated,
+                                    History = typesToDeepen.Contains(ac.ComponentType)
+                                        ? ac.AnalysedHistoricItems
+                                            .Where(ahi => ahi.DeletedAt == null && ahi.IsEnabled)
+                                            .OrderByDescending(ahi => ahi.HistoricDateTime)
+                                            .Select(ahi => new AnalysedHistoricItemViewModel
+                                            {
+                                                Timestamp = ahi.HistoricDateTime,
+                                                Value = ahi.Value
+                                            })
+                                        : null
+                                })
+                        });
+                else if (typesToTake != null && typesToTake.Any())
                     return ascendingQuery
                         .Select(c => new CurrencyViewModel
                         {
