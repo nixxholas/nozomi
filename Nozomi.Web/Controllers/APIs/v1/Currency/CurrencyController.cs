@@ -31,6 +31,15 @@ namespace Nozomi.Web.Controllers.APIs.v1.Currency
         }
 
         [HttpGet]
+        public IActionResult All([FromRoute]int itemsPerIndex = 20, [FromRoute]int index = 0,
+            [FromRoute]AnalysedComponentType sortType = AnalysedComponentType.MarketCap,
+            [FromRoute]bool orderDescending = true,
+            [FromRoute]ICollection<AnalysedComponentType> typesToTake = null)
+        {
+            return Ok(_currencyEvent.All(itemsPerIndex, index, sortType, orderDescending, typesToTake));
+        }
+
+        [HttpGet]
         public IActionResult GetCountByType(string currencyType = "CRYPTO")
         {
             var count = _currencyEvent.GetCountByType(currencyType);

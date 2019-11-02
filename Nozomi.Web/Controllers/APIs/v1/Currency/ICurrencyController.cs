@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using Nozomi.Base.Core.Responses;
 using Nozomi.Data;
+using Nozomi.Data.Models.Web.Analytical;
 using Nozomi.Data.ResponseModels;
 using Nozomi.Data.ResponseModels.Currency;
 
@@ -9,6 +10,10 @@ namespace Nozomi.Web.Controllers.APIs.v1.Currency
 {
     public interface ICurrencyController
     {
+        IActionResult All(int itemsPerIndex = 20, int index = 0,
+            AnalysedComponentType sortType = AnalysedComponentType.Unknown, bool orderDescending = true,
+            ICollection<AnalysedComponentType> typesToTake = null);
+
         IActionResult GetCountByType(string currencyType = "CRYPTO");
 
         NozomiResult<ICollection<string>> ListAll();
