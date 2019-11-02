@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Nozomi.Base.Core;
 using Nozomi.Data.Models.Web;
@@ -19,6 +20,8 @@ namespace Nozomi.Data.Models.Currency
         [Display(Name = "Name", Prompt = "Enter a name.",
             Description = "Name of the Currency Type.")]
         public string Name { get; set; }
+        
+        public Guid Guid { get; set; }
         
         public ICollection<AnalysedComponent> AnalysedComponents { get; set; }
 
