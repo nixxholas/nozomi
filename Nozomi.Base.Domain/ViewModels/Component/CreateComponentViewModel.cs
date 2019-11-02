@@ -1,10 +1,9 @@
-using System.Data;
 using FluentValidation;
 using Nozomi.Data.Models.Currency;
 
-namespace Nozomi.Data.ViewModels.RequestComponent
+namespace Nozomi.Data.ViewModels.Component
 {
-    public class CreateRequestComponentViewModel
+    public class CreateComponentViewModel
     {
         public ComponentType Type { get; set; }
     
@@ -22,13 +21,13 @@ namespace Nozomi.Data.ViewModels.RequestComponent
 
         public bool IsValid()
         {
-            var validator = new CreateRequestComponentValidator();
+            var validator = new CreateComponentValidator();
             return validator.Validate(this).IsValid;
         }
         
-        protected class CreateRequestComponentValidator : AbstractValidator<CreateRequestComponentViewModel>
+        protected class CreateComponentValidator : AbstractValidator<CreateComponentViewModel>
         {
-            public CreateRequestComponentValidator()
+            public CreateComponentValidator()
             {
                 RuleFor(e => e.Type).IsInEnum();
                 // RuleFor(e => e.Identifier); // No rule for identifier, it's not a requirement

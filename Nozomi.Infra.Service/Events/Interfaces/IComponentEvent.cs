@@ -8,7 +8,7 @@ using Nozomi.Data.Models.Web;
 
 namespace Nozomi.Service.Events.Interfaces
 {
-    public interface IRequestComponentEvent
+    public interface IComponentEvent
     {
         ICollection<Component> All(int index = 0, bool includeNested = false);
 

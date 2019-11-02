@@ -12,13 +12,13 @@ namespace Nozomi.Web.Controllers.APIs.v1.CurrencyPairComponent
     public class CurrencyPairComponentController : BaseApiController<CurrencyPairComponentController>,
         ICurrencyPairComponentController
     {
-        private readonly IRequestComponentEvent _requestComponentEvent;
+        private readonly IComponentEvent _componentEvent;
 
         public CurrencyPairComponentController(ILogger<CurrencyPairComponentController> logger,
-            IRequestComponentEvent requestComponentEvent)
+            IComponentEvent componentEvent)
             : base(logger)
         {
-            _requestComponentEvent = requestComponentEvent;
+            _componentEvent = componentEvent;
         }
 
         [HttpGet]
@@ -30,14 +30,14 @@ namespace Nozomi.Web.Controllers.APIs.v1.CurrencyPairComponent
         public NozomiResult<ICollection<Data.Models.Web.Component>> AllByRequestId(long requestId, bool includeNested = false)
         {
             return new NozomiResult<ICollection<Data.Models.Web.Component>>
-                (_requestComponentEvent.GetAllByRequest(requestId, includeNested));
+                (_componentEvent.GetAllByRequest(requestId, includeNested));
         }
 
         [HttpGet]
         public NozomiResult<ICollection<Data.Models.Web.Component>> All(int index = 0, bool includeNested = false)
         {
             return new NozomiResult<ICollection<Data.Models.Web.Component>>
-                (_requestComponentEvent.All(index, includeNested));
+                (_componentEvent.All(index, includeNested));
         }
     }
 }

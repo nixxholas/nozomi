@@ -16,15 +16,15 @@ namespace Nozomi.Ticker.Controllers.APIs.v1.CurrencyPairComponent
 {
     public class CurrencyPairComponentController : BaseController<CurrencyPairComponentController>, ICurrencyPairComponentController
     {
-        private readonly IRequestComponentEvent _requestComponentEvent;
-        private readonly IRequestComponentService _requestComponentService;
+        private readonly IComponentEvent _componentEvent;
+        private readonly IComponentService _componentService;
         
         public CurrencyPairComponentController(ILogger<CurrencyPairComponentController> logger, UserManager<User> userManager,
-            IRequestComponentEvent requestComponentEvent, IRequestComponentService requestComponentService) 
+            IComponentEvent componentEvent, IComponentService componentService) 
             : base(logger, userManager)
         {
-            _requestComponentEvent = requestComponentEvent;
-            _requestComponentService = requestComponentService;
+            _componentEvent = componentEvent;
+            _componentService = componentService;
         }
 
         [HttpGet]
@@ -36,35 +36,35 @@ namespace Nozomi.Ticker.Controllers.APIs.v1.CurrencyPairComponent
         public NozomiResult<ICollection<Component>> AllByRequestId(long requestId, bool includeNested = false)
         {
             return new NozomiResult<ICollection<Component>>
-                (_requestComponentEvent.GetAllByRequest(requestId, includeNested));
+                (_componentEvent.GetAllByRequest(requestId, includeNested));
         }
 
         [HttpGet]
         public NozomiResult<ICollection<Component>> All(int index = 0, bool includeNested = false)
         {
             return new NozomiResult<ICollection<Component>>
-                (_requestComponentEvent.All(index, includeNested));
+                (_componentEvent.All(index, includeNested));
         }
 
         [Authorize]
         [HttpPost]
         public NozomiResult<string> Create(CreateRequestComponent createRequestComponent)
         {
-            return _requestComponentService.Create(createRequestComponent);
+            return _componentService.Create(createRequestComponent);
         }
 
         [Authorize]
         [HttpPost]
         public NozomiResult<string> Update(UpdateRequestComponent updateRequestComponent)
         {
-            return _requestComponentService.Update(updateRequestComponent);
+            return _componentService.Update(updateRequestComponent);
         }
 
         [Authorize]
         [HttpDelete]
         public NozomiResult<string> Delete(long id, string userId = null, bool hardDelete = false)
         {
-            return _requestComponentService.Delete(id, userId, hardDelete);
+            return _componentService.Delete(id, userId, hardDelete);
         }
     }
 }

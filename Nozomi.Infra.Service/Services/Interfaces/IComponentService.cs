@@ -1,13 +1,13 @@
 ﻿using Nozomi.Data;
 using Nozomi.Data.AreaModels.v1.CurrencyPairComponent;
 using Nozomi.Data.AreaModels.v1.RequestComponent;
-using Nozomi.Data.ViewModels.RequestComponent;
+using Nozomi.Data.ViewModels.Component;
 
 namespace Nozomi.Service.Services.Interfaces
 {
-    public interface IRequestComponentService
+    public interface IComponentService
     {
-        void Create(CreateRequestComponentViewModel vm, string userId = null);
+        void Create(CreateComponentViewModel vm, string userId = null);
         
         NozomiResult<string> Create(CreateRequestComponent createRequestComponent, string userId = null);
 

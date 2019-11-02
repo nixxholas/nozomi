@@ -1,9 +1,9 @@
 using System;
 using Nozomi.Data.Models.Currency;
 
-namespace Nozomi.Data.ViewModels.RequestComponent
+namespace Nozomi.Data.ViewModels.Component
 {
-    public class RequestComponentViewModel
+    public class ComponentViewModel
     {
         public Guid Guid { get; set; }
         

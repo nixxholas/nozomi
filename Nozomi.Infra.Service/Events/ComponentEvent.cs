@@ -23,12 +23,10 @@ using Nozomi.Service.Events.Interfaces;
 
 namespace Nozomi.Service.Events
 {
-    public class RequestComponentEvent : BaseEvent<RequestComponentEvent, NozomiDbContext, Component>, 
-        IRequestComponentEvent
+    public class ComponentEvent : BaseEvent<ComponentEvent, NozomiDbContext, Component>, 
+        IComponentEvent
     {
-        private IRequestComponentEvent _requestComponentEventImplementation;
-
-        public RequestComponentEvent(ILogger<RequestComponentEvent> logger, IUnitOfWork<NozomiDbContext> unitOfWork)
+        public ComponentEvent(ILogger<ComponentEvent> logger, IUnitOfWork<NozomiDbContext> unitOfWork)
             : base(logger, unitOfWork)
         {
         }

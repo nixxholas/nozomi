@@ -25,13 +25,13 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
         IHttpPostRequestSyncingService
     {
         private readonly HttpClient _httpClient = new HttpClient();
-        private readonly IRequestComponentService _requestComponentService;
+        private readonly IComponentService _componentService;
         private readonly IRequestEvent _requestEvent;
         private readonly IRequestService _requestService;
         
         public HttpPostRequestSyncingService(IServiceProvider serviceProvider) : base(serviceProvider)
         {
-            _requestComponentService = _scope.ServiceProvider.GetRequiredService<IRequestComponentService>();
+            _componentService = _scope.ServiceProvider.GetRequiredService<IComponentService>();
             _requestEvent = _scope.ServiceProvider.GetRequiredService<IRequestEvent>();
             _requestService = _scope.ServiceProvider.GetRequiredService<IRequestService>();
         }
@@ -295,7 +295,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
                                     if (decimal.TryParse(dataList[index], out decimal val))
                                     {
                                         // Update it
-                                        _requestComponentService.UpdatePairValue(component.Id, val);
+                                        _componentService.UpdatePairValue(component.Id, val);
                                     }
                                 }
                             }
@@ -329,7 +329,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
                                         if (val > 0)
                                         {
                                             // Update it
-                                            _requestComponentService.UpdatePairValue(component.Id, val);
+                                            _componentService.UpdatePairValue(component.Id, val);
                                         }
                                     }
                                 }

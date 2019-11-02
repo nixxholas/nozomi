@@ -8,7 +8,7 @@ using Nozomi.Data;
 using Nozomi.Data.AreaModels.v1.CurrencyPairComponent;
 using Nozomi.Data.AreaModels.v1.RequestComponent;
 using Nozomi.Data.Models.Web;
-using Nozomi.Data.ViewModels.RequestComponent;
+using Nozomi.Data.ViewModels.Component;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Data;
@@ -17,15 +17,15 @@ using Nozomi.Service.Services.Interfaces;
 
 namespace Nozomi.Service.Services
 {
-    public class RequestComponentService : BaseService<RequestComponentService, NozomiDbContext>,
-        IRequestComponentService
+    public class ComponentService : BaseService<ComponentService, NozomiDbContext>,
+        IComponentService
     {
         private const string serviceName = "[CurrencyPairComponentService]";
 
         private IRequestEvent _requestEvent;
         private IRcdHistoricItemService _rcdHistoricItemService;
 
-        public RequestComponentService(ILogger<RequestComponentService> logger, IRequestEvent requestEvent,
+        public ComponentService(ILogger<ComponentService> logger, IRequestEvent requestEvent,
             IRcdHistoricItemService rcdHistoricItemService,
             IUnitOfWork<NozomiDbContext> unitOfWork) : base(logger, unitOfWork)
         {
@@ -33,7 +33,7 @@ namespace Nozomi.Service.Services
             _rcdHistoricItemService = rcdHistoricItemService;
         }
 
-        public void Create(CreateRequestComponentViewModel vm, string userId = null)
+        public void Create(CreateComponentViewModel vm, string userId = null)
         {
             if (vm.IsValid() && !_requestEvent.Exists(vm.Type, vm.RequestId))
             {

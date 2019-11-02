@@ -46,13 +46,13 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
         IHttpGetRequestSyncingService
     {
         private readonly HttpClient _httpClient = new HttpClient();
-        private readonly IRequestComponentService _requestComponentService;
+        private readonly IComponentService _componentService;
         private readonly IRequestEvent _requestEvent;
         private readonly IRequestService _requestService;
 
         public HttpGetRequestSyncingService(IServiceProvider serviceProvider) : base(serviceProvider)
         {
-            _requestComponentService = _scope.ServiceProvider.GetRequiredService<IRequestComponentService>();
+            _componentService = _scope.ServiceProvider.GetRequiredService<IComponentService>();
             _requestEvent = _scope.ServiceProvider.GetRequiredService<IRequestEvent>();
             _requestService = _scope.ServiceProvider.GetRequiredService<IRequestService>();
         }
@@ -518,7 +518,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
                     else
                     {
                         // Failed
-                        _requestComponentService.Checked(component.Id);
+                        _componentService.Checked(component.Id);
                         currToken = null; // Set it to fail for the next statement
                     }
                 }
@@ -590,7 +590,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
                                                     if (val > 0)
                                                     {
                                                         // Update it
-                                                        var res = _requestComponentService.UpdatePairValue(component.Id,
+                                                        var res = _componentService.UpdatePairValue(component.Id,
                                                             val);
 
                                                         if (res.ResultType.Equals(NozomiResultType.Failed))
@@ -629,7 +629,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
                                                     if (val > 0)
                                                     {
                                                         // Update it
-                                                        var res = _requestComponentService.UpdatePairValue(component.Id,
+                                                        var res = _componentService.UpdatePairValue(component.Id,
                                                             val);
 
                                                         if (res.ResultType.Equals(NozomiResultType.Failed))
@@ -700,7 +700,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
                                                 if (val > 0)
                                                 {
                                                     // Update it
-                                                    var res = _requestComponentService.UpdatePairValue(component.Id,
+                                                    var res = _componentService.UpdatePairValue(component.Id,
                                                         val);
 
                                                     if (res.ResultType.Equals(NozomiResultType.Failed))
@@ -739,7 +739,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
                                                 if (val > 0)
                                                 {
                                                     // Update it
-                                                    var res = _requestComponentService.UpdatePairValue(component.Id,
+                                                    var res = _componentService.UpdatePairValue(component.Id,
                                                         val);
 
                                                     if (res.ResultType.Equals(NozomiResultType.Failed))
@@ -796,7 +796,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
                                             if (val > 0)
                                             {
                                                 // Update it
-                                                var res = _requestComponentService.UpdatePairValue(component.Id, val);
+                                                var res = _componentService.UpdatePairValue(component.Id, val);
 
                                                 if (res.ResultType.Equals(NozomiResultType.Failed))
                                                 {
@@ -822,7 +822,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
                 } else if (string.IsNullOrEmpty(component.Identifier))
                 {
                     _logger.LogInformation($"Marking Request Component as checked: {component.Id}");
-                    return _requestComponentService.Checked(component.Id);
+                    return _componentService.Checked(component.Id);
                 }
             }
 

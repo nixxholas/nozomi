@@ -100,7 +100,7 @@ namespace Nozomi.HttpSyncing
             services.AddScoped<IRequestEvent, RequestEvent>();
             services.AddScoped<ITickerEvent, TickerEvent>();
             services.AddTransient<IRcdHistoricItemService, RcdHistoricItemService>();
-            services.AddTransient<IRequestComponentService, RequestComponentService>();
+            services.AddTransient<IComponentService, ComponentService>();
             services.AddTransient<IRequestService, RequestService>();
             services.AddHostedService<HttpGetRequestSyncingService>();
             services.AddHostedService<HttpPostRequestSyncingService>();

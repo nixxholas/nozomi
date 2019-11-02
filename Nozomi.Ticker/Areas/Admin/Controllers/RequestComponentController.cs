@@ -16,14 +16,14 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
     [Authorize(Roles = "Owner, Administrator, Staff")]
     public class RequestComponentController : AreaBaseViewController<RequestComponentController>
     {
-        private readonly IRequestComponentService _requestComponentService;
+        private readonly IComponentService _componentService;
         
         public RequestComponentController(ILogger<RequestComponentController> logger, 
-            IRequestComponentService requestComponentService, SignInManager<User> signInManager,
+            IComponentService componentService, SignInManager<User> signInManager,
             UserManager<User> userManager)
             : base(logger, signInManager, userManager)
         {
-            _requestComponentService = requestComponentService;
+            _componentService = componentService;
         }
         
         #region POST RequestComponent
@@ -37,7 +37,7 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
                 return NotFound($"Unable to load user withID '{_userManager.GetUserId(User)}'.");
             }
 
-            var result = _requestComponentService.Create(createRequestComponent);
+            var result = _componentService.Create(createRequestComponent);
             
             if (result.ResultType.Equals(NozomiResultType.Success)) return Ok(result);
 
@@ -62,7 +62,7 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
                 return BadRequest();
             }
 
-            var result = _requestComponentService.Update(updateRequestComponent);
+            var result = _componentService.Update(updateRequestComponent);
             
             if (result.ResultType.Equals(NozomiResultType.Success)) return Ok(result);
 
@@ -82,7 +82,7 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
                 return NotFound($"Unable to load user withID '{_userManager.GetUserId(User)}'.");
             }
 
-            var result = _requestComponentService.Delete(id);
+            var result = _componentService.Delete(id);
             
             if (result.ResultType.Equals(NozomiResultType.Success)) return Ok(result);
 

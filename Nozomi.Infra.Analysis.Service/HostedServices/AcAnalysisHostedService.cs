@@ -29,7 +29,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
         private readonly IAnalysedHistoricItemEvent _analysedHistoricItemEvent;
         private readonly ICurrencyEvent _currencyEvent;
         private readonly ICurrencyPairEvent _currencyPairEvent;
-        private readonly IRequestComponentEvent _requestComponentEvent;
+        private readonly IComponentEvent _componentEvent;
         private readonly IXAnalysedComponentEvent _xAnalysedComponentEvent;
         private readonly IProcessAnalysedComponentService _processAnalysedComponentService;
 
@@ -39,7 +39,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
             _analysedHistoricItemEvent = _scope.ServiceProvider.GetRequiredService<IAnalysedHistoricItemEvent>();
             _currencyEvent = _scope.ServiceProvider.GetRequiredService<ICurrencyEvent>();
             _currencyPairEvent = _scope.ServiceProvider.GetRequiredService<ICurrencyPairEvent>();
-            _requestComponentEvent = _scope.ServiceProvider.GetRequiredService<IRequestComponentEvent>();
+            _componentEvent = _scope.ServiceProvider.GetRequiredService<IComponentEvent>();
             _xAnalysedComponentEvent = _scope.ServiceProvider.GetRequiredService<IXAnalysedComponentEvent>();
             _processAnalysedComponentService = _scope.ServiceProvider.GetRequiredService<IProcessAnalysedComponentService>();
         }
@@ -358,7 +358,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                         {
                             var avgPrice = decimal.Zero;
                             var index = 0;
-                            var components = _requestComponentEvent.GetAllByCorrelation(entity.Id, true,
+                            var components = _componentEvent.GetAllByCorrelation(entity.Id, true,
                                     index, true, new List<ComponentType>()
                                     {
                                         ComponentType.Ask, ComponentType.Bid

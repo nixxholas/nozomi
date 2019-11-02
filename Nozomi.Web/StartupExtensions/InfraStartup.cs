@@ -35,7 +35,7 @@ namespace Nozomi.Web.StartupExtensions
             services.AddScoped<ICurrencyPairTypeEvent, CurrencyPairTypeEvent>();
             services.AddScoped<ICurrencyTypeEvent, CurrencyTypeEvent>();
             services.AddScoped<IRequestEvent, RequestEvent>();
-            services.AddScoped<IRequestComponentEvent, RequestComponentEvent>();
+            services.AddScoped<IComponentEvent, ComponentEvent>();
             services.AddScoped<IRequestPropertyTypeEvent, RequestPropertyTypeEvent>();
             services.AddScoped<IRequestTypeEvent, RequestTypeEvent>();
             services.AddScoped<ISourceEvent, SourceEvent>();
@@ -45,7 +45,7 @@ namespace Nozomi.Web.StartupExtensions
             // Services
             services.AddScoped<IAnalysedComponentService, AnalysedComponentService>();
             services.AddScoped<IRequestService, RequestService>();
-            services.AddScoped<IRequestComponentService, RequestComponentService>();
+            services.AddScoped<IComponentService, ComponentService>();
             services.AddScoped<IRcdHistoricItemService, RcdHistoricItemService>();
             services.AddScoped<ISourceService, SourceService>();
             services.AddScoped<ISourceTypeService, SourceTypeService>();

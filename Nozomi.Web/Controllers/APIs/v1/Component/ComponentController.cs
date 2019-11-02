@@ -4,32 +4,32 @@ using IdentityModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Nozomi.Data.ViewModels.RequestComponent;
+using Nozomi.Data.ViewModels.Component;
 using Nozomi.Service.Services.Interfaces;
 
-namespace Nozomi.Web.Controllers.APIs.v1.RequestComponent
+namespace Nozomi.Web.Controllers.APIs.v1.Component
 {
     [ApiController]
-    public class RequestComponentController : BaseApiController<RequestComponentController>, IRequestComponentController
+    public class ComponentController : BaseApiController<ComponentController>, IComponentController
     {
-        private readonly IRequestComponentService _requestComponentService;
+        private readonly IComponentService _componentService;
 
-        public RequestComponentController(ILogger<RequestComponentController> logger,
-            IRequestComponentService requestComponentService) : base(logger)
+        public ComponentController(ILogger<ComponentController> logger,
+            IComponentService componentService) : base(logger)
         {
-            _requestComponentService = requestComponentService;
+            _componentService = componentService;
         }
 
         [Authorize]
         [HttpPost]
-        public IActionResult Create([FromBody]CreateRequestComponentViewModel vm)
+        public IActionResult Create([FromBody]CreateComponentViewModel vm)
         {
             var sub = ((ClaimsIdentity) User.Identity)
                 .Claims.SingleOrDefault(c => c.Type.Equals(JwtClaimTypes.Subject))?.Value;
 
             if (!string.IsNullOrWhiteSpace(sub))
             {
-                _requestComponentService.Create(vm, sub);
+                _componentService.Create(vm, sub);
 
                 return Ok();
             }
