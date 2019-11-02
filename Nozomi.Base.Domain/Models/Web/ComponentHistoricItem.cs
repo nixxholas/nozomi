@@ -3,7 +3,7 @@ using Nozomi.Base.Core;
 
 namespace Nozomi.Data.Models.Web
 {
-    public class RcdHistoricItem : Entity
+    public class ComponentHistoricItem : Entity
     {
         public long Id { get; set; }
         

@@ -5,10 +5,10 @@ using Nozomi.Data.Models.Web;
 
 namespace Nozomi.Repo.Data.Mappings.WebModels
 {
-    public class RcdHistoricItemMap : BaseMap<RcdHistoricItem>
+    public class RcdHistoricItemMap : BaseMap<ComponentHistoricItem>
     {
         
-        public RcdHistoricItemMap(EntityTypeBuilder<RcdHistoricItem> entityTypeBuilder) : base(entityTypeBuilder)
+        public RcdHistoricItemMap(EntityTypeBuilder<ComponentHistoricItem> entityTypeBuilder) : base(entityTypeBuilder)
         {
             entityTypeBuilder.HasKey(rcdhi => rcdhi.Id).HasName("RcdHistoricItem_PK_Id");
             entityTypeBuilder.Property(rcdhi => rcdhi.Id).ValueGeneratedOnAdd();

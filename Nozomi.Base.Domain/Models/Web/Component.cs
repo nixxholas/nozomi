@@ -94,7 +94,7 @@ namespace Nozomi.Data.Models.Web
         public long RequestId { get; set; }
         public Request Request { get; set; }
         
-        public ICollection<RcdHistoricItem> RcdHistoricItems { get; set; }
+        public ICollection<ComponentHistoricItem> RcdHistoricItems { get; set; }
         
         /// <summary>
         /// Does it carry an abnormal value?

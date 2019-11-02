@@ -32,7 +32,7 @@ namespace Nozomi.Repo.Data
         public DbSet<CurrencySource> CurrencySources { get; set; }
         public DbSet<Request> Requests { get; set; }
         public DbSet<Component> RequestComponents { get; set; }
-        public DbSet<RcdHistoricItem> RcdHistoricItems { get; set; }
+        public DbSet<ComponentHistoricItem> RcdHistoricItems { get; set; }
         public DbSet<RequestProperty> RequestProperties { get; set; }
         public DbSet<Source> Sources { get; set; }
         public DbSet<SourceType> SourceTypes { get; set; }
@@ -78,8 +78,8 @@ namespace Nozomi.Repo.Data
             var requestComponentMap = new RequestComponentMap(modelBuilder.Entity<Component>());
             modelBuilder.Entity<Component>().ForNpgsqlUseXminAsConcurrencyToken();
 
-            var rcdHistoricItemMap = new RcdHistoricItemMap(modelBuilder.Entity<RcdHistoricItem>());
-            modelBuilder.Entity<RcdHistoricItem>().ForNpgsqlUseXminAsConcurrencyToken();
+            var rcdHistoricItemMap = new RcdHistoricItemMap(modelBuilder.Entity<ComponentHistoricItem>());
+            modelBuilder.Entity<ComponentHistoricItem>().ForNpgsqlUseXminAsConcurrencyToken();
 
             var requestPropertyMap = new RequestPropertyMap(modelBuilder.Entity<RequestProperty>());
             modelBuilder.Entity<RequestProperty>().ForNpgsqlUseXminAsConcurrencyToken();
