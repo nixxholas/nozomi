@@ -16,6 +16,7 @@ using Nozomi.Data.Models.Web.Websocket;
 using Nozomi.Data.ResponseModels.Currency;
 using Nozomi.Data.ResponseModels.PartialCurrencyPair;
 using Nozomi.Data.ResponseModels.Source;
+using Nozomi.Data.ViewModels.AnalysedComponent;
 using Nozomi.Data.ViewModels.Currency;
 using Nozomi.Preprocessing;
 using Nozomi.Preprocessing.Abstracts;
@@ -35,8 +36,9 @@ namespace Nozomi.Service.Events
             _tickerEvent = tickerEvent;
         }
 
-        public IEnumerable<CurrencyViewModel> All(int itemsPerIndex = 20, int index = 0, 
-            AnalysedComponentType sortType = AnalysedComponentType.Unknown, bool orderDescending = true)
+        public IEnumerable<CurrencyViewModel> All(int itemsPerIndex = 20, int index = 0,
+            AnalysedComponentType sortType = AnalysedComponentType.Unknown, bool orderDescending = true, 
+            ICollection<AnalysedComponentType> typesToTake = null)
         {
             if (itemsPerIndex <= 0 || itemsPerIndex > 100)
                 itemsPerIndex = 20;
@@ -54,13 +56,38 @@ namespace Nozomi.Service.Events
             if (orderDescending && sortType != AnalysedComponentType.Unknown)
             {
                 // Order by the market cap
-                return query.OrderByDescending(c => c.AnalysedComponents
+                var descendingQuery = query.OrderByDescending(c => c.AnalysedComponents
                         .Where(ac => ac.ComponentType.Equals(sortType)
                                      && NumberHelper.IsNumericDecimal(ac.Value))
                         .Select(ac => decimal.Parse(ac.Value))
                         .DefaultIfEmpty(0))
                     .Skip(itemsPerIndex * index)
-                    .Take(itemsPerIndex)
+                    .Take(itemsPerIndex);
+
+                if (typesToTake != null)
+                    return descendingQuery
+                        .Select(c => new CurrencyViewModel
+                        {
+                            CurrencyTypeGuid = c.CurrencyType.Guid,
+                            Abbreviation = c.Abbreviation,
+                            Slug = c.Slug,
+                            Name = c.Name,
+                            LogoPath = c.LogoPath,
+                            Description = c.Description,
+                            Denominations = c.Denominations,
+                            DenominationName = c.DenominationName,
+                            Components = c.AnalysedComponents
+                                .Where(ac => typesToTake.Contains(ac.ComponentType))
+                                .Select(ac => new AnalysedComponentViewModel
+                                {
+                                    Type = ac.ComponentType,
+                                    UiFormatting = ac.UIFormatting,
+                                    Value = ac.Value,
+                                    IsDenominated = ac.IsDenominated
+                                })
+                        });
+                
+                return descendingQuery
                     .Select(c => new CurrencyViewModel
                     {
                         CurrencyTypeGuid = c.CurrencyType.Guid,
@@ -75,13 +102,38 @@ namespace Nozomi.Service.Events
             }
             else if (sortType != AnalysedComponentType.Unknown)
             {
-                return query.OrderBy(c => c.AnalysedComponents
+                var ascendingQuery = query.OrderBy(c => c.AnalysedComponents
                     .Where(ac => ac.ComponentType.Equals(sortType)
                                  && NumberHelper.IsNumericDecimal(ac.Value))
                     .Select(ac => decimal.Parse(ac.Value))
                     .DefaultIfEmpty(0))
                     .Skip(itemsPerIndex * index)
-                    .Take(itemsPerIndex)
+                    .Take(itemsPerIndex);
+
+                if (typesToTake != null)
+                    return ascendingQuery
+                        .Select(c => new CurrencyViewModel
+                        {
+                            CurrencyTypeGuid = c.CurrencyType.Guid,
+                            Abbreviation = c.Abbreviation,
+                            Slug = c.Slug,
+                            Name = c.Name,
+                            LogoPath = c.LogoPath,
+                            Description = c.Description,
+                            Denominations = c.Denominations,
+                            DenominationName = c.DenominationName,
+                            Components = c.AnalysedComponents
+                                .Where(ac => typesToTake.Contains(ac.ComponentType))
+                                .Select(ac => new AnalysedComponentViewModel
+                                {
+                                    Type = ac.ComponentType,
+                                    UiFormatting = ac.UIFormatting,
+                                    Value = ac.Value,
+                                    IsDenominated = ac.IsDenominated
+                                })
+                        });
+                
+                return ascendingQuery
                     .Select(c => new CurrencyViewModel
                     {
                         CurrencyTypeGuid = c.CurrencyType.Guid,
@@ -94,23 +146,21 @@ namespace Nozomi.Service.Events
                         DenominationName = c.DenominationName
                     });
             }
-            else
-            {
-                return query
-                    .Skip(itemsPerIndex * index)
-                    .Take(itemsPerIndex)
-                    .Select(c => new CurrencyViewModel
-                    {
-                        CurrencyTypeGuid = c.CurrencyType.Guid,
-                        Abbreviation = c.Abbreviation,
-                        Slug = c.Slug,
-                        Name = c.Name,
-                        LogoPath = c.LogoPath,
-                        Description = c.Description,
-                        Denominations = c.Denominations,
-                        DenominationName = c.DenominationName
-                    });
-            }
+            
+            return query
+                .Skip(itemsPerIndex * index)
+                .Take(itemsPerIndex)
+                .Select(c => new CurrencyViewModel
+                {
+                    CurrencyTypeGuid = c.CurrencyType.Guid,
+                    Abbreviation = c.Abbreviation,
+                    Slug = c.Slug,
+                    Name = c.Name,
+                    LogoPath = c.LogoPath,
+                    Description = c.Description,
+                    Denominations = c.Denominations,
+                    DenominationName = c.DenominationName
+                });
         }
 
         public Currency Get(long id, bool track = false)
