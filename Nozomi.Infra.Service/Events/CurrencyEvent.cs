@@ -64,7 +64,7 @@ namespace Nozomi.Service.Events
                     .Skip(itemsPerIndex * index)
                     .Take(itemsPerIndex);
 
-                if (typesToTake != null)
+                if (typesToTake != null && typesToTake.Any())
                     return descendingQuery
                         .Select(c => new CurrencyViewModel
                         {
@@ -110,7 +110,7 @@ namespace Nozomi.Service.Events
                     .Skip(itemsPerIndex * index)
                     .Take(itemsPerIndex);
 
-                if (typesToTake != null)
+                if (typesToTake != null && typesToTake.Any())
                     return ascendingQuery
                         .Select(c => new CurrencyViewModel
                         {
