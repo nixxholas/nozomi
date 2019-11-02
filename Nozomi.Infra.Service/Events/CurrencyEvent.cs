@@ -56,11 +56,13 @@ namespace Nozomi.Service.Events
             if (orderDescending && sortType != AnalysedComponentType.Unknown)
             {
                 // Order by the market cap
-                var descendingQuery = query.OrderByDescending(c => c.AnalysedComponents
-                        .Where(ac => ac.ComponentType.Equals(sortType)
-                                     && NumberHelper.IsNumericDecimal(ac.Value))
-                        .Select(ac => decimal.Parse(ac.Value))
-                        .DefaultIfEmpty(0))
+                var descendingQuery = query.OrderByDescending(c => 
+                            decimal.Parse(c.AnalysedComponents
+                                .Where(ac => ac.ComponentType.Equals(sortType)
+                                                      && NumberHelper.IsNumericDecimal(ac.Value))
+                                .Select(ac => ac.Value)
+                                .DefaultIfEmpty("0")
+                                .FirstOrDefault()))
                     .Skip(itemsPerIndex * index)
                     .Take(itemsPerIndex);
 
@@ -102,11 +104,13 @@ namespace Nozomi.Service.Events
             }
             else if (sortType != AnalysedComponentType.Unknown)
             {
-                var ascendingQuery = query.OrderBy(c => c.AnalysedComponents
-                    .Where(ac => ac.ComponentType.Equals(sortType)
-                                 && NumberHelper.IsNumericDecimal(ac.Value))
-                    .Select(ac => decimal.Parse(ac.Value))
-                    .DefaultIfEmpty(0))
+                var ascendingQuery = query.OrderBy(c => 
+                        decimal.Parse(c.AnalysedComponents
+                            .Where(ac => ac.ComponentType.Equals(sortType)
+                                         && NumberHelper.IsNumericDecimal(ac.Value))
+                            .Select(ac => ac.Value)
+                            .DefaultIfEmpty("0")
+                            .FirstOrDefault()))
                     .Skip(itemsPerIndex * index)
                     .Take(itemsPerIndex);
 
