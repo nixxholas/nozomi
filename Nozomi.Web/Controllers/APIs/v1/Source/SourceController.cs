@@ -29,6 +29,12 @@ namespace Nozomi.Web.Controllers.APIs.v1.Source
         }
 
         [HttpGet]
+        public IActionResult All()
+        {
+            return Ok(_sourceEvent.GetAll());
+        }
+
+        [HttpGet]
         public NozomiResult<ICollection<CurrencyResponse>> History(long sourceId, long days = 7)
         {
             try
@@ -65,11 +71,12 @@ namespace Nozomi.Web.Controllers.APIs.v1.Source
             return BadRequest("Please re-authenticate again");
         }
 
-        [HttpGet]
-        public NozomiResult<ICollection<Data.Models.Currency.Source>> All()
-        {
-            return new NozomiResult<ICollection<Data.Models.Currency.Source>>(_sourceEvent.GetAllActive(true).ToList());
-        }
+//        [HttpGet]
+//        public NozomiResult<ICollection<Data.Models.Currency.Source>> All()
+//        {
+//            return new NozomiResult<ICollection<Data.Models.Currency.Source>>(
+//                _sourceEvent.GetAllActive(true).ToList());
+//        }
 
         [HttpGet("{slug}")]
         public NozomiResult<ICollection<Data.Models.Currency.Source>> GetCurrencySources(string slug, int page = 0)

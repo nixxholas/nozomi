@@ -9,7 +9,7 @@ namespace Nozomi.Web.Controllers.APIs.v1.Source
      {
          IActionResult Create(CreateSourceViewModel vm);
 
-         NozomiResult<ICollection<Data.Models.Currency.Source>> All();
+         IActionResult All();
 
          NozomiResult<ICollection<Data.Models.Currency.Source>> GetCurrencySources(string slug, int page = 0);
      }
