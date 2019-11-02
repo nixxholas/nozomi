@@ -35,25 +35,70 @@ namespace Nozomi.Service.Events
             _tickerEvent = tickerEvent;
         }
 
-        public IEnumerable<CurrencyViewModel> All()
+        public IEnumerable<CurrencyViewModel> All(AnalysedComponentType sortType = AnalysedComponentType.Unknown,
+            bool orderDescending = true)
         {
-            return _unitOfWork.GetRepository<Currency>()
+            var query = _unitOfWork.GetRepository<Currency>()
                 .GetQueryable()
                 .AsNoTracking()
                 .Where(c => c.DeletedAt == null && c.IsEnabled)
                 .Include(c => c.CurrencyType)
-                .Include(c => c.AnalysedComponents)
-                .Select(c => new CurrencyViewModel
-                {
-                    CurrencyTypeGuid = c.CurrencyType.Guid,
-                    Abbreviation = c.Abbreviation,
-                    Slug = c.Slug,
-                    Name = c.Name,
-                    LogoPath = c.LogoPath,
-                    Description = c.Description,
-                    Denominations = c.Denominations,
-                    DenominationName = c.DenominationName
-                });
+                .Include(c => c.AnalysedComponents);
+
+            if (orderDescending && sortType != AnalysedComponentType.Unknown)
+            {
+                // Order by the market cap
+                return query.OrderByDescending(c => c.AnalysedComponents
+                        .Where(ac => ac.ComponentType.Equals(sortType)
+                                     && NumberHelper.IsNumericDecimal(ac.Value))
+                        .Select(ac => decimal.Parse(ac.Value))
+                        .DefaultIfEmpty(0))
+                    .Select(c => new CurrencyViewModel
+                    {
+                        CurrencyTypeGuid = c.CurrencyType.Guid,
+                        Abbreviation = c.Abbreviation,
+                        Slug = c.Slug,
+                        Name = c.Name,
+                        LogoPath = c.LogoPath,
+                        Description = c.Description,
+                        Denominations = c.Denominations,
+                        DenominationName = c.DenominationName
+                    });
+            }
+            else if (sortType != AnalysedComponentType.Unknown)
+            {
+                return query.OrderBy(c => c.AnalysedComponents
+                    .Where(ac => ac.ComponentType.Equals(sortType)
+                                 && NumberHelper.IsNumericDecimal(ac.Value))
+                    .Select(ac => decimal.Parse(ac.Value))
+                    .DefaultIfEmpty(0))
+                    .Select(c => new CurrencyViewModel
+                    {
+                        CurrencyTypeGuid = c.CurrencyType.Guid,
+                        Abbreviation = c.Abbreviation,
+                        Slug = c.Slug,
+                        Name = c.Name,
+                        LogoPath = c.LogoPath,
+                        Description = c.Description,
+                        Denominations = c.Denominations,
+                        DenominationName = c.DenominationName
+                    });
+            }
+            else
+            {
+                return query
+                    .Select(c => new CurrencyViewModel
+                    {
+                        CurrencyTypeGuid = c.CurrencyType.Guid,
+                        Abbreviation = c.Abbreviation,
+                        Slug = c.Slug,
+                        Name = c.Name,
+                        LogoPath = c.LogoPath,
+                        Description = c.Description,
+                        Denominations = c.Denominations,
+                        DenominationName = c.DenominationName
+                    });
+            }
         }
 
         public Currency Get(long id, bool track = false)

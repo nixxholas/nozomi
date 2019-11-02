@@ -11,8 +11,9 @@ namespace Nozomi.Service.Events.Interfaces
 {
     public interface ICurrencyEvent
     {
-        IEnumerable<CurrencyViewModel> All();
-        
+        IEnumerable<CurrencyViewModel> All(AnalysedComponentType sortType = AnalysedComponentType.Unknown, 
+            bool orderDescending = true);
+
         Currency Get(long id, bool track = false);
         
         Currency GetCurrencyByAbbreviation(string abbreviation, bool track = false);
