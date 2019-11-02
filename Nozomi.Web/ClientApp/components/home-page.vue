@@ -241,13 +241,30 @@
                     console.dir(e);
                 }
             },
+            async loadCurrencyData(type) {
+                let request = await this.$axios.get('/api/Currency/All', {
+                    params: {
+                        itemsPerIndex: 50,
+                        index: 0,
+                        sortType: "MarketCap", // 1 = Market cap
+                        orderDescending: true,
+                        typesToTake: [ 'MarketCap' ].toString() // https://wsvincent.com/javascript-convert-array-to-string/
+                    }
+                }).then(function (response) {
+                    console.log(response);
+                }).catch(function (error) {
+                    console.log(error);
+                }).finally(function () {
+
+                });
+            },
             onPageChange(page) {
                 this.cryptoTable.page = page;
                 this.loadCryptoData();
             }
         },
         mounted() {
-            //this.loadData();
+            this.loadCurrencyData();
             this.loadFiatData();
             this.loadCryptoData();
         }
