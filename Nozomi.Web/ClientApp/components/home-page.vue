@@ -4,9 +4,9 @@
              v-if="currencyTypeTable !== null && currencyTypeTable.data !== null && currencyTypeTable.data.length > 0">
       <div class="hero-body">
         <div class="container">
-          <carousel class="tile is-ancestor" :autoplay="true" :paginationEnabled="false"
+          <Carousel class="tile is-ancestor" :autoplay="true" :paginationEnabled="false"
                     :perPage="1" :perPageCustom="[[768, 2]]">
-            <slide class="tile is-parent" v-for="datum in currencyTypeTable.data"
+            <Slide class="tile is-parent" v-for="datum in currencyTypeTable.data"
                    v-if="datum.historical != null && datum.count > 0">
               <article class="tile is-child" style="width: 100%">
                 <p class="title" v-if="datum.parentName">{{ datum.parentName + ' ' + datum.componentType }}</p>
@@ -16,8 +16,8 @@
                              :showTimeScale="false" :height="'30vh'" intradayData="true"
                              :data-name="datum.componentType"></tv-lw-chart>
               </article>
-            </slide>
-          </carousel>
+            </Slide>
+          </Carousel>
           <b-loading :is-full-page="false" :active.sync="currencyTypeTable.loading" :can-cancel="false"></b-loading>
         </div>
       </div>
@@ -124,16 +124,16 @@
                 </router-link>
               </b-table-column>
               <b-table-column field="marketCap" label="Market Cap" sortable>
-                {{ props.row.marketCap | numeralFormat('$0 a') }}
+                {{ getComponentValue(props.row.components, 1) | numeralFormat('$0 a') }}
               </b-table-column>
               <b-table-column field="price" label="Price" sortable>
-                {{ props.row.averagePrice | numeralFormat('$0[.]00') }}
+                {{ getComponentValue(props.row.components, 10) | numeralFormat('$0[.]00') }}
               </b-table-column>
               <b-table-column field="volume" label="Volume" sortable>
-                {{ props.row.dailyVolume | numeralFormat('$0[.]00') }}
+                {{ getComponentValue(props.row.components, 80) | numeralFormat('$0[.]00') }}
               </b-table-column>
               <b-table-column field="dailyAvgPctChange" label="Change" sortable>
-                {{ props.row.dailyAvgPctChange | numeralFormat('0[.]0') }}%
+                {{ getComponentValue(props.row.components, 70) | numeralFormat('0[.]0') }}%
               </b-table-column>
               <b-table-column field="chart" label="Trend">
                 <trend
@@ -145,7 +145,7 @@
                   v-if="props.row.averagePriceHistory != null"
                 >
                 </trend>
-                <b-tag type="is-danger" size="is-medium" v-else>No data available</b-tag>
+                <b-tag type="is-danger" size="is-small" v-else>Trends are currently disabled!</b-tag>
               </b-table-column>
             </template>
           </b-table>
@@ -171,14 +171,14 @@
                     total: 0,
                     loading: false,
                     page: 1,
-                    perPage: 20
+                    perPage: 50
                 },
                 cryptoTable: {
                     data: [],
                     total: 0,
                     loading: false,
                     page: 1,
-                    perPage: 20
+                    perPage: 50
                 }
             }
         },
@@ -241,26 +241,42 @@
                     console.dir(e);
                 }
             },
-            async loadCurrencyData(type = "CRYPTO") {
-                let request = await this.$axios.get('/api/Currency/All?' +
-                    this.arrayToString("typesToTake", [ "MarketCap", "CurrentAveragePrice" ]), {
-                    params: {
-                        currencyType: type,
-                        itemsPerIndex: 50,
-                        index: 0,
-                        sortType: "MarketCap", // 1 = Market cap
-                        orderDescending: true,
-                        //typesToTake: this.arrayToString("typesToTake", [ "MarketCap" ]) // https://wsvincent.com/javascript-convert-array-to-string/
-                    }
-                }).then(function (response) {
-                    console.log(response);
-                }).catch(function (error) {
-                    console.log(error);
+            loadCurrencyData(type = "CRYPTO", sortType = "MarketCap", typesToTake = ["MarketCap"]) {
+                let self = this;
+                return new Promise((resolve, reject) => {
+                    let result;
+                    this.$axios.get('/api/Currency/All?' +
+                        this.arrayToString("typesToTake", typesToTake), {
+                        params: {
+                            currencyType: type,
+                            itemsPerIndex: 50,
+                            index: 0,
+                            sortType: sortType, // 1 = Market cap
+                            orderDescending: true,
+                            //typesToTake: this.arrayToString("typesToTake", [ "MarketCap" ]) // https://wsvincent.com/javascript-convert-array-to-string/
+                        }
+                    }).then(function (response) {
+                        result = response.data;
+                        resolve(result);
+                    }).catch(function (error) {
+                        reject(error);
+                    });
                 });
             },
             onPageChange(page) {
                 this.cryptoTable.page = page;
                 this.loadCryptoData();
+            },
+            getComponentValue(dataset, type) {
+                if (dataset && dataset.length > 0) {
+                    let res = dataset.filter(c => c.type === type);
+
+                    if (res && res.length > 0) {
+                        return res[0].value;
+                    }
+                }
+
+                return null;
             },
             // Formats the array to the output shown below.
             // arrName[0]=1050&arrName[1]=2000
@@ -276,9 +292,18 @@
             }
         },
         mounted() {
-            this.loadCurrencyData();
+            let self = this;
+
+            self.cryptoTable.loading = true;
+            this.loadCurrencyData("CRYPTO", "MarketCap", ["MarketCap", "CurrentAveragePrice",
+                "DailyVolume", "DailyPricePctChange"])
+                .then(function (result) {
+                    self.cryptoTable.data = result;
+                    self.cryptoTable.loading = false; 
+                });
+            // this.fiatTable.data = this.loadCurrencyData("FIAT");
             this.loadFiatData();
-            this.loadCryptoData();
+            //this.loadCryptoData();
         }
 
     }
