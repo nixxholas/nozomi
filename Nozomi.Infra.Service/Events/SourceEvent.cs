@@ -19,7 +19,23 @@ namespace Nozomi.Service.Events
             : base(logger, unitOfWork)
         {
         }
-        
+
+        public IEnumerable<Nozomi.Data.ViewModels.Source.SourceViewModel> GetAll()
+        {
+            return _unitOfWork.GetRepository<Source>()
+                .GetQueryable()
+                .AsNoTracking()
+                .Where(s => s.DeletedAt == null && s.IsEnabled)
+                .Select(s => new Nozomi.Data.ViewModels.Source.SourceViewModel
+                {
+                    Guid = s.Guid,
+                    Abbreviation = s.Abbreviation,
+                    ApiDocsUrl = s.APIDocsURL,
+                    Name = s.Name,
+                    SourceTypeId = s.SourceTypeId
+                });
+        }
+
         public IEnumerable<Source> GetAllActive(bool countPairs = false, bool includeNested = false)
         {
             var query = _unitOfWork.GetRepository<Source>()
