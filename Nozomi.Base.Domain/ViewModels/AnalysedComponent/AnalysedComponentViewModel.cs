@@ -1,4 +1,6 @@
+using System.Collections.Generic;
 using Nozomi.Data.Models.Web.Analytical;
+using Nozomi.Data.ViewModels.AnalysedHistoricItem;
 
 namespace Nozomi.Data.ViewModels.AnalysedComponent
 {
@@ -11,5 +13,7 @@ namespace Nozomi.Data.ViewModels.AnalysedComponent
         public string Value { get; set; }
         
         public bool IsDenominated { get; set; }
+        
+        public ICollection<AnalysedHistoricItemViewModel> History { get; set; }
     }
 }
