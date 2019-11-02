@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Nozomi.Base.Core;
@@ -17,6 +18,8 @@ namespace Nozomi.Data.Models.Currency
         }
         
         public long Id { get; set; }
+
+        public Guid Guid { get; set; }
 
         // Short form for the currency source if needed.
         public string Abbreviation { get; set; }
