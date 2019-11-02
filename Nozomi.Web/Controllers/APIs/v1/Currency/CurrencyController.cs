@@ -31,10 +31,10 @@ namespace Nozomi.Web.Controllers.APIs.v1.Currency
         }
 
         [HttpGet]
-        public IActionResult All([FromRoute]int itemsPerIndex = 20, [FromRoute]int index = 0,
-            [FromRoute]AnalysedComponentType sortType = AnalysedComponentType.MarketCap,
-            [FromRoute]bool orderDescending = true,
-            [FromRoute]ICollection<AnalysedComponentType> typesToTake = null)
+        public IActionResult All([FromQuery]int itemsPerIndex = 20, [FromQuery]int index = 0,
+            [FromQuery]AnalysedComponentType sortType = AnalysedComponentType.MarketCap,
+            [FromQuery]bool orderDescending = true,
+            [FromQuery]ICollection<AnalysedComponentType> typesToTake = null)
         {
             return Ok(_currencyEvent.All(itemsPerIndex, index, sortType, orderDescending, typesToTake));
         }
