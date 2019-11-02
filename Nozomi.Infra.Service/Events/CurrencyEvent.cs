@@ -41,8 +41,7 @@ namespace Nozomi.Service.Events
         public IEnumerable<CurrencyViewModel> All(string currencyType = "CRYPTO", int itemsPerIndex = 20, int index = 0,
             AnalysedComponentType sortType = AnalysedComponentType.Unknown, bool orderDescending = true, 
             ICollection<AnalysedComponentType> typesToTake = null,
-            ICollection<AnalysedComponentType> typesToDeepen = null, ICollection<ComponentType> rcToTake = null,
-            ICollection<ComponentType> rcToDeepen = null)
+            ICollection<AnalysedComponentType> typesToDeepen = null)
         {
             if (itemsPerIndex <= 0 || itemsPerIndex > 100)
                 itemsPerIndex = 20;
