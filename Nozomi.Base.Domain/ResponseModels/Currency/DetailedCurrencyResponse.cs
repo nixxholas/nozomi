@@ -93,7 +93,7 @@ namespace Nozomi.Data.ResponseModels.Currency
         }
         
         public DetailedCurrencyResponse(Models.Currency.Currency currency, 
-            ICollection<Models.Web.RequestComponent> requestComponents)
+            ICollection<Models.Web.Component> requestComponents)
         {
             // Aggregate non-compounded properties first
             Id = currency.Id;

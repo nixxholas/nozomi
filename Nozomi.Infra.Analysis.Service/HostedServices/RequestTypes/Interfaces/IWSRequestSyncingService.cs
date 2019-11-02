@@ -10,6 +10,6 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes.Interfaces
     {
         Task<bool> Process(ICollection<Request> cpr, string payload);
 
-        bool Update(JToken token, ResponseType resType, IEnumerable<RequestComponent> requestComponents);
+        bool Update(JToken token, ResponseType resType, IEnumerable<Component> requestComponents);
     }
 }

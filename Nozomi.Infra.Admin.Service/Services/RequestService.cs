@@ -57,13 +57,13 @@ namespace Nozomi.Infra.Admin.Service.Services
                     ResponseType = createRequest.ResponseType,
                     RequestComponents = createRequest.RequestComponents?.Count > 0 ? 
                         createRequest.RequestComponents
-                        .Select(rc => new RequestComponent()
+                        .Select(rc => new Component()
                         {
                             ComponentType = rc.ComponentType,
                             QueryComponent = rc.QueryComponent
                         })
                         .ToList() 
-                        : new List<RequestComponent>(),
+                        : new List<Component>(),
                     RequestProperties = createRequest.RequestProperties?.Count > 0 ? 
                         createRequest.RequestProperties
                         .Select(rp => new RequestProperty()
@@ -190,7 +190,7 @@ namespace Nozomi.Infra.Admin.Service.Services
                             if (!string.IsNullOrWhiteSpace(userId))
                                 cpc.DeletedById = userId;
 
-                            _unitOfWork.GetRepository<RequestComponent>().Update(cpc);
+                            _unitOfWork.GetRepository<Component>().Update(cpc);
                         }
                         // Updating?
                         else
@@ -198,7 +198,7 @@ namespace Nozomi.Infra.Admin.Service.Services
                             if (ucpc.ComponentType >= 0) cpc.ComponentType = ucpc.ComponentType;
                             if (!string.IsNullOrEmpty(ucpc.QueryComponent)) cpc.QueryComponent = ucpc.QueryComponent;
 
-                            _unitOfWork.GetRepository<RequestComponent>().Update(cpc);
+                            _unitOfWork.GetRepository<Component>().Update(cpc);
                         }
                     }
                 }

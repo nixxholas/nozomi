@@ -58,7 +58,7 @@ namespace Nozomi.Data.Models.Web
         
         public CurrencyType CurrencyType { get; set; }
 
-        public ICollection<RequestComponent> RequestComponents { get; set; }
+        public ICollection<Component> RequestComponents { get; set; }
         public ICollection<RequestProperty> RequestProperties { get; set; }
         
         // Websocket-based Entities

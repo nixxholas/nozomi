@@ -8,9 +8,9 @@ using Nozomi.Data.Models.Web;
 
 namespace Nozomi.Repo.Data.Mappings.WebModels
 {
-    public class RequestComponentMap : BaseMap<RequestComponent>
+    public class RequestComponentMap : BaseMap<Component>
     {
-        public RequestComponentMap(EntityTypeBuilder<RequestComponent> entityTypeBuilder) : base(entityTypeBuilder)
+        public RequestComponentMap(EntityTypeBuilder<Component> entityTypeBuilder) : base(entityTypeBuilder)
         {
             entityTypeBuilder.HasKey(rc => rc.Id).HasName("RequestComponent_PK_Id");
             entityTypeBuilder.Property(rc => rc.Id).ValueGeneratedOnAdd();
@@ -29,7 +29,7 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
             
             entityTypeBuilder.HasOne(rc => rc.Request).WithMany(r => r.RequestComponents)
                 .HasForeignKey(rc => rc.RequestId).OnDelete(DeleteBehavior.Restrict);
-            entityTypeBuilder.HasMany(rc => rc.RcdHistoricItems).WithOne(rcd => rcd.RequestComponent)
+            entityTypeBuilder.HasMany(rc => rc.RcdHistoricItems).WithOne(rcd => rcd.Component)
                 .HasForeignKey(rcd => rcd.RequestComponentId).OnDelete(DeleteBehavior.Restrict);
         }
     }

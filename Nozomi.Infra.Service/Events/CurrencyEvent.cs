@@ -24,6 +24,7 @@ using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Data;
 using Nozomi.Service.Events.Interfaces;
+using Component = Nozomi.Data.Models.Web.Component;
 
 namespace Nozomi.Service.Events
 {
@@ -40,7 +41,8 @@ namespace Nozomi.Service.Events
         public IEnumerable<CurrencyViewModel> All(string currencyType = "CRYPTO", int itemsPerIndex = 20, int index = 0,
             AnalysedComponentType sortType = AnalysedComponentType.Unknown, bool orderDescending = true, 
             ICollection<AnalysedComponentType> typesToTake = null,
-            ICollection<AnalysedComponentType> typesToDeepen = null)
+            ICollection<AnalysedComponentType> typesToDeepen = null, ICollection<ComponentType> rcToTake = null,
+            ICollection<ComponentType> rcToDeepen = null)
         {
             if (itemsPerIndex <= 0 || itemsPerIndex > 100)
                 itemsPerIndex = 20;
@@ -398,7 +400,7 @@ namespace Nozomi.Service.Events
                     return decimal.MinusOne;
 
                 // We need to make sure that no null exceptions will appear here
-                return _unitOfWork.GetRepository<RequestComponent>()
+                return _unitOfWork.GetRepository<Component>()
                     .GetQueryable()
                     .AsNoTracking()
                     .Where(rc => rc.DeletedAt == null && rc.IsEnabled
@@ -662,7 +664,7 @@ namespace Nozomi.Service.Events
                     .ToList();
             }
 
-            var requestComponents = new List<RequestComponent>();
+            var requestComponents = new List<Component>();
             if (componentTypes != null)
             {
                 requestComponents = query.SelectMany(c => c.Requests)

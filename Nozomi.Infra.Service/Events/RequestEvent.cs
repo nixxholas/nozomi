@@ -24,7 +24,7 @@ namespace Nozomi.Service.Events
 
         public bool Exists(ComponentType type, long requestId)
         {
-            return _unitOfWork.GetRepository<RequestComponent>()
+            return _unitOfWork.GetRepository<Component>()
                 .GetQueryable()
                 .AsNoTracking()
                 .Any(rc => rc.DeletedAt == null && rc.IsEnabled 
@@ -33,7 +33,7 @@ namespace Nozomi.Service.Events
 
         public bool Exists(ComponentType type, string requestGuid)
         {
-            return _unitOfWork.GetRepository<RequestComponent>()
+            return _unitOfWork.GetRepository<Component>()
                 .GetQueryable()
                 .AsNoTracking()
                 .Include(rc => rc.Request)

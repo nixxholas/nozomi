@@ -4,6 +4,6 @@ namespace Nozomi.Service.Services.Interfaces
 {
     public interface IRcdHistoricItemService
     {
-        bool Push(RequestComponent rc);
+        bool Push(Component rc);
     }
 }

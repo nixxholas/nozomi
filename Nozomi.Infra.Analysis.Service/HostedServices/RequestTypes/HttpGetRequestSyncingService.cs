@@ -491,7 +491,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
             return false;
         }
 
-        public bool Update(JToken token, ResponseType resType, ICollection<RequestComponent> components)
+        public bool Update(JToken token, ResponseType resType, ICollection<Component> components)
         {
             // Null Checks
             if (token == null)

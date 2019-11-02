@@ -6,12 +6,12 @@ using Nozomi.Data.Models.Currency;
 
 namespace Nozomi.Data.Models.Web
 {
-    public class RequestComponent : Entity
+    public class Component : Entity
     {
         // Default Constructor
-        public RequestComponent() {}
+        public Component() {}
 
-        public RequestComponent(ComponentType componentType, string identifier, string queryComponent,
+        public Component(ComponentType componentType, string identifier, string queryComponent,
             bool anomalyIgnorance, bool isDenominated, bool storeHistoricals, long requestId)
         {
             ComponentType = componentType;
@@ -23,7 +23,7 @@ namespace Nozomi.Data.Models.Web
             RequestId = requestId;
         }
 
-        public RequestComponent(RequestComponent component, int historicIndex, int historicItemAmount)
+        public Component(Component component, int historicIndex, int historicItemAmount)
         {
             if (component != null)
             {

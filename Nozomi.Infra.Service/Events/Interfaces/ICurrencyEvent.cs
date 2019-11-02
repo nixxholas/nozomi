@@ -14,7 +14,8 @@ namespace Nozomi.Service.Events.Interfaces
         IEnumerable<CurrencyViewModel> All(string currencyType = "CRYPTO", int itemsPerIndex = 20, int index = 0, 
             AnalysedComponentType sortType = AnalysedComponentType.Unknown, bool orderDescending = true, 
             ICollection<AnalysedComponentType> typesToTake = null, 
-            ICollection<AnalysedComponentType> typesToDeepen = null);
+            ICollection<AnalysedComponentType> typesToDeepen = null, ICollection<ComponentType> rcToTake = null,
+            ICollection<ComponentType> rcToDeepen = null);
 
         Currency Get(long id, bool track = false);
         

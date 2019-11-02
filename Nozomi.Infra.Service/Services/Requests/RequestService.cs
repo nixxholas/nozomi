@@ -13,6 +13,7 @@ using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Data;
 using Nozomi.Service.Events.Interfaces;
 using Nozomi.Service.Services.Requests.Interfaces;
+using Component = Nozomi.Data.Models.Web.Component;
 
 namespace Nozomi.Service.Services.Requests
 {
@@ -118,13 +119,13 @@ namespace Nozomi.Service.Services.Requests
                     ResponseType = createRequest.ResponseType,
                     RequestComponents = createRequest.RequestComponents?.Count > 0 ? 
                         createRequest.RequestComponents
-                        .Select(rc => new RequestComponent()
+                        .Select(rc => new Component()
                         {
                             ComponentType = rc.ComponentType,
                             QueryComponent = rc.QueryComponent
                         })
                         .ToList() 
-                        : new List<RequestComponent>(),
+                        : new List<Component>(),
                     RequestProperties = createRequest.RequestProperties?.Count > 0 ? 
                         createRequest.RequestProperties
                         .Select(rp => new RequestProperty()
@@ -251,7 +252,7 @@ namespace Nozomi.Service.Services.Requests
                             if (!string.IsNullOrWhiteSpace(userId))
                                 cpc.DeletedById = userId;
 
-                            _unitOfWork.GetRepository<RequestComponent>().Update(cpc);
+                            _unitOfWork.GetRepository<Component>().Update(cpc);
                         }
                         // Updating?
                         else
@@ -259,7 +260,7 @@ namespace Nozomi.Service.Services.Requests
                             if (ucpc.ComponentType >= 0) cpc.ComponentType = ucpc.ComponentType;
                             if (!string.IsNullOrEmpty(ucpc.QueryComponent)) cpc.QueryComponent = ucpc.QueryComponent;
 
-                            _unitOfWork.GetRepository<RequestComponent>().Update(cpc);
+                            _unitOfWork.GetRepository<Component>().Update(cpc);
                         }
                     }
                 }

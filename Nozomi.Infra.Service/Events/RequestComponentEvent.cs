@@ -23,7 +23,7 @@ using Nozomi.Service.Events.Interfaces;
 
 namespace Nozomi.Service.Events
 {
-    public class RequestComponentEvent : BaseEvent<RequestComponentEvent, NozomiDbContext, RequestComponent>, 
+    public class RequestComponentEvent : BaseEvent<RequestComponentEvent, NozomiDbContext, Component>, 
         IRequestComponentEvent
     {
         private IRequestComponentEvent _requestComponentEventImplementation;
@@ -33,33 +33,33 @@ namespace Nozomi.Service.Events
         {
         }
 
-        public ICollection<RequestComponent> GetAllByRequest(long requestId, bool includeNested = false)
+        public ICollection<Component> GetAllByRequest(long requestId, bool includeNested = false)
         {
             if (requestId <= 0) return null;
 
             return includeNested
-                ? _unitOfWork.GetRepository<RequestComponent>()
+                ? _unitOfWork.GetRepository<Component>()
                     .GetQueryable(rc => rc.RequestId.Equals(requestId) && rc.DeletedAt == null && rc.IsEnabled)
                     .AsNoTracking()
                     .Include(rc => rc.Request)
                     .ToList()
-                : _unitOfWork.GetRepository<RequestComponent>()
+                : _unitOfWork.GetRepository<Component>()
                     .GetQueryable(rc => rc.RequestId.Equals(requestId) && rc.DeletedAt == null && rc.IsEnabled)
                     .AsNoTracking()
                     .ToList();
         }
 
-        public ICollection<RequestComponent> All(int index = 0, bool includeNested = false)
+        public ICollection<Component> All(int index = 0, bool includeNested = false)
         {
             return includeNested
-                ? _unitOfWork.GetRepository<RequestComponent>()
+                ? _unitOfWork.GetRepository<Component>()
                     .GetQueryable(rc => rc.DeletedAt == null && rc.IsEnabled)
                     .AsNoTracking()
                     .Include(rc => rc.Request)
                     .Skip(index * NozomiServiceConstants.RequestComponentTakeoutLimit)
                     .Take(NozomiServiceConstants.RequestComponentTakeoutLimit)
                     .ToList()
-                : _unitOfWork.GetRepository<RequestComponent>()
+                : _unitOfWork.GetRepository<Component>()
                     .GetQueryable(rc => rc.DeletedAt == null && rc.IsEnabled)
                     .AsNoTracking()
                     .Skip(index * NozomiServiceConstants.RequestComponentTakeoutLimit)
@@ -67,7 +67,7 @@ namespace Nozomi.Service.Events
                     .ToList();
         }
 
-        public long GetPredicateCount(Expression<Func<RequestComponent, bool>> predicate)
+        public long GetPredicateCount(Expression<Func<Component, bool>> predicate)
         {
             if (predicate == null)
                 return long.MinValue;
@@ -75,7 +75,7 @@ namespace Nozomi.Service.Events
             return QueryCount(predicate);
         }
 
-        public long GetCorrelationPredicateCount(long analysedComponentId, Expression<Func<RequestComponent, bool>> predicate)
+        public long GetCorrelationPredicateCount(long analysedComponentId, Expression<Func<Component, bool>> predicate)
         {
             var analysedComponent = _unitOfWork.GetRepository<AnalysedComponent>()
                 .GetQueryable()
@@ -119,7 +119,7 @@ namespace Nozomi.Service.Events
             return long.MinValue;
         }
 
-        public ICollection<RequestComponent> GetByMainCurrency(string mainCurrencyAbbrv,
+        public ICollection<Component> GetByMainCurrency(string mainCurrencyAbbrv,
             ICollection<ComponentType> componentTypes)
         {
             return _unitOfWork.GetRepository<CurrencyPair>()
@@ -145,7 +145,7 @@ namespace Nozomi.Service.Events
         /// <param name="analysedComponentId">The unique identifier of the analysed component
         /// that is related to the ticker in question.</param>
         /// <returns>Collection of request components related to the component</returns>
-        public ICollection<RequestComponent> GetAllByCorrelation(long analysedComponentId, bool track = false
+        public ICollection<Component> GetAllByCorrelation(long analysedComponentId, bool track = false
             , int index = 0, bool ensureValid = true, ICollection<ComponentType> componentTypes = null)
         {
             var analysedComponent = _unitOfWork.GetRepository<AnalysedComponent>()
@@ -192,7 +192,7 @@ namespace Nozomi.Service.Events
                     return query
                         .SelectMany(cr => cr.RequestComponents)
                         .Where(rc => componentTypes.Contains(rc.ComponentType))
-                        .Select(rc => new RequestComponent(rc,
+                        .Select(rc => new Component(rc,
                             index, NozomiServiceConstants.RcdHistoricItemTakeoutLimit))
                         .ToList();
                 } 
@@ -201,7 +201,7 @@ namespace Nozomi.Service.Events
                 {
                     return query
                         .SelectMany(cr => cr.RequestComponents)
-                        .Select(rc => new RequestComponent(rc,
+                        .Select(rc => new Component(rc,
                             index, NozomiServiceConstants.RcdHistoricItemTakeoutLimit))
                         .ToList();
                 }
@@ -215,7 +215,7 @@ namespace Nozomi.Service.Events
         /// </summary>
         /// <param name="currencyId">Base Currency Id</param>
         /// <returns></returns>
-        public ICollection<RequestComponent> GetAllByCurrency(long currencyId, bool track = false, int index = 0)
+        public ICollection<Component> GetAllByCurrency(long currencyId, bool track = false, int index = 0)
         {
             // First, obtain the currency in question
             var qCurrency = _unitOfWork.GetRepository<Currency>()
@@ -237,12 +237,12 @@ namespace Nozomi.Service.Events
                                    .Any(rc => rc.DeletedAt == null && rc.IsEnabled)))
                 .SelectMany(cpr => cpr.Requests
                     .SelectMany(cr => cr.RequestComponents
-                    .Select(rc => new RequestComponent(rc, index, 
+                    .Select(rc => new Component(rc, index, 
                         NozomiServiceConstants.RcdHistoricItemTakeoutLimit))))
                 .ToList();
         }
 
-        public ICollection<RequestComponent> GetAllTickerPairCompsByCurrency(long currencyId, bool track = false, 
+        public ICollection<Component> GetAllTickerPairCompsByCurrency(long currencyId, bool track = false, 
             int index = 0)
         {
             // First, obtain the currency in question
@@ -285,19 +285,19 @@ namespace Nozomi.Service.Events
                             .Where(cpr => cpr.IsEnabled && cpr.DeletedAt == null)
                             .SelectMany(cpr => cpr.RequestComponents
                                 .Where(rc => rc.IsEnabled && rc.DeletedAt == null)
-                                .Select(rc => new RequestComponent(rc, index, 
+                                .Select(rc => new Component(rc, index, 
                                     NozomiServiceConstants.RequestComponentTakeoutLimit))))))
                 .ToList();
         }
 
-        public NozomiResult<RequestComponent> Get(long id, bool includeNested = false)
+        public NozomiResult<Component> Get(long id, bool includeNested = false)
         {
             if (includeNested)
-                return new NozomiResult<RequestComponent>(_unitOfWork.GetRepository<RequestComponent>().GetQueryable()
+                return new NozomiResult<Component>(_unitOfWork.GetRepository<Component>().GetQueryable()
                     .Include(rc => rc.Request)
                     .SingleOrDefault(rc => rc.Id.Equals(id) && rc.IsEnabled && rc.DeletedAt == null));
 
-            return new NozomiResult<RequestComponent>(_unitOfWork.GetRepository<RequestComponent>()
+            return new NozomiResult<Component>(_unitOfWork.GetRepository<Component>()
                 .Get(rc => rc.Id.Equals(id) && rc.DeletedAt == null && rc.IsEnabled)
                 .SingleOrDefault());
         }

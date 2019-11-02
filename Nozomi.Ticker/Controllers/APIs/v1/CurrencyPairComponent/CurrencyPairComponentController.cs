@@ -28,21 +28,21 @@ namespace Nozomi.Ticker.Controllers.APIs.v1.CurrencyPairComponent
         }
 
         [HttpGet]
-        //[SwaggerResponse(200, "Request components obtained.", typeof(NozomiResult<ICollection<RequestComponent>>))]
+        //[SwaggerResponse(200, "Request components obtained.", typeof(NozomiResult<ICollection<Component>>))]
         //[SwaggerResponse(400, "The request ID is invalid.")]
         [SwaggerOperation(
             Summary = "Obtains all Request Components related to the specific Request ID."
         )]
-        public NozomiResult<ICollection<RequestComponent>> AllByRequestId(long requestId, bool includeNested = false)
+        public NozomiResult<ICollection<Component>> AllByRequestId(long requestId, bool includeNested = false)
         {
-            return new NozomiResult<ICollection<RequestComponent>>
+            return new NozomiResult<ICollection<Component>>
                 (_requestComponentEvent.GetAllByRequest(requestId, includeNested));
         }
 
         [HttpGet]
-        public NozomiResult<ICollection<RequestComponent>> All(int index = 0, bool includeNested = false)
+        public NozomiResult<ICollection<Component>> All(int index = 0, bool includeNested = false)
         {
-            return new NozomiResult<ICollection<RequestComponent>>
+            return new NozomiResult<ICollection<Component>>
                 (_requestComponentEvent.All(index, includeNested));
         }
 

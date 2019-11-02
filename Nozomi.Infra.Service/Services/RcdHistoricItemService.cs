@@ -19,7 +19,7 @@ namespace Nozomi.Service.Services
         {
         }
 
-        public bool Push(RequestComponent rc)
+        public bool Push(Component rc)
         {
             if (!string.IsNullOrEmpty(rc.Value))
             {

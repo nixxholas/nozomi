@@ -231,7 +231,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
             return Task.FromResult(false);
         }
 
-        public bool Update(JToken token, ResponseType resType, IEnumerable<RequestComponent> requestComponents)
+        public bool Update(JToken token, ResponseType resType, IEnumerable<Component> requestComponents)
         {
             // Null Checks
             if (token == null)

@@ -41,10 +41,10 @@ namespace Nozomi.Service.Services
                 if (requestId <= 0)
                     throw new ArgumentException("Request not found.");
                 
-                var requestComponent = new RequestComponent(vm.Type, vm.Identifier, 
+                var requestComponent = new Component(vm.Type, vm.Identifier, 
                     vm.QueryComponent, vm.AnomalyIgnorance, vm.IsDenominated, vm.StoreHistoricals, requestId);
                 
-                _unitOfWork.GetRepository<RequestComponent>().Add(requestComponent);
+                _unitOfWork.GetRepository<Component>().Add(requestComponent);
                 _unitOfWork.Commit(userId);
 
                 return; // Done
@@ -61,7 +61,7 @@ namespace Nozomi.Service.Services
                     return new NozomiResult<string>
                         (NozomiResultType.Failed, "Invalid payload or userId.");
 
-                var newRequestComponent = new RequestComponent()
+                var newRequestComponent = new Component()
                 {
                     RequestId = createRequestComponent.RequestId,
                     ComponentType = createRequestComponent.ComponentType,
@@ -71,7 +71,7 @@ namespace Nozomi.Service.Services
                     AnomalyIgnorance = createRequestComponent.AnomalyIgnorance
                 };
 
-                _unitOfWork.GetRepository<RequestComponent>().Add(newRequestComponent);
+                _unitOfWork.GetRepository<Component>().Add(newRequestComponent);
                 _unitOfWork.Commit(userId);
 
                 return new NozomiResult<string>
@@ -87,7 +87,7 @@ namespace Nozomi.Service.Services
         {
             if (id > 0)
             {
-                var entity = _unitOfWork.GetRepository<RequestComponent>()
+                var entity = _unitOfWork.GetRepository<Component>()
                     .GetQueryable()
                     .Include(rc => rc.Request)
                     .AsTracking()
@@ -120,7 +120,7 @@ namespace Nozomi.Service.Services
                 }
                     
                 var lastCompVal = _unitOfWork
-                    .GetRepository<RequestComponent>()
+                    .GetRepository<Component>()
                     .GetQueryable()
                     .AsTracking()
                     .Include(rc => rc.Request)
@@ -157,11 +157,11 @@ namespace Nozomi.Service.Services
                 }
                 else if (lastCompVal == null)
                 {
-                    _logger.LogWarning($"[{serviceName}]: RequestComponent {id} is either deleted, " +
+                    _logger.LogWarning($"[{serviceName}]: Component {id} is either deleted, " +
                                        $"disabled or has been updated recently.");
                     
                     return new NozomiResult<string>
-                    (NozomiResultType.Limbo, $"[{serviceName}]: RequestComponent {id} is either deleted, " +
+                    (NozomiResultType.Limbo, $"[{serviceName}]: Component {id} is either deleted, " +
                                              $"disabled or has been updated recently.");
                 }
                 else
@@ -179,7 +179,7 @@ namespace Nozomi.Service.Services
                 return new NozomiResult<string>
                 (NozomiResultType.Failed,
                     $"Invalid component datum id:{id}, val:{val}. Please make sure that the " +
-                    "RequestComponent is properly instantiated.");
+                    "Component is properly instantiated.");
             }
         }
 
@@ -188,7 +188,7 @@ namespace Nozomi.Service.Services
             try
             {
                 var lastCompVal = _unitOfWork
-                    .GetRepository<RequestComponent>()
+                    .GetRepository<Component>()
                     .GetQueryable()
                     .AsTracking()
                     .Include(rc => rc.Request)
@@ -217,7 +217,7 @@ namespace Nozomi.Service.Services
 
                     lastCompVal.Value = val.ToString(CultureInfo.InvariantCulture);
 
-                    _unitOfWork.GetRepository<RequestComponent>().Update(lastCompVal);
+                    _unitOfWork.GetRepository<Component>().Update(lastCompVal);
                     _unitOfWork.Commit();
 
                     return new NozomiResult<string>
@@ -227,7 +227,7 @@ namespace Nozomi.Service.Services
                 return new NozomiResult<string>
                 (NozomiResultType.Failed,
                     $"Invalid component datum id:{id}, val:{val}. Please make sure that the " +
-                    "RequestComponent is properly instantiated.");
+                    "Component is properly instantiated.");
             }
             catch (Exception ex)
             {
@@ -236,7 +236,7 @@ namespace Nozomi.Service.Services
                 return new NozomiResult<string>
                 (NozomiResultType.Failed,
                     $"Invalid component datum id:{id}, val:{val}. Please make sure that the " +
-                    "RequestComponent is properly instantiated.");
+                    "Component is properly instantiated.");
             }
         }
 
@@ -248,7 +248,7 @@ namespace Nozomi.Service.Services
                     return new NozomiResult<string>
                         (NozomiResultType.Failed, "Invalid payload or userId.");
 
-                var rcToUpd = _unitOfWork.GetRepository<RequestComponent>()
+                var rcToUpd = _unitOfWork.GetRepository<Component>()
                     .Get(rc => rc.Id.Equals(updateRequestComponent.Id) && rc.DeletedAt == null && rc.IsEnabled)
                     .SingleOrDefault();
 
@@ -260,7 +260,7 @@ namespace Nozomi.Service.Services
                     rcToUpd.IsDenominated = updateRequestComponent.IsDenominated;
                     rcToUpd.AnomalyIgnorance = updateRequestComponent.AnomalyIgnorance;
 
-                    _unitOfWork.GetRepository<RequestComponent>().Update(rcToUpd);
+                    _unitOfWork.GetRepository<Component>().Update(rcToUpd);
                     _unitOfWork.Commit(userId);
 
                     return new NozomiResult<string>
@@ -283,7 +283,7 @@ namespace Nozomi.Service.Services
                 return new NozomiResult<string>
                     (NozomiResultType.Failed, "Invalid payload or userId.");
 
-            var cpcToDel = _unitOfWork.GetRepository<RequestComponent>()
+            var cpcToDel = _unitOfWork.GetRepository<Component>()
                 .Get(rc => rc.Id.Equals(id) && rc.DeletedAt == null && rc.IsEnabled)
                 .SingleOrDefault();
 
@@ -291,14 +291,14 @@ namespace Nozomi.Service.Services
             {
                 if (hardDelete)
                 {
-                    _unitOfWork.GetRepository<RequestComponent>().Delete(cpcToDel);
+                    _unitOfWork.GetRepository<Component>().Delete(cpcToDel);
                 }
                 else
                 {
                     cpcToDel.DeletedAt = DateTime.UtcNow;
                     cpcToDel.DeletedById = userId;
 
-                    _unitOfWork.GetRepository<RequestComponent>().Update(cpcToDel);
+                    _unitOfWork.GetRepository<Component>().Update(cpcToDel);
                 }
 
                 _unitOfWork.Commit(userId);

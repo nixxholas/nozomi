@@ -8,9 +8,9 @@ namespace Nozomi.Ticker.Controllers.APIs.v1.CurrencyPairComponent
 {
     public interface ICurrencyPairComponentController
     {
-        NozomiResult<ICollection<RequestComponent>> AllByRequestId(long requestId, bool includeNested = false);
+        NozomiResult<ICollection<Component>> AllByRequestId(long requestId, bool includeNested = false);
 
-        NozomiResult<ICollection<RequestComponent>> All(int index = 0, bool includeNested = false);
+        NozomiResult<ICollection<Component>> All(int index = 0, bool includeNested = false);
 
         NozomiResult<string> Create(CreateRequestComponent createRequestComponent);
 
