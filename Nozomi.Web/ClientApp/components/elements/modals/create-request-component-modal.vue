@@ -95,7 +95,7 @@
                 this.isModalLoading = true;
 
                 let self = this;
-                this.$axios.post('/api/RequestComponent/Create', self.form, {
+                this.$axios.post('/api/Component/Create', self.form, {
                     headers: {
                         Authorization: "Bearer " + store.state.oidcStore.access_token
                     }

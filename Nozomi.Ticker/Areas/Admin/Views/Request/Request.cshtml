@@ -57,7 +57,7 @@
         <b-button variant="primary" class="mb-3" v-on:click="showRCCreateModal">Create RC</b-button>
 
         @* Table for requestComponent *@
-        <b-table :items="request.requestComponents" :fields="requestComponentsDataFields">
+        <b-table :items="request.components" :fields="requestComponentsDataFields">
             <template slot="RequestComponentType" slot-scope="datum">
                 {{ getRequestComponentTypeStr(datum.item.componentType) }}
             </template>
@@ -375,7 +375,7 @@
                     formData.append('IsDenominated', this.createRCForm.isDenominated);
                     formData.append('AnomalyIgnorance', this.createRCForm.anomalyIgnorance);
 
-                    const response = await fetch('/Admin/RequestComponent/CreateRequestComponent',
+                    const response = await fetch('/Admin/Component/CreateRequestComponent',
                         {
                             method: 'POST',
                             body: formData
@@ -386,7 +386,7 @@
 
                         const newRequest = data.item;
 
-                        this.requests.requestComponent.push(newRequest);
+                        this.requests.components.push(newRequest);
                         // Put alert for now, change the ui later.
                         alert(data.message);
                     } else {
@@ -423,7 +423,7 @@
                     formData.append('IsDenominated', this.editRCForm.isDenominated);
                     formData.append('AnomalyIgnorance', this.editRCForm.anomalyIgnorance);
 
-                    const response = await fetch(`/Admin/RequestComponent/EditRequestComponent/${this.editRCForm.id}`,
+                    const response = await fetch(`/Admin/Component/EditRequestComponent/${this.editRCForm.id}`,
                         {
                             method: 'PUT',
                             body: formData
@@ -432,14 +432,14 @@
                     if (response.status === 200) {
                         const data = await response.json();
                         // Update the data table
-                        this.request.requestComponents.find((element, index) => {
+                        this.request.components.find((element, index) => {
                             if (element.id === this.editRCForm.id) {
-                                this.request.requestComponents[index].id = this.editRCForm.id;
-                                this.request.requestComponents[index].componentType = this.editRCForm.componentType;
-                                this.request.requestComponents[index].queryComponent = this.editRCForm.queryComponent;
-                                this.request.requestComponents[index].identifier = this.editRCForm.identifier;
-                                this.request.requestComponents[index].isDenominated = this.editRCForm.isDenominated;
-                                this.request.requestComponents[index].anomalyIgnorance = this.editRCForm.anomalyIgnorance;
+                                this.request.components[index].id = this.editRCForm.id;
+                                this.request.components[index].componentType = this.editRCForm.componentType;
+                                this.request.components[index].queryComponent = this.editRCForm.queryComponent;
+                                this.request.components[index].identifier = this.editRCForm.identifier;
+                                this.request.components[index].isDenominated = this.editRCForm.isDenominated;
+                                this.request.components[index].anomalyIgnorance = this.editRCForm.anomalyIgnorance;
                             }
                         });
 
@@ -461,7 +461,7 @@
                 async handleRCDeleteOk(bvModalEvt) {
                     bvModalEvt.preventDefault();
 
-                    const response = await fetch(`/Admin/RequestComponent/DeleteRequestComponent/${this.deleteRCModal.id}`,
+                    const response = await fetch(`/Admin/Component/DeleteRequestComponent/${this.deleteRCModal.id}`,
                         {
                             method: 'DELETE'
                         });
@@ -470,8 +470,8 @@
                         const data = await response.json();
                         
                         // Update the datatable
-                        const index = this.request.requestComponents.findIndex(element => element.id === this.deleteRCModal.id);
-                        this.request.requestComponents.splice(index, 1);
+                        const index = this.request.components.findIndex(element => element.id === this.deleteRCModal.id);
+                        this.request.components.splice(index, 1);
 
                         alert(data.message);
                     } else {
