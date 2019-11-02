@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using Nozomi.Data;
 using Nozomi.Data.AreaModels.v1.Source;
 using Nozomi.Data.Models.Currency;
+using Nozomi.Data.ViewModels.Source;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Data;
@@ -20,6 +21,24 @@ namespace Nozomi.Service.Services
         public SourceService(ILogger<SourceService> logger, 
             IUnitOfWork<NozomiDbContext> unitOfWork) : base(logger, unitOfWork)
         {
+        }
+
+        public void Create(CreateSourceViewModel vm, string userId)
+        {
+            if (vm.IsValid() && !_unitOfWork.GetRepository<Source>()
+                    .GetQueryable().AsNoTracking()
+                    .Any(s => s.Abbreviation.Equals(vm.Abbreviation, StringComparison.InvariantCultureIgnoreCase)))
+            {
+                var source = new Source(vm.Abbreviation, vm.Name, vm.ApiDocsUrl);
+                
+                _unitOfWork.GetRepository<Source>().Add(source);
+                _unitOfWork.Commit(userId);
+
+                return;
+            }
+            
+            throw new ArgumentException("Invalid properties or a source type with the same abbreviation " +
+                                        "already exists.");
         }
 
         public NozomiResult<string> Create(CreateSource createSource, string userId = null)
