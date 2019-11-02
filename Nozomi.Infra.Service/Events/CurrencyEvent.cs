@@ -323,8 +323,14 @@ namespace Nozomi.Service.Events
         }
 
         public ICollection<GeneralisedCurrencyResponse> GetAllDetailed(string typeShortForm = "CRYPTO",
-            int index = 0, int daysOfData = 7)
+            int index = 0, int countPerIndex = 20, int daysOfData = 7)
         {
+            if (countPerIndex <= 0)
+                countPerIndex = 20; // Defaulting checks
+
+            if (daysOfData <= 0 || daysOfData >= 32)
+                daysOfData = 7; // Defaulting checks
+        
             var currencies = _unitOfWork.GetRepository<CurrencyType>()
                 .GetQueryable()
                 .AsNoTracking()
@@ -347,8 +353,8 @@ namespace Nozomi.Service.Events
 //                    .OrderByDescending(c => decimal.Parse(c.AnalysedComponents
 //                        .SingleOrDefault(ac => ac.ComponentType == AnalysedComponentType.MarketCap).Value))
                     .OrderBy(c => c.Id)
-                    .Skip(index * 100)
-                    .Take(100)
+                    .Skip(index * countPerIndex)
+                    .Take(countPerIndex)
                     .Select(c => new Currency
                     {
                         Id = c.Id,

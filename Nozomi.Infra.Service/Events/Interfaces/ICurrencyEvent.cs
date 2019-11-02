@@ -35,7 +35,8 @@ namespace Nozomi.Service.Events.Interfaces
         /// </summary>
         /// <param name="currencyTypeId"></param>
         /// <returns></returns>
-        ICollection<GeneralisedCurrencyResponse> GetAllDetailed(string typeShortForm = "CRYPTO", int index = 0, int daysOfData = 7);
+        ICollection<GeneralisedCurrencyResponse> GetAllDetailed(string typeShortForm = "CRYPTO", int index = 0, 
+            int countPerIndex = 20, int daysOfData = 7);
 
         /// <summary>
         /// Enables to caller to obtained a detailed about regarding a currency,
