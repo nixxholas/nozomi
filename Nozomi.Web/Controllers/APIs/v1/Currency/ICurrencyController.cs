@@ -15,7 +15,8 @@ namespace Nozomi.Web.Controllers.APIs.v1.Currency
 
         NozomiResult<DetailedCurrencyResponse> Detailed(string slug);
 
-        ICollection<GeneralisedCurrencyResponse> GetAllDetailed(string currencyType = "CRYPTO", int index = 0);
+        ICollection<GeneralisedCurrencyResponse> GetAllDetailed(string currencyType = "CRYPTO", int index = 0,
+            int countPerIndex = 20);
 
         NozomiResult<IReadOnlyDictionary<string, long>> GetSlugToIdMap();
 

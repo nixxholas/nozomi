@@ -64,9 +64,10 @@ namespace Nozomi.Web.Controllers.APIs.v1.Currency
         }
 
         [HttpGet("{index}")]
-        public ICollection<GeneralisedCurrencyResponse> GetAllDetailed([FromQuery]string currencyType = "CRYPTO", int index = 0)
+        public ICollection<GeneralisedCurrencyResponse> GetAllDetailed([FromQuery]string currencyType = "CRYPTO",
+            int index = 0, int countPerIndex = 20)
         {
-            return _currencyEvent.GetAllDetailed(currencyType, index);
+            return _currencyEvent.GetAllDetailed(currencyType, index, countPerIndex);
         }
 
         [HttpGet]
