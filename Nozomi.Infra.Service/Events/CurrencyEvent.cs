@@ -36,7 +36,7 @@ namespace Nozomi.Service.Events
             _tickerEvent = tickerEvent;
         }
 
-        public IEnumerable<CurrencyViewModel> All(int itemsPerIndex = 20, int index = 0,
+        public IEnumerable<CurrencyViewModel> All(string currencyType = "CRYPTO", int itemsPerIndex = 20, int index = 0,
             AnalysedComponentType sortType = AnalysedComponentType.Unknown, bool orderDescending = true, 
             ICollection<AnalysedComponentType> typesToTake = null)
         {
@@ -46,11 +46,16 @@ namespace Nozomi.Service.Events
             if (index < 0)
                 index = 0;
             
+            if (string.IsNullOrWhiteSpace(currencyType))
+                throw new ArgumentNullException("Parameter 'currencyType' is supposed to contain a valid string.");
+            
             var query = _unitOfWork.GetRepository<Currency>()
                 .GetQueryable()
                 .AsNoTracking()
-                .Where(c => c.DeletedAt == null && c.IsEnabled)
                 .Include(c => c.CurrencyType)
+                .Where(c => c.DeletedAt == null && c.IsEnabled 
+                                                && c.CurrencyType.Name.Equals(currencyType, 
+                                                    StringComparison.InvariantCultureIgnoreCase))
                 .Include(c => c.AnalysedComponents);
 
             if (orderDescending && sortType != AnalysedComponentType.Unknown)

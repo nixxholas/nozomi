@@ -241,10 +241,11 @@
                     console.dir(e);
                 }
             },
-            async loadCurrencyData(type) {
+            async loadCurrencyData(type = "CRYPTO") {
                 let request = await this.$axios.get('/api/Currency/All?' +
                     this.arrayToString("typesToTake", [ "MarketCap", "CurrentAveragePrice" ]), {
                     params: {
+                        currencyType: type,
                         itemsPerIndex: 50,
                         index: 0,
                         sortType: "MarketCap", // 1 = Market cap
@@ -255,8 +256,6 @@
                     console.log(response);
                 }).catch(function (error) {
                     console.log(error);
-                }).finally(function () {
-
                 });
             },
             onPageChange(page) {

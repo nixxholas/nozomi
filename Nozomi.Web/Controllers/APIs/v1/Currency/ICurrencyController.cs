@@ -10,7 +10,7 @@ namespace Nozomi.Web.Controllers.APIs.v1.Currency
 {
     public interface ICurrencyController
     {
-        IActionResult All(int itemsPerIndex = 20, int index = 0,
+        IActionResult All(string currencyType = "CRYPTO", int itemsPerIndex = 20, int index = 0,
             AnalysedComponentType sortType = AnalysedComponentType.Unknown, bool orderDescending = true,
             ICollection<AnalysedComponentType> typesToTake = null);
 
