@@ -35,9 +35,15 @@ namespace Nozomi.Service.Events
             _tickerEvent = tickerEvent;
         }
 
-        public IEnumerable<CurrencyViewModel> All(AnalysedComponentType sortType = AnalysedComponentType.Unknown,
-            bool orderDescending = true)
+        public IEnumerable<CurrencyViewModel> All(int itemsPerIndex = 20, int index = 0, 
+            AnalysedComponentType sortType = AnalysedComponentType.Unknown, bool orderDescending = true)
         {
+            if (itemsPerIndex <= 0 || itemsPerIndex > 100)
+                itemsPerIndex = 20;
+
+            if (index < 0)
+                index = 0;
+            
             var query = _unitOfWork.GetRepository<Currency>()
                 .GetQueryable()
                 .AsNoTracking()
@@ -53,6 +59,8 @@ namespace Nozomi.Service.Events
                                      && NumberHelper.IsNumericDecimal(ac.Value))
                         .Select(ac => decimal.Parse(ac.Value))
                         .DefaultIfEmpty(0))
+                    .Skip(itemsPerIndex * index)
+                    .Take(itemsPerIndex)
                     .Select(c => new CurrencyViewModel
                     {
                         CurrencyTypeGuid = c.CurrencyType.Guid,
@@ -72,6 +80,8 @@ namespace Nozomi.Service.Events
                                  && NumberHelper.IsNumericDecimal(ac.Value))
                     .Select(ac => decimal.Parse(ac.Value))
                     .DefaultIfEmpty(0))
+                    .Skip(itemsPerIndex * index)
+                    .Take(itemsPerIndex)
                     .Select(c => new CurrencyViewModel
                     {
                         CurrencyTypeGuid = c.CurrencyType.Guid,
@@ -87,6 +97,8 @@ namespace Nozomi.Service.Events
             else
             {
                 return query
+                    .Skip(itemsPerIndex * index)
+                    .Take(itemsPerIndex)
                     .Select(c => new CurrencyViewModel
                     {
                         CurrencyTypeGuid = c.CurrencyType.Guid,
