@@ -18,6 +18,8 @@ using Nozomi.Data.ResponseModels.PartialCurrencyPair;
 using Nozomi.Data.ResponseModels.Source;
 using Nozomi.Data.ViewModels.AnalysedComponent;
 using Nozomi.Data.ViewModels.AnalysedHistoricItem;
+using Nozomi.Data.ViewModels.Component;
+using Nozomi.Data.ViewModels.ComponentHistoricItem;
 using Nozomi.Data.ViewModels.Currency;
 using Nozomi.Preprocessing;
 using Nozomi.Preprocessing.Abstracts;
@@ -36,6 +38,101 @@ namespace Nozomi.Service.Events
             : base(logger, unitOfWork)
         {
             _tickerEvent = tickerEvent;
+        }
+
+        public IEnumerable<CurrencyViewModel> All(string currencyType = "CRYPTO", int itemsPerIndex = 20, int index = 0, 
+            ICollection<ComponentType> typesToTake = null, ICollection<ComponentType> typesToDeepen = null)
+        {
+            if (itemsPerIndex <= 0 || itemsPerIndex > 100)
+                itemsPerIndex = 20;
+
+            if (index < 0)
+                index = 0;
+            
+            if (string.IsNullOrWhiteSpace(currencyType))
+                throw new ArgumentNullException("Parameter 'currencyType' is supposed to contain a valid string.");
+            
+            var query = _unitOfWork.GetRepository<Currency>()
+                .GetQueryable()
+                .AsNoTracking()
+                .Include(c => c.CurrencyType)
+                .Where(c => c.DeletedAt == null && c.IsEnabled 
+                                                && c.CurrencyType.TypeShortForm.Equals(currencyType, 
+                                                    StringComparison.InvariantCultureIgnoreCase))
+                .Include(c => c.Requests)
+                .ThenInclude(r => r.RequestComponents)
+                .Skip(itemsPerIndex * index)
+                .Take(itemsPerIndex);
+            
+            if (typesToTake != null && typesToTake.Any() && typesToDeepen != null && typesToDeepen.Any())
+                    return query
+                        .Select(c => new CurrencyViewModel
+                        {
+                            CurrencyTypeGuid = c.CurrencyType.Guid,
+                            Abbreviation = c.Abbreviation,
+                            Slug = c.Slug,
+                            Name = c.Name,
+                            LogoPath = c.LogoPath,
+                            Description = c.Description,
+                            Denominations = c.Denominations,
+                            DenominationName = c.DenominationName,
+                            RawComponents = c.Requests.SelectMany(r => r.RequestComponents
+                                    .Where(rc => rc.DeletedAt == null && rc.IsEnabled))
+                                .Where(rc => typesToTake.Contains(rc.ComponentType))
+                                .Select(rc => new ComponentViewModel
+                                {
+                                    Type = rc.ComponentType,
+                                    Guid = rc.Guid,
+                                    Value = rc.Value,
+                                    IsDenominated = rc.IsDenominated,
+                                    History = typesToDeepen.Contains(rc.ComponentType)
+                                        ? rc.RcdHistoricItems
+                                            .Where(e => e.DeletedAt == null && e.IsEnabled)
+                                            .OrderByDescending(e => e.HistoricDateTime)
+                                            .Select(e => new ComponentHistoricItemViewModel()
+                                            {
+                                                Timestamp = e.HistoricDateTime,
+                                                Value = e.Value
+                                            })
+                                        : null
+                                })
+                        });
+            else if (typesToTake != null && typesToTake.Any())
+                return query
+                    .Select(c => new CurrencyViewModel
+                    {
+                        CurrencyTypeGuid = c.CurrencyType.Guid,
+                        Abbreviation = c.Abbreviation,
+                        Slug = c.Slug,
+                        Name = c.Name,
+                        LogoPath = c.LogoPath,
+                        Description = c.Description,
+                        Denominations = c.Denominations,
+                        DenominationName = c.DenominationName,
+                        RawComponents = c.Requests.SelectMany(r => r.RequestComponents
+                                .Where(rc => rc.DeletedAt == null && rc.IsEnabled))
+                            .Where(rc => typesToTake.Contains(rc.ComponentType))
+                            .Select(rc => new ComponentViewModel
+                            {
+                                Type = rc.ComponentType,
+                                Guid = rc.Guid,
+                                Value = rc.Value,
+                                IsDenominated = rc.IsDenominated
+                            })
+                    });
+            
+            return query
+                .Select(c => new CurrencyViewModel
+                {
+                    CurrencyTypeGuid = c.CurrencyType.Guid,
+                    Abbreviation = c.Abbreviation,
+                    Slug = c.Slug,
+                    Name = c.Name,
+                    LogoPath = c.LogoPath,
+                    Description = c.Description,
+                    Denominations = c.Denominations,
+                    DenominationName = c.DenominationName
+                });
         }
 
         public IEnumerable<CurrencyViewModel> All(string currencyType = "CRYPTO", int itemsPerIndex = 20, int index = 0,

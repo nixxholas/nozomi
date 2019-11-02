@@ -12,6 +12,10 @@ namespace Nozomi.Service.Events.Interfaces
     public interface ICurrencyEvent
     {
         IEnumerable<CurrencyViewModel> All(string currencyType = "CRYPTO", int itemsPerIndex = 20, int index = 0, 
+            ICollection<ComponentType> typesToTake = null, 
+            ICollection<ComponentType> typesToDeepen = null);
+        
+        IEnumerable<CurrencyViewModel> All(string currencyType = "CRYPTO", int itemsPerIndex = 20, int index = 0, 
             AnalysedComponentType sortType = AnalysedComponentType.Unknown, bool orderDescending = true, 
             ICollection<AnalysedComponentType> typesToTake = null, 
             ICollection<AnalysedComponentType> typesToDeepen = null);
