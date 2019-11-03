@@ -21,22 +21,37 @@ namespace Nozomi.Service.Events
 
         public IEnumerable<SourceTypeViewModel> GetAll(bool track = false)
         {
+            if (!track)
+                return _unitOfWork.GetRepository<SourceType>()
+                    .GetQueryable()
+                    .AsNoTracking()
+                    .Where(st => st.DeletedAt == null && st.IsEnabled)
+                    .Select(st => new SourceTypeViewModel()
+                    {
+                        Guid = st.Guid,
+                        Name = st.Name,
+                        Abbreviation = st.Abbreviation
+                    });
+            
             return _unitOfWork.GetRepository<SourceType>()
                 .GetQueryable()
                 .AsNoTracking()
                 .Where(st => st.DeletedAt == null && st.IsEnabled)
+                .Include(st => st.Sources)
                 .Select(st => new SourceTypeViewModel()
                 {
                     Guid = st.Guid,
                     Name = st.Name,
                     Abbreviation = st.Abbreviation,
-                    Sources = st.Sources.Select(s => new SourceViewModel
-                    {
-                        Id = s.Id,
-                        Abbreviation = s.Abbreviation,
-                        Name = s.Name,
-                        ApiDocsUrl = s.APIDocsURL
-                    })
+                    Sources = st.Sources
+                        .Where(s => s.DeletedAt == null && s.IsEnabled)
+                        .Select(s => new SourceViewModel
+                        {
+                            Id = s.Id,
+                            Abbreviation = s.Abbreviation,
+                            Name = s.Name,
+                            ApiDocsUrl = s.APIDocsURL
+                        })
                 });
         }
     }
