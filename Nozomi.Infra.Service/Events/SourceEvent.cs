@@ -26,13 +26,14 @@ namespace Nozomi.Service.Events
                 .GetQueryable()
                 .AsNoTracking()
                 .Where(s => s.DeletedAt == null && s.IsEnabled)
+                .Include(s => s.SourceType)
                 .Select(s => new Nozomi.Data.ViewModels.Source.SourceViewModel
                 {
                     Guid = s.Guid,
                     Abbreviation = s.Abbreviation,
                     ApiDocsUrl = s.APIDocsURL,
                     Name = s.Name,
-                    SourceTypeId = s.SourceTypeId
+                    SourceTypeGuid = s.SourceType.Guid.ToString()
                 });
         }
 
