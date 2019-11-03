@@ -223,25 +223,7 @@
 
                 }
             },
-            async loadCryptoData() {
-                try {
-                    this.cryptoTable.loading = true;
-
-                    // Load all currencies
-                    const currenciesResponse = await this.$axios.get('/api/Currency/GetAllDetailed/' + (this.cryptoTable.page - 1));
-
-                    if (currenciesResponse.status === 200)
-                        this.cryptoTable.data = currenciesResponse.data;
-
-                    this.cryptoTable.loading = false;
-
-                    // Miscellaneous loading
-                    this.cryptoTable.total = (await this.$axios.get('/api/Currency/GetCountByType')).data;
-                } catch (e) {
-                    console.dir(e);
-                }
-            },
-            loadCurrencyData(type = "CRYPTO", sortType = "MarketCap", typesToTake = ["MarketCap"]) {
+            loadCurrencyData(page = 1, type = "CRYPTO", sortType = "MarketCap", typesToTake = ["MarketCap"]) {
                 let self = this;
                 return new Promise((resolve, reject) => {
                     let result;
@@ -250,7 +232,7 @@
                         params: {
                             currencyType: type,
                             itemsPerIndex: 50,
-                            index: 0,
+                            index: (page - 1),
                             sortType: sortType, // 1 = Market cap
                             orderDescending: true,
                             //typesToTake: this.arrayToString("typesToTake", [ "MarketCap" ]) // https://wsvincent.com/javascript-convert-array-to-string/
@@ -263,9 +245,39 @@
                     });
                 });
             },
+            getCurrencyCount(type) {
+                let self = this;
+                return new Promise((resolve, reject) => {
+                    let result;
+                    this.$axios.get('/api/Currency/GetCountByType', {
+                        params: {
+                            currencyType: type,
+                        }
+                    }).then(function (response) {
+                        result = response.data;
+                        resolve(result);
+                    }).catch(function (error) {
+                        reject(error);
+                    });
+                });
+            },
             onPageChange(page) {
+                this.cryptoTable.loading = true;
                 this.cryptoTable.page = page;
-                this.loadCryptoData();
+
+                let self = this;
+                this.loadCurrencyData(page, "CRYPTO", "MarketCap", ["MarketCap", "CurrentAveragePrice",
+                    "DailyVolume", "DailyPricePctChange"])
+                    .then(function (result) {
+                        self.cryptoTable.data = result;
+                        self.cryptoTable.loading = false;
+
+                        // Miscellaneous loading
+                        self.getCurrencyCount("CRYPTO")
+                            .then(function (result) {
+                                self.cryptoTable.total = result;
+                            });
+                    });
             },
             getComponentValue(dataset, type) {
                 if (dataset && dataset.length > 0) {
@@ -295,15 +307,20 @@
             let self = this;
 
             self.cryptoTable.loading = true;
-            this.loadCurrencyData("CRYPTO", "MarketCap", ["MarketCap", "CurrentAveragePrice",
+            this.loadCurrencyData(self.cryptoTable.page, "CRYPTO", "MarketCap", ["MarketCap", "CurrentAveragePrice",
                 "DailyVolume", "DailyPricePctChange"])
                 .then(function (result) {
                     self.cryptoTable.data = result;
-                    self.cryptoTable.loading = false; 
+                    self.cryptoTable.loading = false;
+
+                    // Miscellaneous loading
+                    self.getCurrencyCount("CRYPTO")
+                        .then(function (result) {
+                            self.cryptoTable.total = result;
+                        });
                 });
             // this.fiatTable.data = this.loadCurrencyData("FIAT");
             this.loadFiatData();
-            //this.loadCryptoData();
         }
 
     }
