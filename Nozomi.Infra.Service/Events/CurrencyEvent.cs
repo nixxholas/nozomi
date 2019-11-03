@@ -40,6 +40,14 @@ namespace Nozomi.Service.Events
             _tickerEvent = tickerEvent;
         }
 
+        public bool Exists(string slug)
+        {
+            return !string.IsNullOrWhiteSpace(slug) && _unitOfWork.GetRepository<Currency>()
+                       .GetQueryable()
+                       .AsNoTracking()
+                       .Any(c => c.Slug.Equals(slug));
+        }
+
         public IEnumerable<CurrencyViewModel> All(string currencyType = "CRYPTO", int itemsPerIndex = 20, int index = 0, 
             ICollection<ComponentType> typesToTake = null, ICollection<ComponentType> typesToDeepen = null)
         {
