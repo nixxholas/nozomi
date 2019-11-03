@@ -158,7 +158,8 @@ namespace Nozomi.Service.Events
                                                     StringComparison.InvariantCultureIgnoreCase));
 
             if (!query.Any())
-                return null;
+                // https://docs.microsoft.com/en-us/dotnet/api/system.linq.enumerable.empty?view=netframework-4.8#examples
+                return Enumerable.Empty<CurrencyViewModel>();
 
             query = query.Include(c => c.AnalysedComponents)
                 .ThenInclude(ac => ac.AnalysedHistoricItems);
