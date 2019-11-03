@@ -155,8 +155,12 @@ namespace Nozomi.Service.Events
                 .Include(c => c.CurrencyType)
                 .Where(c => c.DeletedAt == null && c.IsEnabled 
                                                 && c.CurrencyType.TypeShortForm.Equals(currencyType, 
-                                                    StringComparison.InvariantCultureIgnoreCase))
-                .Include(c => c.AnalysedComponents)
+                                                    StringComparison.InvariantCultureIgnoreCase));
+
+            if (!query.Any())
+                return null;
+
+            query = query.Include(c => c.AnalysedComponents)
                 .ThenInclude(ac => ac.AnalysedHistoricItems);
 
             if (orderDescending && sortType != AnalysedComponentType.Unknown)
