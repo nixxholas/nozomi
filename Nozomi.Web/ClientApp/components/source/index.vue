@@ -12,6 +12,13 @@
         </div>
       </div>
     </section>
+
+    <b-field grouped group-multiline v-if="oidcIsAuthenticated">
+      <div class="control">
+        <CreateSourceModal @created="createdNewSource"></CreateSourceModal>
+      </div>
+    </b-field>
+
     <b-table
       :data="data"
       :current-page.sync="currentPage"
@@ -48,11 +55,23 @@
 </template>
 
 <script>
+    import { mapGetters } from 'vuex';
+  import CreateSourceModal from '../../components/elements/modals/create-source-modal';
   import SourceService from "../../services/SourceService";
   import SourceTypeService from "../../services/SourceTypeService";
 
     export default {
         name: "source-index",
+        components: { CreateSourceModal },
+        computed: {
+            ...mapGetters('oidcStore', [
+                'oidcIsAuthenticated',
+                'oidcAuthenticationIsChecked',
+                'oidcUser',
+                'oidcIdToken',
+                'oidcIdTokenExp'
+            ])
+        },
         data() {
             return {
                 dataLoading: true,
@@ -60,6 +79,20 @@
                 currentPage: 1,
                 perPage: 50,
                 typeData: []
+            }
+        },
+        methods: {
+            createdNewSource: function (value) {
+                if (value) {
+                    let self = this;
+                    self.dataLoading = true;
+                    SourceService.getAll()
+                        .then(function (res) {
+                            self.data = res;
+
+                            self.dataLoading = false;
+                        });
+                }
             }
         },
         mounted: function() {
@@ -73,7 +106,6 @@
 
             SourceTypeService.getAll()
                 .then(function (res) {
-                    console.dir(res);
                     self.typeData = res;
                 })
         }
