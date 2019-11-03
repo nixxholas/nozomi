@@ -10,9 +10,13 @@ import router from './router/index';
 import store from './store';
 import { sync } from 'vuex-router-sync';
 import App from 'components/app-root';
-import { FontAwesomeIcon } from './icons';
 import * as moment from 'moment';
 import TvLwChart from 'components/chart/tv-lw-chart';
+import { library } from '@fortawesome/fontawesome-svg-core';
+import { faAtlas, faHome, faInfo, faUniversity } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+
+library.add(faAtlas, faHome, faInfo, faUniversity);
 
 // Registration of global components
 Vue.component('icon', FontAwesomeIcon);
