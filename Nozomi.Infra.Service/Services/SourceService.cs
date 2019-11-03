@@ -12,15 +12,19 @@ using Nozomi.Data.ViewModels.Source;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Data;
+using Nozomi.Service.Events.Interfaces;
 using Nozomi.Service.Services.Interfaces;
 
 namespace Nozomi.Service.Services
 {
     public class SourceService : BaseService<SourceService, NozomiDbContext>, ISourceService
     {
+        private readonly ISourceTypeEvent _sourceTypeEvent;
+        
         public SourceService(ILogger<SourceService> logger, 
-            IUnitOfWork<NozomiDbContext> unitOfWork) : base(logger, unitOfWork)
+            IUnitOfWork<NozomiDbContext> unitOfWork, ISourceTypeEvent sourceTypeEvent) : base(logger, unitOfWork)
         {
+            _sourceTypeEvent = sourceTypeEvent;
         }
 
         public void Create(CreateSourceViewModel vm, string userId)
@@ -29,7 +33,11 @@ namespace Nozomi.Service.Services
                     .GetQueryable().AsNoTracking()
                     .Any(s => s.Abbreviation.Equals(vm.Abbreviation, StringComparison.InvariantCultureIgnoreCase)))
             {
-                var source = new Source(vm.Abbreviation, vm.Name, vm.ApiDocsUrl);
+                var sourceType = _sourceTypeEvent.Find(vm.SourceType);
+                if (sourceType == null)
+                    throw new ArgumentNullException("Invalid source type.");
+                
+                var source = new Source(vm.Abbreviation, vm.Name, vm.ApiDocsUrl, sourceType.Id);
                 
                 _unitOfWork.GetRepository<Source>().Add(source);
                 _unitOfWork.Commit(userId);

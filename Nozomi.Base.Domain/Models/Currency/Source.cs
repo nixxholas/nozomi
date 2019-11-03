@@ -10,11 +10,12 @@ namespace Nozomi.Data.Models.Currency
     {
         public Source() {}
 
-        public Source(string abbreviation, string name, string apiDocsUrl)
+        public Source(string abbreviation, string name, string apiDocsUrl, long sourceTypeId)
         {
             Abbreviation = abbreviation;
             Name = name;
             APIDocsURL = apiDocsUrl;
+            SourceTypeId = sourceTypeId;
         }
         
         public long Id { get; set; }
