@@ -49,6 +49,10 @@
         <b-table-column field="name" label="Name" sortable>
           {{ props.row.name }}
         </b-table-column>
+
+        <b-table-column field="sourceTypeGuid" label="Type" v-if="typeData !== null && typeData.length > 0">
+          {{ typeData.filter(e => e.guid == props.row.sourceTypeGuid)[0].name }}
+        </b-table-column>
       </template>
     </b-table>
   </div>
