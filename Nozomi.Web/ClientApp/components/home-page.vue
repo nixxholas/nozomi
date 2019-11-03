@@ -124,16 +124,16 @@
                 </router-link>
               </b-table-column>
               <b-table-column field="marketCap" label="Market Cap" sortable>
-                {{ getComponentValue(props.row.components, 1) | numeralFormat('$0 a') }}
+                {{ ComponentService.getComponentValue(props.row.components, 1) | numeralFormat('$0 a') }}
               </b-table-column>
               <b-table-column field="price" label="Price" sortable>
-                {{ getComponentValue(props.row.components, 10) | numeralFormat('$0[.]00') }}
+                {{ ComponentService.getComponentValue(props.row.components, 10) | numeralFormat('$0[.]00') }}
               </b-table-column>
               <b-table-column field="volume" label="Volume" sortable>
-                {{ getComponentValue(props.row.components, 80) | numeralFormat('$0[.]00') }}
+                {{ ComponentService.getComponentValue(props.row.components, 80) | numeralFormat('$0[.]00') }}
               </b-table-column>
               <b-table-column field="dailyAvgPctChange" label="Change" sortable>
-                {{ getComponentValue(props.row.components, 70) | numeralFormat('0[.]0') }}%
+                {{ ComponentService.getComponentValue(props.row.components, 70) | numeralFormat('0[.]0') }}%
               </b-table-column>
               <b-table-column field="chart" label="Trend">
                 <trend
@@ -158,6 +158,7 @@
 
 <script>
   import CurrencyService from "../services/CurrencyService";
+  import ComponentService from "../services/ComponentService";
   import {Carousel, Slide} from 'vue-carousel';
 
     export default {
@@ -205,17 +206,6 @@
                                 self.cryptoTable.total = result;
                             });
                     });
-            },
-            getComponentValue(dataset, type) {
-                if (dataset && dataset.length > 0) {
-                    let res = dataset.filter(c => c.type === type);
-
-                    if (res && res.length > 0) {
-                        return res[0].value;
-                    }
-                }
-
-                return null;
             }
         },
         mounted() {
