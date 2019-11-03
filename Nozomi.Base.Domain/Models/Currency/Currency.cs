@@ -12,6 +12,21 @@ namespace Nozomi.Data.Models.Currency
 {
     public class Currency : Entity
     {
+        public Currency() {}
+
+        public Currency(long currencyTypeId, string logoPath, string abbreviation, string slug, string name,
+            string description, int denominations, string denominationName)
+        {
+            CurrencyTypeId = currencyTypeId;
+            LogoPath = logoPath;
+            Abbreviation = abbreviation;
+            Slug = slug;
+            Name = name;
+            Description = description;
+            Denominations = denominations;
+            DenominationName = denominationName;
+        }
+        
         [Key]
         public long Id { get; set; }
 
