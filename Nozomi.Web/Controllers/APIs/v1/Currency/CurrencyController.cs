@@ -45,10 +45,7 @@ namespace Nozomi.Web.Controllers.APIs.v1.Currency
         {
             var count = _currencyEvent.GetCountByType(currencyType);
 
-            if (count > 0)
-                return Ok(count);
-
-            throw new ArgumentNullException("Invalid or empty currency type.");
+            return Ok(count);
         }
 
         [HttpGet]
