@@ -556,10 +556,15 @@ namespace Nozomi.Service.Events
 
         public long GetCountByType(string typeShortForm = "CRYPTO")
         {
-            return _unitOfWork.GetRepository<CurrencyType>()
+            var query = _unitOfWork.GetRepository<CurrencyType>()
                 .GetQueryable()
                 .AsNoTracking()
-                .Where(ct => ct.TypeShortForm.Equals(typeShortForm, StringComparison.InvariantCultureIgnoreCase))
+                .Where(ct => ct.TypeShortForm.Equals(typeShortForm, StringComparison.InvariantCultureIgnoreCase));
+
+            if (!query.Any())
+                return 0;
+            
+            return query
                 .Include(ct => ct.Currencies)
                 .ThenInclude(c => c.AnalysedComponents)
                 .ThenInclude(ac => ac.AnalysedHistoricItems)
