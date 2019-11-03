@@ -51,15 +51,19 @@ namespace Nozomi.Service.Events
             
             if (string.IsNullOrWhiteSpace(currencyType))
                 throw new ArgumentNullException("Parameter 'currencyType' is supposed to contain a valid string.");
-            
+
             var query = _unitOfWork.GetRepository<Currency>()
                 .GetQueryable()
                 .AsNoTracking()
                 .Include(c => c.CurrencyType)
-                .Where(c => c.DeletedAt == null && c.IsEnabled 
-                                                && c.CurrencyType.TypeShortForm.Equals(currencyType, 
-                                                    StringComparison.InvariantCultureIgnoreCase))
-                .Include(c => c.Requests)
+                .Where(c => c.DeletedAt == null && c.IsEnabled
+                                                && c.CurrencyType.TypeShortForm.Equals(currencyType,
+                                                    StringComparison.InvariantCultureIgnoreCase));
+
+            if (!query.Any())
+                return Enumerable.Empty<CurrencyViewModel>();
+                
+            query = query.Include(c => c.Requests)
                 .ThenInclude(r => r.RequestComponents)
                 .Skip(itemsPerIndex * index)
                 .Take(itemsPerIndex);
