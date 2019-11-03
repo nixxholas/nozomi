@@ -124,16 +124,16 @@
                 </router-link>
               </b-table-column>
               <b-table-column field="marketCap" label="Market Cap" sortable>
-                {{ ComponentService.getComponentValue(props.row.components, 1) | numeralFormat('$0 a') }}
+                {{ getComponentValue(props.row.components, 1) | numeralFormat('$0 a') }}
               </b-table-column>
               <b-table-column field="price" label="Price" sortable>
-                {{ ComponentService.getComponentValue(props.row.components, 10) | numeralFormat('$0[.]00') }}
+                {{ getComponentValue(props.row.components, 10) | numeralFormat('$0[.]00') }}
               </b-table-column>
               <b-table-column field="volume" label="Volume" sortable>
-                {{ ComponentService.getComponentValue(props.row.components, 80) | numeralFormat('$0[.]00') }}
+                {{ getComponentValue(props.row.components, 80) | numeralFormat('$0[.]00') }}
               </b-table-column>
               <b-table-column field="dailyAvgPctChange" label="Change" sortable>
-                {{ ComponentService.getComponentValue(props.row.components, 70) | numeralFormat('0[.]0') }}%
+                {{ getComponentValue(props.row.components, 70) | numeralFormat('0[.]0') }}%
               </b-table-column>
               <b-table-column field="chart" label="Trend">
                 <trend
@@ -206,6 +206,9 @@
                                 self.cryptoTable.total = result;
                             });
                     });
+            },
+            getComponentValue(dataset, type) {
+                return ComponentService.getComponentValue(dataset, type);
             }
         },
         mounted() {
