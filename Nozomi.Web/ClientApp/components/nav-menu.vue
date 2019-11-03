@@ -11,15 +11,15 @@
     </template>
 
     <template slot="start">
+      <b-navbar-item tag="router-link" :to="route.path" v-for="(route, index) in routes"
+                     :key="index"
+                     v-if="route.meta.onNav">
+        <icon :icon="route.icon" class="mr-2 menu-icon" v-if="route.icon"/>
+        <span>{{ route.display }}</span>
+      </b-navbar-item>
       <b-navbar-item href="/docs">
         <icon :icon="['fa', 'atlas']" class="mr-2 menu-icon"/>
         <span>Documentation</span>
-      </b-navbar-item>
-      <b-navbar-item tag="router-link" :to="route.path" v-for="(route, index) in routes"
-                     v-if="index > 0 && index < 2"
-                     :key="index">
-        <icon :icon="route.icon" class="mr-2 menu-icon"/>
-        <span>{{ route.display }}</span>
       </b-navbar-item>
     </template>
 
