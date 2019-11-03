@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
@@ -17,6 +18,17 @@ namespace Nozomi.Service.Events
         public SourceTypeEvent(ILogger<SourceTypeEvent> logger, IUnitOfWork<NozomiDbContext> unitOfWork) 
             : base(logger, unitOfWork)
         {
+        }
+
+        public SourceType Find(string sourceTypeGuid)
+        {
+            if (string.IsNullOrWhiteSpace(sourceTypeGuid))
+                throw new ArgumentNullException("Invalid source type guid.");
+            
+            return _unitOfWork.GetRepository<SourceType>()
+                .GetQueryable()
+                .AsNoTracking()
+                .SingleOrDefault(st => st.Guid.Equals(Guid.Parse(sourceTypeGuid)));
         }
 
         public IEnumerable<SourceTypeViewModel> GetAll(bool track = false)
