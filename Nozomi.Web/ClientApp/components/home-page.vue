@@ -157,7 +157,8 @@
 </template>
 
 <script>
-    import {Carousel, Slide} from 'vue-carousel';
+  import CurrencyService from "../services/CurrencyService";
+  import {Carousel, Slide} from 'vue-carousel';
 
     export default {
         data() {
@@ -187,93 +188,19 @@
             Slide
         },
         methods: {
-            // TODO: Evaluate whether if this is still needed here or not
-            async loadData() {
-                try {
-                    this.currencyTypeTable.loading = true;
-
-                    // Load Currency Type data
-                    const currencyTypesResponse = await this.$axios.get('/api/CurrencyType/GetAll/0');
-
-                    if (currencyTypesResponse.status === 200)
-                        this.currencyTypeTable.data = currencyTypesResponse.data;
-
-                    this.currencyTypeTable.loading = false;
-                } catch (error) {
-                    console.error(error);
-                    this.data = [];
-                    this.total = 0;
-                    this.loading = false;
-                    throw error;
-                }
-            },
-            async loadFiatData() {
-                try {
-                    this.fiatTable.loading = true;
-
-                    // Load all currencies
-                    const currenciesResponse = await this.$axios.get('/api/Currency/GetAllDetailed/' + (this.fiatTable.page - 1)
-                        + '?currencyType=FIAT');
-
-                    if (currenciesResponse.status === 200)
-                        this.fiatTable.data = currenciesResponse.data;
-
-                    this.fiatTable.loading = false;
-                } catch (e) {
-
-                }
-            },
-            loadCurrencyData(page = 1, type = "CRYPTO", sortType = "MarketCap", typesToTake = ["MarketCap"]) {
-                let self = this;
-                return new Promise((resolve, reject) => {
-                    let result;
-                    this.$axios.get('/api/Currency/All?' +
-                        this.arrayToString("typesToTake", typesToTake), {
-                        params: {
-                            currencyType: type,
-                            itemsPerIndex: 50,
-                            index: (page - 1),
-                            sortType: sortType, // 1 = Market cap
-                            orderDescending: true,
-                            //typesToTake: this.arrayToString("typesToTake", [ "MarketCap" ]) // https://wsvincent.com/javascript-convert-array-to-string/
-                        }
-                    }).then(function (response) {
-                        result = response.data;
-                        resolve(result);
-                    }).catch(function (error) {
-                        reject(error);
-                    });
-                });
-            },
-            getCurrencyCount(type) {
-                let self = this;
-                return new Promise((resolve, reject) => {
-                    let result;
-                    this.$axios.get('/api/Currency/GetCountByType', {
-                        params: {
-                            currencyType: type,
-                        }
-                    }).then(function (response) {
-                        result = response.data;
-                        resolve(result);
-                    }).catch(function (error) {
-                        reject(error);
-                    });
-                });
-            },
             onPageChange(page) {
                 this.cryptoTable.loading = true;
                 this.cryptoTable.page = page;
 
                 let self = this;
-                this.loadCurrencyData(page, "CRYPTO", "MarketCap", ["MarketCap", "CurrentAveragePrice",
-                    "DailyVolume", "DailyPricePctChange"])
+                CurrencyService.getCurrencyData(page, this.cryptoTable.perPage, "CRYPTO", "MarketCap", ["MarketCap", "CurrentAveragePrice",
+                    "DailyVolume", "DailyPricePctChange"], true)
                     .then(function (result) {
                         self.cryptoTable.data = result;
                         self.cryptoTable.loading = false;
 
                         // Miscellaneous loading
-                        self.getCurrencyCount("CRYPTO")
+                        CurrencyService.getCurrencyCount("CRYPTO")
                             .then(function (result) {
                                 self.cryptoTable.total = result;
                             });
@@ -289,38 +216,38 @@
                 }
 
                 return null;
-            },
-            // Formats the array to the output shown below.
-            // arrName[0]=1050&arrName[1]=2000
-            arrayToString(arrName, arr) {
-                let str = '';
-                arr.forEach(function(element, index) {
-                    str += arrName + "[" + index + "]=" + element;
-                    if (index !== (arr.length - 1)) { // If the index is not beyond the array's size
-                        str += '&'
-                    }
-                });
-                return str;
             }
         },
         mounted() {
             let self = this;
 
             self.cryptoTable.loading = true;
-            this.loadCurrencyData(self.cryptoTable.page, "CRYPTO", "MarketCap", ["MarketCap", "CurrentAveragePrice",
-                "DailyVolume", "DailyPricePctChange"])
+            CurrencyService.getCurrencyData(self.cryptoTable.page, self.cryptoTable.perPage, "CRYPTO", "MarketCap",
+                ["MarketCap", "CurrentAveragePrice", "DailyVolume", "DailyPricePctChange"], true)
                 .then(function (result) {
                     self.cryptoTable.data = result;
                     self.cryptoTable.loading = false;
 
                     // Miscellaneous loading
-                    self.getCurrencyCount("CRYPTO")
+                    CurrencyService.getCurrencyCount("CRYPTO")
                         .then(function (result) {
                             self.cryptoTable.total = result;
                         });
                 });
-            // this.fiatTable.data = this.loadCurrencyData("FIAT");
-            this.loadFiatData();
+
+            self.fiatTable.loading = true;
+            CurrencyService.getCurrencyData(self.fiatTable.page, self.fiatTable.perPage, "FIAT", "MarketCap",
+                ["MarketCap", "CurrentAveragePrice", "DailyVolume", "DailyPricePctChange"], true)
+                .then(function (result) {
+                    self.fiatTable.data = result;
+                    self.fiatTable.loading = false;
+
+                    // Miscellaneous loading
+                    CurrencyService.getCurrencyCount("FIAT")
+                        .then(function (result) {
+                            self.fiatTable.total = result;
+                        });
+                });
         }
 
     }
