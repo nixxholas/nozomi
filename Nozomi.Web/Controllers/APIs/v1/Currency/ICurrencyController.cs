@@ -5,11 +5,16 @@ using Nozomi.Data;
 using Nozomi.Data.Models.Web.Analytical;
 using Nozomi.Data.ResponseModels;
 using Nozomi.Data.ResponseModels.Currency;
+using Nozomi.Data.ViewModels.Currency;
 
 namespace Nozomi.Web.Controllers.APIs.v1.Currency
 {
     public interface ICurrencyController
     {
+        IActionResult Create(CreateCurrencyViewModel vm);
+
+        IActionResult Edit(ModifyCurrencyViewModel vm);
+
         IActionResult All(string currencyType = "CRYPTO", int itemsPerIndex = 20, int index = 0,
             AnalysedComponentType sortType = AnalysedComponentType.Unknown, bool orderDescending = true,
             ICollection<AnalysedComponentType> typesToTake = null, ICollection<AnalysedComponentType> typesToDeepen = null);

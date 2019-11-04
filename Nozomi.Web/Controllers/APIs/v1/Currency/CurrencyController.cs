@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
+using IdentityModel;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -10,9 +12,11 @@ using Nozomi.Data;
 using Nozomi.Data.Models.Web.Analytical;
 using Nozomi.Data.ResponseModels;
 using Nozomi.Data.ResponseModels.Currency;
+using Nozomi.Data.ViewModels.Currency;
 using Nozomi.Preprocessing;
 using Nozomi.Service.Events.Analysis.Interfaces;
 using Nozomi.Service.Events.Interfaces;
+using Nozomi.Service.Services.Interfaces;
 
 namespace Nozomi.Web.Controllers.APIs.v1.Currency
 {
@@ -21,13 +25,46 @@ namespace Nozomi.Web.Controllers.APIs.v1.Currency
     {
         private readonly IAnalysedHistoricItemEvent _analysedHistoricItemEvent;
         private readonly ICurrencyEvent _currencyEvent;
+        private readonly ICurrencyService _currencyService;
 
         public CurrencyController(ILogger<CurrencyController> logger,
-            IAnalysedHistoricItemEvent analysedHistoricItemEvent, ICurrencyEvent currencyEvent)
+            IAnalysedHistoricItemEvent analysedHistoricItemEvent, ICurrencyEvent currencyEvent,
+            ICurrencyService currencyService)
             : base(logger)
         {
             _analysedHistoricItemEvent = analysedHistoricItemEvent;
             _currencyEvent = currencyEvent;
+            _currencyService = currencyService;
+        }
+
+        public IActionResult Create(CreateCurrencyViewModel vm)
+        {
+            var sub = ((ClaimsIdentity) User.Identity)
+                .Claims.SingleOrDefault(c => c.Type.Equals(JwtClaimTypes.Subject))?.Value;
+
+            if (!string.IsNullOrWhiteSpace(sub))
+            {
+                _currencyService.Create(vm, sub);
+
+                return Ok();
+            }
+
+            return BadRequest("Please re-authenticate again");
+        }
+
+        public IActionResult Edit(ModifyCurrencyViewModel vm)
+        {
+            var sub = ((ClaimsIdentity) User.Identity)
+                .Claims.SingleOrDefault(c => c.Type.Equals(JwtClaimTypes.Subject))?.Value;
+
+            if (!string.IsNullOrWhiteSpace(sub))
+            {
+                _currencyService.Edit(vm, sub);
+
+                return Ok();
+            }
+
+            return BadRequest("Please re-authenticate again");
         }
 
         [HttpGet]
