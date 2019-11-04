@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
@@ -17,6 +18,33 @@ namespace Nozomi.Service.Events
         public CurrencyTypeEvent(ILogger<CurrencyPairEvent> logger, IUnitOfWork<NozomiDbContext> unitOfWork) 
             : base(logger, unitOfWork)
         {
+        }
+
+        public CurrencyType Get(string guid, bool track = false)
+        {
+            if (!string.IsNullOrWhiteSpace(guid))
+            {
+                var currencyType = _unitOfWork.GetRepository<CurrencyType>()
+                    .GetQueryable()
+                    .AsNoTracking()
+                    .Where(ct => ct.DeletedAt == null && ct.IsEnabled 
+                                                      && ct.Guid.Equals(Guid.Parse(guid)));
+
+                if (currencyType.Any())
+                {
+                    if (track)
+                    {
+                        currencyType = currencyType
+                            .Include(ct => ct.AnalysedComponents)
+                            .Include(ct => ct.Currencies)
+                            .Include(ct => ct.Requests);
+                    }
+
+                    return currencyType.SingleOrDefault();
+                }
+            }
+
+            return null;
         }
 
         public CurrencyType Get(long id, bool track = false)
