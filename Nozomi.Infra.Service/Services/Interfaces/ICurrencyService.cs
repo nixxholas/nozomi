@@ -5,5 +5,7 @@ namespace Nozomi.Service.Services.Interfaces
     public interface ICurrencyService
     {
         void Create(CreateCurrencyViewModel vm, string userId);
+
+        void Edit(ModifyCurrencyViewModel vm, string userId);
     }
 }

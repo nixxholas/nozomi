@@ -47,5 +47,36 @@ namespace Nozomi.Service.Services
             
             throw new ArgumentException("Invalid payload.");
         }
+
+        public void Edit(ModifyCurrencyViewModel vm, string userId)
+        {
+            if (vm.IsValid() && string.IsNullOrWhiteSpace(userId))
+            {
+                // Also check if the user owns this currency first
+                var currency = _currencyEvent.Get(vm.Id);
+                
+                if (currency == null || currency.CreatedById.Equals(userId))
+                    throw new InvalidOperationException("Invalid currency.");
+                
+                if (_currencyEvent.Exists(vm.Slug))
+                    return;
+                
+                // Obtain the currency type
+                var currencyType = _currencyTypeEvent.Get(vm.CurrencyTypeGuid.ToString());
+
+                if (currencyType == null)
+                    throw new Exception("Currency type not found."); // TODO: Custom exception
+
+                // Time to create
+                var updatedCurrency = new Currency(currencyType.Id, vm.LogoPath, vm.Abbreviation, vm.Slug, vm.Name, 
+                    vm.Description, vm.Denominations, vm.DenominationName);
+                
+                _unitOfWork.GetRepository<Currency>().Update(updatedCurrency);
+                _unitOfWork.Commit(userId);
+                return;
+            }
+            
+            throw new ArgumentException("Invalid payload.");
+        }
     }
 }
