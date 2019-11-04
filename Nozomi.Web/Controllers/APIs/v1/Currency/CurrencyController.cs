@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using IdentityModel;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -37,6 +38,8 @@ namespace Nozomi.Web.Controllers.APIs.v1.Currency
             _currencyService = currencyService;
         }
 
+        [Authorize]
+        [HttpPost]
         public IActionResult Create(CreateCurrencyViewModel vm)
         {
             var sub = ((ClaimsIdentity) User.Identity)
@@ -52,6 +55,8 @@ namespace Nozomi.Web.Controllers.APIs.v1.Currency
             return BadRequest("Please re-authenticate again");
         }
 
+        [Authorize]
+        [HttpPut]
         public IActionResult Edit(ModifyCurrencyViewModel vm)
         {
             var sub = ((ClaimsIdentity) User.Identity)
