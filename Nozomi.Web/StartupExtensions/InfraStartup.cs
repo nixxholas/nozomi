@@ -44,6 +44,7 @@ namespace Nozomi.Web.StartupExtensions
 
             // Services
             services.AddScoped<IAnalysedComponentService, AnalysedComponentService>();
+            services.AddScoped<ICurrencyService, CurrencyService>();
             services.AddScoped<IRequestService, RequestService>();
             services.AddScoped<IComponentService, ComponentService>();
             services.AddScoped<IRcdHistoricItemService, RcdHistoricItemService>();
