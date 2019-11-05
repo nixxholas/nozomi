@@ -15,7 +15,7 @@
       <form v-on:submit.prevent="create()" class="has-text-justified">
         <div class="modal-card">
           <header class="modal-card-head">
-            <p class="modal-card-title">Create a source</p>
+            <p class="modal-card-title">Create a currency</p>
           </header>
           <section class="modal-card-body">
             <b-field label="Type">
@@ -68,7 +68,7 @@
 
           <footer class="modal-card-foot">
             <button class="button" type="button" @click="isModalActive = false">Close</button>
-            <button class="button is-primary" type="submit">Submit</button>
+            <button class="button is-primary" type="submit" :disabled="!types && types.length <= 0">Submit</button>
           </footer>
         </div>
       </form>
@@ -139,7 +139,7 @@
                     });
             }
         },
-        beforeCreate: function () {
+        mounted: function () {
             let self = this;
 
             // Synchronously call for data
@@ -147,7 +147,6 @@
             CurrencyTypeService.getAll()
                 .then(function (res) {
                     self.types = res;
-                    console.dir(res);
                     self.typesIsLoading = false;
                 });
         },
