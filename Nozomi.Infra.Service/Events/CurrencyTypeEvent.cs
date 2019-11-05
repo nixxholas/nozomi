@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data.Models.Currency;
 using Nozomi.Data.ResponseModels.CurrencyType;
+using Nozomi.Data.ViewModels.CurrencyType;
 using Nozomi.Preprocessing;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.BCL.Repository;
@@ -18,6 +19,20 @@ namespace Nozomi.Service.Events
         public CurrencyTypeEvent(ILogger<CurrencyPairEvent> logger, IUnitOfWork<NozomiDbContext> unitOfWork) 
             : base(logger, unitOfWork)
         {
+        }
+
+        public IEnumerable<CurrencyTypeViewModel> All()
+        {
+            return _unitOfWork.GetRepository<CurrencyType>()
+                .GetQueryable()
+                .AsNoTracking()
+                .Where(ct => ct.DeletedAt == null && ct.IsEnabled)
+                .Select(ct => new CurrencyTypeViewModel
+                {
+                    Guid = ct.Guid,
+                    Name = ct.Name,
+                    TypeShortForm = ct.TypeShortForm
+                });
         }
 
         public CurrencyType Get(string guid, bool track = false)
