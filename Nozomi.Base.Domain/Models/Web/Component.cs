@@ -10,7 +10,28 @@ namespace Nozomi.Data.Models.Web
     {
         // Default Constructor
         public Component() {}
+        
+        // Hard creation constructor
+        public Component(ComponentType componentType, string identifier, string queryComponent, bool anomalyIgnorance,
+            bool isDenominated)
+        {
+            ComponentType = componentType;
+            Identifier = identifier;
+            QueryComponent = queryComponent;
+            AnomalyIgnorance = anomalyIgnorance;
+            IsDenominated = isDenominated;
+        }
 
+        /// <summary>
+        /// Fresh creation constructor
+        /// </summary>
+        /// <param name="componentType"></param>
+        /// <param name="identifier"></param>
+        /// <param name="queryComponent"></param>
+        /// <param name="anomalyIgnorance"></param>
+        /// <param name="isDenominated"></param>
+        /// <param name="storeHistoricals"></param>
+        /// <param name="requestId"></param>
         public Component(ComponentType componentType, string identifier, string queryComponent,
             bool anomalyIgnorance, bool isDenominated, bool storeHistoricals, long requestId)
         {
