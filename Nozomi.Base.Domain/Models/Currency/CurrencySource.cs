@@ -8,6 +8,14 @@ namespace Nozomi.Data.Models.Currency
     /// </summary>
     public class CurrencySource : Entity
     {
+        public CurrencySource() {}
+        
+        /// <summary>
+        /// Constructor for Currency-based seeding
+        /// </summary>
+        /// <param name="sourceId"></param>
+        public CurrencySource(long sourceId) {}
+        
         public long Id { get; set; }
         
         public long CurrencyId { get; set; }
