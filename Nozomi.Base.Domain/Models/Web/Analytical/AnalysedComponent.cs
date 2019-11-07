@@ -33,6 +33,24 @@ namespace Nozomi.Data.Models.Web.Analytical
         }
         
         /// <summary>
+        /// Manual creation constructor    
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="delay"></param>
+        /// <param name="uiFormatting"></param>
+        /// <param name="isDenominated"></param>
+        /// <param name="storeHistoricals"></param>
+        public AnalysedComponent(AnalysedComponentType type, int delay, string uiFormatting, bool isDenominated,
+            bool storeHistoricals)
+        {
+            ComponentType = type;
+            Delay = delay;
+            UIFormatting = uiFormatting;
+            IsDenominated = isDenominated;
+            StoreHistoricals = storeHistoricals;
+        }
+        
+        /// <summary>
         /// Constructor that defines the object with pagination
         /// </summary>
         /// <param name="component">The component we're constructing</param>
