@@ -4,6 +4,16 @@ namespace Nozomi.Data.Models.Web
 {
     public class RequestProperty : Entity
     {
+        public RequestProperty() {}
+        
+        /// <summary>
+        /// Manual-based construction
+        /// </summary>
+        /// <param name="requestPropertyType"></param>
+        /// <param name="key"></param>
+        /// <param name="value"></param>
+        public RequestProperty(RequestPropertyType requestPropertyType, string key, string value) {}
+        
         public long Id { get; set; }
 
         public RequestPropertyType RequestPropertyType { get; set; }
