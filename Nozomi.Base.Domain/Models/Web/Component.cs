@@ -13,13 +13,14 @@ namespace Nozomi.Data.Models.Web
         
         // Hard creation constructor
         public Component(ComponentType componentType, string identifier, string queryComponent, bool anomalyIgnorance,
-            bool isDenominated)
+            bool isDenominated, bool storeHistoricals)
         {
             ComponentType = componentType;
             Identifier = identifier;
             QueryComponent = queryComponent;
             AnomalyIgnorance = anomalyIgnorance;
             IsDenominated = isDenominated;
+            StoreHistoricals = storeHistoricals;
         }
 
         /// <summary>
