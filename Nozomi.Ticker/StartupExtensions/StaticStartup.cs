@@ -48,32 +48,36 @@ namespace Nozomi.Ticker.StartupExtensions
 
                 var sourceTypes = new List<SourceType>()
                 {
+                    // UNK is always seeded via .HasData.
+//                    new SourceType
+//                    {
+//                        Guid = Guid.Parse("ebe6b360-987d-4694-86a7-68c78c680a95"),
+//                        Abbreviation = "UNK",
+//                        Name = "Unknown"
+//                    },
                     new SourceType
                     {
-                        Guid = Guid.Parse("ebe6b360-987d-4694-86a7-68c78c680a95"),
-                        Abbreviation = "UNK",
-                        Name = "Unknown"
-                    },
-                    new SourceType
-                    {
+                        Id = 2,
                         Guid = Guid.Parse("dd09c50c-687e-4895-a46c-e54d5570c668"),
                         Abbreviation = "EXC",
                         Name = "Exchange"
                     },
                     new SourceType
                     {
+                        Id = 3,
                         Guid = Guid.Parse("a682ca6c-5911-4dcd-9e92-7fd865782707"),
                         Abbreviation = "TRH",
                         Name = "Trading House"
                     },
                     new SourceType
                     {
+                        Id = 4,
                         Guid = Guid.Parse("a7f1eea1-9fe9-4756-a3b2-4209da68c829"),
                         Abbreviation = "REG",
                         Name = "Regulated Body"
                     }
                 };
-                if (!context.SourceTypes.Any())
+                if (context.SourceTypes.Count() < 2)
                 {
                     context.AddRange(sourceTypes);
                     context.SaveChanges();
