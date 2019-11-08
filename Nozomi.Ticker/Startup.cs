@@ -30,12 +30,15 @@ namespace Nozomi.Ticker
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, Microsoft.Extensions.Hosting.IHostingEnvironment env)
         {
             Configuration = configuration;
+            HostingEnvironment = env;
         }
 
         public IConfiguration Configuration { get; }
+        
+        public Microsoft.Extensions.Hosting.IHostingEnvironment HostingEnvironment { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -231,7 +234,7 @@ namespace Nozomi.Ticker
             app.UseCookiePolicy();
             
             // Setup the hot collections
-            app.ConfigureStatics();
+            app.ConfigureStatics(HostingEnvironment);
 
             app.UseSignalR(route =>
             {
