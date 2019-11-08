@@ -148,11 +148,9 @@ namespace Nozomi.Ticker.StartupExtensions
                         if (fiatType != null && cryptoType != null && bfxSource != null && bnaSource != null
                             && ecbSource != null && avgSource != null)
                             context.Currencies.AddRange(
-                                new Currency
+                                new Currency(fiatType.Id, null, "USD", "usd", 
+                                    "United States Dollar", null, 8, null)
                                 {
-                                    CurrencyTypeId = fiatType.Id,
-                                    Abbreviation = "USD",
-                                    Name = "United States Dollar",
                                     CurrencySources = new List<CurrencySource>()
                                     {
                                         new CurrencySource(avgSource.Id),
@@ -160,11 +158,9 @@ namespace Nozomi.Ticker.StartupExtensions
                                         new CurrencySource(ecbSource.Id)
                                     }
                                 },
-                                new Currency
+                                new Currency(fiatType.Id, null, "EUR", "eur", 
+                                    "Euro", null, 8, null)
                                 {
-                                    CurrencyTypeId = fiatType.Id,
-                                    Abbreviation = "EUR",
-                                    Name = "Euro",
                                     CurrencySources = new List<CurrencySource>()
                                     {
                                         new CurrencySource(avgSource.Id),
@@ -172,11 +168,10 @@ namespace Nozomi.Ticker.StartupExtensions
                                         new CurrencySource(bfxSource.Id)
                                     }
                                 },
-                                new Currency
+                                new Currency(cryptoType.Id, "assets/svg/icons/eth.svg", "ETH", 
+                                    "eth", "Ethereum", null, 12, 
+                                    "Wei")
                                 {
-                                    CurrencyTypeId = cryptoType.Id,
-                                    Abbreviation = "ETH",
-                                    Name = "Ethereum",
                                     CurrencySources = new List<CurrencySource>()
                                     {
                                         new CurrencySource(bfxSource.Id),
@@ -235,11 +230,10 @@ namespace Nozomi.Ticker.StartupExtensions
                                         },
                                     }
                                 },
-                                new Currency
+                                new Currency(cryptoType.Id, "assets/svg/icons/knc-2018.svg", "KNC", 
+                                    "knc", "Kyber Network Crystal", null, 12, 
+                                    null)
                                 {
-                                    CurrencyTypeId = cryptoType.Id,
-                                    Abbreviation = "KNC",
-                                    Name = "Kyber Network Crystal",
                                     CurrencySources = new List<CurrencySource>()
                                     {
                                         new CurrencySource(bfxSource.Id)
@@ -296,11 +290,10 @@ namespace Nozomi.Ticker.StartupExtensions
                                         },
                                     }
                                 },
-                                new Currency
+                                new Currency(cryptoType.Id, "assets/svg/icons/btc.svg", "BTC", 
+                                    "btc", "Bitcoin", null, 9, 
+                                    "Satoshi")
                                 {
-                                    CurrencyTypeId = cryptoType.Id,
-                                    Abbreviation = "BTC",
-                                    Name = "Bitcoin",
                                     CurrencySources = new List<CurrencySource>()
                                     {
                                         new CurrencySource(bfxSource.Id),
@@ -353,7 +346,9 @@ namespace Nozomi.Ticker.StartupExtensions
                                         }
                                     }
                                 },
-                                new Currency
+                                new Currency(cryptoType.Id, "assets/svg/icons/bcn.svg", "BCN", 
+                                    "bcn", "Bytecoin", null, 9, 
+                                    null)
                                 {
                                     CurrencyTypeId = cryptoType.Id,
                                     Abbreviation = "BCN",
@@ -363,21 +358,19 @@ namespace Nozomi.Ticker.StartupExtensions
                                         new CurrencySource(poloSource.Id)
                                     }
                                 },
-                                new Currency
+                                new Currency(cryptoType.Id, "assets/svg/icons/bts.svg", "BTS", 
+                                    "bts", "Bitshares", null, 9, 
+                                    null)
                                 {
-                                    CurrencyTypeId = cryptoType.Id,
-                                    Abbreviation = "BTS",
-                                    Name = "BitShares",
                                     CurrencySources = new List<CurrencySource>()
                                     {
                                         new CurrencySource(poloSource.Id)
                                     }
                                 },
-                                new Currency
+                                new Currency(cryptoType.Id, "assets/svg/icons/usdt.svg", "USDT", 
+                                    "usdt", "Tether", null, 9, 
+                                    null)
                                 {
-                                    CurrencyTypeId = fiatType.Id,
-                                    Abbreviation = "USDT",
-                                    Name = "Tether USD",
                                     CurrencySources = new List<CurrencySource>()
                                     {
                                         new CurrencySource(bfxSource.Id),
