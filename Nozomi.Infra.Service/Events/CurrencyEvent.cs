@@ -40,6 +40,14 @@ namespace Nozomi.Service.Events
             _tickerEvent = tickerEvent;
         }
 
+        public bool Exists(string slug)
+        {
+            return !string.IsNullOrWhiteSpace(slug) && _unitOfWork.GetRepository<Currency>()
+                       .GetQueryable()
+                       .AsNoTracking()
+                       .Any(c => c.Slug.Equals(slug));
+        }
+
         public IEnumerable<CurrencyViewModel> All(string currencyType = "CRYPTO", int itemsPerIndex = 20, int index = 0, 
             ICollection<ComponentType> typesToTake = null, ICollection<ComponentType> typesToDeepen = null)
         {
@@ -51,15 +59,19 @@ namespace Nozomi.Service.Events
             
             if (string.IsNullOrWhiteSpace(currencyType))
                 throw new ArgumentNullException("Parameter 'currencyType' is supposed to contain a valid string.");
-            
+
             var query = _unitOfWork.GetRepository<Currency>()
                 .GetQueryable()
                 .AsNoTracking()
                 .Include(c => c.CurrencyType)
-                .Where(c => c.DeletedAt == null && c.IsEnabled 
-                                                && c.CurrencyType.TypeShortForm.Equals(currencyType, 
-                                                    StringComparison.InvariantCultureIgnoreCase))
-                .Include(c => c.Requests)
+                .Where(c => c.DeletedAt == null && c.IsEnabled
+                                                && c.CurrencyType.TypeShortForm.Equals(currencyType,
+                                                    StringComparison.InvariantCultureIgnoreCase));
+
+            if (!query.Any())
+                return Enumerable.Empty<CurrencyViewModel>();
+                
+            query = query.Include(c => c.Requests)
                 .ThenInclude(r => r.RequestComponents)
                 .Skip(itemsPerIndex * index)
                 .Take(itemsPerIndex);
@@ -155,8 +167,13 @@ namespace Nozomi.Service.Events
                 .Include(c => c.CurrencyType)
                 .Where(c => c.DeletedAt == null && c.IsEnabled 
                                                 && c.CurrencyType.TypeShortForm.Equals(currencyType, 
-                                                    StringComparison.InvariantCultureIgnoreCase))
-                .Include(c => c.AnalysedComponents)
+                                                    StringComparison.InvariantCultureIgnoreCase));
+
+            if (!query.Any())
+                // https://docs.microsoft.com/en-us/dotnet/api/system.linq.enumerable.empty?view=netframework-4.8#examples
+                return Enumerable.Empty<CurrencyViewModel>();
+
+            query = query.Include(c => c.AnalysedComponents)
                 .ThenInclude(ac => ac.AnalysedHistoricItems);
 
             if (orderDescending && sortType != AnalysedComponentType.Unknown)
@@ -547,10 +564,15 @@ namespace Nozomi.Service.Events
 
         public long GetCountByType(string typeShortForm = "CRYPTO")
         {
-            return _unitOfWork.GetRepository<CurrencyType>()
+            var query = _unitOfWork.GetRepository<CurrencyType>()
                 .GetQueryable()
                 .AsNoTracking()
-                .Where(ct => ct.TypeShortForm.Equals(typeShortForm, StringComparison.InvariantCultureIgnoreCase))
+                .Where(ct => ct.TypeShortForm.Equals(typeShortForm, StringComparison.InvariantCultureIgnoreCase));
+
+            if (!query.Any())
+                return 0;
+            
+            return query
                 .Include(ct => ct.Currencies)
                 .ThenInclude(c => c.AnalysedComponents)
                 .ThenInclude(ac => ac.AnalysedHistoricItems)

@@ -24,6 +24,7 @@
     </section>
 
     <section class="section">
+      <CurrencyModal class="mb-4" v-if="oidcIsAuthenticated"></CurrencyModal>
       <b-tabs>
         <b-tab-item label="FIAT" icon="cash-usd">
           <b-table
@@ -157,11 +158,18 @@
 </template>
 
 <script>
-  import CurrencyService from "../services/CurrencyService";
-  import ComponentService from "../services/ComponentService";
-  import {Carousel, Slide} from 'vue-carousel';
+    import {mapGetters} from 'vuex';
+    import CurrencyService from "../services/CurrencyService";
+    import ComponentService from "../services/ComponentService";
+    import {Carousel, Slide} from 'vue-carousel';
+    import CurrencyModal from '../components/elements/modals/currency-modal';
 
     export default {
+        computed: {
+            ...mapGetters('oidcStore', [
+                'oidcIsAuthenticated'
+            ]),
+        },
         data() {
             return {
                 currencyTypeTable: {
@@ -186,7 +194,8 @@
         },
         components: {
             Carousel,
-            Slide
+            Slide,
+            CurrencyModal
         },
         methods: {
             onPageChange(page) {

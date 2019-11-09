@@ -27,6 +27,12 @@ namespace Nozomi.Web.Controllers.APIs.v1.CurrencyType
             _currencyTypeEvent = currencyTypeEvent;
         }
 
+        [HttpGet]
+        public IActionResult All()
+        {
+            return Ok(_currencyTypeEvent.All());
+        }
+
         [HttpGet("{page}")]
         public ICollection<ExtendedAnalysedComponentResponse<EpochValuePair<string>>> GetAll(int page = 0)
         {

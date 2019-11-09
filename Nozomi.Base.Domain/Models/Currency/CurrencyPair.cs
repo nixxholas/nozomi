@@ -14,6 +14,19 @@ namespace Nozomi.Data.Models.Currency
 {
     public class CurrencyPair : Entity
     {
+        public CurrencyPair() {}
+
+        public CurrencyPair(CurrencyPairType currencyPairType, string mainCurrencyAbbrv, string counterCurrencyAbbrv, 
+            string apiUrl, string defaultComponent, long sourceId)
+        {
+            CurrencyPairType = currencyPairType;
+            MainCurrencyAbbrv = mainCurrencyAbbrv;
+            CounterCurrencyAbbrv = counterCurrencyAbbrv;
+            APIUrl = apiUrl;
+            DefaultComponent = defaultComponent;
+            SourceId = sourceId;
+        }
+        
         [Key]
         public long Id { get; set; }
 

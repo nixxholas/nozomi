@@ -52,16 +52,18 @@
 
               <b-tabs v-model="form.parentType" expanded class="has-text-dark">
                 <b-tab-item label="Currency">
-                  <b-field label="Find a currency">
+                  <b-field>
                     <b-autocomplete
                       rounded
                       v-model="form.currencySlug"
                       :data="currencies"
                       placeholder="e.g. EUR"
                       icon="magnify"
-                      @select="option => form.currencySlug = option">
+                      @select="option => form.currencySlug = option"
+                      v-if="currencies && currencies.length > 0">
                       <template slot="empty">No results found</template>
                     </b-autocomplete>
+                    <b-message>Oh no.. There aren't any currencies at the moment...</b-message>
                   </b-field>
                 </b-tab-item>
                 <b-tab-item label="Currency Pair">
@@ -72,10 +74,12 @@
                       placeholder="e.g. EURUSD"
                       :custom-formatter="getCurrencyPairTickerPairStr"
                       :loading="currencyPairsIsLoading"
-                      @select="option => form.currencyPair = option">
+                      @select="option => form.currencyPair = option"
+                      v-if="currencyPairs && currencyPairs.length > 0 && currencyPairs[0] !== null">
 
                       <template slot-scope="props">
-                        <b-taglist attached>
+                        <b-taglist attached v-if="props.option && props.option.mainTicker && props.option.counterTicker
+                        && props.option.sourceName">
                           <b-tag type="is-dark">
                             {{ props.option.mainTicker }}{{ props.option.counterTicker }}
                           </b-tag>
@@ -85,13 +89,17 @@
                         </b-taglist>
                       </template>
                     </b-autocomplete>
+                    <b-message>Oh no.. There aren't any currency pairs at the moment..</b-message>
                   </b-field>
                 </b-tab-item>
                 <b-tab-item label="Currency Type">
-                  <b-field v-if="currencyTypes !== null && currencyTypes.length > 0">
-                    <b-select placeholder="Select a currency type" v-model="form.currencyTypeId">
+                  <b-field>
+                    <b-select placeholder="Select a currency type"
+                              v-model="form.currencyTypeId"
+                              v-if="currencyTypes !== null && currencyTypes.length > 0">
                       <option v-for="ct in currencyTypes" :value="ct.id">{{ ct.name }}</option>
                     </b-select>
+                    <b-message>Oh no.. There aren't any currency types at the moment..</b-message>
                   </b-field>
                 </b-tab-item>
               </b-tabs>
@@ -123,6 +131,11 @@
         methods: {
             ...mapActions('oidcStore', ['authenticateOidc', 'signOutOidc']),
             getCurrencyPairTickerPairStr: function(obj) {
+                console.dir(obj);
+
+                if (!obj)
+                    return '';
+
                 return obj.mainTicker + obj.counterTicker + " (" + obj.sourceName + ")";
             },
             create: function() {
@@ -143,8 +156,6 @@
                         break;
                     case 2: // Currency Type
                         // Reset the rest just incase
-                        console.dir("resetting non-currency type variables");
-                        console.dir(this.form.currencyTypeId);
                         this.form.currencySlug = '';
                         this.form.currencyPair = null;
                         this.form.currencyPairStr = null;
@@ -209,6 +220,7 @@
             // Synchronously call for data
             this.$axios.get('/api/Currency/ListAll')
                 .then(function (response) {
+                    console.dir(response);
                     self.currencies = response.data.data;
                 })
                 .catch(function (error) {

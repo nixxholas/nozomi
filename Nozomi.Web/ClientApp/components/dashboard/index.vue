@@ -17,11 +17,11 @@
           </div>
           <div class="tile is-parent">
             <article class="tile is-child notification is-info">
-              <p class="title"></p>
-              <p class="subtitle">What more should we do?</p>
-              <figure class="image is-4by3">
-                <img src="https://bulma.io/images/placeholders/640x480.png">
-              </figure>
+              <p class="title">Source Types</p>
+              <p class="subtitle">
+                <CreateSourceTypeModal></CreateSourceTypeModal>
+              </p>
+              <SourceTypesTable></SourceTypesTable>
             </article>
           </div>
         </div>
@@ -51,11 +51,13 @@
     import { mapActions } from 'vuex';
     // Request imports
     import CreateRequestComponent from '../elements/modals/create-request-modal';
-    import RequestsTable from'../elements/tables/requests-table';
+    import CreateSourceTypeModal from '../elements/modals/create-source-type-modal';
+    import RequestsTable from '../elements/tables/requests-table';
+    import SourceTypesTable from '../elements/tables/source-types-table';
 
     export default {
         name: "Dashboard",
-        components: { CreateRequestComponent, RequestsTable },
+        components: { CreateRequestComponent, CreateSourceTypeModal, RequestsTable, SourceTypesTable },
         data: function() {
             return {
             }

@@ -18,6 +18,15 @@ namespace Nozomi.Data.Models.Currency
             SourceTypeId = sourceTypeId;
         }
         
+        public Source(Guid guid, string abbreviation, string name, string apiDocsUrl, long sourceTypeId)
+        {
+            Guid = guid;
+            Abbreviation = abbreviation;
+            Name = name;
+            APIDocsURL = apiDocsUrl;
+            SourceTypeId = sourceTypeId;
+        }
+        
         public long Id { get; set; }
 
         public Guid Guid { get; set; }
