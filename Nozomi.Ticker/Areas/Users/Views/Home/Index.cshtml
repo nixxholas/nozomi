@@ -1,7 +1,6 @@
-﻿@using Microsoft.AspNetCore.Identity
-@using Newtonsoft.Json
+﻿@using System.Text.Json
+@using Microsoft.AspNetCore.Identity
 @using Nozomi.Base.Auth.Models
-@using Nozomi.Data.Models.Web.Analytical
 @using Nozomi.Preprocessing
 @using Nozomi.Service.Events.Analysis.Interfaces
 @inject IAnalysedComponentEvent AnalysedComponentEvent
@@ -160,10 +159,7 @@
             el: "#content",
             // Just dish any random variable in for now
             data: {
-                acTypes: @Html.Raw(Json.Serialize(NozomiServiceConstants.analysedComponentTypes, new JsonSerializerSettings
-                 {
-                     ReferenceLoopHandling = ReferenceLoopHandling.Ignore
-                 })),
+                acTypes: @Html.Raw(JsonSerializer.Serialize(NozomiServiceConstants.analysedComponentTypes)),
                 currencyDataFields: [
                     {
                         key: 'name',

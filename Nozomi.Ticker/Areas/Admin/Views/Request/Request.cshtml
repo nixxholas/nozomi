@@ -1,7 +1,9 @@
+@using System.Text.Json
 @using Newtonsoft.Json
 @using Newtonsoft.Json.Serialization
 @using Nozomi.Base.Core.Helpers.Enumerator
 @using Nozomi.Preprocessing
+@using JsonSerializer = System.Text.Json.JsonSerializer
 @model Nozomi.Ticker.Areas.Admin.Controllers.Request.RequestViewModel
 
 @{
@@ -267,32 +269,30 @@
                 },
                 // The data from the dto
                 request:
-                    @Html.Raw(JsonConvert.SerializeObject(@Model.Request, Formatting.Indented, new JsonSerializerSettings
+                    @Html.Raw(JsonSerializer.Serialize(@Model.Request, new JsonSerializerOptions
                     {
-                        ContractResolver = new CamelCasePropertyNamesContractResolver()
+                        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
                     })),
                 // Grab the types so we can check with the enum into readable data for user
                 requestTypes:
-                    @Html.Raw(JsonConvert.SerializeObject(@Model.RequestTypes, Formatting.Indented, new JsonSerializerSettings
+                    @Html.Raw(JsonSerializer.Serialize(@Model.RequestTypes, new JsonSerializerOptions
                     {
-                        ContractResolver = new CamelCasePropertyNamesContractResolver()
+                        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
                     })),
                 responseTypes:
-                    @Html.Raw(JsonConvert.SerializeObject(@Model.ResponseTypes, Formatting.Indented, new JsonSerializerSettings
+                    @Html.Raw(JsonSerializer.Serialize(@Model.ResponseTypes, new JsonSerializerOptions
                     {
-                        ContractResolver = new CamelCasePropertyNamesContractResolver()
+                        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
                     })),
                 requestComponentTypes:
-                    @Html.Raw(Json.Serialize(@Model.RequestComponentTypes, new JsonSerializerSettings
+                    @Html.Raw(JsonSerializer.Serialize(@Model.RequestComponentTypes, new JsonSerializerOptions
                     {
-                        ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
-                        ContractResolver = new CamelCasePropertyNamesContractResolver()
+                        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
                     })),
                 requestPropertyTypes:
-                    @Html.Raw(Json.Serialize(NozomiServiceConstants.requestPropertyTypes, new JsonSerializerSettings
+                    @Html.Raw(JsonSerializer.Serialize(NozomiServiceConstants.requestPropertyTypes, new JsonSerializerOptions
                     {
-                        ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
-                        ContractResolver = new CamelCasePropertyNamesContractResolver()
+                        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
                     })),
             },
             mounted() {
