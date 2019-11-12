@@ -197,7 +197,7 @@ namespace Nozomi.Auth
             if (HostingEnvironment.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseDatabaseErrorPage();
+                // app.UseDatabaseErrorPage();
             }
             else
             {

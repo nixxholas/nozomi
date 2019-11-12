@@ -9,7 +9,6 @@ using System.Security.Claims;
 using IdentityModel;
 using IdentityServer4;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Hosting.Internal;
 using Nozomi.Base.Auth.Global;
 using Nozomi.Base.Auth.Models;
 
