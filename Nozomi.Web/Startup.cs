@@ -217,9 +217,14 @@ namespace Nozomi.Web
                     name: "Areas",
                     template: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
 
-                routes.MapSpaFallbackRoute(
-                    name: "spa-fallback",
-                    defaults: new { controller = "Home", action = "Index" });
+//                routes.MapSpaFallbackRoute(
+//                    name: "spa-fallback",
+//                    defaults: new { controller = "Home", action = "Index" });
+            });
+
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapFallbackToController("Index", "Home");
             });
         }
     }
