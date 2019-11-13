@@ -43,7 +43,7 @@ namespace Nozomi.Web.StartupExtensions
 
 
                 swaggerGenOptions.ExampleFilters();
-                swaggerGenOptions.OperationFilter<DescriptionOperationFilter>();
+                //swaggerGenOptions.OperationFilter<DescriptionOperationFilter>();
                 // Adds an Upload button to endpoints which have [AddSwaggerFileUploadButton]
                 // Supported out of the box.
                 //swaggerGenOptions.OperationFilter<AddFileParamTypesOperationFilter>();
