@@ -1,5 +1,6 @@
 using System;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.OpenApi.Models;
 using Nozomi.Preprocessing;
 using Nozomi.Preprocessing.Swagger.Examples.Requests.v1.Currency;
 using Nozomi.Preprocessing.Swagger.Examples.Requests.v1.CurrencyPair;
@@ -11,7 +12,6 @@ using Nozomi.Preprocessing.Swagger.Examples.Requests.v1.RequestProperty;
 using Nozomi.Preprocessing.Swagger.Examples.Responses.Generic;
 using Swashbuckle.AspNetCore.Filters;
 using Swashbuckle.AspNetCore.Swagger;
-using License = Swashbuckle.AspNetCore.Swagger.License;
 using UpdateCurrencyPairComponentExample = Nozomi.Preprocessing.Swagger.Examples.Requests.v1.CurrencyPairComponent.UpdateCurrencyPairComponentExample;
 
 namespace Nozomi.Web.StartupExtensions
@@ -22,22 +22,22 @@ namespace Nozomi.Web.StartupExtensions
         {
             services.AddSwaggerGen(swaggerGenOptions =>
             {
-                swaggerGenOptions.SwaggerDoc(GlobalApiVariables.CURRENT_API_VERSION, new Info()
+                swaggerGenOptions.SwaggerDoc(GlobalApiVariables.CURRENT_API_VERSION, new OpenApiInfo()
                 {
                     Version = GlobalApiVariables.CURRENT_API_VERSION,
                     Title = "Nozomi API",
                     Description = "Reference documentation for the usage of Nozomi.",
-                    TermsOfService = new Uri("https://nozomi.one/privacy").ToString(),
-                    Contact = new Contact
+                    TermsOfService = new Uri("https://nozomi.one/privacy"),
+                    Contact = new OpenApiContact()
                     {
                         Name = "Nicholas Chen",
                         Email = "nicholas@counter.network",
-                        Url = new Uri("https://twitter.com/nixxholas").ToString()
+                        Url = new Uri("https://twitter.com/nixxholas")
                     },
-                    License = new License
+                    License = new OpenApiLicense()
                     {
                         Name = "Copyright (C) Hayate Inc. - All Rights Reserved",
-                        Url = new Uri("https://nozomi.one/license").ToString()
+                        Url = new Uri("https://nozomi.one/license")
                     }
                 });
 
