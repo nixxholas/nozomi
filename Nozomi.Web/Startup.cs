@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SpaServices.Webpack;
+using Microsoft.AspNetCore.SpaServices.Extensions;
 // using Microsoft.AspNetCore.SpaServices.Webpack;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -96,10 +97,12 @@ namespace Nozomi.Web
                 }, ServiceLifetime.Transient);
             }
 
+            services.AddResponseCompression();
+            services.AddHealthChecks();
+
             // Add framework services.
             services.AddMvc(options =>
                 {
-                    options.EnableEndpointRouting = false;
                     options.Filters.Add(typeof(HttpGlobalExceptionFilter));
                 })
                 .SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
@@ -115,6 +118,12 @@ namespace Nozomi.Web
             {
                 options.RedirectStatusCode = StatusCodes.Status307TemporaryRedirect;
                 // options.HttpsPort = 5001;
+            });
+
+            // In production, the Vue files will be served from this directory
+            services.AddSpaStaticFiles(configuration =>
+            {
+                configuration.RootPath = "ClientApp/dist";
             });
 
             // UoW-Repository injection
@@ -133,14 +142,15 @@ namespace Nozomi.Web
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
+            app.UseHealthChecks("/health");
             #if DEBUG
             app.UseDeveloperExceptionPage();
 
             // Webpack initialization with hot-reload.
-            app.UseWebpackDevMiddleware(new WebpackDevMiddlewareOptions
-            {
-                HotModuleReplacement = true,
-            });
+//            app.UseWebpackDevMiddleware(new WebpackDevMiddlewareOptions
+//            {
+//                HotModuleReplacement = true,
+//            });
 
             app.UseExceptionHandler(appError =>
             {
@@ -170,7 +180,10 @@ namespace Nozomi.Web
 
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
+                app.UseResponseCompression();
             }
+
+            app.UseHttpsRedirection();
 
             // https://github.com/IdentityServer/IdentityServer4/issues/1331
             var forwardOptions = new ForwardedHeadersOptions
@@ -185,10 +198,16 @@ namespace Nozomi.Web
             // ref: https://github.com/aspnet/Docs/issues/2384
             app.UseForwardedHeaders(forwardOptions);
 
-            app.UseCookiePolicy();
-            app.UseHttpsRedirection();
             app.UseAuthentication();
+
             app.UseStaticFiles();
+            app.UseSpaStaticFiles();
+
+            app.UseRouting();
+
+            app.UseCookiePolicy();
+
+            app.UseAuthorization();
 
             // Enable middleware to serve generated Swagger as a JSON endpoint.
             app.UseSwagger();
@@ -202,20 +221,59 @@ namespace Nozomi.Web
                 c.SwaggerEndpoint("/swagger/" + GlobalApiVariables.CURRENT_API_VERSION + "/swagger.json", "Nozomi API");
             });
 
-            app.UseMvc(routes =>
+            app.UseEndpoints(endpoints =>
             {
-                routes.MapRoute(
+                endpoints.MapControllerRoute(
                     name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
-
-                routes.MapRoute(
-                    name: "Areas",
-                    template: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
-
-                routes.MapSpaFallbackRoute(
-                    name: "spa-fallback",
-                    defaults: new { controller = "Home", action = "Index" });
+                    pattern: "{controller=Home}/{action=Index}/{id?}");
+                endpoints.MapRazorPages();
             });
+
+            app.UseSpa(spa =>
+            {
+                spa.Options.SourcePath = "ClientApp";
+
+                /*
+                // If you want to enable server-side rendering (SSR),
+                // [1] In AspNetCoreSpa.csproj, change the <BuildServerSideRenderer> property
+                //     value to 'true', so that the SSR bundle is built during publish
+                // [2] Uncomment this code block
+                */
+
+                //   spa.UseSpaPrerendering(options =>
+                //    {
+                //        options.BootModulePath = $"{spa.Options.SourcePath}/dist-server/main.bundle.js";
+                //        options.BootModuleBuilder = env.IsDevelopment() ? new AngularCliBuilder(npmScript: "build:ssr") : null;
+                //        options.ExcludeUrls = new[] { "/sockjs-node" };
+                //        options.SupplyData = (requestContext, obj) =>
+                //        {
+                //          //  var result = appService.GetApplicationData(requestContext).GetAwaiter().GetResult();
+                //          obj.Add("Cookies", requestContext.Request.Cookies);
+                //        };
+                //    });
+
+                if (HostingEnvironment.IsDevelopment())
+                {
+                    //   spa.UseAngularCliServer(npmScript: "start");
+                    //   OR
+                    spa.UseProxyToSpaDevelopmentServer("http://localhost:5001");
+                }
+            });
+
+//            app.UseMvc(routes =>
+//            {
+//                routes.MapRoute(
+//                    name: "default",
+//                    template: "{controller=Home}/{action=Index}/{id?}");
+//
+//                routes.MapRoute(
+//                    name: "Areas",
+//                    template: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
+//
+//                routes.MapSpaFallbackRoute(
+//                    name: "spa-fallback",
+//                    defaults: new { controller = "Home", action = "Index" });
+//            });
         }
     }
 }
