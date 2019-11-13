@@ -30,7 +30,7 @@ namespace Nozomi.Web
             HostingEnvironment = hostingEnvironment;
         }
 
-        public IConfiguration Configuration { get; }
+        public static IConfiguration Configuration { get; set; }
 
         public IHostingEnvironment HostingEnvironment { get; }
 
@@ -48,65 +48,9 @@ namespace Nozomi.Web
 
             services.AddResponseCompression();
 
-             // Environment Inclusion
-            var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-            var webEnv = Environment.GetEnvironmentVariable("WEB_ENVIRONMENT") ?? string.Empty;
+            services.AddDbContextInjections();
 
-            if (!string.IsNullOrEmpty(env) && (!env.Equals("production", StringComparison.OrdinalIgnoreCase)
-                && !webEnv.Equals("Production", StringComparison.OrdinalIgnoreCase)))
-            {
-                // Greet the beloved dev
-                Console.WriteLine(@"Welcome to the dev environment, your machine is named: " + Environment.MachineName);
-
-                // Postgres DB Setup
-                var str = Configuration.GetConnectionString("Local:" + @Environment.MachineName);
-
-                services
-                    .AddEntityFrameworkNpgsql()
-                    .AddDbContext<NozomiDbContext>(options =>
-                {
-                    options.UseNpgsql(str);
-                    options.EnableSensitiveDataLogging(false);
-                    options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
-                },
-                    ServiceLifetime.Transient);
-            }
-            else
-            {
-                var vaultToken = Configuration["vaultToken"];
-
-                if (string.IsNullOrEmpty(vaultToken))
-                    throw new SystemException("Invalid vault token.");
-
-                var authMethod = new TokenAuthMethodInfo(vaultToken);
-                var vaultClientSettings = new VaultClientSettings("http://165.22.250.169:8200", authMethod);
-                var vaultClient = new VaultClient(vaultClientSettings);
-
-                var nozomiVault = vaultClient.V1.Secrets.Cubbyhole.ReadSecretAsync("nozomi")
-                    .GetAwaiter()
-                    .GetResult().Data;
-
-                var mainDb = (string) nozomiVault["main"];
-                if (string.IsNullOrEmpty(mainDb))
-                    throw new SystemException("Invalid main database configuration");
-                // Database
-                services.AddDbContext<NozomiDbContext>(options =>
-                {
-                    options.UseNpgsql(mainDb
-                        , builder =>
-                        {
-                            builder.EnableRetryOnFailure();
-//                            builder.ProvideClientCertificatesCallback(certificates =>
-//                            {
-//                                var cert = new X509Certificate2("ca-certificate.crt");
-//                                certificates.Add(cert);
-//                            });
-                        }
-                    );
-                    options.EnableSensitiveDataLogging(false);
-                    options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
-                }, ServiceLifetime.Transient);
-            }
+            services.AddMemoryCache();
 
             services.AddHealthChecks();
 
