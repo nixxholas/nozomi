@@ -53,7 +53,7 @@ namespace Nozomi.Web.StartupExtensions
                 //swaggerGenOptions.OperationFilter<AddHeaderOperationFilter>("correlationId", "Correlation Id for the request", false);
 
                 swaggerGenOptions.OperationFilter<AddResponseHeadersFilter>(); // [SwaggerResponseHeader]
-                swaggerGenOptions.DescribeAllEnumsAsStrings();
+                // swaggerGenOptions.DescribeAllEnumsAsStrings(); // Automatic
                 // Adds "(Auth)" to the summary so that you can see which endpoints have Authorization
                 swaggerGenOptions.OperationFilter<AppendAuthorizeToSummaryOperationFilter>();
                 swaggerGenOptions.OperationFilter<SecurityRequirementsOperationFilter>();
