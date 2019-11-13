@@ -114,7 +114,7 @@ namespace Nozomi.Auth
                 .AddEntityFrameworkStores<AuthDbContext>()
                 .AddDefaultTokenProviders();
 
-            services.AddMvc()
+            services.AddMvc(options => { options.EnableEndpointRouting = false; })
                 .SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
 
             var identityConfig = new IdentityConfig(HostingEnvironment);
