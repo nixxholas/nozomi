@@ -210,7 +210,7 @@ namespace Nozomi.Web
                 {
                     //   spa.UseAngularCliServer(npmScript: "start");
                     //   OR
-                    spa.UseProxyToSpaDevelopmentServer("http://localhost:5001");
+                    spa.UseProxyToSpaDevelopmentServer("https://localhost:5001");
                 }
             });
 
