@@ -1,5 +1,4 @@
 using Microsoft.Extensions.DependencyInjection;
-using Nozomi.Data.Models.Web;
 using Nozomi.Infra.Blockchain.Auth.Events;
 using Nozomi.Infra.Blockchain.Auth.Events.Interfaces;
 using Nozomi.Preprocessing.Events;
@@ -14,7 +13,7 @@ using Nozomi.Service.Services.Interfaces;
 using Nozomi.Service.Services.Requests;
 using Nozomi.Service.Services.Requests.Interfaces;
 
-namespace Nozomi.Web.StartupExtensions
+namespace Nozomi.Web.Extensions
 {
     public static class InfraStartup
     {

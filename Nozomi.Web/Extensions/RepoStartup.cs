@@ -3,7 +3,7 @@ using Nozomi.Repo.BCL.Context;
 using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Data;
 
-namespace Nozomi.Web.StartupExtensions
+namespace Nozomi.Web.Extensions
 {
     public static class RepoStartup
     {

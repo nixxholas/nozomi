@@ -16,7 +16,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Nozomi.Preprocessing;
 using Nozomi.Preprocessing.Filters;
 using Nozomi.Repo.Data;
-using Nozomi.Web.StartupExtensions;
+using Nozomi.Web.Extensions;
 using VaultSharp;
 using VaultSharp.V1.AuthMethods.Token;
 
@@ -37,6 +37,17 @@ namespace Nozomi.Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.Configure<CookiePolicyOptions>(options =>
+            {
+                // This lambda determines whether user consent for non-essential cookies is needed for a given request.
+                options.CheckConsentNeeded = context => false;
+                options.MinimumSameSitePolicy = SameSiteMode.None;
+            });
+
+            services.AddOptions();
+
+            services.AddResponseCompression();
+
              // Environment Inclusion
             var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
             var webEnv = Environment.GetEnvironmentVariable("WEB_ENVIRONMENT") ?? string.Empty;
@@ -97,7 +108,6 @@ namespace Nozomi.Web
                 }, ServiceLifetime.Transient);
             }
 
-            services.AddResponseCompression();
             services.AddHealthChecks();
 
             // Add framework services.

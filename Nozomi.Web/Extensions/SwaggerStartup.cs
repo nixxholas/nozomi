@@ -11,10 +11,9 @@ using Nozomi.Preprocessing.Swagger.Examples.Requests.v1.PartialCurrencyPair;
 using Nozomi.Preprocessing.Swagger.Examples.Requests.v1.RequestProperty;
 using Nozomi.Preprocessing.Swagger.Examples.Responses.Generic;
 using Swashbuckle.AspNetCore.Filters;
-using Swashbuckle.AspNetCore.Swagger;
 using UpdateCurrencyPairComponentExample = Nozomi.Preprocessing.Swagger.Examples.Requests.v1.CurrencyPairComponent.UpdateCurrencyPairComponentExample;
 
-namespace Nozomi.Web.StartupExtensions
+namespace Nozomi.Web.Extensions
 {
     public static class SwaggerStartup
     {
