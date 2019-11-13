@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Net;
 using System.Security.Cryptography.X509Certificates;
 using Microsoft.AspNetCore.Authentication;
@@ -12,7 +13,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.SpaServices.Webpack;
+// using Microsoft.AspNetCore.SpaServices.Webpack;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -22,6 +23,7 @@ using Nozomi.Repo.Data;
 using Nozomi.Web.StartupExtensions;
 using VaultSharp;
 using VaultSharp.V1.AuthMethods.Token;
+using Westwind.AspNetCore.LiveReload;
 
 namespace Nozomi.Web
 {
@@ -62,6 +64,15 @@ namespace Nozomi.Web
                     options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
                 },
                     ServiceLifetime.Transient);
+
+                // Get WestWind.AspnetCore.LiveReload Up
+                services.AddLiveReload(options =>
+                {
+                    options.LiveReloadEnabled = true;
+                    options.FolderToMonitor = Path.GetFullPath(Path.Combine(HostingEnvironment.ContentRootPath,
+                        "wwwroot"));
+                    options.ClientFileExtensions = ".css,.js,.htm,.html,.ts";
+                });
             }
             else
             {
@@ -103,6 +114,7 @@ namespace Nozomi.Web
             // Add framework services.
             services.AddMvc(options =>
                 {
+                    options.EnableEndpointRouting = false;
                     options.Filters.Add(typeof(HttpGlobalExceptionFilter));
                 })
                 .SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
@@ -140,10 +152,12 @@ namespace Nozomi.Web
             app.UseDeveloperExceptionPage();
 
             // Webpack initialization with hot-reload.
-            app.UseWebpackDevMiddleware(new WebpackDevMiddlewareOptions
-            {
-                HotModuleReplacement = true,
-            });
+//            app.UseWebpackDevMiddleware(new WebpackDevMiddlewareOptions
+//            {
+//                HotModuleReplacement = true,
+//            });
+
+            app.UseLiveReload();
 
             app.UseExceptionHandler(appError =>
             {
@@ -193,8 +207,6 @@ namespace Nozomi.Web
             app.UseAuthentication();
             app.UseStaticFiles();
 
-
-
             // Enable middleware to serve generated Swagger as a JSON endpoint.
             app.UseSwagger();
 
@@ -217,14 +229,9 @@ namespace Nozomi.Web
                     name: "Areas",
                     template: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
 
-//                routes.MapSpaFallbackRoute(
-//                    name: "spa-fallback",
-//                    defaults: new { controller = "Home", action = "Index" });
-            });
-
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapFallbackToController("Index", "Home");
+                routes.MapSpaFallbackRoute(
+                    name: "spa-fallback",
+                    defaults: new { controller = "Home", action = "Index" });
             });
         }
     }
