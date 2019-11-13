@@ -3,6 +3,10 @@
         <TargetFramework>netcoreapp3.0</TargetFramework>
         <AspNetCoreHostingModel>OutOfProcess</AspNetCoreHostingModel>
         <LangVersion>latest</LangVersion>
+        <SpaRoot>ClientApp\</SpaRoot>
+        <DefaultItemExcludes>$(DefaultItemExcludes);$(SpaRoot)node_modules\**</DefaultItemExcludes>
+        <!-- Set this to true if you enable server-side prerendering -->
+        <BuildServerSideRenderer>false</BuildServerSideRenderer>
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="IdentityServer4.AccessTokenValidation">
@@ -40,6 +44,12 @@
     </ItemGroup>
     <ItemGroup>
         <Folder Include="ClientApp\components\dashboard\forms" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <!-- Don't publish the SPA source files, but do show them in the project files list -->
+        <Content Remove="$(SpaRoot)**" />
+        <None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**" />
     </ItemGroup>
 
     <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition="'$(Configuration)' == 'Debug'">
