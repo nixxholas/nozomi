@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SpaServices.Webpack;
 // using Microsoft.AspNetCore.SpaServices.Webpack;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -17,7 +18,6 @@ using Nozomi.Repo.Data;
 using Nozomi.Web.StartupExtensions;
 using VaultSharp;
 using VaultSharp.V1.AuthMethods.Token;
-using Westwind.AspNetCore.LiveReload;
 
 namespace Nozomi.Web
 {
@@ -58,15 +58,6 @@ namespace Nozomi.Web
                     options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
                 },
                     ServiceLifetime.Transient);
-
-                // Get WestWind.AspnetCore.LiveReload Up
-                services.AddLiveReload(options =>
-                {
-                    options.LiveReloadEnabled = true;
-                    options.FolderToMonitor = Path.GetFullPath(Path.Combine(HostingEnvironment.ContentRootPath,
-                        "wwwroot"));
-                    options.ClientFileExtensions = ".css,.js,.htm,.html,.ts";
-                });
             }
             else
             {
@@ -146,12 +137,10 @@ namespace Nozomi.Web
             app.UseDeveloperExceptionPage();
 
             // Webpack initialization with hot-reload.
-//            app.UseWebpackDevMiddleware(new WebpackDevMiddlewareOptions
-//            {
-//                HotModuleReplacement = true,
-//            });
-
-            app.UseLiveReload();
+            app.UseWebpackDevMiddleware(new WebpackDevMiddlewareOptions
+            {
+                HotModuleReplacement = true,
+            });
 
             app.UseExceptionHandler(appError =>
             {
