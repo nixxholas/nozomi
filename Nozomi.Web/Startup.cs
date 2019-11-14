@@ -61,12 +61,15 @@ namespace Nozomi.Web
                 })
                 .SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
 
-            services.AddHsts(opt =>
+            if (HostingEnvironment.IsProduction())
             {
-                opt.Preload = true;
-                opt.IncludeSubDomains = true;
-                opt.MaxAge = TimeSpan.FromDays(60);
-            });
+                services.AddHsts(opt =>
+                {
+                    opt.Preload = true;
+                    opt.IncludeSubDomains = true;
+                    opt.MaxAge = TimeSpan.FromDays(60);
+                });
+            }
 
             services.AddHttpsRedirection(options =>
             {
@@ -210,7 +213,7 @@ namespace Nozomi.Web
                 {
                     //   spa.UseAngularCliServer(npmScript: "start");
                     //   OR
-                    spa.UseProxyToSpaDevelopmentServer("https://localhost:5001");
+                    spa.UseProxyToSpaDevelopmentServer("http://localhost:5001");
                 }
             });
 
