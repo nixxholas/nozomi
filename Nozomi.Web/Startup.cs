@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.SpaServices.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json;
 using Nozomi.Preprocessing;
 using Nozomi.Preprocessing.Filters;
 using Nozomi.Repo.Data;
@@ -59,6 +60,10 @@ namespace Nozomi.Web
                 {
                     options.Filters.Add(typeof(HttpGlobalExceptionFilter));
                 })
+                .AddNewtonsoftJson(options =>
+                    {
+                        options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+                    })
                 .SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
 
             if (HostingEnvironment.IsProduction())
