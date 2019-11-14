@@ -1,16 +1,14 @@
 {
-  "name": "aspnetcore-vuejs",
-  "description": "ASP.NET Core & VueJS Starter project - Brought to you by Trilon.io",
+  "name": "nozomi-spa",
+  "description": "ASP.NET Core & VueJS Project for Nozomi.",
   "author": {
-    "name": "Mark Pieszak | Trilon Consulting",
-    "email": "hello@trilon.io",
-    "url": "https://trilon.io"
+    "name": "Nicholas Chen",
+    "email": "nicholas@nozomi.one",
+    "url": "https://nozomi.one"
   },
-  "repository": {
-    "url": "https://github.com/TrilonIO/aspnetcore-Vue-starter"
-  },
-  "license": "MIT",
   "scripts": {
+    "serve": "vue-cli-service serve",
+    "vbuild": "vue-cli-service build",
     "dev": "cross-env ASPNETCORE_ENVIRONMENT=Development NODE_ENV=development dotnet run",
     "build": "npm run build-vendor:prod && npm run build:prod",
     "build:prod": "cross-env NODE_ENV=production webpack --progress --hide-modules",
@@ -21,6 +19,7 @@
     "update-packages": "npx npm-check -u"
   },
   "dependencies": {
+    "@vue/cli-service": "^4.0.5",
     "apexcharts": "^3.8.3",
     "aspnet-webpack": "^3.0.0",
     "axios": "^0.19.0",
