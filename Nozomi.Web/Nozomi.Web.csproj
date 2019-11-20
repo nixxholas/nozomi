@@ -42,9 +42,6 @@
         <_ContentIncludedByDefault Remove="ClientApp\assets\vendor\jquery-ui\component.json" />
         <_ContentIncludedByDefault Remove="ClientApp\assets\vendor\jquery-ui\composer.json" />
     </ItemGroup>
-    <ItemGroup>
-        <Folder Include="ClientApp\components\dashboard\forms" />
-    </ItemGroup>
 
     <ItemGroup>
         <!-- Don't publish the SPA source files, but do show them in the project files list -->
