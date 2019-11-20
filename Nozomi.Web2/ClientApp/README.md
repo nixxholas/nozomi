@@ -1,4 +1,4 @@
-# ASP.NET Core Vue Starter
+# Nozomi Web2 Instruction Set
 
 ## Project setup
 ```
