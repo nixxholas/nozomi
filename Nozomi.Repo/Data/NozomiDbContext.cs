@@ -39,11 +39,15 @@ namespace Nozomi.Repo.Data
         public DbSet<WebsocketCommand> WebsocketCommands { get; set; }
         public DbSet<WebsocketCommandProperty> WebsocketCommandProperties { get; set; }
         
-        public NozomiDbContext(DbContextOptions<NozomiDbContext> options,
-            ILogger<NozomiDbContext> logger) : base(options)
+        public NozomiDbContext(DbContextOptions options) : base(options)
         {
-            _logger = logger;
         }
+        
+//        public NozomiDbContext(DbContextOptions<NozomiDbContext> options,
+//            ILogger<NozomiDbContext> logger) : base(options)
+//        {
+//            _logger = logger;
+//        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
