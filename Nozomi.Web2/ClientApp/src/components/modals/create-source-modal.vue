@@ -73,10 +73,10 @@
 </template>
 
 <script>
-    import store from '../../../store/index';
+    import store from '../../store/index';
     import {mapActions} from 'vuex';
     import {NotificationProgrammatic as Notification} from 'buefy';
-    import SourceTypeService from "../../../services/SourceTypeService";
+    import SourceTypeService from "../../services/SourceTypeService";
 
     export default {
         name: "create-source-modal",

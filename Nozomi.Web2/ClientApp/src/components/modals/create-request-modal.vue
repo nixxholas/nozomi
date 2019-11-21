@@ -116,10 +116,10 @@
 </template>
 
 <script>
-    import store from '../../../store/index';
+    import store from '../../store/index';
     import { mapActions } from 'vuex';
-    import RequestTypeDrowdown from '../../elements/request-type-dropdown';
-    import ResponseTypeDropdown from "../../elements/response-type-dropdown";
+    import RequestTypeDrowdown from '../dropdowns/request-type-dropdown';
+    import ResponseTypeDropdown from "../dropdowns/response-type-dropdown";
     import { NotificationProgrammatic as Notification } from 'buefy';
 
     export default {

@@ -77,10 +77,10 @@
 </template>
 
 <script>
-    import store from '../../../store/index';
+    import store from '../../store/index';
     import {mapActions} from 'vuex';
     import {NotificationProgrammatic as Notification} from 'buefy';
-    import CurrencyTypeService from "../../../services/CurrencyTypeService";
+    import CurrencyTypeService from "../../services/CurrencyTypeService";
 
     export default {
         name: "currency-modal",

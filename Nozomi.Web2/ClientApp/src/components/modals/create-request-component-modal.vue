@@ -79,7 +79,7 @@
 </template>
 
 <script>
-    import store from '../../../store/index';
+    import store from '../../store/index';
     import { mapActions } from 'vuex';
     import { NotificationProgrammatic as Notification } from 'buefy';
 
