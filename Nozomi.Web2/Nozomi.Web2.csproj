@@ -7,10 +7,10 @@
     <IsPackable>false</IsPackable>
     <SpaRoot>ClientApp\</SpaRoot>
     <DefaultItemExcludes>$(DefaultItemExcludes);$(SpaRoot)node_modules\**</DefaultItemExcludes>
-    <Authors>Software Ateliers</Authors>
-    <Company>Software Ateliers</Company>
-    <Description>ASP.NET Core + Vue.js starter project</Description>
-    <Copyright>MIT 2019 Software Ateliers</Copyright>
+    <Authors>Nicholas Chen</Authors>
+    <Company>Nozomi One</Company>
+    <Description>Nozomi data polling and aggregating engine</Description>
+    <Copyright>Nozomi One Pte. Ltd.</Copyright>
     <Version>2.1.3</Version>
     <AssemblyVersion>2.1.3.0</AssemblyVersion>
     <FileVersion>2.1.3.0</FileVersion>
