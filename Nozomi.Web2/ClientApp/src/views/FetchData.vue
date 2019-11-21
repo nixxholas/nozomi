@@ -46,7 +46,7 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import { Forecast } from '../models/Forecast';
+import { Forecast } from '@/models/Forecast';
 import axios from 'axios';
 
 @Component({})

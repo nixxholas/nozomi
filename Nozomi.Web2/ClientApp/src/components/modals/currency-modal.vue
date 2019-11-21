@@ -80,7 +80,7 @@
     import store from '../../store/index';
     import {mapActions} from 'vuex';
     import {NotificationProgrammatic as Notification} from 'buefy';
-    import CurrencyTypeService from "../../services/CurrencyTypeService";
+    import CurrencyTypeService from "@/services/CurrencyTypeService";
 
     export default {
         name: "currency-modal",
@@ -88,6 +88,20 @@
             currentRoute: window.location.href, // https://forum.vuejs.org/t/how-to-get-path-from-route-instance/26934/2
             currency: Object
         },
+      data: function () {
+        return {
+          isModalActive: false,
+          isModalLoading: false,
+          form: {
+            sourceType: "",
+            abbreviation: "",
+            name: "",
+            apiDocsUrl: ""
+          },
+          types: [],
+          typesIsLoading: false
+        }
+      },
         methods: {
             ...mapActions('oidcStore', ['authenticateOidc', 'signOutOidc']),
             create: function () {
@@ -149,20 +163,6 @@
                     self.types = res;
                     self.typesIsLoading = false;
                 });
-        },
-        data: function () {
-            return {
-                isModalActive: false,
-                isModalLoading: false,
-                form: {
-                    sourceType: "",
-                    abbreviation: "",
-                    name: "",
-                    apiDocsUrl: ""
-                },
-                types: [],
-                typesIsLoading: false
-            }
         }
     }
 </script>

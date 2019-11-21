@@ -21,6 +21,7 @@ export default {
       });
     });
   },
+  
   getCurrencyCount(type) {
     return new Promise((resolve, reject) => {
       axios.get('/api/Currency/GetCountByType', {
@@ -33,5 +34,5 @@ export default {
         reject(error);
       });
     });
-  },
+  }
 }
