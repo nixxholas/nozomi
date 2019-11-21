@@ -13,6 +13,7 @@
     "date-fns": "^2.7.0",
     "fibers": "^4.0.2",
     "node-sass": "^4.13.0",
+    "oidc-client": "^1.9.1",
     "register-service-worker": "^1.6.2",
     "vue": "^2.6.10",
     "vue-class-component": "^7.1.0",
