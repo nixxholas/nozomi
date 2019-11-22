@@ -125,8 +125,6 @@ namespace Nozomi.Web2
 
             app.UseAuthentication();
 
-            app.UseAuthorization();
-
             app.UseStaticFiles();
             app.UseSpaStaticFiles();
 
@@ -151,6 +149,8 @@ namespace Nozomi.Web2
 
             app.UseRouting();
 
+            app.UseAuthorization();
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
@@ -167,6 +167,7 @@ namespace Nozomi.Web2
                         "{*path}",
                         new SpaOptions {SourcePath = "ClientApp"},
                         npmScript: "serve",
+                        port: 9000,
                         regex: "Compiled successfully");
                 }
 
