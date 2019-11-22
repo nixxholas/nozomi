@@ -2,11 +2,19 @@ import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 import Vue from 'vue';
 import Buefy from 'buefy';
-// import 'buefy/dist/buefy.css';
+import 'buefy/dist/buefy.css';
+import 'vue-material-design-icons/styles.css';
 import './plugins/axios';
-import vuetify from './plugins/vuetify';
+// @ts-ignore
+import * as numeral from 'numeral';
+// @ts-ignore
+import VueNumerals from 'vue-numerals';
+import VueApexCharts from 'vue-apexcharts';
+import * as moment from 'moment';
+// import vuetify from './plugins/vuetify';
 import App from './App.vue';
-import router from './router';
+// @ts-ignore
+import router from '@/routing/router';
 import store from '@/store/index';
 import './registerServiceWorker';
 import dateFilter from '@/filters/date.filter';
@@ -20,13 +28,20 @@ Vue.component('icon', FontAwesomeIcon);
 
 // Registration of Buefy
 Vue.use(Buefy);
+// Registration of Vue Numerals
+Vue.use(VueNumerals); // default locale is 'en'
+// Registration of Vue apexcharts
+Vue.component('apexchart', VueApexCharts);
+
+Vue.prototype.$moment = moment;
+Vue.prototype.$numeral = numeral;
 
 Vue.config.productionTip = false;
 
 Vue.filter('date', dateFilter);
 
 new Vue({
-  vuetify,
+  // vuetify,
   router,
   store,
   render: (h) => h(App),

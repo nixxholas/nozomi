@@ -1,59 +1,67 @@
 <template>
-  <v-app>
+  <div id="app">
+    <b-message type="is-warning" has-icon>
+      <b>We're currently in the Release Candidate phase.</b> General UI and Major Features will be constantly updated.
+      <br>
+      <b v-if="!hasWeb3()">Your browser is incompatible with our authentication engine.</b>
+    </b-message>
+    <nav-menu params="route: route"></nav-menu>
 
-    <v-navigation-drawer persistent :mini-variant="miniVariant" :clipped="clipped" v-model="drawer" enable-resize-watcher fixed app>
-      <v-list>
-        <v-list-item value="true" v-for="(item, i) in items" :key="i" :to="item.link">
-          <v-list-item-action>
-            <v-icon v-html="item.icon"></v-icon>
-          </v-list-item-action>
-          <v-list-item-content>
-            <v-list-item-title v-text="item.title"></v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-      </v-list>
-    </v-navigation-drawer>
+    <div class="container is-fullhd" style="flex: 1; width: 100%">
+      <router-view></router-view>
+    </div>
 
-    <v-app-bar app :clipped-left="clipped" color="info" dark>
-      <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
-      <v-btn class="d-none d-lg-flex" icon @click.stop="miniVariant = !miniVariant">
-        <v-icon v-html="miniVariant ? 'chevron_right' : 'chevron_left'"></v-icon>
-      </v-btn>
-      <v-btn class="d-none d-lg-flex" icon @click.stop="clipped = !clipped">
-        <v-icon>web</v-icon>
-      </v-btn>
-      <v-toolbar-title v-text="title"></v-toolbar-title>
-      <v-spacer></v-spacer>
-    </v-app-bar>
-
-    <v-content>
-      <router-view/>
-    </v-content>
-
-    <v-footer app>
-      <span>&nbsp;Software Ateliers&nbsp;&copy;&nbsp;2019</span>
-    </v-footer>
-
-  </v-app>
+    <footer class="footer mt-4" style="bottom: 0; width: 100%;">
+      <div class="content container">
+        <div class="columns is-desktop">
+          <div class="column">
+            © 2019 Nozomi One Pte. Ltd. All rights reserved.
+          </div>
+          <div class="column has-text-right">
+            <p class="small text-primary">Nozomi Alpha Build - {{ $moment(buildTime).fromNow() }}</p>
+            <strong>Nozomi</strong> by <a href="https://nixholas.com">Nicholas Chen</a>.
+          </div>
+        </div>
+      </div>
+    </footer>
+  </div>
 </template>
 
-<script lang="ts">
-import HelloWorld from '@/components/HelloWorld.vue';
-import { Component, Vue } from 'vue-property-decorator';
+<script>
+  import NavMenu from './nav-menu'
 
-@Component({
-  components: { HelloWorld },
-})
-export default class App extends Vue {
-  private clipped: boolean = true;
-  private drawer: boolean = true;
-  private miniVariant: boolean = false;
-  private right: boolean = true;
-  private title: string = 'ASP.NET Core Vue Starter';
-  private items = [
-    { title: 'Home', icon: 'home', link: '/' },
-    { title: 'Counter', icon: 'touch_app', link: '/counter' },
-    { title: 'Fetch data', icon: 'get_app', link: '/fetch-data' },
-  ];
-}
+  export default {
+    components: {
+      'nav-menu': NavMenu
+    },
+    async beforeMount() {
+      try {
+        let buildTimeApi = await this.$axios.get('/api/Core/GetCurrentBuildTime');
+
+        if (buildTimeApi.status === 200)
+          this.buildTime = buildTimeApi.data;
+      } catch (e) {
+        console.dir("Couldn't get the build time.");
+      }
+    },
+    data () {
+      return {
+        buildTime: ''
+      }
+    },
+    methods: {
+      hasWeb3() {
+        try {
+          return window.ethereum || window.web3;
+        } catch (e) {
+          // User does not have a Web3-supportive Plugin/Browser.
+          return false;
+        }
+      }
+    },
+  }
 </script>
+
+<style>
+  
+</style>
