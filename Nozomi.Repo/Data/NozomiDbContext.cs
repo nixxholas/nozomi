@@ -39,7 +39,7 @@ namespace Nozomi.Repo.Data
         public DbSet<WebsocketCommand> WebsocketCommands { get; set; }
         public DbSet<WebsocketCommandProperty> WebsocketCommandProperties { get; set; }
         
-        public NozomiDbContext(DbContextOptions options) : base(options)
+        public NozomiDbContext(DbContextOptions<NozomiDbContext> options) : base(options)
         {
         }
         
