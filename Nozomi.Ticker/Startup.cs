@@ -179,7 +179,7 @@ namespace Nozomi.Ticker
 
             services.AddSession();
             
-            services.AddMvc()
+            services.AddControllersWithViews()
                 .SetCompatibilityVersion(CompatibilityVersion.Version_3_0)
                 .AddSessionStateTempDataProvider()
                 .AddRazorPagesOptions(o=>
@@ -244,17 +244,6 @@ namespace Nozomi.Ticker
 
             app.UseSession();
             
-            app.UseMvc(routes =>
-            {
-                routes.MapRoute(
-                    name: "default",
-                    template: "{controller=home}/{action=index}/{id?}");
-                
-                routes.MapRoute(
-                      name: "Areas",
-                      template: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
-            });
-            
             app.UseNozomiExceptionMiddleware();
 
             // Enable middleware to serve generated Swagger as a JSON endpoint.
@@ -267,6 +256,17 @@ namespace Nozomi.Ticker
                 // https://stackoverflow.com/questions/39116047/how-to-change-base-url-of-swagger-in-asp-net-core
                 c.RoutePrefix = "docs";
                 c.SwaggerEndpoint("/swagger/" + GlobalApiVariables.CURRENT_API_VERSION + "/swagger.json", "Nozomi API");
+            });
+            
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllerRoute(
+                    name: "default",
+                    pattern: "{controller=home}/{action=index}/{id?}");
+                
+                endpoints.MapControllerRoute(
+                    name: "Areas",
+                    pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
             });
         }
     }
