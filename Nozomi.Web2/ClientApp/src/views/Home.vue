@@ -26,7 +26,7 @@
     <section class="section">
       <CurrencyModal class="mb-4" v-if="oidcIsAuthenticated"></CurrencyModal>
       <b-tabs>
-        <b-tab-item label="FIAT" icon="cash-usd">
+        <b-tab-item label="FIAT" icon="money-bill-wave">
           <b-table
             :data="fiatTable.data"
 
@@ -44,11 +44,11 @@
                 <div class="content has-text-grey has-text-centered">
                   <p>
                     <b-icon
-                      icon="emoticon-sad"
+                      icon="frown"
                       size="is-large">
                     </b-icon>
                   </p>
-                  <p>No FIAT data yet.</p>
+                  <p>No FIAT data available yet.</p>
                 </div>
               </section>
             </template>
@@ -89,7 +89,7 @@
           </b-table>
           <b-loading :is-full-page="false" :active.sync="fiatTable.loading" :can-cancel="false"></b-loading>
         </b-tab-item>
-        <b-tab-item label="Cryptocurrency" icon="bitcoin">
+        <b-tab-item label="Cryptocurrency" icon-pack="fab" icon="bitcoin">
           <b-table
             :data="cryptoTable.data"
 
@@ -107,7 +107,7 @@
                 <div class="content has-text-grey has-text-centered">
                   <p>
                     <b-icon
-                      icon="emoticon-sad"
+                      icon="frown"
                       size="is-large">
                     </b-icon>
                   </p>

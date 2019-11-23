@@ -26,12 +26,12 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 Vue.component('vue-fontawesome', FontAwesomeIcon);
 
 // Font awesome solid icon configurations
-import { faAtlas, faHome, faInfo, faUniversity } from '@fortawesome/free-solid-svg-icons';
-library.add(faAtlas, faHome, faInfo, faUniversity);
+import { faAtlas, faColumns, faFrown, faHome, faInfo, faMoneyBillWave, faUniversity } from '@fortawesome/free-solid-svg-icons';
+library.add(faAtlas, faColumns, faFrown, faHome, faInfo, faMoneyBillWave, faUniversity);
 
 // Font awesome brand icon configurations
-import { faEthereum, faFontAwesome } from '@fortawesome/free-brands-svg-icons';
-library.add(faEthereum, faFontAwesome);
+import { faBitcoin, faEthereum, faFontAwesome } from '@fortawesome/free-brands-svg-icons';
+library.add(faBitcoin, faEthereum, faFontAwesome);
 
 // Registration of Buefy
 Vue.use(Buefy, {
