@@ -21,43 +21,43 @@ import OidcCallback from '../components/auth/oidc-callback';
 // @ts-ignore
 import OidcCallbackError from '../components/auth/oidc-callback-error';
 
-let router =  new VueRouter({
+const router = new VueRouter({
   mode: 'history',
   base: process.env.BASE_URL,
   routes: [
     { name: 'home', path: '/', component: HomePage,
-      meta: { isPublic: true, onNav: false }
+      meta: { icon: 'home', isPublic: true, onNav: false }
     },
     { name: 'about', path: '/about', component: About, 
-      meta: { isPublic: true, onNav: true }
+      meta: { icon: 'info', isPublic: true, onNav: true }
     },
     { name: 'source-index', path: '/source', props: true, component: SourceIndex, 
-      meta: { isPublic: true, onNav: true }
+      meta: { icon: 'landmark', isPublic: true, onNav: true }
     },
     // Currency-specific routing
     { name: 'view-currency', path: '/currency/:slug', props: true, component: ViewCurrency,
-      meta: { isPublic: true, onNav: false }
+      meta: { icon: null, isPublic: true, onNav: false }
     },
     // Authentication-specific routing
     {
       path: '/oidc-callback', // Needs to match redirectUri (redirect_uri if you use snake case) in you oidcSettings
       name: 'oidcCallback',
       component: OidcCallback,
-      meta: { isPublic: true, onNav: false }
+      meta: { icon: null, isPublic: true, onNav: false }
     },
     // Authentication-specific routing
     {
       path: '/oidc-callback-error', // Needs to match redirectUri (redirect_uri if you use snake case) in you oidcSettings
       name: 'oidcCallbackError',
       component: OidcCallbackError,
-      meta: { isPublic: true, onNav: false }
+      meta: { icon: null, isPublic: true, onNav: false }
     },
     // Dashboard home routing
     { name: 'dashboard', path: '/dashboard', props: true, component: DashboardHome,
-      meta: { isPublic: false, onNav: false }
+      meta: { icon: 'columns', isPublic: false, onNav: false }
     },
     { name: 'modify-account', path: '/dashboard/modify-account', props: true, component: ModifyProfile,
-      meta: { isPublic: false, onNav: false }
+      meta: { icon: null, isPublic: false, onNav: false }
     },
   ]
   // routes: [

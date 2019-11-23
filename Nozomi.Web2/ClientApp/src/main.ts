@@ -26,8 +26,12 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 Vue.component('vue-fontawesome', FontAwesomeIcon);
 
 // Font awesome solid icon configurations
-import { faAtlas, faColumns, faFrown, faHome, faInfo, faMoneyBillWave, faUniversity } from '@fortawesome/free-solid-svg-icons';
-library.add(faAtlas, faColumns, faFrown, faHome, faInfo, faMoneyBillWave, faUniversity);
+import { faAngleLeft, faAngleRight, faArrowUp, faAtlas, faColumns, 
+  faExclamationTriangle, faFrown, 
+  faHome, faInfo, faLandmark, faMoneyBillWave, faUniversity } from '@fortawesome/free-solid-svg-icons';
+library.add(faAngleLeft, faAngleRight, faArrowUp, faAtlas, faColumns,
+    faExclamationTriangle, faFrown,
+    faHome, faInfo, faLandmark, faMoneyBillWave, faUniversity);
 
 // Font awesome brand icon configurations
 import { faBitcoin, faEthereum, faFontAwesome } from '@fortawesome/free-brands-svg-icons';
