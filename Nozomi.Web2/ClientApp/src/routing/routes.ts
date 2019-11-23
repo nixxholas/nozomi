@@ -1,51 +1,55 @@
+// @ts-ignore
 import HomePage from '../views/Home';
+// @ts-ignore
 import About from '../views/About';
-
+// @ts-ignore
 import ViewCurrency from '../views/currency/View';
-
+// @ts-ignore
 import SourceIndex from '../views/source/Index';
-
+// @ts-ignore
 import DashboardHome from '../views/dashboard/Index';
+// @ts-ignore
 import ModifyProfile from '../views/dashboard/account/ModifyProfile';
-
+// @ts-ignore
 import OidcCallback from '../components/auth/oidc-callback';
+// @ts-ignore
 import OidcCallbackError from '../components/auth/oidc-callback-error';
 
 export const routes = [
-  { name: 'home', path: '/', component: HomePage, display: 'Home', icon: ['fa', 'home'],
-    meta: { isPublic: true, onNav: false }
+  { name: 'home', path: '/', component: HomePage, display: 'Home',
+    meta: { icon: 'home', isPublic: true, onNav: false }
   },
-  { name: 'about', path: '/about', component: About, display: 'About', icon: ['fa', 'info'],
-    meta: { isPublic: true, onNav: true }
+  { name: 'about', path: '/about', component: About, display: 'About',
+    meta: { icon: 'info', isPublic: true, onNav: true }
   },
-  { name: 'source-index', path: '/source', props: true, component: SourceIndex, display: 'Sources', icon: ['fa', 'university'],
-    meta: { isPublic: true, onNav: true }
+  { name: 'source-index', path: '/source', props: true, display: 'Sources', 
+    component: SourceIndex,
+    meta: { icon: 'landmark', isPublic: true, onNav: true }
   },
   // Currency-specific routing
-  { name: 'view-currency', path: '/currency/:slug', props: true, component: ViewCurrency,
-    meta: { isPublic: true, onNav: false }
+  { name: 'view-currency', path: '/currency/:slug', props: true,
+    display: 'View Currency', component: ViewCurrency,
+    meta: { icon: null, isPublic: true, onNav: false }
   },
   // Authentication-specific routing
   {
     path: '/oidc-callback', // Needs to match redirectUri (redirect_uri if you use snake case) in you oidcSettings
-    name: 'oidcCallback',
-    display: 'OIDC Callback',
+    name: 'oidcCallback', display: 'Nozomi OIDC Redirection',
     component: OidcCallback,
-    meta: { isPublic: true, onNav: false }
+    meta: { icon: null, isPublic: true, onNav: false }
   },
   // Authentication-specific routing
   {
     path: '/oidc-callback-error', // Needs to match redirectUri (redirect_uri if you use snake case) in you oidcSettings
-    name: 'oidcCallbackError',
-    display: 'Nozomi Auth Error',
+    name: 'oidcCallbackError', display: 'Nozomi OIDC Callback Error',
     component: OidcCallbackError,
-    meta: { isPublic: true, onNav: false }
+    meta: { icon: null, isPublic: true, onNav: false }
   },
   // Dashboard home routing
   { name: 'dashboard', path: '/dashboard', props: true, component: DashboardHome,
-    meta: { isPublic: false, onNav: false }
+    meta: { icon: 'columns', isPublic: false, onNav: false }
   },
   { name: 'modify-account', path: '/dashboard/modify-account', props: true, component: ModifyProfile,
-    meta: { isPublic: false, onNav: false }
+    meta: { icon: null, isPublic: false, onNav: false }
   },
 ];
