@@ -3,7 +3,6 @@ import 'regenerator-runtime/runtime';
 import Vue from 'vue';
 import Buefy from 'buefy';
 import 'buefy/dist/buefy.css';
-import 'vue-material-design-icons/styles.css';
 import './plugins/axios';
 // @ts-ignore
 import * as numeral from 'numeral';
@@ -18,16 +17,29 @@ import router from '@/routing/router';
 import store from '@/store/index';
 import './registerServiceWorker';
 import dateFilter from '@/filters/date.filter';
-import { library } from '@fortawesome/fontawesome-svg-core';
-import { faAtlas, faHome, faInfo, faUniversity } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 
-// Font awesome configurations
+// FontAwesome!!!
+import { library } from '@fortawesome/fontawesome-svg-core';
+// Vue Injection
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+// Vue.component('icon', FontAwesomeIcon);
+Vue.component('vue-fontawesome', FontAwesomeIcon);
+
+// Font awesome solid icon configurations
+import { faAtlas, faHome, faInfo, faUniversity } from '@fortawesome/free-solid-svg-icons';
 library.add(faAtlas, faHome, faInfo, faUniversity);
-Vue.component('icon', FontAwesomeIcon);
+
+// Font awesome brand icon configurations
+import { faEthereum, faFontAwesome } from '@fortawesome/free-brands-svg-icons';
+library.add(faEthereum, faFontAwesome);
 
 // Registration of Buefy
-Vue.use(Buefy);
+Vue.use(Buefy, {
+  defaultIconPack: 'fas',
+  defaultIconComponent: 'vue-fontawesome',
+  // defaultContainerElement: '#content',
+  // ...
+});
 // Registration of Vue Numerals
 Vue.use(VueNumerals); // default locale is 'en'
 // Registration of Vue apexcharts
