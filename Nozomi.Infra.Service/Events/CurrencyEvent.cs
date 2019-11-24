@@ -929,7 +929,7 @@ namespace Nozomi.Service.Events
             }
         }
 
-        public ICollection<string> ListAll()
+        public ICollection<string> ListAllSlugs()
         {
             return _unitOfWork.GetRepository<Currency>()
                 .GetQueryable()

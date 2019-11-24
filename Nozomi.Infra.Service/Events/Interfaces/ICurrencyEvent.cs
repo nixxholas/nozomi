@@ -71,7 +71,7 @@ namespace Nozomi.Service.Events.Interfaces
         IEnumerable<dynamic> GetAllActiveObsc(bool includeNested = false);
         IEnumerable<dynamic> GetAllActiveDistinctObsc(bool includeNested = false);
 
-        ICollection<string> ListAll();
+        ICollection<string> ListAllSlugs();
 
         IReadOnlyDictionary<string, long> ListAllMapped();
     }
