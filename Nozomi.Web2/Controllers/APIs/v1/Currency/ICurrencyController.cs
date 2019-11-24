@@ -21,7 +21,9 @@ namespace Nozomi.Web2.Controllers.APIs.v1.Currency
 
         IActionResult GetCountByType(string currencyType = "CRYPTO");
 
-        NozomiResult<ICollection<string>> ListAll();
+        NozomiResult<ICollection<string>> ListAllSlugs();
+
+        ICollection<CurrencyViewModel> ListAll();
 
         NozomiResult<DetailedCurrencyResponse> Detailed(string slug);
 

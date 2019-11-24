@@ -88,9 +88,14 @@ namespace Nozomi.Web2.Controllers.APIs.v1.Currency
         }
 
         [HttpGet]
-        public NozomiResult<ICollection<string>> ListAll()
+        public NozomiResult<ICollection<string>> ListAllSlugs()
         {
             return new NozomiResult<ICollection<string>>(_currencyEvent.ListAllSlugs());
+        }
+
+        public ICollection<CurrencyViewModel> ListAll()
+        {
+            return _currencyEvent.ListAll().ToList();
         }
 
         [HttpGet("{slug}")]
