@@ -24,7 +24,6 @@
     </section>
 
     <section class="section">
-      <CurrencyModal class="mb-4" v-if="oidcIsAuthenticated"></CurrencyModal>
       <b-tabs>
         <b-tab-item label="FIAT" icon="money-bill-wave">
           <b-table
@@ -163,7 +162,6 @@
     import CurrencyService from "@/services/CurrencyService";
     import ComponentService from "@/services/ComponentService";
     // import {Carousel, Slide} from 'vue-carousel';
-    import CurrencyModal from '@/components/modals/currency-modal';
 
     export default {
         computed: {
@@ -195,8 +193,7 @@
         },
         components: {
             //Carousel,
-            //Slide,
-            CurrencyModal
+            //Slide
         },
         methods: {
             onPageChange(page) {

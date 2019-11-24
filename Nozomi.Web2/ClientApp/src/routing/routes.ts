@@ -5,6 +5,8 @@ import About from '../views/About';
 // @ts-ignore
 import ViewCurrency from '../views/currency/View';
 // @ts-ignore
+import CurrencyIndex from '../views/currency/Index';
+// @ts-ignore
 import SourceIndex from '../views/source/Index';
 // @ts-ignore
 import DashboardHome from '../views/dashboard/Index';
@@ -19,12 +21,16 @@ export const routes = [
   { name: 'home', path: '/', component: HomePage, display: 'Home',
     meta: { icon: 'home', isPublic: true, onNav: false }
   },
-  { name: 'about', path: '/about', component: About, display: 'About',
-    meta: { icon: 'info', isPublic: true, onNav: true }
+  { name: 'currency-index', path: '/currencies', props: true, display: 'Currencies',
+    component: CurrencyIndex,
+    meta: { icon: 'coins', isPublic: true, onNav: true }
   },
-  { name: 'source-index', path: '/source', props: true, display: 'Sources', 
+  { name: 'source-index', path: '/sources', props: true, display: 'Sources', 
     component: SourceIndex,
     meta: { icon: 'landmark', isPublic: true, onNav: true }
+  },
+  { name: 'about', path: '/about', component: About, display: 'About',
+    meta: { icon: 'info', isPublic: true, onNav: true }
   },
   // Currency-specific routing
   { name: 'view-currency', path: '/currency/:slug', props: true,
