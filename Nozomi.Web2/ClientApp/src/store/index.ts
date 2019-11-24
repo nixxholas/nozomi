@@ -43,8 +43,7 @@ const store: StoreOptions<RootState> = {
               duration: 3000,
               message: 'Successfully authenticated!',
               position: 'is-bottom-right',
-              type: 'is-success',
-              hasIcon: true
+              type: 'is-success'
             })
           },
           userUnloaded: () => console.log('OIDC user is unloaded'),
