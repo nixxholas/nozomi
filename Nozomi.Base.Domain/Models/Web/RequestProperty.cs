@@ -1,7 +1,9 @@
-﻿using Nozomi.Base.Core;
+﻿using System.Runtime.Serialization;
+using Nozomi.Base.Core;
 
 namespace Nozomi.Data.Models.Web
 {
+    [DataContract]
     public class RequestProperty : Entity
     {
         public RequestProperty() {}
@@ -16,10 +18,13 @@ namespace Nozomi.Data.Models.Web
         
         public long Id { get; set; }
 
+        [DataMember]
         public RequestPropertyType RequestPropertyType { get; set; }
 
+        [DataMember]
         public string Key { get; set; }
 
+        [DataMember]
         public string Value { get; set; }
 
         public long RequestId { get; set; }

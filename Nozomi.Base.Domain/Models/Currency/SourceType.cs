@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 using Nozomi.Base.Core;
 
 namespace Nozomi.Data.Models.Currency
 {
+    [DataContract]
     public class SourceType : Entity
     {
         public SourceType() {}
@@ -18,8 +20,10 @@ namespace Nozomi.Data.Models.Currency
         
         public Guid Guid { get; set; }
     
+        [DataMember]
         public string Abbreviation { get; set; }
         
+        [DataMember]
         public string Name { get; set; }
         
         public ICollection<Source> Sources { get; set; }

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 using Nozomi.Base.Core;
 
 namespace Nozomi.Data.Models.Currency
@@ -6,6 +7,7 @@ namespace Nozomi.Data.Models.Currency
     /// <summary>
     /// The best way to peg currencies to sources.
     /// </summary>
+    [DataContract]
     public class CurrencySource : Entity
     {
         public CurrencySource() {}

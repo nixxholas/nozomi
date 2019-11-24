@@ -1,8 +1,10 @@
 using System;
+using System.Runtime.Serialization;
 using Nozomi.Base.Core;
 
 namespace Nozomi.Data.Models.Web.Analytical
 {
+    [DataContract]
     public class AnalysedHistoricItem : Entity
     {
         public long Id { get; set; }
@@ -11,8 +13,10 @@ namespace Nozomi.Data.Models.Web.Analytical
         
         public AnalysedComponent AnalysedComponent { get; set; }
         
+        [DataMember]
         public string Value { get; set; }
         
+        [DataMember]
         public DateTime HistoricDateTime { get; set; }
     }
 }

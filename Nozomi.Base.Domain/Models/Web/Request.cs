@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using Nozomi.Base.Core;
 using Nozomi.Data.AreaModels.v1.AnalysedComponent;
 using Nozomi.Data.AreaModels.v1.RequestComponent;
@@ -12,6 +13,7 @@ using Nozomi.Data.Models.Web.Websocket;
 
 namespace Nozomi.Data.Models.Web
 {
+    [DataContract]
     public class Request : Entity
     {
         public Request() {}
@@ -28,22 +30,28 @@ namespace Nozomi.Data.Models.Web
         
         public long Id { get; set; }
 
+        [DataMember]
         public Guid Guid { get; set; }
 
+        [DataMember]
         public RequestType RequestType { get; set; }
 
+        [DataMember]
         public ResponseType ResponseType { get; set; }
 
         /// <summary>
         /// URL.
         /// </summary>
+        [DataMember]
         public string DataPath { get; set; }
 
         /// <summary>
         /// Defines the delay of repeating in milliseconds.
         /// </summary>
+        [DataMember]
         public int Delay { get; set; }
 
+        [DataMember]
         public long FailureDelay { get; set; }
         
         public long? CurrencyId { get; set; }

@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Runtime.Serialization;
 using Nozomi.Base.Core;
 
 namespace Nozomi.Data.Models.Currency
 {
+    [DataContract]
     public class Source : Entity
     {
         public Source() {}
@@ -29,11 +31,14 @@ namespace Nozomi.Data.Models.Currency
         
         public long Id { get; set; }
 
+        [DataMember]
         public Guid Guid { get; set; }
 
         // Short form for the currency source if needed.
+        [DataMember]
         public string Abbreviation { get; set; }
 
+        [DataMember]
         public string Name { get; set; }
 
         public string APIDocsURL { get; set; }

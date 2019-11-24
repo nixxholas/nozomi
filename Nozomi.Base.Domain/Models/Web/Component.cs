@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using Nozomi.Base.Core;
 using Nozomi.Data.Models.Currency;
 
 namespace Nozomi.Data.Models.Web
 {
+    [DataContract]
     public class Component : Entity
     {
         // Default Constructor
@@ -79,8 +81,10 @@ namespace Nozomi.Data.Models.Web
         
         public long Id { get; set; }
         
+        [DataMember]
         public Guid Guid { get; set; }
 
+        [DataMember]
         public ComponentType ComponentType { get; set; } = ComponentType.Unknown;
         
         /// <summary>
@@ -91,6 +95,7 @@ namespace Nozomi.Data.Models.Web
         /// Identifier = data/s/ethbtc
         /// i.e. data/
         /// </summary>
+        [DataMember]
         public string Identifier { get; set; }
 
         /// <summary>
@@ -103,6 +108,7 @@ namespace Nozomi.Data.Models.Web
         /// If the component is actually an array, just toss a number. We'll attempt
         /// to pass thing parameter to an integer first anyway, so as to be able
         /// to distinguish if we're offloading data from an array or object.
+        [DataMember]
         public string QueryComponent { get; set; }
 
         public bool IsDenominated { get; set; } = false;
@@ -111,6 +117,7 @@ namespace Nozomi.Data.Models.Web
         
         public bool StoreHistoricals { get; set; }
 
+        [DataMember]
         public string Value { get; set; }
 
         public long RequestId { get; set; }

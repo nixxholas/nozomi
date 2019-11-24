@@ -1,13 +1,17 @@
+using System.Runtime.Serialization;
 using Nozomi.Base.Core;
 
 namespace Nozomi.Data.Models.Currency
 {
+    [DataContract]
     public class CurrencyProperty : Entity
     {
         public long Id { get; set; }
         
+        [DataMember]
         public CurrencyPropertyType Type { get; set; }
         
+        [DataMember]
         public string Value { get; set; }
         
         public long CurrencyId { get; set; }

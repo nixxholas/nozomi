@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using Nozomi.Base.Core;
 using Nozomi.Data.Models.Currency;
 
@@ -9,6 +10,7 @@ namespace Nozomi.Data.Models.Web.Analytical
     /// <summary>
     /// Component made only in runtime.
     /// </summary>
+    [DataContract]
     public class AnalysedComponent : Entity
     {
         public AnalysedComponent() {}
@@ -252,8 +254,10 @@ namespace Nozomi.Data.Models.Web.Analytical
         
         public long Id { get; set; }
         
+        [DataMember]
         public AnalysedComponentType ComponentType { get; set; }
         
+        [DataMember]
         public string Value { get; set; }
 
         public bool IsDenominated { get; set; } = false;
