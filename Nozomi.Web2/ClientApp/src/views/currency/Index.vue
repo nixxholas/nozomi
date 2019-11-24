@@ -7,7 +7,7 @@
                         Currencies
                     </h1>
                     <h2 class="subtitle">
-                        A look at where all of our data came from.
+                        
                     </h2>
                 </div>
             </div>
@@ -50,9 +50,9 @@
                     {{ props.row.name }}
                 </b-table-column>
 
-                <b-table-column field="sourceTypeGuid" label="Type" v-if="typeData !== null && typeData.length > 0">
-                    {{ typeData.filter(e => e.guid == props.row.sourceTypeGuid)[0].name }}
-                </b-table-column>
+<!--                <b-table-column field="sourceTypeGuid" label="Type" v-if="typeData !== null && typeData.length > 0">-->
+<!--                    {{ typeData.filter(e => e.guid == props.row.sourceTypeGuid)[0].name }}-->
+<!--                </b-table-column>-->
             </template>
         </b-table>
     </div>
@@ -61,7 +61,7 @@
 <script>
     import { mapGetters } from 'vuex';
     import CurrencyModal from '@/components/modals/currency-modal';
-    import SourceService from "../../services/SourceService";
+    import CurrencyService from "../../services/CurrencyService";
     import SourceTypeService from "../../services/SourceTypeService";
 
     export default {
@@ -92,7 +92,7 @@
                 if (value) {
                     let self = this;
                     self.dataLoading = true;
-                    SourceService.getAll()
+                    CurrencyService.listAll()
                         .then(function (res) {
                             self.data = res;
 
@@ -103,7 +103,7 @@
         },
         mounted: function() {
             let self = this;
-            SourceService.getAll()
+            CurrencyService.listAll()
                 .then(function (res) {
                     self.data = res;
 
