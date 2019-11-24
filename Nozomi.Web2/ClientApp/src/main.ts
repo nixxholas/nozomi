@@ -10,7 +10,6 @@ import * as numeral from 'numeral';
 import VueNumerals from 'vue-numerals';
 import VueApexCharts from 'vue-apexcharts';
 import * as moment from 'moment';
-// import vuetify from './plugins/vuetify';
 import App from './App.vue';
 // @ts-ignore
 import router from '@/routing/router';
@@ -57,7 +56,6 @@ Vue.config.productionTip = false;
 Vue.filter('date', dateFilter);
 
 new Vue({
-  // vuetify,
   router,
   store,
   render: (h) => h(App),
