@@ -939,11 +939,15 @@ namespace Nozomi.Service.Events
                 .ToList();
         }
 
-        public IEnumerable<CurrencyViewModel> ListAll()
+        public IEnumerable<CurrencyViewModel> ListAll(int page = 0, int itemsPerPage = 50)
         {
             return _unitOfWork.GetRepository<Currency>()
                 .GetQueryable()
                 .AsNoTracking()
+                .Where(c => c.IsEnabled && c.DeletedAt == null
+                            && c.CurrencyTypeId > 0)
+                .Skip(page * itemsPerPage)
+                .Take(itemsPerPage)
                 .Include(c => c.CurrencyType)
                 .Select(c => new CurrencyViewModel
                 {

@@ -94,9 +94,9 @@ namespace Nozomi.Web2.Controllers.APIs.v1.Currency
         }
 
         [HttpGet]
-        public ICollection<CurrencyViewModel> ListAll()
+        public ICollection<CurrencyViewModel> ListAll(int page = 0, int itemPerPage = 50)
         {
-            return _currencyEvent.ListAll().ToList();
+            return _currencyEvent.ListAll(page, itemPerPage).ToList();
         }
 
         [HttpGet("{slug}")]

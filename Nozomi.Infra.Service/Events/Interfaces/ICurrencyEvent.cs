@@ -73,7 +73,7 @@ namespace Nozomi.Service.Events.Interfaces
 
         ICollection<string> ListAllSlugs();
 
-        IEnumerable<CurrencyViewModel> ListAll();
+        IEnumerable<CurrencyViewModel> ListAll(int page = 0, int itemsPerPage = 50);
 
         IReadOnlyDictionary<string, long> ListAllMapped();
     }
