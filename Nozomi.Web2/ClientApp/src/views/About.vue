@@ -14,76 +14,72 @@
                 <b-button rounded type="is-dark">Get Started</b-button>
               </p>
             </div>
-            <div class="column is-5 is-offset-1">
+            <div class="column is-5">
               <figure class="image">
-                <object data="/assets/svg/illustrations/knowledgebase-community.svg" type="image/svg+xml"></object>
+                <img src="@/assets/svg/illustrations/knowledgebase-community.png">
               </figure>
             </div>
-
+            <div class="column is-1"></div>
           </div>
         </div>
       </div>
     </section>
 
-    <section class="section">
-      <article class="text-center mb-5 mt-3">
-        <h4 class="title is-4 mb-3">Team</h4>
-        <h2 class="title is-2">
-          <strong class="text-primary">“</strong>
-          Great things in business are never done by one person.<br>
-          They're done by a team of people.
-          <strong class="text-primary">“
-            <small> - Steve Jobs</small>
-          </strong>
-        </h2>
-      </article>
-
-      <div class="row">
-        <div class="columns is-desktop">
-          <div class="column">
-            <div class="card">
-              <div class="card-image">
-                <figure class="image is-4by4">
-                </figure>
-              </div>
-              <div class="card-content">
-                <div class="media">
-                  <div class="media-content">
-                    <p class="title is-4">Jasper Chua</p>
-                    <p class="subtitle is-6">Co-founder & CEO</p>
+    <section class="hero is-primary is-bold">
+      <div class="hero-body">
+        <div class="container">
+          <h1 class="title is-1">
+            Our team
+          </h1>
+          
+          <div class="row">
+            <div class="columns is-desktop">
+              <div class="column">
+                <div class="card">
+                  <div class="card-image">
+                    <figure class="image is-4by4">
+                    </figure>
+                  </div>
+                  <div class="card-content">
+                    <div class="media">
+                      <div class="media-content">
+                        <p class="title is-4 has-text-black">Jasper Chua</p>
+                        <p class="subtitle is-6 has-text-black">Co-founder & CEO</p>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          </div>
-          <div class="column">
-            <div class="card">
-              <div class="card-image">
-                <figure class="image is-4by4">
-                  <img src="/assets/img/people/nicholas.jpg">
-                </figure>
-              </div>
-              <div class="card-content">
-                <div class="media">
-                  <div class="media-content">
-                    <p class="title is-4">Nicholas Chen</p>
-                    <p class="subtitle is-6">Founder & Product Architect</p>
+              <div class="column">
+                <div class="card">
+                  <div class="card-image">
+                    <figure class="image is-4by4">
+                      <img src="/assets/img/people/nicholas.jpg">
+                    </figure>
+                  </div>
+                  <div class="card-content">
+                    <div class="media">
+                      <div class="media-content">
+                        <p class="title is-4 has-text-black">Nicholas Chen</p>
+                        <p class="subtitle is-6 has-text-black">Founder & Product Architect</p>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          </div>
-          <div class="column">
-            <div class="card">
-              <div class="card-image">
-                <figure class="image is-4by4">
-                </figure>
-              </div>
-              <div class="card-content">
-                <div class="media">
-                  <div class="media-content">
-                    <p class="title is-4">Elvis Yong</p>
-                    <p class="subtitle is-6">Software Engineer</p>
+              <div class="column">
+                <div class="card">
+                  <div class="card-image">
+                    <figure class="image is-4by4">
+                    </figure>
+                  </div>
+                  <div class="card-content">
+                    <div class="media">
+                      <div class="media-content">
+                        <p class="title is-4 has-text-black">Elvis Yong</p>
+                        <p class="subtitle is-6 has-text-black">Software Engineer</p>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
