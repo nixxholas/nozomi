@@ -93,6 +93,7 @@ namespace Nozomi.Web2.Controllers.APIs.v1.Currency
             return new NozomiResult<ICollection<string>>(_currencyEvent.ListAllSlugs());
         }
 
+        [HttpGet]
         public ICollection<CurrencyViewModel> ListAll()
         {
             return _currencyEvent.ListAll().ToList();
