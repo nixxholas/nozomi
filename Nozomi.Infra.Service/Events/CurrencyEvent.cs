@@ -939,6 +939,25 @@ namespace Nozomi.Service.Events
                 .ToList();
         }
 
+        public IEnumerable<CurrencyViewModel> ListAll()
+        {
+            return _unitOfWork.GetRepository<Currency>()
+                .GetQueryable()
+                .AsNoTracking()
+                .Include(c => c.CurrencyType)
+                .Select(c => new CurrencyViewModel
+                {
+                    Abbreviation = c.Abbreviation,
+                    CurrencyTypeGuid = c.CurrencyType.Guid,
+                    DenominationName = c.DenominationName,
+                    Denominations = c.Denominations,
+                    Description = c.Description,
+                    LogoPath = c.LogoPath,
+                    Name = c.Name,
+                    Slug = c.Slug
+                });
+        }
+
         public IReadOnlyDictionary<string, long> ListAllMapped()
         {
             return _unitOfWork.GetRepository<Currency>()
