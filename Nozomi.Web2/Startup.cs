@@ -140,7 +140,10 @@ namespace Nozomi.Web2
                 c.DocumentTitle = "Nozomi API";
                 // https://stackoverflow.com/questions/39116047/how-to-change-base-url-of-swagger-in-asp-net-core
                 c.RoutePrefix = "docs";
-                c.SwaggerEndpoint("/swagger/" + GlobalApiVariables.CURRENT_API_VERSION + "/swagger.json", "Nozomi API");
+                c.SwaggerEndpoint("/swagger/" + 
+                                  GlobalApiVariables.CURRENT_API_VERSION + "/swagger.json", "Nozomi API");
+                c.IndexStream = () => GetType().Assembly
+                    .GetManifestResourceStream("Nozomi.Web2.Resources.Index.html"); // requires file to be added as an embedded resource
                 
                 c.DocExpansion(DocExpansion.None);
                 c.EnableDeepLinking();
