@@ -87,6 +87,12 @@ namespace Nozomi.Web2.Controllers.APIs.v1.Currency
             return Ok(count);
         }
 
+        [HttpGet("{slug}")]
+        public CurrencyViewModel Get(string slug)
+        {
+            return _currencyEvent.Get(slug);
+        }
+
         [HttpGet]
         public NozomiResult<ICollection<string>> ListAllSlugs()
         {
