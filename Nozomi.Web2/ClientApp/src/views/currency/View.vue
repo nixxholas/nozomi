@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <section class="hero">
+  <div class="container">
+    <section class="hero" v-if="data">
       <div class="hero-body">
         <div class="columns is-desktop is-multiline">
           <div class="column">
@@ -88,7 +88,7 @@
                           <div class="content has-text-grey has-text-centered">
                             <p>
                               <b-icon
-                                icon="emoticon-sad"
+                                icon="frown"
                                 size="is-large">
                               </b-icon>
                             </p>
@@ -126,7 +126,7 @@
                             <div class="content has-text-grey has-text-centered">
                               <p>
                                 <b-icon
-                                  icon="emoticon-sad"
+                                  icon="frown"
                                   size="is-large">
                                 </b-icon>
                               </p>
@@ -148,6 +148,18 @@
                 </b-tabs>
             </div>
           </div>
+        </div>
+      </div>
+    </section>
+    <section class="hero is-large" v-else>
+      <div class="hero-body">
+        <div class="container">
+          <h1 class="title">
+            Damn.. Something's wrong
+          </h1>
+          <h2 class="subtitle">
+            Seems like the currency you're looking for doesn't exist..
+          </h2>
         </div>
       </div>
     </section>
@@ -180,7 +192,7 @@
 
         this.data = response.data.data;
 
-        if (response.data.data.averagePriceHistory !== null) {
+        if (this.data && this.data.averagePriceHistory) {
           this.series[0].data = response.data.data.averagePriceHistory;
 
           // Chart setup
