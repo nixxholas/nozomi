@@ -48,6 +48,37 @@ namespace Nozomi.Service.Events
                        .Any(c => c.Slug.Equals(slug));
         }
 
+        public CurrencyViewModel Get(string slug)
+        {
+            return _unitOfWork.GetRepository<Currency>()
+                .GetQueryable()
+                .AsNoTracking()
+                .Where(c => c.Slug.Equals(slug, StringComparison.InvariantCultureIgnoreCase) && c.DeletedAt == null)
+                .Include(c => c.AnalysedComponents)
+                .Include(c => c.CurrencyType)
+                .Select(c => new CurrencyViewModel
+                {
+                    CurrencyTypeGuid = c.CurrencyType.Guid,
+                    Abbreviation = c.Abbreviation,
+                    Slug = c.Slug,
+                    Name = c.Name,
+                    LogoPath = c.LogoPath,
+                    Description = c.Description,
+                    Denominations = c.Denominations,
+                    DenominationName = c.DenominationName,
+                    Components = c.AnalysedComponents
+                        .Where(ac => ac.IsEnabled && ac.DeletedAt == null)
+                        .Select(ac => new AnalysedComponentViewModel
+                        {
+                            IsDenominated = ac.IsDenominated,
+                            Type = ac.ComponentType,
+                            UiFormatting = ac.UIFormatting,
+                            Value = ac.Value
+                        })
+                })
+                .SingleOrDefault();
+        }
+
         public IEnumerable<CurrencyViewModel> All(string currencyType = "CRYPTO", int itemsPerIndex = 20, int index = 0, 
             ICollection<ComponentType> typesToTake = null, ICollection<ComponentType> typesToDeepen = null)
         {
