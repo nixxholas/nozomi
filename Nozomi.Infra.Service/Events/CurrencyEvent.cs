@@ -5,6 +5,7 @@ using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using Nozomi.Base.Core;
 using Nozomi.Base.Core.Helpers.Enumerable;
 using Nozomi.Base.Core.Helpers.Native.Numerals;
@@ -53,7 +54,7 @@ namespace Nozomi.Service.Events
             return _unitOfWork.GetRepository<Currency>()
                 .GetQueryable()
                 .AsNoTracking()
-                .Where(c => c.Slug.Equals(slug, StringComparison.InvariantCultureIgnoreCase) && c.DeletedAt == null)
+                .Where(c => c.Slug.Equals(slug) && c.DeletedAt == null)
                 .Include(c => c.AnalysedComponents)
                 .Include(c => c.CurrencyType)
                 .Select(c => new CurrencyViewModel
@@ -67,7 +68,7 @@ namespace Nozomi.Service.Events
                     Denominations = c.Denominations,
                     DenominationName = c.DenominationName,
                     Components = c.AnalysedComponents
-                        .Where(ac => ac.IsEnabled && ac.DeletedAt == null)
+                        .Where(ac => ac.IsEnabled && ac.DeletedAt == null && !string.IsNullOrWhiteSpace(ac.Value))
                         .Select(ac => new AnalysedComponentViewModel
                         {
                             IsDenominated = ac.IsDenominated,
