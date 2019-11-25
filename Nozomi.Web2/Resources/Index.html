@@ -70,7 +70,11 @@
         
         let imgEls = document.getElementsByTagName("img");
         let logoEl = imgEls[0];
-        logoEl.src = "/assets/logo.png";
+        logoEl.src = "/assets/logo-white.png";
+        
+        let logoLinkEl = logoEl.parentNode;
+        logoLinkEl.removeAttr('rel');
+        logoLinkEl.href = "https://nozomi.one";
     }
 </script>
 </body>
