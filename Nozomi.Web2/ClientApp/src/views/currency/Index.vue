@@ -49,6 +49,10 @@
                 <b-table-column field="name" label="Name" sortable>
                     {{ props.row.name }}
                 </b-table-column>
+                
+                <b-table-column field="type" label="Type" sortable>
+                    {{ getType(props.row.currencyTypeGuid).name }}
+                </b-table-column>
 
 <!--                <b-table-column field="sourceTypeGuid" label="Type" v-if="typeData !== null && typeData.length > 0">-->
 <!--                    {{ typeData.filter(e => e.guid == props.row.sourceTypeGuid)[0].name }}-->
@@ -62,7 +66,7 @@
     import { mapGetters } from 'vuex';
     import CurrencyModal from '@/components/modals/currency-modal';
     import CurrencyService from "../../services/CurrencyService";
-    import SourceTypeService from "../../services/SourceTypeService";
+    import CurrencyTypeService from "../../services/CurrencyTypeService";
 
     export default {
         name: "currency-index",
@@ -88,6 +92,16 @@
             }
         },
         methods: {
+            getType(guid) {
+                const types = this.typeData;
+                if (types && types.length > 0)
+                    for (var i = 0; i < types.length; i++) {
+                        if (types[i].guid === guid)
+                            return types[i];
+                    }
+                
+                return "Null"
+            },
             createdNewSource: function (value) {
                 if (value) {
                     let self = this;
@@ -110,7 +124,7 @@
                     self.dataLoading = false;
                 });
 
-            SourceTypeService.getAll()
+            CurrencyTypeService.getAll()
                 .then(function (res) {
                     self.typeData = res;
                 })
