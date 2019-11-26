@@ -11,7 +11,7 @@ RUN apt-get update -q && apt-get install -q -y \
 
 # Node Bash Script for Debian
 # https://github.com/nodesource/distributions#deb
-curl -sL https://deb.nodesource.com/setup_13.x | bash -
+RUN curl -sL https://deb.nodesource.com/setup_13.x | bash -
 
 # Propagate Node for Docker
 RUN apt-get update && apt-get upgrade -y && \
