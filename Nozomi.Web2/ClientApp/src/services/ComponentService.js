@@ -1,4 +1,10 @@
+
+
 export default {
+  getAll() {
+    
+  },
+  
   getComponentValue(dataset, type) {
     if (dataset && dataset.length > 0) {
       let res = dataset.filter(c => c.type === type);

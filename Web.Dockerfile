@@ -7,7 +7,8 @@ RUN dotnet restore Nozomi.Web2/Nozomi.Web2.csproj
 
 # Required libraries in Unix
 RUN apt-get update -q && apt-get install -q -y \
-        curl apt-transport-https apt-utils dialog
+        curl apt-transport-https apt-utils dialog \
+        make g++ build-essential
 
 # Node Bash Script for Debian
 # https://github.com/nodesource/distributions#deb
