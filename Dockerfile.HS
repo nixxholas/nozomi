@@ -15,7 +15,7 @@ RUN dotnet publish Nozomi.HttpSyncing/Nozomi.HttpSyncing.csproj -c Release -o ou
 FROM mcr.microsoft.com/dotnet/core/aspnet:3.0
 WORKDIR /app
 RUN ls
-RUN ls out/
+RUN ls /app/out
 COPY --from=build-env /app/Nozomi.HttpSyncing/out .
 RUN ls
 ENTRYPOINT ["dotnet", "Nozomi.HttpSyncing.dll"]
