@@ -3,7 +3,7 @@ WORKDIR /app
 
 # Copy csproj and restore as distinct layers
 COPY . .
-RUN dotnet restore Nozomi.Web/Nozomi.Web.csproj
+RUN dotnet restore Nozomi.Web2/Nozomi.Web2.csproj
 
 # Required libraries in Unix
 RUN apt-get update -q && apt-get install -q -y \
@@ -18,10 +18,10 @@ RUN apt-get update && apt-get upgrade -y && \
     apt-get install -y nodejs
 
 # Copy everything else and build
-RUN dotnet publish Nozomi.Web/Nozomi.Web.csproj -c Release -o out
+RUN dotnet publish Nozomi.Web2/Nozomi.Web2.csproj -c Release -o out
 
 # Build runtime image
 FROM mcr.microsoft.com/dotnet/core/aspnet:3.0
 WORKDIR /app
 COPY --from=build-env /app/out .
-ENTRYPOINT ["dotnet", "Nozomi.Web.dll"]
+ENTRYPOINT ["dotnet", "Nozomi.Web2.dll"]
