@@ -19,7 +19,7 @@ RUN dotnet publish Nozomi.Compute/Nozomi.Compute.csproj -c Release -o out
 # Build runtime image
 FROM mcr.microsoft.com/dotnet/core/aspnet:3.0
 WORKDIR /app
-COPY --from=build-env /app/Nozomi.Compute/out .
+COPY --from=build-env /app/out .
 # COPY --from=build-env /app/Nozomi.Compute/ca-certificate.crt .
 RUN ls
 ENTRYPOINT ["dotnet", "Nozomi.Compute.dll"]
