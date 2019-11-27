@@ -38,6 +38,8 @@ namespace Nozomi.Service.Events.Interfaces
         /// <returns>Circulating supply of the currency in question.</returns>
         decimal GetCirculatingSupply(AnalysedComponent analysedComponent);
 
+        long Count(bool ignoreDeleted = false, bool ignoreDisabled = false);
+
         long GetCountByType(string typeShortForm = "CRYPTO");
         
         ICollection<Currency> GetAll(bool includeNested = false);

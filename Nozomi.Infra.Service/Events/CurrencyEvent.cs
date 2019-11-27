@@ -594,6 +594,21 @@ namespace Nozomi.Service.Events
             return decimal.MinusOne;
         }
 
+        public long Count(bool ignoreDeleted = false, bool ignoreDisabled = false)
+        {
+            var query = _unitOfWork.GetRepository<Currency>()
+                .GetQueryable()
+                .AsNoTracking();
+
+            if (!ignoreDeleted)
+                query = query.Where(c => c.DeletedAt == null);
+
+            if (!ignoreDisabled)
+                query = query.Where(c => c.IsEnabled);
+
+            return query.LongCount();
+        }
+
         public long GetCountByType(string typeShortForm = "CRYPTO")
         {
             var query = _unitOfWork.GetRepository<CurrencyType>()
