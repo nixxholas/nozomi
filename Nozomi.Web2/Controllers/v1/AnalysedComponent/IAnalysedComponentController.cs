@@ -5,6 +5,8 @@ namespace Nozomi.Web2.Controllers.v1.AnalysedComponent
 {
     public interface IAnalysedComponentController
     {
+        IActionResult All();
+        
         IActionResult Create(CreateAnalysedComponentViewModel vm);
     }
 }
