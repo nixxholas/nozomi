@@ -25,7 +25,7 @@ namespace Nozomi.Web2.Controllers.v1.AnalysedComponent
 
         [Authorize]
         [HttpGet]
-        public IActionResult AllTypes()
+        public IActionResult All()
         {
             var payload = _analysedComponentTypeEvent.GetAllKeyValuePairs();
 
