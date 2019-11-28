@@ -6,6 +6,7 @@ using Nozomi.Data.Models.Web;
 using Nozomi.Data.Models.Web.Analytical;
 using Nozomi.Data.ResponseModels.Currency;
 using Nozomi.Data.ViewModels.Currency;
+using Nozomi.Data.ViewModels.Source;
 
 namespace Nozomi.Service.Events.Interfaces
 {
@@ -16,7 +17,7 @@ namespace Nozomi.Service.Events.Interfaces
         CurrencyViewModel Get(string slug);
         
         IEnumerable<CurrencyViewModel> All(string currencyType = "CRYPTO", int itemsPerIndex = 20, int index = 0, 
-            ICollection<ComponentType> typesToTake = null, 
+            ICollection<ComponentType> typesToTake = null,
             ICollection<ComponentType> typesToDeepen = null);
         
         IEnumerable<CurrencyViewModel> All(string currencyType = "CRYPTO", int itemsPerIndex = 20, int index = 0, 
@@ -80,5 +81,7 @@ namespace Nozomi.Service.Events.Interfaces
         IEnumerable<CurrencyViewModel> ListAll(int page = 0, int itemsPerPage = 50);
 
         IReadOnlyDictionary<string, long> ListAllMapped();
+
+        IEnumerable<SourceViewModel> ListSources(string slug, int page = 0, int itemsPerPage = 50);
     }
 }

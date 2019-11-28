@@ -28,6 +28,7 @@ using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Data;
 using Nozomi.Service.Events.Interfaces;
 using Component = Nozomi.Data.Models.Web.Component;
+using SourceViewModel = Nozomi.Data.ViewModels.Source.SourceViewModel;
 
 namespace Nozomi.Service.Events
 {
@@ -1021,6 +1022,30 @@ namespace Nozomi.Service.Events
                 .AsNoTracking()
                 .Where(c => c.DeletedAt == null && c.IsEnabled)
                 .ToDictionary(c => c.Slug, c => c.Id);
+        }
+
+        public IEnumerable<SourceViewModel> ListSources(string slug, int page = 0, int itemsPerPage = 50)
+        {
+            if (string.IsNullOrWhiteSpace(slug) || page < 0 || itemsPerPage < 1)
+                throw new ArgumentOutOfRangeException("Invalid request parameters.");
+
+            return _unitOfWork.GetRepository<Currency>()
+                .GetQueryable()
+                .AsNoTracking()
+                .Where(c => c.DeletedAt == null && c.IsEnabled && c.Slug.Equals(slug))
+                .Include(c => c.CurrencySources)
+                .ThenInclude(cs => cs.Source)
+                .SelectMany(c => c.CurrencySources
+                    .Where(cs => cs.IsEnabled && cs.DeletedAt == null
+                                 && cs.Source.DeletedAt == null && cs.Source.IsEnabled))
+                .Select(cs => new SourceViewModel
+                {
+                    Guid = cs.Source.Guid,
+                    Abbreviation = cs.Source.Abbreviation,
+                    Name = cs.Source.Name,
+                    ApiDocsUrl = cs.Source.APIDocsURL,
+                    SourceTypeGuid = cs.Source.Guid.ToString()
+                });
         }
     }
 }
