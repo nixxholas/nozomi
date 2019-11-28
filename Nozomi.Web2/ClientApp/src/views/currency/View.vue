@@ -2,9 +2,9 @@
     <div class="container">
         <section class="hero" v-if="data">
             <div class="hero-body">
-                <div class="columns is-desktop is-multiline">
-                    <div class="column">
-                        <nav class="level is-full">
+                <div class="tile is-ancestor notification">
+                    <div class="tile is-parent is-vertical is-3">
+                        <div class="tile is-child">
                             <div class="level-left">
                                 <div class="level-item">
                                     <figure class="image is-64x64" v-if="data.logoPath != null">
@@ -16,54 +16,56 @@
                                         {{ data.name }}
                                     </h1>
                                 </div>
-                                <div class="level-item">
-                                    <h1 class="title">
-                                        <b-tag type="is-info">{{ data.abbreviation }}</b-tag>
-                                    </h1>
-                                </div>
                             </div>
+                        </div>
 
-                            <div class="level-right">
-                                <div class="level-item">
-                                    <h1 class="subtitle">
-                                        {{ data.averagePrice | numeralFormat('$0[.]00') }}
-                                    </h1>
-                                </div>
-                            </div>
-                        </nav>
-                    </div>
+                        <!--                        <div class="level-right">-->
+                        <!--                            <div class="level-item">-->
+                        <!--                                <h1 class="subtitle">-->
+                        <!--                                    {{ data.averagePrice | numeralFormat('$0[.]00') }}-->
+                        <!--                                </h1>-->
+                        <!--                            </div>-->
+                        <!--                        </div>-->
 
-                    <div class="column is-full" v-if="data.description !== null">
-                        <b-message>
-                            {{ data.description }}
-                        </b-message>
-                    </div>
-                </div>
+                        <div class="tile is-child" v-if="data.description !== null">
+                            <b-message>
+                                {{ data.description }}
+                            </b-message>
+                        </div>
 
-                <div class="tile is-ancestor notification">
-                    <div class="tile is-parent is-vertical is-3">
                         <div class="tile is-child" v-if="hasAccess">
                             <p class="heading">Have a component to add?</p>
                             <p class="is-4">
                                 <CreateAcComponentModal :currency-id="data.id"></CreateAcComponentModal>
                             </p>
                         </div>
-                        <div class="tile is-child">
-                            <p class="heading">Market Cap</p>
-                            <p class="title is-4">{{ data.marketCap | numeralFormat('$0[.]00 a') }}</p>
-                        </div>
-                        <div class="tile is-child" v-for="rComp in data.requestComponents">
-                            <p class="heading">{{ rComp.name }}</p>
-                            <p class="title is-4">{{ rComp.value }}</p>
-                        </div>
-                        <div class="tile is-child" v-for="property in data.properties" v-if="property.type !== null">
-                            <p class="heading">{{ property.type }}</p>
-                            <p class="title is-6">{{ property.value }}</p>
+
+<!--                        <div class="tile is-child">-->
+<!--                            <p class="heading">Market Cap</p>-->
+<!--                            <p class="title is-4">{{ data.marketCap | numeralFormat('$0[.]00 a') }}</p>-->
+<!--                        </div>-->
+
+                        <div class="tile is-child"
+                             v-if="data && data.components && data.components.length > 0"
+                             v-for="comp in data.components">
+                            <div v-if="comp.value">
+                                <p class="heading">{{ getTypeName(comp.type) }}</p>
+                                <p class="title is-4" v-if="!comp.uiFormatting">{{ comp.value }}</p>
+                                <p class="title is-4" v-else>{{ comp.value | numeralFormat(comp.uiFormatting) }}</p>
+                            </div>
                         </div>
                     </div>
                     <div class="tile is-parent">
                         <div class="tile is-child is-vertical">
                             <b-tabs @change="onTabChange" type="is-toggle" v-model="activeTab">
+                                <b-tab-item label="Information">
+                                    <div class="tile is-child" v-for="property in data.properties"
+                                         v-if="property.type !== null">
+                                        <p class="heading">{{ property.type }}</p>
+                                        <p class="title is-6">{{ property.value }}</p>
+                                    </div>
+                                </b-tab-item>
+
                                 <b-tab-item label="Chart">
                                     <div class="chart" ref="chart"></div>
                                 </b-tab-item>
@@ -92,7 +94,7 @@
                                                                 size="is-large">
                                                         </b-icon>
                                                     </p>
-                                                    <p>No FIAT data yet.</p>
+                                                    <p>No market data yet.</p>
                                                 </div>
                                             </section>
                                         </template>
@@ -130,7 +132,7 @@
                                                                 size="is-large">
                                                         </b-icon>
                                                     </p>
-                                                    <p>No FIAT data yet.</p>
+                                                    <p>No historical data yet.</p>
                                                 </div>
                                             </section>
                                         </template>
@@ -173,6 +175,7 @@
     import {mapGetters} from 'vuex';
     import CreateAcComponentModal from '@/components/modals/create-analysed-component-modal';
     import AnalysedComponentService from "@/services/AnalysedComponentService";
+    import AnalysedHistoricItemService from "@/services/AnalysedHistoricItemService";
 
     export default {
         computed: {
@@ -190,12 +193,14 @@
             this.loading = true;
 
             try {
-                console.dir(AnalysedComponentService.getTypes());
-                
+                this.typeData = await AnalysedComponentService.getTypes();
+                console.dir(this.typeData);
+
                 const response = await this.$axios.get('/api/Currency/Get/' + this.slug);
 
                 if (response) {
                     this.data = response.data;
+                    console.dir(this.data);
                     //this.series[0].data = response.data.data.averagePriceHistory;
 
                     // Chart setup
@@ -247,6 +252,28 @@
         // mounted: function () {
         // },
         methods: {
+            getTypeName(key) {
+                if (!key)
+                    return null;
+
+                for (let i = 0; i < this.typeData.length; i++) {
+                    if (this.typeData[i].key === key)
+                        return this.typeData[i].value;
+                }
+
+                return null;
+            },
+            getTypeKey(value) {
+                if (!value)
+                    return null;
+
+                for (let i = 0; i < this.typeData.length; i++) {
+                    if (this.typeData[i].value === value)
+                        return this.typeData[i].key;
+                }
+
+                return null;
+            },
             async loadMarketData() {
                 this.isMarketDataLoading = true;
 
@@ -264,16 +291,33 @@
                     throw error;
                 }
             },
-            async loadHistoricalData() {
+            // TODO: Test
+            async loadHistoricalData(page) {
+                if (this.data.components && this.data.components.length > 0)
+                    return;
+                
                 this.historic.loading = true;
 
                 try {
-                    const response = await this.$axios.get('/api/Currency/Historical/' + this.data.slug + '/'
-                        + (this.historic.page - 1) + '/' + this.historic.perPage);
-
-                    this.historic.perPage = response.data.elementsPerPage;
-                    this.historic.data = response.data.data;
-                    this.historic.dataCount = response.data.pages * this.historic.perPage;
+                    let priceTypeKey = this.getTypeKey("Price");
+                    if (!priceTypeKey)
+                        return; // No type named price is found
+                    
+                    let priceComponent;
+                    for (let i = 0; i < this.data.components.length; i++) {
+                        if (this.data.components[i].type === priceTypeKey)
+                            priceComponent = this.data.components[i];
+                    }
+                    
+                    if (priceComponent) {
+                        this.historic.data = await AnalysedHistoricItemService.list(priceComponent.guid, this.historic.page, this.historic.perPage);
+                    }
+                    
+                    // const response = await this.$axios.get('/api/Currency/Historical/' + this.data.slug + '/'
+                    //     + (this.historic.page - 1) + '/' + this.historic.perPage);
+                    //
+                    // this.historic.data = response.data.data;
+                    // this.historic.dataCount = response.data.pages * this.historic.perPage;
                     this.historic.loading = false;
                 } catch (error) {
                     console.error(error);
@@ -288,8 +332,9 @@
                 this.loadMarketData()
             },
             onHistoricalDataPageChange(page) {
-                this.historic.page = page;
-                this.loadHistoricalData();
+                console.dir("Current historic page: " + this.historic.page);
+                // this.historic.page = page;
+                this.loadHistoricalData(page);
             },
             onTabChange(index) {
                 switch (index) {
@@ -317,7 +362,7 @@
                     data: [],
                     dataCount: 0,
                     page: 1,
-                    perPage: 25
+                    perPage: 50
                 },
                 // Chart data
                 options: {
@@ -331,7 +376,8 @@
                 series: [{
                     name: 'Price',
                     data: []
-                }]
+                }],
+                typeData: []
             }
         }
     }
