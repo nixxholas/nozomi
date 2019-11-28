@@ -71,6 +71,7 @@ namespace Nozomi.Service.Events
                         .Where(ac => ac.IsEnabled && ac.DeletedAt == null && !string.IsNullOrWhiteSpace(ac.Value))
                         .Select(ac => new AnalysedComponentViewModel
                         {
+                            Guid = ac.Guid,
                             IsDenominated = ac.IsDenominated,
                             Type = ac.ComponentType,
                             UiFormatting = ac.UIFormatting,
@@ -237,6 +238,7 @@ namespace Nozomi.Service.Events
                                 .Where(ac => typesToTake.Contains(ac.ComponentType))
                                 .Select(ac => new AnalysedComponentViewModel
                                 {
+                                    Guid = ac.Guid,
                                     Type = ac.ComponentType,
                                     UiFormatting = ac.UIFormatting,
                                     Value = ac.Value,
@@ -269,6 +271,7 @@ namespace Nozomi.Service.Events
                                 .Where(ac => typesToTake.Contains(ac.ComponentType))
                                 .Select(ac => new AnalysedComponentViewModel
                                 {
+                                    Guid = ac.Guid,
                                     Type = ac.ComponentType,
                                     UiFormatting = ac.UIFormatting,
                                     Value = ac.Value,
@@ -317,6 +320,7 @@ namespace Nozomi.Service.Events
                                 .Where(ac => typesToTake.Contains(ac.ComponentType))
                                 .Select(ac => new AnalysedComponentViewModel
                                 {
+                                    Guid = ac.Guid,
                                     Type = ac.ComponentType,
                                     UiFormatting = ac.UIFormatting,
                                     Value = ac.Value,
@@ -349,6 +353,7 @@ namespace Nozomi.Service.Events
                                 .Where(ac => typesToTake.Contains(ac.ComponentType))
                                 .Select(ac => new AnalysedComponentViewModel
                                 {
+                                    Guid = ac.Guid,
                                     Type = ac.ComponentType,
                                     UiFormatting = ac.UIFormatting,
                                     Value = ac.Value,
