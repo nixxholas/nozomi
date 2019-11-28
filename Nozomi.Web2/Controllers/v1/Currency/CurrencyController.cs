@@ -71,9 +71,10 @@ namespace Nozomi.Web2.Controllers.v1.Currency
 
         [HttpGet]
         public IActionResult All([FromQuery]string currencyType = "CRYPTO", [FromQuery]int itemsPerIndex = 20,
-            [FromQuery]int index = 0, [FromQuery]AnalysedComponentType sortType = AnalysedComponentType.MarketCap,
-            [FromQuery]bool orderDescending = true, [FromQuery]ICollection<AnalysedComponentType> typesToTake = null,
-            [FromQuery]ICollection<AnalysedComponentType> typesToDeepen = null)
+            [FromQuery]int index = 0, [FromQuery]Data.Models.Web.Analytical.AnalysedComponentType sortType = 
+                Data.Models.Web.Analytical.AnalysedComponentType.MarketCap, [FromQuery]bool orderDescending = true, 
+            [FromQuery]ICollection<Data.Models.Web.Analytical.AnalysedComponentType> typesToTake = null,
+            [FromQuery]ICollection<Data.Models.Web.Analytical.AnalysedComponentType> typesToDeepen = null)
         {
             return Ok(_currencyEvent.All(currencyType, itemsPerIndex, index, sortType, orderDescending, typesToTake,
                 typesToDeepen));
@@ -113,11 +114,11 @@ namespace Nozomi.Web2.Controllers.v1.Currency
                 {
                     Data.Models.Currency.ComponentType.CirculatingSupply
                 },
-                new List<AnalysedComponentType>()
+                new List<Data.Models.Web.Analytical.AnalysedComponentType>()
                 {
-                    AnalysedComponentType.MarketCap,
-                    AnalysedComponentType.CurrentAveragePrice,
-                    AnalysedComponentType.HourlyAveragePrice
+                    Data.Models.Web.Analytical.AnalysedComponentType.MarketCap,
+                    Data.Models.Web.Analytical.AnalysedComponentType.CurrentAveragePrice,
+                    Data.Models.Web.Analytical.AnalysedComponentType.HourlyAveragePrice
                 }));
         }
 
