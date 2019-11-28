@@ -1,4 +1,4 @@
-import store from '../../store/index';
+import store from '../store/index';
 import axios from 'axios';
 
 
@@ -16,7 +16,7 @@ export default {
     
     getTypes() {
         return new Promise((resolve, reject) => {
-            axios.get('/api/AnalysedComponent/All', {
+            axios.get('/api/AnalysedComponentType/All', {
                 headers: {
                     Authorization: "Bearer " + store.state.oidcStore.access_token
                 }

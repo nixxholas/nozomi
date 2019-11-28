@@ -172,6 +172,7 @@
     import {createChart} from 'lightweight-charts';
     import {mapGetters} from 'vuex';
     import CreateAcComponentModal from '@/components/modals/create-analysed-component-modal';
+    import AnalysedComponentService from "@/services/AnalysedComponentService";
 
     export default {
         computed: {
@@ -189,6 +190,8 @@
             this.loading = true;
 
             try {
+                console.dir(AnalysedComponentService.getTypes());
+                
                 const response = await this.$axios.get('/api/Currency/Get/' + this.slug);
 
                 if (response) {

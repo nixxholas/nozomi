@@ -11,6 +11,7 @@ namespace Nozomi.Web2.Controllers.v1.AnalysedComponentType
         {
         }
 
+        [HttpGet]
         public IActionResult All()
         {
             return Ok(NozomiServiceConstants.AnalysedComponentTypeMap);
