@@ -16,10 +16,11 @@ namespace Nozomi.Web2.Controllers.v1.Source
 {
     public class SourceController : BaseApiController<SourceController>, ISourceController
     {
+        private readonly ICurrencyEvent _currencyEvent;
         private readonly ISourceEvent _sourceEvent;
         private readonly ISourceService _sourceService;
 
-        public SourceController(ILogger<SourceController> logger,
+        public SourceController(ILogger<SourceController> logger, ICurrencyEvent currencyEvent,
             ISourceEvent sourceEvent, ISourceService sourceService)
             : base(logger)
         {
@@ -82,6 +83,15 @@ namespace Nozomi.Web2.Controllers.v1.Source
         {
             return new NozomiResult<ICollection<Data.Models.Currency.Source>>(
                 _sourceEvent.GetCurrencySources(slug, page).ToList());
+        }
+
+        [HttpGet("{slug}")]
+        public IActionResult ListByCurrency([FromRoute]string slug, [FromQuery]int page = 0, [FromQuery]int itemsPerPage = 50)
+        {
+            if (string.IsNullOrWhiteSpace(slug) || page < 0 || itemsPerPage < 1)
+                return BadRequest("Invalid parameters.");
+            
+            return Ok(_currencyEvent.ListSources(slug, page, itemsPerPage));
         }
     }
 }
