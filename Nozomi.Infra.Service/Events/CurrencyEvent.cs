@@ -68,7 +68,7 @@ namespace Nozomi.Service.Events
                     Denominations = c.Denominations,
                     DenominationName = c.DenominationName,
                     Components = c.AnalysedComponents
-                        .Where(ac => ac.IsEnabled && ac.DeletedAt == null && !string.IsNullOrWhiteSpace(ac.Value))
+                        .Where(ac => ac.IsEnabled && ac.DeletedAt == null)
                         .Select(ac => new AnalysedComponentViewModel
                         {
                             Guid = ac.Guid,
