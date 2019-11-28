@@ -33,8 +33,8 @@ namespace Nozomi.Web2.Controllers.v1.AnalysedHistoricItem
                 _analysedHistoricItemEvent.GetAll(analysedComponentId, TimeSpan.Zero, index)));
         }
 
-        [HttpGet]
-        public IActionResult List(string guid, int page = 0, int itemsPerPage = 50)
+        [HttpGet("{guid}")]
+        public IActionResult List(string guid, [FromQuery]int page = 0, [FromQuery]int itemsPerPage = 50)
         {
             if (Guid.TryParse(guid, out var uniqueId) && page >= 0 && itemsPerPage >= 1)
             {
