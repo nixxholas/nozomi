@@ -32,5 +32,16 @@ namespace Nozomi.Web2.Controllers.v1.AnalysedHistoricItem
             return Task.FromResult(new NozomiResult<ICollection<Data.Models.Web.Analytical.AnalysedHistoricItem>>(
                 _analysedHistoricItemEvent.GetAll(analysedComponentId, TimeSpan.Zero, index)));
         }
+
+        [HttpGet]
+        public IActionResult List(string guid, int page = 0, int itemsPerPage = 50)
+        {
+            if (Guid.TryParse(guid, out var uniqueId) && page >= 0 && itemsPerPage >= 1)
+            {
+                return Ok(_analysedHistoricItemEvent.List(uniqueId, page, itemsPerPage));
+            }
+
+            return BadRequest("Invalid Guid.");
+        }
     }
 }
