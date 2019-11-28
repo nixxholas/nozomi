@@ -10,6 +10,7 @@ using Nozomi.Base.Core.Responses;
 using Nozomi.Data;
 using Nozomi.Data.Models.Currency;
 using Nozomi.Data.Models.Web.Analytical;
+using Nozomi.Data.ViewModels.AnalysedHistoricItem;
 using Nozomi.Preprocessing;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.BCL.Repository;
@@ -89,6 +90,23 @@ namespace Nozomi.Service.Events.Analysis
             }
 
             throw new ArgumentOutOfRangeException("Invalid analysedComponentId.");
+        }
+
+        public IEnumerable<AnalysedHistoricItemViewModel> List(Guid guid, int page = 0, int itemsPerPage = 50)
+        {
+            return _unitOfWork.GetRepository<AnalysedHistoricItem>()
+                .GetQueryable()
+                .AsNoTracking()
+                .Where(ahi => ahi.DeletedAt == null && ahi.IsEnabled)
+                .Include(ahi => ahi.AnalysedComponent)
+                .Where(ahi => ahi.AnalysedComponent.Guid.Equals(guid))
+                .Skip(page * itemsPerPage)
+                .Take(itemsPerPage)
+                .Select(ahi => new AnalysedHistoricItemViewModel
+                {
+                    Timestamp = ahi.HistoricDateTime,
+                    Value = ahi.Value
+                });
         }
 
         /// <summary>
