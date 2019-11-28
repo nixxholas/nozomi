@@ -61,6 +61,7 @@ namespace Nozomi.Data.Models.Web.Analytical
         public AnalysedComponent(AnalysedComponent component, int index = 0, int items = 100)
         {
             Id = component.Id;
+            Guid = component.Guid;
             ComponentType = component.ComponentType;
             Currency = component.Currency;
             CurrencyId = component.CurrencyId;
@@ -94,6 +95,7 @@ namespace Nozomi.Data.Models.Web.Analytical
             Func<AnalysedHistoricItem, object> orderingExpr = null)
         {
             Id = component.Id;
+            Guid = component.Guid;
             ComponentType = component.ComponentType;
             Currency = component.Currency;
             CurrencyId = component.CurrencyId;
@@ -144,6 +146,7 @@ namespace Nozomi.Data.Models.Web.Analytical
             Func<AnalysedHistoricItem, bool> whereExpr = null)
         {
             Id = component.Id;
+            Guid = component.Guid;
             ComponentType = component.ComponentType;
             Currency = component.Currency;
             CurrencyId = component.CurrencyId;
@@ -196,6 +199,7 @@ namespace Nozomi.Data.Models.Web.Analytical
             Func<AnalysedHistoricItem, object> orderingExpr = null, Func<AnalysedHistoricItem, bool> whereExpr = null)
         {
             Id = component.Id;
+            Guid = component.Guid;
             ComponentType = component.ComponentType;
             Currency = component.Currency;
             CurrencyId = component.CurrencyId;
@@ -253,6 +257,8 @@ namespace Nozomi.Data.Models.Web.Analytical
         }
         
         public long Id { get; set; }
+        
+        public Guid Guid { get; set; }
         
         [DataMember]
         public AnalysedComponentType ComponentType { get; set; }
