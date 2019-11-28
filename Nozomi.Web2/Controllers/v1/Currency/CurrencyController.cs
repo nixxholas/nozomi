@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
@@ -141,6 +142,7 @@ namespace Nozomi.Web2.Controllers.v1.Currency
         /// We'll integrate time scale as soon as possible.
         /// </summary>
         [HttpGet("{slug}/{index}/{perPage}")]
+        [Obsolete]
         public NozomiPaginatedResult<EpochValuePair<decimal>> Historical(string slug, int index = 0, int perPage = 0)
         {
             var res = _analysedHistoricItemEvent.GetCurrencyPriceHistory(slug, index, perPage);
