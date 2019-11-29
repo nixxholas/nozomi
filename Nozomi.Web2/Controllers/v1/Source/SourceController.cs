@@ -24,6 +24,7 @@ namespace Nozomi.Web2.Controllers.v1.Source
             ISourceEvent sourceEvent, ISourceService sourceService)
             : base(logger)
         {
+            _currencyEvent = currencyEvent;
             _sourceEvent = sourceEvent;
             _sourceService = sourceService;
         }
