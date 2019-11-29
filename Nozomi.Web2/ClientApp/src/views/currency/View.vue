@@ -49,7 +49,7 @@
                              v-if="data && data.components && data.components.length > 0"
                              v-for="comp in data.components">
                             <div v-if="comp.value">
-                                <p class="heading">{{ getTypeName(comp.type) }}</p>
+                                <p class="heading">{{ getTypeByKey(comp.type) }}</p>
                                 <p class="title is-4" v-if="!comp.uiFormatting">{{ comp.value }}</p>
                                 <p class="title is-4" v-else>{{ comp.value | numeralFormat(comp.uiFormatting) }}</p>
                             </div>
@@ -72,13 +72,13 @@
 
                                 <b-tab-item label="Markets">
                                     <b-table
-                                            :data="marketData"
-                                            :loading="isMarketDataLoading"
+                                            :data="sources.data"
+                                            :loading="sources.loading"
 
                                             :mobile-cards="true"
-                                            :per-page="perPage"
-                                            :total="totalMarketDataCount"
-                                            @page-change="onMarketDataPageChange"
+                                            :per-page="sources.perPage"
+                                            :total="sources.dataCount"
+                                            @page-change="loadMarketData"
                                             aria-current-label="Current page"
                                             aria-next-label="Next page"
                                             aria-page-label="Page"
@@ -176,6 +176,7 @@
     import CreateAcComponentModal from '@/components/modals/create-analysed-component-modal';
     import AnalysedComponentService from "@/services/AnalysedComponentService";
     import AnalysedHistoricItemService from "@/services/AnalysedHistoricItemService";
+    import SourceService from '@/services/SourceService';
 
     export default {
         computed: {
@@ -194,7 +195,6 @@
 
             try {
                 this.typeData = await AnalysedComponentService.getTypes();
-                console.dir(this.typeData);
 
                 const response = await this.$axios.get('/api/Currency/Get/' + this.slug);
 
@@ -252,42 +252,42 @@
         // mounted: function () {
         // },
         methods: {
-            getTypeName(key) {
+            getTypeByKey(key) {
                 if (!key)
                     return null;
 
                 for (let i = 0; i < this.typeData.length; i++) {
                     if (this.typeData[i].key === key)
-                        return this.typeData[i].value;
+                        return this.typeData[i];
                 }
 
                 return null;
             },
-            getTypeKey(value) {
+            getTypeByValue(value) {
                 if (!value)
                     return null;
 
                 for (let i = 0; i < this.typeData.length; i++) {
                     if (this.typeData[i].value === value)
-                        return this.typeData[i].key;
+                        return this.typeData[i];
                 }
 
                 return null;
             },
-            async loadMarketData() {
-                this.isMarketDataLoading = true;
+            async loadMarketData(page) {
+                this.sources.loading = true;
+                if (!page || page <= 0) // Bad logic, reset check
+                    page = 1;
 
                 try {
-                    const response = await this.$axios.get('/api/Source/GetCurrencySources/' + this.data.slug
-                        + '?page=' + (this.marketDataPage - 1));
-
-                    this.marketData = response.data.data;
-                    this.isMarketDataLoading = false;
+                    this.sources.data = await SourceService.listByCurrency(this.data.slug, (page - 1), this.sources.perPage);
+                    
+                    this.sources.loading = false;
                 } catch (error) {
                     console.error(error);
-                    this.marketData = [];
-                    this.totalMarketDataCount = 0;
-                    this.isMarketDataLoading = false;
+                    this.sources.data = [];
+                    this.sources.dataCount = 0;
+                    this.sources.loading = false;
                     throw error;
                 }
             },
@@ -299,7 +299,7 @@
                 this.historic.loading = true;
 
                 try {
-                    let priceTypeKey = this.getTypeKey("Price");
+                    let priceTypeKey = this.getTypeByValue("Price");
                     if (!priceTypeKey)
                         return; // No type named price is found
                     
@@ -327,10 +327,6 @@
                     throw error;
                 }
             },
-            onMarketDataPageChange(page) {
-                this.marketDataPage = page;
-                this.loadMarketData()
-            },
             onHistoricalDataPageChange(page) {
                 console.dir("Current historic page: " + this.historic.page);
                 // this.historic.page = page;
@@ -338,11 +334,15 @@
             },
             onTabChange(index) {
                 switch (index) {
-                    case 1:
-                        this.loadMarketData();
-                        break;
                     case 2:
-                        this.loadHistoricalData();
+                        if (!this.sources.data || this.sources.data.length === 0) {
+                            this.loadMarketData();
+                        }
+                        break;
+                    case 3:
+                        if (!this.historic.data || this.historic.data.length === 0) {
+                            this.loadHistoricalData();    
+                        }
                         break;
                 }
             }
@@ -352,11 +352,13 @@
                 activeTab: 0,
                 isLoading: false,
                 data: {},
-                isMarketDataLoading: false,
-                marketDataPage: 1,
-                marketData: [],
-                totalMarketDataCount: 0,
-                perPage: 20,
+                sources: {
+                    loading: false,
+                    data: [],
+                    dataCount: 0,
+                    page: 1,
+                    perPage: 50
+                },
                 historic: {
                     loading: false,
                     data: [],
