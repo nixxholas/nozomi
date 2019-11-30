@@ -44,5 +44,18 @@ export default {
         reject(error);
       });
     });
+  },
+
+  getPairCount(slug) {
+    if (!slug)
+      return 0;
+    
+    return new Promise((resolve, reject) => {
+      axios.get('/api/Currency/GetPairCount/' + slug).then(function (response) {
+        resolve(response.data);
+      }).catch(function (error) {
+        reject(error);
+      });
+    });
   }
 }
