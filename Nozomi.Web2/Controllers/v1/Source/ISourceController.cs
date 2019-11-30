@@ -9,6 +9,8 @@ namespace Nozomi.Web2.Controllers.v1.Source
      {
          IActionResult Create(CreateSourceViewModel vm);
 
+         IActionResult CountByCurrency(string slug);
+
          IActionResult All();
 
          NozomiResult<ICollection<Data.Models.Currency.Source>> GetCurrencySources(string slug, int page = 0);

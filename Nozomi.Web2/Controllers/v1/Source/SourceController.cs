@@ -29,6 +29,15 @@ namespace Nozomi.Web2.Controllers.v1.Source
             _sourceService = sourceService;
         }
 
+        [HttpGet("{slug}")]
+        public IActionResult CountByCurrency([FromRoute]string slug)
+        {
+            if (string.IsNullOrWhiteSpace(slug))
+                return BadRequest("Invalid slug.");
+
+            return Ok(_currencyEvent.SourceCount(slug));
+        }
+
         [HttpGet]
         public IActionResult All()
         {
