@@ -33,6 +33,19 @@ namespace Nozomi.Service.Events
                 .ToList();
         }
 
+        public long CountByMainCurrency(string mainTicker)
+        {
+            if (string.IsNullOrWhiteSpace(mainTicker))
+                return long.MinValue;
+
+            return _unitOfWork.GetRepository<CurrencyPair>()
+                .GetQueryable()
+                .AsNoTracking()
+                .Where(cp => cp.DeletedAt == null && cp.IsEnabled && cp.MainCurrencyAbbrv.Equals(mainTicker,
+                                 StringComparison.InvariantCultureIgnoreCase))
+                .LongCount();
+        }
+
         public ICollection<CurrencyPair> GetAllByCounterCurrency(string counterCurrencyAbbrv = 
             CoreConstants.GenericCounterCurrency)
         {
