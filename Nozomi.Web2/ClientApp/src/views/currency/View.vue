@@ -178,6 +178,7 @@
     import AnalysedHistoricItemService from "@/services/AnalysedHistoricItemService";
     import CurrencyService from "@/services/CurrencyService";
     import SourceService from '@/services/SourceService';
+    import Converter from '@/helpers/converter';
 
     export default {
         computed: {
@@ -326,14 +327,25 @@
                     throw error;
                 }
             },
-            // TODO: Test
             async loadHistoricalData(page) {
-                if (this.data.components && this.data.components.length > 0)
-                    return;
-
                 this.historic.loading = true;
+                if (!page || page <= 0) // Bad logic, reset check
+                    page = 1;
 
                 try {
+                    let self = this;
+                    // Sync the historic count first
+                    CurrencyService.getPairCount(this.data.slug)
+                        .then(function (res) {
+                            if (!Converter.isInt(res))
+                                self.historic.dataCount = 0;
+                            else
+                                self.historic.dataCount = res;
+                        });
+
+                    if (this.historic.dataCount <= 0)
+                        return; // No items, obtain for what?
+                    
                     let priceTypeKey = this.getTypeByValue("Price");
                     if (!priceTypeKey)
                         return; // No type named price is found
@@ -345,14 +357,17 @@
                     }
 
                     if (priceComponent) {
-                        this.historic.data = await AnalysedHistoricItemService.list(priceComponent.guid, this.historic.page, this.historic.perPage);
+                        AnalysedHistoricItemService.list(priceComponent.guid, this.historic.page, this.historic.perPage)
+                            .then(function (res) {
+                                if (!Array.isArray(res))
+                                    self.historic.data = [];
+                                else
+                                    self.historic.data = res;
+                            });
+                    } else {
+                        // Didn't have to load because there ain't any historic items..
                     }
-
-                    // const response = await this.$axios.get('/api/Currency/Historical/' + this.data.slug + '/'
-                    //     + (this.historic.page - 1) + '/' + this.historic.perPage);
-                    //
-                    // this.historic.data = response.data.data;
-                    // this.historic.dataCount = response.data.pages * this.historic.perPage;
+                    
                     this.historic.loading = false;
                 } catch (error) {
                     console.error(error);
