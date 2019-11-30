@@ -116,7 +116,7 @@
                                             :mobile-cards="true"
                                             :per-page="historic.perPage"
                                             :total="historic.dataCount"
-                                            @page-change="onHistoricalDataPageChange"
+                                            @page-change="loadHistoricalData"
                                             aria-current-label="Current page"
                                             aria-next-label="Next page"
                                             aria-page-label="Page"
@@ -176,6 +176,7 @@
     import CreateAcComponentModal from '@/components/modals/create-analysed-component-modal';
     import AnalysedComponentService from "@/services/AnalysedComponentService";
     import AnalysedHistoricItemService from "@/services/AnalysedHistoricItemService";
+    import CurrencyService from "@/services/CurrencyService";
     import SourceService from '@/services/SourceService';
 
     export default {
@@ -190,27 +191,42 @@
         },
         props: ['slug'],
         components: {CreateAcComponentModal},
-        beforeMount: async function () {
-            this.loading = true;
+        beforeMount: function () {
+            let self = this;
+            self.loading = true;
 
             try {
-                this.typeData = await AnalysedComponentService.getTypes();
+                AnalysedComponentService.getTypes()
+                    .then(function (res) {
+                        self.typeData = res;
+                    });
 
                 // Propagate the currency first
-                const response = await this.$axios.get('/api/Currency/Get/' + this.slug);
+                this.$axios.get('/api/Currency/Get/' + this.slug)
+                    .then(function (res) {
+                        self.data = res.data;
+                    });
 
-                if (response) {
-                    this.data = response.data;
-
-                    if (!this.data || !this.data.slug) {
-                        this.data = null;
-                        this.loading = false;
-                        console.dir("Terminating further load..");
+                if (self.data) {
+                    if (!self.data || !self.data.slug) {
+                        self.data = null;
+                        self.loading = false;
                         return;
                     }
 
-                    // Then, obtain the currency's sources count for pagination
-                    this.sources.dataCount = await SourceService.countByCurrency(this.data.slug);
+                    // Obtain the currency's sources count for sources pagination
+                    SourceService.countByCurrency(this.data.slug)
+                        .then(function (result) {
+                            self.sources.dataCount = result
+                        });
+                    
+                    // Obtain the currency's historical count for historical pagination
+                    CurrencyService.getPairCount(this.data.slug)
+                        .then(function (result) {
+                            self.historic.dataCount = result;
+                        });
+
+                    this.loading = false;
 
                     //this.series[0].data = response.data.data.averagePriceHistory;
 
@@ -250,8 +266,6 @@
                     //     },
                     // });
                 }
-
-                this.loading = false;
             } catch (error) {
                 console.error(error);
                 this.data = [];
@@ -347,11 +361,6 @@
                     this.historic.loading = false;
                     throw error;
                 }
-            },
-            onHistoricalDataPageChange(page) {
-                console.dir("Current historic page: " + this.historic.page);
-                // this.historic.page = page;
-                this.loadHistoricalData(page);
             },
             onTabChange(index) {
                 switch (index) {
