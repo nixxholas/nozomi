@@ -1024,6 +1024,23 @@ namespace Nozomi.Service.Events
                 .ToDictionary(c => c.Slug, c => c.Id);
         }
 
+        public long SourceCount(string slug)
+        {
+            if (string.IsNullOrWhiteSpace(slug))
+                return long.MinValue;
+            
+            return _unitOfWork.GetRepository<Currency>()
+                .GetQueryable()
+                .AsNoTracking()
+                .Where(c => c.DeletedAt == null && c.IsEnabled && c.Slug.Equals(slug))
+                .Include(c => c.CurrencySources)
+                .ThenInclude(cs => cs.Source)
+                .SelectMany(c => c.CurrencySources
+                    .Where(cs => cs.IsEnabled && cs.DeletedAt == null
+                                              && cs.Source.DeletedAt == null && cs.Source.IsEnabled))
+                .LongCount(); 
+        }
+
         public IEnumerable<SourceViewModel> ListSources(string slug, int page = 0, int itemsPerPage = 50)
         {
             if (string.IsNullOrWhiteSpace(slug) || page < 0 || itemsPerPage < 1)

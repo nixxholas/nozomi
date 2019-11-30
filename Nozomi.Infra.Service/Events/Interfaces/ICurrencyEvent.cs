@@ -82,6 +82,8 @@ namespace Nozomi.Service.Events.Interfaces
 
         IReadOnlyDictionary<string, long> ListAllMapped();
 
+        long SourceCount(string slug);
+
         IEnumerable<SourceViewModel> ListSources(string slug, int page = 0, int itemsPerPage = 50);
     }
 }
