@@ -19,14 +19,6 @@
                             </div>
                         </div>
 
-                        <!--                        <div class="level-right">-->
-                        <!--                            <div class="level-item">-->
-                        <!--                                <h1 class="subtitle">-->
-                        <!--                                    {{ data.averagePrice | numeralFormat('$0[.]00') }}-->
-                        <!--                                </h1>-->
-                        <!--                            </div>-->
-                        <!--                        </div>-->
-
                         <div class="tile is-child" v-if="data.description !== null">
                             <b-message>
                                 {{ data.description }}
@@ -39,11 +31,6 @@
                                 <CreateAcComponentModal :currency-id="data.id"></CreateAcComponentModal>
                             </p>
                         </div>
-
-                        <!--                        <div class="tile is-child">-->
-                        <!--                            <p class="heading">Market Cap</p>-->
-                        <!--                            <p class="title is-4">{{ data.marketCap | numeralFormat('$0[.]00 a') }}</p>-->
-                        <!--                        </div>-->
 
                         <div class="tile is-child"
                              v-if="data && data.components && data.components.length > 0"
@@ -343,12 +330,16 @@
                                 self.historic.dataCount = res;
                         });
 
-                    if (this.historic.dataCount <= 0)
+                    if (this.historic.dataCount <= 0) {
+                        self.historic.loading = false;
                         return; // No items, obtain for what?
+                    }
                     
                     let priceTypeKey = this.getTypeByValue("Price");
-                    if (!priceTypeKey)
+                    if (!priceTypeKey) {
+                        self.historic.loading = false;
                         return; // No type named price is found
+                    }
 
                     let priceComponent;
                     for (let i = 0; i < this.data.components.length; i++) {
