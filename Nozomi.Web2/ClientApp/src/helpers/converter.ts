@@ -10,5 +10,15 @@ export default {
       }
     });
     return str;
+    
+  },
+  isInt(value: any) {
+    let x;
+    if (isNaN(value)) {
+      return false;
+    }
+    
+    x = parseFloat(value);
+    return (x | 0) === x;
   }
 }
