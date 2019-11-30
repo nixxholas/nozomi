@@ -291,11 +291,21 @@
                     page = 1;
 
                 try {
+                    // First, check and make sure there's actually a source for this before proceeding.
+                    this.sources.dataCount = await SourceService.countByCurrency(this.data.slug);
+                    
+                    if (!this.sources.dataCount || this.sources.dataCount <= 0) {
+                        this.sources.loading = false;
+                        return; // Don't even bother updating if the count is invalid or non-existent.
+                    }
+                    
+                    // Obtain all of the currency's sources.
                     this.sources.data = await SourceService.listByCurrency(this.data.slug, (page - 1), this.sources.perPage);
 
                     this.sources.loading = false;
                 } catch (error) {
                     console.error(error);
+                    // TODO: Spawn a notification error.
                     this.sources.data = [];
                     this.sources.dataCount = 0;
                     this.sources.loading = false;
