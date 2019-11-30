@@ -23,6 +23,8 @@ namespace Nozomi.Web2.Controllers.v1.Currency
 
         IActionResult GetCountByType(string currencyType = "CRYPTO");
 
+        IActionResult GetPairCount(string slug);
+
         CurrencyViewModel Get(string slug);
 
         NozomiResult<ICollection<string>> ListAllSlugs();

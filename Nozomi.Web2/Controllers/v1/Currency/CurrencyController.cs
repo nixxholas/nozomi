@@ -24,15 +24,17 @@ namespace Nozomi.Web2.Controllers.v1.Currency
     {
         private readonly IAnalysedHistoricItemEvent _analysedHistoricItemEvent;
         private readonly ICurrencyEvent _currencyEvent;
+        private readonly ICurrencyPairEvent _currencyPairEvent;
         private readonly ICurrencyService _currencyService;
 
         public CurrencyController(ILogger<CurrencyController> logger,
-            IAnalysedHistoricItemEvent analysedHistoricItemEvent, ICurrencyEvent currencyEvent,
-            ICurrencyService currencyService)
+            IAnalysedHistoricItemEvent analysedHistoricItemEvent, ICurrencyEvent currencyEvent, 
+            ICurrencyPairEvent currencyPairEvent, ICurrencyService currencyService)
             : base(logger)
         {
             _analysedHistoricItemEvent = analysedHistoricItemEvent;
             _currencyEvent = currencyEvent;
+            _currencyPairEvent = currencyPairEvent;
             _currencyService = currencyService;
         }
 
@@ -87,6 +89,15 @@ namespace Nozomi.Web2.Controllers.v1.Currency
             var count = _currencyEvent.GetCountByType(currencyType);
 
             return Ok(count);
+        }
+
+        [HttpGet("{slug}")]
+        public IActionResult GetPairCount([FromRoute]string slug)
+        {
+            if (string.IsNullOrWhiteSpace(slug))
+                return BadRequest("Invalid slug input.");
+            
+            return Ok(_currencyPairEvent.CountByMainCurrency(slug));
         }
 
         [HttpGet("{slug}")]
