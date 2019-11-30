@@ -1,8 +1,8 @@
 <template>
     <div class="container">
-        <section class="hero" v-if="data">
+        <section class="hero" v-if="this.data">
             <div class="hero-body">
-                <div class="tile is-ancestor notification">
+                <div class="tile is-ancestor">
                     <div class="tile is-parent is-vertical is-3">
                         <div class="tile is-child">
                             <div class="level-left">
@@ -40,10 +40,10 @@
                             </p>
                         </div>
 
-<!--                        <div class="tile is-child">-->
-<!--                            <p class="heading">Market Cap</p>-->
-<!--                            <p class="title is-4">{{ data.marketCap | numeralFormat('$0[.]00 a') }}</p>-->
-<!--                        </div>-->
+                        <!--                        <div class="tile is-child">-->
+                        <!--                            <p class="heading">Market Cap</p>-->
+                        <!--                            <p class="title is-4">{{ data.marketCap | numeralFormat('$0[.]00 a') }}</p>-->
+                        <!--                        </div>-->
 
                         <div class="tile is-child"
                              v-if="data && data.components && data.components.length > 0"
@@ -196,11 +196,22 @@
             try {
                 this.typeData = await AnalysedComponentService.getTypes();
 
+                // Propagate the currency first
                 const response = await this.$axios.get('/api/Currency/Get/' + this.slug);
 
                 if (response) {
                     this.data = response.data;
-                    console.dir(this.data);
+
+                    if (!this.data || !this.data.slug) {
+                        this.data = null;
+                        this.loading = false;
+                        console.dir("Terminating further load..");
+                        return;
+                    }
+
+                    // Then, obtain the currency's sources count for pagination
+                    this.sources.dataCount = await SourceService.countByCurrency(this.data.slug);
+
                     //this.series[0].data = response.data.data.averagePriceHistory;
 
                     // Chart setup
@@ -281,7 +292,7 @@
 
                 try {
                     this.sources.data = await SourceService.listByCurrency(this.data.slug, (page - 1), this.sources.perPage);
-                    
+
                     this.sources.loading = false;
                 } catch (error) {
                     console.error(error);
@@ -295,24 +306,24 @@
             async loadHistoricalData(page) {
                 if (this.data.components && this.data.components.length > 0)
                     return;
-                
+
                 this.historic.loading = true;
 
                 try {
                     let priceTypeKey = this.getTypeByValue("Price");
                     if (!priceTypeKey)
                         return; // No type named price is found
-                    
+
                     let priceComponent;
                     for (let i = 0; i < this.data.components.length; i++) {
                         if (this.data.components[i].type === priceTypeKey)
                             priceComponent = this.data.components[i];
                     }
-                    
+
                     if (priceComponent) {
                         this.historic.data = await AnalysedHistoricItemService.list(priceComponent.guid, this.historic.page, this.historic.perPage);
                     }
-                    
+
                     // const response = await this.$axios.get('/api/Currency/Historical/' + this.data.slug + '/'
                     //     + (this.historic.page - 1) + '/' + this.historic.perPage);
                     //
@@ -341,7 +352,7 @@
                         break;
                     case 3:
                         if (!this.historic.data || this.historic.data.length === 0) {
-                            this.loadHistoricalData();    
+                            this.loadHistoricalData();
                         }
                         break;
                 }
