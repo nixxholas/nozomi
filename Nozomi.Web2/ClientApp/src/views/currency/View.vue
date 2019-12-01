@@ -53,7 +53,7 @@
                                     </div>
                                 </b-tab-item>
 
-                                <b-tab-item label="Chart">
+                                <b-tab-item label="Chart" :visible="series && series.data && series.data.length > 0">
                                     <div class="chart" ref="chart"></div>
                                 </b-tab-item>
 
@@ -141,7 +141,7 @@
                 </div>
             </div>
         </section>
-        <section class="hero is-large" v-else>
+        <section class="hero is-large" v-else-if="!loading">
             <div class="hero-body">
                 <div class="container">
                     <h1 class="title">
