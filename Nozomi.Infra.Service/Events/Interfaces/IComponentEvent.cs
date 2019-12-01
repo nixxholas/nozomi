@@ -5,11 +5,14 @@ using System.Linq.Expressions;
 using Nozomi.Data;
 using Nozomi.Data.Models.Currency;
 using Nozomi.Data.Models.Web;
+using Nozomi.Data.ViewModels.Component;
 
 namespace Nozomi.Service.Events.Interfaces
 {
     public interface IComponentEvent
     {
+        IEnumerable<ComponentViewModel> All(int index = 0, int itemsPerIndex = 50, bool includeNested = false);
+        
         ICollection<Component> All(int index = 0, bool includeNested = false);
 
         long GetPredicateCount(Expression<Func<Component, bool>> predicate);

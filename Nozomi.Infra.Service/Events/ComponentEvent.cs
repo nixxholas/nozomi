@@ -15,6 +15,8 @@ using Nozomi.Data.Models.Currency;
 using Nozomi.Data.Models.Web;
 using Nozomi.Data.Models.Web.Analytical;
 using Nozomi.Data.Models.Web.Websocket;
+using Nozomi.Data.ViewModels.Component;
+using Nozomi.Data.ViewModels.ComponentHistoricItem;
 using Nozomi.Preprocessing;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.BCL.Repository;
@@ -45,6 +47,45 @@ namespace Nozomi.Service.Events
                     .GetQueryable(rc => rc.RequestId.Equals(requestId) && rc.DeletedAt == null && rc.IsEnabled)
                     .AsNoTracking()
                     .ToList();
+        }
+
+        public IEnumerable<ComponentViewModel> All(int index = 0, int itemsPerIndex = 50, bool includeNested = false)
+        {
+            if (index < 0 || itemsPerIndex <= 0)
+                throw new ArgumentOutOfRangeException("Invalid index or itemsPerIndex.");
+            
+            if (includeNested)
+                return _unitOfWork.GetRepository<Component>()
+                    .GetQueryable()
+                    .AsNoTracking()
+                    .Where(c => c.DeletedAt == null && c.IsEnabled)
+                    .Include(c => c.RcdHistoricItems)
+                    .Select(c => new ComponentViewModel
+                    {
+                        Guid = c.Guid,
+                        Type = c.ComponentType,
+                        Value = c.Value,
+                        IsDenominated = c.IsDenominated,
+                        History = c.RcdHistoricItems
+                            .Where(rcdhi => rcdhi.DeletedAt == null && rcdhi.IsEnabled)
+                            .Select(rcdhi => new ComponentHistoricItemViewModel
+                            {
+                                Timestamp = rcdhi.HistoricDateTime,
+                                Value = rcdhi.Value
+                            })
+                    });
+
+            return _unitOfWork.GetRepository<Component>()
+                .GetQueryable()
+                .AsNoTracking()
+                .Where(c => c.DeletedAt == null && c.IsEnabled)
+                .Select(c => new ComponentViewModel
+                {
+                    Guid = c.Guid,
+                    Type = c.ComponentType,
+                    Value = c.Value,
+                    IsDenominated = c.IsDenominated
+                });
         }
 
         public ICollection<Component> All(int index = 0, bool includeNested = false)
