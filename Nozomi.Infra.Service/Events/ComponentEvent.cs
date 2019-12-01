@@ -51,7 +51,7 @@ namespace Nozomi.Service.Events
 
         public IEnumerable<ComponentViewModel> All(int index = 0, int itemsPerIndex = 50, bool includeNested = false)
         {
-            if (index < 0 || itemsPerIndex <= 0)
+            if (index < 0 || itemsPerIndex <= 0 || itemsPerIndex > NozomiServiceConstants.RequestComponentTakeoutLimit)
                 throw new ArgumentOutOfRangeException("Invalid index or itemsPerIndex.");
             
             if (includeNested)
