@@ -1008,7 +1008,7 @@ namespace Nozomi.Service.Events
                 .GetQueryable()
                 .AsNoTracking()
                 .Where(c => c.IsEnabled && c.DeletedAt == null && c.CurrencyTypeId > 0)
-                .OrderBy(orderingParam, orderAscending)
+                // .OrderBy(orderingParam, orderAscending)
                 .Skip(page * itemsPerPage)
                 .Take(itemsPerPage)
                 .Include(c => c.CurrencyType)
