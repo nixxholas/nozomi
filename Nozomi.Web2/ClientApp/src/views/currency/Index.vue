@@ -30,6 +30,11 @@
                 :total="dataCount"
                 @page-change="onCurrencyTablePageChange"
 
+                backend-sorting
+                :default-sort-direction="defaultSortOrder"
+                :default-sort="[sortField, sortOrder]"
+                @sort="onCurrencyTableSort"
+
                 default-sort="name"
                 aria-next-label="Next page"
                 aria-previous-label="Previous page"
@@ -59,7 +64,7 @@
                     </router-link>
                 </b-table-column>
                 
-                <b-table-column field="currencyTypeGuid" label="Type" sortable>
+                <b-table-column field="currencyType" label="Type" sortable>
                     {{ getType(props.row.currencyTypeGuid).name }}
                 </b-table-column>
                 
@@ -100,6 +105,9 @@
                 dataCount: 0,
                 currentPage: 1,
                 perPage: 50,
+                sortField: 'name',
+                defaultSortOrder: 'desc',
+                sortOrder: 'desc',
                 typeData: []
             }
         },
@@ -136,7 +144,23 @@
                         
                         self.dataLoading = false;
                     });
-            }
+            },
+            onCurrencyTableSort(field, order) {
+                let self = this;
+                self.dataLoading = true;
+                
+                self.sortField = field;
+                self.sortOrder = order;
+                
+                let sortAscending = order === "asc";
+                
+                CurrencyService.listAll(self.currentPage - 1, self.perPage, sortAscending, self.sortField)
+                    .then(function (res) {
+                        self.data = res;
+
+                        self.dataLoading = false;
+                    });
+            },
         },
         mounted: function() {
             let self = this;
