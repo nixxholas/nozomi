@@ -113,9 +113,10 @@ namespace Nozomi.Web2.Controllers.v1.Currency
         }
 
         [HttpGet]
-        public ICollection<CurrencyViewModel> ListAll(int page = 0, int itemPerPage = 50)
+        public ICollection<CurrencyViewModel> ListAll([FromQuery]int page = 0, [FromQuery]int itemsPerPage = 50, 
+            [FromQuery]bool orderAscending = true, [FromQuery]string orderingParam = "Name")
         {
-            return _currencyEvent.ListAll(page, itemPerPage).ToList();
+            return _currencyEvent.ListAll(page, itemsPerPage, orderAscending, orderingParam).ToList();
         }
 
         [HttpGet("{slug}")]
