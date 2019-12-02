@@ -41,6 +41,9 @@ namespace Nozomi.Service.Events.Interfaces
 
         ICollection<Component> GetAllByRequest(long requestId, bool includeNested = false);
 
+        IEnumerable<ComponentViewModel> GetAllByRequest(string guid, bool includeNested = false, 
+            int index = 0, int itemsPerPage = 50);
+
         ICollection<Component> GetByMainCurrency(string mainCurrencyAbbrv, 
             ICollection<ComponentType> componentTypes);
         

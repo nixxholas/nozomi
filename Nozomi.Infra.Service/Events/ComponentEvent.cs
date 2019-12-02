@@ -49,6 +49,45 @@ namespace Nozomi.Service.Events
                     .ToList();
         }
 
+        public IEnumerable<ComponentViewModel> GetAllByRequest(string guid, bool includeNested = false, int index = 0, int itemsPerPage = 50)
+        {
+            if (string.IsNullOrWhiteSpace(guid) || !Guid.TryParse(guid, out var parsedGuid) 
+                                                || index < 0 || itemsPerPage <= 0)
+                throw new ArgumentOutOfRangeException("Invalid parameters.");
+
+            var query = _unitOfWork.GetRepository<Component>()
+                .GetQueryable()
+                .AsNoTracking()
+                .Include(c => c.Request)
+                .Where(c => c.DeletedAt == null && c.IsEnabled && c.Request.Guid.Equals(parsedGuid));
+
+            if (includeNested)
+                return query
+                    .Include(c => c.RcdHistoricItems)
+                    .Select(c => new ComponentViewModel
+                {
+                    Guid = c.Guid,
+                    Type = c.ComponentType,
+                    Value = c.Value,
+                    IsDenominated = c.IsDenominated,
+                    History = c.RcdHistoricItems
+                        .Where(rcdhi => rcdhi.DeletedAt == null && rcdhi.IsEnabled)
+                        .Select(rcdhi => new ComponentHistoricItemViewModel
+                        {
+                            Timestamp = rcdhi.HistoricDateTime,
+                            Value = rcdhi.Value
+                        })
+                });
+            
+            return query.Select(c => new ComponentViewModel
+            {
+                Guid = c.Guid,
+                Type = c.ComponentType,
+                Value = c.Value,
+                IsDenominated = c.IsDenominated
+            });
+        }
+
         public IEnumerable<ComponentViewModel> All(int index = 0, int itemsPerIndex = 50, bool includeNested = false)
         {
             if (index < 0 || itemsPerIndex <= 0 || itemsPerIndex > NozomiServiceConstants.RequestComponentTakeoutLimit)
