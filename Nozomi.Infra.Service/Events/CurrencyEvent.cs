@@ -2,12 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Linq.Dynamic.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Nozomi.Base.Core;
+using Nozomi.Base.Core.Extensions;
 using Nozomi.Base.Core.Helpers.Enumerable;
 using Nozomi.Base.Core.Helpers.Native.Numerals;
 using Nozomi.Base.Core.Helpers.Native.Text;
@@ -1004,15 +1004,11 @@ namespace Nozomi.Service.Events
         public IEnumerable<CurrencyViewModel> ListAll(int page = 0, int itemsPerPage = 50, bool orderAscending = true,
             string orderingParam = "Name")
         {
-            if (!StringHelper.IsAlphabeticalOnly(orderingParam))
-                throw new ArgumentException("Possible SQL Injection");
-            
             return _unitOfWork.GetRepository<Currency>()
                 .GetQueryable()
                 .AsNoTracking()
-                .Where(c => c.IsEnabled && c.DeletedAt == null
-                            && c.CurrencyTypeId > 0)
-                .OrderBy(orderingParam + " " + (orderAscending ? "" : "descending"))
+                .Where(c => c.IsEnabled && c.DeletedAt == null && c.CurrencyTypeId > 0)
+                .OrderBy(orderingParam, orderAscending)
                 .Skip(page * itemsPerPage)
                 .Take(itemsPerPage)
                 .Include(c => c.CurrencyType)
