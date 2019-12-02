@@ -24,7 +24,11 @@
                 :current-page.sync="currentPage"
                 :per-page="perPage"
                 :loading="dataLoading"
-                :paginated="true"
+                
+                paginated
+                backend-pagination
+                :total="dataCount"
+                @page-change="onCurrencyTablePageChange"
 
                 default-sort="name"
                 aria-next-label="Next page"
@@ -121,25 +125,36 @@
                             self.dataLoading = false;
                         });
                 }
+            },
+            onCurrencyTablePageChange: function (page) {
+                let self = this;
+                self.dataLoading = true;
+
+                CurrencyService.listAll(page - 1, self.perPage)
+                    .then(function (res) {
+                        self.data = res;
+                        
+                        self.dataLoading = false;
+                    });
             }
         },
         mounted: function() {
             let self = this;
             CurrencyService.getCurrencyCount(null)
                 .then(function (res) {
-                    console.dir(res);
+                    self.dataCount = res;
                 });
             
             CurrencyService.listAll()
                 .then(function (res) {
                     self.data = res;
-
-                    self.dataLoading = false;
                 });
 
             CurrencyTypeService.getAll()
                 .then(function (res) {
                     self.typeData = res;
+
+                    self.dataLoading = false;
                 })
         }
     }
