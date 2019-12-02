@@ -1,4 +1,6 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<!--Great thanks to-->
+<!--https://github.com/SoftwareAteliers/asp-net-core-vue-starter-->
+<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.0</TargetFramework>
