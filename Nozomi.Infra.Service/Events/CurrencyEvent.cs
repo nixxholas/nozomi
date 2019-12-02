@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Linq.Dynamic.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Logging;
@@ -9,6 +10,7 @@ using Newtonsoft.Json;
 using Nozomi.Base.Core;
 using Nozomi.Base.Core.Helpers.Enumerable;
 using Nozomi.Base.Core.Helpers.Native.Numerals;
+using Nozomi.Base.Core.Helpers.Native.Text;
 using Nozomi.Data.AreaModels.v1.Currency;
 using Nozomi.Data.Models.Currency;
 using Nozomi.Data.Models.Web;
@@ -974,9 +976,9 @@ namespace Nozomi.Service.Events
             }
             else
             {
-                return _unitOfWork.GetRepository<Currency>().GetQueryable()
+                return _unitOfWork.GetRepository<Currency>()
+                    .GetQueryable()
                     .AsNoTracking()
-                    .AsEnumerable()
                     .Where(c => c.DeletedAt == null)
                     .Where(c => c.IsEnabled)
                     .DistinctBy(c => c.Abbreviation)
@@ -999,13 +1001,18 @@ namespace Nozomi.Service.Events
                 .ToList();
         }
 
-        public IEnumerable<CurrencyViewModel> ListAll(int page = 0, int itemsPerPage = 50)
+        public IEnumerable<CurrencyViewModel> ListAll(int page = 0, int itemsPerPage = 50, bool orderAscending = true,
+            string orderingParam = "Name")
         {
+            if (!StringHelper.IsAlphabeticalOnly(orderingParam))
+                throw new ArgumentException("Possible SQL Injection");
+            
             return _unitOfWork.GetRepository<Currency>()
                 .GetQueryable()
                 .AsNoTracking()
                 .Where(c => c.IsEnabled && c.DeletedAt == null
                             && c.CurrencyTypeId > 0)
+                .OrderBy(orderingParam + " " + (orderAscending ? "" : "descending"))
                 .Skip(page * itemsPerPage)
                 .Take(itemsPerPage)
                 .Include(c => c.CurrencyType)
