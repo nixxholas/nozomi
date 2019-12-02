@@ -1004,11 +1004,34 @@ namespace Nozomi.Service.Events
         public IEnumerable<CurrencyViewModel> ListAll(int page = 0, int itemsPerPage = 50, bool orderAscending = true,
             string orderingParam = "Name")
         {
-            return _unitOfWork.GetRepository<Currency>()
+            var query = _unitOfWork.GetRepository<Currency>()
                 .GetQueryable()
                 .AsNoTracking()
-                .Where(c => c.IsEnabled && c.DeletedAt == null && c.CurrencyTypeId > 0)
-                // .OrderBy(orderingParam, orderAscending)
+                .Where(c => c.IsEnabled && c.DeletedAt == null && c.CurrencyTypeId > 0);
+            
+            switch (orderingParam.ToLower()) // Ignore case sensitivity
+            {
+                case "abbreviation":
+                    query = orderAscending ? query.OrderBy(c => c.Abbreviation) : 
+                        query.OrderByDescending(c => c.Abbreviation);
+                    break;
+                case "slug":
+                    query = orderAscending ? query.OrderBy(c => c.Slug) : query.OrderByDescending(c => c.Slug);
+                    break;
+                case "currencytype":
+                    query = orderAscending ? query
+                        .Include(c => c.CurrencyType)
+                        .OrderBy(c => c.CurrencyType.Name) : query
+                        .Include(c => c.CurrencyType)
+                        .OrderByDescending(c => c.CurrencyType.Name);
+                    break;
+                default: // Handle all cases.
+                    query = orderAscending ? query.OrderBy(c => c.Name) : query.OrderByDescending(c => c.Name);
+                    break;
+            }
+            
+            return query
+                // .OrderBy(orderingParam, orderAscending) // TODO: Make use of LinqExtensions again
                 .Skip(page * itemsPerPage)
                 .Take(itemsPerPage)
                 .Include(c => c.CurrencyType)
