@@ -615,7 +615,7 @@ namespace Nozomi.Service.Events
             return query.LongCount();
         }
 
-        public long GetCountByType(string typeShortForm = "CRYPTO")
+        public long GetCountByType(string typeShortForm)
         {
             if (string.IsNullOrEmpty(typeShortForm) || string.IsNullOrWhiteSpace(typeShortForm))
                 return _unitOfWork.GetRepository<Currency>()

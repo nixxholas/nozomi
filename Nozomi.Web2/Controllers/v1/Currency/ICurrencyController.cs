@@ -21,7 +21,7 @@ namespace Nozomi.Web2.Controllers.v1.Currency
             ICollection<Data.Models.Web.Analytical.AnalysedComponentType> typesToTake = null, 
             ICollection<Data.Models.Web.Analytical.AnalysedComponentType> typesToDeepen = null);
 
-        IActionResult GetCountByType(string currencyType = "CRYPTO");
+        IActionResult GetCountByType(string currencyType);
 
         IActionResult GetPairCount(string slug);
 

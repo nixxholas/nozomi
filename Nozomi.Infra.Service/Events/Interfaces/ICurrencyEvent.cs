@@ -41,7 +41,7 @@ namespace Nozomi.Service.Events.Interfaces
 
         long Count(bool ignoreDeleted = false, bool ignoreDisabled = false);
 
-        long GetCountByType(string typeShortForm = "CRYPTO");
+        long GetCountByType(string typeShortForm);
         
         ICollection<Currency> GetAll(bool includeNested = false);
         ICollection<Currency> GetAllNonDeleted(bool includeNested = false);

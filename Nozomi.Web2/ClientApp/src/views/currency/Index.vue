@@ -93,6 +93,7 @@
             return {
                 dataLoading: true,
                 data: [],
+                dataCount: 0,
                 currentPage: 1,
                 perPage: 50,
                 typeData: []
@@ -124,6 +125,11 @@
         },
         mounted: function() {
             let self = this;
+            CurrencyService.getCurrencyCount(null)
+                .then(function (res) {
+                    console.dir(res);
+                });
+            
             CurrencyService.listAll()
                 .then(function (res) {
                     self.data = res;

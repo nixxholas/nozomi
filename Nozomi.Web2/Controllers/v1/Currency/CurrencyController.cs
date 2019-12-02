@@ -84,7 +84,7 @@ namespace Nozomi.Web2.Controllers.v1.Currency
         }
 
         [HttpGet]
-        public IActionResult GetCountByType(string currencyType = "CRYPTO")
+        public IActionResult GetCountByType(string currencyType)
         {
             var count = _currencyEvent.GetCountByType(currencyType);
 
