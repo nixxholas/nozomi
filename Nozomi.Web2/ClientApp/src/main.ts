@@ -3,6 +3,7 @@ import 'regenerator-runtime/runtime';
 import Vue from 'vue';
 import Buefy from 'buefy';
 import 'buefy/dist/buefy.css';
+import '@/assets/main.css';
 import './plugins/axios';
 // @ts-ignore
 import * as numeral from 'numeral';
