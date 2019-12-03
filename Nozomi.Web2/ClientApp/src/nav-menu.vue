@@ -96,6 +96,9 @@
 </script>
 
 <style scoped>
+  .mr-quarter-em {
+    margin-right: .25em;
+  }
   .mr-half-em {
     margin-right: .5em;
   }
