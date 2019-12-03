@@ -14,6 +14,7 @@
     "@fortawesome/vue-fontawesome": "^0.1.8",
     "apexcharts": "^3.10.1",
     "buefy": "^0.8.7",
+    "bulma-extensions": "^6.2.7",
     "core-js": "^3.4.1",
     "date-fns": "^2.7.0",
     "fibers": "^4.0.2",

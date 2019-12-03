@@ -4,6 +4,8 @@ import Vue from 'vue';
 import Buefy from 'buefy';
 import 'buefy/dist/buefy.css';
 import '@/assets/main.css';
+import 'bulma-extensions/dist/css/bulma-extensions.min.css'
+import 'bulma-extensions/dist/js/bulma-extensions.min.js';
 import './plugins/axios';
 // @ts-ignore
 import * as numeral from 'numeral';
