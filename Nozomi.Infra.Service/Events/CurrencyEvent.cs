@@ -1001,13 +1001,19 @@ namespace Nozomi.Service.Events
                 .ToList();
         }
 
-        public IEnumerable<CurrencyViewModel> ListAll(int page = 0, int itemsPerPage = 50, bool orderAscending = true,
-            string orderingParam = "Name")
+        public IEnumerable<CurrencyViewModel> ListAll(int page = 0, int itemsPerPage = 50, 
+            string currencyTypeName = null, bool orderAscending = true, string orderingParam = "Name")
         {
             var query = _unitOfWork.GetRepository<Currency>()
                 .GetQueryable()
                 .AsNoTracking()
                 .Where(c => c.IsEnabled && c.DeletedAt == null && c.CurrencyTypeId > 0);
+
+            if (!string.IsNullOrEmpty(currencyTypeName))
+                query = query
+                    .Include(c => c.CurrencyType)
+                    .Where(c => c.CurrencyType.DeletedAt == null && c.CurrencyType.IsEnabled && 
+                        c.CurrencyType.Name.Equals(currencyTypeName, StringComparison.OrdinalIgnoreCase));
             
             switch (orderingParam.ToLower()) // Ignore case sensitivity
             {

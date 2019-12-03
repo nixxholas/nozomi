@@ -78,8 +78,8 @@ namespace Nozomi.Service.Events.Interfaces
 
         ICollection<string> ListAllSlugs();
 
-        IEnumerable<CurrencyViewModel> ListAll(int page = 0, int itemsPerPage = 50, bool orderAscending = true,
-            string orderingParam = "Name");
+        IEnumerable<CurrencyViewModel> ListAll(int page = 0, int itemsPerPage = 50, 
+            string currencyTypeName = null, bool orderAscending = true, string orderingParam = "Name");
 
         IReadOnlyDictionary<string, long> ListAllMapped();
 
