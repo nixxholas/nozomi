@@ -122,7 +122,11 @@
                     self.dataCount = res;
                 });
 
-            CurrencyService.listAll(self.currentPage - 1, self.perPage, self.type)
+            self.sortField = "name";
+            self.sortOrder = "asc";
+            let sortAscending = self.sortOrder === "asc";
+
+            CurrencyService.listAll(self.currentPage - 1, self.perPage, self.type, sortAscending, self.sortField)
                 .then(function (res) {
                     self.data = res;
                 });
