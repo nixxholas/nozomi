@@ -1,56 +1,79 @@
 <template>
-    <div class="container">
+    <div class="container-fluid">        
         <section class="hero" v-if="this.data">
             <div class="hero-body">
-                <div class="tile is-ancestor">
-                    <div class="tile is-parent is-vertical is-3">
-                        <div class="tile is-child">
-                            <div class="level-left">
-                                <div class="level-item">
-                                    <figure class="image is-64x64" v-if="data.logoPath != null">
-                                        <img :src="'/' + data.logoPath"/>
-                                    </figure>
-                                </div>
-                                <div class="level-item">
-                                    <h1 class="title">
-                                        {{ data.name }}
-                                    </h1>
-                                </div>
-                            </div>
-                        </div>
+                    <b-navbar class="pb-4" 
+                              spaced
+                              :mobile-burger="false">
+                        <template slot="brand">
+                            <b-navbar-item tag="div" class="level-item">
+                                <img
+                                        class="image is-64x64 mr-3"
+                                        :src="'/' + data.logoPath"
+                                        alt="Currency"
+                                        v-if="data && data.logoPath"
+                                >
+                                <p class="title is-4">{{ data.name }}</p>
+                            </b-navbar-item>
+                        </template>
+                        <template slot="start">
+                        </template>
 
-                        <div class="tile is-child" v-if="data.description !== null">
-                            <b-message>
-                                {{ data.description }}
-                            </b-message>
-                        </div>
+                        <template slot="end">
+                            <b-navbar-item tag="div">
 
-                        <div class="tile is-child" v-if="hasAccess">
-                            <p class="heading">Have a component to add?</p>
-                            <p class="is-4">
-                                <CreateAcComponentModal :currency-id="data.id"></CreateAcComponentModal>
-                            </p>
-                        </div>
-
-                        <div class="tile is-child"
-                             v-if="data && data.components && data.components.length > 0"
-                             v-for="comp in data.components">
-                            <div v-if="comp.value">
-                                <p class="heading">{{ getTypeByKey(comp.type) }}</p>
-                                <p class="title is-4" v-if="!comp.uiFormatting">{{ comp.value }}</p>
-                                <p class="title is-4" v-else>{{ comp.value | numeralFormat(comp.uiFormatting) }}</p>
-                            </div>
-                        </div>
-                    </div>
+                            </b-navbar-item>
+                        </template>
+                    </b-navbar>
+                
+                <div class="tile is-ancestor box container">
                     <div class="tile is-parent">
                         <div class="tile is-child is-vertical">
                             <b-tabs @change="onTabChange" type="is-toggle" v-model="activeTab">
                                 <b-tab-item label="Information">
-                                    <div class="tile is-child" v-for="property in data.properties"
-                                         v-if="property.type !== null">
-                                        <p class="heading">{{ property.type }}</p>
-                                        <p class="title is-6">{{ property.value }}</p>
-                                    </div>
+                                    <section class="section" v-if="data.description !== null">
+                                        <div class="container">
+                                            <b-message>
+                                                {{ data.description }}
+                                            </b-message>
+                                        </div>
+                                    </section>
+                                    
+                                    <section class="section"
+                                             v-if="(data && data.components && data.components.length > 0) || hasAccess">
+                                        <div class="container">
+
+                                            <div class="tile is-child" v-if="hasAccess">
+                                                <p class="heading">Have a component to add?</p>
+                                                <p class="is-4">
+                                                    <CreateAcComponentModal :currency-id="data.id"></CreateAcComponentModal>
+                                                </p>
+                                            </div>
+                                            
+                                            <div class="columns is-multiline is-mobile" v-if="data && data.components && data.components.length > 0">
+                                                <div class="column is-one-quarter" v-for="comp in data.components">
+                                                    <div v-if="comp.value">
+                                                        <p class="heading">{{ getTypeByKey(comp.type) }}</p>
+                                                        <p class="title is-4" v-if="!comp.uiFormatting">{{ comp.value }}</p>
+                                                        <p class="title is-4" v-else>{{ comp.value | numeralFormat(comp.uiFormatting) }}</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </section>
+                                    
+                                    <section class="section" v-if="data.properties && data.properties.length > 0">
+                                        <div class="container">
+                                            <h1 class="title is-4">Properties</h1>
+                                            <div class="columns is-multiline is-mobile">
+                                                <div class="column is-one-quarter" v-for="property in data.properties"
+                                                     v-if="property.type !== null">
+                                                    <p class="heading">{{ property.type }}</p>
+                                                    <p class="title is-6">{{ property.value }}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </section>
                                 </b-tab-item>
 
                                 <b-tab-item label="Chart" :visible="series && series.data && series.data.length > 0">
@@ -141,7 +164,7 @@
                 </div>
             </div>
         </section>
-        <section class="hero is-large" v-else-if="!loading">
+        <section class="hero is-large" v-else-if="!loading && loadFail">
             <div class="hero-body">
                 <div class="container">
                     <h1 class="title">
@@ -193,6 +216,11 @@
                 this.$axios.get('/api/Currency/Get/' + this.slug)
                     .then(function (res) {
                         self.data = res.data;
+
+                        self.loading = false;
+                    })
+                    .catch(function (err) {
+                        self.loadFail = true;
                     });
 
                 if (self.data) {
@@ -213,8 +241,6 @@
                         .then(function (result) {
                             self.historic.dataCount = result;
                         });
-
-                    this.loading = false;
 
                     //this.series[0].data = response.data.data.averagePriceHistory;
 
@@ -256,7 +282,7 @@
                 }
             } catch (error) {
                 console.error(error);
-                this.data = [];
+                this.data = null;
                 this.total = 0;
                 this.loading = false;
                 throw error;
@@ -387,6 +413,7 @@
             return {
                 activeTab: 0,
                 isLoading: false,
+                loadFail: false,
                 data: {},
                 sources: {
                     loading: false,
