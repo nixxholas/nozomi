@@ -1013,7 +1013,9 @@ namespace Nozomi.Service.Events
                 query = query
                     .Include(c => c.CurrencyType)
                     .Where(c => c.CurrencyType.DeletedAt == null && c.CurrencyType.IsEnabled && 
-                        c.CurrencyType.Name.Equals(currencyTypeName, StringComparison.OrdinalIgnoreCase));
+                                c.CurrencyType.Name.ToUpper().Equals(currencyTypeName.ToUpper()));
+
+            var test = query.ToList();
             
             switch (orderingParam.ToLower()) // Ignore case sensitivity
             {
