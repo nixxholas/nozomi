@@ -22,10 +22,12 @@ export default {
     });
   },
 
-  listAll(page = 0, itemsPerPage = 50, orderAscending = false, orderingParam = "Abbreviation") {
+  listAll(page = 0, itemsPerPage = 50, currencyTypeName = null, orderAscending = false, 
+          orderingParam = "Abbreviation") {
     return new Promise((resolve, reject) => {
       axios.get('/api/Currency/ListAll', {
         params: {
+          currencyTypeName: currencyTypeName,
           page: page,
           itemsPerPage: itemsPerPage,
           orderAscending: orderAscending,

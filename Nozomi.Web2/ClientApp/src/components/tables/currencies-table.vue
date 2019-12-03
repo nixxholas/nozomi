@@ -91,7 +91,7 @@
                 let self = this;
                 self.dataLoading = true;
 
-                CurrencyService.listAll(page - 1, self.perPage)
+                CurrencyService.listAll(page - 1, self.perPage, self.type)
                     .then(function (res) {
                         self.data = res;
 
@@ -107,7 +107,7 @@
 
                 let sortAscending = order === "asc";
 
-                CurrencyService.listAll(self.currentPage - 1, self.perPage, sortAscending, self.sortField)
+                CurrencyService.listAll(self.currentPage - 1, self.perPage, self.type, sortAscending, self.sortField)
                     .then(function (res) {
                         self.data = res;
 
@@ -117,12 +117,12 @@
         },
         mounted: function() {
             let self = this;
-            CurrencyService.getCurrencyCount(self.props.type)
+            CurrencyService.getCurrencyCount(self.type)
                 .then(function (res) {
                     self.dataCount = res;
                 });
 
-            CurrencyService.listAll()
+            CurrencyService.listAll(self.currentPage - 1, self.perPage, self.type)
                 .then(function (res) {
                     self.data = res;
                 });

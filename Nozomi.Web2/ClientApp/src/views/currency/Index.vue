@@ -18,63 +18,8 @@
                 <CurrencyModal class="mb-4" v-if="oidcIsAuthenticated"></CurrencyModal>
             </div>
         </b-field>
-
-        <b-table
-                :data="data"
-                :current-page.sync="currentPage"
-                :per-page="perPage"
-                :loading="dataLoading"
-                
-                paginated
-                backend-pagination
-                :total="dataCount"
-                @page-change="onCurrencyTablePageChange"
-
-                backend-sorting
-                :default-sort-direction="defaultSortOrder"
-                :default-sort="[sortField, sortOrder]"
-                @sort="onCurrencyTableSort"
-
-                default-sort="name"
-                aria-next-label="Next page"
-                aria-previous-label="Previous page"
-                aria-page-label="Page"
-                aria-current-label="Current page">
-            <template slot="empty">
-                <section class="section">
-                    <div class="content has-text-grey has-text-centered">
-                        <p>
-                            <b-icon
-                                    icon="frown"
-                                    size="is-large">
-                            </b-icon>
-                        </p>
-                        <p>Nothing here.</p>
-                    </div>
-                </section>
-            </template>
-
-            <template slot-scope="props">
-                <b-table-column field="name" label="Name" sortable>
-                    <router-link :to="`/currency/${props.row.slug}`">
-                        <img v-if="props.row.logoPath != null"
-                             :src="props.row.logoPath" class="mr-1"
-                             style="width: 24px; height: 24px; vertical-align: bottom;"/>
-                        {{ props.row.name }}
-                    </router-link>
-                </b-table-column>
-                
-                <b-table-column field="currencyType" label="Type" sortable>
-                    {{ getType(props.row.currencyTypeGuid).name }}
-                </b-table-column>
-                
-                <b-table-column v-if="oidcIsAuthenticated"></b-table-column>
-
-<!--                <b-table-column field="sourceTypeGuid" label="Type" v-if="typeData !== null && typeData.length > 0">-->
-<!--                    {{ typeData.filter(e => e.guid == props.row.sourceTypeGuid)[0].name }}-->
-<!--                </b-table-column>-->
-            </template>
-        </b-table>
+        
+        <CurrencyTable></CurrencyTable>
     </div>
 </template>
 
@@ -83,11 +28,13 @@
     import CurrencyModal from '@/components/modals/currency-modal';
     import CurrencyService from "../../services/CurrencyService";
     import CurrencyTypeService from "../../services/CurrencyTypeService";
+    import CurrencyTable from "@/components/tables/currencies-table";
 
     export default {
         name: "currency-index",
         components: {
-            CurrencyModal
+            CurrencyModal,
+            CurrencyTable
         },
         computed: {
             ...mapGetters('oidcStore', [
