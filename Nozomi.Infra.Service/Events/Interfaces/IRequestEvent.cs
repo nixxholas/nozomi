@@ -44,11 +44,10 @@ namespace Nozomi.Service.Events.Interfaces
         IEnumerable<dynamic> GetAllObsc(bool track = false);
         
         IDictionary<string, ICollection<Request>> GetAllByRequestTypeUniqueToUrl(
-            NozomiDbContext nozomiDbContext, RequestType requestType, bool includeNonHistorical = false);
+            NozomiDbContext nozomiDbContext, RequestType requestType);
         
-        ICollection<Request> GetAllByRequestType(RequestType requestType, bool includeNonHistorical = false);
+        ICollection<Request> GetAllByRequestType(RequestType requestType);
 
-        IDictionary<string, ICollection<Request>> GetAllByRequestTypeUniqueToURL(RequestType requestType, 
-            bool includeNonHistorical = false);
+        IDictionary<string, ICollection<Request>> GetAllByRequestTypeUniqueToURL(RequestType requestType);
     }
 }

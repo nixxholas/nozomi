@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using IdentityModel;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data.AreaModels.v1.Requests;
@@ -17,7 +18,7 @@ namespace Nozomi.Service.Events
 {
     public class RequestEvent : BaseEvent<RequestEvent, NozomiDbContext>, IRequestEvent
     {
-        public RequestEvent(ILogger<RequestEvent> logger, IUnitOfWork<NozomiDbContext> unitOfWork) 
+        public RequestEvent(ILogger<RequestEvent> logger, IUnitOfWork<NozomiDbContext> unitOfWork)
             : base(logger, unitOfWork)
         {
         }
@@ -27,8 +28,8 @@ namespace Nozomi.Service.Events
             return _unitOfWork.GetRepository<Component>()
                 .GetQueryable()
                 .AsNoTracking()
-                .Any(rc => rc.DeletedAt == null && rc.IsEnabled 
-                    && rc.ComponentType.Equals(type) && rc.RequestId.Equals(requestId));
+                .Any(rc => rc.DeletedAt == null && rc.IsEnabled
+                                                && rc.ComponentType.Equals(type) && rc.RequestId.Equals(requestId));
         }
 
         public bool Exists(ComponentType type, string requestGuid)
@@ -37,8 +38,8 @@ namespace Nozomi.Service.Events
                 .GetQueryable()
                 .AsNoTracking()
                 .Include(rc => rc.Request)
-                .Any(rc => rc.DeletedAt == null && rc.IsEnabled 
-                                                && rc.ComponentType.Equals(type) 
+                .Any(rc => rc.DeletedAt == null && rc.IsEnabled
+                                                && rc.ComponentType.Equals(type)
                                                 && rc.Request.Guid.Equals(Guid.Parse(requestGuid)));
         }
 
@@ -48,7 +49,7 @@ namespace Nozomi.Service.Events
                 .GetQueryable()
                 .AsNoTracking()
                 .Where(r => r.DeletedAt == null && r.IsEnabled
-                            && r.Guid.Equals(Guid.Parse(guid)))
+                                                && r.Guid.Equals(Guid.Parse(guid)))
                 .Select(r => r.Id)
                 .FirstOrDefault();
         }
@@ -63,7 +64,7 @@ namespace Nozomi.Service.Events
                        .Include(r => r.RequestProperties)
                        .SingleOrDefault(predicate) ?? null;
         }
-        
+
         public Request GetByGuid(Guid guid, bool track = false)
         {
             var query = _unitOfWork.GetRepository<Request>()
@@ -75,10 +76,10 @@ namespace Nozomi.Service.Events
                 query.Include(r => r.RequestComponents)
                     .Include(r => r.RequestProperties);
             }
-            
+
             return query.FirstOrDefault(r => r.Guid.Equals(guid));
         }
-        
+
         public Request GetActive(long id, bool includeNested = false)
         {
             var query = _unitOfWork.GetRepository<Request>()
@@ -125,7 +126,7 @@ namespace Nozomi.Service.Events
                 })
                 .ToList();
         }
-        
+
         public IEnumerable<Request> GetAllActive(bool track = false)
         {
             if (!track)
@@ -318,9 +319,9 @@ namespace Nozomi.Service.Events
                         })
                 });
         }
-        
+
         // CurrencyRequest obtainability
-        private static readonly Func<NozomiDbContext, RequestType, IEnumerable<Request>> 
+        private static readonly Func<NozomiDbContext, RequestType, IEnumerable<Request>>
             GetActiveCurrencyRequests =
                 EF.CompileQuery((NozomiDbContext context, RequestType requestType) =>
                     context.Requests
@@ -330,44 +331,17 @@ namespace Nozomi.Service.Events
                         // TODO: Websocket Support
                         .Include(cr => cr.RequestComponents)
                         .Include(cr => cr.RequestProperties));
-        
+
         public IDictionary<string, ICollection<Request>> GetAllByRequestTypeUniqueToUrl(
-            NozomiDbContext nozomiDbContext, RequestType requestType, bool includeNonHistorical = false)
+            NozomiDbContext nozomiDbContext, RequestType requestType)
         {
             var dict = new Dictionary<string, ICollection<Request>>();
             var currencyRequests = GetActiveCurrencyRequests(_unitOfWork.Context, requestType);
 
-            if (!includeNonHistorical)
-                currencyRequests = currencyRequests.Select(r => new Request
-                {
-                    Id = r.Id,
-                    Guid = r.Guid,
-                    RequestType = r.RequestType,
-                    ResponseType = r.ResponseType,
-                    DataPath = r.DataPath,
-                    Delay = r.Delay,
-                    FailureDelay = r.FailureDelay,
-                    CurrencyId = r.CurrencyId,
-                    Currency = r.Currency,
-                    CurrencyPairId = r.CurrencyPairId,
-                    CurrencyPair = r.CurrencyPair,
-                    CurrencyTypeId = r.CurrencyTypeId,
-                    CurrencyType = r.CurrencyType,
-                    CreatedAt = r.CreatedAt,
-                    CreatedById = r.CreatedById,
-                    ModifiedAt = r.ModifiedAt,
-                    ModifiedById = r.ModifiedById,
-                    IsEnabled = r.IsEnabled,
-                    RequestComponents = r.RequestComponents
-                        .Where(rc => rc.StoreHistoricals).ToList(),
-                    RequestProperties = r.RequestProperties,
-                    WebsocketCommands = r.WebsocketCommands
-                });
-
             foreach (var cReq in currencyRequests)
             {
                 // If the key exists,
-                if (dict.ContainsKey(cReq.DataPath) && dict[cReq.DataPath] != null 
+                if (dict.ContainsKey(cReq.DataPath) && dict[cReq.DataPath] != null
                                                     && dict[cReq.DataPath].Count > 0)
                 {
                     dict[cReq.DataPath].Add(cReq);
@@ -382,102 +356,45 @@ namespace Nozomi.Service.Events
 
             return dict;
         }
-        
-        private static readonly Func<NozomiDbContext, RequestType, IEnumerable<Request>> 
-            CompiledGetAllByRequestType =
-            EF.CompileQuery((NozomiDbContext context, RequestType type) =>
-                context.Requests
-                    .AsQueryable()
-                    .Include(cpr => cpr.RequestComponents)
-                    .Include(r => r.CurrencyPair)
-                    .Include(r => r.RequestProperties)
-                    .Include(r => r.WebsocketCommands)
-                    .ThenInclude(wsc => wsc.WebsocketCommandProperties)
-                    .Where(r => r.IsEnabled && r.DeletedAt == null
-                                            && r.RequestComponents
-                                                .Any(rc => rc.DeletedAt == null && rc.IsEnabled)
-                                            && r.RequestType == type
-                                            && (DateTime.UtcNow >= r.ModifiedAt.Add(TimeSpan.FromMilliseconds(r.Delay))
-                                                // This means the request has been recently created and requires syncing
-                                                || r.CreatedAt.Equals(r.ModifiedAt))
-                                            )); 
 
-        public ICollection<Request> GetAllByRequestType(RequestType requestType, bool includeNonHistorical = false)
+        private static readonly Func<NozomiDbContext, RequestType, IEnumerable<Request>>
+            CompiledGetAllByRequestType =
+                EF.CompileQuery((NozomiDbContext context, RequestType type) =>
+                    context.Requests
+                        .AsQueryable()
+                        .Include(cpr => cpr.RequestComponents)
+                        .Include(r => r.CurrencyPair)
+                        .Include(r => r.RequestProperties)
+                        .Include(r => r.WebsocketCommands)
+                        .ThenInclude(wsc => wsc.WebsocketCommandProperties)
+                        .Where(r => r.IsEnabled && r.DeletedAt == null
+                                                && r.RequestComponents
+                                                    .Any(rc => rc.DeletedAt == null && rc.IsEnabled)
+                                                && r.RequestType == type));
+
+        public ICollection<Request> GetAllByRequestType(RequestType requestType)
         {
-            if (!includeNonHistorical)
-                return CompiledGetAllByRequestType(_unitOfWork.Context, requestType).Select(r => new Request
-                {
-                    Id = r.Id,
-                    Guid = r.Guid,
-                    RequestType = r.RequestType,
-                    ResponseType = r.ResponseType,
-                    DataPath = r.DataPath,
-                    Delay = r.Delay,
-                    FailureDelay = r.FailureDelay,
-                    CurrencyId = r.CurrencyId,
-                    Currency = r.Currency,
-                    CurrencyPairId = r.CurrencyPairId,
-                    CurrencyPair = r.CurrencyPair,
-                    CurrencyTypeId = r.CurrencyTypeId,
-                    CurrencyType = r.CurrencyType,
-                    CreatedAt = r.CreatedAt,
-                    CreatedById = r.CreatedById,
-                    ModifiedAt = r.ModifiedAt,
-                    ModifiedById = r.ModifiedById,
-                    IsEnabled = r.IsEnabled,
-                    RequestComponents = r.RequestComponents
-                        .Where(rc => rc.StoreHistoricals).ToList(),
-                    RequestProperties = r.RequestProperties,
-                    WebsocketCommands = r.WebsocketCommands
-                }).ToList();
-            
-            return CompiledGetAllByRequestType(_unitOfWork.Context, requestType).ToList();
+            return CompiledGetAllByRequestType.Invoke(_unitOfWork.Context, requestType)
+                .Where(r => DateTime.UtcNow >= r.ModifiedAt.AddMilliseconds(r.Delay)
+                            // This means the request has been recently created and requires syncing
+                            || r.CreatedAt.Equals(r.ModifiedAt))
+                .Select(r => new Request(r)).ToList();
         }
 
-        public IDictionary<string, ICollection<Request>> GetAllByRequestTypeUniqueToURL(RequestType requestType
-            , bool includeNonHistorical = false)
+        public IDictionary<string, ICollection<Request>> GetAllByRequestTypeUniqueToURL(RequestType requestType)
         {
             var dict = new Dictionary<string, ICollection<Request>>();
-            
-            #if DEBUG
-            // Check the context
-            var testRequestsFromContext = _unitOfWork.Context.Requests.ToList();
-            #endif
-            
-            var requests = CompiledGetAllByRequestType(_unitOfWork.Context, requestType);
-            
-            if (!includeNonHistorical)
-                requests = requests.Select(r => new Request
-                {
-                    Id = r.Id,
-                    Guid = r.Guid,
-                    RequestType = r.RequestType,
-                    ResponseType = r.ResponseType,
-                    DataPath = r.DataPath,
-                    Delay = r.Delay,
-                    FailureDelay = r.FailureDelay,    
-                    CurrencyId = r.CurrencyId,
-                    Currency = r.Currency,
-                    CurrencyPairId = r.CurrencyPairId,
-                    CurrencyPair = r.CurrencyPair,
-                    CurrencyTypeId = r.CurrencyTypeId,
-                    CurrencyType = r.CurrencyType,
-                    CreatedAt = r.CreatedAt,
-                    CreatedById = r.CreatedById,
-                    ModifiedAt = r.ModifiedAt,
-                    ModifiedById = r.ModifiedById,
-                    IsEnabled = r.IsEnabled,
-                    RequestComponents = r.RequestComponents
-                        .Where(rc => rc.StoreHistoricals).ToList(),
-                    RequestProperties = r.RequestProperties,
-                    WebsocketCommands = r.WebsocketCommands
-                });
+
+            var requests = CompiledGetAllByRequestType.Invoke(_unitOfWork.Context, requestType)
+                .Where(r => DateTime.UtcNow >= r.ModifiedAt.AddMilliseconds(r.Delay)
+                            // This means the request has been recently created and requires syncing
+                            || r.CreatedAt.Equals(r.ModifiedAt));
 
             foreach (var request in requests)
             {
                 // If the key exists,
-                if (dict.ContainsKey(request.DataPath) && dict[request.DataPath] != null 
-                                                        && dict[request.DataPath].Count > 0)
+                if (dict.ContainsKey(request.DataPath) && dict[request.DataPath] != null
+                                                       && dict[request.DataPath].Count > 0)
                 {
                     dict[request.DataPath].Add(request);
                 }
