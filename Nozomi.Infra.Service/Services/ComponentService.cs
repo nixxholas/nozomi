@@ -124,9 +124,9 @@ namespace Nozomi.Service.Services
                     .GetQueryable()
                     .AsTracking()
                     .Include(rc => rc.Request)
-                    .Where(rc => rc.DeletedAt == null && rc.IsEnabled
-                                 && rc.ModifiedAt.AddMilliseconds(rc.Request.Delay) <= DateTime.UtcNow)
-                    .SingleOrDefault(cp => cp.Id.Equals(id));
+                    .Where(rc => rc.DeletedAt == null && rc.IsEnabled && rc.Id.Equals(id))
+                    .AsEnumerable()
+                    .SingleOrDefault(c => c.ModifiedAt.AddMilliseconds(c.Request.Delay) <= DateTime.UtcNow);
 
                 // Anomaly Detection
                 // Let's make it more efficient by checking if the price has changed
