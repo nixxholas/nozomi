@@ -48,6 +48,14 @@
                 <b-table-column field="currencyType" label="Type" sortable>
                     {{ getType(props.row.currencyTypeGuid).name }}
                 </b-table-column>
+                
+                <b-table-column
+                        v-if="props.row.components && props.row.components.length > 0 
+                        && displayComponents && displayComponents.length > 0"
+                        v-for="component in props.row.components"
+                        :visible="componentIsDisplayable(component.type)">
+                    {{ component }}
+                </b-table-column>
             </template>
         </b-table>
         <b-loading :active.sync="dataLoading"></b-loading>
@@ -62,7 +70,11 @@
         name: "currencies-table",
         props: {
             type: null,
-            perPage: 50
+            perPage: {
+                default: 50,
+                type: Number
+            },
+            displayComponents: []
         },
         data: function () {
             return {
@@ -77,6 +89,16 @@
             }
         },
         methods: {
+            componentIsDisplayable(type) {
+                if (this.displayComponents && this.displayComponents.length > 0) {
+                    for (let i = 0; i < this.displayComponents.length; i++) {
+                        if (this.displayComponents[i] === type)
+                            return true;
+                    }
+                }
+                
+                return false;
+            },
             getType(guid) {
                 const types = this.typeData;
                 if (types && types.length > 0)
