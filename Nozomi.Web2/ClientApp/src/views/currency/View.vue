@@ -50,7 +50,7 @@
                                                 </p>
                                             </div>
                                             
-                                            <div class="columns is-multiline is-mobile" v-if="data && data.components && data.components.length > 0">
+                                            <div class="columns is-multiline is-desktop" v-if="data && data.components && data.components.length > 0">
                                                 <div class="column is-one-quarter" v-for="comp in data.components">
                                                     <div v-if="comp.value">
                                                         <p class="heading">{{ getTypeByKey(comp.type).value }}</p>
