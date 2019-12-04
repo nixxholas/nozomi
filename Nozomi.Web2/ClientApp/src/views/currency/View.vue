@@ -53,7 +53,7 @@
                                             <div class="columns is-multiline is-mobile" v-if="data && data.components && data.components.length > 0">
                                                 <div class="column is-one-quarter" v-for="comp in data.components">
                                                     <div v-if="comp.value">
-                                                        <p class="heading">{{ getTypeByKey(comp.type) }}</p>
+                                                        <p class="heading">{{ getTypeByKey(comp.type).value }}</p>
                                                         <p class="title is-4" v-if="!comp.uiFormatting">{{ comp.value }}</p>
                                                         <p class="title is-4" v-else>{{ comp.value | numeralFormat(comp.uiFormatting) }}</p>
                                                     </div>
