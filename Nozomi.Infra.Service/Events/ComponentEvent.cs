@@ -269,6 +269,7 @@ namespace Nozomi.Service.Events
                 {
                     return query
                         .SelectMany(cr => cr.RequestComponents)
+                        .AsEnumerable()
                         .Where(rc => componentTypes.Contains(rc.ComponentType))
                         .Select(rc => new Component(rc,
                             index, NozomiServiceConstants.RcdHistoricItemTakeoutLimit))
