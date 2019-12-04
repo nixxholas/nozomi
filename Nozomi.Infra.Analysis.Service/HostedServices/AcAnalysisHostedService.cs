@@ -100,6 +100,13 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
         {
             if (entity != null)
             {
+                if (entity.ModifiedAt.AddMilliseconds(entity.Delay) > DateTime.UtcNow)
+                {
+                    _processAnalysedComponentService.Checked(entity.Id, true);
+                    _logger.LogWarning($"[{ServiceName}] Analyse: Skipping {entity.Id}, has been recently updated.");
+                    return true;
+                }
+                
                 var dataTimespan = TimeSpan.Zero;
 
                 // Logic here once again
