@@ -20,7 +20,7 @@ namespace Nozomi.Service.Events.Analysis.Interfaces
         IEnumerable<AnalysedHistoricItemViewModel> List(Guid guid, int page = 0, int itemsPerPage = 50);
 
         long GetRelevantComponentQueryCount(long analysedComponentId, Expression<Func<AnalysedHistoricItem, bool>> predicate = null, 
-            bool deepTrack = false);
+            Func<AnalysedHistoricItem, bool> clientPredicate = null, bool deepTrack = false);
 
         ICollection<AnalysedHistoricItem> GetRelevantHistorics(long analysedComponentId, 
             Expression<Func<AnalysedHistoricItem, bool>> predicate, int index = 0);

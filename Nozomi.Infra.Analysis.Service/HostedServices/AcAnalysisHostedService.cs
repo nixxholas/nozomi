@@ -369,25 +369,16 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                     index, true, new List<ComponentType>()
                                     {
                                         ComponentType.Ask, ComponentType.Bid
-                                    });
+                                    })
+                                .Where(c => NumberHelper.IsNumericDecimal(c.Value))
+                                .DefaultIfEmpty()
+                                .ToList();
 
-                            if (components != null && components.Any())
+                            if (components.Any(c => c != null))
                             {
-                                components = components
-                                    .Where(rc => NumberHelper.IsNumericDecimal(rc.Value))
-                                    .ToList();
-                                
                                 // Aggregate it
-                                if (avgPrice > 0)
-                                {
-                                    avgPrice = decimal.Divide(decimal.Add(avgPrice, components
-                                        .Average(rc => decimal.Parse(rc.Value))), 2);
-                                }
-                                else
-                                {
-                                    avgPrice = components
-                                        .Average(rc => decimal.Parse(rc.Value));
-                                }
+                                avgPrice = components
+                                    .Average(rc => decimal.Parse(rc.Value));
 
                                 // Now that's its computed, check again
                                 if (avgPrice > 0)
@@ -395,11 +386,19 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                     return _processAnalysedComponentService.UpdateValue(entity.Id,
                                         avgPrice.ToString(CultureInfo.InvariantCulture));
                                 }
+                            
+                                // Hitting here? Sum ting wong
+                                _logger.LogWarning($"[{ServiceName}] Analyse ({entity.Id}): " +
+                                                   $"average price can't be computed, component data might have been" +
+                                                   $"contaminated..");
+                            }
+                            else
+                            {
+                                // Hitting here? Sum ting wong
+                                _logger.LogWarning($"[{ServiceName}] Analyse ({entity.Id}): " +
+                                                   $"average price can't be computed.");
                             }
                             
-                            // Hitting here? Sum ting wong
-                            _logger.LogWarning($"[{ServiceName}] Analyse ({entity.Id}): " +
-                                               $"average price can't be computed.");
                             return _processAnalysedComponentService.Checked(entity.Id, true);
                         }
 
@@ -489,7 +488,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                                              // Make sure we only check for the CurrentAveragePrice component
                                                              && ahi.AnalysedComponent.ComponentType
                                                                  .Equals(AnalysedComponentType.CurrentAveragePrice),
-                                true);
+                                null, true);
                             var compsPages =
                                 (componentsToCompute > NozomiServiceConstants.AnalysedHistoricItemTakeoutLimit)
                                     ? decimal.Divide(componentsToCompute,
@@ -564,7 +563,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                                              // Make sure we only check for the CurrentAveragePrice component
                                                              && ahi.AnalysedComponent.ComponentType
                                                                  .Equals(AnalysedComponentType.HourlyAveragePrice),
-                                true);
+                                null, true);
                             var componentPages =
                                 (componentsToCompute > NozomiServiceConstants.AnalysedHistoricItemTakeoutLimit)
                                     ? componentsToCompute / NozomiServiceConstants.AnalysedHistoricItemTakeoutLimit
@@ -630,7 +629,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                                              // Make sure we only check for the CurrentAveragePrice component
                                                              && ahi.AnalysedComponent.ComponentType
                                                                  .Equals(AnalysedComponentType.HourlyAveragePrice),
-                                true);
+                                null, true);
                             var compsPages =
                                 (componentsToCompute > NozomiServiceConstants.AnalysedHistoricItemTakeoutLimit)
                                     ? decimal.Divide(componentsToCompute,
@@ -728,13 +727,12 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                             entity.Id,
                             // Active checks
                             ahi => ahi.DeletedAt == null && ahi.IsEnabled
-                                                         // Time check
-                                                         && ahi.HistoricDateTime >=
-                                                         DateTime.UtcNow.Subtract(dataTimespan)
                                                          // Make sure we only check for the correct component
                                                          && ahi.AnalysedComponent.ComponentType
                                                              .Equals(pctChangeComponentType),
-                            true);
+                                                           // Time check
+                                                           ahi => ahi.HistoricDateTime >=
+                                                           DateTime.UtcNow.Subtract(dataTimespan), true);
 
                         if (pctChangeComponentsToCompute > 0)
                         {

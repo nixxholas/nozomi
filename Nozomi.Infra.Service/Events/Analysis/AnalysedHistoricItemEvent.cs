@@ -117,7 +117,8 @@ namespace Nozomi.Service.Events.Analysis
         /// <param name="deepTrack"></param>
         /// <returns></returns>
         public long GetRelevantComponentQueryCount(long analysedComponentId, 
-            Expression<Func<AnalysedHistoricItem, bool>> predicate, bool deepTrack = false)
+            Expression<Func<AnalysedHistoricItem, bool>> predicate, 
+            Func<AnalysedHistoricItem, bool> clientPredicate = null, bool deepTrack = false)
         {
             if (analysedComponentId > 0 && predicate != null)
             {
@@ -127,17 +128,6 @@ namespace Nozomi.Service.Events.Analysis
                 if (correlator == null)
                     _logger.LogWarning($"[{EventName}] GetRelevantComponentQueryCount: No correlator for " +
                                        $"analysed component {analysedComponentId}");
-                
-//                // Obtain all correlated analysed components
-//                var correlations = _analysedComponentEvent.GetAllByCorrelation(analysedComponentId);
-//                var correlationIds = correlations.Select(ac => ac.Id).ToList();
-//                
-//                // Make sure there are correlated analysed components
-//                if (!correlations.Any())
-//                    _logger.LogWarning($"[{EventName}] GetRelevantComponentQueryCount: No correlations for " +
-//                                       $"analysed component {analysedComponentId}");
-                
-                //Debug.Assert(correlator != null, nameof(correlator) + " != null");
                 
                 // Obtain all Historic items for the correlated components.
                 var query = _unitOfWork.GetRepository<AnalysedHistoricItem>()
@@ -150,8 +140,7 @@ namespace Nozomi.Service.Events.Analysis
                         || (correlator.CurrencyPairId != null && correlator.CurrencyPairId.Equals(ahi.AnalysedComponent.CurrencyPairId))
                         // Currency type-based check
                         || (correlator.CurrencyTypeId != null && correlator.CurrencyTypeId.Equals(ahi.AnalysedComponent.CurrencyTypeId))
-                    )
-                    .AsQueryable();
+                    );
 
                 if (deepTrack)
                 {
@@ -164,27 +153,19 @@ namespace Nozomi.Service.Events.Analysis
                         .ThenInclude(s => s.SourceCurrencies)
                         .ThenInclude(sc => sc.Currency)
                         .Include(ahi => ahi.AnalysedComponent)
-                        .ThenInclude(ac => ac.CurrencyType)
-                        .AsQueryable();
+                        .ThenInclude(ac => ac.CurrencyType);
                 }
-                
-                #if DEBUG
-                var testQuery = query.ToList();
-                var testResult = query
-                    .Where(predicate)
-                    .ToList();
 
-                var currAc = _unitOfWork.GetRepository<AnalysedComponent>()
-                    .GetQueryable()
-                    .SingleOrDefault(ac => ac.Id.Equals(analysedComponentId));
-                
-                if ((!testResult.Any() || testResult.Count == 0) && (currAc?.CurrencyId != null && currAc.CurrencyId > 0
-                                                                       && currAc.ComponentType.Equals(AnalysedComponentType.HourlyAveragePrice)))
-                    Console.WriteLine($"[{EventName}] GetRelevantComponentQueryCount: BAD!");
-                #endif
+                query = query
+                    .Where(predicate);
+
+                if (clientPredicate != null)
+                    return query
+                        .AsEnumerable()
+                        .Where(clientPredicate)
+                        .LongCount();
 
                 return query
-                    .Where(predicate)
                     .LongCount();
             }
 
