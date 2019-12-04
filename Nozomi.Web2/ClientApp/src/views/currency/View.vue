@@ -1,5 +1,5 @@
 <template>
-    <div class="container-fluid">        
+    <div class="container">        
         <section class="hero" v-if="this.data">
             <div class="hero-body">
                     <b-navbar class="pb-4" 
