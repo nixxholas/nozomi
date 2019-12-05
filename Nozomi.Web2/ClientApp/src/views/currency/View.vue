@@ -40,10 +40,10 @@
                                     </section>
                                     
                                     <section class="section"
-                                             v-if="(data && data.components && data.components.length > 0) || hasAccess">
+                                             v-if="(data && data.components && data.components.length > 0) || oidcIsAuthenticated">
                                         <div class="container">
 
-                                            <div class="tile is-child" v-if="hasAccess">
+                                            <div class="tile is-child" v-if="oidcIsAuthenticated">
                                                 <p class="heading">Have a component to add?</p>
                                                 <p class="is-4">
                                                     <CreateAcComponentModal :currency-id="data.id"></CreateAcComponentModal>
@@ -196,9 +196,6 @@
                 'oidcIsAuthenticated',
                 'oidcIdTokenExp'
             ]),
-            hasAccess: function () {
-                return this.oidcIsAuthenticated
-            },
         },
         props: ['slug'],
         components: {CreateAcComponentModal},
@@ -210,7 +207,9 @@
                 AnalysedComponentService.getTypes()
                     .then(function (res) {
                         self.typeData = res;
-                    });
+                    }).catch(function (err) {
+                        console.dir(err);
+                });
 
                 // Propagate the currency first
                 this.$axios.get('/api/Currency/Get/' + this.slug)

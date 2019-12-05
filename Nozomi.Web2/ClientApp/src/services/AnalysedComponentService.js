@@ -1,7 +1,6 @@
 import store from '../store/index';
 import axios from 'axios';
 
-
 export default {
     // TODO: Haven't started lol
     getAll() {

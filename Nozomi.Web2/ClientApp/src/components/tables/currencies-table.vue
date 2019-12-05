@@ -50,9 +50,9 @@
                 </b-table-column>
                 
                 <b-table-column
+                        v-for="component in props.row.components"
                         v-if="props.row.components && props.row.components.length > 0 
                         && displayComponents && displayComponents.length > 0"
-                        v-for="component in props.row.components"
                         :visible="componentIsDisplayable(component.type)">
                     {{ component }}
                 </b-table-column>

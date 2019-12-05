@@ -15,12 +15,13 @@
           </header>
           <section class="modal-card-body">
             <b-field label="Type">
+              {{ componentTypes }}
               <b-select placeholder="Pick one!" v-model="form.type">
                 <option
                   v-for="option in componentTypes"
-                  :value="option.value"
-                  :key="option.key">
-                  {{ option.key }}
+                  :value="option.key"
+                  :key="option.value">
+                  {{ option.value }}
                 </option>
               </b-select>
             </b-field>
@@ -82,6 +83,7 @@
     import store from '../../store/index';
     import { mapActions } from 'vuex';
     import { NotificationProgrammatic as Notification } from 'buefy';
+    import AnalysedComponentService from "@/services/AnalysedComponentService";
 
     export default {
         name: "create-ac-modal",
@@ -162,14 +164,9 @@
 
             // Synchronously call for data
             self.componentTypesIsLoading = true;
-            this.$axios.get('/api/AnalysedComponent/AllTypes', {
-                headers: {
-                    Authorization: "Bearer " + store.state.oidcStore.access_token
-                }
-            })
+            AnalysedComponentService.getTypes()
                 .then(function (response) {
-                    // console.dir(response);
-                    self.componentTypes = response.data;
+                    self.componentTypes = response;
                 })
                 .catch(function (error) {
                     //console.dir(error);
