@@ -1,88 +1,87 @@
 <template>
-  <div>
-    <button class="button is-primary"
-            @click="isModalActive = true">
-      Create
-    </button>
+    <div>
+        <button class="button is-primary"
+                @click="isModalActive = true">
+            Create
+        </button>
 
-    <b-modal has-modal-card trap-focus :active.sync="isModalActive">
-      <b-loading :active.sync="isModalLoading" :can-cancel="false"></b-loading>
-      <!--https://stackoverflow.com/questions/48028718/using-event-modifier-prevent-in-vue-to-submit-form-without-redirection-->
-      <form v-on:submit.prevent="create()" class="has-text-justified">
-        <div class="modal-card">
-          <header class="modal-card-head">
-            <p class="modal-card-title">Create an analysed component</p>
-          </header>
-          <section class="modal-card-body">
-            <b-field label="Type">
-              {{ componentTypes }}
-              <b-select placeholder="Pick one!" v-model="form.type">
-                <option
-                  v-for="option in componentTypes"
-                  :value="option.key"
-                  :key="option.value">
-                  {{ option.value }}
-                </option>
-              </b-select>
-            </b-field>
+        <b-modal has-modal-card trap-focus :active.sync="isModalActive">
+            <b-loading :active.sync="isModalLoading" :can-cancel="false"></b-loading>
+            <!--https://stackoverflow.com/questions/48028718/using-event-modifier-prevent-in-vue-to-submit-form-without-redirection-->
+            <form v-on:submit.prevent="create()" class="has-text-justified">
+                <div class="modal-card">
+                    <header class="modal-card-head">
+                        <p class="modal-card-title">Create an analysed component</p>
+                    </header>
+                    <section class="modal-card-body">
+                        <b-field label="Type">
+                            <b-select placeholder="Pick one!" v-model="form.type">
+                                <option
+                                        v-for="option in componentTypes"
+                                        :value="option.key"
+                                        :key="option.value">
+                                    {{ option.value }}
+                                </option>
+                            </b-select>
+                        </b-field>
 
-            <b-field>
-              <template slot="label">
-                UI Formatting
-              </template>
-              <b-input
-                type="text"
-                placeholder=""
-                v-model="form.uiFormatting"
-                expanded>
-              </b-input>
-            </b-field>
+                        <b-field>
+                            <template slot="label">
+                                UI Formatting
+                            </template>
+                            <b-input
+                                    type="text"
+                                    placeholder=""
+                                    v-model="form.uiFormatting"
+                                    expanded>
+                            </b-input>
+                        </b-field>
 
-            <b-field>
-              <template slot="label">
-                Delay <span class="has-text-primary is-italic">(In milliseconds)</span>
-              </template>
-              <b-input
-                type="number"
-                placeholder="Delay between each update in milliseconds"
-                v-model="form.delay"
-                expanded
-                required>
-              </b-input>
-            </b-field>
+                        <b-field>
+                            <template slot="label">
+                                Delay <span class="has-text-primary is-italic">(In milliseconds)</span>
+                            </template>
+                            <b-input
+                                    type="number"
+                                    placeholder="Delay between each update in milliseconds"
+                                    v-model="form.delay"
+                                    expanded
+                                    required>
+                            </b-input>
+                        </b-field>
 
-            <b-field grouped>
-              <b-field label="Denominated Value">
-                <b-switch v-model="form.isDenominated"
-                          true-value="Yes"
-                          false-value="No">
-                  {{ form.isDenominated }}
-                </b-switch>
-              </b-field>
-              <b-field label="Stash Historical">
-                <b-switch v-model="form.storeHistoricals"
-                          true-value="Yes"
-                          false-value="No">
-                  {{ form.storeHistoricals }}
-                </b-switch>
-              </b-field>
-            </b-field>
-          </section>
+                        <b-field grouped>
+                            <b-field label="Denominated Value">
+                                <b-switch v-model="form.isDenominated"
+                                          true-value="Yes"
+                                          false-value="No">
+                                    {{ form.isDenominated }}
+                                </b-switch>
+                            </b-field>
+                            <b-field label="Stash Historical">
+                                <b-switch v-model="form.storeHistoricals"
+                                          true-value="Yes"
+                                          false-value="No">
+                                    {{ form.storeHistoricals }}
+                                </b-switch>
+                            </b-field>
+                        </b-field>
+                    </section>
 
-          <footer class="modal-card-foot">
-            <button class="button" type="button" @click="isModalActive = false">Close</button>
-            <button class="button is-primary" type="submit">Submit</button>
-          </footer>
-        </div>
-      </form>
-    </b-modal>
-  </div>
+                    <footer class="modal-card-foot">
+                        <button class="button" type="button" @click="isModalActive = false">Close</button>
+                        <button class="button is-primary" type="submit">Submit</button>
+                    </footer>
+                </div>
+            </form>
+        </b-modal>
+    </div>
 </template>
 
 <script>
     import store from '../../store/index';
-    import { mapActions } from 'vuex';
-    import { NotificationProgrammatic as Notification } from 'buefy';
+    import {mapActions} from 'vuex';
+    import {NotificationProgrammatic as Notification} from 'buefy';
     import AnalysedComponentService from "@/services/AnalysedComponentService";
 
     export default {
@@ -90,16 +89,18 @@
         props: {
             currentRoute: window.location.href, // https://forum.vuejs.org/t/how-to-get-path-from-route-instance/26934/2
             currencyId: Number,
-            currencyPairId : Number,
+            currencySlug: String,
+            currencyPairId: Number,
             currencyTypeId: Number
         },
         methods: {
             ...mapActions('oidcStore', ['authenticateOidc', 'signOutOidc']),
-            create: function() {
+            create: function () {
                 this.isModalLoading = true;
 
                 let self = this;
-                if (self.currencyId > 0 || self.currencyPairId > 0 || self.currencyTypeId > 0) {
+                console.dir(self);
+                if (self.currencyId > 0 || self.currencySlug || self.currencyPairId > 0 || self.currencyTypeId > 0) {
                     this.$axios.post('/api/AnalysedComponent/Create', self.form, {
                         headers: {
                             Authorization: "Bearer " + store.state.oidcStore.access_token
@@ -113,7 +114,8 @@
                                 isDenominated: false,
                                 storeHistoricals: false,
                                 currencyId: self.form.currencyId,
-                                currencyPairId : self.form.currencyPairId,
+                                currencySlug: self.form.currencySlug,
+                                currencyPairId: self.form.currencyPairId,
                                 currencyTypeId: self.form.currencyTypeId
                             };
 
@@ -189,7 +191,8 @@
                     isDenominated: false,
                     storeHistoricals: false,
                     currencyId: this.currencyId,
-                    currencyPairId : this.currencyPairId,
+                    currencySlug: this.currencySlug,
+                    currencyPairId: this.currencyPairId,
                     currencyTypeId: this.currencyTypeId
                 },
                 componentTypes: [],
