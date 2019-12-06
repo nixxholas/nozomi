@@ -42,11 +42,10 @@
                                     <section class="section"
                                              v-if="(data && data.components && data.components.length > 0) || oidcIsAuthenticated">
                                         <div class="container">
-
                                             <div class="tile is-child" v-if="oidcIsAuthenticated">
-                                                <p class="heading">Have a component to add?</p>
+                                                <p class="heading">Have a component to add?
                                                 <p class="is-4">
-                                                    <CreateAcComponentModal :currency-id="data.id"></CreateAcComponentModal>
+                                                    <CreateAcComponentModal :currency-slug="data.slug"></CreateAcComponentModal>
                                                 </p>
                                             </div>
                                             
