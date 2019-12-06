@@ -17,6 +17,8 @@ namespace Nozomi.Data.ViewModels.AnalysedComponent
         
         public long CurrencyId { get; set; }
         
+        public string CurrencySlug { get; set; }
+        
         public long CurrencyPairId { get; set; }
         
         public long CurrencyTypeId { get; set; }
@@ -37,11 +39,13 @@ namespace Nozomi.Data.ViewModels.AnalysedComponent
                 RuleFor(e => e.IsDenominated).NotNull();
                 RuleFor(e => e.StoreHistoricals).NotNull();
                 RuleFor(e => e.CurrencyId).GreaterThan(0)
-                    .Unless(e => e.CurrencyPairId > 0 || e.CurrencyTypeId > 0);
+                    .Unless(e => !string.IsNullOrEmpty(e.CurrencySlug) || e.CurrencyPairId > 0 || e.CurrencyTypeId > 0);
+                RuleFor(e => e.CurrencySlug).NotNull()
+                    .Unless(e => e.CurrencyId > 0 || e.CurrencyPairId > 0 || e.CurrencyTypeId > 0);
                 RuleFor(e => e.CurrencyPairId).GreaterThan(0)
-                    .Unless(e => e.CurrencyId > 0 || e.CurrencyTypeId > 0);
+                    .Unless(e => !string.IsNullOrEmpty(e.CurrencySlug) || e.CurrencyId > 0 || e.CurrencyTypeId > 0);
                 RuleFor(e => e.CurrencyTypeId).GreaterThan(0)
-                    .Unless(e => e.CurrencyId > 0 || e.CurrencyPairId > 0);
+                    .Unless(e => !string.IsNullOrEmpty(e.CurrencySlug) || e.CurrencyId > 0 || e.CurrencyPairId > 0);
             }
         }
     }
