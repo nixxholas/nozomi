@@ -29,10 +29,10 @@ Vue.component('vue-fontawesome', FontAwesomeIcon);
 
 // Font awesome solid icon configurations
 import { faAngleLeft, faAngleRight, faArrowUp, faAtlas, faCoins, faColumns, 
-  faExclamationTriangle, faFrown, 
+  faExclamationCircle,faExclamationTriangle, faFrown, 
   faHome, faInfo, faLandmark, faMoneyBillWave, faUniversity } from '@fortawesome/free-solid-svg-icons';
 library.add(faAngleLeft, faAngleRight, faArrowUp, faAtlas, faCoins, faColumns,
-    faExclamationTriangle, faFrown,
+    faExclamationCircle, faExclamationTriangle, faFrown,
     faHome, faInfo, faLandmark, faMoneyBillWave, faUniversity);
 
 // Font awesome brand icon configurations
