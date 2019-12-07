@@ -4,6 +4,8 @@ namespace Nozomi.Data.Models.Currency
 { 
     public enum CurrencyPairType
     {
+        [Description("None")]
+        NONE = -1, // No type for now.
         [Description("Unknown")]
         UNKNOWN = 0, // Not usable until set.
         [Description("Tradeable")]
