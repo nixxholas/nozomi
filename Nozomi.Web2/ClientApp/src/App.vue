@@ -28,15 +28,15 @@
 </template>
 
 <script>
-  import NavMenu from './nav-menu'
+  import NavMenu from './nav-menu';
 
   export default {
     components: {
-      'nav-menu': NavMenu
+      'nav-menu': NavMenu,
     },
     data () {
       return {
-        buildTime: ''
+        buildTime: '',
       }
     },
     methods: {
