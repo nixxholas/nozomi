@@ -3,11 +3,15 @@ using Nozomi.Base.Core;
 using Nozomi.Data.Models.Currency;
 using Nozomi.Data.Models.Web.Analytical;
 using Nozomi.Data.ResponseModels.CurrencyPair;
+using Nozomi.Data.ViewModels.CurrencyPair;
 
 namespace Nozomi.Service.Events.Interfaces
 {
     public interface ICurrencyPairEvent
     {
+        IEnumerable<CurrencyPairViewModel> All(int page = 0, int itemsPerPage = 50, 
+            string sourceGuid = null, bool orderAscending = true, string orderingParam = "Name");
+        
         long CountByMainCurrency(string mainTicker);
         
         ICollection<CurrencyPair> GetAllByCounterCurrency(

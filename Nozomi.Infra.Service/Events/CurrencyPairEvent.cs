@@ -7,6 +7,9 @@ using Nozomi.Base.Core;
 using Nozomi.Data.Models.Currency;
 using Nozomi.Data.Models.Web.Analytical;
 using Nozomi.Data.ResponseModels.CurrencyPair;
+using Nozomi.Data.ViewModels.AnalysedComponent;
+using Nozomi.Data.ViewModels.CurrencyPair;
+using Nozomi.Data.ViewModels.Source;
 using Nozomi.Preprocessing;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.BCL.Repository;
@@ -31,6 +34,76 @@ namespace Nozomi.Service.Events
                                                   && cp.MainCurrencyAbbrv.Equals(mainCurrencyAbbrv,
                                                       StringComparison.InvariantCultureIgnoreCase))
                 .ToList();
+        }
+
+        public IEnumerable<CurrencyPairViewModel> All(int page = 0, int itemsPerPage = 50, 
+            string sourceGuid = null, bool orderAscending = true, string orderingParam = "TickerPair")
+        {
+            if (itemsPerPage <= 0 || itemsPerPage > NozomiServiceConstants.CurrencyPairTakeoutLimit)
+                itemsPerPage = NozomiServiceConstants.CurrencyPairTakeoutLimit;
+
+            if (page < 0)
+                page = 0;
+            
+            var query = _unitOfWork.GetRepository<CurrencyPair>()
+                .GetQueryable()
+                .AsNoTracking()
+                .Where(cp => cp.IsEnabled && cp.DeletedAt == null && cp.SourceId > 0);
+
+            if (!string.IsNullOrEmpty(sourceGuid) && Guid.TryParse(sourceGuid, out var parsedSourceGuid))
+                query = query
+                    .Include(c => c.Source)
+                    .Where(cp => cp.Source.DeletedAt == null && cp.Source.IsEnabled && 
+                                 cp.Source.Guid.Equals(parsedSourceGuid));
+            
+            switch (orderingParam.ToLower()) // Ignore case sensitivity
+            {
+                case "Type":
+                    query = orderAscending ? query.OrderBy(cp => cp.CurrencyPairType) : 
+                        query.OrderByDescending(cp => cp.CurrencyPairType);
+                    break;
+                case "SourceName":
+                    query = orderAscending ? query
+                        .Include(cp => cp.Source).OrderBy(cp => cp.Source.Name) : query
+                        .Include(cp => cp.Source)
+                        .OrderByDescending(cp => cp.Source.Name);
+                    break;
+                default: // Handle all cases.
+                    query = orderAscending ? query.OrderBy(cp => string.Concat(cp.MainCurrencyAbbrv, 
+                        cp.CounterCurrencyAbbrv)) : query.OrderByDescending(cp => 
+                        string.Concat(cp.MainCurrencyAbbrv, cp.CounterCurrencyAbbrv));
+                    break;
+            }
+            
+            return query
+                // .OrderBy(orderingParam, orderAscending) // TODO: Make use of LinqExtensions again
+                .Skip(page * itemsPerPage)
+                .Take(itemsPerPage)
+                .Include(cp => cp.Source)
+                .Include(cp => cp.AnalysedComponents)
+                .Select(cp => new CurrencyPairViewModel
+                {
+                    Type = cp.CurrencyPairType,
+                    MainTicker = cp.MainCurrencyAbbrv,
+                    CounterTicker = cp.CounterCurrencyAbbrv,
+                    SourceGuid = cp.Source.Guid.ToString(),
+                    Source = new SourceViewModel
+                    {
+                        Abbreviation = cp.Source.Abbreviation,
+                        Name = cp.Source.Name
+                    },
+                    AnalysedComponents = cp.AnalysedComponents
+                        .Where(ac => ac.DeletedAt == null & ac.IsEnabled 
+                                     && !string.IsNullOrEmpty(ac.Value))
+                        .Select(ac => new AnalysedComponentViewModel
+                        {
+                            Guid = ac.Guid,
+                            Type = ac.ComponentType,
+                            UiFormatting = ac.UIFormatting,
+                            Value = ac.Value,
+                            IsDenominated = ac.IsDenominated
+                        })
+                });
         }
 
         public long CountByMainCurrency(string mainTicker)

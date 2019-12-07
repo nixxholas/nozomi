@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Nozomi.Data.Models.Currency;
 using Nozomi.Data.ViewModels.AnalysedComponent;
+using Nozomi.Data.ViewModels.Source;
 
 namespace Nozomi.Data.ViewModels.CurrencyPair
 {
@@ -14,6 +15,8 @@ namespace Nozomi.Data.ViewModels.CurrencyPair
         
         public string SourceGuid { get; set; }
         
-        public ICollection<AnalysedComponentViewModel> AnalysedComponents { get; set; }
+        public SourceViewModel Source { get; set; }
+        
+        public IEnumerable<AnalysedComponentViewModel> AnalysedComponents { get; set; }
     }
 }
