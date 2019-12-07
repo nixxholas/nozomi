@@ -19,7 +19,7 @@ namespace Nozomi.Data.Models.Currency
         public CurrencyPair() {}
 
         public CurrencyPair(CurrencyPairType currencyPairType, string mainCurrencyAbbrv, string counterCurrencyAbbrv, 
-            string apiUrl, string defaultComponent, long sourceId)
+            string apiUrl, string defaultComponent, long sourceId, bool isEnabled = false)
         {
             CurrencyPairType = currencyPairType;
             MainCurrencyAbbrv = mainCurrencyAbbrv;
@@ -27,6 +27,7 @@ namespace Nozomi.Data.Models.Currency
             APIUrl = apiUrl;
             DefaultComponent = defaultComponent;
             SourceId = sourceId;
+            IsEnabled = isEnabled;
         }
         
         [Key]
