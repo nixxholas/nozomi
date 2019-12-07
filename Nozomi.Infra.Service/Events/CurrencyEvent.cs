@@ -1015,8 +1015,6 @@ namespace Nozomi.Service.Events
                     .Where(c => c.CurrencyType.DeletedAt == null && c.CurrencyType.IsEnabled && 
                                 c.CurrencyType.Name.ToUpper().Equals(currencyTypeName.ToUpper()));
 
-            var test = query.ToList();
-            
             switch (orderingParam.ToLower()) // Ignore case sensitivity
             {
                 case "abbreviation":
