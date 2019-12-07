@@ -472,9 +472,6 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                 entity.Id,
                                 // Active checks
                                 ahi => ahi.DeletedAt == null && ahi.IsEnabled
-                                                             // Time check
-                                                             && ahi.HistoricDateTime >=
-                                                             DateTime.UtcNow.Subtract(dataTimespan)
                                                              // Relational checks
                                                              && ahi.AnalysedComponent.CurrencyPairId != null
                                                              // Make sure the main currency matches this currency
@@ -486,7 +483,9 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                                              // Make sure we only check for the CurrentAveragePrice component
                                                              && ahi.AnalysedComponent.ComponentType
                                                                  .Equals(AnalysedComponentType.CurrentAveragePrice),
-                                null, true);
+                                // Time check
+                                ahi => ahi.HistoricDateTime >= DateTime.UtcNow.Subtract(dataTimespan), 
+                                true);
                             var compsPages =
                                 (componentsToCompute > NozomiServiceConstants.AnalysedHistoricItemTakeoutLimit)
                                     ? decimal.Divide(componentsToCompute,
