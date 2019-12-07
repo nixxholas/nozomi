@@ -14,6 +14,6 @@ namespace Nozomi.Data.ViewModels.Admin.Currency
         
         public ICollection<Models.Currency.CurrencyType> CurrencyTypes { get; set; }
         
-        public ICollection<CurrencyPair> CurrencyPairs { get; set; }
+        public ICollection<Models.Currency.CurrencyPair> CurrencyPairs { get; set; }
     }
 }
