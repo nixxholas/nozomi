@@ -8,6 +8,7 @@ using Nozomi.Data;
 using Nozomi.Data.AreaModels.v1.CurrencyPair;
 using Nozomi.Data.Models.Currency;
 using Nozomi.Data.Models.Web;
+using Nozomi.Data.ViewModels.CurrencyPair;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Data;
@@ -21,6 +22,14 @@ namespace Nozomi.Service.Services
             IUnitOfWork<NozomiDbContext> unitOfWork) : base(logger,
             unitOfWork)
         {
+        }
+
+        public bool Create(CreateCurrencyPairViewModel vm, string userId = null)
+        {
+            _unitOfWork.GetRepository<CurrencyPair>().Add(new CurrencyPair(vm.CurrencyPairType,
+                vm.MainCurrencyAbbrv, vm.CounterCurrencyAbbrv, vm.ApiUrl, vm.DefaultComponent, vm.SourceId, vm.IsEnabled));
+                
+            return _unitOfWork.Commit(userId) == 1;
         }
 
         public NozomiResult<string> Create(CreateCurrencyPair createCurrencyPair, string userId = null)
