@@ -262,7 +262,7 @@ namespace Nozomi.Service.Events
                 else
                 {
                     _logger.LogInformation($"No related components..");
-                    return null;
+                    return new List<Component>();
                 }
 
                 if (query.Any() && componentTypes != null && componentTypes.Any())
@@ -270,7 +270,7 @@ namespace Nozomi.Service.Events
                     return query
                         .SelectMany(cr => cr.RequestComponents)
                         .AsEnumerable()
-                        .Where(rc => componentTypes.Contains(rc.ComponentType))
+                        .Where(rc => !string.IsNullOrEmpty(rc.Value) && componentTypes.Contains(rc.ComponentType))
                         .Select(rc => new Component(rc,
                             index, NozomiServiceConstants.RcdHistoricItemTakeoutLimit))
                         .ToList();
@@ -280,6 +280,7 @@ namespace Nozomi.Service.Events
                 {
                     return query
                         .SelectMany(cr => cr.RequestComponents)
+                        .Where(rc => !string.IsNullOrEmpty(rc.Value))
                         .Select(rc => new Component(rc,
                             index, NozomiServiceConstants.RcdHistoricItemTakeoutLimit))
                         .ToList();

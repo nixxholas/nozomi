@@ -370,11 +370,9 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                     {
                                         ComponentType.Ask, ComponentType.Bid
                                     })
-                                .Where(c => NumberHelper.IsNumericDecimal(c.Value))
-                                .DefaultIfEmpty()
-                                .ToList();
+                                .Where(c => NumberHelper.IsNumericDecimal(c.Value));
 
-                            if (components.Any(c => c != null))
+                            if (components.Count() > 0)
                             {
                                 // Aggregate it
                                 avgPrice = components
@@ -478,7 +476,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                                              && ahi.HistoricDateTime >=
                                                              DateTime.UtcNow.Subtract(dataTimespan)
                                                              // Relational checks
-                                                             && ahi.AnalysedComponent.CurrencyPair != null
+                                                             && ahi.AnalysedComponent.CurrencyPairId != null
                                                              // Make sure the main currency matches this currency
                                                              && ahi.AnalysedComponent.CurrencyPair.Source
                                                                  .SourceCurrencies
