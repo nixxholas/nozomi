@@ -1,12 +1,16 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 using Nozomi.Data;
 using Nozomi.Data.ResponseModels.CurrencyPair;
+using Nozomi.Data.ViewModels.CurrencyPair;
 
 namespace Nozomi.Web2.Controllers.v1.CurrencyPair
 {
     public interface ICurrencyPairController
     {
+        IActionResult Create(CreateCurrencyPairViewModel vm);
+        
         /// <summary>
         /// An explicitly-defined variation of the GET Ticker API, allows the user to explicitly call a single ticker
         /// when the primary key is known to the caller.
