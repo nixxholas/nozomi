@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 using Nozomi.Data;
 using Nozomi.Data.ResponseModels.CurrencyPair;
 using Nozomi.Data.ViewModels.CurrencyPair;
+using Nozomi.Preprocessing;
 using Nozomi.Service.Events.Interfaces;
 using Nozomi.Service.Services.Interfaces;
 
@@ -28,6 +29,19 @@ namespace Nozomi.Web2.Controllers.v1.CurrencyPair
             _currencyPairEvent = currencyPairEvent;
             _currencyPairService = currencyPairService;
             _tickerEvent = tickerEvent;
+        }
+
+        [HttpGet]
+        public IActionResult All([FromQuery]int page = 0, [FromQuery]int itemsPerPage = 50, 
+            [FromQuery]string sourceGuid = null, [FromQuery]bool orderAscending = true,
+            [FromQuery]string orderingParam = "TickerPair")
+        {
+            if (page >= 0 && itemsPerPage <= NozomiServiceConstants.CurrencyPairTakeoutLimit)
+            {
+                return Ok(_currencyPairEvent.All(page, itemsPerPage, sourceGuid, orderAscending, orderingParam));
+            }
+
+            return BadRequest("Invalid request.");
         }
 
         [Authorize]
