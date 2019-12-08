@@ -33,12 +33,13 @@ namespace Nozomi.Web2.Controllers.v1.CurrencyPair
 
         [HttpGet]
         public IActionResult All([FromQuery]int page = 0, [FromQuery]int itemsPerPage = 50, 
-            [FromQuery]string sourceGuid = null, [FromQuery]bool orderAscending = true,
-            [FromQuery]string orderingParam = "TickerPair")
+            [FromQuery]string sourceGuid = null, [FromQuery]string mainTicker = null, 
+            [FromQuery]bool orderAscending = true, [FromQuery]string orderingParam = "TickerPair")
         {
             if (page >= 0 && itemsPerPage <= NozomiServiceConstants.CurrencyPairTakeoutLimit)
             {
-                return Ok(_currencyPairEvent.All(page, itemsPerPage, sourceGuid, orderAscending, orderingParam));
+                return Ok(_currencyPairEvent.All(page, itemsPerPage, sourceGuid, mainTicker, orderAscending, 
+                    orderingParam));
             }
 
             return BadRequest("Invalid request.");

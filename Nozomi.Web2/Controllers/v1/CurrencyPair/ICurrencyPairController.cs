@@ -9,8 +9,8 @@ namespace Nozomi.Web2.Controllers.v1.CurrencyPair
 {
     public interface ICurrencyPairController
     {
-        IActionResult All(int page = 0, int itemsPerPage = 50, 
-            string sourceGuid = null, bool orderAscending = true, string orderingParam = "TickerPair");
+        IActionResult All(int page = 0, int itemsPerPage = 50, string sourceGuid = null, string mainTicker = null, 
+            bool orderAscending = true, string orderingParam = "TickerPair");
         
         IActionResult Create(CreateCurrencyPairViewModel vm);
         

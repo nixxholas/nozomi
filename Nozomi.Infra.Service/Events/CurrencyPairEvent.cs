@@ -36,8 +36,8 @@ namespace Nozomi.Service.Events
                 .ToList();
         }
 
-        public IEnumerable<CurrencyPairViewModel> All(int page = 0, int itemsPerPage = 50, 
-            string sourceGuid = null, bool orderAscending = true, string orderingParam = "TickerPair")
+        public IEnumerable<CurrencyPairViewModel> All(int page = 0, int itemsPerPage = 50, string sourceGuid = null, 
+            string mainTicker = null, bool orderAscending = true, string orderingParam = "TickerPair")
         {
             if (itemsPerPage <= 0 || itemsPerPage > NozomiServiceConstants.CurrencyPairTakeoutLimit)
                 itemsPerPage = NozomiServiceConstants.CurrencyPairTakeoutLimit;
@@ -50,12 +50,15 @@ namespace Nozomi.Service.Events
                 .AsNoTracking()
                 .Where(cp => cp.IsEnabled && cp.DeletedAt == null && cp.SourceId > 0);
 
+            if (!string.IsNullOrEmpty(mainTicker))
+                query = query.Where(cp => cp.MainCurrencyAbbrv.Equals(mainTicker, StringComparison.OrdinalIgnoreCase));
+
             if (!string.IsNullOrEmpty(sourceGuid) && Guid.TryParse(sourceGuid, out var parsedSourceGuid))
                 query = query
                     .Include(c => c.Source)
                     .Where(cp => cp.Source.DeletedAt == null && cp.Source.IsEnabled && 
                                  cp.Source.Guid.Equals(parsedSourceGuid));
-            
+
             switch (orderingParam.ToLower()) // Ignore case sensitivity
             {
                 case "Type":

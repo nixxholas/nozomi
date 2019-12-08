@@ -9,8 +9,8 @@ namespace Nozomi.Service.Events.Interfaces
 {
     public interface ICurrencyPairEvent
     {
-        IEnumerable<CurrencyPairViewModel> All(int page = 0, int itemsPerPage = 50, 
-            string sourceGuid = null, bool orderAscending = true, string orderingParam = "Name");
+        IEnumerable<CurrencyPairViewModel> All(int page = 0, int itemsPerPage = 50, string sourceGuid = null, 
+            string mainTicker = null, bool orderAscending = true, string orderingParam = "Name");
         
         long CountByMainCurrency(string mainTicker);
         
