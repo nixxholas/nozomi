@@ -25,6 +25,7 @@
           <div class="column">
             <h6 class="title">Company</h6>
             <router-link to="/about">About</router-link><br>
+            <router-link to="/changelog">Changelog</router-link><br>
           </div>
           <div class="column">
             <h6 class="title">Resources</h6>

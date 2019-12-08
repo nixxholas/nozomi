@@ -5,6 +5,8 @@ import About from '../views/About';
 // @ts-ignore
 import ViewCurrency from '../views/currency/View';
 // @ts-ignore
+import Changelog from '../views/Changelog';
+// @ts-ignore
 import CurrencyIndex from '../views/currency/Index';
 // @ts-ignore
 import SourceIndex from '../views/source/Index';
@@ -30,6 +32,9 @@ export const routes = [
     meta: { icon: 'landmark', isPublic: true, onNav: true }
   },
   { name: 'about', path: '/about', component: About, display: 'About',
+    meta: { icon: 'info', isPublic: true, onNav: false }
+  },
+  { name: 'changelog', path: '/changelog', component: Changelog, display: 'Changelog',
     meta: { icon: 'info', isPublic: true, onNav: false }
   },
   // Currency-specific routing
