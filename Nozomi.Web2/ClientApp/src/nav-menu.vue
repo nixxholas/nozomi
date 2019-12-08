@@ -21,10 +21,6 @@
                 class="mr-half-em"/>
         <span>{{ route.display }}</span>
       </b-navbar-item>
-      <b-navbar-item href="/docs">
-        <b-icon icon="atlas" class="mr-half-em"/>
-        <span>Documentation</span>
-      </b-navbar-item>
     </template>
 
     <template slot="end">

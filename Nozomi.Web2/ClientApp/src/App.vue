@@ -13,13 +13,26 @@
 
     <footer class="footer mt-4" style="bottom: 0; width: 100%;">
       <div class="content container">
-        <div class="columns is-desktop">
+        <div class="columns is-1 is-centered is-desktop">
           <div class="column">
-            © 2019 Nozomi One Pte. Ltd. All rights reserved.
+            <img
+                    src="@/assets/logo.png"
+                    alt="Nozomi: Data, real quick."
+                    style="width: 112px; height: 28px;"
+            ><br>
+            © Nozomi One Pte. Ltd.<br>
           </div>
-          <div class="column has-text-right">
-            <p class="small text-primary">Nozomi Alpha Build - 24 Nov 2019</p>
-            <strong>Nozomi</strong> by <a href="https://nixholas.com">Nicholas Chen</a>.
+          <div class="column">
+            <h6 class="title">Company</h6>
+            <router-link to="/about">About</router-link><br>
+          </div>
+          <div class="column">
+            <h6 class="title">Resources</h6>
+            <a href="/docs">Documentation</a>
+          </div>
+          <div class="column"></div>
+          <div class="column">
+            <b-tag type="is-info" class="mb-1">8 Dec 2019 Preview</b-tag><br>
           </div>
         </div>
       </div>

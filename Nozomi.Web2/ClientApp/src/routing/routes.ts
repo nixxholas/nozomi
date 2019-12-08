@@ -30,7 +30,7 @@ export const routes = [
     meta: { icon: 'landmark', isPublic: true, onNav: true }
   },
   { name: 'about', path: '/about', component: About, display: 'About',
-    meta: { icon: 'info', isPublic: true, onNav: true }
+    meta: { icon: 'info', isPublic: true, onNav: false }
   },
   // Currency-specific routing
   { name: 'view-currency', path: '/currency/:slug', props: true,
