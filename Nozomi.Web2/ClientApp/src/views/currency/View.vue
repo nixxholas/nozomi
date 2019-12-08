@@ -29,7 +29,7 @@
                 <div class="tile is-ancestor box container">
                     <div class="tile is-parent">
                         <div class="tile is-child is-vertical">
-                            <b-tabs @change="onTabChange" type="is-toggle" v-model="activeTab">
+                            <b-tabs @change="onTabChange" type="is-toggle" v-model="activeTab" :animated="false" expanded>
                                 <b-tab-item label="Information">
                                     <section class="section" v-if="data.description !== null">
                                         <div class="container">
@@ -79,43 +79,62 @@
                                     <div class="chart" ref="chart"></div>
                                 </b-tab-item>
 
-                                <b-tab-item label="Markets">
-                                    <b-table
-                                            :data="sources.data"
-                                            :loading="sources.loading"
+                                <b-tab-item label="Markets & Pairs">
+                                    <section class="hero">
+                                        <div class="hero-body">
+                                            <div class="container">
+                                                <h1 class="title">
+                                                    Sources
+                                                </h1>
+                                                <b-table
+                                                        :data="sources.data"
+                                                        :loading="sources.loading"
 
-                                            :mobile-cards="true"
-                                            :per-page="sources.perPage"
-                                            :total="sources.dataCount"
-                                            @page-change="loadMarketData"
-                                            aria-current-label="Current page"
-                                            aria-next-label="Next page"
-                                            aria-page-label="Page"
-                                            aria-previous-label="Previous page"
-                                            backend-pagination
-                                            paginated>
-                                        <template slot="empty">
-                                            <section class="section">
-                                                <div class="content has-text-grey has-text-centered">
-                                                    <p>
-                                                        <b-icon
-                                                                icon="frown"
-                                                                size="is-large">
-                                                        </b-icon>
-                                                    </p>
-                                                    <p>No market data yet.</p>
-                                                </div>
-                                            </section>
-                                        </template>
-                                        <template slot-scope="props">
-                                            <b-table-column field="name" label="Name" sortable>
-                                                {{ props.row.name }}
-                                            </b-table-column>
-                                            <b-table-column field="abbreviation" label="Abbreviation" sortable>
-                                                {{ props.row.abbreviation }}
-                                            </b-table-column>
-                                        </template>
-                                    </b-table>
+                                                        :mobile-cards="true"
+                                                        :per-page="sources.perPage"
+                                                        :total="sources.dataCount"
+                                                        @page-change="loadMarketData"
+                                                        aria-current-label="Current page"
+                                                        aria-next-label="Next page"
+                                                        aria-page-label="Page"
+                                                        aria-previous-label="Previous page"
+                                                        backend-pagination
+                                                        paginated>
+                                                    <template slot="empty">
+                                                        <section class="section">
+                                                            <div class="content has-text-grey has-text-centered">
+                                                                <p>
+                                                                    <b-icon
+                                                                            icon="frown"
+                                                                            size="is-large">
+                                                                    </b-icon>
+                                                                </p>
+                                                                <p>No market data yet.</p>
+                                                            </div>
+                                                        </section>
+                                                    </template>
+                                                    <template slot-scope="props">
+                                                        <b-table-column field="name" label="Name" sortable>
+                                                            {{ props.row.name }}
+                                                        </b-table-column>
+                                                        <b-table-column field="abbreviation" label="Abbreviation" sortable>
+                                                            {{ props.row.abbreviation }}
+                                                        </b-table-column>
+                                                    </template>
+                                                </b-table>
+                                            </div>
+                                        </div>
+                                    </section>
+                                    <section class="hero">
+                                        <div class="hero-body">
+                                            <div class="container">
+                                                <h1 class="title">
+                                                    Market Pairs
+                                                </h1>
+                                                <CurrencyPairsTable :main-ticker="data.abbreviation"></CurrencyPairsTable>
+                                            </div>
+                                        </div>
+                                    </section>
                                 </b-tab-item>
 
                                 <b-tab-item label="Historical Data">
@@ -188,6 +207,7 @@
     import CurrencyService from "@/services/CurrencyService";
     import SourceService from '@/services/SourceService';
     import Converter from '@/helpers/converter';
+    import CurrencyPairsTable from "@/components/tables/currency-pairs-table";
 
     export default {
         computed: {
@@ -197,7 +217,7 @@
             ]),
         },
         props: ['slug'],
-        components: {CreateAcComponentModal},
+        components: {CurrencyPairsTable, CreateAcComponentModal},
         beforeMount: function () {
             let self = this;
             self.loading = true;
