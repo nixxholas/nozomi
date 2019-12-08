@@ -11,9 +11,11 @@ namespace Nozomi.Web2.Controllers.v1.CurrencyPair
     {
         IActionResult All(int page = 0, int itemsPerPage = 50, string sourceGuid = null, string mainTicker = null, 
             bool orderAscending = true, string orderingParam = "TickerPair");
+
+        IActionResult Count(string mainTicker = null);
         
         IActionResult Create(CreateCurrencyPairViewModel vm);
-        
+
         /// <summary>
         /// An explicitly-defined variation of the GET Ticker API, allows the user to explicitly call a single ticker
         /// when the primary key is known to the caller.

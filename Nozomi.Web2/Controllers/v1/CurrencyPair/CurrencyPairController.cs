@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -43,6 +44,12 @@ namespace Nozomi.Web2.Controllers.v1.CurrencyPair
             }
 
             return BadRequest("Invalid request.");
+        }
+
+        [HttpGet]
+        public IActionResult Count(string mainTicker = null)
+        {
+            return Ok(_currencyPairEvent.GetCount(mainTicker));
         }
 
         [Authorize]
