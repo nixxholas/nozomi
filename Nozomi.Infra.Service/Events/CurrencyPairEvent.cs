@@ -51,8 +51,8 @@ namespace Nozomi.Service.Events
                 .Where(cp => cp.IsEnabled && cp.DeletedAt == null && cp.SourceId > 0);
 
             if (!string.IsNullOrEmpty(mainTicker))
-                query = query.Where(cp => cp.MainCurrencyAbbrv.Equals(mainTicker, StringComparison.OrdinalIgnoreCase));
-
+                query = query.Where(cp => cp.MainCurrencyAbbrv.Equals(mainTicker));
+            
             if (!string.IsNullOrEmpty(sourceGuid) && Guid.TryParse(sourceGuid, out var parsedSourceGuid))
                 query = query
                     .Include(c => c.Source)
