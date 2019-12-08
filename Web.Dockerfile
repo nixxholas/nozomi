@@ -1,28 +1,28 @@
-FROM mcr.microsoft.com/dotnet/core/sdk:2.2 AS build-env
+FROM mcr.microsoft.com/dotnet/core/sdk:3.0 AS build-env
 WORKDIR /app
 
 # Copy csproj and restore as distinct layers
 COPY . .
-RUN dotnet restore Nozomi.Web/Nozomi.Web.csproj
+RUN dotnet restore Nozomi.Web2/Nozomi.Web2.csproj
 
 # Required libraries in Unix
 RUN apt-get update -q && apt-get install -q -y \
-        curl apt-transport-https apt-utils dialog
+        curl apt-transport-https apt-utils dialog \
+        make g++ build-essential
 
 # Node Bash Script for Debian
 # https://github.com/nodesource/distributions#deb
-RUN curl -sL https://deb.nodesource.com/setup_12.x | bash -
+RUN curl -sL https://deb.nodesource.com/setup_13.x | bash -
 
 # Propagate Node for Docker
 RUN apt-get update && apt-get upgrade -y && \
-    apt-get install -y nodejs \
-    npm                       # note this one
+    apt-get install -y nodejs
 
 # Copy everything else and build
-RUN dotnet publish Nozomi.Web/Nozomi.Web.csproj -c Release -o out
+RUN dotnet publish Nozomi.Web2/Nozomi.Web2.csproj -c Release -o out
 
 # Build runtime image
-FROM mcr.microsoft.com/dotnet/core/aspnet:2.2
+FROM mcr.microsoft.com/dotnet/core/aspnet:3.0
 WORKDIR /app
-COPY --from=build-env /app/Nozomi.Web/out .
-ENTRYPOINT ["dotnet", "Nozomi.Web.dll"]
+COPY --from=build-env /app/out .
+ENTRYPOINT ["dotnet", "Nozomi.Web2.dll"]

@@ -5,9 +5,12 @@ using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using Nozomi.Base.Core;
+using Nozomi.Base.Core.Extensions;
 using Nozomi.Base.Core.Helpers.Enumerable;
 using Nozomi.Base.Core.Helpers.Native.Numerals;
+using Nozomi.Base.Core.Helpers.Native.Text;
 using Nozomi.Data.AreaModels.v1.Currency;
 using Nozomi.Data.Models.Currency;
 using Nozomi.Data.Models.Web;
@@ -16,11 +19,18 @@ using Nozomi.Data.Models.Web.Websocket;
 using Nozomi.Data.ResponseModels.Currency;
 using Nozomi.Data.ResponseModels.PartialCurrencyPair;
 using Nozomi.Data.ResponseModels.Source;
+using Nozomi.Data.ViewModels.AnalysedComponent;
+using Nozomi.Data.ViewModels.AnalysedHistoricItem;
+using Nozomi.Data.ViewModels.Component;
+using Nozomi.Data.ViewModels.ComponentHistoricItem;
+using Nozomi.Data.ViewModels.Currency;
 using Nozomi.Preprocessing;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Data;
 using Nozomi.Service.Events.Interfaces;
+using Component = Nozomi.Data.Models.Web.Component;
+using SourceViewModel = Nozomi.Data.ViewModels.Source.SourceViewModel;
 
 namespace Nozomi.Service.Events
 {
@@ -32,6 +42,356 @@ namespace Nozomi.Service.Events
             : base(logger, unitOfWork)
         {
             _tickerEvent = tickerEvent;
+        }
+
+        public bool Exists(string slug)
+        {
+            return !string.IsNullOrWhiteSpace(slug) && _unitOfWork.GetRepository<Currency>()
+                       .GetQueryable()
+                       .AsNoTracking()
+                       .Any(c => c.Slug.Equals(slug));
+        }
+
+        public CurrencyViewModel Get(string slug)
+        {
+            return _unitOfWork.GetRepository<Currency>()
+                .GetQueryable()
+                .AsNoTracking()
+                .Where(c => c.Slug.Equals(slug) && c.DeletedAt == null)
+                .Include(c => c.AnalysedComponents)
+                .Include(c => c.CurrencyType)
+                .Select(c => new CurrencyViewModel
+                {
+                    CurrencyTypeGuid = c.CurrencyType.Guid,
+                    Abbreviation = c.Abbreviation,
+                    Slug = c.Slug,
+                    Name = c.Name,
+                    LogoPath = c.LogoPath,
+                    Description = c.Description,
+                    Denominations = c.Denominations,
+                    DenominationName = c.DenominationName,
+                    Components = c.AnalysedComponents
+                        .Where(ac => ac.IsEnabled && ac.DeletedAt == null)
+                        .Select(ac => new AnalysedComponentViewModel
+                        {
+                            Guid = ac.Guid,
+                            IsDenominated = ac.IsDenominated,
+                            Type = ac.ComponentType,
+                            UiFormatting = ac.UIFormatting,
+                            Value = ac.Value
+                        })
+                })
+                .SingleOrDefault();
+        }
+
+        public IEnumerable<CurrencyViewModel> All(string currencyType = "CRYPTO", int itemsPerIndex = 20, int index = 0, 
+            ICollection<ComponentType> typesToTake = null, ICollection<ComponentType> typesToDeepen = null)
+        {
+            if (itemsPerIndex <= 0 || itemsPerIndex > 100)
+                itemsPerIndex = 20;
+
+            if (index < 0)
+                index = 0;
+            
+            if (string.IsNullOrWhiteSpace(currencyType))
+                throw new ArgumentNullException("Parameter 'currencyType' is supposed to contain a valid string.");
+
+            var query = _unitOfWork.GetRepository<Currency>()
+                .GetQueryable()
+                .AsNoTracking()
+                .Include(c => c.CurrencyType)
+                .Where(c => c.DeletedAt == null && c.IsEnabled
+                                                && c.CurrencyType.TypeShortForm.Equals(currencyType,
+                                                    StringComparison.InvariantCultureIgnoreCase));
+
+            if (!query.Any())
+                return Enumerable.Empty<CurrencyViewModel>();
+                
+            query = query.Include(c => c.Requests)
+                .ThenInclude(r => r.RequestComponents)
+                .Skip(itemsPerIndex * index)
+                .Take(itemsPerIndex);
+            
+            if (typesToTake != null && typesToTake.Any() && typesToDeepen != null && typesToDeepen.Any())
+                    return query
+                        .Select(c => new CurrencyViewModel
+                        {
+                            CurrencyTypeGuid = c.CurrencyType.Guid,
+                            Abbreviation = c.Abbreviation,
+                            Slug = c.Slug,
+                            Name = c.Name,
+                            LogoPath = c.LogoPath,
+                            Description = c.Description,
+                            Denominations = c.Denominations,
+                            DenominationName = c.DenominationName,
+                            RawComponents = c.Requests.SelectMany(r => r.RequestComponents
+                                    .Where(rc => rc.DeletedAt == null && rc.IsEnabled))
+                                .Where(rc => typesToTake.Contains(rc.ComponentType))
+                                .Select(rc => new ComponentViewModel
+                                {
+                                    Type = rc.ComponentType,
+                                    Guid = rc.Guid,
+                                    Value = rc.Value,
+                                    IsDenominated = rc.IsDenominated,
+                                    History = typesToDeepen.Contains(rc.ComponentType)
+                                        ? rc.RcdHistoricItems
+                                            .Where(e => e.DeletedAt == null && e.IsEnabled)
+                                            .OrderByDescending(e => e.HistoricDateTime)
+                                            .Select(e => new ComponentHistoricItemViewModel()
+                                            {
+                                                Timestamp = e.HistoricDateTime,
+                                                Value = e.Value
+                                            })
+                                        : null
+                                })
+                        });
+            else if (typesToTake != null && typesToTake.Any())
+                return query
+                    .Select(c => new CurrencyViewModel
+                    {
+                        CurrencyTypeGuid = c.CurrencyType.Guid,
+                        Abbreviation = c.Abbreviation,
+                        Slug = c.Slug,
+                        Name = c.Name,
+                        LogoPath = c.LogoPath,
+                        Description = c.Description,
+                        Denominations = c.Denominations,
+                        DenominationName = c.DenominationName,
+                        RawComponents = c.Requests.SelectMany(r => r.RequestComponents
+                                .Where(rc => rc.DeletedAt == null && rc.IsEnabled))
+                            .Where(rc => typesToTake.Contains(rc.ComponentType))
+                            .Select(rc => new ComponentViewModel
+                            {
+                                Type = rc.ComponentType,
+                                Guid = rc.Guid,
+                                Value = rc.Value,
+                                IsDenominated = rc.IsDenominated
+                            })
+                    });
+            
+            return query
+                .Select(c => new CurrencyViewModel
+                {
+                    CurrencyTypeGuid = c.CurrencyType.Guid,
+                    Abbreviation = c.Abbreviation,
+                    Slug = c.Slug,
+                    Name = c.Name,
+                    LogoPath = c.LogoPath,
+                    Description = c.Description,
+                    Denominations = c.Denominations,
+                    DenominationName = c.DenominationName
+                });
+        }
+
+        public IEnumerable<CurrencyViewModel> All(string currencyType = "CRYPTO", int itemsPerIndex = 20, int index = 0,
+            AnalysedComponentType sortType = AnalysedComponentType.Unknown, bool orderDescending = true, 
+            ICollection<AnalysedComponentType> typesToTake = null,
+            ICollection<AnalysedComponentType> typesToDeepen = null)
+        {
+            if (itemsPerIndex <= 0 || itemsPerIndex > 100)
+                itemsPerIndex = 20;
+
+            if (index < 0)
+                index = 0;
+            
+            if (string.IsNullOrWhiteSpace(currencyType))
+                throw new ArgumentNullException("Parameter 'currencyType' is supposed to contain a valid string.");
+
+            var query = _unitOfWork.GetRepository<Currency>()
+                .GetQueryable()
+                .AsNoTracking()
+                .Include(c => c.CurrencyType)
+                .Where(c => c.DeletedAt == null && c.IsEnabled 
+                                                && c.CurrencyType.TypeShortForm.Equals(currencyType, 
+                                                    StringComparison.InvariantCultureIgnoreCase));
+
+            if (!query.Any())
+                // https://docs.microsoft.com/en-us/dotnet/api/system.linq.enumerable.empty?view=netframework-4.8#examples
+                return Enumerable.Empty<CurrencyViewModel>();
+
+            query = query.Include(c => c.AnalysedComponents)
+                .ThenInclude(ac => ac.AnalysedHistoricItems);
+
+            if (orderDescending && sortType != AnalysedComponentType.Unknown)
+            {
+                // Order by the market cap
+                var descendingQuery = query.OrderByDescending(c => 
+                            decimal.Parse(c.AnalysedComponents
+                                .Where(ac => ac.ComponentType.Equals(sortType)
+                                                      && NumberHelper.IsNumericDecimal(ac.Value))
+                                .Select(ac => ac.Value)
+                                .DefaultIfEmpty("0")
+                                .FirstOrDefault()))
+                    .Skip(itemsPerIndex * index)
+                    .Take(itemsPerIndex);
+
+                if (typesToTake != null && typesToTake.Any() && typesToDeepen != null && typesToDeepen.Any())
+                    return descendingQuery
+                        .Select(c => new CurrencyViewModel
+                        {
+                            CurrencyTypeGuid = c.CurrencyType.Guid,
+                            Abbreviation = c.Abbreviation,
+                            Slug = c.Slug,
+                            Name = c.Name,
+                            LogoPath = c.LogoPath,
+                            Description = c.Description,
+                            Denominations = c.Denominations,
+                            DenominationName = c.DenominationName,
+                            Components = c.AnalysedComponents
+                                .Where(ac => typesToTake.Contains(ac.ComponentType))
+                                .Select(ac => new AnalysedComponentViewModel
+                                {
+                                    Guid = ac.Guid,
+                                    Type = ac.ComponentType,
+                                    UiFormatting = ac.UIFormatting,
+                                    Value = ac.Value,
+                                    IsDenominated = ac.IsDenominated,
+                                    History = typesToDeepen.Contains(ac.ComponentType)
+                                        ? ac.AnalysedHistoricItems
+                                            .Where(ahi => ahi.DeletedAt == null && ahi.IsEnabled)
+                                            .OrderByDescending(ahi => ahi.HistoricDateTime)
+                                            .Select(ahi => new AnalysedHistoricItemViewModel
+                                            {
+                                                Timestamp = ahi.HistoricDateTime,
+                                                Value = ahi.Value
+                                            })
+                                        : null
+                                })
+                        });
+                else if (typesToTake != null && typesToTake.Any())
+                    return descendingQuery
+                        .Select(c => new CurrencyViewModel
+                        {
+                            CurrencyTypeGuid = c.CurrencyType.Guid,
+                            Abbreviation = c.Abbreviation,
+                            Slug = c.Slug,
+                            Name = c.Name,
+                            LogoPath = c.LogoPath,
+                            Description = c.Description,
+                            Denominations = c.Denominations,
+                            DenominationName = c.DenominationName,
+                            Components = c.AnalysedComponents
+                                .Where(ac => typesToTake.Contains(ac.ComponentType))
+                                .Select(ac => new AnalysedComponentViewModel
+                                {
+                                    Guid = ac.Guid,
+                                    Type = ac.ComponentType,
+                                    UiFormatting = ac.UIFormatting,
+                                    Value = ac.Value,
+                                    IsDenominated = ac.IsDenominated
+                                })
+                        });
+                
+                return descendingQuery
+                    .Select(c => new CurrencyViewModel
+                    {
+                        CurrencyTypeGuid = c.CurrencyType.Guid,
+                        Abbreviation = c.Abbreviation,
+                        Slug = c.Slug,
+                        Name = c.Name,
+                        LogoPath = c.LogoPath,
+                        Description = c.Description,
+                        Denominations = c.Denominations,
+                        DenominationName = c.DenominationName
+                    });
+            }
+            else if (sortType != AnalysedComponentType.Unknown)
+            {
+                var ascendingQuery = query.OrderBy(c => 
+                        decimal.Parse(c.AnalysedComponents
+                            .Where(ac => ac.ComponentType.Equals(sortType)
+                                         && NumberHelper.IsNumericDecimal(ac.Value))
+                            .Select(ac => ac.Value)
+                            .DefaultIfEmpty("0")
+                            .FirstOrDefault()))
+                    .Skip(itemsPerIndex * index)
+                    .Take(itemsPerIndex);
+
+                if (typesToTake != null && typesToTake.Any() && typesToDeepen != null && typesToDeepen.Any())
+                    return ascendingQuery
+                        .Select(c => new CurrencyViewModel
+                        {
+                            CurrencyTypeGuid = c.CurrencyType.Guid,
+                            Abbreviation = c.Abbreviation,
+                            Slug = c.Slug,
+                            Name = c.Name,
+                            LogoPath = c.LogoPath,
+                            Description = c.Description,
+                            Denominations = c.Denominations,
+                            DenominationName = c.DenominationName,
+                            Components = c.AnalysedComponents
+                                .Where(ac => typesToTake.Contains(ac.ComponentType))
+                                .Select(ac => new AnalysedComponentViewModel
+                                {
+                                    Guid = ac.Guid,
+                                    Type = ac.ComponentType,
+                                    UiFormatting = ac.UIFormatting,
+                                    Value = ac.Value,
+                                    IsDenominated = ac.IsDenominated,
+                                    History = typesToDeepen.Contains(ac.ComponentType)
+                                        ? ac.AnalysedHistoricItems
+                                            .Where(ahi => ahi.DeletedAt == null && ahi.IsEnabled)
+                                            .OrderByDescending(ahi => ahi.HistoricDateTime)
+                                            .Select(ahi => new AnalysedHistoricItemViewModel
+                                            {
+                                                Timestamp = ahi.HistoricDateTime,
+                                                Value = ahi.Value
+                                            })
+                                        : null
+                                })
+                        });
+                else if (typesToTake != null && typesToTake.Any())
+                    return ascendingQuery
+                        .Select(c => new CurrencyViewModel
+                        {
+                            CurrencyTypeGuid = c.CurrencyType.Guid,
+                            Abbreviation = c.Abbreviation,
+                            Slug = c.Slug,
+                            Name = c.Name,
+                            LogoPath = c.LogoPath,
+                            Description = c.Description,
+                            Denominations = c.Denominations,
+                            DenominationName = c.DenominationName,
+                            Components = c.AnalysedComponents
+                                .Where(ac => typesToTake.Contains(ac.ComponentType))
+                                .Select(ac => new AnalysedComponentViewModel
+                                {
+                                    Guid = ac.Guid,
+                                    Type = ac.ComponentType,
+                                    UiFormatting = ac.UIFormatting,
+                                    Value = ac.Value,
+                                    IsDenominated = ac.IsDenominated
+                                })
+                        });
+                
+                return ascendingQuery
+                    .Select(c => new CurrencyViewModel
+                    {
+                        CurrencyTypeGuid = c.CurrencyType.Guid,
+                        Abbreviation = c.Abbreviation,
+                        Slug = c.Slug,
+                        Name = c.Name,
+                        LogoPath = c.LogoPath,
+                        Description = c.Description,
+                        Denominations = c.Denominations,
+                        DenominationName = c.DenominationName
+                    });
+            }
+            
+            return query
+                .Skip(itemsPerIndex * index)
+                .Take(itemsPerIndex)
+                .Select(c => new CurrencyViewModel
+                {
+                    CurrencyTypeGuid = c.CurrencyType.Guid,
+                    Abbreviation = c.Abbreviation,
+                    Slug = c.Slug,
+                    Name = c.Name,
+                    LogoPath = c.LogoPath,
+                    Description = c.Description,
+                    Denominations = c.Denominations,
+                    DenominationName = c.DenominationName
+                });
         }
 
         public Currency Get(long id, bool track = false)
@@ -78,8 +438,21 @@ namespace Nozomi.Service.Events
                 .SingleOrDefault(c => c.Abbreviation.Equals(abbreviation, StringComparison.InvariantCultureIgnoreCase));
         }
 
+        public Currency GetBySlug(string slug)
+        {
+            if (string.IsNullOrEmpty(slug))
+                throw new ArgumentNullException("Invalid slug.");
+
+            return _unitOfWork.GetRepository<Currency>()
+                .GetQueryable()
+                .AsNoTracking()
+                .SingleOrDefault(c => c.DeletedAt == null && c.IsEnabled
+                                                          && c.Slug.Equals(slug));
+        }
+
         public decimal GetCirculatingSupply(AnalysedComponent analysedComponent)
         {
+            var circulatingSupplyEnum = ComponentType.CirculatingSupply; 
             // If its a currency-based ac
             if (analysedComponent.CurrencyId != null && analysedComponent.CurrencyId > 0)
             {
@@ -116,7 +489,7 @@ namespace Nozomi.Service.Events
                     // Obtain only the circulating supply
                     .SelectMany(cpr => cpr.RequestComponents
                         .Where(rc => rc.DeletedAt == null && rc.IsEnabled
-                                                          && rc.ComponentType.Equals(ComponentType.CirculatingSupply)
+                                                          && rc.ComponentType.Equals(circulatingSupplyEnum)
                                                           && !string.IsNullOrEmpty(rc.Value)))
                     .FirstOrDefault();
 
@@ -169,65 +542,109 @@ namespace Nozomi.Service.Events
                     Console.WriteLine(ex.ToString());
                 }
 #endif
-
-                if (_unitOfWork.GetRepository<CurrencyPair>()
+                // Obtain the main ticker first
+                var mainTicker = _unitOfWork.GetRepository<CurrencyPair>()
                     .GetQueryable()
                     .AsNoTracking()
-                    .Where(cp => cp.Id.Equals(analysedComponent.CurrencyPairId)
-                                 && cp.DeletedAt == null && cp.IsEnabled)
-                    .Include(cp => cp.Source)
-                    .ThenInclude(s => s.SourceCurrencies)
-                    .ThenInclude(sc => sc.Currency)
-                    .ThenInclude(c => c.Requests)
-                    .ThenInclude(cr => cr.RequestComponents)
-                    .Any(cp => cp.Source.SourceCurrencies
-                                   .Any(sc =>
-                                       sc.Currency.Abbreviation.Equals(cp.MainCurrencyAbbrv)
-                                       && sc.Currency.Requests != null)
-                               && cp.Source.SourceCurrencies.Any(sc => sc.Currency
-                                   // Traverse to the request
-                                   .Requests
-                                   .Any(cr =>
-                                       cr.RequestComponents != null && cr.IsEnabled
-                                                                    && cr.RequestComponents.Count > 0
-                                                                    && cr.RequestComponents.Any(rc => rc.ComponentType
-                                                                        .Equals(ComponentType
-                                                                            .CirculatingSupply))))))
-                {
-                    return _unitOfWork.GetRepository<CurrencyPair>()
-                        .GetQueryable()
-                        .AsNoTracking()
-                        .Where(cp => cp.Id.Equals(analysedComponent.CurrencyPairId)
-                                     && cp.DeletedAt == null && cp.IsEnabled)
-                        .Include(cp => cp.Source)
-                        .ThenInclude(s => s.SourceCurrencies)
-                        .ThenInclude(sc => sc.Currency)
-                        .ThenInclude(c => c.Requests)
-                        .ThenInclude(cr => cr.RequestComponents)
-                        // Obtain the main currency
-                        .Select(cp => decimal.Parse(cp.Source
-                                                        .SourceCurrencies
-                                                        .SingleOrDefault(sc =>
-                                                            sc.Currency.Abbreviation.Equals(cp.MainCurrencyAbbrv)
-                                                            && sc.Currency.Requests != null)
-                                                        .Currency
-                                                        // Traverse to the request
-                                                        .Requests
-                                                        .Where(cr =>
-                                                            cr.RequestComponents != null && cr.RequestComponents.Count > 0
-                                                                                         && cr.RequestComponents.Any(rc =>
-                                                                                             rc.ComponentType
-                                                                                                 .Equals(ComponentType
-                                                                                                     .CirculatingSupply)))
-                                                        .Select(cr => cr.RequestComponents
-                                                            .FirstOrDefault(rc => rc.DeletedAt == null && rc.IsEnabled))
-                                                        .FirstOrDefault()
-                                                        .Value ?? "-1"))
-                        .FirstOrDefault();
-                }
+                    .SingleOrDefault(cp => cp.DeletedAt == null && cp.IsEnabled 
+                                                                && cp.Id.Equals(analysedComponent.CurrencyPairId))
+                    ?.MainCurrencyAbbrv;
+                if (string.IsNullOrWhiteSpace(mainTicker))
+                    return decimal.MinusOne;
+
+                // We need to make sure that no null exceptions will appear here
+                return _unitOfWork.GetRepository<Component>()
+                    .GetQueryable()
+                    .AsNoTracking()
+                    .Where(rc => rc.DeletedAt == null && rc.IsEnabled
+                                                      && rc.ComponentType.Equals(circulatingSupplyEnum)
+                                                      && NumberHelper.IsNumericDecimal(rc.Value))
+                    .Include(rc => rc.Request)
+                    .ThenInclude(r => r.Currency)
+                    .Where(rc => rc.Request.DeletedAt == null && rc.Request.Currency.DeletedAt == null
+                                 && rc.Request.Currency.Abbreviation.Equals(mainTicker, 
+                                     StringComparison.InvariantCultureIgnoreCase))
+                    .Select(rc => decimal.Parse(rc.Value))
+                    .DefaultIfEmpty(decimal.MinusOne) // Give it -1
+                    .FirstOrDefault();
+//                    return _unitOfWork.GetRepository<CurrencyPair>()
+//                        .GetQueryable()
+//                        .AsNoTracking()
+//                        .Where(cp => cp.Id.Equals(analysedComponent.CurrencyPairId)
+//                                     && cp.DeletedAt == null && cp.IsEnabled)
+//                        .Include(cp => cp.Source)
+//                        .ThenInclude(s => s.SourceCurrencies)
+//                        .ThenInclude(sc => sc.Currency)
+//                        .ThenInclude(c => c.Requests)
+//                        .ThenInclude(cr => cr.RequestComponents)
+//                        // Obtain the main currency
+//                        .Select(cp => decimal.Parse(cp.Source
+//                                                        .SourceCurrencies
+//                                                        .SingleOrDefault(sc =>
+//                                                            sc.Currency.Abbreviation.Equals(cp.MainCurrencyAbbrv)
+//                                                            && sc.Currency.Requests != null)
+//                                                        .Currency
+//                                                        // Traverse to the request
+//                                                        .Requests
+//                                                        .Where(cr =>
+//                                                            cr.RequestComponents != null && cr.RequestComponents.Count > 0
+//                                                                                         && cr.RequestComponents.Any(rc =>
+//                                                                                             rc.ComponentType
+//                                                                                                 .Equals(ComponentType
+//                                                                                                     .CirculatingSupply)))
+//                                                        .Select(cr => cr.RequestComponents
+//                                                            .FirstOrDefault(rc => rc.DeletedAt == null && rc.IsEnabled))
+//                                                        .FirstOrDefault()
+//                                                        .Value ?? "-1"))
+//                        .FirstOrDefault();
             }
 
             return decimal.MinusOne;
+        }
+
+        public long Count(bool ignoreDeleted = false, bool ignoreDisabled = false)
+        {
+            var query = _unitOfWork.GetRepository<Currency>()
+                .GetQueryable()
+                .AsNoTracking();
+
+            if (!ignoreDeleted)
+                query = query.Where(c => c.DeletedAt == null);
+
+            if (!ignoreDisabled)
+                query = query.Where(c => c.IsEnabled);
+
+            return query.LongCount();
+        }
+
+        public long GetCountByType(string typeShortForm)
+        {
+            if (string.IsNullOrEmpty(typeShortForm) || string.IsNullOrWhiteSpace(typeShortForm))
+                return _unitOfWork.GetRepository<Currency>()
+                    .GetQueryable()
+                    .AsNoTracking()
+                    .Where(c => c.DeletedAt == null && c.IsEnabled)
+                    .LongCount();
+            
+            var query = _unitOfWork.GetRepository<CurrencyType>()
+                .GetQueryable()
+                .AsNoTracking()
+                .Where(ct => ct.TypeShortForm.Equals(typeShortForm, StringComparison.InvariantCultureIgnoreCase));
+
+            if (!query.Any())
+                return 0;
+            
+            return query
+                .Include(ct => ct.Currencies)
+                .ThenInclude(c => c.AnalysedComponents)
+                .ThenInclude(ac => ac.AnalysedHistoricItems)
+                .Include(ct => ct.Currencies)
+                .ThenInclude(c => c.Requests)
+                .ThenInclude(r => r.RequestComponents)
+                .SelectMany(ct => ct.Currencies
+                    .Where(c => c.DeletedAt == null && c.IsEnabled)
+                    .OrderBy(c => c.Id))
+                .LongCount();
         }
 
         public ICollection<Currency> GetAll(bool includeNested = false)
@@ -293,8 +710,14 @@ namespace Nozomi.Service.Events
         }
 
         public ICollection<GeneralisedCurrencyResponse> GetAllDetailed(string typeShortForm = "CRYPTO",
-            int index = 0, int daysOfData = 7)
+            int index = 0, int countPerIndex = 20, int daysOfData = 7)
         {
+            if (countPerIndex <= 0)
+                countPerIndex = 20; // Defaulting checks
+
+            if (daysOfData <= 0 || daysOfData >= 32)
+                daysOfData = 7; // Defaulting checks
+        
             var currencies = _unitOfWork.GetRepository<CurrencyType>()
                 .GetQueryable()
                 .AsNoTracking()
@@ -312,13 +735,13 @@ namespace Nozomi.Service.Events
 //                                                        && !string.IsNullOrEmpty(ac.Value)
 //                                                        && NumberHelper.IsNumericDecimal(ac.Value))
                                                     )
-                    .Where(c => c.AnalysedComponents
-                        .Any(ac => ac.DeletedAt == null && ac.IsEnabled))
+//                    .Where(c => c.AnalysedComponents
+//                        .Any(ac => ac.DeletedAt == null && ac.IsEnabled))
 //                    .OrderByDescending(c => decimal.Parse(c.AnalysedComponents
 //                        .SingleOrDefault(ac => ac.ComponentType == AnalysedComponentType.MarketCap).Value))
                     .OrderBy(c => c.Id)
-                    .Skip(index * 100)
-                    .Take(100)
+                    .Skip(index * countPerIndex)
+                    .Take(countPerIndex)
                     .Select(c => new Currency
                     {
                         Id = c.Id,
@@ -421,7 +844,7 @@ namespace Nozomi.Service.Events
                     .ToList();
             }
 
-            var requestComponents = new List<RequestComponent>();
+            var requestComponents = new List<Component>();
             if (componentTypes != null)
             {
                 requestComponents = query.SelectMany(c => c.Requests)
@@ -553,9 +976,9 @@ namespace Nozomi.Service.Events
             }
             else
             {
-                return _unitOfWork.GetRepository<Currency>().GetQueryable()
+                return _unitOfWork.GetRepository<Currency>()
+                    .GetQueryable()
                     .AsNoTracking()
-                    .AsEnumerable()
                     .Where(c => c.DeletedAt == null)
                     .Where(c => c.IsEnabled)
                     .DistinctBy(c => c.Abbreviation)
@@ -566,6 +989,119 @@ namespace Nozomi.Service.Events
                         Name = c.Name
                     });
             }
+        }
+
+        public ICollection<string> ListAllSlugs()
+        {
+            return _unitOfWork.GetRepository<Currency>()
+                .GetQueryable()
+                .AsNoTracking()
+                .Where(c => c.DeletedAt == null && c.IsEnabled)
+                .Select(c => c.Slug)
+                .ToList();
+        }
+
+        public IEnumerable<CurrencyViewModel> ListAll(int page = 0, int itemsPerPage = 50, 
+            string currencyTypeName = null, bool orderAscending = true, string orderingParam = "Name")
+        {
+            var query = _unitOfWork.GetRepository<Currency>()
+                .GetQueryable()
+                .AsNoTracking()
+                .Where(c => c.IsEnabled && c.DeletedAt == null && c.CurrencyTypeId > 0);
+
+            if (!string.IsNullOrEmpty(currencyTypeName))
+                query = query
+                    .Include(c => c.CurrencyType)
+                    .Where(c => c.CurrencyType.DeletedAt == null && c.CurrencyType.IsEnabled && 
+                                c.CurrencyType.Name.ToUpper().Equals(currencyTypeName.ToUpper()));
+
+            switch (orderingParam.ToLower()) // Ignore case sensitivity
+            {
+                case "abbreviation":
+                    query = orderAscending ? query.OrderBy(c => c.Abbreviation) : 
+                        query.OrderByDescending(c => c.Abbreviation);
+                    break;
+                case "slug":
+                    query = orderAscending ? query.OrderBy(c => c.Slug) : query.OrderByDescending(c => c.Slug);
+                    break;
+                case "currencytype":
+                    query = orderAscending ? query
+                        .Include(c => c.CurrencyType)
+                        .OrderBy(c => c.CurrencyType.Name) : query
+                        .Include(c => c.CurrencyType)
+                        .OrderByDescending(c => c.CurrencyType.Name);
+                    break;
+                default: // Handle all cases.
+                    query = orderAscending ? query.OrderBy(c => c.Name) : query.OrderByDescending(c => c.Name);
+                    break;
+            }
+            
+            return query
+                // .OrderBy(orderingParam, orderAscending) // TODO: Make use of LinqExtensions again
+                .Skip(page * itemsPerPage)
+                .Take(itemsPerPage)
+                .Include(c => c.CurrencyType)
+                .Select(c => new CurrencyViewModel
+                {
+                    Abbreviation = c.Abbreviation,
+                    CurrencyTypeGuid = c.CurrencyType.Guid,
+                    DenominationName = c.DenominationName,
+                    Denominations = c.Denominations,
+                    Description = c.Description,
+                    LogoPath = c.LogoPath,
+                    Name = c.Name,
+                    Slug = c.Slug
+                });
+        }
+
+        public IReadOnlyDictionary<string, long> ListAllMapped()
+        {
+            return _unitOfWork.GetRepository<Currency>()
+                .GetQueryable()
+                .AsNoTracking()
+                .Where(c => c.DeletedAt == null && c.IsEnabled)
+                .ToDictionary(c => c.Slug, c => c.Id);
+        }
+
+        public long SourceCount(string slug)
+        {
+            if (string.IsNullOrWhiteSpace(slug))
+                return long.MinValue;
+            
+            return _unitOfWork.GetRepository<Currency>()
+                .GetQueryable()
+                .AsNoTracking()
+                .Where(c => c.DeletedAt == null && c.IsEnabled && c.Slug.Equals(slug))
+                .Include(c => c.CurrencySources)
+                .ThenInclude(cs => cs.Source)
+                .SelectMany(c => c.CurrencySources
+                    .Where(cs => cs.IsEnabled && cs.DeletedAt == null
+                                              && cs.Source.DeletedAt == null && cs.Source.IsEnabled))
+                .LongCount(); 
+        }
+
+        public IEnumerable<SourceViewModel> ListSources(string slug, int page = 0, int itemsPerPage = 50)
+        {
+            if (string.IsNullOrWhiteSpace(slug) || page < 0 || itemsPerPage < 1)
+                throw new ArgumentOutOfRangeException("Invalid request parameters.");
+
+            return _unitOfWork.GetRepository<Currency>()
+                .GetQueryable()
+                .AsNoTracking()
+                .Where(c => c.DeletedAt == null && c.IsEnabled && c.Slug.Equals(slug))
+                .Include(c => c.CurrencySources)
+                .ThenInclude(cs => cs.Source)
+                .SelectMany(c => c.CurrencySources
+                    .Where(cs => cs.IsEnabled && cs.DeletedAt == null
+                                 && cs.Source.DeletedAt == null && cs.Source.IsEnabled))
+                .Select(cs => new SourceViewModel
+                {
+                    Guid = cs.Source.Guid,
+                    Abbreviation = cs.Source.Abbreviation,
+                    Name = cs.Source.Name,
+                    ApiDocsUrl = cs.Source.APIDocsURL,
+                    SourceTypeGuid = cs.Source.Guid.ToString()
+                });
         }
     }
 }

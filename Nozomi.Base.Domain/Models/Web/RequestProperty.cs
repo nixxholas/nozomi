@@ -1,15 +1,30 @@
-﻿using Nozomi.Base.Core;
+﻿using System.Runtime.Serialization;
+using Nozomi.Base.Core;
 
 namespace Nozomi.Data.Models.Web
 {
-    public class RequestProperty : BaseEntityModel
+    [DataContract]
+    public class RequestProperty : Entity
     {
+        public RequestProperty() {}
+        
+        /// <summary>
+        /// Manual-based construction
+        /// </summary>
+        /// <param name="requestPropertyType"></param>
+        /// <param name="key"></param>
+        /// <param name="value"></param>
+        public RequestProperty(RequestPropertyType requestPropertyType, string key, string value) {}
+        
         public long Id { get; set; }
 
+        [DataMember]
         public RequestPropertyType RequestPropertyType { get; set; }
 
+        [DataMember]
         public string Key { get; set; }
 
+        [DataMember]
         public string Value { get; set; }
 
         public long RequestId { get; set; }

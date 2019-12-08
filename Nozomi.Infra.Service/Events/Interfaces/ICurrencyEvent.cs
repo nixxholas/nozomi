@@ -5,14 +5,31 @@ using Nozomi.Data.Models.Currency;
 using Nozomi.Data.Models.Web;
 using Nozomi.Data.Models.Web.Analytical;
 using Nozomi.Data.ResponseModels.Currency;
+using Nozomi.Data.ViewModels.Currency;
+using Nozomi.Data.ViewModels.Source;
 
 namespace Nozomi.Service.Events.Interfaces
 {
     public interface ICurrencyEvent
     {
+        bool Exists(string slug);
+
+        CurrencyViewModel Get(string slug);
+        
+        IEnumerable<CurrencyViewModel> All(string currencyType = "CRYPTO", int itemsPerIndex = 20, int index = 0, 
+            ICollection<ComponentType> typesToTake = null,
+            ICollection<ComponentType> typesToDeepen = null);
+        
+        IEnumerable<CurrencyViewModel> All(string currencyType = "CRYPTO", int itemsPerIndex = 20, int index = 0, 
+            AnalysedComponentType sortType = AnalysedComponentType.Unknown, bool orderDescending = true, 
+            ICollection<AnalysedComponentType> typesToTake = null, 
+            ICollection<AnalysedComponentType> typesToDeepen = null);
+
         Currency Get(long id, bool track = false);
         
         Currency GetCurrencyByAbbreviation(string abbreviation, bool track = false);
+
+        Currency GetBySlug(string slug);
         
         /// <summary>
         /// Provides the caller the total amount of currency currently circulating
@@ -22,6 +39,10 @@ namespace Nozomi.Service.Events.Interfaces
         /// <returns>Circulating supply of the currency in question.</returns>
         decimal GetCirculatingSupply(AnalysedComponent analysedComponent);
 
+        long Count(bool ignoreDeleted = false, bool ignoreDisabled = false);
+
+        long GetCountByType(string typeShortForm);
+        
         ICollection<Currency> GetAll(bool includeNested = false);
         ICollection<Currency> GetAllNonDeleted(bool includeNested = false);
         
@@ -32,7 +53,8 @@ namespace Nozomi.Service.Events.Interfaces
         /// </summary>
         /// <param name="currencyTypeId"></param>
         /// <returns></returns>
-        ICollection<GeneralisedCurrencyResponse> GetAllDetailed(string typeShortForm = "CRYPTO", int index = 0, int daysOfData = 7);
+        ICollection<GeneralisedCurrencyResponse> GetAllDetailed(string typeShortForm = "CRYPTO", int index = 0, 
+            int countPerIndex = 20, int daysOfData = 7);
 
         /// <summary>
         /// Enables to caller to obtained a detailed about regarding a currency,
@@ -53,5 +75,16 @@ namespace Nozomi.Service.Events.Interfaces
         IEnumerable<Currency> GetAllActive(bool includeNested = false);
         IEnumerable<dynamic> GetAllActiveObsc(bool includeNested = false);
         IEnumerable<dynamic> GetAllActiveDistinctObsc(bool includeNested = false);
+
+        ICollection<string> ListAllSlugs();
+
+        IEnumerable<CurrencyViewModel> ListAll(int page = 0, int itemsPerPage = 50, 
+            string currencyTypeName = null, bool orderAscending = true, string orderingParam = "Name");
+
+        IReadOnlyDictionary<string, long> ListAllMapped();
+
+        long SourceCount(string slug);
+
+        IEnumerable<SourceViewModel> ListSources(string slug, int page = 0, int itemsPerPage = 50);
     }
 }

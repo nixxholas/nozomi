@@ -16,51 +16,68 @@ namespace Nozomi.Repo.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn)
-                .HasAnnotation("ProductVersion", "2.2.6-servicing-10079")
+                .HasAnnotation("ProductVersion", "3.0.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             modelBuilder.Entity("Nozomi.Data.Models.Currency.Currency", b =>
                 {
                     b.Property<long>("Id")
-                        .ValueGeneratedOnAdd();
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
                     b.Property<string>("Abbreviation")
-                        .IsRequired();
+                        .IsRequired()
+                        .HasColumnType("text");
 
-                    b.Property<DateTime>("CreatedAt");
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp without time zone");
 
-                    b.Property<long>("CreatedBy");
+                    b.Property<string>("CreatedById")
+                        .HasColumnType("text");
 
-                    b.Property<long>("CurrencyTypeId");
+                    b.Property<long>("CurrencyTypeId")
+                        .HasColumnType("bigint");
 
-                    b.Property<DateTime?>("DeletedAt");
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp without time zone");
 
-                    b.Property<long>("DeletedBy");
+                    b.Property<string>("DeletedById")
+                        .HasColumnType("text");
 
-                    b.Property<string>("DenominationName");
+                    b.Property<string>("DenominationName")
+                        .HasColumnType("text");
 
                     b.Property<int>("Denominations")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
                         .HasDefaultValue(0);
 
-                    b.Property<string>("Description");
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
 
-                    b.Property<bool>("IsEnabled");
+                    b.Property<bool>("IsEnabled")
+                        .HasColumnType("boolean");
 
                     b.Property<string>("LogoPath")
                         .IsRequired()
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("text")
                         .HasDefaultValue("assets/svg/icons/question.svg");
 
-                    b.Property<DateTime>("ModifiedAt");
+                    b.Property<DateTime>("ModifiedAt")
+                        .HasColumnType("timestamp without time zone");
 
-                    b.Property<long>("ModifiedBy");
+                    b.Property<string>("ModifiedById")
+                        .HasColumnType("text");
 
                     b.Property<string>("Name")
-                        .IsRequired();
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<string>("Slug")
-                        .IsRequired();
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<uint>("xmin")
                         .IsConcurrencyToken()
@@ -82,37 +99,52 @@ namespace Nozomi.Repo.Migrations
             modelBuilder.Entity("Nozomi.Data.Models.Currency.CurrencyPair", b =>
                 {
                     b.Property<long>("Id")
-                        .ValueGeneratedOnAdd();
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
                     b.Property<string>("APIUrl")
-                        .IsRequired();
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<string>("CounterCurrencyAbbrv")
-                        .IsRequired();
+                        .IsRequired()
+                        .HasColumnType("text");
 
-                    b.Property<DateTime>("CreatedAt");
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp without time zone");
 
-                    b.Property<long>("CreatedBy");
+                    b.Property<string>("CreatedById")
+                        .HasColumnType("text");
 
-                    b.Property<int>("CurrencyPairType");
+                    b.Property<int>("CurrencyPairType")
+                        .HasColumnType("integer");
 
                     b.Property<string>("DefaultComponent")
-                        .IsRequired();
+                        .IsRequired()
+                        .HasColumnType("text");
 
-                    b.Property<DateTime?>("DeletedAt");
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp without time zone");
 
-                    b.Property<long>("DeletedBy");
+                    b.Property<string>("DeletedById")
+                        .HasColumnType("text");
 
-                    b.Property<bool>("IsEnabled");
+                    b.Property<bool>("IsEnabled")
+                        .HasColumnType("boolean");
 
                     b.Property<string>("MainCurrencyAbbrv")
-                        .IsRequired();
+                        .IsRequired()
+                        .HasColumnType("text");
 
-                    b.Property<DateTime>("ModifiedAt");
+                    b.Property<DateTime>("ModifiedAt")
+                        .HasColumnType("timestamp without time zone");
 
-                    b.Property<long>("ModifiedBy");
+                    b.Property<string>("ModifiedById")
+                        .HasColumnType("text");
 
-                    b.Property<long>("SourceId");
+                    b.Property<long>("SourceId")
+                        .HasColumnType("bigint");
 
                     b.Property<uint>("xmin")
                         .IsConcurrencyToken()
@@ -133,27 +165,39 @@ namespace Nozomi.Repo.Migrations
             modelBuilder.Entity("Nozomi.Data.Models.Currency.CurrencyProperty", b =>
                 {
                     b.Property<long>("Id")
-                        .ValueGeneratedOnAdd();
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
-                    b.Property<DateTime>("CreatedAt");
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp without time zone");
 
-                    b.Property<long>("CreatedBy");
+                    b.Property<string>("CreatedById")
+                        .HasColumnType("text");
 
-                    b.Property<long>("CurrencyId");
+                    b.Property<long>("CurrencyId")
+                        .HasColumnType("bigint");
 
-                    b.Property<DateTime?>("DeletedAt");
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp without time zone");
 
-                    b.Property<long>("DeletedBy");
+                    b.Property<string>("DeletedById")
+                        .HasColumnType("text");
 
-                    b.Property<bool>("IsEnabled");
+                    b.Property<bool>("IsEnabled")
+                        .HasColumnType("boolean");
 
-                    b.Property<DateTime>("ModifiedAt");
+                    b.Property<DateTime>("ModifiedAt")
+                        .HasColumnType("timestamp without time zone");
 
-                    b.Property<long>("ModifiedBy");
+                    b.Property<string>("ModifiedById")
+                        .HasColumnType("text");
 
-                    b.Property<int>("Type");
+                    b.Property<int>("Type")
+                        .HasColumnType("integer");
 
-                    b.Property<string>("Value");
+                    b.Property<string>("Value")
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
@@ -165,25 +209,36 @@ namespace Nozomi.Repo.Migrations
             modelBuilder.Entity("Nozomi.Data.Models.Currency.CurrencySource", b =>
                 {
                     b.Property<long>("Id")
-                        .ValueGeneratedOnAdd();
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
-                    b.Property<DateTime>("CreatedAt");
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp without time zone");
 
-                    b.Property<long>("CreatedBy");
+                    b.Property<string>("CreatedById")
+                        .HasColumnType("text");
 
-                    b.Property<long>("CurrencyId");
+                    b.Property<long>("CurrencyId")
+                        .HasColumnType("bigint");
 
-                    b.Property<DateTime?>("DeletedAt");
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp without time zone");
 
-                    b.Property<long>("DeletedBy");
+                    b.Property<string>("DeletedById")
+                        .HasColumnType("text");
 
-                    b.Property<bool>("IsEnabled");
+                    b.Property<bool>("IsEnabled")
+                        .HasColumnType("boolean");
 
-                    b.Property<DateTime>("ModifiedAt");
+                    b.Property<DateTime>("ModifiedAt")
+                        .HasColumnType("timestamp without time zone");
 
-                    b.Property<long>("ModifiedBy");
+                    b.Property<string>("ModifiedById")
+                        .HasColumnType("text");
 
-                    b.Property<long>("SourceId");
+                    b.Property<long>("SourceId")
+                        .HasColumnType("bigint");
 
                     b.Property<uint>("xmin")
                         .IsConcurrencyToken()
@@ -205,27 +260,43 @@ namespace Nozomi.Repo.Migrations
             modelBuilder.Entity("Nozomi.Data.Models.Currency.CurrencyType", b =>
                 {
                     b.Property<long>("Id")
-                        .ValueGeneratedOnAdd();
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
-                    b.Property<DateTime>("CreatedAt");
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp without time zone");
 
-                    b.Property<long>("CreatedBy");
+                    b.Property<string>("CreatedById")
+                        .HasColumnType("text");
 
-                    b.Property<DateTime?>("DeletedAt");
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp without time zone");
 
-                    b.Property<long>("DeletedBy");
+                    b.Property<string>("DeletedById")
+                        .HasColumnType("text");
 
-                    b.Property<bool>("IsEnabled");
+                    b.Property<Guid>("Guid")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasDefaultValueSql("uuid_generate_v4()");
 
-                    b.Property<DateTime>("ModifiedAt");
+                    b.Property<bool>("IsEnabled")
+                        .HasColumnType("boolean");
 
-                    b.Property<long>("ModifiedBy");
+                    b.Property<DateTime>("ModifiedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("ModifiedById")
+                        .HasColumnType("text");
 
                     b.Property<string>("Name")
-                        .IsRequired();
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<string>("TypeShortForm")
                         .IsRequired()
+                        .HasColumnType("character varying(12)")
                         .HasMaxLength(12);
 
                     b.Property<uint>("xmin")
@@ -236,35 +307,60 @@ namespace Nozomi.Repo.Migrations
                     b.HasKey("Id")
                         .HasName("CurrencyType_PK_Id");
 
+                    b.HasIndex("Guid")
+                        .IsUnique();
+
                     b.ToTable("CurrencyTypes");
                 });
 
             modelBuilder.Entity("Nozomi.Data.Models.Currency.Source", b =>
                 {
                     b.Property<long>("Id")
-                        .ValueGeneratedOnAdd();
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
-                    b.Property<string>("APIDocsURL");
+                    b.Property<string>("APIDocsURL")
+                        .HasColumnType("text");
 
                     b.Property<string>("Abbreviation")
-                        .IsRequired();
+                        .IsRequired()
+                        .HasColumnType("text");
 
-                    b.Property<DateTime>("CreatedAt");
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp without time zone");
 
-                    b.Property<long>("CreatedBy");
+                    b.Property<string>("CreatedById")
+                        .HasColumnType("text");
 
-                    b.Property<DateTime?>("DeletedAt");
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp without time zone");
 
-                    b.Property<long>("DeletedBy");
+                    b.Property<string>("DeletedById")
+                        .HasColumnType("text");
 
-                    b.Property<bool>("IsEnabled");
+                    b.Property<Guid>("Guid")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasDefaultValueSql("uuid_generate_v4()");
 
-                    b.Property<DateTime>("ModifiedAt");
+                    b.Property<bool>("IsEnabled")
+                        .HasColumnType("boolean");
 
-                    b.Property<long>("ModifiedBy");
+                    b.Property<DateTime>("ModifiedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("ModifiedById")
+                        .HasColumnType("text");
 
                     b.Property<string>("Name")
-                        .IsRequired();
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<long>("SourceTypeId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasDefaultValue(1L);
 
                     b.Property<uint>("xmin")
                         .IsConcurrencyToken()
@@ -277,55 +373,153 @@ namespace Nozomi.Repo.Migrations
                     b.HasIndex("Abbreviation")
                         .HasName("Source_Index_Abbreviation");
 
+                    b.HasIndex("Guid")
+                        .IsUnique();
+
+                    b.HasIndex("SourceTypeId");
+
                     b.ToTable("Sources");
+                });
+
+            modelBuilder.Entity("Nozomi.Data.Models.Currency.SourceType", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<string>("Abbreviation")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("CreatedById")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("DeletedById")
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("Guid")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("IsEnabled")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime>("ModifiedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("ModifiedById")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<uint>("xmin")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid");
+
+                    b.HasKey("Id")
+                        .HasName("SourceType_Id_PK");
+
+                    b.HasIndex("Abbreviation")
+                        .IsUnique();
+
+                    b.HasIndex("Guid")
+                        .IsUnique();
+
+                    b.ToTable("SourceTypes");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1L,
+                            Abbreviation = "UNK",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Guid = new Guid("05b6457d-059c-458c-8774-0811e4d59ea8"),
+                            IsEnabled = true,
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "Unknown"
+                        });
                 });
 
             modelBuilder.Entity("Nozomi.Data.Models.Web.Analytical.AnalysedComponent", b =>
                 {
                     b.Property<long>("Id")
-                        .ValueGeneratedOnAdd();
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
                     b.Property<int>("ComponentType")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
                         .HasDefaultValue(0);
 
-                    b.Property<DateTime>("CreatedAt");
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp without time zone");
 
-                    b.Property<long>("CreatedBy");
+                    b.Property<string>("CreatedById")
+                        .HasColumnType("text");
 
-                    b.Property<long?>("CurrencyId");
+                    b.Property<long?>("CurrencyId")
+                        .HasColumnType("bigint");
 
-                    b.Property<long?>("CurrencyPairId");
+                    b.Property<long?>("CurrencyPairId")
+                        .HasColumnType("bigint");
 
-                    b.Property<long?>("CurrencyTypeId");
+                    b.Property<long?>("CurrencyTypeId")
+                        .HasColumnType("bigint");
 
                     b.Property<int>("Delay")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
                         .HasDefaultValue(86400000);
 
-                    b.Property<DateTime?>("DeletedAt");
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp without time zone");
 
-                    b.Property<long>("DeletedBy");
+                    b.Property<string>("DeletedById")
+                        .HasColumnType("text");
 
-                    b.Property<bool>("IsDenominated");
+                    b.Property<Guid>("Guid")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasDefaultValueSql("uuid_generate_v4()");
 
-                    b.Property<bool>("IsEnabled");
+                    b.Property<bool>("IsDenominated")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsEnabled")
+                        .HasColumnType("boolean");
 
                     b.Property<bool>("IsFailing")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
                         .HasDefaultValue(false);
 
-                    b.Property<DateTime>("ModifiedAt");
+                    b.Property<DateTime>("ModifiedAt")
+                        .HasColumnType("timestamp without time zone");
 
-                    b.Property<long>("ModifiedBy");
+                    b.Property<string>("ModifiedById")
+                        .HasColumnType("text");
 
                     b.Property<bool>("StoreHistoricals")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
                         .HasDefaultValue(false);
 
-                    b.Property<string>("UIFormatting");
+                    b.Property<string>("UIFormatting")
+                        .HasColumnType("text");
 
-                    b.Property<string>("Value");
+                    b.Property<string>("Value")
+                        .HasColumnType("text");
 
                     b.Property<uint>("xmin")
                         .IsConcurrencyToken()
@@ -334,6 +528,9 @@ namespace Nozomi.Repo.Migrations
 
                     b.HasKey("Id")
                         .HasName("AnalysedComponent_PK_Id");
+
+                    b.HasIndex("Guid")
+                        .IsUnique();
 
                     b.HasIndex("CurrencyId", "ComponentType")
                         .IsUnique()
@@ -353,28 +550,40 @@ namespace Nozomi.Repo.Migrations
             modelBuilder.Entity("Nozomi.Data.Models.Web.Analytical.AnalysedHistoricItem", b =>
                 {
                     b.Property<long>("Id")
-                        .ValueGeneratedOnAdd();
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
-                    b.Property<long>("AnalysedComponentId");
+                    b.Property<long>("AnalysedComponentId")
+                        .HasColumnType("bigint");
 
-                    b.Property<DateTime>("CreatedAt");
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp without time zone");
 
-                    b.Property<long>("CreatedBy");
+                    b.Property<string>("CreatedById")
+                        .HasColumnType("text");
 
-                    b.Property<DateTime?>("DeletedAt");
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp without time zone");
 
-                    b.Property<long>("DeletedBy");
+                    b.Property<string>("DeletedById")
+                        .HasColumnType("text");
 
-                    b.Property<DateTime>("HistoricDateTime");
+                    b.Property<DateTime>("HistoricDateTime")
+                        .HasColumnType("timestamp without time zone");
 
-                    b.Property<bool>("IsEnabled");
+                    b.Property<bool>("IsEnabled")
+                        .HasColumnType("boolean");
 
-                    b.Property<DateTime>("ModifiedAt");
+                    b.Property<DateTime>("ModifiedAt")
+                        .HasColumnType("timestamp without time zone");
 
-                    b.Property<long>("ModifiedBy");
+                    b.Property<string>("ModifiedById")
+                        .HasColumnType("text");
 
                     b.Property<string>("Value")
-                        .IsRequired();
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<uint>("xmin")
                         .IsConcurrencyToken()
@@ -389,31 +598,124 @@ namespace Nozomi.Repo.Migrations
                     b.ToTable("AnalysedHistoricItems");
                 });
 
-            modelBuilder.Entity("Nozomi.Data.Models.Web.RcdHistoricItem", b =>
+            modelBuilder.Entity("Nozomi.Data.Models.Web.Component", b =>
                 {
                     b.Property<long>("Id")
-                        .ValueGeneratedOnAdd();
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
-                    b.Property<DateTime>("CreatedAt");
+                    b.Property<bool>("AnomalyIgnorance")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false);
 
-                    b.Property<long>("CreatedBy");
+                    b.Property<int>("ComponentType")
+                        .HasColumnType("integer");
 
-                    b.Property<DateTime?>("DeletedAt");
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp without time zone");
 
-                    b.Property<long>("DeletedBy");
+                    b.Property<string>("CreatedById")
+                        .HasColumnType("text");
 
-                    b.Property<DateTime>("HistoricDateTime");
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp without time zone");
 
-                    b.Property<bool>("IsEnabled");
+                    b.Property<string>("DeletedById")
+                        .HasColumnType("text");
 
-                    b.Property<DateTime>("ModifiedAt");
+                    b.Property<Guid>("Guid")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasDefaultValueSql("uuid_generate_v4()");
 
-                    b.Property<long>("ModifiedBy");
+                    b.Property<string>("Identifier")
+                        .HasColumnType("text");
 
-                    b.Property<long>("RequestComponentId");
+                    b.Property<bool>("IsDenominated")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false);
+
+                    b.Property<bool>("IsEnabled")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime>("ModifiedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("ModifiedById")
+                        .HasColumnType("text");
+
+                    b.Property<string>("QueryComponent")
+                        .HasColumnType("text");
+
+                    b.Property<long>("RequestId")
+                        .HasColumnType("bigint");
+
+                    b.Property<bool>("StoreHistoricals")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false);
+
+                    b.Property<string>("Value")
+                        .HasColumnType("text");
+
+                    b.Property<uint>("xmin")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid");
+
+                    b.HasKey("Id")
+                        .HasName("RequestComponent_PK_Id");
+
+                    b.HasIndex("Guid")
+                        .IsUnique();
+
+                    b.HasIndex("RequestId", "ComponentType")
+                        .IsUnique()
+                        .HasName("RequestComponent_AK_RequestId_ComponentType");
+
+                    b.ToTable("RequestComponents");
+                });
+
+            modelBuilder.Entity("Nozomi.Data.Models.Web.ComponentHistoricItem", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("CreatedById")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("DeletedById")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("HistoricDateTime")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<bool>("IsEnabled")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime>("ModifiedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("ModifiedById")
+                        .HasColumnType("text");
+
+                    b.Property<long>("RequestComponentId")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("Value")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("text")
                         .HasDefaultValue("");
 
                     b.Property<uint>("xmin")
@@ -432,46 +734,64 @@ namespace Nozomi.Repo.Migrations
             modelBuilder.Entity("Nozomi.Data.Models.Web.Request", b =>
                 {
                     b.Property<long>("Id")
-                        .ValueGeneratedOnAdd();
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
-                    b.Property<DateTime>("CreatedAt");
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp without time zone");
 
-                    b.Property<long>("CreatedBy");
+                    b.Property<string>("CreatedById")
+                        .HasColumnType("text");
 
-                    b.Property<long?>("CurrencyId");
+                    b.Property<long?>("CurrencyId")
+                        .HasColumnType("bigint");
 
-                    b.Property<long?>("CurrencyPairId");
+                    b.Property<long?>("CurrencyPairId")
+                        .HasColumnType("bigint");
 
-                    b.Property<long?>("CurrencyTypeId");
+                    b.Property<long?>("CurrencyTypeId")
+                        .HasColumnType("bigint");
 
-                    b.Property<string>("DataPath");
+                    b.Property<string>("DataPath")
+                        .HasColumnType("text");
 
                     b.Property<int>("Delay")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
                         .HasDefaultValue(0);
 
-                    b.Property<DateTime?>("DeletedAt");
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp without time zone");
 
-                    b.Property<long>("DeletedBy");
+                    b.Property<string>("DeletedById")
+                        .HasColumnType("text");
 
                     b.Property<long>("FailureDelay")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
                         .HasDefaultValue(3600000L);
 
                     b.Property<Guid>("Guid")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
                         .HasDefaultValueSql("uuid_generate_v4()");
 
-                    b.Property<bool>("IsEnabled");
+                    b.Property<bool>("IsEnabled")
+                        .HasColumnType("boolean");
 
-                    b.Property<DateTime>("ModifiedAt");
+                    b.Property<DateTime>("ModifiedAt")
+                        .HasColumnType("timestamp without time zone");
 
-                    b.Property<long>("ModifiedBy");
+                    b.Property<string>("ModifiedById")
+                        .HasColumnType("text");
 
-                    b.Property<int>("RequestType");
+                    b.Property<int>("RequestType")
+                        .HasColumnType("integer");
 
                     b.Property<int>("ResponseType")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
                         .HasDefaultValue(1);
 
                     b.Property<uint>("xmin")
@@ -494,88 +814,45 @@ namespace Nozomi.Repo.Migrations
                     b.ToTable("Requests");
                 });
 
-            modelBuilder.Entity("Nozomi.Data.Models.Web.RequestComponent", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<bool>("AnomalyIgnorance")
-                        .ValueGeneratedOnAdd()
-                        .HasDefaultValue(false);
-
-                    b.Property<int>("ComponentType");
-
-                    b.Property<DateTime>("CreatedAt");
-
-                    b.Property<long>("CreatedBy");
-
-                    b.Property<DateTime?>("DeletedAt");
-
-                    b.Property<long>("DeletedBy");
-
-                    b.Property<string>("Identifier");
-
-                    b.Property<bool>("IsDenominated")
-                        .ValueGeneratedOnAdd()
-                        .HasDefaultValue(false);
-
-                    b.Property<bool>("IsEnabled");
-
-                    b.Property<DateTime>("ModifiedAt");
-
-                    b.Property<long>("ModifiedBy");
-
-                    b.Property<string>("QueryComponent");
-
-                    b.Property<long>("RequestId");
-
-                    b.Property<bool>("StoreHistoricals")
-                        .ValueGeneratedOnAdd()
-                        .HasDefaultValue(false);
-
-                    b.Property<string>("Value");
-
-                    b.Property<uint>("xmin")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("xid");
-
-                    b.HasKey("Id")
-                        .HasName("RequestComponent_PK_Id");
-
-                    b.HasIndex("RequestId", "ComponentType")
-                        .IsUnique()
-                        .HasName("RequestComponent_AK_RequestId_ComponentType");
-
-                    b.ToTable("RequestComponents");
-                });
-
             modelBuilder.Entity("Nozomi.Data.Models.Web.RequestProperty", b =>
                 {
                     b.Property<long>("Id")
-                        .ValueGeneratedOnAdd();
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
-                    b.Property<DateTime>("CreatedAt");
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp without time zone");
 
-                    b.Property<long>("CreatedBy");
+                    b.Property<string>("CreatedById")
+                        .HasColumnType("text");
 
-                    b.Property<DateTime?>("DeletedAt");
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp without time zone");
 
-                    b.Property<long>("DeletedBy");
+                    b.Property<string>("DeletedById")
+                        .HasColumnType("text");
 
-                    b.Property<bool>("IsEnabled");
+                    b.Property<bool>("IsEnabled")
+                        .HasColumnType("boolean");
 
-                    b.Property<string>("Key");
+                    b.Property<string>("Key")
+                        .HasColumnType("text");
 
-                    b.Property<DateTime>("ModifiedAt");
+                    b.Property<DateTime>("ModifiedAt")
+                        .HasColumnType("timestamp without time zone");
 
-                    b.Property<long>("ModifiedBy");
+                    b.Property<string>("ModifiedById")
+                        .HasColumnType("text");
 
-                    b.Property<long>("RequestId");
+                    b.Property<long>("RequestId")
+                        .HasColumnType("bigint");
 
-                    b.Property<int>("RequestPropertyType");
+                    b.Property<int>("RequestPropertyType")
+                        .HasColumnType("integer");
 
-                    b.Property<string>("Value");
+                    b.Property<string>("Value")
+                        .HasColumnType("text");
 
                     b.Property<uint>("xmin")
                         .IsConcurrencyToken()
@@ -593,31 +870,44 @@ namespace Nozomi.Repo.Migrations
             modelBuilder.Entity("Nozomi.Data.Models.Web.Websocket.WebsocketCommand", b =>
                 {
                     b.Property<long>("Id")
-                        .ValueGeneratedOnAdd();
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
-                    b.Property<int>("CommandType");
+                    b.Property<int>("CommandType")
+                        .HasColumnType("integer");
 
-                    b.Property<DateTime>("CreatedAt");
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp without time zone");
 
-                    b.Property<long>("CreatedBy");
+                    b.Property<string>("CreatedById")
+                        .HasColumnType("text");
 
                     b.Property<long>("Delay")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
                         .HasDefaultValue(0L);
 
-                    b.Property<DateTime?>("DeletedAt");
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp without time zone");
 
-                    b.Property<long>("DeletedBy");
+                    b.Property<string>("DeletedById")
+                        .HasColumnType("text");
 
-                    b.Property<bool>("IsEnabled");
+                    b.Property<bool>("IsEnabled")
+                        .HasColumnType("boolean");
 
-                    b.Property<DateTime>("ModifiedAt");
+                    b.Property<DateTime>("ModifiedAt")
+                        .HasColumnType("timestamp without time zone");
 
-                    b.Property<long>("ModifiedBy");
+                    b.Property<string>("ModifiedById")
+                        .HasColumnType("text");
 
-                    b.Property<string>("Name");
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
 
-                    b.Property<long>("RequestId");
+                    b.Property<long>("RequestId")
+                        .HasColumnType("bigint");
 
                     b.Property<uint>("xmin")
                         .IsConcurrencyToken()
@@ -635,32 +925,45 @@ namespace Nozomi.Repo.Migrations
             modelBuilder.Entity("Nozomi.Data.Models.Web.Websocket.WebsocketCommandProperty", b =>
                 {
                     b.Property<long>("Id")
-                        .ValueGeneratedOnAdd();
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
-                    b.Property<int>("CommandPropertyType");
+                    b.Property<int>("CommandPropertyType")
+                        .HasColumnType("integer");
 
-                    b.Property<DateTime>("CreatedAt");
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp without time zone");
 
-                    b.Property<long>("CreatedBy");
+                    b.Property<string>("CreatedById")
+                        .HasColumnType("text");
 
-                    b.Property<DateTime?>("DeletedAt");
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp without time zone");
 
-                    b.Property<long>("DeletedBy");
+                    b.Property<string>("DeletedById")
+                        .HasColumnType("text");
 
-                    b.Property<bool>("IsEnabled");
+                    b.Property<bool>("IsEnabled")
+                        .HasColumnType("boolean");
 
                     b.Property<string>("Key")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("text")
                         .HasDefaultValue(null);
 
-                    b.Property<DateTime>("ModifiedAt");
+                    b.Property<DateTime>("ModifiedAt")
+                        .HasColumnType("timestamp without time zone");
 
-                    b.Property<long>("ModifiedBy");
+                    b.Property<string>("ModifiedById")
+                        .HasColumnType("text");
 
                     b.Property<string>("Value")
-                        .IsRequired();
+                        .IsRequired()
+                        .HasColumnType("text");
 
-                    b.Property<long>("WebsocketCommandId");
+                    b.Property<long>("WebsocketCommandId")
+                        .HasColumnType("bigint");
 
                     b.Property<uint>("xmin")
                         .IsConcurrencyToken()
@@ -681,7 +984,8 @@ namespace Nozomi.Repo.Migrations
                         .WithMany("Currencies")
                         .HasForeignKey("CurrencyTypeId")
                         .HasConstraintName("CurrencyType_Currencies_Constraint")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Nozomi.Data.Models.Currency.CurrencyPair", b =>
@@ -690,7 +994,8 @@ namespace Nozomi.Repo.Migrations
                         .WithMany("CurrencyPairs")
                         .HasForeignKey("SourceId")
                         .HasConstraintName("Source_CurrencyPairs_Constraint")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Nozomi.Data.Models.Currency.CurrencyProperty", b =>
@@ -698,7 +1003,8 @@ namespace Nozomi.Repo.Migrations
                     b.HasOne("Nozomi.Data.Models.Currency.Currency", "Currency")
                         .WithMany("CurrencyProperties")
                         .HasForeignKey("CurrencyId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Nozomi.Data.Models.Currency.CurrencySource", b =>
@@ -707,13 +1013,24 @@ namespace Nozomi.Repo.Migrations
                         .WithMany("CurrencySources")
                         .HasForeignKey("CurrencyId")
                         .HasConstraintName("CurrencySource_Currency_Constraint")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.HasOne("Nozomi.Data.Models.Currency.Source", "Source")
                         .WithMany("SourceCurrencies")
                         .HasForeignKey("SourceId")
                         .HasConstraintName("CurrencySource_Source_Constraint")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Nozomi.Data.Models.Currency.Source", b =>
+                {
+                    b.HasOne("Nozomi.Data.Models.Currency.SourceType", "SourceType")
+                        .WithMany("Sources")
+                        .HasForeignKey("SourceTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Nozomi.Data.Models.Web.Analytical.AnalysedComponent", b =>
@@ -741,15 +1058,26 @@ namespace Nozomi.Repo.Migrations
                     b.HasOne("Nozomi.Data.Models.Web.Analytical.AnalysedComponent", "AnalysedComponent")
                         .WithMany("AnalysedHistoricItems")
                         .HasForeignKey("AnalysedComponentId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
                 });
 
-            modelBuilder.Entity("Nozomi.Data.Models.Web.RcdHistoricItem", b =>
+            modelBuilder.Entity("Nozomi.Data.Models.Web.Component", b =>
                 {
-                    b.HasOne("Nozomi.Data.Models.Web.RequestComponent", "RequestComponent")
+                    b.HasOne("Nozomi.Data.Models.Web.Request", "Request")
+                        .WithMany("RequestComponents")
+                        .HasForeignKey("RequestId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Nozomi.Data.Models.Web.ComponentHistoricItem", b =>
+                {
+                    b.HasOne("Nozomi.Data.Models.Web.Component", "Component")
                         .WithMany("RcdHistoricItems")
                         .HasForeignKey("RequestComponentId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Nozomi.Data.Models.Web.Request", b =>
@@ -771,20 +1099,13 @@ namespace Nozomi.Repo.Migrations
                         .HasConstraintName("CurrencyType_Request_Constraint");
                 });
 
-            modelBuilder.Entity("Nozomi.Data.Models.Web.RequestComponent", b =>
-                {
-                    b.HasOne("Nozomi.Data.Models.Web.Request", "Request")
-                        .WithMany("RequestComponents")
-                        .HasForeignKey("RequestId")
-                        .OnDelete(DeleteBehavior.Restrict);
-                });
-
             modelBuilder.Entity("Nozomi.Data.Models.Web.RequestProperty", b =>
                 {
                     b.HasOne("Nozomi.Data.Models.Web.Request", "Request")
                         .WithMany("RequestProperties")
                         .HasForeignKey("RequestId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Nozomi.Data.Models.Web.Websocket.WebsocketCommand", b =>
@@ -792,7 +1113,8 @@ namespace Nozomi.Repo.Migrations
                     b.HasOne("Nozomi.Data.Models.Web.Request", "Request")
                         .WithMany("WebsocketCommands")
                         .HasForeignKey("RequestId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Nozomi.Data.Models.Web.Websocket.WebsocketCommandProperty", b =>
@@ -800,7 +1122,8 @@ namespace Nozomi.Repo.Migrations
                     b.HasOne("Nozomi.Data.Models.Web.Websocket.WebsocketCommand", "WebsocketCommand")
                         .WithMany("WebsocketCommandProperties")
                         .HasForeignKey("WebsocketCommandId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

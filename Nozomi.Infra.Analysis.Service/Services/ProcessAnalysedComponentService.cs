@@ -22,7 +22,7 @@ namespace Nozomi.Infra.Analysis.Service.Services
             _analysedHistoricItemService = analysedHistoricItemService;
         }
 
-        public long Create(AnalysedComponent analysedComponent, long userId = 0)
+        public long Create(AnalysedComponent analysedComponent, string userId = null)
         {
             if (analysedComponent != null)
             {
@@ -35,7 +35,7 @@ namespace Nozomi.Infra.Analysis.Service.Services
             return -1;
         }
 
-        public bool UpdateValue(long analysedComponentId, string value, long userId = 0)
+        public bool UpdateValue(long analysedComponentId, string value, string userId = null)
         {
             if (string.IsNullOrEmpty(value)) return false;
             
@@ -66,7 +66,7 @@ namespace Nozomi.Infra.Analysis.Service.Services
             return false;
         }
 
-        public bool Checked(long analysedComponentId, bool isFailing = false, long userId = 0)
+        public bool Checked(long analysedComponentId, bool isFailing = false, string userId = null)
         {
             var comp = _unitOfWork.GetRepository<AnalysedComponent>()
                 .GetQueryable()
@@ -85,7 +85,7 @@ namespace Nozomi.Infra.Analysis.Service.Services
             return false;
         }
 
-        public bool Disable(long analysedComponentId, long userId = 0)
+        public bool Disable(long analysedComponentId, string userId = null)
         {
             var comp = _unitOfWork.GetRepository<AnalysedComponent>()
                 .GetQueryable()

@@ -94,7 +94,7 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers
             }
 
             // TODO: Make full use of the hard delete option.
-            var result = _currencyTypeService.Delete(id, false, 0);
+            var result = _currencyTypeService.Delete(id, false);
 
             if (result) return Ok("Currency Type successfully deleted!");
 

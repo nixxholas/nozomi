@@ -29,6 +29,7 @@ namespace Nozomi.Auth.Controllers.Account
     [AllowAnonymous]
     public class AccountController : BaseController<AccountController>
     {
+        private readonly RoleManager<Role> _roleManager;
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
         private readonly IIdentityServerInteractionService _interaction;
@@ -41,6 +42,7 @@ namespace Nozomi.Auth.Controllers.Account
 
         public AccountController(
             ILogger<AccountController> logger,
+            RoleManager<Role> roleManager,
             UserManager<User> userManager,
             SignInManager<User> signInManager,
             IIdentityServerInteractionService interaction,
@@ -50,6 +52,7 @@ namespace Nozomi.Auth.Controllers.Account
             IValidatingEvent validatingEvent,
             IEventService events, IAddressService addressService) : base(logger)
         {
+            _roleManager = roleManager;
             _userManager = userManager;
             _signInManager = signInManager;
             _interaction = interaction;
@@ -73,26 +76,38 @@ namespace Nozomi.Auth.Controllers.Account
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
-                    // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=532713
-                    // Send an email with this link
+                    // Default role binding
+                    var roleResult = await _userManager.AddToRoleAsync(user, "User");
+
+                    if (roleResult.Succeeded)
+                    {
+                        // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=532713
+                        // Send an email with this link
 //                    var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
 //                    var callbackUrl = Url.Action("ConfirmEmail", "Account", 
 //                        new { userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
 //                    await _emailSender.SendEmailAsync(model.Email, "Confirm your account",
 //                        "Please confirm your account by clicking this link: <a href=\"" + callbackUrl + "\">link</a>");
-                    await _signInManager.SignInAsync(user, isPersistent: false);
-                    //_logger.LogInformation(3, "User created a new account with password.");
+                        await _signInManager.SignInAsync(user, isPersistent: false);
+                        //_logger.LogInformation(3, "User created a new account with password.");
                     
-                    //return Redirect(model.ReturnUrl);
-                    return Ok();
+                        //return Redirect(model.ReturnUrl);
+                        return Ok();
+                    }
+                    
+                    ModelState.AddModelError(user.Id, AccountOptions.FailedToJoinRole);
                 }
-                ModelState.AddModelError(string.Empty, AccountOptions.CredentialsAlreadyTaken);
+                else
+                {
+                    ModelState.AddModelError(string.Empty, AccountOptions.CredentialsAlreadyTaken);
+                }
             }
 
             // If we got this far, something failed, redisplay form
             return BadRequest(model);
         }
 
+        [HttpPost]
         public async Task<User> Web3Create(string signature, string address, string message)
         {
             if (_addressEvent.IsBinded(address)) return null;

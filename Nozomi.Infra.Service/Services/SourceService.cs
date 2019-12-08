@@ -8,21 +8,48 @@ using Microsoft.Extensions.Logging;
 using Nozomi.Data;
 using Nozomi.Data.AreaModels.v1.Source;
 using Nozomi.Data.Models.Currency;
+using Nozomi.Data.ViewModels.Source;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Data;
+using Nozomi.Service.Events.Interfaces;
 using Nozomi.Service.Services.Interfaces;
 
 namespace Nozomi.Service.Services
 {
     public class SourceService : BaseService<SourceService, NozomiDbContext>, ISourceService
     {
+        private readonly ISourceTypeEvent _sourceTypeEvent;
+        
         public SourceService(ILogger<SourceService> logger, 
-            IUnitOfWork<NozomiDbContext> unitOfWork) : base(logger, unitOfWork)
+            IUnitOfWork<NozomiDbContext> unitOfWork, ISourceTypeEvent sourceTypeEvent) : base(logger, unitOfWork)
         {
+            _sourceTypeEvent = sourceTypeEvent;
         }
 
-        public NozomiResult<string> Create(CreateSource createSource, long userId = 0)
+        public void Create(CreateSourceViewModel vm, string userId)
+        {
+            if (vm.IsValid() && !_unitOfWork.GetRepository<Source>()
+                    .GetQueryable().AsNoTracking()
+                    .Any(s => s.Abbreviation.Equals(vm.Abbreviation, StringComparison.InvariantCultureIgnoreCase)))
+            {
+                var sourceType = _sourceTypeEvent.Find(vm.SourceType);
+                if (sourceType == null)
+                    throw new ArgumentNullException("Invalid source type.");
+                
+                var source = new Source(vm.Abbreviation, vm.Name, vm.ApiDocsUrl, sourceType.Id);
+                
+                _unitOfWork.GetRepository<Source>().Add(source);
+                _unitOfWork.Commit(userId);
+
+                return;
+            }
+            
+            throw new ArgumentException("Invalid properties or a source type with the same abbreviation " +
+                                        "already exists.");
+        }
+
+        public NozomiResult<string> Create(CreateSource createSource, string userId = null)
         {
             try
             {
@@ -192,7 +219,7 @@ namespace Nozomi.Service.Services
             return false;
         }
 
-        public bool Delete(long id, bool hardDelete = false, long userId = 0)
+        public bool Delete(long id, bool hardDelete = false, string userId = null)
         {
             var source = _unitOfWork.GetRepository<Source>()
                 .GetQueryable()
@@ -217,7 +244,7 @@ namespace Nozomi.Service.Services
 
                 source.DeletedAt = DateTime.UtcNow;
 
-                if (userId > 0) source.DeletedBy = userId;
+                if (!string.IsNullOrWhiteSpace(userId)) source.DeletedById = userId;
                     
                 _unitOfWork.GetRepository<Source>().Update(source);
                 _unitOfWork.Commit();

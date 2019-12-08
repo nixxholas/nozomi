@@ -9,14 +9,14 @@ namespace Nozomi.Repo.BCL.Context
     {
         DbSet<TEntity> Set<TEntity>() where TEntity : class;
         
-        int SaveChanges(long userId = 0);
+        int SaveChanges(string userId = null);
 
         Task<int> SaveChangesAsync(
             CancellationToken cancellationToken = default(CancellationToken));
 
-        Task<int> SaveChangesAsync(long userId,
+        Task<int> SaveChangesAsync(string userId,
             CancellationToken cancellationToken = default(CancellationToken));
 
-        void AddTimestamps(long userId = 0);
+        void AddTimestamps(string userId);
     }
 }

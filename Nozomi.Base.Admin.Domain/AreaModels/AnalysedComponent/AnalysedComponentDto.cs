@@ -10,15 +10,15 @@ namespace Nozomi.Base.Admin.Domain.AreaModels.AnalysedComponent
         
         public DateTime CreatedAt { get; set; }
         
-        public long CreatedBy { get; set; }
+        public string CreatedBy { get; set; }
         
         public DateTime ModifiedAt { get; set; }
         
-        public long ModifiedBy { get; set; }
+        public string ModifiedBy { get; set; }
         
         public DateTime? DeletedAt { get; set; }
         
-        public long DeletedBy { get; set; }
+        public string DeletedBy { get; set; }
         
         public ICollection<AnalysedHistoricItemDto> AnalysedHistoricItems { get; set; }
     }

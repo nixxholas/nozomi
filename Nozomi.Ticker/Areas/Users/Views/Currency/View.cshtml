@@ -2,6 +2,7 @@
 @using Nozomi.Data.Models.Web.Analytical
 @using Nozomi.Preprocessing
 @using Nozomi.Service.Events.Interfaces
+@using JsonSerializer = System.Text.Json.JsonSerializer
 @inject ITickerEvent _TickerEvent
 @model Nozomi.Data.Models.Currency.Currency
 
@@ -246,22 +247,10 @@
       el: "#partialView",
       // Just dish any random variable in for now
       data: {
-        acTypes: @Html.Raw(Json.Serialize(NozomiServiceConstants.analysedComponentTypes, new JsonSerializerSettings
-                 {
-                     ReferenceLoopHandling = ReferenceLoopHandling.Ignore
-                 })),
-        reqCompTypes: @Html.Raw(Json.Serialize(NozomiServiceConstants.requestComponentTypes, new JsonSerializerSettings
-                      {
-                          ReferenceLoopHandling = ReferenceLoopHandling.Ignore
-                      })),
-        currency: @Html.Raw(Json.Serialize(Model, new JsonSerializerSettings
-                  {
-                      ReferenceLoopHandling = ReferenceLoopHandling.Ignore
-                  })),
-                  tickerPairs: @Html.Raw(Json.Serialize(tickerPairs, new JsonSerializerSettings
-                               {
-                                   ReferenceLoopHandling = ReferenceLoopHandling.Ignore
-                               })),
+        acTypes: @Html.Raw(JsonSerializer.Serialize(NozomiServiceConstants.analysedComponentTypes)),
+        reqCompTypes: @Html.Raw(JsonSerializer.Serialize(NozomiServiceConstants.requestComponentTypes)),
+        currency: @Html.Raw(JsonSerializer.Serialize(Model)),
+                  tickerPairs: @Html.Raw(JsonSerializer.Serialize(tickerPairs)),
           itemsPerPage: 50,
           currentHistoricPage: 1,
           isHistoricalPricingTableBusy: false,

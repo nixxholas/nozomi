@@ -79,5 +79,26 @@ namespace Nozomi.Base.Core.Helpers.Enumerator
 
             return enumValList;
         }
+        
+        public static List<KeyValuePair<int, string>> GetEnumDescriptionsAndValues<T>() where T : Enum
+        {
+            Type enumType = typeof (T);
+
+            if (enumType.BaseType != typeof(Enum))
+                throw new ArgumentException("T is not System.Enum");
+
+            List<KeyValuePair<int, string>> enumValList = new List<KeyValuePair<int, string>>();
+
+            foreach (var e in Enum.GetValues(typeof(T)))
+            {
+                var fi = e.GetType().GetField(e.ToString());
+                var attributes = (DescriptionAttribute[])fi.GetCustomAttributes(typeof(DescriptionAttribute), false);
+
+                enumValList.Add(new KeyValuePair<int, string>((int)e, 
+                    (attributes.Length > 0) ? attributes[0].Description : e.ToString()));
+            }
+
+            return enumValList;
+        }
     }
 }

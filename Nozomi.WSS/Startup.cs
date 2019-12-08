@@ -92,9 +92,13 @@ namespace Nozomi.WSS
             services.AddTransient<IUnitOfWork<NozomiDbContext>, UnitOfWork<NozomiDbContext>>();
             services.AddTransient<IDbContext, NozomiDbContext>();
             
+            services.AddScoped<ICurrencyEvent, CurrencyEvent>();
+            services.AddScoped<ICurrencyPairEvent, CurrencyPairEvent>();
+            services.AddScoped<ICurrencyTypeEvent, CurrencyTypeEvent>();
             services.AddScoped<IRequestEvent, RequestEvent>();
+            services.AddScoped<ITickerEvent, TickerEvent>();
             services.AddTransient<IRcdHistoricItemService, RcdHistoricItemService>();
-            services.AddTransient<IRequestComponentService, RequestComponentService>();
+            services.AddTransient<IComponentService, ComponentService>();
             services.AddTransient<IRequestService, RequestService>();
             services.AddHostedService<WSRequestSyncingService>();
         }

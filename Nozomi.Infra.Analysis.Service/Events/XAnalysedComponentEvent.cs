@@ -67,6 +67,8 @@ namespace Nozomi.Infra.Analysis.Service.Events
 
         public ICollection<AnalysedComponent> GetNextWorkingSet(int index = 0, bool includeNonHistoricals = false)
         {
+            var currentUtc = DateTime.UtcNow;
+            
             if (!includeNonHistoricals)
                 return _unitOfWork.GetRepository<AnalysedComponent>()
                     .GetQueryable()
@@ -74,8 +76,7 @@ namespace Nozomi.Infra.Analysis.Service.Events
                     .Where(ac => ac.DeletedAt == null
                                  && ac.IsEnabled
                                  && (// Last modified time is older than the current time in conjunction with the delay
-                                     ac.ModifiedAt.Add(TimeSpan.FromMilliseconds(ac.Delay)) 
-                                     <= DateTime.UtcNow
+                                     ac.ModifiedAt < currentUtc
                                      // Always give null ACs a chance
                                      || string.IsNullOrEmpty(ac.Value))
                                  && ac.StoreHistoricals == includeNonHistoricals)
@@ -93,7 +94,7 @@ namespace Nozomi.Infra.Analysis.Service.Events
                 .Where(ac => ac.DeletedAt == null && ac.IsEnabled)
                 // Make sure LastChecked is null
                 .Where(ac => // Last modified time is older than the current time in conjunction with the delay
-                       ac.ModifiedAt.Add(TimeSpan.FromMilliseconds(ac.Delay)) <= DateTime.UtcNow
+                       ac.ModifiedAt < currentUtc
                        // Always give null ACs a chance
                        || string.IsNullOrEmpty(ac.Value))
                 // Order by ascending to the last modified time

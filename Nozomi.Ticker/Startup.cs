@@ -30,12 +30,15 @@ namespace Nozomi.Ticker
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, Microsoft.Extensions.Hosting.IHostingEnvironment env)
         {
             Configuration = configuration;
+            HostingEnvironment = env;
         }
 
         public IConfiguration Configuration { get; }
+        
+        public Microsoft.Extensions.Hosting.IHostingEnvironment HostingEnvironment { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -176,8 +179,8 @@ namespace Nozomi.Ticker
 
             services.AddSession();
             
-            services.AddMvc()
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
+            services.AddControllersWithViews()
+                .SetCompatibilityVersion(CompatibilityVersion.Version_3_0)
                 .AddSessionStateTempDataProvider()
                 .AddRazorPagesOptions(o=>
                 {
@@ -231,7 +234,7 @@ namespace Nozomi.Ticker
             app.UseCookiePolicy();
             
             // Setup the hot collections
-            app.ConfigureStatics();
+            app.ConfigureStatics(HostingEnvironment);
 
             app.UseSignalR(route =>
             {
@@ -240,17 +243,6 @@ namespace Nozomi.Ticker
             });
 
             app.UseSession();
-            
-            app.UseMvc(routes =>
-            {
-                routes.MapRoute(
-                    name: "default",
-                    template: "{controller=home}/{action=index}/{id?}");
-                
-                routes.MapRoute(
-                      name: "Areas",
-                      template: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
-            });
             
             app.UseNozomiExceptionMiddleware();
 
@@ -264,6 +256,17 @@ namespace Nozomi.Ticker
                 // https://stackoverflow.com/questions/39116047/how-to-change-base-url-of-swagger-in-asp-net-core
                 c.RoutePrefix = "docs";
                 c.SwaggerEndpoint("/swagger/" + GlobalApiVariables.CURRENT_API_VERSION + "/swagger.json", "Nozomi API");
+            });
+            
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllerRoute(
+                    name: "default",
+                    pattern: "{controller=home}/{action=index}/{id?}");
+                
+                endpoints.MapControllerRoute(
+                    name: "Areas",
+                    pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
             });
         }
     }

@@ -9,12 +9,12 @@ namespace Nozomi.Ticker.Controllers.APIs.v1.Request
     {
         NozomiResult<JsonResult> All(bool includeNested);
 
-        NozomiResult<string> Create(CreateRequest obj, long userId = 0);
+        NozomiResult<string> Create(CreateRequest obj, string userId = null);
 
-        NozomiResult<string> Update(UpdateRequest obj, long userId = 0);
+        NozomiResult<string> Update(UpdateRequest obj, string userId = null);
 
-        NozomiResult<string> Delete(long id, bool hardDelete = false, long userId = 0);
+        NozomiResult<string> Delete(long id, bool hardDelete = false, string userId = null);
 
-        NozomiResult<JsonResult> ManualPoll(long requestId, long userId = 0);
+        NozomiResult<JsonResult> ManualPoll(long requestId, string userId = null);
     }
 }

@@ -19,11 +19,11 @@ namespace Nozomi.Service.Services
         {
         }
 
-        public bool Push(RequestComponent rc)
+        public bool Push(Component rc)
         {
             if (!string.IsNullOrEmpty(rc.Value))
             {
-                var lastHistoric = _unitOfWork.GetRepository<RcdHistoricItem>()
+                var lastHistoric = _unitOfWork.GetRepository<ComponentHistoricItem>()
                     .GetQueryable()
                     .AsNoTracking()
                     .OrderByDescending(rcdhi => rcdhi.CreatedAt)
@@ -37,7 +37,7 @@ namespace Nozomi.Service.Services
                     if (lastHistoricVal != existingVal)
                     {
                         // Push it
-                        _unitOfWork.GetRepository<RcdHistoricItem>().Add(new RcdHistoricItem
+                        _unitOfWork.GetRepository<ComponentHistoricItem>().Add(new ComponentHistoricItem
                         {
                             RequestComponentId = rc.Id,
                             Value = rc.Value,
@@ -51,7 +51,7 @@ namespace Nozomi.Service.Services
                 else
                 {
                     // Push it
-                    _unitOfWork.GetRepository<RcdHistoricItem>().Add(new RcdHistoricItem
+                    _unitOfWork.GetRepository<ComponentHistoricItem>().Add(new ComponentHistoricItem
                     {
                         RequestComponentId = rc.Id,
                         Value = rc.Value,

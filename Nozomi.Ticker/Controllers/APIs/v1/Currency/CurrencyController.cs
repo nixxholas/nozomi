@@ -8,8 +8,10 @@ using Nozomi.Data;
 using Nozomi.Data.AreaModels.v1.Currency;
 using Nozomi.Data.Models.Web.Analytical;
 using Nozomi.Data.ResponseModels.Currency;
+using Nozomi.Infra.Admin.Service.Services.Interfaces;
 using Nozomi.Service.Events.Interfaces;
 using Nozomi.Service.Services.Interfaces;
+using ICurrencyService = Nozomi.Infra.Admin.Service.Services.Interfaces.ICurrencyService;
 
 namespace Nozomi.Ticker.Controllers.APIs.v1.Currency
 {

@@ -8,15 +8,18 @@ using Nozomi.Data.Models.Web;
 
 namespace Nozomi.Repo.Data.Mappings.WebModels
 {
-    public class RequestComponentMap : BaseMap<RequestComponent>
+    public class RequestComponentMap : BaseMap<Component>
     {
-        public RequestComponentMap(EntityTypeBuilder<RequestComponent> entityTypeBuilder) : base(entityTypeBuilder)
+        public RequestComponentMap(EntityTypeBuilder<Component> entityTypeBuilder) : base(entityTypeBuilder)
         {
             entityTypeBuilder.HasKey(rc => rc.Id).HasName("RequestComponent_PK_Id");
             entityTypeBuilder.Property(rc => rc.Id).ValueGeneratedOnAdd();
 
             entityTypeBuilder.HasIndex(rc => new {rc.RequestId, rc.ComponentType})
                 .HasName("RequestComponent_AK_RequestId_ComponentType").IsUnique();
+            
+            entityTypeBuilder.HasIndex(rc => rc.Guid).IsUnique();
+            entityTypeBuilder.Property(rc => rc.Guid).HasDefaultValueSql("uuid_generate_v4()");
 
             entityTypeBuilder.Property(rc => rc.Identifier).IsRequired(false);
             entityTypeBuilder.Property(rc => rc.QueryComponent).IsRequired(false);
@@ -26,7 +29,7 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
             
             entityTypeBuilder.HasOne(rc => rc.Request).WithMany(r => r.RequestComponents)
                 .HasForeignKey(rc => rc.RequestId).OnDelete(DeleteBehavior.Restrict);
-            entityTypeBuilder.HasMany(rc => rc.RcdHistoricItems).WithOne(rcd => rcd.RequestComponent)
+            entityTypeBuilder.HasMany(rc => rc.RcdHistoricItems).WithOne(rcd => rcd.Component)
                 .HasForeignKey(rcd => rcd.RequestComponentId).OnDelete(DeleteBehavior.Restrict);
         }
     }

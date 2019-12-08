@@ -16,7 +16,7 @@ namespace Nozomi.Infra.Admin.Service.Services
         {
         }
 
-        public long Create(CurrencyType currencyType, long userId = 0)
+        public long Create(CurrencyType currencyType, string userId = null)
         {
             if (currencyType != null && currencyType.IsValid())
             {
@@ -29,7 +29,7 @@ namespace Nozomi.Infra.Admin.Service.Services
             return long.MinValue;
         }
 
-        public bool Update(CurrencyType currencyType, long userId = 0)
+        public bool Update(CurrencyType currencyType, string userId = null)
         {
             if (currencyType != null && currencyType.IsValid())
             {
@@ -53,7 +53,7 @@ namespace Nozomi.Infra.Admin.Service.Services
             return false;
         }
 
-        public bool Delete(long currencyTypeId, bool hardDelete = false, long userId = 0)
+        public bool Delete(long currencyTypeId, bool hardDelete = false, string userId = null)
         {
             if (currencyTypeId > 0)
             {
@@ -70,7 +70,9 @@ namespace Nozomi.Infra.Admin.Service.Services
                     else
                     {
                         cTypeToDel.DeletedAt = DateTime.UtcNow;
-                        cTypeToDel.DeletedBy = userId;
+                        
+                        if (!string.IsNullOrWhiteSpace(userId))
+                            cTypeToDel.DeletedById = userId;
                     }
 
                     _unitOfWork.Commit(userId);

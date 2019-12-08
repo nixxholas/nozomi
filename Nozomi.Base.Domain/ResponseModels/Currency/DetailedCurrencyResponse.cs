@@ -93,15 +93,17 @@ namespace Nozomi.Data.ResponseModels.Currency
         }
         
         public DetailedCurrencyResponse(Models.Currency.Currency currency, 
-            ICollection<Models.Web.RequestComponent> requestComponents)
+            ICollection<Models.Web.Component> requestComponents)
         {
             // Aggregate non-compounded properties first
+            Id = currency.Id;
             Name = currency.Name;
             Abbreviation = currency.Abbreviation;
             Description = currency.Description;
             Slug = currency.Slug;
             LastUpdated = currency.ModifiedAt;
             LogoPath = currency.LogoPath;
+            // CurrencyType = currency.CurrencyType.Name; // Omitted for brevity
 
             foreach (var ac in currency.AnalysedComponents)
             {
@@ -167,7 +169,7 @@ namespace Nozomi.Data.ResponseModels.Currency
             {
                 RequestComponents = requestComponents.Select(rc => new RequestComponentResponse()
                     {
-                        Name = EnumHelper.GetDescription(rc.ComponentType),
+                        Name = rc.ComponentType.GetDescription(),
                         Timestamp = rc.ModifiedAt,
                         Value = rc.Value
                     })

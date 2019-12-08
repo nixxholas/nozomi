@@ -49,19 +49,19 @@ namespace Nozomi.Repo.Auth.Data
             var userTokenMap = new UserTokenMap(builder.Entity<UserToken>());
         }
 
-        public int SaveChanges(long userId = 0)
+        public int SaveChanges(string userId)
         {
             return base.SaveChanges();
         }
 
-        public async Task<int> SaveChangesAsync(long userId, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<int> SaveChangesAsync(string userId, CancellationToken cancellationToken = default(CancellationToken))
         {
             return await base.SaveChangesAsync(cancellationToken);
         }
 
-        public void AddTimestamps(long userId = 0)
+        public void AddTimestamps(string userId)
         {
-            throw new NotImplementedException();
+            // throw new NotImplementedException();
         }
     }
 }

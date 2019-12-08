@@ -1,17 +1,31 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using Microsoft.EntityFrameworkCore.Internal;
+using System.Runtime.Serialization;
 using Nozomi.Base.Core;
 using Nozomi.Data.Models.Web;
 using Nozomi.Data.Models.Web.Analytical;
 
 namespace Nozomi.Data.Models.Currency
 {
-    public class Currency : BaseEntityModel
+    [DataContract]
+    public class Currency : Entity
     {
+        public Currency() {}
+
+        public Currency(long currencyTypeId, string logoPath, string abbreviation, string slug, string name,
+            string description, int denominations, string denominationName)
+        {
+            CurrencyTypeId = currencyTypeId;
+            LogoPath = logoPath;
+            Abbreviation = abbreviation;
+            Slug = slug;
+            Name = name;
+            Description = description;
+            Denominations = denominations;
+            DenominationName = denominationName;
+        }
+        
         [Key]
         public long Id { get; set; }
 
@@ -20,16 +34,21 @@ namespace Nozomi.Data.Models.Currency
         
         public string LogoPath { get; set; }
 
+        [DataMember]
         public string Abbreviation { get; set; } // USD? MYR? IND?
         
+        [DataMember]
         public string Slug { get; set; }
 
+        [DataMember]
         public string Name { get; set; }
         
         public string Description { get; set; }
 
+        [DataMember]
         public int Denominations { get; set; } = 0;
         
+        [DataMember]
         public string DenominationName { get; set; }
         
         public ICollection<AnalysedComponent> AnalysedComponents { get; set; }

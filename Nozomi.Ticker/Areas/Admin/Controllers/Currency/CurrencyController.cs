@@ -8,9 +8,11 @@ using Nozomi.Data;
 using Nozomi.Data.AreaModels.v1.Currency;
 using Nozomi.Data.ViewModels.Admin.Currency;
 using Nozomi.Infra.Admin.Service.Events.Interfaces;
+using Nozomi.Infra.Admin.Service.Services.Interfaces;
 using Nozomi.Service.Events.Interfaces;
 using Nozomi.Service.Services.Interfaces;
 using Nozomi.Ticker.Controllers;
+using ICurrencyService = Nozomi.Infra.Admin.Service.Services.Interfaces.ICurrencyService;
 
 namespace Nozomi.Ticker.Areas.Admin.Controllers.Currency
 {

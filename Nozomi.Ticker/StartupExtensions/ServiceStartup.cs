@@ -25,11 +25,13 @@ namespace Nozomi.Ticker.StartupExtensions
         public static void ConfigureServiceLayer(this IServiceCollection services)
         {
             // Service Injections
-            services.AddTransient<ICurrencyService, CurrencyService>();
+            services.AddTransient<Nozomi.Infra.Admin.Service.Services.Interfaces.ICurrencyService, 
+                Nozomi.Infra.Admin.Service.Services.CurrencyService>();
             services.AddTransient<ICurrencyPairService, CurrencyPairService>();
             services.AddTransient<ICurrencyTypeService, CurrencyTypeService>();
-            services.AddTransient<IRequestComponentService, RequestComponentService>();
-            services.AddTransient<IRequestService, RequestService>();
+            services.AddTransient<IComponentService, ComponentService>();
+            services.AddTransient<Nozomi.Infra.Admin.Service.Services.Interfaces.IRequestService, 
+                Nozomi.Infra.Admin.Service.Services.RequestService>();
             services.AddTransient<IRcdHistoricItemService, RcdHistoricItemService>();
             services.AddScoped<IRequestTypeEvent, RequestTypeEvent>();
             services.AddTransient<ISourceService, SourceService>();
@@ -37,7 +39,8 @@ namespace Nozomi.Ticker.StartupExtensions
             services.AddTransient<ICurrencySourceService, CurrencySourceService>();
 
             // Admin Service Injections
-            services.AddTransient<IAnalysedComponentService, AnalysedComponentService>();
+            services.AddTransient<Nozomi.Infra.Admin.Service.Services.Interfaces.IAnalysedComponentService, 
+                Nozomi.Infra.Admin.Service.Services.AnalysedComponentService>();
             services.AddTransient<ICurrencyPropertyService, CurrencyPropertyService>();
             
             // TODO: Microservice

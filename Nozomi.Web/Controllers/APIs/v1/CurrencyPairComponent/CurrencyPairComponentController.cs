@@ -12,32 +12,32 @@ namespace Nozomi.Web.Controllers.APIs.v1.CurrencyPairComponent
     public class CurrencyPairComponentController : BaseApiController<CurrencyPairComponentController>,
         ICurrencyPairComponentController
     {
-        private readonly IRequestComponentEvent _requestComponentEvent;
+        private readonly IComponentEvent _componentEvent;
 
         public CurrencyPairComponentController(ILogger<CurrencyPairComponentController> logger,
-            IRequestComponentEvent requestComponentEvent)
+            IComponentEvent componentEvent)
             : base(logger)
         {
-            _requestComponentEvent = requestComponentEvent;
+            _componentEvent = componentEvent;
         }
 
         [HttpGet]
-        //[SwaggerResponse(200, "Request components obtained.", typeof(NozomiResult<ICollection<RequestComponent>>))]
+        //[SwaggerResponse(200, "Request components obtained.", typeof(NozomiResult<ICollection<Component>>))]
         //[SwaggerResponse(400, "The request ID is invalid.")]
         [SwaggerOperation(
             Summary = "Obtains all Request Components related to the specific Request ID."
         )]
-        public NozomiResult<ICollection<RequestComponent>> AllByRequestId(long requestId, bool includeNested = false)
+        public NozomiResult<ICollection<Data.Models.Web.Component>> AllByRequestId(long requestId, bool includeNested = false)
         {
-            return new NozomiResult<ICollection<RequestComponent>>
-                (_requestComponentEvent.GetAllByRequest(requestId, includeNested));
+            return new NozomiResult<ICollection<Data.Models.Web.Component>>
+                (_componentEvent.GetAllByRequest(requestId, includeNested));
         }
 
         [HttpGet]
-        public NozomiResult<ICollection<RequestComponent>> All(int index = 0, bool includeNested = false)
+        public NozomiResult<ICollection<Data.Models.Web.Component>> All(int index = 0, bool includeNested = false)
         {
-            return new NozomiResult<ICollection<RequestComponent>>
-                (_requestComponentEvent.All(index, includeNested));
+            return new NozomiResult<ICollection<Data.Models.Web.Component>>
+                (_componentEvent.All(index, includeNested));
         }
     }
 }

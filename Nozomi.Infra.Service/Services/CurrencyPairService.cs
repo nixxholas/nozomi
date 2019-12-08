@@ -8,6 +8,7 @@ using Nozomi.Data;
 using Nozomi.Data.AreaModels.v1.CurrencyPair;
 using Nozomi.Data.Models.Currency;
 using Nozomi.Data.Models.Web;
+using Nozomi.Data.ViewModels.CurrencyPair;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Data;
@@ -23,7 +24,15 @@ namespace Nozomi.Service.Services
         {
         }
 
-        public NozomiResult<string> Create(CreateCurrencyPair createCurrencyPair, long userId = 0)
+        public bool Create(CreateCurrencyPairViewModel vm, string userId = null)
+        {
+            _unitOfWork.GetRepository<CurrencyPair>().Add(new CurrencyPair(vm.CurrencyPairType,
+                vm.MainCurrencyAbbrv, vm.CounterCurrencyAbbrv, vm.ApiUrl, vm.DefaultComponent, vm.SourceId, vm.IsEnabled));
+                
+            return _unitOfWork.Commit(userId) == 1;
+        }
+
+        public NozomiResult<string> Create(CreateCurrencyPair createCurrencyPair, string userId = null)
         {
             if (createCurrencyPair == null || !createCurrencyPair.IsValid() ||
                 // Make sure the pair we're creating doesn't exist.
@@ -84,7 +93,7 @@ namespace Nozomi.Service.Services
             return new NozomiResult<string>(NozomiResultType.Success, "CurrencyPair successfully created");
         }
 
-        public NozomiResult<string> Update(UpdateCurrencyPair updateCurrencyPair, long userId = 0)
+        public NozomiResult<string> Update(UpdateCurrencyPair updateCurrencyPair, string userId = null)
         {
             if (updateCurrencyPair == null || !updateCurrencyPair.IsValid()
                 || !_unitOfWork.GetRepository<CurrencySource>()
@@ -131,7 +140,7 @@ namespace Nozomi.Service.Services
             return new NozomiResult<string>(NozomiResultType.Success, "CurrencyPair successfully updated!");
         }
 
-        public NozomiResult<string> Delete(long currencyPairId, long userId = 0, bool hardDelete = false)
+        public NozomiResult<string> Delete(long currencyPairId, string userId = null, bool hardDelete = false)
         {
             if (currencyPairId > 0)
             {
@@ -146,7 +155,9 @@ namespace Nozomi.Service.Services
                 else if (cpToDel != null && cpToDel.DeletedAt == null)
                 {
                     cpToDel.DeletedAt = DateTime.UtcNow;
-                    cpToDel.DeletedBy = userId;
+                    if (string.IsNullOrWhiteSpace(userId))
+                        cpToDel.DeletedById = userId;
+                    
                     _unitOfWork.GetRepository<CurrencyPair>().Update(cpToDel);
                 }
                 else

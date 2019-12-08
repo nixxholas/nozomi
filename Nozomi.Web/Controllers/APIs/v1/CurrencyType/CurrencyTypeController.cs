@@ -7,20 +7,30 @@ using Microsoft.Extensions.Logging;
 using Nozomi.Base.Core;
 using Nozomi.Data.ResponseModels;
 using Nozomi.Data.ResponseModels.AnalysedComponent;
+using Nozomi.Data.ResponseModels.CurrencyType;
 using Nozomi.Preprocessing;
 using Nozomi.Service.Events.Analysis.Interfaces;
+using Nozomi.Service.Events.Interfaces;
 
 namespace Nozomi.Web.Controllers.APIs.v1.CurrencyType
 {
     public class CurrencyTypeController : BaseApiController<CurrencyTypeController>, ICurrencyTypeController
     {
         private readonly IAnalysedComponentEvent _analysedComponentEvent;
+        private readonly ICurrencyTypeEvent _currencyTypeEvent;
 
         public CurrencyTypeController(ILogger<CurrencyTypeController> logger,
-            IAnalysedComponentEvent analysedComponentEvent)
+            IAnalysedComponentEvent analysedComponentEvent, ICurrencyTypeEvent currencyTypeEvent)
             : base(logger)
         {
             _analysedComponentEvent = analysedComponentEvent;
+            _currencyTypeEvent = currencyTypeEvent;
+        }
+
+        [HttpGet]
+        public IActionResult All()
+        {
+            return Ok(_currencyTypeEvent.All());
         }
 
         [HttpGet("{page}")]
@@ -63,6 +73,12 @@ namespace Nozomi.Web.Controllers.APIs.v1.CurrencyType
                     Value = ac.Value
                 })
                 .ToList();
+        }
+
+        [HttpGet]
+        public ICollection<DistinctCurrencyTypeResponse> ListAll()
+        {
+            return _currencyTypeEvent.ListAll();
         }
     }
 }

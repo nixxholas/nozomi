@@ -1,11 +1,6 @@
 using System;
+using System.IO;
 using System.Net;
-using System.Security.Cryptography.X509Certificates;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authentication.OpenIdConnect;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
@@ -13,12 +8,16 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SpaServices.Webpack;
+using Microsoft.AspNetCore.SpaServices.Extensions;
+// using Microsoft.AspNetCore.SpaServices.Webpack;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json;
 using Nozomi.Preprocessing;
+using Nozomi.Preprocessing.Filters;
 using Nozomi.Repo.Data;
-using Nozomi.Web.StartupExtensions;
+using Nozomi.Web.Extensions;
 using VaultSharp;
 using VaultSharp.V1.AuthMethods.Token;
 
@@ -32,82 +31,68 @@ namespace Nozomi.Web
             HostingEnvironment = hostingEnvironment;
         }
 
-        public IConfiguration Configuration { get; }
+        public static IConfiguration Configuration { get; set; }
 
         public IHostingEnvironment HostingEnvironment { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-             // Environment Inclusion
-            var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-            var webEnv = Environment.GetEnvironmentVariable("WEB_ENVIRONMENT") ?? string.Empty;
-
-            if (!string.IsNullOrEmpty(env) && (!env.Equals("production", StringComparison.OrdinalIgnoreCase)
-                && !webEnv.Equals("Production", StringComparison.OrdinalIgnoreCase)))
+            services.Configure<CookiePolicyOptions>(options =>
             {
-                // Greet the beloved dev
-                Console.WriteLine(@"Welcome to the dev environment, your machine is named: " + Environment.MachineName);
+                // This lambda determines whether user consent for non-essential cookies is needed for a given request.
+                options.CheckConsentNeeded = context => false;
+                options.MinimumSameSitePolicy = SameSiteMode.None;
+            });
 
-                // Postgres DB Setup
-                var str = Configuration.GetConnectionString("Local:" + @Environment.MachineName);
+            services.AddOptions();
 
-                services
-                    .AddEntityFrameworkNpgsql()
-                    .AddDbContext<NozomiDbContext>(options =>
-                {
-                    options.UseNpgsql(str);
-                    options.EnableSensitiveDataLogging(false);
-                    options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
-                },
-                    ServiceLifetime.Transient);
-            }
-            else
-            {
-                var vaultToken = Configuration["vaultToken"];
+            services.AddResponseCompression();
 
-                if (string.IsNullOrEmpty(vaultToken))
-                    throw new SystemException("Invalid vault token.");
+            services.AddDbContextInjections();
 
-                var authMethod = new TokenAuthMethodInfo(vaultToken);
-                var vaultClientSettings = new VaultClientSettings("http://165.22.250.169:8200", authMethod);
-                var vaultClient = new VaultClient(vaultClientSettings);
+            services.AddMemoryCache();
 
-                var nozomiVault = vaultClient.V1.Secrets.Cubbyhole.ReadSecretAsync("nozomi")
-                    .GetAwaiter()
-                    .GetResult().Data;
-
-                var mainDb = (string) nozomiVault["main"];
-                if (string.IsNullOrEmpty(mainDb))
-                    throw new SystemException("Invalid main database configuration");
-                // Database
-                services.AddDbContext<NozomiDbContext>(options =>
-                {
-                    options.UseNpgsql(mainDb
-                        , builder =>
-                        {
-                            builder.EnableRetryOnFailure();
-//                            builder.ProvideClientCertificatesCallback(certificates =>
-//                            {
-//                                var cert = new X509Certificate2("ca-certificate.crt");
-//                                certificates.Add(cert);
-//                            });
-                        }
-                    );
-                    options.EnableSensitiveDataLogging(false);
-                    options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
-                }, ServiceLifetime.Transient);
-            }
+            services.AddHealthChecks();
 
             // Add framework services.
-            services.AddMvc()
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddMvc(options =>
+                {
+                    options.Filters.Add(typeof(HttpGlobalExceptionFilter));
+                })
+                .AddNewtonsoftJson(options =>
+                    {
+                        options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+                    })
+                .SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
+
+            if (HostingEnvironment.IsProduction())
+            {
+                services.AddHsts(opt =>
+                {
+                    opt.Preload = true;
+                    opt.IncludeSubDomains = true;
+                    opt.MaxAge = TimeSpan.FromDays(60);
+                });
+            }
+
+            services.AddHttpsRedirection(options =>
+            {
+                options.RedirectStatusCode = StatusCodes.Status307TemporaryRedirect;
+                // options.HttpsPort = 5001;
+            });
+
+            // In production, the Vue files will be served from this directory
+            services.AddSpaStaticFiles(configuration =>
+            {
+                configuration.RootPath = "ClientApp/dist";
+            });
 
             // UoW-Repository injection
             services.ConfigureRepoLayer();
 
             // Service layer injections
-            services.ConfigureEvents();
+            services.ConfigureInfra();
 
             // Swashbuckle Swagger
             services.ConfigureSwagger();
@@ -119,14 +104,15 @@ namespace Nozomi.Web
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
+            app.UseHealthChecks("/health");
             #if DEBUG
             app.UseDeveloperExceptionPage();
 
             // Webpack initialization with hot-reload.
-            app.UseWebpackDevMiddleware(new WebpackDevMiddlewareOptions
-            {
-                HotModuleReplacement = true,
-            });
+//            app.UseWebpackDevMiddleware(new WebpackDevMiddlewareOptions
+//            {
+//                HotModuleReplacement = true,
+//            });
 
             app.UseExceptionHandler(appError =>
             {
@@ -156,7 +142,10 @@ namespace Nozomi.Web
 
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
+                app.UseResponseCompression();
             }
+
+            app.UseHttpsRedirection();
 
             // https://github.com/IdentityServer/IdentityServer4/issues/1331
             var forwardOptions = new ForwardedHeadersOptions
@@ -171,10 +160,16 @@ namespace Nozomi.Web
             // ref: https://github.com/aspnet/Docs/issues/2384
             app.UseForwardedHeaders(forwardOptions);
 
-            app.UseCookiePolicy();
-            app.UseHttpsRedirection();
             app.UseAuthentication();
+
             app.UseStaticFiles();
+            app.UseSpaStaticFiles();
+
+            app.UseRouting();
+
+            app.UseCookiePolicy();
+
+            app.UseAuthorization();
 
             // Enable middleware to serve generated Swagger as a JSON endpoint.
             app.UseSwagger();
@@ -188,20 +183,61 @@ namespace Nozomi.Web
                 c.SwaggerEndpoint("/swagger/" + GlobalApiVariables.CURRENT_API_VERSION + "/swagger.json", "Nozomi API");
             });
 
-            app.UseMvc(routes =>
+            app.UseEndpoints(endpoints =>
             {
-                routes.MapRoute(
+                endpoints.MapControllerRoute(
                     name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
-
-                routes.MapRoute(
-                    name: "Areas",
-                    template: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
-
-                routes.MapSpaFallbackRoute(
-                    name: "spa-fallback",
-                    defaults: new { controller = "Home", action = "Index" });
+                    pattern: "{controller=Home}/{action=Index}/{id?}");
+                endpoints.MapRazorPages();
             });
+
+            app.UseSpa(spa =>
+            {
+                spa.Options.SourcePath = "ClientApp";
+
+                /*
+                // If you want to enable server-side rendering (SSR),
+                // [1] In AspNetCoreSpa.csproj, change the <BuildServerSideRenderer> property
+                //     value to 'true', so that the SSR bundle is built during publish
+                // [2] Uncomment this code block
+                */
+
+                //   spa.UseSpaPrerendering(options =>
+                //    {
+                //        options.BootModulePath = $"{spa.Options.SourcePath}/dist-server/main.bundle.js";
+                //        options.BootModuleBuilder = env.IsDevelopment() ? new AngularCliBuilder(npmScript: "build:ssr") : null;
+                //        options.ExcludeUrls = new[] { "/sockjs-node" };
+                //        options.SupplyData = (requestContext, obj) =>
+                //        {
+                //          //  var result = appService.GetApplicationData(requestContext).GetAwaiter().GetResult();
+                //          obj.Add("Cookies", requestContext.Request.Cookies);
+                //        };
+                //    });
+
+                if (HostingEnvironment.IsDevelopment())
+                {
+                    //   spa.UseAngularCliServer(npmScript: "start");
+                    //   OR
+                    //   spa.UseProxyToSpaDevelopmentServer("http://localhost:5001");
+
+                    spa.UseVueDevelopmentServer();
+                }
+            });
+
+//            app.UseMvc(routes =>
+//            {
+//                routes.MapRoute(
+//                    name: "default",
+//                    template: "{controller=Home}/{action=Index}/{id?}");
+//
+//                routes.MapRoute(
+//                    name: "Areas",
+//                    template: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
+//
+//                routes.MapSpaFallbackRoute(
+//                    name: "spa-fallback",
+//                    defaults: new { controller = "Home", action = "Index" });
+//            });
         }
     }
 }

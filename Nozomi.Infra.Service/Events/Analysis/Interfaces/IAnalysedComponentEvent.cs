@@ -9,6 +9,9 @@ namespace Nozomi.Service.Events.Analysis.Interfaces
 {
     public interface IAnalysedComponentEvent
     {
+        bool Exists(AnalysedComponentType type, long currencyId = 0, string currencySlug = null, 
+            long currencyPairId = 0, long currencyTypeId = 0);
+        
         AnalysedComponent Get(long id, bool track = false, int index = 0);
         
         /// <summary>

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using Nozomi.Base.Core;
 using Nozomi.Data.Models.Currency;
 
@@ -9,9 +10,47 @@ namespace Nozomi.Data.Models.Web.Analytical
     /// <summary>
     /// Component made only in runtime.
     /// </summary>
-    public class AnalysedComponent : BaseEntityModel
+    [DataContract]
+    public class AnalysedComponent : Entity
     {
         public AnalysedComponent() {}
+
+        public AnalysedComponent(AnalysedComponentType type, int delay, string uiFormatting, bool isDenominated,
+            bool storeHistoricals, long currencyId, long currencyPairId, long currencyTypeId)
+        {
+            ComponentType = type;
+            Delay = delay;
+            UIFormatting = uiFormatting;
+            IsDenominated = isDenominated;
+            StoreHistoricals = storeHistoricals;
+            
+            if (currencyId > 0)
+                CurrencyId = currencyId;
+            
+            if (currencyPairId > 0)
+                CurrencyPairId = currencyPairId;
+            
+            if (currencyTypeId > 0)
+                CurrencyTypeId = currencyTypeId;
+        }
+        
+        /// <summary>
+        /// Manual creation constructor    
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="delay"></param>
+        /// <param name="uiFormatting"></param>
+        /// <param name="isDenominated"></param>
+        /// <param name="storeHistoricals"></param>
+        public AnalysedComponent(AnalysedComponentType type, int delay, string uiFormatting, bool isDenominated,
+            bool storeHistoricals)
+        {
+            ComponentType = type;
+            Delay = delay;
+            UIFormatting = uiFormatting;
+            IsDenominated = isDenominated;
+            StoreHistoricals = storeHistoricals;
+        }
         
         /// <summary>
         /// Constructor that defines the object with pagination
@@ -22,6 +61,7 @@ namespace Nozomi.Data.Models.Web.Analytical
         public AnalysedComponent(AnalysedComponent component, int index = 0, int items = 100)
         {
             Id = component.Id;
+            Guid = component.Guid;
             ComponentType = component.ComponentType;
             Currency = component.Currency;
             CurrencyId = component.CurrencyId;
@@ -55,6 +95,7 @@ namespace Nozomi.Data.Models.Web.Analytical
             Func<AnalysedHistoricItem, object> orderingExpr = null)
         {
             Id = component.Id;
+            Guid = component.Guid;
             ComponentType = component.ComponentType;
             Currency = component.Currency;
             CurrencyId = component.CurrencyId;
@@ -105,6 +146,7 @@ namespace Nozomi.Data.Models.Web.Analytical
             Func<AnalysedHistoricItem, bool> whereExpr = null)
         {
             Id = component.Id;
+            Guid = component.Guid;
             ComponentType = component.ComponentType;
             Currency = component.Currency;
             CurrencyId = component.CurrencyId;
@@ -157,6 +199,7 @@ namespace Nozomi.Data.Models.Web.Analytical
             Func<AnalysedHistoricItem, object> orderingExpr = null, Func<AnalysedHistoricItem, bool> whereExpr = null)
         {
             Id = component.Id;
+            Guid = component.Guid;
             ComponentType = component.ComponentType;
             Currency = component.Currency;
             CurrencyId = component.CurrencyId;
@@ -215,8 +258,12 @@ namespace Nozomi.Data.Models.Web.Analytical
         
         public long Id { get; set; }
         
+        public Guid Guid { get; set; }
+        
+        [DataMember]
         public AnalysedComponentType ComponentType { get; set; }
         
+        [DataMember]
         public string Value { get; set; }
 
         public bool IsDenominated { get; set; } = false;

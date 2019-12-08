@@ -35,6 +35,9 @@ namespace Nozomi.Preprocessing
             EnumHelper.GetEnumValuesAndDescriptions<RequestPropertyType>();
         public static List<KeyValuePair<string, int>> currencyPairType =
             EnumHelper.GetEnumValuesAndDescriptions<CurrencyPairType>();
+
+        public static readonly List<KeyValuePair<int, string>> AnalysedComponentTypeMap =
+            EnumHelper.GetEnumDescriptionsAndValues<AnalysedComponentType>();
         
         /// <summary>
         /// Let's say if an AnalysedComponent Updates every second,
@@ -46,6 +49,8 @@ namespace Nozomi.Preprocessing
         public const int AnalysedComponentTakeoutLimit = 100;
         
         public const int AnalysedHistoricItemTakeoutLimit = 500;
+
+        public const int CurrencyPairTakeoutLimit = 100;
 
         public const int CurrencyTypeTakeoutLimit = 20;
 

@@ -43,11 +43,11 @@ namespace Nozomi.Infra.Admin.Service.Events
                     Delay = ac.Delay,
                     IsEnabled = ac.IsEnabled,
                     CreatedAt = ac.CreatedAt,
-                    CreatedBy = ac.CreatedBy,
+                    CreatedBy = ac.CreatedById,
                     ModifiedAt = ac.ModifiedAt,
-                    ModifiedBy = ac.ModifiedBy,
+                    ModifiedBy = ac.ModifiedById,
                     DeletedAt = ac.DeletedAt,
-                    DeletedBy = ac.DeletedBy,
+                    DeletedBy = ac.DeletedById,
                     AnalysedHistoricItems = ac.AnalysedHistoricItems
                         .Select(ahi => new AnalysedHistoricItemDto
                         {
@@ -56,11 +56,11 @@ namespace Nozomi.Infra.Admin.Service.Events
                             HistoricDateTime = ahi.HistoricDateTime,
                             IsEnabled = ahi.IsEnabled,
                             CreatedAt = ahi.CreatedAt,
-                            CreatedBy = ahi.CreatedBy,
+                            CreatedBy = ahi.CreatedById,
                             ModifiedAt = ahi.ModifiedAt,
-                            ModifiedBy = ahi.ModifiedBy,
+                            ModifiedBy = ahi.ModifiedById,
                             DeletedAt = ahi.DeletedAt,
-                            DeletedBy = ahi.DeletedBy
+                            DeletedBy = ahi.DeletedById
                         })
                         .ToList()
                 })
@@ -89,11 +89,11 @@ namespace Nozomi.Infra.Admin.Service.Events
                     Delay = ac.Delay,
                     IsEnabled = ac.IsEnabled,
                     CreatedAt = ac.CreatedAt,
-                    CreatedBy = ac.CreatedBy,
+                    CreatedBy = ac.CreatedById,
                     ModifiedAt = ac.ModifiedAt,
-                    ModifiedBy = ac.ModifiedBy,
+                    ModifiedBy = ac.ModifiedById,
                     DeletedAt = ac.DeletedAt,
-                    DeletedBy = ac.DeletedBy,
+                    DeletedBy = ac.DeletedById,
                     AnalysedHistoricItems = ac.AnalysedHistoricItems
                         .Select(ahi => new AnalysedHistoricItemDto
                         {
@@ -102,11 +102,11 @@ namespace Nozomi.Infra.Admin.Service.Events
                             HistoricDateTime = ahi.HistoricDateTime,
                             IsEnabled = ahi.IsEnabled,
                             CreatedAt = ahi.CreatedAt,
-                            CreatedBy = ahi.CreatedBy,
+                            CreatedBy = ahi.CreatedById,
                             ModifiedAt = ahi.ModifiedAt,
-                            ModifiedBy = ahi.ModifiedBy,
+                            ModifiedBy = ahi.ModifiedById,
                             DeletedAt = ahi.DeletedAt,
-                            DeletedBy = ahi.DeletedBy
+                            DeletedBy = ahi.DeletedById
                         })
                         .ToList()
                 })
@@ -135,11 +135,11 @@ namespace Nozomi.Infra.Admin.Service.Events
                     Delay = ac.Delay,
                     IsEnabled = ac.IsEnabled,
                     CreatedAt = ac.CreatedAt,
-                    CreatedBy = ac.CreatedBy,
+                    CreatedBy = ac.CreatedById,
                     ModifiedAt = ac.ModifiedAt,
-                    ModifiedBy = ac.ModifiedBy,
+                    ModifiedBy = ac.ModifiedById,
                     DeletedAt = ac.DeletedAt,
-                    DeletedBy = ac.DeletedBy,
+                    DeletedBy = ac.DeletedById,
                     AnalysedHistoricItems = ac.AnalysedHistoricItems
                         .Select(ahi => new AnalysedHistoricItemDto
                         {
@@ -148,11 +148,11 @@ namespace Nozomi.Infra.Admin.Service.Events
                             HistoricDateTime = ahi.HistoricDateTime,
                             IsEnabled = ahi.IsEnabled,
                             CreatedAt = ahi.CreatedAt,
-                            CreatedBy = ahi.CreatedBy,
+                            CreatedBy = ahi.CreatedById,
                             ModifiedAt = ahi.ModifiedAt,
-                            ModifiedBy = ahi.ModifiedBy,
+                            ModifiedBy = ahi.ModifiedById,
                             DeletedAt = ahi.DeletedAt,
-                            DeletedBy = ahi.DeletedBy
+                            DeletedBy = ahi.DeletedById
                         })
                         .ToList()
                 })

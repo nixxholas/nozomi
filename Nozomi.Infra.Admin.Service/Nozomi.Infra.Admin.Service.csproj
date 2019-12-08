@@ -1,13 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>netcoreapp2.2</TargetFramework>
+        <TargetFramework>netcoreapp3.0</TargetFramework>
     </PropertyGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\Nozomi.Base.Admin.Domain\Nozomi.Base.Admin.Domain.csproj" />
       <ProjectReference Include="..\Nozomi.Infra.Preprocessing\Nozomi.Infra.Preprocessing.csproj" />
-      <ProjectReference Include="..\Nozomi.Infra.Service\Nozomi.Infra.Service.csproj" />
     </ItemGroup>
 
 </Project>

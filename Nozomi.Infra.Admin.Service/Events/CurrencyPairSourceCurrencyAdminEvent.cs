@@ -8,13 +8,14 @@ using Nozomi.Infra.Admin.Service.Events.Interfaces;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Data;
-using Nozomi.Service.Events;
 
 namespace Nozomi.Infra.Admin.Service.Events
 {
-    public class CurrencyPairSourceCurrencyAdminEvent : BaseEvent<CurrencyEvent, NozomiDbContext>, Interfaces.ICurrencyPairSourceCurrencyAdminEvent
+    public class CurrencyPairSourceCurrencyAdminEvent : BaseEvent<CurrencyPairSourceCurrencyAdminEvent, NozomiDbContext>
+        , Interfaces.ICurrencyPairSourceCurrencyAdminEvent
     {
-        public CurrencyPairSourceCurrencyAdminEvent(ILogger<CurrencyEvent> logger, IUnitOfWork<NozomiDbContext> unitOfWork) 
+        public CurrencyPairSourceCurrencyAdminEvent(ILogger<CurrencyPairSourceCurrencyAdminEvent> logger, 
+            IUnitOfWork<NozomiDbContext> unitOfWork) 
             : base(logger, unitOfWork)
         {
         }

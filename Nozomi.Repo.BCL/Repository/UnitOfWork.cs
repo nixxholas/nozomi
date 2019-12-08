@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using Microsoft.EntityFrameworkCore;
 using Nozomi.Repo.BCL.Context;
 
 namespace Nozomi.Repo.BCL.Repository
 {
-    public class UnitOfWork<TContext>  : IRepositoryFactory, IUnitOfWork<TContext>, IUnitOfWork
+    public class UnitOfWork<TContext>  : IRepositoryFactory, IUnitOfWork<TContext>
         where TContext : IDbContext
     {
         private Dictionary<Type, object> _repositories;
@@ -31,14 +33,28 @@ namespace Nozomi.Repo.BCL.Repository
             return (IRepository<TEntity>) _repositories[type];
         }
 
-        public int SaveChanges(long userId = 0)
+        public int Commit(string userId = null)
         {
-            return Context.SaveChanges();
-        }
+            bool saveFailed;
+            do
+            {
+                saveFailed = false;
+                try
+                {
+                    Context.SaveChanges(userId);
+                }
+                catch (DbUpdateConcurrencyException ex)
+                {
+                    saveFailed = true;
 
-        public int Commit(long userId = 0)
-        {
-            return Context.SaveChanges(userId);
+                    // Update original values from the database
+                    var entry = ex.Entries.Single();
+                    entry.OriginalValues.SetValues(entry.GetDatabaseValues());
+                }
+
+            } while (saveFailed);
+
+            return 1;
         }
 
         public void Dispose()

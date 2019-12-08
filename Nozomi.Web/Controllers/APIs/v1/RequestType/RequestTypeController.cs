@@ -17,7 +17,7 @@ namespace Nozomi.Web.Controllers.APIs.v1.RequestType
             _requestTypeEvent = requestTypeEvent;
         }
 
-        [Authorize(Roles = "Staff")]
+        [Authorize]
         [HttpGet]
         public NozomiResult<JsonResult> All()
         {

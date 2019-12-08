@@ -1,24 +1,32 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Runtime.Serialization;
 using Nozomi.Base.Core;
 using Nozomi.Data.Models.Web;
 using Nozomi.Data.Models.Web.Analytical;
 
 namespace Nozomi.Data.Models.Currency
 {
-    public class CurrencyType : BaseEntityModel
+    [DataContract]
+    public class CurrencyType : Entity
     {
         [Key]
         public long Id { get; set; }
 
+        [DataMember]
         [MaxLength(12)]
         [Display(Name = "Abbreviation", Prompt = "Enter a short form for the name.",
             Description = "The abbreviated form of the currency type's name.")]
         public string TypeShortForm { get; set; }
 
+        [DataMember]
         [Display(Name = "Name", Prompt = "Enter a name.",
             Description = "Name of the Currency Type.")]
         public string Name { get; set; }
+        
+        [DataMember]
+        public Guid Guid { get; set; }
         
         public ICollection<AnalysedComponent> AnalysedComponents { get; set; }
 

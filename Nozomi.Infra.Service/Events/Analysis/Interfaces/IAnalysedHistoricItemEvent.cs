@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using Nozomi.Base.Core.Responses;
 using Nozomi.Data.Models.Web.Analytical;
+using Nozomi.Data.ViewModels.AnalysedHistoricItem;
 
 namespace Nozomi.Service.Events.Analysis.Interfaces
 {
@@ -16,8 +17,10 @@ namespace Nozomi.Service.Events.Analysis.Interfaces
         
         IEnumerable<AnalysedHistoricItem> GetAll(long analysedComponentId, bool track = false, int index = 0);
 
+        IEnumerable<AnalysedHistoricItemViewModel> List(Guid guid, int page = 0, int itemsPerPage = 50);
+
         long GetRelevantComponentQueryCount(long analysedComponentId, Expression<Func<AnalysedHistoricItem, bool>> predicate = null, 
-            bool deepTrack = false);
+            Func<AnalysedHistoricItem, bool> clientPredicate = null, bool deepTrack = false);
 
         ICollection<AnalysedHistoricItem> GetRelevantHistorics(long analysedComponentId, 
             Expression<Func<AnalysedHistoricItem, bool>> predicate, int index = 0);

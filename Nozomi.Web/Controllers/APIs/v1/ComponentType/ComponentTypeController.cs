@@ -17,7 +17,7 @@ namespace Nozomi.Web.Controllers.APIs.v1.ComponentType
             _componentTypeEvent = componentTypeEvent;
         }
 
-        [Authorize(Roles = "Staff")]
+        [Authorize]
         [HttpGet]
         public NozomiResult<JsonResult> All()
         {

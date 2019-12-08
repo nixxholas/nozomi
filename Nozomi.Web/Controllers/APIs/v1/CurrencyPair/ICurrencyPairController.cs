@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Nozomi.Data;
+using Nozomi.Data.ResponseModels.CurrencyPair;
 
 namespace Nozomi.Web.Controllers.APIs.v1.CurrencyPair
 {
@@ -13,6 +14,8 @@ namespace Nozomi.Web.Controllers.APIs.v1.CurrencyPair
         /// <param name="id">Unique identifier </param>
         /// <returns></returns>
         Task Get(long id);
+
+        ICollection<DistinctCurrencyPairResponse> ListAll();
 
         NozomiResult<ICollection<Data.Models.Currency.CurrencyPair>> Ticker(string abbrv);
     }

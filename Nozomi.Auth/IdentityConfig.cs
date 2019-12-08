@@ -9,7 +9,6 @@ using System.Security.Claims;
 using IdentityModel;
 using IdentityServer4;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Hosting.Internal;
 using Nozomi.Base.Auth.Global;
 using Nozomi.Base.Auth.Models;
 
@@ -38,7 +37,8 @@ namespace Nozomi.Auth
                 new IdentityResources.OpenId(),
                 new IdentityResources.Profile(),
                 new IdentityResources.Email(), 
-                walletAddressProfile
+                walletAddressProfile,
+                new IdentityResource("roles", new[] { "role" })
             };
         }
 
@@ -92,7 +92,7 @@ namespace Nozomi.Auth
                         AllowAccessTokensViaBrowser = true,
                         AllowedGrantTypes = GrantTypes.Implicit,
                     
-                        AllowedScopes = { "openid", "profile", "email", "nozomi.web.read_only" },
+                        AllowedScopes = { "openid", "profile", "email", "roles", "nozomi.web.read_only" },
                         RedirectUris = {"https://nozomi.one/oidc-callback", "https://nozomi.one/oidc-silent-renew" },
                         PostLogoutRedirectUris = {"https://nozomi.one/"},
                         AllowedCorsOrigins = {"https://nozomi.one"},
@@ -102,20 +102,6 @@ namespace Nozomi.Auth
             
             return new[]
             {
-                // client credentials flow client
-                new Client
-                {
-                    ClientId = "nozomi.web",
-                    ClientName = "Nozomi Client Credentials Client",
-
-                    AllowedGrantTypes = GrantTypes.ClientCredentials,
-                    ClientSecrets = {new Secret("511536EF-F270-4058-80CA-1C89C192F69A".Sha256())},
-
-                    AllowedScopes = {
-                        "nozomi.web.read_only",
-                        "nozomi.web.full_access"
-                    }
-                },
                 new Client {
                     ClientId = "nozomi.spa",
                     ClientName = "Nozomi Vue SPA",
@@ -123,7 +109,7 @@ namespace Nozomi.Auth
                     AllowAccessTokensViaBrowser = true,
                     AllowedGrantTypes = GrantTypes.Implicit,
                     
-                    AllowedScopes = { "openid", "profile", "email", "nozomi.web.read_only" },
+                    AllowedScopes = { "openid", "profile", "email", "roles", "nozomi.web.read_only" },
                     RedirectUris = {"https://localhost:5001/oidc-callback", "https://localhost:5001/oidc-silent-renew"},
                     PostLogoutRedirectUris = {"https://localhost:5001/"},
                     AllowedCorsOrigins = {"https://localhost:5001"},

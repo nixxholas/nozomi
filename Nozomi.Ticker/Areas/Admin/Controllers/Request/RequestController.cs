@@ -18,18 +18,18 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers.Request
     public class RequestController : AreaBaseViewController<RequestController>
     {
         private readonly IRequestEvent _requestEvent;
-        private readonly IRequestComponentEvent _requestComponentEvent;
+        private readonly IComponentEvent _componentEvent;
         private readonly IRequestService _requestService;
 
         public RequestController(ILogger<RequestController> logger, IRequestEvent requestEvent,
-            IRequestService requestService, IRequestComponentEvent requestComponentEvent,
+            IRequestService requestService, IComponentEvent componentEvent,
             SignInManager<User> signInManager,
             UserManager<User> userManager)
             : base(logger, signInManager, userManager)
         {
             _requestEvent = requestEvent;
             _requestService = requestService;
-            _requestComponentEvent = requestComponentEvent;
+            _componentEvent = componentEvent;
         }
 
         #region GET Requests
@@ -87,7 +87,7 @@ namespace Nozomi.Ticker.Areas.Admin.Controllers.Request
                 return NotFound($"Unable to load user withID '{_userManager.GetUserId(User)}'.");
             }
 
-            var result = _requestService.Create(createRequest, 0);
+            var result = _requestService.Create(createRequest);
 
             if (result.ResultType.Equals(NozomiResultType.Success)) return Ok(result);
 

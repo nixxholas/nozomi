@@ -15,7 +15,6 @@ using Nozomi.Infra.Admin.Service.Services.Interfaces;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Data;
-using Nozomi.Service.Services.Interfaces;
 
 namespace Nozomi.Infra.Admin.Service.Services
 {
@@ -176,7 +175,7 @@ namespace Nozomi.Infra.Admin.Service.Services
                 Delay = createTickerInputModel.Delay,
                 RequestType = createTickerInputModel.RequestType,
                 ResponseType = createTickerInputModel.ResponseType,
-                RequestComponents = new List<RequestComponent>(),
+                RequestComponents = new List<Component>(),
                 RequestProperties = new List<RequestProperty>()
             };
             
@@ -263,7 +262,7 @@ namespace Nozomi.Infra.Admin.Service.Services
 
                 if (requestComponentEl.Length == 3)
                 {
-                    currencyPairRequest.RequestComponents.Add(new RequestComponent
+                    currencyPairRequest.RequestComponents.Add(new Component
                     {
                         ComponentType = componentType,
                         QueryComponent = requestComponentEl[2],
@@ -273,7 +272,7 @@ namespace Nozomi.Infra.Admin.Service.Services
                 }
                 else
                 {
-                    currencyPairRequest.RequestComponents.Add(new RequestComponent
+                    currencyPairRequest.RequestComponents.Add(new Component
                     {
                         ComponentType = componentType,
                         QueryComponent = requestComponentEl[1],

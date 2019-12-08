@@ -10,7 +10,6 @@ using Nozomi.Infra.Admin.Service.Events.Interfaces;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Data;
-using Nozomi.Service.Events.Interfaces;
 
 namespace Nozomi.Infra.Admin.Service.Events
 {

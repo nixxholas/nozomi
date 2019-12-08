@@ -34,13 +34,13 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
         private readonly Dictionary<string, WebSocket> _wsrWebsockets;
 
         private readonly IRequestEvent _websocketRequestEvent;
-        private readonly IRequestComponentService _requestComponentService;
+        private readonly IComponentService _componentService;
         private readonly IRequestService _requestService;
 
         public WSRequestSyncingService(IServiceProvider serviceProvider) : base(serviceProvider)
         {
             _wsrWebsockets = new Dictionary<string, WebSocket>();
-            _requestComponentService = _scope.ServiceProvider.GetRequiredService<IRequestComponentService>();
+            _componentService = _scope.ServiceProvider.GetRequiredService<IComponentService>();
             _websocketRequestEvent = _scope.ServiceProvider.GetRequiredService<IRequestEvent>();
             _requestService = _scope.ServiceProvider.GetRequiredService<IRequestService>();
         }
@@ -57,7 +57,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
                 //============================= Update Sockets to keep =============================// 
 
                 // We will need to resync the Request collection to make sure we're polling only the ones we want to poll
-                var dataEndpoints = _websocketRequestEvent.GetAllByRequestTypeUniqueToURL(RequestType.WebSocket, true);
+                var dataEndpoints = _websocketRequestEvent.GetAllByRequestTypeUniqueToURL(RequestType.WebSocket);
 
                 if (dataEndpoints.Count > 0)
                 {
@@ -231,7 +231,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
             return Task.FromResult(false);
         }
 
-        public bool Update(JToken token, ResponseType resType, IEnumerable<RequestComponent> requestComponents)
+        public bool Update(JToken token, ResponseType resType, IEnumerable<Component> requestComponents)
         {
             // Null Checks
             if (token == null)
@@ -257,7 +257,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
                     else
                     {
                         // Failed
-                        _requestComponentService.Checked(component.Id);
+                        _componentService.Checked(component.Id);
                         processingToken = null; // Set it to fail for the next statement
                     }
                 }
@@ -330,7 +330,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
                                                     if (val > 0)
                                                     {
                                                         // Update it
-                                                        _requestComponentService.UpdatePairValue(component.Id, val);
+                                                        _componentService.UpdatePairValue(component.Id, val);
                                                     }
                                                 }
                                             }
@@ -358,7 +358,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
                                                     if (val > 0)
                                                     {
                                                         // Update it
-                                                        _requestComponentService.UpdatePairValue(component.Id, val);
+                                                        _componentService.UpdatePairValue(component.Id, val);
                                                     }
                                                 }
                                             }
@@ -418,7 +418,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
                                                 if (val > 0)
                                                 {
                                                     // Update it
-                                                    _requestComponentService.UpdatePairValue(component.Id, val);
+                                                    _componentService.UpdatePairValue(component.Id, val);
                                                 }
                                             }
                                         }
@@ -446,7 +446,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
                                                 if (val > 0)
                                                 {
                                                     // Update it
-                                                    _requestComponentService.UpdatePairValue(component.Id, val);
+                                                    _componentService.UpdatePairValue(component.Id, val);
                                                 }
                                             }
                                         }
@@ -493,7 +493,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
                                             if (val > 0)
                                             {
                                                 // Update it
-                                                _requestComponentService.UpdatePairValue(component.Id, val);
+                                                _componentService.UpdatePairValue(component.Id, val);
                                             }
                                         }
                                     }
@@ -510,7 +510,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
                 else if (string.IsNullOrEmpty(component.Identifier))
                 {
                     _logger.LogInformation($"Marking Request Component as checked: {component.Id}");
-                    return _requestComponentService.Checked(component.Id);
+                    return _componentService.Checked(component.Id);
                 }
             }
 
