@@ -109,10 +109,14 @@ namespace Nozomi.Service.Events
                 });
         }
 
-        public long CountByMainCurrency(string mainTicker)
+        public long GetCount(string mainTicker)
         {
             if (string.IsNullOrWhiteSpace(mainTicker))
-                return long.MinValue;
+                return _unitOfWork.GetRepository<CurrencyPair>()
+                    .GetQueryable()
+                    .AsNoTracking()
+                    .Where(cp => cp.DeletedAt == null && cp.IsEnabled)
+                    .LongCount();
 
             return _unitOfWork.GetRepository<CurrencyPair>()
                 .GetQueryable()

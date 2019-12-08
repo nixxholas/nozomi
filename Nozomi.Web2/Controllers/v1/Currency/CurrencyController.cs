@@ -97,7 +97,7 @@ namespace Nozomi.Web2.Controllers.v1.Currency
             if (string.IsNullOrWhiteSpace(slug))
                 return BadRequest("Invalid slug input.");
             
-            return Ok(_currencyPairEvent.CountByMainCurrency(slug));
+            return Ok(_currencyPairEvent.GetCount(slug));
         }
 
         [HttpGet("{slug}")]

@@ -12,7 +12,7 @@ namespace Nozomi.Service.Events.Interfaces
         IEnumerable<CurrencyPairViewModel> All(int page = 0, int itemsPerPage = 50, string sourceGuid = null, 
             string mainTicker = null, bool orderAscending = true, string orderingParam = "Name");
         
-        long CountByMainCurrency(string mainTicker);
+        long GetCount(string mainTicker);
         
         ICollection<CurrencyPair> GetAllByCounterCurrency(
             string counterCurrencyAbbrv = CoreConstants.GenericCounterCurrency);
