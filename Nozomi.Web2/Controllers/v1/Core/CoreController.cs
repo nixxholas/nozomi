@@ -18,11 +18,5 @@ namespace Nozomi.Web2.Controllers.v1.Core
         {
             return CoreConstants.BuildDateTime;
         }
-
-        [Authorize]
-        public IActionResult GetUserDetails()
-        {
-            return Ok(Json(User.Claims));
-        }
     }
 }
