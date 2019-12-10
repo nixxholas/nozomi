@@ -1,7 +1,12 @@
+using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using IdentityModel;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Nozomi.Web2.Extensions
 {
@@ -12,14 +17,47 @@ namespace Nozomi.Web2.Extensions
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
             var authority = Startup.Environment.IsProduction() ? "https://auth.nozomi.one" : "https://localhost:6001/";
 
+            services.Configure<IdentityOptions>(options => 
+                options.ClaimsIdentity.RoleClaimType = JwtClaimTypes.Role);
+            
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(options =>
-                {
-                    options.Authority = authority;
-                    options.RequireHttpsMetadata = true;
-                    options.Audience = "nozomi.web";
-                    //options.ApiSecret = "super-secret";
-                });
+                .AddOpenIdConnect(
+                    o =>
+                    {
+                        o.Authority = authority;
+                        o.ClientId = "nozomi.web";
+                        // o.ClientSecret = "secret";
+                        o.RequireHttpsMetadata = false;
+                        o.GetClaimsFromUserInfoEndpoint = true;
+                        o.TokenValidationParameters = new TokenValidationParameters
+                        {
+                            RoleClaimType = JwtClaimTypes.Role
+                        };
+                        
+                        o.Scope.Add("openid");
+                        o.Scope.Add("profile");
+                        o.Scope.Add("email");
+                        o.Scope.Add("roles");
+                        o.Scope.Add(JwtClaimTypes.Role);
+                    })
+                .AddJwtBearer(o =>
+                    {
+                        o.Authority = authority;
+                        o.Audience = "nozomi.web";
+                        o.RequireHttpsMetadata = false;
+                        o.TokenValidationParameters = new TokenValidationParameters
+                        {
+                            RoleClaimType = JwtClaimTypes.Role
+                        };
+                        o.SaveToken = true;
+                    });
+//                .AddJwtBearer(options =>
+//                {
+//                    options.Authority = authority;
+//                    options.RequireHttpsMetadata = true;
+//                    options.Audience = "nozomi.web";
+//                    //options.ApiSecret = "super-secret";
+//                });
 
             // Turn off the JWT claim type mapping to allow well-known claims (e.g. ‘sub’ and ‘idp’) to flow through unmolested
 //            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
