@@ -13,6 +13,7 @@ using Nozomi.Data.Models.Web.Analytical;
 using Nozomi.Data.ResponseModels;
 using Nozomi.Data.ResponseModels.Currency;
 using Nozomi.Data.ViewModels.Currency;
+using Nozomi.Preprocessing.Statics;
 using Nozomi.Service.Events.Analysis.Interfaces;
 using Nozomi.Service.Events.Interfaces;
 using Nozomi.Service.Services.Interfaces;
@@ -38,7 +39,7 @@ namespace Nozomi.Web2.Controllers.v1.Currency
             _currencyService = currencyService;
         }
 
-        [Authorize]
+        [Authorize(Roles = NozomiPermissions.AllowAllStaffRoles)]
         [HttpPost]
         public IActionResult Create(CreateCurrencyViewModel vm)
         {
@@ -55,7 +56,7 @@ namespace Nozomi.Web2.Controllers.v1.Currency
             return BadRequest("Please re-authenticate again");
         }
 
-        [Authorize]
+        [Authorize(Roles = NozomiPermissions.AllowAllStaffRoles)]
         [HttpPut]
         public IActionResult Edit(ModifyCurrencyViewModel vm)
         {
@@ -121,6 +122,7 @@ namespace Nozomi.Web2.Controllers.v1.Currency
         }
 
         [HttpGet("{slug}")]
+        [Obsolete]
         public NozomiResult<DetailedCurrencyResponse> Detailed(string slug)
         {
             return new NozomiResult<DetailedCurrencyResponse>(_currencyEvent.GetDetailedBySlug(slug,
@@ -137,6 +139,7 @@ namespace Nozomi.Web2.Controllers.v1.Currency
         }
 
         [HttpGet("{index}")]
+        [Obsolete]
         public ICollection<GeneralisedCurrencyResponse> GetAllDetailed([FromQuery]string currencyType = "CRYPTO",
             int index = 0, int countPerIndex = 20)
         {
@@ -144,6 +147,7 @@ namespace Nozomi.Web2.Controllers.v1.Currency
         }
 
         [HttpGet]
+        [Obsolete]
         public NozomiResult<IReadOnlyDictionary<string, long>> GetSlugToIdMap()
         {
             return new NozomiResult<IReadOnlyDictionary<string, long>>(_currencyEvent.ListAllMapped());

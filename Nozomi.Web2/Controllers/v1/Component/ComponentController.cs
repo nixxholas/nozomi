@@ -32,7 +32,7 @@ namespace Nozomi.Web2.Controllers.v1.Component
             return Ok(_componentEvent.All(index, itemsPerPage, includeNested));
         }
 
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public IActionResult Create([FromBody]CreateComponentViewModel vm)
         {
