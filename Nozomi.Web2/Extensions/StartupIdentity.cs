@@ -17,6 +17,7 @@ namespace Nozomi.Web2.Extensions
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
             var authority = Startup.Environment.IsProduction() ? "https://auth.nozomi.one" : "https://localhost:6001/";
 
+            // https://stackoverflow.com/questions/46091301/roles-not-being-populated-by-addjwtbearer-using-identityserver4-and-dotnetcore-2#46094800
             services.Configure<IdentityOptions>(options => 
                 options.ClaimsIdentity.RoleClaimType = JwtClaimTypes.Role);
             
@@ -29,11 +30,13 @@ namespace Nozomi.Web2.Extensions
                         // o.ClientSecret = "secret";
                         o.RequireHttpsMetadata = false;
                         o.GetClaimsFromUserInfoEndpoint = true;
+                        // https://stackoverflow.com/questions/46579376/identityserver4-how-to-access-user-email
                         o.TokenValidationParameters = new TokenValidationParameters
                         {
                             RoleClaimType = JwtClaimTypes.Role
                         };
                         
+                        // https://stackoverflow.com/questions/46579376/identityserver4-how-to-access-user-email
                         o.Scope.Add("openid");
                         o.Scope.Add("profile");
                         o.Scope.Add("email");
@@ -45,6 +48,7 @@ namespace Nozomi.Web2.Extensions
                         o.Authority = authority;
                         o.Audience = "nozomi.web";
                         o.RequireHttpsMetadata = false;
+                        // https://stackoverflow.com/questions/46579376/identityserver4-how-to-access-user-email
                         o.TokenValidationParameters = new TokenValidationParameters
                         {
                             RoleClaimType = JwtClaimTypes.Role
