@@ -29,7 +29,7 @@ namespace Nozomi.Data.ViewModels.Request
         /// <summary>
         /// The delay after a failed poll attempt
         /// </summary>
-        public int FailureDelay { get; set; }
+        public long FailureDelay { get; set; }
 
         /// <summary>
         /// This will deduce what type of request this is for
@@ -52,6 +52,7 @@ namespace Nozomi.Data.ViewModels.Request
         /// <summary>
         /// The distinct response of the currency pair selected.
         /// </summary>
+        /// TODO: Rewrite
         public DistinctCurrencyPairResponse CurrencyPair { get; set; }
 
         /// <summary>

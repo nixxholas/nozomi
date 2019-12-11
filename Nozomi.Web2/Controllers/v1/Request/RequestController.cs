@@ -24,7 +24,7 @@ namespace Nozomi.Web2.Controllers.v1.Request
             _requestService = requestService;
         }
 
-        [Authorize(Roles = "Staff")]
+        [Authorize]
         [HttpGet]
         public NozomiResult<JsonResult> All(bool includeNested)
         {

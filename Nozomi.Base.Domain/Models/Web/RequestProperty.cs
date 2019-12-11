@@ -1,4 +1,5 @@
-﻿using System.Runtime.Serialization;
+﻿using System;
+using System.Runtime.Serialization;
 using Nozomi.Base.Core;
 
 namespace Nozomi.Data.Models.Web
@@ -17,6 +18,9 @@ namespace Nozomi.Data.Models.Web
         public RequestProperty(RequestPropertyType requestPropertyType, string key, string value) {}
         
         public long Id { get; set; }
+        
+        [DataMember]
+        public Guid Guid { get; set; }
 
         [DataMember]
         public RequestPropertyType RequestPropertyType { get; set; }

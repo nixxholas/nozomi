@@ -35,7 +35,7 @@ namespace Nozomi.Web2.Controllers.v1.AnalysedComponent
             return Ok(payload);
         }
 
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public IActionResult Create([FromBody]CreateAnalysedComponentViewModel vm)
         {

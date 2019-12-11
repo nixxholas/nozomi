@@ -28,6 +28,8 @@ namespace Nozomi.Data.Models.Currency
         
         [Key]
         public long Id { get; set; }
+        
+        public Guid Guid { get; set; }
 
         public long CurrencyTypeId { get; set; }
         public CurrencyType CurrencyType { get; set; }

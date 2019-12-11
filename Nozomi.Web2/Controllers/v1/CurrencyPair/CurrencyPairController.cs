@@ -11,6 +11,7 @@ using Nozomi.Data;
 using Nozomi.Data.ResponseModels.CurrencyPair;
 using Nozomi.Data.ViewModels.CurrencyPair;
 using Nozomi.Preprocessing;
+using Nozomi.Preprocessing.Statics;
 using Nozomi.Service.Events.Interfaces;
 using Nozomi.Service.Services.Interfaces;
 
@@ -52,7 +53,7 @@ namespace Nozomi.Web2.Controllers.v1.CurrencyPair
             return Ok(_currencyPairEvent.GetCount(mainTicker));
         }
 
-        [Authorize]
+        [Authorize(Roles = NozomiPermissions.AllowAllStaffRoles)]
         [HttpPost]
         public IActionResult Create([FromBody]CreateCurrencyPairViewModel vm)
         {
@@ -87,6 +88,7 @@ namespace Nozomi.Web2.Controllers.v1.CurrencyPair
 
         [Authorize(Roles = "Owner")]
         [HttpGet("{abbrv}")]
+        [Obsolete]
         public NozomiResult<ICollection<Data.Models.Currency.CurrencyPair>> Ticker(string abbrv)
         {
             return new NozomiResult<ICollection<Data.Models.Currency.CurrencyPair>>(

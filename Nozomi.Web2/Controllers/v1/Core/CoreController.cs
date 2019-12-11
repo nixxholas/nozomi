@@ -1,5 +1,7 @@
 using System;
+using System.Linq;
 using System.Security.Claims;
+using IdentityModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -22,7 +24,9 @@ namespace Nozomi.Web2.Controllers.v1.Core
         [Authorize]
         public IActionResult GetUserDetails()
         {
-            return Ok(Json(User.Claims));
+            // var role = ((ClaimsIdentity) User.Identity).Claims.SingleOrDefault(c => c.Type == JwtClaimTypes.Role)?.Value;
+            
+            return Ok(Json(User.Identity));
         }
     }
 }

@@ -4,6 +4,8 @@ namespace Nozomi.Base.Auth.Models
 {
     public enum RoleEnum
     {
+        [Description("User")]
+        User,
         [Description("CorporateUser")]
         CorporateUser,
         [Description("Staff")]

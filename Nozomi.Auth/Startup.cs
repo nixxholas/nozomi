@@ -9,6 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.IO;
+using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
@@ -116,6 +117,9 @@ namespace Nozomi.Auth
 
             services.AddMvc(options => { options.EnableEndpointRouting = false; })
                 .SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
+
+            services.Configure<IdentityOptions>(options =>
+                options.ClaimsIdentity.RoleClaimType = ClaimTypes.Role);
 
             var identityConfig = new IdentityConfig(HostingEnvironment);
 

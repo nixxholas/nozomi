@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -26,6 +27,7 @@ namespace Nozomi.Web2.Controllers.v1.Ticker
         }
 
         [HttpGet("{index}")]
+        [Obsolete]
         public async Task<NozomiResult<ICollection<UniqueTickerResponse>>> GetAllAsync(int index = 0)
         {
             if (index < 0) return new NozomiResult<ICollection<UniqueTickerResponse>>(

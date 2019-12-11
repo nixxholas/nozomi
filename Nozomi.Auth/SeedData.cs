@@ -88,6 +88,22 @@ namespace Nozomi.Auth
                         }
                     }
                     
+                    var userRoleExists = roleMgr.RoleExistsAsync(RoleEnum.User.GetDescription());
+                    if (!userRoleExists.Result)
+                    {
+                        var userRole = new Role
+                        {
+                            Name = RoleEnum.User.GetDescription(),
+                            NormalizedName = RoleEnum.User.GetDescription().ToUpperInvariant()
+                        };
+
+                        var result = roleMgr.CreateAsync(userRole).Result;
+                        if (!result.Succeeded)
+                        {
+                            throw new Exception(result.Errors.First().Description);
+                        }
+                    }
+                    
                     var corpUserExists = roleMgr.RoleExistsAsync(RoleEnum.CorporateUser.GetDescription());
                     if (!corpUserExists.Result)
                     {

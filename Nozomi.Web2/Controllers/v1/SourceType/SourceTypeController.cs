@@ -4,6 +4,7 @@ using IdentityModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using Nozomi.Data.ResponseModels.SourceType;
 using Nozomi.Service.Events.Interfaces;
 using Nozomi.Service.Services.Interfaces;
@@ -28,7 +29,7 @@ namespace Nozomi.Web2.Controllers.v1.SourceType
             return Ok(_sourceTypeEvent.GetAll());
         }
 
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public IActionResult Create(CreateSourceTypeViewModel vm)
         {

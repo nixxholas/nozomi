@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
@@ -32,6 +33,7 @@ namespace Nozomi.Web2.Controllers.v1.CurrencyType
         }
 
         [HttpGet("{page}")]
+        [Obsolete]
         public ICollection<ExtendedAnalysedComponentResponse<EpochValuePair<string>>> GetAll(int page = 0)
         {
             #if DEBUG
@@ -74,6 +76,7 @@ namespace Nozomi.Web2.Controllers.v1.CurrencyType
         }
 
         [HttpGet]
+        [Obsolete]
         public ICollection<DistinctCurrencyTypeResponse> ListAll()
         {
             return _currencyTypeEvent.ListAll();

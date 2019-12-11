@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data;
+using Nozomi.Preprocessing.Statics;
 using Nozomi.Service.Events.Interfaces;
 
 namespace Nozomi.Web2.Controllers.v1.RequestPropertyType
@@ -16,7 +17,7 @@ namespace Nozomi.Web2.Controllers.v1.RequestPropertyType
             _requestPropertyTypeEvent = requestPropertyTypeEvent;
         }
 
-        [Authorize(Roles = "Staff")]
+        [Authorize(Roles = NozomiPermissions.AllowHigherStaffRoles)]
         [HttpGet]
         public NozomiResult<JsonResult> All()
         {

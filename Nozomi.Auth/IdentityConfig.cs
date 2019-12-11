@@ -36,7 +36,7 @@ namespace Nozomi.Auth
             {
                 new IdentityResources.OpenId(),
                 new IdentityResources.Profile(),
-                new IdentityResources.Email(), 
+                new IdentityResources.Email(),
                 walletAddressProfile,
                 new IdentityResource("roles", new[] { "role" })
             };
@@ -59,7 +59,7 @@ namespace Nozomi.Auth
                     },
 
                     // include the following using claims in access token (in addition to subject id)
-                    UserClaims = { JwtClaimTypes.Id, JwtClaimTypes.Name, JwtClaimTypes.Email, 
+                    UserClaims = { JwtClaimTypes.Id, JwtClaimTypes.Name, JwtClaimTypes.Email, JwtClaimTypes.Role, 
                         ExtendedJwtClaimTypes.DefaultWallet },
 
                     // this API defines two scopes

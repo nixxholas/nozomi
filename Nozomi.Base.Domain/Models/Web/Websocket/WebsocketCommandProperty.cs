@@ -1,3 +1,4 @@
+using System;
 using System.Runtime.Serialization;
 using Nozomi.Base.Core;
 
@@ -7,6 +8,8 @@ namespace Nozomi.Data.Models.Web.Websocket
     public class WebsocketCommandProperty : Entity
     {
         public long Id { get; set; }
+        
+        public Guid Guid { get; set; }
 
         [DataMember]
         public CommandPropertyType CommandPropertyType { get; set; } = CommandPropertyType.Default;
