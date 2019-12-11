@@ -166,25 +166,44 @@ namespace Nozomi.Service.Events
         public AnalysedComponent GetRelatedAnalysedComponent(long analysedComponentId, AnalysedComponentType type,
             bool track = false)
         {
-            var query = _unitOfWork.GetRepository<CurrencyPair>()
+//            var query = _unitOfWork.GetRepository<CurrencyPair>()
+//                .GetQueryable()
+//                .AsNoTracking()
+//                .Where(cp => cp.DeletedAt == null && cp.IsEnabled)
+//                .Include(cp => cp.AnalysedComponents)
+//                .Where(cp => cp.AnalysedComponents.Any(ac => ac.Id.Equals(analysedComponentId)));
+
+            // Obtain the original component first
+            var component = _unitOfWork.GetRepository<AnalysedComponent>()
                 .GetQueryable()
                 .AsNoTracking()
-                .Where(cp => cp.DeletedAt == null && cp.IsEnabled)
-                .Include(cp => cp.AnalysedComponents)
-                .Where(cp => cp.AnalysedComponents.Any(ac => ac.Id.Equals(analysedComponentId)));
+                .SingleOrDefault(ac => ac.Id.Equals(analysedComponentId));
 
+            // Safety net 
+            if (component == null)
+                return null;
+
+            var query = _unitOfWork.GetRepository<AnalysedComponent>()
+                .GetQueryable()
+                .AsNoTracking();
+            
             if (track)
-            {
-                query = query
-                    .Include(cp => cp.AnalysedComponents)
-                    .ThenInclude(ac => ac.AnalysedHistoricItems);
-            }
-
+                return query
+                    .Include(ac => ac.AnalysedHistoricItems)
+                    .Select(ac => new AnalysedComponent(ac, 0,
+                    NozomiServiceConstants.AnalysedHistoricItemTakeoutLimit))
+                    .FirstOrDefault(ac => (ac.CurrencyPairId.Equals(component.CurrencyPairId) ||
+                                           ac.CurrencyId.Equals(component.CurrencyId) ||
+                                           ac.CurrencyTypeId.Equals(component.CurrencyTypeId)) &&
+                                          ac.ComponentType.Equals(type));
+            
             return query
-                .Select(cp => cp.AnalysedComponents.SingleOrDefault(ac => ac.ComponentType.Equals(type)))
                 .Select(ac => new AnalysedComponent(ac, 0,
                     NozomiServiceConstants.AnalysedHistoricItemTakeoutLimit))
-                .SingleOrDefault();
+                .FirstOrDefault(ac => (ac.CurrencyPairId.Equals(component.CurrencyPairId) ||
+                             ac.CurrencyId.Equals(component.CurrencyId) ||
+                             ac.CurrencyTypeId.Equals(component.CurrencyTypeId)) &&
+                             ac.ComponentType.Equals(type));
         }
 
         public ICollection<AnalysedComponent> GetAnalysedComponents(long analysedComponentId, bool track = false)
