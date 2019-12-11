@@ -13,6 +13,9 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
             entityTypeBuilder.HasKey(rp => rp.Id).HasName("RequestProperty_PK_Id");
             entityTypeBuilder.Property(rp => rp.Id).ValueGeneratedOnAdd();
 
+            entityTypeBuilder.Property(e => e.Guid).ValueGeneratedOnAdd().HasDefaultValueSql("uuid_generate_v4()");
+            entityTypeBuilder.HasIndex(e => e.Guid).IsUnique();
+
             entityTypeBuilder.Property(rp => rp.RequestPropertyType).IsRequired();
 
             entityTypeBuilder.Property(rp => rp.Key).IsRequired(false);

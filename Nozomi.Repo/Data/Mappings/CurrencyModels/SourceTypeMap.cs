@@ -13,7 +13,7 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
             entityTypeBuilder.HasKey(e => e.Id).HasName("SourceType_Id_PK");
             entityTypeBuilder.Property(e => e.Id).ValueGeneratedOnAdd();
 
-            entityTypeBuilder.Property(e => e.Guid).ValueGeneratedOnAdd();
+            entityTypeBuilder.Property(e => e.Guid).ValueGeneratedOnAdd().HasDefaultValueSql("uuid_generate_v4()");
             entityTypeBuilder.HasIndex(e => e.Guid).IsUnique();
 
             entityTypeBuilder.HasIndex(e => e.Abbreviation).IsUnique();
