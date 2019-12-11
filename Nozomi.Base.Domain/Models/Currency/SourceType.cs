@@ -18,6 +18,7 @@ namespace Nozomi.Data.Models.Currency
         
         public long Id { get; set; }
         
+        [DataMember]
         public Guid Guid { get; set; }
     
         [DataMember]

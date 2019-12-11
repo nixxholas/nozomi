@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Runtime.Serialization;
 using Nozomi.Base.Core;
 
@@ -21,6 +22,7 @@ namespace Nozomi.Data.Models.Currency
             SourceId = sourceId;
         }
         
+        [Key]
         public long Id { get; set; }
         
         public long CurrencyId { get; set; }

@@ -258,6 +258,7 @@ namespace Nozomi.Data.Models.Web.Analytical
         
         public long Id { get; set; }
         
+        [DataMember]
         public Guid Guid { get; set; }
         
         [DataMember]

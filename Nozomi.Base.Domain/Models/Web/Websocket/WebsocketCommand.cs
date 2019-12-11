@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using Nozomi.Base.Core;
@@ -8,6 +9,8 @@ namespace Nozomi.Data.Models.Web.Websocket
     public class WebsocketCommand : Entity
     {
         public long Id { get; set; }
+        
+        public Guid Guid { get; set; }
 
         public CommandType CommandType { get; set; } = CommandType.PlainText;
         
