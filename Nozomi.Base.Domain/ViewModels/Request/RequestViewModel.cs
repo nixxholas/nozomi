@@ -11,7 +11,7 @@ namespace Nozomi.Data.ViewModels.Request
         public RequestViewModel() {}
         
         public RequestViewModel(Guid guid, RequestType requestType, ResponseType responseType, string dataPath,
-            int delay, int failureDelay, bool isEnabled, string currencySlug, long currencyPairId, long currencyTypeId)
+            int delay, long failureDelay, bool isEnabled, string currencySlug, long? currencyPairId, long? currencyTypeId)
         {
             Guid = guid;
             RequestType = requestType;
@@ -24,7 +24,7 @@ namespace Nozomi.Data.ViewModels.Request
         }
         
         public RequestViewModel(Guid guid, RequestType requestType, ResponseType responseType, string dataPath,
-            int delay, int failureDelay, bool isEnabled, long currencyId, long currencyPairId, long currencyTypeId,
+            int delay, long failureDelay, bool isEnabled, long? currencyId, long? currencyPairId, long? currencyTypeId,
             ICollection<ComponentViewModel> components, ICollection<RequestPropertyViewModel> properties)
         {
             Guid = guid;
