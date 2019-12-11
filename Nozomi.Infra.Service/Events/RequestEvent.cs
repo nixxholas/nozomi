@@ -8,7 +8,9 @@ using Microsoft.Extensions.Logging;
 using Nozomi.Data.AreaModels.v1.Requests;
 using Nozomi.Data.Models.Currency;
 using Nozomi.Data.Models.Web;
+using Nozomi.Data.ViewModels.Component;
 using Nozomi.Data.ViewModels.Request;
+using Nozomi.Data.ViewModels.RequestProperty;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Data;
@@ -104,7 +106,7 @@ namespace Nozomi.Service.Events
                 .Where(r => r.DeletedAt == null);
 
             if (!string.IsNullOrWhiteSpace(userId) && !string.IsNullOrEmpty(userId))
-                query = query.Include(r => r.CreatedById.Equals(userId));
+                query = query.Where(r => r.CreatedById.Equals(userId));
 
             if (enabledOnly)
                 query = query.Where(r => r.IsEnabled);
@@ -114,12 +116,26 @@ namespace Nozomi.Service.Events
                     .Include(r => r.RequestComponents)
                     .Include(r => r.RequestProperties)
                     .Include(r => r.RequestType)
-                    .Select(r => new RequestViewModel());
+                    .Select(r => new RequestViewModel(r.Guid, r.RequestType, r.ResponseType, r.DataPath, r.Delay,
+                        r.FailureDelay, r.IsEnabled, r.CurrencyId, r.CurrencyPairId, r.CurrencyTypeId,
+                        r.RequestComponents.Select(rc => new ComponentViewModel
+                        {
+                            Guid = rc.Guid,
+                            Type = rc.ComponentType,
+                            Value = rc.Value,
+                            IsDenominated = rc.IsDenominated
+                        }).ToList(), 
+                        r.RequestProperties.Select(rp => new RequestPropertyViewModel
+                        {
+                            Type = rp.RequestPropertyType,
+                            Key = rp.Key,
+                            Value = rp.Value
+                        }).ToList()));
             
-//            return query
-//                .Select(r => new RequestViewModel(r.Guid, r.RequestType, r.ResponseType, r.DataPath, r.Delay,
-//                    r.FailureDelay, r.IsEnabled));
-            return null;
+            return query
+                .Select(r => new RequestViewModel(r.Guid, r.RequestType, r.ResponseType, r.DataPath, r.Delay,
+                    r.FailureDelay, r.IsEnabled, r.CurrencyId, r.CurrencyPairId, r.CurrencyTypeId,
+                    null, null));
         }
 
         public ICollection<RequestDTO> GetAllDTO(int index)
