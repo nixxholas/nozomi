@@ -5,7 +5,7 @@ using System.Linq.Expressions;
 using Nozomi.Data.AreaModels.v1.Requests;
 using Nozomi.Data.Models.Currency;
 using Nozomi.Data.Models.Web;
-using Nozomi.Data.ResponseModels.Request;
+using Nozomi.Data.ViewModels.Request;
 using Nozomi.Repo.Data;
 
 namespace Nozomi.Service.Events.Interfaces
@@ -24,7 +24,7 @@ namespace Nozomi.Service.Events.Interfaces
         
         Request GetActive(long id, bool track = false);
 
-        IQueryable<RequestViewModel> GetAll(string userId);
+        IQueryable<RequestViewModel> GetAll(string userId = null, bool enabledOnly = true, bool track = false);
 
         /// <summary>
         /// Select all Requests with a limit of 50.

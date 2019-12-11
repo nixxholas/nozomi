@@ -52,6 +52,7 @@ namespace Nozomi.Data.ViewModels.Request
         /// <summary>
         /// The distinct response of the currency pair selected.
         /// </summary>
+        /// TODO: Rewrite
         public DistinctCurrencyPairResponse CurrencyPair { get; set; }
 
         /// <summary>
