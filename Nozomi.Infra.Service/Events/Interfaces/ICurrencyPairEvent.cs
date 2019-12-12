@@ -22,6 +22,8 @@ namespace Nozomi.Service.Events.Interfaces
 
         ICollection<CurrencyPair> GetAllByTickerPairAbbreviation(string tickerPairAbbreviation, bool track = false);
 
+        bool HasRelatedComponent(long analysedComponentId, AnalysedComponentType type);
+
         /// <summary>
         /// This API could be a little confusing.. Basically allows you to look for the Currency Pair in question,
         /// obtain all of its related AnalysedComponents, obtain the specific type. If its not available,

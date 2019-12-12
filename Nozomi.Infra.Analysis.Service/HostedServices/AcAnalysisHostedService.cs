@@ -497,25 +497,35 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
 
                             for (var i = 0; i < compsPages; i++)
                             {
-                                // Obtain all the historic items related to this AC.
-                                var analysedComponent = _currencyPairEvent.GetRelatedAnalysedComponent(entity.Id,
-                                    AnalysedComponentType.CurrentAveragePrice, true);
-
-                                if (analysedComponent?.AnalysedHistoricItems != null
-                                    && analysedComponent.AnalysedHistoricItems.Count > 0)
+                                if (_currencyPairEvent.HasRelatedComponent(entity.Id,
+                                    AnalysedComponentType.CurrentAveragePrice))
                                 {
-                                    // Aggregate it
-                                    if (!avgPrice.Equals(decimal.Zero))
+                                    // Obtain all the historic items related to this AC.
+                                    var analysedComponent = _currencyPairEvent.GetRelatedAnalysedComponent(entity.Id,
+                                        AnalysedComponentType.CurrentAveragePrice, true);
+
+                                    if (analysedComponent?.AnalysedHistoricItems != null
+                                        && analysedComponent.AnalysedHistoricItems.Count > 0)
                                     {
-                                        avgPrice = decimal.Divide(decimal.Add(avgPrice,
-                                            analysedComponent.AnalysedHistoricItems
-                                                .Average(ahi => decimal.Parse(ahi.Value))), 2);
+                                        // Aggregate it
+                                        if (!avgPrice.Equals(decimal.Zero))
+                                        {
+                                            avgPrice = decimal.Divide(decimal.Add(avgPrice,
+                                                analysedComponent.AnalysedHistoricItems
+                                                    .Average(ahi => decimal.Parse(ahi.Value))), 2);
+                                        }
+                                        else
+                                        {
+                                            avgPrice = analysedComponent.AnalysedHistoricItems
+                                                .Average(ahi => decimal.Parse(ahi.Value));
+                                        }
                                     }
-                                    else
-                                    {
-                                        avgPrice = analysedComponent.AnalysedHistoricItems
-                                            .Average(ahi => decimal.Parse(ahi.Value));
-                                    }
+                                }
+                                else
+                                {
+                                    _logger.LogInformation($"[{ServiceName}] Analyse ({entity.Id}): " +
+                                                           $"hourly average price can't be computed because an average" +
+                                                           $" price component is doesn't exist.");
                                 }
                             }
 
