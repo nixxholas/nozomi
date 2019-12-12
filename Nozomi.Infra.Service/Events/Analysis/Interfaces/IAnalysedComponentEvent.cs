@@ -33,6 +33,7 @@ namespace Nozomi.Service.Events.Analysis.Interfaces
         
         ICollection<AnalysedComponent> GetTickerPairComponentsByCurrency(long currencyId, bool ensureValid = false, 
             int index = 0, bool track = false,  Expression<Func<AnalysedComponent, bool>> predicate = null, 
+            Func<AnalysedComponent, bool> clientPredicate = null,
             int historicItemIndex = 0);
 
         ICollection<AnalysedComponent> GetAllByCurrencyType(long currencyTypeId, bool track = false, int index = 0, 

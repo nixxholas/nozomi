@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data.Models.Currency;
 using Nozomi.Data.Models.Web.Analytical;
@@ -235,55 +236,67 @@ namespace Nozomi.Service.Events.Analysis
 
         public ICollection<AnalysedComponent> GetTickerPairComponentsByCurrency(long currencyId, bool ensureValid = false, 
             int index = 0, bool track = false, Expression<Func<AnalysedComponent, bool>> predicate = null, 
-            int historicItemIndex = 0)
+            Func<AnalysedComponent, bool> clientPredicate = null, int historicItemIndex = 0)
         {
-            var cPairs = _unitOfWork.GetRepository<CurrencyPair>()
+//            var cPairs = _unitOfWork.GetRepository<CurrencyPair>()
+//                .GetQueryable()
+//                .AsNoTracking()
+//                .Include(cp => cp.Source)
+//                .ThenInclude(s => s.SourceCurrencies)
+//                .ThenInclude(sc => sc.Currency)
+//                .OrderBy(cp => cp.Id)
+//                // Make sure the source has such currency
+//                .Where(cp => cp.Source != null && cp.Source.SourceCurrencies != null
+//                                               && cp.Source.SourceCurrencies.Any(sc => sc.CurrencyId.Equals(currencyId)
+//                                                                  // And that the main currency abbreviation matches
+//                                                                  // the currency's abbreviation
+//                                                                  && sc.Currency.Abbreviation.Equals(cp.MainCurrencyAbbrv)));
+            
+            // obtain the currency
+            var mainCurrency = _unitOfWork.GetRepository<Currency>()
                 .GetQueryable()
                 .AsNoTracking()
-                .Include(cp => cp.Source)
+                .SingleOrDefault(c => c.DeletedAt == null && c.IsEnabled && c.Id.Equals(currencyId));
+
+            var components = _unitOfWork.GetRepository<AnalysedComponent>()
+                .GetQueryable()
+                .AsNoTracking()
+                .Where(ac => ac.CurrencyPairId != null && ac.CurrencyPairId > 0)
+                .Include(ac => ac.CurrencyPair)
+                .ThenInclude(cp => cp.Source)
                 .ThenInclude(s => s.SourceCurrencies)
-                .ThenInclude(sc => sc.Currency)
-                .OrderBy(cp => cp.Id)
-                // Make sure the source has such currency
-                .Where(cp => cp.Source != null && cp.Source.SourceCurrencies != null
-                                               && cp.Source.SourceCurrencies.Any(sc => sc.CurrencyId.Equals(currencyId)
-                                                                  // And that the main currency abbreviation matches
-                                                                  // the currency's abbreviation
-                                                                  && sc.Currency.Abbreviation.Equals(cp.MainCurrencyAbbrv)));
+                .Where(ac => ac.CurrencyPair != null 
+                             && ac.CurrencyPair.MainCurrencyAbbrv.Equals(mainCurrency.Abbreviation)
+                             && ac.CurrencyPair.Source != null && ac.CurrencyPair.Source.SourceCurrencies != null
+                             && ac.CurrencyPair.Source.SourceCurrencies // Second layer check.
+                                 .Any(sc => sc.DeletedAt == null && sc.IsEnabled && sc.CurrencyId.Equals(currencyId)));
+                
 
             if (ensureValid)
-            {
-                cPairs = cPairs.Where(cp => cp.DeletedAt == null && cp.IsEnabled);
-            }
-
-            cPairs = cPairs
-                .Include(cp => cp.AnalysedComponents);
+                components = components.Where(cp => cp.DeletedAt == null && cp.IsEnabled);
 
             if (track)
-            {
-                cPairs = cPairs.Include(c => c.AnalysedComponents)
-                    .ThenInclude(ac => ac.AnalysedHistoricItems);
-            }
+                components = components.Include(ac => ac.AnalysedHistoricItems);
 
             if (predicate != null)
-            {
-                return cPairs
-                    .OrderBy(cp => cp.Id)
+                components = components.Where(predicate);
+
+            if (clientPredicate != null)
+                return components
+                    .OrderBy(ac => ac.Id)
                     .Skip(index * NozomiServiceConstants.AnalysedComponentTakeoutLimit)
                     .Take(NozomiServiceConstants.AnalysedComponentTakeoutLimit)
-                    .SelectMany(cp => cp.AnalysedComponents)
-                    .Where(predicate)
-                    .Select(ac => new AnalysedComponent(ac, index, 
+                    .AsEnumerable()
+                    .Where(clientPredicate)
+                    .Select(ac => new AnalysedComponent(ac, index,
                         NozomiServiceConstants.AnalysedComponentTakeoutLimit))
                     .ToList();
-            }
-
-            return cPairs
-                .OrderBy(cp => cp.Id)
+            
+            return components
+                .OrderBy(ac => ac.Id)
                 .Skip(index * NozomiServiceConstants.AnalysedComponentTakeoutLimit)
                 .Take(NozomiServiceConstants.AnalysedComponentTakeoutLimit)
-                .SelectMany(cp => cp.AnalysedComponents)
-                .Select(ac => new AnalysedComponent(ac, index, 
+                .Select(ac => new AnalysedComponent(ac, index,
                     NozomiServiceConstants.AnalysedComponentTakeoutLimit))
                 .ToList();
         }

@@ -310,10 +310,9 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                 true, index, false, ac => // Make sure its the generic counter currency
                                     // since we can't convert yet
                                     ac.CurrencyPair.CounterCurrencyAbbrv
-                                        .Equals(CoreConstants.GenericCounterCurrency,
-                                            StringComparison.InvariantCultureIgnoreCase)
-                                    && ac.ComponentType.Equals(AnalysedComponentType.CurrentAveragePrice)
-                                    && NumberHelper.IsNumericDecimal(ac.Value));
+                                        .Equals(CoreConstants.GenericCounterCurrency)
+                                    && ac.ComponentType.Equals(AnalysedComponentType.CurrentAveragePrice), 
+                                ac => NumberHelper.IsNumericDecimal(ac.Value));
 
                             // While there's something within the current page,
                             while (components.Any()) // iterate
