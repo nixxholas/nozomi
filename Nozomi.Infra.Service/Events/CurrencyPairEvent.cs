@@ -163,6 +163,27 @@ namespace Nozomi.Service.Events
             return null;
         }
 
+        public bool HasRelatedComponent(long analysedComponentId, AnalysedComponentType type)
+        {
+            // Obtain the original component first
+            var component = _unitOfWork.GetRepository<AnalysedComponent>()
+                .GetQueryable()
+                .AsNoTracking()
+                .SingleOrDefault(ac => ac.Id.Equals(analysedComponentId));
+
+            // Safety net 
+            if (component == null)
+                return false;
+            
+            return _unitOfWork.GetRepository<AnalysedComponent>()
+                .GetQueryable()
+                .AsNoTracking()
+                .Any(ac => (ac.CurrencyPairId.Equals(component.CurrencyPairId) ||
+                                       ac.CurrencyId.Equals(component.CurrencyId) ||
+                                       ac.CurrencyTypeId.Equals(component.CurrencyTypeId)) &&
+                                      ac.ComponentType.Equals(type));
+        }
+
         public AnalysedComponent GetRelatedAnalysedComponent(long analysedComponentId, AnalysedComponentType type,
             bool track = false)
         {
