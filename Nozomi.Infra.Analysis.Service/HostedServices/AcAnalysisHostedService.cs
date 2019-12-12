@@ -71,22 +71,6 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                             _logger.LogCritical("[ComponentAnalysisService]: Invalid top AC.");
                         }
                     }
-                    // Monolithic way
-//                    var top = _xAnalysedComponentEvent.Top();
-//
-//                    if (Analyse(top))
-//                    {
-//                        _logger.LogInformation($"[{ServiceName}] AnalysedComponent {top.Id}: Successfully to updated");
-//                    }
-//                    else if (top != null)
-//                    {
-//                        _processAnalysedComponentService.Checked(top.Id);
-//                        _logger.LogWarning($"[{ServiceName}] AnalysedComponent {top.Id}: Failed to update");
-//                    }
-//                    else
-//                    {
-//                        _logger.LogCritical("[ComponentAnalysisService]: Invalid top AC.");
-//                    }
                 }
                 catch (Exception ex)
                 {
