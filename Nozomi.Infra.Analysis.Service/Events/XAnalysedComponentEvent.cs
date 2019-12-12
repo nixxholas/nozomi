@@ -4,6 +4,7 @@ using System.Collections.Immutable;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Nozomi.Base.Core.Extensions;
 using Nozomi.Data.Models.Web.Analytical;
 using Nozomi.Infra.Analysis.Service.Events.Interfaces;
 using Nozomi.Preprocessing;
@@ -76,12 +77,12 @@ namespace Nozomi.Infra.Analysis.Service.Events
                     .Where(ac => ac.DeletedAt == null
                                  && ac.IsEnabled
                                  && (// Last modified time is older than the current time in conjunction with the delay
-                                     ac.ModifiedAt < currentUtc
-                                     // Always give null ACs a chance
-                                     || string.IsNullOrEmpty(ac.Value))
+                                     ac.ModifiedAt < currentUtc)
                                  && ac.StoreHistoricals == includeNonHistoricals)
                     // Order by ascending to the last modified time
                     .OrderBy(ac => ac.ModifiedAt)
+                    .ThenBy(ac => // Always give null ACs a chance
+                       string.IsNullOrEmpty(ac.Value))
                     .ThenByDescending(ac => ac.IsFailing)
                     .Skip(index * NozomiServiceConstants.AnalysedComponentTakeoutLimit)
                     .Take(NozomiServiceConstants.AnalysedComponentTakeoutLimit)
@@ -94,11 +95,11 @@ namespace Nozomi.Infra.Analysis.Service.Events
                 .Where(ac => ac.DeletedAt == null && ac.IsEnabled)
                 // Make sure LastChecked is null
                 .Where(ac => // Last modified time is older than the current time in conjunction with the delay
-                       ac.ModifiedAt < currentUtc
-                       // Always give null ACs a chance
-                       || string.IsNullOrEmpty(ac.Value))
+                       ac.ModifiedAt < currentUtc)
                 // Order by ascending to the last modified time
                 .OrderBy(ac => ac.ModifiedAt)
+                .ThenBy(ac => // Always give null ACs a chance
+                   string.IsNullOrEmpty(ac.Value))
                 .ThenByDescending(ac => ac.IsFailing)
                 .Skip(index * NozomiServiceConstants.AnalysedComponentTakeoutLimit)
                 .Take(NozomiServiceConstants.AnalysedComponentTakeoutLimit)
