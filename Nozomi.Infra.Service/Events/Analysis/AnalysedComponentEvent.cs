@@ -362,7 +362,8 @@ namespace Nozomi.Service.Events.Analysis
         }
 
         public ICollection<AnalysedComponent> GetAllByCorrelation(long analysedComponentId, 
-            Expression<Func<AnalysedComponent, bool>> predicate = null, int index = 0, bool track = false)
+            Expression<Func<AnalysedComponent, bool>> predicate = null, 
+            Func<AnalysedComponent, bool> clientPredicate = null, int index = 0, bool track = false)
         {
             var aComp = _unitOfWork.GetRepository<AnalysedComponent>()
                 .GetQueryable()
@@ -388,7 +389,13 @@ namespace Nozomi.Service.Events.Analysis
             }
 
             if (predicate != null)
-                return query.Where(predicate).ToList();
+                query = query.Where(predicate);
+            
+            if (clientPredicate != null)
+                return query
+                    .AsEnumerable()
+                    .Where(clientPredicate)
+                    .ToList();
             
             return query
                 .ToList();

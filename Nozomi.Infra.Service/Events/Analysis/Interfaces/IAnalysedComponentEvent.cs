@@ -42,7 +42,8 @@ namespace Nozomi.Service.Events.Analysis.Interfaces
         ICollection<AnalysedComponent> GetAllCurrencyComponentsByType(long currencyTypeId, bool track = false, int index = 0);
 
         ICollection<AnalysedComponent> GetAllByCorrelation(long analysedComponentId, 
-            Expression<Func<AnalysedComponent, bool>> predicate = null, int index = 0, bool track = false);
+            Expression<Func<AnalysedComponent, bool>> predicate = null, Func<AnalysedComponent, bool> clientPredicate = null, 
+        int index = 0, bool track = false);
 
         ICollection<AnalysedComponent> GetAllByCurrencyPair(long currencyPairId, bool track = false, int index = 0);
 
