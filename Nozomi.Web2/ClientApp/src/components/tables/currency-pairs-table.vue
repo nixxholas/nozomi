@@ -33,9 +33,15 @@
             <b-table-column field="source" label="Source" sortable>
                 {{ props.row.source.name }}
             </b-table-column>
-            <b-table-column field="price" label="Price">
-                {{ props.row.analysedComponents.filter(ac => ac.type === 10)[0].value 
-                | numeralFormat(props.row.analysedComponents.filter(ac => ac.type === 10)[0].uiFormatting.toString()) }}
+            <b-table-column field="price" label="Price" 
+                            v-if="props.row.analysedComponents.filter(ac => ac.type === 10).length > 0">
+                <div v-if="props.row.analysedComponents.filter(ac => ac.type === 10)[0].uiFormatting">
+                    {{ props.row.analysedComponents.filter(ac => ac.type === 10)[0].value
+                    | numeralFormat(props.row.analysedComponents.filter(ac => ac.type === 10)[0].uiFormatting.toString()) }}
+                </div>
+                <div v-else>
+                    {{ props.row.analysedComponents.filter(ac => ac.type === 10)[0].value }}
+                </div>
             </b-table-column>
         </template>
     </b-table>
