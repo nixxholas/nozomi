@@ -5,6 +5,7 @@ using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Nozomi.Base.Core;
@@ -257,8 +258,8 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                             var circulatingSupply = _currencyEvent.GetCirculatingSupply(entity);
                             var analysedComponents = _analysedComponentEvent.GetAllByCorrelation(entity.Id,
                                     ac => !string.IsNullOrEmpty(ac.Value)
-                                          && ac.ComponentType.Equals(AnalysedComponentType.CurrentAveragePrice)
-                                          && NumberHelper.IsNumericDecimal(ac.Value))
+                                          && ac.ComponentType.Equals(AnalysedComponentType.CurrentAveragePrice),
+                                    ac => NumberHelper.IsNumericDecimal(ac.Value))
                                 .ToList();
 
                             // Parsable average?
@@ -368,10 +369,9 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                     index, true, new List<ComponentType>()
                                     {
                                         ComponentType.Ask, ComponentType.Bid
-                                    })
-                                .Where(c => NumberHelper.IsNumericDecimal(c.Value));
+                                    });
 
-                            if (components.Count() > 0)
+                            if (components.Any(c => NumberHelper.IsNumericDecimal(c.Value)))
                             {
                                 // Aggregate it
                                 avgPrice = components
