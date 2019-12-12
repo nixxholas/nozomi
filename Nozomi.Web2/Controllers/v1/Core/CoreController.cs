@@ -22,6 +22,7 @@ namespace Nozomi.Web2.Controllers.v1.Core
         }
 
         [Authorize]
+        [HttpGet]
         public IActionResult GetUserDetails()
         {
             // var role = ((ClaimsIdentity) User.Identity).Claims.SingleOrDefault(c => c.Type == JwtClaimTypes.Role)?.Value;
