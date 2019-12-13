@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Nozomi.Base.Core;
 using Nozomi.Data.Models.Currency;
+using Nozomi.Data.Models.Web;
 using Nozomi.Data.Models.Web.Analytical;
 using Nozomi.Data.ResponseModels.CurrencyPair;
 using Nozomi.Data.ViewModels.CurrencyPair;
@@ -19,6 +20,9 @@ namespace Nozomi.Service.Events.Interfaces
         
         ICollection<CurrencyPair> GetAllByMainCurrency(
             string mainCurrencyAbbrv = CoreConstants.GenericCurrency);
+
+        ICollection<Component> GetComponents(long analysedComponentId, bool track = false, int index = 0,
+            bool ensureValid = true, ICollection<ComponentType> componentTypes = null);
 
         ICollection<CurrencyPair> GetAllByTickerPairAbbreviation(string tickerPairAbbreviation, bool track = false);
 
