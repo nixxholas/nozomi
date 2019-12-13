@@ -238,20 +238,6 @@ namespace Nozomi.Service.Events.Analysis
             int index = 0, bool track = false, Expression<Func<AnalysedComponent, bool>> predicate = null, 
             Func<AnalysedComponent, bool> clientPredicate = null, int historicItemIndex = 0)
         {
-//            var cPairs = _unitOfWork.GetRepository<CurrencyPair>()
-//                .GetQueryable()
-//                .AsNoTracking()
-//                .Include(cp => cp.Source)
-//                .ThenInclude(s => s.SourceCurrencies)
-//                .ThenInclude(sc => sc.Currency)
-//                .OrderBy(cp => cp.Id)
-//                // Make sure the source has such currency
-//                .Where(cp => cp.Source != null && cp.Source.SourceCurrencies != null
-//                                               && cp.Source.SourceCurrencies.Any(sc => sc.CurrencyId.Equals(currencyId)
-//                                                                  // And that the main currency abbreviation matches
-//                                                                  // the currency's abbreviation
-//                                                                  && sc.Currency.Abbreviation.Equals(cp.MainCurrencyAbbrv)));
-            
             // obtain the currency
             var mainCurrency = _unitOfWork.GetRepository<Currency>()
                 .GetQueryable()
@@ -265,9 +251,9 @@ namespace Nozomi.Service.Events.Analysis
                 .Include(ac => ac.CurrencyPair)
                 .ThenInclude(cp => cp.Source)
                 .ThenInclude(s => s.SourceCurrencies)
-                .Where(ac => ac.CurrencyPair != null 
-                             && ac.CurrencyPair.MainCurrencyAbbrv.Equals(mainCurrency.Abbreviation)
-                             && ac.CurrencyPair.Source != null && ac.CurrencyPair.Source.SourceCurrencies != null
+                .Where(ac => ac.CurrencyPair != null // Make sure the currency pair is not null
+                             && ac.CurrencyPair.MainCurrencyAbbrv.Equals(mainCurrency.Abbreviation) // Make sure the main ticker is the currency
+                             && ac.CurrencyPair.Source != null && ac.CurrencyPair.Source.SourceCurrencies != null // Make sure the source currency is not empty
                              && ac.CurrencyPair.Source.SourceCurrencies // Second layer check.
                                  .Any(sc => sc.DeletedAt == null && sc.IsEnabled && sc.CurrencyId.Equals(currencyId)));
                 
