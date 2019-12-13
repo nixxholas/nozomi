@@ -349,7 +349,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                         {
                             var avgPrice = decimal.Zero;
                             var index = 0;
-                            var components = _componentEvent.GetAllByCorrelation(entity.Id, true,
+                            var components = _currencyPairEvent.GetComponents(entity.Id, true,
                                     index, true, new List<ComponentType>()
                                     {
                                         ComponentType.Ask, ComponentType.Bid
