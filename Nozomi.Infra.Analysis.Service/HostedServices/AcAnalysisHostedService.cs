@@ -289,7 +289,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                         {
                             var avgPrice = decimal.Zero; // Stored value for final average price
                             var index = 0; // Indexer for iterator
-                            var components =  _analysedComponentEvent.GetTickerPairComponentsByCurrency(
+                            var components =  _currencyEvent.GetTickerPairComponents(
                                 (long) entity.CurrencyId,
                                 // Ensure that all components used are valid, no historical values are being tapped on.
                                 true, index, false, ac => // Make sure its the generic counter currency
@@ -314,7 +314,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                 }
                                 
                                 // Index Increment and iterate
-                                components =  _analysedComponentEvent.GetTickerPairComponentsByCurrency(
+                                components =  _currencyEvent.GetTickerPairComponents(
                                     (long) entity.CurrencyId,
                                     // Ensure that all components used are valid, no historical values are being tapped on.
                                     true, ++index, false, ac => // Make sure its the generic counter currency
