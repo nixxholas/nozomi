@@ -93,15 +93,38 @@
                             self.$emit('created', true);
                         }
                     })
-                    .catch(function (error) {
-                        //console.log(error);
-                        Notification.open({
+                    .catch(function (error) {                        
+                        if (error && error.response) {
+                          switch (error.response.status) {
+                            case 401:
+                            case 403:
+                              Notification.open({
+                                duration: 2500,
+                                message: `You do not have the permissions for this!`,
+                                position: 'is-bottom-right',
+                                type: 'is-danger',
+                                hasIcon: true
+                              });
+                              break;
+                            case 408:
+                              Notification.open({
+                                duration: 2500,
+                                message: `Oh no.. something is not right with our connection to the server!`,
+                                position: 'is-bottom-right',
+                                type: 'is-danger',
+                                hasIcon: true
+                              });
+                              break;
+                          }                      
+                        } else {
+                          Notification.open({
                             duration: 2500,
                             message: `Please make sure your entry is correctly filled!`,
                             position: 'is-bottom-right',
                             type: 'is-danger',
                             hasIcon: true
-                        });
+                          });
+                        }
                     })
                     .finally(function () {
                         // always executed
