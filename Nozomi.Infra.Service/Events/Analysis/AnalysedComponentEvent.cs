@@ -234,59 +234,6 @@ namespace Nozomi.Service.Events.Analysis
                 .LongCount();
         }
 
-        public ICollection<AnalysedComponent> GetTickerPairComponentsByCurrency(long currencyId, bool ensureValid = false, 
-            int index = 0, bool track = false, Expression<Func<AnalysedComponent, bool>> predicate = null, 
-            Func<AnalysedComponent, bool> clientPredicate = null, int historicItemIndex = 0)
-        {
-            // obtain the currency
-            var mainCurrency = _unitOfWork.GetRepository<Currency>()
-                .GetQueryable()
-                .AsNoTracking()
-                .SingleOrDefault(c => c.DeletedAt == null && c.IsEnabled && c.Id.Equals(currencyId));
-
-            var components = _unitOfWork.GetRepository<AnalysedComponent>()
-                .GetQueryable()
-                .AsNoTracking()
-                .Where(ac => ac.CurrencyPairId != null && ac.CurrencyPairId > 0)
-                .Include(ac => ac.CurrencyPair)
-                .ThenInclude(cp => cp.Source)
-                .ThenInclude(s => s.SourceCurrencies)
-                .Where(ac => ac.CurrencyPair != null // Make sure the currency pair is not null
-                             && ac.CurrencyPair.MainCurrencyAbbrv.Equals(mainCurrency.Abbreviation) // Make sure the main ticker is the currency
-                             && ac.CurrencyPair.Source != null && ac.CurrencyPair.Source.SourceCurrencies != null // Make sure the source currency is not empty
-                             && ac.CurrencyPair.Source.SourceCurrencies // Second layer check.
-                                 .Any(sc => sc.DeletedAt == null && sc.IsEnabled && sc.CurrencyId.Equals(currencyId)));
-                
-
-            if (ensureValid)
-                components = components.Where(cp => cp.DeletedAt == null && cp.IsEnabled);
-
-            if (track)
-                components = components.Include(ac => ac.AnalysedHistoricItems);
-
-            if (predicate != null)
-                components = components.Where(predicate);
-
-            if (clientPredicate != null)
-                return components
-                    .OrderBy(ac => ac.Id)
-                    .Skip(index * NozomiServiceConstants.AnalysedComponentTakeoutLimit)
-                    .Take(NozomiServiceConstants.AnalysedComponentTakeoutLimit)
-                    .AsEnumerable()
-                    .Where(clientPredicate)
-                    .Select(ac => new AnalysedComponent(ac, index,
-                        NozomiServiceConstants.AnalysedComponentTakeoutLimit))
-                    .ToList();
-            
-            return components
-                .OrderBy(ac => ac.Id)
-                .Skip(index * NozomiServiceConstants.AnalysedComponentTakeoutLimit)
-                .Take(NozomiServiceConstants.AnalysedComponentTakeoutLimit)
-                .Select(ac => new AnalysedComponent(ac, index,
-                    NozomiServiceConstants.AnalysedComponentTakeoutLimit))
-                .ToList();
-        }
-
         public ICollection<AnalysedComponent> GetAllByCurrencyType(long currencyTypeId, bool track = false, int index = 0,
             long ago = long.MinValue)
         {

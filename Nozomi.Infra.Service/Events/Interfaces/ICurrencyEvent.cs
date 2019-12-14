@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using Nozomi.Data.AreaModels.v1.Currency;
 using Nozomi.Data.Models.Currency;
 using Nozomi.Data.Models.Web;
@@ -75,6 +76,10 @@ namespace Nozomi.Service.Events.Interfaces
         IEnumerable<Currency> GetAllActive(bool includeNested = false);
         IEnumerable<dynamic> GetAllActiveObsc(bool includeNested = false);
         IEnumerable<dynamic> GetAllActiveDistinctObsc(bool includeNested = false);
+
+        ICollection<AnalysedComponent> GetTickerPairComponents(long currencyId, bool ensureValid = false, 
+            int index = 0, bool track = false, Expression<Func<AnalysedComponent, bool>> predicate = null, 
+            Func<AnalysedComponent, bool> clientPredicate = null, int historicItemIndex = 0);
 
         ICollection<string> ListAllSlugs();
 
