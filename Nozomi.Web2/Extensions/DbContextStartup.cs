@@ -11,7 +11,7 @@ namespace Nozomi.Web2.Extensions
 {
     public static class DbContextStartup
     {
-        public static IServiceCollection AddDbContextInjections(this IServiceCollection services)
+        public static void AddDbContextInjections(this IServiceCollection services)
         {
             if (Startup.Environment.IsDevelopment())
             {
@@ -69,7 +69,7 @@ namespace Nozomi.Web2.Extensions
                     });
             }
 
-            return services;
+            // return services;
         }
     }
 }
