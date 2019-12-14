@@ -56,6 +56,10 @@
                         :visible="componentIsDisplayable(component.type)">
                     {{ component }}
                 </b-table-column>
+                
+                <b-table-column v-if="oidcIsAuthenticated">
+                    <CurrencyModal :currency="props.row"></CurrencyModal>
+                </b-table-column>
             </template>
         </b-table>
         <b-loading :active.sync="dataLoading"></b-loading>
@@ -63,6 +67,8 @@
 </template>
 
 <script>
+    import {mapActions, mapGetters} from 'vuex';
+    import CurrencyModal from '@/components/modals/currency-modal';
     import CurrencyService from "@/services/CurrencyService";
     import CurrencyTypeService from "@/services/CurrencyTypeService";
     
@@ -75,6 +81,14 @@
                 type: Number
             },
             displayComponents: []
+        },
+        components: {
+            CurrencyModal
+        },
+        computed: {
+            ...mapGetters('oidcStore', [
+                'oidcIsAuthenticated', 'oidcUser'
+            ])
         },
         data: function () {
             return {
@@ -89,6 +103,7 @@
             }
         },
         methods: {
+            ...mapActions('oidcStore', ['authenticateOidc', 'signOutOidc']),
             componentIsDisplayable(type) {
                 if (this.displayComponents && this.displayComponents.length > 0) {
                     for (let i = 0; i < this.displayComponents.length; i++) {
