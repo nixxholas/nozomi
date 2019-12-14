@@ -162,6 +162,16 @@
                 .then(function (res) {
                     self.types = res;
                     self.typesIsLoading = false;
+
+                  // If currency isn't null, it means we're editing an existing one.
+                  if (self.currency) {
+                    self.form = self.currency; // Set first
+
+                    // Update the source type
+                    if (self.types) {
+                      self.form.sourceType = self.types.filter(t => t.guid === self.currency.currencyTypeGuid)[0].guid; 
+                    }
+                  }
                 });
         }
     }
