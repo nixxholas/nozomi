@@ -43,6 +43,18 @@
 
             <b-field>
               <template slot="label">
+                Slug
+              </template>
+              <b-input
+                      type="text"
+                      placeholder=""
+                      v-model="form.slug"
+                      expanded>
+              </b-input>
+            </b-field>
+
+            <b-field>
+              <template slot="label">
                 Name
               </template>
               <b-input
@@ -50,6 +62,51 @@
                 placeholder=""
                 v-model="form.name"
                 expanded>
+              </b-input>
+            </b-field>
+
+            <b-field>
+              <template slot="label">
+                Denomination Name
+              </template>
+              <b-input
+                      type="text"
+                      placeholder=""
+                      v-model="form.denominationName"
+                      expanded>
+              </b-input>
+            </b-field>
+
+            <b-field>
+              <template slot="label">
+                Denominations
+              </template>
+              <b-input
+                      type="number"
+                      placeholder=""
+                      v-model="form.denominations"
+                      expanded>
+              </b-input>
+            </b-field>
+
+            <b-field>
+              <template slot="label">
+                Description
+              </template>
+              <b-input maxlength="300"
+                       type="textarea"
+                       v-model="form.description"></b-input>
+            </b-field>
+
+            <b-field>
+              <template slot="label">
+                Logo Path
+              </template>
+              <b-input
+                      type="text"
+                      placeholder=""
+                      v-model="form.logoPath"
+                      expanded>
               </b-input>
             </b-field>
 
@@ -95,7 +152,12 @@
           form: {
             sourceType: "",
             abbreviation: "",
+            slug: "",
             name: "",
+            denominations: 0,
+            denominationName: "",
+            logoPath: "",
+            description: "",
             apiDocsUrl: ""
           },
           types: [],
@@ -116,10 +178,15 @@
                     .then(function (response) {
                         // Reset the form data regardless
                         self.form = {
-                            sourceType: "",
-                            abbreviation: "",
-                            name: "",
-                            apiDocsUrl: ""
+                          sourceType: "",
+                          abbreviation: "",
+                          slug: "",
+                          name: "",
+                          denominations: 0,
+                          denominationName: "",
+                          logoPath: "",
+                          description: "",
+                          apiDocsUrl: ""
                         };
 
                         if (response.status === 200) {
@@ -168,9 +235,12 @@
                     self.form = self.currency; // Set first
 
                     // Update the source type
-                    if (self.types) {
+                    if (self.types && self.currency.currencyTypeGuid 
+                            && self.types.filter(t => t.guid === self.currency.currencyTypeGuid).length > 0) {
                       self.form.sourceType = self.types.filter(t => t.guid === self.currency.currencyTypeGuid)[0].guid; 
                     }
+                    
+                    console.dir(self.form);
                   }
                 });
         }
