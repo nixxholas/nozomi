@@ -26,6 +26,20 @@ namespace Nozomi.Data.Models.Currency
             DenominationName = denominationName;
         }
         
+        public Currency(long id, long currencyTypeId, string logoPath, string abbreviation, string slug, string name,
+            string description, int denominations, string denominationName)
+        {
+            Id = id;
+            CurrencyTypeId = currencyTypeId;
+            LogoPath = logoPath;
+            Abbreviation = abbreviation;
+            Slug = slug;
+            Name = name;
+            Description = description;
+            Denominations = denominations;
+            DenominationName = denominationName;
+        }
+        
         [Key]
         public long Id { get; set; }
         
