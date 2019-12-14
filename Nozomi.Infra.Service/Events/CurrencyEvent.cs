@@ -958,10 +958,6 @@ namespace Nozomi.Service.Events
 
             if (predicate != null)
                 components = components.Where(predicate);
-            
-#if DEBUG
-            var testComps = components.ToList();
-#endif
 
             if (clientPredicate != null)
                 return components

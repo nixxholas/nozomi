@@ -322,8 +322,8 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                         ac.CurrencyPair.CounterCurrencyAbbrv
                                             .Equals(CoreConstants.GenericCounterCurrency,
                                                 StringComparison.InvariantCultureIgnoreCase)
-                                        && ac.ComponentType.Equals(AnalysedComponentType.CurrentAveragePrice)
-                                        && NumberHelper.IsNumericDecimal(ac.Value));
+                                        && ac.ComponentType.Equals(AnalysedComponentType.CurrentAveragePrice), 
+                                    ac => NumberHelper.IsNumericDecimal(ac.Value));
                             }
 
                             // Update!
