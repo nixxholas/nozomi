@@ -24,10 +24,11 @@
                         <div class="timeline-item is-primary">
                             <div class="timeline-marker is-primary"></div>
                             <div class="timeline-content">
-                                <p class="heading">12 December 2019 - <b>preview release candidate 2</b></p>
+                                <p class="heading">14 December 2019 - <b>preview release candidate 2</b></p>
                                 <ul>
                                     <li>Currency view UI hotfixes</li>
                                     <li>Compute engine critical bug fixes and increased safetynet checks</li>
+                                    <li>Compute engine - Fully compatible with Nozomi's complete rewrite</li>
                                     <li>Role-based Authorisation Control (RBAC) implementation</li>
                                 </ul>
                             </div>
