@@ -2,9 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Logging;
 using Nozomi.Base.Core;
 using Nozomi.Data.Models.Currency;
+using Nozomi.Data.Models.Web;
 using Nozomi.Data.Models.Web.Analytical;
 using Nozomi.Data.ResponseModels.CurrencyPair;
 using Nozomi.Data.ViewModels.AnalysedComponent;
@@ -34,6 +36,62 @@ namespace Nozomi.Service.Events
                                                   && cp.MainCurrencyAbbrv.Equals(mainCurrencyAbbrv,
                                                       StringComparison.InvariantCultureIgnoreCase))
                 .ToList();
+        }
+
+        public ICollection<Component> GetComponents(long analysedComponentId, bool track = false, int index = 0, 
+            bool ensureValid = true, ICollection<ComponentType> componentTypes = null)
+        {
+            if (analysedComponentId <= 0 )
+                return new List<Component>();
+
+            if (index < 0)
+                index = 0;
+
+            // Obtain the component first
+            var aComp = _unitOfWork.GetRepository<AnalysedComponent>()
+                .GetQueryable()
+                .AsNoTracking()
+                .SingleOrDefault(ac => ac.DeletedAt == null && ac.IsEnabled && ac.Id.Equals(analysedComponentId));
+
+            if (aComp != null && aComp.CurrencyPairId !> 0)
+            {
+                var components = _unitOfWork.GetRepository<Component>()
+                    .GetQueryable()
+                    .AsNoTracking()
+                    .Where(c => c.DeletedAt == null && c.IsEnabled)
+                    .Include(r => r.Request)
+                    .ThenInclude(r => r.CurrencyPair)
+                    .Where(c => c.Request.CurrencyPairId.Equals(aComp.CurrencyPairId))
+                    .Skip(index * NozomiServiceConstants.RequestComponentTakeoutLimit)
+                    .Take(NozomiServiceConstants.RequestComponentTakeoutLimit);
+
+                if (components.Any())
+                {
+                    if (track)
+                    {
+                        var trackedComponents = components
+                            .Include(c => c.RcdHistoricItems);
+
+                        if (componentTypes != null && componentTypes.Any())
+                            return trackedComponents
+                                .AsEnumerable()
+                                .Where(c => componentTypes.Contains(c.ComponentType))
+                                .ToList();
+
+                        return trackedComponents.ToList();
+                    }
+
+                    if (componentTypes != null && componentTypes.Any())
+                        return components
+                            .AsEnumerable()
+                            .Where(c => componentTypes.Contains(c.ComponentType))
+                            .ToList();
+
+                    return components.ToList();
+                }
+            }
+            
+            return new List<Component>();
         }
 
         public IEnumerable<CurrencyPairViewModel> All(int page = 0, int itemsPerPage = 50, string sourceGuid = null, 

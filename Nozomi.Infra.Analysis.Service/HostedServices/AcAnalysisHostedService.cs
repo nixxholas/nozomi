@@ -289,7 +289,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                         {
                             var avgPrice = decimal.Zero; // Stored value for final average price
                             var index = 0; // Indexer for iterator
-                            var components =  _analysedComponentEvent.GetTickerPairComponentsByCurrency(
+                            var components =  _currencyEvent.GetTickerPairComponents(
                                 (long) entity.CurrencyId,
                                 // Ensure that all components used are valid, no historical values are being tapped on.
                                 true, index, false, ac => // Make sure its the generic counter currency
@@ -314,7 +314,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                 }
                                 
                                 // Index Increment and iterate
-                                components =  _analysedComponentEvent.GetTickerPairComponentsByCurrency(
+                                components =  _currencyEvent.GetTickerPairComponents(
                                     (long) entity.CurrencyId,
                                     // Ensure that all components used are valid, no historical values are being tapped on.
                                     true, ++index, false, ac => // Make sure its the generic counter currency
@@ -322,8 +322,8 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                         ac.CurrencyPair.CounterCurrencyAbbrv
                                             .Equals(CoreConstants.GenericCounterCurrency,
                                                 StringComparison.InvariantCultureIgnoreCase)
-                                        && ac.ComponentType.Equals(AnalysedComponentType.CurrentAveragePrice)
-                                        && NumberHelper.IsNumericDecimal(ac.Value));
+                                        && ac.ComponentType.Equals(AnalysedComponentType.CurrentAveragePrice), 
+                                    ac => NumberHelper.IsNumericDecimal(ac.Value));
                             }
 
                             // Update!
@@ -349,7 +349,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                         {
                             var avgPrice = decimal.Zero;
                             var index = 0;
-                            var components = _componentEvent.GetAllByCorrelation(entity.Id, true,
+                            var components = _currencyPairEvent.GetComponents(entity.Id, true,
                                     index, true, new List<ComponentType>()
                                     {
                                         ComponentType.Ask, ComponentType.Bid
