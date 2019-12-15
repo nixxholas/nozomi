@@ -160,6 +160,7 @@
 
 <script>
     import {mapGetters} from 'vuex';
+    import CoreService from "@/services/CoreService";
     import CurrencyService from "@/services/CurrencyService";
     import ComponentService from "@/services/ComponentService";
     import CurrencyTable from '@/components/tables/currencies-table';
@@ -223,6 +224,12 @@
         },
         mounted() {
             let self = this;
+
+            // if (this.oidcIsAuthenticated)
+            //     CoreService.getUserDetails()
+            //         .then(function (result) {
+            //             console.dir(result);
+            //         });
 
             self.cryptoTable.loading = true;
             CurrencyService.getCurrencyData(self.cryptoTable.page, self.cryptoTable.perPage, "CRYPTO", "MarketCap",
