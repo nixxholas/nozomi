@@ -1,9 +1,13 @@
 import axios from 'axios';
+import store from '../store/index';
 import Converter from '../helpers/converter';
 
 export default {
-  getCurrencyData(page = 1, itemsPerPage = 50, type = "CRYPTO", sortType = "MarketCap", typesToTake = ["MarketCap"]
-  ,descendingOrder = true) {
+  getCurrencyData(page = 1, itemsPerPage = 50, type = "CRYPTO", sortType = "MarketCap", 
+                  typesToTake = ["MarketCap"], descendingOrder = true) {
+    if (!typesToTake)
+      typesToTake = ["MarketCap"];
+    
     return new Promise((resolve, reject) => {
       axios.get('/api/Currency/All?' +
         Converter.arrayToString("typesToTake", typesToTake), {
@@ -61,6 +65,40 @@ export default {
     
     return new Promise((resolve, reject) => {
       axios.get('/api/Currency/GetPairCount/' + slug).then(function (response) {
+        resolve(response.data);
+      }).catch(function (error) {
+        reject(error);
+      });
+    });
+  },
+  
+  create(vm) {
+    if (!vm)
+      throw new Error("Invalid payload. Please try again.");
+
+    return new Promise((resolve, reject) => {
+      axios.post('/api/Currency/Create', vm, {
+        headers: {
+          Authorization: "Bearer " + store.state.oidcStore.access_token
+        }
+      }).then(function (response) {
+        resolve(response.data);
+      }).catch(function (error) {
+        reject(error);
+      });
+    });
+  },
+
+  edit(vm) {
+    if (!vm)
+      throw new Error("Invalid payload. Please try again.");
+
+    return new Promise((resolve, reject) => {
+      axios.put('/api/Currency/Edit', vm, {
+        headers: {
+          Authorization: "Bearer " + store.state.oidcStore.access_token
+        }
+      }).then(function (response) {
         resolve(response.data);
       }).catch(function (error) {
         reject(error);
