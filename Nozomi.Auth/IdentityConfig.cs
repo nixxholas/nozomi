@@ -5,6 +5,7 @@
 using System;
 using IdentityServer4.Models;
 using System.Collections.Generic;
+using System.Net.Sockets;
 using System.Security.Claims;
 using IdentityModel;
 using IdentityServer4;
@@ -38,13 +39,23 @@ namespace Nozomi.Auth
                 new IdentityResources.Profile(),
                 new IdentityResources.Email(),
                 walletAddressProfile,
-                new IdentityResource("roles", new[] { "role" })
+                new IdentityResource
+                {
+                    Name = "roles",
+                    DisplayName = "Roles",
+                    Description = "Allow the service access to your user roles.",
+                    UserClaims = new[] { JwtClaimTypes.Role, ClaimTypes.Role },
+                    ShowInDiscoveryDocument = true,
+                    Required = true,
+                    Emphasize = true
+                }
+                // new IdentityResource("roles", new[] { "role" })
             };
         }
 
         public IEnumerable<ApiResource> GetApis()
         {
-            return new ApiResource[]
+            return new []
             {
                 // Nozomi.Web
                 new ApiResource()
@@ -59,7 +70,7 @@ namespace Nozomi.Auth
                     },
 
                     // include the following using claims in access token (in addition to subject id)
-                    UserClaims = { JwtClaimTypes.Id, JwtClaimTypes.Name, JwtClaimTypes.Email, JwtClaimTypes.Role, 
+                    UserClaims = { JwtClaimTypes.Id, JwtClaimTypes.Name, JwtClaimTypes.Email, JwtClaimTypes.Role,
                         ExtendedJwtClaimTypes.DefaultWallet },
 
                     // this API defines two scopes
@@ -105,7 +116,8 @@ namespace Nozomi.Auth
                 new Client {
                     ClientId = "nozomi.spa",
                     ClientName = "Nozomi Vue SPA",
-                    
+                    AlwaysIncludeUserClaimsInIdToken = true, // Always include user claims in the tokens.
+
                     AllowAccessTokensViaBrowser = true,
                     AllowedGrantTypes = GrantTypes.Implicit,
                     
