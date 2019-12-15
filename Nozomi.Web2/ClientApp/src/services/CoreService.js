@@ -14,7 +14,7 @@ export default {
 
     getUserDetails() {
         return new Promise((resolve, reject) => {
-            axios.post('/api/Core/GetUserDetails', vm, {
+            axios.get('/api/Core/GetUserDetails', {
                 headers: {
                     Authorization: "Bearer " + store.state.oidcStore.access_token
                 }
