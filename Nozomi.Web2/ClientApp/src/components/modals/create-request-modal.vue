@@ -63,7 +63,7 @@
                       v-if="currencies && currencies.length > 0">
                       <template slot="empty">No results found</template>
                     </b-autocomplete>
-                    <b-message>Oh no.. There aren't any currencies at the moment...</b-message>
+                    <b-message v-else>Oh no.. There aren't any currencies at the moment...</b-message>
                   </b-field>
                 </b-tab-item>
                 <b-tab-item label="Currency Pair">
@@ -89,7 +89,7 @@
                         </b-taglist>
                       </template>
                     </b-autocomplete>
-                    <b-message>Oh no.. There aren't any currency pairs at the moment..</b-message>
+                    <b-message v-else>Oh no.. There aren't any currency pairs at the moment..</b-message>
                   </b-field>
                 </b-tab-item>
                 <b-tab-item label="Currency Type">
@@ -99,7 +99,7 @@
                               v-if="currencyTypes !== null && currencyTypes.length > 0">
                       <option v-for="ct in currencyTypes" :value="ct.id">{{ ct.name }}</option>
                     </b-select>
-                    <b-message>Oh no.. There aren't any currency types at the moment..</b-message>
+                    <b-message v-else>Oh no.. There aren't any currency types at the moment..</b-message>
                   </b-field>
                 </b-tab-item>
               </b-tabs>
