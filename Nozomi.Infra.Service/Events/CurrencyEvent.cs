@@ -398,12 +398,11 @@ namespace Nozomi.Service.Events
         public Currency Get(long id, bool track = false)
         {
             var query = _unitOfWork.GetRepository<Currency>()
-                .GetQueryable()
-                .AsNoTracking();
+                .GetQueryable();
 
             if (track)
             {
-                query = query
+                query = query.AsTracking()
                     .Include(c => c.AnalysedComponents)
                     .Include(c => c.CurrencySources)
                     .ThenInclude(cs => cs.Source)
