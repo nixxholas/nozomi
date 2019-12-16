@@ -81,7 +81,7 @@
         <div class="content has-text-grey has-text-centered">
           <p>
             <b-icon
-              icon="emoticon-sad"
+              icon="sad-cry"
               size="is-large">
             </b-icon>
           </p>
