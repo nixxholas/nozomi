@@ -98,8 +98,16 @@ namespace Nozomi.Service.Services
                     throw new Exception("Currency type not found."); // TODO: Custom exception
 
                 // Time to create
-                var updatedCurrency = new Currency(currency.Id, currencyType.Id, vm.LogoPath, vm.Abbreviation, vm.Slug, 
-                    vm.Name, vm.Description, vm.Denominations, vm.DenominationName);
+                var updatedCurrency = _currencyEvent.Get(currency.Id, true);
+                
+                updatedCurrency.CurrencyTypeId = currencyType.Id;
+                updatedCurrency.LogoPath = vm.LogoPath;
+                updatedCurrency.Abbreviation = vm.Abbreviation;
+                updatedCurrency.Slug = vm.Slug;
+                updatedCurrency.Name = vm.Name;
+                updatedCurrency.Description = vm.Description;
+                updatedCurrency.Denominations = vm.Denominations;
+                updatedCurrency.DenominationName = vm.DenominationName;
                 
                 _unitOfWork.GetRepository<Currency>().Update(updatedCurrency);
                 _unitOfWork.Commit(userId);
