@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
@@ -341,6 +342,26 @@ namespace Nozomi.Service.Events
                 .GetQueryable()
                 .AsNoTracking()
                 .SingleOrDefault(cp => cp.Id.Equals(id) && cp.DeletedAt == null);
+        }
+
+        public CurrencyPair Get(string guid, bool track = false, string userId = null)
+        {
+            if (!Guid.TryParse(guid, out var parsedGuid))
+                throw new InvalidConstraintException("Can't parse the given guid.");
+            
+            if (track)
+                return _unitOfWork.GetRepository<CurrencyPair>()
+                    .GetQueryable()
+                    .Include(cp => cp.Requests)
+                    .Include(cp => cp.Source)
+                    .Include(cp => cp.AnalysedComponents)
+                    .SingleOrDefault(cp => cp.Guid.Equals(parsedGuid) && cp.DeletedAt == null);
+
+            return _unitOfWork
+                .GetRepository<CurrencyPair>()
+                .GetQueryable()
+                .AsNoTracking()
+                .SingleOrDefault(cp => cp.Guid.Equals(parsedGuid) && cp.DeletedAt == null);
         }
 
         public ICollection<DistinctCurrencyPairResponse> ListAll()

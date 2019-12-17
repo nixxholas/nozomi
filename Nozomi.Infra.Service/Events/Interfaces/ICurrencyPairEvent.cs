@@ -44,6 +44,8 @@ namespace Nozomi.Service.Events.Interfaces
 
         CurrencyPair Get(long id, bool track = false, string userId = null);
 
+        CurrencyPair Get(string guid, bool track = false, string userId = null);
+
         ICollection<DistinctCurrencyPairResponse> ListAll();
     }
 }
