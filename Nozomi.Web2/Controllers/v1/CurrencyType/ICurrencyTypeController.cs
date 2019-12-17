@@ -12,6 +12,7 @@ namespace Nozomi.Web2.Controllers.v1.CurrencyType
 
         ICollection<ExtendedAnalysedComponentResponse<EpochValuePair<string>>> GetAll(int page);
 
-        IActionResult ListAll();
+        IActionResult ListAll(int page = 0, int itemsPerPage = 50, bool orderAscending = true, 
+            string orderingParam = "TypeShortForm");
     }
 }

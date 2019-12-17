@@ -76,9 +76,10 @@ namespace Nozomi.Web2.Controllers.v1.CurrencyType
         }
 
         [HttpGet]
-        public IActionResult ListAll()
+        public IActionResult ListAll([FromQuery]int page = 0, [FromQuery]int itemsPerPage = 50, [FromQuery]bool orderAscending = true, 
+            [FromQuery]string orderingParam = "TypeShortForm")
         {
-            return Ok(_currencyTypeEvent.ListAll());
+            return Ok(_currencyTypeEvent.ListAll(page, itemsPerPage, orderAscending, orderingParam));
         }
     }
 }
