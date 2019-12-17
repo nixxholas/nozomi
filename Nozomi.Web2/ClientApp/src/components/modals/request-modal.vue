@@ -1,0 +1,339 @@
+<template>
+    <div>
+        <button v-if="!request"
+                class="button is-primary"
+                @click="isActive = true">
+            Create
+        </button>
+        <button v-else
+                class="button is-warning"
+                @click="isActive = true">
+            Edit
+        </button>
+
+        <b-modal has-modal-card trap-focus :active.sync="isActive">
+            <b-loading :active.sync="isLoading" :can-cancel="false" />
+            <!--https://stackoverflow.com/questions/48028718/using-event-modifier-prevent-in-vue-to-submit-form-without-redirection-->
+            <form v-on:submit.prevent="create()">
+                <div class="modal-card">
+                    <header class="modal-card-head">
+                        <p class="modal-card-title" v-if="!request">Create a request</p>
+                        <p class="modal-card-title" v-else>Modify a request</p>
+                    </header>
+                    <section class="modal-card-body">
+                        <RequestTypeDrowdown v-model="form.type" />
+                        <ResponseTypeDropdown v-model="form.responseType" />
+                        <b-field label="URL">
+                            <b-input
+                                    type="url"
+                                    placeholder="https://nozomi.one/api/Ticker/GetAllAsync/0"
+                                    v-model="form.dataPath"
+                                    required
+                                    expanded>
+                            </b-input>
+                        </b-field>
+                        <b-field>
+                            <template slot="label">
+                                Delay <span class="has-text-primary is-italic">(In milliseconds)</span>
+                            </template>
+                            <b-input
+                                    type="number"
+                                    placeholder="Delay between each update in milliseconds"
+                                    v-model="form.delay"
+                                    expanded
+                                    required>
+                            </b-input>
+                        </b-field>
+                        <b-field>
+                            <template slot="label">
+                                Retry Delay <span class="has-text-primary is-italic">(In milliseconds)</span>
+                            </template>
+                            <b-input
+                                    type="number"
+                                    placeholder="Retry attempt delay in milliseconds"
+                                    v-model="form.failureDelay"
+                                    required
+                                    expanded>
+                            </b-input>
+                        </b-field>
+
+                        <b-tabs v-model="form.parentType" expanded class="has-text-dark">
+                            <b-tab-item label="Currency">
+                                <b-field>
+                                    <b-dropdown v-if="currencies && currencies.length > 0"
+                                                position="is-top-right"
+                                            v-model="form.currency" aria-role="list">
+                                        <button class="button is-primary" type="button" slot="trigger">
+                                            <div v-if="form.currency && form.currency.name">
+                                                <img v-if="form.currency.logoPath"
+                                                     alt="logo"
+                                                     :src="form.currency.logoPath" class="mr-1"
+                                                     style="width: 24px; height: 24px; vertical-align: bottom;"/>
+                                                {{ form.currency.name }}
+                                            </div>
+                                            <div class="media" v-else>
+                                                <b-icon class="ml-1 mr-3" icon="money-bill-wave" />
+                                                <span>Pick a currency</span>
+                                            </div>
+                                            <b-icon icon="caret-down" />
+                                        </button>
+
+                                        <b-dropdown-item v-for="currency in currencies" 
+                                                :value="currency" aria-role="listitem">
+                                            <div class="media">
+                                                <img v-if="currency.logoPath"
+                                                     alt="logo"
+                                                     :src="currency.logoPath" class="media-left mt-2"
+                                                     style="width: 24px; height: 24px; vertical-align: bottom;"/>
+                                                <div class="media-content">
+                                                    <h3>{{ currency.name }}</h3>
+                                                    <small>{{ currency.slug }}</small>
+                                                </div>
+                                            </div>
+                                        </b-dropdown-item>
+                                    </b-dropdown>
+                                    <b-message v-else>Oh no.. There aren't any currencies at the moment...</b-message>
+                                </b-field>
+                            </b-tab-item>
+                            <b-tab-item label="Currency Pair">
+                                <b-field>
+                                    <b-autocomplete
+                                            :data="currencyPairs"
+                                            v-model="form.currencyPairStr"
+                                            placeholder="e.g. EURUSD"
+                                            :custom-formatter="getCurrencyPairTickerPairStr"
+                                            :loading="currencyPairsIsLoading"
+                                            @select="option => form.currencyPairGuid = (option && option.guid) ? option.guid : ''"
+                                            v-if="currencyPairs && currencyPairs.length > 0 && currencyPairs[0] !== null">
+
+                                        <template slot-scope="props">
+                                            <div class="media">
+                                                <div class="media-content">
+                                                    {{ props.option.mainTicker + props.option.counterTicker }}
+                                                    <br>
+                                                    <small v-if="props.option.source">
+                                                        From <b><i>{{ props.option.source.name }}</i></b>
+                                                    </small>
+                                                </div>
+                                            </div>
+                                        </template>
+                                    </b-autocomplete>
+                                    <b-message v-else>Oh no.. There aren't any currency pairs at the moment..
+                                    </b-message>
+                                </b-field>
+                            </b-tab-item>
+                            <b-tab-item label="Currency Type">
+                                <b-field>
+                                    <b-select placeholder="Select a currency type"
+                                              v-model="form.currencyTypeId"
+                                              v-if="currencyTypes !== null && currencyTypes.length > 0">
+                                        <option v-for="ct in currencyTypes" :value="ct.id">{{ ct.name }}</option>
+                                    </b-select>
+                                    <b-message v-else>Oh no.. There aren't any currency types at the moment..
+                                    </b-message>
+                                </b-field>
+                            </b-tab-item>
+                        </b-tabs>
+                    </section>
+
+                    <footer class="modal-card-foot">
+                        <button class="button" type="button" @click="isActive = false">Close</button>
+                        <button class="button is-primary" type="submit">Submit</button>
+                    </footer>
+                </div>
+            </form>
+        </b-modal>
+    </div>
+</template>
+
+<script>
+    import store from '../../store/index';
+    import {mapActions} from 'vuex';
+    import RequestService from "@/services/RequestService";
+    import RequestTypeDrowdown from '../dropdowns/request-type-dropdown';
+    import ResponseTypeDropdown from "../dropdowns/response-type-dropdown";
+    import {NotificationProgrammatic as Notification} from 'buefy';
+    import CurrencyService from "@/services/CurrencyService";
+    import CurrencyPairService from "@/services/CurrencyPairService";
+
+    export default {
+        name: "request-modal",
+        components: {ResponseTypeDropdown, RequestTypeDrowdown},
+        props: {
+            request: Object,
+            currentRoute: window.location.href // https://forum.vuejs.org/t/how-to-get-path-from-route-instance/26934/2
+        },
+        methods: {
+            ...mapActions('oidcStore', ['authenticateOidc', 'signOutOidc']),
+            getCurrencyPairTickerPairStr: function (obj) {
+                if (!obj)
+                    return '';
+
+                return obj.mainTicker + obj.counterTicker + " from " + obj.source.name + "";
+            },
+            create: function () {
+                this.isLoading = true;
+
+                // Process the parent type first
+                switch (this.form.parentType) {
+                    case 0: // Currency
+                        // Reset the rest just incase
+                        this.form.currencyPairGuid = null;
+                        this.form.currencyPairStr = null;
+                        this.form.currencyTypeId = 0;
+                        this.form.currencySlug = this.form.currency.slug;
+                        break;
+                    case 1: // Currency Pair
+                        // Reset the rest just incase
+                        this.form.currencySlug = '';
+                        this.form.currencyTypeId = 0;
+                        break;
+                    case 2: // Currency Type
+                        // Reset the rest just incase
+                        this.form.currencySlug = '';
+                        this.form.currencyPairGuid = null;
+                        this.form.currencyPairStr = null;
+                        break;
+                }
+
+                let self = this;
+                RequestService.create(self.form)
+                    .then(function (response) {
+                        // Reset the form data regardless
+                        self.form = {
+                            type: 0,
+                            responseType: 1,
+                            dataPath: "",
+                            delay: 0,
+                            failureDelay: 0,
+                            parentType: 0,
+                            currency: {},
+                            currencySlug: '',
+                            currencyPairGuid: null,
+                            currencyPairStr: null,
+                            currencyTypeId: 0
+                        };
+
+                        if (response.status === 200) {
+                            self.isActive = false; // Close the modal
+                            Notification.open({
+                                duration: 2500,
+                                message: `Request successfully created!`,
+                                position: 'is-bottom-right',
+                                type: 'is-success',
+                                hasIcon: true
+                            });
+
+                            // Inform the parent that a new request has been created
+                            // https://forum.vuejs.org/t/passing-data-back-to-parent/1201
+                            self.$emit('created', true);
+                        }
+                    })
+                    .catch(function (error) {
+                        //console.log(error);
+                        Notification.open({
+                            duration: 2500,
+                            message: `Please make sure your entry is correctly filled!`,
+                            position: 'is-bottom-right',
+                            type: 'is-warning',
+                            hasIcon: true
+                        });
+                    })
+                    .finally(function () {
+                        // always executed
+                        self.isLoading = false;
+                    });
+            }
+        },
+        beforeCreate: function () {
+            let self = this;
+
+            // Synchronously call for data
+            CurrencyService.listAll()
+                .then(function (response) {
+                    self.currencies = response;
+                })
+                .catch(function (error) {
+                    // handle error
+                    self.methods.authenticateOidc(self.currentRoute);
+                })
+                .finally(function () {
+                    // always executed
+                    self.isLoading = false;
+                });
+
+            CurrencyPairService.all()
+            .then(function (response) {
+                console.dir(response);
+                self.currencyPairs = response;
+            });
+
+            // Synchronously call for data
+            // self.currencyPairsIsLoading = true;
+            // this.$axios.get('/api/CurrencyPair/ListAll', {
+            //     headers: {
+            //         Authorization: "Bearer " + store.state.oidcStore.access_token
+            //     }
+            // })
+            //     .then(function (response) {
+            //         self.currencyPairs = response.data;
+            //     })
+            //     .catch(function (error) {
+            //         // handle error
+            //         self.methods.authenticateOidc(self.currentRoute);
+            //     })
+            //     .finally(function () {
+            //         // always executed
+            //         self.currencyPairsIsLoading = false;
+            //     });
+
+            // Synchronously call for data
+            self.currencyTypesIsLoading = true;
+            this.$axios.get('/api/CurrencyType/ListAll', {
+                headers: {
+                    Authorization: "Bearer " + store.state.oidcStore.access_token
+                }
+            })
+                .then(function (response) {
+                    self.currencyTypes = response.data;
+                })
+                .catch(function (error) {
+                    // handle error
+                    console.log(error);
+                })
+                .finally(function () {
+                    // always executed
+                    self.currencyTypesIsLoading = false;
+                });
+        },
+        data: function () {
+            return {
+                isActive: false,
+                isLoading: false,
+                form: {
+                    type: 0,
+                    responseType: 1,
+                    dataPath: "",
+                    delay: 0,
+                    failureDelay: 0,
+                    parentType: 0,
+                    currency: {},
+                    currencySlug: '',
+                    currencyPairGuid: null,
+                    currencyPairStr: null,
+                    currencyTypeId: 0
+                },
+                formHelper: {},
+                currencies: [],
+                currencyPairs: [],
+                currencyPairsIsLoading: false,
+                currencyTypes: [],
+                currencyTypesIsLoading: false
+            }
+        }
+    }
+</script>
+
+<style scoped>
+
+</style>
