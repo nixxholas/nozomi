@@ -55,9 +55,9 @@ namespace Nozomi.Data.ViewModels.Request
         public string CurrencyPairGuid { get; set; }
 
         /// <summary>
-        /// The ID of the Currency Type selected.
+        /// The Guid of the Currency Type selected.
         /// </summary>
-        public long CurrencyTypeId { get; set; }
+        public string CurrencyTypeGuid { get; set; }
 
         public bool IsValid()
         {
@@ -79,14 +79,14 @@ namespace Nozomi.Data.ViewModels.Request
                 RuleFor(r => r.CurrencySlug).NotNull().NotEmpty()
                     // Ignore the check if a currency pair or currency type is selected.
                     .Unless(r => 
-                        !string.IsNullOrEmpty(r.CurrencyPairGuid) || r.CurrencyTypeId > 0);
+                        !string.IsNullOrEmpty(r.CurrencyPairGuid) || !string.IsNullOrEmpty(r.CurrencyTypeGuid));
                 // Safetynet for Currency Pairs
                 RuleFor(r => r.CurrencyPairGuid).NotEmpty().NotNull()
                     // Ignore the check if a currency or currency type is selected.
                     .Unless(r => 
-                        r.CurrencyTypeId > 0 || !string.IsNullOrEmpty(r.CurrencySlug));
+                        !string.IsNullOrEmpty(r.CurrencyTypeGuid) || !string.IsNullOrEmpty(r.CurrencySlug));
                 // Safetynet for Currency types
-                RuleFor(r => r.CurrencyTypeId).GreaterThan(0)
+                RuleFor(r => r.CurrencyTypeGuid).NotEmpty().NotNull()
                     .Unless(r =>
                         // Ignore the check if a currency or currency pair is selected
                         !string.IsNullOrEmpty(r.CurrencySlug) || !string.IsNullOrEmpty(r.CurrencyPairGuid));
