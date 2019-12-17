@@ -144,6 +144,7 @@ namespace Nozomi.Service.Events
                 .Include(cp => cp.AnalysedComponents)
                 .Select(cp => new CurrencyPairViewModel
                 {
+                    Guid = cp.Guid,
                     Type = cp.CurrencyPairType,
                     MainTicker = cp.MainCurrencyAbbrv,
                     CounterTicker = cp.CounterCurrencyAbbrv,

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Nozomi.Data.Models.Currency;
 using Nozomi.Data.ViewModels.AnalysedComponent;
@@ -7,6 +8,8 @@ namespace Nozomi.Data.ViewModels.CurrencyPair
 {
     public class CurrencyPairViewModel
     {
+        public Guid Guid { get; set; }
+        
         public CurrencyPairType Type { get; set; }
         
         public string MainTicker { get; set; }
