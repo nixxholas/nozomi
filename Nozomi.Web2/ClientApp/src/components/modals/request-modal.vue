@@ -12,7 +12,7 @@
         </button>
 
         <b-modal has-modal-card trap-focus :active.sync="isActive">
-            <b-loading :active.sync="isLoading" :can-cancel="false" />
+            <b-loading :active.sync="isLoading" :can-cancel="false"/>
             <!--https://stackoverflow.com/questions/48028718/using-event-modifier-prevent-in-vue-to-submit-form-without-redirection-->
             <form v-on:submit.prevent="create()">
                 <div class="modal-card">
@@ -21,8 +21,8 @@
                         <p class="modal-card-title" v-else>Modify a request</p>
                     </header>
                     <section class="modal-card-body">
-                        <RequestTypeDrowdown v-model="form.type" />
-                        <ResponseTypeDropdown v-model="form.responseType" />
+                        <RequestTypeDrowdown v-model="form.type"/>
+                        <ResponseTypeDropdown v-model="form.responseType"/>
                         <b-field label="URL">
                             <b-input
                                     type="url"
@@ -62,7 +62,7 @@
                                 <b-field>
                                     <b-dropdown v-if="currencies && currencies.length > 0"
                                                 position="is-top-right"
-                                            v-model="form.currency" aria-role="list">
+                                                v-model="form.currency" aria-role="list">
                                         <button class="button is-primary" type="button" slot="trigger">
                                             <div v-if="form.currency && form.currency.name">
                                                 <img v-if="form.currency.logoPath"
@@ -72,14 +72,14 @@
                                                 {{ form.currency.name }}
                                             </div>
                                             <div class="media" v-else>
-                                                <b-icon class="ml-1 mr-3" icon="money-bill-wave" />
+                                                <b-icon class="ml-1 mr-3" icon="money-bill-wave"/>
                                                 <span>Pick a currency</span>
                                             </div>
-                                            <b-icon icon="caret-down" />
+                                            <b-icon icon="caret-down"/>
                                         </button>
 
-                                        <b-dropdown-item v-for="currency in currencies" 
-                                                :value="currency" aria-role="listitem">
+                                        <b-dropdown-item v-for="currency in currencies"
+                                                         :value="currency" aria-role="listitem">
                                             <div class="media">
                                                 <img v-if="currency.logoPath"
                                                      alt="logo"
@@ -125,9 +125,9 @@
                             <b-tab-item label="Currency Type">
                                 <b-field>
                                     <b-select placeholder="Select a currency type"
-                                              v-model="form.currencyTypeId"
+                                              v-model="form.currencyTypeGuid"
                                               v-if="currencyTypes !== null && currencyTypes.length > 0">
-                                        <option v-for="ct in currencyTypes" :value="ct.id">{{ ct.name }}</option>
+                                        <option v-for="ct in currencyTypes" :value="ct.guid">{{ ct.name }}</option>
                                     </b-select>
                                     <b-message v-else>Oh no.. There aren't any currency types at the moment..
                                     </b-message>
@@ -155,6 +155,7 @@
     import {NotificationProgrammatic as Notification} from 'buefy';
     import CurrencyService from "@/services/CurrencyService";
     import CurrencyPairService from "@/services/CurrencyPairService";
+    import CurrencyTypeService from "@/services/CurrencyTypeService";
 
     export default {
         name: "request-modal",
@@ -180,13 +181,13 @@
                         // Reset the rest just incase
                         this.form.currencyPairGuid = null;
                         this.form.currencyPairStr = null;
-                        this.form.currencyTypeId = 0;
+                        this.form.currencyTypeGuid = 0;
                         this.form.currencySlug = this.form.currency.slug;
                         break;
                     case 1: // Currency Pair
                         // Reset the rest just incase
                         this.form.currencySlug = '';
-                        this.form.currencyTypeId = 0;
+                        this.form.currencyTypeGuid = 0;
                         break;
                     case 2: // Currency Type
                         // Reset the rest just incase
@@ -211,7 +212,7 @@
                             currencySlug: '',
                             currencyPairGuid: null,
                             currencyPairStr: null,
-                            currencyTypeId: 0
+                            currencyTypeGuid: 0
                         };
 
                         if (response.status === 200) {
@@ -262,40 +263,26 @@
                     self.isLoading = false;
                 });
 
-            CurrencyPairService.all()
-            .then(function (response) {
-                console.dir(response);
-                self.currencyPairs = response;
-            });
-
             // Synchronously call for data
-            // self.currencyPairsIsLoading = true;
-            // this.$axios.get('/api/CurrencyPair/ListAll', {
-            //     headers: {
-            //         Authorization: "Bearer " + store.state.oidcStore.access_token
-            //     }
-            // })
-            //     .then(function (response) {
-            //         self.currencyPairs = response.data;
-            //     })
-            //     .catch(function (error) {
-            //         // handle error
-            //         self.methods.authenticateOidc(self.currentRoute);
-            //     })
-            //     .finally(function () {
-            //         // always executed
-            //         self.currencyPairsIsLoading = false;
-            //     });
+            self.currencyPairsIsLoading = true;
+            CurrencyPairService.all()
+                .then(function (response) {
+                    self.currencyPairs = response;
+                })
+                .catch(function (error) {
+                    // handle error
+                    self.methods.authenticateOidc(self.currentRoute);
+                })
+                .finally(function () {
+                    // always executed
+                    self.currencyPairsIsLoading = false;
+                });
 
             // Synchronously call for data
             self.currencyTypesIsLoading = true;
-            this.$axios.get('/api/CurrencyType/ListAll', {
-                headers: {
-                    Authorization: "Bearer " + store.state.oidcStore.access_token
-                }
-            })
+            CurrencyTypeService.listAll()
                 .then(function (response) {
-                    self.currencyTypes = response.data;
+                    self.currencyTypes = response;
                 })
                 .catch(function (error) {
                     // handle error
@@ -321,7 +308,7 @@
                     currencySlug: '',
                     currencyPairGuid: null,
                     currencyPairStr: null,
-                    currencyTypeId: 0
+                    currencyTypeGuid: 0
                 },
                 formHelper: {},
                 currencies: [],
