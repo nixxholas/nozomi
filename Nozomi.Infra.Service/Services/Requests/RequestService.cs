@@ -66,13 +66,13 @@ namespace Nozomi.Service.Services.Requests
                         request.CurrencyId = currency.Id;
                         break;
                     case CreateRequestViewModel.RequestParentType.CurrencyPair:
-                        var currencyPair = _currencyPairEvent.Get(vm.CurrencyPair.Id);
+                        var currencyPair = _currencyPairEvent.Get(vm.CurrencyPairGuid);
                         
                         if (currencyPair == null)
                             throw new KeyNotFoundException("[RequestService/Create/CreateRequestViewModel]: " +
                                                            "Currency pair not found.");
                         
-                        request.CurrencyPairId = vm.CurrencyPair.Id;
+                        request.CurrencyPairId = currencyPair.Id;
                         break;
                     case CreateRequestViewModel.RequestParentType.CurrencyType:
                         var currencyType = _currencyTypeEvent.Get(vm.CurrencyTypeId);
