@@ -16,7 +16,8 @@
           {{ getResponseType(props.row.responseType) }}
         </b-tag>
       </b-table-column>
-      <b-table-column field="dataPath" label="API Url">
+      <!--  https://github.com/buefy/buefy/issues/278#issuecomment-349536701  -->
+      <b-table-column field="dataPath" label="API Url" style="word-break:break-all;">
         <a class="has-text-info" :href="props.row.dataPath">{{ props.row.dataPath }}</a>
       </b-table-column>
       <b-table-column field="delay" label="Delay">
@@ -62,18 +63,6 @@
             </p>
           </div>
         </div>
-        <!--                    <div class="level-item has-text-centered">-->
-        <!--                      <div>-->
-        <!--                        <p class="heading">Followers</p>-->
-        <!--                        <p class="title">456K</p>-->
-        <!--                      </div>-->
-        <!--                    </div>-->
-        <!--                    <div class="level-item has-text-centered">-->
-        <!--                      <div>-->
-        <!--                        <p class="heading">Likes</p>-->
-        <!--                        <p class="title">789</p>-->
-        <!--                      </div>-->
-        <!--                    </div>-->
       </nav>
     </template>
     <template slot="empty">
@@ -96,6 +85,7 @@
     import store from '@/store/index';
     // Request Component imports
     import CreateRCComponent from '@/components/modals/create-request-component-modal';
+    import RequestService from "@/services/RequestService";
 
     export default {
         name: "requests-table",
@@ -145,11 +135,7 @@
                 let self = this;
 
                 // Synchronously call for data
-                this.$axios.get('/api/Request/GetAll', {
-                    headers: {
-                        Authorization: "Bearer " + store.state.oidcStore.access_token
-                    }
-                })
+                RequestService.getAllForUser()
                     .then(function (response) {
                         self.requestData = response.data;
                     })
