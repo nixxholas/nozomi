@@ -33,7 +33,7 @@
       <b-table-column field="actions" label="">
         <div class="buttons">
           <b-button type="is-danger"
-                    icon-left="delete">
+                    icon-left="trash">
             Delete
           </b-button>
         </div>
