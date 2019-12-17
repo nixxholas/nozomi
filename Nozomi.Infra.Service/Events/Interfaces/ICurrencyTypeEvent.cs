@@ -15,6 +15,7 @@ namespace Nozomi.Service.Events.Interfaces
         
         ICollection<CurrencyType> GetAll(int index = 0, bool track = false);
 
-        ICollection<DistinctCurrencyTypeResponse> ListAll();
+        ICollection<CurrencyTypeViewModel> ListAll(int page = 0, int itemsPerPage = 50, bool orderAscending = true, 
+            string orderingParam = "TypeShortForm");
     }
 }

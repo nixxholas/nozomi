@@ -16,7 +16,7 @@ namespace Nozomi.Service.Events
 {
     public class CurrencyTypeEvent : BaseEvent<CurrencyPairEvent, NozomiDbContext>, ICurrencyTypeEvent
     {
-        public CurrencyTypeEvent(ILogger<CurrencyPairEvent> logger, IUnitOfWork<NozomiDbContext> unitOfWork) 
+        public CurrencyTypeEvent(ILogger<CurrencyPairEvent> logger, IUnitOfWork<NozomiDbContext> unitOfWork)
             : base(logger, unitOfWork)
         {
         }
@@ -42,7 +42,7 @@ namespace Nozomi.Service.Events
                 var currencyType = _unitOfWork.GetRepository<CurrencyType>()
                     .GetQueryable()
                     .AsNoTracking()
-                    .Where(ct => ct.DeletedAt == null && ct.IsEnabled 
+                    .Where(ct => ct.DeletedAt == null && ct.IsEnabled
                                                       && ct.Guid.Equals(Guid.Parse(guid)));
 
                 if (currencyType.Any())
@@ -69,7 +69,7 @@ namespace Nozomi.Service.Events
                 var currencyType = _unitOfWork.GetRepository<CurrencyType>()
                     .GetQueryable()
                     .AsNoTracking()
-                    .Where(ct => ct.DeletedAt == null && ct.IsEnabled 
+                    .Where(ct => ct.DeletedAt == null && ct.IsEnabled
                                                       && ct.Id.Equals(id));
 
                 if (currencyType.Any())
@@ -116,17 +116,45 @@ namespace Nozomi.Service.Events
             return null;
         }
 
-        public ICollection<DistinctCurrencyTypeResponse> ListAll()
+        public ICollection<CurrencyTypeViewModel> ListAll(int page = 0, int itemsPerPage = 50,
+            bool orderAscending = true,
+            string orderingParam = "TypeShortForm")
         {
-            return _unitOfWork.GetRepository<CurrencyType>()
+            if (page < 0)
+                page = 0;
+
+            if (itemsPerPage < 0 || itemsPerPage > NozomiServiceConstants.CurrencyTypeTakeoutLimit)
+                itemsPerPage = NozomiServiceConstants.CurrencyTypeTakeoutLimit;
+            
+            var query = _unitOfWork.GetRepository<CurrencyType>()
                 .GetQueryable()
                 .AsNoTracking()
-                .Where(ct => ct.DeletedAt == null && ct.IsEnabled)
-                .Select(ct => new DistinctCurrencyTypeResponse()
+                .Where(ct => ct.DeletedAt == null && ct.IsEnabled);
+            
+            switch (orderingParam)
+            {
+                case "Name":
+                    if (orderAscending)
+                        query = query.OrderBy(ct => ct.Name);
+                    else
+                        query = query.OrderByDescending(ct => ct.Name);
+                    break;
+                case "TypeShortForm":
+                    if (orderAscending)
+                        query = query.OrderBy(ct => ct.TypeShortForm);
+                    else
+                        query = query.OrderByDescending(ct => ct.TypeShortForm);
+                    break;
+            }
+
+            return query
+                .Skip(page * itemsPerPage)
+                .Take(itemsPerPage)
+                .Select(ct => new CurrencyTypeViewModel
                 {
-                    Id = ct.Id,
-                    Name = ct.Name,
-                    ShortForm = ct.TypeShortForm
+                    Guid = ct.Guid,
+                    TypeShortForm = ct.TypeShortForm,
+                    Name = ct.Name
                 })
                 .ToList();
         }
