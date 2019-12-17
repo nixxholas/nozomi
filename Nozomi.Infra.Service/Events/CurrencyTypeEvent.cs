@@ -117,8 +117,7 @@ namespace Nozomi.Service.Events
         }
 
         public ICollection<CurrencyTypeViewModel> ListAll(int page = 0, int itemsPerPage = 50,
-            bool orderAscending = true,
-            string orderingParam = "TypeShortForm")
+            bool orderAscending = true, string orderingParam = "TypeShortForm")
         {
             if (page < 0)
                 page = 0;
