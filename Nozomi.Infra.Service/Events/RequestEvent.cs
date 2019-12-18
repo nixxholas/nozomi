@@ -113,11 +113,13 @@ namespace Nozomi.Service.Events
 
             if (track)
                 return query
+                    .Include(r => r.Currency)
                     .Include(r => r.RequestComponents)
                     .Include(r => r.RequestProperties)
                     .Include(r => r.RequestType)
                     .Select(r => new RequestViewModel(r.Guid, r.RequestType, r.ResponseType, r.DataPath, r.Delay,
-                        r.FailureDelay, r.IsEnabled, r.CurrencyId, r.CurrencyPairId, r.CurrencyTypeId,
+                        r.FailureDelay, r.IsEnabled, r.CurrencyId <= 0 ? r.Currency.Name : null, r.CurrencyPairId, 
+                        r.CurrencyTypeId,
                         r.RequestComponents.Select(rc => new ComponentViewModel
                         {
                             Guid = rc.Guid,
@@ -133,9 +135,10 @@ namespace Nozomi.Service.Events
                         }).ToList()));
             
             return query
+                .Include(r => r.Currency)
                 .Select(r => new RequestViewModel(r.Guid, r.RequestType, r.ResponseType, r.DataPath, r.Delay,
-                    r.FailureDelay, r.IsEnabled, r.CurrencyId, r.CurrencyPairId, r.CurrencyTypeId,
-                    null, null));
+                    r.FailureDelay, r.IsEnabled, r.CurrencyId <= 0 ? r.Currency.Name : null, 
+                    r.CurrencyPairId, r.CurrencyTypeId, null, null));
         }
 
         public ICollection<RequestDTO> GetAllDTO(int index)

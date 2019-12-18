@@ -21,10 +21,16 @@ namespace Nozomi.Data.ViewModels.Request
             FailureDelay = failureDelay;
             IsEnabled = isEnabled;
             CurrencySlug = currencySlug;
+            
+            if (currencyPairId != null)
+                CurrencyPairId = (long)currencyPairId;
+            
+            if (currencyTypeId != null)
+                CurrencyTypeId = (long)currencyTypeId;
         }
         
         public RequestViewModel(Guid guid, RequestType requestType, ResponseType responseType, string dataPath,
-            int delay, long failureDelay, bool isEnabled, long? currencyId, long? currencyPairId, long? currencyTypeId,
+            int delay, long failureDelay, bool isEnabled, string currencySlug, long? currencyPairId, long? currencyTypeId,
             ICollection<ComponentViewModel> components, ICollection<RequestPropertyViewModel> properties)
         {
             Guid = guid;
@@ -36,6 +42,13 @@ namespace Nozomi.Data.ViewModels.Request
             IsEnabled = isEnabled;
             Components = components;
             Properties = properties;
+            CurrencySlug = currencySlug;
+
+            if (currencyPairId != null)
+                CurrencyPairId = (long)currencyPairId;
+            
+            if (currencyTypeId != null)
+                CurrencyTypeId = (long)currencyTypeId;
         }
         
         public Guid Guid { get; set; }
