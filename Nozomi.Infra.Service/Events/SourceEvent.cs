@@ -20,6 +20,22 @@ namespace Nozomi.Service.Events
         {
         }
 
+        public Source GetByGuid(string guid, bool filterActive = false)
+        {
+            if (string.IsNullOrEmpty(guid) || string.IsNullOrWhiteSpace(guid))
+                return null;
+
+            var query = _unitOfWork.GetRepository<Source>()
+                .GetQueryable()
+                .AsNoTracking();
+
+            if (filterActive)
+                query = query.Where(s => s.DeletedAt == null && s.IsEnabled);
+
+            return query
+                .SingleOrDefault(s => s.Guid.ToString().Equals(guid));
+        }
+
         public IEnumerable<Nozomi.Data.ViewModels.Source.SourceViewModel> GetAll()
         {
             return _unitOfWork.GetRepository<Source>()

@@ -13,6 +13,8 @@ namespace Nozomi.Service.Events.Interfaces
         XSourceResponse Get(long id);
         XSourceResponse Get(string abbreviation);
 
+        Source GetByGuid(string guid, bool filterActive = false);
+
         IEnumerable<Nozomi.Data.ViewModels.Source.SourceViewModel> GetAll();
 
         IEnumerable<Source> GetAllActive(bool countPairs = false, bool includeNested = false);
