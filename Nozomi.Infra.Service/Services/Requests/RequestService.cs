@@ -308,6 +308,66 @@ namespace Nozomi.Service.Services.Requests
             }
         }
 
+        public bool Update(UpdateRequestViewModel vm, string userId = null)
+        {
+            // Safetynet
+            if (vm != null && vm.IsValid())
+            {
+                var request = _unitOfWork.GetRepository<Request>()
+                    .GetQueryable()
+                    .AsTracking()
+                    .SingleOrDefault(r => r.DeletedAt == null && r.Guid.Equals(vm.Guid));
+
+                if (request != null)
+                {
+                    request.IsEnabled = vm.IsEnabled;
+                    request.RequestType = vm.RequestType;
+                    request.ResponseType = vm.ResponseType;
+                    request.DataPath = vm.DataPath;
+                    request.Delay = vm.Delay;
+                    request.FailureDelay = vm.FailureDelay;
+
+                    switch (vm.ParentType)
+                    {
+                        case CreateRequestViewModel.RequestParentType.Currency:
+                            var currency = _currencyEvent.GetBySlug(vm.CurrencySlug);
+
+                            if (currency != null)
+                                request.CurrencyId = currency.Id;
+                            else
+                                return false;
+                            
+                            break;
+                        case CreateRequestViewModel.RequestParentType.CurrencyPair:
+                            var currencyPair = _currencyPairEvent.Get(vm.CurrencyPairGuid);
+
+                            if (currencyPair != null)
+                                request.CurrencyPairId = currencyPair.Id;
+                            else
+                                return false;
+
+                            break;
+                        case CreateRequestViewModel.RequestParentType.CurrencyType:
+                            var currencyType = _currencyTypeEvent.Get(vm.CurrencyTypeGuid);
+
+                            if (currencyType != null)
+                                request.CurrencyTypeId = currencyType.Id;
+                            else
+                                return false;
+
+                            break;
+                    }
+                    
+                    _unitOfWork.GetRepository<Request>().Update(request);
+                    _unitOfWork.Commit(userId);
+
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         public NozomiResult<string> Delete(long reqId, bool hardDelete = false, string userId = null)
         {
             try
