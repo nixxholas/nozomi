@@ -21,7 +21,7 @@
                         <p class="modal-card-title" v-else>Modify a request</p>
                     </header>
                     <section class="modal-card-body">
-                        <RequestTypeDrowdown v-model="form.type"/>
+                        <RequestTypeDropdown v-model="form.type"/>
                         <ResponseTypeDropdown v-model="form.responseType"/>
                         <b-field label="URL">
                             <b-input
@@ -64,12 +64,15 @@
                                                 position="is-top-right"
                                                 v-model="form.currency" aria-role="list">
                                         <button class="button is-primary" type="button" slot="trigger">
-                                            <div v-if="form.currency && form.currency.name">
-                                                <img v-if="form.currency.logoPath"
-                                                     alt="logo"
-                                                     :src="form.currency.logoPath" class="mr-1"
-                                                     style="width: 24px; height: 24px; vertical-align: bottom;"/>
-                                                {{ form.currency.name }}
+                                            <div v-if="form.currencySlug"
+                                                v-for="c in currencies">
+                                                <div v-if="c && c.slug == form.currencySlug && c.logoPath">
+                                                    <img
+                                                            alt="logo"
+                                                            :src="c.logoPath" class="mr-1"
+                                                            style="width: 24px; height: 24px; vertical-align: bottom;"/>
+                                                    {{ c.name }}
+                                                </div>
                                             </div>
                                             <div class="media" v-else>
                                                 <b-icon class="ml-1 mr-3" icon="money-bill-wave"/>
@@ -79,7 +82,7 @@
                                         </button>
 
                                         <b-dropdown-item v-for="currency in currencies"
-                                                         :value="currency" aria-role="listitem">
+                                                         :value="currency.slug" aria-role="listitem">
                                             <div class="media">
                                                 <img v-if="currency.logoPath"
                                                      alt="logo"
@@ -147,10 +150,9 @@
 </template>
 
 <script>
-    import store from '../../store/index';
     import {mapActions} from 'vuex';
     import RequestService from "@/services/RequestService";
-    import RequestTypeDrowdown from '../dropdowns/request-type-dropdown';
+    import RequestTypeDropdown from '../dropdowns/request-type-dropdown';
     import ResponseTypeDropdown from "../dropdowns/response-type-dropdown";
     import {NotificationProgrammatic as Notification} from 'buefy';
     import CurrencyService from "@/services/CurrencyService";
@@ -159,7 +161,7 @@
 
     export default {
         name: "request-modal",
-        components: {ResponseTypeDropdown, RequestTypeDrowdown},
+        components: {ResponseTypeDropdown, RequestTypeDropdown},
         props: {
             request: Object,
             currentRoute: window.location.href // https://forum.vuejs.org/t/how-to-get-path-from-route-instance/26934/2
@@ -182,7 +184,6 @@
                         this.form.currencyPairGuid = null;
                         this.form.currencyPairStr = null;
                         this.form.currencyTypeGuid = 0;
-                        this.form.currencySlug = this.form.currency.slug;
                         break;
                     case 1: // Currency Pair
                         // Reset the rest just incase
@@ -212,7 +213,6 @@
                                 delay: 0,
                                 failureDelay: 0,
                                 parentType: 0,
-                                currency: {},
                                 currencySlug: '',
                                 currencyPairGuid: null,
                                 currencyPairStr: null,
