@@ -48,7 +48,7 @@
                 <b-table-column field="currencyType" label="Type" sortable>
                     {{ getType(props.row.currencyTypeGuid).name }}
                 </b-table-column>
-                
+
                 <b-table-column
                         v-for="component in props.row.components"
                         v-if="props.row.components && props.row.components.length > 0 
@@ -56,7 +56,7 @@
                         :visible="componentIsDisplayable(component.type)">
                     {{ component }}
                 </b-table-column>
-                
+
                 <b-table-column v-if="oidcIsAuthenticated">
                     <CurrencyModal :currency="props.row"></CurrencyModal>
                 </b-table-column>
@@ -71,7 +71,7 @@
     import CurrencyModal from '@/components/modals/currency-modal';
     import CurrencyService from "@/services/CurrencyService";
     import CurrencyTypeService from "@/services/CurrencyTypeService";
-    
+
     export default {
         name: "currencies-table",
         props: {
@@ -111,7 +111,7 @@
                             return true;
                     }
                 }
-                
+
                 return false;
             },
             getType(guid) {
@@ -152,21 +152,25 @@
                     });
             },
         },
-        mounted: function() {
+        mounted: function () {
             let self = this;
             CurrencyService.getCurrencyCount(self.type)
                 .then(function (res) {
                     self.dataCount = res;
+
+                    CurrencyService.listAll(self.currentPage - 1, self.perPage, 
+                        self.type, sortAscending, self.sortField)
+                        .then(function (res) {
+                            self.data = res;
+                        });
+                })
+                .catch(function (err) {
+                    console.dir(err);
                 });
 
             self.sortField = "name";
             self.sortOrder = "asc";
             let sortAscending = self.sortOrder === "asc";
-
-            CurrencyService.listAll(self.currentPage - 1, self.perPage, self.type, sortAscending, self.sortField)
-                .then(function (res) {
-                    self.data = res;
-                });
 
             CurrencyTypeService.getAll()
                 .then(function (res) {
