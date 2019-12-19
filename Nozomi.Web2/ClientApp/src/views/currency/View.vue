@@ -131,7 +131,7 @@
                                                 <h1 class="title">
                                                     Market Pairs
                                                 </h1>
-                                                <CurrencyPairsTable :main-ticker="data.abbreviation"></CurrencyPairsTable>
+                                                <CurrencyPairsTable :main-ticker="data.abbreviation" />
                                             </div>
                                         </div>
                                     </section>
@@ -174,7 +174,7 @@
                                         </template>
                                     </b-table>
                                     <b-loading :active.sync="historic.loading" :can-cancel="false"
-                                               :is-full-page="false"></b-loading>
+                                               :is-full-page="false" />
                                 </b-tab-item>
                             </b-tabs>
                         </div>
