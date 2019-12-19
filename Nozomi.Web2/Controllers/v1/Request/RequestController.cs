@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data;
 using Nozomi.Data.ViewModels.Request;
+using Nozomi.Preprocessing.Statics;
 using Nozomi.Service.Events.Interfaces;
 using Nozomi.Service.Services.Requests.Interfaces;
 
@@ -39,6 +40,23 @@ namespace Nozomi.Web2.Controllers.v1.Request
         }
 
         [Authorize]
+        [HttpPost]
+        public IActionResult Create([FromBody]CreateRequestViewModel vm)
+        {
+            var sub = ((ClaimsIdentity) User.Identity)
+                .Claims.SingleOrDefault(c => c.Type.Equals(JwtClaimTypes.Subject))?.Value;
+
+            if (!string.IsNullOrWhiteSpace(sub))
+            {
+                _requestService.Create(vm, sub);
+
+                return Ok();
+            }
+
+            return BadRequest("Please login again. Your session may have expired!");
+        }
+
+        [Authorize]
         [HttpGet]
         public IActionResult GetAll()
         {
@@ -55,20 +73,19 @@ namespace Nozomi.Web2.Controllers.v1.Request
         }
 
         [Authorize]
-        [HttpPost]
-        public IActionResult Create([FromBody]CreateRequestViewModel vm)
+        [HttpPut]
+        public IActionResult Update([FromBody]UpdateRequestViewModel vm)
         {
             var sub = ((ClaimsIdentity) User.Identity)
                 .Claims.SingleOrDefault(c => c.Type.Equals(JwtClaimTypes.Subject))?.Value;
 
+            // Since we get the sub,
             if (!string.IsNullOrWhiteSpace(sub))
             {
-                _requestService.Create(vm, sub);
-
-                return Ok();
+                return Ok(_requestService.Update(vm, sub));
             }
 
-            return BadRequest("Please login again. Your session may have expired!");
+            return BadRequest("Please re-authenticate again");
         }
     }
 }
