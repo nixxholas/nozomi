@@ -33,11 +33,14 @@ namespace Nozomi.Service.Services
             if (vm != null && vm.IsValid())
             {
                 var source = _sourceEvent.GetByGuid(vm.SourceGuid);
+
+                if (source != null)
+                {
+                    _unitOfWork.GetRepository<CurrencyPair>().Add(new CurrencyPair(vm.Type,
+                        vm.MainTicker, vm.CounterTicker, vm.ApiUrl, vm.DefaultComponent, source.Id, vm.IsEnabled));
                 
-                _unitOfWork.GetRepository<CurrencyPair>().Add(new CurrencyPair(vm.CurrencyPairType,
-                    vm.MainTicker, vm.CounterTicker, vm.ApiUrl, vm.DefaultComponent, vm.SourceId, vm.IsEnabled));
-                
-                return _unitOfWork.Commit(userId) == 1;
+                    return _unitOfWork.Commit(userId) == 1;   
+                }
             }
 
             return false;
