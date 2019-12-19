@@ -198,52 +198,57 @@
                 }
 
                 let self = this;
-                RequestService.create(self.form)
-                    .then(function (response) {
-                        // Reset the form data regardless
-                        self.form = {
-                            type: 0,
-                            responseType: 1,
-                            dataPath: "",
-                            delay: 0,
-                            failureDelay: 0,
-                            parentType: 0,
-                            currency: {},
-                            currencySlug: '',
-                            currencyPairGuid: null,
-                            currencyPairStr: null,
-                            currencyTypeGuid: 0
-                        };
+                
+                if (this.request !== null) {
+                    
+                } else {
+                    RequestService.create(self.form)
+                        .then(function (response) {
+                            // Reset the form data regardless
+                            self.form = {
+                                type: 0,
+                                responseType: 1,
+                                dataPath: "",
+                                delay: 0,
+                                failureDelay: 0,
+                                parentType: 0,
+                                currency: {},
+                                currencySlug: '',
+                                currencyPairGuid: null,
+                                currencyPairStr: null,
+                                currencyTypeGuid: 0
+                            };
 
-                        if (response.status === 200) {
-                            self.isActive = false; // Close the modal
+                            if (response.status === 200) {
+                                self.isActive = false; // Close the modal
+                                Notification.open({
+                                    duration: 2500,
+                                    message: `Request successfully created!`,
+                                    position: 'is-bottom-right',
+                                    type: 'is-success',
+                                    hasIcon: true
+                                });
+
+                                // Inform the parent that a new request has been created
+                                // https://forum.vuejs.org/t/passing-data-back-to-parent/1201
+                                self.$emit('created', true);
+                            }
+                        })
+                        .catch(function (error) {
+                            //console.log(error);
                             Notification.open({
                                 duration: 2500,
-                                message: `Request successfully created!`,
+                                message: `Please make sure your entry is correctly filled!`,
                                 position: 'is-bottom-right',
-                                type: 'is-success',
+                                type: 'is-warning',
                                 hasIcon: true
                             });
-
-                            // Inform the parent that a new request has been created
-                            // https://forum.vuejs.org/t/passing-data-back-to-parent/1201
-                            self.$emit('created', true);
-                        }
-                    })
-                    .catch(function (error) {
-                        //console.log(error);
-                        Notification.open({
-                            duration: 2500,
-                            message: `Please make sure your entry is correctly filled!`,
-                            position: 'is-bottom-right',
-                            type: 'is-warning',
-                            hasIcon: true
+                        })
+                        .finally(function () {
+                            // always executed
+                            self.isLoading = false;
                         });
-                    })
-                    .finally(function () {
-                        // always executed
-                        self.isLoading = false;
-                    });
+                }
             }
         },
         beforeCreate: function () {
@@ -292,6 +297,41 @@
                     // always executed
                     self.currencyTypesIsLoading = false;
                 });
+        },
+        mounted: function() {
+            // If its a modification, add the data in
+            if (this.request) {
+                if (this.request.type && this.form.type !== this.request.type)
+                    this.form.type = this.request.type;
+
+                if (this.request.responseType && this.form.responseType !== this.request.responseType)
+                    this.form.responseType = this.request.responseType;
+                
+                if (this.request.dataPath && this.form.dataPath !== this.request.dataPath)
+                    this.form.dataPath = this.request.dataPath;
+                
+                if (this.request.delay && this.request.delay > 0 && this.form.delay !== this.request.delay)
+                    this.form.delay = this.request.delay;
+
+                if (this.request.failureDelay && this.request.failureDelay > 0 && this.form.failureDelay !== this.request.failureDelay)
+                    this.form.failureDelay = this.request.failureDelay;
+
+                if (this.request.currencySlug && this.form.currencySlug !== this.request.currencySlug) {
+                    this.form.parentType = 0;
+                    this.form.currencySlug = this.request.currencySlug;
+                }
+                
+                if (this.request.currencyPairGuid && this.form.currencyPairGuid !== this.request.currencyPairGuid) {
+                    this.form.parentType = 1;
+                    this.form.currencyPairGuid = this.request.currencyPairGuid;
+                    this.form.currencyPairStr = "Unchanged";
+                }
+
+                if (this.request.currencyTypeGuid && this.form.currencyTypeGuid !== this.request.currencyTypeGuid) {
+                    this.form.parentType = 2;
+                    this.form.currencyTypeGuid = this.request.currencyTypeGuid;
+                }
+            }
         },
         data: function () {
             return {
