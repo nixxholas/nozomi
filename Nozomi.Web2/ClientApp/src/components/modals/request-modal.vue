@@ -201,7 +201,33 @@
                 let self = this;
                 
                 if (this.request !== null) {
-                    
+                    RequestService.update(self.form)
+                        .then(function (response) {
+                            if (response.status === 200) {
+                                self.isActive = false; // Close the modal
+                                Notification.open({
+                                    duration: 2500,
+                                    message: `Request successfully updated!`,
+                                    position: 'is-bottom-right',
+                                    type: 'is-success',
+                                    hasIcon: true
+                                });
+                            }
+                        })
+                        .catch(function (error) {
+                            //console.log(error);
+                            Notification.open({
+                                duration: 2500,
+                                message: `Please make sure your entries are correctly filled!`,
+                                position: 'is-bottom-right',
+                                type: 'is-warning',
+                                hasIcon: true
+                            });
+                        })
+                        .finally(function () {
+                            // always executed
+                            self.isLoading = false;
+                        });
                 } else {
                     RequestService.create(self.form)
                         .then(function (response) {
@@ -301,6 +327,9 @@
         mounted: function() {
             // If its a modification, add the data in
             if (this.request) {
+                if (this.request.guid && this.form.guid !== this.request.guid)
+                    this.form.guid = this.request.guid;
+                
                 if (this.request.type && this.form.type !== this.request.type)
                     this.form.type = this.request.type;
 
@@ -338,6 +367,7 @@
                 isActive: false,
                 isLoading: false,
                 form: {
+                    guid: null,
                     type: 0,
                     responseType: 1,
                     dataPath: "",
