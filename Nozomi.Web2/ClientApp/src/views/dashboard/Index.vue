@@ -39,9 +39,9 @@
                                 <CreateRequestComponent @created="createdNewRequest"></CreateRequestComponent>
                             </div>
                         </b-field>
-                        <div class="content">
-                            <RequestsTable ref="reqTable"></RequestsTable>
-                        </div>
+                        <section>
+                            <RequestsTable ref="reqTable" />
+                        </section>
                     </article>
                 </div>
             </div>
@@ -50,10 +50,10 @@
 </template>
 
 <script>
-    import {mapActions} from 'vuex';
+    import {mapActions, mapGetters} from 'vuex';
     import store from '@/store/index';
     // Request imports
-    import CreateRequestComponent from '@/components/modals/create-request-modal';
+    import CreateRequestComponent from '@/components/modals/request-modal';
     import CreateSourceTypeModal from '@/components/modals/create-source-type-modal';
     import RequestsTable from '@/components/tables/requests-table';
     import SourceTypesTable from '@/components/tables/source-types-table';
@@ -62,7 +62,14 @@
         name: "Dashboard",
         components: {CreateRequestComponent, CreateSourceTypeModal, RequestsTable, SourceTypesTable},
         data: function () {
-            return {}
+            return {
+                user: this.oidcUser
+            }
+        },
+        computed: {
+            ...mapGetters('oidcStore', [
+                'oidcUser'
+            ])
         },
         methods: {
             ...mapActions('oidcStore', ['authenticateOidc', 'signOutOidc']),
@@ -72,14 +79,6 @@
             }
         },
         mounted: function () {
-          this.$axios.get('/api/Core/GetUserDetails', {
-            headers: {
-              Authorization: "Bearer " + store.state.oidcStore.access_token
-            }
-          })
-                  .then(function (response) {
-                    console.dir(response);
-                  });
         }
     }
 </script>
