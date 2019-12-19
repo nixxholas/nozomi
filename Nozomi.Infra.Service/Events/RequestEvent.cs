@@ -103,23 +103,26 @@ namespace Nozomi.Service.Events
             var query = _unitOfWork.GetRepository<Request>()
                 .GetQueryable()
                 .AsNoTracking()
+                .Include(r => r.Currency)
+                .Include(r => r.CurrencyPair)
+                .Include(r => r.CurrencyType)
                 .Where(r => r.DeletedAt == null);
 
             if (!string.IsNullOrWhiteSpace(userId) && !string.IsNullOrEmpty(userId))
                 query = query.Where(r => r.CreatedById.Equals(userId));
-
+            
             if (enabledOnly)
                 query = query.Where(r => r.IsEnabled);
 
             if (track)
                 return query
-                    .Include(r => r.Currency)
                     .Include(r => r.RequestComponents)
                     .Include(r => r.RequestProperties)
                     .Include(r => r.RequestType)
-                    .Select(r => new RequestViewModel(r.Guid, r.RequestType, r.ResponseType, r.DataPath, r.Delay,
-                        r.FailureDelay, r.IsEnabled, r.CurrencyId <= 0 ? r.Currency.Name : null, r.CurrencyPairId, 
-                        r.CurrencyTypeId,
+                    .Select(r => new RequestViewModel(r.Guid, r.RequestType, r.ResponseType, r.DataPath, 
+                        r.Delay, r.FailureDelay, r.IsEnabled, r.CurrencyId > 0 ? r.Currency.Name : null, 
+                        r.CurrencyPairId > 0 ? r.CurrencyPair.Guid.ToString() : null, 
+                        r.CurrencyTypeId > 0 ? r.CurrencyType.Guid.ToString() : null,
                         r.RequestComponents.Select(rc => new ComponentViewModel
                         {
                             Guid = rc.Guid,
@@ -135,14 +138,15 @@ namespace Nozomi.Service.Events
                         }).ToList()));
             
             return query
-                .Include(r => r.Currency)
                 .Select(r => new RequestViewModel(r.Guid, r.RequestType, r.ResponseType, r.DataPath, r.Delay,
-                    r.FailureDelay, r.IsEnabled, r.CurrencyId <= 0 ? r.Currency.Name : null, 
-                    r.CurrencyPairId, r.CurrencyTypeId, null, null));
+                    r.FailureDelay, r.IsEnabled, r.CurrencyId > 0 ? r.Currency.Name : null, 
+                    r.CurrencyPairId > 0 ? r.CurrencyPair.Guid.ToString() : null, 
+                    r.CurrencyTypeId > 0 ? r.CurrencyType.Guid.ToString() : null, 
+                    null, null));
         }
 
         public ICollection<RequestDTO> GetAllDTO(int index)
-        {
+        { 
             return _unitOfWork.GetRepository<Request>()
                 .GetQueryable()
                 .AsNoTracking()

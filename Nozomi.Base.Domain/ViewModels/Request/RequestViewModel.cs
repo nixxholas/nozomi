@@ -11,7 +11,8 @@ namespace Nozomi.Data.ViewModels.Request
         public RequestViewModel() {}
         
         public RequestViewModel(Guid guid, RequestType requestType, ResponseType responseType, string dataPath,
-            int delay, long failureDelay, bool isEnabled, string currencySlug, long? currencyPairId, long? currencyTypeId)
+            int delay, long failureDelay, bool isEnabled, string currencySlug, string currencyPairGuid, 
+            string currencyTypeGuid)
         {
             Guid = guid;
             RequestType = requestType;
@@ -21,17 +22,14 @@ namespace Nozomi.Data.ViewModels.Request
             FailureDelay = failureDelay;
             IsEnabled = isEnabled;
             CurrencySlug = currencySlug;
-            
-            if (currencyPairId != null)
-                CurrencyPairId = (long)currencyPairId;
-            
-            if (currencyTypeId != null)
-                CurrencyTypeId = (long)currencyTypeId;
+            CurrencyPairGuid = currencyPairGuid;
+            CurrencyTypeGuid = currencyTypeGuid;
         }
         
         public RequestViewModel(Guid guid, RequestType requestType, ResponseType responseType, string dataPath,
-            int delay, long failureDelay, bool isEnabled, string currencySlug, long? currencyPairId, long? currencyTypeId,
-            ICollection<ComponentViewModel> components, ICollection<RequestPropertyViewModel> properties)
+            int delay, long failureDelay, bool isEnabled, string currencySlug, string currencyPairGuid, 
+            string currencyTypeGuid, ICollection<ComponentViewModel> components, 
+            ICollection<RequestPropertyViewModel> properties)
         {
             Guid = guid;
             RequestType = requestType;
@@ -43,21 +41,13 @@ namespace Nozomi.Data.ViewModels.Request
             Components = components;
             Properties = properties;
             CurrencySlug = currencySlug;
-
-            if (currencyPairId != null)
-                CurrencyPairId = (long)currencyPairId;
-            
-            if (currencyTypeId != null)
-                CurrencyTypeId = (long)currencyTypeId;
+            CurrencyPairGuid = currencyPairGuid;
+            CurrencyTypeGuid = currencyTypeGuid;
         }
         
         public Guid Guid { get; set; }
         
         public bool IsEnabled { get; set; }
-        
-        public long CurrencyPairId { get; set; }
-        
-        public long CurrencyTypeId { get; set; }
         
         public ICollection<ComponentViewModel> Components { get; set; }
         
