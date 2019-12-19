@@ -15,7 +15,7 @@ namespace Nozomi.Data.ViewModels.CurrencyPair
             public UpdateCurrencyPairValidator()
             {
                 RuleFor(e => e.Guid).NotNull().NotEmpty();
-                RuleFor(e => e.CurrencyPairType).IsInEnum();
+                RuleFor(e => e.Type).IsInEnum();
                 // RuleFor(e => e.ApiUrl);
                 // RuleFor(e => e.DefaultComponent);
                 RuleFor(e => e.SourceGuid).NotEmpty().NotNull();

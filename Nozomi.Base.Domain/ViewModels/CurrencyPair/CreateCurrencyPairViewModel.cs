@@ -5,7 +5,7 @@ namespace Nozomi.Data.ViewModels.CurrencyPair
 {
     public class CreateCurrencyPairViewModel
     {
-        public CurrencyPairType CurrencyPairType { get; set; }
+        public CurrencyPairType Type { get; set; }
         
         public string ApiUrl { get; set; }
         
@@ -29,7 +29,7 @@ namespace Nozomi.Data.ViewModels.CurrencyPair
         {
             public CreateCurrencyPairValidator()
             {
-                RuleFor(e => e.CurrencyPairType).IsInEnum();
+                RuleFor(e => e.Type).IsInEnum();
                 // RuleFor(e => e.ApiUrl);
                 // RuleFor(e => e.DefaultComponent);
                 RuleFor(e => e.SourceGuid).NotEmpty().NotNull();
