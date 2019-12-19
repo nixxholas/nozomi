@@ -47,7 +47,8 @@ namespace Nozomi.Web2.Controllers.v1.Request
             // Since we get the sub,
             if (identity.Claims.Any(c => c.Type.Equals(JwtClaimTypes.Subject)))
             {
-                return Ok(_requestEvent.GetAll(identity.Claims.SingleOrDefault(c => c.Type.Equals(JwtClaimTypes.Subject))?.Value));
+                return Ok(_requestEvent.GetAll(identity.Claims
+                    .SingleOrDefault(c => c.Type.Equals(JwtClaimTypes.Subject))?.Value));
             }
 
             return BadRequest("Please re-authenticate again");
