@@ -120,7 +120,7 @@ namespace Nozomi.Service.Events
                     .Include(r => r.RequestProperties)
                     .Include(r => r.RequestType)
                     .Select(r => new RequestViewModel(r.Guid, r.RequestType, r.ResponseType, r.DataPath, 
-                        r.Delay, r.FailureDelay, r.IsEnabled, r.CurrencyId > 0 ? r.Currency.Name : null, 
+                        r.Delay, r.FailureDelay, r.IsEnabled, r.CurrencyId > 0 ? r.Currency.Slug : null, 
                         r.CurrencyPairId > 0 ? r.CurrencyPair.Guid.ToString() : null, 
                         r.CurrencyTypeId > 0 ? r.CurrencyType.Guid.ToString() : null,
                         r.RequestComponents.Select(rc => new ComponentViewModel
@@ -139,7 +139,7 @@ namespace Nozomi.Service.Events
             
             return query
                 .Select(r => new RequestViewModel(r.Guid, r.RequestType, r.ResponseType, r.DataPath, r.Delay,
-                    r.FailureDelay, r.IsEnabled, r.CurrencyId > 0 ? r.Currency.Name : null, 
+                    r.FailureDelay, r.IsEnabled, r.CurrencyId > 0 ? r.Currency.Slug : null, 
                     r.CurrencyPairId > 0 ? r.CurrencyPair.Guid.ToString() : null, 
                     r.CurrencyTypeId > 0 ? r.CurrencyType.Guid.ToString() : null, 
                     null, null));
