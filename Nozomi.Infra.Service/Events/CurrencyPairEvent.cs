@@ -157,7 +157,8 @@ namespace Nozomi.Service.Events
                     },
                     AnalysedComponents = cp.AnalysedComponents
                         .Where(ac => ac.DeletedAt == null & ac.IsEnabled 
-                                     && !string.IsNullOrEmpty(ac.Value))
+                                     && !string.IsNullOrEmpty(ac.Value)
+                                     || !string.IsNullOrWhiteSpace(ac.Value))
                         .Select(ac => new AnalysedComponentViewModel
                         {
                             Guid = ac.Guid,
