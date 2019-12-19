@@ -16,11 +16,12 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
             entityTypeBuilder.Property(e => e.Guid).ValueGeneratedOnAdd().HasDefaultValueSql("uuid_generate_v4()");
             entityTypeBuilder.HasIndex(e => e.Guid).IsUnique();
 
-            entityTypeBuilder.HasAlternateKey(cp => new
+            entityTypeBuilder.HasIndex(cp => new
             {
-                MainCurrencyAbbrv = cp.MainTicker, CounterCurrencyAbbrv = cp.CounterTicker,
+                cp.MainTicker, 
+                cp.CounterTicker,
                 cp.SourceId
-            }).HasName("CurrencyPair_AK_MainCurrency_CounterCurrency_Source");
+            });
 
             entityTypeBuilder.Property(cp => cp.APIUrl).IsRequired();
             entityTypeBuilder.Property(cp => cp.DefaultComponent).IsRequired();

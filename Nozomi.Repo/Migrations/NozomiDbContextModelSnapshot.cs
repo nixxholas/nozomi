@@ -116,7 +116,6 @@ namespace Nozomi.Repo.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("CounterTicker")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<DateTime>("CreatedAt")
@@ -147,7 +146,6 @@ namespace Nozomi.Repo.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<string>("MainTicker")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<DateTime>("ModifiedAt")
@@ -167,13 +165,12 @@ namespace Nozomi.Repo.Migrations
                     b.HasKey("Id")
                         .HasName("CurrencyPair_PK_Id");
 
-                    b.HasAlternateKey("MainTicker", "CounterTicker", "SourceId")
-                        .HasName("CurrencyPair_AK_MainCurrency_CounterCurrency_Source");
-
                     b.HasIndex("Guid")
                         .IsUnique();
 
                     b.HasIndex("SourceId");
+
+                    b.HasIndex("MainTicker", "CounterTicker", "SourceId");
 
                     b.ToTable("CurrencyPairs");
                 });

@@ -21,25 +21,23 @@ namespace Nozomi.Repo.Migrations
             migrationBuilder.AddColumn<string>(
                 name: "CounterTicker",
                 table: "CurrencyPairs",
-                nullable: false,
-                defaultValue: "");
+                nullable: true);
 
             migrationBuilder.AddColumn<string>(
                 name: "MainTicker",
                 table: "CurrencyPairs",
-                nullable: false,
-                defaultValue: "");
+                nullable: true);
 
-            migrationBuilder.AddUniqueConstraint(
-                name: "CurrencyPair_AK_MainCurrency_CounterCurrency_Source",
+            migrationBuilder.CreateIndex(
+                name: "IX_CurrencyPairs_MainTicker_CounterTicker_SourceId",
                 table: "CurrencyPairs",
                 columns: new[] { "MainTicker", "CounterTicker", "SourceId" });
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropUniqueConstraint(
-                name: "CurrencyPair_AK_MainCurrency_CounterCurrency_Source",
+            migrationBuilder.DropIndex(
+                name: "IX_CurrencyPairs_MainTicker_CounterTicker_SourceId",
                 table: "CurrencyPairs");
 
             migrationBuilder.DropColumn(
