@@ -294,7 +294,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                 // Ensure that all components used are valid, no historical values are being tapped on.
                                 true, index, false, ac => // Make sure its the generic counter currency
                                     // since we can't convert yet
-                                    ac.CurrencyPair.CounterCurrencyAbbrv
+                                    ac.CurrencyPair.CounterTicker
                                         .Equals(CoreConstants.GenericCounterCurrency)
                                     && ac.ComponentType.Equals(AnalysedComponentType.CurrentAveragePrice), 
                                 ac => NumberHelper.IsNumericDecimal(ac.Value));
@@ -319,7 +319,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                     // Ensure that all components used are valid, no historical values are being tapped on.
                                     true, ++index, false, ac => // Make sure its the generic counter currency
                                         // since we can't convert yet
-                                        ac.CurrencyPair.CounterCurrencyAbbrv
+                                        ac.CurrencyPair.CounterTicker
                                             .Equals(CoreConstants.GenericCounterCurrency,
                                                 StringComparison.InvariantCultureIgnoreCase)
                                         && ac.ComponentType.Equals(AnalysedComponentType.CurrentAveragePrice), 
@@ -462,7 +462,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                                                  .SourceCurrencies
                                                                  .Any(sc => sc.Currency.Abbreviation
                                                                      .Equals(ahi.AnalysedComponent.CurrencyPair
-                                                                         .MainCurrencyAbbrv))
+                                                                         .MainTicker))
                                                              // Make sure we only check for the CurrentAveragePrice component
                                                              && ahi.AnalysedComponent.ComponentType
                                                                  .Equals(AnalysedComponentType.CurrentAveragePrice),
@@ -615,7 +615,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                                                  .SourceCurrencies
                                                                  .Any(sc => sc.Currency.Abbreviation
                                                                      .Equals(ahi.AnalysedComponent.CurrencyPair
-                                                                         .MainCurrencyAbbrv))
+                                                                         .MainTicker))
                                                              // Make sure we only check for the CurrentAveragePrice component
                                                              && ahi.AnalysedComponent.ComponentType
                                                                  .Equals(AnalysedComponentType.HourlyAveragePrice),

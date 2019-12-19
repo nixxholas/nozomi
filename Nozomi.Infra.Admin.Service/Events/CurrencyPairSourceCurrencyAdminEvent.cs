@@ -25,12 +25,12 @@ namespace Nozomi.Infra.Admin.Service.Events
             return _unitOfWork.GetRepository<CurrencyPair>()
                 .GetQueryable()
                 .AsNoTracking()
-                .Where(cp => cp.MainCurrencyAbbrv.Equals(mainAbbreviation, StringComparison.InvariantCultureIgnoreCase))
+                .Where(cp => cp.MainTicker.Equals(mainAbbreviation, StringComparison.InvariantCultureIgnoreCase))
                 .Include(cp => cp.Source)
                 .ThenInclude(s => s.SourceCurrencies)
                 .ThenInclude(sc => sc.Currency)
                 .SelectMany(cp => cp.Source.SourceCurrencies
-                    .Where(sc => sc.Currency.Abbreviation.Equals(cp.CounterCurrencyAbbrv))
+                    .Where(sc => sc.Currency.Abbreviation.Equals(cp.CounterTicker))
                     .Select(sc => sc.Currency))
                 .ToList();
         }

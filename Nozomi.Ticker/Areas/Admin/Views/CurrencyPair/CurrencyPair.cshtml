@@ -102,8 +102,8 @@
         
         <!-- AnalysedComponent AddModal -->
         <b-modal ref="ac-add-modal" size="xl" 
-                 title="Create an Analysed Component for @string.Concat(Model.CurrencyPair.MainCurrencyAbbrv, 
-                                                             Model.CurrencyPair.CounterCurrencyAbbrv)" 
+                 title="Create an Analysed Component for @string.Concat(Model.CurrencyPair.MainTicker, 
+                                                             Model.CurrencyPair.CounterTicker)" 
                  ok-title="Create" v-on:ok="handleAcAddOk">
             <b-form v-on:submit.stop.prevent="onAcAddSubmit">
                 <b-form-group label="Type">
@@ -214,8 +214,8 @@
                     })),
                 editCPForm: {
                     id: @Model.CurrencyPair.Id,
-                    mainCurrencyAbbrv: '@Model.CurrencyPair.MainCurrencyAbbrv',
-                    counterCurrencyAbbrv: '@Model.CurrencyPair.CounterCurrencyAbbrv',
+                    mainCurrencyAbbrv: '@Model.CurrencyPair.MainTicker',
+                    counterCurrencyAbbrv: '@Model.CurrencyPair.CounterTicker',
                     currencyPairType: @currencyPairType,
                     apiUrl: '@Model.CurrencyPair.APIUrl',
                     defaultComponent: '@Model.CurrencyPair.DefaultComponent',

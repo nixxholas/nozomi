@@ -225,7 +225,7 @@ namespace Nozomi.Service.Events.Analysis
                 .Where(cp => cp.Source.SourceCurrencies.Any(sc => sc.CurrencyId.Equals(currencyId)
                                                                   // And that the main currency abbreviation matches
                                                                   // the currency's abbreviation
-                                                                  && sc.Currency.Abbreviation.Equals(cp.MainCurrencyAbbrv)))
+                                                                  && sc.Currency.Abbreviation.Equals(cp.MainTicker)))
                 .Include(cp => cp.AnalysedComponents)
                 .ThenInclude(ac => ac.AnalysedHistoricItems);
 

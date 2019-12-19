@@ -18,12 +18,12 @@ namespace Nozomi.Data.Models.Currency
     {
         public CurrencyPair() {}
 
-        public CurrencyPair(CurrencyPairType currencyPairType, string mainCurrencyAbbrv, string counterCurrencyAbbrv, 
+        public CurrencyPair(CurrencyPairType currencyPairType, string mainTicker, string counterTicker, 
             string apiUrl, string defaultComponent, long sourceId, bool isEnabled = false)
         {
             CurrencyPairType = currencyPairType;
-            MainCurrencyAbbrv = mainCurrencyAbbrv;
-            CounterCurrencyAbbrv = counterCurrencyAbbrv;
+            MainTicker = mainTicker;
+            CounterTicker = counterTicker;
             APIUrl = apiUrl;
             DefaultComponent = defaultComponent;
             SourceId = sourceId;
@@ -52,14 +52,14 @@ namespace Nozomi.Data.Models.Currency
         public ICollection<Request> Requests { get; set; }
         
         [DataMember]
-        public string MainCurrencyAbbrv { get; set; }
+        public string MainTicker { get; set; }
         
         [DataMember]
-        public string CounterCurrencyAbbrv { get; set; }
+        public string CounterTicker { get; set; }
         
         public bool IsValid()
         {
-            return !string.IsNullOrEmpty(MainCurrencyAbbrv) && !string.IsNullOrEmpty(CounterCurrencyAbbrv) 
+            return !string.IsNullOrEmpty(MainTicker) && !string.IsNullOrEmpty(CounterTicker) 
                    && CurrencyPairType > 0 && (!string.IsNullOrEmpty(APIUrl))
                                           && (!string.IsNullOrEmpty(DefaultComponent))
                                           && (SourceId > 0);

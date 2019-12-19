@@ -12,24 +12,35 @@ using Nozomi.Data.ViewModels.CurrencyPair;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Data;
+using Nozomi.Service.Events.Interfaces;
 using Nozomi.Service.Services.Interfaces;
 
 namespace Nozomi.Service.Services
 {
     public class CurrencyPairService : BaseService<CurrencyPairService, NozomiDbContext>, ICurrencyPairService
     {
-        public CurrencyPairService(ILogger<CurrencyPairService> logger, 
+        private readonly ISourceEvent _sourceEvent;
+        
+        public CurrencyPairService(ILogger<CurrencyPairService> logger, ISourceEvent sourceEvent, 
             IUnitOfWork<NozomiDbContext> unitOfWork) : base(logger,
             unitOfWork)
         {
+            _sourceEvent = sourceEvent;
         }
 
         public bool Create(CreateCurrencyPairViewModel vm, string userId = null)
         {
-            _unitOfWork.GetRepository<CurrencyPair>().Add(new CurrencyPair(vm.CurrencyPairType,
-                vm.MainCurrencyAbbrv, vm.CounterCurrencyAbbrv, vm.ApiUrl, vm.DefaultComponent, vm.SourceId, vm.IsEnabled));
+            if (vm != null && vm.IsValid())
+            {
+                var source = _sourceEvent.GetByGuid(vm.SourceGuid);
                 
-            return _unitOfWork.Commit(userId) == 1;
+                _unitOfWork.GetRepository<CurrencyPair>().Add(new CurrencyPair(vm.CurrencyPairType,
+                    vm.MainTicker, vm.CounterTicker, vm.ApiUrl, vm.DefaultComponent, vm.SourceId, vm.IsEnabled));
+                
+                return _unitOfWork.Commit(userId) == 1;
+            }
+
+            return false;
         }
 
         public NozomiResult<string> Create(CreateCurrencyPair createCurrencyPair, string userId = null)
@@ -39,9 +50,9 @@ namespace Nozomi.Service.Services
                 _unitOfWork.GetRepository<CurrencyPair>()
                     .GetQueryable()
                     .AsNoTracking()
-                    .Any(cp => cp.MainCurrencyAbbrv.Equals(createCurrencyPair.MainCurrencyAbbrv,
+                    .Any(cp => cp.MainTicker.Equals(createCurrencyPair.MainCurrencyAbbrv,
                         StringComparison.InvariantCultureIgnoreCase)
-                               && cp.CounterCurrencyAbbrv.Equals(createCurrencyPair.CounterCurrencyAbbrv,
+                               && cp.CounterTicker.Equals(createCurrencyPair.CounterCurrencyAbbrv,
                                    StringComparison.InvariantCultureIgnoreCase)
                                && cp.SourceId.Equals(createCurrencyPair.SourceId))) 
                 return new NozomiResult<string>(
@@ -82,8 +93,8 @@ namespace Nozomi.Service.Services
                 APIUrl = createCurrencyPair.ApiUrl,
                 DefaultComponent = createCurrencyPair.DefaultComponent,
                 SourceId = createCurrencyPair.SourceId,
-                MainCurrencyAbbrv = createCurrencyPair.MainCurrencyAbbrv,
-                CounterCurrencyAbbrv = createCurrencyPair.CounterCurrencyAbbrv,
+                MainTicker = createCurrencyPair.MainCurrencyAbbrv,
+                CounterTicker = createCurrencyPair.CounterCurrencyAbbrv,
                 IsEnabled = createCurrencyPair.IsEnabled
             };
             
@@ -120,14 +131,14 @@ namespace Nozomi.Service.Services
                     .AsNoTracking()
                     .Any(cp => !cp.Id.Equals(updateCurrencyPair.Id) 
                                && cp.SourceId.Equals(updateCurrencyPair.SourceId)
-                               && cp.MainCurrencyAbbrv.Equals(cp.MainCurrencyAbbrv, StringComparison.InvariantCultureIgnoreCase)
-                               && cp.CounterCurrencyAbbrv.Equals(cp.CounterCurrencyAbbrv, StringComparison.InvariantCultureIgnoreCase)))
+                               && cp.MainTicker.Equals(cp.MainTicker, StringComparison.InvariantCultureIgnoreCase)
+                               && cp.CounterTicker.Equals(cp.CounterTicker, StringComparison.InvariantCultureIgnoreCase)))
                 return new NozomiResult<string>(
                     NozomiResultType.Failed, "Please ensure that the payload is valid and if the data you're " +
                                              "submitting does not contain a pre-existing ticker pair.");
 
-            cpToUpd.MainCurrencyAbbrv = updateCurrencyPair.MainCurrencyAbbrv;
-            cpToUpd.CounterCurrencyAbbrv = updateCurrencyPair.CounterCurrencyAbbrv;
+            cpToUpd.MainTicker = updateCurrencyPair.MainCurrencyAbbrv;
+            cpToUpd.CounterTicker = updateCurrencyPair.CounterCurrencyAbbrv;
             cpToUpd.SourceId = updateCurrencyPair.SourceId;
             cpToUpd.CurrencyPairType = updateCurrencyPair.CurrencyPairType;
             cpToUpd.APIUrl = updateCurrencyPair.ApiUrl;

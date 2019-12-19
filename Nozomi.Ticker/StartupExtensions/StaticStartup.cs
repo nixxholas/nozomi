@@ -554,8 +554,8 @@ namespace Nozomi.Ticker.StartupExtensions
                                 CurrencyPairType = CurrencyPairType.EXCHANGEABLE,
                                 APIUrl = "https://poloniex.com/public?command=returnTicker",
                                 DefaultComponent = "BTC_BTS/lowestAsk",
-                                MainCurrencyAbbrv = "BTC",
-                                CounterCurrencyAbbrv = "BTS",
+                                MainTicker = "BTC",
+                                CounterTicker = "BTS",
                                 SourceId = poloSource.Id,
                                 AnalysedComponents = new List<AnalysedComponent>()
                                 {
@@ -676,8 +676,8 @@ namespace Nozomi.Ticker.StartupExtensions
                                     APIUrl = "wss://stream.binance.com:9443/stream?streams=!ticker@arr",
                                     DefaultComponent = "b",
                                     SourceId = bnaSource.Id,
-                                    MainCurrencyAbbrv = "ETH",
-                                    CounterCurrencyAbbrv = "BTC"
+                                    MainTicker = "ETH",
+                                    CounterTicker = "BTC"
                                 },
                                 Guid = Guid.NewGuid(),
                                 RequestType = RequestType.WebSocket,
@@ -731,8 +731,8 @@ namespace Nozomi.Ticker.StartupExtensions
                                     APIUrl = "wss://stream.binance.com:9443/stream?streams=!ticker@arr",
                                     DefaultComponent = "b",
                                     SourceId = bnaSource.Id,
-                                    MainCurrencyAbbrv = "KNC",
-                                    CounterCurrencyAbbrv = "ETH"
+                                    MainTicker = "KNC",
+                                    CounterTicker = "ETH"
                                 },
                                 Guid = Guid.NewGuid(),
                                 RequestType = RequestType.WebSocket,

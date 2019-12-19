@@ -947,7 +947,7 @@ namespace Nozomi.Service.Events
                 .ThenInclude(cp => cp.Source)
                 .ThenInclude(s => s.SourceCurrencies)
                 .Where(ac => ac.CurrencyPair != null // Make sure the currency pair is not null
-                             && ac.CurrencyPair.MainCurrencyAbbrv.Equals(mainCurrency.Abbreviation) // Make sure the main ticker is the currency
+                             && ac.CurrencyPair.MainTicker.Equals(mainCurrency.Abbreviation) // Make sure the main ticker is the currency
                              && ac.CurrencyPair.Source != null && ac.CurrencyPair.Source.SourceCurrencies != null // Make sure the source currency is not empty
                              && ac.CurrencyPair.Source.SourceCurrencies // Second layer check.
                                  .Any(sc => sc.DeletedAt == null && sc.IsEnabled && sc.CurrencyId.Equals(currencyId)));

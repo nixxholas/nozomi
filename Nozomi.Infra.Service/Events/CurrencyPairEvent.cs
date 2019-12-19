@@ -34,7 +34,7 @@ namespace Nozomi.Service.Events
                 .GetQueryable()
                 .AsNoTracking()
                 .Where(cp => cp.DeletedAt == null && cp.IsEnabled
-                                                  && cp.MainCurrencyAbbrv.Equals(mainCurrencyAbbrv,
+                                                  && cp.MainTicker.Equals(mainCurrencyAbbrv,
                                                       StringComparison.InvariantCultureIgnoreCase))
                 .ToList();
         }
@@ -110,7 +110,7 @@ namespace Nozomi.Service.Events
                 .Where(cp => cp.IsEnabled && cp.DeletedAt == null && cp.SourceId > 0);
 
             if (!string.IsNullOrEmpty(mainTicker))
-                query = query.Where(cp => cp.MainCurrencyAbbrv.Equals(mainTicker));
+                query = query.Where(cp => cp.MainTicker.Equals(mainTicker));
             
             if (!string.IsNullOrEmpty(sourceGuid) && Guid.TryParse(sourceGuid, out var parsedSourceGuid))
                 query = query
@@ -131,9 +131,9 @@ namespace Nozomi.Service.Events
                         .OrderByDescending(cp => cp.Source.Name);
                     break;
                 default: // Handle all cases.
-                    query = orderAscending ? query.OrderBy(cp => string.Concat(cp.MainCurrencyAbbrv, 
-                        cp.CounterCurrencyAbbrv)) : query.OrderByDescending(cp => 
-                        string.Concat(cp.MainCurrencyAbbrv, cp.CounterCurrencyAbbrv));
+                    query = orderAscending ? query.OrderBy(cp => string.Concat(cp.MainTicker, 
+                        cp.CounterTicker)) : query.OrderByDescending(cp => 
+                        string.Concat(cp.MainTicker, cp.CounterTicker));
                     break;
             }
             
@@ -147,8 +147,8 @@ namespace Nozomi.Service.Events
                 {
                     Guid = cp.Guid,
                     Type = cp.CurrencyPairType,
-                    MainTicker = cp.MainCurrencyAbbrv,
-                    CounterTicker = cp.CounterCurrencyAbbrv,
+                    MainTicker = cp.MainTicker,
+                    CounterTicker = cp.CounterTicker,
                     SourceGuid = cp.Source.Guid.ToString(),
                     Source = new SourceViewModel
                     {
@@ -182,7 +182,7 @@ namespace Nozomi.Service.Events
             return _unitOfWork.GetRepository<CurrencyPair>()
                 .GetQueryable()
                 .AsNoTracking()
-                .Where(cp => cp.DeletedAt == null && cp.IsEnabled && cp.MainCurrencyAbbrv.Equals(mainTicker))
+                .Where(cp => cp.DeletedAt == null && cp.IsEnabled && cp.MainTicker.Equals(mainTicker))
                 .LongCount();
         }
 
@@ -193,7 +193,7 @@ namespace Nozomi.Service.Events
                 .GetQueryable()
                 .AsNoTracking()
                 .Where(cp => cp.DeletedAt == null && cp.IsEnabled
-                                                  && cp.CounterCurrencyAbbrv.Equals(counterCurrencyAbbrv,
+                                                  && cp.CounterTicker.Equals(counterCurrencyAbbrv,
                                                       StringComparison.InvariantCultureIgnoreCase))
                 .ToList();
         }
@@ -207,7 +207,7 @@ namespace Nozomi.Service.Events
                     .GetQueryable()
                     .AsNoTracking()
                     .Where(cp => cp.DeletedAt == null && cp.IsEnabled
-                                                      && string.Concat(cp.MainCurrencyAbbrv, cp.CounterCurrencyAbbrv)
+                                                      && string.Concat(cp.MainTicker, cp.CounterTicker)
                                                           .Equals(tickerPairAbbreviation,
                                                               StringComparison.InvariantCultureIgnoreCase));
 
@@ -374,8 +374,8 @@ namespace Nozomi.Service.Events
                 .Include(cp => cp.Source)
                 .Select(cp => new DistinctCurrencyPairResponse()
                 {
-                    MainTicker = cp.MainCurrencyAbbrv,
-                    CounterTicker = cp.CounterCurrencyAbbrv,
+                    MainTicker = cp.MainTicker,
+                    CounterTicker = cp.CounterTicker,
                     CurrencyPairType = cp.CurrencyPairType,
                     Id = cp.Id,
                     SourceAbbreviation = cp.Source.Abbreviation,

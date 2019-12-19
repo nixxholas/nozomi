@@ -18,7 +18,7 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
 
             entityTypeBuilder.HasAlternateKey(cp => new
             {
-                cp.MainCurrencyAbbrv, cp.CounterCurrencyAbbrv,
+                MainCurrencyAbbrv = cp.MainTicker, CounterCurrencyAbbrv = cp.CounterTicker,
                 cp.SourceId
             }).HasName("CurrencyPair_AK_MainCurrency_CounterCurrency_Source");
 

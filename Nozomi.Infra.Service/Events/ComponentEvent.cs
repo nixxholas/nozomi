@@ -203,7 +203,7 @@ namespace Nozomi.Service.Events
             return _unitOfWork.GetRepository<CurrencyPair>()
                 .GetQueryable(cp => cp.DeletedAt == null && cp.IsEnabled)
                 .AsNoTracking()
-                .Where(cp => cp.MainCurrencyAbbrv.Equals(mainCurrencyAbbrv, StringComparison.InvariantCultureIgnoreCase))
+                .Where(cp => cp.MainTicker.Equals(mainCurrencyAbbrv, StringComparison.InvariantCultureIgnoreCase))
                 .Include(cp => cp.Requests)
                 .ThenInclude(cpr => cpr.RequestComponents)
                 .SelectMany(cp => cp.Requests
@@ -359,7 +359,7 @@ namespace Nozomi.Service.Events
                     .SelectMany(cs => cs.Source
                         .CurrencyPairs
                         .Where(cp => cp.IsEnabled && cp.DeletedAt == null
-                                                  && cp.CounterCurrencyAbbrv.Equals(
+                                                  && cp.CounterTicker.Equals(
                                                       CoreConstants.GenericCounterCurrency))
                         .SelectMany(cp => cp.Requests
                             .Where(cpr => cpr.IsEnabled && cpr.DeletedAt == null)

@@ -70,14 +70,14 @@ namespace Nozomi.Service.HostedServices.StaticUpdater
                                 .Select(cp => new UniqueTickerResponse
                                 {
                                     MainTickerAbbreviation = 
-                                        cp.MainCurrencyAbbrv,
+                                        cp.MainTicker,
                                     MainTickerName = cp.Source.SourceCurrencies
-                                        .SingleOrDefault(sc => sc.Currency.Abbreviation.Equals(cp.MainCurrencyAbbrv))?
+                                        .SingleOrDefault(sc => sc.Currency.Abbreviation.Equals(cp.MainTicker))?
                                         .Currency?
                                         .Name,
-                                    CounterTickerAbbreviation = cp.CounterCurrencyAbbrv,
+                                    CounterTickerAbbreviation = cp.CounterTicker,
                                     CounterTickerName = cp.Source.SourceCurrencies
-                                        .SingleOrDefault(sc => sc.Currency.Abbreviation.Equals(cp.CounterCurrencyAbbrv))?
+                                        .SingleOrDefault(sc => sc.Currency.Abbreviation.Equals(cp.CounterTicker))?
                                         .Currency?
                                         .Name,
                                     LastUpdated = cp.ModifiedAt,

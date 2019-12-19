@@ -32,7 +32,7 @@ namespace Nozomi.Infra.Analysis.Service.Events
                 .GetQueryable()
                 .AsNoTracking()
                 .Where(cp => cp.IsEnabled && cp.DeletedAt == null
-                             && cp.MainCurrencyAbbrv.Equals(abbrv, StringComparison.InvariantCultureIgnoreCase))
+                             && cp.MainTicker.Equals(abbrv, StringComparison.InvariantCultureIgnoreCase))
                 .Include(cp => cp.AnalysedComponents
                     .Where(ac => ac.IsEnabled && ac.DeletedAt == null
                                  && ac.ComponentType.Equals(AnalysedComponentType.CurrentAveragePrice)))
@@ -41,7 +41,7 @@ namespace Nozomi.Infra.Analysis.Service.Events
             // Obtain the uncomputed first
             foreach (var cPair in cPairs)
             {
-                var counterCurrency = cPair.CounterCurrencyAbbrv.ToUpper();
+                var counterCurrency = cPair.CounterTicker.ToUpper();
                 
                 var avgPrice = cPair.AnalysedComponents.FirstOrDefault(ac =>
                     ac.ComponentType.Equals(AnalysedComponentType.CurrentAveragePrice));

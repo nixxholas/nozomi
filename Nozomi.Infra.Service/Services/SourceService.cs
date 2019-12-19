@@ -377,9 +377,9 @@ namespace Nozomi.Service.Services
                                         .GetRepository<CurrencyPair>()
                                         .GetQueryable()
                                         .AsNoTracking()
-                                        .Any(cp => cp.MainCurrencyAbbrv.Equals(currencyPair.MainCurrencyAbbrv
+                                        .Any(cp => cp.MainTicker.Equals(currencyPair.MainTicker
                                                        ,StringComparison.InvariantCultureIgnoreCase)
-                                        && cp.CounterCurrencyAbbrv.Equals(currencyPair.CounterCurrencyAbbrv,
+                                        && cp.CounterTicker.Equals(currencyPair.CounterTicker,
                                             StringComparison.InvariantCultureIgnoreCase)
                                         && cp.SourceId.Equals(ucp.CurrencySourceId)))
                                     {
