@@ -6,17 +6,9 @@ using Nozomi.Data.ViewModels.Source;
 
 namespace Nozomi.Data.ViewModels.CurrencyPair
 {
-    public class CurrencyPairViewModel
+    public class CurrencyPairViewModel : CreateCurrencyPairViewModel
     {
         public Guid Guid { get; set; }
-        
-        public CurrencyPairType Type { get; set; }
-        
-        public string MainTicker { get; set; }
-        
-        public string CounterTicker { get; set; }
-        
-        public string SourceGuid { get; set; }
         
         public SourceViewModel Source { get; set; }
         
