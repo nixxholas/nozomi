@@ -45,7 +45,7 @@
                                             <div class="tile is-child" v-if="oidcIsAuthenticated">
                                                 <p class="heading">Have a component to add?
                                                 <p class="is-4">
-                                                    <CreateAcComponentModal :currency-slug="data.slug"></CreateAcComponentModal>
+                                                    <CreateAcComponentModal :currency-slug="data.slug" />
                                                 </p>
                                             </div>
                                             
@@ -128,9 +128,21 @@
                                     <section class="hero">
                                         <div class="hero-body">
                                             <div class="container">
-                                                <h1 class="title">
-                                                    Market Pairs
-                                                </h1>
+                                                <nav class="level">
+                                                    <!-- Left side -->
+                                                    <div class="level-left">
+                                                        <div class="level-item">
+                                                            <h1 class="title">
+                                                                Market Pairs
+                                                            </h1>
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- Right side -->
+                                                    <div class="level-right">
+                                                        <CurrencyPairModal v-if="oidcIsAuthenticated" />
+                                                    </div>
+                                                </nav>
                                                 <CurrencyPairsTable :main-ticker="data.abbreviation" />
                                             </div>
                                         </div>
@@ -194,13 +206,14 @@
                 </div>
             </div>
         </section>
-        <b-loading :active.sync="loading" :can-cancel="false" :is-full-page="false"></b-loading>
+        <b-loading :active.sync="loading" :can-cancel="false" :is-full-page="false" />
     </div>
 </template>
 
 <script>
     import {createChart} from 'lightweight-charts';
     import {mapGetters} from 'vuex';
+    import CurrencyPairModal from '@/components/modals/currency-pair-modal';
     import CreateAcComponentModal from '@/components/modals/create-analysed-component-modal';
     import AnalysedComponentService from "@/services/AnalysedComponentService";
     import AnalysedHistoricItemService from "@/services/AnalysedHistoricItemService";
@@ -217,7 +230,7 @@
             ]),
         },
         props: ['slug'],
-        components: {CurrencyPairsTable, CreateAcComponentModal},
+        components: {CurrencyPairModal, CurrencyPairsTable, CreateAcComponentModal},
         beforeMount: function () {
             let self = this;
             self.loading = true;
