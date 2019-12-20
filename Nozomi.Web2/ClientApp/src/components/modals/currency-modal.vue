@@ -10,7 +10,7 @@
         </button>
 
         <b-modal has-modal-card trap-focus :active.sync="isModalActive">
-            <b-loading :active.sync="isModalLoading" :can-cancel="false"></b-loading>
+            <b-loading :active.sync="isModalLoading" :can-cancel="false" />
             <!--https://stackoverflow.com/questions/48028718/using-event-modifier-prevent-in-vue-to-submit-form-without-redirection-->
             <form v-on:submit.prevent="create()" class="has-text-justified">
                 <div class="modal-card">
@@ -19,7 +19,7 @@
                     </header>
                     <section class="modal-card-body">
                         <b-field label="Type">
-                            <b-select placeholder="Pick one!" v-model="form.sourceType">
+                            <b-select placeholder="Pick one!" v-model="form.currencyTypeGuid">
                                 <option
                                         v-for="option in types"
                                         :value="option.guid"
@@ -95,7 +95,7 @@
                             </template>
                             <b-input maxlength="300"
                                      type="textarea"
-                                     v-model="form.description"></b-input>
+                                     v-model="form.description" />
                         </b-field>
 
                         <b-field>
@@ -156,14 +156,14 @@
                 isModalActive: false,
                 isModalLoading: false,
                 form: {
-                    sourceType: "",
+                    currencyTypeGuid: "",
                     abbreviation: "",
                     slug: "",
                     name: "",
                     denominations: 0,
                     denominationName: "",
                     logoPath: "",
-                    description: "",
+                    description: null,
                     apiDocsUrl: ""
                 },
                 types: [],
@@ -214,7 +214,7 @@
                         .then(function (response) {
                             // Reset the form data regardless
                             self.form = {
-                                sourceType: "",
+                                currencyTypeGuid: "",
                                 abbreviation: "",
                                 slug: "",
                                 name: "",
@@ -274,7 +274,7 @@
                         // Update the source type
                         if (self.types && self.currency.currencyTypeGuid
                             && self.types.filter(t => t.guid === self.currency.currencyTypeGuid).length > 0) {
-                            self.form.sourceType = self.types.filter(t => t.guid === self.currency.currencyTypeGuid)[0].guid;
+                            self.form.currencyTypeGuid = self.types.filter(t => t.guid === self.currency.currencyTypeGuid)[0].guid;
                         }
                     }
                 });
