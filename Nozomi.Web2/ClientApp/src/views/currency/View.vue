@@ -140,7 +140,8 @@
 
                                                     <!-- Right side -->
                                                     <div class="level-right">
-                                                        <CurrencyPairModal v-if="oidcIsAuthenticated" />
+                                                        <CurrencyPairModal v-if="oidcIsAuthenticated" 
+                                                                           :currency="data"/>
                                                     </div>
                                                 </nav>
                                                 <CurrencyPairsTable :main-ticker="data.abbreviation" />
