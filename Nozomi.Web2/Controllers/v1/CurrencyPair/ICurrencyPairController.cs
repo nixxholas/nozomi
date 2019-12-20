@@ -16,6 +16,8 @@ namespace Nozomi.Web2.Controllers.v1.CurrencyPair
         
         IActionResult Create(CreateCurrencyPairViewModel vm);
 
+        IActionResult Edit(UpdateCurrencyPairViewModel vm);
+
         /// <summary>
         /// An explicitly-defined variation of the GET Ticker API, allows the user to explicitly call a single ticker
         /// when the primary key is known to the caller.

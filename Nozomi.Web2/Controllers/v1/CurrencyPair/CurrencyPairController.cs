@@ -48,7 +48,7 @@ namespace Nozomi.Web2.Controllers.v1.CurrencyPair
         }
 
         [HttpGet]
-        public IActionResult Count(string mainTicker = null)
+        public IActionResult Count([FromQuery]string mainTicker = null)
         {
             return Ok(_currencyPairEvent.GetCount(mainTicker));
         }
@@ -67,6 +67,26 @@ namespace Nozomi.Web2.Controllers.v1.CurrencyPair
             {
                 // Create the entity
                 _currencyPairService.Create(vm, sub);
+                return Ok();
+            }
+
+            return BadRequest("Invalid payload.");
+        }
+
+        [Authorize(Roles = NozomiPermissions.AllowAllStaffRoles)]
+        [HttpPut]
+        public IActionResult Edit([FromBody]UpdateCurrencyPairViewModel vm)
+        {
+            var sub = ((ClaimsIdentity) User.Identity)
+                .Claims.SingleOrDefault(c => c.Type.Equals(JwtClaimTypes.Subject))?.Value;
+
+            if (string.IsNullOrWhiteSpace(sub))
+                return BadRequest("Please login again. Your session may have expired!");
+            
+            if (vm.IsValid())
+            {
+                // Create the entity
+                _currencyPairService.Update(vm, sub);
                 return Ok();
             }
 
