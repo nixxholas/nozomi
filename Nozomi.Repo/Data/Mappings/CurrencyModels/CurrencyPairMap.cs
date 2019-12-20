@@ -23,6 +23,13 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                 cp.SourceId
             });
 
+            entityTypeBuilder.Property(cp => cp.MainTicker)
+                .HasConversion(val => val.ToUpperInvariant(), 
+                    val => val);
+            entityTypeBuilder.Property(cp => cp.CounterTicker)
+                .HasConversion(val => val.ToUpperInvariant(), 
+                    val => val);
+
             entityTypeBuilder.Property(cp => cp.APIUrl).IsRequired();
             entityTypeBuilder.Property(cp => cp.DefaultComponent).IsRequired();
 
