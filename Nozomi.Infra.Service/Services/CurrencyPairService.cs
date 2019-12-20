@@ -20,26 +20,64 @@ namespace Nozomi.Service.Services
     public class CurrencyPairService : BaseService<CurrencyPairService, NozomiDbContext>, ICurrencyPairService
     {
         private readonly ISourceEvent _sourceEvent;
+        private readonly ICurrencySourceService _currencySourceService;
         
         public CurrencyPairService(ILogger<CurrencyPairService> logger, ISourceEvent sourceEvent, 
-            IUnitOfWork<NozomiDbContext> unitOfWork) : base(logger,
+            ICurrencySourceService currencySourceService, IUnitOfWork<NozomiDbContext> unitOfWork) : base(logger,
             unitOfWork)
         {
             _sourceEvent = sourceEvent;
+            _currencySourceService = currencySourceService;
         }
 
         public bool Create(CreateCurrencyPairViewModel vm, string userId = null)
         {
             if (vm != null && vm.IsValid())
             {
-                var source = _sourceEvent.GetByGuid(vm.SourceGuid);
-
-                if (source != null)
+                var source = _sourceEvent.GetByGuid(vm.SourceGuid, true);
+                
+                // Obtain currencies needed first, if it ain't there, make it.
+                if (source != null && 
+                    _currencySourceService.EnsurePairIsCreated(vm.MainTicker, vm.CounterTicker, source.Id, userId))
                 {
                     _unitOfWork.GetRepository<CurrencyPair>().Add(new CurrencyPair(vm.Type,
                         vm.MainTicker, vm.CounterTicker, vm.ApiUrl, vm.DefaultComponent, source.Id, vm.IsEnabled));
                 
                     return _unitOfWork.Commit(userId) == 1;   
+                }
+            }
+
+            return false;
+        }
+
+        public bool Update(UpdateCurrencyPairViewModel vm, string userId = null)
+        {
+            if (vm != null && vm.IsValid())
+            {
+                var source = _sourceEvent.GetByGuid(vm.SourceGuid, true);
+                
+                // Obtain currencies needed first, if it ain't there, make it.
+                if (source != null && 
+                    _currencySourceService.EnsurePairIsCreated(vm.MainTicker, vm.CounterTicker, source.Id, userId))
+                {
+                    var currencyPair = _unitOfWork.GetRepository<CurrencyPair>()
+                        .GetQueryable()
+                        .AsTracking()
+                        .SingleOrDefault(cp => cp.Guid.Equals(vm.Guid));
+
+                    if (currencyPair != null)
+                    {
+                        currencyPair.CurrencyPairType = vm.Type;
+                        currencyPair.MainTicker = vm.MainTicker;
+                        currencyPair.CounterTicker = vm.CounterTicker;
+                        currencyPair.APIUrl = vm.ApiUrl;
+                        currencyPair.DefaultComponent = vm.DefaultComponent;
+                        currencyPair.SourceId = source.Id;
+                        currencyPair.IsEnabled = source.IsEnabled;
+
+                        _unitOfWork.GetRepository<CurrencyPair>().Update(currencyPair);
+                        return _unitOfWork.Commit(userId) == 1;
+                    }
                 }
             }
 

@@ -10,6 +10,8 @@ namespace Nozomi.Service.Services.Interfaces
     public interface ICurrencyPairService
     {
         bool Create(CreateCurrencyPairViewModel vm, string userId = null);
+
+        bool Update(UpdateCurrencyPairViewModel vm, string userId = null);
         
         NozomiResult<string> Create(CreateCurrencyPair createCurrencyPair, string userId = null);
 
