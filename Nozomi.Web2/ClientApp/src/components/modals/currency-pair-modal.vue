@@ -256,7 +256,8 @@
 
                     // If currency isn't null, it means we're editing an existing one.
                     if (self.currency) {
-                        self.form = self.currency; // Set first
+                        // self.form = self.currency; // Set first
+                        self.form.mainTicker = self.currency.slug;
 
                         // Update the currency pair type
                         // if (self.types && self.currency.currencyTypeGuid
