@@ -66,8 +66,10 @@ namespace Nozomi.Web2.Controllers.v1.CurrencyPair
             if (vm.IsValid())
             {
                 // Create the entity
-                _currencyPairService.Create(vm, sub);
-                return Ok();
+                if (_currencyPairService.Create(vm, sub))
+                    return Ok();
+                
+                return BadRequest("Incorrect data was presented.");
             }
 
             return BadRequest("Invalid payload.");
