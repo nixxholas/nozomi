@@ -32,7 +32,7 @@ namespace Nozomi.Service.Services
 
         public void Create(CreateCurrencyViewModel vm, string userId)
         {
-            if (vm.IsValid() && string.IsNullOrWhiteSpace(userId))
+            if (vm.IsValid() && !string.IsNullOrWhiteSpace(userId))
             {
                 if (_currencyEvent.Exists(vm.Slug))
                     return;
