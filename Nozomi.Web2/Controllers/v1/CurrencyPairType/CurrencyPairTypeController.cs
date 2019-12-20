@@ -17,9 +17,9 @@ namespace Nozomi.Web2.Controllers.v1.CurrencyPairType
         }
 
         [HttpGet]
-        public NozomiResult<JsonResult> All()
+        public IActionResult All()
         {
-            return new NozomiResult<JsonResult>(new JsonResult(_currencyPairTypeEvent.All()));
+            return Ok(_currencyPairTypeEvent.All());
         }
     }
 }
