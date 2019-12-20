@@ -58,11 +58,11 @@
                 </b-table-column>
 
                 <b-table-column v-if="oidcIsAuthenticated">
-                    <CurrencyModal :currency="props.row"></CurrencyModal>
+                    <CurrencyModal :currency="props.row" />
                 </b-table-column>
             </template>
         </b-table>
-        <b-loading :active.sync="dataLoading"></b-loading>
+        <b-loading :active.sync="dataLoading" />
     </div>
 </template>
 

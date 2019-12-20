@@ -15,11 +15,11 @@
 
         <b-field grouped group-multiline v-if="oidcIsAuthenticated">
             <div class="control">
-                <CurrencyModal class="mb-4" v-if="oidcIsAuthenticated"></CurrencyModal>
+                <CurrencyModal class="mb-4" v-if="oidcIsAuthenticated" />
             </div>
         </b-field>
         
-        <CurrencyTable></CurrencyTable>
+        <CurrencyTable />
     </div>
 </template>
 
