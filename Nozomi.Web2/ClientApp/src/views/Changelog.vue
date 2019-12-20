@@ -43,6 +43,16 @@
                                 </ul>
                             </div>
                         </div>
+                        <div class="timeline-item is-primary">
+                            <div class="timeline-marker is-primary"></div>
+                            <div class="timeline-content">
+                                <p class="heading">21 December 2019 - <b>preview 4</b></p>
+                                <ul>
+                                    <li>General hotfixes and improvements across Nozomi Web</li>
+                                    <li>Currency Pairs Creation Interface</li>
+                                </ul>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
