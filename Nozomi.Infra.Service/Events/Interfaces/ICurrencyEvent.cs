@@ -16,7 +16,9 @@ namespace Nozomi.Service.Events.Interfaces
         bool Exists(string slug);
 
         CurrencyViewModel Get(string slug);
-        
+
+        IEnumerable<BaseCurrencyViewModel> All(string slug = null);
+
         IEnumerable<CurrencyViewModel> All(string currencyType = "CRYPTO", int itemsPerIndex = 20, int index = 0, 
             ICollection<ComponentType> typesToTake = null,
             ICollection<ComponentType> typesToDeepen = null);

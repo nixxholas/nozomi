@@ -85,6 +85,33 @@ namespace Nozomi.Service.Events
                 .SingleOrDefault();
         }
 
+        public IEnumerable<BaseCurrencyViewModel> All(string slug = null)
+        {
+            if (string.IsNullOrWhiteSpace(slug))
+                return _unitOfWork.GetRepository<Currency>()
+                    .GetQueryable()
+                    .AsNoTracking()
+                    .Where(c => c.DeletedAt == null && c.IsEnabled)
+                    .Select(c => new BaseCurrencyViewModel
+                    {
+                        Abbreviation = c.Abbreviation,
+                        Name = c.Name,
+                        Slug = c.Slug
+                    });
+            
+            return _unitOfWork.GetRepository<Currency>()
+                .GetQueryable()
+                .AsNoTracking()
+                .Where(c => c.DeletedAt == null && c.IsEnabled
+                            && c.Slug.Contains(slug))
+                .Select(c => new BaseCurrencyViewModel
+                {
+                    Abbreviation = c.Abbreviation,
+                    Name = c.Name,
+                    Slug = c.Slug
+                });
+        }
+
         public IEnumerable<CurrencyViewModel> All(string currencyType = "CRYPTO", int itemsPerIndex = 20, int index = 0, 
             ICollection<ComponentType> typesToTake = null, ICollection<ComponentType> typesToDeepen = null)
         {
