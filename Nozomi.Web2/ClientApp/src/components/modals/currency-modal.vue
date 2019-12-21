@@ -109,18 +109,6 @@
                                     expanded>
                             </b-input>
                         </b-field>
-
-                        <b-field>
-                            <template slot="label">
-                                API Documentation URL
-                            </template>
-                            <b-input
-                                    type="url"
-                                    placeholder=""
-                                    v-model="form.apiDocsUrl"
-                                    expanded>
-                            </b-input>
-                        </b-field>
                     </section>
 
                     <footer class="modal-card-foot">
@@ -151,6 +139,21 @@
                 'oidcUser'
             ])
         },
+        watch: {
+            currency: function(newVal) { // watch it
+                let self = this;
+
+                if (newVal) {
+                    self.form = newVal; // Set first
+
+                    // Update the source type
+                    if (self.types && newVal.currencyTypeGuid
+                        && self.types.filter(t => t.guid === newVal.currencyTypeGuid).length > 0) {
+                        self.form.currencyTypeGuid = self.types.filter(t => t.guid === newVal.currencyTypeGuid)[0].guid;
+                    }
+                }
+            }
+        },
         data: function () {
             return {
                 isModalActive: false,
@@ -163,8 +166,7 @@
                     denominations: 0,
                     denominationName: "",
                     logoPath: "",
-                    description: null,
-                    apiDocsUrl: ""
+                    description: null
                 },
                 types: [],
                 typesIsLoading: false
@@ -221,8 +223,7 @@
                                 denominations: 0,
                                 denominationName: "",
                                 logoPath: "",
-                                description: "",
-                                apiDocsUrl: ""
+                                description: ""
                             };
 
                             if (response.status === 200) {
@@ -269,6 +270,7 @@
 
                     // If currency isn't null, it means we're editing an existing one.
                     if (self.currency) {
+                        console.dir(self.currency);
                         self.form = self.currency; // Set first
 
                         // Update the source type
