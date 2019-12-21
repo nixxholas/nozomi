@@ -29,6 +29,8 @@ namespace Nozomi.Web2.Controllers.v1.Currency
 
         NozomiResult<ICollection<string>> ListAllSlugs();
 
+        IActionResult List(string slug = null);
+
         ICollection<CurrencyViewModel> ListAll(int page = 0, int itemsPerPage = 50, 
             string currencyTypeName = null, bool orderAscending = true, string orderingParam = "Name");
 
