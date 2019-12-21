@@ -26,9 +26,13 @@ export default {
         });
     },
 
-    list(slug = null) {
+    list(slug = "") {
         return new Promise((resolve, reject) => {
-            axios.get('/api/Currency/List?' + slug)
+            axios.get('/api/Currency/List', {
+                params: {
+                    slug: slug
+                }
+            })
                 .then(function (response) {
                     resolve(response.data);
                 }).catch(function (error) {
