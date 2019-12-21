@@ -101,8 +101,8 @@ namespace Nozomi.Web2.Controllers.v1.Currency
             return Ok(_currencyPairEvent.GetCount(slug));
         }
 
-        [HttpGet("{slug}")]
-        public CurrencyViewModel Get(string slug)
+        [HttpGet]
+        public CurrencyViewModel Get([FromQuery]string slug)
         {
             return _currencyEvent.Get(slug);
         }
@@ -113,8 +113,8 @@ namespace Nozomi.Web2.Controllers.v1.Currency
             return new NozomiResult<ICollection<string>>(_currencyEvent.ListAllSlugs());
         }
 
-        [HttpGet("{slug}")]
-        public IActionResult List(string slug = null)
+        [HttpGet]
+        public IActionResult List([FromQuery]string slug = null)
         {
             return Ok(_currencyEvent.All(slug));
         }
