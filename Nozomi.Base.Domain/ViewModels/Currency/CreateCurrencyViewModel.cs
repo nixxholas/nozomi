@@ -3,15 +3,9 @@ using FluentValidation;
 
 namespace Nozomi.Data.ViewModels.Currency
 {
-    public class CreateCurrencyViewModel
+    public class CreateCurrencyViewModel : BaseCurrencyViewModel
     {
         public Guid CurrencyTypeGuid { get; set; }
-        
-        public string Abbreviation { get; set; }
-        
-        public string Slug { get; set; }
-        
-        public string Name { get;set; }
         
         public string LogoPath { get; set; }
         
