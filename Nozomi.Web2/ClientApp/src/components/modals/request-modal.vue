@@ -166,6 +166,15 @@
             request: Object,
             currentRoute: window.location.href // https://forum.vuejs.org/t/how-to-get-path-from-route-instance/26934/2
         },
+        watch: {
+            request: function(newVal) { // watch it
+                let self = this;
+
+                if (newVal) {
+                    self.form = newVal; // Set first
+                }
+            }
+        },
         methods: {
             ...mapActions('oidcStore', ['authenticateOidc', 'signOutOidc']),
             getCurrencyPairTickerPairStr: function (obj) {
