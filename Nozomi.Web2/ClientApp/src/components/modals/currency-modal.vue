@@ -270,7 +270,6 @@
 
                     // If currency isn't null, it means we're editing an existing one.
                     if (self.currency) {
-                        console.dir(self.currency);
                         self.form = self.currency; // Set first
 
                         // Update the source type
