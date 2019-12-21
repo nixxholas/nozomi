@@ -113,8 +113,8 @@ namespace Nozomi.Web2.Controllers.v1.Currency
             return new NozomiResult<ICollection<string>>(_currencyEvent.ListAllSlugs());
         }
 
-        [HttpGet]
-        public IActionResult List([FromQuery]string slug = null)
+        [HttpGet("{slug}")]
+        public IActionResult List(string slug = null)
         {
             return Ok(_currencyEvent.All(slug));
         }
