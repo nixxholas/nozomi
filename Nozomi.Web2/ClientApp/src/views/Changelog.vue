@@ -53,6 +53,16 @@
                                 </ul>
                             </div>
                         </div>
+                        <div class="timeline-item is-primary">
+                            <div class="timeline-marker is-primary"></div>
+                            <div class="timeline-content">
+                                <p class="heading">23 December 2019 - <b>preview 5</b></p>
+                                <ul>
+                                    <li>.NET Core 3.1 framework upgrade</li>
+                                    <li>Prepare for currency sources</li>
+                                </ul>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
