@@ -31,7 +31,7 @@
                         <div class="tile is-child is-vertical">
                             <b-tabs @change="onTabChange" type="is-toggle" v-model="activeTab" :animated="false" expanded>
                                 <b-tab-item label="Information">
-                                    <section class="section" v-if="data.description !== null">
+                                    <section class="section" v-if='(data.description !== null || !/\S/.test(data.description))'>
                                         <div class="container">
                                             <b-message>
                                                 {{ data.description }}
