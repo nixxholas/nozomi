@@ -226,7 +226,7 @@
             let self = this;
 
             // Synchronously call for data
-            CurrencyService.listAll()
+            CurrencyService.list()
                 .then(function (response) {
                     self.currencies = response;
                 })
