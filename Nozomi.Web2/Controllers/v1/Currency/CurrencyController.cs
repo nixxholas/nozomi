@@ -101,8 +101,8 @@ namespace Nozomi.Web2.Controllers.v1.Currency
             return Ok(_currencyPairEvent.GetCount(slug));
         }
 
-        [HttpGet]
-        public CurrencyViewModel Get([FromQuery]string slug)
+        [HttpGet("{slug}")]
+        public CurrencyViewModel Get(string slug)
         {
             return _currencyEvent.Get(slug);
         }
