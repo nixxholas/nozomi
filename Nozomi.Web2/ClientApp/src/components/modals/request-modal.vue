@@ -60,41 +60,14 @@
                         <b-tabs v-model="form.parentType" expanded class="has-text-dark">
                             <b-tab-item label="Currency">
                                 <b-field>
-                                    <b-dropdown v-if="currencies && currencies.length > 0"
-                                                position="is-top-right"
-                                                v-model="form.currency" aria-role="list">
-                                        <button class="button is-primary" type="button" slot="trigger">
-                                            <div v-if="form.currencySlug"
-                                                v-for="c in currencies">
-                                                <div v-if="c && c.slug == form.currencySlug && c.logoPath">
-                                                    <img
-                                                            alt="logo"
-                                                            :src="c.logoPath" class="mr-1"
-                                                            style="width: 24px; height: 24px; vertical-align: bottom;"/>
-                                                    {{ c.name }}
-                                                </div>
-                                            </div>
-                                            <div class="media" v-else>
-                                                <b-icon class="ml-1 mr-3" icon="money-bill-wave"/>
-                                                <span>Pick a currency</span>
-                                            </div>
-                                            <b-icon icon="caret-down"/>
-                                        </button>
-
-                                        <b-dropdown-item v-for="currency in currencies"
-                                                         :value="currency.slug" aria-role="listitem">
-                                            <div class="media">
-                                                <img v-if="currency.logoPath"
-                                                     alt="logo"
-                                                     :src="currency.logoPath" class="media-left mt-2"
-                                                     style="width: 24px; height: 24px; vertical-align: bottom;"/>
-                                                <div class="media-content">
-                                                    <h3>{{ currency.name }}</h3>
-                                                    <small>{{ currency.slug }}</small>
-                                                </div>
-                                            </div>
-                                        </b-dropdown-item>
-                                    </b-dropdown>
+                                    <b-select icon="money-bill" 
+                                            placeholder="Pick a currency"
+                                              v-if="currencies && currencies.length > 0"
+                                              v-model="form.currencySlug"
+                                              required>
+                                        <option v-for="c in currencies" 
+                                                :value="c.slug">{{ c.name }}</option>
+                                    </b-select>
                                     <b-message v-else>Oh no.. There aren't any currencies at the moment...</b-message>
                                 </b-field>
                             </b-tab-item>
@@ -290,9 +263,16 @@
             let self = this;
 
             // Synchronously call for data
-            CurrencyService.listAll()
+            CurrencyService.list()
                 .then(function (response) {
                     self.currencies = response;
+                    
+                    // if (response && response.length > 0) {
+                    //     let firstEl = response[0];
+                    //    
+                    //     if (firstEl && firstEl.currencySlug)
+                    //         this.form.currencySlug = firstEl.currencySlug;
+                    // }
                 })
                 .catch(function (error) {
                     // handle error
