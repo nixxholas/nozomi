@@ -83,9 +83,22 @@
                                     <section class="hero">
                                         <div class="hero-body">
                                             <div class="container">
-                                                <h1 class="title">
-                                                    Sources
-                                                </h1>
+                                                <nav class="level">
+                                                    <!-- Left side -->
+                                                    <div class="level-left">
+                                                        <div class="level-item">
+                                                            <h1 class="title">
+                                                                Sources
+                                                            </h1>
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- Right side -->
+                                                    <div class="level-right">
+                                                        <CurrencySourceModal v-if="oidcIsAuthenticated"
+                                                                             :defCurrencySlug="slug"/>
+                                                    </div>
+                                                </nav>
                                                 <b-table
                                                         :data="sources.data"
                                                         :loading="sources.loading"
@@ -216,6 +229,7 @@
     import {mapGetters} from 'vuex';
     import CurrencyPairModal from '@/components/modals/currency-pair-modal';
     import CreateAcComponentModal from '@/components/modals/create-analysed-component-modal';
+    import CurrencySourceModal from '@/components/modals/currency-source-modal';
     import AnalysedComponentService from "@/services/AnalysedComponentService";
     import AnalysedHistoricItemService from "@/services/AnalysedHistoricItemService";
     import CurrencyService from "@/services/CurrencyService";
@@ -231,7 +245,7 @@
             ]),
         },
         props: ['slug'],
-        components: {CurrencyPairModal, CurrencyPairsTable, CreateAcComponentModal},
+        components: {CurrencySourceModal, CurrencyPairModal, CurrencyPairsTable, CreateAcComponentModal},
         beforeMount: function () {
             let self = this;
             self.loading = true;
