@@ -33,7 +33,8 @@ namespace Nozomi.Web2.Controllers.v1.Currency
         IActionResult List(string slug = null);
 
         ICollection<CurrencyViewModel> ListAll(int page = 0, int itemsPerPage = 50, 
-            string currencyTypeName = null, bool orderAscending = true, string orderingParam = "Name");
+            string currencyTypeName = null, bool orderAscending = true, 
+            CurrencySortingEnum orderingParam = CurrencySortingEnum.None);
 
         NozomiResult<DetailedCurrencyResponse> Detailed(string slug);
 

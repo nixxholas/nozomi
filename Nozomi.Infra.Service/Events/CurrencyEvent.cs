@@ -240,16 +240,34 @@ namespace Nozomi.Service.Events
             if (!query.Any())
                 // https://docs.microsoft.com/en-us/dotnet/api/system.linq.enumerable.empty?view=netframework-4.8#examples
                 return Enumerable.Empty<CurrencyViewModel>();
-
-            if (currencySortingEnum != CurrencySortingEnum.None)
-                switch (currencySortingEnum)
-                {
-                    default:
-                        query = orderDescending
-                            ? query.OrderByDescending(c => c.Name)
-                            : query.OrderBy(c => c.Name);
-                        break;
-                }
+            
+            switch (currencySortingEnum) // Ignore case sensitivity
+            {
+                case CurrencySortingEnum.Abbreviation:
+                    query = !orderDescending
+                        ? query.OrderBy(c => c.Abbreviation)
+                        : query.OrderByDescending(c => c.Abbreviation);
+                    break;
+                case CurrencySortingEnum.Slug:
+                    query = !orderDescending 
+                        ? query.OrderBy(c => c.Slug) 
+                        : query.OrderByDescending(c => c.Slug);
+                    break;
+                case CurrencySortingEnum.Type:
+                    query = !orderDescending
+                        ? query
+                            .Include(c => c.CurrencyType)
+                            .OrderBy(c => c.CurrencyType.Name)
+                        : query
+                            .Include(c => c.CurrencyType)
+                            .OrderByDescending(c => c.CurrencyType.Name);
+                    break;
+                case CurrencySortingEnum.Name: // Handle all cases.
+                    query = !orderDescending 
+                        ? query.OrderBy(c => c.Name) 
+                        : query.OrderByDescending(c => c.Name);
+                    break;
+            }
 
             if (orderDescending && sortType != AnalysedComponentType.Unknown)
             {
@@ -1033,7 +1051,8 @@ namespace Nozomi.Service.Events
         }
 
         public IEnumerable<CurrencyViewModel> ListAll(int page = 0, int itemsPerPage = 50,
-            string currencyTypeName = null, bool orderAscending = true, string orderingParam = "Name")
+            string currencyTypeName = null, bool orderAscending = true, 
+            CurrencySortingEnum orderingParam = CurrencySortingEnum.None)
         {
             var query = _unitOfWork.GetRepository<Currency>()
                 .GetQueryable()
@@ -1046,17 +1065,17 @@ namespace Nozomi.Service.Events
                     .Where(c => c.CurrencyType.DeletedAt == null && c.CurrencyType.IsEnabled &&
                                 c.CurrencyType.Name.ToUpper().Equals(currencyTypeName.ToUpper()));
 
-            switch (orderingParam.ToLower()) // Ignore case sensitivity
+            switch (orderingParam) // Ignore case sensitivity
             {
-                case "abbreviation":
+                case CurrencySortingEnum.Abbreviation:
                     query = orderAscending
                         ? query.OrderBy(c => c.Abbreviation)
                         : query.OrderByDescending(c => c.Abbreviation);
                     break;
-                case "slug":
+                case CurrencySortingEnum.Slug:
                     query = orderAscending ? query.OrderBy(c => c.Slug) : query.OrderByDescending(c => c.Slug);
                     break;
-                case "currencytype":
+                case CurrencySortingEnum.Type:
                     query = orderAscending
                         ? query
                             .Include(c => c.CurrencyType)

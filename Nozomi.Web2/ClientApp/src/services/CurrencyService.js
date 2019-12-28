@@ -44,7 +44,7 @@ export default {
     },
 
     listAll(page = 0, itemsPerPage = 50, currencyTypeName = null, orderAscending = false,
-            orderingParam = "Abbreviation") {
+            orderingParam = 2) {
         return new Promise((resolve, reject) => {
             axios.get('/api/Currency/ListAll', {
                 params: {
