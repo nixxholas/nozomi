@@ -70,7 +70,7 @@
                                 <ul>
                                     <li>.NET Core 3.1 framework compatibility update and hotfixing</li>
                                     <li>Backend sorting is now working as intended</li>
-                                    <li>We literally added a huge supercharger to every part of the app</li>
+                                    <li>We literally added a huge supercharger to every part of th e app</li>
                                 </ul>
                             </div>
                         </div>
