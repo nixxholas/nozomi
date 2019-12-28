@@ -58,11 +58,11 @@
                 </b-table-column>
 
                 <b-table-column v-if="oidcIsAuthenticated">
-                    <CurrencyModal :currency="props.row" />
+                    <CurrencyModal :currency="props.row"/>
                 </b-table-column>
             </template>
         </b-table>
-        <b-loading :active.sync="dataLoading" />
+        <b-loading :active.sync="dataLoading"/>
     </div>
 </template>
 
@@ -88,7 +88,21 @@
         computed: {
             ...mapGetters('oidcStore', [
                 'oidcIsAuthenticated', 'oidcUser'
-            ])
+            ]),
+            sortFieldEnum: function () {
+                switch (this.sortField) {
+                    case "name":
+                        return 1;
+                    case "abbreviation":
+                        return 2;
+                    case "slug":
+                        return 3;
+                    case "currencyType":
+                        return 4;
+                    default:
+                        return 0;
+                }
+            }
         },
         data: function () {
             return {
@@ -144,7 +158,7 @@
 
                 let sortAscending = order === "asc";
 
-                CurrencyService.listAll(self.currentPage - 1, self.perPage, self.type, sortAscending, self.sortField)
+                CurrencyService.listAll(self.currentPage - 1, self.perPage, self.type, sortAscending, self.sortFieldEnum)
                     .then(function (res) {
                         self.data = res;
 
@@ -155,13 +169,13 @@
         mounted: function () {
             let self = this;
             let sortAscending = self.sortOrder === "asc";
-            
+
             CurrencyService.getCurrencyCount(self.type)
                 .then(function (res) {
                     self.dataCount = res;
 
-                    CurrencyService.listAll(self.currentPage - 1, self.perPage, 
-                        self.type, sortAscending, self.sortField)
+                    CurrencyService.listAll(self.currentPage - 1, self.perPage,
+                        self.type, sortAscending, self.sortFieldEnum)
                         .then(function (res) {
                             self.data = res;
                         });
