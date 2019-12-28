@@ -213,6 +213,7 @@ namespace Nozomi.Service.Events
         }
 
         public IEnumerable<CurrencyViewModel> All(string currencyType = "CRYPTO", int itemsPerIndex = 20, int index = 0,
+            CurrencySortingEnum currencySortingEnum = CurrencySortingEnum.None,
             AnalysedComponentType sortType = AnalysedComponentType.Unknown, bool orderDescending = true,
             ICollection<AnalysedComponentType> typesToTake = null,
             ICollection<AnalysedComponentType> typesToDeepen = null)
@@ -230,22 +231,32 @@ namespace Nozomi.Service.Events
                 .GetQueryable()
                 .AsNoTracking()
                 .Include(c => c.CurrencyType)
+                .Include(c => c.AnalysedComponents)
+                .ThenInclude(ac => ac.AnalysedHistoricItems)
                 .Where(c => c.DeletedAt == null && c.IsEnabled && c.CurrencyType != null
                             && c.CurrencyType.TypeShortForm
-                                .Equals(currencyType.ToUpper()))
-                .Include(c => c.AnalysedComponents)
-                .ThenInclude(ac => ac.AnalysedHistoricItems);
+                                .Equals(currencyType.ToUpper()));
 
             if (!query.Any())
                 // https://docs.microsoft.com/en-us/dotnet/api/system.linq.enumerable.empty?view=netframework-4.8#examples
                 return Enumerable.Empty<CurrencyViewModel>();
+
+            if (currencySortingEnum != CurrencySortingEnum.None)
+                switch (currencySortingEnum)
+                {
+                    default:
+                        query = orderDescending
+                            ? query.OrderByDescending(c => c.Name)
+                            : query.OrderBy(c => c.Name);
+                        break;
+                }
 
             if (orderDescending && sortType != AnalysedComponentType.Unknown)
             {
                 // Order by the market cap
                 var descendingQuery = query
                     .OrderByDescending(c => c.AnalysedComponents
-                        .Where(ac => ac.DeletedAt == null && ac.IsEnabled 
+                        .Where(ac => ac.DeletedAt == null && ac.IsEnabled
                                                           && ac.ComponentType.Equals(sortType))
                         .Select(ac => ac.Value)
                         .FirstOrDefault()
@@ -327,7 +338,7 @@ namespace Nozomi.Service.Events
             {
                 var ascendingQuery = query
                     .OrderBy(c => c.AnalysedComponents
-                        .Where(ac => ac.DeletedAt == null && ac.IsEnabled 
+                        .Where(ac => ac.DeletedAt == null && ac.IsEnabled
                                                           && ac.ComponentType.Equals(sortType))
                         .Select(ac => ac.Value)
                         .FirstOrDefault()

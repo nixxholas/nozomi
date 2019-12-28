@@ -3,7 +3,8 @@ import store from '../store/index';
 import Converter from '../helpers/converter';
 
 export default {
-    getCurrencyData(page = 1, itemsPerPage = 50, type = "CRYPTO", sortType = "MarketCap",
+    getCurrencyData(page = 1, itemsPerPage = 50, currencySortType = "None" , 
+                    type = "CRYPTO", sortType = "MarketCap",
                     typesToTake = ["MarketCap"], descendingOrder = true) {
         if (!typesToTake)
             typesToTake = ["MarketCap"];
@@ -13,6 +14,7 @@ export default {
                 Converter.arrayToString("typesToTake", typesToTake), {
                 params: {
                     currencyType: type,
+                    currencySortType: currencySortType,
                     itemsPerIndex: itemsPerPage,
                     index: (page - 1),
                     sortType: sortType, // 1 = Market cap

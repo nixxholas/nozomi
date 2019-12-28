@@ -16,6 +16,7 @@ namespace Nozomi.Web2.Controllers.v1.Currency
         IActionResult Edit(ModifyCurrencyViewModel vm);
 
         IActionResult All(string currencyType = "CRYPTO", int itemsPerIndex = 20, int index = 0,
+            CurrencySortingEnum currencySortType = CurrencySortingEnum.None,
             Data.Models.Web.Analytical.AnalysedComponentType sortType = 
                 Data.Models.Web.Analytical.AnalysedComponentType.Unknown, bool orderDescending = true,
             ICollection<Data.Models.Web.Analytical.AnalysedComponentType> typesToTake = null, 

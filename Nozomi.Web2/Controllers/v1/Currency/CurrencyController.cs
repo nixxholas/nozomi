@@ -75,13 +75,14 @@ namespace Nozomi.Web2.Controllers.v1.Currency
 
         [HttpGet]
         public IActionResult All([FromQuery]string currencyType = "CRYPTO", [FromQuery]int itemsPerIndex = 20,
-            [FromQuery]int index = 0, [FromQuery]Data.Models.Web.Analytical.AnalysedComponentType sortType = 
+            [FromQuery]int index = 0, [FromQuery]CurrencySortingEnum currencySortType = CurrencySortingEnum.None, 
+            [FromQuery]Data.Models.Web.Analytical.AnalysedComponentType sortType = 
                 Data.Models.Web.Analytical.AnalysedComponentType.MarketCap, [FromQuery]bool orderDescending = true, 
             [FromQuery]ICollection<Data.Models.Web.Analytical.AnalysedComponentType> typesToTake = null,
             [FromQuery]ICollection<Data.Models.Web.Analytical.AnalysedComponentType> typesToDeepen = null)
         {
-            return Ok(_currencyEvent.All(currencyType, itemsPerIndex, index, sortType, orderDescending, typesToTake,
-                typesToDeepen));
+            return Ok(_currencyEvent.All(currencyType, itemsPerIndex, index, currencySortType, sortType, 
+                orderDescending, typesToTake, typesToDeepen));
         }
 
         [HttpGet]

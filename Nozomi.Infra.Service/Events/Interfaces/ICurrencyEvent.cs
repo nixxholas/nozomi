@@ -24,6 +24,7 @@ namespace Nozomi.Service.Events.Interfaces
             ICollection<ComponentType> typesToDeepen = null);
         
         IEnumerable<CurrencyViewModel> All(string currencyType = "CRYPTO", int itemsPerIndex = 20, int index = 0, 
+            CurrencySortingEnum currencySortingEnum = CurrencySortingEnum.None,
             AnalysedComponentType sortType = AnalysedComponentType.Unknown, bool orderDescending = true, 
             ICollection<AnalysedComponentType> typesToTake = null, 
             ICollection<AnalysedComponentType> typesToDeepen = null);
