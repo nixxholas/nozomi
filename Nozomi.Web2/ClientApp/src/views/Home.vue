@@ -18,7 +18,6 @@
 <!--              </article>-->
 <!--            </Slide>-->
 <!--          </Carousel>-->
-          <b-loading :is-full-page="false" :active.sync="currencyTypeTable.loading" :can-cancel="false"></b-loading>
         </div>
       </div>
     </section>
@@ -26,132 +25,10 @@
     <section class="section">
       <b-tabs>
         <b-tab-item label="FIAT" icon="money-bill-wave">
-<!--          <b-table-->
-<!--            :data="fiatTable.data"-->
-
-<!--            paginated-->
-<!--            backend-pagination-->
-<!--            :total="fiatTable.total"-->
-<!--            :per-page="fiatTable.perPage"-->
-<!--            @page-change="onPageChange"-->
-<!--            aria-next-label="Next page"-->
-<!--            aria-previous-label="Previous page"-->
-<!--            aria-page-label="Page"-->
-<!--            aria-current-label="Current page">-->
-<!--            <template slot="empty">-->
-<!--              <section class="section">-->
-<!--                <div class="content has-text-grey has-text-centered">-->
-<!--                  <p>-->
-<!--                    <b-icon-->
-<!--                      icon="frown"-->
-<!--                      size="is-large">-->
-<!--                    </b-icon>-->
-<!--                  </p>-->
-<!--                  <p>No FIAT data available yet.</p>-->
-<!--                </div>-->
-<!--              </section>-->
-<!--            </template>-->
-<!--            <template slot-scope="props">-->
-<!--              <b-table-column field="name" label="Name" sortable>-->
-<!--                <router-link :to="`/currency/${props.row.slug}`">-->
-<!--                  <img v-if="props.row.logoPath != null"-->
-<!--                       :src="props.row.logoPath" class="mr-1"-->
-<!--                       style="width: 24px; height: 24px; vertical-align: bottom;"/>-->
-<!--                  {{ props.row.name }}-->
-<!--                </router-link>-->
-<!--              </b-table-column>-->
-<!--              <b-table-column field="marketCap" label="Market Cap" sortable>-->
-<!--                {{ props.row.marketCap | numeralFormat('$0 a') }}-->
-<!--              </b-table-column>-->
-<!--              <b-table-column field="price" label="Price" sortable>-->
-<!--                {{ props.row.averagePrice | numeralFormat('$0[.]00') }}-->
-<!--              </b-table-column>-->
-<!--              <b-table-column field="volume" label="Volume" sortable>-->
-<!--                {{ props.row.dailyVolume | numeralFormat('$0[.]00') }}-->
-<!--              </b-table-column>-->
-<!--              <b-table-column field="dailyAvgPctChange" label="Change" sortable>-->
-<!--                {{ props.row.dailyAvgPctChange | numeralFormat('0[.]0') }}%-->
-<!--              </b-table-column>-->
-<!--              <b-table-column field="chart" label="Trend" sortable>-->
-<!--                <trend-->
-<!--                  class="chart"-->
-<!--                  :data="props.row.averagePriceHistory" :radius="24"-->
-<!--                  :gradient="['#6fa8dc', '#42b983', '#2c3e50']"-->
-<!--                  auto-draw-->
-<!--                  smooth-->
-<!--                  v-if="props.row.averagePriceHistory != null"-->
-<!--                >-->
-<!--                </trend>-->
-<!--                <b-tag type="is-danger" size="is-medium" v-else>No data available</b-tag>-->
-<!--              </b-table-column>-->
-<!--            </template>-->
-<!--          </b-table>-->
-          <CurrencyTable type="FIAT Cash"></CurrencyTable>
-          <b-loading :is-full-page="false" :active.sync="fiatTable.loading" :can-cancel="false"></b-loading>
+          <CurrencyTable type="FIAT Cash" />
         </b-tab-item>
         <b-tab-item label="Cryptocurrency" icon-pack="fab" icon="bitcoin">
-<!--          <b-table-->
-<!--            :data="cryptoTable.data"-->
-
-<!--            paginated-->
-<!--            backend-pagination-->
-<!--            :total="cryptoTable.total"-->
-<!--            :per-page="cryptoTable.perPage"-->
-<!--            @page-change="onPageChange"-->
-<!--            aria-next-label="Next page"-->
-<!--            aria-previous-label="Previous page"-->
-<!--            aria-page-label="Page"-->
-<!--            aria-current-label="Current page">-->
-<!--            <template slot="empty">-->
-<!--              <section class="section">-->
-<!--                <div class="content has-text-grey has-text-centered">-->
-<!--                  <p>-->
-<!--                    <b-icon-->
-<!--                      icon="frown"-->
-<!--                      size="is-large">-->
-<!--                    </b-icon>-->
-<!--                  </p>-->
-<!--                  <p>No Crypto data available yet.</p>-->
-<!--                </div>-->
-<!--              </section>-->
-<!--            </template>-->
-<!--            <template slot-scope="props">-->
-<!--              <b-table-column field="name" label="Name" sortable>-->
-<!--                <router-link :to="`/currency/${props.row.slug}`">-->
-<!--                  <img v-if="props.row.logoPath != null"-->
-<!--                       :src="props.row.logoPath" class="mr-1"-->
-<!--                       style="width: 24px; height: 24px; vertical-align: bottom;"/>-->
-<!--                  {{ props.row.name }}-->
-<!--                </router-link>-->
-<!--              </b-table-column>-->
-<!--              <b-table-column field="marketCap" label="Market Cap" sortable>-->
-<!--                {{ getComponentValue(props.row.components, 1) | numeralFormat('$0 a') }}-->
-<!--              </b-table-column>-->
-<!--              <b-table-column field="price" label="Price" sortable>-->
-<!--                {{ getComponentValue(props.row.components, 10) | numeralFormat('$0[.]00') }}-->
-<!--              </b-table-column>-->
-<!--              <b-table-column field="volume" label="Volume" sortable>-->
-<!--                {{ getComponentValue(props.row.components, 80) | numeralFormat('$0[.]00') }}-->
-<!--              </b-table-column>-->
-<!--              <b-table-column field="dailyAvgPctChange" label="Change" sortable>-->
-<!--                {{ getComponentValue(props.row.components, 70) | numeralFormat('0[.]0') }}%-->
-<!--              </b-table-column>-->
-<!--              <b-table-column field="chart" label="Trend">-->
-<!--                <trend-->
-<!--                  class="trend"-->
-<!--                  :data="props.row.averagePriceHistory" :radius="24"-->
-<!--                  :gradient="['#6fa8dc', '#42b983', '#2c3e50']"-->
-<!--                  auto-draw-->
-<!--                  smooth-->
-<!--                  v-if="props.row.averagePriceHistory != null"-->
-<!--                >-->
-<!--                </trend>-->
-<!--                <b-tag type="is-danger" size="is-small" v-else>Trends are currently disabled!</b-tag>-->
-<!--              </b-table-column>-->
-<!--            </template>-->
-<!--          </b-table>-->
-          <CurrencyTable type="Cryptocurrency"></CurrencyTable>
-          <b-loading :is-full-page="false" :active.sync="cryptoTable.loading" :can-cancel="false"></b-loading>
+          <CurrencyTable type="Cryptocurrency" />
         </b-tab-item>
       </b-tabs>
     </section>
@@ -177,20 +54,6 @@
                 currencyTypeTable: {
                     loading: false,
                     data: [],
-                },
-                fiatTable: {
-                    data: [],
-                    total: 0,
-                    loading: false,
-                    page: 1,
-                    perPage: 50
-                },
-                cryptoTable: {
-                    data: [],
-                    total: 0,
-                    loading: false,
-                    page: 1,
-                    perPage: 50
                 }
             }
         },
@@ -201,22 +64,6 @@
         },
         methods: {
             onPageChange(page) {
-                this.cryptoTable.loading = true;
-                this.cryptoTable.page = page;
-
-                let self = this;
-                CurrencyService.getCurrencyData(page, this.cryptoTable.perPage, "CRYPTO", "MarketCap", ["MarketCap", "CurrentAveragePrice",
-                    "DailyVolume", "DailyPricePctChange"], true)
-                    .then(function (result) {
-                        self.cryptoTable.data = result;
-                        self.cryptoTable.loading = false;
-
-                        // Miscellaneous loading
-                        CurrencyService.getCurrencyCount("CRYPTO")
-                            .then(function (result) {
-                                self.cryptoTable.total = result;
-                            });
-                    });
             },
             getComponentValue(dataset, type) {
                 return ComponentService.getComponentValue(dataset, type);
@@ -230,34 +77,6 @@
             //         .then(function (result) {
             //             console.dir(result);
             //         });
-
-            self.cryptoTable.loading = true;
-            CurrencyService.getCurrencyData(self.cryptoTable.page, self.cryptoTable.perPage, "CRYPTO", "MarketCap",
-                ["MarketCap", "CurrentAveragePrice", "DailyVolume", "DailyPricePctChange"], true)
-                .then(function (result) {
-                    self.cryptoTable.data = result;
-                    self.cryptoTable.loading = false;
-
-                    // Miscellaneous loading
-                    CurrencyService.getCurrencyCount("CRYPTO")
-                        .then(function (result) {
-                            self.cryptoTable.total = result;
-                        });
-                });
-
-            self.fiatTable.loading = true;
-            CurrencyService.getCurrencyData(self.fiatTable.page, self.fiatTable.perPage, "FIAT", "MarketCap",
-                ["MarketCap", "CurrentAveragePrice", "DailyVolume", "DailyPricePctChange"], true)
-                .then(function (result) {
-                    self.fiatTable.data = result;
-                    self.fiatTable.loading = false;
-
-                    // Miscellaneous loading
-                    CurrencyService.getCurrencyCount("FIAT")
-                        .then(function (result) {
-                            self.fiatTable.total = result;
-                        });
-                });
         }
 
     }
