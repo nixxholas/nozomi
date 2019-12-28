@@ -97,8 +97,8 @@
                 data: [],
                 dataCount: 0,
                 sortField: 'name',
-                defaultSortOrder: 'desc',
-                sortOrder: 'desc',
+                defaultSortOrder: 'asc',
+                sortOrder: 'asc',
                 typeData: []
             }
         },
@@ -154,6 +154,8 @@
         },
         mounted: function () {
             let self = this;
+            let sortAscending = self.sortOrder === "asc";
+            
             CurrencyService.getCurrencyCount(self.type)
                 .then(function (res) {
                     self.dataCount = res;
@@ -167,10 +169,6 @@
                 .catch(function (err) {
                     console.dir(err);
                 });
-
-            self.sortField = "name";
-            self.sortOrder = "asc";
-            let sortAscending = self.sortOrder === "asc";
 
             CurrencyTypeService.getAll()
                 .then(function (res) {
