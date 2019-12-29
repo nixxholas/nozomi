@@ -15,7 +15,7 @@
 
     <b-field grouped group-multiline v-if="oidcIsAuthenticated">
       <div class="control">
-        <CreateSourceModal @created="createdNewSource"></CreateSourceModal>
+        <CreateSourceModal @created="createdNewSource" />
       </div>
     </b-field>
 
