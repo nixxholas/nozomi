@@ -177,7 +177,7 @@ namespace Nozomi.Service.Events
         {
             return _unitOfWork.GetRepository<Source>()
                 .Get(s => s.DeletedAt == null &&
-                          s.Abbreviation.Equals(abbrv, StringComparison.InvariantCultureIgnoreCase))
+                          s.Abbreviation.Equals(abbrv.ToUpper()))
                 .Any();
         }
 
