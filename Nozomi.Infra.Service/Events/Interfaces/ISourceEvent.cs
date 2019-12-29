@@ -8,6 +8,8 @@ namespace Nozomi.Service.Events.Interfaces
 {
     public interface ISourceEvent
     {
+        bool Exists(string guid);
+        
         bool SourceExists(string abbrv);
         
         XSourceResponse Get(long id);

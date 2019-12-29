@@ -162,6 +162,17 @@ namespace Nozomi.Service.Events
             }
         }
 
+        public bool Exists(string guid)
+        {
+            if (string.IsNullOrWhiteSpace(guid))
+                return false;
+            
+            return _unitOfWork.GetRepository<Source>()
+                .Get(s => s.DeletedAt == null
+                          && s.Guid.ToString().Equals(guid))
+                .Any();
+        }
+
         public bool SourceExists(string abbrv)
         {
             return _unitOfWork.GetRepository<Source>()
