@@ -96,7 +96,8 @@
                                                     <!-- Right side -->
                                                     <div class="level-right">
                                                         <CurrencySourceModal v-if="oidcIsAuthenticated"
-                                                                             :defCurrencySlug="slug"/>
+                                                                             :defCurrencySlug="slug"
+                                                        @created="updateSources"/>
                                                     </div>
                                                 </nav>
                                                 <b-table
@@ -104,6 +105,7 @@
                                                         :loading="sources.loading"
 
                                                         :mobile-cards="true"
+                                                        :current-page="sources.page"
                                                         :per-page="sources.perPage"
                                                         :total="sources.dataCount"
                                                         @page-change="loadMarketData"
@@ -358,6 +360,10 @@
                 }
 
                 return null;
+            },
+            async updateSources() {
+                // Obtain all of the currency's sources.
+                this.sources.data = await SourceService.listByCurrency(this.data.slug, (this.sources.page - 1), this.sources.perPage);
             },
             async loadMarketData(page) {
                 this.sources.loading = true;
