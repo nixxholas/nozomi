@@ -30,13 +30,14 @@ namespace Nozomi.Web2.Extensions
             services.AddScoped<IAnalysedComponentEvent, AnalysedComponentEvent>();
             services.AddScoped<IAnalysedComponentTypeEvent, AnalysedComponentTypeEvent>();
             services.AddScoped<IAnalysedHistoricItemEvent, AnalysedHistoricItemEvent>();
+            services.AddScoped<IComponentEvent, ComponentEvent>();
             services.AddScoped<IComponentTypeEvent, ComponentTypeEvent>();
             services.AddScoped<ICurrencyEvent, CurrencyEvent>();
             services.AddScoped<ICurrencyPairEvent, CurrencyPairEvent>();
             services.AddScoped<ICurrencyPairTypeEvent, CurrencyPairTypeEvent>();
+            services.AddScoped<ICurrencySourceEvent, CurrencySourceEvent>();
             services.AddScoped<ICurrencyTypeEvent, CurrencyTypeEvent>();
             services.AddScoped<IRequestEvent, RequestEvent>();
-            services.AddScoped<IComponentEvent, ComponentEvent>();
             services.AddScoped<IRequestPropertyTypeEvent, RequestPropertyTypeEvent>();
             services.AddScoped<IRequestTypeEvent, RequestTypeEvent>();
             services.AddScoped<ISourceEvent, SourceEvent>();
