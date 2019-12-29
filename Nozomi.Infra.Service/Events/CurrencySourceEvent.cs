@@ -1,3 +1,4 @@
+using System.Linq;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data.Models.Currency;
 using Nozomi.Preprocessing.Abstracts;
@@ -15,7 +16,11 @@ namespace Nozomi.Service.Events
 
         public bool Exists(long sourceId, long currencyId)
         {
-            throw new System.NotImplementedException();
+            return _unitOfWork.GetRepository<CurrencySource>()
+                .Get(cs => cs.DeletedAt == null
+                           && cs.SourceId.Equals(sourceId)
+                           && cs.CurrencyId.Equals(currencyId))
+                .Any();
         }
     }
 }
