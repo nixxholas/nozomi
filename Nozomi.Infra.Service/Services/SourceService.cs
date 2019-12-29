@@ -19,19 +19,19 @@ namespace Nozomi.Service.Services
 {
     public class SourceService : BaseService<SourceService, NozomiDbContext>, ISourceService
     {
+        private readonly ISourceEvent _sourceEvent;
         private readonly ISourceTypeEvent _sourceTypeEvent;
         
-        public SourceService(ILogger<SourceService> logger, 
-            IUnitOfWork<NozomiDbContext> unitOfWork, ISourceTypeEvent sourceTypeEvent) : base(logger, unitOfWork)
+        public SourceService(ILogger<SourceService> logger, IUnitOfWork<NozomiDbContext> unitOfWork, 
+            ISourceEvent sourceEvent, ISourceTypeEvent sourceTypeEvent) : base(logger, unitOfWork)
         {
+            _sourceEvent = sourceEvent;
             _sourceTypeEvent = sourceTypeEvent;
         }
 
         public void Create(CreateSourceViewModel vm, string userId)
         {
-            if (vm.IsValid() && !_unitOfWork.GetRepository<Source>()
-                    .GetQueryable().AsNoTracking()
-                    .Any(s => s.Abbreviation.Equals(vm.Abbreviation, StringComparison.InvariantCultureIgnoreCase)))
+            if (vm.IsValid() && !_sourceEvent.AbbreviationIsUsed(vm.Abbreviation))
             {
                 var sourceType = _sourceTypeEvent.Find(vm.SourceType);
                 if (sourceType == null)
