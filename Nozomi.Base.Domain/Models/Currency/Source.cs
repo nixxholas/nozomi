@@ -14,7 +14,7 @@ namespace Nozomi.Data.Models.Currency
 
         public Source(string abbreviation, string name, string apiDocsUrl, long sourceTypeId)
         {
-            Abbreviation = abbreviation;
+            Abbreviation = abbreviation.ToUpper();
             Name = name;
             APIDocsURL = apiDocsUrl;
             SourceTypeId = sourceTypeId;
@@ -23,7 +23,7 @@ namespace Nozomi.Data.Models.Currency
         public Source(Guid guid, string abbreviation, string name, string apiDocsUrl, long sourceTypeId)
         {
             Guid = guid;
-            Abbreviation = abbreviation;
+            Abbreviation = abbreviation.ToUpper();
             Name = name;
             APIDocsURL = apiDocsUrl;
             SourceTypeId = sourceTypeId;
