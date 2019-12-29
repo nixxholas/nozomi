@@ -10,7 +10,7 @@ namespace Nozomi.Service.Events.Interfaces
     {
         bool Exists(string guid);
         
-        bool SourceExists(string abbrv);
+        bool AbbreviationIsUsed(string abbrv);
         
         XSourceResponse Get(long id);
         XSourceResponse Get(string abbreviation);

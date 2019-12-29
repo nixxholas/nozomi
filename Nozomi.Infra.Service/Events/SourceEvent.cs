@@ -173,7 +173,7 @@ namespace Nozomi.Service.Events
                 .Any();
         }
 
-        public bool SourceExists(string abbrv)
+        public bool AbbreviationIsUsed(string abbrv)
         {
             return _unitOfWork.GetRepository<Source>()
                 .Get(s => s.DeletedAt == null &&
