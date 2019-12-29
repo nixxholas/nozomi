@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using Nozomi.Data;
 using Nozomi.Data.AreaModels.v1.CurrencySource;
 using Nozomi.Data.Models.Currency;
+using Nozomi.Data.ViewModels.CurrencySource;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Data;
@@ -16,11 +17,16 @@ namespace Nozomi.Service.Services
     public class CurrencySourceService : BaseService<CurrencySourceService, NozomiDbContext>, ICurrencySourceService
     {
         private readonly ICurrencyEvent _currencyEvent;
+        private readonly ICurrencySourceEvent _currencySourceEvent;
+        private readonly ISourceEvent _sourceEvent;
         
         public CurrencySourceService(ILogger<CurrencySourceService> logger, ICurrencyEvent currencyEvent, 
+            ICurrencySourceEvent currencySourceEvent, ISourceEvent sourceEvent, 
             IUnitOfWork<NozomiDbContext> unitOfWork) : base(logger, unitOfWork)
         {
             _currencyEvent = currencyEvent;
+            _currencySourceEvent = currencySourceEvent;
+            _sourceEvent = sourceEvent;
         }
 
         public NozomiResult<string> Create(CreateCurrencySource currencySource, string userId = null)
@@ -48,6 +54,29 @@ namespace Nozomi.Service.Services
             {
                 return new NozomiResult<string>(NozomiResultType.Failed, ex.ToString());
             }
+        }
+
+        public bool Create(CreateCurrencySourceViewModel vm, string userId = null)
+        {
+            if (vm.IsValid())
+            {
+                var source = _sourceEvent.GetByGuid(vm.SourceGuid);
+                var currency = _currencyEvent.GetBySlug(vm.CurrencySlug);
+
+                if (source != null && currency != null 
+                                   && !_currencySourceEvent.Exists(source.Id, currency.Id))
+                {
+                    _unitOfWork.GetRepository<CurrencySource>()
+                        .Add(new CurrencySource(source.Id, currency.Id));
+
+                    _unitOfWork.Commit(userId);
+
+                    return true;
+                }
+            }
+
+            _logger.LogInformation($"{_serviceName} - [Create]: Invalid ViewModel.");
+            return false;
         }
 
         public bool EnsurePairIsCreated(string mainTicker, string counterTicker, long sourceId,
