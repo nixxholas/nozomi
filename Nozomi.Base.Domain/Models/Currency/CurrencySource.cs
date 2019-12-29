@@ -21,6 +21,12 @@ namespace Nozomi.Data.Models.Currency
         {
             SourceId = sourceId;
         }
+
+        public CurrencySource(long sourceId, long currencyId)
+        {
+            SourceId = sourceId;
+            CurrencyId = currencyId;
+        }
         
         [Key]
         public long Id { get; set; }
