@@ -141,6 +141,10 @@
         },
         methods: {
             ...mapActions('oidcStore', ['authenticateOidc', 'signOutOidc']),
+            updateSources: function () {
+                let self = this;
+                
+            },
             create: function () {
                 this.isModalLoading = true;
 
@@ -162,7 +166,7 @@
 
                             // Inform the parent that a new request has been created
                             // https://forum.vuejs.org/t/passing-data-back-to-parent/1201
-                            self.$emit('updated', true);
+                            self.$emit('updated', self.form);
                         })
                         .catch(function (error) {
                             Notification.open({
