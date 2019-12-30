@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Security.Claims;
 using IdentityModel;
@@ -21,6 +22,20 @@ namespace Nozomi.Web2.Controllers.v1.Component
         {
             _componentEvent = componentEvent;
             _componentService = componentService;
+        }
+
+        [Authorize]
+        [HttpGet]
+        public IActionResult AllByRequest([FromQuery]string requestGuid, [FromQuery]int index = 0, 
+            [FromQuery]int itemsPerPage = 50, [FromQuery]bool includeNested = false)
+        {
+            if (!Guid.TryParse(requestGuid, out var guid))
+                return BadRequest("Invalid request GUID, please make sure you are handing over a valid guid.");
+                
+            if (index < 0 || itemsPerPage <= 0)
+                return BadRequest("Invalid index or itemsPerIndex");
+            
+            return Ok(_componentEvent.GetAllByRequest(requestGuid, includeNested, index, itemsPerPage));
         }
 
         [HttpGet]
