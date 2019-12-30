@@ -88,7 +88,8 @@ namespace Nozomi.Service.Events
             });
         }
 
-        public IEnumerable<ComponentViewModel> All(string requestGuid, int index = 0, int itemsPerIndex = 50, bool includeNested = false)
+        public IEnumerable<ComponentViewModel> All(string requestGuid, int index = 0, int itemsPerIndex = 50, 
+            bool includeNested = false, string userId = null)
         {
             if (string.IsNullOrEmpty(requestGuid) || string.IsNullOrWhiteSpace(requestGuid)
                 || !Guid.TryParse(requestGuid, out var guid))
@@ -100,6 +101,9 @@ namespace Nozomi.Service.Events
                 .Include(r => r.RequestComponents)
                 .Where(r => r.DeletedAt == null && r.IsEnabled 
                                                 && r.Guid.Equals(guid));
+
+            if (!string.IsNullOrEmpty(userId) && !string.IsNullOrWhiteSpace(userId))
+                query = query.Where(r => r.CreatedById.Equals(userId));
 
             if (includeNested)
                 query = query
@@ -133,7 +137,8 @@ namespace Nozomi.Service.Events
                 });
         }
 
-        public IEnumerable<ComponentViewModel> All(long requestId, int index = 0, int itemsPerIndex = 50, bool includeNested = false)
+        public IEnumerable<ComponentViewModel> All(long requestId, int index = 0, int itemsPerIndex = 50, 
+            bool includeNested = false, string userId = null)
         {
             if (requestId < 1)
                 throw new ArgumentNullException("Invalid requestGuid.");
@@ -144,6 +149,9 @@ namespace Nozomi.Service.Events
                 .Include(r => r.RequestComponents)
                 .Where(r => r.DeletedAt == null && r.IsEnabled
                             && r.Id.Equals(requestId));
+
+            if (!string.IsNullOrEmpty(userId) && !string.IsNullOrWhiteSpace(userId))
+                query = query.Where(r => r.CreatedById.Equals(userId));
 
             if (includeNested)
                 query = query

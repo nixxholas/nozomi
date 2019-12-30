@@ -12,10 +12,10 @@ namespace Nozomi.Service.Events.Interfaces
     public interface IComponentEvent
     {
         IEnumerable<ComponentViewModel> All(string requestGuid, int index = 0, int itemsPerIndex = 50,
-            bool includeNested = false);
+            bool includeNested = false, string userId = null);
         
         IEnumerable<ComponentViewModel> All(long requestId, int index = 0, int itemsPerIndex = 50,
-            bool includeNested = false);
+            bool includeNested = false, string userId = null);
         
         IEnumerable<ComponentViewModel> All(int index = 0, int itemsPerIndex = 50, bool includeNested = false);
         
