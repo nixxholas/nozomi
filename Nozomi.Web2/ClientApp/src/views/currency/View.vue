@@ -156,7 +156,8 @@
                                                     <!-- Right side -->
                                                     <div class="level-right">
                                                         <CurrencyPairModal v-if="oidcIsAuthenticated" 
-                                                                           :currency="data"/>
+                                                                           :currency="data"
+                                                                           @created="updateCurrencyPairs"/>
                                                     </div>
                                                 </nav>
                                                 <CurrencyPairsTable :main-ticker="data.abbreviation" />
@@ -360,6 +361,9 @@
                 }
 
                 return null;
+            },
+            async updateCurrencyPairs() {
+                // TODO: We need to somehow beep the table component that there's a new update
             },
             async updateSources() {
                 // Obtain all of the currency's sources.
