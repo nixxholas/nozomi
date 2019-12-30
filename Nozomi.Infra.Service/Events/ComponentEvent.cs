@@ -88,6 +88,95 @@ namespace Nozomi.Service.Events
             });
         }
 
+        public IEnumerable<ComponentViewModel> All(string requestGuid, int index = 0, int itemsPerIndex = 50, bool includeNested = false)
+        {
+            if (string.IsNullOrEmpty(requestGuid) || string.IsNullOrWhiteSpace(requestGuid)
+                || !Guid.TryParse(requestGuid, out var guid))
+                throw new ArgumentNullException("Invalid requestGuid.");
+
+            var query = _unitOfWork.GetRepository<Request>()
+                .GetQueryable()
+                .AsNoTracking()
+                .Include(r => r.RequestComponents)
+                .Where(r => r.DeletedAt == null && r.IsEnabled 
+                                                && r.Guid.Equals(guid));
+
+            if (includeNested)
+                query = query
+                    .Include(r => r.RequestComponents)
+                    .ThenInclude(rc => rc.RcdHistoricItems);
+
+            if (index < 0)
+                index = 0;
+
+            if (itemsPerIndex < 1)
+                itemsPerIndex = 50;
+
+            return query
+                .SelectMany(r => r.RequestComponents)
+                .Skip(index * itemsPerIndex)
+                .Take(itemsPerIndex)
+                .Select(rc => new ComponentViewModel
+                {
+                    Guid = rc.Guid,
+                    Type = rc.ComponentType,
+                    Value = rc.Value,
+                    IsDenominated = rc.IsDenominated,
+                    History = rc.RcdHistoricItems
+                        .Any(rcdhi => rcdhi.DeletedAt == null && rcdhi.IsEnabled)
+                    ? rc.RcdHistoricItems.Select(rcdhi => new ComponentHistoricItemViewModel
+                    {
+                        Timestamp = rcdhi.HistoricDateTime,
+                        Value = rcdhi.Value
+                    })
+                    : null
+                });
+        }
+
+        public IEnumerable<ComponentViewModel> All(long requestId, int index = 0, int itemsPerIndex = 50, bool includeNested = false)
+        {
+            if (requestId < 1)
+                throw new ArgumentNullException("Invalid requestGuid.");
+
+            var query = _unitOfWork.GetRepository<Request>()
+                .GetQueryable()
+                .AsNoTracking()
+                .Include(r => r.RequestComponents)
+                .Where(r => r.DeletedAt == null && r.IsEnabled
+                            && r.Id.Equals(requestId));
+
+            if (includeNested)
+                query = query
+                    .Include(r => r.RequestComponents)
+                    .ThenInclude(rc => rc.RcdHistoricItems);
+
+            if (index < 0)
+                index = 0;
+
+            if (itemsPerIndex < 1)
+                itemsPerIndex = 50;
+
+            return query
+                .SelectMany(r => r.RequestComponents)
+                .Skip(index * itemsPerIndex)
+                .Take(itemsPerIndex)
+                .Select(rc => new ComponentViewModel
+                {
+                    Guid = rc.Guid,
+                    Type = rc.ComponentType,
+                    Value = rc.Value,
+                    IsDenominated = rc.IsDenominated,
+                    History = rc.RcdHistoricItems
+                        .Any(rcdhi => rcdhi.DeletedAt == null && rcdhi.IsEnabled)
+                        ? rc.RcdHistoricItems.Select(rcdhi => new ComponentHistoricItemViewModel
+                        {
+                            Timestamp = rcdhi.HistoricDateTime,
+                            Value = rcdhi.Value
+                        })
+                        : null
+                });
+        }
+
         public IEnumerable<ComponentViewModel> All(int index = 0, int itemsPerIndex = 50, bool includeNested = false)
         {
             if (index < 0 || itemsPerIndex <= 0 || itemsPerIndex > NozomiServiceConstants.RequestComponentTakeoutLimit)
