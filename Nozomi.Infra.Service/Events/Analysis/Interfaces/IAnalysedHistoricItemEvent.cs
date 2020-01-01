@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
-using Nozomi.Base.Core.Responses;
+using Nozomi.Base.BCL.Responses;
 using Nozomi.Data.Models.Web.Analytical;
 using Nozomi.Data.ViewModels.AnalysedHistoricItem;
 

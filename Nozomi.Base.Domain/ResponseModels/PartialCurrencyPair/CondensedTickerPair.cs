@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using Microsoft.AspNetCore.Mvc;
 using Nozomi.Data.ResponseModels.Source;
 
 namespace Nozomi.Data.ResponseModels.PartialCurrencyPair

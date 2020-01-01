@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
@@ -10,13 +9,7 @@ using Nozomi.Data.Models.Currency;
 using Nozomi.Data.Models.Web;
 using Nozomi.Data.Models.Web.Analytical;
 using Nozomi.Data.Models.Web.Websocket;
-using Nozomi.Data.ResponseModels;
-using Nozomi.Data.ResponseModels.Ticker;
-using Nozomi.Preprocessing;
 using Nozomi.Repo.Data;
-using Nozomi.Service;
-using Nozomi.Ticker.Areas;
-using Swashbuckle.AspNetCore.Swagger;
 
 namespace Nozomi.Ticker.StartupExtensions
 {

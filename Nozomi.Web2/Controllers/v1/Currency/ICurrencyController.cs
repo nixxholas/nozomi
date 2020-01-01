@@ -1,8 +1,7 @@
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
-using Nozomi.Base.Core.Responses;
+using Nozomi.Base.BCL.Responses;
 using Nozomi.Data;
-using Nozomi.Data.Models.Web.Analytical;
 using Nozomi.Data.ResponseModels;
 using Nozomi.Data.ResponseModels.Currency;
 using Nozomi.Data.ViewModels.Currency;

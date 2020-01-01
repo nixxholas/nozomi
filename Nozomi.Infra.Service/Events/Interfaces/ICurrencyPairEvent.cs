@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using Nozomi.Base.Core;
+using Nozomi.Base.BCL;
 using Nozomi.Data.Models.Currency;
 using Nozomi.Data.Models.Web;
 using Nozomi.Data.Models.Web.Analytical;

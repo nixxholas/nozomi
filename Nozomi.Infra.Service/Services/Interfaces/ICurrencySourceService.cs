@@ -1,6 +1,5 @@
 using Nozomi.Data;
 using Nozomi.Data.AreaModels.v1.CurrencySource;
-using Nozomi.Data.Models.Currency;
 using Nozomi.Data.ViewModels.CurrencySource;
 
 namespace Nozomi.Service.Services.Interfaces

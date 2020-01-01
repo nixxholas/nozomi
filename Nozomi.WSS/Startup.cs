@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Nozomi.Base.Core.Configurations;
 using Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes;
 using Nozomi.Repo.BCL.Context;
 using Nozomi.Repo.BCL.Repository;

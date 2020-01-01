@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
-using Nozomi.Base.Core;
+using Nozomi.Base.BCL;
 
 namespace Nozomi.Ticker.Areas.Users.Controllers.Manage.TwoFactorAuthentication
 {

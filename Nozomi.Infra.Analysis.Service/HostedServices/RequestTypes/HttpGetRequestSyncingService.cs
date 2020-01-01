@@ -9,24 +9,19 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 using System.Xml;
-using Microsoft.EntityFrameworkCore.Internal;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using Nozomi.Base.Core.Helpers.Enumerator;
-using Nozomi.Base.Core.Helpers.Exponent;
+using Nozomi.Base.BCL.Helpers.Enumerator;
+using Nozomi.Base.BCL.Helpers.Exponent;
 using Nozomi.Data;
 using Nozomi.Data.Models.Web;
 using Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes.Interfaces;
 using Nozomi.Preprocessing.Abstracts;
-using Nozomi.Repo.Data;
 using Nozomi.Service.Events.Interfaces;
 using Nozomi.Service.Services.Interfaces;
 using Nozomi.Service.Services.Requests.Interfaces;
-using StackExchange.Redis;
 
 /*
  * HttpGetCurrencyPairRequestSyncingService

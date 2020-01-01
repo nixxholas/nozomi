@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using Nozomi.Data.Models.Currency;
 using Nozomi.Data.ViewModels.AnalysedComponent;
 using Nozomi.Data.ViewModels.Source;
 

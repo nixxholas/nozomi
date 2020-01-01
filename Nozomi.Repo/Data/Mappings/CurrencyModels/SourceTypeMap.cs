@@ -1,7 +1,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Nozomi.Base.Core.Helpers.Mapping;
+using Nozomi.Base.BCL.Helpers.Mapping;
 using Nozomi.Data.Models.Currency;
 
 namespace Nozomi.Repo.Data.Mappings.CurrencyModels

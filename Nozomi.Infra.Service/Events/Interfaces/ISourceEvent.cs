@@ -1,6 +1,4 @@
-using System.Collections;
 using System.Collections.Generic;
-using Nozomi.Data;
 using Nozomi.Data.Models.Currency;
 using Nozomi.Data.ResponseModels.Source;
 

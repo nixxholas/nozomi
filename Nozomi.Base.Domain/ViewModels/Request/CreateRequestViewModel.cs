@@ -1,6 +1,5 @@
 using FluentValidation;
 using Nozomi.Data.Models.Web;
-using Nozomi.Data.ResponseModels.CurrencyPair;
 
 namespace Nozomi.Data.ViewModels.Request
 {

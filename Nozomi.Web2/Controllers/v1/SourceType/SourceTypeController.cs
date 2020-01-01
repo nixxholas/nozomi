@@ -4,7 +4,6 @@ using IdentityModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using Nozomi.Data.ResponseModels.SourceType;
 using Nozomi.Service.Events.Interfaces;
 using Nozomi.Service.Services.Interfaces;

@@ -1,10 +1,8 @@
 using System;
 using System.Linq;
-using System.Net.Http;
 using System.Security.Claims;
 using IdentityModel;
 using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data.Models.Currency;
 using Nozomi.Data.ViewModels.Currency;

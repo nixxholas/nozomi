@@ -1,5 +1,4 @@
 using System;
-using Nozomi.Base.Auth.Models;
 
 namespace Nozomi.Base.BCL
 {

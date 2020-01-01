@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Nozomi.Data;
 using Nozomi.Service.Events.Interfaces;
 
 namespace Nozomi.Web2.Controllers.v1.CurrencyPairType

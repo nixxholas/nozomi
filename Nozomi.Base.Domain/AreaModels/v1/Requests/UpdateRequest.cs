@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using Nozomi.Data.AreaModels.v1.CurrencyPairComponent;
 using Nozomi.Data.AreaModels.v1.RequestProperty;

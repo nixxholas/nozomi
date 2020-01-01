@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using Nozomi.Data.Models.Currency;
 
 namespace Nozomi.Data.ViewModels.Admin.Currency
 {

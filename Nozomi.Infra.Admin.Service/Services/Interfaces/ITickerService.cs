@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using Nozomi.Base.Admin.Domain.AreaModels.Tickers;
 using Nozomi.Data;
 using Nozomi.Data.ResponseModels.Ticker;

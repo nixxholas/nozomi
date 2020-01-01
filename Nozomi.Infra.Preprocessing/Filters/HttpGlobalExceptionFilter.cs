@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Logging;
-using Nozomi.Base.Core;
+using Nozomi.Base.BCL;
 using Nozomi.Preprocessing.ActionResults;
 
 namespace Nozomi.Preprocessing.Filters
