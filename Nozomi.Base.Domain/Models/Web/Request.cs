@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
-using Nozomi.Base.Core;
+using Nozomi.Base.BCL;
 using Nozomi.Data.AreaModels.v1.AnalysedComponent;
 using Nozomi.Data.AreaModels.v1.RequestComponent;
 using Nozomi.Data.AreaModels.v1.RequestProperty;

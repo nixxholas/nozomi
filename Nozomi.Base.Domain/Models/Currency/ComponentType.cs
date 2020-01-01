@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel;
-using Nozomi.Base.Core.Helpers.Attributes;
+using Nozomi.Base.BCL.Helpers.Attributes;
 
 namespace Nozomi.Data.Models.Currency
 {

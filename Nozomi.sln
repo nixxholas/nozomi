@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nozomi.Infra.Service", "Noz
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nozomi.Ticker", "Nozomi.Ticker\Nozomi.Ticker.csproj", "{C2DE3793-B136-4821-9DD6-27FCB355FB85}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nozomi.Base.Core", "Nozomi.Base.Core\Nozomi.Base.Core.csproj", "{08B57962-9841-4DFA-8DC3-E95042220750}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nozomi.Base.BCL", "Nozomi.Base.BCL\Nozomi.Base.BCL.csproj", "{08B57962-9841-4DFA-8DC3-E95042220750}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Nozomi.Infra", "Nozomi.Infra", "{D54DB59C-EB6F-4CBD-9FC0-EF423F88248E}"
 EndProject

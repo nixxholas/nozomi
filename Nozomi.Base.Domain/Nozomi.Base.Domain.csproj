@@ -17,6 +17,6 @@
     <PackageReference Include="System.Threading.Channels" Version="4.7.0" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Nozomi.Base.Core\Nozomi.Base.Core.csproj" />
+    <ProjectReference Include="..\Nozomi.Base.BCL\Nozomi.Base.BCL.csproj" />
   </ItemGroup>
 </Project>

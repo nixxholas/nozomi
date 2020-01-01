@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Runtime.Serialization;
-using Nozomi.Base.Core;
+using Nozomi.Base.BCL;
 
 namespace Nozomi.Data.Models.Currency
 {

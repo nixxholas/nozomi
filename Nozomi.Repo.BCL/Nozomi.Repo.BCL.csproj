@@ -5,7 +5,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Nozomi.Base.Core\Nozomi.Base.Core.csproj" />
+      <ProjectReference Include="..\Nozomi.Base.BCL\Nozomi.Base.BCL.csproj" />
       <ProjectReference Include="..\Nozomi.Base.Domain\Nozomi.Base.Domain.csproj" />
     </ItemGroup>
 

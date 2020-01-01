@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Runtime.Serialization;
-using Nozomi.Base.Core;
+using Nozomi.Base.BCL;
 using Nozomi.Data.Models.Web;
 using Nozomi.Data.Models.Web.Analytical;
 
