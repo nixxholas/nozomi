@@ -14,7 +14,7 @@
         <b-modal has-modal-card trap-focus :active.sync="isActive">
             <b-loading :active.sync="isLoading" :can-cancel="false"/>
             <!--https://stackoverflow.com/questions/48028718/using-event-modifier-prevent-in-vue-to-submit-form-without-redirection-->
-            <form v-on:submit.prevent="create()">
+            <form v-on:submit.prevent="create">
                 <div class="modal-card">
                     <header class="modal-card-head">
                         <p class="modal-card-title" v-if="!request">Create a request</p>
@@ -63,8 +63,7 @@
                                     <b-select icon="money-bill" 
                                             placeholder="Pick a currency"
                                               v-if="currencies && currencies.length > 0"
-                                              v-model="form.currencySlug"
-                                              required>
+                                              v-model="form.currencySlug">
                                         <option v-for="c in currencies" 
                                                 :value="c.slug">{{ c.name }}</option>
                                     </b-select>
@@ -88,7 +87,7 @@
                                                     {{ props.option.mainTicker + props.option.counterTicker }}
                                                     <br>
                                                     <small v-if="props.option.source">
-                                                        From <b><i>{{ props.option.source.name }}</i></b>
+                                                        From <b><i v-if="props.option.source.name">{{ props.option.source.name }}</i></b>
                                                     </small>
                                                 </div>
                                             </div>
@@ -182,7 +181,7 @@
 
                 let self = this;
                 
-                if (this.request !== null) {
+                if (this.request) {
                     RequestService.update(self.form)
                         .then(function (response) {
                             if (response.status === 200) {
