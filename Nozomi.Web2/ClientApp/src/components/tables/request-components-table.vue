@@ -1,10 +1,10 @@
 <template>
     <div class="section">
-        <b-navbar spaced="true">
+        <b-navbar :spaced="true">
             <template slot="brand">
                 <b class="has-text-dark">Components</b>
             </template>
-            <template v-if="showCreateFeature && guid" 
+            <template v-if="showCreateFeature && guid"
                       slot="end">
                 <CreateRequestComponentModal v-bind:guid="guid"/>
             </template>
@@ -12,8 +12,9 @@
         <b-table :data="data">
             <template slot-scope="props">
                 <b-table-column field="type" label="Type" sortable centered>
-                    <span class="tag is-info">
-                        {{ props.row.type }}
+                    <span class="tag is-info" 
+                          v-if="componentTypes && componentTypes.length > 0">
+                        {{ componentTypes.filter(e => e.value == props.row.type)[0].key }}
                     </span>
                 </b-table-column>
 
@@ -72,7 +73,7 @@
 <script>
     import CreateRequestComponentModal from '../modals/create-request-component-modal';
     import ComponentService from "../../services/ComponentService";
-    import ComponentTypeService from "../../services/ComponentService"
+    import ComponentTypeService from "../../services/ComponentTypeService";
 
     export default {
         name: "request-components-table",
@@ -90,7 +91,8 @@
         data: function () {
             return {
                 requestGuid: this.guid,
-                data: []
+                data: [],
+                componentTypes: []
             }
         },
         mounted: function () {
@@ -109,6 +111,14 @@
                         self.data = res.data;
                     });
             }
+
+            ComponentTypeService.all()
+                .then(function (res) {
+                    if (res && res.data && res.data.length > 0)
+                        self.componentTypes = res.data;
+                }).catch(function (err) {
+                console.dir(err);
+            })
         }
     }
 </script>

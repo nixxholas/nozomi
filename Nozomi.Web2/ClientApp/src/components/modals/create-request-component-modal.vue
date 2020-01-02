@@ -71,6 +71,7 @@
     import { mapActions } from 'vuex';
     import { NotificationProgrammatic as Notification } from 'buefy';
     import ComponentService from "@/services/ComponentService";
+    import ComponentTypeService from "@/services/ComponentTypeService";
 
     export default {
         name: "create-rc-modal",
@@ -149,13 +150,9 @@
 
             // Synchronously call for data
             self.componentTypesIsLoading = true;
-            this.$axios.get('/api/ComponentType/All', {
-                headers: {
-                    Authorization: "Bearer " + store.state.oidcStore.access_token
-                }
-            })
+            ComponentTypeService.all()
                 .then(function (response) {
-                    self.componentTypes = response.data.data.value;
+                    self.componentTypes = response.data;
                 })
                 .catch(function (error) {
                     // handle error

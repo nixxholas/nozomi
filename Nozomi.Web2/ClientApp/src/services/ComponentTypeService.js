@@ -2,7 +2,7 @@ import axios from "axios";
 import store from "../store";
 
 export default {
-    all(index) {
+    all() {
 
         return new Promise((resolve, reject) => {
             axios.get('/api/ComponentType/All', {
