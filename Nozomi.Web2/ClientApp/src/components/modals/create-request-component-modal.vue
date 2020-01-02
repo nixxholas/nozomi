@@ -45,25 +45,13 @@
 
             <b-field grouped>
               <b-field label="Denominated Value">
-                <b-switch v-model="form.isDenominated"
-                          true-value="Yes"
-                          false-value="No">
-                  {{ form.isDenominated }}
-                </b-switch>
+                <b-switch v-model="form.isDenominated" />
               </b-field>
               <b-field label="Ignore Anomalies">
-                <b-switch v-model="form.anomalyIgnorance"
-                          true-value="Yes"
-                          false-value="No">
-                  {{ form.anomalyIgnorance }}
-                </b-switch>
+                <b-switch v-model="form.anomalyIgnorance" />
               </b-field>
               <b-field label="Stash Historical">
-                <b-switch v-model="form.storeHistoricals"
-                          true-value="Yes"
-                          false-value="No">
-                  {{ form.storeHistoricals }}
-                </b-switch>
+                <b-switch v-model="form.storeHistoricals" />
               </b-field>
             </b-field>
           </section>
