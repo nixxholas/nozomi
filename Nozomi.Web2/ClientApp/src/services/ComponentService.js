@@ -6,10 +6,7 @@ export default {
       includeNested = false) {
 
     return new Promise((resolve, reject) => {
-      axios.get('/api/ComponentType/All', {
-        headers: {
-          Authorization: "Bearer " + store.state.oidcStore.access_token
-        },
+      axios.get('/api/Component/All', {
         params: {
           index: index,
           itemsPerPage: itemsPerPage,
@@ -23,11 +20,11 @@ export default {
     });
   },
   
-  allByRequest(requestGuid, index = 0, itemsPerPage = 0,
+  allByRequest(requestGuid, index = 0, itemsPerPage = 50,
       includeNested = false) {
 
     return new Promise((resolve, reject) => {
-      axios.get('/api/ComponentType/AllByRequest', {
+      axios.get('/api/Component/AllByRequest', {
         headers: {
           Authorization: "Bearer " + store.state.oidcStore.access_token
         },
