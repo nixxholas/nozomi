@@ -28,14 +28,16 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 Vue.component('vue-fontawesome', FontAwesomeIcon);
 
 // Font awesome solid icon configurations
-import { faAngleLeft, faAngleRight, faArrowUp, faAtlas, faCaretDown, faCoins,
-  faCheckCircle, faColumns, faDumpster, faExclamationCircle, faExclamationTriangle,
+import { faAngleLeft, faAngleRight, faArrowUp, faAtlas, faCaretDown, faCheck,
+  faCheckCircle, 
+  faCoins, faColumns, faDumpster, faExclamationCircle, faExclamationTriangle,
   faFrown, faHome, faInfo, faLandmark, faMoneyBill, faMoneyBillWave, faSadCry,
-  faSearch, faTrash, faUniversity } from '@fortawesome/free-solid-svg-icons';
-library.add(faAngleLeft, faAngleRight, faArrowUp, faAtlas, faCaretDown, faCoins,
-    faCheckCircle, faColumns, faDumpster, faExclamationCircle, faExclamationTriangle, 
+  faSearch, faTimes, faTrash, faUniversity } from '@fortawesome/free-solid-svg-icons';
+library.add(faAngleLeft, faAngleRight, faArrowUp, faAtlas, faCaretDown, faCheck, 
+    faCheckCircle, 
+    faCoins, faColumns, faDumpster, faExclamationCircle, faExclamationTriangle, 
     faFrown, faHome, faInfo, faLandmark, faMoneyBill, faMoneyBillWave, faSadCry, 
-    faSearch, faTrash, faUniversity);
+    faSearch, faTimes, faTrash, faUniversity);
 
 // Font awesome brand icon configurations
 import { faBitcoin, faEthereum, faFontAwesome } from '@fortawesome/free-brands-svg-icons';
