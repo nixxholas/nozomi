@@ -1,5 +1,5 @@
 import axios from 'axios';
-import store from "../store";
+import store from '../store/index';
 
 export default {
   all(index = 0, itemsPerPage = 0,
@@ -45,7 +45,7 @@ export default {
   create(vm) {
     if (!vm)
       throw new Error("Invalid payload. Please try again.");
-
+    
     return new Promise((resolve, reject) => {
       axios.post('/api/Component/Create', vm, {
         headers: {
