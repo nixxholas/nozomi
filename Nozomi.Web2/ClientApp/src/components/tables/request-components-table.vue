@@ -4,9 +4,9 @@
             <template slot="brand">
                 <b class="has-text-dark">Components</b>
             </template>
-            <template v-if="showCreateFeature"
+            <template v-if="showCreateFeature && guid" 
                       slot="end">
-                <CreateRequestComponentModal/>
+                <CreateRequestComponentModal v-bind:guid="guid"/>
             </template>
         </b-navbar>
         <b-table :data="data">
@@ -72,6 +72,7 @@
 <script>
     import CreateRequestComponentModal from '../modals/create-request-component-modal';
     import ComponentService from "../../services/ComponentService";
+    import ComponentTypeService from "../../services/ComponentService"
 
     export default {
         name: "request-components-table",
