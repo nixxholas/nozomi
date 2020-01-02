@@ -5,8 +5,9 @@
                 <template slot="brand">
                     <b class="has-text-dark">Components</b>
                 </template>
-                <template slot="end">
-                    <CreateRequestComponentModal v-if="showCreateFeature"></CreateRequestComponentModal>
+                <template v-if="showCreateFeature"
+                          slot="end">
+                    <CreateRequestComponentModal />
                 </template>
             </b-navbar>
             <b-table :data="data">
@@ -56,7 +57,7 @@
                         <div class="content has-text-grey has-text-centered">
                             <p>
                                 <b-icon
-                                        icon="emoticon-sad"
+                                        icon="sad-cry"
                                         size="is-large">
                                 </b-icon>
                             </p>
@@ -70,26 +71,42 @@
 </template>
 
 <script>
-    import CreateRequestComponentModal from '../../elements/create-request-component-modal';
+    import CreateRequestComponentModal from '../modals/create-request-component-modal';
+    import ComponentService from "../../services/ComponentService";
 
     export default {
         name: "request-components-table",
         components: {CreateRequestComponentModal},
         props: {
             showCreateFeature: false,
-            requestId: 0
+            guid: {
+                type: String,
+                default: null
+            }
         },
         data: function () {
             return {
-              data: []
+                requestGuid: this.guid, 
+                data: []
             }
         },
-        beforeCreate: function () {
+        mounted: function () {
+            let self = this;
+            
             // If this is a request-specific 
-            if (this.requestId && this.requestId > 0) {
-                
+            if (self.requestGuid) {
+                ComponentService.allByRequest(self.requestGuid)
+                .then(function (res) {
+                    console.dir(res);
+                    self.data = res.data;
+                });
             } else {
                 // Else load everything because there's nothing specific
+                ComponentService.all()
+                    .then(function (res) {
+                        console.dir(res);
+                        self.data = res.data;
+                    });
             }
         }
     }

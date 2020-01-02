@@ -65,6 +65,10 @@
                     </div>
                 </div>
             </nav>
+            <RequestComponentsTable :show-create-feature="false"
+                                    v-if="props.row.guid" 
+                                    v-bind:guid="props.row.guid"/>
+            <b-message v-else>We can't seem to load this request's components.</b-message>
         </template>
         <template slot="empty">
             <section class="section">
@@ -88,10 +92,11 @@
     import CreateRCComponent from '@/components/modals/create-request-component-modal';
     import RequestModal from '@/components/modals/request-modal'
     import RequestService from "@/services/RequestService";
+    import RequestComponentsTable from "@/components/tables/request-components-table";
 
     export default {
         name: "requests-table",
-        components: { CreateRCComponent, RequestModal },
+        components: {RequestComponentsTable, CreateRCComponent, RequestModal },
         props: {
             request: {
                 default: null,
@@ -183,7 +188,6 @@
         },
         beforeMount: function () {
             this.updateRequests();
-
             let self = this;
 
             // Setup Request types
