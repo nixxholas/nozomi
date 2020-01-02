@@ -6,7 +6,7 @@
     </button>
 
     <b-modal has-modal-card trap-focus :active.sync="isModalActive">
-      <b-loading :active.sync="isModalLoading" :can-cancel="false"></b-loading>
+      <b-loading :active.sync="isModalLoading" :can-cancel="false" />
       <!--https://stackoverflow.com/questions/48028718/using-event-modifier-prevent-in-vue-to-submit-form-without-redirection-->
       <form v-on:submit.prevent="create()" class="has-text-justified">
         <div class="modal-card">
@@ -82,6 +82,7 @@
     import store from '../../store/index';
     import { mapActions } from 'vuex';
     import { NotificationProgrammatic as Notification } from 'buefy';
+    import ComponentService from "@/services/ComponentService";
 
     export default {
         name: "create-rc-modal",
@@ -89,17 +90,30 @@
             currentRoute: window.location.href, // https://forum.vuejs.org/t/how-to-get-path-from-route-instance/26934/2
             guid: ""
         },
+      data: function () {
+        return {
+          isModalActive: false,
+          isModalLoading: false,
+          form: {
+            type: 0,
+            identifier: "",
+            queryComponent: "",
+            isDenominated: false,
+            anomalyIgnorance: false,
+            storeHistoricals: false,
+            requestId: this.guid
+          },
+          componentTypes: [],
+          componentTypesIsLoading: false
+        }
+      },
         methods: {
             ...mapActions('oidcStore', ['authenticateOidc', 'signOutOidc']),
             create: function() {
                 this.isModalLoading = true;
-
                 let self = this;
-                this.$axios.post('/api/Component/Create', self.form, {
-                    headers: {
-                        Authorization: "Bearer " + store.state.oidcStore.access_token
-                    }
-                })
+                
+                ComponentService.create(self.form)
                     .then(function (response) {
                         // Reset the form data regardless
                         self.form = {
@@ -127,7 +141,7 @@
                         }
                     })
                     .catch(function (error) {
-                        //console.log(error);
+                        console.dir(error);
                         Notification.open({
                             duration: 2500,
                             message: `Please make sure your entry is correctly filled!`,
@@ -164,23 +178,6 @@
                     self.componentTypesIsLoading = false;
                 });
         },
-        data: function () {
-            return {
-                isModalActive: false,
-                isModalLoading: false,
-                form: {
-                    type: 0,
-                    identifier: "",
-                    queryComponent: "",
-                    isDenominated: false,
-                    anomalyIgnorance: false,
-                    storeHistoricals: false,
-                    requestId: this.guid
-                },
-                componentTypes: [],
-                componentTypesIsLoading: false
-            }
-        }
     }
 </script>
 
