@@ -56,16 +56,8 @@
                         </p>
                     </div>
                 </div>
-                <div class="level-item has-text-centered">
-                    <div>
-                        <p class="heading">Request Component</p>
-                        <p>
-                            <CreateRCComponent v-bind:guid="props.row.guid" />
-                        </p>
-                    </div>
-                </div>
             </nav>
-            <RequestComponentsTable :show-create-feature="false"
+            <RequestComponentsTable :show-create-feature="true"
                                     v-if="props.row.guid" 
                                     v-bind:guid="props.row.guid"/>
             <b-message v-else>We can't seem to load this request's components.</b-message>
