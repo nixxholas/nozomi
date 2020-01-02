@@ -2,8 +2,7 @@ import axios from "axios";
 import store from "../store";
 
 export default {
-    all(index = 0, itemsPerPage = 0,
-        includeNested = false) {
+    all(index) {
 
         return new Promise((resolve, reject) => {
             axios.get('/api/ComponentType/All', {
