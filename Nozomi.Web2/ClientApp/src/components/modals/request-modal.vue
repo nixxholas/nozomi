@@ -72,29 +72,7 @@
                             </b-tab-item>
                             <b-tab-item label="Currency Pair">
                                 <b-field>
-                                    <b-autocomplete
-                                            :data="currencyPairs"
-                                            v-model="form.currencyPairStr"
-                                            placeholder="e.g. EURUSD"
-                                            :custom-formatter="getCurrencyPairTickerPairStr"
-                                            :loading="currencyPairsIsLoading"
-                                            @select="option => form.currencyPairGuid = (option && option.guid) ? option.guid : ''"
-                                            v-if="currencyPairs && currencyPairs.length > 0 && currencyPairs[0] !== null">
-
-                                        <template slot-scope="props">
-                                            <div class="media">
-                                                <div class="media-content">
-                                                    {{ props.option.mainTicker + props.option.counterTicker }}
-                                                    <br>
-                                                    <small v-if="props.option.source">
-                                                        From <b><i v-if="props.option.source.name">{{ props.option.source.name }}</i></b>
-                                                    </small>
-                                                </div>
-                                            </div>
-                                        </template>
-                                    </b-autocomplete>
-                                    <b-message v-else>Oh no.. There aren't any currency pairs at the moment..
-                                    </b-message>
+                                    <CurrencyPairsAutoComplete v-model="form.currencyPairGuid"/>
                                 </b-field>
                             </b-tab-item>
                             <b-tab-item label="Currency Type">
@@ -124,6 +102,7 @@
 <script>
     import {mapActions} from 'vuex';
     import RequestService from "@/services/RequestService";
+    import CurrencyPairsAutoComplete from '../autocompletes/currency-pairs-autocomplete';
     import RequestTypeDropdown from '../dropdowns/request-type-dropdown';
     import ResponseTypeDropdown from "../dropdowns/response-type-dropdown";
     import {NotificationProgrammatic as Notification} from 'buefy';
@@ -133,7 +112,8 @@
 
     export default {
         name: "request-modal",
-        components: {ResponseTypeDropdown, RequestTypeDropdown},
+        components: { CurrencyPairsAutoComplete, ResponseTypeDropdown, 
+            RequestTypeDropdown},
         props: {
             request: Object,
             currentRoute: window.location.href // https://forum.vuejs.org/t/how-to-get-path-from-route-instance/26934/2
@@ -149,12 +129,6 @@
         },
         methods: {
             ...mapActions('oidcStore', ['authenticateOidc', 'signOutOidc']),
-            getCurrencyPairTickerPairStr: function (obj) {
-                if (!obj)
-                    return '';
-
-                return obj.mainTicker + obj.counterTicker + " from " + obj.source.name + "";
-            },
             create: function () {
                 this.isLoading = true;
 
@@ -283,21 +257,6 @@
                 });
 
             // Synchronously call for data
-            self.currencyPairsIsLoading = true;
-            CurrencyPairService.all()
-                .then(function (response) {
-                    self.currencyPairs = response;
-                })
-                .catch(function (error) {
-                    // handle error
-                    self.methods.authenticateOidc(self.currentRoute);
-                })
-                .finally(function () {
-                    // always executed
-                    self.currencyPairsIsLoading = false;
-                });
-
-            // Synchronously call for data
             self.currencyTypesIsLoading = true;
             CurrencyTypeService.listAll()
                 .then(function (response) {
@@ -370,8 +329,6 @@
                 },
                 formHelper: {},
                 currencies: [],
-                currencyPairs: [],
-                currencyPairsIsLoading: false,
                 currencyTypes: [],
                 currencyTypesIsLoading: false
             }
