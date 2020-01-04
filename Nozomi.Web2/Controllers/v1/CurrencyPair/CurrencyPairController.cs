@@ -107,6 +107,12 @@ namespace Nozomi.Web2.Controllers.v1.CurrencyPair
         {
             return _currencyPairEvent.ListAll();
         }
+        
+        [HttpGet]
+        public IActionResult Search(string queryTickerPair = null, int page = 0, int itemsPerPage = 50)
+        {
+            return Ok(_currencyPairEvent.Search(queryTickerPair, page, itemsPerPage));
+        }
 
         [Authorize(Roles = "Owner")]
         [HttpGet("{abbrv}")]
