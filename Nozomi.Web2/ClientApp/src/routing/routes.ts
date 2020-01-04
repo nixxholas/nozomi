@@ -18,6 +18,8 @@ import ModifyProfile from '../views/dashboard/account/ModifyProfile';
 import OidcCallback from '../components/auth/oidc-callback';
 // @ts-ignore
 import OidcCallbackError from '../components/auth/oidc-callback-error';
+// @ts-ignore
+import Pricing from '../views/Pricing';
 
 export const routes = [
   { name: 'home', path: '/', component: HomePage, display: 'Home',
@@ -33,6 +35,9 @@ export const routes = [
   },
   { name: 'about', path: '/about', component: About, display: 'About',
     meta: { icon: 'info', isPublic: true, onNav: false }
+  },
+  { name: 'pricing', path: '/pricing', component: Pricing, display: 'Pricing',
+    meta: { icon: 'info', isPublic: true, onNav: true }
   },
   { name: 'changelog', path: '/changelog', component: Changelog, display: 'Changelog',
     meta: { icon: 'info', isPublic: true, onNav: false }
