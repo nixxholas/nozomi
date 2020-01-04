@@ -75,6 +75,22 @@
                                 </ul>
                             </div>
                         </div>
+                        <header class="timeline-header">
+                            <span class="tag is-info">Public Beta</span>
+                        </header>
+                        <div class="timeline-item is-info">
+                            <div class="timeline-marker is-info"></div>
+                            <div class="timeline-content">
+                                <p class="heading">03 January 2019 - <b>beta 1</b></p>
+                                <ul>
+                                    <li><b>UI</b> - Our pricing plans are out bitches</li>
+                                    <li><b>UI</b> - General hotfixes and improvements</li>
+                                    <li><b>UI</b> - Well.. we couldn't really create currency pairs but now we can</li>
+                                    <li><b>Cabin</b> - Components listing for requests</li>
+                                    <li><b>Cabin</b> - Components for a request can now be created</li>
+                                </ul>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
