@@ -37,7 +37,7 @@ export const routes = [
     meta: { icon: 'info', isPublic: true, onNav: false }
   },
   { name: 'pricing', path: '/pricing', component: Pricing, display: 'Pricing',
-    meta: { icon: 'info', isPublic: true, onNav: true }
+    meta: { icon: 'ticket-alt', isPublic: true, onNav: true }
   },
   { name: 'changelog', path: '/changelog', component: Changelog, display: 'Changelog',
     meta: { icon: 'info', isPublic: true, onNav: false }

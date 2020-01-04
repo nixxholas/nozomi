@@ -32,12 +32,13 @@ import { faAngleLeft, faAngleRight, faArrowUp, faAtlas, faCaretDown, faCheck,
   faCheckCircle, 
   faCoins, faColumns, faDumpster, faExclamationCircle, faExclamationTriangle,
   faFrown, faHome, faInfo, faLandmark, faMoneyBill, faMoneyBillWave, faSadCry,
-  faSearch, faTimes, faTrash, faUniversity } from '@fortawesome/free-solid-svg-icons';
+  faSearch, faTicketAlt, faTimes, faTrash, faUniversity } 
+  from '@fortawesome/free-solid-svg-icons';
 library.add(faAngleLeft, faAngleRight, faArrowUp, faAtlas, faCaretDown, faCheck, 
     faCheckCircle, 
     faCoins, faColumns, faDumpster, faExclamationCircle, faExclamationTriangle, 
     faFrown, faHome, faInfo, faLandmark, faMoneyBill, faMoneyBillWave, faSadCry, 
-    faSearch, faTimes, faTrash, faUniversity);
+    faSearch, faTicketAlt, faTimes, faTrash, faUniversity);
 
 // Font awesome brand icon configurations
 import { faBitcoin, faEthereum, faFontAwesome } from '@fortawesome/free-brands-svg-icons';
