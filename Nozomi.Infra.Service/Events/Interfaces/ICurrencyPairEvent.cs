@@ -47,5 +47,7 @@ namespace Nozomi.Service.Events.Interfaces
         CurrencyPair Get(string guid, bool track = false, string userId = null);
 
         ICollection<DistinctCurrencyPairResponse> ListAll();
+
+        IEnumerable<CurrencyPairViewModel> Search(string queryTickerPair = null, int page = 0, int itemsPerPage = 0);
     }
 }
