@@ -109,9 +109,9 @@ namespace Nozomi.Web2.Controllers.v1.CurrencyPair
         }
         
         [HttpGet]
-        public IActionResult Search(string queryTickerPair = null, int page = 0, int itemsPerPage = 50)
+        public IActionResult Search(string query = null, int page = 0, int itemsPerPage = 50)
         {
-            return Ok(_currencyPairEvent.Search(queryTickerPair, page, itemsPerPage));
+            return Ok(_currencyPairEvent.Search(query, page, itemsPerPage));
         }
 
         [Authorize(Roles = "Owner")]

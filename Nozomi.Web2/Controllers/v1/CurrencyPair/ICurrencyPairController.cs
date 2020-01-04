@@ -28,7 +28,7 @@ namespace Nozomi.Web2.Controllers.v1.CurrencyPair
 
         ICollection<DistinctCurrencyPairResponse> ListAll();
         
-        IActionResult Search(string queryTickerPair = null, int page = 0, int itemsPerPage = 50);
+        IActionResult Search(string query = null, int page = 0, int itemsPerPage = 50);
 
         NozomiResult<ICollection<Data.Models.Currency.CurrencyPair>> Ticker(string abbrv);
     }
