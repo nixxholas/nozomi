@@ -70,4 +70,20 @@ export default {
             });
         });
     },
+    
+    search(query = "", page = 0, itemsPerPage = 50) {
+        return new Promise((resolve, reject) => {
+            axios.get('/api/CurrencyPair/Search', {
+                params: {
+                    query: query,
+                    page: page,
+                    itemsPerPage: itemsPerPage
+                }
+            }).then(function (response) {
+                resolve(response.data);
+            }).catch(function (error) {
+                reject(error);
+            });
+        });
+    },
 }
