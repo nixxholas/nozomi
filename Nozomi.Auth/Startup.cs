@@ -162,25 +162,23 @@ namespace Nozomi.Auth
                 if (string.IsNullOrWhiteSpace(authSigningKey))
                     throw new Exception("Null auth signing key.");
 
-                string rawCertificate;
                 // Obtain the raw certificate encoded in base64str
-                if (HostingEnvironment.IsStaging())
-                {
-                    rawCertificate = File.ReadAllText("noz-web.raw");
-                }
-                else
-                {
-                    rawCertificate = (string) vaultClient.V1.Secrets.Cubbyhole.ReadSecretAsync("nozomi")
+                if (!HostingEnvironment.IsProduction() 
+                    ? string.IsNullOrWhiteSpace(File.ReadAllText("noz-web.raw"))
+                    : string.IsNullOrWhiteSpace((string) 
+                        vaultClient.V1.Secrets.Cubbyhole.ReadSecretAsync("nozomi")
                         .GetAwaiter()
-                        .GetResult().Data["auth-signing-cert"];
-                }
-                
-                if (string.IsNullOrWhiteSpace(rawCertificate))
+                        .GetResult().Data["auth-signing-cert"]))
                     throw new Exception("Null auth signing cert.");
 
                 var certificate = new X509Certificate2(
                     // https://stackoverflow.com/questions/25919387/converting-file-into-base64string-and-back-again
-                Convert.FromBase64String(rawCertificate)
+                    !HostingEnvironment.IsProduction()
+                        ? Convert.FromBase64String(File.ReadAllText("noz-web.raw"))
+                        : Convert.FromBase64String((string) 
+                            vaultClient.V1.Secrets.Cubbyhole.ReadSecretAsync("nozomi")
+                            .GetAwaiter()
+                            .GetResult().Data["auth-signing-cert"])
                     , authSigningKey);
                 
                 // https://stackoverflow.com/questions/49042474/addsigningcredential-for-identityserver4
