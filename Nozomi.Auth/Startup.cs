@@ -156,29 +156,28 @@ namespace Nozomi.Auth
                     authMethod);
                 var vaultClient = new VaultClient(vaultClientSettings);
 
-                var authSigningKey = (string) vaultClient.V1.Secrets.Cubbyhole.ReadSecretAsync("nozomi")
+                var nozomiVault = 
+                    vaultClient.V1.Secrets.Cubbyhole.ReadSecretAsync("nozomi")
                     .GetAwaiter()
-                    .GetResult().Data["auth-signing-key"];
+                    .GetResult().Data;
+                
+                Console.WriteLine(nozomiVault);
+
+                var authSigningKey = (string) nozomiVault["auth-signing-key"];
                 if (string.IsNullOrWhiteSpace(authSigningKey))
                     throw new Exception("Null auth signing key.");
 
                 // Obtain the raw certificate encoded in base64str
-                if (!HostingEnvironment.IsProduction() 
-                    ? string.IsNullOrWhiteSpace(File.ReadAllText("noz-web.raw"))
-                    : string.IsNullOrWhiteSpace((string) 
-                        vaultClient.V1.Secrets.Cubbyhole.ReadSecretAsync("nozomi")
-                        .GetAwaiter()
-                        .GetResult().Data["auth-signing-cert"]))
-                    throw new Exception("Null auth signing cert.");
-
+                var authSigningCert = (string) nozomiVault["auth-signing-cert"];
+                if ((HostingEnvironment.IsProduction() && string.IsNullOrEmpty(authSigningCert)) 
+                    || string.IsNullOrEmpty(File.ReadAllText("noz-web.raw")))
+                    throw new NullReferenceException("Auth signing cert from vault is empty.");
+                
                 var certificate = new X509Certificate2(
                     // https://stackoverflow.com/questions/25919387/converting-file-into-base64string-and-back-again
-                    !HostingEnvironment.IsProduction()
-                        ? Convert.FromBase64String(File.ReadAllText("noz-web.raw"))
-                        : Convert.FromBase64String((string) 
-                            vaultClient.V1.Secrets.Cubbyhole.ReadSecretAsync("nozomi")
-                            .GetAwaiter()
-                            .GetResult().Data["auth-signing-cert"])
+                    HostingEnvironment.IsProduction()
+                        ? Convert.FromBase64String(authSigningCert)
+                        : Convert.FromBase64String(File.ReadAllText("noz-web.raw"))
                     , authSigningKey);
                 
                 // https://stackoverflow.com/questions/49042474/addsigningcredential-for-identityserver4
