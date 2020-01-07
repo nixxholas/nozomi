@@ -79,7 +79,10 @@ namespace Nozomi.Web2
             });
 
             // In production, the Vue files will be served from this directory
-            services.AddSpaStaticFiles(configuration => { configuration.RootPath = "ClientApp/dist"; });
+            services.AddSpaStaticFiles(configuration =>
+            {
+                configuration.RootPath = "ClientApp/dist";
+            });
 
             // UoW-Repository injection
             services.ConfigureRepoLayer();
