@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data.ResponseModels.SourceType;
+using Nozomi.Preprocessing.Statics;
 using Nozomi.Service.Events.Interfaces;
 using Nozomi.Service.Services.Interfaces;
 
@@ -28,7 +29,7 @@ namespace Nozomi.Web2.Controllers.v1.SourceType
             return Ok(_sourceTypeEvent.GetAll());
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = NozomiPermissions.AllowHigherStaffRoles)]
         [HttpPost]
         public IActionResult Create(CreateSourceTypeViewModel vm)
         {
