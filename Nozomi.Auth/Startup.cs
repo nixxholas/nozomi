@@ -169,15 +169,12 @@ namespace Nozomi.Auth
 
                 // Obtain the raw certificate encoded in base64str
                 var authSigningCert = (string) nozomiVault["auth-signing-cert"];
-                if ((HostingEnvironment.IsProduction() && string.IsNullOrEmpty(authSigningCert)) 
-                    || string.IsNullOrEmpty(File.ReadAllText("noz-web.raw")))
+                if (string.IsNullOrEmpty(authSigningCert))
                     throw new NullReferenceException("Auth signing cert from vault is empty.");
                 
                 var certificate = new X509Certificate2(
                     // https://stackoverflow.com/questions/25919387/converting-file-into-base64string-and-back-again
-                    HostingEnvironment.IsProduction()
-                        ? Convert.FromBase64String(authSigningCert)
-                        : Convert.FromBase64String(File.ReadAllText("noz-web.raw"))
+                    Convert.FromBase64String(authSigningCert)
                     , authSigningKey);
                 
                 // https://stackoverflow.com/questions/49042474/addsigningcredential-for-identityserver4
