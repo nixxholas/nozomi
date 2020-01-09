@@ -10,21 +10,38 @@ namespace Nozomi.Data.Models.Currency
     {
         public Source() {}
 
-        public Source(string abbreviation, string name, string apiDocsUrl, long sourceTypeId)
+        public Source(string abbreviation, string name, string apiDocsUrl, string sourceTypeGuid)
         {
             Abbreviation = abbreviation.ToUpper();
             Name = name;
             APIDocsURL = apiDocsUrl;
-            SourceTypeId = sourceTypeId;
+            SourceTypeGuid = Guid.Parse(sourceTypeGuid);
         }
         
-        public Source(Guid guid, string abbreviation, string name, string apiDocsUrl, long sourceTypeId)
+        public Source(string abbreviation, string name, string apiDocsUrl, Guid sourceTypeGuid)
+        {
+            Abbreviation = abbreviation.ToUpper();
+            Name = name;
+            APIDocsURL = apiDocsUrl;
+            SourceTypeGuid = sourceTypeGuid;
+        }
+        
+        public Source(Guid guid, string abbreviation, string name, string apiDocsUrl, string sourceTypeGuid)
         {
             Guid = guid;
             Abbreviation = abbreviation.ToUpper();
             Name = name;
             APIDocsURL = apiDocsUrl;
-            SourceTypeId = sourceTypeId;
+            SourceTypeGuid = Guid.Parse(sourceTypeGuid);
+        }
+        
+        public Source(Guid guid, string abbreviation, string name, string apiDocsUrl, Guid sourceTypeGuid)
+        {
+            Guid = guid;
+            Abbreviation = abbreviation.ToUpper();
+            Name = name;
+            APIDocsURL = apiDocsUrl;
+            SourceTypeGuid = sourceTypeGuid;
         }
         
         public long Id { get; set; }
@@ -50,7 +67,7 @@ namespace Nozomi.Data.Models.Currency
         }
 
         // =========== RELATIONS ============ //
-        public long SourceTypeId { get; set; }
+        public Guid SourceTypeGuid { get; set; }
         
         public SourceType SourceType { get; set; }
         

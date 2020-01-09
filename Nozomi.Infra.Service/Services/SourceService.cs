@@ -34,7 +34,7 @@ namespace Nozomi.Service.Services
                 if (sourceType == null)
                     throw new ArgumentNullException("Invalid source type.");
                 
-                var source = new Source(vm.Abbreviation, vm.Name, vm.ApiDocsUrl, sourceType.Id);
+                var source = new Source(vm.Abbreviation, vm.Name, vm.ApiDocsUrl, sourceType.Guid);
                 
                 _unitOfWork.GetRepository<Source>().Add(source);
                 _unitOfWork.Commit(userId);

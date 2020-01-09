@@ -42,32 +42,33 @@ namespace Nozomi.Ticker.StartupExtensions
                 var sourceTypes = new List<SourceType>()
                 {
                     // UNK is always seeded via .HasData.
-//                    new SourceType
-//                    {
-//                        Guid = Guid.Parse("ebe6b360-987d-4694-86a7-68c78c680a95"),
-//                        Abbreviation = "UNK",
-//                        Name = "Unknown"
-//                    },
                     new SourceType
                     {
-                        Id = 2,
+                        Guid = Guid.Parse("05b6457d-059c-458c-8774-0811e4d59ea8"),
+                        Name = "Unknown",
+                        Abbreviation = "UNK",
+                        IsEnabled = true
+                    },
+                    new SourceType
+                    {
                         Guid = Guid.Parse("dd09c50c-687e-4895-a46c-e54d5570c668"),
                         Abbreviation = "EXC",
-                        Name = "Exchange"
+                        Name = "Exchange",
+                        IsEnabled = true
                     },
                     new SourceType
                     {
-                        Id = 3,
                         Guid = Guid.Parse("a682ca6c-5911-4dcd-9e92-7fd865782707"),
                         Abbreviation = "TRH",
-                        Name = "Trading House"
+                        Name = "Trading House",
+                        IsEnabled = true
                     },
                     new SourceType
                     {
-                        Id = 4,
                         Guid = Guid.Parse("a7f1eea1-9fe9-4756-a3b2-4209da68c829"),
                         Abbreviation = "REG",
-                        Name = "Regulated Body"
+                        Name = "Regulated Body",
+                        IsEnabled = true
                     }
                 };
                 if (context.SourceTypes.Count() < 2)
@@ -80,23 +81,23 @@ namespace Nozomi.Ticker.StartupExtensions
                 {
                     new Source(Guid.Parse("894c8128-953e-4ead-b5f2-73e90dff4a97"), "BFX", "Bitfinex",
                         "https://docs.bitfinex.com/docs/introduction",
-                        context.SourceTypes.SingleOrDefault(st => st.Abbreviation.Equals("EXC")).Id),
+                        context.SourceTypes.SingleOrDefault(st => st.Abbreviation.Equals("EXC")).Guid),
                     new Source(Guid.Parse("088746a6-4e99-471b-b989-adc8c799532b"), "HAKO", "Coinhako", "None",
-                        context.SourceTypes.SingleOrDefault(st => st.Abbreviation.Equals("EXC")).Id),
+                        context.SourceTypes.SingleOrDefault(st => st.Abbreviation.Equals("EXC")).Guid),
                     new Source(Guid.Parse("df739166-4db1-4ad2-bfbb-d048d9ca345a"), "BNA", "Binance",
                         "https://github.com/binance-exchange/binance-official-api-docs/blob/master/rest-api.md",
-                        context.SourceTypes.SingleOrDefault(st => st.Abbreviation.Equals("EXC")).Id),
+                        context.SourceTypes.SingleOrDefault(st => st.Abbreviation.Equals("EXC")).Guid),
                     new Source(Guid.Parse("e436c827-bb15-4e28-9d35-d7624c08fbf3"), "ECB",
                         "European Central Bank",
                         "https://www.ecb.europa.eu/stats/policy_and_exchange_rates/euro_reference_exchange_rates/html/index.en.html",
-                        context.SourceTypes.SingleOrDefault(st => st.Abbreviation.Equals("REG")).Id),
+                        context.SourceTypes.SingleOrDefault(st => st.Abbreviation.Equals("REG")).Guid),
                     new Source(Guid.Parse("c6fa40f9-c6ee-4192-b8a6-c5878173bcc0"), "AVG", "AlphaVantage",
                         "https://www.alphavantage.co/documentation/",
-                        context.SourceTypes.SingleOrDefault(st => st.Abbreviation.Equals("TRH")).Id
+                        context.SourceTypes.SingleOrDefault(st => st.Abbreviation.Equals("TRH")).Guid
                     ),
                     new Source(Guid.Parse("ae0b0acc-5108-4b44-ac69-c1110992b7d4"), "POLO", "Poloniex",
                         "https://docs.poloniex.com/#public-http-api-methods",
-                        context.SourceTypes.SingleOrDefault(st => st.Abbreviation.Equals("EXC")).Id)
+                        context.SourceTypes.SingleOrDefault(st => st.Abbreviation.Equals("EXC")).Guid)
                 };
                 if (!context.Sources.Any())
                 {
