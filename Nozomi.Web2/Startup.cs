@@ -74,18 +74,20 @@ namespace Nozomi.Web2
                 });
             }
 
+            // https://docs.microsoft.com/en-us/aspnet/core/security/enforcing-ssl?view=aspnetcore-3.1&tabs=visual-studio#options
+            // Calling AddHttpsRedirection is only necessary to change the values of HttpsPort or RedirectStatusCode.
             services.AddHttpsRedirection(options =>
             {
                 options.RedirectStatusCode = StatusCodes.Status307TemporaryRedirect;
                 
-                if (Environment.IsProduction())
-                    options.HttpsPort = 443;
+                // if (Environment.IsProduction())
+                //     options.HttpsPort = 5001;
             });
 
             // In production, the Vue files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
             {
-                configuration.RootPath = "ClientApp/public";
+                configuration.RootPath = "ClientApp/dist";
             });
 
             // UoW-Repository injection
@@ -183,10 +185,6 @@ namespace Nozomi.Web2
                         npmScript: "serve",
                         port: 9000,
                         regex: "Compiled successfully");
-                }
-                else
-                {
-                    endpoints.MapFallbackToFile("ClientApp/dist/index.html");
                 }
 
                 // Add MapRazorPages if the app uses Razor Pages. Since Endpoint Routing includes support for many frameworks, adding Razor Pages is now opt -in.
