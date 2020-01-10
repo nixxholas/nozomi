@@ -26,18 +26,6 @@ namespace Nozomi.Repo.Auth.Data
             // For example, you can rename the ASP.NET Identity table names and more.
             // Add your customizations after calling base.OnModelCreating(builder);
 
-//            builder
-//                .HasPostgresExtension("uuid-ossp")
-//                .Entity<User>()
-//                .Property(u => u.Id)
-//                .HasDefaultValueSql("uuid_generate_v4()");
-//            
-//            builder
-//                .HasPostgresExtension("uuid-ossp")
-//                .Entity<Address>()
-//                .Property(addr => addr.Id)
-//                .HasDefaultValueSql("uuid_generate_v4()");
-            
             var addressMap = new AddressMap(builder.Entity<Address>());
             var roleClaimMap = new RoleClaimMap(builder.Entity<RoleClaim>());
             var roleMap = new RoleMap(builder.Entity<Role>());
