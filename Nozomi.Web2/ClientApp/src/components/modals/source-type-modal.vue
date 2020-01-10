@@ -1,19 +1,35 @@
 <template>
   <div>
-    <button class="button is-primary"
+    <button v-if="sourceType != null"
+            class="button is-warning"
+            @click="isModalActive = true">
+      Modify
+    </button>
+    <button v-else
+            class="button is-primary"
             @click="isModalActive = true">
       Create
     </button>
 
     <b-modal has-modal-card trap-focus :active.sync="isModalActive">
-      <b-loading :active.sync="isModalLoading" :can-cancel="false"></b-loading>
+      <b-loading :active.sync="isModalLoading" :can-cancel="false" />
       <!--https://stackoverflow.com/questions/48028718/using-event-modifier-prevent-in-vue-to-submit-form-without-redirection-->
-      <form v-on:submit.prevent="create()" class="has-text-justified">
+      <form v-on:submit.prevent="push()" class="has-text-justified">
         <div class="modal-card">
           <header class="modal-card-head">
-            <p class="modal-card-title">Create a source type</p>
+            <p class="modal-card-title" v-if="sourceType && form && form.name">
+              Modify {{ form.name }}
+            </p>
+            <p class="modal-card-title" v-else>Create a source type</p>
           </header>
           <section class="modal-card-body">
+            <b-field v-if="sourceType !== null">
+              <b-input
+                      type="hidden"
+                      v-model="form.guid">
+              </b-input>
+            </b-field>
+            
             <b-field>
               <template slot="label">
                 Abbreviation
@@ -56,13 +72,31 @@
     import SourceTypeService from "../../services/SourceTypeService";
 
     export default {
-        name: "create-source-type-modal",
+        name: "source-type-modal",
         props: {
-            currentRoute: window.location.href, // https://forum.vuejs.org/t/how-to-get-path-from-route-instance/26934/2
+          sourceType: {
+            type: Object,
+            default: null
+          },
+          currentRoute: window.location.href, // https://forum.vuejs.org/t/how-to-get-path-from-route-instance/26934/2
         },
+      beforeMount: function() {
+          if (this.sourceType) {
+            let sType = this.sourceType;
+            
+            if (sType.guid)
+              this.form.guid = sType.guid;
+            
+            if (sType.abbreviation)
+              this.form.abbreviation = sType.abbreviation;
+            
+            if (sType.name)
+              this.form.name = sType.name;
+          }
+      },
         methods: {
             ...mapActions('oidcStore', ['authenticateOidc', 'signOutOidc']),
-            create: function () {
+            push: function () {
                 this.isModalLoading = true;
 
                 let self = this;
@@ -137,8 +171,9 @@
                 isModalActive: false,
                 isModalLoading: false,
                 form: {
-                    abbreviation: "",
-                    name: ""
+                  guid: "",
+                  abbreviation: "",
+                  name: ""
                 }
             }
         }

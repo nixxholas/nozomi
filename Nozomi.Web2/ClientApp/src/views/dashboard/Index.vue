@@ -54,7 +54,7 @@
     import store from '@/store/index';
     // Request imports
     import CreateRequestComponent from '@/components/modals/request-modal';
-    import CreateSourceTypeModal from '@/components/modals/create-source-type-modal';
+    import CreateSourceTypeModal from '@/components/modals/source-type-modal';
     import RequestsTable from '@/components/tables/requests-table';
     import SourceTypesTable from '@/components/tables/source-types-table';
 

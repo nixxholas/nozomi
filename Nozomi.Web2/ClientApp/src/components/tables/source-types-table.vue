@@ -11,6 +11,10 @@
       <b-table-column field="name" label="Name">
         {{ props.row.name }}
       </b-table-column>
+      
+      <b-table-column label="">
+        <SourceTypeModal :source-type="props.row" />
+      </b-table-column>
     </template>
 
     <template slot="empty">
@@ -30,10 +34,12 @@
 </template>
 
 <script>
+  import SourceTypeModal from "@/components/modals/source-type-modal";
   import SourceTypeService from "@/services/SourceTypeService";
 
     export default {
         name: "source-types-table",
+      components: { SourceTypeModal },
         data() {
             return {
                 dataLoading: true,
