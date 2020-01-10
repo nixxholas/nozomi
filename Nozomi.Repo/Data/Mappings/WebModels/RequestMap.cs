@@ -13,7 +13,7 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
             entityTypeBuilder.Property(r => r.Id).ValueGeneratedOnAdd();
 
             entityTypeBuilder.HasAlternateKey(r => r.Guid).HasName("Request_AK_Guid");
-            entityTypeBuilder.Property(r => r.Guid).HasDefaultValueSql("uuid_generate_v4()");
+            entityTypeBuilder.Property(r => r.Guid);
 
             entityTypeBuilder.Property(r => r.Delay).HasDefaultValue(0).IsRequired();
             entityTypeBuilder.Property(r => r.FailureDelay).HasDefaultValue(3600000).IsRequired();

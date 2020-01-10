@@ -14,7 +14,7 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.AnalyticalModels
                 .ValueGeneratedOnAdd();
             
             entityTypeBuilder.HasIndex(ac => ac.Guid).IsUnique();
-            entityTypeBuilder.Property(ac => ac.Guid).HasDefaultValueSql("uuid_generate_v4()");
+            entityTypeBuilder.Property(ac => ac.Guid);
 
             entityTypeBuilder.HasIndex(ac => new { ac.CurrencyId, ac.ComponentType })
                 .HasName("AnalysedComponent_Index_CurrencyId_ComponentType").IsUnique();

@@ -8,9 +8,6 @@ namespace Nozomi.Repo.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AlterDatabase()
-                .Annotation("Npgsql:PostgresExtension:uuid-ossp", ",,");
-
             migrationBuilder.CreateTable(
                 name: "CurrencyTypes",
                 columns: table => new
@@ -21,11 +18,13 @@ namespace Nozomi.Repo.Migrations
                     CreatedAt = table.Column<DateTime>(nullable: false),
                     ModifiedAt = table.Column<DateTime>(nullable: false),
                     DeletedAt = table.Column<DateTime>(nullable: true),
-                    CreatedBy = table.Column<long>(nullable: false),
-                    ModifiedBy = table.Column<long>(nullable: false),
-                    DeletedBy = table.Column<long>(nullable: false),
+                    CreatedById = table.Column<string>(nullable: true),
+                    ModifiedById = table.Column<string>(nullable: true),
+                    DeletedById = table.Column<string>(nullable: true),
                     TypeShortForm = table.Column<string>(maxLength: 12, nullable: false),
-                    Name = table.Column<string>(nullable: false)
+                    Name = table.Column<string>(nullable: false),
+                    Guid = table.Column<Guid>(nullable: false),
+                    xmin = table.Column<uint>(type: "xid", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -33,25 +32,25 @@ namespace Nozomi.Repo.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Sources",
+                name: "SourceTypes",
                 columns: table => new
                 {
-                    Id = table.Column<long>(nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Guid = table.Column<Guid>(nullable: false),
                     IsEnabled = table.Column<bool>(nullable: false),
                     CreatedAt = table.Column<DateTime>(nullable: false),
                     ModifiedAt = table.Column<DateTime>(nullable: false),
                     DeletedAt = table.Column<DateTime>(nullable: true),
-                    CreatedBy = table.Column<long>(nullable: false),
-                    ModifiedBy = table.Column<long>(nullable: false),
-                    DeletedBy = table.Column<long>(nullable: false),
+                    CreatedById = table.Column<string>(nullable: true),
+                    ModifiedById = table.Column<string>(nullable: true),
+                    DeletedById = table.Column<string>(nullable: true),
+                    Id = table.Column<long>(nullable: false),
                     Abbreviation = table.Column<string>(nullable: false),
                     Name = table.Column<string>(nullable: false),
-                    APIDocsURL = table.Column<string>(nullable: true)
+                    xmin = table.Column<uint>(type: "xid", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("Source_PK_Id", x => x.Id);
+                    table.PrimaryKey("SourceType_Guid_PK", x => x.Guid);
                 });
 
             migrationBuilder.CreateTable(
@@ -64,9 +63,10 @@ namespace Nozomi.Repo.Migrations
                     CreatedAt = table.Column<DateTime>(nullable: false),
                     ModifiedAt = table.Column<DateTime>(nullable: false),
                     DeletedAt = table.Column<DateTime>(nullable: true),
-                    CreatedBy = table.Column<long>(nullable: false),
-                    ModifiedBy = table.Column<long>(nullable: false),
-                    DeletedBy = table.Column<long>(nullable: false),
+                    CreatedById = table.Column<string>(nullable: true),
+                    ModifiedById = table.Column<string>(nullable: true),
+                    DeletedById = table.Column<string>(nullable: true),
+                    Guid = table.Column<Guid>(nullable: false),
                     CurrencyTypeId = table.Column<long>(nullable: false),
                     LogoPath = table.Column<string>(nullable: false, defaultValue: "assets/svg/icons/question.svg"),
                     Abbreviation = table.Column<string>(nullable: false),
@@ -74,7 +74,8 @@ namespace Nozomi.Repo.Migrations
                     Name = table.Column<string>(nullable: false),
                     Description = table.Column<string>(nullable: true),
                     Denominations = table.Column<int>(nullable: false, defaultValue: 0),
-                    DenominationName = table.Column<string>(nullable: true)
+                    DenominationName = table.Column<string>(nullable: true),
+                    xmin = table.Column<uint>(type: "xid", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -88,7 +89,7 @@ namespace Nozomi.Repo.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "CurrencyPairs",
+                name: "Sources",
                 columns: table => new
                 {
                     Id = table.Column<long>(nullable: false)
@@ -97,25 +98,24 @@ namespace Nozomi.Repo.Migrations
                     CreatedAt = table.Column<DateTime>(nullable: false),
                     ModifiedAt = table.Column<DateTime>(nullable: false),
                     DeletedAt = table.Column<DateTime>(nullable: true),
-                    CreatedBy = table.Column<long>(nullable: false),
-                    ModifiedBy = table.Column<long>(nullable: false),
-                    DeletedBy = table.Column<long>(nullable: false),
-                    CurrencyPairType = table.Column<int>(nullable: false),
-                    APIUrl = table.Column<string>(nullable: false),
-                    DefaultComponent = table.Column<string>(nullable: false),
-                    SourceId = table.Column<long>(nullable: false),
-                    MainCurrencyAbbrv = table.Column<string>(nullable: false),
-                    CounterCurrencyAbbrv = table.Column<string>(nullable: false)
+                    CreatedById = table.Column<string>(nullable: true),
+                    ModifiedById = table.Column<string>(nullable: true),
+                    DeletedById = table.Column<string>(nullable: true),
+                    Guid = table.Column<Guid>(nullable: false),
+                    Abbreviation = table.Column<string>(nullable: false),
+                    Name = table.Column<string>(nullable: false),
+                    APIDocsURL = table.Column<string>(nullable: true),
+                    SourceTypeGuid = table.Column<Guid>(nullable: false, defaultValue: new Guid("05b6457d-059c-458c-8774-0811e4d59ea8")),
+                    xmin = table.Column<uint>(type: "xid", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("CurrencyPair_PK_Id", x => x.Id);
-                    table.UniqueConstraint("CurrencyPair_AK_MainCurrency_CounterCurrency_Source", x => new { x.MainCurrencyAbbrv, x.CounterCurrencyAbbrv, x.SourceId });
+                    table.PrimaryKey("Source_PK_Id", x => x.Id);
                     table.ForeignKey(
-                        name: "Source_CurrencyPairs_Constraint",
-                        column: x => x.SourceId,
-                        principalTable: "Sources",
-                        principalColumn: "Id",
+                        name: "FK_Sources_SourceTypes_SourceTypeGuid",
+                        column: x => x.SourceTypeGuid,
+                        principalTable: "SourceTypes",
+                        principalColumn: "Guid",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -129,9 +129,10 @@ namespace Nozomi.Repo.Migrations
                     CreatedAt = table.Column<DateTime>(nullable: false),
                     ModifiedAt = table.Column<DateTime>(nullable: false),
                     DeletedAt = table.Column<DateTime>(nullable: true),
-                    CreatedBy = table.Column<long>(nullable: false),
-                    ModifiedBy = table.Column<long>(nullable: false),
-                    DeletedBy = table.Column<long>(nullable: false),
+                    CreatedById = table.Column<string>(nullable: true),
+                    ModifiedById = table.Column<string>(nullable: true),
+                    DeletedById = table.Column<string>(nullable: true),
+                    Guid = table.Column<Guid>(nullable: false),
                     Type = table.Column<int>(nullable: false),
                     Value = table.Column<string>(nullable: true),
                     CurrencyId = table.Column<long>(nullable: false)
@@ -148,6 +149,39 @@ namespace Nozomi.Repo.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "CurrencyPairs",
+                columns: table => new
+                {
+                    Id = table.Column<long>(nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    IsEnabled = table.Column<bool>(nullable: false),
+                    CreatedAt = table.Column<DateTime>(nullable: false),
+                    ModifiedAt = table.Column<DateTime>(nullable: false),
+                    DeletedAt = table.Column<DateTime>(nullable: true),
+                    CreatedById = table.Column<string>(nullable: true),
+                    ModifiedById = table.Column<string>(nullable: true),
+                    DeletedById = table.Column<string>(nullable: true),
+                    Guid = table.Column<Guid>(nullable: false),
+                    CurrencyPairType = table.Column<int>(nullable: false),
+                    APIUrl = table.Column<string>(nullable: false),
+                    DefaultComponent = table.Column<string>(nullable: false),
+                    SourceId = table.Column<long>(nullable: false),
+                    MainTicker = table.Column<string>(nullable: true),
+                    CounterTicker = table.Column<string>(nullable: true),
+                    xmin = table.Column<uint>(type: "xid", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("CurrencyPair_PK_Id", x => x.Id);
+                    table.ForeignKey(
+                        name: "Source_CurrencyPairs_Constraint",
+                        column: x => x.SourceId,
+                        principalTable: "Sources",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "CurrencySources",
                 columns: table => new
                 {
@@ -157,11 +191,12 @@ namespace Nozomi.Repo.Migrations
                     CreatedAt = table.Column<DateTime>(nullable: false),
                     ModifiedAt = table.Column<DateTime>(nullable: false),
                     DeletedAt = table.Column<DateTime>(nullable: true),
-                    CreatedBy = table.Column<long>(nullable: false),
-                    ModifiedBy = table.Column<long>(nullable: false),
-                    DeletedBy = table.Column<long>(nullable: false),
+                    CreatedById = table.Column<string>(nullable: true),
+                    ModifiedById = table.Column<string>(nullable: true),
+                    DeletedById = table.Column<string>(nullable: true),
                     CurrencyId = table.Column<long>(nullable: false),
-                    SourceId = table.Column<long>(nullable: false)
+                    SourceId = table.Column<long>(nullable: false),
+                    xmin = table.Column<uint>(type: "xid", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -190,17 +225,21 @@ namespace Nozomi.Repo.Migrations
                     CreatedAt = table.Column<DateTime>(nullable: false),
                     ModifiedAt = table.Column<DateTime>(nullable: false),
                     DeletedAt = table.Column<DateTime>(nullable: true),
-                    CreatedBy = table.Column<long>(nullable: false),
-                    ModifiedBy = table.Column<long>(nullable: false),
-                    DeletedBy = table.Column<long>(nullable: false),
+                    CreatedById = table.Column<string>(nullable: true),
+                    ModifiedById = table.Column<string>(nullable: true),
+                    DeletedById = table.Column<string>(nullable: true),
+                    Guid = table.Column<Guid>(nullable: false),
                     ComponentType = table.Column<int>(nullable: false, defaultValue: 0),
                     Value = table.Column<string>(nullable: true),
                     IsDenominated = table.Column<bool>(nullable: false),
+                    IsFailing = table.Column<bool>(nullable: false, defaultValue: false),
+                    StoreHistoricals = table.Column<bool>(nullable: false, defaultValue: false),
                     Delay = table.Column<int>(nullable: false, defaultValue: 86400000),
                     UIFormatting = table.Column<string>(nullable: true),
                     CurrencyId = table.Column<long>(nullable: true),
                     CurrencyPairId = table.Column<long>(nullable: true),
-                    CurrencyTypeId = table.Column<long>(nullable: true)
+                    CurrencyTypeId = table.Column<long>(nullable: true),
+                    xmin = table.Column<uint>(type: "xid", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -235,10 +274,10 @@ namespace Nozomi.Repo.Migrations
                     CreatedAt = table.Column<DateTime>(nullable: false),
                     ModifiedAt = table.Column<DateTime>(nullable: false),
                     DeletedAt = table.Column<DateTime>(nullable: true),
-                    CreatedBy = table.Column<long>(nullable: false),
-                    ModifiedBy = table.Column<long>(nullable: false),
-                    DeletedBy = table.Column<long>(nullable: false),
-                    Guid = table.Column<Guid>(nullable: false, defaultValueSql: "uuid_generate_v4()"),
+                    CreatedById = table.Column<string>(nullable: true),
+                    ModifiedById = table.Column<string>(nullable: true),
+                    DeletedById = table.Column<string>(nullable: true),
+                    Guid = table.Column<Guid>(nullable: false),
                     RequestType = table.Column<int>(nullable: false),
                     ResponseType = table.Column<int>(nullable: false, defaultValue: 1),
                     DataPath = table.Column<string>(nullable: true),
@@ -246,7 +285,8 @@ namespace Nozomi.Repo.Migrations
                     FailureDelay = table.Column<long>(nullable: false, defaultValue: 3600000L),
                     CurrencyId = table.Column<long>(nullable: true),
                     CurrencyPairId = table.Column<long>(nullable: true),
-                    CurrencyTypeId = table.Column<long>(nullable: true)
+                    CurrencyTypeId = table.Column<long>(nullable: true),
+                    xmin = table.Column<uint>(type: "xid", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -282,12 +322,13 @@ namespace Nozomi.Repo.Migrations
                     CreatedAt = table.Column<DateTime>(nullable: false),
                     ModifiedAt = table.Column<DateTime>(nullable: false),
                     DeletedAt = table.Column<DateTime>(nullable: true),
-                    CreatedBy = table.Column<long>(nullable: false),
-                    ModifiedBy = table.Column<long>(nullable: false),
-                    DeletedBy = table.Column<long>(nullable: false),
+                    CreatedById = table.Column<string>(nullable: true),
+                    ModifiedById = table.Column<string>(nullable: true),
+                    DeletedById = table.Column<string>(nullable: true),
                     AnalysedComponentId = table.Column<long>(nullable: false),
                     Value = table.Column<string>(nullable: false),
-                    HistoricDateTime = table.Column<DateTime>(nullable: false)
+                    HistoricDateTime = table.Column<DateTime>(nullable: false),
+                    xmin = table.Column<uint>(type: "xid", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -310,16 +351,19 @@ namespace Nozomi.Repo.Migrations
                     CreatedAt = table.Column<DateTime>(nullable: false),
                     ModifiedAt = table.Column<DateTime>(nullable: false),
                     DeletedAt = table.Column<DateTime>(nullable: true),
-                    CreatedBy = table.Column<long>(nullable: false),
-                    ModifiedBy = table.Column<long>(nullable: false),
-                    DeletedBy = table.Column<long>(nullable: false),
+                    CreatedById = table.Column<string>(nullable: true),
+                    ModifiedById = table.Column<string>(nullable: true),
+                    DeletedById = table.Column<string>(nullable: true),
+                    Guid = table.Column<Guid>(nullable: false),
                     ComponentType = table.Column<int>(nullable: false),
                     Identifier = table.Column<string>(nullable: true),
                     QueryComponent = table.Column<string>(nullable: true),
                     IsDenominated = table.Column<bool>(nullable: false, defaultValue: false),
                     AnomalyIgnorance = table.Column<bool>(nullable: false, defaultValue: false),
+                    StoreHistoricals = table.Column<bool>(nullable: false, defaultValue: false),
                     Value = table.Column<string>(nullable: true),
-                    RequestId = table.Column<long>(nullable: false)
+                    RequestId = table.Column<long>(nullable: false),
+                    xmin = table.Column<uint>(type: "xid", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -333,34 +377,6 @@ namespace Nozomi.Repo.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "RequestLogs",
-                columns: table => new
-                {
-                    Id = table.Column<long>(nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    IsEnabled = table.Column<bool>(nullable: false),
-                    CreatedAt = table.Column<DateTime>(nullable: false),
-                    ModifiedAt = table.Column<DateTime>(nullable: false),
-                    DeletedAt = table.Column<DateTime>(nullable: true),
-                    CreatedBy = table.Column<long>(nullable: false),
-                    ModifiedBy = table.Column<long>(nullable: false),
-                    DeletedBy = table.Column<long>(nullable: false),
-                    Type = table.Column<int>(nullable: false),
-                    RawPayload = table.Column<string>(nullable: true),
-                    RequestId = table.Column<long>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("RequestLog_PK_Id", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_RequestLogs_Requests_RequestId",
-                        column: x => x.RequestId,
-                        principalTable: "Requests",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "RequestProperties",
                 columns: table => new
                 {
@@ -370,13 +386,15 @@ namespace Nozomi.Repo.Migrations
                     CreatedAt = table.Column<DateTime>(nullable: false),
                     ModifiedAt = table.Column<DateTime>(nullable: false),
                     DeletedAt = table.Column<DateTime>(nullable: true),
-                    CreatedBy = table.Column<long>(nullable: false),
-                    ModifiedBy = table.Column<long>(nullable: false),
-                    DeletedBy = table.Column<long>(nullable: false),
+                    CreatedById = table.Column<string>(nullable: true),
+                    ModifiedById = table.Column<string>(nullable: true),
+                    DeletedById = table.Column<string>(nullable: true),
+                    Guid = table.Column<Guid>(nullable: false),
                     RequestPropertyType = table.Column<int>(nullable: false),
                     Key = table.Column<string>(nullable: true),
                     Value = table.Column<string>(nullable: true),
-                    RequestId = table.Column<long>(nullable: false)
+                    RequestId = table.Column<long>(nullable: false),
+                    xmin = table.Column<uint>(type: "xid", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -399,13 +417,15 @@ namespace Nozomi.Repo.Migrations
                     CreatedAt = table.Column<DateTime>(nullable: false),
                     ModifiedAt = table.Column<DateTime>(nullable: false),
                     DeletedAt = table.Column<DateTime>(nullable: true),
-                    CreatedBy = table.Column<long>(nullable: false),
-                    ModifiedBy = table.Column<long>(nullable: false),
-                    DeletedBy = table.Column<long>(nullable: false),
+                    CreatedById = table.Column<string>(nullable: true),
+                    ModifiedById = table.Column<string>(nullable: true),
+                    DeletedById = table.Column<string>(nullable: true),
+                    Guid = table.Column<Guid>(nullable: false),
                     CommandType = table.Column<int>(nullable: false),
                     Name = table.Column<string>(nullable: true),
                     Delay = table.Column<long>(nullable: false, defaultValue: 0L),
-                    RequestId = table.Column<long>(nullable: false)
+                    RequestId = table.Column<long>(nullable: false),
+                    xmin = table.Column<uint>(type: "xid", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -428,12 +448,13 @@ namespace Nozomi.Repo.Migrations
                     CreatedAt = table.Column<DateTime>(nullable: false),
                     ModifiedAt = table.Column<DateTime>(nullable: false),
                     DeletedAt = table.Column<DateTime>(nullable: true),
-                    CreatedBy = table.Column<long>(nullable: false),
-                    ModifiedBy = table.Column<long>(nullable: false),
-                    DeletedBy = table.Column<long>(nullable: false),
+                    CreatedById = table.Column<string>(nullable: true),
+                    ModifiedById = table.Column<string>(nullable: true),
+                    DeletedById = table.Column<string>(nullable: true),
                     HistoricDateTime = table.Column<DateTime>(nullable: false),
                     Value = table.Column<string>(nullable: true, defaultValue: ""),
-                    RequestComponentId = table.Column<long>(nullable: false)
+                    RequestComponentId = table.Column<long>(nullable: false),
+                    xmin = table.Column<uint>(type: "xid", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -456,13 +477,15 @@ namespace Nozomi.Repo.Migrations
                     CreatedAt = table.Column<DateTime>(nullable: false),
                     ModifiedAt = table.Column<DateTime>(nullable: false),
                     DeletedAt = table.Column<DateTime>(nullable: true),
-                    CreatedBy = table.Column<long>(nullable: false),
-                    ModifiedBy = table.Column<long>(nullable: false),
-                    DeletedBy = table.Column<long>(nullable: false),
+                    CreatedById = table.Column<string>(nullable: true),
+                    ModifiedById = table.Column<string>(nullable: true),
+                    DeletedById = table.Column<string>(nullable: true),
+                    Guid = table.Column<Guid>(nullable: false),
                     CommandPropertyType = table.Column<int>(nullable: false),
                     Key = table.Column<string>(nullable: true),
                     Value = table.Column<string>(nullable: false),
-                    WebsocketCommandId = table.Column<long>(nullable: false)
+                    WebsocketCommandId = table.Column<long>(nullable: false),
+                    xmin = table.Column<uint>(type: "xid", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -474,6 +497,12 @@ namespace Nozomi.Repo.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AnalysedComponents_Guid",
+                table: "AnalysedComponents",
+                column: "Guid",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "AnalysedComponent_Index_CurrencyId_ComponentType",
@@ -504,15 +533,32 @@ namespace Nozomi.Repo.Migrations
                 column: "CurrencyTypeId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Currencies_Guid",
+                table: "Currencies",
+                column: "Guid",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "Currency_Index_Slug",
                 table: "Currencies",
                 column: "Slug",
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_CurrencyPairs_Guid",
+                table: "CurrencyPairs",
+                column: "Guid",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_CurrencyPairs_SourceId",
                 table: "CurrencyPairs",
                 column: "SourceId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CurrencyPairs_MainTicker_CounterTicker_SourceId",
+                table: "CurrencyPairs",
+                columns: new[] { "MainTicker", "CounterTicker", "SourceId" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_CurrencyProperty_CurrencyId",
@@ -531,9 +577,21 @@ namespace Nozomi.Repo.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_CurrencyTypes_Guid",
+                table: "CurrencyTypes",
+                column: "Guid",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_RcdHistoricItems_RequestComponentId",
                 table: "RcdHistoricItems",
                 column: "RequestComponentId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_RequestComponents_Guid",
+                table: "RequestComponents",
+                column: "Guid",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "RequestComponent_AK_RequestId_ComponentType",
@@ -542,9 +600,10 @@ namespace Nozomi.Repo.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_RequestLogs_RequestId",
-                table: "RequestLogs",
-                column: "RequestId");
+                name: "IX_RequestProperties_Guid",
+                table: "RequestProperties",
+                column: "Guid",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_RequestProperties_RequestId",
@@ -572,9 +631,38 @@ namespace Nozomi.Repo.Migrations
                 column: "Abbreviation");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Sources_Guid",
+                table: "Sources",
+                column: "Guid",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Sources_SourceTypeGuid",
+                table: "Sources",
+                column: "SourceTypeGuid");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SourceTypes_Abbreviation",
+                table: "SourceTypes",
+                column: "Abbreviation",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_WebsocketCommandProperties_Guid",
+                table: "WebsocketCommandProperties",
+                column: "Guid",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_WebsocketCommandProperties_WebsocketCommandId",
                 table: "WebsocketCommandProperties",
                 column: "WebsocketCommandId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_WebsocketCommands_Guid",
+                table: "WebsocketCommands",
+                column: "Guid",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_WebsocketCommands_RequestId",
@@ -595,9 +683,6 @@ namespace Nozomi.Repo.Migrations
 
             migrationBuilder.DropTable(
                 name: "RcdHistoricItems");
-
-            migrationBuilder.DropTable(
-                name: "RequestLogs");
 
             migrationBuilder.DropTable(
                 name: "RequestProperties");
@@ -628,6 +713,9 @@ namespace Nozomi.Repo.Migrations
 
             migrationBuilder.DropTable(
                 name: "Sources");
+
+            migrationBuilder.DropTable(
+                name: "SourceTypes");
         }
     }
 }

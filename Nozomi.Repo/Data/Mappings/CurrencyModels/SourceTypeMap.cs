@@ -11,9 +11,7 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
         public SourceTypeMap(EntityTypeBuilder<SourceType> entityTypeBuilder) : base(entityTypeBuilder)
         {
             entityTypeBuilder.HasKey(e => e.Guid).HasName("SourceType_Guid_PK");
-            entityTypeBuilder.Property(e => e.Guid)
-                .ValueGeneratedOnAdd().
-                HasDefaultValueSql("uuid_generate_v4()");
+            entityTypeBuilder.Property(e => e.Guid).ValueGeneratedOnAdd();
 
             entityTypeBuilder.HasIndex(e => e.Abbreviation).IsUnique();
             entityTypeBuilder.Property(e => e.Abbreviation).IsRequired();
