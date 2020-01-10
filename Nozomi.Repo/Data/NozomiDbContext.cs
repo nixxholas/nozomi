@@ -19,8 +19,6 @@ namespace Nozomi.Repo.Data
 {
     public class NozomiDbContext : DbContext, IDbContext
     {
-        private readonly ILogger<NozomiDbContext> _logger;
-        
         public DbSet<AnalysedComponent> AnalysedComponents { get; set; }
         public DbSet<AnalysedHistoricItem> AnalysedHistoricItems { get; set; }
         public DbSet<Currency> Currencies { get; set; }
@@ -146,7 +144,7 @@ namespace Nozomi.Repo.Data
             }
             catch (Exception ex)
             {
-                _logger.LogCritical("[NozomiDbContext]: " + ex);
+                Console.WriteLine("[NozomiDbContext]: " + ex);
             }
         }
     }
