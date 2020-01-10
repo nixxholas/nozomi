@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using Nozomi.Data.ResponseModels.Source;
 
-namespace Nozomi.Data.ResponseModels.SourceType
+namespace Nozomi.Data.ViewModels.SourceType
 {
     public class SourceTypeViewModel
     {

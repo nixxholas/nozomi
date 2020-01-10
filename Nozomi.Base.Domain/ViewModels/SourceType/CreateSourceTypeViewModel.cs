@@ -1,6 +1,6 @@
 using FluentValidation;
 
-namespace Nozomi.Data.ResponseModels.SourceType
+namespace Nozomi.Data.ViewModels.SourceType
 {
     public class CreateSourceTypeViewModel
     {

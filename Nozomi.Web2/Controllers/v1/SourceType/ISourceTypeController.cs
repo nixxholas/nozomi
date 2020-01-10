@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using Nozomi.Data.ResponseModels.SourceType;
+using Nozomi.Data.ViewModels.SourceType;
 
 namespace Nozomi.Web2.Controllers.v1.SourceType
 {
