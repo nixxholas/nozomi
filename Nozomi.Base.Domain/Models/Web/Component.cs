@@ -17,6 +17,7 @@ namespace Nozomi.Data.Models.Web
         public Component(ComponentType componentType, string identifier, string queryComponent, bool anomalyIgnorance,
             bool isDenominated, bool storeHistoricals)
         {
+            Guid = Guid.NewGuid();
             ComponentType = componentType;
             Identifier = identifier;
             QueryComponent = queryComponent;
@@ -38,6 +39,7 @@ namespace Nozomi.Data.Models.Web
         public Component(ComponentType componentType, string identifier, string queryComponent,
             bool anomalyIgnorance, bool isDenominated, bool storeHistoricals, long requestId)
         {
+            Guid = Guid.NewGuid();
             ComponentType = componentType;
             Identifier = identifier;
             QueryComponent = queryComponent;
@@ -52,6 +54,7 @@ namespace Nozomi.Data.Models.Web
             if (component != null)
             {
                 Id = component.Id;
+                Guid = component.Guid;
                 ComponentType = component.ComponentType;
                 IsEnabled = component.IsEnabled;
                 CreatedAt = component.CreatedAt;

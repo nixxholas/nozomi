@@ -18,6 +18,7 @@ namespace Nozomi.Data.Models.Web.Analytical
         public AnalysedComponent(AnalysedComponentType type, int delay, string uiFormatting, bool isDenominated,
             bool storeHistoricals, long currencyId, long currencyPairId, long currencyTypeId)
         {
+            Guid = Guid.NewGuid();
             ComponentType = type;
             Delay = delay;
             UIFormatting = uiFormatting;
@@ -45,6 +46,7 @@ namespace Nozomi.Data.Models.Web.Analytical
         public AnalysedComponent(AnalysedComponentType type, int delay, string uiFormatting, bool isDenominated,
             bool storeHistoricals)
         {
+            Guid = Guid.NewGuid();
             ComponentType = type;
             Delay = delay;
             UIFormatting = uiFormatting;
