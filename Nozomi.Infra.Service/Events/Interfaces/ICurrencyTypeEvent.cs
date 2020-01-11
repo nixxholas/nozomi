@@ -1,12 +1,13 @@
 using System.Collections.Generic;
 using Nozomi.Data.Models.Currency;
 using Nozomi.Data.ViewModels.CurrencyType;
+using Nozomi.Preprocessing;
 
 namespace Nozomi.Service.Events.Interfaces
 {
     public interface ICurrencyTypeEvent
     {
-        IEnumerable<CurrencyTypeViewModel> All();
+        IEnumerable<CurrencyTypeViewModel> All(int index = 0, int itemsPerPage = 200);
         
         CurrencyType Get(string guid, bool track = false);
         

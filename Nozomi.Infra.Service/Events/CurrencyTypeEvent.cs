@@ -20,12 +20,17 @@ namespace Nozomi.Service.Events
         {
         }
 
-        public IEnumerable<CurrencyTypeViewModel> All()
+        public IEnumerable<CurrencyTypeViewModel> All(int index = 0, int itemsPerPage = 200)
         {
+            if (itemsPerPage > 200 || itemsPerPage <= 0) // Always default to 200
+                itemsPerPage = 200;
+            
             return _unitOfWork.GetRepository<CurrencyType>()
                 .GetQueryable()
                 .AsNoTracking()
                 .Where(ct => ct.DeletedAt == null && ct.IsEnabled)
+                .Skip(index * itemsPerPage)
+                .Take(itemsPerPage)
                 .Select(ct => new CurrencyTypeViewModel
                 {
                     Guid = ct.Guid,
