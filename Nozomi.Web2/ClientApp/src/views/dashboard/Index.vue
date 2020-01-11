@@ -21,9 +21,18 @@
                         <article class="tile is-child notification is-info">
                             <p class="title">Source Types</p>
                             <p class="subtitle">
-                                <CreateSourceTypeModal />
+                                <SourceTypeModal />
                             </p>
                             <SourceTypesTable />
+                        </article>
+                    </div>
+                    <div class="tile is-parent">
+                        <article class="tile is-child notification is-info">
+                            <p class="title">Currency Types</p>
+                            <p class="subtitle">
+                                <CurrencyTypeModal />
+                            </p>
+                            <CurrencyTypesTable />
                         </article>
                     </div>
                 </div>
@@ -51,16 +60,18 @@
 
 <script>
     import {mapActions, mapGetters} from 'vuex';
-    import store from '@/store/index';
     // Request imports
     import CreateRequestComponent from '@/components/modals/request-modal';
-    import CreateSourceTypeModal from '@/components/modals/source-type-modal';
+    import CurrencyTypeModal from '@/components/modals/currency-type-modal';
+    import SourceTypeModal from '@/components/modals/source-type-modal';
+    import CurrencyTypesTable from '@/components/tables/currency-types-table';
     import RequestsTable from '@/components/tables/requests-table';
     import SourceTypesTable from '@/components/tables/source-types-table';
 
     export default {
         name: "Dashboard",
-        components: {CreateRequestComponent, CreateSourceTypeModal, RequestsTable, SourceTypesTable},
+        components: { CreateRequestComponent, CurrencyTypeModal, SourceTypeModal, 
+            CurrencyTypesTable, RequestsTable, SourceTypesTable },
         data: function () {
             return {
                 user: this.oidcUser
