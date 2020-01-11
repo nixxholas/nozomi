@@ -2,10 +2,15 @@ import axios from 'axios';
 import Converter from '../helpers/converter';
 
 export default {
-    getAll() {
+    all(index = 0, itemsPerPage = 200) {
         return new Promise((resolve, reject) => {
-            axios.get('/api/CurrencyType/All').then(function (response) {
-                resolve(response.data);
+            axios.get('/api/CurrencyType/All', {
+                params: {
+                    index: index,
+                    itemsPerPage: itemsPerPage
+                }
+            }).then(function (response) {
+                resolve(response);
             }).catch(function (error) {
                 reject(error);
             });

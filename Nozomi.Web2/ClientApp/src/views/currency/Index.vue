@@ -26,8 +26,8 @@
 <script>
     import { mapGetters } from 'vuex';
     import CurrencyModal from '@/components/modals/currency-modal';
-    import CurrencyService from "../../services/CurrencyService";
-    import CurrencyTypeService from "../../services/CurrencyTypeService";
+    import CurrencyService from "@/services/CurrencyService";
+    import CurrencyTypeService from "@/services/CurrencyTypeService";
     import CurrencyTable from "@/components/tables/currencies-table";
 
     export default {
