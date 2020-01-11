@@ -11,9 +11,7 @@ namespace Nozomi.Data.Models.Currency
     [DataContract]
     public class Currency : Entity
     {
-        public Currency() {
-            Guid = Guid.NewGuid();
-        }
+        public Currency() {}
 
         public Currency(long currencyTypeId, string logoPath, string abbreviation, string slug, string name,
             string description, int denominations, string denominationName)

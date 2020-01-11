@@ -16,6 +16,7 @@ namespace Nozomi.Data.Models.Currency
         public CurrencyPair(CurrencyPairType currencyPairType, string mainTicker, string counterTicker, 
             string apiUrl, string defaultComponent, long sourceId, bool isEnabled = false)
         {
+            Guid = Guid.NewGuid();
             CurrencyPairType = currencyPairType;
             MainTicker = mainTicker;
             CounterTicker = counterTicker;
