@@ -14,7 +14,10 @@ namespace Nozomi.Data.Models.Web
     [DataContract]
     public class Request : Entity
     {
-        public Request() {}
+        public Request()
+        {
+            Guid = Guid.NewGuid();
+        }
 
         public Request(Request r)
         {
@@ -98,6 +101,7 @@ namespace Nozomi.Data.Models.Web
         public Request(RequestType requestType, ResponseType responseType, string dataPath, int delay,
             long failureDelay)
         {
+            Guid = Guid.NewGuid();
             RequestType = requestType;
             ResponseType = responseType;
             DataPath = dataPath;
