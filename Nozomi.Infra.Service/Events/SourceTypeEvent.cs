@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data.Models.Currency;
 using Nozomi.Data.ResponseModels.Source;
@@ -26,6 +27,14 @@ namespace Nozomi.Service.Events
                 .GetQueryable()
                 .AsNoTracking()
                 .Any(st => st.Abbreviation.Equals(abbreviation));
+        }
+
+        public bool Exists(Guid guid)
+        {
+            return _unitOfWork.GetRepository<SourceType>()
+                .GetQueryable()
+                .AsNoTracking()
+                .Any(st => st.Guid.Equals(guid));
         }
 
         public SourceType Find(string sourceTypeGuid)
