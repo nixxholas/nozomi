@@ -36,5 +36,15 @@ namespace Nozomi.Service.Services
             throw new ArgumentException("Invalid properties or a source type with the same abbreviation " +
                                         "already exists.");
         }
+
+        public bool Update(UpdateSourceTypeViewModel vm, string userId)
+        {
+            if (vm.IsValid())
+            {
+                
+            }
+            
+            throw new ArgumentException("Invalid source type.");
+        }
     }
 }
