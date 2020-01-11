@@ -6,6 +6,8 @@ namespace Nozomi.Service.Events.Interfaces
 {
     public interface ISourceTypeEvent
     {
+        bool Exists(string abbreviation);
+        
         SourceType Find(string sourceTypeGuid);
         
         IEnumerable<SourceTypeViewModel> GetAll(bool track = false);

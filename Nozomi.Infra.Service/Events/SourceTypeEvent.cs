@@ -20,6 +20,14 @@ namespace Nozomi.Service.Events
         {
         }
 
+        public bool Exists(string abbreviation)
+        {
+            return _unitOfWork.GetRepository<SourceType>()
+                .GetQueryable()
+                .AsNoTracking()
+                .Any(st => st.Abbreviation.Equals(abbreviation));
+        }
+
         public SourceType Find(string sourceTypeGuid)
         {
             if (string.IsNullOrWhiteSpace(sourceTypeGuid))
