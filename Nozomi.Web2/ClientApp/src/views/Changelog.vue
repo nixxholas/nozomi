@@ -91,6 +91,21 @@
                                 </ul>
                             </div>
                         </div>
+                        <div class="timeline-item is-info">
+                            <div class="timeline-marker is-info"></div>
+                            <div class="timeline-content">
+                                <p class="heading">11 January 2019 - <b>beta 2</b></p>
+                                <ul>
+                                    <li><b>Backend</b> - Complete database wipe for MVP preparations</li>
+                                    <li><b>Backend</b> - Certain entities now carry a more obscure ID</li>
+                                    <li><b>Backend</b> - Package updates for better .NET Core 3.1 compatibility</li>
+                                    <li><b>UI</b> - General hotfixes and improvements</li>
+                                    <li><b>Cabin</b> - Currency type management</li>
+                                    <li><b>Cabin</b> - Source type and Currency type tables now have a self-update functionality</li>
+                                    <li><b class="has-text-danger">Known Issue</b> - Some creation forms send a UI console error after the creation of an entity is complete</li>
+                                </ul>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -1,13 +1,14 @@
 <template>
     <section>
         <b-autocomplete
-                v-if="data && data.length > 0 && data[0] !== null"
                 :data="data.filter(e => e.mainTicker && e.counterTicker)"
                 v-model="currencyPairGuid"
                 placeholder="e.g. EURUSD"
                 :custom-formatter="getCurrencyPairTickerPairStr"
                 :loading="isLoading"
-                @select="option => selected = option">
+                @select="option => selected = option"
+                @typing="getAsyncData"
+                @infinite-scroll="getMoreAsyncData">
 
             <template slot-scope="props">
                 <div class="media">
@@ -21,13 +22,12 @@
                 </div>
             </template>
         </b-autocomplete>
-        <b-message v-else>Oh no.. There aren't any currency pairs at the moment..
-        </b-message>
     </section>
 </template>
 
 <script>
-import CurrencyPairService from "@/services/CurrencyPairService";
+    import debounce from 'lodash/debounce';
+    import CurrencyPairService from "@/services/CurrencyPairService";
 
 export default {
     name: 'currency-pairs-autocomplete',
@@ -41,6 +41,8 @@ export default {
         return {
             isLoading: false,
             data: [],
+            page: 0,
+            query: '',
             selected: null,
             currencyPairGuid: null,
         }
@@ -63,6 +65,28 @@ export default {
 
             return obj.mainTicker + obj.counterTicker + " from " + obj.source.name + "";
         },
+        getAsyncData: function (query) {
+            let self = this;
+            self.isLoading = true;
+
+            console.dir(query);
+            CurrencyPairService.search(query, this.page, 50)
+                .then(function (data) {
+                    self.data = data;
+                    
+                    self.page++;
+                    // this.totalPages = data.total_pages
+                })
+                .catch((error) => {
+                    throw error;
+                })
+                .finally(() => {
+                    self.isLoading = false;
+                })
+        },
+        getMoreAsyncData: function () {
+            this.getAsyncData(this.query);
+        }
     },
     created: function () {
         let self = this;
