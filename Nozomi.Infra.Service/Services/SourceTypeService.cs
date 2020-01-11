@@ -41,9 +41,38 @@ namespace Nozomi.Service.Services
 
         public bool Update(UpdateSourceTypeViewModel vm, string userId)
         {
-            if (vm.IsValid())
+            if (vm.IsValid() && _sourceTypeEvent.Exists(vm.Guid))
             {
-                
+                var sourceType = _sourceTypeEvent.Get(vm.Guid);
+
+                if (sourceType != null)
+                {
+                    if (vm.DeletedAt != null)
+                    {
+                        sourceType.DeletedAt = DateTime.UtcNow;
+                        sourceType.DeletedById = userId;
+                        
+                        _unitOfWork.GetRepository<SourceType>().Update(sourceType);
+                        _unitOfWork.Commit(userId);
+
+                        return true;
+                    }
+                    
+                    if (vm.IsEnabled != null)
+                        sourceType.IsEnabled = (bool)vm.IsEnabled;
+                    
+                    if (!string.IsNullOrEmpty(vm.Name))
+                        sourceType.Name = vm.Name;
+
+                    if (!string.IsNullOrEmpty(vm.Abbreviation) 
+                        && !_sourceTypeEvent.Exists(vm.Abbreviation))
+                        sourceType.Abbreviation = vm.Abbreviation;
+                    
+                    _unitOfWork.GetRepository<SourceType>().Update(sourceType);
+                    _unitOfWork.Commit(userId);
+
+                    return true;
+                }
             }
             
             throw new ArgumentException("Invalid source type.");
