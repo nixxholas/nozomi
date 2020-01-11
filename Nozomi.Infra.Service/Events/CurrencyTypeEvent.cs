@@ -39,7 +39,10 @@ namespace Nozomi.Service.Events
 
         public bool Exists(long id)
         {
-            throw new NotImplementedException();
+            return _unitOfWork.GetRepository<CurrencyType>()
+                .GetQueryable()
+                .AsNoTracking()
+                .Any(ct => ct.Id.Equals(id));
         }
 
         public IEnumerable<CurrencyTypeViewModel> All(int index = 0, int itemsPerPage = 200)
