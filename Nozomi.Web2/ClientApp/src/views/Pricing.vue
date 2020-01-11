@@ -6,7 +6,7 @@
                     Pricing
                 </h1>
                 <h2 class="subtitle">
-                    Hero subtitle
+                    
                 </h2>
                 
                 <div class="pricing-table">
