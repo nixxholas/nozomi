@@ -1,12 +1,15 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Nozomi.Base.BCL;
 using Nozomi.Data.ResponseModels;
 using Nozomi.Data.ResponseModels.AnalysedComponent;
+using Nozomi.Data.ViewModels.CurrencyType;
 using Nozomi.Preprocessing;
+using Nozomi.Preprocessing.Statics;
 using Nozomi.Service.Events.Analysis.Interfaces;
 using Nozomi.Service.Events.Interfaces;
 
@@ -29,6 +32,13 @@ namespace Nozomi.Web2.Controllers.v1.CurrencyType
         public IActionResult All([FromQuery]int index = 0, [FromQuery]int itemsPerPage = 200)
         {
             return Ok(_currencyTypeEvent.All());
+        }
+
+        [Authorize(Roles = NozomiPermissions.AllowAllStaffRoles)]
+        [HttpPost]
+        public IActionResult Create(CreateCurrencyTypeViewModel vm)
+        {
+            throw new NotImplementedException();
         }
 
         [HttpGet("{page}")]
@@ -79,6 +89,12 @@ namespace Nozomi.Web2.Controllers.v1.CurrencyType
             [FromQuery]string orderingParam = "TypeShortForm")
         {
             return Ok(_currencyTypeEvent.ListAll(page, itemsPerPage, orderAscending, orderingParam));
+        }
+        [Authorize(Roles = NozomiPermissions.AllowAllStaffRoles)]
+        [HttpPut]
+        public IActionResult Update(UpdateCurrencyTypeViewModel vm)
+        {
+            throw new NotImplementedException();
         }
     }
 }
