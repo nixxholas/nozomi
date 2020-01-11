@@ -57,7 +57,7 @@ namespace Nozomi.Service.Services
                 }                    
 
                 if (!string.IsNullOrEmpty(vm.TypeShortForm)
-                    && _currencyTypeEvent.Exists(vm.TypeShortForm))
+                    && !_currencyTypeEvent.Exists(vm.TypeShortForm))
                     currencyType.TypeShortForm = vm.TypeShortForm;
 
                 if (!string.IsNullOrEmpty(vm.Name))
