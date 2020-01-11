@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
+using IdentityModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -12,6 +14,7 @@ using Nozomi.Preprocessing;
 using Nozomi.Preprocessing.Statics;
 using Nozomi.Service.Events.Analysis.Interfaces;
 using Nozomi.Service.Events.Interfaces;
+using Nozomi.Service.Services.Interfaces;
 
 namespace Nozomi.Web2.Controllers.v1.CurrencyType
 {
@@ -19,13 +22,16 @@ namespace Nozomi.Web2.Controllers.v1.CurrencyType
     {
         private readonly IAnalysedComponentEvent _analysedComponentEvent;
         private readonly ICurrencyTypeEvent _currencyTypeEvent;
+        private readonly ICurrencyTypeService _currencyTypeService;
 
         public CurrencyTypeController(ILogger<CurrencyTypeController> logger,
-            IAnalysedComponentEvent analysedComponentEvent, ICurrencyTypeEvent currencyTypeEvent)
+            IAnalysedComponentEvent analysedComponentEvent, ICurrencyTypeEvent currencyTypeEvent,
+            ICurrencyTypeService currencyTypeService)
             : base(logger)
         {
             _analysedComponentEvent = analysedComponentEvent;
             _currencyTypeEvent = currencyTypeEvent;
+            _currencyTypeService = currencyTypeService;
         }
 
         [HttpGet]
@@ -36,9 +42,19 @@ namespace Nozomi.Web2.Controllers.v1.CurrencyType
 
         [Authorize(Roles = NozomiPermissions.AllowAllStaffRoles)]
         [HttpPost]
-        public IActionResult Create(CreateCurrencyTypeViewModel vm)
+        public IActionResult Create([FromBody]CreateCurrencyTypeViewModel vm)
         {
-            throw new NotImplementedException();
+            var sub = ((ClaimsIdentity) User.Identity)
+                .Claims.SingleOrDefault(c => c.Type.Equals(JwtClaimTypes.Subject))?.Value;
+
+            if (!string.IsNullOrWhiteSpace(sub))
+            {
+                _currencyTypeService.Create(vm, sub);
+
+                return Ok();
+            }
+
+            return BadRequest("Please re-authenticate again");
         }
 
         [HttpGet("{page}")]
