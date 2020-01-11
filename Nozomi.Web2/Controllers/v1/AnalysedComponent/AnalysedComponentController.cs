@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data.ViewModels.AnalysedComponent;
+using Nozomi.Preprocessing.Statics;
 using Nozomi.Service.Events.Analysis.Interfaces;
 using Nozomi.Service.Services.Interfaces;
 
@@ -35,7 +36,7 @@ namespace Nozomi.Web2.Controllers.v1.AnalysedComponent
             return Ok(payload);
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = NozomiPermissions.AllowAllStaffRoles)]
         [HttpPost]
         public IActionResult Create([FromBody]CreateAnalysedComponentViewModel vm)
         {
