@@ -11,11 +11,14 @@ namespace Nozomi.Data.Models.Currency
     [DataContract]
     public class Currency : Entity
     {
-        public Currency() {}
+        public Currency() {
+            Guid = Guid.NewGuid();
+        }
 
         public Currency(long currencyTypeId, string logoPath, string abbreviation, string slug, string name,
             string description, int denominations, string denominationName)
         {
+            Guid = Guid.NewGuid();
             CurrencyTypeId = currencyTypeId;
             LogoPath = logoPath;
             Abbreviation = abbreviation;
