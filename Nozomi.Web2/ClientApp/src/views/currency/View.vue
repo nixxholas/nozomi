@@ -9,7 +9,7 @@
                             <b-navbar-item tag="div" class="level-item">
                                 <img
                                         class="image is-64x64 mr-3"
-                                        :src="'/' + data.logoPath"
+                                        :src="data.logoPath"
                                         alt="Currency"
                                         v-if="data && data.logoPath"
                                 >
