@@ -121,9 +121,9 @@
                     self.data = res;
                 });
 
-            CurrencyTypeService.getAll()
+            CurrencyTypeService.all()
                 .then(function (res) {
-                    self.typeData = res;
+                    self.typeData = res.data;
 
                     self.dataLoading = false;
                 })

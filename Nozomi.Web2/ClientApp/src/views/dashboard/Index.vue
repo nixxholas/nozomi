@@ -21,9 +21,9 @@
                         <article class="tile is-child notification is-info">
                             <p class="title">Source Types</p>
                             <p class="subtitle">
-                                <CreateSourceTypeModal></CreateSourceTypeModal>
+                                <CreateSourceTypeModal />
                             </p>
-                            <SourceTypesTable></SourceTypesTable>
+                            <SourceTypesTable />
                         </article>
                     </div>
                 </div>
@@ -36,7 +36,7 @@
                         </b-field>
                         <b-field position="is-right">
                             <div class="control">
-                                <CreateRequestComponent @created="createdNewRequest"></CreateRequestComponent>
+                                <CreateRequestComponent @created="createdNewRequest" />
                             </div>
                         </b-field>
                         <section>

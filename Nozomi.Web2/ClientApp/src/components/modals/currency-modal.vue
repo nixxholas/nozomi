@@ -261,9 +261,9 @@
 
             // Synchronously call for data
             self.typesIsLoading = true;
-            CurrencyTypeService.getAll()
+            CurrencyTypeService.all()
                 .then(function (res) {
-                    self.types = res;
+                    self.types = res.data;
                     self.typesIsLoading = false;
 
                     // If currency isn't null, it means we're editing an existing one.

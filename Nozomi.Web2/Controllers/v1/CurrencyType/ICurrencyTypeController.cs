@@ -7,7 +7,7 @@ namespace Nozomi.Web2.Controllers.v1.CurrencyType
 {
     public interface ICurrencyTypeController
     {
-        IActionResult All();
+        IActionResult All(int index = 0, int itemsPerPage = 200);
 
         ICollection<ExtendedAnalysedComponentResponse<EpochValuePair<string>>> GetAll(int page);
 

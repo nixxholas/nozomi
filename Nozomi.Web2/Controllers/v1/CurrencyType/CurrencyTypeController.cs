@@ -26,7 +26,7 @@ namespace Nozomi.Web2.Controllers.v1.CurrencyType
         }
 
         [HttpGet]
-        public IActionResult All()
+        public IActionResult All([FromQuery]int index = 0, [FromQuery]int itemsPerPage = 200)
         {
             return Ok(_currencyTypeEvent.All());
         }
