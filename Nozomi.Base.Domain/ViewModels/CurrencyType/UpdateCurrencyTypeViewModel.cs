@@ -18,9 +18,8 @@ namespace Nozomi.Data.ViewModels.CurrencyType
         {
             public UpdateCurrencyTypeValidator()
             {
-                RuleFor(st => st.TypeShortForm).NotNull().NotEmpty()
+                RuleFor(st => st.TypeShortForm)
                     .Must(e => e.Length <= 12);
-                RuleFor(st => st.Name).NotNull().NotEmpty();
             }
         }
     }
