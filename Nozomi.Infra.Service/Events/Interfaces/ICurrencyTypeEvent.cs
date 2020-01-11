@@ -24,5 +24,7 @@ namespace Nozomi.Service.Events.Interfaces
 
         ICollection<CurrencyTypeViewModel> ListAll(int page = 0, int itemsPerPage = 50, bool orderAscending = true, 
             string orderingParam = "TypeShortForm");
+
+        CurrencyType Pop(Guid guid);
     }
 }

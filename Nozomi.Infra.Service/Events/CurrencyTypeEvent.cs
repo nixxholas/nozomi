@@ -186,5 +186,18 @@ namespace Nozomi.Service.Events
                 })
                 .ToList();
         }
+
+        /// <summary>
+        /// Obtain a tracked version of currency type
+        /// </summary>
+        /// <param name="guid">GUID of the currency type in question</param>
+        /// <returns>Currency type in question</returns>
+        public CurrencyType Pop(Guid guid)
+        {
+            return _unitOfWork.GetRepository<CurrencyType>()
+                .GetQueryable()
+                .AsTracking()
+                .SingleOrDefault(ct => ct.Guid.Equals(guid));
+        }
     }
 }
