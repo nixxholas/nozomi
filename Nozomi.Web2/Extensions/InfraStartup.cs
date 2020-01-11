@@ -27,22 +27,22 @@ namespace Nozomi.Web2.Extensions
             // Auth Events
             services.AddScoped<IValidatingEvent, ValidatingEvent>();
 
-            services.AddScoped<IAnalysedComponentEvent, AnalysedComponentEvent>();
-            services.AddScoped<IAnalysedComponentTypeEvent, AnalysedComponentTypeEvent>();
-            services.AddScoped<IAnalysedHistoricItemEvent, AnalysedHistoricItemEvent>();
-            services.AddScoped<IComponentEvent, ComponentEvent>();
-            services.AddScoped<IComponentTypeEvent, ComponentTypeEvent>();
-            services.AddScoped<ICurrencyEvent, CurrencyEvent>();
-            services.AddScoped<ICurrencyPairEvent, CurrencyPairEvent>();
-            services.AddScoped<ICurrencyPairTypeEvent, CurrencyPairTypeEvent>();
-            services.AddScoped<ICurrencySourceEvent, CurrencySourceEvent>();
-            services.AddScoped<ICurrencyTypeEvent, CurrencyTypeEvent>();
-            services.AddScoped<IRequestEvent, RequestEvent>();
-            services.AddScoped<IRequestPropertyTypeEvent, RequestPropertyTypeEvent>();
-            services.AddScoped<IRequestTypeEvent, RequestTypeEvent>();
-            services.AddScoped<ISourceEvent, SourceEvent>();
-            services.AddScoped<ISourceTypeEvent, SourceTypeEvent>();
-            services.AddScoped<ITickerEvent, TickerEvent>();
+            services.AddTransient<IAnalysedComponentEvent, AnalysedComponentEvent>();
+            services.AddTransient<IAnalysedComponentTypeEvent, AnalysedComponentTypeEvent>();
+            services.AddTransient<IAnalysedHistoricItemEvent, AnalysedHistoricItemEvent>();
+            services.AddTransient<IComponentEvent, ComponentEvent>();
+            services.AddTransient<IComponentTypeEvent, ComponentTypeEvent>();
+            services.AddTransient<ICurrencyEvent, CurrencyEvent>();
+            services.AddTransient<ICurrencyPairEvent, CurrencyPairEvent>();
+            services.AddTransient<ICurrencyPairTypeEvent, CurrencyPairTypeEvent>();
+            services.AddTransient<ICurrencySourceEvent, CurrencySourceEvent>();
+            services.AddTransient<ICurrencyTypeEvent, CurrencyTypeEvent>();
+            services.AddTransient<IRequestEvent, RequestEvent>();
+            services.AddTransient<IRequestPropertyTypeEvent, RequestPropertyTypeEvent>();
+            services.AddTransient<IRequestTypeEvent, RequestTypeEvent>();
+            services.AddTransient<ISourceEvent, SourceEvent>();
+            services.AddTransient<ISourceTypeEvent, SourceTypeEvent>();
+            services.AddTransient<ITickerEvent, TickerEvent>();
 
             // Services
             services.AddScoped<IAnalysedComponentService, AnalysedComponentService>();
@@ -51,6 +51,7 @@ namespace Nozomi.Web2.Extensions
             services.AddScoped<IComponentService, ComponentService>();
             services.AddScoped<ICurrencyPairService, CurrencyPairService>();
             services.AddScoped<ICurrencySourceService, CurrencySourceService>();
+            services.AddScoped<ICurrencyTypeService, CurrencyTypeService>();
             services.AddScoped<IRcdHistoricItemService, RcdHistoricItemService>();
             services.AddScoped<ISourceService, SourceService>();
             services.AddScoped<ISourceTypeService, SourceTypeService>();
