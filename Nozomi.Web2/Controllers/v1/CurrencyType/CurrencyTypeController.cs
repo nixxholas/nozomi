@@ -106,11 +106,22 @@ namespace Nozomi.Web2.Controllers.v1.CurrencyType
         {
             return Ok(_currencyTypeEvent.ListAll(page, itemsPerPage, orderAscending, orderingParam));
         }
+        
         [Authorize(Roles = NozomiPermissions.AllowAllStaffRoles)]
         [HttpPut]
-        public IActionResult Update(UpdateCurrencyTypeViewModel vm)
+        public IActionResult Update([FromBody]UpdateCurrencyTypeViewModel vm)
         {
-            throw new NotImplementedException();
+            var sub = ((ClaimsIdentity) User.Identity)
+                .Claims.SingleOrDefault(c => c.Type.Equals(JwtClaimTypes.Subject))?.Value;
+
+            if (!string.IsNullOrWhiteSpace(sub))
+            {
+                _currencyTypeService.Update(vm, sub);
+
+                return Ok();
+            }
+
+            return BadRequest("Please re-authenticate again");
         }
     }
 }
