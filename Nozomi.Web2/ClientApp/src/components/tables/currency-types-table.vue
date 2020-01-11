@@ -13,7 +13,7 @@
       </b-table-column>
       
       <b-table-column label="">
-        <CurrencyTypeModal :currency-type="props.row" />
+        <CurrencyTypeModal :currency-type="props.row" @created="update" />
       </b-table-column>
     </template>
 
@@ -55,7 +55,19 @@
 
                     self.dataLoading = false;
                 });
+        },
+      methods: {
+        update: function() {
+          let self = this;
+
+          CurrencyTypeService.all()
+                  .then(function(res) {
+                    self.data = res.data;
+
+                    self.dataLoading = false;
+                  });
         }
+      }
     }
 </script>
 
