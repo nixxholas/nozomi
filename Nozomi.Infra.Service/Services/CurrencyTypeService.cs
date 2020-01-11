@@ -21,10 +21,6 @@ namespace Nozomi.Service.Services
             _currencyTypeEvent = currencyTypeEvent;
         }
 
-        public CurrencyTypeService(IHttpContextAccessor contextAccessor, ILogger<CurrencyTypeService> logger, IUnitOfWork<NozomiDbContext> unitOfWork) : base(contextAccessor, logger, unitOfWork)
-        {
-        }
-
         public void Create(CreateCurrencyTypeViewModel vm, string userId = null)
         {
             if (vm.IsValid() && !_currencyTypeEvent.Exists(vm.TypeShortForm))
@@ -42,7 +38,38 @@ namespace Nozomi.Service.Services
 
         public void Update(UpdateCurrencyTypeViewModel vm, string userId = null)
         {
-            throw new System.NotImplementedException();
+            if (vm.IsValid() && _currencyTypeEvent.Exists(vm.Guid))
+            {
+                var currencyType = _currencyTypeEvent.Pop(vm.Guid);
+
+                if (vm.IsEnabled != null)
+                    currencyType.IsEnabled = (bool) vm.IsEnabled;
+
+                if (vm.Delete)
+                {
+                    currencyType.DeletedAt = DateTime.UtcNow;
+                    currencyType.DeletedById = userId;
+                    
+                    _unitOfWork.GetRepository<CurrencyType>().Update(currencyType);
+                    _unitOfWork.Commit(userId);
+
+                    return; // Do not execute further since we're done
+                }                    
+
+                if (!string.IsNullOrEmpty(vm.TypeShortForm)
+                    && _currencyTypeEvent.Exists(vm.TypeShortForm))
+                    currencyType.TypeShortForm = vm.TypeShortForm;
+
+                if (!string.IsNullOrEmpty(vm.Name))
+                    currencyType.Name = vm.Name;
+                
+                _unitOfWork.GetRepository<CurrencyType>().Update(currencyType);
+                _unitOfWork.Commit(userId);
+
+                return; // Do not execute further since we're done
+            }
+            
+            throw new ArgumentNullException("Invalid payload, the currency type does not exist.");
         }
     }
 }
