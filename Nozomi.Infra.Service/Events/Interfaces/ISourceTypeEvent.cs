@@ -12,6 +12,8 @@ namespace Nozomi.Service.Events.Interfaces
         bool Exists(Guid guid);
         
         SourceType Find(string sourceTypeGuid);
+
+        SourceType Get(Guid guid);
         
         IEnumerable<SourceTypeViewModel> GetAll(bool track = false);
     }
