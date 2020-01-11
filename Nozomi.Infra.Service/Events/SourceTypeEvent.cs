@@ -48,8 +48,14 @@ namespace Nozomi.Service.Events
                 .SingleOrDefault(st => st.Guid.Equals(Guid.Parse(sourceTypeGuid)));
         }
 
-        public SourceType Get(Guid guid)
+        public SourceType Get(Guid guid, bool track = false)
         {
+            if (!track)
+                return _unitOfWork.GetRepository<SourceType>()
+                    .GetQueryable()
+                    .AsNoTracking()
+                    .SingleOrDefault(st => st.Guid.Equals(guid));
+            
             return _unitOfWork.GetRepository<SourceType>()
                 .GetQueryable()
                 .AsTracking()

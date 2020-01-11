@@ -13,7 +13,7 @@ namespace Nozomi.Service.Events.Interfaces
         
         SourceType Find(string sourceTypeGuid);
 
-        SourceType Get(Guid guid);
+        SourceType Get(Guid guid, bool track = false);
         
         IEnumerable<SourceTypeViewModel> GetAll(bool track = false);
     }
