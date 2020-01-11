@@ -1,5 +1,5 @@
 ﻿<template>
-  <b-navbar :transparent="true">
+  <b-navbar :transparent="true" style="padding-top: 1em; padding-left: 1em; padding-right: 1em">
     <template slot="brand">
       <b-navbar-item tag="router-link" to="/">
         <img

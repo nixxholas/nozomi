@@ -1,10 +1,10 @@
 <template>
-  <div id="app">
-    <b-message type="is-warning" has-icon>
-      <b>We're currently in the Release Candidate phase.</b> General UI and Major Features will be constantly updated.
-      <br>
-      <b v-if="!hasWeb3()">Your browser is incompatible with our authentication engine.</b>
-    </b-message>
+  <div id="app" class="container-fluid">
+<!--    <b-message type="is-warning" has-icon>-->
+<!--      <b>We're currently in the Release Candidate phase.</b> General UI and Major Features will be constantly updated.-->
+<!--      <br>-->
+<!--      <b v-if="!hasWeb3()">Your browser is incompatible with our authentication engine.</b>-->
+<!--    </b-message>-->
     <nav-menu params="route: route" />
 
     <div class="container is-fullhd" style="flex: 1; width: 100%">
