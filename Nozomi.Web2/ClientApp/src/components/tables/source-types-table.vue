@@ -13,7 +13,7 @@
       </b-table-column>
       
       <b-table-column label="">
-        <SourceTypeModal :source-type="props.row" />
+        <SourceTypeModal :source-type="props.row" @created="update" />
       </b-table-column>
     </template>
 
@@ -55,7 +55,20 @@
 
                     self.dataLoading = false;
                 });
-        }
+        },
+      methods: {
+          update: function() {
+            let self = this;
+            
+            SourceTypeService.getAll()
+                    .then(function(res) {
+                      console.dir(res);
+                      self.data = res;
+
+                      self.dataLoading = false;
+                    });
+          }
+      }
     }
 </script>
 
