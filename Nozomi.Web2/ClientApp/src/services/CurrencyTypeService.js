@@ -1,5 +1,6 @@
 import axios from 'axios';
 import Converter from '../helpers/converter';
+import store from "../store";
 
 export default {
     all(index = 0, itemsPerPage = 200) {
@@ -31,6 +32,34 @@ export default {
                 .then(function (response) {
                     resolve(response.data);
                 }).catch(function (error) {
+                reject(error);
+            });
+        });
+    },
+
+    create(vm) {
+        return new Promise((resolve, reject) => {
+            axios.post('/api/CurrencyType/Create', vm, {
+                headers: {
+                    Authorization: "Bearer " + store.state.oidcStore.access_token
+                }
+            }).then(function (response) {
+                resolve(response);
+            }).catch(function (error) {
+                reject(error);
+            });
+        });
+    },
+
+    update(vm) {
+        return new Promise((resolve, reject) => {
+            axios.put('/api/CurrencyType/Update', vm, {
+                headers: {
+                    Authorization: "Bearer " + store.state.oidcStore.access_token
+                }
+            }).then(function (response) {
+                resolve(response);
+            }).catch(function (error) {
                 reject(error);
             });
         });
