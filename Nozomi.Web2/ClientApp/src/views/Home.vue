@@ -23,14 +23,20 @@
     </section>
 
     <section class="section">
-      <b-tabs>
-        <b-tab-item label="FIAT" icon="money-bill-wave">
-          <CurrencyTable type="FIAT Cash" />
-        </b-tab-item>
-        <b-tab-item label="Cryptocurrency" icon-pack="fab" icon="bitcoin">
-          <CurrencyTable type="Cryptocurrency" />
-        </b-tab-item>
-      </b-tabs>
+<!--      <b-tabs>-->
+<!--        <b-tab-item label="FIAT" icon="money-bill-wave">-->
+<!--          <CurrencyTable type="FIAT Cash" />-->
+<!--        </b-tab-item>-->
+<!--        <b-tab-item label="Cryptocurrency" icon-pack="fab" icon="bitcoin">-->
+<!--          <CurrencyTable type="Cryptocurrency" />-->
+<!--        </b-tab-item>-->
+<!--      </b-tabs>-->
+        <b-tabs v-if="currencyTypes && currencyTypes.length > 0">
+            <b-tab-item v-for="currencyType in currencyTypes" 
+                    :label="currencyType.name">
+                <CurrencyTable :type="currencyType.name" />
+            </b-tab-item>
+        </b-tabs>
     </section>
   </div>
 </template>
@@ -41,6 +47,7 @@
     import CurrencyService from "@/services/CurrencyService";
     import ComponentService from "@/services/ComponentService";
     import CurrencyTable from '@/components/tables/currencies-table';
+    import CurrencyTypeService from "@/services/CurrencyTypeService";
     // import {Carousel, Slide} from 'vue-carousel';
 
     export default {
@@ -53,8 +60,9 @@
             return {
                 currencyTypeTable: {
                     loading: false,
-                    data: [],
-                }
+                    data: []
+                },
+                currencyTypes: []
             }
         },
         components: {
@@ -77,6 +85,11 @@
             //         .then(function (result) {
             //             console.dir(result);
             //         });
+            
+            CurrencyTypeService.all()
+            .then(function(res) {
+                self.currencyTypes = res.data;
+            })
         }
 
     }
