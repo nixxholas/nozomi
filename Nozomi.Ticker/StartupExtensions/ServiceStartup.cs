@@ -19,7 +19,7 @@ namespace Nozomi.Ticker.StartupExtensions
                 Nozomi.Infra.Admin.Service.Services.CurrencyService>();
             services.AddTransient<ICurrencyPairService, CurrencyPairService>();
             services.AddTransient<Nozomi.Infra.Admin.Service.Services.Interfaces.ICurrencyTypeService, 
-                CurrencyTypeService>();
+                Nozomi.Infra.Admin.Service.Services.CurrencyTypeService>();
             services.AddTransient<IComponentService, ComponentService>();
             services.AddTransient<IRequestService, RequestService>();
             services.AddTransient<IRcdHistoricItemService, RcdHistoricItemService>();
