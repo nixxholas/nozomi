@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Nozomi.Data.Models.Currency;
 using Nozomi.Data.ViewModels.CurrencyType;
@@ -7,6 +8,12 @@ namespace Nozomi.Service.Events.Interfaces
 {
     public interface ICurrencyTypeEvent
     {
+        bool Exists(string typeShortForm);
+
+        bool Exists(Guid guid);
+
+        bool Exists(long id);
+        
         IEnumerable<CurrencyTypeViewModel> All(int index = 0, int itemsPerPage = 200);
         
         CurrencyType Get(string guid, bool track = false);

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data.Models.Currency;
 using Nozomi.Data.ViewModels.CurrencyType;
@@ -18,6 +19,27 @@ namespace Nozomi.Service.Events
         public CurrencyTypeEvent(ILogger<CurrencyPairEvent> logger, IUnitOfWork<NozomiDbContext> unitOfWork)
             : base(logger, unitOfWork)
         {
+        }
+
+        public bool Exists(string typeShortForm)
+        {
+            return _unitOfWork.GetRepository<CurrencyType>()
+                .GetQueryable()
+                .AsNoTracking()
+                .Any(ct => ct.TypeShortForm.Equals(typeShortForm));
+        }
+
+        public bool Exists(Guid guid)
+        {
+            return _unitOfWork.GetRepository<CurrencyType>()
+                .GetQueryable()
+                .AsNoTracking()
+                .Any(ct => ct.Guid.Equals(guid));
+        }
+
+        public bool Exists(long id)
+        {
+            throw new NotImplementedException();
         }
 
         public IEnumerable<CurrencyTypeViewModel> All(int index = 0, int itemsPerPage = 200)
