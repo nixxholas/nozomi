@@ -39,6 +39,23 @@ namespace Nozomi.Web2.Controllers.v1.AnalysedComponent
             return Ok(payload);
         }
 
+        [Authorize]
+        [HttpGet]
+        public IActionResult AllByIdentifier([FromQuery]string currencySlug, [FromQuery]string currencyPairGuid, 
+            [FromQuery]string currencyTypeShortForm, [FromQuery]int index = 0, [FromQuery]int itemsPerPage = 200)
+        {
+            var sub = ((ClaimsIdentity) User.Identity)
+                .Claims.SingleOrDefault(c => c.Type.Equals(JwtClaimTypes.Subject))?.Value;
+
+            if (!string.IsNullOrWhiteSpace(sub))
+            {
+                return Ok(_analysedComponentEvent.All(currencySlug, currencyPairGuid, currencyTypeShortForm, index,
+                    itemsPerPage, sub));
+            }
+
+            return BadRequest("Please login again. Your session may have expired!");
+        }
+
         [Authorize(Roles = NozomiPermissions.AllowAllStaffRoles)]
         [HttpPost]
         public IActionResult Create([FromBody]CreateAnalysedComponentViewModel vm)
