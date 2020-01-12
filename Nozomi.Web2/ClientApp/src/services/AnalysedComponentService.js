@@ -2,7 +2,7 @@ import store from '../store/index';
 import axios from 'axios';
 
 export default {
-    all(currencySlug, currencyPairGuid, currencyTypeShortForm, 
+    all(currencySlug, currencyPairGuid, currencyTypeShortForm,
         index = 0, itemsPerPage = 200) {
         return new Promise((resolve, reject) => {
             axios.get('/api/AnalysedComponent/AllByIdentifier', {
@@ -24,17 +24,19 @@ export default {
             });
         });
     },
-    
+
     create(payload) {
-        axios.post('/api/AnalysedComponent/Create', payload, {
-            headers: {
-                Authorization: "Bearer " + store.state.oidcStore.access_token
-            }
-        })
-            .then(function (response) {
-                resolve(response);
-            }).catch(function (error) {
-            reject(error);
+        return new Promise((resolve, reject) => {
+            axios.post('/api/AnalysedComponent/Create', payload, {
+                headers: {
+                    Authorization: "Bearer " + store.state.oidcStore.access_token
+                }
+            })
+                .then(function (response) {
+                    resolve(response);
+                }).catch(function (error) {
+                reject(error);
+            });
         });
     },
 
