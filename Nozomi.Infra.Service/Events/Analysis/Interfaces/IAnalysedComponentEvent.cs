@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using Nozomi.Data.Models.Currency;
 using Nozomi.Data.Models.Web.Analytical;
+using Nozomi.Data.ViewModels.AnalysedComponent;
 
 namespace Nozomi.Service.Events.Analysis.Interfaces
 {
@@ -12,6 +13,8 @@ namespace Nozomi.Service.Events.Analysis.Interfaces
             long currencyPairId = 0, long currencyTypeId = 0);
         
         AnalysedComponent Get(long id, bool track = false, int index = 0);
+
+        UpdateAnalysedComponentViewModel Get(Guid guid);
         
         /// <summary>
         /// For internal consumption, exposes the entire dbset.

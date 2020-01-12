@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data.Models.Currency;
 using Nozomi.Data.Models.Web.Analytical;
+using Nozomi.Data.ViewModels.AnalysedComponent;
 using Nozomi.Preprocessing;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.BCL.Repository;
@@ -83,6 +84,32 @@ namespace Nozomi.Service.Events.Analysis
             }
 
             return query.SingleOrDefault();
+        }
+
+        public UpdateAnalysedComponentViewModel Get(Guid guid)
+        {
+            return _unitOfWork.GetRepository<AnalysedComponent>()
+                .GetQueryable()
+                .AsNoTracking()
+                .Where(ac => ac.Guid.Equals(guid))
+                .Include(ac => ac.Currency)
+                .Include(ac => ac.CurrencyPair)
+                .Include(ac => ac.CurrencyType)
+                .Select(ac => new UpdateAnalysedComponentViewModel
+                {
+                    Guid = guid,
+                    Type = ac.ComponentType,
+                    Delay = ac.Delay,
+                    UiFormatting = ac.UIFormatting,
+                    Value = ac.Value,
+                    IsDenominated = ac.IsDenominated,
+                    StoreHistoricals = ac.StoreHistoricals,
+                    IsEnabled = ac.IsEnabled,
+                    CurrencySlug = ac.CurrencyId != null ? ac.Currency.Slug : null,
+                    CurrencyPairId = ac.CurrencyPairId != null ? ac.CurrencyPair.Guid.ToString() : null,
+                    CurrencyTypeId = ac.CurrencyTypeId != null ? ac.CurrencyType.Guid.ToString() : null,
+                })
+                .FirstOrDefault();
         }
 
         public IEnumerable<AnalysedComponent> GetAll(bool filter = false, bool track = false, int index = 0)
