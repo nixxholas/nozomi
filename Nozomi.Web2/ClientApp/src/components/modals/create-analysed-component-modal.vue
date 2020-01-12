@@ -52,18 +52,10 @@
 
                         <b-field grouped>
                             <b-field label="Denominated Value">
-                                <b-switch v-model="form.isDenominated"
-                                          true-value="Yes"
-                                          false-value="No">
-                                    {{ form.isDenominated }}
-                                </b-switch>
+                                <b-switch v-model="form.isDenominated" />
                             </b-field>
                             <b-field label="Stash Historical">
-                                <b-switch v-model="form.storeHistoricals"
-                                          true-value="Yes"
-                                          false-value="No">
-                                    {{ form.storeHistoricals }}
-                                </b-switch>
+                                <b-switch v-model="form.storeHistoricals" />
                             </b-field>
                         </b-field>
                     </section>
@@ -97,9 +89,8 @@
             ...mapActions('oidcStore', ['authenticateOidc', 'signOutOidc']),
             create: function () {
                 this.isModalLoading = true;
-
                 let self = this;
-                console.dir(self);
+                
                 if (self.currencyId > 0 || self.currencySlug || self.currencyPairId > 0 || self.currencyTypeId > 0) {
                     this.$axios.post('/api/AnalysedComponent/Create', self.form, {
                         headers: {
@@ -110,6 +101,7 @@
                             // Reset the form data regardless
                             self.form = {
                                 type: 0,
+                                delay: 0,
                                 uiFormatting: "",
                                 isDenominated: false,
                                 storeHistoricals: false,
@@ -187,6 +179,7 @@
                 currentTypeTab: 0,
                 form: {
                     type: 0,
+                    delay: 0,
                     uiFormatting: "",
                     isDenominated: false,
                     storeHistoricals: false,
