@@ -366,6 +366,26 @@ namespace Nozomi.Service.Events
                 .SingleOrDefault(cp => cp.Guid.Equals(parsedGuid) && cp.DeletedAt == null);
         }
 
+        public CurrencyPair Get(Guid guid, bool track = false, string userId = null)
+        {
+            if (guid == null)
+                throw new InvalidConstraintException("Can't parse the given guid.");
+            
+            if (track)
+                return _unitOfWork.GetRepository<CurrencyPair>()
+                    .GetQueryable()
+                    .Include(cp => cp.Requests)
+                    .Include(cp => cp.Source)
+                    .Include(cp => cp.AnalysedComponents)
+                    .SingleOrDefault(cp => cp.Guid.Equals(guid) && cp.DeletedAt == null);
+
+            return _unitOfWork
+                .GetRepository<CurrencyPair>()
+                .GetQueryable()
+                .AsNoTracking()
+                .SingleOrDefault(cp => cp.Guid.Equals(guid) && cp.DeletedAt == null);
+        }
+
         public ICollection<DistinctCurrencyPairResponse> ListAll()
         {
             return _unitOfWork.GetRepository<CurrencyPair>()

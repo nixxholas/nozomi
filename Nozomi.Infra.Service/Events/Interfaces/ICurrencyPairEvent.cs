@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Nozomi.Base.BCL;
 using Nozomi.Data.Models.Currency;
@@ -45,6 +46,8 @@ namespace Nozomi.Service.Events.Interfaces
         CurrencyPair Get(long id, bool track = false, string userId = null);
 
         CurrencyPair Get(string guid, bool track = false, string userId = null);
+
+        CurrencyPair Get(Guid guid, bool track = false, string userId = null);
 
         ICollection<DistinctCurrencyPairResponse> ListAll();
 
