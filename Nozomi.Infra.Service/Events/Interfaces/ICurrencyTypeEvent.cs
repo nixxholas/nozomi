@@ -16,7 +16,9 @@ namespace Nozomi.Service.Events.Interfaces
         
         IEnumerable<CurrencyTypeViewModel> All(int index = 0, int itemsPerPage = 200);
         
-        CurrencyType Get(string guid, bool track = false);
+        CurrencyType Get(string slug, bool track = false);
+        
+        CurrencyType Get(Guid guid, bool track = false);
         
         CurrencyType Get(long id, bool track = false);
         

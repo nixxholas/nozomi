@@ -34,9 +34,9 @@ namespace Nozomi.Service.Services
             {
                 if (_currencyEvent.Exists(vm.Slug))
                     return;
-                
+
                 // Obtain the currency type
-                var currencyType = _currencyTypeEvent.Get(vm.CurrencyTypeGuid.ToString());
+                var currencyType = _currencyTypeEvent.Get(vm.CurrencyTypeGuid);
 
                 if (currencyType == null)
                     throw new Exception("Currency type not found."); // TODO: Custom exception
@@ -90,7 +90,7 @@ namespace Nozomi.Service.Services
                     throw new AccessViolationException("You do not have permissions to modify this currency.");
                 
                 // Obtain the currency type
-                var currencyType = _currencyTypeEvent.Get(vm.CurrencyTypeGuid.ToString());
+                var currencyType = _currencyTypeEvent.Get(vm.CurrencyTypeGuid);
 
                 if (currencyType == null)
                     throw new Exception("Currency type not found."); // TODO: Custom exception
