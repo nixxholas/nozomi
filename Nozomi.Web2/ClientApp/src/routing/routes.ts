@@ -3,6 +3,8 @@ import HomePage from '../views/Home';
 // @ts-ignore
 import About from '../views/About';
 // @ts-ignore
+import ApiTerms from '../views/legal/api-terms';
+// @ts-ignore
 import ViewCurrency from '../views/currency/View';
 // @ts-ignore
 import Changelog from '../views/Changelog';
@@ -34,6 +36,9 @@ export const routes = [
     meta: { icon: 'landmark', isPublic: true, onNav: true }
   },
   { name: 'about', path: '/about', component: About, display: 'About',
+    meta: { icon: 'info', isPublic: true, onNav: false }
+  },
+  { name: 'api-terms', path: '/legal/api-terms', component: ApiTerms, display: 'API Terms',
     meta: { icon: 'info', isPublic: true, onNav: false }
   },
   { name: 'pricing', path: '/pricing', component: Pricing, display: 'Pricing',

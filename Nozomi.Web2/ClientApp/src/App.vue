@@ -31,7 +31,10 @@
             <h6 class="title">Resources</h6>
             <a href="/docs">Documentation</a>
           </div>
-          <div class="column"></div>
+          <div class="column">
+            <h6 class="title">Legal</h6>
+            <router-link to="/legal/api-terms">API Terms</router-link><br>
+          </div>
           <div class="column">
             <b-tag type="is-info" class="mb-1">12 Jan 2019 Preview</b-tag><br>
           </div>
