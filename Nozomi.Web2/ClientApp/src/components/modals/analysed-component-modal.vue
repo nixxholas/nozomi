@@ -6,7 +6,7 @@
         </button>
 
         <b-modal has-modal-card trap-focus :active.sync="isModalActive">
-            <b-loading :active.sync="isModalLoading" :can-cancel="false"></b-loading>
+            <b-loading :active.sync="isModalLoading" :can-cancel="false" />
             <!--https://stackoverflow.com/questions/48028718/using-event-modifier-prevent-in-vue-to-submit-form-without-redirection-->
             <form v-on:submit.prevent="create()" class="has-text-justified">
                 <div class="modal-card">

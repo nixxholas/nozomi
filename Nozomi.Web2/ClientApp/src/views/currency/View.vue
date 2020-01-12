@@ -231,7 +231,7 @@
     import {createChart} from 'lightweight-charts';
     import {mapGetters} from 'vuex';
     import CurrencyPairModal from '@/components/modals/currency-pair-modal';
-    import CreateAcComponentModal from '@/components/modals/create-analysed-component-modal';
+    import AcComponentModal from '@/components/modals/analysed-component-modal';
     import CurrencySourceModal from '@/components/modals/currency-source-modal';
     import AnalysedComponentService from "@/services/AnalysedComponentService";
     import AnalysedHistoricItemService from "@/services/AnalysedHistoricItemService";
@@ -248,7 +248,7 @@
             ]),
         },
         props: ['slug'],
-        components: {CurrencySourceModal, CurrencyPairModal, CurrencyPairsTable, CreateAcComponentModal},
+        components: {CurrencySourceModal, CurrencyPairModal, CurrencyPairsTable, CreateAcComponentModal: AcComponentModal},
         beforeMount: function () {
             let self = this;
             self.loading = true;
