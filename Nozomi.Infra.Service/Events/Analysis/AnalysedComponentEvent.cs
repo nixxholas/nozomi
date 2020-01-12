@@ -482,5 +482,13 @@ namespace Nozomi.Service.Events.Analysis
                     .Any(ac => ac.Id.Equals(analysedComponent.Id)))
                 ?.Abbreviation;
         }
+
+        public AnalysedComponent Pop(Guid guid)
+        {
+            return _unitOfWork.GetRepository<AnalysedComponent>()
+                .GetQueryable()
+                .AsTracking()
+                .SingleOrDefault(ac => ac.DeletedAt == null && ac.Guid.Equals(guid));
+        }
     }
 }

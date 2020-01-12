@@ -49,5 +49,7 @@ namespace Nozomi.Service.Events.Analysis.Interfaces
         ICollection<AnalysedComponent> GetAllByCurrencyPair(long currencyPairId, bool track = false, int index = 0);
 
         string GetCurrencyAbbreviation(AnalysedComponent analysedComponent);
+
+        AnalysedComponent Pop(Guid guid);
     }
 }
