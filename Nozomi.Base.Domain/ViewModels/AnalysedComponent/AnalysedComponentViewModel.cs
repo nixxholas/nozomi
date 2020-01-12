@@ -10,11 +10,7 @@ namespace Nozomi.Data.ViewModels.AnalysedComponent
         public Guid Guid { get; set; }
         
         public string Value { get; set; }
-        
-        public new string CurrencyPairId { get; set; }
-        
-        public new string CurrencyTypeId { get; set; }
-        
+
         public bool? IsEnabled { get; set; }
 
         public IEnumerable<AnalysedHistoricItemViewModel> History { get; set; }
