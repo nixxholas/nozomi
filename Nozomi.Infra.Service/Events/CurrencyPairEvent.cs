@@ -389,10 +389,20 @@ namespace Nozomi.Service.Events
         public IEnumerable<CurrencyPairViewModel> Search(string queryTickerPair = null, int page = 0, 
             int itemsPerPage = 0)
         {
-            if (string.IsNullOrEmpty(queryTickerPair) || string.IsNullOrWhiteSpace(queryTickerPair))
-                queryTickerPair = "";
-
-            queryTickerPair = queryTickerPair.ToUpper();
+            if (!string.IsNullOrEmpty(queryTickerPair) && !string.IsNullOrWhiteSpace(queryTickerPair))
+                queryTickerPair = queryTickerPair.ToUpper();
+            
+            #if DEBUG
+            var res = _unitOfWork.GetRepository<CurrencyPair>()
+                .GetQueryable()
+                .Where(cp => cp.IsEnabled && cp.DeletedAt == null
+                                          && !string.IsNullOrEmpty(cp.MainTicker)
+                                          && !string.IsNullOrEmpty(cp.CounterTicker))
+                .OrderBy(cp => string.Concat(cp.MainTicker, cp.CounterTicker))
+                .Where(cp => string.IsNullOrEmpty(queryTickerPair)
+                             || string.Concat(cp.MainTicker, cp.CounterTicker).Contains(queryTickerPair))
+                .ToList();
+            #endif
 
             return _unitOfWork.GetRepository<CurrencyPair>()
                 .GetQueryable()
@@ -400,8 +410,7 @@ namespace Nozomi.Service.Events
                                           && !string.IsNullOrEmpty(cp.MainTicker)
                                           && !string.IsNullOrEmpty(cp.CounterTicker))
                 .OrderBy(cp => string.Concat(cp.MainTicker, cp.CounterTicker))
-                .Where(cp => cp.MainTicker.Contains(queryTickerPair) 
-                             || cp.CounterTicker.Contains(queryTickerPair)
+                .Where(cp => string.IsNullOrEmpty(queryTickerPair) 
                              || string.Concat(cp.MainTicker, cp.CounterTicker).Contains(queryTickerPair))
                 .Include(cp => cp.Source)
                 .Skip(page * itemsPerPage)
