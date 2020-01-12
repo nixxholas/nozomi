@@ -3,7 +3,6 @@ import store from "../store";
 
 export default {
     all() {
-
         return new Promise((resolve, reject) => {
             axios.get('/api/ComponentType/All', {
                 headers: {
