@@ -64,15 +64,15 @@ namespace Nozomi.Service.Events
                 });
         }
 
-        public CurrencyType Get(string guid, bool track = false)
+        public CurrencyType Get(string typeShortForm, bool track = false)
         {
-            if (!string.IsNullOrWhiteSpace(guid))
+            if (!string.IsNullOrWhiteSpace(typeShortForm))
             {
                 var currencyType = _unitOfWork.GetRepository<CurrencyType>()
                     .GetQueryable()
                     .AsNoTracking()
                     .Where(ct => ct.DeletedAt == null && ct.IsEnabled
-                                                      && ct.Guid.Equals(Guid.Parse(guid)));
+                                                      && ct.TypeShortForm.Equals(typeShortForm));
 
                 if (currencyType.Any())
                 {
@@ -86,6 +86,30 @@ namespace Nozomi.Service.Events
 
                     return currencyType.SingleOrDefault();
                 }
+            }
+
+            return null;
+        }
+
+        public CurrencyType Get(Guid guid, bool track = false)
+        {
+            var currencyType = _unitOfWork.GetRepository<CurrencyType>()
+                .GetQueryable()
+                .AsNoTracking()
+                .Where(ct => ct.DeletedAt == null && ct.IsEnabled
+                                                  && ct.Guid.Equals(guid));
+
+            if (currencyType.Any())
+            {
+                if (track)
+                {
+                    currencyType = currencyType
+                        .Include(ct => ct.AnalysedComponents)
+                        .Include(ct => ct.Currencies)
+                        .Include(ct => ct.Requests);
+                }
+
+                return currencyType.SingleOrDefault();
             }
 
             return null;
