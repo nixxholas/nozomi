@@ -8,7 +8,7 @@
                     </h1>
                     <div class="timeline">
                         <header class="timeline-header">
-                            <span class="tag is-primary">Public Preview</span>
+                            <span class="tag is-danger">Public Preview</span>
                         </header>
                         <div class="timeline-item is-primary">
                             <div class="timeline-marker is-primary"></div>
@@ -115,11 +115,25 @@
                                     <li><b>Backend</b> - Buffed the search function for currency pair's search API</li>
                                     <li><b>Cabin</b> - The currency pair input box for creating a request is now working as intended</li>
                                     <li><b>Documentation</b> - API legal terms page introduction</li>
-                                    <li><b>UI</b> - General hotfixes and improvements</li>
-                                    <li><b class="has-text-danger">Known Issue</b> - Some creation forms send a UI console error after the creation of an entity is complete</li>
+                                    <li><b>UI</b> - Slowly updating the look of it..</li>
                                 </ul>
                             </div>
                         </div>
+                        <div class="timeline-item is-info">
+                            <div class="timeline-marker is-info"></div>
+                            <div class="timeline-content">
+                                <p class="heading">13 January 2019 - <b>beta 4</b></p>
+                                <ul>
+                                    <li><b>API</b> - The data obscurity increases ever so slightly ;))</li>
+                                    <li><b>Cabin</b> - A request's analysed components can now be seen</li>
+                                    <li><b>Cabin</b> - A request analysed components can now be created</li>
+                                    <li><b class="has-text-danger">Known Issue</b> - Nozomi API Documentation is down for now.. We have some deprecated crap clashing with our new stuff</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <header class="timeline-header">
+                            <span class="tag is-primary">Release Candidate</span>
+                        </header>
                     </div>
                 </div>
             </div>
