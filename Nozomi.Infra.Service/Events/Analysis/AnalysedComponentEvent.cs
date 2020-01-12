@@ -35,6 +35,7 @@ namespace Nozomi.Service.Events.Analysis
                     .Include(ac => ac.Currency)
                     .Where(ac => ac.Currency.Slug.Equals(currencySlug))
                     .Skip(index * itemsPerPage)
+                    .Take(itemsPerPage)
                     .Select(ac => new AnalysedComponentViewModel
                     {
                         Guid = ac.Guid,
@@ -58,6 +59,7 @@ namespace Nozomi.Service.Events.Analysis
                     .Include(ac => ac.CurrencyPair)
                     .Where(ac => ac.CurrencyPair.Guid.Equals(cpGuid))
                     .Skip(index * itemsPerPage)
+                    .Take(itemsPerPage)
                     .Select(ac => new AnalysedComponentViewModel
                     {
                         Guid = ac.Guid,
@@ -81,6 +83,7 @@ namespace Nozomi.Service.Events.Analysis
                     .Include(ac => ac.CurrencyType)
                     .Where(ac => ac.CurrencyType.TypeShortForm.Equals(currencyTypeAbbrv))
                     .Skip(index * itemsPerPage)
+                    .Take(itemsPerPage)
                     .Select(ac => new AnalysedComponentViewModel
                     {
                         Guid = ac.Guid,
