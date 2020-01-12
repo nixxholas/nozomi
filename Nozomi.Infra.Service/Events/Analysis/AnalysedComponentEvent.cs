@@ -24,13 +24,18 @@ namespace Nozomi.Service.Events.Analysis
         }
 
         public IEnumerable<AnalysedComponentViewModel> All(string currencySlug, string currencyPairGuid, string currencyTypeAbbrv, int index = 0,
-            int itemsPerPage = 200)
+            int itemsPerPage = 200, string userId = null)
         {
+            var query = _unitOfWork.GetRepository<AnalysedComponent>()
+                .GetQueryable()
+                .AsNoTracking();
+
+            if (!string.IsNullOrEmpty(userId))
+                query = query.Where(ac => ac.CreatedById.Equals(userId));
+            
             if (!string.IsNullOrEmpty(currencySlug) || !string.IsNullOrWhiteSpace(currencySlug))
             {
-                return _unitOfWork.GetRepository<AnalysedComponent>()
-                    .GetQueryable()
-                    .AsNoTracking()
+                return query
                     .Where(ac => ac.DeletedAt == null && ac.CurrencyId != null)
                     .Include(ac => ac.Currency)
                     .Where(ac => ac.Currency.Slug.Equals(currencySlug))
@@ -52,9 +57,7 @@ namespace Nozomi.Service.Events.Analysis
 
             if (Guid.TryParse(currencyPairGuid, out var cpGuid))
             {
-                return _unitOfWork.GetRepository<AnalysedComponent>()
-                    .GetQueryable()
-                    .AsNoTracking()
+                return query
                     .Where(ac => ac.DeletedAt == null && ac.CurrencyPairId != null)
                     .Include(ac => ac.CurrencyPair)
                     .Where(ac => ac.CurrencyPair.Guid.Equals(cpGuid))
@@ -76,9 +79,7 @@ namespace Nozomi.Service.Events.Analysis
             
             if (!string.IsNullOrEmpty(currencyTypeAbbrv) || !string.IsNullOrWhiteSpace(currencyTypeAbbrv))
             {
-                return _unitOfWork.GetRepository<AnalysedComponent>()
-                    .GetQueryable()
-                    .AsNoTracking()
+                return query
                     .Where(ac => ac.DeletedAt == null && ac.CurrencyTypeId != null)
                     .Include(ac => ac.CurrencyType)
                     .Where(ac => ac.CurrencyType.TypeShortForm.Equals(currencyTypeAbbrv))
