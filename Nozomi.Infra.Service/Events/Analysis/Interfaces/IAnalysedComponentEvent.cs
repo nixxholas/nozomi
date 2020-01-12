@@ -4,13 +4,14 @@ using System.Linq.Expressions;
 using Nozomi.Data.Models.Currency;
 using Nozomi.Data.Models.Web.Analytical;
 using Nozomi.Data.ViewModels.AnalysedComponent;
+using Nozomi.Preprocessing;
 
 namespace Nozomi.Service.Events.Analysis.Interfaces
 {
     public interface IAnalysedComponentEvent
     {
         IEnumerable<AnalysedComponentViewModel> All(string currencySlug, string currencyPairGuid, string currencyTypeAbbrv, 
-            int index = 0, int itemsPerPage = 200, string userId = null);
+            int index = 0, int itemsPerPage = NozomiServiceConstants.AnalysedComponentTakeoutLimit, string userId = null);
         
         bool Exists(AnalysedComponentType type, long currencyId = 0, string currencySlug = null, 
             long currencyPairId = 0, long currencyTypeId = 0);

@@ -24,8 +24,14 @@ namespace Nozomi.Service.Events.Analysis
         }
 
         public IEnumerable<AnalysedComponentViewModel> All(string currencySlug, string currencyPairGuid, string currencyTypeAbbrv, int index = 0,
-            int itemsPerPage = 200, string userId = null)
+            int itemsPerPage = NozomiServiceConstants.AnalysedComponentTakeoutLimit, string userId = null)
         {
+            if (index < 0)
+                index = 0;
+
+            if (itemsPerPage > NozomiServiceConstants.AnalysedComponentTakeoutLimit || itemsPerPage < 0)
+                itemsPerPage = NozomiServiceConstants.AnalysedComponentTakeoutLimit;
+                
             var query = _unitOfWork.GetRepository<AnalysedComponent>()
                 .GetQueryable()
                 .AsNoTracking();
