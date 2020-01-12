@@ -19,7 +19,6 @@
     "date-fns": "^2.7.0",
     "fibers": "^4.0.2",
     "lightweight-charts": "^1.1.0",
-    "lodash": "^4.17.15",
     "moment": "^2.24.0",
     "node-sass": "^4.13.0",
     "numeral": "^2.0.6",
