@@ -16,13 +16,9 @@ namespace Nozomi.Data.ViewModels.AnalysedComponent
         
         public bool StoreHistoricals { get; set; }
         
-        public long CurrencyId { get; set; }
-        
         public string CurrencySlug { get; set; }
         
         public string CurrencyPairGuid { get; set; }
-        
-        public string CurrencyTypeGuid { get; set; }
         
         public string CurrencyTypeShortForm { get; set; }
 
@@ -41,32 +37,17 @@ namespace Nozomi.Data.ViewModels.AnalysedComponent
                 // RuleFor(e => e.UiFormatting); // No rules yet
                 RuleFor(e => e.IsDenominated).NotNull();
                 RuleFor(e => e.StoreHistoricals).NotNull();
-                RuleFor(e => e.CurrencyId).GreaterThan(0)
-                    .Unless(e => !string.IsNullOrEmpty(e.CurrencySlug) 
-                                 || Guid.TryParse(e.CurrencyPairGuid, out var cpGuid) 
-                                 || Guid.TryParse(e.CurrencyTypeGuid, out var ctGuid)
-                                 || !string.IsNullOrEmpty(e.CurrencyTypeShortForm));
                 RuleFor(e => e.CurrencySlug).NotNull()
-                    .Unless(e => e.CurrencyId > 0 
-                                 || Guid.TryParse(e.CurrencyPairGuid, out var cpGuid) 
-                                 || Guid.TryParse(e.CurrencyTypeGuid, out var ctGuid)
+                    .Unless(e => Guid.TryParse(e.CurrencyPairGuid, out var cpGuid)
                                  || !string.IsNullOrEmpty(e.CurrencyTypeShortForm));
                 RuleFor(e => e.CurrencyPairGuid)
                     .Must(e => Guid.TryParse(e, out var cpGuid))
-                    .Unless(e => !string.IsNullOrEmpty(e.CurrencySlug) 
-                                 || e.CurrencyId > 0 || Guid.TryParse(e.CurrencyTypeGuid, out var ctGuid)
-                                 || !string.IsNullOrEmpty(e.CurrencyTypeShortForm));
-                RuleFor(e => e.CurrencyTypeGuid)
-                    .Must(e => Guid.TryParse(e, out var ctGuid))
-                    .Unless(e => !string.IsNullOrEmpty(e.CurrencySlug) 
-                                 || e.CurrencyId > 0 || Guid.TryParse(e.CurrencyPairGuid, out var cpGuid)
+                    .Unless(e => !string.IsNullOrEmpty(e.CurrencySlug)
                                  || !string.IsNullOrEmpty(e.CurrencyTypeShortForm));
                 RuleFor(e => e.CurrencyTypeShortForm)
                     .Must(e => !string.IsNullOrEmpty(e) && !string.IsNullOrWhiteSpace(e))
-                    .Unless(e => e.CurrencyId > 0
-                                 || !string.IsNullOrEmpty(e.CurrencySlug)
-                                 || Guid.TryParse(e.CurrencyPairGuid, out var cpGuid)
-                                 || Guid.TryParse(e.CurrencyTypeGuid, out var ctGuid));
+                    .Unless(e => !string.IsNullOrEmpty(e.CurrencySlug)
+                                 || Guid.TryParse(e.CurrencyPairGuid, out var cpGuid));
             }
         }
     }
