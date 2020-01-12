@@ -73,7 +73,7 @@ namespace Nozomi.Service.Events.Analysis
                     {
                         Guid = ac.Guid,
                         Value = ac.Value,
-                        CurrencyPairId = ac.CurrencyPair.Guid.ToString(),
+                        CurrencyPairGuid = ac.CurrencyPair.Guid.ToString(),
                         IsEnabled = ac.IsEnabled,
                         Type = ac.ComponentType,
                         Delay = ac.Delay,
@@ -95,7 +95,7 @@ namespace Nozomi.Service.Events.Analysis
                     {
                         Guid = ac.Guid,
                         Value = ac.Value,
-                        CurrencyTypeId = ac.CurrencyType.Guid.ToString(),
+                        CurrencyPairGuid = ac.CurrencyType.Guid.ToString(),
                         IsEnabled = ac.IsEnabled,
                         Type = ac.ComponentType,
                         Delay = ac.Delay,
@@ -200,8 +200,8 @@ namespace Nozomi.Service.Events.Analysis
                     StoreHistoricals = ac.StoreHistoricals,
                     IsEnabled = ac.IsEnabled,
                     CurrencySlug = ac.CurrencyId != null ? ac.Currency.Slug : null,
-                    CurrencyPairId = ac.CurrencyPairId != null ? ac.CurrencyPair.Guid.ToString() : null,
-                    CurrencyTypeId = ac.CurrencyTypeId != null ? ac.CurrencyType.Guid.ToString() : null,
+                    CurrencyPairGuid = ac.CurrencyPairId != null ? ac.CurrencyPair.Guid.ToString() : null,
+                    CurrencyTypeShortForm = ac.CurrencyTypeId != null ? ac.CurrencyType.TypeShortForm : null,
                 })
                 .FirstOrDefault();
         }
