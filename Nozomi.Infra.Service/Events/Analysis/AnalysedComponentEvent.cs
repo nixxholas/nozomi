@@ -22,7 +22,82 @@ namespace Nozomi.Service.Events.Analysis
             : base(logger, unitOfWork)
         {
         }
-        
+
+        public IEnumerable<AnalysedComponentViewModel> All(string currencySlug, string currencyPairGuid, string currencyTypeAbbrv, int index = 0,
+            int itemsPerPage = 200)
+        {
+            if (!string.IsNullOrEmpty(currencySlug) || !string.IsNullOrWhiteSpace(currencySlug))
+            {
+                return _unitOfWork.GetRepository<AnalysedComponent>()
+                    .GetQueryable()
+                    .AsNoTracking()
+                    .Where(ac => ac.DeletedAt == null && ac.CurrencyId != null)
+                    .Include(ac => ac.Currency)
+                    .Where(ac => ac.Currency.Slug.Equals(currencySlug))
+                    .Skip(index * itemsPerPage)
+                    .Select(ac => new AnalysedComponentViewModel
+                    {
+                        Guid = ac.Guid,
+                        Value = ac.Value,
+                        CurrencySlug = currencySlug,
+                        IsEnabled = ac.IsEnabled,
+                        Type = ac.ComponentType,
+                        Delay = ac.Delay,
+                        UiFormatting = ac.UIFormatting,
+                        IsDenominated = ac.IsDenominated,
+                        StoreHistoricals = ac.StoreHistoricals
+                    });
+            }
+
+            if (Guid.TryParse(currencyPairGuid, out var cpGuid))
+            {
+                return _unitOfWork.GetRepository<AnalysedComponent>()
+                    .GetQueryable()
+                    .AsNoTracking()
+                    .Where(ac => ac.DeletedAt == null && ac.CurrencyPairId != null)
+                    .Include(ac => ac.CurrencyPair)
+                    .Where(ac => ac.CurrencyPair.Guid.Equals(cpGuid))
+                    .Skip(index * itemsPerPage)
+                    .Select(ac => new AnalysedComponentViewModel
+                    {
+                        Guid = ac.Guid,
+                        Value = ac.Value,
+                        CurrencyPairId = ac.CurrencyPair.Guid.ToString(),
+                        IsEnabled = ac.IsEnabled,
+                        Type = ac.ComponentType,
+                        Delay = ac.Delay,
+                        UiFormatting = ac.UIFormatting,
+                        IsDenominated = ac.IsDenominated,
+                        StoreHistoricals = ac.StoreHistoricals
+                    });
+            } 
+            
+            if (!string.IsNullOrEmpty(currencyTypeAbbrv) || !string.IsNullOrWhiteSpace(currencyTypeAbbrv))
+            {
+                return _unitOfWork.GetRepository<AnalysedComponent>()
+                    .GetQueryable()
+                    .AsNoTracking()
+                    .Where(ac => ac.DeletedAt == null && ac.CurrencyTypeId != null)
+                    .Include(ac => ac.CurrencyType)
+                    .Where(ac => ac.CurrencyType.TypeShortForm.Equals(currencyTypeAbbrv))
+                    .Skip(index * itemsPerPage)
+                    .Select(ac => new AnalysedComponentViewModel
+                    {
+                        Guid = ac.Guid,
+                        Value = ac.Value,
+                        CurrencyTypeId = ac.CurrencyType.Guid.ToString(),
+                        IsEnabled = ac.IsEnabled,
+                        Type = ac.ComponentType,
+                        Delay = ac.Delay,
+                        UiFormatting = ac.UIFormatting,
+                        IsDenominated = ac.IsDenominated,
+                        StoreHistoricals = ac.StoreHistoricals
+                    });
+            }
+
+            throw new ArgumentOutOfRangeException("You need to have a unique identifier to obtain results.");
+        }
+
         public bool Exists(AnalysedComponentType type, long currencyId = 0, string currencySlug = null, 
             long currencyPairId = 0, long currencyTypeId = 0)
         {

@@ -9,6 +9,9 @@ namespace Nozomi.Service.Events.Analysis.Interfaces
 {
     public interface IAnalysedComponentEvent
     {
+        IEnumerable<AnalysedComponentViewModel> All(string currencySlug, string currencyPairGuid, string currencyTypeAbbrv, 
+            int index = 0, int itemsPerPage = 200);
+        
         bool Exists(AnalysedComponentType type, long currencyId = 0, string currencySlug = null, 
             long currencyPairId = 0, long currencyTypeId = 0);
         
