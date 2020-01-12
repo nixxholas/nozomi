@@ -61,6 +61,13 @@
                                     v-if="props.row.guid" 
                                     v-bind:guid="props.row.guid"/>
             <b-message v-else>We can't seem to load this request's components.</b-message>
+            
+            <AnalysedComponentsTable :show-create-feature="true"
+                                    v-if="props.row.guid"
+                                    :currency-slug="props.row.currencySlug"
+                                    :currency-pair-guid="props.row.currencyPairGuid"
+                                    :currency-type-short-form="props.row.currencyTypeGuid"/>
+            <b-message v-else>We can't seem to load this request's analysed components.</b-message>
         </template>
         <template slot="empty">
             <section class="section">
@@ -84,11 +91,13 @@
     import CreateRCComponent from '@/components/modals/create-request-component-modal';
     import RequestModal from '@/components/modals/request-modal'
     import RequestService from "@/services/RequestService";
+    import AnalysedComponentsTable from "@/components/tables/analysed-components-table";
     import RequestComponentsTable from "@/components/tables/request-components-table";
 
     export default {
         name: "requests-table",
-        components: {RequestComponentsTable, CreateRCComponent, RequestModal },
+        components: { AnalysedComponentsTable, RequestComponentsTable, 
+            CreateRCComponent, RequestModal },
         props: {
             request: {
                 default: null,
