@@ -1,7 +1,6 @@
 <template>
     <div class="container is-fluid">
-        <div class="tile is-ancestor">
-            <div class="tile is-vertical">
+        <div class="tile is-ancestor is-vertical">
                 <div class="tile">
                     <div class="tile is-parent is-vertical">
                         <b-notification aria-close-label="Close notification">
@@ -12,11 +11,13 @@
                                 within it and the data you
                                 want to process and that's it!</p>
                         </b-notification>
-                        <article class="tile is-child notification is-warning">
-                            <p class="title">Favourites</p>
-                            <p class="subtitle is-italic">Coding in progress..</p>
-                        </article>
+<!--                        <article class="tile is-child notification is-warning">-->
+<!--                            <p class="title">Favourites</p>-->
+<!--                            <p class="subtitle is-italic">Coding in progress..</p>-->
+<!--                        </article>-->
                     </div>
+                </div>
+                <div class="tile">
                     <div class="tile is-parent">
                         <article class="tile is-child notification is-info">
                             <p class="title">Source Types</p>
@@ -53,7 +54,6 @@
                         </section>
                     </article>
                 </div>
-            </div>
         </div>
     </div>
 </template>
