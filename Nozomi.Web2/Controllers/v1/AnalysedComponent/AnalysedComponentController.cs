@@ -87,5 +87,22 @@ namespace Nozomi.Web2.Controllers.v1.AnalysedComponent
 
             return BadRequest("Please login again. Your session may have expired!");
         }
+
+        [Authorize]
+        [HttpPut]
+        public IActionResult Update([FromBody]UpdateAnalysedComponentViewModel vm)
+        {
+            var sub = ((ClaimsIdentity) User.Identity)
+                .Claims.SingleOrDefault(c => c.Type.Equals(JwtClaimTypes.Subject))?.Value;
+
+            if (!string.IsNullOrWhiteSpace(sub))
+            {
+                _analysedComponentService.Update(vm, sub);
+
+                return Ok();
+            }
+
+            return BadRequest("Please login again. Your session may have expired!");
+        }
     }
 }

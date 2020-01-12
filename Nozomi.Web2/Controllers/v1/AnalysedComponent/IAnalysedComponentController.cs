@@ -13,5 +13,7 @@ namespace Nozomi.Web2.Controllers.v1.AnalysedComponent
         IActionResult Create(CreateAnalysedComponentViewModel vm);
 
         IActionResult Get(string guid);
+
+        IActionResult Update(UpdateAnalysedComponentViewModel vm);
     }
 }
