@@ -1,17 +1,24 @@
 <template>
     <div>
-        <button class="button is-primary"
+        <button v-if="guid"
+                class="button is-warning"
+                @click="isModalActive = true">
+            Modify
+        </button>
+        <button v-else
+                class="button is-primary"
                 @click="isModalActive = true">
             Create
         </button>
 
         <b-modal has-modal-card trap-focus :active.sync="isModalActive">
-            <b-loading :active.sync="isModalLoading" :can-cancel="false" />
+            <b-loading :active.sync="isModalLoading" :can-cancel="false"/>
             <!--https://stackoverflow.com/questions/48028718/using-event-modifier-prevent-in-vue-to-submit-form-without-redirection-->
-            <form v-on:submit.prevent="create()" class="has-text-justified">
+            <form v-on:submit.prevent="push()" class="has-text-justified">
                 <div class="modal-card">
                     <header class="modal-card-head">
-                        <p class="modal-card-title">Create an analysed component</p>
+                        <p class="modal-card-title" v-if="guid">Edit</p>
+                        <p class="modal-card-title" v-else>Create an analysed component</p>
                     </header>
                     <section class="modal-card-body">
                         <b-field label="Type">
@@ -52,10 +59,10 @@
 
                         <b-field grouped>
                             <b-field label="Denominated Value">
-                                <b-switch v-model="form.isDenominated" />
+                                <b-switch v-model="form.isDenominated"/>
                             </b-field>
                             <b-field label="Stash Historical">
-                                <b-switch v-model="form.storeHistoricals" />
+                                <b-switch v-model="form.storeHistoricals"/>
                             </b-field>
                         </b-field>
                     </section>
@@ -77,27 +84,25 @@
     import AnalysedComponentService from "@/services/AnalysedComponentService";
 
     export default {
-        name: "create-ac-modal",
+        name: "ac-modal",
         props: {
             currentRoute: window.location.href, // https://forum.vuejs.org/t/how-to-get-path-from-route-instance/26934/2
-            currencyId: Number,
+            guid: String,
             currencySlug: String,
-            currencyPairId: Number,
-            currencyTypeId: Number
+            currencyPairGuid: String,
+            currencyTypeShortForm: String,
         },
         methods: {
             ...mapActions('oidcStore', ['authenticateOidc', 'signOutOidc']),
-            create: function () {
+            push: function () {
                 this.isModalLoading = true;
                 let self = this;
-                
-                if (self.currencyId > 0 || self.currencySlug || self.currencyPairId > 0 || self.currencyTypeId > 0) {
-                    this.$axios.post('/api/AnalysedComponent/Create', self.form, {
-                        headers: {
-                            Authorization: "Bearer " + store.state.oidcStore.access_token
-                        }
-                    })
+                console.dir(this);
+
+                if (!self.guid && (self.currencySlug || self.currencyPairGuid || self.currencyTypeShortForm)) {
+                    AnalysedComponentService.create(self.form)
                         .then(function (response) {
+                            console.dir(response);
                             // Reset the form data regardless
                             self.form = {
                                 type: 0,
@@ -105,10 +110,9 @@
                                 uiFormatting: "",
                                 isDenominated: false,
                                 storeHistoricals: false,
-                                currencyId: self.form.currencyId,
                                 currencySlug: self.form.currencySlug,
-                                currencyPairId: self.form.currencyPairId,
-                                currencyTypeId: self.form.currencyTypeId
+                                currencyPairGuid: self.form.currencyPairGuid,
+                                currencyTypeShortForm: self.form.currencyTypeShortForm
                             };
 
                             if (response.status === 200) {
@@ -140,7 +144,10 @@
                             // always executed
                             self.isModalLoading = false;
                         });
-                } else {
+                } else if (guid) {
+                    
+                }
+                else {
                     //console.dir(self.form);
                     Notification.open({
                         duration: 2500,
@@ -151,6 +158,9 @@
                     });
                     this.isModalLoading = false;
                 }
+            },
+            getAnalysedComponentObj(type) {
+                // TODO
             }
         },
         beforeCreate: function () {
@@ -172,6 +182,17 @@
                     self.componentTypesIsLoading = false;
                 });
         },
+        beforeMount: function() {
+            let self = this;
+            
+            // If this is a component that we're going to edit,
+            if (self.guid) {
+                AnalysedComponentService.get(self.guid)
+                .then(function (res) {
+                    console.dir(res);
+                })
+            }
+        },
         data: function () {
             return {
                 isModalActive: false,
@@ -183,10 +204,9 @@
                     uiFormatting: "",
                     isDenominated: false,
                     storeHistoricals: false,
-                    currencyId: this.currencyId,
                     currencySlug: this.currencySlug,
-                    currencyPairId: this.currencyPairId,
-                    currencyTypeId: this.currencyTypeId
+                    currencyPairGuid: this.currencyPairGuid,
+                    currencyTypeShortForm: this.currencyTypeShortForm
                 },
                 componentTypes: [],
                 componentTypesIsLoading: false
