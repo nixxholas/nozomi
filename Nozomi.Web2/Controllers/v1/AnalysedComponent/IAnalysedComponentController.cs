@@ -8,5 +8,7 @@ namespace Nozomi.Web2.Controllers.v1.AnalysedComponent
         IActionResult All();
         
         IActionResult Create(CreateAnalysedComponentViewModel vm);
+
+        IActionResult Get(string guid);
     }
 }
