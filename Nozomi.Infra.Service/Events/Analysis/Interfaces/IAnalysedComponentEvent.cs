@@ -14,7 +14,7 @@ namespace Nozomi.Service.Events.Analysis.Interfaces
             int index = 0, int itemsPerPage = NozomiServiceConstants.AnalysedComponentTakeoutLimit, string userId = null);
         
         bool Exists(AnalysedComponentType type, long currencyId = 0, string currencySlug = null, 
-            long currencyPairId = 0, long currencyTypeId = 0);
+            string currencyPairGuid = null, string currencyTypeShortForm = null);
         
         AnalysedComponent Get(long id, bool track = false, int index = 0);
 

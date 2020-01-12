@@ -109,7 +109,7 @@ namespace Nozomi.Service.Events.Analysis
         }
 
         public bool Exists(AnalysedComponentType type, long currencyId = 0, string currencySlug = null, 
-            long currencyPairId = 0, long currencyTypeId = 0)
+            string currencyPairGuid = null, string currencyTypeShortForm = null)
         {
             if (currencyId > 0)
                 return _unitOfWork.GetRepository<AnalysedComponent>()
@@ -128,20 +128,24 @@ namespace Nozomi.Service.Events.Analysis
                     .Any(ac => ac.Currency.Slug.Equals(currencySlug)
                                && ac.ComponentType.Equals(type));
             
-            if (currencyPairId > 0)
+            if (Guid.TryParse(currencyPairGuid, out var cpGuid))
                 return _unitOfWork.GetRepository<AnalysedComponent>()
                     .GetQueryable()
                     .AsNoTracking()
-                    .Any(ac => ac.DeletedAt == null && ac.IsEnabled 
-                                                    && ac.CurrencyPairId.Equals(currencyPairId)
-                                                    && ac.ComponentType.Equals(type));
+                    .Where(ac => ac.DeletedAt == null && ac.IsEnabled 
+                                 && ac.CurrencyPairId != null)
+                    .Include(ac => ac.CurrencyPair)
+                    .Any(ac => ac.CurrencyPair.Guid.Equals(cpGuid)
+                               && ac.ComponentType.Equals(type));
             
-            if (currencyTypeId > 0)
+            if (!string.IsNullOrEmpty(currencyTypeShortForm))
                 return _unitOfWork.GetRepository<AnalysedComponent>()
                     .GetQueryable()
                     .AsNoTracking()
-                    .Any(ac => ac.DeletedAt == null && ac.IsEnabled 
-                                                    && ac.CurrencyTypeId.Equals(currencyTypeId)
+                    .Where(ac => ac.DeletedAt == null && ac.IsEnabled
+                                 && ac.CurrencyTypeId != null)
+                    .Include(ac => ac.CurrencyType)
+                    .Any(ac =>  ac.CurrencyType.TypeShortForm.Equals(currencyTypeShortForm)
                                                     && ac.ComponentType.Equals(type));
             
             throw new ArgumentOutOfRangeException("Foreign key out of range for logic.");
