@@ -14,7 +14,7 @@ namespace Nozomi.Service.Events.Analysis.Interfaces
         
         AnalysedComponent Get(long id, bool track = false, int index = 0);
 
-        UpdateAnalysedComponentViewModel Get(Guid guid);
+        UpdateAnalysedComponentViewModel Get(Guid guid, string userId = null);
         
         /// <summary>
         /// For internal consumption, exposes the entire dbset.

@@ -86,12 +86,17 @@ namespace Nozomi.Service.Events.Analysis
             return query.SingleOrDefault();
         }
 
-        public UpdateAnalysedComponentViewModel Get(Guid guid)
+        public UpdateAnalysedComponentViewModel Get(Guid guid, string userId = null)
         {
-            return _unitOfWork.GetRepository<AnalysedComponent>()
+            var query = _unitOfWork.GetRepository<AnalysedComponent>()
                 .GetQueryable()
                 .AsNoTracking()
-                .Where(ac => ac.Guid.Equals(guid))
+                .Where(ac => ac.Guid.Equals(guid));
+
+            if (!string.IsNullOrEmpty(userId))
+                query = query.Where(ac => ac.CreatedById.Equals(userId));
+            
+            return query
                 .Include(ac => ac.Currency)
                 .Include(ac => ac.CurrencyPair)
                 .Include(ac => ac.CurrencyType)
