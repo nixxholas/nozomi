@@ -83,8 +83,26 @@
                 <i class="fa fa-plus"></i>
               </div>
               <div class="timeline-content">
+                <p class="heading">February 2020</p>
+                <p>Seed funding round</p>
+              </div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-marker is-primary is-icon">
+                <i class="fa fa-plus"></i>
+              </div>
+              <div class="timeline-content">
                 <p class="heading">March 2020</p>
                 <p>Public beta</p>
+              </div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-marker is-primary is-icon">
+                <i class="fa fa-plus"></i>
+              </div>
+              <div class="timeline-content">
+                <p class="heading">September 2020</p>
+                <p>Public Release Candidate</p>
               </div>
             </div>
             <header class="timeline-header">
@@ -107,22 +125,6 @@
                 <div class="card">
                   <div class="card-image">
                     <figure class="image is-4by4">
-                    </figure>
-                  </div>
-                  <div class="card-content">
-                    <div class="media">
-                      <div class="media-content">
-                        <p class="title is-4 has-text-black">Jasper Chua</p>
-                        <p class="subtitle is-6 has-text-black">Co-founder & CEO</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="column">
-                <div class="card">
-                  <div class="card-image">
-                    <figure class="image is-4by4">
                       <img src="/assets/img/people/nicholas.jpg">
                     </figure>
                   </div>
@@ -130,7 +132,7 @@
                     <div class="media">
                       <div class="media-content">
                         <p class="title is-4 has-text-black">Nicholas Chen</p>
-                        <p class="subtitle is-6 has-text-black">Founder & Product Architect</p>
+                        <p class="subtitle is-6 has-text-black">Founder</p>
                       </div>
                     </div>
                   </div>
@@ -145,8 +147,47 @@
                   <div class="card-content">
                     <div class="media">
                       <div class="media-content">
+                        <p class="title is-4 has-text-black">Qi Xiang</p>
+                        <p class="subtitle is-6 has-text-black">Backend Engineer</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="hero is-bold">
+      <div class="hero-body">
+        <div class="container">
+          <h1 class="title is-1">
+            Never forgotten.
+          </h1>
+
+          <div class="row">
+            <div class="columns is-desktop">
+              <div class="column">
+                <div class="card">
+                  <div class="card-content">
+                    <div class="media">
+                      <div class="media-content">
+                        <p class="title is-4 has-text-black">Jasper Chua</p>
+                        <p class="subtitle is-6 has-text-black">Contributions to Nozomi's First Business Plan</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="column">
+                <div class="card">
+                  <div class="card-content">
+                    <div class="media">
+                      <div class="media-content">
                         <p class="title is-4 has-text-black">Elvis Yong</p>
-                        <p class="subtitle is-6 has-text-black">Software Engineer</p>
+                        <p class="subtitle is-6 has-text-black">Contributions to Nozomi's First Web App</p>
                       </div>
                     </div>
                   </div>
