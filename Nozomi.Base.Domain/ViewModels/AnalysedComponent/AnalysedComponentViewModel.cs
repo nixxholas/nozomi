@@ -15,6 +15,8 @@ namespace Nozomi.Data.ViewModels.AnalysedComponent
         
         public new string CurrencyTypeId { get; set; }
         
+        public bool? IsEnabled { get; set; }
+
         public IEnumerable<AnalysedHistoricItemViewModel> History { get; set; }
     }
 }
