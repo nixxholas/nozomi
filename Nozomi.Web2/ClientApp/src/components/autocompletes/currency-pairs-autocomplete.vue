@@ -2,11 +2,11 @@
     <section>
         <b-autocomplete
                 :data="data.filter(e => e.mainTicker && e.counterTicker)"
-                v-model="currencyPairGuid"
+                v-model="query"
                 placeholder="e.g. EURUSD"
                 :custom-formatter="getCurrencyPairTickerPairStr"
                 :loading="isLoading"
-                @select="option => selected ? selected = option.guid : selected = null"
+                @select="option => selected ? selected = option : selected = null"
                 @typing="getAsyncData"
                 @infinite-scroll="getMoreAsyncData">
             <template slot-scope="props">
@@ -43,7 +43,6 @@
                 page: 0,
                 query: '',
                 selected: null,
-                currencyPairGuid: null,
                 sources: []
             }
         },
@@ -51,8 +50,6 @@
             selected: function (newVal) {
                 // Safetynet
                 if (newVal && newVal.guid) {
-                    this.currencyPairGuid = newVal.guid;
-
                     // https://www.telerik.com/blogs/how-to-emit-data-in-vue-beyond-the-vuejs-documentation
                     this.$emit('input', newVal.guid); // Emit the value out for v-model support
                 }
@@ -61,7 +58,9 @@
         methods: {
             getCurrencyPairTickerPairStr: function (obj) {
                 if (obj && obj.mainTicker && obj.counterTicker && obj.sourceGuid) {
-                    // + obj.source.name + ""
+                    // Always set the final object for emission first
+                    this.selected = obj;
+                    
                     let source = this.getSource(obj.sourceGuid);
 
                     if (source)
@@ -72,7 +71,6 @@
 
                 // Reset everything if something is off
                 this.selected = null;
-                this.currencyPairGuid = null;
                 return '';
             },
             getAsyncData: function (query) {
@@ -112,6 +110,11 @@
             CurrencyPairService.all()
                 .then(function (response) {
                     self.data = response;
+                    
+                    if (self.incomingCurrencyPairGuid && response 
+                        && response.length > 0) {
+                        self.selected = response.filter(e => e.guid === self.incomingCurrencyPairGuid)[0];
+                    }
                 })
                 .catch(function (error) {
                     // handle error
