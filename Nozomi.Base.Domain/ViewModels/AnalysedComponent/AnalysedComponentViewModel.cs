@@ -5,17 +5,15 @@ using Nozomi.Data.ViewModels.AnalysedHistoricItem;
 
 namespace Nozomi.Data.ViewModels.AnalysedComponent
 {
-    public class AnalysedComponentViewModel
+    public class AnalysedComponentViewModel : CreateAnalysedComponentViewModel
     {
         public Guid Guid { get; set; }
         
-        public AnalysedComponentType Type { get; set; }
-        
-        public string UiFormatting { get; set; }
-        
         public string Value { get; set; }
         
-        public bool IsDenominated { get; set; }
+        public new string CurrencyPairId { get; set; }
+        
+        public new string CurrencyTypeId { get; set; }
         
         public IEnumerable<AnalysedHistoricItemViewModel> History { get; set; }
     }
