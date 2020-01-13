@@ -65,6 +65,12 @@
                                 <b-switch v-model="form.storeHistoricals"/>
                             </b-field>
                         </b-field>
+                        
+                        <b-field v-if="form.guid">
+                            <b-checkbox v-model="form.isEnabled">
+                                Enabled
+                            </b-checkbox>
+                        </b-field>
                     </section>
 
                     <footer class="modal-card-foot">
@@ -78,7 +84,6 @@
 </template>
 
 <script>
-    import store from '../../store/index';
     import {mapActions} from 'vuex';
     import {NotificationProgrammatic as Notification} from 'buefy';
     import AnalysedComponentService from "@/services/AnalysedComponentService";
@@ -97,7 +102,6 @@
             push: function () {
                 this.isModalLoading = true;
                 let self = this;
-                console.dir(this);
 
                 if (!self.guid && (self.currencySlug || self.currencyPairGuid || self.currencyTypeShortForm)) {
                     AnalysedComponentService.create(self.form)
@@ -144,11 +148,39 @@
                             // always executed
                             self.isModalLoading = false;
                         });
-                } else if (guid) {
-                    
+                } else if (self.guid) {
+                    AnalysedComponentService.update(self.form)
+                    .then(function (response) {
+                        if (response.status === 200) {
+                            self.isModalActive = false; // Close the modal
+                            Notification.open({
+                                duration: 2500,
+                                message: `Component successfully updated!`,
+                                position: 'is-bottom-right',
+                                type: 'is-success',
+                                hasIcon: true
+                            });
+
+                            // Inform the parent that a new request has been created
+                            // https://forum.vuejs.org/t/passing-data-back-to-parent/1201
+                            self.$emit('created', true);
+                        }
+                    })
+                        .catch(function (error) {
+                            //console.log(error);
+                            Notification.open({
+                                duration: 2500,
+                                message: `Please make sure your entries are correctly filled!`,
+                                position: 'is-bottom-right',
+                                type: 'is-danger',
+                                hasIcon: true
+                            });
+                        })
+                    .finally(function () {
+                        self.isModalLoading = false;
+                    })
                 }
                 else {
-                    //console.dir(self.form);
                     Notification.open({
                         duration: 2500,
                         message: `The modal was incorrectly instantiated! You might have to contact our staff :(.`,
@@ -158,9 +190,6 @@
                     });
                     this.isModalLoading = false;
                 }
-            },
-            getAnalysedComponentObj(type) {
-                // TODO
             }
         },
         beforeCreate: function () {
@@ -189,7 +218,17 @@
             if (self.guid) {
                 AnalysedComponentService.get(self.guid)
                 .then(function (res) {
-                    console.dir(res);
+                    if (res.status === 200) {
+                        self.form = res.data;
+                    } else {
+                        Notification.open({
+                            duration: 2500,
+                            message: `We were unable to load this component, Please contact our staff.`,
+                            position: 'is-bottom-right',
+                            type: 'is-danger',
+                            hasIcon: true
+                        });
+                    }
                 })
             }
         },
@@ -199,6 +238,7 @@
                 isModalLoading: false,
                 currentTypeTab: 0,
                 form: {
+                    guid: this.guid,
                     type: 0,
                     delay: 0,
                     uiFormatting: "",
@@ -206,7 +246,9 @@
                     storeHistoricals: false,
                     currencySlug: this.currencySlug,
                     currencyPairGuid: this.currencyPairGuid,
-                    currencyTypeShortForm: this.currencyTypeShortForm
+                    currencyTypeShortForm: this.currencyTypeShortForm,
+                    // Update properties
+                    isEnabled: false,
                 },
                 componentTypes: [],
                 componentTypesIsLoading: false
