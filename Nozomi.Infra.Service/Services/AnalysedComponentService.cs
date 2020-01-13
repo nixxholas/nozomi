@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data.Models.Web.Analytical;
 using Nozomi.Data.ViewModels.AnalysedComponent;
@@ -79,6 +80,69 @@ namespace Nozomi.Service.Services
             }
         
             throw new InvalidOperationException("Invalid model data.");
+        }
+
+        public void Update(UpdateAnalysedComponentViewModel vm, string userId = null)
+        {
+            if (vm.IsValid())
+            {
+                var analysedComponent = _analysedComponentEvent.Pop(vm.Guid);
+
+                if (analysedComponent != null)
+                {
+                    // Update
+                    if (vm.Type != analysedComponent.ComponentType)
+                        analysedComponent.ComponentType = vm.Type;
+
+                    if (vm.Delay != analysedComponent.Delay)
+                        analysedComponent.Delay = vm.Delay;
+
+                    if (vm.IsDenominated != analysedComponent.IsDenominated)
+                        analysedComponent.IsDenominated = vm.IsDenominated;
+
+                    if (vm.StoreHistoricals != analysedComponent.StoreHistoricals)
+                        analysedComponent.StoreHistoricals = vm.StoreHistoricals;
+
+                    if (!string.IsNullOrEmpty(vm.CurrencySlug))
+                    {
+                        // Obtain the currency in question
+                        var currency = _currencyEvent.GetBySlug(vm.CurrencySlug);
+
+                        // Ensure that the component is not currently binded to the aforementioned currency.
+                        if (currency != null && !analysedComponent.CurrencyId.Equals(currency.Id))
+                            analysedComponent.CurrencyId = currency.Id;
+                    }
+
+                    if (Guid.TryParse(vm.CurrencyPairGuid, out var cpGuid))
+                    {
+                        // Obtain the currency in question
+                        var currencyPair = _currencyPairEvent.Get(vm.CurrencyPairGuid);
+
+                        // Ensure that the component is not currently binded to the aforementioned currency.
+                        if (currencyPair != null && !analysedComponent.CurrencyPairId.Equals(currencyPair.Id))
+                            analysedComponent.CurrencyPairId = currencyPair.Id;
+                    }
+
+                    if (!string.IsNullOrEmpty(vm.CurrencyTypeShortForm))
+                    {
+                        // Obtain the currency in question
+                        var currencyType = _currencyTypeEvent.Get(vm.CurrencyTypeShortForm);
+
+                        // Ensure that the component is not currently binded to the aforementioned currency.
+                        if (currencyType != null && !analysedComponent.CurrencyTypeId.Equals(currencyType.Id))
+                            analysedComponent.CurrencyTypeId = currencyType.Id;
+                    }
+                    
+                    _unitOfWork.GetRepository<AnalysedComponent>().Update(analysedComponent);
+                    _unitOfWork.Commit(userId);
+
+                    _logger.LogInformation($"{_serviceName}: Successfully updated AnalysedComponent -> " +
+                                           $"{analysedComponent.Guid}");
+                    return; // Done
+                }
+            }
+            
+            throw new InvalidDataException("Invalid payload!!!");
         }
     }
 }
