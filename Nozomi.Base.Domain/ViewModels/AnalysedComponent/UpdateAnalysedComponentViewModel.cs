@@ -4,7 +4,7 @@ namespace Nozomi.Data.ViewModels.AnalysedComponent
 {
     public class UpdateAnalysedComponentViewModel : AnalysedComponentViewModel
     {
-        public bool IsValid()
+        public new bool IsValid()
         {
             var validator = new UpdateAnalysedComponentValidator();
             return validator.Validate(this).IsValid;
