@@ -317,9 +317,8 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                     // Ensure that all components used are valid, no historical values are being tapped on.
                                     true, ++index, false, ac => // Make sure its the generic counter currency
                                         // since we can't convert yet
-                                        ac.CurrencyPair.CounterTicker
-                                            .Equals(CoreConstants.GenericCounterCurrency,
-                                                StringComparison.InvariantCultureIgnoreCase)
+                                        ac.CurrencyPair.CounterTicker.ToUpper()
+                                            .Equals(CoreConstants.GenericCounterCurrency.ToUpper())
                                         && ac.ComponentType.Equals(AnalysedComponentType.CurrentAveragePrice), 
                                     ac => NumberHelper.IsNumericDecimal(ac.Value));
                             }
