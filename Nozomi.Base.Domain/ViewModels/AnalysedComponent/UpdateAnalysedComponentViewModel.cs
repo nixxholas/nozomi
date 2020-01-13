@@ -14,6 +14,7 @@ namespace Nozomi.Data.ViewModels.AnalysedComponent
         {
             public UpdateAnalysedComponentValidator()
             {
+                RuleFor(e => e.Guid).NotEmpty().NotNull();
                 RuleFor(e => e.Type).IsInEnum();
                 RuleFor(e => e.Delay).GreaterThanOrEqualTo(0);
                 // RuleFor(e => e.UiFormatting); // No rules yet
