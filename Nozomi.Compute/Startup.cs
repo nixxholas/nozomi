@@ -78,7 +78,7 @@ namespace Nozomi.Compute
                     .GetAwaiter()
                     .GetResult().Data;
 
-                var mainDb = (string) nozomiVault["main-compute"];
+                var mainDb = (string) nozomiVault["main"];
                 if (string.IsNullOrEmpty(mainDb))
                     throw new SystemException("Invalid main database configuration");
                 // Database
