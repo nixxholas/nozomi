@@ -125,8 +125,10 @@
                                 <p class="heading">13 January 2019 - <b>beta 4</b></p>
                                 <ul>
                                     <li><b>API</b> - The data obscurity increases ever so slightly ;))</li>
+                                    <li><b>Backend</b> - Compute engine general deployment hotfixes</li>
                                     <li><b>Cabin</b> - A request's analysed components can now be seen</li>
                                     <li><b>Cabin</b> - A request analysed components can now be created</li>
+                                    <li><b>Cabin</b> - A request analysed components can now be modified</li>
                                     <li><b class="has-text-danger">Known Issue</b> - Nozomi API Documentation is down for now.. We have some deprecated crap clashing with our new stuff</li>
                                 </ul>
                             </div>
