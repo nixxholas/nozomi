@@ -35,18 +35,43 @@
         </b-button>
         <b-button type="is-warning" v-else @click="authenticateOidc(currentRoute)" :loading="loginLoading">Login</b-button>
       </b-navbar-item>
-      <b-navbar-item tag="div" class="buttons" v-else>
-        <b-button type="is-info"
-                  icon-left="columns"
-                  tag="router-link"
-                  to="/dashboard">
-          <span>Dashboard</span>
-        </b-button>
-        <b-button type="is-danger"
-                  icon-left=""
-                  @click="signOutOidc()">
-          <span>Logout</span>
-        </b-button>
+      <b-navbar-item tag="div" v-else>
+        <b-dropdown
+                v-model="navigation"
+                position="is-bottom-left"
+                aria-role="menu">
+          <a
+                  class="navbar-item"
+                  slot="trigger"
+                  role="button">
+            <span>Menu</span>
+            <b-icon icon="caret-down" />
+          </a>
+
+          <b-dropdown-item custom aria-role="menuitem">
+            Logged as <b>{{ this.oidcUser.preferred_username }}</b>
+          </b-dropdown-item>
+          <hr class="dropdown-divider">
+
+          <b-dropdown-item has-link value="dashboard" aria-role="menuitem">
+            <router-link to="/dashboard">
+              <b-icon icon="columns" />
+              Dashboard
+            </router-link>
+          </b-dropdown-item>
+          
+          <hr class="dropdown-divider">
+          
+          <b-dropdown-item value="settings" aria-role="menuitem">
+            <b-icon icon="cog" />
+            Settings
+          </b-dropdown-item>
+          <b-dropdown-item value="logout" aria-role="menuitem"
+                           @click="signOutOidc()">
+            <b-icon icon="sign-out-alt" />
+            Logout
+          </b-dropdown-item>
+        </b-dropdown>
       </b-navbar-item>
     </template>
   </b-navbar>
@@ -59,6 +84,7 @@
     export default {
         data() {
             return {
+              navigation: null,
                 routes,
                 loginLoading: false,
                 collapsed: true,
