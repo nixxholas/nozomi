@@ -55,6 +55,21 @@ export default {
         });
     },
 
+    update(payload) {
+        return new Promise((resolve, reject) => {
+            axios.put('/api/AnalysedComponent/Update', payload, {
+                headers: {
+                    Authorization: "Bearer " + store.state.oidcStore.access_token
+                }
+            })
+                .then(function (response) {
+                    resolve(response);
+                }).catch(function (error) {
+                reject(error);
+            });
+        });
+    },
+
     // TODO: Haven't started lol
     getAll() {
         return new Promise((resolve, reject) => {
