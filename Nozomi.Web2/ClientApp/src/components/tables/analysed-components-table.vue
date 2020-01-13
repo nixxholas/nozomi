@@ -39,16 +39,12 @@
                     <b-icon v-else icon="times"/>
                 </b-table-column>
 
-                <!--                    <b-table-column field="anomalyIgnorance" label="Ignore Anomalies">-->
-                <!--                        <b-checkbox v-model="form.anomalyIgnorance"-->
-                <!--                                    true-value="Yes"-->
-                <!--                                    false-value="No">-->
-                <!--                            {{ form.anomalyIgnorance }}-->
-                <!--                        </b-checkbox>-->
-                <!--                    </b-table-column>-->
-
                 <b-table-column field="value" label="Value">
                     {{ props.row.value ? props.row.value : "" }}
+                </b-table-column>
+
+                <b-table-column>
+                    <AnalysedComponentModal :guid="props.row.guid"/>
                 </b-table-column>
             </template>
             <template slot="empty">
