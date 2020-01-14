@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -11,7 +8,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Nozomi.Infra.Analysis.Service.Events;
 using Nozomi.Infra.Analysis.Service.Events.Interfaces;
 using Nozomi.Infra.Analysis.Service.HostedServices;
-using Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes;
 using Nozomi.Infra.Analysis.Service.Services;
 using Nozomi.Infra.Analysis.Service.Services.Interfaces;
 using Nozomi.Repo.BCL.Context;
@@ -66,20 +62,23 @@ namespace Nozomi.Compute
             }
             else
             {
+                var vaultUrl = Configuration["vaultUrl"];
                 var vaultToken = Configuration["vaultToken"];
 
                 if (string.IsNullOrEmpty(vaultToken))
                     throw new SystemException("Invalid vault token.");
 
                 var authMethod = new TokenAuthMethodInfo(vaultToken);
-                var vaultClientSettings = new VaultClientSettings("http://vault.nozomi.one:8200", authMethod);
+                var vaultClientSettings = new VaultClientSettings(
+                    !string.IsNullOrWhiteSpace(vaultUrl) ? vaultUrl : "https://blackbox.nozomi.one:8200", 
+                    authMethod);
                 var vaultClient = new VaultClient(vaultClientSettings);
 
                 var nozomiVault = vaultClient.V1.Secrets.Cubbyhole.ReadSecretAsync("nozomi")
                     .GetAwaiter()
                     .GetResult().Data;
 
-                var mainDb = (string) nozomiVault["main-compute"];
+                var mainDb = (string) nozomiVault["main"];
                 if (string.IsNullOrEmpty(mainDb))
                     throw new SystemException("Invalid main database configuration");
                 // Database

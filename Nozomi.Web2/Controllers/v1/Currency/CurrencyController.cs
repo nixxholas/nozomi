@@ -6,10 +6,9 @@ using IdentityModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Nozomi.Base.Core;
-using Nozomi.Base.Core.Responses;
+using Nozomi.Base.BCL;
+using Nozomi.Base.BCL.Responses;
 using Nozomi.Data;
-using Nozomi.Data.Models.Web.Analytical;
 using Nozomi.Data.ResponseModels;
 using Nozomi.Data.ResponseModels.Currency;
 using Nozomi.Data.ViewModels.Currency;
@@ -75,13 +74,14 @@ namespace Nozomi.Web2.Controllers.v1.Currency
 
         [HttpGet]
         public IActionResult All([FromQuery]string currencyType = "CRYPTO", [FromQuery]int itemsPerIndex = 20,
-            [FromQuery]int index = 0, [FromQuery]Data.Models.Web.Analytical.AnalysedComponentType sortType = 
+            [FromQuery]int index = 0, [FromQuery]CurrencySortingEnum currencySortType = CurrencySortingEnum.None, 
+            [FromQuery]Data.Models.Web.Analytical.AnalysedComponentType sortType = 
                 Data.Models.Web.Analytical.AnalysedComponentType.MarketCap, [FromQuery]bool orderDescending = true, 
             [FromQuery]ICollection<Data.Models.Web.Analytical.AnalysedComponentType> typesToTake = null,
             [FromQuery]ICollection<Data.Models.Web.Analytical.AnalysedComponentType> typesToDeepen = null)
         {
-            return Ok(_currencyEvent.All(currencyType, itemsPerIndex, index, sortType, orderDescending, typesToTake,
-                typesToDeepen));
+            return Ok(_currencyEvent.All(currencyType, itemsPerIndex, index, currencySortType, sortType, 
+                orderDescending, typesToTake, typesToDeepen));
         }
 
         [HttpGet]
@@ -114,9 +114,15 @@ namespace Nozomi.Web2.Controllers.v1.Currency
         }
 
         [HttpGet]
+        public IActionResult List([FromQuery]string slug = null)
+        {
+            return Ok(_currencyEvent.All(slug));
+        }
+
+        [HttpGet]
         public ICollection<CurrencyViewModel> ListAll([FromQuery]int page = 0, [FromQuery]int itemsPerPage = 50, 
             [FromQuery]string currencyTypeName = null, [FromQuery]bool orderAscending = true, 
-            [FromQuery]string orderingParam = "Name")
+            [FromQuery]CurrencySortingEnum orderingParam = CurrencySortingEnum.None)
         {
             return _currencyEvent.ListAll(page, itemsPerPage, currencyTypeName, orderAscending, orderingParam).ToList();
         }

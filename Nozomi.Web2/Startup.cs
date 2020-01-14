@@ -1,14 +1,14 @@
 using System;
-using Microsoft.AspNetCore.Authorization;
+using System.IO;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.AspNetCore.SpaServices;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Newtonsoft.Json;
 using Nozomi.Preprocessing;
@@ -74,14 +74,21 @@ namespace Nozomi.Web2
                 });
             }
 
+            // https://docs.microsoft.com/en-us/aspnet/core/security/enforcing-ssl?view=aspnetcore-3.1&tabs=visual-studio#options
+            // Calling AddHttpsRedirection is only necessary to change the values of HttpsPort or RedirectStatusCode.
             services.AddHttpsRedirection(options =>
             {
                 options.RedirectStatusCode = StatusCodes.Status307TemporaryRedirect;
-                // options.HttpsPort = 5001;
+                
+                // if (Environment.IsProduction())
+                //     options.HttpsPort = 5001;
             });
 
             // In production, the Vue files will be served from this directory
-            services.AddSpaStaticFiles(configuration => { configuration.RootPath = "ClientApp/dist"; });
+            services.AddSpaStaticFiles(configuration =>
+            {
+                configuration.RootPath = "ClientApp/dist";
+            });
 
             // UoW-Repository injection
             services.ConfigureRepoLayer();
@@ -164,11 +171,12 @@ namespace Nozomi.Web2
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller}/{action=Index}/{id?}");
-                
+                // endpoints.MapControllers();
+
                 // Health check up!!!
                 // https://docs.microsoft.com/en-us/aspnet/core/host-and-deploy/health-checks?view=aspnetcore-3.0#basic-health-probe
                 endpoints.MapHealthChecks("/health");
-
+                
                 if (env.IsDevelopment())
                 {
                     endpoints.MapToVueCliProxy(
@@ -183,7 +191,10 @@ namespace Nozomi.Web2
                 endpoints.MapRazorPages();
             });
 
-            app.UseSpa(spa => { spa.Options.SourcePath = "ClientApp"; });
+            app.UseSpa(spa =>
+            {
+                spa.Options.SourcePath = "ClientApp";
+            });
         }
     }
 }

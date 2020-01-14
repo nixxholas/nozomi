@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data.Models.Currency;
-using Nozomi.Data.ResponseModels.CurrencyType;
 using Nozomi.Data.ViewModels.CurrencyType;
 using Nozomi.Preprocessing;
 using Nozomi.Preprocessing.Abstracts;
@@ -16,17 +16,46 @@ namespace Nozomi.Service.Events
 {
     public class CurrencyTypeEvent : BaseEvent<CurrencyPairEvent, NozomiDbContext>, ICurrencyTypeEvent
     {
-        public CurrencyTypeEvent(ILogger<CurrencyPairEvent> logger, IUnitOfWork<NozomiDbContext> unitOfWork) 
+        public CurrencyTypeEvent(ILogger<CurrencyPairEvent> logger, IUnitOfWork<NozomiDbContext> unitOfWork)
             : base(logger, unitOfWork)
         {
         }
 
-        public IEnumerable<CurrencyTypeViewModel> All()
+        public bool Exists(string typeShortForm)
         {
             return _unitOfWork.GetRepository<CurrencyType>()
                 .GetQueryable()
                 .AsNoTracking()
+                .Any(ct => ct.TypeShortForm.Equals(typeShortForm));
+        }
+
+        public bool Exists(Guid guid)
+        {
+            return _unitOfWork.GetRepository<CurrencyType>()
+                .GetQueryable()
+                .AsNoTracking()
+                .Any(ct => ct.Guid.Equals(guid));
+        }
+
+        public bool Exists(long id)
+        {
+            return _unitOfWork.GetRepository<CurrencyType>()
+                .GetQueryable()
+                .AsNoTracking()
+                .Any(ct => ct.Id.Equals(id));
+        }
+
+        public IEnumerable<CurrencyTypeViewModel> All(int index = 0, int itemsPerPage = 200)
+        {
+            if (itemsPerPage > 200 || itemsPerPage <= 0) // Always default to 200
+                itemsPerPage = 200;
+            
+            return _unitOfWork.GetRepository<CurrencyType>()
+                .GetQueryable()
+                .AsNoTracking()
                 .Where(ct => ct.DeletedAt == null && ct.IsEnabled)
+                .Skip(index * itemsPerPage)
+                .Take(itemsPerPage)
                 .Select(ct => new CurrencyTypeViewModel
                 {
                     Guid = ct.Guid,
@@ -35,15 +64,15 @@ namespace Nozomi.Service.Events
                 });
         }
 
-        public CurrencyType Get(string guid, bool track = false)
+        public CurrencyType Get(string typeShortForm, bool track = false)
         {
-            if (!string.IsNullOrWhiteSpace(guid))
+            if (!string.IsNullOrWhiteSpace(typeShortForm))
             {
                 var currencyType = _unitOfWork.GetRepository<CurrencyType>()
                     .GetQueryable()
                     .AsNoTracking()
-                    .Where(ct => ct.DeletedAt == null && ct.IsEnabled 
-                                                      && ct.Guid.Equals(Guid.Parse(guid)));
+                    .Where(ct => ct.DeletedAt == null && ct.IsEnabled
+                                                      && ct.TypeShortForm.Equals(typeShortForm));
 
                 if (currencyType.Any())
                 {
@@ -62,6 +91,30 @@ namespace Nozomi.Service.Events
             return null;
         }
 
+        public CurrencyType Get(Guid guid, bool track = false)
+        {
+            var currencyType = _unitOfWork.GetRepository<CurrencyType>()
+                .GetQueryable()
+                .AsNoTracking()
+                .Where(ct => ct.DeletedAt == null && ct.IsEnabled
+                                                  && ct.Guid.Equals(guid));
+
+            if (currencyType.Any())
+            {
+                if (track)
+                {
+                    currencyType = currencyType
+                        .Include(ct => ct.AnalysedComponents)
+                        .Include(ct => ct.Currencies)
+                        .Include(ct => ct.Requests);
+                }
+
+                return currencyType.SingleOrDefault();
+            }
+
+            return null;
+        }
+
         public CurrencyType Get(long id, bool track = false)
         {
             if (id > 0)
@@ -69,7 +122,7 @@ namespace Nozomi.Service.Events
                 var currencyType = _unitOfWork.GetRepository<CurrencyType>()
                     .GetQueryable()
                     .AsNoTracking()
-                    .Where(ct => ct.DeletedAt == null && ct.IsEnabled 
+                    .Where(ct => ct.DeletedAt == null && ct.IsEnabled
                                                       && ct.Id.Equals(id));
 
                 if (currencyType.Any())
@@ -116,19 +169,59 @@ namespace Nozomi.Service.Events
             return null;
         }
 
-        public ICollection<DistinctCurrencyTypeResponse> ListAll()
+        public ICollection<CurrencyTypeViewModel> ListAll(int page = 0, int itemsPerPage = 50,
+            bool orderAscending = true, string orderingParam = "TypeShortForm")
+        {
+            if (page < 0)
+                page = 0;
+
+            if (itemsPerPage < 0 || itemsPerPage > NozomiServiceConstants.CurrencyTypeTakeoutLimit)
+                itemsPerPage = NozomiServiceConstants.CurrencyTypeTakeoutLimit;
+            
+            var query = _unitOfWork.GetRepository<CurrencyType>()
+                .GetQueryable()
+                .AsNoTracking()
+                .Where(ct => ct.DeletedAt == null && ct.IsEnabled);
+            
+            switch (orderingParam)
+            {
+                case "Name":
+                    if (orderAscending)
+                        query = query.OrderBy(ct => ct.Name);
+                    else
+                        query = query.OrderByDescending(ct => ct.Name);
+                    break;
+                case "TypeShortForm":
+                    if (orderAscending)
+                        query = query.OrderBy(ct => ct.TypeShortForm);
+                    else
+                        query = query.OrderByDescending(ct => ct.TypeShortForm);
+                    break;
+            }
+
+            return query
+                .Skip(page * itemsPerPage)
+                .Take(itemsPerPage)
+                .Select(ct => new CurrencyTypeViewModel
+                {
+                    Guid = ct.Guid,
+                    TypeShortForm = ct.TypeShortForm,
+                    Name = ct.Name
+                })
+                .ToList();
+        }
+
+        /// <summary>
+        /// Obtain a tracked version of currency type
+        /// </summary>
+        /// <param name="guid">GUID of the currency type in question</param>
+        /// <returns>Currency type in question</returns>
+        public CurrencyType Pop(Guid guid)
         {
             return _unitOfWork.GetRepository<CurrencyType>()
                 .GetQueryable()
-                .AsNoTracking()
-                .Where(ct => ct.DeletedAt == null && ct.IsEnabled)
-                .Select(ct => new DistinctCurrencyTypeResponse()
-                {
-                    Id = ct.Id,
-                    Name = ct.Name,
-                    ShortForm = ct.TypeShortForm
-                })
-                .ToList();
+                .AsTracking()
+                .SingleOrDefault(ct => ct.Guid.Equals(guid));
         }
     }
 }

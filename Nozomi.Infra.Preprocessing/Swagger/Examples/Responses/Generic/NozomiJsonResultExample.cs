@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 using Nozomi.Data;
 using Swashbuckle.AspNetCore.Filters;
 

@@ -4,10 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Nozomi.Base.Core.Helpers.UI;
 using Nozomi.Data;
 using Nozomi.Data.Models.Currency;
-using Nozomi.Data.ResponseModels;
 using Nozomi.Data.ResponseModels.Source;
 using Nozomi.Data.ResponseModels.Ticker;
 using Nozomi.Data.ResponseModels.TickerPair;
@@ -30,13 +28,13 @@ namespace Nozomi.Service.Events
                 .GetQueryable()
                 .AsNoTracking()
                 .Where(cp => cp.DeletedAt == null && cp.IsEnabled
-                                                  && cp.MainCurrencyAbbrv.Equals(currencyAbbrv,
+                                                  && cp.MainTicker.Equals(currencyAbbrv,
                                                       StringComparison.InvariantCultureIgnoreCase))
                 .Include(cp => cp.Source)
                 .Where(cp => cp.Source.DeletedAt == null && cp.Source.IsEnabled)
                 .Select(cp => new CurrencyTickerPair
                 {
-                    TickerPair = string.Concat(cp.MainCurrencyAbbrv, cp.CounterCurrencyAbbrv),
+                    TickerPair = string.Concat(cp.MainTicker, cp.CounterTicker),
                     Source = cp.Source.Name
                 })
                 .ToList();
@@ -59,14 +57,14 @@ namespace Nozomi.Service.Events
                 .DefaultIfEmpty()
                 .Select(cp => new UniqueTickerResponse
                 {
-                    MainTickerAbbreviation = cp.MainCurrencyAbbrv,
+                    MainTickerAbbreviation = cp.MainTicker,
                     MainTickerName = cp.Source.SourceCurrencies
-                        .SingleOrDefault(sc => sc.Currency.Abbreviation.Equals(cp.MainCurrencyAbbrv))
+                        .SingleOrDefault(sc => sc.Currency.Abbreviation.Equals(cp.MainTicker))
                         .Currency
                         .Name,
-                    CounterTickerAbbreviation = cp.CounterCurrencyAbbrv,
+                    CounterTickerAbbreviation = cp.CounterTicker,
                     CounterTickerName = cp.Source.SourceCurrencies
-                        .SingleOrDefault(sc => sc.Currency.Abbreviation.Equals(cp.CounterCurrencyAbbrv))
+                        .SingleOrDefault(sc => sc.Currency.Abbreviation.Equals(cp.CounterTicker))
                         .Currency
                         .Name,
                     Exchange = cp.Source.Name,
@@ -104,14 +102,14 @@ namespace Nozomi.Service.Events
                 .DefaultIfEmpty()
                 .Select(cp => new UniqueTickerResponse
                 {
-                    MainTickerAbbreviation = cp.MainCurrencyAbbrv,
+                    MainTickerAbbreviation = cp.MainTicker,
                     MainTickerName = cp.Source.SourceCurrencies
-                        .SingleOrDefault(sc => sc.Currency.Abbreviation.Equals(cp.MainCurrencyAbbrv))
+                        .SingleOrDefault(sc => sc.Currency.Abbreviation.Equals(cp.MainTicker))
                         .Currency
                         .Name,
-                    CounterTickerAbbreviation = cp.CounterCurrencyAbbrv,
+                    CounterTickerAbbreviation = cp.CounterTicker,
                     CounterTickerName = cp.Source.SourceCurrencies
-                        .SingleOrDefault(sc => sc.Currency.Abbreviation.Equals(cp.CounterCurrencyAbbrv))
+                        .SingleOrDefault(sc => sc.Currency.Abbreviation.Equals(cp.CounterTicker))
                         .Currency
                         .Name,
                     Exchange = cp.Source.Name,
@@ -184,7 +182,7 @@ namespace Nozomi.Service.Events
 
             foreach (var cPair in cPairs)
             {
-                var tickerPairStr = string.Concat(cPair.MainCurrencyAbbrv, cPair.CounterCurrencyAbbrv);
+                var tickerPairStr = string.Concat(cPair.MainTicker, cPair.CounterTicker);
                 
                 var tPair = res.FirstOrDefault(tpair => tpair.Key.Equals(tickerPairStr,
                     StringComparison.InvariantCultureIgnoreCase));
@@ -231,7 +229,7 @@ namespace Nozomi.Service.Events
                     .GetQueryable()
                     .AsNoTracking()
                     .Where(cp => cp.DeletedAt == null && cp.IsEnabled 
-                                                      && string.Concat(cp.MainCurrencyAbbrv, cp.CounterCurrencyAbbrv)
+                                                      && string.Concat(cp.MainTicker, cp.CounterTicker)
                                                           .Equals(ticker, StringComparison.InvariantCultureIgnoreCase))
                     .Include(cp => cp.Source)
                     .Include(cp => cp.AnalysedComponents);

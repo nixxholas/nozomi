@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data;
 using Nozomi.Data.AreaModels.v1.Source;
@@ -19,25 +16,25 @@ namespace Nozomi.Service.Services
 {
     public class SourceService : BaseService<SourceService, NozomiDbContext>, ISourceService
     {
+        private readonly ISourceEvent _sourceEvent;
         private readonly ISourceTypeEvent _sourceTypeEvent;
         
-        public SourceService(ILogger<SourceService> logger, 
-            IUnitOfWork<NozomiDbContext> unitOfWork, ISourceTypeEvent sourceTypeEvent) : base(logger, unitOfWork)
+        public SourceService(ILogger<SourceService> logger, IUnitOfWork<NozomiDbContext> unitOfWork, 
+            ISourceEvent sourceEvent, ISourceTypeEvent sourceTypeEvent) : base(logger, unitOfWork)
         {
+            _sourceEvent = sourceEvent;
             _sourceTypeEvent = sourceTypeEvent;
         }
 
         public void Create(CreateSourceViewModel vm, string userId)
         {
-            if (vm.IsValid() && !_unitOfWork.GetRepository<Source>()
-                    .GetQueryable().AsNoTracking()
-                    .Any(s => s.Abbreviation.Equals(vm.Abbreviation, StringComparison.InvariantCultureIgnoreCase)))
+            if (vm.IsValid() && !_sourceEvent.AbbreviationIsUsed(vm.Abbreviation))
             {
                 var sourceType = _sourceTypeEvent.Find(vm.SourceType);
                 if (sourceType == null)
                     throw new ArgumentNullException("Invalid source type.");
                 
-                var source = new Source(vm.Abbreviation, vm.Name, vm.ApiDocsUrl, sourceType.Id);
+                var source = new Source(vm.Abbreviation, vm.Name, vm.ApiDocsUrl, sourceType.Guid);
                 
                 _unitOfWork.GetRepository<Source>().Add(source);
                 _unitOfWork.Commit(userId);
@@ -377,9 +374,9 @@ namespace Nozomi.Service.Services
                                         .GetRepository<CurrencyPair>()
                                         .GetQueryable()
                                         .AsNoTracking()
-                                        .Any(cp => cp.MainCurrencyAbbrv.Equals(currencyPair.MainCurrencyAbbrv
+                                        .Any(cp => cp.MainTicker.Equals(currencyPair.MainTicker
                                                        ,StringComparison.InvariantCultureIgnoreCase)
-                                        && cp.CounterCurrencyAbbrv.Equals(currencyPair.CounterCurrencyAbbrv,
+                                        && cp.CounterTicker.Equals(currencyPair.CounterTicker,
                                             StringComparison.InvariantCultureIgnoreCase)
                                         && cp.SourceId.Equals(ucp.CurrencySourceId)))
                                     {

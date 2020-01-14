@@ -1,13 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using Nozomi.Base.Core;
-using Nozomi.Data;
+using Nozomi.Base.BCL;
 using Nozomi.Data.Models.Currency;
 using Nozomi.Data.Models.Web;
 using Nozomi.Data.Models.Web.Analytical;
@@ -22,8 +19,6 @@ namespace Nozomi.Repo.Data
 {
     public class NozomiDbContext : DbContext, IDbContext
     {
-        private readonly ILogger<NozomiDbContext> _logger;
-        
         public DbSet<AnalysedComponent> AnalysedComponents { get; set; }
         public DbSet<AnalysedHistoricItem> AnalysedHistoricItems { get; set; }
         public DbSet<Currency> Currencies { get; set; }
@@ -53,50 +48,50 @@ namespace Nozomi.Repo.Data
         {
             base.OnModelCreating(modelBuilder);
             
-            modelBuilder.ForNpgsqlUseIdentityColumns();
+            modelBuilder.UseIdentityColumns();
             
             var analysedComponentMap = new AnalysedComponentMap(modelBuilder.Entity<AnalysedComponent>());
-            modelBuilder.Entity<AnalysedComponent>().ForNpgsqlUseXminAsConcurrencyToken();
+            modelBuilder.Entity<AnalysedComponent>().UseXminAsConcurrencyToken();
 
             var analysedHistoricItemMap = new AnalysedHistoricItemMap(modelBuilder.Entity<AnalysedHistoricItem>());
-            modelBuilder.Entity<AnalysedHistoricItem>().ForNpgsqlUseXminAsConcurrencyToken();
+            modelBuilder.Entity<AnalysedHistoricItem>().UseXminAsConcurrencyToken();
 
             var currencyMap = new CurrencyMap(modelBuilder.Entity<Currency>());
-            modelBuilder.Entity<Currency>().ForNpgsqlUseXminAsConcurrencyToken();
+            modelBuilder.Entity<Currency>().UseXminAsConcurrencyToken();
 
             var currencyPairMap = new CurrencyPairMap(modelBuilder.Entity<CurrencyPair>());
-            modelBuilder.Entity<CurrencyPair>().ForNpgsqlUseXminAsConcurrencyToken();
+            modelBuilder.Entity<CurrencyPair>().UseXminAsConcurrencyToken();
 
             var currencyTypeMap = new CurrencyTypeMap(modelBuilder.Entity<CurrencyType>());
-            modelBuilder.Entity<CurrencyType>().ForNpgsqlUseXminAsConcurrencyToken();
+            modelBuilder.Entity<CurrencyType>().UseXminAsConcurrencyToken();
 
             var requestMap = new RequestMap(modelBuilder.Entity<Request>());
-            modelBuilder.Entity<Request>().ForNpgsqlUseXminAsConcurrencyToken();
+            modelBuilder.Entity<Request>().UseXminAsConcurrencyToken();
 
             var webSocketCommandMap = new WebsocketCommandMap(modelBuilder.Entity<WebsocketCommand>());
-            modelBuilder.Entity<WebsocketCommand>().ForNpgsqlUseXminAsConcurrencyToken();
+            modelBuilder.Entity<WebsocketCommand>().UseXminAsConcurrencyToken();
 
             var webSocketCommandPropertyMap = new WebsocketCommandPropertyMap(modelBuilder.Entity<WebsocketCommandProperty>());
-            modelBuilder.Entity<WebsocketCommandProperty>().ForNpgsqlUseXminAsConcurrencyToken();
+            modelBuilder.Entity<WebsocketCommandProperty>().UseXminAsConcurrencyToken();
 
             var requestComponentMap = new RequestComponentMap(modelBuilder.Entity<Component>());
-            modelBuilder.Entity<Component>().ForNpgsqlUseXminAsConcurrencyToken();
+            modelBuilder.Entity<Component>().UseXminAsConcurrencyToken();
 
             var rcdHistoricItemMap = new RcdHistoricItemMap(modelBuilder.Entity<ComponentHistoricItem>());
-            modelBuilder.Entity<ComponentHistoricItem>().ForNpgsqlUseXminAsConcurrencyToken();
+            modelBuilder.Entity<ComponentHistoricItem>().UseXminAsConcurrencyToken();
 
             var requestPropertyMap = new RequestPropertyMap(modelBuilder.Entity<RequestProperty>());
-            modelBuilder.Entity<RequestProperty>().ForNpgsqlUseXminAsConcurrencyToken();
+            modelBuilder.Entity<RequestProperty>().UseXminAsConcurrencyToken();
             
             var sourceMap = new SourceMap(modelBuilder.Entity<Source>());
-            modelBuilder.Entity<Source>().ForNpgsqlUseXminAsConcurrencyToken();
+            modelBuilder.Entity<Source>().UseXminAsConcurrencyToken();
 
             var sourceTypeMap = new SourceTypeMap(modelBuilder.Entity<SourceType>());
-            modelBuilder.Entity<SourceType>().ForNpgsqlUseXminAsConcurrencyToken();
+            modelBuilder.Entity<SourceType>().UseXminAsConcurrencyToken();
 
             // MTM
             var currencySourceMap = new CurrencySourceMap(modelBuilder.Entity<CurrencySource>());
-            modelBuilder.Entity<CurrencySource>().ForNpgsqlUseXminAsConcurrencyToken();
+            modelBuilder.Entity<CurrencySource>().UseXminAsConcurrencyToken();
         }
         
         public int SaveChanges(string userId)
@@ -149,7 +144,7 @@ namespace Nozomi.Repo.Data
             }
             catch (Exception ex)
             {
-                _logger.LogCritical("[NozomiDbContext]: " + ex);
+                Console.WriteLine("[NozomiDbContext]: " + ex);
             }
         }
     }

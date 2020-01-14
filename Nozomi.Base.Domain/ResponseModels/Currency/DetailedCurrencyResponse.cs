@@ -1,9 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Nozomi.Base.Core.Helpers.Enumerator;
-using Nozomi.Base.Core.Helpers.Native.Numerals;
-using Nozomi.Data.AreaModels.v1.RequestComponent;
+using Nozomi.Base.BCL.Helpers.Enumerator;
+using Nozomi.Base.BCL.Helpers.Native.Numerals;
 using Nozomi.Data.Models.Web.Analytical;
 using Nozomi.Data.ResponseModels.CurrencyProperty;
 using Nozomi.Data.ResponseModels.RequestComponent;

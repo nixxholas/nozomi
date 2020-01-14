@@ -1,11 +1,5 @@
-using System.Collections.Generic;
 using Nozomi.Data.AreaModels.v1.CurrencyPair;
-using Nozomi.Data.AreaModels.v1.CurrencyPairComponent;
-using Nozomi.Data.AreaModels.v1.CurrencyPairRequest;
-using Nozomi.Data.AreaModels.v1.PartialCurrencyPair;
-using Nozomi.Data.AreaModels.v1.RequestProperty;
 using Nozomi.Data.Models.Currency;
-using Nozomi.Data.Models.Web;
 using Swashbuckle.AspNetCore.Filters;
 
 namespace Nozomi.Preprocessing.Swagger.Examples.Requests.v1.CurrencyPair

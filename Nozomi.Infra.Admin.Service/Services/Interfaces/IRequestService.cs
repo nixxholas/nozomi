@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using Nozomi.Data;
 using Nozomi.Data.AreaModels.v1.Requests;
 using Nozomi.Data.Models.Web;
-using Nozomi.Data.ViewModels.Request;
 
 namespace Nozomi.Infra.Admin.Service.Services.Interfaces
 {

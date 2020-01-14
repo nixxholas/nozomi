@@ -13,7 +13,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Nozomi.Base.Auth.Models;
-using Nozomi.Base.Core.Helpers.Enumerator;
+using Nozomi.Base.BCL.Helpers.Enumerator;
 using Nozomi.Repo.Auth.Data;
 
 namespace Nozomi.Auth

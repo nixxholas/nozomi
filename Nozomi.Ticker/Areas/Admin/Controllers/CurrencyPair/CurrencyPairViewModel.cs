@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using Nozomi.Data.Models.Currency;
 
 namespace Nozomi.Ticker.Areas.Admin.Controllers.CurrencyPair
 {

@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Nozomi.Base.Core.Configurations;
 using Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes;
 using Nozomi.Repo.BCL.Context;
 using Nozomi.Repo.BCL.Repository;
@@ -57,13 +56,16 @@ namespace Nozomi.WSS
             }
             else
             {
+                var vaultUrl = Configuration["vaultUrl"];
                 var vaultToken = Configuration["vaultToken"];
 
                 if (string.IsNullOrEmpty(vaultToken))
                     throw new SystemException("Invalid vault token.");
 
                 var authMethod = new TokenAuthMethodInfo(vaultToken);
-                var vaultClientSettings = new VaultClientSettings("http://vault.nozomi.one:8200", authMethod);
+                var vaultClientSettings = new VaultClientSettings(
+                    !string.IsNullOrWhiteSpace(vaultUrl) ? vaultUrl : "https://blackbox.nozomi.one:8200", 
+                    authMethod);
                 var vaultClient = new VaultClient(vaultClientSettings);
 
                 var nozomiVault = vaultClient.V1.Secrets.Cubbyhole.ReadSecretAsync("nozomi")

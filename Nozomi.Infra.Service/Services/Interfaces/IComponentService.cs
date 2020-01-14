@@ -1,5 +1,4 @@
 ﻿using Nozomi.Data;
-using Nozomi.Data.AreaModels.v1.CurrencyPairComponent;
 using Nozomi.Data.AreaModels.v1.RequestComponent;
 using Nozomi.Data.ViewModels.Component;
 

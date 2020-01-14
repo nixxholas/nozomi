@@ -1,6 +1,5 @@
 using FluentValidation;
 using Nozomi.Data.Models.Web;
-using Nozomi.Data.ResponseModels.CurrencyPair;
 
 namespace Nozomi.Data.ViewModels.Request
 {
@@ -50,15 +49,14 @@ namespace Nozomi.Data.ViewModels.Request
         public string CurrencySlug { get; set; }
 
         /// <summary>
-        /// The distinct response of the currency pair selected.
+        /// The distinct guid of the currency pair selected.
         /// </summary>
-        /// TODO: Rewrite
-        public DistinctCurrencyPairResponse CurrencyPair { get; set; }
+        public string CurrencyPairGuid { get; set; }
 
         /// <summary>
-        /// The ID of the Currency Type selected.
+        /// The Guid of the Currency Type selected.
         /// </summary>
-        public long CurrencyTypeId { get; set; }
+        public string CurrencyTypeGuid { get; set; }
 
         public bool IsValid()
         {
@@ -76,15 +74,21 @@ namespace Nozomi.Data.ViewModels.Request
                 RuleFor(r => r.Delay).GreaterThan(-1);
                 RuleFor(r => r.FailureDelay).GreaterThan(-1);
                 RuleFor(r => r.ParentType).IsInEnum();
-
-                RuleFor(r => r.CurrencySlug).NotNull().Unless(r => r.CurrencyPair != null
-                                                                   || r.CurrencyTypeId > 0);
-                RuleFor(r => r.CurrencyPair).NotNull().Unless(r =>
-                    !string.IsNullOrEmpty(r.CurrencySlug) || r.CurrencyTypeId > 0);
-                RuleFor(r => r.CurrencyPair.Id).Must(v => v > 0).Unless(r =>
-                    !string.IsNullOrEmpty(r.CurrencySlug) || r.CurrencyTypeId > 0);
-                RuleFor(r => r.CurrencyTypeId).GreaterThan(0).Unless(r =>
-                    !string.IsNullOrEmpty(r.CurrencySlug) || r.CurrencyPair != null);
+                // Safetynet for Currencies
+                RuleFor(r => r.CurrencySlug).NotNull().NotEmpty()
+                    // Ignore the check if a currency pair or currency type is selected.
+                    .Unless(r => 
+                        !string.IsNullOrEmpty(r.CurrencyPairGuid) || !string.IsNullOrEmpty(r.CurrencyTypeGuid));
+                // Safetynet for Currency Pairs
+                RuleFor(r => r.CurrencyPairGuid).NotEmpty().NotNull()
+                    // Ignore the check if a currency or currency type is selected.
+                    .Unless(r => 
+                        !string.IsNullOrEmpty(r.CurrencyTypeGuid) || !string.IsNullOrEmpty(r.CurrencySlug));
+                // Safetynet for Currency types
+                RuleFor(r => r.CurrencyTypeGuid).NotEmpty().NotNull()
+                    .Unless(r =>
+                        // Ignore the check if a currency or currency pair is selected
+                        !string.IsNullOrEmpty(r.CurrencySlug) || !string.IsNullOrEmpty(r.CurrencyPairGuid));
             }
         }
     }

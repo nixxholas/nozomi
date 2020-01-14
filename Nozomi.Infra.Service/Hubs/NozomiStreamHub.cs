@@ -1,13 +1,10 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Channels;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json.Linq;
-using Nozomi.Base.Core.Helpers.Enumerator;
+using Nozomi.Base.BCL.Helpers.Enumerator;
 using Nozomi.Data;
 using Nozomi.Data.Models.Web.Analytical;
 using Nozomi.Data.ResponseModels.AnalysedComponent;
@@ -17,7 +14,6 @@ using Nozomi.Infra.Preprocessing.SignalR;
 using Nozomi.Infra.Preprocessing.SignalR.Hubs.Interfaces;
 using Nozomi.Service.Events.Analysis.Interfaces;
 using Nozomi.Service.Events.Interfaces;
-using Nozomi.Service.Services.Interfaces;
 
 namespace Nozomi.Service.Hubs
 {

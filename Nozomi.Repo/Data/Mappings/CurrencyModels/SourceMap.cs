@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Nozomi.Base.Core.Helpers.Mapping;
+using Nozomi.Base.BCL.Helpers.Mapping;
 using Nozomi.Data.Models.Currency;
 
 namespace Nozomi.Repo.Data.Mappings.CurrencyModels
@@ -13,7 +13,7 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
             entityTypeBuilder.HasKey(s => s.Id).HasName("Source_PK_Id");
             entityTypeBuilder.Property(s => s.Id).ValueGeneratedOnAdd();
 
-            entityTypeBuilder.Property(e => e.Guid).ValueGeneratedOnAdd().HasDefaultValueSql("uuid_generate_v4()");
+            entityTypeBuilder.Property(e => e.Guid).ValueGeneratedOnAdd();
             entityTypeBuilder.HasIndex(e => e.Guid).IsUnique();
 
             entityTypeBuilder.HasIndex(s => s.Abbreviation).HasName("Source_Index_Abbreviation");
@@ -21,9 +21,10 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
 
             entityTypeBuilder.Property(s => s.Name).IsRequired();
 
-            entityTypeBuilder.Property(s => s.SourceTypeId).HasDefaultValue(1);
-            entityTypeBuilder.HasOne(s => s.SourceType).WithMany(st => st.Sources)
-                .HasForeignKey(s => s.SourceTypeId);
+            entityTypeBuilder.HasOne(s => s.SourceType)
+                .WithMany(st => st.Sources)
+                .HasForeignKey(s => s.SourceTypeGuid)
+                .IsRequired();
             entityTypeBuilder.HasMany(s => s.SourceCurrencies).WithOne(c => c.Source)
                 .HasForeignKey(c=> c.SourceId).OnDelete(DeleteBehavior.Restrict)
                 .HasConstraintName("Source_SourceCurrencies_Constraint");

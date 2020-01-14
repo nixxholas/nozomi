@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Nozomi.Base.Auth.Models;
-using Nozomi.Base.Core.Helpers.Mapping;
+using Nozomi.Base.BCL.Helpers.Mapping;
 
 namespace Nozomi.Repo.Auth.Data.Mappings
 {

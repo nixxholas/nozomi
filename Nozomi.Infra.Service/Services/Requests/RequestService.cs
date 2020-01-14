@@ -66,22 +66,25 @@ namespace Nozomi.Service.Services.Requests
                         request.CurrencyId = currency.Id;
                         break;
                     case CreateRequestViewModel.RequestParentType.CurrencyPair:
-                        var currencyPair = _currencyPairEvent.Get(vm.CurrencyPair.Id);
+                        var currencyPair = _currencyPairEvent.Get(vm.CurrencyPairGuid);
                         
                         if (currencyPair == null)
                             throw new KeyNotFoundException("[RequestService/Create/CreateRequestViewModel]: " +
                                                            "Currency pair not found.");
                         
-                        request.CurrencyPairId = vm.CurrencyPair.Id;
+                        request.CurrencyPairId = currencyPair.Id;
                         break;
                     case CreateRequestViewModel.RequestParentType.CurrencyType:
-                        var currencyType = _currencyTypeEvent.Get(vm.CurrencyTypeId);
+                        if (!Guid.TryParse(vm.CurrencyTypeGuid, out var ctGuid))
+                            throw new ArgumentException("Invalid currency type key.");
+                        
+                        var currencyType = _currencyTypeEvent.Get(ctGuid);
                         
                         if (currencyType == null)
                             throw new KeyNotFoundException("[RequestService/Create/CreateRequestViewModel]: " +
                                                            "Currency type not found.");
                         
-                        request.CurrencyTypeId = vm.CurrencyTypeId;
+                        request.CurrencyTypeId = currencyType.Id;
                         break;
                     default:
                         throw new InvalidEnumArgumentException("[RequestService/Create/CreateRequestViewModel]: "
@@ -306,6 +309,69 @@ namespace Nozomi.Service.Services.Requests
             {
                 return new NozomiResult<string>(NozomiResultType.Failed, ex.ToString());
             }
+        }
+
+        public bool Update(UpdateRequestViewModel vm, string userId = null)
+        {
+            // Safetynet
+            if (vm != null && vm.IsValid())
+            {
+                var request = _unitOfWork.GetRepository<Request>()
+                    .GetQueryable()
+                    .AsTracking()
+                    .SingleOrDefault(r => r.DeletedAt == null && r.Guid.Equals(vm.Guid));
+
+                if (request != null)
+                {
+                    request.IsEnabled = vm.IsEnabled;
+                    request.RequestType = vm.RequestType;
+                    request.ResponseType = vm.ResponseType;
+                    request.DataPath = vm.DataPath;
+                    request.Delay = vm.Delay;
+                    request.FailureDelay = vm.FailureDelay;
+
+                    switch (vm.ParentType)
+                    {
+                        case CreateRequestViewModel.RequestParentType.Currency:
+                            var currency = _currencyEvent.GetBySlug(vm.CurrencySlug);
+
+                            if (currency != null)
+                                request.CurrencyId = currency.Id;
+                            else
+                                return false;
+                            
+                            break;
+                        case CreateRequestViewModel.RequestParentType.CurrencyPair:
+                            var currencyPair = _currencyPairEvent.Get(vm.CurrencyPairGuid);
+
+                            if (currencyPair != null)
+                                request.CurrencyPairId = currencyPair.Id;
+                            else
+                                return false;
+
+                            break;
+                        case CreateRequestViewModel.RequestParentType.CurrencyType:
+                            if (!Guid.TryParse(vm.CurrencyTypeGuid, out var ctGuid))
+                                throw new ArgumentException("Invalid currency type id.");
+                            
+                            var currencyType = _currencyTypeEvent.Get(ctGuid);
+
+                            if (currencyType != null)
+                                request.CurrencyTypeId = currencyType.Id;
+                            else
+                                return false;
+
+                            break;
+                    }
+                    
+                    _unitOfWork.GetRepository<Request>().Update(request);
+                    _unitOfWork.Commit(userId);
+
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         public NozomiResult<string> Delete(long reqId, bool hardDelete = false, string userId = null)

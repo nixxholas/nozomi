@@ -2,13 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
-using Nozomi.Base.Core;
-using Nozomi.Data.AreaModels.v1.AnalysedComponent;
+using Nozomi.Base.BCL;
 using Nozomi.Data.AreaModels.v1.RequestComponent;
 using Nozomi.Data.AreaModels.v1.RequestProperty;
 using Nozomi.Data.AreaModels.v1.Requests;
 using Nozomi.Data.Models.Currency;
-using Nozomi.Data.Models.Web.Analytical;
 using Nozomi.Data.Models.Web.Websocket;
 
 namespace Nozomi.Data.Models.Web
@@ -16,7 +14,10 @@ namespace Nozomi.Data.Models.Web
     [DataContract]
     public class Request : Entity
     {
-        public Request() {}
+        public Request()
+        {
+            Guid = Guid.NewGuid();
+        }
 
         public Request(Request r)
         {
@@ -100,6 +101,7 @@ namespace Nozomi.Data.Models.Web
         public Request(RequestType requestType, ResponseType responseType, string dataPath, int delay,
             long failureDelay)
         {
+            Guid = Guid.NewGuid();
             RequestType = requestType;
             ResponseType = responseType;
             DataPath = dataPath;

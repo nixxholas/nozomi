@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.Runtime.Serialization;
-using Nozomi.Base.Core;
+using Nozomi.Base.BCL;
 
 namespace Nozomi.Data.Models.Currency
 {
@@ -12,21 +10,40 @@ namespace Nozomi.Data.Models.Currency
     {
         public Source() {}
 
-        public Source(string abbreviation, string name, string apiDocsUrl, long sourceTypeId)
+        public Source(string abbreviation, string name, string apiDocsUrl, string sourceTypeGuid)
         {
-            Abbreviation = abbreviation;
+            Guid = Guid.NewGuid();
+            Abbreviation = abbreviation.ToUpper();
             Name = name;
             APIDocsURL = apiDocsUrl;
-            SourceTypeId = sourceTypeId;
+            SourceTypeGuid = Guid.Parse(sourceTypeGuid);
         }
         
-        public Source(Guid guid, string abbreviation, string name, string apiDocsUrl, long sourceTypeId)
+        public Source(string abbreviation, string name, string apiDocsUrl, Guid sourceTypeGuid)
         {
-            Guid = guid;
-            Abbreviation = abbreviation;
+            Guid = Guid.NewGuid();
+            Abbreviation = abbreviation.ToUpper();
             Name = name;
             APIDocsURL = apiDocsUrl;
-            SourceTypeId = sourceTypeId;
+            SourceTypeGuid = sourceTypeGuid;
+        }
+        
+        public Source(Guid guid, string abbreviation, string name, string apiDocsUrl, string sourceTypeGuid)
+        {
+            Guid = guid;
+            Abbreviation = abbreviation.ToUpper();
+            Name = name;
+            APIDocsURL = apiDocsUrl;
+            SourceTypeGuid = Guid.Parse(sourceTypeGuid);
+        }
+        
+        public Source(Guid guid, string abbreviation, string name, string apiDocsUrl, Guid sourceTypeGuid)
+        {
+            Guid = guid;
+            Abbreviation = abbreviation.ToUpper();
+            Name = name;
+            APIDocsURL = apiDocsUrl;
+            SourceTypeGuid = sourceTypeGuid;
         }
         
         public long Id { get; set; }
@@ -52,7 +69,7 @@ namespace Nozomi.Data.Models.Currency
         }
 
         // =========== RELATIONS ============ //
-        public long SourceTypeId { get; set; }
+        public Guid SourceTypeGuid { get; set; }
         
         public SourceType SourceType { get; set; }
         

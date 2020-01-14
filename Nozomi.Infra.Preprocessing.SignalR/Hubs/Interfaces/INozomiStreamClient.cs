@@ -1,9 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
-using Nozomi.Data.Models.Currency;
-using Nozomi.Data.ResponseModels;
 using Nozomi.Data.ResponseModels.Currency;
 using Nozomi.Data.ResponseModels.CurrencyType;
 using Nozomi.Data.ResponseModels.Ticker;

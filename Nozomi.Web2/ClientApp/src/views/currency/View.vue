@@ -9,7 +9,7 @@
                             <b-navbar-item tag="div" class="level-item">
                                 <img
                                         class="image is-64x64 mr-3"
-                                        :src="'/' + data.logoPath"
+                                        :src="data.logoPath"
                                         alt="Currency"
                                         v-if="data && data.logoPath"
                                 >
@@ -31,7 +31,7 @@
                         <div class="tile is-child is-vertical">
                             <b-tabs @change="onTabChange" type="is-toggle" v-model="activeTab" :animated="false" expanded>
                                 <b-tab-item label="Information">
-                                    <section class="section" v-if="data.description !== null">
+                                    <section class="section" v-if='(data.description !== null || !/\S/.test(data.description))'>
                                         <div class="container">
                                             <b-message>
                                                 {{ data.description }}
@@ -45,7 +45,7 @@
                                             <div class="tile is-child" v-if="oidcIsAuthenticated">
                                                 <p class="heading">Have a component to add?
                                                 <p class="is-4">
-                                                    <CreateAcComponentModal :currency-slug="data.slug"></CreateAcComponentModal>
+                                                    <CreateAcComponentModal :currency-slug="data.slug" />
                                                 </p>
                                             </div>
                                             
@@ -83,14 +83,29 @@
                                     <section class="hero">
                                         <div class="hero-body">
                                             <div class="container">
-                                                <h1 class="title">
-                                                    Sources
-                                                </h1>
+                                                <nav class="level">
+                                                    <!-- Left side -->
+                                                    <div class="level-left">
+                                                        <div class="level-item">
+                                                            <h1 class="title">
+                                                                Sources
+                                                            </h1>
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- Right side -->
+                                                    <div class="level-right">
+                                                        <CurrencySourceModal v-if="oidcIsAuthenticated"
+                                                                             :defCurrencySlug="slug"
+                                                        @created="updateSources"/>
+                                                    </div>
+                                                </nav>
                                                 <b-table
                                                         :data="sources.data"
                                                         :loading="sources.loading"
 
                                                         :mobile-cards="true"
+                                                        :current-page="sources.page"
                                                         :per-page="sources.perPage"
                                                         :total="sources.dataCount"
                                                         @page-change="loadMarketData"
@@ -128,10 +143,24 @@
                                     <section class="hero">
                                         <div class="hero-body">
                                             <div class="container">
-                                                <h1 class="title">
-                                                    Market Pairs
-                                                </h1>
-                                                <CurrencyPairsTable :main-ticker="data.abbreviation"></CurrencyPairsTable>
+                                                <nav class="level">
+                                                    <!-- Left side -->
+                                                    <div class="level-left">
+                                                        <div class="level-item">
+                                                            <h1 class="title">
+                                                                Market Pairs
+                                                            </h1>
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- Right side -->
+                                                    <div class="level-right">
+                                                        <CurrencyPairModal v-if="oidcIsAuthenticated" 
+                                                                           :currency="data"
+                                                                           @created="updateCurrencyPairs"/>
+                                                    </div>
+                                                </nav>
+                                                <CurrencyPairsTable :main-ticker="data.abbreviation" />
                                             </div>
                                         </div>
                                     </section>
@@ -174,7 +203,7 @@
                                         </template>
                                     </b-table>
                                     <b-loading :active.sync="historic.loading" :can-cancel="false"
-                                               :is-full-page="false"></b-loading>
+                                               :is-full-page="false" />
                                 </b-tab-item>
                             </b-tabs>
                         </div>
@@ -194,14 +223,16 @@
                 </div>
             </div>
         </section>
-        <b-loading :active.sync="loading" :can-cancel="false" :is-full-page="false"></b-loading>
+        <b-loading :active.sync="loading" :can-cancel="false" :is-full-page="false" />
     </div>
 </template>
 
 <script>
     import {createChart} from 'lightweight-charts';
     import {mapGetters} from 'vuex';
-    import CreateAcComponentModal from '@/components/modals/create-analysed-component-modal';
+    import CurrencyPairModal from '@/components/modals/currency-pair-modal';
+    import AcComponentModal from '@/components/modals/analysed-component-modal';
+    import CurrencySourceModal from '@/components/modals/currency-source-modal';
     import AnalysedComponentService from "@/services/AnalysedComponentService";
     import AnalysedHistoricItemService from "@/services/AnalysedHistoricItemService";
     import CurrencyService from "@/services/CurrencyService";
@@ -217,7 +248,7 @@
             ]),
         },
         props: ['slug'],
-        components: {CurrencyPairsTable, CreateAcComponentModal},
+        components: {CurrencySourceModal, CurrencyPairModal, CurrencyPairsTable, CreateAcComponentModal: AcComponentModal},
         beforeMount: function () {
             let self = this;
             self.loading = true;
@@ -330,6 +361,13 @@
                 }
 
                 return null;
+            },
+            async updateCurrencyPairs() {
+                // TODO: We need to somehow beep the table component that there's a new update
+            },
+            async updateSources() {
+                // Obtain all of the currency's sources.
+                this.sources.data = await SourceService.listByCurrency(this.data.slug, (this.sources.page - 1), this.sources.perPage);
             },
             async loadMarketData(page) {
                 this.sources.loading = true;

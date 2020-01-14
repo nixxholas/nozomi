@@ -16,7 +16,7 @@ namespace Nozomi.Repo.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn)
-                .HasAnnotation("ProductVersion", "3.0.0")
+                .HasAnnotation("ProductVersion", "3.1.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             modelBuilder.Entity("Nozomi.Data.Models.Currency.Currency", b =>
@@ -58,8 +58,7 @@ namespace Nozomi.Repo.Migrations
 
                     b.Property<Guid>("Guid")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasDefaultValueSql("uuid_generate_v4()");
+                        .HasColumnType("uuid");
 
                     b.Property<bool>("IsEnabled")
                         .HasColumnType("boolean");
@@ -115,8 +114,7 @@ namespace Nozomi.Repo.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("CounterCurrencyAbbrv")
-                        .IsRequired()
+                    b.Property<string>("CounterTicker")
                         .HasColumnType("text");
 
                     b.Property<DateTime>("CreatedAt")
@@ -140,14 +138,12 @@ namespace Nozomi.Repo.Migrations
 
                     b.Property<Guid>("Guid")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasDefaultValueSql("uuid_generate_v4()");
+                        .HasColumnType("uuid");
 
                     b.Property<bool>("IsEnabled")
                         .HasColumnType("boolean");
 
-                    b.Property<string>("MainCurrencyAbbrv")
-                        .IsRequired()
+                    b.Property<string>("MainTicker")
                         .HasColumnType("text");
 
                     b.Property<DateTime>("ModifiedAt")
@@ -167,13 +163,12 @@ namespace Nozomi.Repo.Migrations
                     b.HasKey("Id")
                         .HasName("CurrencyPair_PK_Id");
 
-                    b.HasAlternateKey("MainCurrencyAbbrv", "CounterCurrencyAbbrv", "SourceId")
-                        .HasName("CurrencyPair_AK_MainCurrency_CounterCurrency_Source");
-
                     b.HasIndex("Guid")
                         .IsUnique();
 
                     b.HasIndex("SourceId");
+
+                    b.HasIndex("MainTicker", "CounterTicker", "SourceId");
 
                     b.ToTable("CurrencyPairs");
                 });
@@ -297,8 +292,7 @@ namespace Nozomi.Repo.Migrations
 
                     b.Property<Guid>("Guid")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasDefaultValueSql("uuid_generate_v4()");
+                        .HasColumnType("uuid");
 
                     b.Property<bool>("IsEnabled")
                         .HasColumnType("boolean");
@@ -360,8 +354,7 @@ namespace Nozomi.Repo.Migrations
 
                     b.Property<Guid>("Guid")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasDefaultValueSql("uuid_generate_v4()");
+                        .HasColumnType("uuid");
 
                     b.Property<bool>("IsEnabled")
                         .HasColumnType("boolean");
@@ -376,10 +369,8 @@ namespace Nozomi.Repo.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<long>("SourceTypeId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasDefaultValue(1L);
+                    b.Property<Guid>("SourceTypeGuid")
+                        .HasColumnType("uuid");
 
                     b.Property<uint>("xmin")
                         .IsConcurrencyToken()
@@ -395,17 +386,16 @@ namespace Nozomi.Repo.Migrations
                     b.HasIndex("Guid")
                         .IsUnique();
 
-                    b.HasIndex("SourceTypeId");
+                    b.HasIndex("SourceTypeGuid");
 
                     b.ToTable("Sources");
                 });
 
             modelBuilder.Entity("Nozomi.Data.Models.Currency.SourceType", b =>
                 {
-                    b.Property<long>("Id")
+                    b.Property<Guid>("Guid")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Abbreviation")
                         .IsRequired()
@@ -423,10 +413,8 @@ namespace Nozomi.Repo.Migrations
                     b.Property<string>("DeletedById")
                         .HasColumnType("text");
 
-                    b.Property<Guid>("Guid")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasDefaultValueSql("uuid_generate_v4()");
+                    b.Property<long>("Id")
+                        .HasColumnType("bigint");
 
                     b.Property<bool>("IsEnabled")
                         .HasColumnType("boolean");
@@ -446,28 +434,13 @@ namespace Nozomi.Repo.Migrations
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("xid");
 
-                    b.HasKey("Id")
-                        .HasName("SourceType_Id_PK");
+                    b.HasKey("Guid")
+                        .HasName("SourceType_Guid_PK");
 
                     b.HasIndex("Abbreviation")
                         .IsUnique();
 
-                    b.HasIndex("Guid")
-                        .IsUnique();
-
                     b.ToTable("SourceTypes");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1L,
-                            Abbreviation = "UNK",
-                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Guid = new Guid("05b6457d-059c-458c-8774-0811e4d59ea8"),
-                            IsEnabled = true,
-                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Name = "Unknown"
-                        });
                 });
 
             modelBuilder.Entity("Nozomi.Data.Models.Web.Analytical.AnalysedComponent", b =>
@@ -509,9 +482,7 @@ namespace Nozomi.Repo.Migrations
                         .HasColumnType("text");
 
                     b.Property<Guid>("Guid")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasDefaultValueSql("uuid_generate_v4()");
+                        .HasColumnType("uuid");
 
                     b.Property<bool>("IsDenominated")
                         .HasColumnType("boolean");
@@ -647,8 +618,7 @@ namespace Nozomi.Repo.Migrations
 
                     b.Property<Guid>("Guid")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasDefaultValueSql("uuid_generate_v4()");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Identifier")
                         .HasColumnType("text");
@@ -793,9 +763,7 @@ namespace Nozomi.Repo.Migrations
                         .HasDefaultValue(3600000L);
 
                     b.Property<Guid>("Guid")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasDefaultValueSql("uuid_generate_v4()");
+                        .HasColumnType("uuid");
 
                     b.Property<bool>("IsEnabled")
                         .HasColumnType("boolean");
@@ -855,8 +823,7 @@ namespace Nozomi.Repo.Migrations
 
                     b.Property<Guid>("Guid")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasDefaultValueSql("uuid_generate_v4()");
+                        .HasColumnType("uuid");
 
                     b.Property<bool>("IsEnabled")
                         .HasColumnType("boolean");
@@ -924,8 +891,7 @@ namespace Nozomi.Repo.Migrations
 
                     b.Property<Guid>("Guid")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasDefaultValueSql("uuid_generate_v4()");
+                        .HasColumnType("uuid");
 
                     b.Property<bool>("IsEnabled")
                         .HasColumnType("boolean");
@@ -982,8 +948,7 @@ namespace Nozomi.Repo.Migrations
 
                     b.Property<Guid>("Guid")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasDefaultValueSql("uuid_generate_v4()");
+                        .HasColumnType("uuid");
 
                     b.Property<bool>("IsEnabled")
                         .HasColumnType("boolean");
@@ -1072,7 +1037,7 @@ namespace Nozomi.Repo.Migrations
                 {
                     b.HasOne("Nozomi.Data.Models.Currency.SourceType", "SourceType")
                         .WithMany("Sources")
-                        .HasForeignKey("SourceTypeId")
+                        .HasForeignKey("SourceTypeGuid")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

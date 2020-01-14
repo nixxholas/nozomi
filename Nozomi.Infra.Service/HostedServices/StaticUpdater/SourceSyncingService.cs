@@ -6,14 +6,10 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Nozomi.Base.Core.Helpers.Enumerator;
+using Nozomi.Base.BCL.Helpers.Enumerator;
 using Nozomi.Data.Models.Currency;
-using Nozomi.Data.Models.Web.Analytical;
-using Nozomi.Data.ResponseModels;
 using Nozomi.Data.ResponseModels.Ticker;
-using Nozomi.Infra.Preprocessing.SignalR;
 using Nozomi.Infra.Preprocessing.SignalR.Hubs.Interfaces;
 using Nozomi.Preprocessing;
 using Nozomi.Preprocessing.Abstracts;
@@ -70,14 +66,14 @@ namespace Nozomi.Service.HostedServices.StaticUpdater
                                 .Select(cp => new UniqueTickerResponse
                                 {
                                     MainTickerAbbreviation = 
-                                        cp.MainCurrencyAbbrv,
+                                        cp.MainTicker,
                                     MainTickerName = cp.Source.SourceCurrencies
-                                        .SingleOrDefault(sc => sc.Currency.Abbreviation.Equals(cp.MainCurrencyAbbrv))?
+                                        .SingleOrDefault(sc => sc.Currency.Abbreviation.Equals(cp.MainTicker))?
                                         .Currency?
                                         .Name,
-                                    CounterTickerAbbreviation = cp.CounterCurrencyAbbrv,
+                                    CounterTickerAbbreviation = cp.CounterTicker,
                                     CounterTickerName = cp.Source.SourceCurrencies
-                                        .SingleOrDefault(sc => sc.Currency.Abbreviation.Equals(cp.CounterCurrencyAbbrv))?
+                                        .SingleOrDefault(sc => sc.Currency.Abbreviation.Equals(cp.CounterTicker))?
                                         .Currency?
                                         .Name,
                                     LastUpdated = cp.ModifiedAt,

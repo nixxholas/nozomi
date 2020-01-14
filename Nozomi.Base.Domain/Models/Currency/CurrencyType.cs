@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Runtime.Serialization;
-using Nozomi.Base.Core;
+using Nozomi.Base.BCL;
 using Nozomi.Data.Models.Web;
 using Nozomi.Data.Models.Web.Analytical;
 
@@ -11,6 +11,24 @@ namespace Nozomi.Data.Models.Currency
     [DataContract]
     public class CurrencyType : Entity
     {
+        public CurrencyType() {}
+
+        public CurrencyType(string typeShortForm, string name)
+        {
+            Guid = Guid.NewGuid();
+            Name = name;
+            TypeShortForm = typeShortForm;
+        }
+
+        public CurrencyType(long id, Guid guid, string name, 
+            string typeShortForm)
+        {
+            Id = id;
+            Guid = guid;
+            Name = name;
+            TypeShortForm = typeShortForm;
+        }
+        
         [Key]
         public long Id { get; set; }
 

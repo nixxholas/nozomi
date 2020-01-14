@@ -2,10 +2,8 @@
 using System.Globalization;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data;
-using Nozomi.Data.AreaModels.v1.CurrencyPairComponent;
 using Nozomi.Data.AreaModels.v1.RequestComponent;
 using Nozomi.Data.Models.Web;
 using Nozomi.Data.ViewModels.Component;

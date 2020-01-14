@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using Nozomi.Data;
@@ -11,6 +10,12 @@ namespace Nozomi.Service.Events.Interfaces
 {
     public interface IComponentEvent
     {
+        IEnumerable<ComponentViewModel> All(string requestGuid, int index = 0, int itemsPerIndex = 50,
+            bool includeNested = false, string userId = null);
+        
+        IEnumerable<ComponentViewModel> All(long requestId, int index = 0, int itemsPerIndex = 50,
+            bool includeNested = false, string userId = null);
+        
         IEnumerable<ComponentViewModel> All(int index = 0, int itemsPerIndex = 50, bool includeNested = false);
         
         ICollection<Component> All(int index = 0, bool includeNested = false);

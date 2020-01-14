@@ -12,7 +12,6 @@ using System.IO;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
-using System.Text;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
@@ -57,13 +56,16 @@ namespace Nozomi.Auth
             }
             else
             {
+                var vaultUrl = Configuration["vaultUrl"];
                 var vaultToken = Configuration["vaultToken"];
 
                 if (string.IsNullOrEmpty(vaultToken))
                     throw new SystemException("Invalid vault token.");
 
                 var authMethod = new TokenAuthMethodInfo(vaultToken);
-                var vaultClientSettings = new VaultClientSettings("http://165.22.250.169:8200", authMethod);
+                var vaultClientSettings = new VaultClientSettings(
+                    !string.IsNullOrWhiteSpace(vaultUrl) ? vaultUrl : "https://blackbox.nozomi.one:8200", 
+                    authMethod);
                 var vaultClient = new VaultClient(vaultClientSettings);
 
                 var nozomiVault = vaultClient.V1.Secrets.Cubbyhole.ReadSecretAsync("nozomi")
@@ -142,40 +144,37 @@ namespace Nozomi.Auth
             }
             else
             {
+                var vaultUrl = Configuration["vaultUrl"];
                 var vaultToken = Configuration["vaultToken"];
 
                 if (string.IsNullOrEmpty(vaultToken))
                     throw new SystemException("Invalid vault token.");
 
                 var authMethod = new TokenAuthMethodInfo(vaultToken);
-                var vaultClientSettings = new VaultClientSettings("http://165.22.250.169:8200", authMethod);
+                var vaultClientSettings = new VaultClientSettings(
+                    !string.IsNullOrWhiteSpace(vaultUrl) ? vaultUrl : "https://blackbox.nozomi.one:8200", 
+                    authMethod);
                 var vaultClient = new VaultClient(vaultClientSettings);
 
-                var authSigningKey = (string) vaultClient.V1.Secrets.Cubbyhole.ReadSecretAsync("nozomi")
+                var nozomiVault = 
+                    vaultClient.V1.Secrets.Cubbyhole.ReadSecretAsync("nozomi")
                     .GetAwaiter()
-                    .GetResult().Data["auth-signing-key"];
+                    .GetResult().Data;
+                
+                Console.WriteLine(nozomiVault);
+
+                var authSigningKey = (string) nozomiVault["auth-signing-key"];
                 if (string.IsNullOrWhiteSpace(authSigningKey))
                     throw new Exception("Null auth signing key.");
 
-                string rawCertificate;
                 // Obtain the raw certificate encoded in base64str
-                if (HostingEnvironment.IsStaging())
-                {
-                    rawCertificate = File.ReadAllText("noz-web.raw");
-                }
-                else
-                {
-                    rawCertificate = (string) vaultClient.V1.Secrets.Cubbyhole.ReadSecretAsync("nozomi")
-                        .GetAwaiter()
-                        .GetResult().Data["auth-signing-cert"];
-                }
+                var authSigningCert = (string) nozomiVault["auth-signing-cert"];
+                if (string.IsNullOrEmpty(authSigningCert))
+                    throw new NullReferenceException("Auth signing cert from vault is empty.");
                 
-                if (string.IsNullOrWhiteSpace(rawCertificate))
-                    throw new Exception("Null auth signing cert.");
-
                 var certificate = new X509Certificate2(
                     // https://stackoverflow.com/questions/25919387/converting-file-into-base64string-and-back-again
-                Convert.FromBase64String(rawCertificate)
+                    Convert.FromBase64String(authSigningCert)
                     , authSigningKey);
                 
                 // https://stackoverflow.com/questions/49042474/addsigningcredential-for-identityserver4

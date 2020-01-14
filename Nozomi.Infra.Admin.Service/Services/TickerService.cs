@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Nozomi.Base.Admin.Domain.AreaModels.Tickers;
@@ -43,8 +42,8 @@ namespace Nozomi.Infra.Admin.Service.Services
             if (_unitOfWork.GetRepository<CurrencyPair>()
                     .GetQueryable()
                     .Any(cp => cp.DeletedAt == null 
-                               && cp.MainCurrencyAbbrv.Equals(createTickerInputModel.MainCurrencyAbbrv)
-                               && cp.CounterCurrencyAbbrv.Equals(createTickerInputModel.CounterCurrencyAbbrv)
+                               && cp.MainTicker.Equals(createTickerInputModel.MainCurrencyAbbrv)
+                               && cp.CounterTicker.Equals(createTickerInputModel.CounterCurrencyAbbrv)
                                && cp.SourceId.Equals(createTickerInputModel.CurrencySourceId)))
                 return new NozomiResult<UniqueTickerResponse>(NozomiResultType.Failed,
                     "The currency pair already exists.");
@@ -164,8 +163,8 @@ namespace Nozomi.Infra.Admin.Service.Services
                 APIUrl = createTickerInputModel.DataPath,
                 CurrencyPairType = createTickerInputModel.CurrencyPairType,
                 SourceId = createTickerInputModel.CurrencySourceId,
-                MainCurrencyAbbrv = mainCurrency.Abbreviation,
-                CounterCurrencyAbbrv = counterCurrency.Abbreviation
+                MainTicker = mainCurrency.Abbreviation,
+                CounterTicker = counterCurrency.Abbreviation
             };
             
             var currencyPairRequest = new Request()
@@ -316,7 +315,7 @@ namespace Nozomi.Infra.Admin.Service.Services
                 .GetQueryable()
                 .Where(cp => cp.DeletedAt == null && cp.IsEnabled 
                                                   // Ticker pair check
-                                                  && string.Concat(cp.MainCurrencyAbbrv, cp.CounterCurrencyAbbrv)
+                                                  && string.Concat(cp.MainTicker, cp.CounterTicker)
                                                       .Equals(ticker, StringComparison.InvariantCultureIgnoreCase))
                 .Include(cp => cp.Source)
                 .SingleOrDefault(cp => cp.Source.Abbreviation

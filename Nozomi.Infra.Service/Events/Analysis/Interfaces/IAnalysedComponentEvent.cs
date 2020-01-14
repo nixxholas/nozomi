@@ -3,16 +3,22 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using Nozomi.Data.Models.Currency;
 using Nozomi.Data.Models.Web.Analytical;
-using Nozomi.Preprocessing.Abstracts.Interfaces;
+using Nozomi.Data.ViewModels.AnalysedComponent;
+using Nozomi.Preprocessing;
 
 namespace Nozomi.Service.Events.Analysis.Interfaces
 {
     public interface IAnalysedComponentEvent
     {
+        IEnumerable<AnalysedComponentViewModel> All(string currencySlug, string currencyPairGuid, string currencyTypeAbbrv, 
+            int index = 0, int itemsPerPage = NozomiServiceConstants.AnalysedComponentTakeoutLimit, string userId = null);
+        
         bool Exists(AnalysedComponentType type, long currencyId = 0, string currencySlug = null, 
-            long currencyPairId = 0, long currencyTypeId = 0);
+            string currencyPairGuid = null, string currencyTypeShortForm = null);
         
         AnalysedComponent Get(long id, bool track = false, int index = 0);
+
+        UpdateAnalysedComponentViewModel Get(Guid guid, string userId = null);
         
         /// <summary>
         /// For internal consumption, exposes the entire dbset.
@@ -43,5 +49,7 @@ namespace Nozomi.Service.Events.Analysis.Interfaces
         ICollection<AnalysedComponent> GetAllByCurrencyPair(long currencyPairId, bool track = false, int index = 0);
 
         string GetCurrencyAbbreviation(AnalysedComponent analysedComponent);
+
+        AnalysedComponent Pop(Guid guid);
     }
 }

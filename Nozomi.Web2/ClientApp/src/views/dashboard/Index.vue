@@ -1,7 +1,6 @@
 <template>
     <div class="container is-fluid">
-        <div class="tile is-ancestor">
-            <div class="tile is-vertical">
+        <div class="tile is-ancestor is-vertical">
                 <div class="tile">
                     <div class="tile is-parent is-vertical">
                         <b-notification aria-close-label="Close notification">
@@ -12,18 +11,29 @@
                                 within it and the data you
                                 want to process and that's it!</p>
                         </b-notification>
-                        <article class="tile is-child notification is-warning">
-                            <p class="title">Favourites</p>
-                            <p class="subtitle is-italic">Coding in progress..</p>
-                        </article>
+<!--                        <article class="tile is-child notification is-warning">-->
+<!--                            <p class="title">Favourites</p>-->
+<!--                            <p class="subtitle is-italic">Coding in progress..</p>-->
+<!--                        </article>-->
                     </div>
+                </div>
+                <div class="tile">
                     <div class="tile is-parent">
                         <article class="tile is-child notification is-info">
                             <p class="title">Source Types</p>
                             <p class="subtitle">
-                                <CreateSourceTypeModal></CreateSourceTypeModal>
+                                <SourceTypeModal />
                             </p>
-                            <SourceTypesTable></SourceTypesTable>
+                            <SourceTypesTable />
+                        </article>
+                    </div>
+                    <div class="tile is-parent">
+                        <article class="tile is-child notification is-info">
+                            <p class="title">Currency Types</p>
+                            <p class="subtitle">
+                                <CurrencyTypeModal />
+                            </p>
+                            <CurrencyTypesTable />
                         </article>
                     </div>
                 </div>
@@ -36,33 +46,41 @@
                         </b-field>
                         <b-field position="is-right">
                             <div class="control">
-                                <CreateRequestComponent @created="createdNewRequest"></CreateRequestComponent>
+                                <CreateRequestComponent @created="createdNewRequest" />
                             </div>
                         </b-field>
-                        <div class="content">
-                            <RequestsTable ref="reqTable"></RequestsTable>
-                        </div>
+                        <section>
+                            <RequestsTable ref="reqTable" />
+                        </section>
                     </article>
                 </div>
-            </div>
         </div>
     </div>
 </template>
 
 <script>
-    import {mapActions} from 'vuex';
-    import store from '@/store/index';
+    import {mapActions, mapGetters} from 'vuex';
     // Request imports
-    import CreateRequestComponent from '@/components/modals/create-request-modal';
-    import CreateSourceTypeModal from '@/components/modals/create-source-type-modal';
+    import CreateRequestComponent from '@/components/modals/request-modal';
+    import CurrencyTypeModal from '@/components/modals/currency-type-modal';
+    import SourceTypeModal from '@/components/modals/source-type-modal';
+    import CurrencyTypesTable from '@/components/tables/currency-types-table';
     import RequestsTable from '@/components/tables/requests-table';
     import SourceTypesTable from '@/components/tables/source-types-table';
 
     export default {
         name: "Dashboard",
-        components: {CreateRequestComponent, CreateSourceTypeModal, RequestsTable, SourceTypesTable},
+        components: { CreateRequestComponent, CurrencyTypeModal, SourceTypeModal, 
+            CurrencyTypesTable, RequestsTable, SourceTypesTable },
         data: function () {
-            return {}
+            return {
+                user: this.oidcUser
+            }
+        },
+        computed: {
+            ...mapGetters('oidcStore', [
+                'oidcUser'
+            ])
         },
         methods: {
             ...mapActions('oidcStore', ['authenticateOidc', 'signOutOidc']),
@@ -72,14 +90,6 @@
             }
         },
         mounted: function () {
-          this.$axios.get('/api/Core/GetUserDetails', {
-            headers: {
-              Authorization: "Bearer " + store.state.oidcStore.access_token
-            }
-          })
-                  .then(function (response) {
-                    console.dir(response);
-                  });
         }
     }
 </script>

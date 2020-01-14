@@ -1,6 +1,4 @@
-using System.Collections;
 using System.Collections.Generic;
-using Nozomi.Data;
 using Nozomi.Data.Models.Currency;
 using Nozomi.Data.ResponseModels.Source;
 
@@ -8,10 +6,14 @@ namespace Nozomi.Service.Events.Interfaces
 {
     public interface ISourceEvent
     {
-        bool SourceExists(string abbrv);
+        bool Exists(string guid);
+        
+        bool AbbreviationIsUsed(string abbrv);
         
         XSourceResponse Get(long id);
         XSourceResponse Get(string abbreviation);
+
+        Source GetByGuid(string guid, bool filterActive = false);
 
         IEnumerable<Nozomi.Data.ViewModels.Source.SourceViewModel> GetAll();
 

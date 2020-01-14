@@ -1,20 +1,14 @@
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Security.Cryptography;
-using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Logging;
-using Nozomi.Base.Core;
-using Nozomi.Base.Core.Helpers.Enumerable;
+using Nozomi.Base.BCL;
 using Nozomi.Data;
 using Nozomi.Data.Models.Currency;
 using Nozomi.Data.Models.Web;
 using Nozomi.Data.Models.Web.Analytical;
-using Nozomi.Data.Models.Web.Websocket;
 using Nozomi.Data.ViewModels.Component;
 using Nozomi.Data.ViewModels.ComponentHistoricItem;
 using Nozomi.Preprocessing;
@@ -86,6 +80,103 @@ namespace Nozomi.Service.Events
                 Value = c.Value,
                 IsDenominated = c.IsDenominated
             });
+        }
+
+        public IEnumerable<ComponentViewModel> All(string requestGuid, int index = 0, int itemsPerIndex = 50, 
+            bool includeNested = false, string userId = null)
+        {
+            if (string.IsNullOrEmpty(requestGuid) || string.IsNullOrWhiteSpace(requestGuid)
+                || !Guid.TryParse(requestGuid, out var guid))
+                throw new ArgumentNullException("Invalid requestGuid.");
+
+            var query = _unitOfWork.GetRepository<Request>()
+                .GetQueryable()
+                .AsNoTracking()
+                .Include(r => r.RequestComponents)
+                .Where(r => r.DeletedAt == null && r.IsEnabled 
+                                                && r.Guid.Equals(guid));
+
+            if (!string.IsNullOrEmpty(userId) && !string.IsNullOrWhiteSpace(userId))
+                query = query.Where(r => r.CreatedById.Equals(userId));
+
+            if (includeNested)
+                query = query
+                    .Include(r => r.RequestComponents)
+                    .ThenInclude(rc => rc.RcdHistoricItems);
+
+            if (index < 0)
+                index = 0;
+
+            if (itemsPerIndex < 1)
+                itemsPerIndex = 50;
+
+            return query
+                .SelectMany(r => r.RequestComponents)
+                .Skip(index * itemsPerIndex)
+                .Take(itemsPerIndex)
+                .Select(rc => new ComponentViewModel
+                {
+                    Guid = rc.Guid,
+                    Type = rc.ComponentType,
+                    Value = rc.Value,
+                    IsDenominated = rc.IsDenominated,
+                    History = rc.RcdHistoricItems
+                        .Any(rcdhi => rcdhi.DeletedAt == null && rcdhi.IsEnabled)
+                    ? rc.RcdHistoricItems.Select(rcdhi => new ComponentHistoricItemViewModel
+                    {
+                        Timestamp = rcdhi.HistoricDateTime,
+                        Value = rcdhi.Value
+                    })
+                    : null
+                });
+        }
+
+        public IEnumerable<ComponentViewModel> All(long requestId, int index = 0, int itemsPerIndex = 50, 
+            bool includeNested = false, string userId = null)
+        {
+            if (requestId < 1)
+                throw new ArgumentNullException("Invalid requestGuid.");
+
+            var query = _unitOfWork.GetRepository<Request>()
+                .GetQueryable()
+                .AsNoTracking()
+                .Include(r => r.RequestComponents)
+                .Where(r => r.DeletedAt == null && r.IsEnabled
+                            && r.Id.Equals(requestId));
+
+            if (!string.IsNullOrEmpty(userId) && !string.IsNullOrWhiteSpace(userId))
+                query = query.Where(r => r.CreatedById.Equals(userId));
+
+            if (includeNested)
+                query = query
+                    .Include(r => r.RequestComponents)
+                    .ThenInclude(rc => rc.RcdHistoricItems);
+
+            if (index < 0)
+                index = 0;
+
+            if (itemsPerIndex < 1)
+                itemsPerIndex = 50;
+
+            return query
+                .SelectMany(r => r.RequestComponents)
+                .Skip(index * itemsPerIndex)
+                .Take(itemsPerIndex)
+                .Select(rc => new ComponentViewModel
+                {
+                    Guid = rc.Guid,
+                    Type = rc.ComponentType,
+                    Value = rc.Value,
+                    IsDenominated = rc.IsDenominated,
+                    History = rc.RcdHistoricItems
+                        .Any(rcdhi => rcdhi.DeletedAt == null && rcdhi.IsEnabled)
+                        ? rc.RcdHistoricItems.Select(rcdhi => new ComponentHistoricItemViewModel
+                        {
+                            Timestamp = rcdhi.HistoricDateTime,
+                            Value = rcdhi.Value
+                        })
+                        : null
+                });
         }
 
         public IEnumerable<ComponentViewModel> All(int index = 0, int itemsPerIndex = 50, bool includeNested = false)
@@ -203,7 +294,7 @@ namespace Nozomi.Service.Events
             return _unitOfWork.GetRepository<CurrencyPair>()
                 .GetQueryable(cp => cp.DeletedAt == null && cp.IsEnabled)
                 .AsNoTracking()
-                .Where(cp => cp.MainCurrencyAbbrv.Equals(mainCurrencyAbbrv, StringComparison.InvariantCultureIgnoreCase))
+                .Where(cp => cp.MainTicker.Equals(mainCurrencyAbbrv, StringComparison.InvariantCultureIgnoreCase))
                 .Include(cp => cp.Requests)
                 .ThenInclude(cpr => cpr.RequestComponents)
                 .SelectMany(cp => cp.Requests
@@ -359,7 +450,7 @@ namespace Nozomi.Service.Events
                     .SelectMany(cs => cs.Source
                         .CurrencyPairs
                         .Where(cp => cp.IsEnabled && cp.DeletedAt == null
-                                                  && cp.CounterCurrencyAbbrv.Equals(
+                                                  && cp.CounterTicker.Equals(
                                                       CoreConstants.GenericCounterCurrency))
                         .SelectMany(cp => cp.Requests
                             .Where(cpr => cpr.IsEnabled && cpr.DeletedAt == null)

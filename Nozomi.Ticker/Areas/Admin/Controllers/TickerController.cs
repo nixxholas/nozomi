@@ -7,7 +7,6 @@ using Nozomi.Base.Admin.Domain.AreaModels.Tickers;
 using Nozomi.Base.Auth.Models;
 using Nozomi.Data;
 using Nozomi.Infra.Admin.Service.Services.Interfaces;
-using Nozomi.Service.Services.Interfaces;
 using Nozomi.Ticker.Controllers;
 
 namespace Nozomi.Ticker.Areas.Admin.Controllers

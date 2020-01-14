@@ -1,4 +1,3 @@
-using System.Text;
 using Microsoft.Extensions.Logging;
 using Nethereum.Signer;
 using Nethereum.Util;

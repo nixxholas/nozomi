@@ -1,10 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Logging;
-using Nozomi.Base.Core;
+using Nozomi.Base.BCL;
+using Nozomi.Base.BCL.Extensions;
 using Nozomi.Data.Models.Currency;
 using Nozomi.Data.Models.Web;
 using Nozomi.Data.Models.Web.Analytical;
@@ -33,7 +34,7 @@ namespace Nozomi.Service.Events
                 .GetQueryable()
                 .AsNoTracking()
                 .Where(cp => cp.DeletedAt == null && cp.IsEnabled
-                                                  && cp.MainCurrencyAbbrv.Equals(mainCurrencyAbbrv,
+                                                  && cp.MainTicker.Equals(mainCurrencyAbbrv,
                                                       StringComparison.InvariantCultureIgnoreCase))
                 .ToList();
         }
@@ -109,8 +110,9 @@ namespace Nozomi.Service.Events
                 .Where(cp => cp.IsEnabled && cp.DeletedAt == null && cp.SourceId > 0);
 
             if (!string.IsNullOrEmpty(mainTicker))
-                query = query.Where(cp => cp.MainCurrencyAbbrv.Equals(mainTicker));
-            
+                query = query.Where(cp => cp.MainTicker.ToUpper()
+                    .Equals(mainTicker.ToUpper()));
+
             if (!string.IsNullOrEmpty(sourceGuid) && Guid.TryParse(sourceGuid, out var parsedSourceGuid))
                 query = query
                     .Include(c => c.Source)
@@ -130,9 +132,9 @@ namespace Nozomi.Service.Events
                         .OrderByDescending(cp => cp.Source.Name);
                     break;
                 default: // Handle all cases.
-                    query = orderAscending ? query.OrderBy(cp => string.Concat(cp.MainCurrencyAbbrv, 
-                        cp.CounterCurrencyAbbrv)) : query.OrderByDescending(cp => 
-                        string.Concat(cp.MainCurrencyAbbrv, cp.CounterCurrencyAbbrv));
+                    query = orderAscending ? query.OrderBy(cp => string.Concat(cp.MainTicker, 
+                        cp.CounterTicker)) : query.OrderByDescending(cp => 
+                        string.Concat(cp.MainTicker, cp.CounterTicker));
                     break;
             }
             
@@ -144,9 +146,10 @@ namespace Nozomi.Service.Events
                 .Include(cp => cp.AnalysedComponents)
                 .Select(cp => new CurrencyPairViewModel
                 {
+                    Guid = cp.Guid,
                     Type = cp.CurrencyPairType,
-                    MainTicker = cp.MainCurrencyAbbrv,
-                    CounterTicker = cp.CounterCurrencyAbbrv,
+                    MainTicker = cp.MainTicker,
+                    CounterTicker = cp.CounterTicker,
                     SourceGuid = cp.Source.Guid.ToString(),
                     Source = new SourceViewModel
                     {
@@ -155,7 +158,8 @@ namespace Nozomi.Service.Events
                     },
                     AnalysedComponents = cp.AnalysedComponents
                         .Where(ac => ac.DeletedAt == null & ac.IsEnabled 
-                                     && !string.IsNullOrEmpty(ac.Value))
+                                     && !string.IsNullOrEmpty(ac.Value)
+                                     || !string.IsNullOrWhiteSpace(ac.Value))
                         .Select(ac => new AnalysedComponentViewModel
                         {
                             Guid = ac.Guid,
@@ -179,7 +183,7 @@ namespace Nozomi.Service.Events
             return _unitOfWork.GetRepository<CurrencyPair>()
                 .GetQueryable()
                 .AsNoTracking()
-                .Where(cp => cp.DeletedAt == null && cp.IsEnabled && cp.MainCurrencyAbbrv.Equals(mainTicker))
+                .Where(cp => cp.DeletedAt == null && cp.IsEnabled && cp.MainTicker.Equals(mainTicker))
                 .LongCount();
         }
 
@@ -190,7 +194,7 @@ namespace Nozomi.Service.Events
                 .GetQueryable()
                 .AsNoTracking()
                 .Where(cp => cp.DeletedAt == null && cp.IsEnabled
-                                                  && cp.CounterCurrencyAbbrv.Equals(counterCurrencyAbbrv,
+                                                  && cp.CounterTicker.Equals(counterCurrencyAbbrv,
                                                       StringComparison.InvariantCultureIgnoreCase))
                 .ToList();
         }
@@ -204,7 +208,7 @@ namespace Nozomi.Service.Events
                     .GetQueryable()
                     .AsNoTracking()
                     .Where(cp => cp.DeletedAt == null && cp.IsEnabled
-                                                      && string.Concat(cp.MainCurrencyAbbrv, cp.CounterCurrencyAbbrv)
+                                                      && string.Concat(cp.MainTicker, cp.CounterTicker)
                                                           .Equals(tickerPairAbbreviation,
                                                               StringComparison.InvariantCultureIgnoreCase));
 
@@ -342,6 +346,46 @@ namespace Nozomi.Service.Events
                 .SingleOrDefault(cp => cp.Id.Equals(id) && cp.DeletedAt == null);
         }
 
+        public CurrencyPair Get(string guid, bool track = false, string userId = null)
+        {
+            if (!Guid.TryParse(guid, out var parsedGuid))
+                throw new InvalidConstraintException("Can't parse the given guid.");
+            
+            if (track)
+                return _unitOfWork.GetRepository<CurrencyPair>()
+                    .GetQueryable()
+                    .Include(cp => cp.Requests)
+                    .Include(cp => cp.Source)
+                    .Include(cp => cp.AnalysedComponents)
+                    .SingleOrDefault(cp => cp.Guid.Equals(parsedGuid) && cp.DeletedAt == null);
+
+            return _unitOfWork
+                .GetRepository<CurrencyPair>()
+                .GetQueryable()
+                .AsNoTracking()
+                .SingleOrDefault(cp => cp.Guid.Equals(parsedGuid) && cp.DeletedAt == null);
+        }
+
+        public CurrencyPair Get(Guid guid, bool track = false, string userId = null)
+        {
+            if (guid == null)
+                throw new InvalidConstraintException("Can't parse the given guid.");
+            
+            if (track)
+                return _unitOfWork.GetRepository<CurrencyPair>()
+                    .GetQueryable()
+                    .Include(cp => cp.Requests)
+                    .Include(cp => cp.Source)
+                    .Include(cp => cp.AnalysedComponents)
+                    .SingleOrDefault(cp => cp.Guid.Equals(guid) && cp.DeletedAt == null);
+
+            return _unitOfWork
+                .GetRepository<CurrencyPair>()
+                .GetQueryable()
+                .AsNoTracking()
+                .SingleOrDefault(cp => cp.Guid.Equals(guid) && cp.DeletedAt == null);
+        }
+
         public ICollection<DistinctCurrencyPairResponse> ListAll()
         {
             return _unitOfWork.GetRepository<CurrencyPair>()
@@ -351,8 +395,8 @@ namespace Nozomi.Service.Events
                 .Include(cp => cp.Source)
                 .Select(cp => new DistinctCurrencyPairResponse()
                 {
-                    MainTicker = cp.MainCurrencyAbbrv,
-                    CounterTicker = cp.CounterCurrencyAbbrv,
+                    MainTicker = cp.MainTicker,
+                    CounterTicker = cp.CounterTicker,
                     CurrencyPairType = cp.CurrencyPairType,
                     Id = cp.Id,
                     SourceAbbreviation = cp.Source.Abbreviation,
@@ -360,6 +404,46 @@ namespace Nozomi.Service.Events
                 })
                 .DefaultIfEmpty()
                 .ToList();
+        }
+
+        public IEnumerable<CurrencyPairViewModel> Search(string queryTickerPair = null, int page = 0, 
+            int itemsPerPage = 0)
+        {
+            if (!string.IsNullOrEmpty(queryTickerPair) && !string.IsNullOrWhiteSpace(queryTickerPair))
+                queryTickerPair = queryTickerPair.ToUpper();
+            
+            #if DEBUG
+            var res = _unitOfWork.GetRepository<CurrencyPair>()
+                .GetQueryable()
+                .Where(cp => cp.IsEnabled && cp.DeletedAt == null
+                                          && !string.IsNullOrEmpty(cp.MainTicker)
+                                          && !string.IsNullOrEmpty(cp.CounterTicker))
+                .OrderBy(cp => string.Concat(cp.MainTicker, cp.CounterTicker))
+                .Where(cp => string.IsNullOrEmpty(queryTickerPair)
+                             || string.Concat(cp.MainTicker, cp.CounterTicker).Contains(queryTickerPair))
+                .ToList();
+            #endif
+
+            return _unitOfWork.GetRepository<CurrencyPair>()
+                .GetQueryable()
+                .Where(cp => cp.IsEnabled && cp.DeletedAt == null
+                                          && !string.IsNullOrEmpty(cp.MainTicker)
+                                          && !string.IsNullOrEmpty(cp.CounterTicker))
+                .OrderBy(cp => string.Concat(cp.MainTicker, cp.CounterTicker))
+                .Where(cp => string.IsNullOrEmpty(queryTickerPair) 
+                             || string.Concat(cp.MainTicker, cp.CounterTicker).Contains(queryTickerPair))
+                .Include(cp => cp.Source)
+                .Skip(page * itemsPerPage)
+                .Take(itemsPerPage)
+                .Select(cp => new CurrencyPairViewModel
+                {
+                    Guid = cp.Guid,
+                    Type = cp.CurrencyPairType,
+                    DefaultComponent = cp.DefaultComponent,
+                    MainTicker = cp.MainTicker,
+                    CounterTicker = cp.CounterTicker,
+                    SourceGuid = cp.Source.Guid.ToString()
+                });
         }
     }
 }

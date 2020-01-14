@@ -15,19 +15,19 @@
 
         <b-field grouped group-multiline v-if="oidcIsAuthenticated">
             <div class="control">
-                <CurrencyModal class="mb-4" v-if="oidcIsAuthenticated"></CurrencyModal>
+                <CurrencyModal class="mb-4" v-if="oidcIsAuthenticated" />
             </div>
         </b-field>
         
-        <CurrencyTable></CurrencyTable>
+        <CurrencyTable />
     </div>
 </template>
 
 <script>
     import { mapGetters } from 'vuex';
     import CurrencyModal from '@/components/modals/currency-modal';
-    import CurrencyService from "../../services/CurrencyService";
-    import CurrencyTypeService from "../../services/CurrencyTypeService";
+    import CurrencyService from "@/services/CurrencyService";
+    import CurrencyTypeService from "@/services/CurrencyTypeService";
     import CurrencyTable from "@/components/tables/currencies-table";
 
     export default {
@@ -121,9 +121,9 @@
                     self.data = res;
                 });
 
-            CurrencyTypeService.getAll()
+            CurrencyTypeService.all()
                 .then(function (res) {
-                    self.typeData = res;
+                    self.typeData = res.data;
 
                     self.dataLoading = false;
                 })

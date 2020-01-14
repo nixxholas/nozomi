@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using Nozomi.Data.ViewModels.AnalysedComponent;
 using Nozomi.Data.ViewModels.Component;

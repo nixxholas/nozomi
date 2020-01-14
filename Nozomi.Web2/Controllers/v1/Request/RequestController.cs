@@ -39,21 +39,6 @@ namespace Nozomi.Web2.Controllers.v1.Request
         }
 
         [Authorize]
-        [HttpGet]
-        public IActionResult GetAll()
-        {
-            var identity = (ClaimsIdentity) User.Identity;
-
-            // Since we get the sub,
-            if (identity.Claims.Any(c => c.Type.Equals(JwtClaimTypes.Subject)))
-            {
-                return Ok(_requestEvent.GetAll(identity.Claims.SingleOrDefault(c => c.Type.Equals(JwtClaimTypes.Subject))?.Value));
-            }
-
-            return BadRequest("Please re-authenticate again");
-        }
-
-        [Authorize]
         [HttpPost]
         public IActionResult Create([FromBody]CreateRequestViewModel vm)
         {
@@ -68,6 +53,38 @@ namespace Nozomi.Web2.Controllers.v1.Request
             }
 
             return BadRequest("Please login again. Your session may have expired!");
+        }
+
+        [Authorize]
+        [HttpGet]
+        public IActionResult GetAll()
+        {
+            var identity = (ClaimsIdentity) User.Identity;
+
+            // Since we get the sub,
+            if (identity.Claims.Any(c => c.Type.Equals(JwtClaimTypes.Subject)))
+            {
+                return Ok(_requestEvent.GetAll(identity.Claims
+                    .SingleOrDefault(c => c.Type.Equals(JwtClaimTypes.Subject))?.Value));
+            }
+
+            return BadRequest("Please re-authenticate again");
+        }
+
+        [Authorize]
+        [HttpPut]
+        public IActionResult Update([FromBody]UpdateRequestViewModel vm)
+        {
+            var sub = ((ClaimsIdentity) User.Identity)
+                .Claims.SingleOrDefault(c => c.Type.Equals(JwtClaimTypes.Subject))?.Value;
+
+            // Since we get the sub,
+            if (!string.IsNullOrWhiteSpace(sub))
+            {
+                return Ok(_requestService.Update(vm, sub));
+            }
+
+            return BadRequest("Please re-authenticate again");
         }
     }
 }

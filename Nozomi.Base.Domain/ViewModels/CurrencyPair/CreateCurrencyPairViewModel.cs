@@ -5,17 +5,17 @@ namespace Nozomi.Data.ViewModels.CurrencyPair
 {
     public class CreateCurrencyPairViewModel
     {
-        public CurrencyPairType CurrencyPairType { get; set; }
+        public CurrencyPairType Type { get; set; }
         
         public string ApiUrl { get; set; }
         
         public string DefaultComponent { get; set; }
         
-        public long SourceId { get; set; }
+        public string SourceGuid { get; set; }
+
+        public string MainTicker { get; set; }
         
-        public string MainCurrencyAbbrv{ get; set; }
-        
-        public string CounterCurrencyAbbrv { get; set; }
+        public string CounterTicker { get; set; }
         
         public bool IsEnabled { get; set; }
 
@@ -29,12 +29,12 @@ namespace Nozomi.Data.ViewModels.CurrencyPair
         {
             public CreateCurrencyPairValidator()
             {
-                RuleFor(e => e.CurrencyPairType).IsInEnum();
+                RuleFor(e => e.Type).IsInEnum();
                 // RuleFor(e => e.ApiUrl);
                 // RuleFor(e => e.DefaultComponent);
-                RuleFor(e => e.SourceId).GreaterThan(0);
-                RuleFor(e => e.MainCurrencyAbbrv).NotNull().NotEmpty();
-                RuleFor(e => e.CounterCurrencyAbbrv).NotNull().NotEmpty();
+                RuleFor(e => e.SourceGuid).NotEmpty().NotNull();
+                RuleFor(e => e.MainTicker).NotNull().NotEmpty();
+                RuleFor(e => e.CounterTicker).NotNull().NotEmpty();
             }
         }
     }

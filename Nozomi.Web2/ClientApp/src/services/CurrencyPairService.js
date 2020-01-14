@@ -1,5 +1,6 @@
 import axios from 'axios';
 import Converter from '../helpers/converter';
+import store from "../store";
 
 export default {
     all(page = 0, itemsPerPage = 50, sourceGuid = null, mainTicker = null, orderAscending = true, 
@@ -34,5 +35,55 @@ export default {
                 reject(error);
             });
         });
-    }
+    },
+
+    create(vm) {
+        if (!vm)
+            throw new Error("Invalid payload. Please try again.");
+
+        return new Promise((resolve, reject) => {
+            axios.post('/api/CurrencyPair/Create', vm, {
+                headers: {
+                    Authorization: "Bearer " + store.state.oidcStore.access_token
+                }
+            }).then(function (response) {
+                resolve(response.data);
+            }).catch(function (error) {
+                reject(error);
+            });
+        });
+    },
+
+    edit(vm) {
+        if (!vm)
+            throw new Error("Invalid payload. Please try again.");
+
+        return new Promise((resolve, reject) => {
+            axios.put('/api/CurrencyPair/Edit', vm, {
+                headers: {
+                    Authorization: "Bearer " + store.state.oidcStore.access_token
+                }
+            }).then(function (response) {
+                resolve(response.data);
+            }).catch(function (error) {
+                reject(error);
+            });
+        });
+    },
+    
+    search(query = "", page = 0, itemsPerPage = 50) {
+        return new Promise((resolve, reject) => {
+            axios.get('/api/CurrencyPair/Search', {
+                params: {
+                    query: query,
+                    page: page,
+                    itemsPerPage: itemsPerPage
+                }
+            }).then(function (response) {
+                resolve(response.data);
+            }).catch(function (error) {
+                reject(error);
+            });
+        });
+    },
 }

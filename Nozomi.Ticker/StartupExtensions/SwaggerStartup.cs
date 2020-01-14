@@ -1,5 +1,4 @@
 using System;
-using System.ComponentModel;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using Nozomi.Preprocessing;
@@ -11,8 +10,6 @@ using Nozomi.Preprocessing.Swagger.Examples.Requests.v1.CurrencySource;
 using Nozomi.Preprocessing.Swagger.Examples.Requests.v1.PartialCurrencyPair;
 using Nozomi.Preprocessing.Swagger.Examples.Requests.v1.RequestProperty;
 using Nozomi.Preprocessing.Swagger.Examples.Responses.Generic;
-using Nozomi.Ticker.Areas;
-using Nozomi.Ticker.Controllers;
 using Swashbuckle.AspNetCore.Filters;
 using UpdateCurrencyPairComponentExample = Nozomi.Preprocessing.Swagger.Examples.Requests.v1.CurrencyPairComponent.UpdateCurrencyPairComponentExample;
 

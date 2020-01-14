@@ -1,15 +1,13 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Nozomi.Base.Core;
-using Nozomi.Base.Core.Helpers.Native.Numerals;
+using Nozomi.Base.BCL;
+using Nozomi.Base.BCL.Helpers.Native.Numerals;
 using Nozomi.Data.Models.Currency;
 using Nozomi.Data.Models.Web.Analytical;
 using Nozomi.Infra.Analysis.Service.Events.Interfaces;
@@ -294,7 +292,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                 // Ensure that all components used are valid, no historical values are being tapped on.
                                 true, index, false, ac => // Make sure its the generic counter currency
                                     // since we can't convert yet
-                                    ac.CurrencyPair.CounterCurrencyAbbrv
+                                    ac.CurrencyPair.CounterTicker
                                         .Equals(CoreConstants.GenericCounterCurrency)
                                     && ac.ComponentType.Equals(AnalysedComponentType.CurrentAveragePrice), 
                                 ac => NumberHelper.IsNumericDecimal(ac.Value));
@@ -319,9 +317,8 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                     // Ensure that all components used are valid, no historical values are being tapped on.
                                     true, ++index, false, ac => // Make sure its the generic counter currency
                                         // since we can't convert yet
-                                        ac.CurrencyPair.CounterCurrencyAbbrv
-                                            .Equals(CoreConstants.GenericCounterCurrency,
-                                                StringComparison.InvariantCultureIgnoreCase)
+                                        ac.CurrencyPair.CounterTicker.ToUpper()
+                                            .Equals(CoreConstants.GenericCounterCurrency.ToUpper())
                                         && ac.ComponentType.Equals(AnalysedComponentType.CurrentAveragePrice), 
                                     ac => NumberHelper.IsNumericDecimal(ac.Value));
                             }
@@ -462,7 +459,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                                                  .SourceCurrencies
                                                                  .Any(sc => sc.Currency.Abbreviation
                                                                      .Equals(ahi.AnalysedComponent.CurrencyPair
-                                                                         .MainCurrencyAbbrv))
+                                                                         .MainTicker))
                                                              // Make sure we only check for the CurrentAveragePrice component
                                                              && ahi.AnalysedComponent.ComponentType
                                                                  .Equals(AnalysedComponentType.CurrentAveragePrice),
@@ -615,7 +612,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                                                  .SourceCurrencies
                                                                  .Any(sc => sc.Currency.Abbreviation
                                                                      .Equals(ahi.AnalysedComponent.CurrencyPair
-                                                                         .MainCurrencyAbbrv))
+                                                                         .MainTicker))
                                                              // Make sure we only check for the CurrentAveragePrice component
                                                              && ahi.AnalysedComponent.ComponentType
                                                                  .Equals(AnalysedComponentType.HourlyAveragePrice),

@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
@@ -18,6 +17,22 @@ namespace Nozomi.Service.Events
         public SourceEvent(ILogger<SourceEvent> logger, IUnitOfWork<NozomiDbContext> unitOfWork) 
             : base(logger, unitOfWork)
         {
+        }
+
+        public Source GetByGuid(string guid, bool filterActive = false)
+        {
+            if (string.IsNullOrEmpty(guid) || string.IsNullOrWhiteSpace(guid))
+                return null;
+
+            var query = _unitOfWork.GetRepository<Source>()
+                .GetQueryable()
+                .AsNoTracking();
+
+            if (filterActive)
+                query = query.Where(s => s.DeletedAt == null && s.IsEnabled);
+
+            return query
+                .SingleOrDefault(s => s.Guid.ToString().Equals(guid));
         }
 
         public IEnumerable<Nozomi.Data.ViewModels.Source.SourceViewModel> GetAll()
@@ -146,11 +161,22 @@ namespace Nozomi.Service.Events
             }
         }
 
-        public bool SourceExists(string abbrv)
+        public bool Exists(string guid)
+        {
+            if (string.IsNullOrWhiteSpace(guid))
+                return false;
+            
+            return _unitOfWork.GetRepository<Source>()
+                .Get(s => s.DeletedAt == null
+                          && s.Guid.ToString().Equals(guid))
+                .Any();
+        }
+
+        public bool AbbreviationIsUsed(string abbrv)
         {
             return _unitOfWork.GetRepository<Source>()
                 .Get(s => s.DeletedAt == null &&
-                          s.Abbreviation.Equals(abbrv, StringComparison.InvariantCultureIgnoreCase))
+                          s.Abbreviation.Equals(abbrv.ToUpper()))
                 .Any();
         }
 

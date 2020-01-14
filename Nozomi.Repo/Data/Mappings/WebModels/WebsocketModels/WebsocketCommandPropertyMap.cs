@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Nozomi.Base.Core.Helpers.Mapping;
+using Nozomi.Base.BCL.Helpers.Mapping;
 using Nozomi.Data.Models.Web.Websocket;
 
 namespace Nozomi.Repo.Data.Mappings.WebModels.WebsocketModels
@@ -13,7 +13,7 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.WebsocketModels
             entityTypeBuilder.HasKey(wscp => wscp.Id).HasName("WebsocketCommandProperty_PK_Id");
             entityTypeBuilder.Property(wscp => wscp.Id).ValueGeneratedOnAdd();
 
-            entityTypeBuilder.Property(e => e.Guid).ValueGeneratedOnAdd().HasDefaultValueSql("uuid_generate_v4()");
+            entityTypeBuilder.Property(e => e.Guid).ValueGeneratedOnAdd();
             entityTypeBuilder.HasIndex(e => e.Guid).IsUnique();
 
             entityTypeBuilder.Property(wscp => wscp.CommandPropertyType).IsRequired();

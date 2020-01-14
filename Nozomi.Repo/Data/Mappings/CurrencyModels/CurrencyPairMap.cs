@@ -1,7 +1,6 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Nozomi.Base.Core.Helpers.Mapping;
+using Nozomi.Base.BCL.Helpers.Mapping;
 using Nozomi.Data.Models.Currency;
 
 namespace Nozomi.Repo.Data.Mappings.CurrencyModels
@@ -13,14 +12,22 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
             entityTypeBuilder.HasKey(cp => cp.Id).HasName("CurrencyPair_PK_Id");
             entityTypeBuilder.Property(cp => cp.Id).ValueGeneratedOnAdd();
 
-            entityTypeBuilder.Property(e => e.Guid).ValueGeneratedOnAdd().HasDefaultValueSql("uuid_generate_v4()");
+            entityTypeBuilder.Property(e => e.Guid).ValueGeneratedOnAdd();
             entityTypeBuilder.HasIndex(e => e.Guid).IsUnique();
 
-            entityTypeBuilder.HasAlternateKey(cp => new
+            entityTypeBuilder.HasIndex(cp => new
             {
-                cp.MainCurrencyAbbrv, cp.CounterCurrencyAbbrv,
+                cp.MainTicker, 
+                cp.CounterTicker,
                 cp.SourceId
-            }).HasName("CurrencyPair_AK_MainCurrency_CounterCurrency_Source");
+            });
+
+            entityTypeBuilder.Property(cp => cp.MainTicker)
+                .HasConversion(val => val.ToUpperInvariant(), 
+                    val => val);
+            entityTypeBuilder.Property(cp => cp.CounterTicker)
+                .HasConversion(val => val.ToUpperInvariant(), 
+                    val => val);
 
             entityTypeBuilder.Property(cp => cp.APIUrl).IsRequired();
             entityTypeBuilder.Property(cp => cp.DefaultComponent).IsRequired();

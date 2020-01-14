@@ -1,17 +1,9 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Globalization;
 using System.Linq;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Internal;
-using Nozomi.Base.Core;
-using Nozomi.Base.Core.Helpers.Native.Numerals;
+using Nozomi.Base.BCL.Helpers.Native.Numerals;
 using Nozomi.Data.Models.Currency;
-using Nozomi.Data.Models.Web;
 using Nozomi.Data.Models.Web.Analytical;
-using Nozomi.Data.ResponseModels.RequestComponent;
 using Nozomi.Data.ResponseModels.TickerPair;
 
 namespace Nozomi.Data.ResponseModels.Currency

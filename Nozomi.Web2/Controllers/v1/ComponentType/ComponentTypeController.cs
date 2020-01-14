@@ -18,9 +18,9 @@ namespace Nozomi.Web2.Controllers.v1.ComponentType
 
         [Authorize]
         [HttpGet]
-        public NozomiResult<JsonResult> All()
+        public IActionResult All()
         {
-            return new NozomiResult<JsonResult>(new JsonResult(_componentTypeEvent.All()));
+            return Ok(_componentTypeEvent.All());
         }
     }
 }

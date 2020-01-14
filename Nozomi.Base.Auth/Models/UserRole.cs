@@ -1,4 +1,3 @@
-using System;
 using Microsoft.AspNetCore.Identity;
 
 namespace Nozomi.Base.Auth.Models

@@ -1,14 +1,14 @@
 <template>
-  <div id="app">
-    <b-message type="is-warning" has-icon>
-      <b>We're currently in the Release Candidate phase.</b> General UI and Major Features will be constantly updated.
-      <br>
-      <b v-if="!hasWeb3()">Your browser is incompatible with our authentication engine.</b>
-    </b-message>
-    <nav-menu params="route: route"></nav-menu>
+  <div id="app" class="container-fluid">
+<!--    <b-message type="is-warning" has-icon>-->
+<!--      <b>We're currently in the Release Candidate phase.</b> General UI and Major Features will be constantly updated.-->
+<!--      <br>-->
+<!--      <b v-if="!hasWeb3()">Your browser is incompatible with our authentication engine.</b>-->
+<!--    </b-message>-->
+    <nav-menu params="route: route" />
 
     <div class="container is-fullhd" style="flex: 1; width: 100%">
-      <router-view></router-view>
+      <router-view />
     </div>
 
     <footer class="footer mt-4" style="bottom: 0; width: 100%;">
@@ -31,9 +31,12 @@
             <h6 class="title">Resources</h6>
             <a href="/docs">Documentation</a>
           </div>
-          <div class="column"></div>
           <div class="column">
-            <b-tag type="is-info" class="mb-1">8 Dec 2019 Preview</b-tag><br>
+            <h6 class="title">Legal</h6>
+            <router-link to="/legal/api-terms">API Terms</router-link><br>
+          </div>
+          <div class="column">
+            <b-tag type="is-info" class="mb-1">12 Jan 2019 Preview</b-tag><br>
           </div>
         </div>
       </div>

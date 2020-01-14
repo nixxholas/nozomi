@@ -1,19 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Nozomi.Base.Core.Configurations;
-using Nozomi.Base.Core.Helpers.Routing;
+using Nozomi.Base.BCL.Configurations;
+using Nozomi.Base.BCL.Helpers.Routing;
 using Nozomi.Preprocessing;
 using Nozomi.Preprocessing.Options;
 using Nozomi.Repo.Auth.Data;
@@ -21,7 +15,6 @@ using Nozomi.Repo.Data;
 using Nozomi.Service.Hubs;
 using Nozomi.Service.Middleware;
 using Nozomi.Ticker.StartupExtensions;
-using StackExchange.Redis;
 using VaultSharp;
 using VaultSharp.V1.AuthMethods.Token;
 using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
@@ -86,13 +79,16 @@ namespace Nozomi.Ticker
             }
             else
             {
+                var vaultUrl = Configuration["vaultUrl"];
                 var vaultToken = Configuration["vaultToken"];
 
                 if (string.IsNullOrEmpty(vaultToken))
                     throw new SystemException("Invalid vault token.");
 
                 var authMethod = new TokenAuthMethodInfo(vaultToken);
-                var vaultClientSettings = new VaultClientSettings("http://165.22.250.169:8200", authMethod);
+                var vaultClientSettings = new VaultClientSettings(
+                    !string.IsNullOrWhiteSpace(vaultUrl) ? vaultUrl : "https://blackbox.nozomi.one:8200", 
+                    authMethod);
                 var vaultClient = new VaultClient(vaultClientSettings);
 
                 var nozomiVault = vaultClient.V1.Secrets.Cubbyhole.ReadSecretAsync("nozomi")

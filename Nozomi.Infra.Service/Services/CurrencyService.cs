@@ -1,8 +1,13 @@
 using System;
+using System.Linq;
+using System.Security.Claims;
+using IdentityModel;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data.Models.Currency;
 using Nozomi.Data.ViewModels.Currency;
 using Nozomi.Preprocessing.Abstracts;
+using Nozomi.Preprocessing.Statics;
 using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Data;
 using Nozomi.Service.Events.Interfaces;
@@ -16,8 +21,8 @@ namespace Nozomi.Service.Services
         private readonly ICurrencyTypeEvent _currencyTypeEvent;
         
         public CurrencyService(ILogger<CurrencyService> logger, IUnitOfWork<NozomiDbContext> unitOfWork,
-            ICurrencyEvent currencyEvent, ICurrencyTypeEvent currencyTypeEvent) 
-            : base(logger, unitOfWork)
+            IHttpContextAccessor contextAccessor, ICurrencyEvent currencyEvent, ICurrencyTypeEvent currencyTypeEvent) 
+            : base(contextAccessor, logger, unitOfWork)
         {
             _currencyEvent = currencyEvent;
             _currencyTypeEvent = currencyTypeEvent;
@@ -25,13 +30,13 @@ namespace Nozomi.Service.Services
 
         public void Create(CreateCurrencyViewModel vm, string userId)
         {
-            if (vm.IsValid() && string.IsNullOrWhiteSpace(userId))
+            if (vm.IsValid() && !string.IsNullOrWhiteSpace(userId))
             {
                 if (_currencyEvent.Exists(vm.Slug))
                     return;
-                
+
                 // Obtain the currency type
-                var currencyType = _currencyTypeEvent.Get(vm.CurrencyTypeGuid.ToString());
+                var currencyType = _currencyTypeEvent.Get(vm.CurrencyTypeGuid);
 
                 if (currencyType == null)
                     throw new Exception("Currency type not found."); // TODO: Custom exception
@@ -50,26 +55,57 @@ namespace Nozomi.Service.Services
 
         public void Edit(ModifyCurrencyViewModel vm, string userId)
         {
-            if (vm.IsValid() && string.IsNullOrWhiteSpace(userId))
+            if (vm.IsValid() && !string.IsNullOrWhiteSpace(userId))
             {
-                // Also check if the user owns this currency first
-                var currency = _currencyEvent.Get(vm.Id);
+                var currency = new Currency();
                 
-                if (currency == null || currency.CreatedById.Equals(userId))
+                // Also check if the user owns this currency first
+                if (vm.Id != null && vm.Id > 0) // ID-based currency obtaining
+                {
+                    currency = _currencyEvent.Get((long) vm.Id);
+                } else if (!string.IsNullOrWhiteSpace(vm.Slug) && !string.IsNullOrEmpty(vm.Slug))
+                { // Slug-based currency obtaining
+                    currency = _currencyEvent.GetBySlug(vm.Slug);
+                }
+                else
+                {
+                    throw new Exception("Currency not found.");
+                }
+
+                var userRoles = CurrentAccessor().HttpContext.User.Claims
+                    .Where(c => c.Type.Equals(JwtClaimTypes.Role) || c.Type.Equals(ClaimTypes.Role))
+                    .ToList();
+                
+                // Null Checks
+                if (currency == null ||
+                    // Or if the slug is null or if the ID < 0, which counts it as invalid.
+                    string.IsNullOrEmpty(currency.Slug) || currency.Id <= 0)
                     throw new InvalidOperationException("Invalid currency.");
                 
-                if (_currencyEvent.Exists(vm.Slug))
-                    return;
+                // Role Checks
+                // If the user in not a staff,
+                if (!userRoles.Any(r => NozomiPermissions.AllowAllStaffRoles.Contains(r.Value))
+                    // And if the creator is the machine or if the user accessing this API is not the creator,
+                    && (currency.CreatedById == null || !currency.CreatedById.Equals(userId)))
+                    throw new AccessViolationException("You do not have permissions to modify this currency.");
                 
                 // Obtain the currency type
-                var currencyType = _currencyTypeEvent.Get(vm.CurrencyTypeGuid.ToString());
+                var currencyType = _currencyTypeEvent.Get(vm.CurrencyTypeGuid);
 
                 if (currencyType == null)
                     throw new Exception("Currency type not found."); // TODO: Custom exception
 
                 // Time to create
-                var updatedCurrency = new Currency(currencyType.Id, vm.LogoPath, vm.Abbreviation, vm.Slug, vm.Name, 
-                    vm.Description, vm.Denominations, vm.DenominationName);
+                var updatedCurrency = _currencyEvent.Get(currency.Id, true);
+                
+                updatedCurrency.CurrencyTypeId = currencyType.Id;
+                updatedCurrency.LogoPath = vm.LogoPath;
+                updatedCurrency.Abbreviation = vm.Abbreviation;
+                updatedCurrency.Slug = vm.Slug;
+                updatedCurrency.Name = vm.Name;
+                updatedCurrency.Description = vm.Description;
+                updatedCurrency.Denominations = vm.Denominations;
+                updatedCurrency.DenominationName = vm.DenominationName;
                 
                 _unitOfWork.GetRepository<Currency>().Update(updatedCurrency);
                 _unitOfWork.Commit(userId);

@@ -2,10 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data.Models.Currency;
 using Nozomi.Data.ResponseModels.Source;
-using Nozomi.Data.ResponseModels.SourceType;
+using Nozomi.Data.ViewModels.SourceType;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Data;
@@ -20,6 +21,22 @@ namespace Nozomi.Service.Events
         {
         }
 
+        public bool Exists(string abbreviation)
+        {
+            return _unitOfWork.GetRepository<SourceType>()
+                .GetQueryable()
+                .AsNoTracking()
+                .Any(st => st.Abbreviation.Equals(abbreviation));
+        }
+
+        public bool Exists(Guid guid)
+        {
+            return _unitOfWork.GetRepository<SourceType>()
+                .GetQueryable()
+                .AsNoTracking()
+                .Any(st => st.Guid.Equals(guid));
+        }
+
         public SourceType Find(string sourceTypeGuid)
         {
             if (string.IsNullOrWhiteSpace(sourceTypeGuid))
@@ -29,6 +46,20 @@ namespace Nozomi.Service.Events
                 .GetQueryable()
                 .AsNoTracking()
                 .SingleOrDefault(st => st.Guid.Equals(Guid.Parse(sourceTypeGuid)));
+        }
+
+        public SourceType Get(Guid guid, bool track = false)
+        {
+            if (!track)
+                return _unitOfWork.GetRepository<SourceType>()
+                    .GetQueryable()
+                    .AsNoTracking()
+                    .SingleOrDefault(st => st.Guid.Equals(guid));
+            
+            return _unitOfWork.GetRepository<SourceType>()
+                .GetQueryable()
+                .AsTracking()
+                .SingleOrDefault(st => st.Guid.Equals(guid));
         }
 
         public IEnumerable<SourceTypeViewModel> GetAll(bool track = false)

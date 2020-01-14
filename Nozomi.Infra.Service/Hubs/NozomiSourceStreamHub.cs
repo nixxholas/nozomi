@@ -1,15 +1,10 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
-using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data;
 using Nozomi.Infra.Preprocessing.SignalR.Hubs.Interfaces;
-using Nozomi.Preprocessing;
 using Nozomi.Service.Events.Interfaces;
 
 namespace Nozomi.Service.Hubs

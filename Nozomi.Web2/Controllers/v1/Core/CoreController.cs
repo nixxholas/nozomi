@@ -1,11 +1,8 @@
 using System;
-using System.Linq;
-using System.Security.Claims;
-using IdentityModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Nozomi.Base.Core;
+using Nozomi.Base.BCL;
 
 namespace Nozomi.Web2.Controllers.v1.Core
 {

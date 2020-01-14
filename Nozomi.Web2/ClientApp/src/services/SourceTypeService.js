@@ -1,4 +1,5 @@
 import axios from 'axios';
+import store from "../store";
 
 export default {
   getAll() {
@@ -9,5 +10,33 @@ export default {
         reject(error);
       });
     });
-  }
+  },
+  
+  create(vm) {
+    return new Promise((resolve, reject) => {
+      axios.post('/api/SourceType/Create', vm, {
+        headers: {
+          Authorization: "Bearer " + store.state.oidcStore.access_token
+        }
+      }).then(function (response) {
+        resolve(response);
+      }).catch(function (error) {
+        reject(error);
+      });
+    });
+  },
+  
+  update(vm) {
+    return new Promise((resolve, reject) => {
+      axios.put('/api/SourceType/Update', vm, {
+        headers: {
+          Authorization: "Bearer " + store.state.oidcStore.access_token
+        }
+      }).then(function (response) {
+        resolve(response);
+      }).catch(function (error) {
+        reject(error);
+      });
+    });
+  },
 }

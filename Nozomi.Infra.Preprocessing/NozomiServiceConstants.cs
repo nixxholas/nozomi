@@ -1,12 +1,8 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using Nozomi.Base.Core.Helpers.Enumerator;
+using Nozomi.Base.BCL.Helpers.Enumerator;
 using Nozomi.Data.Models.Currency;
 using Nozomi.Data.Models.Web;
 using Nozomi.Data.Models.Web.Analytical;
-using Nozomi.Data.ResponseModels;
-using Nozomi.Data.ResponseModels.Ticker;
 
 namespace Nozomi.Preprocessing
 {
@@ -46,7 +42,7 @@ namespace Nozomi.Preprocessing
         /// i.e. 1 hour of data, NozomiServiceConstants.AnalysedComponentTakeoutLimit is 1000 = 3600 rows. You need 4 queries to do that.
         /// 4000 rows will cover 3.6k
         /// </summary>
-        public const int AnalysedComponentTakeoutLimit = 100;
+        public const int AnalysedComponentTakeoutLimit = 200;
         
         public const int AnalysedHistoricItemTakeoutLimit = 500;
 

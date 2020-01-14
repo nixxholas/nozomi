@@ -1,8 +1,7 @@
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
-using Nozomi.Base.Core.Responses;
+using Nozomi.Base.BCL.Responses;
 using Nozomi.Data;
-using Nozomi.Data.Models.Web.Analytical;
 using Nozomi.Data.ResponseModels;
 using Nozomi.Data.ResponseModels.Currency;
 using Nozomi.Data.ViewModels.Currency;
@@ -16,6 +15,7 @@ namespace Nozomi.Web2.Controllers.v1.Currency
         IActionResult Edit(ModifyCurrencyViewModel vm);
 
         IActionResult All(string currencyType = "CRYPTO", int itemsPerIndex = 20, int index = 0,
+            CurrencySortingEnum currencySortType = CurrencySortingEnum.None,
             Data.Models.Web.Analytical.AnalysedComponentType sortType = 
                 Data.Models.Web.Analytical.AnalysedComponentType.Unknown, bool orderDescending = true,
             ICollection<Data.Models.Web.Analytical.AnalysedComponentType> typesToTake = null, 
@@ -29,8 +29,11 @@ namespace Nozomi.Web2.Controllers.v1.Currency
 
         NozomiResult<ICollection<string>> ListAllSlugs();
 
+        IActionResult List(string slug = null);
+
         ICollection<CurrencyViewModel> ListAll(int page = 0, int itemsPerPage = 50, 
-            string currencyTypeName = null, bool orderAscending = true, string orderingParam = "Name");
+            string currencyTypeName = null, bool orderAscending = true, 
+            CurrencySortingEnum orderingParam = CurrencySortingEnum.None);
 
         NozomiResult<DetailedCurrencyResponse> Detailed(string slug);
 

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq.Expressions;
 using Nozomi.Data;
 using Nozomi.Data.AreaModels.v1.Requests;
 using Nozomi.Data.Models.Web;
@@ -23,6 +22,8 @@ namespace Nozomi.Service.Services.Requests.Interfaces
         bool HasUpdated(ICollection<Request> requests);
 
         NozomiResult<string> Update(UpdateRequest updateRequest, string userId = null);
+
+        bool Update(UpdateRequestViewModel vm, string userId = null);
 
         NozomiResult<string> Delete(long reqId, bool hardDelete = false, string userId = null);
 

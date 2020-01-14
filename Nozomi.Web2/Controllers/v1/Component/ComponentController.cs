@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Security.Claims;
 using IdentityModel;
@@ -5,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data.ViewModels.Component;
+using Nozomi.Preprocessing.Statics;
 using Nozomi.Service.Events.Interfaces;
 using Nozomi.Service.Services.Interfaces;
 
@@ -23,6 +25,20 @@ namespace Nozomi.Web2.Controllers.v1.Component
             _componentService = componentService;
         }
 
+        [Authorize]
+        [HttpGet]
+        public IActionResult AllByRequest([FromQuery]string requestGuid, [FromQuery]int index = 0, 
+            [FromQuery]int itemsPerPage = 50, [FromQuery]bool includeNested = false)
+        {
+            if (!Guid.TryParse(requestGuid, out var guid))
+                return BadRequest("Invalid request GUID, please make sure you are handing over a valid guid.");
+                
+            if (index < 0 || itemsPerPage <= 0)
+                return BadRequest("Invalid index or itemsPerIndex");
+            
+            return Ok(_componentEvent.GetAllByRequest(requestGuid, includeNested, index, itemsPerPage));
+        }
+
         [HttpGet]
         public IActionResult All([FromQuery]int index = 0, [FromQuery]int itemsPerPage = 50, [FromQuery]bool includeNested = false)
         {
@@ -32,7 +48,7 @@ namespace Nozomi.Web2.Controllers.v1.Component
             return Ok(_componentEvent.All(index, itemsPerPage, includeNested));
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = NozomiPermissions.AllowAllStaffRoles)]
         [HttpPost]
         public IActionResult Create([FromBody]CreateComponentViewModel vm)
         {

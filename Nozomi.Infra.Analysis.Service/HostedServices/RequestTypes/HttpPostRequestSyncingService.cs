@@ -11,7 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using Nozomi.Base.Core.Helpers.Exponent;
+using Nozomi.Base.BCL.Helpers.Exponent;
 using Nozomi.Data.Models.Web;
 using Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes.Interfaces;
 using Nozomi.Preprocessing.Abstracts;

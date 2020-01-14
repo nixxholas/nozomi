@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Runtime.Serialization;
-using Nozomi.Base.Core;
+using Nozomi.Base.BCL;
 using Nozomi.Data.Models.Web;
 using Nozomi.Data.Models.Web.Analytical;
 
@@ -16,6 +16,21 @@ namespace Nozomi.Data.Models.Currency
         public Currency(long currencyTypeId, string logoPath, string abbreviation, string slug, string name,
             string description, int denominations, string denominationName)
         {
+            Guid = Guid.NewGuid();
+            CurrencyTypeId = currencyTypeId;
+            LogoPath = logoPath;
+            Abbreviation = abbreviation;
+            Slug = slug;
+            Name = name;
+            Description = description;
+            Denominations = denominations;
+            DenominationName = denominationName;
+        }
+        
+        public Currency(long id, long currencyTypeId, string logoPath, string abbreviation, string slug, string name,
+            string description, int denominations, string denominationName)
+        {
+            Id = id;
             CurrencyTypeId = currencyTypeId;
             LogoPath = logoPath;
             Abbreviation = abbreviation;

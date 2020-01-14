@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using Nozomi.Data.AreaModels.v1.Currency;
 using Nozomi.Data.Models.Currency;
-using Nozomi.Data.Models.Web;
 using Nozomi.Data.Models.Web.Analytical;
 using Nozomi.Data.ResponseModels.Currency;
 using Nozomi.Data.ViewModels.Currency;
@@ -16,12 +15,15 @@ namespace Nozomi.Service.Events.Interfaces
         bool Exists(string slug);
 
         CurrencyViewModel Get(string slug);
-        
+
+        IEnumerable<BaseCurrencyViewModel> All(string slug = null);
+
         IEnumerable<CurrencyViewModel> All(string currencyType = "CRYPTO", int itemsPerIndex = 20, int index = 0, 
             ICollection<ComponentType> typesToTake = null,
             ICollection<ComponentType> typesToDeepen = null);
         
         IEnumerable<CurrencyViewModel> All(string currencyType = "CRYPTO", int itemsPerIndex = 20, int index = 0, 
+            CurrencySortingEnum currencySortingEnum = CurrencySortingEnum.None,
             AnalysedComponentType sortType = AnalysedComponentType.Unknown, bool orderDescending = true, 
             ICollection<AnalysedComponentType> typesToTake = null, 
             ICollection<AnalysedComponentType> typesToDeepen = null);
@@ -83,8 +85,8 @@ namespace Nozomi.Service.Events.Interfaces
 
         ICollection<string> ListAllSlugs();
 
-        IEnumerable<CurrencyViewModel> ListAll(int page = 0, int itemsPerPage = 50, 
-            string currencyTypeName = null, bool orderAscending = true, string orderingParam = "Name");
+        IEnumerable<CurrencyViewModel> ListAll(int page = 0, int itemsPerPage = 50, string currencyTypeName = null, 
+            bool orderAscending = true, CurrencySortingEnum orderingParam = CurrencySortingEnum.None);
 
         IReadOnlyDictionary<string, long> ListAllMapped();
 

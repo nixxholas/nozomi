@@ -48,7 +48,7 @@
                 <b-table-column field="currencyType" label="Type" sortable>
                     {{ getType(props.row.currencyTypeGuid).name }}
                 </b-table-column>
-                
+
                 <b-table-column
                         v-for="component in props.row.components"
                         v-if="props.row.components && props.row.components.length > 0 
@@ -56,16 +56,22 @@
                         :visible="componentIsDisplayable(component.type)">
                     {{ component }}
                 </b-table-column>
+
+                <b-table-column v-if="oidcIsAuthenticated">
+                    <CurrencyModal :currency="props.row"/>
+                </b-table-column>
             </template>
         </b-table>
-        <b-loading :active.sync="dataLoading"></b-loading>
+        <b-loading :active.sync="dataLoading"/>
     </div>
 </template>
 
 <script>
+    import {mapActions, mapGetters} from 'vuex';
+    import CurrencyModal from '@/components/modals/currency-modal';
     import CurrencyService from "@/services/CurrencyService";
     import CurrencyTypeService from "@/services/CurrencyTypeService";
-    
+
     export default {
         name: "currencies-table",
         props: {
@@ -76,6 +82,28 @@
             },
             displayComponents: []
         },
+        components: {
+            CurrencyModal
+        },
+        computed: {
+            ...mapGetters('oidcStore', [
+                'oidcIsAuthenticated', 'oidcUser'
+            ]),
+            sortFieldEnum: function () {
+                switch (this.sortField) {
+                    case "name":
+                        return 1;
+                    case "abbreviation":
+                        return 2;
+                    case "slug":
+                        return 3;
+                    case "currencyType":
+                        return 4;
+                    default:
+                        return 0;
+                }
+            }
+        },
         data: function () {
             return {
                 currentPage: 1,
@@ -83,12 +111,13 @@
                 data: [],
                 dataCount: 0,
                 sortField: 'name',
-                defaultSortOrder: 'desc',
-                sortOrder: 'desc',
+                defaultSortOrder: 'asc',
+                sortOrder: 'asc',
                 typeData: []
             }
         },
         methods: {
+            ...mapActions('oidcStore', ['authenticateOidc', 'signOutOidc']),
             componentIsDisplayable(type) {
                 if (this.displayComponents && this.displayComponents.length > 0) {
                     for (let i = 0; i < this.displayComponents.length; i++) {
@@ -96,7 +125,7 @@
                             return true;
                     }
                 }
-                
+
                 return false;
             },
             getType(guid) {
@@ -129,7 +158,7 @@
 
                 let sortAscending = order === "asc";
 
-                CurrencyService.listAll(self.currentPage - 1, self.perPage, self.type, sortAscending, self.sortField)
+                CurrencyService.listAll(self.currentPage - 1, self.perPage, self.type, sortAscending, self.sortFieldEnum)
                     .then(function (res) {
                         self.data = res;
 
@@ -137,25 +166,27 @@
                     });
             },
         },
-        mounted: function() {
+        mounted: function () {
             let self = this;
+            let sortAscending = self.sortOrder === "asc";
+
             CurrencyService.getCurrencyCount(self.type)
                 .then(function (res) {
                     self.dataCount = res;
+
+                    CurrencyService.listAll(self.currentPage - 1, self.perPage,
+                        self.type, sortAscending, self.sortFieldEnum)
+                        .then(function (res) {
+                            self.data = res;
+                        });
+                })
+                .catch(function (err) {
+                    console.dir(err);
                 });
 
-            self.sortField = "name";
-            self.sortOrder = "asc";
-            let sortAscending = self.sortOrder === "asc";
-
-            CurrencyService.listAll(self.currentPage - 1, self.perPage, self.type, sortAscending, self.sortField)
+            CurrencyTypeService.all()
                 .then(function (res) {
-                    self.data = res;
-                });
-
-            CurrencyTypeService.getAll()
-                .then(function (res) {
-                    self.typeData = res;
+                    self.typeData = res.data;
 
                     self.dataLoading = false;
                 })

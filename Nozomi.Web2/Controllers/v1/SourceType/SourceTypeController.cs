@@ -4,8 +4,9 @@ using IdentityModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
-using Nozomi.Data.ResponseModels.SourceType;
+using Nozomi.Base.Auth.Models;
+using Nozomi.Data.ViewModels.SourceType;
+using Nozomi.Preprocessing.Statics;
 using Nozomi.Service.Events.Interfaces;
 using Nozomi.Service.Services.Interfaces;
 
@@ -29,7 +30,7 @@ namespace Nozomi.Web2.Controllers.v1.SourceType
             return Ok(_sourceTypeEvent.GetAll());
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = NozomiPermissions.AllowHigherStaffRoles)]
         [HttpPost]
         public IActionResult Create(CreateSourceTypeViewModel vm)
         {
@@ -39,6 +40,23 @@ namespace Nozomi.Web2.Controllers.v1.SourceType
             if (!string.IsNullOrWhiteSpace(sub))
             {
                 _sourceTypeService.Create(vm, sub);
+
+                return Ok();
+            }
+
+            return BadRequest("Please re-authenticate again");
+        }
+
+        [Authorize(Roles = NozomiPermissions.AllowHigherStaffRoles)]
+        [HttpPut]
+        public IActionResult Update(UpdateSourceTypeViewModel vm)
+        {
+            var sub = ((ClaimsIdentity) User.Identity)
+                .Claims.SingleOrDefault(c => c.Type.Equals(JwtClaimTypes.Subject))?.Value;
+
+            if (!string.IsNullOrWhiteSpace(sub))
+            {
+                _sourceTypeService.Update(vm, sub);
 
                 return Ok();
             }

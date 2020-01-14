@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data.Models.Currency;
 using Nozomi.Data.Models.Web.Analytical;
+using Nozomi.Data.ViewModels.AnalysedComponent;
 using Nozomi.Preprocessing;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.BCL.Repository;
@@ -22,9 +22,94 @@ namespace Nozomi.Service.Events.Analysis
             : base(logger, unitOfWork)
         {
         }
-        
+
+        public IEnumerable<AnalysedComponentViewModel> All(string currencySlug, string currencyPairGuid, string currencyTypeAbbrv, int index = 0,
+            int itemsPerPage = NozomiServiceConstants.AnalysedComponentTakeoutLimit, string userId = null)
+        {
+            if (index < 0)
+                index = 0;
+
+            if (itemsPerPage > NozomiServiceConstants.AnalysedComponentTakeoutLimit || itemsPerPage < 0)
+                itemsPerPage = NozomiServiceConstants.AnalysedComponentTakeoutLimit;
+                
+            var query = _unitOfWork.GetRepository<AnalysedComponent>()
+                .GetQueryable()
+                .AsNoTracking();
+
+            if (!string.IsNullOrEmpty(userId))
+                query = query.Where(ac => ac.CreatedById.Equals(userId));
+            
+            if (!string.IsNullOrEmpty(currencySlug) || !string.IsNullOrWhiteSpace(currencySlug))
+            {
+                return query
+                    .Where(ac => ac.DeletedAt == null && ac.CurrencyId != null)
+                    .Include(ac => ac.Currency)
+                    .Where(ac => ac.Currency.Slug.Equals(currencySlug))
+                    .Skip(index * itemsPerPage)
+                    .Take(itemsPerPage)
+                    .Select(ac => new AnalysedComponentViewModel
+                    {
+                        Guid = ac.Guid,
+                        Value = ac.Value,
+                        CurrencySlug = currencySlug,
+                        IsEnabled = ac.IsEnabled,
+                        Type = ac.ComponentType,
+                        Delay = ac.Delay,
+                        UiFormatting = ac.UIFormatting,
+                        IsDenominated = ac.IsDenominated,
+                        StoreHistoricals = ac.StoreHistoricals
+                    });
+            }
+
+            if (Guid.TryParse(currencyPairGuid, out var cpGuid))
+            {
+                return query
+                    .Where(ac => ac.DeletedAt == null && ac.CurrencyPairId != null)
+                    .Include(ac => ac.CurrencyPair)
+                    .Where(ac => ac.CurrencyPair.Guid.Equals(cpGuid))
+                    .Skip(index * itemsPerPage)
+                    .Take(itemsPerPage)
+                    .Select(ac => new AnalysedComponentViewModel
+                    {
+                        Guid = ac.Guid,
+                        Value = ac.Value,
+                        CurrencyPairGuid = ac.CurrencyPair.Guid.ToString(),
+                        IsEnabled = ac.IsEnabled,
+                        Type = ac.ComponentType,
+                        Delay = ac.Delay,
+                        UiFormatting = ac.UIFormatting,
+                        IsDenominated = ac.IsDenominated,
+                        StoreHistoricals = ac.StoreHistoricals
+                    });
+            } 
+            
+            if (!string.IsNullOrEmpty(currencyTypeAbbrv) || !string.IsNullOrWhiteSpace(currencyTypeAbbrv))
+            {
+                return query
+                    .Where(ac => ac.DeletedAt == null && ac.CurrencyTypeId != null)
+                    .Include(ac => ac.CurrencyType)
+                    .Where(ac => ac.CurrencyType.TypeShortForm.Equals(currencyTypeAbbrv))
+                    .Skip(index * itemsPerPage)
+                    .Take(itemsPerPage)
+                    .Select(ac => new AnalysedComponentViewModel
+                    {
+                        Guid = ac.Guid,
+                        Value = ac.Value,
+                        CurrencyPairGuid = ac.CurrencyType.Guid.ToString(),
+                        IsEnabled = ac.IsEnabled,
+                        Type = ac.ComponentType,
+                        Delay = ac.Delay,
+                        UiFormatting = ac.UIFormatting,
+                        IsDenominated = ac.IsDenominated,
+                        StoreHistoricals = ac.StoreHistoricals
+                    });
+            }
+
+            throw new ArgumentOutOfRangeException("You need to have a unique identifier to obtain results.");
+        }
+
         public bool Exists(AnalysedComponentType type, long currencyId = 0, string currencySlug = null, 
-            long currencyPairId = 0, long currencyTypeId = 0)
+            string currencyPairGuid = null, string currencyTypeShortForm = null)
         {
             if (currencyId > 0)
                 return _unitOfWork.GetRepository<AnalysedComponent>()
@@ -40,24 +125,31 @@ namespace Nozomi.Service.Events.Analysis
                     .AsNoTracking()
                     .Where(ac => ac.DeletedAt == null && ac.IsEnabled)
                     .Include(ac => ac.Currency)
-                    .Any(ac => ac.Currency.Slug.Equals(currencySlug)
-                               && ac.ComponentType.Equals(type));
+                    .Any(ac => ac.DeletedAt == null && ac.IsEnabled 
+                                                    && ac.Currency.Slug.Equals(currencySlug)
+                                                    && ac.ComponentType.Equals(type));
             
-            if (currencyPairId > 0)
+            if (Guid.TryParse(currencyPairGuid, out var cpGuid))
                 return _unitOfWork.GetRepository<AnalysedComponent>()
                     .GetQueryable()
                     .AsNoTracking()
+                    .Where(ac => ac.DeletedAt == null && ac.IsEnabled 
+                                 && ac.CurrencyPairId != null)
+                    .Include(ac => ac.CurrencyPair)
                     .Any(ac => ac.DeletedAt == null && ac.IsEnabled 
-                                                    && ac.CurrencyPairId.Equals(currencyPairId)
+                                                    && ac.CurrencyPair.Guid.Equals(cpGuid)
                                                     && ac.ComponentType.Equals(type));
             
-            if (currencyTypeId > 0)
+            if (!string.IsNullOrEmpty(currencyTypeShortForm))
                 return _unitOfWork.GetRepository<AnalysedComponent>()
                     .GetQueryable()
                     .AsNoTracking()
-                    .Any(ac => ac.DeletedAt == null && ac.IsEnabled 
-                                                    && ac.CurrencyTypeId.Equals(currencyTypeId)
-                                                    && ac.ComponentType.Equals(type));
+                    .Where(ac => ac.DeletedAt == null && ac.IsEnabled
+                                 && ac.CurrencyTypeId != null)
+                    .Include(ac => ac.CurrencyType)
+                    .Any(ac =>  ac.DeletedAt == null && ac.IsEnabled 
+                                                     && ac.CurrencyType.TypeShortForm.Equals(currencyTypeShortForm)
+                                                     && ac.ComponentType.Equals(type));
             
             throw new ArgumentOutOfRangeException("Foreign key out of range for logic.");
         }
@@ -84,6 +176,37 @@ namespace Nozomi.Service.Events.Analysis
             }
 
             return query.SingleOrDefault();
+        }
+
+        public UpdateAnalysedComponentViewModel Get(Guid guid, string userId = null)
+        {
+            var query = _unitOfWork.GetRepository<AnalysedComponent>()
+                .GetQueryable()
+                .AsNoTracking()
+                .Where(ac => ac.Guid.Equals(guid));
+
+            if (!string.IsNullOrEmpty(userId))
+                query = query.Where(ac => ac.CreatedById.Equals(userId));
+            
+            return query
+                .Include(ac => ac.Currency)
+                .Include(ac => ac.CurrencyPair)
+                .Include(ac => ac.CurrencyType)
+                .Select(ac => new UpdateAnalysedComponentViewModel
+                {
+                    Guid = guid,
+                    Type = ac.ComponentType,
+                    Delay = ac.Delay,
+                    UiFormatting = ac.UIFormatting,
+                    Value = ac.Value,
+                    IsDenominated = ac.IsDenominated,
+                    StoreHistoricals = ac.StoreHistoricals,
+                    IsEnabled = ac.IsEnabled,
+                    CurrencySlug = ac.CurrencyId != null ? ac.Currency.Slug : null,
+                    CurrencyPairGuid = ac.CurrencyPairId != null ? ac.CurrencyPair.Guid.ToString() : null,
+                    CurrencyTypeShortForm = ac.CurrencyTypeId != null ? ac.CurrencyType.TypeShortForm : null,
+                })
+                .FirstOrDefault();
         }
 
         public IEnumerable<AnalysedComponent> GetAll(bool filter = false, bool track = false, int index = 0)
@@ -225,7 +348,7 @@ namespace Nozomi.Service.Events.Analysis
                 .Where(cp => cp.Source.SourceCurrencies.Any(sc => sc.CurrencyId.Equals(currencyId)
                                                                   // And that the main currency abbreviation matches
                                                                   // the currency's abbreviation
-                                                                  && sc.Currency.Abbreviation.Equals(cp.MainCurrencyAbbrv)))
+                                                                  && sc.Currency.Abbreviation.Equals(cp.MainTicker)))
                 .Include(cp => cp.AnalysedComponents)
                 .ThenInclude(ac => ac.AnalysedHistoricItems);
 
@@ -361,6 +484,14 @@ namespace Nozomi.Service.Events.Analysis
                 .FirstOrDefault(c => c.AnalysedComponents
                     .Any(ac => ac.Id.Equals(analysedComponent.Id)))
                 ?.Abbreviation;
+        }
+
+        public AnalysedComponent Pop(Guid guid)
+        {
+            return _unitOfWork.GetRepository<AnalysedComponent>()
+                .GetQueryable()
+                .AsTracking()
+                .SingleOrDefault(ac => ac.DeletedAt == null && ac.Guid.Equals(guid));
         }
     }
 }
