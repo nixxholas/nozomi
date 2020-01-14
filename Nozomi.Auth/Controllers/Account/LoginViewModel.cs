@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Nozomi.Base.Auth.ViewModels.Account;
 
 namespace Nozomi.Auth.Controllers.Account
 {
