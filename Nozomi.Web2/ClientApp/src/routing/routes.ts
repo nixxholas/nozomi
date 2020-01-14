@@ -15,7 +15,7 @@ import SourceIndex from '../views/source/Index';
 // @ts-ignore
 import DashboardHome from '../views/dashboard/Index';
 // @ts-ignore
-import ModifyProfile from '../views/dashboard/account/ModifyProfile';
+import SettingsIndex from '../views/settings/Index';
 // @ts-ignore
 import OidcCallback from '../components/auth/oidc-callback';
 // @ts-ignore
@@ -70,7 +70,7 @@ export const routes = [
   { name: 'dashboard', path: '/dashboard', props: true, component: DashboardHome,
     meta: { icon: 'columns', isPublic: false, onNav: false }
   },
-  { name: 'modify-account', path: '/dashboard/modify-account', props: true, component: ModifyProfile,
+  { name: 'settings', path: '/settings', props: true, component: SettingsIndex,
     meta: { icon: null, isPublic: false, onNav: false }
   },
 ];

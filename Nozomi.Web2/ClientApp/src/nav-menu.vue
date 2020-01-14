@@ -44,8 +44,8 @@
                   class="navbar-item"
                   slot="trigger"
                   role="button">
-            <span>Menu</span>
-            <b-icon icon="caret-down" />
+            <span class="mr-2">Menu</span>
+            <b-icon size="is-small" icon="chevron-down" />
           </a>
 
           <b-dropdown-item custom aria-role="menuitem">
@@ -55,20 +55,23 @@
 
           <b-dropdown-item has-link value="dashboard" aria-role="menuitem">
             <router-link to="/dashboard">
-              <b-icon icon="columns" />
+<!--              <b-icon icon="columns" />-->
               Dashboard
             </router-link>
           </b-dropdown-item>
           
           <hr class="dropdown-divider">
           
-          <b-dropdown-item value="settings" aria-role="menuitem">
-            <b-icon icon="cog" />
-            Settings
+          <b-dropdown-item has-link
+                           value="settings" aria-role="menuitem">
+              <router-link to="/settings">
+                  <!--            <b-icon icon="cog" />-->
+                  Settings
+              </router-link>
           </b-dropdown-item>
           <b-dropdown-item value="logout" aria-role="menuitem"
                            @click="signOutOidc()">
-            <b-icon icon="sign-out-alt" />
+<!--            <b-icon icon="sign-out-alt" />-->
             Logout
           </b-dropdown-item>
         </b-dropdown>
