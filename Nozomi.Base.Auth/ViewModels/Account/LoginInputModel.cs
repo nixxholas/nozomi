@@ -8,6 +8,8 @@ namespace Nozomi.Base.Auth.ViewModels.Account
 {
     public class LoginInputModel
     {
+        public string Button { get; set; }
+        
         public string Username { get; set; }
         public string Password { get; set; }
         public bool RememberLogin { get; set; }
@@ -38,13 +40,28 @@ namespace Nozomi.Base.Auth.ViewModels.Account
         {
             public LoginInputValidator()
             {
-                RuleFor(e => e.Type).IsInEnum();
-                // RuleFor(e => e.Identifier); // No rule for identifier, it's not a requirement
-                // RuleFor(e => e.QueryComponent); // No rule for query component, it's not a requirement
-                RuleFor(e => e.IsDenominated).NotNull();
-                RuleFor(e => e.AnomalyIgnorance).NotNull();
-                RuleFor(e => e.StoreHistoricals).NotNull();
-                RuleFor(e => e.RequestId).NotNull().NotEmpty();
+                // Password authentication validation
+                RuleFor(e => e.Username).NotNull().NotEmpty().MaximumLength(200)
+                    .Unless(e => !string.IsNullOrEmpty(e.Signature) 
+                                 && !string.IsNullOrEmpty(e.Address)
+                                 && !string.IsNullOrEmpty(e.Message));
+                RuleFor(e => e.Password).NotNull().NotEmpty()
+                    .MinimumLength(4).MaximumLength(200)
+                    .Unless(e => !string.IsNullOrEmpty(e.Signature) 
+                                 && !string.IsNullOrEmpty(e.Address)
+                                 && !string.IsNullOrEmpty(e.Message));
+                // Web3 authentication validation
+                RuleFor(e => e.Message).NotNull().NotEmpty().MaximumLength(500)
+                    .Unless(e => !string.IsNullOrEmpty(e.Username) 
+                                 && !string.IsNullOrEmpty(e.Password));
+                RuleFor(e => e.Address).NotNull().NotEmpty().MaximumLength(200)
+                    .Unless(e => !string.IsNullOrEmpty(e.Username) 
+                                 && !string.IsNullOrEmpty(e.Password));
+                RuleFor(e => e.Signature).NotNull().NotEmpty().MaximumLength(1000)
+                    .Unless(e => !string.IsNullOrEmpty(e.Username) 
+                                 && !string.IsNullOrEmpty(e.Password));
+
+                RuleFor(e => e.ReturnUrl).NotNull().NotEmpty().MaximumLength(1000);
             }
         }
     }
