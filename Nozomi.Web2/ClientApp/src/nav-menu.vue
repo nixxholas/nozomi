@@ -45,7 +45,7 @@
                   slot="trigger"
                   role="button">
             <span class="mr-2">Menu</span>
-            <b-icon size="is-small" icon="chevron-down" />
+            <b-icon size="is-small" icon="chevron-down" style="vertical-align: middle;" />
           </a>
 
           <b-dropdown-item custom aria-role="menuitem">
@@ -53,8 +53,8 @@
           </b-dropdown-item>
           <hr class="dropdown-divider">
 
-          <b-dropdown-item has-link value="dashboard" aria-role="menuitem">
-            <router-link to="/dashboard">
+          <b-dropdown-item value="dashboard" aria-role="menuitem">
+            <router-link tag="div" to="/dashboard">
 <!--              <b-icon icon="columns" />-->
               Dashboard
             </router-link>
@@ -62,9 +62,8 @@
           
           <hr class="dropdown-divider">
           
-          <b-dropdown-item has-link
-                           value="settings" aria-role="menuitem">
-              <router-link to="/settings">
+          <b-dropdown-item value="settings" aria-role="menuitem">
+              <router-link tag="div" to="/settings">
                   <!--            <b-icon icon="cog" />-->
                   Settings
               </router-link>

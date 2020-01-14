@@ -15,6 +15,10 @@
                     </b-tab-item>
 <!--                    <b-tab-item label="Music" icon="library-music"></b-tab-item>-->
 <!--                    <b-tab-item label="Videos" icon="video"></b-tab-item>-->
+                    
+                    <b-button type="is-primary" 
+                            native-type="submit" 
+                              value="Update" />
                 </b-tabs>
             </div>
         </div>
