@@ -2,7 +2,9 @@
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
 
-namespace Nozomi.Auth.Controllers.Account
+using FluentValidation;
+
+namespace Nozomi.Base.Auth.ViewModels.Account
 {
     public class LoginInputModel
     {
@@ -25,5 +27,25 @@ namespace Nozomi.Auth.Controllers.Account
         /// The raw message
         /// </summary>
         public string Message { get; set; }
+
+        public bool IsValid()
+        {
+            var validator = new LoginInputValidator();
+            return validator.Validate(this).IsValid;
+        }
+        
+        protected class LoginInputValidator : AbstractValidator<LoginInputModel>
+        {
+            public LoginInputValidator()
+            {
+                RuleFor(e => e.Type).IsInEnum();
+                // RuleFor(e => e.Identifier); // No rule for identifier, it's not a requirement
+                // RuleFor(e => e.QueryComponent); // No rule for query component, it's not a requirement
+                RuleFor(e => e.IsDenominated).NotNull();
+                RuleFor(e => e.AnomalyIgnorance).NotNull();
+                RuleFor(e => e.StoreHistoricals).NotNull();
+                RuleFor(e => e.RequestId).NotNull().NotEmpty();
+            }
+        }
     }
 }
