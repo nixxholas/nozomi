@@ -23,6 +23,7 @@ using Nozomi.Base.Auth.ViewModels.Account;
 using Nozomi.Base.Blockchain.Auth.Query.Validating;
 using Nozomi.Infra.Auth.Services.Address;
 using Nozomi.Infra.Blockchain.Auth.Events.Interfaces;
+using Nozomi.Preprocessing.Events.Interfaces;
 
 namespace Nozomi.Auth.Controllers.Account
 {
@@ -30,6 +31,7 @@ namespace Nozomi.Auth.Controllers.Account
     [AllowAnonymous]
     public class AccountController : BaseController<AccountController>
     {
+        private readonly IEmailSender _emailSender;
         private readonly RoleManager<Role> _roleManager;
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
@@ -43,6 +45,7 @@ namespace Nozomi.Auth.Controllers.Account
 
         public AccountController(
             ILogger<AccountController> logger,
+            IEmailSender emailSender,
             RoleManager<Role> roleManager,
             UserManager<User> userManager,
             SignInManager<User> signInManager,
@@ -53,6 +56,7 @@ namespace Nozomi.Auth.Controllers.Account
             IValidatingEvent validatingEvent,
             IEventService events, IAddressService addressService) : base(logger)
         {
+            _emailSender = emailSender;
             _roleManager = roleManager;
             _userManager = userManager;
             _signInManager = signInManager;
@@ -70,7 +74,7 @@ namespace Nozomi.Auth.Controllers.Account
         {
             return View();
         }
-        
+
         //
         // POST: /Account/Register
         [HttpPost]
@@ -95,10 +99,11 @@ namespace Nozomi.Auth.Controllers.Account
                             // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=532713
                             // Send an email with this link
                             var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                            // var callbackUrl = Url.Action("ConfirmEmail", "Account", 
-                            //     new { userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
-//                    await _emailSender.SendEmailAsync(model.Email, "Confirm your account",
-//                        "Please confirm your account by clicking this link: <a href=\"" + callbackUrl + "\">link</a>");
+                            var callbackUrl = Url.Action("ConfirmEmail", "Account",
+                                new {userId = user.Id, code = code}, protocol: HttpContext.Request.Scheme);
+                            await _emailSender.SendEmailAsync(model.Email, "Confirm your account",
+                                "Please confirm your account by clicking this link: <a href=\"" + callbackUrl +
+                                "\">link</a>");
                             await _signInManager.SignInAsync(user, isPersistent: false);
                             _logger.LogInformation(3, "User created a new account with password.");
 
@@ -128,7 +133,7 @@ namespace Nozomi.Auth.Controllers.Account
         public async Task<User> Web3Create(string signature, string address, string message)
         {
             if (_addressEvent.IsBinded(address)) return null;
-            
+
             var fakeUser = new Faker<User>()
                 //Basic rules using built-in generators
                 .RuleFor(u => u.UserName, (f, u) => f.Internet.UserName(f.Name.FirstName(), f.Name.LastName()))
@@ -136,13 +141,10 @@ namespace Nozomi.Auth.Controllers.Account
                 //.RuleFor(u => u.Avatar, f => f.Internet.Avatar())
                 .RuleFor(u => u.Email, (f, u) => f.Internet.Email(f.Name.FirstName(), f.Name.LastName()))
                 //.RuleFor(u => u.SomethingUnique, f => $"Value {f.UniqueIndex}")
-                .FinishWith((f, u) =>
-                {
-                    Console.WriteLine("User Created! Id={0}", u.Id);
-                });
+                .FinishWith((f, u) => { Console.WriteLine("User Created! Id={0}", u.Id); });
 
             var generatedFakeUser = fakeUser.Generate();
-            var user = new User { UserName = generatedFakeUser.UserName, Email = generatedFakeUser.Email };
+            var user = new User {UserName = generatedFakeUser.UserName, Email = generatedFakeUser.Email};
             var result = await _userManager.CreateAsync(user, signature);
 
             if (result.Succeeded)
@@ -161,22 +163,22 @@ namespace Nozomi.Auth.Controllers.Account
 //                        "Please confirm your account by clicking this link: <a href=\"" + callbackUrl + "\">link</a>");
                     await _signInManager.SignInAsync(user, isPersistent: false);
                     //_logger.LogInformation(3, "User created a new account with password.");
-                    
+
                     //return Redirect(model.ReturnUrl);
-                    
+
                     var createdAddress = _addressService.Create(user.Id, address, AddressType.Ethereum);
 
                     return !string.IsNullOrWhiteSpace(createdAddress) ? user : null;
                 }
-                    
+
                 ModelState.AddModelError(user.Id, AccountOptions.FailedToJoinRole);
             }
 
             return null;
         }
-        
+
         [HttpPost]
-        public async Task<IActionResult> Web3Register([FromBody]Web3InputModel model, string returnUrl = null)
+        public async Task<IActionResult> Web3Register([FromBody] Web3InputModel model, string returnUrl = null)
         {
             ViewData["ReturnUrl"] = returnUrl;
             if (ModelState.IsValid && _validatingEvent.ValidateOwner(new ValidateOwnerQuery
@@ -196,7 +198,7 @@ namespace Nozomi.Auth.Controllers.Account
 //                        "Please confirm your account by clicking this link: <a href=\"" + callbackUrl + "\">link</a>");
                     await _signInManager.SignInAsync(user, isPersistent: false);
                     _logger.LogInformation(3, "User created a new account with password.");
-                    
+
                     //return Redirect(model.ReturnUrl);
                     return Ok();
                 }
@@ -306,7 +308,7 @@ namespace Nozomi.Auth.Controllers.Account
 //            var vm = await BuildLoginViewModelAsync(model);
 //            return View(vm);
 //        }
-        
+
         /// <summary>
         /// Handle postback from username/password login
         /// </summary>
@@ -318,7 +320,7 @@ namespace Nozomi.Auth.Controllers.Account
             var context = await _interaction.GetAuthorizationContextAsync(model.ReturnUrl);
 
             // the user clicked the "cancel" button
-            if (!string.IsNullOrWhiteSpace(button) 
+            if (!string.IsNullOrWhiteSpace(button)
                 && button.Equals("cancel", StringComparison.InvariantCultureIgnoreCase))
             {
                 if (context != null)
@@ -347,7 +349,7 @@ namespace Nozomi.Auth.Controllers.Account
 
             // The user is logging in through password authentication
             if (model.IsValid() && !string.IsNullOrWhiteSpace(model.Username)
-                && !string.IsNullOrWhiteSpace(model.Password))
+                                && !string.IsNullOrWhiteSpace(model.Password))
             {
                 var result = await _signInManager.PasswordSignInAsync(model.Username, model.Password,
                     model.RememberLogin, lockoutOnFailure: true);
@@ -389,9 +391,10 @@ namespace Nozomi.Auth.Controllers.Account
                 await _events.RaiseAsync(new UserLoginFailureEvent(model.Username, "invalid credentials",
                     clientId: context?.ClientId));
                 ModelState.AddModelError(string.Empty, AccountOptions.InvalidCredentialsErrorMessage);
-            } else if (model.IsValid() && !string.IsNullOrWhiteSpace(model.Message) 
-                                       && !string.IsNullOrWhiteSpace(model.Address) 
-                                       && !string.IsNullOrWhiteSpace(model.Signature))
+            }
+            else if (model.IsValid() && !string.IsNullOrWhiteSpace(model.Message)
+                                     && !string.IsNullOrWhiteSpace(model.Address)
+                                     && !string.IsNullOrWhiteSpace(model.Signature))
             {
                 var addrEntity = _addressEvent.Authenticate(model.Address, model.Signature, model.Message);
 
@@ -401,7 +404,7 @@ namespace Nozomi.Auth.Controllers.Account
                     // Sign in
                     var user = await _userManager.FindByIdAsync(addrEntity.UserId);
                     await _signInManager.SignInAsync(user, true);
-                    
+
                     // Raise an event to say that the sign in is successful
                     await _events.RaiseAsync(new UserLoginSuccessEvent(user.UserName, user.Id, user.UserName,
                         clientId: context?.ClientId));
@@ -442,11 +445,11 @@ namespace Nozomi.Auth.Controllers.Account
                     if (user != null && !string.IsNullOrWhiteSpace(user.UserName))
                     {
                         await _signInManager.SignInAsync(user, true);
-                        
+
                         // Raise an event to say that the sign in is successful
                         await _events.RaiseAsync(new UserLoginSuccessEvent(user.UserName, user.Id, user.UserName,
                             clientId: context?.ClientId));
-                        
+
                         if (context != null)
                         {
                             if (await _clientStore.IsPkceClientAsync(context.ClientId))

@@ -19,6 +19,7 @@ using Nozomi.Base.Auth.Models;
 using Nozomi.Infra.Auth.Services.Address;
 using Nozomi.Infra.Blockchain.Auth.Events;
 using Nozomi.Infra.Blockchain.Auth.Events.Interfaces;
+using Nozomi.Preprocessing.Options;
 using Nozomi.Repo.Auth.Data;
 using Nozomi.Repo.BCL.Context;
 using Nozomi.Repo.BCL.Repository;
@@ -124,6 +125,11 @@ namespace Nozomi.Auth
 
             services.Configure<IdentityOptions>(options =>
                 options.ClaimsIdentity.RoleClaimType = ClaimTypes.Role);
+            services.Configure<SendgridOptions>(options =>
+                {
+                    options.SendGridKey = "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";
+                    options.SendGridUser = "Nozomi Auth";
+                });
 
             var identityConfig = new IdentityConfig(HostingEnvironment);
 
