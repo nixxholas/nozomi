@@ -19,6 +19,8 @@ using Nozomi.Base.Auth.Models;
 using Nozomi.Infra.Auth.Services.Address;
 using Nozomi.Infra.Blockchain.Auth.Events;
 using Nozomi.Infra.Blockchain.Auth.Events.Interfaces;
+using Nozomi.Preprocessing.Events;
+using Nozomi.Preprocessing.Events.Interfaces;
 using Nozomi.Preprocessing.Options;
 using Nozomi.Repo.Auth.Data;
 using Nozomi.Repo.BCL.Context;
@@ -201,7 +203,8 @@ namespace Nozomi.Auth
 
             services.AddScoped<IAddressEvent, AddressEvent>();
             services.AddScoped<IValidatingEvent, ValidatingEvent>();
-            
+
+            services.AddTransient<IEmailSender, EmailSender>();
             services.AddTransient<IAddressService, AddressService>();
         }
 
