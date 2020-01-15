@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Nozomi.Auth.Controllers.Account;
+using Nozomi.Base.Auth.ViewModels.Account;
 
 namespace Nozomi.Auth.Controllers.Consent
 {

@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Nozomi.Base.Auth.Models;
+using Nozomi.Base.Auth.ViewModels.Account;
 
 namespace Nozomi.Auth.Controllers.Account
 {

@@ -1,4 +1,4 @@
-namespace Nozomi.Auth.Controllers.Account
+namespace Nozomi.Base.Auth.ViewModels.Account
 {
     public class RegisterInputModel
     {

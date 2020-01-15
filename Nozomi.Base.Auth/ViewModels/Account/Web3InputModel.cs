@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace Nozomi.Auth.Controllers.Account
+namespace Nozomi.Base.Auth.ViewModels.Account
 {
     public class Web3InputModel
     {

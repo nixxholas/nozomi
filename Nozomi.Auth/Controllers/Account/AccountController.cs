@@ -64,6 +64,12 @@ namespace Nozomi.Auth.Controllers.Account
             _events = events;
             _addressService = addressService;
         }
+
+        [HttpGet]
+        public IActionResult Register()
+        {
+            return View();
+        }
         
         //
         // POST: /Account/Register

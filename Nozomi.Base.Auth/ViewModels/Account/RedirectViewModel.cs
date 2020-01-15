@@ -2,7 +2,7 @@
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
 
-namespace Nozomi.Auth.Controllers.Account
+namespace Nozomi.Base.Auth.ViewModels.Account
 {
     public class RedirectViewModel
     {
