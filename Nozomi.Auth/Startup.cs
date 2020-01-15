@@ -105,6 +105,11 @@ namespace Nozomi.Auth
                 }, ServiceLifetime.Transient);
             }
 
+            services.AddControllersWithViews()
+                .SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
+
+            services.AddRazorPages();
+
             services
                 .AddEntityFrameworkNpgsql()
                 .AddIdentity<User, Role>(options =>
@@ -116,11 +121,6 @@ namespace Nozomi.Auth
                 })
                 .AddEntityFrameworkStores<AuthDbContext>()
                 .AddDefaultTokenProviders();
-
-            services.AddMvc(options => { options.EnableEndpointRouting = false; })
-                .SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
-
-            services.AddRazorPages();
 
             services.Configure<IdentityOptions>(options =>
                 options.ClaimsIdentity.RoleClaimType = ClaimTypes.Role);
@@ -183,6 +183,8 @@ namespace Nozomi.Auth
                 builder.AddSigningCredential(certificate);
             }
 
+            services.AddAuthentication();
+
             // Database
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 
@@ -211,6 +213,9 @@ namespace Nozomi.Auth
             }
             
             app.UseAutoDbMigration(HostingEnvironment);
+
+            app.UseStaticFiles();
+            app.UseRouting();
             
             // Reverse proxy bypass for OpenID compatibility
             // https://github.com/IdentityServer/IdentityServer4/issues/1331#issuecomment-317049214
@@ -224,16 +229,25 @@ namespace Nozomi.Auth
             forwardOptions.KnownProxies.Clear();
 
             // ref: https://github.com/aspnet/Docs/issues/2384
-            app.UseForwardedHeaders(forwardOptions);
-            
+            app.UseForwardedHeaders(forwardOptions);            
             app.UseHttpsRedirection();
-
-            app.UseStaticFiles();
+            
             app.UseCookiePolicy();
             app.UseIdentityServer();
             
+            app.UseAuthorization();
+            
             // "default", "{controller=Home}/{action=Index}/{id?}"
-            app.UseMvcWithDefaultRoute();
+            // app.UseMvcWithDefaultRoute();
+
+            app.UseEndpoints(options =>
+            {
+                options.MapControllerRoute(
+                    name: "default",
+                    pattern: "{controller=Home}/{action=Index}/{id?}");
+                
+                options.MapRazorPages();
+            });
         }
         
         private SigningCredentials CreateSigningCredential()
