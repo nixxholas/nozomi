@@ -1,0 +1,56 @@
+﻿@model Nozomi.Base.Auth.ViewModels.Account.RegisterViewModel
+@using IdentityServer4.Extensions
+@{
+    string name = null;
+    if (!true.Equals(ViewData["signed-out"]))
+    {
+        name = Context.User?.GetDisplayName();
+    }
+}
+
+<section class="hero">
+    <div class="hero-body">
+        @if (string.IsNullOrEmpty(name))
+        {
+            <h1 class="title">Register</h1>
+
+            <form asp-action="Register">
+                <input type="hidden" asp-for="ReturnUrl"/>
+
+                <div class="field">
+                    <label class="label" asp-for="Email">Email</label>
+                    <div class="control">
+                        <input class="input" type="text" asp-for="Email" placeholder="hello@nozomi.one"/>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label class="label" asp-for="Username">Username</label>
+                    <div class="control">
+                        <input class="input" type="text" asp-for="Username" placeholder="helloboi"/>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label class="label" asp-for="Password">Password</label>
+                    <div class="control">
+                        <input class="input" type="password" asp-for="Password"/>
+                    </div>
+                </div>
+
+                <div class="field is-grouped">
+                    <div class="control">
+                        <button class="button is-success" name="button" value="register">Submit</button>
+                    </div>
+                    <div class="control">
+                        <button class="button is-light" name="button" value="register">Cancel</button>
+                    </div>
+                </div>
+            </form>
+        }
+        else
+        {
+            <h1 class="title">You are already logged in!</h1>
+        }
+    </div>
+</section>
