@@ -13,6 +13,7 @@
         @if (string.IsNullOrEmpty(name))
         {
             <partial name="_ValidationSummary"/>
+            
             <div class="container has-text-centered">
 
                 <div class="box columns is-centered is-vcentered">
@@ -61,6 +62,13 @@
                                 </environment>
 
                                 <div class="field is-grouped">
+                                    <p class="control">
+                                        <button class="button is-info"
+                                                name="button"
+                                                value="register">
+                                            Register
+                                        </button>
+                                    </p>
                                     <p class="control">
                                         <button class="button is-primary"
                                                 name="button"

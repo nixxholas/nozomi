@@ -1,3 +1,4 @@
+using System;
 using System.Data;
 using FluentValidation;
 
@@ -26,6 +27,15 @@ namespace Nozomi.Base.Auth.ViewModels.Account
                 RuleFor(e => e.Username).NotNull().NotEmpty().MaximumLength(100);
                 RuleFor(e => e.Email).EmailAddress();
                 RuleFor(e => e.Password).NotNull().NotEmpty();
+                RuleFor(e => e.ReturnUrl).NotEmpty().NotNull()
+                    .Custom((url, context) =>
+                    {
+                        if (!string.IsNullOrEmpty(url) && !Uri.TryCreate(url, UriKind.Absolute, out var uriResult) 
+                            && uriResult.Scheme == Uri.UriSchemeHttp)
+                        {
+                            context.AddFailure("Invalid URL.");
+                        }
+                    });
             }
         }
     }
