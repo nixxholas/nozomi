@@ -107,7 +107,7 @@ namespace Nozomi.Auth.Controllers.Account
 
             if (!string.IsNullOrEmpty(button) && button.Equals("register"))
             {
-                if (ModelState.IsValid)
+                if (model.IsValid())
                 {
                     var user = new User {UserName = model.Username, Email = model.Email};
                     var result = await _userManager.CreateAsync(user, model.Password);
@@ -148,7 +148,7 @@ namespace Nozomi.Auth.Controllers.Account
 
             // If we got this far, something failed, redisplay form
             // return BadRequest(model);
-            var vm = BuildRegisterViewModel(model);
+            var vm = BuildRegisterViewModelFromInput(model);
             return View(vm);
         }
 
@@ -341,6 +341,14 @@ namespace Nozomi.Auth.Controllers.Account
         {
             // check if we are in the context of an authorization request
             var context = await _interaction.GetAuthorizationContextAsync(model.ReturnUrl);
+            
+            // the user clicked the "register" button
+            if (!string.IsNullOrWhiteSpace(button)
+                && button.Equals("register", StringComparison.InvariantCultureIgnoreCase))
+            {
+                return RedirectToAction("Register", "Account", 
+                    new { ReturnUrl = model.ReturnUrl});
+            }
 
             // the user clicked the "cancel" button
             if (!string.IsNullOrWhiteSpace(button)
@@ -719,7 +727,7 @@ namespace Nozomi.Auth.Controllers.Account
             return vm;
         }
 
-        private RegisterViewModel BuildRegisterViewModel(RegisterInputModel inputModel = null)
+        private RegisterViewModel BuildRegisterViewModelFromInput(RegisterInputModel inputModel = null)
         {
             var vm = new RegisterViewModel();
 
