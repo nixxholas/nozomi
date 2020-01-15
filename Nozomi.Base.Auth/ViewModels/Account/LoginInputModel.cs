@@ -8,8 +8,6 @@ namespace Nozomi.Base.Auth.ViewModels.Account
 {
     public class LoginInputModel
     {
-        public string Button { get; set; }
-        
         public string Username { get; set; }
         public string Password { get; set; }
         public bool RememberLogin { get; set; }
