@@ -122,7 +122,8 @@ namespace Nozomi.Auth.Controllers.Account
                             // Send an email with this link
                             var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                             var callbackUrl = Url.Action("ConfirmEmail", "Account",
-                                new {userId = user.Id, code = code}, protocol: HttpContext.Request.Scheme);
+                                new {userId = user.Id, code = code, returnUrl = model.ReturnUrl}, protocol: 
+                                HttpContext.Request.Scheme);
                             await _emailSender.SendEmailAsync(model.Email, "Confirm your account",
                                 "Please confirm your account by clicking this link: <a href=\"" + callbackUrl +
                                 "\">link</a>");
