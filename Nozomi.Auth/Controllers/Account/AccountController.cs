@@ -17,6 +17,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Nozomi.Auth.Controllers.Home;
 using Nozomi.Base.Auth.Models;
 using Nozomi.Base.Auth.Models.Wallet;
 using Nozomi.Base.Auth.ViewModels.Account;
@@ -67,6 +68,27 @@ namespace Nozomi.Auth.Controllers.Account
             _validatingEvent = validatingEvent;
             _events = events;
             _addressService = addressService;
+        }
+        
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<IActionResult> ConfirmEmail(string userId, string code, string returnUrl)
+        {
+            if (userId == null || code == null)
+            {
+                return RedirectToAction(nameof(HomeController.Index), "Home");
+            }
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                throw new ApplicationException($"Unable to load user with ID '{userId}'.");
+            }
+            var result = await _userManager.ConfirmEmailAsync(user, code);
+
+            var vm = BuildConfirmEmailViewModel(result.Succeeded, returnUrl);
+            
+            // return View(result.Succeeded ? "ConfirmEmail" : "Error");
+            return View(vm);
         }
 
         [HttpGet]
@@ -553,6 +575,17 @@ namespace Nozomi.Auth.Controllers.Account
         /*****************************************/
         /* helper APIs for the AccountController */
         /*****************************************/
+        private ConfirmEmailViewModel BuildConfirmEmailViewModel(bool succeeded, string returnUrl)
+        {
+            var vm = new ConfirmEmailViewModel
+            {
+                Succeeded = succeeded,
+                ReturnUrl = returnUrl
+            };
+            
+            return vm;
+        }
+        
         private async Task<LoginViewModel> BuildLoginViewModelAsync(string returnUrl)
         {
             var context = await _interaction.GetAuthorizationContextAsync(returnUrl);
