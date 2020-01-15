@@ -92,9 +92,11 @@ namespace Nozomi.Auth.Controllers.Account
         }
 
         [HttpGet]
-        public IActionResult Register()
+        public IActionResult Register(string returnUrl)
         {
-            return View();
+            var vm = BuildRegisterViewModel(returnUrl);
+            
+            return View(vm);
         }
 
         //
@@ -347,7 +349,7 @@ namespace Nozomi.Auth.Controllers.Account
                 && button.Equals("register", StringComparison.InvariantCultureIgnoreCase))
             {
                 return RedirectToAction("Register", "Account", 
-                    new { ReturnUrl = model.ReturnUrl});
+                    new { returnUrl = model.ReturnUrl });
             }
 
             // the user clicked the "cancel" button
@@ -727,7 +729,19 @@ namespace Nozomi.Auth.Controllers.Account
             return vm;
         }
 
-        private RegisterViewModel BuildRegisterViewModelFromInput(RegisterInputModel inputModel = null)
+        private RegisterViewModel BuildRegisterViewModel(string returnUrl, string userName = null, string email = null)
+        {
+            var vm = new RegisterViewModel
+            {
+                ReturnUrl = returnUrl,
+                Username = userName,
+                Email = email
+            };
+
+            return vm;
+        }
+
+            private RegisterViewModel BuildRegisterViewModelFromInput(RegisterInputModel inputModel = null)
         {
             var vm = new RegisterViewModel();
 
