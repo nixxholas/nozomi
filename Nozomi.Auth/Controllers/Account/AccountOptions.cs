@@ -27,6 +27,8 @@ namespace Nozomi.Auth.Controllers.Account
         public static string CredentialsAlreadyTaken =
             "These credentials have been used for another account. Please try again.";
 
+        public static string EmailNotConfirmed = "Please verify your email before signing in.";
+
         public static string FailedToJoinRole = "Your account's role failed to propagate.";
     }
 }

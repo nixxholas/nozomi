@@ -129,8 +129,10 @@ namespace Nozomi.Auth.Controllers.Account
                             await _emailSender.SendEmailAsync(model.Email, "Confirm your account",
                                 "Please confirm your account by clicking this link: <a href=\"" + callbackUrl +
                                 "\">link</a>");
-                            await _signInManager.SignInAsync(user, isPersistent: false);
+                            // await _signInManager.SignInAsync(user, isPersistent: false);
                             _logger.LogInformation(3, "User created a new account with password.");
+                            
+                            // TODO: Inform about successful registration, inform the user to confirm his email.
 
                             return Redirect(model.ReturnUrl);
                         }
@@ -384,46 +386,55 @@ namespace Nozomi.Auth.Controllers.Account
             if (model.IsValid() && !string.IsNullOrWhiteSpace(model.Username)
                                 && !string.IsNullOrWhiteSpace(model.Password))
             {
-                var result = await _signInManager.PasswordSignInAsync(model.Username, model.Password,
-                    model.RememberLogin, lockoutOnFailure: true);
-                if (result.Succeeded)
+                var user = await _userManager.FindByNameAsync(model.Username);
+                if (!user.EmailConfirmed)
                 {
-                    var user = await _userManager.FindByNameAsync(model.Username);
-                    await _events.RaiseAsync(new UserLoginSuccessEvent(user.UserName, user.Id, user.UserName,
+                    await _events.RaiseAsync(new UserLoginFailureEvent(model.Username, "email not confirmed",
                         clientId: context?.ClientId));
-
-                    if (context != null)
+                    ModelState.AddModelError(string.Empty, AccountOptions.EmailNotConfirmed);
+                }
+                else
+                {
+                    var result = await _signInManager.PasswordSignInAsync(model.Username, model.Password,
+                        model.RememberLogin, lockoutOnFailure: true);
+                    if (result.Succeeded)
                     {
-                        if (await _clientStore.IsPkceClientAsync(context.ClientId))
+                        await _events.RaiseAsync(new UserLoginSuccessEvent(user.UserName, user.Id, user.UserName,
+                            clientId: context?.ClientId));
+
+                        if (context != null)
                         {
-                            // if the client is PKCE then we assume it's native, so this change in how to
-                            // return the response is for better UX for the end user.
-                            return View("Redirect", new RedirectViewModel {RedirectUrl = model.ReturnUrl});
+                            if (await _clientStore.IsPkceClientAsync(context.ClientId))
+                            {
+                                // if the client is PKCE then we assume it's native, so this change in how to
+                                // return the response is for better UX for the end user.
+                                return View("Redirect", new RedirectViewModel {RedirectUrl = model.ReturnUrl});
+                            }
+
+                            // we can trust model.ReturnUrl since GetAuthorizationContextAsync returned non-null
+                            return Redirect(model.ReturnUrl);
                         }
 
-                        // we can trust model.ReturnUrl since GetAuthorizationContextAsync returned non-null
-                        return Redirect(model.ReturnUrl);
+                        // request for a local page
+                        if (Url.IsLocalUrl(model.ReturnUrl))
+                        {
+                            return Redirect(model.ReturnUrl);
+                        }
+                        else if (string.IsNullOrEmpty(model.ReturnUrl))
+                        {
+                            return Redirect("~/");
+                        }
+                        else
+                        {
+                            // user might have clicked on a malicious link - should be logged
+                            throw new Exception("invalid return URL");
+                        }
                     }
 
-                    // request for a local page
-                    if (Url.IsLocalUrl(model.ReturnUrl))
-                    {
-                        return Redirect(model.ReturnUrl);
-                    }
-                    else if (string.IsNullOrEmpty(model.ReturnUrl))
-                    {
-                        return Redirect("~/");
-                    }
-                    else
-                    {
-                        // user might have clicked on a malicious link - should be logged
-                        throw new Exception("invalid return URL");
-                    }
+                    await _events.RaiseAsync(new UserLoginFailureEvent(model.Username, "invalid credentials",
+                        clientId: context?.ClientId));
+                    ModelState.AddModelError(string.Empty, AccountOptions.InvalidCredentialsErrorMessage);
                 }
-
-                await _events.RaiseAsync(new UserLoginFailureEvent(model.Username, "invalid credentials",
-                    clientId: context?.ClientId));
-                ModelState.AddModelError(string.Empty, AccountOptions.InvalidCredentialsErrorMessage);
             }
             else if (model.IsValid() && !string.IsNullOrWhiteSpace(model.Message)
                                      && !string.IsNullOrWhiteSpace(model.Address)
