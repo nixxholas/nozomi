@@ -14,6 +14,15 @@
         {
             <partial name="_ValidationSummary"/>
             
+            @if (Model.UserRegistrationSuccessful)
+            {
+                <div class="notification is-success">
+                    <strong>Your account registration is sucessful!</strong> <br/>
+                    <p>Oh and also, your email will receive a verification notification 
+                        for your email account so don't forget to check it out!.</p>
+                </div>
+            }
+            
             <div class="container has-text-centered">
 
                 <div class="box columns is-centered is-vcentered">

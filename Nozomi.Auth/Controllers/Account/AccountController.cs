@@ -134,7 +134,11 @@ namespace Nozomi.Auth.Controllers.Account
                             
                             // TODO: Inform about successful registration, inform the user to confirm his email.
 
-                            return Redirect(model.ReturnUrl);
+                            return RedirectToAction("Login", "Account", new
+                            {
+                                returnUrl = model.ReturnUrl,
+                                userEmail = model.Email
+                            });
                         }
 
                         ModelState.AddModelError(user.Id, AccountOptions.FailedToJoinRole);
@@ -238,7 +242,7 @@ namespace Nozomi.Auth.Controllers.Account
         /// Entry point into the login workflow
         /// </summary>
         [HttpGet]
-        public async Task<IActionResult> Login(string returnUrl)
+        public async Task<IActionResult> Login(string returnUrl, string userEmail = null)
         {
             // build a model so we know what to show on the login page
             var vm = await BuildLoginViewModelAsync(returnUrl);
@@ -247,6 +251,15 @@ namespace Nozomi.Auth.Controllers.Account
             {
                 // we only have one option for logging in and it's an external provider
                 return RedirectToAction("Challenge", "External", new {provider = vm.ExternalLoginScheme, returnUrl});
+            }
+
+            // TODO: This is extremely hacky, make a more beautified version of informing the user he/she has successfully registered
+            if (!string.IsNullOrEmpty(userEmail))
+            {
+                var user = await _userManager.FindByEmailAsync(userEmail);
+
+                if (!user.EmailConfirmed)
+                    vm.UserRegistrationSuccessful = true;
             }
 
             return View(vm);
