@@ -108,7 +108,11 @@ namespace Nozomi.Auth
                         AllowAccessTokensViaBrowser = true,
                         AllowedGrantTypes = GrantTypes.Implicit,
                     
-                        AllowedScopes = { "openid", "profile", "email", "roles", "nozomi.web.read_only" },
+                        AllowedScopes = { IdentityServerConstants.StandardScopes.OpenId, 
+                            IdentityServerConstants.StandardScopes.Profile, 
+                            IdentityServerConstants.StandardScopes.Email,
+                            IdentityServerConstants.StandardScopes.Phone,
+                            "roles", "nozomi.web.read_only" },
                         RedirectUris = {"https://nozomi.one/oidc-callback", "https://nozomi.one/oidc-silent-renew" },
                         PostLogoutRedirectUris = {"https://nozomi.one/"},
                         AllowedCorsOrigins = {"https://nozomi.one"},

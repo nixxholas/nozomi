@@ -1,5 +1,6 @@
 using System.IdentityModel.Tokens.Jwt;
 using IdentityModel;
+using IdentityServer4;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
@@ -35,9 +36,10 @@ namespace Nozomi.Web2.Extensions
                         };
                         
                         // https://stackoverflow.com/questions/46579376/identityserver4-how-to-access-user-email
-                        o.Scope.Add("openid");
-                        o.Scope.Add("profile");
-                        o.Scope.Add("email");
+                        o.Scope.Add(IdentityServerConstants.StandardScopes.OpenId);
+                        o.Scope.Add(IdentityServerConstants.StandardScopes.Profile);
+                        o.Scope.Add(IdentityServerConstants.StandardScopes.Email);
+                        o.Scope.Add(IdentityServerConstants.StandardScopes.Phone);
                         o.Scope.Add("roles");
                         o.Scope.Add(JwtClaimTypes.Role);
                     })
@@ -53,13 +55,6 @@ namespace Nozomi.Web2.Extensions
                         };
                         o.SaveToken = true;
                     });
-//                .AddJwtBearer(options =>
-//                {
-//                    options.Authority = authority;
-//                    options.RequireHttpsMetadata = true;
-//                    options.Audience = "nozomi.web";
-//                    //options.ApiSecret = "super-secret";
-//                });
 
             // Turn off the JWT claim type mapping to allow well-known claims (e.g. ‘sub’ and ‘idp’) to flow through unmolested
 //            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
