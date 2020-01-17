@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
+using Nozomi.Base.Auth.Global;
 
 namespace Nozomi.Web2.Extensions
 {
@@ -42,6 +43,7 @@ namespace Nozomi.Web2.Extensions
                         o.Scope.Add(IdentityServerConstants.StandardScopes.Phone);
                         o.Scope.Add("roles");
                         o.Scope.Add(JwtClaimTypes.Role);
+                        o.Scope.Add(ExtendedJwtClaimTypes.DefaultWallet);
                     })
                 .AddJwtBearer(o =>
                     {
