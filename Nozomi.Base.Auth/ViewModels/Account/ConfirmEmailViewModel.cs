@@ -4,6 +4,6 @@ namespace Nozomi.Base.Auth.ViewModels.Account
     {
         public bool Succeeded { get; set; }
         
-        public string ReturnUrl { get; set; }
+        public string PostLogoutRedirectUri { get; set; }
     }
 }
