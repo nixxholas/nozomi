@@ -36,6 +36,10 @@
                                 <b-input type="url" v-model="user.website" disabled/>
                             </b-field>
 
+                            <b-field label="Default Wallet Address">
+                                <b-input type="url" v-model="user.default_wallet_hash" disabled/>
+                            </b-field>
+
                             <b-field>
                                 <b-button type="is-primary"
                                           native-type="submit"
