@@ -13,7 +13,7 @@
                 @* <a href="@Model.ReturnUrl"  *@
                 @*    class="button is-warning is-light">I'm not redirected..</a> *@
                 
-                <a href="@Model.ReturnUrl" 
+                <a href="@Model.PostLogoutRedirectUri" 
                    class="button is-warning is-light">Back to where I came from</a>
             </p>
         </div>
@@ -22,10 +22,8 @@
 
 @section scripts
 {
-    <script>
-    // window.setTimeout(function() {
-    //     window.location.href = @Model.ReturnUrl;
-    // }, 
-    // 4000);
-    </script>
+    @if (!string.IsNullOrEmpty(Model.PostLogoutRedirectUri))
+    {
+        <script src="~/js/signout-redirect.js"></script>
+    }
 }

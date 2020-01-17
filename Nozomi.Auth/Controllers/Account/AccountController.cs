@@ -615,7 +615,7 @@ namespace Nozomi.Auth.Controllers.Account
             var vm = new ConfirmEmailViewModel
             {
                 Succeeded = succeeded,
-                ReturnUrl = returnUrl
+                PostLogoutRedirectUri = returnUrl
             };
             
             return vm;
