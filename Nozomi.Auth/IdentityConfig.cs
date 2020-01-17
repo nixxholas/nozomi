@@ -112,6 +112,7 @@ namespace Nozomi.Auth
                             IdentityServerConstants.StandardScopes.Profile, 
                             IdentityServerConstants.StandardScopes.Email,
                             IdentityServerConstants.StandardScopes.Phone,
+                            JwtClaimTypes.PhoneNumber, // Different from ISC's Phone
                             "roles", "nozomi.web.read_only" },
                         RedirectUris = {"https://nozomi.one/oidc-callback", "https://nozomi.one/oidc-silent-renew" },
                         PostLogoutRedirectUris = {"https://nozomi.one/"},
