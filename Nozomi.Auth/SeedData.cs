@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Nozomi.Base.Auth.Models;
 using Nozomi.Base.BCL.Helpers.Enumerator;
@@ -20,7 +21,7 @@ namespace Nozomi.Auth
 {
     public static class SeedData
     {
-        public static void UseAutoDbMigration(this IApplicationBuilder app, IHostingEnvironment env)
+        public static void UseAutoDbMigration(this IApplicationBuilder app, IWebHostEnvironment env)
         {
             using (var serviceScope = app.ApplicationServices
                 .GetRequiredService<IServiceScopeFactory>()

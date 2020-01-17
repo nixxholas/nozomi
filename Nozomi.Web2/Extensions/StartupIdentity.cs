@@ -42,7 +42,6 @@ namespace Nozomi.Web2.Extensions
                         o.Scope.Add(IdentityServerConstants.StandardScopes.Phone);
                         o.Scope.Add("roles");
                         o.Scope.Add(JwtClaimTypes.Role);
-                        o.Scope.Add(JwtClaimTypes.PhoneNumber); // Different from ISC's Phone
                     })
                 .AddJwtBearer(o =>
                     {

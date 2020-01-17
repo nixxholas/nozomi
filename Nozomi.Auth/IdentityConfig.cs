@@ -9,6 +9,7 @@ using System.Security.Claims;
 using IdentityModel;
 using IdentityServer4;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Hosting;
 using Nozomi.Base.Auth.Global;
 using Nozomi.Base.Auth.Models;
 
@@ -16,9 +17,9 @@ namespace Nozomi.Auth
 {
     public class IdentityConfig
     {
-        private readonly IHostingEnvironment _hostingEnvironment;
+        private readonly IWebHostEnvironment _hostingEnvironment;
         
-        public IdentityConfig(IHostingEnvironment hostingEnvironment)
+        public IdentityConfig(IWebHostEnvironment hostingEnvironment)
         {
             _hostingEnvironment = hostingEnvironment;
         }
@@ -27,18 +28,16 @@ namespace Nozomi.Auth
         {
             // Defining a custom identity resource
             // http://docs.identityserver.io/en/latest/topics/resources.html#defining-custom-identity-resources
-            var walletAddressProfile = new IdentityResource(
-                name: "nozomi.address",
-                displayName: "Wallet address",
-                claimTypes: new[] { "walletHash" });
-                    
             return new IdentityResource[]
             {
                 new IdentityResources.OpenId(),
                 new IdentityResources.Profile(),
                 new IdentityResources.Email(),
                 new IdentityResources.Phone(),
-                walletAddressProfile,
+                new IdentityResource(
+                    name: "nozomi.address",
+                    displayName: "Wallet address",
+                    claimTypes: new[] { "walletHash" }),
                 new IdentityResource
                 {
                     Name = "roles",
@@ -71,11 +70,10 @@ namespace Nozomi.Auth
 
                     // include the following using claims in access token (in addition to subject id)
                     UserClaims = { 
-                        JwtClaimTypes.Id, 
-                        JwtClaimTypes.Name, 
-                        JwtClaimTypes.Email, 
-                        JwtClaimTypes.Role,
-                        JwtClaimTypes.PhoneNumber,
+                        IdentityServerConstants.StandardScopes.OpenId, 
+                        IdentityServerConstants.StandardScopes.Profile, 
+                        IdentityServerConstants.StandardScopes.Email,
+                        IdentityServerConstants.StandardScopes.Phone,
                         ExtendedJwtClaimTypes.DefaultWallet },
 
                     // this API defines two scopes
@@ -112,7 +110,6 @@ namespace Nozomi.Auth
                             IdentityServerConstants.StandardScopes.Profile, 
                             IdentityServerConstants.StandardScopes.Email,
                             IdentityServerConstants.StandardScopes.Phone,
-                            JwtClaimTypes.PhoneNumber, // Different from ISC's Phone
                             "roles", "nozomi.web.read_only" },
                         RedirectUris = {"https://nozomi.one/oidc-callback", "https://nozomi.one/oidc-silent-renew" },
                         PostLogoutRedirectUris = {"https://nozomi.one/"},
