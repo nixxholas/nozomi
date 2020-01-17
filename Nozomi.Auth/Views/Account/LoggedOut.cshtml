@@ -1,29 +1,34 @@
-﻿@model Nozomi.Auth.Controllers.Account.LoggedOutViewModel
+﻿@model Nozomi.Base.Auth.ViewModels.Account.LoggedOutViewModel
 
-@{ 
+@{
     // set this so the layout rendering sees an anonymous user
     ViewData["signed-out"] = true;
 }
 
-<div class="page-header logged-out">
-    <h1>
-        Logout
-        <small>You are now logged out</small>
-    </h1>
 
-    @if (Model.PostLogoutRedirectUri != null)
-    {
-        <div>
-            Click <a class="PostLogoutRedirectUri" href="@Model.PostLogoutRedirectUri">here</a> to return to the
-            <span>@Model.ClientName</span> application.
+<section class="hero is-medium">
+    <div class="hero-body">
+        <div class="container">
+            <h1 class="title">
+                Logged out!
+            </h1>
+            <h2 class="subtitle">
+                @if (Model.PostLogoutRedirectUri != null)
+                {
+                    <div>
+                        Click <a class="PostLogoutRedirectUri" href="@Model.PostLogoutRedirectUri">here</a> to return to
+                        <span>@Model.ClientName</span>.
+                    </div>
+                }
+
+                @if (Model.SignOutIframeUrl != null)
+                {
+                    <iframe width="0" height="0" class="signout" src="@Model.SignOutIframeUrl"></iframe>
+                }
+            </h2>
         </div>
-    }
-
-    @if (Model.SignOutIframeUrl != null)
-    {
-        <iframe width="0" height="0" class="signout" src="@Model.SignOutIframeUrl"></iframe>
-    }
-</div>
+    </div>
+</section>
 
 @section scripts
 {

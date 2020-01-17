@@ -66,6 +66,8 @@ async function metamaskAuth(e) {
             console.dir("Browser is does not support web3.");
         }
     } catch (error) {
-        console.dir(error);
+        if (error && error.message) {
+            console.dir(error.message);
+        }
     }
 }

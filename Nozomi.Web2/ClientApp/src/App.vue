@@ -36,7 +36,7 @@
             <router-link to="/legal/api-terms">API Terms</router-link><br>
           </div>
           <div class="column">
-            <b-tag type="is-info" class="mb-1">12 Jan 2019 Preview</b-tag><br>
+            <b-tag type="is-info" class="mb-1">16 Jan 2019 Beta</b-tag><br>
           </div>
         </div>
       </div>

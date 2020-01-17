@@ -133,6 +133,20 @@
                                 </ul>
                             </div>
                         </div>
+                        <div class="timeline-item is-info">
+                            <div class="timeline-marker is-info"></div>
+                            <div class="timeline-content">
+                                <p class="heading">16 January 2019 - <b>beta 5</b></p>
+                                <ul>
+                                    <li><b>UI</b> - We're getting started on user profile modification features!</li>
+                                    <li><b>Auth</b> - You can now register and login with your email or username!</li>
+                                    <li><b>Auth</b> - New framework compliance updates</li>
+                                    <li><b>Auth</b> - Cancelling login finally works now</li>
+                                    <li><b>Auth</b> - Email verification functionality; <i>yes click the link to verify your account</i></li>
+                                    <li><b class="has-text-danger">Known Issue</b> - Nozomi API Documentation is down for now.. We have some deprecated crap clashing with our new stuff</li>
+                                </ul>
+                            </div>
+                        </div>
                         <header class="timeline-header">
                             <span class="tag is-primary">Release Candidate</span>
                         </header>

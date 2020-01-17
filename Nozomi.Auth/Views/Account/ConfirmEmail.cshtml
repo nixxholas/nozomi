@@ -1,0 +1,29 @@
+﻿@model Nozomi.Base.Auth.ViewModels.Account.ConfirmEmailViewModel
+
+<section class="hero is-medium">
+    <div class="hero-body">
+        <div class="container">
+            <h1 class="title">
+                Your email has been verified!
+            </h1>
+            <h2 class="subtitle">
+                Redirecting you back, hang in there.
+            </h2>
+            <p>
+                @* <a href="@Model.ReturnUrl"  *@
+                @*    class="button is-warning is-light">I'm not redirected..</a> *@
+                
+                <a href="@Model.PostLogoutRedirectUri" 
+                   class="button is-warning is-light">Back to where I came from</a>
+            </p>
+        </div>
+    </div>
+</section>
+
+@section scripts
+{
+    @if (!string.IsNullOrEmpty(Model.PostLogoutRedirectUri))
+    {
+        <script src="~/js/signout-redirect.js"></script>
+    }
+}
