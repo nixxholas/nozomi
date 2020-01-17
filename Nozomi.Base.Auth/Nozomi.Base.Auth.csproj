@@ -10,6 +10,7 @@
         <PackageReference Include="IdentityServer4.AspNetIdentity" Version="3.1.0" />
         <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="3.1.0" />
         <PackageReference Include="NuGet.Build.Packaging" Version="0.2.2" />
+        <PackageReference Include="Stripe.net" Version="34.15.0" />
     </ItemGroup>
 
 </Project>

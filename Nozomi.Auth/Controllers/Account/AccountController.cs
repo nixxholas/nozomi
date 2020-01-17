@@ -4,6 +4,7 @@
 
 using System;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Bogus;
 using IdentityModel;
@@ -18,6 +19,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Nozomi.Auth.Controllers.Home;
+using Nozomi.Base.Auth.Events;
+using Nozomi.Base.Auth.Global;
 using Nozomi.Base.Auth.Models;
 using Nozomi.Base.Auth.Models.Wallet;
 using Nozomi.Base.Auth.ViewModels.Account;
@@ -160,10 +163,12 @@ namespace Nozomi.Auth.Controllers.Account
             return View(vm);
         }
 
-        [HttpPost]
-        public async Task<User> Web3Create(string signature, string address, string message)
+        private async Task<User> Web3Create(string signature, string address, string message, string clientId = null)
         {
-            if (_addressEvent.IsBinded(address)) return null;
+            if (_addressEvent.IsBinded(address))
+            {
+                return null;
+            }
 
             var fakeUser = new Faker<User>()
                 //Basic rules using built-in generators
@@ -198,8 +203,15 @@ namespace Nozomi.Auth.Controllers.Account
                     //return Redirect(model.ReturnUrl);
 
                     var createdAddress = _addressService.Create(user.Id, address, AddressType.Ethereum);
+                    if (string.IsNullOrEmpty(createdAddress))
+                        await _events.RaiseAsync(new UserCreateClaimFailureEvent(user.UserName, 
+                            "Address creation failed", "Web3Create",clientId));
 
-                    return !string.IsNullOrWhiteSpace(createdAddress) ? user : null;
+                    var createdDefaultAddressClaim = await _userManager.AddClaimAsync(user, 
+                        new Claim(ExtendedJwtClaimTypes.DefaultWallet, address));
+
+                    return !string.IsNullOrWhiteSpace(createdAddress) && createdDefaultAddressClaim.Succeeded 
+                        ? user : null;
                 }
 
                 ModelState.AddModelError(user.Id, AccountOptions.FailedToJoinRole);
@@ -211,7 +223,11 @@ namespace Nozomi.Auth.Controllers.Account
         [HttpPost]
         public async Task<IActionResult> Web3Register([FromBody] Web3InputModel model, string returnUrl = null)
         {
+            // check if we are in the context of an authorization request
+            var context = await _interaction.GetAuthorizationContextAsync(returnUrl);
+            
             ViewData["ReturnUrl"] = returnUrl;
+            
             if (ModelState.IsValid && _validatingEvent.ValidateOwner(new ValidateOwnerQuery
             {
                 ClaimerAddress = model.Address, RawMessage = model.Message, Signature = model.Signature
