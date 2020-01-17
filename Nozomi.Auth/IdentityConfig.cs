@@ -34,10 +34,16 @@ namespace Nozomi.Auth
                 new IdentityResources.Profile(),
                 new IdentityResources.Email(),
                 new IdentityResources.Phone(),
-                new IdentityResource(
-                    name: "nozomi.address",
-                    displayName: "Wallet address",
-                    claimTypes: new[] { "walletHash" }),
+                new IdentityResource
+                {
+                    Name = "crypto_default",
+                    DisplayName = "Default Wallet Address",
+                    Description = "Allow the service access to your default wallet hash.",
+                    UserClaims = new[] { ExtendedJwtClaimTypes.DefaultWallet },
+                    ShowInDiscoveryDocument = true,
+                    Required = true,
+                    Emphasize = true
+                },
                 new IdentityResource
                 {
                     Name = "roles",
@@ -74,7 +80,7 @@ namespace Nozomi.Auth
                         IdentityServerConstants.StandardScopes.Profile, 
                         IdentityServerConstants.StandardScopes.Email,
                         IdentityServerConstants.StandardScopes.Phone,
-                        ExtendedJwtClaimTypes.DefaultWallet },
+                        NozomiAuthConstants.StandardScopes.DefaultCryptoAddress },
 
                     // this API defines two scopes
                     Scopes =
@@ -110,7 +116,8 @@ namespace Nozomi.Auth
                             IdentityServerConstants.StandardScopes.Profile, 
                             IdentityServerConstants.StandardScopes.Email,
                             IdentityServerConstants.StandardScopes.Phone,
-                            "roles", "nozomi.web.read_only" },
+                            "roles", "nozomi.web.read_only",
+                            NozomiAuthConstants.StandardScopes.DefaultCryptoAddress },
                         RedirectUris = {"https://nozomi.one/oidc-callback", "https://nozomi.one/oidc-silent-renew" },
                         PostLogoutRedirectUris = {"https://nozomi.one/"},
                         AllowedCorsOrigins = {"https://nozomi.one"},
@@ -132,7 +139,8 @@ namespace Nozomi.Auth
                         IdentityServerConstants.StandardScopes.Profile, 
                         IdentityServerConstants.StandardScopes.Email,
                         IdentityServerConstants.StandardScopes.Phone,
-                        "roles", "nozomi.web.read_only" },
+                        "roles", "nozomi.web.read_only",
+                        NozomiAuthConstants.StandardScopes.DefaultCryptoAddress },
                     RedirectUris = {"https://localhost:5001/oidc-callback", "https://localhost:5001/oidc-silent-renew"},
                     PostLogoutRedirectUris = {"https://localhost:5001/"},
                     AllowedCorsOrigins = {"https://localhost:5001"},

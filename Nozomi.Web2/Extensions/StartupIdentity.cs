@@ -43,7 +43,7 @@ namespace Nozomi.Web2.Extensions
                         o.Scope.Add(IdentityServerConstants.StandardScopes.Phone);
                         o.Scope.Add("roles");
                         o.Scope.Add(JwtClaimTypes.Role);
-                        o.Scope.Add(ExtendedJwtClaimTypes.DefaultWallet);
+                        o.Scope.Add(NozomiAuthConstants.StandardScopes.DefaultCryptoAddress);
                     })
                 .AddJwtBearer(o =>
                     {
