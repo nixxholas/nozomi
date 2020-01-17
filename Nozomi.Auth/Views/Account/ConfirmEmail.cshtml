@@ -9,6 +9,13 @@
             <h2 class="subtitle">
                 Redirecting you back, hang in there.
             </h2>
+            <p>
+                @* <a href="@Model.ReturnUrl"  *@
+                @*    class="button is-warning is-light">I'm not redirected..</a> *@
+                
+                <a href="@Model.ReturnUrl" 
+                   class="button is-warning is-light">Back to where I came from</a>
+            </p>
         </div>
     </div>
 </section>
@@ -16,8 +23,9 @@
 @section scripts
 {
     <script>
-    document.addEventListener("DOMContentLoaded", function(event) { 
-        window.location.replace(@Model.ReturnUrl);
-    });
+    // window.setTimeout(function() {
+    //     window.location.href = @Model.ReturnUrl;
+    // }, 
+    // 4000);
     </script>
 }
