@@ -8,18 +8,34 @@
                 <b-tabs type="is-toggle" expanded>
                     <b-tab-item label="Profile" icon="user">
                         <form method="put">
-                            <b-field label="Name">
-                                <b-input v-model="user.name" disabled/>
+                            <b-field grouped>
+                                <b-field label="First name" expanded>
+                                    <b-input v-model="user.given_name" disabled/>
+                                </b-field>
+
+                                <b-field label="Last name" expanded>
+                                    <b-input v-model="user.family_name" disabled/>
+                                </b-field>
+                            </b-field>
+
+                            <b-field label="Username">
+                                <b-input v-model="user.preferred_username" disabled/>
                             </b-field>
 
                             <b-field
-                                    :type="(!user.emailVerified && user.email) ? 'is-danger' : ''"
-                                    :message="(!user.emailVerified && user.email) ? 'This email is pending verification' : ''"
+                                    :type="{ 'is-danger': !user.email_verified && user.email }"
+                                    :message="[
+                                        { 'This email is pending verification': (!user.email_verified && user.email) }
+                                        ]"
                                     label="Email">
-                                <b-input 
+                                <b-input
                                         v-model="user.email" disabled/>
                             </b-field>
                             
+                            <b-field label="Website">
+                                <b-input type="url" v-model="user.website" disabled/>
+                            </b-field>
+
                             <b-field>
                                 <b-button type="is-primary"
                                           native-type="submit"
@@ -30,9 +46,9 @@
                         </form>
                     </b-tab-item>
                     <b-tab-item label="Billing" icon="money-bill">
-                        
+
                     </b-tab-item>
-<!--                    <b-tab-item label="Videos" icon="video"></b-tab-item>-->
+                    <!--                    <b-tab-item label="Videos" icon="video"></b-tab-item>-->
                 </b-tabs>
             </div>
         </div>
@@ -41,7 +57,7 @@
 
 <script>
     import {mapActions, mapGetters} from 'vuex';
-    
+
     export default {
         name: 'settings-index',
         computed: {
@@ -58,9 +74,9 @@
                 user: {}
             }
         },
-        mounted: function() {
+        mounted: function () {
             this.user = this.oidcUser;
-            
+
             console.dir(this.user);
         }
     }
