@@ -36,6 +36,7 @@ namespace Nozomi.Auth
                 new IdentityResources.OpenId(),
                 new IdentityResources.Profile(),
                 new IdentityResources.Email(),
+                new IdentityResources.Phone(),
                 walletAddressProfile,
                 new IdentityResource
                 {
@@ -46,7 +47,7 @@ namespace Nozomi.Auth
                     ShowInDiscoveryDocument = true,
                     Required = true,
                     Emphasize = true
-                }
+                },
                 // new IdentityResource("roles", new[] { "role" })
             };
         }
