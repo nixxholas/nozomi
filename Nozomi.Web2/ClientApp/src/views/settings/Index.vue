@@ -9,16 +9,30 @@
                     <b-tab-item label="Profile" icon="user">
                         <form method="put">
                             <b-field label="Name">
-                                <b-input v-model="user.name" />
+                                <b-input v-model="user.name" disabled/>
+                            </b-field>
+
+                            <b-field
+                                    :type="(!user.emailVerified && user.email) ? 'is-danger' : ''"
+                                    :message="(!user.emailVerified && user.email) ? 'This email is pending verification' : ''"
+                                    label="Email">
+                                <b-input 
+                                        v-model="user.email" disabled/>
+                            </b-field>
+                            
+                            <b-field>
+                                <b-button type="is-primary"
+                                          native-type="submit"
+                                          value="Update" disabled>
+                                    Update
+                                </b-button>
                             </b-field>
                         </form>
                     </b-tab-item>
-<!--                    <b-tab-item label="Music" icon="library-music"></b-tab-item>-->
+                    <b-tab-item label="Billing" icon="money-bill">
+                        
+                    </b-tab-item>
 <!--                    <b-tab-item label="Videos" icon="video"></b-tab-item>-->
-                    
-                    <b-button type="is-primary" 
-                            native-type="submit" 
-                              value="Update" />
                 </b-tabs>
             </div>
         </div>
@@ -47,7 +61,7 @@
         mounted: function() {
             this.user = this.oidcUser;
             
-            // console.dir(this.user);
+            console.dir(this.user);
         }
     }
 </script>

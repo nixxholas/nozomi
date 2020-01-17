@@ -31,13 +31,15 @@ Vue.component('vue-fontawesome', FontAwesomeIcon);
 import { faAngleLeft, faAngleRight, faArrowUp, faAtlas, faCaretDown, faCheck,
   faCheckCircle, faChevronDown, faCog,
   faCoins, faColumns, faDumpster, faExclamationCircle, faExclamationTriangle,
-  faFrown, faHome, faInfo, faLandmark, faMoneyBill, faMoneyBillWave, faSadCry,
+  faFrown, faHome, faInfo, faInfoCircle, faLandmark, faMoneyBill, 
+  faMoneyBillWave, faSadCry,
   faSearch, faSignOutAlt,faTicketAlt, faTimes, faTrash, faUniversity, faUser } 
   from '@fortawesome/free-solid-svg-icons';
 library.add(faAngleLeft, faAngleRight, faArrowUp, faAtlas, faCaretDown, faCheck, 
     faCheckCircle, faChevronDown, faCog,
     faCoins, faColumns, faDumpster, faExclamationCircle, faExclamationTriangle, 
-    faFrown, faHome, faInfo, faLandmark, faMoneyBill, faMoneyBillWave, faSadCry, 
+    faFrown, faHome, faInfo, faInfoCircle, faLandmark, faMoneyBill, 
+    faMoneyBillWave, faSadCry, 
     faSearch, faSignOutAlt, faTicketAlt, faTimes, faTrash, faUniversity, faUser);
 
 // Font awesome brand icon configurations

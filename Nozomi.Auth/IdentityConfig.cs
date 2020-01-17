@@ -7,6 +7,7 @@ using IdentityServer4.Models;
 using System.Collections.Generic;
 using System.Security.Claims;
 using IdentityModel;
+using IdentityServer4;
 using Microsoft.AspNetCore.Hosting;
 using Nozomi.Base.Auth.Global;
 using Nozomi.Base.Auth.Models;
@@ -69,7 +70,12 @@ namespace Nozomi.Auth
                     },
 
                     // include the following using claims in access token (in addition to subject id)
-                    UserClaims = { JwtClaimTypes.Id, JwtClaimTypes.Name, JwtClaimTypes.Email, JwtClaimTypes.Role,
+                    UserClaims = { 
+                        JwtClaimTypes.Id, 
+                        JwtClaimTypes.Name, 
+                        JwtClaimTypes.Email, 
+                        JwtClaimTypes.Role,
+                        JwtClaimTypes.PhoneNumber,
                         ExtendedJwtClaimTypes.DefaultWallet },
 
                     // this API defines two scopes
@@ -120,7 +126,11 @@ namespace Nozomi.Auth
                     AllowAccessTokensViaBrowser = true,
                     AllowedGrantTypes = GrantTypes.Implicit,
                     
-                    AllowedScopes = { "openid", "profile", "email", "roles", "nozomi.web.read_only" },
+                    AllowedScopes = { IdentityServerConstants.StandardScopes.OpenId, 
+                        IdentityServerConstants.StandardScopes.Profile, 
+                        IdentityServerConstants.StandardScopes.Email,
+                        IdentityServerConstants.StandardScopes.Phone,
+                        "roles", "nozomi.web.read_only" },
                     RedirectUris = {"https://localhost:5001/oidc-callback", "https://localhost:5001/oidc-silent-renew"},
                     PostLogoutRedirectUris = {"https://localhost:5001/"},
                     AllowedCorsOrigins = {"https://localhost:5001"},
