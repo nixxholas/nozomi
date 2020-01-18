@@ -20,6 +20,11 @@ import store from '@/store/index';
 import './registerServiceWorker';
 import dateFilter from '@/filters/date.filter';
 
+// Simple Analytics
+// @ts-ignore
+import SimpleAnalytics from 'simple-analytics-vue';
+Vue.use(SimpleAnalytics, { skip: process.env.NODE_ENV !== "production" });
+
 // FontAwesome!!!
 import { library } from '@fortawesome/fontawesome-svg-core';
 // Vue Injection
