@@ -45,7 +45,6 @@ namespace Nozomi.Web2.Extensions
                         o.Scope.Add(IdentityServerConstants.StandardScopes.Profile);
                         o.Scope.Add(IdentityServerConstants.StandardScopes.Email);
                         o.Scope.Add(IdentityServerConstants.StandardScopes.Phone);
-                        o.Scope.Add("roles");
                         o.Scope.Add("nozomi.web");
                         o.Scope.Add("nozomi.web.read_only");
                         o.Scope.Add(JwtClaimTypes.Role);

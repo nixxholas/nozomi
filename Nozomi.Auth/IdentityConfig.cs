@@ -54,7 +54,7 @@ namespace Nozomi.Auth
                 },
                 new IdentityResource
                 {
-                    Name = "roles",
+                    Name = "role",
                     DisplayName = "Roles",
                     Description = "Allow the service access to your user roles.",
                     UserClaims = new[] { JwtClaimTypes.Role, ClaimTypes.Role, "roles" },
@@ -88,7 +88,7 @@ namespace Nozomi.Auth
                         IdentityServerConstants.StandardScopes.Profile, 
                         IdentityServerConstants.StandardScopes.Email,
                         IdentityServerConstants.StandardScopes.Phone,
-                        JwtClaimTypes.Role, "roles",
+                        JwtClaimTypes.Role,
                         NozomiAuthConstants.StandardScopes.DefaultCryptoAddress },
 
                     // this API defines two scopes
@@ -130,8 +130,7 @@ namespace Nozomi.Auth
                             IdentityServerConstants.StandardScopes.Profile, 
                             IdentityServerConstants.StandardScopes.Email,
                             IdentityServerConstants.StandardScopes.Phone,
-                            JwtClaimTypes.Role,
-                            "roles", "nozomi.web", "nozomi.web.read_only",
+                            JwtClaimTypes.Role, "nozomi.web", "nozomi.web.read_only",
                             NozomiAuthConstants.StandardScopes.DefaultCryptoAddress },
                         RedirectUris = {"https://nozomi.one/oidc-callback", "https://nozomi.one/oidc-silent-renew" },
                         PostLogoutRedirectUris = {"https://nozomi.one/"},
@@ -154,8 +153,7 @@ namespace Nozomi.Auth
                         IdentityServerConstants.StandardScopes.Profile, 
                         IdentityServerConstants.StandardScopes.Email,
                         IdentityServerConstants.StandardScopes.Phone,
-                        JwtClaimTypes.Role,
-                        "roles", "nozomi.web", "nozomi.web.read_only",
+                        JwtClaimTypes.Role, "nozomi.web", "nozomi.web.read_only",
                         NozomiAuthConstants.StandardScopes.DefaultCryptoAddress },
                     RedirectUris = {"https://localhost:5001/oidc-callback", "https://localhost:5001/oidc-silent-renew"},
                     PostLogoutRedirectUris = {"https://localhost:5001/"},
