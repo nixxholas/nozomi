@@ -87,6 +87,11 @@ namespace Nozomi.Auth
                     {
                         new Scope()
                         {
+                            Name = "nozomi.web",
+                            DisplayName = "Standard access to Nozomi API",
+                        },
+                        new Scope()
+                        {
                             Name = "nozomi.web.full_access",
                             DisplayName = "Full access to Nozomi API",
                         },
@@ -108,7 +113,7 @@ namespace Nozomi.Auth
                     new Client {
                         ClientId = "nozomi.spa",
                         ClientName = "Nozomi",
-                    
+                        
                         AllowAccessTokensViaBrowser = true,
                         AllowedGrantTypes = GrantTypes.Implicit,
                     
@@ -116,7 +121,7 @@ namespace Nozomi.Auth
                             IdentityServerConstants.StandardScopes.Profile, 
                             IdentityServerConstants.StandardScopes.Email,
                             IdentityServerConstants.StandardScopes.Phone,
-                            "roles", "nozomi.web.read_only",
+                            "roles", "nozomi.web", "nozomi.web.read_only",
                             NozomiAuthConstants.StandardScopes.DefaultCryptoAddress },
                         RedirectUris = {"https://nozomi.one/oidc-callback", "https://nozomi.one/oidc-silent-renew" },
                         PostLogoutRedirectUris = {"https://nozomi.one/"},
@@ -139,7 +144,7 @@ namespace Nozomi.Auth
                         IdentityServerConstants.StandardScopes.Profile, 
                         IdentityServerConstants.StandardScopes.Email,
                         IdentityServerConstants.StandardScopes.Phone,
-                        "roles", "nozomi.web.read_only",
+                        "roles", "nozomi.web", "nozomi.web.read_only",
                         NozomiAuthConstants.StandardScopes.DefaultCryptoAddress },
                     RedirectUris = {"https://localhost:5001/oidc-callback", "https://localhost:5001/oidc-silent-renew"},
                     PostLogoutRedirectUris = {"https://localhost:5001/"},
