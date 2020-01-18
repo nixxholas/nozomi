@@ -23,7 +23,9 @@ import dateFilter from '@/filters/date.filter';
 // Simple Analytics
 // @ts-ignore
 import SimpleAnalytics from 'simple-analytics-vue';
-Vue.use(SimpleAnalytics, { skip: process.env.NODE_ENV !== "production" });
+if (process.env.NODE_ENV === "production") {
+  Vue.use(SimpleAnalytics);
+}
 
 // FontAwesome!!!
 import { library } from '@fortawesome/fontawesome-svg-core';
@@ -36,14 +38,14 @@ Vue.component('vue-fontawesome', FontAwesomeIcon);
 import { faAngleLeft, faAngleRight, faArrowUp, faAtlas, faCaretDown, faCheck,
   faCheckCircle, faChevronDown, faCog,
   faCoins, faColumns, faDumpster, faExclamationCircle, faExclamationTriangle,
-  faFrown, faHome, faInfo, faInfoCircle, faLandmark, faMoneyBill, 
+  faEye, faFrown, faHome, faInfo, faInfoCircle, faLandmark, faMoneyBill, 
   faMoneyBillWave, faSadCry,
   faSearch, faSignOutAlt,faTicketAlt, faTimes, faTrash, faUniversity, faUser } 
   from '@fortawesome/free-solid-svg-icons';
 library.add(faAngleLeft, faAngleRight, faArrowUp, faAtlas, faCaretDown, faCheck, 
     faCheckCircle, faChevronDown, faCog,
-    faCoins, faColumns, faDumpster, faExclamationCircle, faExclamationTriangle, 
-    faFrown, faHome, faInfo, faInfoCircle, faLandmark, faMoneyBill, 
+    faCoins, faColumns, faDumpster, faExclamationCircle, faExclamationTriangle,
+    faEye, faFrown, faHome, faInfo, faInfoCircle, faLandmark, faMoneyBill, 
     faMoneyBillWave, faSadCry, 
     faSearch, faSignOutAlt, faTicketAlt, faTimes, faTrash, faUniversity, faUser);
 
