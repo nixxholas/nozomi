@@ -93,6 +93,7 @@
     import RequestService from "@/services/RequestService";
     import AnalysedComponentsTable from "@/components/tables/analysed-components-table";
     import RequestComponentsTable from "@/components/tables/request-components-table";
+    import {mapActions} from "vuex";
 
     export default {
         name: "requests-table",
@@ -144,6 +145,7 @@
             }
         },
         methods: {
+            ...mapActions('oidcStore', ['authenticateOidc']),
             updateRequests: function () {
                 this.isLoading = true;
                 let self = this;
@@ -155,7 +157,9 @@
                     })
                     .catch(function (error) {
                         // handle error
-                        self.methods.authenticateOidc(self.currentRoute);
+                        if (error.status === 401) {
+                            self.authenticateOidc(self.currentRoute);
+                        }
                     })
                     .finally(function () {
                         // always executed
@@ -202,7 +206,9 @@
                 })
                 .catch(function (error) {
                     // handle error
-                    self.methods.authenticateOidc(self.currentRoute);
+                    if (error.status === 401) {
+                        self.authenticateOidc(self.currentRoute);
+                    }
                 })
                 .finally(function () {
                     // always executed
@@ -220,7 +226,9 @@
                 })
                 .catch(function (error) {
                     // handle error
-                    self.methods.authenticateOidc(self.currentRoute);
+                    if (error.status === 401) {
+                        self.authenticateOidc(self.currentRoute);
+                    }
                 })
                 .finally(function () {
                     // always executed
