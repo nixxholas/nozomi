@@ -18,8 +18,8 @@ namespace Nozomi.Web2.Extensions
         {
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
             var authority = Startup.Environment.IsProduction() ? "https://auth.nozomi.one" : "https://localhost:6001/";
-            IdentityModelEventSource.ShowPII =
-                !Startup.Environment.IsProduction(); //To show detail of error and see the problem
+            // IdentityModelEventSource.ShowPII =
+            //     !Startup.Environment.IsProduction(); //To show detail of error and see the problem
 
             // https://stackoverflow.com/questions/46091301/roles-not-being-populated-by-addjwtbearer-using-identityserver4-and-dotnetcore-2#46094800
             services.Configure<IdentityOptions>(options =>
@@ -60,12 +60,12 @@ namespace Nozomi.Web2.Extensions
                     o.TokenValidationParameters = new TokenValidationParameters
                     {
                         RoleClaimType = JwtClaimTypes.Role,
-                        ValidAudiences = new List<string>
-                        {
-                            "nozomi.spa",
-                            "nozomi.web"
-                        },
-                        ValidateAudience = true
+                        // ValidAudiences = new List<string>
+                        // {
+                        //     "nozomi.spa",
+                        //     "nozomi.web"
+                        // },
+                        // ValidateAudience = true
                     };
                     o.SaveToken = true;
                 });

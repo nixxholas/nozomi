@@ -4,7 +4,7 @@ const identityAuthority = process.env.NODE_ENV === "production" ? "https://auth.
 
 export const oidcSettings = {
     authority: identityAuthority,
-    client_id: 'nozomi.spa',
+    client_id: 'nozomi.web',
     redirect_uri: process.env.NODE_ENV === "production" ? "https://nozomi.one/oidc-callback"
         : window.location.origin + "/oidc-callback",
     response_type: 'id_token token',

@@ -24,10 +24,18 @@ namespace Nozomi.Auth
             _hostingEnvironment = hostingEnvironment;
         }
         
+        /// <summary>
+        /// Identity resources are data like user ID, name, or email address of a user.
+        /// An identity resource has a unique name, and you can assign arbitrary claim types to it.
+        /// These claims will then be included in the identity token for the user.
+        /// The client will use the scope parameter to request access to an identity resource.
+        /// </summary>
+        /// <returns></returns>
         public IEnumerable<IdentityResource> GetIdentityResources()
         {
             // Defining a custom identity resource
             // http://docs.identityserver.io/en/latest/topics/resources.html#defining-custom-identity-resources
+            
             return new IdentityResource[]
             {
                 new IdentityResources.OpenId(),
@@ -49,7 +57,7 @@ namespace Nozomi.Auth
                     Name = "roles",
                     DisplayName = "Roles",
                     Description = "Allow the service access to your user roles.",
-                    UserClaims = new[] { JwtClaimTypes.Role, ClaimTypes.Role },
+                    UserClaims = new[] { JwtClaimTypes.Role, ClaimTypes.Role, "roles" },
                     ShowInDiscoveryDocument = true,
                     Required = true,
                     Emphasize = true
@@ -80,6 +88,7 @@ namespace Nozomi.Auth
                         IdentityServerConstants.StandardScopes.Profile, 
                         IdentityServerConstants.StandardScopes.Email,
                         IdentityServerConstants.StandardScopes.Phone,
+                        JwtClaimTypes.Role, "roles",
                         NozomiAuthConstants.StandardScopes.DefaultCryptoAddress },
 
                     // this API defines two scopes
@@ -111,7 +120,7 @@ namespace Nozomi.Auth
                 return new[]
                 {
                     new Client {
-                        ClientId = "nozomi.spa",
+                        ClientId = "nozomi.web",
                         ClientName = "Nozomi",
                         
                         AllowAccessTokensViaBrowser = true,
@@ -121,6 +130,7 @@ namespace Nozomi.Auth
                             IdentityServerConstants.StandardScopes.Profile, 
                             IdentityServerConstants.StandardScopes.Email,
                             IdentityServerConstants.StandardScopes.Phone,
+                            JwtClaimTypes.Role,
                             "roles", "nozomi.web", "nozomi.web.read_only",
                             NozomiAuthConstants.StandardScopes.DefaultCryptoAddress },
                         RedirectUris = {"https://nozomi.one/oidc-callback", "https://nozomi.one/oidc-silent-renew" },
@@ -133,7 +143,7 @@ namespace Nozomi.Auth
             return new[]
             {
                 new Client {
-                    ClientId = "nozomi.spa",
+                    ClientId = "nozomi.web",
                     ClientName = "Nozomi Vue SPA",
                     AlwaysIncludeUserClaimsInIdToken = true, // Always include user claims in the tokens.
 
@@ -144,6 +154,7 @@ namespace Nozomi.Auth
                         IdentityServerConstants.StandardScopes.Profile, 
                         IdentityServerConstants.StandardScopes.Email,
                         IdentityServerConstants.StandardScopes.Phone,
+                        JwtClaimTypes.Role,
                         "roles", "nozomi.web", "nozomi.web.read_only",
                         NozomiAuthConstants.StandardScopes.DefaultCryptoAddress },
                     RedirectUris = {"https://localhost:5001/oidc-callback", "https://localhost:5001/oidc-silent-renew"},
