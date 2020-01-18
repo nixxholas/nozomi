@@ -37,6 +37,8 @@ namespace Nozomi.Auth
         public IConfiguration Configuration { get; }
         public IWebHostEnvironment HostingEnvironment { get; }
 
+        private readonly string NozomiSpecificOrigins = "_nozomiSpecificOrigins";
+
         public Startup(IConfiguration configuration, IWebHostEnvironment hostingEnvironment)
         {
             Configuration = configuration;
@@ -109,6 +111,23 @@ namespace Nozomi.Auth
                 }, ServiceLifetime.Transient);
             }
 
+            // Cross Origin Requests for Nozomi Auth
+            services.AddCors(options =>
+            {
+                options.AddPolicy(NozomiSpecificOrigins,
+                    policyBuilder =>
+                    {
+                        if (HostingEnvironment.IsProduction())
+                            policyBuilder.WithOrigins("https://nozomi.one", "https://www.nozomi.one")
+                                .AllowAnyHeader()
+                                .AllowAnyMethod();
+                        else
+                            policyBuilder.AllowAnyOrigin()
+                                .AllowAnyHeader()
+                                .AllowAnyMethod();
+                    });
+            });
+            
             services.AddControllersWithViews()
                 .SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
 
@@ -238,6 +257,9 @@ namespace Nozomi.Auth
             forwardOptions.KnownNetworks.Clear();
             forwardOptions.KnownProxies.Clear();
 
+            // Cross origin requests DI
+            app.UseCors(NozomiSpecificOrigins);
+            
             // ref: https://github.com/aspnet/Docs/issues/2384
             app.UseForwardedHeaders(forwardOptions);            
             app.UseHttpsRedirection();
