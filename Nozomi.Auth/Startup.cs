@@ -8,14 +8,19 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.IdentityModel.Tokens.Jwt;
 using System.IO;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
+using IdentityModel;
+using IdentityServer4;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
+using Nozomi.Base.Auth.Global;
 using Nozomi.Base.Auth.Models;
 using Nozomi.Infra.Auth.Services.Address;
 using Nozomi.Infra.Blockchain.Auth.Events;
@@ -211,7 +216,41 @@ namespace Nozomi.Auth
                 builder.AddSigningCredential(certificate);
             }
 
-            services.AddAuthentication();
+            var authority = HostingEnvironment.IsProduction()
+                ? "https://auth.nozomi.one"
+                : "https://localhost:6001/";
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddOpenIdConnect(
+                    o =>
+                    {
+                        o.Authority = authority;
+                        o.ClientId = "nozomi.web";
+                        // o.ClientSecret = "secret";
+                        o.RequireHttpsMetadata = false;
+                        o.GetClaimsFromUserInfoEndpoint = true;
+                        // https://stackoverflow.com/questions/46579376/identityserver4-how-to-access-user-email
+                        o.TokenValidationParameters = new TokenValidationParameters
+                        {
+                            RoleClaimType = JwtClaimTypes.Role
+                        };
+
+                        // https://stackoverflow.com/questions/46579376/identityserver4-how-to-access-user-email
+                        o.Scope.Add(IdentityServerConstants.StandardScopes.OpenId);
+                        o.Scope.Add(IdentityServerConstants.StandardScopes.Profile);
+                        o.Scope.Add(IdentityServerConstants.StandardScopes.Email);
+                        o.Scope.Add(IdentityServerConstants.StandardScopes.Phone);
+                        o.Scope.Add("nozomi.web");
+                        o.Scope.Add("nozomi.web.read_only");
+                        o.Scope.Add(JwtClaimTypes.Role);
+                        o.Scope.Add(NozomiAuthConstants.StandardScopes.DefaultCryptoAddress);
+                    })
+                .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
+                {
+                    options.Authority = authority;
+                    options.RequireHttpsMetadata = false;
+
+                    options.Audience = "nozomi.web";
+                });
 
             // Database
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
@@ -266,7 +305,8 @@ namespace Nozomi.Auth
             
             app.UseCookiePolicy();
             app.UseIdentityServer();
-            
+
+            app.UseAuthentication();
             app.UseAuthorization();
             
             // "default", "{controller=Home}/{action=Index}/{id?}"
