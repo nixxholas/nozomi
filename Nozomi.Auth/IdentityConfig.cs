@@ -91,9 +91,14 @@ namespace Nozomi.Auth
                         JwtClaimTypes.Role,
                         NozomiAuthConstants.StandardScopes.DefaultCryptoAddress },
 
-                    // this API defines two scopes
+                    // this API has limit to its scopes
                     Scopes =
                     {
+                        new Scope()
+                        {
+                            Name = "nozomi.auth",
+                            DisplayName = "Standard access to Nozomi Auth API",
+                        },
                         new Scope()
                         {
                             Name = "nozomi.web",
@@ -108,6 +113,42 @@ namespace Nozomi.Auth
                         {
                             Name = "nozomi.web.read_only",
                             DisplayName = "Read only access to Nozomi API"
+                        }
+                    }
+                },
+                // Nozomi.Auth
+                new ApiResource()
+                {
+                    Name = "nozomi.auth", 
+                    DisplayName = "Nozomi Auth API",
+                    
+                    // secret for using introspection endpoint
+                    ApiSecrets =
+                    {
+                        new Secret("secret".Sha256())
+                    },
+
+                    // include the following using claims in access token (in addition to subject id)
+                    UserClaims = { 
+                        IdentityServerConstants.StandardScopes.OpenId, 
+                        IdentityServerConstants.StandardScopes.Profile, 
+                        IdentityServerConstants.StandardScopes.Email,
+                        IdentityServerConstants.StandardScopes.Phone,
+                        JwtClaimTypes.Role,
+                        NozomiAuthConstants.StandardScopes.DefaultCryptoAddress },
+
+                    // this API has limit to its scopes
+                    Scopes =
+                    {
+                        new Scope()
+                        {
+                            Name = "nozomi.auth",
+                            DisplayName = "Standard access to Nozomi Auth API",
+                        },
+                        new Scope()
+                        {
+                            Name = "nozomi.auth.full_access",
+                            DisplayName = "Full access to Nozomi Auth API",
                         }
                     }
                 }
@@ -130,7 +171,7 @@ namespace Nozomi.Auth
                             IdentityServerConstants.StandardScopes.Profile, 
                             IdentityServerConstants.StandardScopes.Email,
                             IdentityServerConstants.StandardScopes.Phone,
-                            JwtClaimTypes.Role, "nozomi.web", "nozomi.web.read_only",
+                            JwtClaimTypes.Role, "nozomi.auth", "nozomi.web", "nozomi.web.read_only",
                             NozomiAuthConstants.StandardScopes.DefaultCryptoAddress },
                         RedirectUris = {"https://nozomi.one/oidc-callback", "https://nozomi.one/oidc-silent-renew" },
                         PostLogoutRedirectUris = {"https://nozomi.one/"},
@@ -153,7 +194,7 @@ namespace Nozomi.Auth
                         IdentityServerConstants.StandardScopes.Profile, 
                         IdentityServerConstants.StandardScopes.Email,
                         IdentityServerConstants.StandardScopes.Phone,
-                        JwtClaimTypes.Role, "nozomi.web", "nozomi.web.read_only",
+                        JwtClaimTypes.Role, "nozomi.auth", "nozomi.web", "nozomi.web.read_only",
                         NozomiAuthConstants.StandardScopes.DefaultCryptoAddress },
                     RedirectUris = {"https://localhost:5001/oidc-callback", "https://localhost:5001/oidc-silent-renew"},
                     PostLogoutRedirectUris = {"https://localhost:5001/"},
