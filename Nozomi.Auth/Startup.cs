@@ -220,35 +220,11 @@ namespace Nozomi.Auth
                 ? "https://auth.nozomi.one"
                 : "https://localhost:6001/";
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddOpenIdConnect(
-                    o =>
-                    {
-                        o.Authority = authority;
-                        o.ClientId = "nozomi.web";
-                        // o.ClientSecret = "secret";
-                        o.RequireHttpsMetadata = false;
-                        o.GetClaimsFromUserInfoEndpoint = true;
-                        // https://stackoverflow.com/questions/46579376/identityserver4-how-to-access-user-email
-                        o.TokenValidationParameters = new TokenValidationParameters
-                        {
-                            RoleClaimType = JwtClaimTypes.Role
-                        };
-
-                        // https://stackoverflow.com/questions/46579376/identityserver4-how-to-access-user-email
-                        o.Scope.Add(IdentityServerConstants.StandardScopes.OpenId);
-                        o.Scope.Add(IdentityServerConstants.StandardScopes.Profile);
-                        o.Scope.Add(IdentityServerConstants.StandardScopes.Email);
-                        o.Scope.Add(IdentityServerConstants.StandardScopes.Phone);
-                        o.Scope.Add("nozomi.web");
-                        o.Scope.Add("nozomi.web.read_only");
-                        o.Scope.Add(JwtClaimTypes.Role);
-                        o.Scope.Add(NozomiAuthConstants.StandardScopes.DefaultCryptoAddress);
-                    })
                 .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
                 {
                     options.Authority = authority;
                     options.RequireHttpsMetadata = false;
-
+                    
                     options.Audience = "nozomi.web";
                 });
 
