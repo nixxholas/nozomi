@@ -96,11 +96,6 @@ namespace Nozomi.Auth
                     {
                         new Scope()
                         {
-                            Name = "nozomi.auth",
-                            DisplayName = "Standard access to Nozomi Auth API",
-                        },
-                        new Scope()
-                        {
                             Name = "nozomi.web",
                             DisplayName = "Standard access to Nozomi API",
                         },
