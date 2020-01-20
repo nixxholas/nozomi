@@ -8,6 +8,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Bogus;
 using IdentityModel;
+using IdentityModel.Client;
 using IdentityServer4.Events;
 using IdentityServer4.Extensions;
 using IdentityServer4.Models;
@@ -26,6 +27,7 @@ using Nozomi.Base.Auth.Models.Wallet;
 using Nozomi.Base.Auth.ViewModels.Account;
 using Nozomi.Base.Blockchain.Auth.Query.Validating;
 using Nozomi.Infra.Auth.Services.Address;
+using Nozomi.Infra.Auth.Services.User;
 using Nozomi.Infra.Blockchain.Auth.Events.Interfaces;
 using Nozomi.Preprocessing.Events.Interfaces;
 
@@ -46,6 +48,7 @@ namespace Nozomi.Auth.Controllers.Account
         private readonly IValidatingEvent _validatingEvent;
         private readonly IEventService _events;
         private readonly IAddressService _addressService;
+        private readonly IUserService _userService;
 
         public AccountController(
             ILogger<AccountController> logger,
@@ -58,7 +61,9 @@ namespace Nozomi.Auth.Controllers.Account
             IAuthenticationSchemeProvider schemeProvider,
             IAddressEvent addressEvent,
             IValidatingEvent validatingEvent,
-            IEventService events, IAddressService addressService) : base(logger)
+            IEventService events, 
+            IAddressService addressService,
+            IUserService userService) : base(logger)
         {
             _emailSender = emailSender;
             _roleManager = roleManager;
@@ -71,6 +76,7 @@ namespace Nozomi.Auth.Controllers.Account
             _validatingEvent = validatingEvent;
             _events = events;
             _addressService = addressService;
+            _userService = userService;
         }
         
         [HttpGet]
@@ -622,6 +628,20 @@ namespace Nozomi.Auth.Controllers.Account
             return View();
         }
 
+        [Authorize(AuthenticationSchemes = "Bearer")]
+        [HttpPut]
+        public IActionResult Update([FromBody]UpdateUserInputModel model)
+        {
+            if (model.IsValid())
+            {
+                // Modify the user's profile
+                _userService.Update(model, User.Identity.GetSubjectId());
+
+                return Ok();
+            }
+
+            return BadRequest("Please re-authenticate again");
+        }
 
         /*****************************************/
         /* helper APIs for the AccountController */

@@ -23,6 +23,7 @@ using Microsoft.IdentityModel.Tokens;
 using Nozomi.Base.Auth.Global;
 using Nozomi.Base.Auth.Models;
 using Nozomi.Infra.Auth.Services.Address;
+using Nozomi.Infra.Auth.Services.User;
 using Nozomi.Infra.Blockchain.Auth.Events;
 using Nozomi.Infra.Blockchain.Auth.Events.Interfaces;
 using Nozomi.Preprocessing.Events;
@@ -241,6 +242,7 @@ namespace Nozomi.Auth
 
             services.AddTransient<IEmailSender, EmailSender>();
             services.AddTransient<IAddressService, AddressService>();
+            services.AddTransient<IUserService, UserService>();
         }
 
         public void Configure(IApplicationBuilder app)
