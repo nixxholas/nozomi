@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Policy;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -10,6 +11,7 @@ using Microsoft.Extensions.Logging;
 using Nozomi.Base.Auth.Models;
 using Nozomi.Base.Auth.ViewModels.Account;
 using Nozomi.Preprocessing.Abstracts;
+using Nozomi.Preprocessing.Events.Interfaces;
 using Nozomi.Repo.Auth.Data;
 using Nozomi.Repo.BCL.Repository;
 
@@ -17,18 +19,21 @@ namespace Nozomi.Infra.Auth.Services.User
 {
     public class UserService : BaseService<UserService, AuthDbContext>, IUserService
     {
-        private readonly PasswordHasher<Base.Auth.Models.User> _hasher;
+        private readonly IEmailSender _emailSender;
         private readonly UserManager<Base.Auth.Models.User> _userManager;
         
-        public UserService(ILogger<UserService> logger, IUnitOfWork<AuthDbContext> unitOfWork) 
+        public UserService(ILogger<UserService> logger, IUnitOfWork<AuthDbContext> unitOfWork,
+            UserManager<Base.Auth.Models.User> userManager) 
             : base(logger, unitOfWork)
         {
+            _userManager = userManager;
         }
 
         public UserService(IHttpContextAccessor contextAccessor, ILogger<UserService> logger, 
-            IUnitOfWork<AuthDbContext> unitOfWork) 
+            IUnitOfWork<AuthDbContext> unitOfWork, UserManager<Base.Auth.Models.User> userManager) 
             : base(contextAccessor, logger, unitOfWork)
         {
+            _userManager = userManager;
         }
 
         public async Task Update(UpdateUserInputModel vm, string userId)
@@ -64,22 +69,45 @@ namespace Nozomi.Infra.Auth.Services.User
                     user.UserClaims = new List<UserClaim>();
                 foreach (var uClaim in vm.UserClaims)
                 {
-                    if (user.UserClaims.Any(uc => uc.ClaimType.Equals(uClaim.Key)))
+                    // Switch case every type of claim
+                    switch (uClaim.Key)
                     {
-                        var existingClaim = user.UserClaims
-                            .SingleOrDefault(uc => uc.ClaimType.Equals(uClaim.Key));
+                        case "email":
+                            // Update the email and prepare to send a confirmation mail
+                            user.Email = uClaim.Value;
+                            user.NormalizedEmail = uClaim.Value.ToUpper();
+                            
+                            if (user.EmailConfirmed)
+                                user.EmailConfirmed = false;
+                            break;
+                        case "name":
+                        case "preferred_username":
+                            // Update the username
+                            user.UserName = uClaim.Value;
+                            user.NormalizedUserName = uClaim.Value.ToUpper();
+                            break;
+                        default:
+                            // Update the claims if it already exists
+                            if (user.UserClaims.Any(uc => uc.ClaimType.Equals(uClaim.Key)))
+                            {
+                                var existingClaim = user.UserClaims
+                                    .SingleOrDefault(uc => uc.ClaimType.Equals(uClaim.Key));
 
-                        if (existingClaim != null)
-                            existingClaim.ClaimValue = uClaim.Value;
-                    }
-                    else
-                    {
-                        user.UserClaims.Add(new UserClaim
-                        {
-                            UserId = userId,
-                            ClaimType = uClaim.Key,
-                            ClaimValue = uClaim.Value
-                        });
+                                if (existingClaim != null)
+                                    existingClaim.ClaimValue = uClaim.Value;
+                            }
+                            else
+                            {
+                                // Add it since it's not up yet
+                                user.UserClaims.Add(new UserClaim
+                                {
+                                    UserId = userId,
+                                    ClaimType = uClaim.Key,
+                                    ClaimValue = uClaim.Value
+                                });
+                            }
+
+                            break;
                     }
                 }
                 
