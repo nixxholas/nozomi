@@ -13,4 +13,8 @@
         <PackageReference Include="Stripe.net" Version="34.15.0" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\Nozomi.Base.BCL\Nozomi.Base.BCL.csproj" />
+    </ItemGroup>
+
 </Project>

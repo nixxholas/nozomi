@@ -27,8 +27,4 @@
       <PackageReference Include="System.Linq.Parallel" Version="4.3.0" />
     </ItemGroup>
 
-    <ItemGroup>
-      <ProjectReference Include="..\Nozomi.Base.Auth\Nozomi.Base.Auth.csproj" />
-    </ItemGroup>
-
 </Project>
