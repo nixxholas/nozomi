@@ -143,6 +143,8 @@ namespace Nozomi.Auth
                 .AddEntityFrameworkNpgsql()
                 .AddIdentity<User, Role>(options =>
                 {
+                    options.ClaimsIdentity.UserIdClaimType = ClaimTypes.NameIdentifier;
+                    
                     options.Password.RequireLowercase = false;
                     options.Password.RequireUppercase = false;
                     options.Password.RequireNonAlphanumeric = false;
