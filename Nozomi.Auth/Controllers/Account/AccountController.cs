@@ -630,17 +630,21 @@ namespace Nozomi.Auth.Controllers.Account
 
         [Authorize(AuthenticationSchemes = "Bearer")]
         [HttpPut]
-        public IActionResult Update([FromBody]UpdateUserInputModel model)
+        public async Task<IActionResult> Update([FromBody]UpdateUserInputModel model)
         {
-            if (model.IsValid())
+            var user = await _userManager.FindByIdAsync(((ClaimsIdentity) User.Identity)
+                .Claims.FirstOrDefault(c => c.Type.Equals(JwtClaimTypes.Subject)
+                                            || c.Type.Equals(ClaimTypes.NameIdentifier))?.Value);
+            
+            // Modify the user's profile
+            if (user != null)
             {
-                // Modify the user's profile
-                _userService.Update(model, User.Identity.GetSubjectId());
+                await _userService.Update(model, user.Id);
 
-                return Ok();
+                return Ok("Account details updated successfully!");
             }
 
-            return BadRequest("Please re-authenticate again");
+            return BadRequest("Invalid input/s, please ensure that the entries are correctly filled!");
         }
 
         /*****************************************/
