@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using FluentValidation;
+using Nozomi.Base.BCL;
 
 namespace Nozomi.Base.Auth.ViewModels.Account
 {
@@ -9,7 +10,7 @@ namespace Nozomi.Base.Auth.ViewModels.Account
         
         public string Password { get; set; }
         
-        public ICollection<KeyValuePair<string, string>> UserClaims { get; set; }
+        public IDictionary<string, string> UserClaims { get; set; }
 
         public bool IsValid()
         {
