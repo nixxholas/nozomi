@@ -71,7 +71,7 @@
 <script>
     import {mapGetters} from 'vuex';
     import NozomiAuthService from "@/services/NozomiAuthService";
-    import {NotificationProgrammatic as Notification} from "buefy/types/components";
+    import {NotificationProgrammatic as Notification} from 'buefy';
 
     export default {
         name: 'settings-index',
