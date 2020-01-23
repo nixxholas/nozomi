@@ -10,7 +10,7 @@ namespace Nozomi.Base.Auth.ViewModels.Account
         
         public string Password { get; set; }
         
-        public IDictionary<string, string> UserClaims { get; set; }
+        public ICollection<KeyValuePairObject> UserClaims { get; set; }
 
         public bool IsValid()
         {
@@ -25,6 +25,8 @@ namespace Nozomi.Base.Auth.ViewModels.Account
                 RuleFor(e => e.Password).Must(PasswordsMatch)
                     .Unless(e => string.IsNullOrEmpty(e.PreviousPassword)
                                  || string.IsNullOrWhiteSpace(e.PreviousPassword));
+
+                RuleFor(e => e.UserClaims).NotNull();
             }
             
             private bool PasswordsMatch(UpdateUserInputModel instance, string password)
