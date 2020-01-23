@@ -17,8 +17,10 @@ using IdentityServer4.Services;
 using IdentityServer4.Stores;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Nozomi.Auth.Controllers.Home;
 using Nozomi.Base.Auth.Events;
@@ -54,6 +56,7 @@ namespace Nozomi.Auth.Controllers.Account
 
         public AccountController(
             ILogger<AccountController> logger,
+            IWebHostEnvironment webHostEnvironment,
             IEmailSender emailSender,
             RoleManager<Role> roleManager,
             UserManager<User> userManager,
@@ -65,7 +68,7 @@ namespace Nozomi.Auth.Controllers.Account
             IValidatingEvent validatingEvent,
             IEventService events, 
             IAddressService addressService,
-            IUserService userService) : base(logger)
+            IUserService userService) : base(logger, webHostEnvironment)
         {
             _emailSender = emailSender;
             _roleManager = roleManager;
@@ -431,7 +434,7 @@ namespace Nozomi.Auth.Controllers.Account
                 if (user == null)
                     ModelState.AddModelError(string.Empty, AccountOptions.InvalidCredentialsErrorMessage);
 
-                if (!user.EmailConfirmed)
+                if (!user.EmailConfirmed && !_webHostEnvironment.IsDevelopment())
                 {
                     await _events.RaiseAsync(new UserLoginFailureEvent(model.Username, "email not confirmed",
                         clientId: context?.ClientId));
