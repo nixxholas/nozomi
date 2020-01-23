@@ -4,7 +4,6 @@
             <div class="container">
                 <h1 class="title">
                     Settings
-                    {{ user }}
                 </h1>
                 <b-tabs type="is-toggle" expanded>
                     <b-tab-item label="Profile" icon="user">
@@ -72,6 +71,7 @@
 <script>
     import {mapGetters} from 'vuex';
     import NozomiAuthService from "@/services/NozomiAuthService";
+    import {NotificationProgrammatic as Notification} from "buefy/types/components";
 
     export default {
         name: 'settings-index',
@@ -100,7 +100,7 @@
                 model: {
                     password: '',
                     previousPassword: '',
-                    userClaims: {}
+                    userClaims: []
                 }
             }
         },
@@ -111,11 +111,15 @@
             push: function () {
                 let self = this;
 
-                for (let key in self.user) {
-                    if (self.user.hasOwnProperty(key)) {
-                        self.model.userClaims[key] = self.user[key];
-                    }
-                }
+                // Collate them first
+                // for (let key in self.user) {
+                //     if (self.user.hasOwnProperty(key)) {
+                //         self.model.userClaims.push({ key : key, value: self.user[key] });
+                //     }
+                // }
+                
+                // Then compress them
+                // self.model.userClaims = JSON.stringify(self.model.userClaims);
 
                 // for (let key in self.user) {
                 //     if (self.user.hasOwnProperty(key)) {
@@ -127,14 +131,34 @@
                 //     }
                 // }
 
-                // TODO: Ensure that userClaims does not cause the entire payload to end up null in the API.
-                console.dir(self.model);
-
                 NozomiAuthService.update(self.model)
                     .then(function (res) {
-                        console.dir(res);
+                        if (res && res.status === 200) {
+                            self.isModalActive = false; // Close the modal
+                            Notification.open({
+                                duration: 2500,
+                                message: self.form.name + ` successfully updated!`,
+                                position: 'is-bottom-right',
+                                type: 'is-success',
+                                hasIcon: true
+                            });
+                        } else {
+                            Notification.open({
+                                duration: 2500,
+                                message: `There might've been a communication error, please try again!`,
+                                position: 'is-bottom-right',
+                                type: 'is-warning',
+                                hasIcon: true
+                            });
+                        }
                     }).catch(function (err) {
-                    console.dir(err)
+                    Notification.open({
+                        duration: 2500,
+                        message: `Please make sure your entry is correctly filled!`,
+                        position: 'is-bottom-right',
+                        type: 'is-danger',
+                        hasIcon: true
+                    });
                 });
             }
         }
