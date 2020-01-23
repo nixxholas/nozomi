@@ -3,6 +3,7 @@
 
 
 using FluentValidation;
+using Nozomi.Base.BCL.Helpers.Native.Text;
 
 namespace Nozomi.Base.Auth.ViewModels.Account
 {
@@ -32,6 +33,19 @@ namespace Nozomi.Base.Auth.ViewModels.Account
         {
             var validator = new LoginInputValidator();
             return validator.Validate(this).IsValid;
+        }
+
+        public bool UsernameBasedIsValid()
+        {
+            return IsValid() 
+                   && !string.IsNullOrEmpty(Username);
+        }
+
+        public bool EmailBasedIsValid()
+        {
+            return IsValid() 
+                   && !string.IsNullOrEmpty(Username) 
+                   && StringHelper.IsValidEmail(Username);
         }
         
         protected class LoginInputValidator : AbstractValidator<LoginInputModel>
