@@ -22,17 +22,21 @@ namespace Nozomi.Base.Auth.ViewModels.Account
         {
             public UpdateUserValidator()
             {
-                RuleFor(e => e.Password).Must(PasswordsMatch)
-                    .Unless(e => string.IsNullOrEmpty(e.PreviousPassword)
-                                 || string.IsNullOrWhiteSpace(e.PreviousPassword));
+                RuleFor(e => e.Password).NotEmpty().NotNull()
+                    .Unless(e => string.IsNullOrEmpty(e.PreviousPassword));
+                RuleFor(e => e.PreviousPassword).NotEmpty().NotNull()
+                    .Unless(e => string.IsNullOrEmpty(e.Password));
+                // RuleFor(e => e.Password).Must(PasswordsMatch)
+                //     .Unless(e => string.IsNullOrEmpty(e.PreviousPassword)
+                //                  || string.IsNullOrWhiteSpace(e.PreviousPassword));
 
                 RuleFor(e => e.UserClaims).NotNull();
             }
             
-            private bool PasswordsMatch(UpdateUserInputModel instance, string password)
-            {
-                return instance.PreviousPassword.Equals(password);
-            }
+            // private bool PasswordsMatch(UpdateUserInputModel instance, string password)
+            // {
+            //     return instance.PreviousPassword.Equals(password);
+            // }
         }
     }
 }
