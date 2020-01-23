@@ -3,6 +3,7 @@
 
 
 using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -25,6 +26,7 @@ using Nozomi.Base.Auth.Global;
 using Nozomi.Base.Auth.Models;
 using Nozomi.Base.Auth.Models.Wallet;
 using Nozomi.Base.Auth.ViewModels.Account;
+using Nozomi.Base.BCL.Helpers.Native.Text;
 using Nozomi.Base.Blockchain.Auth.Query.Validating;
 using Nozomi.Infra.Auth.Services.Address;
 using Nozomi.Infra.Auth.Services.User;
@@ -418,10 +420,17 @@ namespace Nozomi.Auth.Controllers.Account
             }
 
             // The user is logging in through password authentication
-            if (model.IsValid() && !string.IsNullOrWhiteSpace(model.Username)
-                                && !string.IsNullOrWhiteSpace(model.Password))
+            if (model.IsValid())
             {
-                var user = await _userManager.FindByNameAsync(model.Username);
+                var user = new User();
+                if (model.UsernameBasedIsValid())
+                    user = await _userManager.FindByNameAsync(model.Username);
+                else if (model.EmailBasedIsValid())
+                    user = await _userManager.FindByEmailAsync(model.Username);
+
+                if (user == null)
+                    ModelState.AddModelError(string.Empty, AccountOptions.InvalidCredentialsErrorMessage);
+
                 if (!user.EmailConfirmed)
                 {
                     await _events.RaiseAsync(new UserLoginFailureEvent(model.Username, "email not confirmed",
