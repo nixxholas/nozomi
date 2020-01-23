@@ -423,7 +423,7 @@ namespace Nozomi.Auth.Controllers.Account
             }
 
             // The user is logging in through password authentication
-            if (model.IsValid())
+            if (model.IsValidForPassAuth())
             {
                 var user = new User();
                 if (model.UsernameBasedIsValid())

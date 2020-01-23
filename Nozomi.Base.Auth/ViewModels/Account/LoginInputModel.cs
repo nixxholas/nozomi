@@ -35,6 +35,11 @@ namespace Nozomi.Base.Auth.ViewModels.Account
             return validator.Validate(this).IsValid;
         }
 
+        public bool IsValidForPassAuth()
+        {
+            return IsValid() && !string.IsNullOrEmpty(Password);
+        }
+
         public bool UsernameBasedIsValid()
         {
             return IsValid() 
