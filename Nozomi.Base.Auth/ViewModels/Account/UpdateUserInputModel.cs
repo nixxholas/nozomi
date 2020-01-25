@@ -10,7 +10,7 @@ namespace Nozomi.Base.Auth.ViewModels.Account
         
         public string Password { get; set; }
         
-        public ICollection<KeyValuePairObject> UserClaims { get; set; }
+        public IDictionary<string, dynamic> UserClaims { get; set; }
 
         public bool IsValid()
         {
