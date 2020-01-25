@@ -79,9 +79,17 @@ namespace Nozomi.Infra.Auth.Services.User
                                 user.EmailConfirmed = false;
                             break;
                         case JwtClaimTypes.PreferredUserName:
-                            // Update the username
-                            user.UserName = uClaim.Value.GetString();
-                            user.NormalizedUserName = uClaim.Value.GetString().ToUpper();
+                            // Ensure that we're modifying a new username request
+                            if (!string.IsNullOrEmpty(uClaim.Value.GetString())
+                                && !user.UserName.Equals(uClaim.Value.GetString())
+                                // Dupe checks
+                                && !_unitOfWork.GetRepository<Base.Auth.Models.User>().GetQueryable()
+                                    .Any(u => u.NormalizedUserName.Equals(uClaim.Value.GetString())))
+                            {
+                                // Update the username
+                                user.UserName = uClaim.Value.GetString();
+                                user.NormalizedUserName = uClaim.Value.GetString().ToUpper();
+                            }
                             break;
                         case JwtClaimTypes.Name:
                             // Ensure that the given and family name are updated
