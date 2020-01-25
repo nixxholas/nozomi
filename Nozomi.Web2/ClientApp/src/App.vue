@@ -28,6 +28,8 @@
                         <br>
                         <router-link to="/changelog">Changelog</router-link>
                         <br>
+                        <router-link to="/bugs">Bugs and Issues</router-link>
+                        <br>
                     </div>
                     <div class="column">
                         <h6 class="title">Resources</h6>

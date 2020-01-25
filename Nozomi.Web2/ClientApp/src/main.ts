@@ -35,17 +35,17 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 Vue.component('vue-fontawesome', FontAwesomeIcon);
 
 // Font awesome solid icon configurations
-import { faAngleLeft, faAngleRight, faArrowUp, faAtlas, faCaretDown, faCheck,
-  faCheckCircle, faChevronDown, faCog,
+import { faAngleLeft, faAngleRight, faArrowUp, faAtlas, faBug, faCaretDown, 
+  faCheck, faCheckCircle, faChevronDown, faCog,
   faCoins, faColumns, faDumpster, faExclamationCircle, faExclamationTriangle,
-  faEye, faFrown, faHome, faInfo, faInfoCircle, faLandmark, faMoneyBill, 
+  faEye, faFingerprint, faFrown, faHome, faInfo, faInfoCircle, faLandmark, faMoneyBill, 
   faMoneyBillWave, faSadCry,
   faSearch, faSignOutAlt,faTicketAlt, faTimes, faTrash, faUniversity, faUser } 
   from '@fortawesome/free-solid-svg-icons';
-library.add(faAngleLeft, faAngleRight, faArrowUp, faAtlas, faCaretDown, faCheck, 
-    faCheckCircle, faChevronDown, faCog,
+library.add(faAngleLeft, faAngleRight, faArrowUp, faAtlas, faBug, faCaretDown, 
+    faCheck, faCheckCircle, faChevronDown, faCog,
     faCoins, faColumns, faDumpster, faExclamationCircle, faExclamationTriangle,
-    faEye, faFrown, faHome, faInfo, faInfoCircle, faLandmark, faMoneyBill, 
+    faEye, faFingerprint, faFrown, faHome, faInfo, faInfoCircle, faLandmark, faMoneyBill, 
     faMoneyBillWave, faSadCry, 
     faSearch, faSignOutAlt, faTicketAlt, faTimes, faTrash, faUniversity, faUser);
 
