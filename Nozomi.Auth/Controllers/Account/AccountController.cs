@@ -251,7 +251,7 @@ namespace Nozomi.Auth.Controllers.Account
                             "Address creation failed", "Web3Create",clientId));
 
                     var createdDefaultAddressClaim = await _userManager.AddClaimAsync(user, 
-                        new Claim(ExtendedJwtClaimTypes.DefaultWallet, address));
+                        new Claim(NozomiJwtClaimTypes.DefaultWallet, address));
 
                     return !string.IsNullOrWhiteSpace(createdAddress) && createdDefaultAddressClaim.Succeeded 
                         ? user : null;

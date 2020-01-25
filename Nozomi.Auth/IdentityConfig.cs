@@ -47,7 +47,7 @@ namespace Nozomi.Auth
                     Name = "crypto_default",
                     DisplayName = "Default Wallet Address",
                     Description = "Allow the service access to your default wallet hash.",
-                    UserClaims = new[] { ExtendedJwtClaimTypes.DefaultWallet },
+                    UserClaims = new[] { NozomiJwtClaimTypes.DefaultWallet },
                     ShowInDiscoveryDocument = true,
                     Required = true,
                     Emphasize = true
