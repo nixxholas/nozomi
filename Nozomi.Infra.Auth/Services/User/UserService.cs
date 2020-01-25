@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Policy;
 using System.Threading.Tasks;
+using IdentityModel;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -85,6 +86,14 @@ namespace Nozomi.Infra.Auth.Services.User
                             // Update the username
                             user.UserName = uClaim.Value;
                             user.NormalizedUserName = uClaim.Value.ToUpper();
+                            break;
+                        // TODO: Anything below here, we need to re-evaluate if this is solid
+                        case JwtClaimTypes.AuthenticationMethod:
+                        case JwtClaimTypes.AuthenticationTime:
+                        case JwtClaimTypes.StateHash:
+                        case JwtClaimTypes.SessionId:
+                        case JwtClaimTypes.Subject:
+                            // Ignore these properties
                             break;
                         default:
                             // Update the claims if it already exists
