@@ -6,6 +6,7 @@ using IdentityModel;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Logging;
 using Nozomi.Base.Auth.Models;
 using Nozomi.Base.Auth.ViewModels.Account;
@@ -71,17 +72,52 @@ namespace Nozomi.Infra.Auth.Services.User
                     {
                         case "email":
                             // Update the email and prepare to send a confirmation mail
-                            user.Email = uClaim.Value;
-                            user.NormalizedEmail = uClaim.Value.ToUpper();
+                            user.Email = uClaim.Value.GetString();
+                            user.NormalizedEmail = uClaim.Value.GetString().ToUpper();
                             
                             if (user.EmailConfirmed)
                                 user.EmailConfirmed = false;
                             break;
-                        case "name":
-                        case "preferred_username":
+                        case JwtClaimTypes.PreferredUserName:
                             // Update the username
-                            user.UserName = uClaim.Value;
-                            user.NormalizedUserName = uClaim.Value.ToUpper();
+                            user.UserName = uClaim.Value.GetString();
+                            user.NormalizedUserName = uClaim.Value.GetString().ToUpper();
+                            break;
+                        case JwtClaimTypes.Name:
+                            // Ensure that the given and family name are updated
+                            if (user.UserClaims.Any(uc => uc.ClaimValue.Equals(JwtClaimTypes.Name))
+                                && vm.UserClaims
+                                    .Where(uc => !string.IsNullOrEmpty(uc.Value.GetString()))
+                                    .Any(uc => uc.Key.Equals(JwtClaimTypes.GivenName))
+                                && vm.UserClaims
+                                    .Where(uc => !string.IsNullOrEmpty(uc.Value.GetString()))
+                                    .Any(uc => uc.Key.Equals(JwtClaimTypes.FamilyName))
+                                && !string.Concat(vm.UserClaims
+                                    .SingleOrDefault(uc =>
+                                        uc.Key.Equals(JwtClaimTypes.GivenName)).Value.GetString(), vm.UserClaims
+                                    .SingleOrDefault(uc =>
+                                        uc.Key.Equals(JwtClaimTypes.FamilyName)).Value.GetString()).Equals(user
+                                    .UserClaims
+                                    .SingleOrDefault(uc => uc.ClaimType.Equals(JwtClaimTypes.Name))
+                                    ?.ClaimValue))
+                            {
+                                // Since it is, update it
+                                var name = string.Concat(vm.UserClaims
+                                    .SingleOrDefault(uc =>
+                                        uc.Key.Equals(JwtClaimTypes.GivenName)).Value.GetString(), vm.UserClaims
+                                    .SingleOrDefault(uc =>
+                                        uc.Key.Equals(JwtClaimTypes.FamilyName)).Value.GetString());
+
+                                if (!string.IsNullOrEmpty(name))
+                                {
+                                    var existingClaim = user.UserClaims
+                                        .SingleOrDefault(uc => uc.ClaimType.Equals(uClaim.Key));
+
+                                    if (existingClaim != null)
+                                        existingClaim.ClaimValue = name;
+                                }
+                            }
+                                
                             break;
                         case JwtClaimTypes.GivenName:
                         case JwtClaimTypes.FamilyName:
@@ -93,7 +129,7 @@ namespace Nozomi.Infra.Auth.Services.User
                                     .SingleOrDefault(uc => uc.ClaimType.Equals(uClaim.Key));
 
                                 if (existingClaim != null)
-                                    existingClaim.ClaimValue = uClaim.Value;
+                                    existingClaim.ClaimValue = uClaim.Value.GetString();
                             }
                             else
                             {
@@ -102,7 +138,7 @@ namespace Nozomi.Infra.Auth.Services.User
                                 {
                                     UserId = userId,
                                     ClaimType = uClaim.Key,
-                                    ClaimValue = uClaim.Value
+                                    ClaimValue = uClaim.Value.GetString()
                                 });
                             }
                             

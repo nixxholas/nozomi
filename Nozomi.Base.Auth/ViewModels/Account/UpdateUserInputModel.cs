@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Text.Json;
 using FluentValidation;
 using Nozomi.Base.BCL;
 
@@ -10,7 +11,7 @@ namespace Nozomi.Base.Auth.ViewModels.Account
         
         public string Password { get; set; }
         
-        public IDictionary<string, dynamic> UserClaims { get; set; }
+        public IDictionary<string, JsonElement> UserClaims { get; set; }
 
         public bool IsValid()
         {
