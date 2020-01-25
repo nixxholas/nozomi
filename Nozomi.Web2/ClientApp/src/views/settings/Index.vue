@@ -10,34 +10,34 @@
                         <form v-on:submit.prevent="push()">
                             <b-field grouped>
                                 <b-field label="First name" expanded>
-                                    <b-input v-model="user.given_name" disabled/>
+                                    <b-input v-model="model.userClaims.given_name" />
                                 </b-field>
 
                                 <b-field label="Last name" expanded>
-                                    <b-input v-model="user.family_name" disabled/>
+                                    <b-input v-model="model.userClaims.family_name" />
                                 </b-field>
                             </b-field>
 
                             <b-field label="Username">
-                                <b-input v-model="user.preferred_username" disabled/>
+                                <b-input v-model="model.userClaims.preferred_username" disabled/>
                             </b-field>
 
                             <b-field
-                                    :type="{ 'is-danger': !user.email_verified && user.email }"
+                                    :type="{ 'is-danger': !model.userClaims.email_verified && model.userClaims.email }"
                                     :message="[
-                                        { 'This email is pending verification': (!user.email_verified && user.email) }
+                                        { 'This email is pending verification': (!model.userClaims.email_verified && model.userClaims.email) }
                                         ]"
                                     label="Email">
                                 <b-input
-                                        v-model="user.email" disabled/>
+                                        v-model="model.userClaims.email" disabled/>
                             </b-field>
 
                             <b-field label="Website">
-                                <b-input type="url" v-model="user.website" disabled/>
+                                <b-input type="url" v-model="model.userClaims.website" />
                             </b-field>
 
                             <b-field label="Default Wallet Address">
-                                <b-input type="url" v-model="user.default_wallet_hash" disabled/>
+                                <b-input type="url" v-model="model.userClaims.default_wallet_hash" disabled/>
                             </b-field>
 
                             <b-field grouped>
@@ -61,7 +61,9 @@
                     <b-tab-item label="Billing" icon="money-bill">
 
                     </b-tab-item>
-                    <!--                    <b-tab-item label="Videos" icon="video"></b-tab-item>-->
+                    <b-tab-item label="API Keys" icon="key">
+                        
+                    </b-tab-item>
                 </b-tabs>
             </div>
         </div>
@@ -88,50 +90,29 @@
             return {
                 previousPassword: null,
                 password: null,
-                user: {
-                    given_name: '',
-                    family_name: '',
-                    preferred_username: '',
-                    email: '',
-                    email_verified: '',
-                    website: '',
-                    default_wallet_hash: ''
-                },
                 model: {
                     password: '',
                     previousPassword: '',
-                    userClaims: []
+                    userClaims: {
+                        given_name: '',
+                        family_name: '',
+                        preferred_username: '',
+                        email: '',
+                        email_verified: '',
+                        website: '',
+                        default_wallet_hash: ''
+                    }
                 }
             }
         },
         mounted: function () {
-            this.user = this.oidcUser;
+            this.model.userClaims = this.oidcUser;
         },
         methods: {
             push: function () {
                 let self = this;
 
-                // Collate them first
-                // for (let key in self.user) {
-                //     if (self.user.hasOwnProperty(key)) {
-                //         self.model.userClaims.push({ key : key, value: self.user[key] });
-                //     }
-                // }
-                
-                // Then compress them
-                // self.model.userClaims = JSON.stringify(self.model.userClaims);
-
-                // for (let key in self.user) {
-                //     if (self.user.hasOwnProperty(key)) {
-                //         console.dir(key);
-                //         self.model.userClaims.push({ 
-                //             key: key,
-                //             value: self.user[key]
-                //         });
-                //     }
-                // }
-
-                NozomiAuthService.update(self.model)
+                NozomiAuthService.update(JSON.parse(JSON.stringify(self.model)))
                     .then(function (res) {
                         if (res && res.status === 200) {
                             self.isModalActive = false; // Close the modal
