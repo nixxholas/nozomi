@@ -6,8 +6,8 @@ using IdentityModel;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Logging;
+using Nozomi.Base.Auth.Global;
 using Nozomi.Base.Auth.Models;
 using Nozomi.Base.Auth.ViewModels.Account;
 using Nozomi.Preprocessing.Abstracts;
@@ -32,6 +32,38 @@ namespace Nozomi.Infra.Auth.Services.User
             : base(contextAccessor, logger, unitOfWork)
         {
             _userManager = userManager;
+        }
+
+        public Task LinkStripe(string stripeCustId, string userId)
+        {
+            if (!string.IsNullOrEmpty(stripeCustId) && !string.IsNullOrEmpty(userId))
+            {
+                var user = _unitOfWork.GetRepository<Base.Auth.Models.User>()
+                    .GetQueryable()
+                    .AsNoTracking()
+                    .Where(u => u.Id.Equals(userId))
+                    .Include(u => u.UserClaims)
+                    // Ensure that the user hasn't had stripe propagated for his/her account yet.
+                    .SingleOrDefault(u => !u.UserClaims
+                        .Any(uc => uc.ClaimType.Equals(NozomiJwtClaimTypes.StripeCustomerId)));
+
+                // Check!
+                if (user != null)
+                {
+                    _unitOfWork.GetRepository<UserClaim>().Add(new UserClaim
+                    {
+                        UserId = userId,
+                        ClaimType = NozomiJwtClaimTypes.StripeCustomerId,
+                        ClaimValue = stripeCustId
+                    });
+
+                    _unitOfWork.Commit(userId);
+                    
+                    return Task.CompletedTask;
+                }
+            }
+            
+            throw new ArgumentNullException($"{_serviceName} LinkStripe(): Invalid stripeCustId or userId.");
         }
 
         public async Task Update(UpdateUserInputModel vm, string userId)
