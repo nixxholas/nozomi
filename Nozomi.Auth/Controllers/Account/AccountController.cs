@@ -3,6 +3,8 @@
 
 
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Security.Claims;
@@ -785,7 +787,7 @@ namespace Nozomi.Auth.Controllers.Account
 
         [Authorize(AuthenticationSchemes = "Bearer")]
         [HttpPut]
-        public async Task<IActionResult> Update([FromBody]UpdateUserInputModel model)
+        public async Task<IActionResult> Update([FromBody]UpdateUserInputModel vm)
         {
             var user = await _userManager.FindByIdAsync(((ClaimsIdentity) User.Identity)
                 .Claims.FirstOrDefault(c => c.Type.Equals(JwtClaimTypes.Subject)
@@ -794,7 +796,7 @@ namespace Nozomi.Auth.Controllers.Account
             // Modify the user's profile
             if (user != null)
             {
-                await _userService.Update(model, user.Id);
+                await _userService.Update(vm, user.Id);
 
                 return Ok("Account details updated successfully!");
             }
