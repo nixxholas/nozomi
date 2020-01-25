@@ -87,15 +87,9 @@ namespace Nozomi.Infra.Auth.Services.User
                             user.UserName = uClaim.Value;
                             user.NormalizedUserName = uClaim.Value.ToUpper();
                             break;
-                        // TODO: Anything below here, we need to re-evaluate if this is solid
-                        case JwtClaimTypes.AuthenticationMethod:
-                        case JwtClaimTypes.AuthenticationTime:
-                        case JwtClaimTypes.StateHash:
-                        case JwtClaimTypes.SessionId:
-                        case JwtClaimTypes.Subject:
-                            // Ignore these properties
-                            break;
-                        default:
+                        case JwtClaimTypes.GivenName:
+                        case JwtClaimTypes.FamilyName:
+                        case JwtClaimTypes.WebSite:
                             // Update the claims if it already exists
                             if (user.UserClaims.Any(uc => uc.ClaimType.Equals(uClaim.Key)))
                             {
@@ -115,7 +109,16 @@ namespace Nozomi.Infra.Auth.Services.User
                                     ClaimValue = uClaim.Value
                                 });
                             }
-
+                            
+                            break;
+                        // case JwtClaimTypes.AuthenticationMethod:
+                        // case JwtClaimTypes.AuthenticationTime:
+                        // case JwtClaimTypes.StateHash:
+                        // case JwtClaimTypes.SessionId:
+                        // case JwtClaimTypes.Subject:
+                        default:
+                            _logger.LogInformation($"{_serviceName} Update: Ignoring update for " +
+                                                   $"{uClaim.Key} for {userId}");
                             break;
                     }
                 }
