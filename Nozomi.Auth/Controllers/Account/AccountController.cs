@@ -462,55 +462,57 @@ namespace Nozomi.Auth.Controllers.Account
                     user = await _userManager.FindByEmailAsync(model.Username);
 
                 if (user == null)
+                {
                     ModelState.AddModelError(string.Empty, AccountOptions.InvalidCredentialsErrorMessage);
-
-                if (!user.EmailConfirmed && !_webHostEnvironment.IsDevelopment())
+                } else {
+                    if (!user.EmailConfirmed && !_webHostEnvironment.IsDevelopment())
                 {
                     await _events.RaiseAsync(new UserLoginFailureEvent(model.Username, "email not confirmed",
                         clientId: context?.ClientId));
                     ModelState.AddModelError(string.Empty, AccountOptions.EmailNotConfirmed);
                 }
-                else
-                {
-                    var result = await _signInManager.PasswordSignInAsync(model.Username, model.Password,
-                        model.RememberLogin, lockoutOnFailure: true);
-                    if (result.Succeeded)
+                    else
                     {
-                        await _events.RaiseAsync(new UserLoginSuccessEvent(user.UserName, user.Id, user.UserName,
-                            clientId: context?.ClientId));
-
-                        if (context != null)
+                        var result = await _signInManager.PasswordSignInAsync(model.Username, model.Password,
+                            model.RememberLogin, lockoutOnFailure: true);
+                        if (result.Succeeded)
                         {
-                            if (await _clientStore.IsPkceClientAsync(context.ClientId))
+                            await _events.RaiseAsync(new UserLoginSuccessEvent(user.UserName, user.Id, user.UserName,
+                                clientId: context?.ClientId));
+
+                            if (context != null)
                             {
-                                // if the client is PKCE then we assume it's native, so this change in how to
-                                // return the response is for better UX for the end user.
-                                return View("Redirect", new RedirectViewModel {RedirectUrl = model.ReturnUrl});
+                                if (await _clientStore.IsPkceClientAsync(context.ClientId))
+                                {
+                                    // if the client is PKCE then we assume it's native, so this change in how to
+                                    // return the response is for better UX for the end user.
+                                    return View("Redirect", new RedirectViewModel {RedirectUrl = model.ReturnUrl});
+                                }
+
+                                // we can trust model.ReturnUrl since GetAuthorizationContextAsync returned non-null
+                                return Redirect(model.ReturnUrl);
                             }
 
-                            // we can trust model.ReturnUrl since GetAuthorizationContextAsync returned non-null
-                            return Redirect(model.ReturnUrl);
+                            // request for a local page
+                            if (Url.IsLocalUrl(model.ReturnUrl))
+                            {
+                                return Redirect(model.ReturnUrl);
+                            }
+                            else if (string.IsNullOrEmpty(model.ReturnUrl))
+                            {
+                                return Redirect("~/");
+                            }
+                            else
+                            {
+                                // user might have clicked on a malicious link - should be logged
+                                throw new Exception("invalid return URL");
+                            }
                         }
 
-                        // request for a local page
-                        if (Url.IsLocalUrl(model.ReturnUrl))
-                        {
-                            return Redirect(model.ReturnUrl);
-                        }
-                        else if (string.IsNullOrEmpty(model.ReturnUrl))
-                        {
-                            return Redirect("~/");
-                        }
-                        else
-                        {
-                            // user might have clicked on a malicious link - should be logged
-                            throw new Exception("invalid return URL");
-                        }
+                        await _events.RaiseAsync(new UserLoginFailureEvent(model.Username, "invalid credentials",
+                            clientId: context?.ClientId));
+                        ModelState.AddModelError(string.Empty, AccountOptions.InvalidCredentialsErrorMessage);
                     }
-
-                    await _events.RaiseAsync(new UserLoginFailureEvent(model.Username, "invalid credentials",
-                        clientId: context?.ClientId));
-                    ModelState.AddModelError(string.Empty, AccountOptions.InvalidCredentialsErrorMessage);
                 }
             }
             else if (model.IsValid() && !string.IsNullOrWhiteSpace(model.Message)
@@ -638,7 +640,9 @@ namespace Nozomi.Auth.Controllers.Account
         public async Task<IActionResult> Logout(LogoutInputModel model)
         {
             // build a model so the logged out page knows what to display
-            var vm = await BuildLoggedOutViewModelAsync(model.LogoutId);
+            var vm = await BuildLoggedOutViewModelAsync(model.LogoutId,
+                // https://stackoverflow.com/questions/38772394/how-can-i-get-url-referrer-in-asp-net-core-mvc
+                HttpContext.Request.Headers["Referer"]);
 
             if (User?.Identity.IsAuthenticated == true)
             {
@@ -906,7 +910,7 @@ namespace Nozomi.Auth.Controllers.Account
             return vm;
         }
 
-        private async Task<LoggedOutViewModel> BuildLoggedOutViewModelAsync(string logoutId)
+        private async Task<LoggedOutViewModel> BuildLoggedOutViewModelAsync(string logoutId, string referralUrl = null)
         {
             // get context information (client name, post logout redirect URI and iframe for federated signout)
             var logout = await _interaction.GetLogoutContextAsync(logoutId);
@@ -919,6 +923,10 @@ namespace Nozomi.Auth.Controllers.Account
                 SignOutIframeUrl = logout?.SignOutIFrameUrl,
                 LogoutId = logoutId
             };
+
+            if ((string.IsNullOrEmpty(vm.PostLogoutRedirectUri) || string.IsNullOrWhiteSpace(vm.PostLogoutRedirectUri))
+                && StringHelper.IsUrl(referralUrl))
+                vm.PostLogoutRedirectUri = referralUrl;
 
             if (User?.Identity.IsAuthenticated == true)
             {
