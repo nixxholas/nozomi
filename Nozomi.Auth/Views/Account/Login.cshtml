@@ -8,152 +8,86 @@
     }
 }
 
-<section class="hero login-page">
-    <div class="hero-body">
-        @if (string.IsNullOrEmpty(name))
-        {
+@if (!string.IsNullOrEmpty(name))
+{
+    <section class="hero is-danger is-medium">
+        <div class="hero-body">
+            You're already logged in!
+        </div>
+    </section>
+}
+else
+{
+    <section class="hero is-medium">
+        <div class="hero-body">
             <partial name="_ValidationSummary"/>
-            
+
             @if (Model.UserRegistrationSuccessful)
             {
                 <div class="notification is-success">
                     <h4 class="title">Your account registration is sucessful!</h4> <br/>
-                    <p><b>Oh and also, your email will receive a verification notification 
-                        for your email account so don't forget to check it out!</b></p>
+                    <p>
+                        <b>
+                            Oh and also, your email will receive a verification notification
+                            for your email account so don't forget to check it out!
+                        </b>
+                    </p>
                 </div>
             }
-            
+
             <div class="container has-text-centered">
+                <div class="column is-4 is-offset-4">
+                    <div class="box">
+                        <form asp-route="Login">
+                            <input type="hidden" asp-for="ReturnUrl"/>
 
-                <div class="box columns is-centered is-vcentered">
-
-                    @if (Model.EnableLocalLogin)
-                    {
-                        <div class="column is-5-tablet is-4-desktop is-3-widescreen">
-                            <form asp-route="Login">
-                                <input type="hidden" asp-for="ReturnUrl"/>
-
-                                <h2 class="title">Login</h2>
-
-                                <div class="field">
-                                    <p class="control has-icons-left has-icons-right">
-                                        <input class="input" placeholder="Username" asp-for="Username" autofocus>
-                                        <span class="icon is-small is-left">
-                                            <i class="fas fa-envelope"></i>
-                                        </span>
-                                        <span class="icon is-small is-right">
-                                            <i class="fas fa-check"></i>
-                                        </span>
-                                    </p>
-                                </div>
-                                <div class="field">
-                                    <p class="control has-icons-left has-icons-right">
-                                        <input type="password" class="input" placeholder="Password" asp-for="Password" autofocus>
-                                        <span class="icon is-small is-left">
-                                            <i class="fas fa-lock"></i>
-                                        </span>
-                                    </p>
-                                </div>
-                                @if (Model.AllowRememberLogin)
-                                {
-                                    <div class="field login-remember">
-                                        <label class="checkbox" asp-for="RememberLogin">
-                                            <input asp-for="RememberLogin" type="checkbox">
-                                            Remember My Login
-                                        </label>
-                                    </div>
-                                }
-
-                                <environment include="Development">
-                                    <div>
-                                        <p>The default users are alice/bob, password: Pass123$</p>
-                                    </div>
-                                </environment>
-
-                                <div class="field is-grouped">
-                                    <p class="control">
-                                        <button class="button is-primary"
-                                                name="button"
-                                                value="login">
-                                            Login
-                                        </button>
-                                    </p>
-                                    <p class="control">
-                                        <button class="button is-info"
-                                                name="button"
-                                                value="register">
-                                            Register
-                                        </button>
-                                    </p>
-                                    <p class="control">
-                                        <button class="button is-light"
-                                                name="button"
-                                                value="cancel">
-                                            Cancel
-                                        </button>
-                                    </p>
-                                </div>
-                            </form>
-                        </div>
-                    }
-                    
-                    <div class="column is-2-tablet is-2-desktop is-1-widescreen">
-                        Or
-                    </div>
-
-                    @if (Model.VisibleExternalProviders.Any())
-                    {
-                        <div class="col-md-6 col-sm-6 external-providers">
-                            <div class="panel panel-default">
-                                <div class="panel-heading">
-                                    <h3 class="panel-title">External Login</h3>
-                                </div>
-                                <div class="panel-body">
-                                    <ul class="list-inline">
-                                        @foreach (var provider in Model.VisibleExternalProviders)
-                                        {
-                                            <li>
-                                                <a class="btn btn-default"
-                                                   asp-controller="External"
-                                                   asp-action="Challenge"
-                                                   asp-route-provider="@provider.AuthenticationScheme"
-                                                   asp-route-returnUrl="@Model.ReturnUrl">
-                                                    @provider.DisplayName
-                                                </a>
-                                            </li>
-                                        }
-                                    </ul>
-                                </div>
+                            <div class="field">
+                                <p class="control has-icons-left has-icons-right">
+                                    <input class="input" placeholder="Username" asp-for="Username" autofocus>
+                                    <span class="icon is-small is-left">
+                                        <i class="fas fa-envelope"></i>
+                                    </span>
+                                    <span class="icon is-small is-right">
+                                        <i class="fas fa-check"></i>
+                                    </span>
+                                </p>
                             </div>
-                        </div>
-                    }
-
-                    @if (!Model.EnableLocalLogin && !Model.VisibleExternalProviders.Any())
-                    {
-                        <div class="alert alert-warning">
-                            <strong>Invalid login request</strong>
-                            There are no login schemes configured for this client.
-                        </div>
-                    }
-
-                    <div class="column is-5-tablet is-4-desktop is-3-widescreen">
+                            <div class="field">
+                                <p class="control has-icons-left has-icons-right">
+                                    <input type="password" class="input" placeholder="Password" asp-for="Password" autofocus>
+                                    <span class="icon is-small is-left">
+                                        <i class="fas fa-lock"></i>
+                                    </span>
+                                </p>
+                            </div>
+                            @if (Model.AllowRememberLogin)
+                            {
+                                <div class="field login-remember">
+                                    <label class="checkbox" asp-for="RememberLogin">
+                                        <input asp-for="RememberLogin" type="checkbox">
+                                        Remember me
+                                    </label>
+                                </div>
+                            }
+                            <button class="button is-info is-medium is-fullwidth">Login <i class="fa fa-sign-in" aria-hidden="true"></i></button>
+                        </form>
+                        <hr class="login-hr"/>
                         <form id="web3login" asp-route="login">
                             <input type="hidden" asp-for="Message"/>
                             <input type="hidden" asp-for="Address"/>
                             <input type="hidden" asp-for="Signature"/>
-                            <button class="button" id="metamaskBtn" value="metamask">Login with Metamask</button>
+                            <button class="button is-medium is-fullwidth" id="metamaskBtn" value="metamask">Metamask</button>
                         </form>
                     </div>
-
+                    <p class="has-text-grey">
+                        <a asp-action="Register">Sign Up</a> &nbsp;·&nbsp;
+                        <a asp-action="ForgotPassword">Forgot Password</a> &nbsp;·&nbsp;
+                    </p>
                 </div>
             </div>
-        }
-        else
-        {
-            <h1>You are already logged in!</h1>
-        }
-    </div>
-</section>
+        </div>
+    </section>
+}
 
 @section Scripts {
     <script src="~/lib/web3/web3.min.js"></script>
