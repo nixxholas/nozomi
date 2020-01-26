@@ -181,7 +181,7 @@ namespace Nozomi.Web2
                 {
                     endpoints.MapToVueCliProxy(
                         "{*path}",
-                        new SpaOptions { SourcePath = "ClientApp" },
+                        new SpaOptions { DefaultPage = "/dist/index.html" ,SourcePath = "ClientApp" },
                         System.Diagnostics.Debugger.IsAttached ? "serve" : null,
                         regex: "Compiled successfully",
                         forceKill: true
