@@ -59,7 +59,7 @@
                         </form>
                     </b-tab-item>
                     <b-tab-item label="Billing" icon="money-bill">
-
+                        <CardsComponent></CardsComponent>
                     </b-tab-item>
                     <b-tab-item label="API Keys" icon="key">
                         
@@ -73,10 +73,14 @@
 <script>
     import {mapGetters} from 'vuex';
     import NozomiAuthService from "@/services/NozomiAuthService";
+    import CardsComponent from '@/components/stripe/cards';
     import {NotificationProgrammatic as Notification} from 'buefy';
 
     export default {
         name: 'settings-index',
+        components: {
+            CardsComponent
+        },
         computed: {
             ...mapGetters('oidcStore', [
                 'oidcIsAuthenticated',
