@@ -158,6 +158,17 @@
                                 </ul>
                             </div>
                         </div>
+                        <div class="timeline-item is-info">
+                            <div class="timeline-marker is-info"></div>
+                            <div class="timeline-content">
+                                <p class="heading">26 January 2019 - <b>beta 6</b></p>
+                                <ul>
+                                    <li><b>UI</b> - View account information</li>
+                                    <li><b>UI</b> - Account Information updating functionality</li>
+                                    <li><b>Auth</b> - Manual logout redirection implementation</li>
+                                </ul>
+                            </div>
+                        </div>
                         <header class="timeline-header">
                             <span class="tag is-primary">Release Candidate</span>
                         </header>
