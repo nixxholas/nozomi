@@ -51,7 +51,13 @@ namespace Nozomi.Web2
 
             services.AddHealthChecks();
 
-            services.AddControllersWithViews(options =>
+            // In production, the Vue files will be served from this directory
+            services.AddSpaStaticFiles(configuration =>
+            {
+                configuration.RootPath = "ClientApp/dist";
+            });
+
+            services.AddControllers(options =>
                 {
                     options.Filters.Add(typeof(HttpGlobalExceptionFilter));
                 })
@@ -82,12 +88,6 @@ namespace Nozomi.Web2
                 
                 // if (Environment.IsProduction())
                 //     options.HttpsPort = 5001;
-            });
-
-            // In production, the Vue files will be served from this directory
-            services.AddSpaStaticFiles(configuration =>
-            {
-                configuration.RootPath = "ClientApp/dist";
             });
 
             // UoW-Repository injection
@@ -168,10 +168,10 @@ namespace Nozomi.Web2
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllerRoute(
-                    name: "default",
-                    pattern: "{controller}/{action=Index}/{id?}");
-                // endpoints.MapControllers();
+                // endpoints.MapControllerRoute(
+                //     name: "default",
+                //     pattern: "{controller}/{action=Index}/{id?}");
+                endpoints.MapControllers();
 
                 // Health check up!!!
                 // https://docs.microsoft.com/en-us/aspnet/core/host-and-deploy/health-checks?view=aspnetcore-3.0#basic-health-probe
@@ -181,20 +181,21 @@ namespace Nozomi.Web2
                 {
                     endpoints.MapToVueCliProxy(
                         "{*path}",
-                        new SpaOptions {SourcePath = "ClientApp"},
-                        npmScript: "serve",
-                        port: 9000,
-                        regex: "Compiled successfully");
+                        new SpaOptions { SourcePath = "ClientApp" },
+                        System.Diagnostics.Debugger.IsAttached ? "serve" : null,
+                        regex: "Compiled successfully",
+                        forceKill: true
+                    );
                 }
 
                 // Add MapRazorPages if the app uses Razor Pages. Since Endpoint Routing includes support for many frameworks, adding Razor Pages is now opt -in.
                 endpoints.MapRazorPages();
             });
 
-            app.UseSpa(spa =>
-            {
-                spa.Options.SourcePath = "ClientApp";
-            });
+            // app.UseSpa(spa =>
+            // {
+            //     spa.Options.SourcePath = "ClientApp";
+            // });
         }
     }
 }
