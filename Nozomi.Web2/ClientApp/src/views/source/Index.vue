@@ -74,7 +74,7 @@
                 'oidcUser',
                 'oidcIdToken',
                 'oidcIdTokenExp',
-            ])
+            ]),
         },
         data() {
             return {
