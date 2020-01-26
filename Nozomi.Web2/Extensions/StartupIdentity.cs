@@ -1,10 +1,14 @@
+using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using IdentityModel;
+using IdentityServer4;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Tokens;
+using Nozomi.Base.Auth.Global;
 
 namespace Nozomi.Web2.Extensions
 {
@@ -14,11 +18,13 @@ namespace Nozomi.Web2.Extensions
         {
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
             var authority = Startup.Environment.IsProduction() ? "https://auth.nozomi.one" : "https://localhost:6001/";
+            // IdentityModelEventSource.ShowPII =
+            //     !Startup.Environment.IsProduction(); //To show detail of error and see the problem
 
             // https://stackoverflow.com/questions/46091301/roles-not-being-populated-by-addjwtbearer-using-identityserver4-and-dotnetcore-2#46094800
-            services.Configure<IdentityOptions>(options => 
+            services.Configure<IdentityOptions>(options =>
                 options.ClaimsIdentity.RoleClaimType = JwtClaimTypes.Role);
-            
+
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddOpenIdConnect(
                     o =>
@@ -33,33 +39,35 @@ namespace Nozomi.Web2.Extensions
                         {
                             RoleClaimType = JwtClaimTypes.Role
                         };
-                        
+
                         // https://stackoverflow.com/questions/46579376/identityserver4-how-to-access-user-email
-                        o.Scope.Add("openid");
-                        o.Scope.Add("profile");
-                        o.Scope.Add("email");
-                        o.Scope.Add("roles");
+                        o.Scope.Add(IdentityServerConstants.StandardScopes.OpenId);
+                        o.Scope.Add(IdentityServerConstants.StandardScopes.Profile);
+                        o.Scope.Add(IdentityServerConstants.StandardScopes.Email);
+                        o.Scope.Add(IdentityServerConstants.StandardScopes.Phone);
+                        o.Scope.Add("nozomi.web");
+                        o.Scope.Add("nozomi.web.read_only");
                         o.Scope.Add(JwtClaimTypes.Role);
+                        o.Scope.Add(NozomiAuthConstants.StandardScopes.DefaultCryptoAddress);
                     })
                 .AddJwtBearer(o =>
+                {
+                    o.Authority = authority;
+                    o.Audience = "nozomi.web";
+                    o.RequireHttpsMetadata = false;
+                    // https://stackoverflow.com/questions/46579376/identityserver4-how-to-access-user-email
+                    o.TokenValidationParameters = new TokenValidationParameters
                     {
-                        o.Authority = authority;
-                        o.Audience = "nozomi.web";
-                        o.RequireHttpsMetadata = false;
-                        // https://stackoverflow.com/questions/46579376/identityserver4-how-to-access-user-email
-                        o.TokenValidationParameters = new TokenValidationParameters
-                        {
-                            RoleClaimType = JwtClaimTypes.Role
-                        };
-                        o.SaveToken = true;
-                    });
-//                .AddJwtBearer(options =>
-//                {
-//                    options.Authority = authority;
-//                    options.RequireHttpsMetadata = true;
-//                    options.Audience = "nozomi.web";
-//                    //options.ApiSecret = "super-secret";
-//                });
+                        RoleClaimType = JwtClaimTypes.Role,
+                        // ValidAudiences = new List<string>
+                        // {
+                        //     "nozomi.spa",
+                        //     "nozomi.web"
+                        // },
+                        // ValidateAudience = true
+                    };
+                    o.SaveToken = true;
+                });
 
             // Turn off the JWT claim type mapping to allow well-known claims (e.g. ‘sub’ and ‘idp’) to flow through unmolested
 //            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();

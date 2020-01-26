@@ -22,6 +22,8 @@ import OidcCallback from '../components/auth/oidc-callback';
 import OidcCallbackError from '../components/auth/oidc-callback-error';
 // @ts-ignore
 import Pricing from '../views/Pricing';
+// @ts-ignore
+import Bugs from '../views/Bugs';
 
 export const routes = [
   { name: 'home', path: '/', component: HomePage, display: 'Home',
@@ -46,6 +48,9 @@ export const routes = [
   },
   { name: 'changelog', path: '/changelog', component: Changelog, display: 'Changelog',
     meta: { icon: 'info', isPublic: true, onNav: false }
+  },
+  { name: 'bugs-and-issues', path: '/bugs', component: Bugs, display: 'Bugs & Issues',
+    meta: { icon: 'bug', isPublic: true, onNav: false }
   },
   // Currency-specific routing
   { name: 'view-currency', path: '/currency/:slug', props: true,

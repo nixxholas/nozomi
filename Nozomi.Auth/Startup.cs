@@ -8,15 +8,22 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.IdentityModel.Tokens.Jwt;
 using System.IO;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
+using IdentityModel;
+using IdentityServer4;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
+using Nozomi.Base.Auth.Global;
 using Nozomi.Base.Auth.Models;
 using Nozomi.Infra.Auth.Services.Address;
+using Nozomi.Infra.Auth.Services.User;
 using Nozomi.Infra.Blockchain.Auth.Events;
 using Nozomi.Infra.Blockchain.Auth.Events.Interfaces;
 using Nozomi.Preprocessing.Events;
@@ -34,9 +41,11 @@ namespace Nozomi.Auth
     public class Startup
     {
         public IConfiguration Configuration { get; }
-        public IHostingEnvironment HostingEnvironment { get; }
+        public IWebHostEnvironment HostingEnvironment { get; }
 
-        public Startup(IConfiguration configuration, IHostingEnvironment hostingEnvironment)
+        private readonly string NozomiSpecificOrigins = "_nozomiSpecificOrigins";
+
+        public Startup(IConfiguration configuration, IWebHostEnvironment hostingEnvironment)
         {
             Configuration = configuration;
             HostingEnvironment = hostingEnvironment;
@@ -108,6 +117,23 @@ namespace Nozomi.Auth
                 }, ServiceLifetime.Transient);
             }
 
+            // Cross Origin Requests for Nozomi Auth
+            services.AddCors(options =>
+            {
+                options.AddPolicy(NozomiSpecificOrigins,
+                    policyBuilder =>
+                    {
+                        if (HostingEnvironment.IsProduction())
+                            policyBuilder.WithOrigins("https://nozomi.one", "https://www.nozomi.one")
+                                .AllowAnyHeader()
+                                .AllowAnyMethod();
+                        else
+                            policyBuilder.AllowAnyOrigin()
+                                .AllowAnyHeader()
+                                .AllowAnyMethod();
+                    });
+            });
+            
             services.AddControllersWithViews()
                 .SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
 
@@ -117,6 +143,8 @@ namespace Nozomi.Auth
                 .AddEntityFrameworkNpgsql()
                 .AddIdentity<User, Role>(options =>
                 {
+                    options.ClaimsIdentity.UserIdClaimType = ClaimTypes.NameIdentifier;
+                    
                     options.Password.RequireLowercase = false;
                     options.Password.RequireUppercase = false;
                     options.Password.RequireNonAlphanumeric = false;
@@ -191,7 +219,17 @@ namespace Nozomi.Auth
                 builder.AddSigningCredential(certificate);
             }
 
-            services.AddAuthentication();
+            var authority = HostingEnvironment.IsProduction()
+                ? "https://auth.nozomi.one"
+                : "https://localhost:6001/";
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
+                {
+                    options.Authority = authority;
+                    options.RequireHttpsMetadata = false;
+                    
+                    options.Audience = "nozomi.web";
+                });
 
             // Database
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
@@ -206,6 +244,7 @@ namespace Nozomi.Auth
 
             services.AddTransient<IEmailSender, EmailSender>();
             services.AddTransient<IAddressService, AddressService>();
+            services.AddTransient<IUserService, UserService>();
         }
 
         public void Configure(IApplicationBuilder app)
@@ -237,13 +276,17 @@ namespace Nozomi.Auth
             forwardOptions.KnownNetworks.Clear();
             forwardOptions.KnownProxies.Clear();
 
+            // Cross origin requests DI
+            app.UseCors(NozomiSpecificOrigins);
+            
             // ref: https://github.com/aspnet/Docs/issues/2384
             app.UseForwardedHeaders(forwardOptions);            
             app.UseHttpsRedirection();
             
             app.UseCookiePolicy();
             app.UseIdentityServer();
-            
+
+            app.UseAuthentication();
             app.UseAuthorization();
             
             // "default", "{controller=Home}/{action=Index}/{id?}"

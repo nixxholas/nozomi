@@ -3,10 +3,15 @@
 
 
 using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Bogus;
 using IdentityModel;
+using IdentityModel.Client;
 using IdentityServer4.Events;
 using IdentityServer4.Extensions;
 using IdentityServer4.Models;
@@ -14,15 +19,22 @@ using IdentityServer4.Services;
 using IdentityServer4.Stores;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Nozomi.Auth.Controllers.Home;
+using Nozomi.Base.Auth.Events;
+using Nozomi.Base.Auth.Global;
 using Nozomi.Base.Auth.Models;
 using Nozomi.Base.Auth.Models.Wallet;
 using Nozomi.Base.Auth.ViewModels.Account;
+using Nozomi.Base.BCL.Helpers.Native.Text;
 using Nozomi.Base.Blockchain.Auth.Query.Validating;
 using Nozomi.Infra.Auth.Services.Address;
+using Nozomi.Infra.Auth.Services.User;
 using Nozomi.Infra.Blockchain.Auth.Events.Interfaces;
 using Nozomi.Preprocessing.Events.Interfaces;
 
@@ -43,9 +55,11 @@ namespace Nozomi.Auth.Controllers.Account
         private readonly IValidatingEvent _validatingEvent;
         private readonly IEventService _events;
         private readonly IAddressService _addressService;
+        private readonly IUserService _userService;
 
         public AccountController(
             ILogger<AccountController> logger,
+            IWebHostEnvironment webHostEnvironment,
             IEmailSender emailSender,
             RoleManager<Role> roleManager,
             UserManager<User> userManager,
@@ -55,7 +69,9 @@ namespace Nozomi.Auth.Controllers.Account
             IAuthenticationSchemeProvider schemeProvider,
             IAddressEvent addressEvent,
             IValidatingEvent validatingEvent,
-            IEventService events, IAddressService addressService) : base(logger)
+            IEventService events, 
+            IAddressService addressService,
+            IUserService userService) : base(logger, webHostEnvironment)
         {
             _emailSender = emailSender;
             _roleManager = roleManager;
@@ -68,7 +84,37 @@ namespace Nozomi.Auth.Controllers.Account
             _validatingEvent = validatingEvent;
             _events = events;
             _addressService = addressService;
+            _userService = userService;
         }
+        
+        #region Helpers
+
+        protected void AddErrors(IdentityResult result)
+        {
+            foreach (var error in result.Errors)
+            {
+                ModelState.AddModelError(string.Empty, error.Description);
+            }
+        }
+
+        protected Task<User> GetCurrentUserAsync()
+        {
+            return _userManager.GetUserAsync(HttpContext.User);
+        }
+
+        protected IActionResult RedirectToLocal(string returnUrl)
+        {
+            if (Url.IsLocalUrl(returnUrl))
+            {
+                return Redirect(returnUrl);
+            }
+            else
+            {
+                return RedirectToAction(nameof(HomeController.Index), "Home");
+            }
+        }
+
+        #endregion
         
         [HttpGet]
         [AllowAnonymous]
@@ -160,10 +206,12 @@ namespace Nozomi.Auth.Controllers.Account
             return View(vm);
         }
 
-        [HttpPost]
-        public async Task<User> Web3Create(string signature, string address, string message)
+        private async Task<User> Web3Create(string signature, string address, string message, string clientId = null)
         {
-            if (_addressEvent.IsBinded(address)) return null;
+            if (_addressEvent.IsBinded(address))
+            {
+                return null;
+            }
 
             var fakeUser = new Faker<User>()
                 //Basic rules using built-in generators
@@ -198,8 +246,15 @@ namespace Nozomi.Auth.Controllers.Account
                     //return Redirect(model.ReturnUrl);
 
                     var createdAddress = _addressService.Create(user.Id, address, AddressType.Ethereum);
+                    if (string.IsNullOrEmpty(createdAddress))
+                        await _events.RaiseAsync(new UserCreateClaimFailureEvent(user.UserName, 
+                            "Address creation failed", "Web3Create",clientId));
 
-                    return !string.IsNullOrWhiteSpace(createdAddress) ? user : null;
+                    var createdDefaultAddressClaim = await _userManager.AddClaimAsync(user, 
+                        new Claim(NozomiJwtClaimTypes.DefaultWallet, address));
+
+                    return !string.IsNullOrWhiteSpace(createdAddress) && createdDefaultAddressClaim.Succeeded 
+                        ? user : null;
                 }
 
                 ModelState.AddModelError(user.Id, AccountOptions.FailedToJoinRole);
@@ -211,7 +266,11 @@ namespace Nozomi.Auth.Controllers.Account
         [HttpPost]
         public async Task<IActionResult> Web3Register([FromBody] Web3InputModel model, string returnUrl = null)
         {
+            // check if we are in the context of an authorization request
+            var context = await _interaction.GetAuthorizationContextAsync(returnUrl);
+            
             ViewData["ReturnUrl"] = returnUrl;
+            
             if (ModelState.IsValid && _validatingEvent.ValidateOwner(new ValidateOwnerQuery
             {
                 ClaimerAddress = model.Address, RawMessage = model.Message, Signature = model.Signature
@@ -396,57 +455,66 @@ namespace Nozomi.Auth.Controllers.Account
             }
 
             // The user is logging in through password authentication
-            if (model.IsValid() && !string.IsNullOrWhiteSpace(model.Username)
-                                && !string.IsNullOrWhiteSpace(model.Password))
+            if (model.IsValidForPassAuth())
             {
-                var user = await _userManager.FindByNameAsync(model.Username);
-                if (!user.EmailConfirmed)
+                var user = new User();
+                if (model.UsernameBasedIsValid())
+                    user = await _userManager.FindByNameAsync(model.Username);
+                else if (model.EmailBasedIsValid())
+                    user = await _userManager.FindByEmailAsync(model.Username);
+
+                if (user == null)
+                {
+                    ModelState.AddModelError(string.Empty, AccountOptions.InvalidCredentialsErrorMessage);
+                } else {
+                    if (!user.EmailConfirmed && !_webHostEnvironment.IsDevelopment())
                 {
                     await _events.RaiseAsync(new UserLoginFailureEvent(model.Username, "email not confirmed",
                         clientId: context?.ClientId));
                     ModelState.AddModelError(string.Empty, AccountOptions.EmailNotConfirmed);
                 }
-                else
-                {
-                    var result = await _signInManager.PasswordSignInAsync(model.Username, model.Password,
-                        model.RememberLogin, lockoutOnFailure: true);
-                    if (result.Succeeded)
+                    else
                     {
-                        await _events.RaiseAsync(new UserLoginSuccessEvent(user.UserName, user.Id, user.UserName,
-                            clientId: context?.ClientId));
-
-                        if (context != null)
+                        var result = await _signInManager.PasswordSignInAsync(model.Username, model.Password,
+                            model.RememberLogin, lockoutOnFailure: true);
+                        if (result.Succeeded)
                         {
-                            if (await _clientStore.IsPkceClientAsync(context.ClientId))
+                            await _events.RaiseAsync(new UserLoginSuccessEvent(user.UserName, user.Id, user.UserName,
+                                clientId: context?.ClientId));
+
+                            if (context != null)
                             {
-                                // if the client is PKCE then we assume it's native, so this change in how to
-                                // return the response is for better UX for the end user.
-                                return View("Redirect", new RedirectViewModel {RedirectUrl = model.ReturnUrl});
+                                if (await _clientStore.IsPkceClientAsync(context.ClientId))
+                                {
+                                    // if the client is PKCE then we assume it's native, so this change in how to
+                                    // return the response is for better UX for the end user.
+                                    return View("Redirect", new RedirectViewModel {RedirectUrl = model.ReturnUrl});
+                                }
+
+                                // we can trust model.ReturnUrl since GetAuthorizationContextAsync returned non-null
+                                return Redirect(model.ReturnUrl);
                             }
 
-                            // we can trust model.ReturnUrl since GetAuthorizationContextAsync returned non-null
-                            return Redirect(model.ReturnUrl);
+                            // request for a local page
+                            if (Url.IsLocalUrl(model.ReturnUrl))
+                            {
+                                return Redirect(model.ReturnUrl);
+                            }
+                            else if (string.IsNullOrEmpty(model.ReturnUrl))
+                            {
+                                return Redirect("~/");
+                            }
+                            else
+                            {
+                                // user might have clicked on a malicious link - should be logged
+                                throw new Exception("invalid return URL");
+                            }
                         }
 
-                        // request for a local page
-                        if (Url.IsLocalUrl(model.ReturnUrl))
-                        {
-                            return Redirect(model.ReturnUrl);
-                        }
-                        else if (string.IsNullOrEmpty(model.ReturnUrl))
-                        {
-                            return Redirect("~/");
-                        }
-                        else
-                        {
-                            // user might have clicked on a malicious link - should be logged
-                            throw new Exception("invalid return URL");
-                        }
+                        await _events.RaiseAsync(new UserLoginFailureEvent(model.Username, "invalid credentials",
+                            clientId: context?.ClientId));
+                        ModelState.AddModelError(string.Empty, AccountOptions.InvalidCredentialsErrorMessage);
                     }
-
-                    await _events.RaiseAsync(new UserLoginFailureEvent(model.Username, "invalid credentials",
-                        clientId: context?.ClientId));
-                    ModelState.AddModelError(string.Empty, AccountOptions.InvalidCredentialsErrorMessage);
                 }
             }
             else if (model.IsValid() && !string.IsNullOrWhiteSpace(model.Message)
@@ -574,7 +642,9 @@ namespace Nozomi.Auth.Controllers.Account
         public async Task<IActionResult> Logout(LogoutInputModel model)
         {
             // build a model so the logged out page knows what to display
-            var vm = await BuildLoggedOutViewModelAsync(model.LogoutId);
+            var vm = await BuildLoggedOutViewModelAsync(model.LogoutId,
+                // https://stackoverflow.com/questions/38772394/how-can-i-get-url-referrer-in-asp-net-core-mvc
+                HttpContext.Request.Headers["Referer"]);
 
             if (User?.Identity.IsAuthenticated == true)
             {
@@ -600,12 +670,139 @@ namespace Nozomi.Auth.Controllers.Account
             return View("LoggedOut", vm);
         }
 
+        //
+        // GET: /Account/ForgotPassword
+        [HttpGet]
+        [AllowAnonymous]
+        public IActionResult ForgotPassword()
+        {
+            return View();
+        }
+
+        //
+        // POST: /Account/ForgotPassword
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ForgotPassword(ForgotPasswordInputModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await _userManager.FindByEmailAsync(model.Email);
+                if (user == null || !(await _userManager.IsEmailConfirmedAsync(user)))
+                {
+                    // Don't reveal that the user does not exist or is not confirmed
+                    return View("ForgotPasswordConfirmation");
+                }
+
+                // Send an email with this link
+                var code = await _userManager.GeneratePasswordResetTokenAsync(user);
+                var callbackUrl = Url.Action("ResetPassword", "Account", 
+                    new ResetPasswordInputModel { Email = user.Email, Code = code }, protocol: HttpContext.Request.Scheme);
+                await _emailSender.SendEmailAsync(model.Email, "Reset Password",
+                    "Please reset your password by clicking here: <a href=\"" + callbackUrl + "\">link</a>");
+                return View("ForgotPasswordConfirmation");
+            }
+
+            // If we got this far, something failed, redisplay form
+            return View(model);
+        }
+
+        //
+        // GET: /Account/ForgotPasswordConfirmation
+        [HttpGet]
+        [AllowAnonymous]
+        public IActionResult ForgotPasswordConfirmation()
+        {
+            return View();
+        }
+        
+        //
+        // GET: /Account/ResetPassword
+        [HttpGet]
+        [AllowAnonymous]
+        public IActionResult ResetPassword(string code = null)
+        {
+            return code == null ? View("Error") : View();
+        }
+
+        //
+        // POST: /Account/ResetPassword
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ResetPassword(ResetPasswordInputModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+            var user = await _userManager.FindByEmailAsync(model.Email);
+            if (user == null)
+            {
+                // Don't reveal that the user does not exist
+                return RedirectToAction(nameof(ResetPasswordConfirmation), "Account");
+            }
+            var result = await _userManager.ResetPasswordAsync(user, model.Code, model.Password);
+            if (result.Succeeded)
+            {
+                return RedirectToAction(nameof(ResetPasswordConfirmation), "Account");
+            }
+            AddErrors(result);
+            
+            return View();
+        }
+
+        //
+        // GET: /Account/ResetPasswordConfirmation
+        [HttpGet]
+        [AllowAnonymous]
+        public IActionResult ResetPasswordConfirmation()
+        {
+            return View();
+        }
+
+        //
+        // GET: /Account/SendCode
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<ActionResult> SendCode(string returnUrl = null, bool rememberMe = false)
+        {
+            var user = await _signInManager.GetTwoFactorAuthenticationUserAsync();
+            if (user == null)
+            {
+                return View("Error");
+            }
+            var userFactors = await _userManager.GetValidTwoFactorProvidersAsync(user);
+            var factorOptions = userFactors
+                .Select(purpose => new SelectListItem { Text = purpose, Value = purpose }).ToList();
+            return View(new SendCodeViewModel { Providers = factorOptions, ReturnUrl = returnUrl, RememberMe = rememberMe });
+        }
+
         [HttpGet]
         public IActionResult AccessDenied()
         {
             return View();
         }
 
+        [Authorize(AuthenticationSchemes = "Bearer")]
+        [HttpPut]
+        public async Task<IActionResult> Update([FromBody]UpdateUserInputModel vm)
+        {
+            var user = await _userManager.FindByIdAsync(((ClaimsIdentity) User.Identity)
+                .Claims.FirstOrDefault(c => c.Type.Equals(JwtClaimTypes.Subject)
+                                            || c.Type.Equals(ClaimTypes.NameIdentifier))?.Value);
+            
+            // Modify the user's profile
+            if (user != null)
+            {
+                await _userService.Update(vm, user.Id);
+
+                return Ok("Account details updated successfully!");
+            }
+
+            return BadRequest("Invalid input/s, please ensure that the entries are correctly filled!");
+        }
 
         /*****************************************/
         /* helper APIs for the AccountController */
@@ -715,7 +912,7 @@ namespace Nozomi.Auth.Controllers.Account
             return vm;
         }
 
-        private async Task<LoggedOutViewModel> BuildLoggedOutViewModelAsync(string logoutId)
+        private async Task<LoggedOutViewModel> BuildLoggedOutViewModelAsync(string logoutId, string referralUrl = null)
         {
             // get context information (client name, post logout redirect URI and iframe for federated signout)
             var logout = await _interaction.GetLogoutContextAsync(logoutId);
@@ -728,6 +925,10 @@ namespace Nozomi.Auth.Controllers.Account
                 SignOutIframeUrl = logout?.SignOutIFrameUrl,
                 LogoutId = logoutId
             };
+
+            if ((string.IsNullOrEmpty(vm.PostLogoutRedirectUri) || string.IsNullOrWhiteSpace(vm.PostLogoutRedirectUri))
+                && StringHelper.IsUrl(referralUrl))
+                vm.PostLogoutRedirectUri = referralUrl;
 
             if (User?.Identity.IsAuthenticated == true)
             {

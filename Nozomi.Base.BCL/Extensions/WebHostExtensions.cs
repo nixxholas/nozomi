@@ -9,7 +9,7 @@ using Polly;
 
 namespace Nozomi.Base.BCL.Extensions
 {
-    public static class IWebHostExtensions
+    public static class WebHostExtensions
     {
         public static bool IsInKubernetes(this IWebHost webHost)
         {

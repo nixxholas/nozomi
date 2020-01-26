@@ -20,6 +20,13 @@ import store from '@/store/index';
 import './registerServiceWorker';
 import dateFilter from '@/filters/date.filter';
 
+// Simple Analytics
+// @ts-ignore
+import SimpleAnalytics from 'simple-analytics-vue';
+if (process.env.NODE_ENV === "production") {
+  Vue.use(SimpleAnalytics);
+}
+
 // FontAwesome!!!
 import { library } from '@fortawesome/fontawesome-svg-core';
 // Vue Injection
@@ -28,16 +35,18 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 Vue.component('vue-fontawesome', FontAwesomeIcon);
 
 // Font awesome solid icon configurations
-import { faAngleLeft, faAngleRight, faArrowUp, faAtlas, faCaretDown, faCheck,
-  faCheckCircle, faChevronDown, faCog,
+import { faAngleLeft, faAngleRight, faArrowUp, faAtlas, faBug, faCaretDown, 
+  faCheck, faCheckCircle, faChevronDown, faCog,
   faCoins, faColumns, faDumpster, faExclamationCircle, faExclamationTriangle,
-  faFrown, faHome, faInfo, faLandmark, faMoneyBill, faMoneyBillWave, faSadCry,
+  faEye, faFingerprint, faFrown, faHome, faInfo, faInfoCircle, faKey, faLandmark, 
+  faMoneyBill, faMoneyBillWave, faSadCry,
   faSearch, faSignOutAlt,faTicketAlt, faTimes, faTrash, faUniversity, faUser } 
   from '@fortawesome/free-solid-svg-icons';
-library.add(faAngleLeft, faAngleRight, faArrowUp, faAtlas, faCaretDown, faCheck, 
-    faCheckCircle, faChevronDown, faCog,
-    faCoins, faColumns, faDumpster, faExclamationCircle, faExclamationTriangle, 
-    faFrown, faHome, faInfo, faLandmark, faMoneyBill, faMoneyBillWave, faSadCry, 
+library.add(faAngleLeft, faAngleRight, faArrowUp, faAtlas, faBug, faCaretDown, 
+    faCheck, faCheckCircle, faChevronDown, faCog,
+    faCoins, faColumns, faDumpster, faExclamationCircle, faExclamationTriangle,
+    faEye, faFingerprint, faFrown, faHome, faInfo, faInfoCircle, faKey, faLandmark, 
+    faMoneyBill, faMoneyBillWave, faSadCry, 
     faSearch, faSignOutAlt, faTicketAlt, faTimes, faTrash, faUniversity, faUser);
 
 // Font awesome brand icon configurations

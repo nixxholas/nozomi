@@ -21,7 +21,7 @@ namespace Nozomi.Infra.Auth.Services.Address
             if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(address))
                 return string.Empty;
 
-            var user = _unitOfWork.GetRepository<User>()
+            var user = _unitOfWork.GetRepository<Base.Auth.Models.User>()
                 .GetQueryable()
                 .AsNoTracking()
                 .SingleOrDefault(u => u.Id.Equals(userId));
