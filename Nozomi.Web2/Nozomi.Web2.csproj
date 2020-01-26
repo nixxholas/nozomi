@@ -58,8 +58,7 @@
     <Exec Command="npm --version" ContinueOnError="true">
       <Output TaskParameter="ExitCode" PropertyName="ErrorCode" />
     </Exec>
-    <Error Condition="'$(ErrorCode)' != '0'" Text="Node.js and npm are required to build and run this project. 
-    To continue, please install Node.js from https://nodejs.org/, and then restart your command prompt or IDE." />
+    <Error Condition="'$(ErrorCode)' != '0'" Text="Node.js and npm are required to build and run this project. &#xA;    To continue, please install Node.js from https://nodejs.org/, and then restart your command prompt or IDE." />
   </Target>
 
   <Target Name="EnsureNodeModulesInstalled" BeforeTargets="Build" Inputs="package.json" Outputs="packages-lock.json" Condition="!Exists('$(SpaRoot)node_modules')">
