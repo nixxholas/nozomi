@@ -1,6 +1,9 @@
+using System;
+
 namespace Nozomi.Data.ResponseModels.Source
 {
-    public class SourceViewModel
+    [Obsolete]
+    public class LegacySourceViewModel
     {
         public long Id { get; set; }
         
