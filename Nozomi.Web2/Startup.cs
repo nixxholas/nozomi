@@ -175,7 +175,7 @@ namespace Nozomi.Web2
 
                 // Health check up!!!
                 // https://docs.microsoft.com/en-us/aspnet/core/host-and-deploy/health-checks?view=aspnetcore-3.0#basic-health-probe
-                endpoints.MapHealthChecks("/health");
+                // endpoints.MapHealthChecks("/health");
                 
                 if (env.IsDevelopment())
                     endpoints.MapToVueCliProxy(
