@@ -40,6 +40,16 @@ namespace Nozomi.Web2
                 options.CheckConsentNeeded = context => false;
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
+            services.Configure<ForwardedHeadersOptions>(options =>
+            {
+                options.KnownNetworks.Clear();
+                options.KnownProxies.Clear();
+                
+                // https://github.com/IdentityServer/IdentityServer4/issues/1331
+                options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+                options.RequireHeaderSymmetry = false;
+                options.ForwardLimit = 2;
+            });
 
             services.AddOptions();
 
@@ -122,22 +132,12 @@ namespace Nozomi.Web2
             // Always enforce HTTPS for development and production
             app.UseHttpsRedirection();
 
-            // https://github.com/IdentityServer/IdentityServer4/issues/1331
-            var forwardOptions = new ForwardedHeadersOptions
-            {
-                ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto,
-                RequireHeaderSymmetry = false
-            };
-
-            forwardOptions.KnownNetworks.Clear();
-            forwardOptions.KnownProxies.Clear();
-
             // ref: https://github.com/aspnet/Docs/issues/2384
-            app.UseForwardedHeaders(forwardOptions);
+            app.UseForwardedHeaders();
 
             app.UseAuthentication();
 
-            // app.UseStaticFiles();
+            app.UseStaticFiles();
             app.UseSpaStaticFiles();
 
             app.UseCookiePolicy();
@@ -178,7 +178,6 @@ namespace Nozomi.Web2
                 endpoints.MapHealthChecks("/health");
                 
                 if (env.IsDevelopment())
-                {
                     endpoints.MapToVueCliProxy(
                         "{*path}",
                         new SpaOptions { SourcePath = "ClientApp" },
@@ -186,7 +185,8 @@ namespace Nozomi.Web2
                         regex: "Compiled successfully",
                         forceKill: true
                     );
-                }
+                else
+                    endpoints.MapFallbackToFile("index.html");
 
                 // Add MapRazorPages if the app uses Razor Pages. Since Endpoint Routing includes support for many frameworks, adding Razor Pages is now opt -in.
                 endpoints.MapRazorPages();
