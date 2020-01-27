@@ -195,7 +195,7 @@ namespace Nozomi.Web2
             app.UseSpa(spa =>
             {
                 spa.Options.DefaultPage = "index.html";
-                spa.Options.SourcePath = "ClientApp";
+                spa.Options.SourcePath = "/ClientApp";
             });
         }
     }
