@@ -15,8 +15,8 @@ RUN apt-get update -q && apt-get install -q -y \
 RUN curl -sL https://deb.nodesource.com/setup_12.x | bash -
 
 # Propagate Node for Docker
-RUN apt-get update && apt-get upgrade -y && \
-    apt-get install -y nodejs
+RUN apt-get update \
+    && apt-get install -y nodejs
 
 # Copy everything else and build
 RUN dotnet publish Nozomi.Web2/Nozomi.Web2.csproj -c Release -o out
