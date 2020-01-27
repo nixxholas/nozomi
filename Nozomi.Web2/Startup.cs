@@ -192,10 +192,11 @@ namespace Nozomi.Web2
                 endpoints.MapRazorPages();
             });
 
-            // app.UseSpa(spa =>
-            // {
-            //     spa.Options.SourcePath = "ClientApp";
-            // });
+            app.UseSpa(spa =>
+            {
+                spa.Options.DefaultPage = "index.html";
+                spa.Options.SourcePath = "ClientApp";
+            });
         }
     }
 }
