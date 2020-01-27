@@ -137,7 +137,7 @@ namespace Nozomi.Web2
 
             app.UseAuthentication();
 
-            app.UseStaticFiles();
+            // app.UseStaticFiles();
             app.UseSpaStaticFiles();
 
             app.UseCookiePolicy();
@@ -181,7 +181,7 @@ namespace Nozomi.Web2
                 {
                     endpoints.MapToVueCliProxy(
                         "{*path}",
-                        new SpaOptions { DefaultPage = "/dist/index.html" ,SourcePath = "ClientApp" },
+                        new SpaOptions { SourcePath = "ClientApp" },
                         System.Diagnostics.Debugger.IsAttached ? "serve" : null,
                         regex: "Compiled successfully",
                         forceKill: true
