@@ -25,6 +25,7 @@ RUN dotnet publish Nozomi.Web2/Nozomi.Web2.csproj -c Release -o out
 FROM mcr.microsoft.com/dotnet/core/aspnet:3.1
 WORKDIR /app
 COPY --from=build-env /app/out .
+COPY nozomi.pfx .
 
 # Make sure the app binds to port 8080
 ENV ASPNETCORE_URLS https://*:8080
