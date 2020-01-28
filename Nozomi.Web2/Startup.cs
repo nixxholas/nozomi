@@ -51,7 +51,7 @@ namespace Nozomi.Web2
             //     options.ForwardLimit = 2;
             // });
 
-            services.AddOptions();
+            // services.AddOptions();
 
             // services.AddResponseCompression();
 
@@ -135,6 +135,7 @@ namespace Nozomi.Web2
             // ref: https://github.com/aspnet/Docs/issues/2384
             // app.UseForwardedHeaders();
 
+            app.UseDefaultFiles();
             // app.UseStaticFiles();
             app.UseSpaStaticFiles();
 
