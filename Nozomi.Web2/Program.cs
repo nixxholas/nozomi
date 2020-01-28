@@ -26,20 +26,31 @@ namespace Nozomi.Web2
                     {
                         var hasHttpsPortConfigured = int.TryParse(Environment.GetEnvironmentVariable("HTTPS_PORT")
                             , out var port);
-                        var certPassword = Environment.GetEnvironmentVariable("SSLCERT_PASSWORD");
-                        if (string.IsNullOrEmpty(certPassword))
-                            certPassword = "290597"; // Deefault
-                        
                         if (!hasHttpsPortConfigured)
                         {
                             port = 5001; // Default port
 
-                            Console.WriteLine("HTTPS port not configured! Self configuring to 443.");
+                            Console.WriteLine("HTTPS port not configured! Self configuring to 5001.");
+                        }
+                        
+                        var certPath = Environment.GetEnvironmentVariable("SSLCERT_PATH");
+                        if (string.IsNullOrEmpty(certPath)) {
+                            certPath = "nozomi.pfx"; // Deefault
+
+                            Console.WriteLine("SSLCERT_PATH not configured! Self configuring to nozomi.pfx");
+                        }
+                        
+                        var certPassword = Environment.GetEnvironmentVariable("SSLCERT_PASSWORD");
+                        if (string.IsNullOrEmpty(certPassword))
+                        {
+                            certPassword = "290597"; // Deefault
+
+                            Console.WriteLine("SSLCERT_PASSWORD not configured! Self configuring to the defaults.");
                         }
                         
                         options.Listen(IPAddress.Loopback, port, listenOptions =>
                         {
-                            var cert = new X509Certificate2("nozomi.pfx", certPassword);
+                            var cert = new X509Certificate2(certPath, certPassword);
 
                             listenOptions.UseHttps(cert);
                         });
