@@ -3,6 +3,7 @@ using System.Net;
 using System.Security.Cryptography.X509Certificates;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Hosting;
 
 namespace Nozomi.Web2
 {
@@ -18,6 +19,31 @@ namespace Nozomi.Web2
                 .UseKestrel(options =>
                 {
                     options.AddServerHeader = false;
+
+                    var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+                    var isDevelopment = environment == Environments.Development;
+                    if (!System.Diagnostics.Debugger.IsAttached && !isDevelopment)
+                    {
+                        var hasHttpsPortConfigured = int.TryParse(Environment.GetEnvironmentVariable("HTTPS_PORT")
+                            , out var port);
+                        var certPassword = Environment.GetEnvironmentVariable("SSLCERT_PASSWORD");
+                        if (string.IsNullOrEmpty(certPassword))
+                            certPassword = "290597"; // Deefault
+                        
+                        if (!hasHttpsPortConfigured)
+                        {
+                            port = 5001; // Default port
+
+                            Console.WriteLine("HTTPS port not configured! Self configuring to 443.");
+                        }
+                        
+                        options.Listen(IPAddress.Loopback, port, listenOptions =>
+                        {
+                            var cert = new X509Certificate2("nozomi.pfx", certPassword);
+
+                            listenOptions.UseHttps(cert);
+                        });
+                    }
                 })
                 .UseStartup<Startup>();
     }

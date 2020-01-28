@@ -92,13 +92,13 @@ namespace Nozomi.Web2
 
             // https://docs.microsoft.com/en-us/aspnet/core/security/enforcing-ssl?view=aspnetcore-3.1&tabs=visual-studio#options
             // Calling AddHttpsRedirection is only necessary to change the values of HttpsPort or RedirectStatusCode.
-            // services.AddHttpsRedirection(options =>
-            // {
-            //     options.RedirectStatusCode = StatusCodes.Status307TemporaryRedirect;
-            //     
-            //     // if (Environment.IsProduction())
-            //     //     options.HttpsPort = 5001;
-            // });
+            services.AddHttpsRedirection(options =>
+            {
+                options.RedirectStatusCode = StatusCodes.Status307TemporaryRedirect;
+                
+                if (!Environment.IsProduction())
+                    options.HttpsPort = 5001;
+            });
 
             // UoW-Repository injection
             services.ConfigureRepoLayer();
