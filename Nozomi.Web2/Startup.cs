@@ -34,12 +34,12 @@ namespace Nozomi.Web2
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.Configure<CookiePolicyOptions>(options =>
-            {
-                // This lambda determines whether user consent for non-essential cookies is needed for a given request.
-                options.CheckConsentNeeded = context => false;
-                options.MinimumSameSitePolicy = SameSiteMode.None;
-            });
+            // services.Configure<CookiePolicyOptions>(options =>
+            // {
+            //     // This lambda determines whether user consent for non-essential cookies is needed for a given request.
+            //     options.CheckConsentNeeded = context => false;
+            //     options.MinimumSameSitePolicy = SameSiteMode.None;
+            // });
             // services.Configure<ForwardedHeadersOptions>(options =>
             // {
             //     options.KnownNetworks.Clear();
@@ -135,12 +135,10 @@ namespace Nozomi.Web2
             // ref: https://github.com/aspnet/Docs/issues/2384
             // app.UseForwardedHeaders();
 
-            app.UseAuthentication();
-
             // app.UseStaticFiles();
             app.UseSpaStaticFiles();
 
-            app.UseCookiePolicy();
+            // app.UseCookiePolicy();
 
             // // Enable middleware to serve generated Swagger as a JSON endpoint.
             // app.UseSwagger();
@@ -164,14 +162,21 @@ namespace Nozomi.Web2
 
             app.UseRouting();
 
+            // For most apps, calls to UseAuthentication, UseAuthorization, and UseCors must
+            // appear between the calls to UseRouting and UseEndpoints to be effective.
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
+                // MapControllers adds support for attribute-routed controllers.
+                // MapAreaControllerRoute adds a conventional route for controllers
+                // in an area.
+                // MapControllerRoute adds a conventional route for controllers.
+                endpoints.MapControllers();
                 // endpoints.MapControllerRoute(
                 //     name: "default",
                 //     pattern: "{controller}/{action=Index}/{id?}");
-                endpoints.MapControllers();
 
                 // Health check up!!!
                 // https://docs.microsoft.com/en-us/aspnet/core/host-and-deploy/health-checks?view=aspnetcore-3.0#basic-health-probe
