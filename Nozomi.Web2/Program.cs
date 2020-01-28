@@ -20,7 +20,7 @@ namespace Nozomi.Web2
                 {
                     options.AddServerHeader = false;
                     
-                    options.Listen(IPAddress.Any, 8080);         // http:*:80
+                    // options.Listen(IPAddress.Any, 8080);         // http:*:80
                     
                     var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
                     var isDevelopment = environment == Environments.Development;
