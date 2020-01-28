@@ -17,7 +17,6 @@ import App from './App.vue';
 // @ts-ignore
 import router from '@/routing/router';
 import store from '@/store/index';
-import './registerServiceWorker';
 import dateFilter from '@/filters/date.filter';
 
 // Simple Analytics

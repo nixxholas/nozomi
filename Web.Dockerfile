@@ -12,11 +12,11 @@ RUN apt-get update -q && apt-get install -q -y \
 
 # Node Bash Script for Debian
 # https://github.com/nodesource/distributions#deb
-RUN curl -sL https://deb.nodesource.com/setup_13.x | bash -
+RUN curl -sL https://deb.nodesource.com/setup_12.x | bash -
 
 # Propagate Node for Docker
-RUN apt-get update && apt-get upgrade -y && \
-    apt-get install -y nodejs
+RUN apt-get update \
+    && apt-get install -y nodejs
 
 # Copy everything else and build
 RUN dotnet publish Nozomi.Web2/Nozomi.Web2.csproj -c Release -o out
@@ -25,4 +25,9 @@ RUN dotnet publish Nozomi.Web2/Nozomi.Web2.csproj -c Release -o out
 FROM mcr.microsoft.com/dotnet/core/aspnet:3.1
 WORKDIR /app
 COPY --from=build-env /app/out .
+COPY nozomi.pfx .
+
+# Make sure the app binds to port 8080
+ENV ASPNETCORE_URLS https://*:8080
+
 ENTRYPOINT ["dotnet", "Nozomi.Web2.dll"]

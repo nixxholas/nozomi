@@ -88,7 +88,7 @@ namespace Nozomi.Service.Events
                     Abbreviation = st.Abbreviation,
                     Sources = st.Sources
                         .Where(s => s.DeletedAt == null && s.IsEnabled)
-                        .Select(s => new SourceViewModel
+                        .Select(s => new LegacySourceViewModel
                         {
                             Id = s.Id,
                             Abbreviation = s.Abbreviation,

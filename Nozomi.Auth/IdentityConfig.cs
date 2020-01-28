@@ -191,7 +191,11 @@ namespace Nozomi.Auth
                         IdentityServerConstants.StandardScopes.Phone,
                         JwtClaimTypes.Role, "nozomi.auth", "nozomi.web", "nozomi.web.read_only",
                         NozomiAuthConstants.StandardScopes.DefaultCryptoAddress },
-                    RedirectUris = {"https://localhost:5001/oidc-callback", "https://localhost:5001/oidc-silent-renew"},
+                    RedirectUris =
+                    {
+                        "https://localhost:5001/oidc-callback", "https://localhost:5001/oidc-silent-renew" 
+                        ,"https://localhost:443/oidc-callback", "https://localhost:443/oidc-silent-renew"
+                    },
                     PostLogoutRedirectUris = {"https://localhost:5001/"},
                     AllowedCorsOrigins = {"https://localhost:5001"},
                     AccessTokenLifetime = 3600

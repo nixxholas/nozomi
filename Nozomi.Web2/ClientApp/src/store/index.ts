@@ -6,7 +6,6 @@ import { oidcSettings } from "./config";
 // @ts-ignore
 import { vuexOidcCreateStoreModule } from 'vuex-oidc';
 import { RootState } from './types';
-import { counter } from './counter/index';
 import {NotificationProgrammatic as Notification} from "buefy";
 
 const vuexPersist = new VuexPersist<RootState>({
@@ -53,7 +52,6 @@ const store: StoreOptions<RootState> = {
           userSignedOut: () => console.log('OIDC user is signed out'),
           oidcError: (payload: any) => console.log('OIDC error', payload)
         }),
-    counter,
   },
   plugins: [vuexPersist.plugin]
 };

@@ -129,7 +129,7 @@
                                     <li><b>Cabin</b> - A request's analysed components can now be seen</li>
                                     <li><b>Cabin</b> - A request analysed components can now be created</li>
                                     <li><b>Cabin</b> - A request analysed components can now be modified</li>
-                                    <li><b class="has-text-danger">Known Issue</b> - Nozomi API Documentation is down for now.. We have some deprecated crap clashing with our new stuff</li>
+                                    <strike><li><b class="has-text-danger">Known Issue</b> - Nozomi API Documentation is down for now.. We have some deprecated crap clashing with our new stuff</li></strike>
                                 </ul>
                             </div>
                         </div>
@@ -143,7 +143,6 @@
                                     <li><b>Auth</b> - New framework compliance updates</li>
                                     <li><b>Auth</b> - Cancelling login finally works now</li>
                                     <li><b>Auth</b> - Email verification functionality; <i>yes click the link to verify your account</i></li>
-                                    <li><b class="has-text-danger">Known Issue</b> - Nozomi API Documentation is down for now.. We have some deprecated crap clashing with our new stuff</li>
                                 </ul>
                             </div>
                         </div>
@@ -161,11 +160,13 @@
                         <div class="timeline-item is-info">
                             <div class="timeline-marker is-info"></div>
                             <div class="timeline-content">
-                                <p class="heading">26 January 2019 - <b>beta 6</b></p>
+                                <p class="heading">27 January 2019 - <b>beta 6</b></p>
                                 <ul>
                                     <li><b>UI</b> - View account information</li>
                                     <li><b>UI</b> - Account Information updating functionality</li>
                                     <li><b>Auth</b> - Manual logout redirection implementation</li>
+                                    <li><b>Web</b> - Framework & rendering engine updates</li>
+                                    <li><b>Web Docs</b> - We got it working again</li>
                                 </ul>
                             </div>
                         </div>

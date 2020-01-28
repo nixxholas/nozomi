@@ -3,6 +3,8 @@ import { oidcSettings } from '../store/config';
 import axios from 'axios';
 
 export default {
+    
+    
     update(vm) {
         if (!vm)
             throw new Error("Invalid payload. Please try again.");

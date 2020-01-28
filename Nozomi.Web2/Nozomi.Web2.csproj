@@ -3,8 +3,6 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-    <TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
-    <TypeScriptToolsVersion>Latest</TypeScriptToolsVersion>
     <IsPackable>false</IsPackable>
     <SpaRoot>ClientApp\</SpaRoot>
     <DefaultItemExcludes>$(DefaultItemExcludes);$(SpaRoot)node_modules\**</DefaultItemExcludes>
@@ -26,9 +24,9 @@
   <ItemGroup>
     <PackageReference Include="IdentityServer4.AccessTokenValidation" Version="3.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="4.1.0" />
-    <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="3.1.0" />
+    <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="3.1.1" />
     <PackageReference Include="VaultSharp" Version="0.11.1002" />
-    <PackageReference Include="VueCliMiddleware" Version="3.0.0" />
+    <PackageReference Include="VueCliMiddleware" Version="3.1.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -36,34 +34,34 @@
     <Content Remove="$(SpaRoot)**" />
     <None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**" />
   </ItemGroup>
-
+  
   <ItemGroup>
-    <Content Include="ClientApp\tsconfig.json" />
+    <Folder Include="wwwroot\" />
   </ItemGroup>
-
+  
   <ItemGroup>
     <ProjectReference Include="..\Nozomi.Infra.Blockchain.Auth\Nozomi.Infra.Blockchain.Auth.csproj" />
     <ProjectReference Include="..\Nozomi.Infra.Service\Nozomi.Infra.Service.csproj" />
   </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="ClientApp\src\views\dashboard\RequestComponent" />
-  </ItemGroup>
-
-  <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">
-    <Message Importance="high" Text="Checking if node is installed" />
-    <!-- Ensure Node.js is installed -->
+  
+  <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build">
+    <!-- Build Target:  Ensure Node.js is installed -->
     <Exec Command="node --version" ContinueOnError="true">
       <Output TaskParameter="ExitCode" PropertyName="ErrorCode" />
     </Exec>
-    <Error Condition="'$(ErrorCode)' != '0'" Text="Node.js is required to build and run this project. To continue, please install Node.js from https://nodejs.org/, and then restart your command prompt or IDE." />
+    <Exec Command="npm --version" ContinueOnError="true">
+      <Output TaskParameter="ExitCode" PropertyName="ErrorCode" />
+    </Exec>
+    <Error Condition="'$(ErrorCode)' != '0'" Text="Node.js and npm are required to build and run this project. To continue, please install Node.js from https://nodejs.org/, and then restart your command prompt or IDE." />
+  </Target>
+
+  <Target Name="EnsureNodeModulesInstalled" BeforeTargets="Build" Inputs="package.json" Outputs="packages-lock.json" Condition="!Exists('$(SpaRoot)node_modules')">
+    <!-- Build Target: Restore NPM packages using npm -->
     <Message Importance="high" Text="Restoring dependencies using 'npm'. This may take several minutes..." />
     <Exec WorkingDirectory="$(SpaRoot)" Command="npm install" />
   </Target>
 
   <Target Name="PublishRunWebpack" AfterTargets="ComputeFilesToPublish">
-    <!-- As part of publishing, ensure the JS resources are freshly built in production mode -->
-    <Exec WorkingDirectory="$(SpaRoot)" Command="npm install" />
     <!-- Build Target: Run webpack dist build -->
     <Message Importance="high" Text="Running npm build..." />
     <Exec WorkingDirectory="$(SpaRoot)" Command="npm run build" />

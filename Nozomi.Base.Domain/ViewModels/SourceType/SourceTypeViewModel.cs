@@ -12,6 +12,6 @@ namespace Nozomi.Data.ViewModels.SourceType
         
         public string Abbreviation { get; set; }
         
-        public IEnumerable<SourceViewModel> Sources { get; set; }
+        public IEnumerable<LegacySourceViewModel> Sources { get; set; }
     }
 }
