@@ -40,24 +40,24 @@ namespace Nozomi.Web2
             //     options.CheckConsentNeeded = context => false;
             //     options.MinimumSameSitePolicy = SameSiteMode.None;
             // });
-            // services.Configure<ForwardedHeadersOptions>(options =>
-            // {
-            //     options.KnownNetworks.Clear();
-            //     options.KnownProxies.Clear();
-            //     
-            //     // https://github.com/IdentityServer/IdentityServer4/issues/1331
-            //     options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
-            //     options.RequireHeaderSymmetry = false;
-            //     options.ForwardLimit = 2;
-            // });
+            services.Configure<ForwardedHeadersOptions>(options =>
+            {
+                options.KnownNetworks.Clear();
+                options.KnownProxies.Clear();
+                
+                // https://github.com/IdentityServer/IdentityServer4/issues/1331
+                options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+                options.RequireHeaderSymmetry = false;
+                options.ForwardLimit = 2;
+            });
 
-            // services.AddOptions();
+            services.AddOptions();
 
-            // services.AddResponseCompression();
+            services.AddResponseCompression();
 
             services.AddDbContextInjections();
 
-            // services.AddMemoryCache();
+            services.AddMemoryCache();
             
             // services.AddHealthChecks();
 
@@ -92,13 +92,13 @@ namespace Nozomi.Web2
 
             // https://docs.microsoft.com/en-us/aspnet/core/security/enforcing-ssl?view=aspnetcore-3.1&tabs=visual-studio#options
             // Calling AddHttpsRedirection is only necessary to change the values of HttpsPort or RedirectStatusCode.
-            services.AddHttpsRedirection(options =>
-            {
-                // options.RedirectStatusCode = StatusCodes.Status307TemporaryRedirect;
-                
-                if (!Environment.IsProduction())
-                    options.HttpsPort = 5001;
-            });
+            // services.AddHttpsRedirection(options =>
+            // {
+            //     // options.RedirectStatusCode = StatusCodes.Status307TemporaryRedirect;
+            //     
+            //     if (!Environment.IsProduction())
+            //         options.HttpsPort = 5001;
+            // });
 
             // UoW-Repository injection
             services.ConfigureRepoLayer();
@@ -126,7 +126,7 @@ namespace Nozomi.Web2
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
                 
-                // app.UseResponseCompression();
+                app.UseResponseCompression();
             }
             
             // Always enforce HTTPS for development and production
@@ -141,25 +141,25 @@ namespace Nozomi.Web2
 
             // app.UseCookiePolicy();
 
-            // // Enable middleware to serve generated Swagger as a JSON endpoint.
-            // app.UseSwagger();
-            //
-            // // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.),
-            // // specifying the Swagger JSON endpoint.
-            // app.UseSwaggerUI(c =>
-            // {
-            //     c.DocumentTitle = "Nozomi API";
-            //     // https://stackoverflow.com/questions/39116047/how-to-change-base-url-of-swagger-in-asp-net-core
-            //     c.RoutePrefix = "docs";
-            //     c.SwaggerEndpoint("/swagger/" + 
-            //                       GlobalApiVariables.CURRENT_API_VERSION + "/swagger.json", "Nozomi API");
-            //     c.IndexStream = () => GetType().Assembly
-            //         .GetManifestResourceStream("Nozomi.Web2.Resources.Index.html"); // requires file to be added as an embedded resource
-            //     
-            //     c.DocExpansion(DocExpansion.None);
-            //     c.EnableDeepLinking();
-            //     c.EnableFilter();
-            // });
+            // Enable middleware to serve generated Swagger as a JSON endpoint.
+            app.UseSwagger();
+            
+            // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.),
+            // specifying the Swagger JSON endpoint.
+            app.UseSwaggerUI(c =>
+            {
+                c.DocumentTitle = "Nozomi API";
+                // https://stackoverflow.com/questions/39116047/how-to-change-base-url-of-swagger-in-asp-net-core
+                c.RoutePrefix = "docs";
+                c.SwaggerEndpoint("/swagger/" + 
+                                  GlobalApiVariables.CURRENT_API_VERSION + "/swagger.json", "Nozomi API");
+                c.IndexStream = () => GetType().Assembly
+                    .GetManifestResourceStream("Nozomi.Web2.Resources.Index.html"); // requires file to be added as an embedded resource
+                
+                c.DocExpansion(DocExpansion.None);
+                c.EnableDeepLinking();
+                c.EnableFilter();
+            });
 
             app.UseRouting();
 
@@ -175,9 +175,9 @@ namespace Nozomi.Web2
                 // in an area.
                 // MapControllerRoute adds a conventional route for controllers.
                 endpoints.MapControllers();
-                // endpoints.MapControllerRoute(
-                //     name: "default",
-                //     pattern: "{controller}/{action=Index}/{id?}");
+                endpoints.MapControllerRoute(
+                    name: "default",
+                    pattern: "{controller}/{action=Index}/{id?}");
 
                 // Health check up!!!
                 // https://docs.microsoft.com/en-us/aspnet/core/host-and-deploy/health-checks?view=aspnetcore-3.0#basic-health-probe
@@ -191,8 +191,8 @@ namespace Nozomi.Web2
                         regex: "Compiled successfully",
                         forceKill: true
                     );
-                // else
-                //     endpoints.MapFallbackToFile("index.html");
+                else
+                    endpoints.MapFallbackToFile("index.html");
 
                 // Add MapRazorPages if the app uses Razor Pages. Since Endpoint Routing includes support for many frameworks, adding Razor Pages is now opt -in.
                 // endpoints.MapRazorPages();
