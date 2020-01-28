@@ -126,18 +126,18 @@ namespace Nozomi.Web2
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
                 
-                app.UseResponseCompression();
+                // app.UseResponseCompression();
             }
             
             // Always enforce HTTPS for development and production
             app.UseHttpsRedirection();
 
             // ref: https://github.com/aspnet/Docs/issues/2384
-            app.UseForwardedHeaders();
+            // app.UseForwardedHeaders();
 
             app.UseAuthentication();
 
-            app.UseStaticFiles();
+            // app.UseStaticFiles();
             app.UseSpaStaticFiles();
 
             app.UseCookiePolicy();
