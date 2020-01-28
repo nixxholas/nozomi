@@ -48,7 +48,7 @@ namespace Nozomi.Web2
                             Console.WriteLine("SSLCERT_PASSWORD not configured! Self configuring to the defaults.");
                         }
                         
-                        options.Listen(IPAddress.Loopback, port, listenOptions =>
+                        options.Listen(IPAddress.Any, port, listenOptions =>
                         {
                             var cert = new X509Certificate2(certPath, certPassword);
 
