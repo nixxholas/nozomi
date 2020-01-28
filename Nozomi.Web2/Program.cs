@@ -20,7 +20,7 @@ namespace Nozomi.Web2
                 {
                     options.AddServerHeader = false;
                     
-                    options.Listen(IPAddress.Any, 80);         // http:*:80
+                    options.Listen(IPAddress.Any, 8080);         // http:*:80
 
                     var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
                     var isDevelopment = environment == Environments.Development;
@@ -52,7 +52,7 @@ namespace Nozomi.Web2
                             Console.WriteLine("SSLCERT_PASSWORD not configured! Self configuring to the defaults.");
                         }
                         
-                        options.Listen(IPAddress.Loopback, httpsPort, listenOptions =>
+                        options.Listen(IPAddress.Any, httpsPort, listenOptions =>
                         {
                             var cert = new X509Certificate2(certPath, certPassword);
 
