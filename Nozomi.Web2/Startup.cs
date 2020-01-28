@@ -78,7 +78,7 @@ namespace Nozomi.Web2
                 .SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
 
             // Add AddRazorPages
-            services.AddRazorPages();
+            // services.AddRazorPages();
 
             if (Environment.IsProduction())
             {
@@ -94,7 +94,7 @@ namespace Nozomi.Web2
             // Calling AddHttpsRedirection is only necessary to change the values of HttpsPort or RedirectStatusCode.
             services.AddHttpsRedirection(options =>
             {
-                options.RedirectStatusCode = StatusCodes.Status307TemporaryRedirect;
+                // options.RedirectStatusCode = StatusCodes.Status307TemporaryRedirect;
                 
                 if (!Environment.IsProduction())
                     options.HttpsPort = 5001;
