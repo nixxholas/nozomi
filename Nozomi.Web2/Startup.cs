@@ -40,26 +40,26 @@ namespace Nozomi.Web2
                 options.CheckConsentNeeded = context => false;
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
-            services.Configure<ForwardedHeadersOptions>(options =>
-            {
-                options.KnownNetworks.Clear();
-                options.KnownProxies.Clear();
-                
-                // https://github.com/IdentityServer/IdentityServer4/issues/1331
-                options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
-                options.RequireHeaderSymmetry = false;
-                options.ForwardLimit = 2;
-            });
+            // services.Configure<ForwardedHeadersOptions>(options =>
+            // {
+            //     options.KnownNetworks.Clear();
+            //     options.KnownProxies.Clear();
+            //     
+            //     // https://github.com/IdentityServer/IdentityServer4/issues/1331
+            //     options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+            //     options.RequireHeaderSymmetry = false;
+            //     options.ForwardLimit = 2;
+            // });
 
             services.AddOptions();
 
-            services.AddResponseCompression();
+            // services.AddResponseCompression();
 
             services.AddDbContextInjections();
 
-            services.AddMemoryCache();
-
-            services.AddHealthChecks();
+            // services.AddMemoryCache();
+            
+            // services.AddHealthChecks();
 
             // In production, the Vue files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
@@ -142,25 +142,25 @@ namespace Nozomi.Web2
 
             app.UseCookiePolicy();
 
-            // Enable middleware to serve generated Swagger as a JSON endpoint.
-            app.UseSwagger();
-
-            // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.),
-            // specifying the Swagger JSON endpoint.
-            app.UseSwaggerUI(c =>
-            {
-                c.DocumentTitle = "Nozomi API";
-                // https://stackoverflow.com/questions/39116047/how-to-change-base-url-of-swagger-in-asp-net-core
-                c.RoutePrefix = "docs";
-                c.SwaggerEndpoint("/swagger/" + 
-                                  GlobalApiVariables.CURRENT_API_VERSION + "/swagger.json", "Nozomi API");
-                c.IndexStream = () => GetType().Assembly
-                    .GetManifestResourceStream("Nozomi.Web2.Resources.Index.html"); // requires file to be added as an embedded resource
-                
-                c.DocExpansion(DocExpansion.None);
-                c.EnableDeepLinking();
-                c.EnableFilter();
-            });
+            // // Enable middleware to serve generated Swagger as a JSON endpoint.
+            // app.UseSwagger();
+            //
+            // // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.),
+            // // specifying the Swagger JSON endpoint.
+            // app.UseSwaggerUI(c =>
+            // {
+            //     c.DocumentTitle = "Nozomi API";
+            //     // https://stackoverflow.com/questions/39116047/how-to-change-base-url-of-swagger-in-asp-net-core
+            //     c.RoutePrefix = "docs";
+            //     c.SwaggerEndpoint("/swagger/" + 
+            //                       GlobalApiVariables.CURRENT_API_VERSION + "/swagger.json", "Nozomi API");
+            //     c.IndexStream = () => GetType().Assembly
+            //         .GetManifestResourceStream("Nozomi.Web2.Resources.Index.html"); // requires file to be added as an embedded resource
+            //     
+            //     c.DocExpansion(DocExpansion.None);
+            //     c.EnableDeepLinking();
+            //     c.EnableFilter();
+            // });
 
             app.UseRouting();
 
