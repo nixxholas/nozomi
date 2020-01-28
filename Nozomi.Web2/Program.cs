@@ -21,12 +21,13 @@ namespace Nozomi.Web2
                     options.AddServerHeader = false;
                     
                     options.Listen(IPAddress.Any, 8080);         // http:*:80
-
+                    
                     var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
                     var isDevelopment = environment == Environments.Development;
+                    var validateSSL = !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("SSLCERT_PATH"));
                     
                     // HTTPS Configuration
-                    if (!System.Diagnostics.Debugger.IsAttached && !isDevelopment)
+                    if (!System.Diagnostics.Debugger.IsAttached && !isDevelopment && validateSSL)
                     {
                         var hasHttpsPortConfigured = int.TryParse(Environment.GetEnvironmentVariable("HTTPS_PORT")
                             , out var httpsPort);
