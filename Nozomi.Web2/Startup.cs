@@ -190,10 +190,10 @@ namespace Nozomi.Web2
                 // MapAreaControllerRoute adds a conventional route for controllers
                 // in an area.
                 // MapControllerRoute adds a conventional route for controllers.
-                endpoints.MapControllers();
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller}/{action=Index}/{id?}");
+                endpoints.MapControllers();
 
                 // Health check up!!!
                 // https://docs.microsoft.com/en-us/aspnet/core/host-and-deploy/health-checks?view=aspnetcore-3.0#basic-health-probe

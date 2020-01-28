@@ -1,9 +1,12 @@
 using System;
+using System.IO;
 using System.Net;
 using System.Security.Cryptography.X509Certificates;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace Nozomi.Web2
 {
@@ -16,6 +19,17 @@ namespace Nozomi.Web2
 
         static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
+                .UseContentRoot(Directory.GetCurrentDirectory())
+                // .ConfigureAppConfiguration((builderContext, config) =>
+                // {
+                //     config.AddEnvironmentVariables();
+                // })
+                // .ConfigureLogging((hostingContext, builder) =>
+                // {
+                //     builder.AddConfiguration(hostingContext.Configuration.GetSection("Logging"));
+                //     builder.AddConsole();
+                //     builder.AddDebug();
+                // })
                 .UseKestrel(options =>
                 {
                     options.AddServerHeader = false;
