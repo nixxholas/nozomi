@@ -152,7 +152,7 @@ namespace Nozomi.Web2
             });
 
             app.UseDefaultFiles();
-            // app.UseStaticFiles();
+            app.UseStaticFiles(); 
             app.UseSpaStaticFiles();
 
             // app.UseCookiePolicy();
