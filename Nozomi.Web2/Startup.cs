@@ -189,7 +189,7 @@ namespace Nozomi.Web2
                 //     endpoints.MapFallbackToFile("index.html");
 
                 // Add MapRazorPages if the app uses Razor Pages. Since Endpoint Routing includes support for many frameworks, adding Razor Pages is now opt -in.
-                endpoints.MapRazorPages();
+                // endpoints.MapRazorPages();
             });
 
             // app.UseSpa(spa =>
