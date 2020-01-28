@@ -185,8 +185,8 @@ namespace Nozomi.Web2
                         regex: "Compiled successfully",
                         forceKill: true
                     );
-                else
-                    endpoints.MapFallbackToFile("index.html");
+                // else
+                //     endpoints.MapFallbackToFile("index.html");
 
                 // Add MapRazorPages if the app uses Razor Pages. Since Endpoint Routing includes support for many frameworks, adding Razor Pages is now opt -in.
                 endpoints.MapRazorPages();
