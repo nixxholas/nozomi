@@ -34,12 +34,12 @@ namespace Nozomi.Web2
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            // services.Configure<CookiePolicyOptions>(options =>
-            // {
-            //     // This lambda determines whether user consent for non-essential cookies is needed for a given request.
-            //     options.CheckConsentNeeded = context => false;
-            //     options.MinimumSameSitePolicy = SameSiteMode.None;
-            // });
+            services.Configure<CookiePolicyOptions>(options =>
+            {
+                // This lambda determines whether user consent for non-essential cookies is needed for a given request.
+                options.CheckConsentNeeded = context => false;
+                options.MinimumSameSitePolicy = SameSiteMode.None;
+            });
             services.Configure<ForwardedHeadersOptions>(options =>
             {
                 options.KnownNetworks.Clear();
@@ -92,13 +92,10 @@ namespace Nozomi.Web2
 
             // https://docs.microsoft.com/en-us/aspnet/core/security/enforcing-ssl?view=aspnetcore-3.1&tabs=visual-studio#options
             // Calling AddHttpsRedirection is only necessary to change the values of HttpsPort or RedirectStatusCode.
-            // services.AddHttpsRedirection(options =>
-            // {
-            //     // options.RedirectStatusCode = StatusCodes.Status307TemporaryRedirect;
-            //     
-            //     if (!Environment.IsProduction())
-            //         options.HttpsPort = 5001;
-            // });
+            services.AddHttpsRedirection(options =>
+            {
+                options.RedirectStatusCode = StatusCodes.Status307TemporaryRedirect;
+            });
 
             // UoW-Repository injection
             services.ConfigureRepoLayer();
@@ -133,7 +130,7 @@ namespace Nozomi.Web2
             app.UseHttpsRedirection();
 
             // ref: https://github.com/aspnet/Docs/issues/2384
-            // app.UseForwardedHeaders();
+            app.UseForwardedHeaders();
 
             app.Use(async (context, next) =>
             {
@@ -155,7 +152,7 @@ namespace Nozomi.Web2
             app.UseStaticFiles(); 
             app.UseSpaStaticFiles();
 
-            // app.UseCookiePolicy();
+            app.UseCookiePolicy();
 
             // Enable middleware to serve generated Swagger as a JSON endpoint.
             app.UseSwagger();
