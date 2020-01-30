@@ -27,7 +27,4 @@ WORKDIR /app
 COPY --from=build-env /app/out .
 COPY nozomi.pfx .
 
-# Make sure the app binds to port 8080
-ENV ASPNETCORE_URLS https://*:8080
-
 ENTRYPOINT ["dotnet", "Nozomi.Web2.dll"]
