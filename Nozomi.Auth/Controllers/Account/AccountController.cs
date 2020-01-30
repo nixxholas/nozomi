@@ -804,6 +804,33 @@ namespace Nozomi.Auth.Controllers.Account
             return BadRequest("Invalid input/s, please ensure that the entries are correctly filled!");
         }
 
+        [Authorize(AuthenticationSchemes = "Bearer")]
+        [HttpHead]
+        public async Task<IActionResult> Bootstripe()
+        {
+            var user = await _userManager.FindByIdAsync(((ClaimsIdentity) User.Identity)
+                .Claims.FirstOrDefault(c => c.Type.Equals(JwtClaimTypes.Subject)
+                                            || c.Type.Equals(ClaimTypes.NameIdentifier))?.Value);
+            
+            // Modify the user's profile
+            if (user != null)
+            {
+                if (_userService.HasStripe(user.Id))
+                {
+                    return BadRequest("Stripe already linked!!");
+                }
+                else
+                {
+                    
+                    // await _userService.LinkStripe(, user.Id);
+                }
+
+                return Ok("Account details updated successfully!");
+            }
+
+            return BadRequest("Invalid input/s, please ensure that the entries are correctly filled!");
+        }
+
         /*****************************************/
         /* helper APIs for the AccountController */
         /*****************************************/
