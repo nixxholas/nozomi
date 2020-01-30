@@ -22,8 +22,6 @@ namespace Nozomi.Web2.Extensions
             services.AddTransient<IEmailSender, EmailSender>();
             services.AddTransient<ISmsSender, SmsSender>();
 
-            services.AddHttpContextAccessor();
-
             // Auth Events
             services.AddScoped<IValidatingEvent, ValidatingEvent>();
 

@@ -80,6 +80,8 @@ namespace Nozomi.Web2
             // Add AddRazorPages
             services.AddRazorPages();
 
+            services.AddHttpContextAccessor();
+
             if (Environment.IsProduction())
             {
                 services.AddHsts(opt =>
