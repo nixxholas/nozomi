@@ -19,13 +19,6 @@ import router from '@/routing/router';
 import store from '@/store/index';
 import dateFilter from '@/filters/date.filter';
 
-// Simple Analytics
-// @ts-ignore
-import SimpleAnalytics from 'simple-analytics-vue';
-if (process.env.NODE_ENV === "production") {
-  Vue.use(SimpleAnalytics);
-}
-
 // FontAwesome!!!
 import { library } from '@fortawesome/fontawesome-svg-core';
 // Vue Injection
