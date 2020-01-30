@@ -170,6 +170,16 @@
                                 </ul>
                             </div>
                         </div>
+                        <div class="timeline-item is-info">
+                            <div class="timeline-marker is-info"></div>
+                            <div class="timeline-content">
+                                <p class="heading">30 January 2019 - <b>beta 7</b></p>
+                                <ul>
+                                    <li><b>Auth</b> - All connections to Nozomi are now end-to-end encrypted</li>
+                                    <li><b>Web</b> - All connections to Nozomi are now end-to-end encrypted</li>
+                                </ul>
+                            </div>
+                        </div>
                         <header class="timeline-header">
                             <span class="tag is-primary">Release Candidate</span>
                         </header>
