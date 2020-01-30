@@ -67,7 +67,7 @@ namespace Nozomi.Web2
                 configuration.RootPath = "ClientApp/dist";
             });
 
-            services.AddControllersWithViews(options =>
+            services.AddControllers(options =>
                 {
                     options.Filters.Add(typeof(HttpGlobalExceptionFilter));
                 })
@@ -132,22 +132,23 @@ namespace Nozomi.Web2
             // ref: https://github.com/aspnet/Docs/issues/2384
             app.UseForwardedHeaders();
 
-            // app.Use(async (context, next) =>
-            // {
-            //     await next();
-            //
-            //     // If there's no available file and the request doesn't contain an extension,
-            //     // we're probably trying to access a page. Rewrite request to use app root
-            //     if (context.Response.StatusCode == 404 
-            //         && !Path.HasExtension(context.Request.Path.Value)
-            //         && !context.Request.Path.Value.StartsWith("/api"))
-            //     {
-            //         context.Request.Path = "/index.html";
-            //         context.Response.StatusCode = 200; // Make sure we update the status code, otherwise it returns 404
-            //         await next();
-            //     }
-            // });
+            app.Use(async (context, next) =>
+            {
+                await next();
+            
+                // If there's no available file and the request doesn't contain an extension,
+                // we're probably trying to access a page. Rewrite request to use app root
+                if ((context.Response.StatusCode == 404 
+                    || !Path.HasExtension(context.Request.Path.Value))
+                    && !context.Request.Path.Value.StartsWith("/api"))
+                {
+                    context.Request.Path = "/index.html";
+                    context.Response.StatusCode = 200; // Make sure we update the status code, otherwise it returns 404
+                    await next();
+                }
+            });
 
+            app.UseStaticFiles();
             app.UseSpaStaticFiles();
 
             app.UseCookiePolicy();
@@ -202,16 +203,11 @@ namespace Nozomi.Web2
                         regex: "Compiled successfully",
                         forceKill: true
                     );
-                else
-                    endpoints.MapFallbackToFile("index.html");
+                // else
+                //     endpoints.MapFallbackToFile("index.html");
 
                 // Add MapRazorPages if the app uses Razor Pages. Since Endpoint Routing includes support for many frameworks, adding Razor Pages is now opt -in.
                 endpoints.MapRazorPages();
-            });
-
-            app.UseSpa(spa =>
-            {
-                spa.Options.SourcePath = "ClientApp";
             });
         }
     }
