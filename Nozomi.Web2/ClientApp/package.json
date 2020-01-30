@@ -23,7 +23,6 @@
     "node-sass": "^4.13.1",
     "numeral": "^2.0.6",
     "oidc-client": "^1.10.1",
-    "simple-analytics-vue": "^1.1.0",
     "vue": "^2.6.11",
     "vue-apexcharts": "^1.5.2",
     "vue-class-component": "^7.1.0",

@@ -13,7 +13,7 @@ namespace Nozomi.Web2.Extensions
     {
         public static void AddDbContextInjections(this IServiceCollection services)
         {
-            if (Startup.Environment.IsDevelopment())
+            if (!Startup.Environment.IsProduction())
             {
                 // Greet the beloved dev
                 Console.WriteLine(@"Welcome to the dev environment, your machine is named: " + Environment.MachineName);

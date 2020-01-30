@@ -58,8 +58,8 @@ namespace Nozomi.Web2
             services.AddDbContextInjections();
 
             services.AddMemoryCache();
-
-            services.AddHealthChecks();
+            
+            // services.AddHealthChecks();
 
             // In production, the Vue files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
@@ -78,7 +78,7 @@ namespace Nozomi.Web2
                 .SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
 
             // Add AddRazorPages
-            // services.AddRazorPages();
+            services.AddRazorPages();
 
             if (Environment.IsProduction())
             {
@@ -94,10 +94,7 @@ namespace Nozomi.Web2
             // Calling AddHttpsRedirection is only necessary to change the values of HttpsPort or RedirectStatusCode.
             services.AddHttpsRedirection(options =>
             {
-                // options.RedirectStatusCode = StatusCodes.Status307TemporaryRedirect;
-                
-                if (!Environment.IsProduction())
-                    options.HttpsPort = 5001;
+                options.RedirectStatusCode = StatusCodes.Status307TemporaryRedirect;
             });
 
             // UoW-Repository injection
@@ -126,25 +123,39 @@ namespace Nozomi.Web2
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
                 
-                // app.UseResponseCompression();
+                app.UseResponseCompression();
             }
             
             // Always enforce HTTPS for development and production
             app.UseHttpsRedirection();
 
             // ref: https://github.com/aspnet/Docs/issues/2384
-            // app.UseForwardedHeaders();
+            app.UseForwardedHeaders();
 
-            app.UseAuthentication();
+            app.Use(async (context, next) =>
+            {
+                await next();
+            
+                // If there's no available file and the request doesn't contain an extension,
+                // we're probably trying to access a page. Rewrite request to use app root
+                if ((context.Response.StatusCode == 404 
+                    || !Path.HasExtension(context.Request.Path.Value))
+                    && !context.Request.Path.Value.StartsWith("/api"))
+                {
+                    context.Request.Path = "/index.html";
+                    context.Response.StatusCode = 200; // Make sure we update the status code, otherwise it returns 404
+                    await next();
+                }
+            });
 
-            // app.UseStaticFiles();
+            app.UseStaticFiles();
             app.UseSpaStaticFiles();
 
             app.UseCookiePolicy();
 
             // Enable middleware to serve generated Swagger as a JSON endpoint.
             app.UseSwagger();
-
+            
             // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.),
             // specifying the Swagger JSON endpoint.
             app.UseSwaggerUI(c =>
@@ -164,14 +175,21 @@ namespace Nozomi.Web2
 
             app.UseRouting();
 
+            // For most apps, calls to UseAuthentication, UseAuthorization, and UseCors must
+            // appear between the calls to UseRouting and UseEndpoints to be effective.
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
-                // endpoints.MapControllerRoute(
-                //     name: "default",
-                //     pattern: "{controller}/{action=Index}/{id?}");
-                endpoints.MapControllers();
+                // MapControllers adds support for attribute-routed controllers.
+                // MapAreaControllerRoute adds a conventional route for controllers
+                // in an area.
+                // MapControllerRoute adds a conventional route for controllers.
+                endpoints.MapControllerRoute(
+                    name: "default",
+                    pattern: "{controller}/{action=Index}/{id?}");
+                // endpoints.MapControllers();
 
                 // Health check up!!!
                 // https://docs.microsoft.com/en-us/aspnet/core/host-and-deploy/health-checks?view=aspnetcore-3.0#basic-health-probe
@@ -189,14 +207,8 @@ namespace Nozomi.Web2
                 //     endpoints.MapFallbackToFile("index.html");
 
                 // Add MapRazorPages if the app uses Razor Pages. Since Endpoint Routing includes support for many frameworks, adding Razor Pages is now opt -in.
-                // endpoints.MapRazorPages();
+                endpoints.MapRazorPages();
             });
-
-            // app.UseSpa(spa =>
-            // {
-            //     spa.Options.DefaultPage = "/index.html";
-            //     spa.Options.SourcePath = "ClientApp";
-            // });
         }
     }
 }
