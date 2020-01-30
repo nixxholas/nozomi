@@ -160,13 +160,23 @@
                         <div class="timeline-item is-info">
                             <div class="timeline-marker is-info"></div>
                             <div class="timeline-content">
-                                <p class="heading">27 January 2019 - <b>beta 6</b></p>
+                                <p class="heading">27 January 2019 - <b>beta 7</b></p>
                                 <ul>
                                     <li><b>UI</b> - View account information</li>
                                     <li><b>UI</b> - Account Information updating functionality</li>
                                     <li><b>Auth</b> - Manual logout redirection implementation</li>
                                     <li><b>Web</b> - Framework & rendering engine updates</li>
                                     <li><b>Web Docs</b> - We got it working again</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="timeline-item is-info">
+                            <div class="timeline-marker is-info"></div>
+                            <div class="timeline-content">
+                                <p class="heading">30 January 2019 - <b>beta 8</b></p>
+                                <ul>
+                                    <li><b>Auth</b> - All connections to Nozomi are now end-to-end encrypted</li>
+                                    <li><b>Web</b> - All connections to Nozomi are now end-to-end encrypted</li>
                                 </ul>
                             </div>
                         </div>
