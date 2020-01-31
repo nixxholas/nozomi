@@ -15,11 +15,13 @@ namespace Nozomi.Preprocessing.Abstracts
         public const string EventName = nameof(T);
         protected ILogger<T> _logger;
         protected IUnitOfWork<TContext> _unitOfWork;
+        protected readonly string _eventName;
 
         public BaseEvent(ILogger<T> logger, IUnitOfWork<TContext> unitOfWork)
         {
             _logger = logger;
             _unitOfWork = unitOfWork;
+            _eventName = typeof(T).FullName;
         }
     }
     
@@ -31,11 +33,13 @@ namespace Nozomi.Preprocessing.Abstracts
         public const string EventName = nameof(T);
         protected ILogger<T> _logger;
         protected IUnitOfWork<TContext> _unitOfWork;
+        protected readonly string _eventName;
 
         public BaseEvent(ILogger<T> logger, IUnitOfWork<TContext> unitOfWork)
         {
             _logger = logger;
             _unitOfWork = unitOfWork;
+            _eventName = typeof(T).FullName;
         }
 
         public long QueryCount(Expression<Func<TEntity, bool>> predicate)
