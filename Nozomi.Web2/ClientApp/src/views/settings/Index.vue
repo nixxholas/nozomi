@@ -59,7 +59,7 @@
                         </form>
                     </b-tab-item>
                     <b-tab-item label="Billing" icon="money-bill">
-                        <CardsComponent></CardsComponent>
+                        <CardsComponent @created="updateUser" />
                     </b-tab-item>
                     <b-tab-item label="API Keys" icon="key">
                         
@@ -145,6 +145,9 @@
                         hasIcon: true
                     });
                 });
+            },
+            updateUser: function() {
+                // Update the user
             }
         }
     }

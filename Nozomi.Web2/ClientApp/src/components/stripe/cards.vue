@@ -1,5 +1,6 @@
 <template>
     <div>
+        <b-loading :v-model="isLoading"/>
         <b-carousel-list v-if="custId" 
                 v-model="carouselPage" :data="cards" :items-to-show="2">
             <template slot="item" slot-scope="props">
@@ -54,6 +55,7 @@
         methods: {
             bootstripe: function() {
                 let self = this;
+                self.isLoading = true;
                 
                 NozomiAuthService.bootstripe()
                 .then(function(res) {
@@ -77,11 +79,14 @@
                         type: 'is-danger',
                         hasIcon: true
                     });
+                }).finally(function() {
+                    self.isLoading = false;
                 });
             }
         },
         data: () => {
             return {
+                isLoading: false,
                 carouselPage: 0,
                 cards: [],
             };
