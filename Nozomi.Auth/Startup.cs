@@ -22,7 +22,9 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Nozomi.Base.Auth.Global;
 using Nozomi.Base.Auth.Models;
+using Nozomi.Infra.Auth.Events.Stripe;
 using Nozomi.Infra.Auth.Services.Address;
+using Nozomi.Infra.Auth.Services.Stripe;
 using Nozomi.Infra.Auth.Services.User;
 using Nozomi.Infra.Blockchain.Auth.Events;
 using Nozomi.Infra.Blockchain.Auth.Events.Interfaces;
@@ -239,12 +241,14 @@ namespace Nozomi.Auth
             services.AddTransient<IUnitOfWork<NozomiDbContext>, UnitOfWork<NozomiDbContext>>();
             services.AddTransient<IDbContext, NozomiDbContext>();
 
-            services.AddScoped<IAddressEvent, AddressEvent>();
-            services.AddScoped<IValidatingEvent, ValidatingEvent>();
+            services.AddTransient<IAddressEvent, AddressEvent>();
+            services.AddTransient<IStripeEvent, StripeEvent>();
+            services.AddTransient<IValidatingEvent, ValidatingEvent>();
 
             services.AddTransient<IEmailSender, EmailSender>();
-            services.AddTransient<IAddressService, AddressService>();
-            services.AddTransient<IUserService, UserService>();
+            services.AddScoped<IAddressService, AddressService>();
+            services.AddScoped<IStripeService, StripeService>();
+            services.AddScoped<IUserService, UserService>();
         }
 
         public void Configure(IApplicationBuilder app)
