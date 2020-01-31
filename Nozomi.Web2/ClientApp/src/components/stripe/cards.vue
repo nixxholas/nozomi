@@ -29,12 +29,12 @@
         </b-carousel-list>
         <section class="hero is-medium" v-else>
             <div class="hero-body">
-                <div class="container has-text-centered">
+                <div class="container has-text-centered" v-if="!custId">
                     <h1 class="title">
                         Well, we gotta setup billing first!
                     </h1>
                     <h2 class="subtitle">
-                        <b-button type="is-info" rounded>Get me started!</b-button>
+                        <b-button @click="bootstripe" type="is-info" rounded>Get me started!</b-button>
                     </h2>
                 </div>
             </div>
@@ -43,12 +43,44 @@
 </template>
 
 <script>
+    import NozomiAuthService from "@/services/NozomiAuthService";
+    import { NotificationProgrammatic as Notification } from 'buefy';
+    
     export default {
         name: 'cards',
         props: {
             custId: null,
         },
-        date: () => {
+        methods: {
+            bootstripe: function() {
+                let self = this;
+                
+                NozomiAuthService.bootstripe()
+                .then(function(res) {
+                    Notification.open({
+                        duration: 2500,
+                        message: `Stripe successfully set up!`,
+                        position: 'is-bottom-right',
+                        type: 'is-success',
+                        hasIcon: true
+                    });
+                    
+                    // Inform the parent that a new request has been created
+                    // https://forum.vuejs.org/t/passing-data-back-to-parent/1201
+                    self.$emit('created', true);
+                })
+                .catch(function(err) {
+                    Notification.open({
+                        duration: 2500,
+                        message: `There was an issue setting up stripe, please try again!`,
+                        position: 'is-bottom-right',
+                        type: 'is-danger',
+                        hasIcon: true
+                    });
+                });
+            }
+        },
+        data: () => {
             return {
                 carouselPage: 0,
                 cards: [],
