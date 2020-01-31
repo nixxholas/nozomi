@@ -34,6 +34,7 @@ using Nozomi.Base.Auth.ViewModels.Account;
 using Nozomi.Base.BCL.Helpers.Native.Text;
 using Nozomi.Base.Blockchain.Auth.Query.Validating;
 using Nozomi.Infra.Auth.Services.Address;
+using Nozomi.Infra.Auth.Services.Stripe;
 using Nozomi.Infra.Auth.Services.User;
 using Nozomi.Infra.Blockchain.Auth.Events.Interfaces;
 using Nozomi.Preprocessing.Events.Interfaces;
@@ -55,6 +56,7 @@ namespace Nozomi.Auth.Controllers.Account
         private readonly IValidatingEvent _validatingEvent;
         private readonly IEventService _events;
         private readonly IAddressService _addressService;
+        private readonly IStripeService _stripeService;
         private readonly IUserService _userService;
 
         public AccountController(
@@ -71,6 +73,7 @@ namespace Nozomi.Auth.Controllers.Account
             IValidatingEvent validatingEvent,
             IEventService events, 
             IAddressService addressService,
+            IStripeService stripeService,
             IUserService userService) : base(logger, webHostEnvironment)
         {
             _emailSender = emailSender;
@@ -84,6 +87,7 @@ namespace Nozomi.Auth.Controllers.Account
             _validatingEvent = validatingEvent;
             _events = events;
             _addressService = addressService;
+            _stripeService = stripeService;
             _userService = userService;
         }
         
@@ -821,11 +825,23 @@ namespace Nozomi.Auth.Controllers.Account
                 }
                 else
                 {
+                    // Setup stripe
+                    await _stripeService.PropagateCustomer(user);
                     
-                    // await _userService.LinkStripe(, user.Id);
-                }
+                    // Obtain claim
+                    var stripeCustomerIdClaim = (await _userManager.GetClaimsAsync(user))
+                        .FirstOrDefault(c => c.Type.Equals(NozomiJwtClaimTypes.StripeCustomerId));
 
-                return Ok("Account details updated successfully!");
+                    if (stripeCustomerIdClaim == null)
+                    {
+                        _logger.LogInformation($"Bootstripe: {user.Id} has failed to propagate Stripe.");
+                        return BadRequest("There was an issue with the Stripe link up. Please try again later!");
+                    }
+
+                    _logger.LogInformation($"Bootstripe: {user.Id} successful symlink with Stripe with ID " +
+                                           $"{stripeCustomerIdClaim.Value}");
+                    return Ok("Account details updated successfully!");
+                }
             }
 
             return BadRequest("Invalid input/s, please ensure that the entries are correctly filled!");
