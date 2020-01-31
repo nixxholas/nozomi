@@ -203,8 +203,6 @@ namespace Nozomi.Auth
                         .GetAwaiter()
                         .GetResult().Data;
 
-                Console.WriteLine(nozomiVault);
-
                 var authSigningKey = (string) nozomiVault["auth-signing-key"];
                 if (string.IsNullOrWhiteSpace(authSigningKey))
                     throw new Exception("Null auth signing key.");
@@ -266,7 +264,7 @@ namespace Nozomi.Auth
                 app.UseHsts();
             }
 
-            StripeConfiguration.ApiKey = ;
+            StripeConfiguration.ApiKey = Configuration["Stripe:SecretKey"];
 
             app.UseAutoDbMigration(HostingEnvironment);
 
