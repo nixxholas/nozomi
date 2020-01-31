@@ -4,11 +4,9 @@ using System.Linq;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Nozomi.Base.Auth.Global;
-using Nozomi.Base.Auth.Models;
 using Nozomi.Base.BCL.Configurations;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.Auth.Data;
@@ -19,7 +17,6 @@ namespace Nozomi.Infra.Auth.Services.Stripe
 {
     public class StripeService : BaseService<StripeService, AuthDbContext>, IStripeService
     {
-        private readonly StripeClient _stripeClient;
         private readonly UserManager<Base.Auth.Models.User> _userManager;
 
         public StripeService(ILogger<StripeService> logger, IUnitOfWork<AuthDbContext> unitOfWork,
@@ -35,7 +32,7 @@ namespace Nozomi.Infra.Auth.Services.Stripe
             else
             {
                 // apiKey = Secret Key
-                _stripeClient = new StripeClient(stripeConfiguration.Value.SecretKey);
+                StripeConfiguration.ApiKey = stripeConfiguration.Value.SecretKey;
             }
 
             _userManager = userManager;
@@ -54,7 +51,7 @@ namespace Nozomi.Infra.Auth.Services.Stripe
             else
             {
                 // apiKey = Secret Key
-                _stripeClient = new StripeClient(stripeConfiguration.Value.SecretKey);
+                StripeConfiguration.ApiKey = stripeConfiguration.Value.SecretKey;
             }
 
             _userManager = userManager;
