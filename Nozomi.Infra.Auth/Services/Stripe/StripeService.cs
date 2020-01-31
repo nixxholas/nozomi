@@ -1,9 +1,12 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Net;
 using System.Security.Claims;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Nozomi.Base.Auth.Global;
@@ -20,43 +23,68 @@ namespace Nozomi.Infra.Auth.Services.Stripe
         private readonly UserManager<Base.Auth.Models.User> _userManager;
 
         public StripeService(ILogger<StripeService> logger, IUnitOfWork<AuthDbContext> unitOfWork,
-            UserManager<Base.Auth.Models.User> userManager, IOptions<StripeOptions> stripeConfiguration)
+            UserManager<Base.Auth.Models.User> userManager)
             : base(logger, unitOfWork)
         {
-            if (stripeConfiguration == null || stripeConfiguration.Value == null
-                                            || string.IsNullOrEmpty(stripeConfiguration.Value.PublishableKey)
-                                            || string.IsNullOrEmpty(stripeConfiguration.Value.SecretKey))
-            {
-                _logger.LogCritical($"{_serviceName} Potential failure detected. Please configure Stripe!");
-            }
-            else
-            {
-                // apiKey = Secret Key
-                StripeConfiguration.ApiKey = stripeConfiguration.Value.SecretKey;
-            }
-
             _userManager = userManager;
         }
 
         public StripeService(IHttpContextAccessor contextAccessor, ILogger<StripeService> logger,
-            UserManager<Base.Auth.Models.User> userManager, IUnitOfWork<AuthDbContext> unitOfWork,
-            IOptions<StripeOptions> stripeConfiguration) : base(contextAccessor, logger, unitOfWork)
+            UserManager<Base.Auth.Models.User> userManager, IUnitOfWork<AuthDbContext> unitOfWork) 
+            : base(contextAccessor, logger, unitOfWork)
         {
-            if (stripeConfiguration == null || stripeConfiguration.Value == null
-                                            || string.IsNullOrEmpty(stripeConfiguration.Value.PublishableKey)
-                                            || string.IsNullOrEmpty(stripeConfiguration.Value.SecretKey))
-            {
-                _logger.LogCritical($"{_serviceName} Potential failure detected. Please configure Stripe!");
-            }
-            else
-            {
-                // apiKey = Secret Key
-                StripeConfiguration.ApiKey = stripeConfiguration.Value.SecretKey;
-            }
-
             _userManager = userManager;
         }
+        
+        public async Task PropagateCustomer(Base.Auth.Models.User user)
+        {
+            if (user != null)
+            {
+                // Check if he/she has stripe up or not first 
+                var stripeClaims = (await _userManager.GetClaimsAsync(user))
+                    .Where(c => c.Type.Equals(NozomiJwtClaimTypes.StripeCustomerId));
 
+                if (stripeClaims.Any())
+                {
+                    _logger.LogInformation($"{_serviceName} PropagateCustomer: User {user.Id} already has " +
+                                           $"stripe binded.");
+                    return;
+                }
+
+                var customer = new CustomerCreateOptions
+                {
+                    Email = user.Email,
+                };
+                var customerService = new CustomerService();
+                var result = await customerService.CreateAsync(customer);
+
+                if (result.StripeResponse.StatusCode == HttpStatusCode.OK)
+                {
+                    var claim = new Claim(NozomiJwtClaimTypes.StripeCustomerId, result.Id);
+                    var addClaimRes = await _userManager.AddClaimAsync(user, claim);
+
+                    if (!addClaimRes.Succeeded)
+                    {
+                        _logger.LogInformation($"{_serviceName} PropagateCustomer: There was an issue " +
+                                               $"pushing the stripe customer id of {result.Id} to user claims of " +
+                                               $"user {user.Id}.");
+                        throw new WebException($"{_serviceName} PropagateCustomer: There was an issue " +
+                                                             $"pushing the stripe customer id of {result.Id} to user claims of " +
+                                                             $"user {user.Id}.");
+                    }
+                    
+                    return; // ok!
+                }
+                
+                _logger.LogInformation($"{_serviceName} PropagateCustomer: There was an issue " +
+                                       $"propagating the stripe id for user {user.Id}.");
+                throw new StripeException($"{_serviceName} PropagateCustomer: There was an issue " +
+                                          $"propagating the stripe id for user {user.Id}.");
+            }
+            
+            _logger.LogInformation($"{_serviceName} PropagateCustomer: Invalid user.");
+            throw new InvalidConstraintException($"{_serviceName} PropagateCustomer: Invalid user.");
+        }
 
         public async void addCard(string stripeCardId, Base.Auth.Models.User user)
         {
