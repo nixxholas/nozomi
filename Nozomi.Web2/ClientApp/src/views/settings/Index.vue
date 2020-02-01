@@ -59,7 +59,7 @@
                         </form>
                     </b-tab-item>
                     <b-tab-item label="Billing" icon="money-bill">
-                        <CardsComponent @created="updateUser" />
+                        <CardsComponent :id="model.userClaims.stripe_cust_id" @created="updateUser" />
                     </b-tab-item>
                     <b-tab-item label="API Keys" icon="key">
                         
@@ -87,7 +87,7 @@
                 'oidcAuthenticationIsChecked',
                 'oidcUser',
                 'oidcIdToken',
-                'oidcIdTokenExp'
+                'oidcIdTokenExp',
             ]),
         },
         data: function () {
@@ -104,13 +104,30 @@
                         email: '',
                         email_verified: '',
                         website: '',
-                        default_wallet_hash: ''
+                        default_wallet_hash: '',
                     }
                 }
             }
         },
-        mounted: function () {
-            this.model.userClaims = this.oidcUser;
+        created: function () {
+            let self = this;
+            self.model.userClaims = this.oidcUser;
+
+            // If stripe's cust id ain't found,
+            if (!self.model.userClaims.stripe_cust_id) {
+                // Just attempt to look for it just in case
+                NozomiAuthService.getStripeCustId()
+                    .then(function (res) {
+                        if (res && res.status === 200 && res.data && res.data !== "") {
+                            self.model.userClaims.stripe_cust_id = res.data;
+                        } else {
+                            self.model.userClaims.stripe_cust_id = null;
+                        }
+                    })
+                    .catch(function (err) {
+                        self.model.userClaims.stripe_cust_id = null;
+                    });
+            }
         },
         methods: {
             push: function () {
@@ -147,7 +164,42 @@
                 });
             },
             updateUser: function() {
-                // Update the user
+                let self = this;
+                
+                if (!self.model.userClaims.stripe_cust_id) {
+                    // Update the user
+                    NozomiAuthService.getStripeCustId()
+                        .then(function (res) {
+                            if (res && res.status === 200 && res.data) {
+                                self.model.userClaims.stripe_cust_id = res.data;
+                                
+                                Notification.open({
+                                    duration: 2500,
+                                    message: self.form.name + ` successfully updated!`,
+                                    position: 'is-bottom-right',
+                                    type: 'is-success',
+                                    hasIcon: true
+                                });
+                            } else {
+                                Notification.open({
+                                    duration: 2500,
+                                    message: `There might've been a communication error, please try again!`,
+                                    position: 'is-bottom-right',
+                                    type: 'is-warning',
+                                    hasIcon: true
+                                });
+                            }
+                        })
+                        .catch(function (err) {
+                            Notification.open({
+                                duration: 2500,
+                                message: `There might've been a communication error, please try again!`,
+                                position: 'is-bottom-right',
+                                type: 'is-danger',
+                                hasIcon: true
+                            });
+                        });
+                }
             }
         }
     }

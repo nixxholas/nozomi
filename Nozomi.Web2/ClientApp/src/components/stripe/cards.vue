@@ -1,6 +1,6 @@
 <template>
     <div>
-        <b-carousel-list v-if="custId" 
+        <b-carousel-list v-if="id && !isLoading" 
                 v-model="carouselPage" :data="cards" :items-to-show="2">
             <template slot="item" slot-scope="props">
                 <div class="card">
@@ -27,9 +27,9 @@
                 </div>
             </template>
         </b-carousel-list>
-        <section class="hero is-medium" v-else>
+        <section class="hero is-medium" v-else-if="!isLoading">
             <div class="hero-body">
-                <div class="container has-text-centered" v-if="!custId">
+                <div class="container has-text-centered" v-if="!id">
                     <h1 class="title">
                         Well, we gotta setup billing first!
                     </h1>
@@ -40,6 +40,7 @@
                 <b-loading :is-full-page="false" :active.sync="isBootstripeRunning" :can-cancel="true" />
             </div>
         </section>
+        <b-loading :is-full-page="false" :active.sync="isLoading" :can-cancel="true" />
     </div>
 </template>
 
@@ -50,7 +51,37 @@
     export default {
         name: 'cards',
         props: {
-            custId: null,
+            custId: {
+                type: String,
+                default: null
+            },
+        },
+        data: () => {
+            return {
+                id : null,
+                isBootstripeRunning: false,
+                isLoading: true,
+                carouselPage: 0,
+                cards: [],
+            };
+        },
+        created: function() {
+            let self = this;
+            
+            if (self.custId)
+                self.id = self.custId;
+            
+            if (!self.id) {
+                NozomiAuthService.getStripeCustId()
+                    .then(function (res) {
+                        if (res && res.status === 200 && res.data)
+                            self.id = res.data;
+                    })
+                    .catch(function (err) {
+                    });
+            }
+            
+            self.isLoading = false;
         },
         methods: {
             bootstripe: function() {
@@ -94,12 +125,10 @@
                 });
             }
         },
-        data: () => {
-            return {
-                isBootstripeRunning: false,
-                carouselPage: 0,
-                cards: [],
-            };
-        },
+        watch: {
+            custId: function(newVal, oldVal) { // watch it
+                this.id = newVal;
+            }
+        }
     }
 </script>

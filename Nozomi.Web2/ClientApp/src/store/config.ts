@@ -8,7 +8,7 @@ export const oidcSettings = {
     redirect_uri: process.env.NODE_ENV === "production" ? "https://nozomi.one/oidc-callback"
         : window.location.origin + "/oidc-callback",
     response_type: 'id_token token',
-    scope: 'openid profile email phone role crypto_default nozomi.web.read_only',
+    scope: 'openid profile email phone role crypto_default stripe nozomi.web.read_only',
     post_logout_redirect_uri: process.env.NODE_ENV === "production" ? "https://nozomi.one" : window.location.origin,
     //silent_redirect_uri: process.env.NODE_ENV === "production" ? "https://nozomi.one/oidc-silent-renew"
     //  : window.location.origin + '/oidc-silent-renew',
