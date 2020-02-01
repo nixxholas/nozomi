@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -20,9 +21,10 @@ namespace Nozomi.Infra.Auth.Services.Stripe
 {
     public class StripeService : BaseService<StripeService, AuthDbContext>, IStripeService
     {
+        private readonly SubscriptionService _subscriptionService;
         private readonly UserManager<Base.Auth.Models.User> _userManager;
 
-        public StripeService(ILogger<StripeService> logger, IUnitOfWork<AuthDbContext> unitOfWork,
+        public StripeService(ILogger<StripeService> logger, IUnitOfWork<AuthDbContext> unitOfWork, SubscriptionService subscriptionService,
             UserManager<Base.Auth.Models.User> userManager)
             : base(logger, unitOfWork)
         {
@@ -211,6 +213,47 @@ namespace Nozomi.Infra.Auth.Services.Stripe
 
             _logger.LogInformation($"{_serviceName} removeCard: Invalid cardId or userId.");
             throw new InvalidConstraintException($"{_serviceName} removeCard: Invalid cardId or userId.");
+        }
+
+        public async void subscribePlan(Plan plan, Base.Auth.Models.User user) {
+            if (user != null) {
+                if (plan != null) {
+
+                    var userClaims = await _userManager.GetClaimsAsync(user);
+
+                    // Ensure the user has his/her stripe customer id up
+                    if (!userClaims.Any() || !userClaims.Any(uc =>
+                            uc.Type.Equals(NozomiJwtClaimTypes.StripeCustomerId)))
+                    {
+                        // This shouldn't happen, but just in case
+                        _logger.LogInformation($"{_serviceName} addsubscribePlanCard: user has yet to bind to stripe");
+                        throw new KeyNotFoundException($"{_serviceName} subscribePlan: user has yet to bind to stripe");
+                    }
+                    else 
+                    {
+                        var customerIdClaim = userClaims.SingleOrDefault(uc => uc.Type.Equals(NozomiJwtClaimTypes.StripeCustomerId));
+                        if (customerIdClaim != null) {
+
+                            var subscriptionOptions = new SubscriptionCreateOptions
+                            {
+                                Customer = customerIdClaim.Value,
+                                Items = new List<SubscriptionItemOptions> {
+                                    new SubscriptionItemOptions
+                                    {
+                                        Plan = plan.Id
+                                    }
+                                }
+                            };
+
+                            _subscriptionService.Create(subscriptionOptions);
+                            return;
+                        }
+                        throw new NullReferenceException($"{_serviceName} subscribePlan: user has yet to bind to stripe");
+                    }
+                }
+                throw new NullReferenceException($"{_serviceName} subscribePlan: plan is null.");
+            }
+            throw new NullReferenceException($"{_serviceName} subscribePlan: user is null.");
         }
     }
 }
