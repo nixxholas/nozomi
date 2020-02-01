@@ -244,7 +244,7 @@ namespace Nozomi.Infra.Auth.Services.Stripe
                             }
                         };
 
-                        var subscription = _subscriptionService.Create(subscriptionOptions);
+                        var subscription = await _subscriptionService.CreateAsync(subscriptionOptions);
 
                         // If the subscription ain't null, bind it
                         if (subscription != null)
@@ -269,9 +269,49 @@ namespace Nozomi.Infra.Auth.Services.Stripe
             throw new NullReferenceException($"{_serviceName} subscribePlan: user is null.");
         }
 
-        public void cancelPlan(Base.Auth.Models.User user)
+        public async void cancelPlan(Base.Auth.Models.User user)
         {
-            throw new NotImplementedException();
+            if (user != null) {
+                var userClaims = await _userManager.GetClaimsAsync(user);
+
+                // Ensure the user has his/her stripe customer id up
+                if (!userClaims.Any() || !userClaims.Any(uc =>
+                        uc.Type.Equals(NozomiJwtClaimTypes.StripeCustomerId)))
+                {
+                    // This shouldn't happen, but just in case
+                    _logger.LogInformation($"{_serviceName} cancelPlan: user has yet to bind to stripe");
+                    throw new KeyNotFoundException($"{_serviceName} cancelPlan: user has yet to bind to stripe");
+                }
+
+                var subscriptionIdClaim = userClaims.SingleOrDefault(uc => uc.Type.Equals(NozomiJwtClaimTypes.StripeSubscriptionId));
+                if (subscriptionIdClaim != null) {
+                    var cancelOptions = new SubscriptionCancelOptions
+                    {
+                        InvoiceNow = true,
+                        Prorate = false
+                    };
+                    var subscription = await _subscriptionService.CancelAsync(subscriptionIdClaim.Value, cancelOptions);
+                    
+                    //Remove subscription from userclaims
+                    if (subscription.CanceledAt != null) {
+                        await _userManager.RemoveClaimAsync(user, subscriptionIdClaim);
+
+                        _logger.LogInformation($"{_serviceName} cancelPlan: {user.Id} successfully cancelled a plan subscription" +
+                                           $" that was tokenized as {subscriptionIdClaim.Value}");
+
+                        return;
+                    }
+                    _logger.LogInformation($"{_serviceName} cancelPlan: There was an issue cancelling " +
+                                    $"subscription {subscriptionIdClaim.Value} of user {user.Id}");
+                    throw new StripeException($"{_serviceName} cancelPlan: There was an issue cancelling " +
+                                                    $"subscription {subscriptionIdClaim.Value} of user {user.Id}");
+                }
+                // This shouldn't happen, but just in case
+                _logger.LogInformation($"{_serviceName} cancelPlan: user is not subscribed to a plan");
+                throw new KeyNotFoundException($"{_serviceName} cancelPlan: user is not subscribed to a plan");
+            }
+
+            throw new NullReferenceException($"{_serviceName} cancelPlan: user is null.");
         }
 
         public void changePlan(Plan plan, Base.Auth.Models.User user)
