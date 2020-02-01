@@ -79,9 +79,9 @@
                     })
                     .catch(function (err) {
                     });
+            } else {
+                self.isLoading = false;
             }
-            
-            self.isLoading = false;
         },
         methods: {
             bootstripe: function() {
@@ -102,6 +102,15 @@
                         // Inform the parent that a new request has been created
                         // https://forum.vuejs.org/t/passing-data-back-to-parent/1201
                         self.$emit('created', true);
+                        
+                        // Then set the id again
+                        NozomiAuthService.getStripeCustId()
+                            .then(function (res) {
+                                if (res && res.status === 200 && res.data)
+                                    self.id = res.data;
+                            })
+                            .catch(function (err) {
+                            });
                     } else {
                         Notification.open({
                             duration: 2500,
@@ -113,6 +122,7 @@
                     }
                 })
                 .catch(function(err) {
+                    console.dir(err);
                     Notification.open({
                         duration: 2500,
                         message: `There was an issue setting up stripe, please try again!`,
