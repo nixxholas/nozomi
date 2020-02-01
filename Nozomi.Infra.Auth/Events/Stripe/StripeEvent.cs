@@ -51,6 +51,29 @@ namespace Nozomi.Infra.Auth.Events.Stripe
             throw new NullReferenceException($"{_eventName} cards: Unable to get cards, user is not null.");
         }
 
+        public bool CardExists(string stripeUserId, string cardId)
+        {
+            if (!string.IsNullOrEmpty(cardId))
+            {
+                var cardService = new CardService();
+                // Let stripe handle the card ownership checks
+                var card = cardService.Get(stripeUserId, cardId);
+
+                // TODO: Expiration checks, not sure if Stripe covers this.
+                if (card != null && card.Deleted == null)
+                {
+                    return true;
+                }
+                
+                _logger.LogWarning($"{_eventName} CardExists: StripeUserId {stripeUserId} is attempting " +
+                                   $"to access a card he/she does not own {cardId}.");
+                return false;
+            }
+            
+            _logger.LogWarning($"{_eventName} CardExists: Null card id.");
+            return false;
+        }
+
         public async Task<IEnumerable<Plan>> Plans(bool activeOnly = true)
         {
             if (_stripeProduct != null)
