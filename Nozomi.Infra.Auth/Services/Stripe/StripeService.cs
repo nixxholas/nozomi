@@ -88,7 +88,7 @@ namespace Nozomi.Infra.Auth.Services.Stripe
             throw new InvalidConstraintException($"{_serviceName} PropagateCustomer: Invalid user.");
         }
 
-        public async void addCard(string stripeCardId, Base.Auth.Models.User user)
+        public async Task addCard(string stripeCardId, Base.Auth.Models.User user)
         {
             if (!string.IsNullOrEmpty(stripeCardId) && user != null)
             {

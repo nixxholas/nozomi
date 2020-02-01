@@ -7,7 +7,7 @@ namespace Nozomi.Infra.Auth.Services.Stripe
     {
         Task PropagateCustomer(Base.Auth.Models.User user);
         
-        void addCard(string stripeCardId, Base.Auth.Models.User user);
+        Task addCard(string stripeCardId, Base.Auth.Models.User user);
 
         void removeCard(string stripeCardId, Base.Auth.Models.User user);
 
