@@ -88,7 +88,7 @@ namespace Nozomi.Infra.Auth.Services.Stripe
             throw new InvalidConstraintException($"{_serviceName} PropagateCustomer: Invalid user.");
         }
 
-        public async Task addCard(string stripeCardId, Base.Auth.Models.User user)
+        public async Task AddCard(string stripeCardId, Base.Auth.Models.User user)
         {
             if (!string.IsNullOrEmpty(stripeCardId) && user != null)
             {
@@ -147,7 +147,7 @@ namespace Nozomi.Infra.Auth.Services.Stripe
             throw new InvalidConstraintException($"{_serviceName} addCard: Invalid tokenId or userId.");
         }
 
-        public async void removeCard(string stripeCardId, Base.Auth.Models.User user)
+        public async void RemoveCard(string stripeCardId, Base.Auth.Models.User user)
         {
             if (!string.IsNullOrEmpty(stripeCardId) && user != null)
             {
@@ -215,7 +215,7 @@ namespace Nozomi.Infra.Auth.Services.Stripe
             throw new InvalidConstraintException($"{_serviceName} removeCard: Invalid cardId or userId.");
         }
 
-        public async void subscribePlan(Plan plan, Base.Auth.Models.User user)
+        public async void Subscribe(Plan plan, Base.Auth.Models.User user)
         {
             if (user != null)
             {
@@ -274,7 +274,7 @@ namespace Nozomi.Infra.Auth.Services.Stripe
             throw new NullReferenceException($"{_serviceName} subscribePlan: user is null.");
         }
 
-        public async void cancelPlan(Base.Auth.Models.User user)
+        public async void Unsubscribe(Base.Auth.Models.User user)
         {
             if (user != null)
             {
@@ -322,7 +322,7 @@ namespace Nozomi.Infra.Auth.Services.Stripe
             throw new NullReferenceException($"{_serviceName} cancelPlan: user is null.");
         }
 
-        public async void changePlan(Plan plan, Base.Auth.Models.User user)
+        public async void ChangeSubscription(Plan plan, Base.Auth.Models.User user)
         {
             if (user != null)
             {
