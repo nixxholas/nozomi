@@ -16,4 +16,18 @@ export default {
             });
         });
     },
+
+    getStripeCustId() {
+        return new Promise((resolve, reject) => {
+            axios.get(oidcSettings.authority + '/Payment/GetStripeCustId', {
+                headers: {
+                    Authorization: "Bearer " + store.state.oidcStore.access_token
+                }
+            }).then(function (response) {
+                resolve(response);
+            }).catch(function (error) {
+                reject(error);
+            });
+        });
+    },
 }
