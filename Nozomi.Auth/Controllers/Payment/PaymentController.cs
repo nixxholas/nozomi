@@ -9,6 +9,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Nozomi.Base.Auth.Global;
 using Nozomi.Base.Auth.Models;
+using Nozomi.Infra.Auth.Events.Stripe;
+using Nozomi.Infra.Auth.Services.Stripe;
 using Nozomi.Infra.Auth.Services.User;
 
 namespace Nozomi.Auth.Controllers.Payment
@@ -16,13 +18,18 @@ namespace Nozomi.Auth.Controllers.Payment
     public class PaymentController : BaseController<PaymentController>
     {
         private readonly UserManager<User> _userManager;
+        private readonly IStripeEvent _stripeEvent;
+        private readonly IStripeService _stripeService;
         private readonly IUserService _userService;
         
         public PaymentController(ILogger<PaymentController> logger, IWebHostEnvironment webHostEnvironment,
-            UserManager<User> userManager, IUserService userService) 
+            UserManager<User> userManager, IStripeEvent stripeEvent, IStripeService stripeService, 
+            IUserService userService) 
             : base(logger, webHostEnvironment)
         {
             _userManager = userManager;
+            _stripeEvent = stripeEvent;
+            _stripeService = stripeService;
             _userService = userService;
         }
 
@@ -57,6 +64,39 @@ namespace Nozomi.Auth.Controllers.Payment
             }
 
             return BadRequest("Invalid input/s, please ensure that the entries are correctly filled!");
+        }
+        
+        [Authorize(AuthenticationSchemes = "Bearer")]
+        [HttpPost]
+        public async Task<IActionResult> AddCard([FromBody]string cardToken)
+        {
+            // Validate
+            var user = await _userManager.FindByIdAsync(((ClaimsIdentity) User.Identity)
+                .Claims.FirstOrDefault(c => c.Type.Equals(JwtClaimTypes.Subject)
+                                            || c.Type.Equals(ClaimTypes.NameIdentifier))?.Value);
+            
+            // Ensure stripe binding
+            if (user != null)
+            {
+                var stripeUserClaim = (await _userManager.GetClaimsAsync(user))
+                    .FirstOrDefault(c => c.Type.Equals(NozomiJwtClaimTypes.StripeCustomerId));
+
+                if (stripeUserClaim == null)
+                    return BadRequest("Please bootstripe first!");
+                
+                // Process card addition
+                if (!string.IsNullOrEmpty(cardToken) 
+                    && !_stripeEvent.CardExists(stripeUserClaim.Value, cardToken))
+                {
+                    await _stripeService.addCard(cardToken, user);
+                
+                    // Return
+                    _logger.LogInformation($"AddCard: card of ID {cardToken} added to {user.Id}");
+                    return Ok("Card successfully added!");
+                }
+            }
+
+            return BadRequest("Invalid card token!");
         }
     }
 }
