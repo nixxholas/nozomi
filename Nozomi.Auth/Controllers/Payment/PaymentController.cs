@@ -7,8 +7,10 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Nozomi.Base.Auth.Global;
 using Nozomi.Base.Auth.Models;
+using Nozomi.Base.BCL.Configurations;
 using Nozomi.Infra.Auth.Events.Stripe;
 using Nozomi.Infra.Auth.Services.Stripe;
 using Nozomi.Infra.Auth.Services.User;
@@ -17,20 +19,42 @@ namespace Nozomi.Auth.Controllers.Payment
 {
     public class PaymentController : BaseController<PaymentController>
     {
+        private readonly IOptions<StripeOptions> _stripeOptions;
         private readonly UserManager<User> _userManager;
         private readonly IStripeEvent _stripeEvent;
         private readonly IStripeService _stripeService;
         private readonly IUserService _userService;
         
         public PaymentController(ILogger<PaymentController> logger, IWebHostEnvironment webHostEnvironment,
+            IOptions<StripeOptions> stripeOptions,
             UserManager<User> userManager, IStripeEvent stripeEvent, IStripeService stripeService, 
             IUserService userService) 
             : base(logger, webHostEnvironment)
         {
+            _stripeOptions = stripeOptions;
             _userManager = userManager;
             _stripeEvent = stripeEvent;
             _stripeService = stripeService;
             _userService = userService;
+        }
+
+        [Authorize(AuthenticationSchemes = "Bearer")]
+        [HttpGet]
+        public async Task<IActionResult> GetStripePubKey()
+        {
+            // Validate
+            var user = await _userManager.FindByIdAsync(((ClaimsIdentity) User.Identity)
+                .Claims.FirstOrDefault(c => c.Type.Equals(JwtClaimTypes.Subject)
+                                            || c.Type.Equals(ClaimTypes.NameIdentifier))?.Value);
+            
+            // Safetynet
+            if (user != null)
+            {
+                // Return only the publishable key
+                return Ok(_stripeOptions.Value.PublishableKey);
+            }
+
+            return BadRequest("Invalid input/s, please ensure that the entries are correctly filled!");
         }
 
         [Authorize(AuthenticationSchemes = "Bearer")]
