@@ -231,11 +231,13 @@ namespace Nozomi.Infra.Auth.Services.Stripe
                     }
 
                     var customerIdClaim = userClaims.SingleOrDefault(uc => uc.Type.Equals(NozomiJwtClaimTypes.StripeCustomerId));
-                    if (customerIdClaim != null) {
+                    if (customerIdClaim != null)
+                    {
 
                         var subscriptionOptions = new SubscriptionCreateOptions
                         {
                             Customer = customerIdClaim.Value,
+                            CancelAtPeriodEnd = false,
                             Items = new List<SubscriptionItemOptions> {
                                 new SubscriptionItemOptions
                                 {
