@@ -1009,7 +1009,7 @@ namespace Nozomi.Auth.Controllers.Account
             return vm;
         }
 
-            private RegisterViewModel BuildRegisterViewModelFromInput(RegisterInputModel inputModel = null)
+        private RegisterViewModel BuildRegisterViewModelFromInput(RegisterInputModel inputModel = null)
         {
             var vm = new RegisterViewModel();
 
