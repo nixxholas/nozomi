@@ -1,5 +1,5 @@
-import store from '../store/index';
-import { oidcSettings } from '../store/config';
+import store from '@/store/index';
+import { oidcSettings } from '@/store/config';
 import axios from 'axios';
 
 export default {

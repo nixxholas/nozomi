@@ -73,6 +73,7 @@
 <script>
     import {mapGetters} from 'vuex';
     import NozomiAuthService from "@/services/NozomiAuthService";
+    import PaymentService from "@/services/auth/PaymentService";
     import CardsComponent from '@/components/stripe/cards';
     import {NotificationProgrammatic as Notification} from 'buefy';
 
@@ -112,22 +113,6 @@
         created: function () {
             let self = this;
             self.model.userClaims = this.oidcUser;
-
-            // If stripe's cust id ain't found,
-            if (!self.model.userClaims.stripe_cust_id) {
-                // Just attempt to look for it just in case
-                NozomiAuthService.getStripeCustId()
-                    .then(function (res) {
-                        if (res && res.status === 200 && res.data && res.data !== "") {
-                            self.model.userClaims.stripe_cust_id = res.data;
-                        } else {
-                            self.model.userClaims.stripe_cust_id = null;
-                        }
-                    })
-                    .catch(function (err) {
-                        self.model.userClaims.stripe_cust_id = null;
-                    });
-            }
         },
         methods: {
             push: function () {
@@ -168,7 +153,7 @@
                 
                 if (!self.model.userClaims.stripe_cust_id) {
                     // Update the user
-                    NozomiAuthService.getStripeCustId()
+                    PaymentService.getStripeCustId()
                         .then(function (res) {
                             if (res && res.status === 200 && res.data) {
                                 self.model.userClaims.stripe_cust_id = res.data;

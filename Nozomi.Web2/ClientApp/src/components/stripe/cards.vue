@@ -1,7 +1,9 @@
 <template>
     <div>
-        <b-carousel-list v-if="id && !isLoading" 
-                v-model="carouselPage" :data="cards" :items-to-show="2">
+        <b-field grouped group-multiline>
+        </b-field>
+        <b-carousel-list v-if="id && !isLoading"
+                         v-model="carouselPage" :data="cards" :items-to-show="2">
             <template slot="item" slot-scope="props">
                 <div class="card">
                     <div class="card-image">
@@ -14,12 +16,14 @@
                         <div class="content">
                             <p class="title is-6">{{ props.list.title }}</p>
                             <p class="subtitle is-7">@johnsmith</p>
-                            <div class="field is-grouped" >
+                            <div class="field is-grouped">
                                 <p class="control" v-if="props.list.rating">
                                     <b-rate :value="props.list.rating" show-score disabled/>
                                 </p>
                                 <p class="control" style="margin-left: auto">
-                                    <button class="button is-small is-danger is-outlined"><b-icon size="is-small" icon="heart"/></button>
+                                    <button class="button is-small is-danger is-outlined">
+                                        <b-icon size="is-small" icon="heart"/>
+                                    </button>
                                 </p>
                             </div>
                         </div>
@@ -37,17 +41,18 @@
                         <b-button @click="bootstripe" type="is-info" rounded>Get me started!</b-button>
                     </h2>
                 </div>
-                <b-loading :is-full-page="false" :active.sync="isBootstripeRunning" :can-cancel="true" />
+                <b-loading :is-full-page="false" :active.sync="isBootstripeRunning" :can-cancel="true"/>
             </div>
         </section>
-        <b-loading :is-full-page="false" :active.sync="isLoading" :can-cancel="true" />
+        <b-loading :is-full-page="false" :active.sync="isLoading" :can-cancel="true"/>
     </div>
 </template>
 
 <script>
     import NozomiAuthService from "@/services/NozomiAuthService";
-    import { NotificationProgrammatic as Notification } from 'buefy';
-    
+    import PaymentService from "@/services/auth/PaymentService";
+    import {NotificationProgrammatic as Notification} from 'buefy';
+
     export default {
         name: 'cards',
         props: {
@@ -58,85 +63,93 @@
         },
         data: () => {
             return {
-                id : null,
+                id: null,
                 isBootstripeRunning: false,
                 isLoading: true,
                 carouselPage: 0,
                 cards: [],
             };
         },
-        created: function() {
+        created: function () {
             let self = this;
-            
+
             if (self.custId)
                 self.id = self.custId;
-            
+
             if (!self.id) {
-                NozomiAuthService.getStripeCustId()
+                PaymentService.getStripeCustId()
                     .then(function (res) {
                         if (res && res.status === 200 && res.data)
                             self.id = res.data;
                     })
                     .catch(function (err) {
+                    })
+                    .finally(function () {
+                        self.isLoading = false;
                     });
             } else {
                 self.isLoading = false;
             }
         },
         methods: {
-            bootstripe: function() {
+            bootstripe: function () {
                 let self = this;
                 self.isBootstripeRunning = true;
-                
-                NozomiAuthService.bootstripe()
-                .then(function(res) {
-                    if (res.status === 200) {
-                        Notification.open({
-                            duration: 2500,
-                            message: `Stripe successfully set up!`,
-                            position: 'is-bottom-right',
-                            type: 'is-success',
-                            hasIcon: true
-                        });
 
-                        // Inform the parent that a new request has been created
-                        // https://forum.vuejs.org/t/passing-data-back-to-parent/1201
-                        self.$emit('created', true);
-                        
-                        // Then set the id again
-                        NozomiAuthService.getStripeCustId()
-                            .then(function (res) {
-                                if (res && res.status === 200 && res.data)
-                                    self.id = res.data;
-                            })
-                            .catch(function (err) {
+                NozomiAuthService.bootstripe()
+                    .then(function (res) {
+                        if (res.status === 200) {
+                            Notification.open({
+                                duration: 2500,
+                                message: `Stripe successfully set up!`,
+                                position: 'is-bottom-right',
+                                type: 'is-success',
+                                hasIcon: true
                             });
-                    } else {
+
+                            // Inform the parent that a new request has been created
+                            // https://forum.vuejs.org/t/passing-data-back-to-parent/1201
+                            self.$emit('created', true);
+                        } else {
+                            Notification.open({
+                                duration: 2500,
+                                message: `There might be a connection issue with Stripe. Please try again in a moment!`,
+                                position: 'is-bottom-right',
+                                type: 'is-warning',
+                                hasIcon: true
+                            });
+                        }
+                    })
+                    .catch(function (err) {
                         Notification.open({
                             duration: 2500,
-                            message: `There might be a connection issue with Stripe. Please try again in a moment!`,
+                            message: `There was an issue setting up stripe, please try again!`,
                             position: 'is-bottom-right',
-                            type: 'is-warning',
+                            type: 'is-danger',
                             hasIcon: true
                         });
-                    }
-                })
-                .catch(function(err) {
-                    console.dir(err);
-                    Notification.open({
-                        duration: 2500,
-                        message: `There was an issue setting up stripe, please try again!`,
-                        position: 'is-bottom-right',
-                        type: 'is-danger',
-                        hasIcon: true
-                    });
-                }).finally(function() {
+                    }).finally(function () {
                     self.isBootstripeRunning = false;
                 });
+                
+                if (!self.id) {
+                    self.isLoading = true;
+                    // Then set the id again
+                    PaymentService.getStripeCustId()
+                        .then(function (res) {
+                            if (res && res.status === 200 && res.data)
+                                self.id = res.data;
+                        })
+                        .catch(function (err) {
+                        })
+                        .finally(function() {
+                            self.isLoading = false;
+                        });
+                }
             }
         },
         watch: {
-            custId: function(newVal, oldVal) { // watch it
+            custId: function (newVal, oldVal) { // watch it
                 this.id = newVal;
             }
         }
