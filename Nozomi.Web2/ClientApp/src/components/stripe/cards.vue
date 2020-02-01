@@ -1,6 +1,5 @@
 <template>
     <div>
-        <b-loading :v-model="isLoading"/>
         <b-carousel-list v-if="custId" 
                 v-model="carouselPage" :data="cards" :items-to-show="2">
             <template slot="item" slot-scope="props">
@@ -38,6 +37,7 @@
                         <b-button @click="bootstripe" type="is-info" rounded>Get me started!</b-button>
                     </h2>
                 </div>
+                <b-loading :is-full-page="false" :active.sync="isBootstripeRunning" :can-cancel="true" />
             </div>
         </section>
     </div>
@@ -55,21 +55,31 @@
         methods: {
             bootstripe: function() {
                 let self = this;
-                self.isLoading = true;
+                self.isBootstripeRunning = true;
                 
                 NozomiAuthService.bootstripe()
                 .then(function(res) {
-                    Notification.open({
-                        duration: 2500,
-                        message: `Stripe successfully set up!`,
-                        position: 'is-bottom-right',
-                        type: 'is-success',
-                        hasIcon: true
-                    });
-                    
-                    // Inform the parent that a new request has been created
-                    // https://forum.vuejs.org/t/passing-data-back-to-parent/1201
-                    self.$emit('created', true);
+                    if (res.status === 200) {
+                        Notification.open({
+                            duration: 2500,
+                            message: `Stripe successfully set up!`,
+                            position: 'is-bottom-right',
+                            type: 'is-success',
+                            hasIcon: true
+                        });
+
+                        // Inform the parent that a new request has been created
+                        // https://forum.vuejs.org/t/passing-data-back-to-parent/1201
+                        self.$emit('created', true);
+                    } else {
+                        Notification.open({
+                            duration: 2500,
+                            message: `There might be a connection issue with Stripe. Please try again in a moment!`,
+                            position: 'is-bottom-right',
+                            type: 'is-warning',
+                            hasIcon: true
+                        });
+                    }
                 })
                 .catch(function(err) {
                     Notification.open({
@@ -80,13 +90,13 @@
                         hasIcon: true
                     });
                 }).finally(function() {
-                    self.isLoading = false;
+                    self.isBootstripeRunning = false;
                 });
             }
         },
         data: () => {
             return {
-                isLoading: false,
+                isBootstripeRunning: false,
                 carouselPage: 0,
                 cards: [],
             };
