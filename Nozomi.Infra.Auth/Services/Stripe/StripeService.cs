@@ -88,9 +88,9 @@ namespace Nozomi.Infra.Auth.Services.Stripe
             throw new InvalidConstraintException($"{_serviceName} PropagateCustomer: Invalid user.");
         }
 
-        public async Task AddCard(string stripeCardId, Base.Auth.Models.User user)
+        public async Task AddPaymentMethod(string paymentMethodId, Base.Auth.Models.User user)
         {
-            if (!string.IsNullOrEmpty(stripeCardId) && user != null)
+            if (!string.IsNullOrEmpty(paymentMethodId) && user != null)
             {
                 var userClaims = await _userManager.GetClaimsAsync(user);
 
@@ -99,57 +99,68 @@ namespace Nozomi.Infra.Auth.Services.Stripe
                         uc.Type.Equals(NozomiJwtClaimTypes.StripeCustomerId)))
                 {
                     // This shouldn't happen, but just in case
-                    _logger.LogInformation($"{_serviceName} addCard: user has yet to bind to stripe");
-                    throw new KeyNotFoundException($"{_serviceName} addCard: user has yet to bind to stripe");
+                    _logger.LogInformation($"{_serviceName} AddPaymentMethod: user has yet to bind to stripe");
+                    throw new KeyNotFoundException($"{_serviceName} AddPaymentMethod: user has yet to bind to stripe");
                 }
 
-                // Ensure the user has yet to bind this card.
-                if (userClaims.Any(uc => uc.Type.Equals(NozomiJwtClaimTypes.StripeCustomerCardId)
-                                         && uc.Value.Equals(stripeCardId)))
+                // Ensure the user has yet to bind this payment method.
+                if (userClaims.Any(uc => uc.Type.Equals(NozomiJwtClaimTypes.StripeCustomerPaymentMethodId)
+                                         && uc.Value.Equals(paymentMethodId)))
                 {
                     // This shouldn't happen, but just in case
-                    _logger.LogInformation($"{_serviceName} addCard: user already has the card...");
-                    throw new KeyNotFoundException($"{_serviceName} addCard: user has completed binding earlier.");
+                    _logger.LogInformation($"{_serviceName} AddPaymentMethod: user already has the " +
+                                           $"payment method...");
+                    throw new KeyNotFoundException($"{_serviceName} AddPaymentMethod: user has completed " +
+                                                   $"the binding earlier.");
                 }
 
+                // Obtain the user's stripe id
                 var userStripeCustId = userClaims
                     .SingleOrDefault(uc => uc.Type.Equals(NozomiJwtClaimTypes.StripeCustomerId))?
                     .Value;
 
+                // Safetynet
                 if (string.IsNullOrEmpty(userStripeCustId))
                 {
                     // This shouldn't happen, but just in case
-                    _logger.LogInformation($"{_serviceName} addCard: user has yet to bind to stripe");
-                    throw new KeyNotFoundException($"{_serviceName} addCard: user has yet to bind to stripe");
+                    _logger.LogInformation($"{_serviceName} AddPaymentMethod: user has yet to bind to stripe");
+                    throw new KeyNotFoundException($"{_serviceName} AddPaymentMethod: user has yet to bind " +
+                                                   $"to stripe");
                 }
-
-                var cardService = new CardService();
-                var card = cardService.Get(userStripeCustId, stripeCardId);
-
-                // If the card ain't null, bind it
-                if (card != null)
+                
+                // Bind it!
+                var options = new PaymentMethodAttachOptions
                 {
-                    var cardUserClaim = new Claim(NozomiJwtClaimTypes.StripeCustomerCardId, card.Id);
-                    await _userManager.AddClaimAsync(user, cardUserClaim);
+                    Customer = userStripeCustId,
+                };
+                var paymentMethodService = new PaymentMethodService();
+                var paymentMethod = paymentMethodService.Attach(paymentMethodId, options);
 
-                    _logger.LogInformation($"{_serviceName} addCard: {user.Id} successfully added a new card" +
-                                           $" tokenized as {cardUserClaim.Value}");
+                // If the method ain't null, bind it
+                if (paymentMethod != null)
+                {
+                    var paymentMethodUserClaim = new Claim(NozomiJwtClaimTypes.StripeCustomerPaymentMethodId, 
+                        paymentMethod.Id);
+                    await _userManager.AddClaimAsync(user, paymentMethodUserClaim);
+
+                    _logger.LogInformation($"{_serviceName} AddPaymentMethod: {user.Id} successfully added " +
+                                           $"a new payment method tokenized as {paymentMethodUserClaim.Value}");
                     return; // Done!
                 }
 
-                _logger.LogInformation($"{_serviceName} addCard: There was an issue related to binding cardId" +
-                                       $" {stripeCardId} to user {user.Id}.");
-                throw new StripeException($"{_serviceName} addCard: There was a problem binding the newly" +
-                                          $" created card of {stripeCardId} to {user.Id}");
+                _logger.LogInformation($"{_serviceName} AddPaymentMethod: There was an issue related to binding " +
+                                       $"paymentMethodId {paymentMethodId} to user {user.Id}.");
+                throw new StripeException($"{_serviceName} AddPaymentMethod: There was a problem binding " +
+                                          $"the newly created payment method of {paymentMethodId} to {user.Id}");
             }
 
-            _logger.LogInformation($"{_serviceName} addCard: Invalid tokenId or userId.");
-            throw new InvalidConstraintException($"{_serviceName} addCard: Invalid tokenId or userId.");
+            _logger.LogInformation($"{_serviceName} AddPaymentMethod: Invalid tokenId or userId.");
+            throw new InvalidConstraintException($"{_serviceName} AddPaymentMethod: Invalid tokenId or userId.");
         }
 
-        public async void RemoveCard(string stripeCardId, Base.Auth.Models.User user)
+        public async void RemovePaymentMethod(string paymentMethodId, Base.Auth.Models.User user)
         {
-            if (!string.IsNullOrEmpty(stripeCardId) && user != null)
+            if (!string.IsNullOrEmpty(paymentMethodId) && user != null)
             {
                 var userClaims = await _userManager.GetClaimsAsync(user);
 
@@ -158,57 +169,68 @@ namespace Nozomi.Infra.Auth.Services.Stripe
                         uc.Type.Equals(NozomiJwtClaimTypes.StripeCustomerId)))
                 {
                     // This shouldn't happen, but just in case
-                    _logger.LogInformation($"{_serviceName} addCard: user has yet to bind to stripe");
-                    throw new KeyNotFoundException($"{_serviceName} addCard: user has yet to bind to stripe");
+                    _logger.LogInformation($"{_serviceName} RemovePaymentMethod: user has yet to bind " +
+                                           $"to stripe");
+                    throw new KeyNotFoundException($"{_serviceName} RemovePaymentMethod: user has yet to " +
+                                                   $"bind to stripe");
                 }
 
-                // Ensure the user is binded to this card
-                if (!userClaims.Any(uc => uc.Type.Equals(NozomiJwtClaimTypes.StripeCustomerCardId)
-                                          && uc.Value.Equals(stripeCardId)))
+                // Ensure the user is binded to this payment method
+                if (!userClaims.Any(uc => uc.Type.Equals(NozomiJwtClaimTypes.StripeCustomerPaymentMethodId)
+                                          && uc.Value.Equals(paymentMethodId)))
                 {
                     // This shouldn't happen, but just in case
-                    _logger.LogInformation($"{_serviceName} addCard: user already has the card...");
-                    throw new KeyNotFoundException($"{_serviceName} addCard: user has completed binding earlier.");
+                    _logger.LogInformation($"{_serviceName} RemovePaymentMethod: user already has the " +
+                                           $"payment method...");
+                    throw new KeyNotFoundException($"{_serviceName} RemovePaymentMethod: user has " +
+                                                   $"completed binding earlier.");
                 }
 
+                // Obtain the user's stripe customer id
                 var userStripeCustId = userClaims
                     .SingleOrDefault(uc => uc.Type.Equals(NozomiJwtClaimTypes.StripeCustomerId))?
                     .Value;
 
+                // Safetynet
                 if (string.IsNullOrEmpty(userStripeCustId))
                 {
                     // This shouldn't happen, but just in case
-                    _logger.LogInformation($"{_serviceName} removeCard: user has yet to bind to stripe");
-                    throw new KeyNotFoundException($"{_serviceName} removeCard: user has yet to bind to stripe");
+                    _logger.LogInformation($"{_serviceName} RemovePaymentMethod: user has yet to bind to " +
+                                           $"stripe");
+                    throw new KeyNotFoundException($"{_serviceName} RemovePaymentMethod: user has yet to " +
+                                                   $"bind to stripe");
                 }
 
-                // Obtain the card claim directly
-                var stripeCardClaim = userClaims.SingleOrDefault(uc =>
-                    uc.Type.Equals(NozomiJwtClaimTypes.StripeCustomerCardId) && uc.Value.Equals(stripeCardId));
+                // Obtain the payment method claim directly
+                var stripePaymentMethodClaim = userClaims.SingleOrDefault(uc =>
+                    uc.Type.Equals(NozomiJwtClaimTypes.StripeCustomerPaymentMethodId) 
+                    && uc.Value.Equals(paymentMethodId));
 
-                if (stripeCardClaim == null) // This shouldn't happen, but just in case
+                if (stripePaymentMethodClaim == null) // This shouldn't happen, but just in case
                 {
-                    _logger.LogInformation($"{_serviceName} removeCard: user doesn't own the card what a bitch");
-                    throw new KeyNotFoundException($"{_serviceName} removeCard: user does not own the card");
+                    _logger.LogInformation($"{_serviceName} RemovePaymentMethod: user doesn't own the " +
+                                           $"payment method what a bitch");
+                    throw new KeyNotFoundException($"{_serviceName} RemovePaymentMethod: user does not own " +
+                                                   $"the payment method");
                 }
-
-                var cardService = new CardService();
-                var card = cardService.Delete(userStripeCustId, stripeCardId);
+                
+                var paymentMethodService = new PaymentMethodService();
+                var paymentMethod = paymentMethodService.Detach(stripePaymentMethodClaim.Value);
 
                 // If the card's deleted, delete it on our end
-                if (card.Deleted != null && (bool)card.Deleted)
+                if (paymentMethod != null && paymentMethod.Customer == null)
                 {
-                    await _userManager.RemoveClaimAsync(user, stripeCardClaim);
+                    await _userManager.RemoveClaimAsync(user, stripePaymentMethodClaim);
 
-                    _logger.LogInformation($"{_serviceName} removeCard: {user.Id} successfully removed a card" +
-                                           $" that was tokenized as {stripeCardClaim.Value}");
+                    _logger.LogInformation($"{_serviceName} RemovePaymentMethod: {user.Id} successfully " +
+                                           $"removed a payment method that was tokenized as {stripePaymentMethodClaim.Value}");
                     return; // Done!
                 }
 
-                _logger.LogInformation($"{_serviceName} removeCard: There was an issue deleting the card " +
-                                       $"{stripeCardId} from user {user.Id}");
-                throw new StripeException($"{_serviceName} removeCard: There was an issue deleting " +
-                                               $"{stripeCardId} from user {user.Id}");
+                _logger.LogInformation($"{_serviceName} RemovePaymentMethod: There was an issue deleting " +
+                                       $"the payment method {paymentMethodId} from user {user.Id}");
+                throw new StripeException($"{_serviceName} RemovePaymentMethod: There was an issue deleting " +
+                                               $"{paymentMethodId} from user {user.Id}");
             }
 
             _logger.LogInformation($"{_serviceName} removeCard: Invalid cardId or userId.");

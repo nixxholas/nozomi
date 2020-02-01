@@ -8,9 +8,9 @@ namespace Nozomi.Base.Auth.Global
         /// </summary>
         public const string StripeCustomerId = "stripe_cust_id";
         /// <summary>
-        /// A set of array for the cards the user has.
+        /// A set of array for the payment methods the user has.
         /// </summary>
-        public const string StripeCustomerCardId = "stripe_cust_card_id";
+        public const string StripeCustomerPaymentMethodId = "stripe_cust_payment_method_id";
         /// <summary>
         /// The Id of the user's current subscription
         /// </summary>

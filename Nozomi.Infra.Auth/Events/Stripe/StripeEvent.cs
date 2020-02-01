@@ -46,7 +46,7 @@ namespace Nozomi.Infra.Auth.Events.Stripe
                     throw new KeyNotFoundException($"{_eventName} addCard: user has yet to bind to stripe");
                 }
 
-                return userClaims.Where(uc => uc.Type.Equals(NozomiJwtClaimTypes.StripeCustomerCardId)).Select(uc => new Card { Id = uc.Value });
+                return userClaims.Where(uc => uc.Type.Equals(NozomiJwtClaimTypes.StripeCustomerPaymentMethodId)).Select(uc => new Card { Id = uc.Value });
             }
             throw new NullReferenceException($"{_eventName} cards: Unable to get cards, user is not null.");
         }

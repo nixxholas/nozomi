@@ -67,7 +67,7 @@ namespace Nozomi.Auth
                     Name = NozomiAuthConstants.StandardScopes.Stripe,
                     DisplayName = "Stripe",
                     Description = "Allow the service access to process payments through Stripe.",
-                    UserClaims = new[] { NozomiJwtClaimTypes.StripeCustomerId, NozomiJwtClaimTypes.StripeCustomerCardId },
+                    UserClaims = new[] { NozomiJwtClaimTypes.StripeCustomerId, NozomiJwtClaimTypes.StripeCustomerPaymentMethodId },
                     ShowInDiscoveryDocument = true,
                     Required = true
                 }, 
@@ -100,7 +100,7 @@ namespace Nozomi.Auth
                         JwtClaimTypes.Role,
                         NozomiAuthConstants.StandardScopes.DefaultCryptoAddress,
                         NozomiJwtClaimTypes.StripeCustomerId,
-                        NozomiJwtClaimTypes.StripeCustomerCardId
+                        NozomiJwtClaimTypes.StripeCustomerPaymentMethodId
                     },
 
                     // this API has limit to its scopes
@@ -144,7 +144,7 @@ namespace Nozomi.Auth
                         JwtClaimTypes.Role,
                         NozomiAuthConstants.StandardScopes.DefaultCryptoAddress,
                         NozomiJwtClaimTypes.StripeCustomerId,
-                        NozomiJwtClaimTypes.StripeCustomerCardId },
+                        NozomiJwtClaimTypes.StripeCustomerPaymentMethodId },
 
                     // this API has limit to its scopes
                     Scopes =

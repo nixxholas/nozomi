@@ -68,7 +68,7 @@ namespace Nozomi.Auth.Controllers.Payment
         
         [Authorize(AuthenticationSchemes = "Bearer")]
         [HttpPost]
-        public async Task<IActionResult> AddCard([FromBody]string cardToken)
+        public async Task<IActionResult> AddPaymentMethod([FromBody]string paymentMethodToken)
         {
             // Validate
             var user = await _userManager.FindByIdAsync(((ClaimsIdentity) User.Identity)
@@ -85,13 +85,13 @@ namespace Nozomi.Auth.Controllers.Payment
                     return BadRequest("Please bootstripe first!");
                 
                 // Process card addition
-                if (!string.IsNullOrEmpty(cardToken) 
-                    && !_stripeEvent.CardExists(stripeUserClaim.Value, cardToken))
+                if (!string.IsNullOrEmpty(paymentMethodToken) 
+                    && !_stripeEvent.CardExists(stripeUserClaim.Value, paymentMethodToken))
                 {
-                    await _stripeService.addCard(cardToken, user);
+                    await _stripeService.AddPaymentMethod(paymentMethodToken, user);
                 
                     // Return
-                    _logger.LogInformation($"AddCard: card of ID {cardToken} added to {user.Id}");
+                    _logger.LogInformation($"AddCard: card of ID {paymentMethodToken} added to {user.Id}");
                     return Ok("Card successfully added!");
                 }
             }
