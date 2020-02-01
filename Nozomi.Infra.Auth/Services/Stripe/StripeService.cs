@@ -32,12 +32,12 @@ namespace Nozomi.Infra.Auth.Services.Stripe
         }
 
         public StripeService(IHttpContextAccessor contextAccessor, ILogger<StripeService> logger,
-            UserManager<Base.Auth.Models.User> userManager, IUnitOfWork<AuthDbContext> unitOfWork) 
+            UserManager<Base.Auth.Models.User> userManager, IUnitOfWork<AuthDbContext> unitOfWork)
             : base(contextAccessor, logger, unitOfWork)
         {
             _userManager = userManager;
         }
-        
+
         public async Task PropagateCustomer(Base.Auth.Models.User user)
         {
             if (user != null)
@@ -74,16 +74,16 @@ namespace Nozomi.Infra.Auth.Services.Stripe
                                                              $"pushing the stripe customer id of {result.Id} to user claims of " +
                                                              $"user {user.Id}.");
                     }
-                    
+
                     return; // ok!
                 }
-                
+
                 _logger.LogInformation($"{_serviceName} PropagateCustomer: There was an issue " +
                                        $"propagating the stripe id for user {user.Id}.");
                 throw new StripeException($"{_serviceName} PropagateCustomer: There was an issue " +
                                           $"propagating the stripe id for user {user.Id}.");
             }
-            
+
             _logger.LogInformation($"{_serviceName} PropagateCustomer: Invalid user.");
             throw new InvalidConstraintException($"{_serviceName} PropagateCustomer: Invalid user.");
         }
@@ -136,13 +136,13 @@ namespace Nozomi.Infra.Auth.Services.Stripe
                                            $" tokenized as {cardUserClaim.Value}");
                     return; // Done!
                 }
-                
+
                 _logger.LogInformation($"{_serviceName} addCard: There was an issue related to binding cardId" +
                                        $" {stripeCardId} to user {user.Id}.");
                 throw new StripeException($"{_serviceName} addCard: There was a problem binding the newly" +
                                           $" created card of {stripeCardId} to {user.Id}");
             }
-            
+
             _logger.LogInformation($"{_serviceName} addCard: Invalid tokenId or userId.");
             throw new InvalidConstraintException($"{_serviceName} addCard: Invalid tokenId or userId.");
         }
@@ -183,7 +183,7 @@ namespace Nozomi.Infra.Auth.Services.Stripe
                 }
 
                 // Obtain the card claim directly
-                var stripeCardClaim = userClaims.SingleOrDefault(uc => 
+                var stripeCardClaim = userClaims.SingleOrDefault(uc =>
                     uc.Type.Equals(NozomiJwtClaimTypes.StripeCustomerCardId) && uc.Value.Equals(stripeCardId));
 
                 if (stripeCardClaim == null) // This shouldn't happen, but just in case
@@ -196,7 +196,7 @@ namespace Nozomi.Infra.Auth.Services.Stripe
                 var card = cardService.Delete(userStripeCustId, stripeCardId);
 
                 // If the card's deleted, delete it on our end
-                if (card.Deleted != null && (bool) card.Deleted)
+                if (card.Deleted != null && (bool)card.Deleted)
                 {
                     await _userManager.RemoveClaimAsync(user, stripeCardClaim);
 
@@ -204,7 +204,7 @@ namespace Nozomi.Infra.Auth.Services.Stripe
                                            $" that was tokenized as {stripeCardClaim.Value}");
                     return; // Done!
                 }
-                
+
                 _logger.LogInformation($"{_serviceName} removeCard: There was an issue deleting the card " +
                                        $"{stripeCardId} from user {user.Id}");
                 throw new StripeException($"{_serviceName} removeCard: There was an issue deleting " +
@@ -215,9 +215,12 @@ namespace Nozomi.Infra.Auth.Services.Stripe
             throw new InvalidConstraintException($"{_serviceName} removeCard: Invalid cardId or userId.");
         }
 
-        public async void subscribePlan(Plan plan, Base.Auth.Models.User user) {
-            if (user != null) {
-                if (plan != null) {
+        public async void subscribePlan(Plan plan, Base.Auth.Models.User user)
+        {
+            if (user != null)
+            {
+                if (plan != null)
+                {
 
                     var userClaims = await _userManager.GetClaimsAsync(user);
 
@@ -231,11 +234,13 @@ namespace Nozomi.Infra.Auth.Services.Stripe
                     }
 
                     var customerIdClaim = userClaims.SingleOrDefault(uc => uc.Type.Equals(NozomiJwtClaimTypes.StripeCustomerId));
-                    if (customerIdClaim != null) {
+                    if (customerIdClaim != null)
+                    {
 
                         var subscriptionOptions = new SubscriptionCreateOptions
                         {
                             Customer = customerIdClaim.Value,
+                            CancelAtPeriodEnd = false,
                             Items = new List<SubscriptionItemOptions> {
                                 new SubscriptionItemOptions
                                 {
@@ -244,7 +249,7 @@ namespace Nozomi.Infra.Auth.Services.Stripe
                             }
                         };
 
-                        var subscription = _subscriptionService.Create(subscriptionOptions);
+                        var subscription = await _subscriptionService.CreateAsync(subscriptionOptions);
 
                         // If the subscription ain't null, bind it
                         if (subscription != null)
@@ -269,14 +274,107 @@ namespace Nozomi.Infra.Auth.Services.Stripe
             throw new NullReferenceException($"{_serviceName} subscribePlan: user is null.");
         }
 
-        public void cancelPlan(Base.Auth.Models.User user)
+        public async void cancelPlan(Base.Auth.Models.User user)
         {
-            throw new NotImplementedException();
+            if (user != null)
+            {
+                var userClaims = await _userManager.GetClaimsAsync(user);
+
+                // Ensure the user has his/her stripe customer id up
+                if (!userClaims.Any() || !userClaims.Any(uc =>
+                        uc.Type.Equals(NozomiJwtClaimTypes.StripeCustomerId)))
+                {
+                    // This shouldn't happen, but just in case
+                    _logger.LogInformation($"{_serviceName} cancelPlan: user has yet to bind to stripe");
+                    throw new KeyNotFoundException($"{_serviceName} cancelPlan: user has yet to bind to stripe");
+                }
+
+                var subscriptionIdClaim = userClaims.SingleOrDefault(uc => uc.Type.Equals(NozomiJwtClaimTypes.StripeSubscriptionId));
+                if (subscriptionIdClaim != null)
+                {
+                    var cancelOptions = new SubscriptionCancelOptions
+                    {
+                        InvoiceNow = true,
+                        Prorate = false
+                    };
+                    var subscription = await _subscriptionService.CancelAsync(subscriptionIdClaim.Value, cancelOptions);
+
+                    //Remove subscription from userclaims
+                    if (subscription.CanceledAt != null)
+                    {
+                        await _userManager.RemoveClaimAsync(user, subscriptionIdClaim);
+
+                        _logger.LogInformation($"{_serviceName} cancelPlan: {user.Id} successfully cancelled a plan subscription" +
+                                           $" that was tokenized as {subscriptionIdClaim.Value}");
+
+                        return;
+                    }
+                    _logger.LogInformation($"{_serviceName} cancelPlan: There was an issue cancelling " +
+                                    $"subscription {subscriptionIdClaim.Value} of user {user.Id}");
+                    throw new StripeException($"{_serviceName} cancelPlan: There was an issue cancelling " +
+                                                    $"subscription {subscriptionIdClaim.Value} of user {user.Id}");
+                }
+                // This shouldn't happen, but just in case
+                _logger.LogInformation($"{_serviceName} cancelPlan: user is not subscribed to a plan");
+                throw new KeyNotFoundException($"{_serviceName} cancelPlan: user is not subscribed to a plan");
+            }
+
+            throw new NullReferenceException($"{_serviceName} cancelPlan: user is null.");
         }
 
-        public void changePlan(Plan plan, Base.Auth.Models.User user)
+        public async void changePlan(Plan plan, Base.Auth.Models.User user)
         {
-            throw new NotImplementedException();
+            if (user != null)
+            {
+                if (plan != null)
+                {
+                    var userClaims = await _userManager.GetClaimsAsync(user);
+
+                    // Ensure the user has his/her stripe customer id up
+                    if (!userClaims.Any() || !userClaims.Any(uc =>
+                            uc.Type.Equals(NozomiJwtClaimTypes.StripeCustomerId)))
+                    {
+                        // This shouldn't happen, but just in case
+                        _logger.LogInformation($"{_serviceName} changePlan: user has yet to bind to stripe");
+                        throw new KeyNotFoundException($"{_serviceName} changePlan: user has yet to bind to stripe");
+                    }
+
+                    var subscriptionIdUserClaim = userClaims.SingleOrDefault(uc => uc.Type.Equals(NozomiJwtClaimTypes.StripeSubscriptionId));
+
+                    if (subscriptionIdUserClaim != null)
+                    {
+                        var subscription = await _subscriptionService.GetAsync(subscriptionIdUserClaim.Value);
+
+                        if (subscription != null && subscription.CanceledAt != null)
+                        {
+
+                            var subscriptionChangeOptions = new SubscriptionUpdateOptions {
+                                Items = new List<SubscriptionItemOptions> {
+                                    new SubscriptionItemOptions
+                                    {
+                                        Plan = plan.Id
+                                    }
+                                }
+                            };
+
+                            subscription = await _subscriptionService.UpdateAsync(subscription.Id, subscriptionChangeOptions);
+                            if (subscription.Plan.Id.Equals(plan.Id)) {
+                                _logger.LogInformation($"{_serviceName} changePlan: {user.Id} successfully changed to new plan {subscription.Plan.Id}");
+                                return;
+                            }
+                            _logger.LogInformation($"{_serviceName} changePlan: There was an issue changing " +
+                                    $"user {user.Id} plan to {plan.Id}");
+                            throw new StripeException($"{_serviceName} changePlan: There was an issue changing " +
+                                                            $"user {user.Id} plan to {plan.Id}");
+                        }
+                        throw new NullReferenceException($"{_serviceName} changePlan: subscription {subscriptionIdUserClaim.Value} does not exist or has been cancelled");
+                    }
+                    throw new NullReferenceException($"{_serviceName} changePlan: user does not have a subscription");
+                }
+                throw new NullReferenceException($"{_serviceName} changePlan: plan is null.");
+            }
+            throw new NullReferenceException($"{_serviceName} changePlan: user is null.");
+
         }
     }
 }
