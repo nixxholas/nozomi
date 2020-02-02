@@ -1,6 +1,7 @@
 <template>
     <div>
         <b-field grouped group-multiline>
+            <StripeCardModal v-if="id"/>
         </b-field>
         <b-carousel-list v-if="id && !isLoading"
                          v-model="carouselPage" :data="cards" :items-to-show="2">
@@ -49,12 +50,14 @@
 </template>
 
 <script>
+    import StripeCardModal from "@/components/stripe/card-modal";
     import NozomiAuthService from "@/services/NozomiAuthService";
     import PaymentService from "@/services/auth/PaymentService";
     import {NotificationProgrammatic as Notification} from 'buefy';
 
     export default {
         name: 'cards',
+        components: { StripeCardModal },
         props: {
             custId: {
                 type: String,
@@ -146,7 +149,7 @@
                             self.isLoading = false;
                         });
                 }
-            }
+            },
         },
         watch: {
             custId: function (newVal, oldVal) { // watch it
