@@ -41,7 +41,7 @@ namespace Nozomi.Auth.Controllers.Payment
         }
         
         [Authorize(AuthenticationSchemes = "Bearer")]
-        [HttpPost]
+        [HttpGet]
         public async Task<IActionResult> StripeSetupIntent()
         {
             // Validate
