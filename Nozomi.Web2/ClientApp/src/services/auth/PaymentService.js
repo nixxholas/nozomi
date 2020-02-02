@@ -33,7 +33,7 @@ export default {
 
     stripeSetupIntent() {
         return new Promise((resolve, reject) => {
-            axios.post(oidcSettings.authority + '/Payment/StripeSetupIntent', {
+            axios.get(oidcSettings.authority + '/Payment/StripeSetupIntent', {
                 headers: {
                     Authorization: "Bearer " + store.state.oidcStore.access_token
                 }

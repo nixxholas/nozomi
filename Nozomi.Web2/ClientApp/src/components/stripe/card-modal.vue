@@ -91,15 +91,19 @@
                     name: '',
                     email: '',
                     address: '',
+                    country: '',
                     city: '',
                     state: '',
-                    postalCode: ''
+                    postalCode: '',
+                    phone: '',
                 },
                 card: null,
                 elementsError: null,
                 paymentMethod: 'card',
                 stripe: null,
-                stripePubKey: ''
+                stripeClientSecret: null,
+                stripePubKey: '',
+                stripeSetupIntent: null,
             }
         },
         methods: {
@@ -117,7 +121,9 @@
                 // Get the setup intent up
                 PaymentService.stripeSetupIntent()
                     .then(function (res) {
-                        console.dir(res);
+                        if (res.data) {
+                            self.stripeSetupIntent = res.data;
+                        }
                     });
 
                 // Get stripe elements up
@@ -182,26 +188,39 @@
                     return;
                 }
 
-                self.stripe.confirmCardSetup(
-                    clientSecret,
-                    {
-                        payment_method: {
-                            card: self.$refs.cardelement,
-                            billing_details: {
-                                name: cardholderName.value,
+                if (self.stripeSetupIntent && self.stripeSetupIntent.clientSecret) {
+                    self.stripe.confirmCardSetup(
+                        self.stripeSetupIntent.clientSecret,
+                        {
+                            payment_method: {
+                                card: self.$refs.cardelement,
+                                billing_details: {
+                                    address: {
+                                        city: self.cardDetails.city,
+                                        country: self.cardDetails.country,
+                                        line1: self.cardDetails.address,
+                                        "postal_code": self.cardDetails.postalCode,
+                                        state: self.cardDetails.state,
+                                    },
+                                    email: self.cardDetails.email,
+                                    name: self.cardDetails.name,
+                                    phone: self.cardDetails.phone,
+                                },
                             },
-                        },
-                    }
-                ).then(function (result) {
-                    if (result.error) {
-                        // Display error.message in your UI.
-                    } else {
-                        // The setup has succeeded. Display a success message.
-                    }
-                });
+                        }
+                    ).then(function (result) {
+                        console.dir(result);
+                        if (result.error) {
+                            // Display error.message in your UI.
+                        } else {
+                            // The setup has succeeded. Display a success message.
+                        }
+                    });
+                }
             },
             openModal() {
                 this.isModalActive = true;
+                // https://stackoverflow.com/questions/60019294/vue-spa-single-file-component-element-binding-with-stripe-elements
                 this.$nextTick(function () {
                     this.createCardElement()
                 })

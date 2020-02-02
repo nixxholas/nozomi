@@ -166,14 +166,6 @@
                                     type: 'is-success',
                                     hasIcon: true
                                 });
-                            } else {
-                                Notification.open({
-                                    duration: 2500,
-                                    message: `There might've been a communication error, please try again!`,
-                                    position: 'is-bottom-right',
-                                    type: 'is-warning',
-                                    hasIcon: true
-                                });
                             }
                         })
                         .catch(function (err) {
