@@ -105,7 +105,7 @@ namespace Nozomi.Auth.Controllers.Payment
                 // Exist
                 if (!_userService.HasStripe(user.Id))
                 {
-                    return BadRequest("Please bootstripe first!");
+                    return Ok(null); // Just return nothing since he/she exists
                 }
                 
                 // Obtain
