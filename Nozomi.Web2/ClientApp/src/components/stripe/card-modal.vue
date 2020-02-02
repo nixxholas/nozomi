@@ -53,7 +53,7 @@
 
                     <footer class="modal-card-foot">
                         <button class="button" type="button" @click="closeModal">Close</button>
-                        <button class="button is-primary" type="submit" :disabled="!complete">Add</button>
+                        <button class="button is-primary" type="submit">Add</button>
                     </footer>
                 </div>
             </form>
@@ -183,10 +183,8 @@
                 // Check if stripe is up, else set it up
                 if (!self.stripe && self.stripePubKey) {
                     self.stripe = Stripe(self.stripePubKey);
-                } else {
-                    return;
                 }
-
+                
                 if (self.stripeSetupIntent && self.stripeSetupIntent.clientSecret) {
                     // Setup the card first through Stripe for PCI compliance
                     self.stripe.confirmCardSetup(
@@ -194,18 +192,21 @@
                         {
                             // https://stripe.com/docs/api/payment_methods/object
                             payment_method: {
-                                card: self.$refs.cardelement,
+                                type: 'card',
+                                card: self.card,
                                 billing_details: {
                                     address: {
                                         city: self.cardDetails.city,
-                                        country: self.cardDetails.country,
+                                        // TODO: Country Support
+                                        // country: self.cardDetails.country,
                                         line1: self.cardDetails.address,
                                         "postal_code": self.cardDetails.postalCode,
                                         state: self.cardDetails.state,
                                     },
                                     email: self.cardDetails.email,
                                     name: self.cardDetails.name,
-                                    phone: self.cardDetails.phone,
+                                    // TODO: Phone number support
+                                    // phone: self.cardDetails.phone,
                                 },
                             },
                         }
