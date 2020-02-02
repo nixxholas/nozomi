@@ -1,0 +1,232 @@
+<template>
+    <div>
+        <b-button class="button is-info is-rounded"
+                  size="is-medium"
+                  icon-left="credit-card"
+                  :loading="isLoading"
+                  @click="openModal" v-if="!cardId">
+            Add a card
+        </b-button>
+        <button class="button is-warning"
+                :loading="isLoading"
+                @click="openModal" v-else>
+            Edit
+        </button>
+
+        <b-modal has-modal-card trap-focus :active.sync="isModalActive">
+            <b-loading :active.sync="isModalLoading" :can-cancel="false"/>
+            <!--https://stackoverflow.com/questions/48028718/using-event-modifier-prevent-in-vue-to-submit-form-without-redirection-->
+            <form v-on:submit.prevent="create()" class="has-text-justified">
+                <div class="modal-card">
+                    <header class="modal-card-head">
+                        <p class="modal-card-title" v-if="!cardId">Add a card</p>
+                        <p class="modal-card-title" v-else>Edit a card</p>
+                    </header>
+                    <section class="modal-card-body">
+                        <b-field>
+                            <b-input v-model="cardDetails.name" type="text" placeholder="Cardholder's Name"/>
+                        </b-field>
+
+                        <b-field>
+                            <b-input v-model="cardDetails.email" type="email" placeholder="Billing Email"/>
+                        </b-field>
+
+                        <b-field>
+                            <b-input v-model="cardDetails.address" type="text" placeholder="Billing Address"/>
+                        </b-field>
+
+                        <b-field grouped>
+                            <b-field expanded>
+                                <b-input v-model="cardDetails.city" placeholder="City"/>
+                            </b-field>
+                            <b-field expanded>
+                                <b-input v-model="cardDetails.state" placeholder="State"/>
+                            </b-field>
+                            <b-field expanded>
+                                <b-input v-model="cardDetails.postalCode" placeholder="Postal Code"/>
+                            </b-field>
+                        </b-field>
+
+                        <div ref="cardelement"></div>
+                        <p v-show="elementsError" id="card-errors" v-text="elementsError"/>
+                    </section>
+
+                    <footer class="modal-card-foot">
+                        <button class="button" type="button" @click="closeModal">Close</button>
+                        <button class="button is-primary" type="submit" :disabled="!complete">Add</button>
+                    </footer>
+                </div>
+            </form>
+        </b-modal>
+    </div>
+</template>
+
+<script>
+    import {mapActions, mapGetters} from 'vuex';
+    import {NotificationProgrammatic as Notification} from 'buefy';
+    import PaymentService from "@/services/auth/PaymentService";
+
+    export default {
+        name: "stripe-card-modal",
+        props: {
+            currentRoute: window.location.href, // https://forum.vuejs.org/t/how-to-get-path-from-route-instance/26934/2
+            cardId: {
+                type: String,
+                default: null
+            }
+        },
+        computed: {
+            ...mapGetters('oidcStore', [
+                'oidcUser'
+            ])
+        },
+        data: function () {
+            return {
+                isLoading: true,
+                isModalActive: false,
+                isModalLoading: false,
+                complete: false,
+                // Stripe variables
+                cardDetails: {
+                    name: '',
+                    email: '',
+                    address: '',
+                    city: '',
+                    state: '',
+                    postalCode: ''
+                },
+                card: null,
+                elementsError: null,
+                paymentMethod: 'card',
+                stripe: null,
+                stripePubKey: ''
+            }
+        },
+        methods: {
+            ...mapActions('oidcStore', ['authenticateOidc', 'signOutOidc']),
+            createCardElement: function () {
+                let self = this;
+
+                // Check if stripe is up, else set it up
+                if (!self.stripe && self.stripePubKey) {
+                    self.stripe = Stripe(self.stripePubKey);
+                } else {
+                    return;
+                }
+
+                // Get the setup intent up
+                PaymentService.stripeSetupIntent()
+                    .then(function (res) {
+                        console.dir(res);
+                    });
+
+                // Get stripe elements up
+                const elements = self.stripe.elements({
+                    // Use Roboto from Google Fonts
+                    fonts: [
+                        {
+                            cssSrc: 'https://fonts.googleapis.com/css?family=Roboto',
+                        },
+                    ],
+                    // Detect the locale automatically
+                    locale: 'auto',
+                });
+                // Define CSS styles for Elements
+                const style = {
+                    base: {
+                        color: "#32325D",
+                        fontWeight: 500,
+                        fontFamily: "Inter UI, Open Sans, Segoe UI, sans-serif",
+                        fontSize: "16px",
+                        fontSmoothing: "antialiased",
+
+                        "::placeholder": {
+                            color: "#CFD7DF"
+                        }
+                    },
+                    invalid: {
+                        color: "#E25950"
+                    }
+                };
+                // Create the card element, then attach it to the DOM
+                self.card = elements.create('card', {
+                    iconStyle: "solid",
+                    style: style
+                });
+                self.card.mount(self.$refs.cardelement);
+                // Element focus ring
+                self.card.on("focus", function () {
+                    self.$refs.cardelement.classList.add("focused");
+                });
+                self.card.on("blur", function () {
+                    self.$refs.cardelement.classList.remove("focused");
+                });
+                // Add an event listener: check for error messages as we type
+                self.card.addEventListener('change', ({error}) => {
+                    if (error) {
+                        self.elementsError = error.message;
+                    } else {
+                        self.elementsError = '';
+                    }
+                });
+            },
+            create: function () {
+                this.isModalLoading = true;
+
+                let self = this;
+
+                // Check if stripe is up, else set it up
+                if (!self.stripe && self.stripePubKey) {
+                    self.stripe = Stripe(self.stripePubKey);
+                } else {
+                    return;
+                }
+
+                self.stripe.confirmCardSetup(
+                    clientSecret,
+                    {
+                        payment_method: {
+                            card: self.$refs.cardelement,
+                            billing_details: {
+                                name: cardholderName.value,
+                            },
+                        },
+                    }
+                ).then(function (result) {
+                    if (result.error) {
+                        // Display error.message in your UI.
+                    } else {
+                        // The setup has succeeded. Display a success message.
+                    }
+                });
+            },
+            openModal() {
+                this.isModalActive = true;
+                this.$nextTick(function () {
+                    this.createCardElement()
+                })
+            },
+            closeModal() {
+                this.isModalActive = false;
+            },
+        },
+        // beforeCreate: function() {
+        //     let self = this;
+        // },
+        mounted: function () {
+            let self = this;
+
+            PaymentService.getStripePubKey()
+                .then(function (res) {
+                    self.stripePubKey = res.data;
+                })
+                .finally(function () {
+                    self.isLoading = false;
+                });
+        },
+    }
+</script>
+
+<style scoped>
+
+</style>
