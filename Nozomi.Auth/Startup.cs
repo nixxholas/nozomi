@@ -269,8 +269,6 @@ namespace Nozomi.Auth
             app.UseAutoDbMigration(HostingEnvironment);
 
             app.UseStaticFiles();
-            app.UseRouting();
-
             // Reverse proxy bypass for OpenID compatibility
             // https://github.com/IdentityServer/IdentityServer4/issues/1331#issuecomment-317049214
             var forwardOptions = new ForwardedHeadersOptions
@@ -282,15 +280,20 @@ namespace Nozomi.Auth
             forwardOptions.KnownNetworks.Clear();
             forwardOptions.KnownProxies.Clear();
 
-            // Cross origin requests DI
-            app.UseCors(NozomiSpecificOrigins);
-
             // ref: https://github.com/aspnet/Docs/issues/2384
             app.UseForwardedHeaders(forwardOptions);
+
             app.UseHttpsRedirection();
 
             app.UseCookiePolicy();
             app.UseIdentityServer();
+
+            app.UseRouting();
+
+            // Cross origin requests DI
+            // With endpoint routing, the CORS middleware must be configured to execute between the calls to
+            // UseRouting and UseEndpoints. Incorrect configuration will cause the middleware to stop functioning correctly.
+            app.UseCors(NozomiSpecificOrigins);
 
             app.UseAuthentication();
             app.UseAuthorization();
