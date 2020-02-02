@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -14,6 +15,7 @@ using Nozomi.Base.BCL.Configurations;
 using Nozomi.Infra.Auth.Events.Stripe;
 using Nozomi.Infra.Auth.Services.Stripe;
 using Nozomi.Infra.Auth.Services.User;
+using Stripe;
 
 namespace Nozomi.Auth.Controllers.Payment
 {
@@ -36,6 +38,37 @@ namespace Nozomi.Auth.Controllers.Payment
             _stripeEvent = stripeEvent;
             _stripeService = stripeService;
             _userService = userService;
+        }
+        
+        [Authorize(AuthenticationSchemes = "Bearer")]
+        [HttpPost]
+        public async Task<IActionResult> StripeSetupIntent()
+        {
+            // Validate
+            var user = await _userManager.FindByIdAsync(((ClaimsIdentity) User.Identity)
+                .Claims.FirstOrDefault(c => c.Type.Equals(JwtClaimTypes.Subject)
+                                            || c.Type.Equals(ClaimTypes.NameIdentifier))?.Value);
+            
+            // Safetynet
+            if (user != null)
+            {
+                StripeConfiguration.ApiKey = _stripeOptions.Value.SecretKey;
+                var options = new SetupIntentCreateOptions
+                {
+                    PaymentMethodTypes = new List<string>
+                    {
+                        "card",
+                    },
+                };
+                var service = new SetupIntentService();
+                var setupIntent = service.Create(options);
+
+                // Return the payload
+                if (setupIntent != null)
+                    return Ok(setupIntent);
+            }
+
+            return BadRequest("There was an error attempting to obtain a setup intent!");
         }
 
         [Authorize(AuthenticationSchemes = "Bearer")]
