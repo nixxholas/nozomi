@@ -58,26 +58,18 @@
     export default {
         name: 'cards',
         components: { StripeCardModal },
-        props: {
-            custId: {
-                type: String,
-                default: null
-            },
-        },
-        data: () => {
+        props: ['custId'],
+        data: function() {
             return {
-                id: null,
+                id: this.custId,
                 isBootstripeRunning: false,
                 isLoading: true,
                 carouselPage: 0,
                 cards: [],
             };
         },
-        created: function () {
+        beforeMount: function () {
             let self = this;
-
-            if (self.custId)
-                self.id = self.custId;
 
             if (!self.id) {
                 PaymentService.getStripeCustId()
@@ -134,27 +126,7 @@
                     }).finally(function () {
                     self.isBootstripeRunning = false;
                 });
-                
-                if (!self.id) {
-                    self.isLoading = true;
-                    // Then set the id again
-                    PaymentService.getStripeCustId()
-                        .then(function (res) {
-                            if (res && res.status === 200 && res.data)
-                                self.id = res.data;
-                        })
-                        .catch(function (err) {
-                        })
-                        .finally(function() {
-                            self.isLoading = false;
-                        });
-                }
             },
-        },
-        watch: {
-            custId: function (newVal, oldVal) { // watch it
-                this.id = newVal;
-            }
         }
     }
 </script>

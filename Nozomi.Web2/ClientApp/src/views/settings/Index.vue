@@ -59,7 +59,7 @@
                         </form>
                     </b-tab-item>
                     <b-tab-item label="Billing" icon="money-bill">
-                        <CardsComponent :id="model.userClaims.stripe_cust_id" @created="updateUser" />
+                        <CardsComponent :cust-id="model.userClaims.stripe_cust_id" @created="updateUser" />
                     </b-tab-item>
                     <b-tab-item label="API Keys" icon="key">
                         
@@ -106,6 +106,7 @@
                         email_verified: '',
                         website: '',
                         default_wallet_hash: '',
+                        stripe_cust_id: null,
                     }
                 }
             }
