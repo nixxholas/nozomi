@@ -101,7 +101,6 @@
                 elementsError: null,
                 paymentMethod: 'card',
                 stripe: null,
-                stripeClientSecret: null,
                 stripePubKey: '',
                 stripeSetupIntent: null,
             }
@@ -118,7 +117,7 @@
                     return;
                 }
 
-                // Get the setup intent up
+                // SetupIntent configuration
                 PaymentService.stripeSetupIntent()
                     .then(function (res) {
                         if (res.data) {
@@ -189,9 +188,11 @@
                 }
 
                 if (self.stripeSetupIntent && self.stripeSetupIntent.clientSecret) {
+                    // Setup the card first through Stripe for PCI compliance
                     self.stripe.confirmCardSetup(
                         self.stripeSetupIntent.clientSecret,
                         {
+                            // https://stripe.com/docs/api/payment_methods/object
                             payment_method: {
                                 card: self.$refs.cardelement,
                                 billing_details: {
@@ -212,8 +213,16 @@
                         console.dir(result);
                         if (result.error) {
                             // Display error.message in your UI.
+                            Notification.open({
+                                duration: 2500,
+                                message: result.error.message ? result.error.message 
+                                    : "The current session may have been up for too long, please refresh!",
+                                position: 'is-bottom-right',
+                                type: 'is-danger',
+                                hasIcon: true
+                            });
                         } else {
-                            // The setup has succeeded. Display a success message.
+                            // The setup from Stripe has succeeded. Bind the token in our db with our user's data.
                         }
                     });
                 }
