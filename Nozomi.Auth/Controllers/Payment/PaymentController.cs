@@ -180,7 +180,8 @@ namespace Nozomi.Auth.Controllers.Payment
                 // Obtain the list of payment methods via Stripe
                 var options = new PaymentMethodListOptions
                 {
-                    Customer = stripeUserClaim.Value
+                    Customer = stripeUserClaim.Value,
+                    Type = "card"
                 };
                 var paymentMethodService = new PaymentMethodService();
                 var paymentMethods = paymentMethodService.List(options);
