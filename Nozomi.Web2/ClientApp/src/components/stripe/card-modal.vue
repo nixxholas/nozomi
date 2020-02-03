@@ -252,6 +252,9 @@
                                                 hasIcon: true
                                             });
                                         }
+                                    })
+                                    .finally(function() {
+                                        self.isModalLoading = false;
                                     });
                             }
                         }
