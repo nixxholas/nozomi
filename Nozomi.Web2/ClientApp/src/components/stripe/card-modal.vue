@@ -2,7 +2,6 @@
     <!--  TODO: Ensure cardelement is filled along with the rest of the form  -->
     <div>
         <b-button class="button is-info is-rounded"
-                  size="is-medium"
                   icon-left="credit-card"
                   :loading="isLoading"
                   @click="openModal" v-if="!cardId">
