@@ -9,16 +9,16 @@
             <template slot="item" slot-scope="props">
                 <div class="card">
                     <div class="card-image">
-                        <figure class="image is-2by1">
+<!--                        <figure class="image is-2by1">-->
 <!--                            <a @click="info(props.index)"><img :src="props.list.image"></a>-->
-                        </figure>
+<!--                        </figure>-->
                     </div>
                     <div class="card-content">
                         <div class="content">
                             <p class="title is-6">{{ props.list.card.brand }} ending with {{ props.list.card.last4 }}</p>
-                            
+                            <p class="subtitle is-7" v-if="props.list.billingDetails && props.list.billingDetails.name">{{ props.list.billingDetails.name }}</p>
                             <div class="field is-grouped">
-                                <p class="control subtitle is-7">expiring on {{ props.list.card.expMonth }}/{{ props.list.card.expYear }}</p>
+                                <p class="control">expiring on {{ props.list.card.expMonth }}/{{ props.list.card.expYear }}</p>
                                 <p class="control" style="margin-left: auto">
                                     <button @click="removePaymentMethod(props.list.id)" class="button is-small is-danger is-outlined">
                                         <b-icon size="is-small" icon="trash"/>
