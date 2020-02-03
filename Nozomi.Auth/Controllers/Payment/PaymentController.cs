@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using IdentityModel;
@@ -156,6 +157,41 @@ namespace Nozomi.Auth.Controllers.Payment
             }
 
             return BadRequest("Invalid card token!");
+        }
+        
+        [Authorize(AuthenticationSchemes = "Bearer")]
+        [HttpGet]
+        public async Task<IActionResult> ListPaymentMethods()
+        {
+            // Validate
+            var user = await _userManager.FindByIdAsync(((ClaimsIdentity) User.Identity)
+                .Claims.FirstOrDefault(c => c.Type.Equals(JwtClaimTypes.Subject)
+                                            || c.Type.Equals(ClaimTypes.NameIdentifier))?.Value);
+            
+            // Ensure stripe binding
+            if (user != null)
+            {
+                var stripeUserClaim = (await _userManager.GetClaimsAsync(user))
+                    .FirstOrDefault(c => c.Type.Equals(NozomiJwtClaimTypes.StripeCustomerId));
+
+                if (stripeUserClaim == null)
+                    return BadRequest("Please bootstripe first!");
+                
+                // Obtain the list of payment methods via Stripe
+                var options = new PaymentMethodListOptions
+                {
+                    Customer = stripeUserClaim.Value
+                };
+                var paymentMethodService = new PaymentMethodService();
+                var paymentMethods = paymentMethodService.List(options);
+                
+                // Process card addition
+                if (paymentMethods != null && paymentMethods.StripeResponse.StatusCode.Equals(HttpStatusCode.OK)
+                                           && paymentMethods.Data != null)
+                    return Ok(paymentMethods.Data);
+            }
+
+            return BadRequest("Invalid user!");
         }
     }
 }
