@@ -15,5 +15,7 @@ namespace Nozomi.Infra.Auth.Events.Stripe
         Task<IEnumerable<Card>> Cards(Base.Auth.Models.User user);
 
         bool CardExists(string stripeUserId, string cardId);
+
+        bool PaymentMethodExists(string stripeUserId, string paymentMethodId);
     }
 }

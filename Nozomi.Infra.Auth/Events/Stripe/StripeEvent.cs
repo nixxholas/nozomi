@@ -74,6 +74,29 @@ namespace Nozomi.Infra.Auth.Events.Stripe
             return false;
         }
 
+        public bool PaymentMethodExists(string stripeUserId, string paymentMethodId)
+        {
+            if (!string.IsNullOrEmpty(paymentMethodId))
+            {
+                var paymentMethodService = new PaymentMethodService();
+                // Let stripe handle the card ownership checks
+                var paymentMethod = paymentMethodService.Get(paymentMethodId);
+
+                if (paymentMethod != null && !string.IsNullOrEmpty(paymentMethod.CustomerId) 
+                                          && paymentMethod.CustomerId.Equals(stripeUserId))
+                {
+                    return true;
+                }
+                
+                _logger.LogInformation($"{_eventName} PaymentMethodExists: StripeUserId {stripeUserId} is attempting " +
+                                   $"to access a card he/she does not own {paymentMethodId}.");
+                return false;
+            }
+            
+            _logger.LogWarning($"{_eventName} PaymentMethodExists: Null payment method id.");
+            return false;
+        }
+
         public async Task<IEnumerable<Plan>> Plans(bool activeOnly = true)
         {
             if (_stripeProduct != null)
