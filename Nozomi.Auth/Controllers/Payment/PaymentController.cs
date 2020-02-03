@@ -176,20 +176,8 @@ namespace Nozomi.Auth.Controllers.Payment
 
                 if (stripeUserClaim == null)
                     return BadRequest("Please bootstripe first!");
-                
-                // Obtain the list of payment methods via Stripe
-                var options = new PaymentMethodListOptions
-                {
-                    Customer = stripeUserClaim.Value,
-                    Type = "card"
-                };
-                var paymentMethodService = new PaymentMethodService();
-                var paymentMethods = paymentMethodService.List(options);
-                
-                // Process card addition
-                if (paymentMethods != null && paymentMethods.StripeResponse.StatusCode.Equals(HttpStatusCode.OK)
-                                           && paymentMethods.Data != null)
-                    return Ok(paymentMethods.Data);
+
+                return Ok(_stripeEvent.ListPaymentMethods(stripeUserClaim.Value));
             }
 
             return BadRequest("Invalid user!");
@@ -213,16 +201,29 @@ namespace Nozomi.Auth.Controllers.Payment
                 if (stripeUserClaim == null)
                     return BadRequest("Please bootstripe and add a card first!");
                 
-                // Process card addition
-                if (!string.IsNullOrEmpty(id)
-                    && _stripeEvent.PaymentMethodExists(stripeUserClaim.Value, id))
-                {
-                    _stripeService.RemovePaymentMethod(id, user);
+                // Obtain the user's payment methods
+                var paymentMethods = await 
+                    _stripeEvent.ListPaymentMethods(stripeUserClaim.Value);
                 
-                    // Return
-                    _logger.LogInformation($"RemovePaymentMethod: card of ID {id} added to {user.Id}");
-                    return Ok("Card successfully removed!");
+                // Ensure he/she has more than one payment method currently
+                if (paymentMethods != null && paymentMethods.Count() > 1)
+                {
+                    // Process card removal
+                    if (!string.IsNullOrEmpty(id)
+                        && _stripeEvent.PaymentMethodExists(stripeUserClaim.Value, id))
+                    {
+                        _stripeService.RemovePaymentMethod(id, user);
+                
+                        // Return
+                        _logger.LogInformation($"RemovePaymentMethod: card of ID {id} removed from {user.Id}");
+                        return Ok("Card successfully removed!");
+                    }
                 }
+                
+                // Log failure
+                _logger.LogInformation("RemovePaymentMethod: An attempt to remove was made for card of " +
+                                       $"ID {id} by {user.Id}.");
+                return BadRequest("You do not have more than one payment method!");
             }
 
             return BadRequest("Invalid card token!");
