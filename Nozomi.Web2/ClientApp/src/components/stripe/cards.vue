@@ -133,7 +133,42 @@
                 });
             },
             removePaymentMethod: function(id) {
-                console.dir(id);
+                let self = this;
+                
+                // Client-side validation
+                if (id && self.cards && self.cards.length > 1) {
+                    self.$buefy.dialog.confirm({
+                        message: 'Are you sure you want to delete this card?',
+                        onConfirm: () => {
+                            self.$buefy.toast.open('Deleting the card!');
+                            
+                            self.isLoading = true;
+                            PaymentService.removePaymentMethod(id)
+                            .then(function(res) {
+                                if (res.status === 200) {
+                                    Notification.open({
+                                        duration: 2500,
+                                        message: res.data ? res.data : "Card successfully removed!",
+                                        position: 'is-bottom-right',
+                                        type: 'is-success',
+                                        hasIcon: true
+                                    });
+                                }
+                            })
+                            .finally(function() 
+                                self.isLoading = false;
+                            });
+                        }
+                    });
+                } else {
+                    Notification.open({
+                        duration: 2500,
+                        message: `You only have one card!`,
+                        position: 'is-bottom-right',
+                        type: 'is-danger',
+                        hasIcon: true
+                    });
+                }
             },
         }
     }
