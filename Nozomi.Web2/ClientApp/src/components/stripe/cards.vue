@@ -1,29 +1,27 @@
 <template>
     <div>
-        <b-field grouped group-multiline>
+        <b-field class="pb-2" grouped group-multiline>
             <StripeCardModal v-if="id"/>
         </b-field>
         <b-carousel-list v-if="id && !isLoading"
-                         v-model="carouselPage" :data="cards" :items-to-show="2">
+                         v-model="carouselPage"
+                         :arrow="false" :data="cards" :items-to-show="3">
             <template slot="item" slot-scope="props">
                 <div class="card">
                     <div class="card-image">
-                        <figure class="image is-5by4">
-                            <a @click="info(props.index)"><img :src="props.list.image"></a>
+                        <figure class="image is-2by1">
+<!--                            <a @click="info(props.index)"><img :src="props.list.image"></a>-->
                         </figure>
-                        <b-tag type="is-danger" rounded style="position: absolute; top: 0;"><b>50%</b></b-tag>
                     </div>
                     <div class="card-content">
                         <div class="content">
-                            <p class="title is-6">{{ props.list.title }}</p>
-                            <p class="subtitle is-7">@johnsmith</p>
+                            <p class="title is-6">{{ props.list.card.brand }} ending with {{ props.list.card.last4 }}</p>
+                            
                             <div class="field is-grouped">
-                                <p class="control" v-if="props.list.rating">
-                                    <b-rate :value="props.list.rating" show-score disabled/>
-                                </p>
+                                <p class="control subtitle is-7">expiring on {{ props.list.card.expMonth }}/{{ props.list.card.expYear }}</p>
                                 <p class="control" style="margin-left: auto">
-                                    <button class="button is-small is-danger is-outlined">
-                                        <b-icon size="is-small" icon="heart"/>
+                                    <button @click="removePaymentMethod(props.list.id)" class="button is-small is-danger is-outlined">
+                                        <b-icon size="is-small" icon="trash"/>
                                     </button>
                                 </p>
                             </div>
@@ -57,9 +55,9 @@
 
     export default {
         name: 'cards',
-        components: { StripeCardModal },
+        components: {StripeCardModal},
         props: ['custId'],
-        data: function() {
+        data: function () {
             return {
                 id: this.custId,
                 isBootstripeRunning: false,
@@ -74,8 +72,15 @@
             if (!self.id) {
                 PaymentService.getStripeCustId()
                     .then(function (res) {
-                        if (res && res.status === 200 && res.data)
+                        if (res && res.status === 200 && res.data) {
                             self.id = res.data;
+
+                            PaymentService.listPaymentMethods()
+                                .then(function (res) {
+                                    console.dir(res);
+                                    self.cards = res.data;
+                                })
+                        }
                     })
                     .catch(function (err) {
                     })
@@ -126,6 +131,9 @@
                     }).finally(function () {
                     self.isBootstripeRunning = false;
                 });
+            },
+            removePaymentMethod: function(id) {
+                console.dir(id);
             },
         }
     }
