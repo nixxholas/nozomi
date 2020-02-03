@@ -137,7 +137,8 @@ namespace Nozomi.Infra.Auth.Services.Stripe
                 var paymentMethod = paymentMethodService.Attach(paymentMethodId, options);
 
                 // If the method ain't null, bind it
-                if (paymentMethod != null)
+                if (paymentMethod != null && paymentMethod.StripeResponse != null 
+                                          && paymentMethod.StripeResponse.StatusCode.Equals(HttpStatusCode.OK))
                 {
                     var paymentMethodUserClaim = new Claim(NozomiJwtClaimTypes.StripeCustomerPaymentMethodId, 
                         paymentMethod.Id);
