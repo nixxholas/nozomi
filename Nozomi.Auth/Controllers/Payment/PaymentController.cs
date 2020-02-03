@@ -9,8 +9,10 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 using Nozomi.Base.Auth.Global;
 using Nozomi.Base.Auth.Models;
+using Nozomi.Base.Auth.ViewModels.Payment;
 using Nozomi.Base.BCL.Configurations;
 using Nozomi.Infra.Auth.Events.Stripe;
 using Nozomi.Infra.Auth.Services.Stripe;
@@ -125,7 +127,7 @@ namespace Nozomi.Auth.Controllers.Payment
         
         [Authorize(AuthenticationSchemes = "Bearer")]
         [HttpPost]
-        public async Task<IActionResult> AddPaymentMethod([FromBody]string paymentMethodToken)
+        public async Task<IActionResult> AddPaymentMethod([FromBody]AddPaymentMethodInputModel vm)
         {
             // Validate
             var user = await _userManager.FindByIdAsync(((ClaimsIdentity) User.Identity)
@@ -133,7 +135,7 @@ namespace Nozomi.Auth.Controllers.Payment
                                             || c.Type.Equals(ClaimTypes.NameIdentifier))?.Value);
             
             // Ensure stripe binding
-            if (user != null)
+            if (user != null && vm != null)
             {
                 var stripeUserClaim = (await _userManager.GetClaimsAsync(user))
                     .FirstOrDefault(c => c.Type.Equals(NozomiJwtClaimTypes.StripeCustomerId));
@@ -142,13 +144,13 @@ namespace Nozomi.Auth.Controllers.Payment
                     return BadRequest("Please bootstripe first!");
                 
                 // Process card addition
-                if (!string.IsNullOrEmpty(paymentMethodToken) 
-                    && !_stripeEvent.CardExists(stripeUserClaim.Value, paymentMethodToken))
+                if (!string.IsNullOrEmpty(vm.PaymentMethodId)
+                    && !_stripeEvent.PaymentMethodExists(stripeUserClaim.Value, vm.PaymentMethodId))
                 {
-                    await _stripeService.AddPaymentMethod(paymentMethodToken, user);
+                    await _stripeService.AddPaymentMethod(vm.PaymentMethodId, user);
                 
                     // Return
-                    _logger.LogInformation($"AddCard: card of ID {paymentMethodToken} added to {user.Id}");
+                    _logger.LogInformation($"AddCard: card of ID {vm.PaymentMethodId} added to {user.Id}");
                     return Ok("Card successfully added!");
                 }
             }
