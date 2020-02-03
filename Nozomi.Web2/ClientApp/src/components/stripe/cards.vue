@@ -9,18 +9,22 @@
             <template slot="item" slot-scope="props">
                 <div class="card" v-if="props.list && props.list.card">
                     <div class="card-image">
-<!--                        <figure class="image is-2by1">-->
-<!--                            <a @click="info(props.index)"><img :src="props.list.image"></a>-->
-<!--                        </figure>-->
+                        <!--                        <figure class="image is-2by1">-->
+                        <!--                            <a @click="info(props.index)"><img :src="props.list.image"></a>-->
+                        <!--                        </figure>-->
                     </div>
                     <div class="card-content">
                         <div class="content">
-                            <p class="title is-6">{{ props.list.card.brand }} ending with {{ props.list.card.last4 }}</p>
-                            <p class="subtitle is-7" v-if="props.list.billingDetails && props.list.billingDetails.name">{{ props.list.billingDetails.name }}</p>
+                            <p class="title is-6">{{ props.list.card.brand }} ending with {{ props.list.card.last4
+                                }}</p>
+                            <p class="subtitle is-7" v-if="props.list.billingDetails && props.list.billingDetails.name">
+                                {{ props.list.billingDetails.name }}</p>
                             <div class="field is-grouped">
-                                <p class="control">expiring on {{ props.list.card.expMonth }}/{{ props.list.card.expYear }}</p>
+                                <p class="control">expiring on {{ props.list.card.expMonth }}/{{ props.list.card.expYear
+                                    }}</p>
                                 <p class="control" style="margin-left: auto">
-                                    <button @click="removePaymentMethod(props.list.id)" class="button is-small is-danger is-outlined">
+                                    <button @click="removePaymentMethod(props.list.id)"
+                                            class="button is-small is-danger is-outlined">
                                         <b-icon size="is-small" icon="trash"/>
                                     </button>
                                 </p>
@@ -132,32 +136,41 @@
                     self.isBootstripeRunning = false;
                 });
             },
-            removePaymentMethod: function(id) {
+            removePaymentMethod: function (id) {
                 let self = this;
-                
+
                 // Client-side validation
                 if (id && self.cards && self.cards.length > 1) {
                     self.$buefy.dialog.confirm({
                         message: 'Are you sure you want to delete this card?',
                         onConfirm: () => {
                             self.$buefy.toast.open('Deleting the card!');
-                            
+
                             self.isLoading = true;
                             PaymentService.removePaymentMethod(id)
-                            .then(function(res) {
-                                if (res.status === 200) {
+                                .then(function (res) {
+                                    if (res.status === 200) {
+                                        Notification.open({
+                                            duration: 2500,
+                                            message: res.data ? res.data : "Card successfully removed!",
+                                            position: 'is-bottom-right',
+                                            type: 'is-success',
+                                            hasIcon: true
+                                        });
+                                    }
+                                })
+                                .catch(function (err) {
                                     Notification.open({
                                         duration: 2500,
-                                        message: res.data ? res.data : "Card successfully removed!",
+                                        message: "Please ensure you have more than 1 payment method before deleting!",
                                         position: 'is-bottom-right',
-                                        type: 'is-success',
+                                        type: 'is-danger',
                                         hasIcon: true
                                     });
-                                }
-                            })
-                            .finally(function() 
-                                self.isLoading = false;
-                            });
+                                })
+                                .finally(function () {
+                                    self.isLoading = false;
+                                });
                         }
                     });
                 } else {
