@@ -7,7 +7,7 @@
                          v-model="carouselPage"
                          :arrow="false" :data="cards" :items-to-show="3">
             <template slot="item" slot-scope="props">
-                <div class="card">
+                <div class="card" v-if="props.list && props.list.card">
                     <div class="card-image">
 <!--                        <figure class="image is-2by1">-->
 <!--                            <a @click="info(props.index)"><img :src="props.list.image"></a>-->
