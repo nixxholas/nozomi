@@ -7,6 +7,7 @@ export default {
         return new Promise((resolve, reject) => {
             axios.post(oidcSettings.authority + '/Payment/AddPaymentMethod', pmToken, {
                 headers: {
+                    // 'Content-Type': "application/json",
                     Authorization: "Bearer " + store.state.oidcStore.access_token
                 }
             }).then(function (response) {
