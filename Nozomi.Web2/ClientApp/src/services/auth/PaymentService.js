@@ -59,6 +59,20 @@ export default {
             });
         });
     },
+    
+    removePaymentMethod(id) {
+        return new Promise((resolve, reject) => {
+            axios.delete(oidcSettings.authority + '/Payment/RemovePaymentMethod/' + id, {
+                headers: {
+                    Authorization: "Bearer " + store.state.oidcStore.access_token
+                }
+            }).then(function (response) {
+                resolve(response);
+            }).catch(function (error) {
+                reject(error);
+            });
+        });
+    },
 
     stripeSetupIntent() {
         return new Promise((resolve, reject) => {
