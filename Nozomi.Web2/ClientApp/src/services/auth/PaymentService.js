@@ -45,6 +45,20 @@ export default {
             });
         });
     },
+    
+    listPaymentMethods() {
+        return new Promise((resolve, reject) => {
+            axios.get(oidcSettings.authority + '/Payment/ListPaymentMethods', {
+                headers: {
+                    Authorization: "Bearer " + store.state.oidcStore.access_token
+                }
+            }).then(function (response) {
+                resolve(response);
+            }).catch(function (error) {
+                reject(error);
+            });
+        });
+    },
 
     stripeSetupIntent() {
         return new Promise((resolve, reject) => {
