@@ -1,4 +1,5 @@
 <template>
+    <!--  TODO: Ensure cardelement is filled along with the rest of the form  -->
     <div>
         <b-button class="button is-info is-rounded"
                   size="is-medium"
@@ -185,7 +186,9 @@
                     self.stripe = Stripe(self.stripePubKey);
                 }
                 
-                if (self.stripeSetupIntent && self.stripeSetupIntent.clientSecret) {
+                if (self.stripeSetupIntent && self.stripeSetupIntent.clientSecret
+                        // Ensure that its not setup yet
+                    && !self.stripeSetupIntent.payment_method) {
                     // Setup the card first through Stripe for PCI compliance
                     self.stripe.confirmCardSetup(
                         self.stripeSetupIntent.clientSecret,
@@ -211,8 +214,7 @@
                             },
                         }
                     ).then(function (result) {
-                        console.dir(result);
-                        if (result.error) {
+                        if (result.error || !result.setupIntent) {
                             // Display error.message in your UI.
                             Notification.open({
                                 duration: 2500,
@@ -222,10 +224,44 @@
                                 type: 'is-danger',
                                 hasIcon: true
                             });
-                        } else {
-                            // The setup from Stripe has succeeded. Bind the token in our db with our user's data.
+                        } else if (result.setupIntent && result.setupIntent.payment_method) {
+                            console.dir(result);
+                            console.dir(JSON.stringify(result.setupIntent));
+                            // Update the intent first
+                            self.stripeSetupIntent = result.setupIntent;
+                            
+                            // Perform some conversion support for .NET Core because
+                            // Stripe.NET doesn't seem to work well for SetupIntent
+                            if (self.stripeSetupIntent.created && self.stripeSetupIntent.created > 0 
+                                && self.stripeSetupIntent.payment_method) {
+                                // Perform the relevant conversions gracefully
+                                // let createdDate = new Date(0); // The 0 there is the key, which sets the date to the epoch
+                                // createdDate.setUTCSeconds(self.stripeSetupIntent.created);
+                                // result.setupIntent.created = createdDate;
+                                
+                                result.setupIntent.paymentMethodId = self.stripeSetupIntent.payment_method;
+                                result.setupIntent.paymentMethodTypes = self.stripeSetupIntent.payment_method_types;
+
+                                // The setup from Stripe has succeeded. Bind the token in our db with our user's data.
+                                PaymentService.addPaymentMethod(result.setupIntent)
+                                    .then(function(res) {
+                                        console.dir(res);
+                                    });
+                            }
                         }
+                    })
+                    .finally(function() {
+                        self.isModalLoading = false;
                     });
+                } else {
+                    Notification.open({
+                        duration: 2500,
+                        message: "There was an issue with our payment gateway, please refresh and try again.",
+                        position: 'is-bottom-right',
+                        type: 'is-danger',
+                        hasIcon: true
+                    });
+                    self.isModalLoading = false;
                 }
             },
             openModal() {
