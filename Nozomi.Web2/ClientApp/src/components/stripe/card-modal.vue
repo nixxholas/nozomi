@@ -187,7 +187,7 @@
                 }
                 
                 if (self.stripeSetupIntent && self.stripeSetupIntent.clientSecret
-                        // Ensure that its not setup yet
+                    // Ensure that its not setup yet
                     && !self.stripeSetupIntent.payment_method) {
                     // Setup the card first through Stripe for PCI compliance
                     self.stripe.confirmCardSetup(
@@ -225,8 +225,6 @@
                                 hasIcon: true
                             });
                         } else if (result.setupIntent && result.setupIntent.payment_method) {
-                            console.dir(result);
-                            console.dir(JSON.stringify(result.setupIntent));
                             // Update the intent first
                             self.stripeSetupIntent = result.setupIntent;
                             
@@ -245,7 +243,15 @@
                                 // The setup from Stripe has succeeded. Bind the token in our db with our user's data.
                                 PaymentService.addPaymentMethod(result.setupIntent)
                                     .then(function(res) {
-                                        console.dir(res);
+                                        if (res.status === 200) {
+                                            Notification.open({
+                                                duration: 2500,
+                                                message: res.data ? res.data : 'New payment method successfully added!',
+                                                position: 'is-bottom-right',
+                                                type: 'is-success',
+                                                hasIcon: true
+                                            });
+                                        }
                                     });
                             }
                         }
@@ -275,9 +281,6 @@
                 this.isModalActive = false;
             },
         },
-        // beforeCreate: function() {
-        //     let self = this;
-        // },
         mounted: function () {
             let self = this;
 
