@@ -193,5 +193,38 @@ namespace Nozomi.Auth.Controllers.Payment
 
             return BadRequest("Invalid user!");
         }
+        
+        [Authorize(AuthenticationSchemes = "Bearer")]
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> RemovePaymentMethod(string id)
+        {
+            // Validate
+            var user = await _userManager.FindByIdAsync(((ClaimsIdentity) User.Identity)
+                .Claims.FirstOrDefault(c => c.Type.Equals(JwtClaimTypes.Subject)
+                                            || c.Type.Equals(ClaimTypes.NameIdentifier))?.Value);
+            
+            // Ensure stripe binding
+            if (user != null && !string.IsNullOrEmpty(id))
+            {
+                var stripeUserClaim = (await _userManager.GetClaimsAsync(user))
+                    .FirstOrDefault(c => c.Type.Equals(NozomiJwtClaimTypes.StripeCustomerId));
+
+                if (stripeUserClaim == null)
+                    return BadRequest("Please bootstripe and add a card first!");
+                
+                // Process card addition
+                if (!string.IsNullOrEmpty(id)
+                    && _stripeEvent.PaymentMethodExists(stripeUserClaim.Value, id))
+                {
+                    _stripeService.RemovePaymentMethod(id, user);
+                
+                    // Return
+                    _logger.LogInformation($"RemovePaymentMethod: card of ID {id} added to {user.Id}");
+                    return Ok("Card successfully removed!");
+                }
+            }
+
+            return BadRequest("Invalid card token!");
+        }
     }
 }
