@@ -158,17 +158,10 @@
                         .then(function (res) {
                             if (res && res.status === 200 && res.data) {
                                 self.model.userClaims.stripe_cust_id = res.data;
-                                
-                                Notification.open({
-                                    duration: 2500,
-                                    message: self.form.name + ` successfully updated!`,
-                                    position: 'is-bottom-right',
-                                    type: 'is-success',
-                                    hasIcon: true
-                                });
                             }
                         })
                         .catch(function (err) {
+                            console.dir(err);
                             Notification.open({
                                 duration: 2500,
                                 message: `There might've been a communication error, please try again!`,
