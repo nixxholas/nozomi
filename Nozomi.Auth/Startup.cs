@@ -132,8 +132,13 @@ namespace Nozomi.Auth
                     });
             });
 
-            services.AddControllersWithViews()
-                .SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
+            if (HostingEnvironment.IsDevelopment())
+                services.AddControllersWithViews()
+                    .AddRazorRuntimeCompilation()
+                    .SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
+            else
+                services.AddControllersWithViews()
+                    .SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
 
             services.AddRazorPages();
 
