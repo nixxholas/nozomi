@@ -20,6 +20,7 @@ using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 using Nozomi.Base.Auth.Global;
 using Nozomi.Base.Auth.Models;
 using Nozomi.Base.BCL.Configurations;
@@ -135,9 +136,17 @@ namespace Nozomi.Auth
             if (HostingEnvironment.IsDevelopment())
                 services.AddControllersWithViews()
                     .AddRazorRuntimeCompilation()
+                    .AddNewtonsoftJson(options =>
+                        {
+                            options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+                        })
                     .SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
             else
                 services.AddControllersWithViews()
+                    .AddNewtonsoftJson(options =>
+                    {
+                        options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+                    })
                     .SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
 
             services.AddRazorPages();
