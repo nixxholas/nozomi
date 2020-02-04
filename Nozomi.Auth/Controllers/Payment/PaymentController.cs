@@ -177,7 +177,7 @@ namespace Nozomi.Auth.Controllers.Payment
                 if (stripeUserClaim == null)
                     return BadRequest("Please bootstripe first!");
 
-                return Ok(_stripeEvent.ListPaymentMethods(stripeUserClaim.Value));
+                return Ok(await _stripeEvent.ListPaymentMethods(stripeUserClaim.Value));
             }
 
             return BadRequest("Invalid user!");
