@@ -5,24 +5,22 @@
         </b-field>
         <b-carousel-list v-if="id && !isLoading"
                          v-model="carouselPage"
-                         :arrow="false" :data="cards" :items-to-show="3">
+                         :arrow="false" :data="cards" :items-to-show="2">
             <template slot="item" slot-scope="props">
                 <div class="card" v-if="props.list && props.list.card">
-                    <div class="card-image">
-                        <!--                        <figure class="image is-2by1">-->
-                        <!--                            <a @click="info(props.index)"><img :src="props.list.image"></a>-->
-                        <!--                        </figure>-->
-                    </div>
+<!--                    <div class="card-image">-->
+<!--                        <figure class="image is-2by1">-->
+<!--                            <a @click="info(props.index)"><img :src="props.list.image"></a>-->
+<!--                        </figure>-->
+<!--                    </div>-->
                     <div class="card-content">
                         <div class="content">
-                            <p class="title is-6">{{ props.list.card.brand }} ending with {{ props.list.card.last4
-                                }}</p>
-                            <p class="subtitle is-7" v-if="props.list.billingDetails && props.list.billingDetails.name">
-                                {{ props.list.billingDetails.name }}</p>
+                            <p class="title is-6">{{ props.list.card.brand }} ending with {{ props.list.card.last4 }}</p>
+<!--                            <p class="subtitle is-7" v-if="props.list.billing_details && props.list.billing_details.name">-->
+<!--                                {{ props.list.billing_details.name }}</p>-->
                             <div class="field is-grouped">
-                                <p class="control">expiring on {{ props.list.card.expMonth }}/{{ props.list.card.expYear
-                                    }}</p>
-                                <p class="control" style="margin-left: auto">
+                                <p class="control">expiring on {{ props.list.card.exp_month }}/{{ props.list.card.exp_year }}</p>
+                                <p class="control" v-if="cards.length > 1" style="margin-left: auto">
                                     <button @click="removePaymentMethod(props.list.id)"
                                             class="button is-small is-danger is-outlined">
                                         <b-icon size="is-small" icon="trash"/>
@@ -83,7 +81,6 @@
 
                             PaymentService.listPaymentMethods()
                                 .then(function (res) {
-                                    console.dir(res);
                                     self.cards = res.data;
                                 });
                         }

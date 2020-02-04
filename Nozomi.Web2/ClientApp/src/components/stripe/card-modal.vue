@@ -114,6 +114,7 @@
                 if (!self.stripe && self.stripePubKey) {
                     self.stripe = Stripe(self.stripePubKey);
                 } else {
+                    console.dir("Can't seem to get stripe and it's pub key up");
                     return;
                 }
 
@@ -185,12 +186,12 @@
                     self.stripe = Stripe(self.stripePubKey);
                 }
                 
-                if (self.stripeSetupIntent && self.stripeSetupIntent.clientSecret
+                if (self.stripeSetupIntent && self.stripeSetupIntent.client_secret
                     // Ensure that its not setup yet
                     && !self.stripeSetupIntent.payment_method) {
                     // Setup the card first through Stripe for PCI compliance
                     self.stripe.confirmCardSetup(
-                        self.stripeSetupIntent.clientSecret,
+                        self.stripeSetupIntent.client_secret,
                         {
                             // https://stripe.com/docs/api/payment_methods/object
                             payment_method: {
@@ -277,7 +278,7 @@
                 // https://stackoverflow.com/questions/60019294/vue-spa-single-file-component-element-binding-with-stripe-elements
                 this.$nextTick(function () {
                     this.createCardElement()
-                })
+                });
             },
             closeModal() {
                 this.isModalActive = false;
