@@ -59,7 +59,7 @@
                         </form>
                     </b-tab-item>
                     <b-tab-item label="Billing" icon="money-bill">
-                        <CardsComponent :cust-id="model.userClaims.stripe_cust_id" @created="updateUser" />
+                        <CardsComponent :raw-id="model.userClaims.stripe_cust_id" @created="updateUser" />
                     </b-tab-item>
                     <b-tab-item label="API Keys" icon="key">
                         

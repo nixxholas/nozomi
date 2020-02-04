@@ -34,7 +34,7 @@
                 </div>
             </template>
         </b-carousel-list>
-        <section class="hero is-medium" v-else-if="!isLoading">
+        <section class="hero is-medium" v-else-if="!isLoading && !rawId">
             <div class="hero-body">
                 <div class="container has-text-centered" v-if="!id">
                     <h1 class="title">
@@ -60,10 +60,12 @@
     export default {
         name: 'cards',
         components: {StripeCardModal},
-        props: ['custId'],
+        props: {
+            rawId: String,
+        },
         data: function () {
             return {
-                id: this.custId,
+                id: this.rawId,
                 isBootstripeRunning: false,
                 isLoading: true,
                 carouselPage: 0,
@@ -83,7 +85,7 @@
                                 .then(function (res) {
                                     console.dir(res);
                                     self.cards = res.data;
-                                })
+                                });
                         }
                     })
                     .catch(function (err) {
@@ -114,6 +116,29 @@
                             // Inform the parent that a new request has been created
                             // https://forum.vuejs.org/t/passing-data-back-to-parent/1201
                             self.$emit('created', true);
+
+                            // Update the user
+                            // TODO: Remove this, make the watch function work gracefully
+                            self.$nextTick(function () {
+                                if (!self.id) {
+                                    PaymentService.getStripeCustId()
+                                        .then(function (res) {
+                                            if (res && res.status === 200 && res.data) {
+                                                self.id = res.data;
+                                            }
+                                        })
+                                        .catch(function (err) {
+                                            console.dir(err);
+                                            Notification.open({
+                                                duration: 2500,
+                                                message: `There might've been a communication error, please try again!`,
+                                                position: 'is-bottom-right',
+                                                type: 'is-danger',
+                                                hasIcon: true
+                                            });
+                                        });
+                                }
+                            });
                         } else {
                             Notification.open({
                                 duration: 2500,
@@ -183,6 +208,14 @@
                     });
                 }
             },
-        }
+        },
+        watch: {
+            // TODO: Since the parent will update, this should handle the receiving of new data
+            rawId: function (newVal, oldVal) {
+                if (newVal && newVal !== oldVal) {
+                    this.id = newVal;
+                }
+            },
+        },
     }
 </script>
