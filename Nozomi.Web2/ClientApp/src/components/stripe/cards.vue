@@ -3,82 +3,84 @@
         <b-field class="pb-2" grouped group-multiline>
             <StripeCardModal @created="refreshCards" v-if="id"/>
         </b-field>
-        <b-collapse v-if="id && !isLoading"
-                class="card"
-                v-for="(collapse, index) of cards"
-                :key="index"
-                :open="collapseIndex == index"
-                @open="collapseIndex = index">
-            <div
-                    slot="trigger"
-                    slot-scope="props"
-                    class="card-header"
-                    role="button">
-                <p class="card-header-title">
-                    {{ collapse.card.brand | capitalize }} ending in {{ collapse.card.last4 }}
-                    <b-taglist class="pl-2" attached>
-                        <b-tag type="is-dark">expiring on</b-tag>
-                        <b-tag type="is-warning">{{ collapse.card.exp_month }}
-                            /{{collapse.card.exp_year }}</b-tag>
-                    </b-taglist>
-                </p>
-                <a class="card-header-icon">
-                    <b-icon
-                            :icon="props.open ? 'caret-up' : 'caret-down'">
-                    </b-icon>
-                </a>
-            </div>
-            <div class="card-content">
-                <div class="content">
-                    <article class="media" v-if="collapse.billing_details">
-                        <div class="media-content">
-                            <div class="content">
-                                <ul style="list-style-type: none;">
-                                    <li><h4><b>Billing Details</b></h4></li>
-                                    <li v-if="collapse.billing_details.name">
-                                        <b>Name: </b> {{ collapse.billing_details.name }}
-                                    </li>
-                                    <li v-if="collapse.billing_details.email">
-                                        <b>Email: </b> {{ collapse.billing_details.email }}
-                                    </li>
-                                    <li v-if="collapse.billing_details.phone">
-                                        <b>Phone: </b> {{ collapse.billing_details.phone }}
-                                    </li>
-                                    <li v-if="collapse.billing_details.address.country">
-                                        <b>Country: </b> {{ collapse.billing_details.address.country }}
-                                    </li>
-                                    <li>
-                                        <b>Address: </b> {{ collapse.billing_details.address.line1 }}
-                                    </li>
-                                    <li v-if="collapse.billing_details.address.line2">
-                                        <b>Suite: </b> {{ collapse.billing_details.address.line2 }}
-                                    </li>
-                                    <li>
-                                        <b>City: </b> {{ collapse.billing_details.address.city }}
-                                    </li>
-                                    <li v-if="collapse.billing_details.address.state
+        <b-field v-if="id && !isLoading && cards.length > 0">
+            <b-collapse
+                    class="card"
+                    v-for="(collapse, index) of cards"
+                    :key="index"
+                    :open="collapseIndex == index"
+                    @open="collapseIndex = index">
+                <div
+                        slot="trigger"
+                        slot-scope="props"
+                        class="card-header"
+                        role="button">
+                    <p class="card-header-title">
+                        {{ collapse.card.brand | capitalize }} ending in {{ collapse.card.last4 }}
+                        <b-taglist class="pl-2" attached>
+                            <b-tag type="is-dark">expiring on</b-tag>
+                            <b-tag type="is-warning">{{ collapse.card.exp_month }}
+                                /{{collapse.card.exp_year }}</b-tag>
+                        </b-taglist>
+                    </p>
+                    <a class="card-header-icon">
+                        <b-icon
+                                :icon="props.open ? 'caret-up' : 'caret-down'">
+                        </b-icon>
+                    </a>
+                </div>
+                <div class="card-content">
+                    <div class="content">
+                        <article class="media" v-if="collapse.billing_details">
+                            <div class="media-content">
+                                <div class="content">
+                                    <ul style="list-style-type: none;">
+                                        <li><h4><b>Billing Details</b></h4></li>
+                                        <li v-if="collapse.billing_details.name">
+                                            <b>Name: </b> {{ collapse.billing_details.name }}
+                                        </li>
+                                        <li v-if="collapse.billing_details.email">
+                                            <b>Email: </b> {{ collapse.billing_details.email }}
+                                        </li>
+                                        <li v-if="collapse.billing_details.phone">
+                                            <b>Phone: </b> {{ collapse.billing_details.phone }}
+                                        </li>
+                                        <li v-if="collapse.billing_details.address.country">
+                                            <b>Country: </b> {{ collapse.billing_details.address.country }}
+                                        </li>
+                                        <li>
+                                            <b>Address: </b> {{ collapse.billing_details.address.line1 }}
+                                        </li>
+                                        <li v-if="collapse.billing_details.address.line2">
+                                            <b>Suite: </b> {{ collapse.billing_details.address.line2 }}
+                                        </li>
+                                        <li>
+                                            <b>City: </b> {{ collapse.billing_details.address.city }}
+                                        </li>
+                                        <li v-if="collapse.billing_details.address.state
                                     && collapse.billing_details.address.state !== '---------'">
-                                        <b>State: </b> {{ collapse.billing_details.address.state }}
-                                    </li>
-                                    <li>
-                                        <b>Postal Code: </b> {{ collapse.billing_details.address.postal_code }}
-                                    </li>
-                                </ul>
+                                            <b>State: </b> {{ collapse.billing_details.address.state }}
+                                        </li>
+                                        <li>
+                                            <b>Postal Code: </b> {{ collapse.billing_details.address.postal_code }}
+                                        </li>
+                                    </ul>
+                                </div>
                             </div>
-                        </div>
-                    </article>
+                        </article>
+                    </div>
                 </div>
-            </div>
-            <footer class="card-footer">
-                <div v-if="cards.length > 1" class="card-footer-item">
-                    <b-button @click="removePaymentMethod(collapse.id)"
-                            type="is-danger" icon-left="trash" outlined>
-                        Delete
-                    </b-button>
-                </div>
-            </footer>
-        </b-collapse>
-        <section class="hero is-medium" v-else-if="!isLoading && !rawId">
+                <footer class="card-footer">
+                    <div v-if="cards.length > 1" class="card-footer-item">
+                        <b-button @click="removePaymentMethod(collapse.id)"
+                                  type="is-danger" icon-left="trash" outlined>
+                            Delete
+                        </b-button>
+                    </div>
+                </footer>
+            </b-collapse>
+        </b-field>
+        <section class="hero is-medium" v-else-if="!id">
             <div class="hero-body">
                 <div class="container has-text-centered" v-if="!id">
                     <h1 class="title">
@@ -120,7 +122,6 @@
         beforeMount: function () {
             let self = this;
 
-            console.dir(self.id);
             if (!self.id) {
                 PaymentService.getStripeCustId()
                     .then(function (res) {
@@ -134,6 +135,7 @@
                         }
                     })
                     .catch(function (err) {
+                        console.dir(err);
                     })
                     .finally(function () {
                         self.isLoading = false;
@@ -142,6 +144,9 @@
                 PaymentService.listPaymentMethods()
                     .then(function (res) {
                         self.cards = res.data;
+                    })
+                    .catch(function (err) {
+                        console.dir(err);
                     })
                 .finally(function() {
                     self.isLoading = false;
