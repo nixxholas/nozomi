@@ -9,7 +9,7 @@ namespace Nozomi.Infra.Auth.Services.Stripe
         
         Task AddPaymentMethod(string paymentMethodId, Base.Auth.Models.User user);
 
-        void RemovePaymentMethod(string paymentMethodId, Base.Auth.Models.User user);
+        Task RemovePaymentMethod(string paymentMethodId, Base.Auth.Models.User user);
 
         void Subscribe(Plan plan, Base.Auth.Models.User user);
 

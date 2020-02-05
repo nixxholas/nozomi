@@ -183,6 +183,7 @@ namespace Nozomi.Auth.Controllers.Payment
             return BadRequest("Invalid user!");
         }
         
+        // DELETE: /Payment/RemovePaymentMethod/{id}
         [Authorize(AuthenticationSchemes = "Bearer")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> RemovePaymentMethod(string id)
@@ -212,7 +213,7 @@ namespace Nozomi.Auth.Controllers.Payment
                     if (!string.IsNullOrEmpty(id)
                         && _stripeEvent.PaymentMethodExists(stripeUserClaim.Value, id))
                     {
-                        _stripeService.RemovePaymentMethod(id, user);
+                        await _stripeService.RemovePaymentMethod(id, user);
                 
                         // Return
                         _logger.LogInformation($"RemovePaymentMethod: card of ID {id} removed from {user.Id}");

@@ -159,7 +159,7 @@ namespace Nozomi.Infra.Auth.Services.Stripe
             throw new InvalidConstraintException($"{_serviceName} AddPaymentMethod: Invalid tokenId or userId.");
         }
 
-        public async void RemovePaymentMethod(string paymentMethodId, Base.Auth.Models.User user)
+        public async Task RemovePaymentMethod(string paymentMethodId, Base.Auth.Models.User user)
         {
             if (!string.IsNullOrEmpty(paymentMethodId) && user != null)
             {
