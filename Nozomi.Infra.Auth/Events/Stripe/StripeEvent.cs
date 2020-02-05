@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Nozomi.Base.Auth.Global;
@@ -18,6 +19,7 @@ namespace Nozomi.Infra.Auth.Events.Stripe
     public class StripeEvent : BaseEvent<StripeEvent, AuthDbContext>, IStripeEvent
     {
         private readonly Product _stripeProduct;
+        private readonly string _productId;
         private readonly UserManager<Base.Auth.Models.User> _userManager;
 
         public StripeEvent(ILogger<StripeEvent> logger, IUnitOfWork<AuthDbContext> unitOfWork, UserManager<Base.Auth.Models.User> userManager,
@@ -26,10 +28,27 @@ namespace Nozomi.Infra.Auth.Events.Stripe
         {
             // apiKey = Secret Key
             StripeConfiguration.ApiKey = stripeConfiguration.Value.SecretKey;
-
+            _productId = stripeConfiguration.Value.ProductId;
+            
             var productService = new ProductService();
             _stripeProduct = productService.Get(stripeConfiguration.Value.ProductId);
             _userManager = userManager;
+        }
+
+        public bool PlanExists(string planId)
+        {
+            if (string.IsNullOrEmpty(planId))
+                return false; // Invalid plan id...
+            
+            var planService = new PlanService();
+            var planListOptions = new PlanListOptions
+            {
+                Active = true,
+                Product = _productId,
+            };
+            var plans = planService.List(planListOptions);
+
+            return plans.Data.Any(p => p.Id.Equals(planId));
         }
 
         public async Task<IEnumerable<Card>> Cards(Base.Auth.Models.User user)
