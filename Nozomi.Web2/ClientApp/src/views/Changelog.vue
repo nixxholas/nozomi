@@ -81,7 +81,7 @@
                         <div class="timeline-item is-info">
                             <div class="timeline-marker is-info"></div>
                             <div class="timeline-content">
-                                <p class="heading">03 January 2019 - <b>beta 1</b></p>
+                                <p class="heading">03 January 2020 - <b>beta 1</b></p>
                                 <ul>
                                     <li><b>UI</b> - Our pricing plans are out bitches</li>
                                     <li><b>UI</b> - General hotfixes and improvements</li>
@@ -94,7 +94,7 @@
                         <div class="timeline-item is-info">
                             <div class="timeline-marker is-info"></div>
                             <div class="timeline-content">
-                                <p class="heading">11 January 2019 - <b>beta 2</b></p>
+                                <p class="heading">11 January 2020 - <b>beta 2</b></p>
                                 <ul>
                                     <li><b>Backend</b> - Complete database wipe for MVP preparations</li>
                                     <li><b>Backend</b> - Certain entities now carry a more obscure ID</li>
@@ -109,7 +109,7 @@
                         <div class="timeline-item is-info">
                             <div class="timeline-marker is-info"></div>
                             <div class="timeline-content">
-                                <p class="heading">12 January 2019 - <b>beta 3</b></p>
+                                <p class="heading">12 January 2020 - <b>beta 3</b></p>
                                 <ul>
                                     <li><b>Backend</b> - Hotfixes for obscure ID implementations</li>
                                     <li><b>Backend</b> - Buffed the search function for currency pair's search API</li>
@@ -122,7 +122,7 @@
                         <div class="timeline-item is-info">
                             <div class="timeline-marker is-info"></div>
                             <div class="timeline-content">
-                                <p class="heading">13 January 2019 - <b>beta 4</b></p>
+                                <p class="heading">13 January 2020 - <b>beta 4</b></p>
                                 <ul>
                                     <li><b>API</b> - The data obscurity increases ever so slightly ;))</li>
                                     <li><b>Backend</b> - Compute engine general deployment hotfixes</li>
@@ -136,7 +136,7 @@
                         <div class="timeline-item is-info">
                             <div class="timeline-marker is-info"></div>
                             <div class="timeline-content">
-                                <p class="heading">16 January 2019 - <b>beta 5</b></p>
+                                <p class="heading">16 January 2020 - <b>beta 5</b></p>
                                 <ul>
                                     <li><b>UI</b> - We're getting started on user profile modification features!</li>
                                     <li><b>Auth</b> - You can now register and login with your email or username!</li>
@@ -149,7 +149,7 @@
                         <div class="timeline-item is-info">
                             <div class="timeline-marker is-info"></div>
                             <div class="timeline-content">
-                                <p class="heading">23 January 2019 - <b>beta 6</b></p>
+                                <p class="heading">23 January 2020 - <b>beta 6</b></p>
                                 <ul>
                                     <li><b>UI</b> - Password updating functionality</li>
                                     <li><b>UI</b> - View account information</li>
@@ -160,7 +160,7 @@
                         <div class="timeline-item is-info">
                             <div class="timeline-marker is-info"></div>
                             <div class="timeline-content">
-                                <p class="heading">27 January 2019 - <b>beta 7</b></p>
+                                <p class="heading">27 January 2020 - <b>beta 7</b></p>
                                 <ul>
                                     <li><b>UI</b> - View account information</li>
                                     <li><b>UI</b> - Account Information updating functionality</li>
@@ -173,10 +173,22 @@
                         <div class="timeline-item is-info">
                             <div class="timeline-marker is-info"></div>
                             <div class="timeline-content">
-                                <p class="heading">30 January 2019 - <b>beta 8</b></p>
+                                <p class="heading">30 January 2020 - <b>beta 8</b></p>
                                 <ul>
                                     <li><b>Auth</b> - All connections to Nozomi are now end-to-end encrypted</li>
                                     <li><b>Web</b> - All connections to Nozomi are now end-to-end encrypted</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="timeline-item is-info">
+                            <div class="timeline-marker is-info"></div>
+                            <div class="timeline-content">
+                                <p class="heading">04 January 2020 - <b>beta 9</b></p>
+                                <ul>
+                                    <li><b>Auth</b> - General UI updates</li>
+                                    <li><b>Web</b> - Setup payments for your account! </li>
+                                    <li><b>Web</b> - Add a card for payments </li>
+                                    <li><b>Web</b> - Remove a card for payments! <i>Of course you gotta have more than one to do that.</i> </li>
                                 </ul>
                             </div>
                         </div>
