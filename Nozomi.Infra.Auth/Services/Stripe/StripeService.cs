@@ -356,6 +356,7 @@ namespace Nozomi.Infra.Auth.Services.Stripe
                         // Remove subscription from user claims
                         await _userManager.RemoveClaimAsync(user, subscriptionIdClaim);
 
+                        // Obtain his/her stripe customer id
                         var userStripeClaim = userClaims.SingleOrDefault(uc =>
                             uc.Type.Equals(NozomiJwtClaimTypes.StripeCustomerId));
                         if (userStripeClaim == null)
@@ -367,6 +368,7 @@ namespace Nozomi.Infra.Auth.Services.Stripe
                                                       "his/her claims.");
                         }
                         
+                        // Prepare to bind on Stripe's end
                         var subCreateOptions = new SubscriptionCreateOptions
                         {
                             Customer = userStripeClaim.Value,
@@ -388,6 +390,10 @@ namespace Nozomi.Infra.Auth.Services.Stripe
                             throw new StripeException($"{_serviceName} Unsubscribe: There was an issue " +
                                                       $"binding the user {user.Id} back to the default plan on Stripe.");
                         }
+                        
+                        // Since binding on Stripe is successful, we'll bind him/her internally
+                        await _userManager.AddClaimAsync(user, new Claim(
+                            NozomiJwtClaimTypes.StripeSubscriptionId, defaultSubRes.Id));
 
                         _logger.LogInformation($"{_serviceName} Unsubscribe: {user.Id} successfully " +
                                                "cancelled a plan subscription that was tokenized as " +
