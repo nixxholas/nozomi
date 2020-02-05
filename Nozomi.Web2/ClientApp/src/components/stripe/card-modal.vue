@@ -258,12 +258,16 @@
                                     })
                                     .finally(function() {
                                         self.isModalLoading = false;
+                                        self.isModalActive = false;
                                     });
                             }
                         }
                     })
                     .finally(function() {
-                        self.isModalLoading = false;
+                        if (self.isModalLoading)
+                            self.isModalLoading = false;
+                        if (self.isModalActive)
+                            self.isModalActive = false;
                     });
                 } else {
                     Notification.open({
