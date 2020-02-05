@@ -22,8 +22,8 @@ namespace Nozomi.Infra.Auth.Events.Stripe
         private readonly string _productId;
         private readonly UserManager<Base.Auth.Models.User> _userManager;
 
-        public StripeEvent(ILogger<StripeEvent> logger, IUnitOfWork<AuthDbContext> unitOfWork, UserManager<Base.Auth.Models.User> userManager,
-            IOptions<StripeOptions> stripeConfiguration) 
+        public StripeEvent(ILogger<StripeEvent> logger, IUnitOfWork<AuthDbContext> unitOfWork, 
+            UserManager<Base.Auth.Models.User> userManager, IOptions<StripeOptions> stripeConfiguration) 
             : base(logger, unitOfWork)
         {
             // apiKey = Secret Key
@@ -81,7 +81,8 @@ namespace Nozomi.Infra.Auth.Events.Stripe
                     throw new KeyNotFoundException($"{_eventName} addCard: user has yet to bind to stripe");
                 }
 
-                return userClaims.Where(uc => uc.Type.Equals(NozomiJwtClaimTypes.StripeCustomerPaymentMethodId)).Select(uc => new Card { Id = uc.Value });
+                return userClaims.Where(uc => uc.Type.Equals(NozomiJwtClaimTypes.StripeCustomerPaymentMethodId))
+                    .Select(uc => new Card { Id = uc.Value });
             }
             throw new NullReferenceException($"{_eventName} cards: Unable to get cards, user is not null.");
         }

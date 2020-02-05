@@ -21,20 +21,23 @@ namespace Nozomi.Infra.Auth.Services.Stripe
 {
     public class StripeService : BaseService<StripeService, AuthDbContext>, IStripeService
     {
-        private readonly SubscriptionService _subscriptionService;
+        private readonly IOptions<StripeOptions> _stripeConfiguration;
         private readonly UserManager<Base.Auth.Models.User> _userManager;
 
-        public StripeService(ILogger<StripeService> logger, IUnitOfWork<AuthDbContext> unitOfWork, SubscriptionService subscriptionService,
-            UserManager<Base.Auth.Models.User> userManager)
+        public StripeService(ILogger<StripeService> logger, IUnitOfWork<AuthDbContext> unitOfWork, 
+            UserManager<Base.Auth.Models.User> userManager, IOptions<StripeOptions> stripeConfiguration)
             : base(logger, unitOfWork)
         {
+            _stripeConfiguration = stripeConfiguration;
             _userManager = userManager;
         }
 
         public StripeService(IHttpContextAccessor contextAccessor, ILogger<StripeService> logger,
-            UserManager<Base.Auth.Models.User> userManager, IUnitOfWork<AuthDbContext> unitOfWork)
+            UserManager<Base.Auth.Models.User> userManager, IUnitOfWork<AuthDbContext> unitOfWork, 
+            IOptions<StripeOptions> stripeConfiguration)
             : base(contextAccessor, logger, unitOfWork)
         {
+            _stripeConfiguration = stripeConfiguration;
             _userManager = userManager;
         }
 
@@ -259,7 +262,6 @@ namespace Nozomi.Infra.Auth.Services.Stripe
                     var customerIdClaim = userClaims.SingleOrDefault(uc => uc.Type.Equals(NozomiJwtClaimTypes.StripeCustomerId));
                     if (customerIdClaim != null)
                     {
-
                         var subscriptionOptions = new SubscriptionCreateOptions
                         {
                             Customer = customerIdClaim.Value,
@@ -272,7 +274,8 @@ namespace Nozomi.Infra.Auth.Services.Stripe
                             }
                         };
 
-                        var subscription = await _subscriptionService.CreateAsync(subscriptionOptions);
+                        var subscriptionService = new SubscriptionService();
+                        var subscription = await subscriptionService.CreateAsync(subscriptionOptions);
 
                         // If the subscription ain't null, bind it
                         if (subscription != null)
@@ -320,7 +323,8 @@ namespace Nozomi.Infra.Auth.Services.Stripe
                         InvoiceNow = true,
                         Prorate = false
                     };
-                    var subscription = await _subscriptionService.CancelAsync(subscriptionIdClaim.Value, cancelOptions);
+                    var subscriptionService = new SubscriptionService();
+                    var subscription = await subscriptionService.CancelAsync(subscriptionIdClaim.Value, cancelOptions);
 
                     //Remove subscription from userclaims
                     if (subscription.CanceledAt != null)
@@ -366,7 +370,8 @@ namespace Nozomi.Infra.Auth.Services.Stripe
 
                     if (subscriptionIdUserClaim != null)
                     {
-                        var subscription = await _subscriptionService.GetAsync(subscriptionIdUserClaim.Value);
+                        var subscriptionService = new SubscriptionService();
+                        var subscription = await subscriptionService.GetAsync(subscriptionIdUserClaim.Value);
 
                         if (subscription != null && subscription.CanceledAt != null)
                         {
@@ -380,7 +385,7 @@ namespace Nozomi.Infra.Auth.Services.Stripe
                                 }
                             };
 
-                            subscription = await _subscriptionService.UpdateAsync(subscription.Id, subscriptionChangeOptions);
+                            subscription = await subscriptionService.UpdateAsync(subscription.Id, subscriptionChangeOptions);
                             if (subscription.Plan.Id.Equals(plan.Id)) {
                                 _logger.LogInformation($"{_serviceName} changePlan: {user.Id} successfully changed to new plan {subscription.Plan.Id}");
                                 return;
