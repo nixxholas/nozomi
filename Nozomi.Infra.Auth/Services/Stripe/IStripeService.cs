@@ -11,7 +11,7 @@ namespace Nozomi.Infra.Auth.Services.Stripe
 
         Task RemovePaymentMethod(string paymentMethodId, Base.Auth.Models.User user);
 
-        void Subscribe(Plan plan, Base.Auth.Models.User user);
+        Task Subscribe(Plan plan, Base.Auth.Models.User user);
 
         void Unsubscribe(Base.Auth.Models.User user);
 

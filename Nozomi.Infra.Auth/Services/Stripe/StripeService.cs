@@ -238,7 +238,7 @@ namespace Nozomi.Infra.Auth.Services.Stripe
             throw new InvalidConstraintException($"{_serviceName} removeCard: Invalid cardId or userId.");
         }
 
-        public async void Subscribe(Plan plan, Base.Auth.Models.User user)
+        public async Task Subscribe(Plan plan, Base.Auth.Models.User user)
         {
             if (user != null)
             {
