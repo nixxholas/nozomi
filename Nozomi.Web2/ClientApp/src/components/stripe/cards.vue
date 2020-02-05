@@ -1,7 +1,7 @@
 <template>
     <div>
         <b-field class="pb-2" grouped group-multiline>
-            <StripeCardModal v-if="id"/>
+            <StripeCardModal @created="refreshCards" v-if="id"/>
         </b-field>
         <b-carousel-list v-if="id && !isLoading"
                          :autoplay="false"
@@ -9,18 +9,20 @@
                          :arrow="false" :data="cards" :items-to-show="2">
             <template slot="item" slot-scope="props">
                 <div class="card" v-if="props.list && props.list.card">
-<!--                    <div class="card-image">-->
-<!--                        <figure class="image is-2by1">-->
-<!--                            <a @click="info(props.index)"><img :src="props.list.image"></a>-->
-<!--                        </figure>-->
-<!--                    </div>-->
+                    <!--                    <div class="card-image">-->
+                    <!--                        <figure class="image is-2by1">-->
+                    <!--                            <a @click="info(props.index)"><img :src="props.list.image"></a>-->
+                    <!--                        </figure>-->
+                    <!--                    </div>-->
                     <div class="card-content">
                         <div class="content">
-                            <p class="title is-6">{{ props.list.card.brand }} ending with {{ props.list.card.last4 }}</p>
-<!--                            <p class="subtitle is-7" v-if="props.list.billing_details && props.list.billing_details.name">-->
-<!--                                {{ props.list.billing_details.name }}</p>-->
+                            <p class="title is-6">{{ props.list.card.brand }} ending with {{ props.list.card.last4
+                                }}</p>
+                            <!--                            <p class="subtitle is-7" v-if="props.list.billing_details && props.list.billing_details.name">-->
+                            <!--                                {{ props.list.billing_details.name }}</p>-->
                             <div class="field is-grouped">
-                                <p class="control">expiring on {{ props.list.card.exp_month }}/{{ props.list.card.exp_year }}</p>
+                                <p class="control">expiring on {{ props.list.card.exp_month }}/{{
+                                    props.list.card.exp_year }}</p>
                                 <p class="control" v-if="cards.length > 1" style="margin-left: auto">
                                     <button @click="removePaymentMethod(props.list.id)"
                                             class="button is-small is-danger is-outlined">
@@ -158,6 +160,27 @@
                     }).finally(function () {
                     self.isBootstripeRunning = false;
                 });
+            },
+            refreshCards: function () {
+                let self = this;
+
+                if (self.id) {
+                    PaymentService.listPaymentMethods()
+                        .then(function (res) {
+                            self.cards = res.data;
+                        })
+                        .catch(function (err) {
+                            console.dir(err);
+                            Notification.open({
+                                duration: 2500,
+                                message: "Your cards list have been updated but there was an " +
+                                    "issue refreshing, please refresh the page!",
+                                position: 'is-bottom-right',
+                                type: 'is-danger',
+                                hasIcon: true
+                            });
+                        });
+                }
             },
             removePaymentMethod: function (id) {
                 let self = this;
