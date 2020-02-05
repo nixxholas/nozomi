@@ -114,7 +114,6 @@
                 if (!self.stripe && self.stripePubKey) {
                     self.stripe = Stripe(self.stripePubKey);
                 } else {
-                    console.dir("Can't seem to get stripe and it's pub key up");
                     return;
                 }
 

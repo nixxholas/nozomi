@@ -4,6 +4,7 @@
             <StripeCardModal v-if="id"/>
         </b-field>
         <b-carousel-list v-if="id && !isLoading"
+                         :autoplay="false"
                          v-model="carouselPage"
                          :arrow="false" :data="cards" :items-to-show="2">
             <template slot="item" slot-scope="props">
