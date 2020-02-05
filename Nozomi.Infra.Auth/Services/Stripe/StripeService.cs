@@ -356,6 +356,39 @@ namespace Nozomi.Infra.Auth.Services.Stripe
                         // Remove subscription from user claims
                         await _userManager.RemoveClaimAsync(user, subscriptionIdClaim);
 
+                        var userStripeClaim = userClaims.SingleOrDefault(uc =>
+                            uc.Type.Equals(NozomiJwtClaimTypes.StripeCustomerId));
+                        if (userStripeClaim == null)
+                        {
+                            _logger.LogInformation($"{_serviceName} Unsubscribe: There was an issue binding " +
+                                                   $"the user {user.Id} back to the default plan in his/her claims.");
+                            throw new StripeException($"{_serviceName} Unsubscribe: There was an issue " +
+                                                      $"binding the user {user.Id} back to the default plan in " +
+                                                      "his/her claims.");
+                        }
+                        
+                        var subCreateOptions = new SubscriptionCreateOptions
+                        {
+                            Customer = userStripeClaim.Value,
+                            CancelAtPeriodEnd = false,
+                            Items = new List<SubscriptionItemOptions>
+                            {
+                                new SubscriptionItemOptions
+                                {
+                                    Plan = _stripeConfiguration.Value.DefaultPlanId
+                                }
+                            }
+                        };
+                        var defaultSubRes = await subscriptionService.CreateAsync(subCreateOptions);
+
+                        if (defaultSubRes == null || defaultSubRes.StripeResponse.StatusCode != HttpStatusCode.OK)
+                        {
+                            _logger.LogInformation($"{_serviceName} Unsubscribe: There was an issue binding " +
+                                                   $"the user {user.Id} back to the default plan on Stripe.");
+                            throw new StripeException($"{_serviceName} Unsubscribe: There was an issue " +
+                                                      $"binding the user {user.Id} back to the default plan on Stripe.");
+                        }
+
                         _logger.LogInformation($"{_serviceName} Unsubscribe: {user.Id} successfully " +
                                                "cancelled a plan subscription that was tokenized as " +
                                                $"{subscriptionIdClaim.Value}");
