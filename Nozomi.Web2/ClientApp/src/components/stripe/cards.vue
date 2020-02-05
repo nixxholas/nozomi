@@ -203,6 +203,8 @@
                                             type: 'is-success',
                                             hasIcon: true
                                         });
+                                        
+                                        self.refreshCards();
                                     }
                                 })
                                 .catch(function (err) {
