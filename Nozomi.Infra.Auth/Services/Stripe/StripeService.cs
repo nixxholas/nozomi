@@ -305,7 +305,7 @@ namespace Nozomi.Infra.Auth.Services.Stripe
             throw new NullReferenceException($"{_serviceName} subscribePlan: user is null.");
         }
 
-        public async void Unsubscribe(Base.Auth.Models.User user)
+        public async Task Unsubscribe(Base.Auth.Models.User user)
         {
             if (user != null)
             {
