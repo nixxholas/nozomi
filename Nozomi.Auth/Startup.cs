@@ -174,6 +174,7 @@ namespace Nozomi.Auth
             });
             services.Configure<StripeOptions>(options =>
             {
+                options.DefaultPlanId = Configuration["Stripe:DefaultPlanId"];
                 options.ProductId = Configuration["Stripe:ProductId"];
                 options.PublishableKey = Configuration["Stripe:PublishableKey"];
                 options.SecretKey = Configuration["Stripe:SecretKey"];
