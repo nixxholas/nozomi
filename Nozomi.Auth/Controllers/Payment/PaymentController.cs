@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
@@ -207,7 +208,9 @@ namespace Nozomi.Auth.Controllers.Payment
                     _stripeEvent.ListPaymentMethods(stripeUserClaim.Value);
                 
                 // Ensure he/she has more than one payment method currently
-                if (paymentMethods != null && paymentMethods.Count() > 1)
+                if (paymentMethods != null && paymentMethods.Count() > 1 
+                                           // Ensure the user owns this payment method
+                                           && paymentMethods.Any(pm => pm.Id.Equals(id)))
                 {
                     // Process card removal
                     if (!string.IsNullOrEmpty(id)
@@ -224,7 +227,7 @@ namespace Nozomi.Auth.Controllers.Payment
                 // Log failure
                 _logger.LogInformation("RemovePaymentMethod: An attempt to remove was made for card of " +
                                        $"ID {id} by {user.Id}.");
-                return BadRequest("You do not have more than one payment method!");
+                return BadRequest("You can't delete this!");
             }
 
             return BadRequest("Invalid card token!");
