@@ -35,7 +35,7 @@ namespace Nozomi.Infra.Auth.Events.Stripe
             _userManager = userManager;
         }
 
-        public Plan plan(string planId)
+        public Plan Plan(string planId)
         {
             if (string.IsNullOrEmpty(planId))
                 return null; // Invalid plan id
