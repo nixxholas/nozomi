@@ -109,7 +109,20 @@
             ...mapActions('oidcStore', ['authenticateOidc', 'signOutOidc']),
             createCardElement: function () {
                 let self = this;
+                self.isModalLoading = true;
 
+                if (!self.stripePubKey) {
+                    self.isLoading = true;
+                    
+                    PaymentService.getStripePubKey()
+                        .then(function (res) {
+                            self.stripePubKey = res.data;
+                        })
+                        .finally(function () {
+                            self.isLoading = false;
+                        });
+                }
+                
                 // Always reboot stripe
                 self.stripe = Stripe(self.stripePubKey);
 
@@ -169,6 +182,10 @@
                     } else {
                         self.elementsError = '';
                     }
+                });
+                
+                self.$nextTick(function() {
+                    self.isModalLoading = false;
                 });
             },
             create: function () {
