@@ -110,12 +110,8 @@
             createCardElement: function () {
                 let self = this;
 
-                // Check if stripe is up, else set it up
-                if (!self.stripe && self.stripePubKey) {
-                    self.stripe = Stripe(self.stripePubKey);
-                } else {
-                    return;
-                }
+                // Always reboot stripe
+                self.stripe = Stripe(self.stripePubKey);
 
                 // SetupIntent configuration
                 PaymentService.stripeSetupIntent()
