@@ -15,6 +15,9 @@ namespace Nozomi.Base.Auth.Global
         /// The Id of the user's current subscription
         /// </summary>
         public const string StripeSubscriptionId = "stripe_sub_id";
-        
+        /// <summary>
+        /// The Ids of the user's previous subscriptions
+        /// </summary>
+        public const string PreviousStripeSubscriptionId = "ex_stripe_sud_id";
     }
 }

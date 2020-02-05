@@ -308,7 +308,7 @@ namespace Nozomi.Auth.Controllers.Payment
                 await _stripeService.Unsubscribe(user);
                 
                 // Return
-                _logger.LogInformation($"Subscribe: plan of ID {id} added to {user.Id}");
+                _logger.LogInformation($"Unsubscribe: plan of ID {id} removed from {user.Id}");
                 return Ok("Plan has successfully been unsubscribed!");
             }
 

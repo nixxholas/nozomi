@@ -338,6 +338,7 @@ namespace Nozomi.Infra.Auth.Services.Stripe
                                                   "because its the default plan.");
                     }
                     
+                    // Since it's not the default, cancel it
                     var cancelOptions = new SubscriptionCancelOptions
                     {
                         InvoiceNow = true,
@@ -346,17 +347,22 @@ namespace Nozomi.Infra.Auth.Services.Stripe
                     var subCancellation = await subscriptionService.CancelAsync(subscriptionIdClaim.Value, 
                         cancelOptions);
 
-                    //Remove subscription from userclaims
                     if (subCancellation.CanceledAt != null)
                     {
+                        // Add it historically
+                        await _userManager.AddClaimAsync(user, new Claim(
+                            NozomiJwtClaimTypes.PreviousStripeSubscriptionId, subscriptionIdClaim.Value));
+
+                        // Remove subscription from user claims
                         await _userManager.RemoveClaimAsync(user, subscriptionIdClaim);
 
                         _logger.LogInformation($"{_serviceName} Unsubscribe: {user.Id} successfully " +
                                                "cancelled a plan subscription that was tokenized as " +
                                                $"{subscriptionIdClaim.Value}");
-
+                        
                         return;
                     }
+                    
                     _logger.LogInformation($"{_serviceName} Unsubscribe: There was an issue cancelling " +
                                     $"subscription {subscriptionIdClaim.Value} of user {user.Id}");
                     throw new StripeException($"{_serviceName} Unsubscribe: There was an issue cancelling " +
