@@ -281,5 +281,38 @@ namespace Nozomi.Auth.Controllers.Payment
 
             return BadRequest("Invalid plan!");
         }
+
+        /// <summary>
+        /// Plan Unsubscription API
+        ///
+        /// Enables the caller to subscribe to a specified plan if he/she is unsubscribed.
+        /// </summary>
+        /// <param name="id">the ID of the subscription</param>
+        /// <returns>HttpResult of the subscription deletion.</returns>
+        [Authorize(AuthenticationSchemes = "Bearer")]
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Unsubscribe(string id)
+        {
+            // Validate
+            var user = await _userManager.FindByIdAsync(((ClaimsIdentity) User.Identity)
+                .Claims.FirstOrDefault(c => c.Type.Equals(JwtClaimTypes.Subject)
+                                            || c.Type.Equals(ClaimTypes.NameIdentifier))?.Value);
+            
+            // Safetynet
+            if (user != null && !string.IsNullOrEmpty(id)
+                             // Ensure the plan in question exists and is enabled
+                             && _stripeEvent.PlanExists(id))
+            {
+                // Since the user has no existing subscriptions, proceed.
+                var plan = _stripeEvent.Plan(id);
+                await _stripeService.Subscribe(plan, user);
+                
+                // Return
+                _logger.LogInformation($"Subscribe: plan of ID {id} added to {user.Id}");
+                return Ok("Plan has successfully been unsubscribed!");
+            }
+
+            return BadRequest("Invalid plan!");
+        }
     }
 }
