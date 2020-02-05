@@ -18,20 +18,20 @@ namespace Nozomi.Infra.Auth.Events.Stripe
 {
     public class StripeEvent : BaseEvent<StripeEvent, AuthDbContext>, IStripeEvent
     {
+        private readonly IOptions<StripeOptions> _stripeOptions;
         private readonly Product _stripeProduct;
-        private readonly string _productId;
         private readonly UserManager<Base.Auth.Models.User> _userManager;
 
         public StripeEvent(ILogger<StripeEvent> logger, IUnitOfWork<AuthDbContext> unitOfWork, 
-            UserManager<Base.Auth.Models.User> userManager, IOptions<StripeOptions> stripeConfiguration) 
+            UserManager<Base.Auth.Models.User> userManager, IOptions<StripeOptions> stripeOptions) 
             : base(logger, unitOfWork)
         {
             // apiKey = Secret Key
-            StripeConfiguration.ApiKey = stripeConfiguration.Value.SecretKey;
-            _productId = stripeConfiguration.Value.ProductId;
+            StripeConfiguration.ApiKey = stripeOptions.Value.SecretKey;
+            _stripeOptions = stripeOptions;
             
             var productService = new ProductService();
-            _stripeProduct = productService.Get(stripeConfiguration.Value.ProductId);
+            _stripeProduct = productService.Get(stripeOptions.Value.ProductId);
             _userManager = userManager;
         }
 
@@ -44,7 +44,7 @@ namespace Nozomi.Infra.Auth.Events.Stripe
             var planListOptions = new PlanListOptions
             {
                 Active = true,
-                Product = _productId,
+                Product = _stripeOptions.Value.ProductId,
             };
             var plans = planService.List(planListOptions);
 
@@ -60,7 +60,7 @@ namespace Nozomi.Infra.Auth.Events.Stripe
             var planListOptions = new PlanListOptions
             {
                 Active = true,
-                Product = _productId,
+                Product = _stripeOptions.Value.ProductId,
             };
             var plans = planService.List(planListOptions);
 
@@ -160,6 +160,16 @@ namespace Nozomi.Infra.Auth.Events.Stripe
             }
             
             _logger.LogWarning($"{_eventName} PaymentMethodExists: Null payment method id.");
+            return false;
+        }
+
+        public bool IsDefaultPlan(string planId)
+        {
+            if (!string.IsNullOrEmpty(planId))
+            {
+                return planId.Equals(_stripeOptions.Value.DefaultPlanId);
+            }
+            _logger.LogWarning($"{_eventName} IsDefaultPlan: Null plan id.");
             return false;
         }
 

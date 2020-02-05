@@ -315,7 +315,8 @@ namespace Nozomi.Infra.Auth.Services.Stripe
                     throw new KeyNotFoundException($"{_serviceName} cancelPlan: user has yet to bind to stripe");
                 }
 
-                var subscriptionIdClaim = userClaims.SingleOrDefault(uc => uc.Type.Equals(NozomiJwtClaimTypes.StripeSubscriptionId));
+                var subscriptionIdClaim = userClaims
+                    .SingleOrDefault(uc => uc.Type.Equals(NozomiJwtClaimTypes.StripeSubscriptionId));
                 if (subscriptionIdClaim != null)
                 {
                     var cancelOptions = new SubscriptionCancelOptions
