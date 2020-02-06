@@ -428,18 +428,23 @@ namespace Nozomi.Infra.Auth.Services.Stripe
                             uc.Type.Equals(NozomiJwtClaimTypes.StripeCustomerId)))
                     {
                         // This shouldn't happen, but just in case
-                        _logger.LogInformation($"{_serviceName} changePlan: user has yet to bind to stripe");
-                        throw new KeyNotFoundException($"{_serviceName} changePlan: user has yet to bind to stripe");
+                        _logger.LogInformation($"{_serviceName} ChangeSubscription: user has yet to bind " +
+                                               "to stripe");
+                        throw new KeyNotFoundException($"{_serviceName} ChangeSubscription: user has yet " +
+                                                       "to bind to stripe");
                     }
 
-                    var subscriptionIdUserClaim = userClaims.SingleOrDefault(uc => uc.Type.Equals(NozomiJwtClaimTypes.StripeSubscriptionId));
+                    // Obtain the user's current subscription
+                    var subscriptionIdUserClaim = userClaims
+                        .SingleOrDefault(uc => uc.Type.Equals(NozomiJwtClaimTypes.StripeSubscriptionId));
 
                     if (subscriptionIdUserClaim != null)
                     {
                         var subscriptionService = new SubscriptionService();
                         var subscription = await subscriptionService.GetAsync(subscriptionIdUserClaim.Value);
 
-                        if (subscription != null && subscription.CanceledAt != null)
+                        if (subscription != null && subscription.CanceledAt != null
+                            && !subscription.Plan.Id.Equals(plan.Id))
                         {
 
                             var subscriptionChangeOptions = new SubscriptionUpdateOptions {
@@ -451,23 +456,34 @@ namespace Nozomi.Infra.Auth.Services.Stripe
                                 }
                             };
 
-                            subscription = await subscriptionService.UpdateAsync(subscription.Id, subscriptionChangeOptions);
+                            subscription = await subscriptionService.UpdateAsync(subscription.Id, 
+                                subscriptionChangeOptions);
                             if (subscription.Plan.Id.Equals(plan.Id)) {
-                                _logger.LogInformation($"{_serviceName} changePlan: {user.Id} successfully changed to new plan {subscription.Plan.Id}");
+                                _logger.LogInformation($"{_serviceName} ChangeSubscription: {user.Id} " +
+                                                       "successfully changed to new plan {subscription.Plan.Id}");
                                 return;
                             }
-                            _logger.LogInformation($"{_serviceName} changePlan: There was an issue changing " +
-                                    $"user {user.Id} plan to {plan.Id}");
-                            throw new StripeException($"{_serviceName} changePlan: There was an issue changing " +
-                                                            $"user {user.Id} plan to {plan.Id}");
+                            _logger.LogInformation($"{_serviceName} ChangeSubscription: There was an issue " +
+                                                   $"changing user {user.Id} plan to {plan.Id}");
+                            throw new StripeException($"{_serviceName} ChangeSubscription: There was an " +
+                                                      $"issue changing user {user.Id} plan to {plan.Id}");
                         }
-                        throw new NullReferenceException($"{_serviceName} changePlan: subscription {subscriptionIdUserClaim.Value} does not exist or has been cancelled");
+                        
+                        if (subscription != null && subscription.Plan.Id.Equals(plan.Id))
+                            throw new InvalidOperationException($"{_serviceName} ChangeSubscription: " +
+                                                                $"subscription {subscriptionIdUserClaim.Value} is the" +
+                                                                " same plan as the one requested for.");
+                        
+                        throw new NullReferenceException($"{_serviceName} ChangeSubscription: subscription " +
+                                                         $"{subscriptionIdUserClaim.Value} does not exist or has " +
+                                                         "been cancelled");
                     }
-                    throw new NullReferenceException($"{_serviceName} changePlan: user does not have a subscription");
+                    throw new NullReferenceException($"{_serviceName} ChangeSubscription: user does not have " +
+                                                     "a ChangeSubscription");
                 }
-                throw new NullReferenceException($"{_serviceName} changePlan: plan is null.");
+                throw new NullReferenceException($"{_serviceName} ChangeSubscription: plan is null.");
             }
-            throw new NullReferenceException($"{_serviceName} changePlan: user is null.");
+            throw new NullReferenceException($"{_serviceName} ChangeSubscription: user is null.");
 
         }
     }
