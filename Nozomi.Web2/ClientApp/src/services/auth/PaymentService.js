@@ -60,6 +60,17 @@ export default {
         });
     },
     
+    plans() {
+        return new Promise((resolve, reject) => {
+            axios.get(oidcSettings.authority + '/Payment/Plans')
+            .then(function (response) {
+                resolve(response);
+            }).catch(function (error) {
+                reject(error);
+            });
+        });
+    },
+    
     removePaymentMethod(id) {
         return new Promise((resolve, reject) => {
             axios.delete(oidcSettings.authority + '/Payment/RemovePaymentMethod/' + id, {
