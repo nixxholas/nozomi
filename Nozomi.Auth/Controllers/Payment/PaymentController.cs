@@ -44,7 +44,7 @@ namespace Nozomi.Auth.Controllers.Payment
             _userService = userService;
         }
 
-        [Authorize(AuthenticationSchemes = "Bearer")]
+        [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> Plans()
         {
