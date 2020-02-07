@@ -6,6 +6,8 @@ namespace Nozomi.Infra.Auth.Events.Stripe
 {
     public interface IStripeEvent
     {
+        Task<string> GetUserCurrentPlanIdAsync(string userId);
+        
         bool IsDefaultPlan(string planId);
         
         /// <summary>

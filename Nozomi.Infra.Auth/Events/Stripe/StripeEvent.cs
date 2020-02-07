@@ -163,6 +163,46 @@ namespace Nozomi.Infra.Auth.Events.Stripe
             return false;
         }
 
+        public async Task<string> GetUserCurrentPlanIdAsync(string userId)
+        {
+            // Safetynet
+            if (!string.IsNullOrEmpty(userId))
+            {
+                // Obtain the user object first
+                var user = await _userManager.FindByIdAsync(userId);
+
+                // Safetynet
+                if (user != null)
+                {
+                    // Obtain the user's claims next
+                    var userClaims = await _userManager.GetClaimsAsync(user);
+                    // Then filter it to look for his/her subscription id just to be sure this person actually has a
+                    // subscription.
+                    var userSubId =
+                        userClaims.SingleOrDefault(c => 
+                            c.Type.Equals(NozomiJwtClaimTypes.StripeSubscriptionId));
+
+                    // Safetynet
+                    if (!string.IsNullOrEmpty(userSubId?.Value) && userClaims
+                                // Make sure there is a Stripe binding no matter what.
+                            .Any(c => c.Type.Equals(NozomiJwtClaimTypes.StripeCustomerId)))
+                    {
+                        // Since a subscription to Stripe exists, locate the current subscription if any
+                        var subService = new SubscriptionService();
+                        var sub = await subService.GetAsync(userSubId.Value);
+
+                        // Make sure this subscription is actually valid, through Stripe to ensure it is really legit
+                        if ((sub.EndedAt == null || sub.EndedAt < DateTime.UtcNow) && sub.Plan != null)
+                            return sub.Plan.Id; // Return since fulfilled
+                    }
+                }
+            }
+            
+            _logger.LogWarning($"{_eventName} GetUserCurrentPlanIdAsync: Invalid user, is there even a " +
+                               "subscription?");
+            return string.Empty;
+        }
+
         public bool IsDefaultPlan(string planId)
         {
             if (!string.IsNullOrEmpty(planId))
