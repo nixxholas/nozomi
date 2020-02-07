@@ -48,16 +48,7 @@ namespace Nozomi.Auth.Controllers.Payment
         [HttpGet]
         public async Task<IActionResult> Plans()
         {
-            // Validate
-            var user = await _userManager.FindByIdAsync(((ClaimsIdentity) User.Identity)
-                .Claims.FirstOrDefault(c => c.Type.Equals(JwtClaimTypes.Subject)
-                                            || c.Type.Equals(ClaimTypes.NameIdentifier))?.Value);
-            
-            // Safetynet
-            if (user != null)
-                return Ok(await _stripeEvent.Plans());
-
-            return BadRequest("There was an error attempting to obtain the plans.");
+            return Ok(await _stripeEvent.Plans());
         }
         
         [Authorize(AuthenticationSchemes = "Bearer")]
