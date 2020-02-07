@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div ref="table" class="pricing-table" v-if="!isLoading && plans && plans.length > 0">
+        <div ref="table" class="pricing-table" v-if="!isLoading && plans && plans.length > 0 && !viewMode">
             <div v-for="plan in plans" class="pricing-plan">
                 <div class="plan-header">{{ plan.nickname }}</div>
                 <div class="plan-price">
@@ -18,6 +18,9 @@
                 </div>
             </div>
         </div>
+        <div v-else-if="currentPlan" class="container">
+            <h2 class="title">You are currently on </h2>
+        </div>
         <b-loading :is-full-page="false" :active.sync="isLoading" :can-cancel="false" />
     </div>
 </template>
@@ -32,6 +35,10 @@
             currentPlan: {
                 type: String,
                 default: null,
+            },
+            viewMode: {
+                type: Boolean,
+                default: false,
             },
         },
         data() {

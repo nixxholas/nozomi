@@ -60,6 +60,7 @@
                     </b-tab-item>
                     <b-tab-item label="Billing" icon="money-bill">
                         <CardsComponent :raw-id="model.userClaims.stripe_cust_id" @created="updateUser" />
+                        <Plans :viewMode="true" />
                     </b-tab-item>
                     <b-tab-item label="API Keys" icon="key">
                         
@@ -76,10 +77,12 @@
     import PaymentService from "@/services/auth/PaymentService";
     import CardsComponent from '@/components/stripe/cards';
     import {NotificationProgrammatic as Notification} from 'buefy';
+    import Plans from "@/components/stripe/plans";
 
     export default {
         name: 'settings-index',
         components: {
+            Plans,
             CardsComponent
         },
         computed: {
