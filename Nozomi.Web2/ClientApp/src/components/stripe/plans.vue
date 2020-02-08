@@ -15,9 +15,13 @@
                     </div>
                 </div>
                 <div class="plan-footer">
-                    <button v-if="oidcIsAuthenticated && plan.id === currentPlan" class="button is-fullwidth"
+                    <b-button v-if="oidcIsAuthenticated && plan.id === currentPlan" expanded
                             disabled="disabled">Current plan
-                    </button>
+                    </b-button>
+                    <b-button v-if="oidcIsAuthenticated && plan.id === currentPlan" expanded 
+                              @click="unsubscribe(plan.id)">
+                        Delete
+                    </b-button>
                     <button v-else-if="oidcIsAuthenticated" @click="subscribe(plan.id)"
                             class="button is-primary is-fullwidth">Choose
                     </button>
@@ -102,6 +106,35 @@
                         Notification.open({
                             duration: 2500,
                             message: `There was an issue with subscribing! Please try again.`,
+                            position: 'is-bottom-right',
+                            type: 'is-danger',
+                            hasIcon: true
+                        });
+                    })
+                    .finally(function () {
+                        self.isLoading = false;
+                    });
+            },
+            unsubscribe: function (planId) {
+                let self = this;
+                self.isLoading = true;
+
+                PaymentService.unsubscribe(planId)
+                    .then(function (res) {
+                        console.dir(res);
+                        Notification.open({
+                            duration: 2000,
+                            message: `Plan successfully unsubscribed!`,
+                            position: 'is-bottom-right',
+                            type: 'is-success',
+                            hasIcon: true
+                        });
+                    })
+                    .catch(function (err) {
+                        console.dir(err);
+                        Notification.open({
+                            duration: 2500,
+                            message: `There was an issue with unsubscribing! Please try again.`,
                             position: 'is-bottom-right',
                             type: 'is-danger',
                             hasIcon: true
