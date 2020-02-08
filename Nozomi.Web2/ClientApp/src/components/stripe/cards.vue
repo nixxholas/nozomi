@@ -79,9 +79,9 @@
                 </div>
             </footer>
         </b-collapse>
-        <section class="hero is-medium" v-else-if="!id">
+        <section class="hero is-medium" v-if="!id">
             <div class="hero-body">
-                <div class="container has-text-centered" v-if="!id">
+                <div class="container has-text-centered">
                     <h1 class="title">
                         Well, we gotta setup billing first!
                     </h1>
@@ -106,7 +106,10 @@
         name: 'cards',
         components: {StripeCardModal},
         props: {
-            rawId: String,
+            rawId: { 
+                type: String,
+                default: null
+            },
         },
         data: function () {
             return {
