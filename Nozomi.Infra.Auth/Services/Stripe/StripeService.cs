@@ -25,6 +25,8 @@ namespace Nozomi.Infra.Auth.Services.Stripe
         private readonly IOptions<StripeOptions> _stripeConfiguration;
         private readonly UserManager<Base.Auth.Models.User> _userManager;
         private readonly IStripeEvent _stripeEvent;
+        private readonly SubscriptionService _subscriptionService;
+        private readonly PlanService _planService;
 
         public StripeService(ILogger<StripeService> logger, IUnitOfWork<AuthDbContext> unitOfWork, 
             IStripeEvent stripeEvent, UserManager<Base.Auth.Models.User> userManager, 
@@ -34,6 +36,8 @@ namespace Nozomi.Infra.Auth.Services.Stripe
             _stripeConfiguration = stripeConfiguration;
             _stripeEvent = stripeEvent;
             _userManager = userManager;
+            _subscriptionService = new SubscriptionService();
+            _planService = new PlanService();
         }
 
         public StripeService(IHttpContextAccessor contextAccessor, ILogger<StripeService> logger,
@@ -246,10 +250,12 @@ namespace Nozomi.Infra.Auth.Services.Stripe
             throw new InvalidConstraintException($"{_serviceName} removeCard: Invalid cardId or userId.");
         }
 
-        public async Task Subscribe(Plan plan, Base.Auth.Models.User user)
+        public async Task Subscribe(string planId, Base.Auth.Models.User user)
         {
             if (user != null)
             {
+                var plan = await _planService.GetAsync(planId);
+
                 if (plan != null)
                 {
 
@@ -279,8 +285,7 @@ namespace Nozomi.Infra.Auth.Services.Stripe
                             }
                         };
 
-                        var subscriptionService = new SubscriptionService();
-                        var subscription = await subscriptionService.CreateAsync(subscriptionOptions);
+                        var subscription = await _subscriptionService.CreateAsync(subscriptionOptions);
 
                         // If the subscription ain't null, bind it
                         if (subscription != null)
@@ -324,10 +329,9 @@ namespace Nozomi.Infra.Auth.Services.Stripe
                     .SingleOrDefault(uc => uc.Type.Equals(NozomiJwtClaimTypes.StripeSubscriptionId));
                 if (subscriptionIdClaim != null)
                 {
-                    var subscriptionService = new SubscriptionService();
                     
                     // Check the plan of the subscription first
-                    var subscription = subscriptionService.Get(subscriptionIdClaim.Value);
+                    var subscription = _subscriptionService.Get(subscriptionIdClaim.Value);
                     if (_stripeEvent.IsDefaultPlan(subscription.Plan.Id))
                     {
                         _logger.LogInformation($"{_serviceName} Unsubscribe: There was an issue cancelling " +
@@ -344,7 +348,7 @@ namespace Nozomi.Infra.Auth.Services.Stripe
                         InvoiceNow = true,
                         Prorate = false
                     };
-                    var subCancellation = await subscriptionService.CancelAsync(subscriptionIdClaim.Value, 
+                    var subCancellation = await _subscriptionService.CancelAsync(subscriptionIdClaim.Value, 
                         cancelOptions);
 
                     if (subCancellation.CanceledAt != null)
@@ -381,7 +385,7 @@ namespace Nozomi.Infra.Auth.Services.Stripe
                                 }
                             }
                         };
-                        var defaultSubRes = await subscriptionService.CreateAsync(subCreateOptions);
+                        var defaultSubRes = await _subscriptionService.CreateAsync(subCreateOptions);
 
                         if (defaultSubRes == null || defaultSubRes.StripeResponse.StatusCode != HttpStatusCode.OK)
                         {
@@ -415,10 +419,12 @@ namespace Nozomi.Infra.Auth.Services.Stripe
             throw new NullReferenceException($"{_serviceName} Unsubscribe: user is null.");
         }
 
-        public async void ChangeSubscription(Plan plan, Base.Auth.Models.User user)
+        public async void ChangeSubscription(string planId, Base.Auth.Models.User user)
         {
             if (user != null)
             {
+                var plan = await _planService.GetAsync(planId);
+
                 if (plan != null)
                 {
                     var userClaims = await _userManager.GetClaimsAsync(user);
@@ -440,8 +446,7 @@ namespace Nozomi.Infra.Auth.Services.Stripe
 
                     if (subscriptionIdUserClaim != null)
                     {
-                        var subscriptionService = new SubscriptionService();
-                        var subscription = await subscriptionService.GetAsync(subscriptionIdUserClaim.Value);
+                        var subscription = await _subscriptionService.GetAsync(subscriptionIdUserClaim.Value);
 
                         if (subscription != null && subscription.CanceledAt != null
                             && !subscription.Plan.Id.Equals(plan.Id))
@@ -456,7 +461,7 @@ namespace Nozomi.Infra.Auth.Services.Stripe
                                 }
                             };
 
-                            subscription = await subscriptionService.UpdateAsync(subscription.Id, 
+                            subscription = await _subscriptionService.UpdateAsync(subscription.Id, 
                                 subscriptionChangeOptions);
                             if (subscription.Plan.Id.Equals(plan.Id)) {
                                 _logger.LogInformation($"{_serviceName} ChangeSubscription: {user.Id} " +
