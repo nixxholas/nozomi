@@ -262,8 +262,7 @@ namespace Nozomi.Auth.Controllers.Payment
                              && _stripeEvent.PlanExists(id))
             {
                 // Since the user has no existing subscriptions, proceed.
-                var plan = _stripeEvent.Plan(id);
-                await _stripeService.Subscribe(plan, user);
+                await _stripeService.Subscribe(id, user);
                 
                 // Return
                 _logger.LogInformation($"Subscribe: plan of ID {id} added to {user.Id}");
@@ -295,7 +294,6 @@ namespace Nozomi.Auth.Controllers.Payment
                              && _stripeEvent.PlanExists(id))
             {
                 // Since the user has no existing subscriptions, proceed.
-                var plan = _stripeEvent.Plan(id);
                 await _stripeService.Unsubscribe(user);
                 
                 // Return

@@ -12,6 +12,10 @@ namespace Nozomi.Base.Auth.Global
         /// </summary>
         public const string StripeCustomerPaymentMethodId = "stripe_cust_payment_method_id";
         /// <summary>
+        /// The Id of the user's default payment method
+        /// </summary>
+        public const string StripeCustomerDefaultPaymentId = "stripe_cust_default_payment_method_id";
+        /// <summary>
         /// The Id of the user's current subscription
         /// </summary>
         public const string StripeSubscriptionId = "stripe_sub_id";
