@@ -254,10 +254,9 @@ namespace Nozomi.Infra.Auth.Services.Stripe
         {
             if (user != null)
             {
-                var plan = await _planService.GetAsync(planId);
-
-                if (plan != null)
+                if (_stripeEvent.PlanExists(planId))
                 {
+                    var plan = await _planService.GetAsync(planId);
 
                     var userClaims = await _userManager.GetClaimsAsync(user);
 
@@ -305,7 +304,7 @@ namespace Nozomi.Infra.Auth.Services.Stripe
                     }
                     throw new NullReferenceException($"{_serviceName} subscribePlan: user has yet to bind to stripe");
                 }
-                throw new NullReferenceException($"{_serviceName} subscribePlan: plan is null.");
+                throw new NullReferenceException($"{_serviceName} subscribePlan: plan does not exist.");
             }
             throw new NullReferenceException($"{_serviceName} subscribePlan: user is null.");
         }
@@ -423,10 +422,9 @@ namespace Nozomi.Infra.Auth.Services.Stripe
         {
             if (user != null)
             {
-                var plan = await _planService.GetAsync(planId);
-
-                if (plan != null)
+                if (_stripeEvent.PlanExists(planId))
                 {
+                    var plan = await _planService.GetAsync(planId);
                     var userClaims = await _userManager.GetClaimsAsync(user);
 
                     // Ensure the user has his/her stripe customer id up
