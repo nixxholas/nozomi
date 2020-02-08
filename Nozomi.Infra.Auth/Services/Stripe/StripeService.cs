@@ -28,6 +28,7 @@ namespace Nozomi.Infra.Auth.Services.Stripe
         private readonly SubscriptionService _subscriptionService;
         private readonly PlanService _planService;
         private readonly CustomerService _customerService;
+        private readonly PaymentMethodService _paymentMethodService;
 
         public StripeService(ILogger<StripeService> logger, IUnitOfWork<AuthDbContext> unitOfWork, 
             IStripeEvent stripeEvent, UserManager<Base.Auth.Models.User> userManager, 
@@ -40,6 +41,7 @@ namespace Nozomi.Infra.Auth.Services.Stripe
             _subscriptionService = new SubscriptionService();
             _planService = new PlanService();
             _customerService = new CustomerService();
+            _paymentMethodService = new PaymentMethodService();
         }
 
         public StripeService(IHttpContextAccessor contextAccessor, ILogger<StripeService> logger,
@@ -241,7 +243,7 @@ namespace Nozomi.Infra.Auth.Services.Stripe
 
                 // Obtain the payment method claim directly
                 var stripePaymentMethodClaim = userClaims.SingleOrDefault(uc =>
-                    uc.Type.Equals(NozomiJwtClaimTypes.StripeCustomerPaymentMethodId) 
+                    uc.Type.Equals(NozomiJwtClaimTypes.StripeCustomerPaymentMethodId)
                     && uc.Value.Equals(paymentMethodId));
 
                 if (stripePaymentMethodClaim == null) // This shouldn't happen, but just in case
@@ -251,18 +253,43 @@ namespace Nozomi.Infra.Auth.Services.Stripe
                     throw new KeyNotFoundException($"{_serviceName} RemovePaymentMethod: user does not own " +
                                                    $"the payment method");
                 }
-                
-                var paymentMethodService = new PaymentMethodService();
-                var paymentMethod = paymentMethodService.Detach(stripePaymentMethodClaim.Value);
 
-                // If the card's deleted, delete it on our end
-                if (paymentMethod != null && paymentMethod.Customer == null)
-                {
-                    await _userManager.RemoveClaimAsync(user, stripePaymentMethodClaim);
+                var customer = await _customerService.GetAsync(userStripeCustId);
 
+                var paymentMethodOptions = new PaymentMethodListOptions {
+                    Customer = userStripeCustId
+                };
+                var paymentMethods = _paymentMethodService.List(paymentMethodOptions);
+
+                if (paymentMethods.Count() > 1) {
+                    var paymentMethod = _paymentMethodService.Detach(stripePaymentMethodClaim.Value);
                     _logger.LogInformation($"{_serviceName} RemovePaymentMethod: {user.Id} successfully " +
-                                           $"removed a payment method that was tokenized as {stripePaymentMethodClaim.Value}");
-                    return; // Done!
+                                       $"removed a payment method that was tokenized as {stripePaymentMethodClaim.Value}");
+                    // If the card's deleted, delete it on our end
+                    if (paymentMethod != null && paymentMethod.Customer == null)
+                    {
+                        await _userManager.RemoveClaimAsync(user, stripePaymentMethodClaim);
+
+                        _logger.LogInformation($"{_serviceName} RemovePaymentMethod: {user.Id} successfully " +
+                                               $"removed a payment method that was tokenized as {stripePaymentMethodClaim.Value}");
+
+                        // Update the default payment method
+                        customer = await _customerService.GetAsync(userStripeCustId);
+
+                        var defaultPaymentMethodClaim = userClaims.SingleOrDefault(uc => uc.Type.Equals(NozomiJwtClaimTypes.StripeCustomerDefaultPaymentId));
+
+                        if (customer.InvoiceSettings.DefaultPaymentMethodId != null && defaultPaymentMethodClaim != null)
+                        {
+                            await _userManager.RemoveClaimAsync(user, defaultPaymentMethodClaim);
+
+                            var newDefaultPaymentMethodClaim = new Claim(NozomiJwtClaimTypes.StripeCustomerDefaultPaymentId, customer.InvoiceSettings.DefaultPaymentMethodId);
+                            await _userManager.AddClaimAsync(user, newDefaultPaymentMethodClaim);
+
+                            _logger.LogInformation($"{_serviceName} RemovePaymentMethod: {user.Id} new default payment method is " +
+                                               $"{newDefaultPaymentMethodClaim.Value}");
+                        }
+                        return; // Done!
+                    }
                 }
 
                 _logger.LogInformation($"{_serviceName} RemovePaymentMethod: There was an issue deleting " +
