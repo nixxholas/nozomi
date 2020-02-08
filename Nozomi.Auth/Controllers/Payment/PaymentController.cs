@@ -280,8 +280,8 @@ namespace Nozomi.Auth.Controllers.Payment
         /// <param name="id">the ID of the subscription</param>
         /// <returns>HttpResult of the subscription deletion.</returns>
         [Authorize(AuthenticationSchemes = "Bearer")]
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> Unsubscribe(string id)
+        [HttpDelete]
+        public async Task<IActionResult> Unsubscribe()
         {
             // Validate
             var user = await _userManager.FindByIdAsync(((ClaimsIdentity) User.Identity)
@@ -289,15 +289,13 @@ namespace Nozomi.Auth.Controllers.Payment
                                             || c.Type.Equals(ClaimTypes.NameIdentifier))?.Value);
             
             // Safetynet
-            if (user != null && !string.IsNullOrEmpty(id)
-                             // Ensure the plan in question exists and is enabled
-                             && _stripeEvent.PlanExists(id))
+            if (user != null)
             {
                 // Since the user has no existing subscriptions, proceed.
                 await _stripeService.Unsubscribe(user);
                 
                 // Return
-                _logger.LogInformation($"Unsubscribe: plan of ID {id} removed from {user.Id}");
+                _logger.LogInformation($"Unsubscribe: Subscription removed from {user.Id}");
                 return Ok("Plan has successfully been unsubscribed!");
             }
 
