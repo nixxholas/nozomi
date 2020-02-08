@@ -115,4 +115,21 @@ export default {
             });
         });
     },
+
+    unsubscribe(planId) {
+        if (!planId)
+            reject("Invalid plan id.");
+
+        return new Promise((resolve, reject) => {
+            axios.delete(oidcSettings.authority + '/Payment/Subscribe/' + planId, {
+                headers: {
+                    Authorization: "Bearer " + store.state.oidcStore.access_token
+                }
+            }).then(function (response) {
+                resolve(response);
+            }).catch(function (error) {
+                reject(error);
+            });
+        });
+    },
 }
