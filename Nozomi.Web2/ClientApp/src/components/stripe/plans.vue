@@ -26,8 +26,11 @@
                 </div>
             </div>
         </div>
-        <div v-else-if="currentPlan" class="container">
+        <div v-else-if="currentPlan && viewMode" class="container">
             <h2 class="title">You are currently on </h2>
+        </div>
+        <div v-else-if="viewMode" class="container p-4">
+            <h2 class="title">You currently <span class="has-text-danger">do not</span> have a plan.</h2>
         </div>
         <b-loading :is-full-page="false" :active.sync="isLoading" :can-cancel="false"/>
     </div>
