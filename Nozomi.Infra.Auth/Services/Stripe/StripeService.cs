@@ -27,6 +27,7 @@ namespace Nozomi.Infra.Auth.Services.Stripe
         private readonly IStripeEvent _stripeEvent;
         private readonly SubscriptionService _subscriptionService;
         private readonly PlanService _planService;
+        private readonly CustomerService _customerService;
 
         public StripeService(ILogger<StripeService> logger, IUnitOfWork<AuthDbContext> unitOfWork, 
             IStripeEvent stripeEvent, UserManager<Base.Auth.Models.User> userManager, 
@@ -38,6 +39,7 @@ namespace Nozomi.Infra.Auth.Services.Stripe
             _userManager = userManager;
             _subscriptionService = new SubscriptionService();
             _planService = new PlanService();
+            _customerService = new CustomerService();
         }
 
         public StripeService(IHttpContextAccessor contextAccessor, ILogger<StripeService> logger,
@@ -158,6 +160,29 @@ namespace Nozomi.Infra.Auth.Services.Stripe
 
                     _logger.LogInformation($"{_serviceName} AddPaymentMethod: {user.Id} successfully added " +
                                            $"a new payment method tokenized as {paymentMethodUserClaim.Value}");
+
+                    // If there is no default method, set it as the default payment method
+                    if (!userClaims.Any(uc => uc.Type.Equals(NozomiJwtClaimTypes.StripeCustomerDefaultPaymentId))) {
+                        //Set the default payment method
+                        var customer = await _customerService.GetAsync(userStripeCustId);
+                        if (customer.InvoiceSettings.DefaultPaymentMethodId == null)
+                        {
+                            var customerUpdateOptions = new CustomerUpdateOptions
+                            {
+                                InvoiceSettings = new CustomerInvoiceSettingsOptions
+                                {
+                                    DefaultPaymentMethod = paymentMethod.Id
+                                }
+                            };
+
+                            await _customerService.UpdateAsync(userStripeCustId, customerUpdateOptions);
+                        }
+                        var defaultPaymentMethodUserClaim = new Claim(NozomiJwtClaimTypes.StripeCustomerDefaultPaymentId, paymentMethod.Id);
+                        await _userManager.AddClaimAsync(user, defaultPaymentMethodUserClaim);
+
+                        _logger.LogInformation($"{_serviceName} AddPaymentMethod: set payment method {defaultPaymentMethodUserClaim.Value} as default for {user.Id}");
+                    }
+
                     return; // Done!
                 }
 
