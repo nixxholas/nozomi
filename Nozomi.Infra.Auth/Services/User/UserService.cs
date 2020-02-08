@@ -6,10 +6,12 @@ using IdentityModel;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Logging;
 using Nozomi.Base.Auth.Global;
 using Nozomi.Base.Auth.Models;
 using Nozomi.Base.Auth.ViewModels.Account;
+using Nozomi.Preprocessing;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.Auth.Data;
 using Nozomi.Repo.BCL.Repository;
@@ -32,6 +34,23 @@ namespace Nozomi.Infra.Auth.Services.User
             : base(contextAccessor, logger, unitOfWork)
         {
             _userManager = userManager;
+        }
+
+        public bool HasStripe(string userId)
+        {
+            if (!string.IsNullOrEmpty(userId))
+            {
+                return _unitOfWork.GetRepository<Base.Auth.Models.User>()
+                    .GetQueryable()
+                    .AsNoTracking()
+                    .Where(u => u.Id.Equals(userId))
+                    .Include(u => u.UserClaims)
+                    .Any(u => u.UserClaims != null && u.UserClaims.Count > 0
+                              && u.UserClaims.Any(uc => uc.ClaimType
+                                  .Equals(NozomiJwtClaimTypes.StripeCustomerId)));
+            }
+            
+            throw new ArgumentNullException($"{_serviceName} HasStripe(): Invalid userId.");
         }
 
         public Task LinkStripe(string stripeCustId, string userId)

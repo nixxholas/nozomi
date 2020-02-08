@@ -1,76 +1,80 @@
 @model Nozomi.Auth.Controllers.Consent.ConsentViewModel
 
-<div class="page-consent">
-    <div class="row page-header">
-        <div class="col-sm-10">
+<div class="columns is-multiline is-mobile is-gapless">
+    <div class="column is-full">
+        <div class="column is-10">
             @if (Model.ClientLogoUrl != null)
             {
-                <div class="client-logo"><img src="@Model.ClientLogoUrl"></div>
+                <div class="client-logo">
+                    <img src="@Model.ClientLogoUrl">
+                </div>
             }
             <h1>
-                @Model.ClientName
+                <b>@Model.ClientName</b>
                 <small>is requesting your permission</small>
             </h1>
+
+            <i>Uncheck the permissions you do not wish to grant.</i>
+
         </div>
     </div>
 
-    <div class="row">
-        <div class="col-sm-8">
-            <partial name="_ValidationSummary" />
-            
-            <form asp-action="Index" class="consent-form">
-                <input type="hidden" asp-for="ReturnUrl" />
+    <div class="column is-full">
+        <div class="column is-8">
+            <partial name="_ValidationSummary"/>
 
-                <div>Uncheck the permissions you do not wish to grant.</div>
-                
+            <form asp-action="Index" class="consent-form">
+                <input type="hidden" asp-for="ReturnUrl"/>
                 @if (Model.IdentityScopes.Any())
                 {
-                    <div class="panel panel-default consent-buttons">
-                        <div class="panel-heading">
-                            <span class="glyphicon glyphicon-user"></span>
-                            Personal Information
+                    <nav class="panel">
+                        <p class="panel-heading">
+                            <b>Personal Information</b>
+                        </p>
+                        <div class="panel-block">
+                            <ul class="list-group">
+                                @foreach (var scope in Model.IdentityScopes)
+                                {
+                                    <partial name="_ScopeListItem" model="@scope"/>
+                                }
+                            </ul>
                         </div>
-                        <ul class="list-group">
-                            @foreach (var scope in Model.IdentityScopes)
-                            {
-                                <partial name="_ScopeListItem" model="@scope" />
-                            }
-                        </ul>
-                    </div>
+                    </nav>
                 }
 
                 @if (Model.ResourceScopes.Any())
                 {
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <span class="glyphicon glyphicon-tasks"></span>
-                            Application Access
+                    <nav class="panel">
+                        <p class="panel-heading">
+                            <b>Application Access</b>
+                        </p>
+                        <div class="panel-block">
+                            <ul class="list-group">
+                                @foreach (var scope in Model.ResourceScopes)
+                                {
+                                    <partial name="_ScopeListItem" model="scope"/>
+                                }
+                            </ul>
                         </div>
-                        <ul class="list-group">
-                            @foreach (var scope in Model.ResourceScopes)
-                            {
-                                <partial name="_ScopeListItem" model="scope" />
-                            }
-                        </ul>
-                    </div>
+                    </nav>
                 }
 
                 @if (Model.AllowRememberConsent)
                 {
-                    <div class="consent-remember">
+                    <div class="field">
                         <label>
-                            <input class="consent-scopecheck" asp-for="RememberConsent" />
+                            <input class="consent-scopecheck" asp-for="RememberConsent"/>
                             <strong>Remember My Decision</strong>
                         </label>
                     </div>
                 }
 
-                <div class="consent-buttons">
-                    <button name="button" value="yes" class="btn btn-primary" autofocus>Yes, Allow</button>
-                    <button name="button" value="no" class="btn">No, Do Not Allow</button>
+                <div class="field buttons">
+                    <button name="button" value="yes" class="button is-primary" autofocus>Yes, Allow</button>
+                    <button name="button" value="no" class="button">No, Do Not Allow</button>
                     @if (Model.ClientUrl != null)
                     {
-                        <a class="pull-right btn btn-default" target="_blank" href="@Model.ClientUrl">
+                        <a class="pull-right button is-warning" target="_blank" href="@Model.ClientUrl">
                             <span class="glyphicon glyphicon-info-sign"></span>
                             <strong>@Model.ClientName</strong>
                         </a>

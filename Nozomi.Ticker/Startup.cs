@@ -71,7 +71,7 @@ namespace Nozomi.Ticker
 //                });
             
                 // Stripe
-                services.Configure<StripeSettings>(ss =>
+                services.Configure<StripeOptions>(ss =>
                 {
                     ss.SecretKey = Configuration.GetConnectionString("Stripe:TestPriv");
                     ss.PublishableKey = Configuration.GetConnectionString("Stripe:TestPub");
@@ -153,7 +153,7 @@ namespace Nozomi.Ticker
                     throw new SystemException("Invalid stripe configuration");
             
                 // Stripe
-                services.Configure<StripeSettings>(ss =>
+                services.Configure<StripeOptions>(ss =>
                 {
                     ss.SecretKey = stripePrivConf;
                     ss.PublishableKey = stripePubConf;

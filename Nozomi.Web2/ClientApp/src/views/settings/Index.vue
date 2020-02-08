@@ -59,7 +59,8 @@
                         </form>
                     </b-tab-item>
                     <b-tab-item label="Billing" icon="money-bill">
-                        <CardsComponent></CardsComponent>
+                        <Plans :viewMode="true" />
+                        <CardsComponent :raw-id="model.userClaims.stripe_cust_id" @created="updateUser" />
                     </b-tab-item>
                     <b-tab-item label="API Keys" icon="key">
                         
@@ -73,12 +74,15 @@
 <script>
     import {mapGetters} from 'vuex';
     import NozomiAuthService from "@/services/NozomiAuthService";
+    import PaymentService from "@/services/auth/PaymentService";
     import CardsComponent from '@/components/stripe/cards';
     import {NotificationProgrammatic as Notification} from 'buefy';
+    import Plans from "@/components/stripe/plans";
 
     export default {
         name: 'settings-index',
         components: {
+            Plans,
             CardsComponent
         },
         computed: {
@@ -87,7 +91,7 @@
                 'oidcAuthenticationIsChecked',
                 'oidcUser',
                 'oidcIdToken',
-                'oidcIdTokenExp'
+                'oidcIdTokenExp',
             ]),
         },
         data: function () {
@@ -104,13 +108,15 @@
                         email: '',
                         email_verified: '',
                         website: '',
-                        default_wallet_hash: ''
+                        default_wallet_hash: '',
+                        stripe_cust_id: null,
                     }
                 }
             }
         },
-        mounted: function () {
-            this.model.userClaims = this.oidcUser;
+        created: function () {
+            let self = this;
+            self.model.userClaims = this.oidcUser;
         },
         methods: {
             push: function () {
@@ -145,6 +151,29 @@
                         hasIcon: true
                     });
                 });
+            },
+            updateUser: function() {
+                let self = this;
+                
+                if (!self.model.userClaims.stripe_cust_id) {
+                    // Update the user
+                    PaymentService.getStripeCustId()
+                        .then(function (res) {
+                            if (res && res.status === 200 && res.data) {
+                                self.model.userClaims.stripe_cust_id = res.data;
+                            }
+                        })
+                        .catch(function (err) {
+                            console.dir(err);
+                            Notification.open({
+                                duration: 2500,
+                                message: `There might've been a communication error, please try again!`,
+                                position: 'is-bottom-right',
+                                type: 'is-danger',
+                                hasIcon: true
+                            });
+                        });
+                }
             }
         }
     }

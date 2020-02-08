@@ -20,9 +20,13 @@ using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 using Nozomi.Base.Auth.Global;
 using Nozomi.Base.Auth.Models;
+using Nozomi.Base.BCL.Configurations;
+using Nozomi.Infra.Auth.Events.Stripe;
 using Nozomi.Infra.Auth.Services.Address;
+using Nozomi.Infra.Auth.Services.Stripe;
 using Nozomi.Infra.Auth.Services.User;
 using Nozomi.Infra.Blockchain.Auth.Events;
 using Nozomi.Infra.Blockchain.Auth.Events.Interfaces;
@@ -33,6 +37,7 @@ using Nozomi.Repo.Auth.Data;
 using Nozomi.Repo.BCL.Context;
 using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Data;
+using Stripe;
 using VaultSharp;
 using VaultSharp.V1.AuthMethods.Token;
 
@@ -57,7 +62,7 @@ namespace Nozomi.Auth
             {
                 // Greet the beloved dev
                 Console.WriteLine(@"Welcome to the dev environment, your machine is named: " + Environment.MachineName);
-                
+
                 // Postgres DB Setup
                 var str = Configuration.GetConnectionString("Local:" + Environment.MachineName);
                 services.AddDbContext<AuthDbContext>(options =>
@@ -76,7 +81,7 @@ namespace Nozomi.Auth
 
                 var authMethod = new TokenAuthMethodInfo(vaultToken);
                 var vaultClientSettings = new VaultClientSettings(
-                    !string.IsNullOrWhiteSpace(vaultUrl) ? vaultUrl : "https://blackbox.nozomi.one:8200", 
+                    !string.IsNullOrWhiteSpace(vaultUrl) ? vaultUrl : "https://blackbox.nozomi.one:8200",
                     authMethod);
                 var vaultClient = new VaultClient(vaultClientSettings);
 
@@ -91,10 +96,7 @@ namespace Nozomi.Auth
                 services.AddDbContext<NozomiDbContext>(options =>
                 {
                     options.UseNpgsql(mainDb
-                        , nozomiDbContextBuilder =>
-                        {
-                            nozomiDbContextBuilder.EnableRetryOnFailure();
-                        }
+                        , nozomiDbContextBuilder => { nozomiDbContextBuilder.EnableRetryOnFailure(); }
                     );
                     options.EnableSensitiveDataLogging(false);
                     options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
@@ -107,10 +109,7 @@ namespace Nozomi.Auth
                 services.AddDbContext<AuthDbContext>(options =>
                 {
                     options.UseNpgsql(authDb
-                        , authDbContextBuilder =>
-                        {
-                            authDbContextBuilder.EnableRetryOnFailure();
-                        }
+                        , authDbContextBuilder => { authDbContextBuilder.EnableRetryOnFailure(); }
                     );
                     options.EnableSensitiveDataLogging(false);
                     options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
@@ -133,9 +132,22 @@ namespace Nozomi.Auth
                                 .AllowAnyMethod();
                     });
             });
-            
-            services.AddControllersWithViews()
-                .SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
+
+            if (HostingEnvironment.IsDevelopment())
+                services.AddControllersWithViews()
+                    .AddRazorRuntimeCompilation()
+                    .AddNewtonsoftJson(options =>
+                        {
+                            options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+                        })
+                    .SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
+            else
+                services.AddControllersWithViews()
+                    .AddNewtonsoftJson(options =>
+                    {
+                        options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+                    })
+                    .SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
 
             services.AddRazorPages();
 
@@ -144,7 +156,7 @@ namespace Nozomi.Auth
                 .AddIdentity<User, Role>(options =>
                 {
                     options.ClaimsIdentity.UserIdClaimType = ClaimTypes.NameIdentifier;
-                    
+
                     options.Password.RequireLowercase = false;
                     options.Password.RequireUppercase = false;
                     options.Password.RequireNonAlphanumeric = false;
@@ -156,10 +168,17 @@ namespace Nozomi.Auth
             services.Configure<IdentityOptions>(options =>
                 options.ClaimsIdentity.RoleClaimType = ClaimTypes.Role);
             services.Configure<SendgridOptions>(options =>
-                {
-                    options.SendGridKey = "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";
-                    options.SendGridUser = "Nozomi Auth";
-                });
+            {
+                options.SendGridKey = "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";
+                options.SendGridUser = "Nozomi Auth";
+            });
+            services.Configure<StripeOptions>(options =>
+            {
+                options.DefaultPlanId = Configuration["Stripe:DefaultPlanId"];
+                options.ProductId = Configuration["Stripe:ProductId"];
+                options.PublishableKey = Configuration["Stripe:PublishableKey"];
+                options.SecretKey = Configuration["Stripe:SecretKey"];
+            });
 
             var identityConfig = new IdentityConfig(HostingEnvironment);
 
@@ -190,16 +209,14 @@ namespace Nozomi.Auth
 
                 var authMethod = new TokenAuthMethodInfo(vaultToken);
                 var vaultClientSettings = new VaultClientSettings(
-                    !string.IsNullOrWhiteSpace(vaultUrl) ? vaultUrl : "https://blackbox.nozomi.one:8200", 
+                    !string.IsNullOrWhiteSpace(vaultUrl) ? vaultUrl : "https://blackbox.nozomi.one:8200",
                     authMethod);
                 var vaultClient = new VaultClient(vaultClientSettings);
 
-                var nozomiVault = 
+                var nozomiVault =
                     vaultClient.V1.Secrets.Cubbyhole.ReadSecretAsync("nozomi")
-                    .GetAwaiter()
-                    .GetResult().Data;
-                
-                Console.WriteLine(nozomiVault);
+                        .GetAwaiter()
+                        .GetResult().Data;
 
                 var authSigningKey = (string) nozomiVault["auth-signing-key"];
                 if (string.IsNullOrWhiteSpace(authSigningKey))
@@ -209,12 +226,12 @@ namespace Nozomi.Auth
                 var authSigningCert = (string) nozomiVault["auth-signing-cert"];
                 if (string.IsNullOrEmpty(authSigningCert))
                     throw new NullReferenceException("Auth signing cert from vault is empty.");
-                
+
                 var certificate = new X509Certificate2(
                     // https://stackoverflow.com/questions/25919387/converting-file-into-base64string-and-back-again
                     Convert.FromBase64String(authSigningCert)
                     , authSigningKey);
-                
+
                 // https://stackoverflow.com/questions/49042474/addsigningcredential-for-identityserver4
                 builder.AddSigningCredential(certificate);
             }
@@ -227,7 +244,7 @@ namespace Nozomi.Auth
                 {
                     options.Authority = authority;
                     options.RequireHttpsMetadata = false;
-                    
+
                     options.Audience = "nozomi.web";
                 });
 
@@ -239,12 +256,14 @@ namespace Nozomi.Auth
             services.AddTransient<IUnitOfWork<NozomiDbContext>, UnitOfWork<NozomiDbContext>>();
             services.AddTransient<IDbContext, NozomiDbContext>();
 
-            services.AddScoped<IAddressEvent, AddressEvent>();
-            services.AddScoped<IValidatingEvent, ValidatingEvent>();
+            services.AddTransient<IAddressEvent, AddressEvent>();
+            services.AddTransient<IStripeEvent, StripeEvent>();
+            services.AddTransient<IValidatingEvent, ValidatingEvent>();
 
             services.AddTransient<IEmailSender, EmailSender>();
-            services.AddTransient<IAddressService, AddressService>();
-            services.AddTransient<IUserService, UserService>();
+            services.AddScoped<IAddressService, AddressService>();
+            services.AddScoped<IStripeService, StripeService>();
+            services.AddScoped<IUserService, UserService>();
         }
 
         public void Configure(IApplicationBuilder app)
@@ -259,12 +278,12 @@ namespace Nozomi.Auth
                 app.UseExceptionHandler("/Home/Error");
                 app.UseHsts();
             }
-            
+
+            StripeConfiguration.ApiKey = Configuration["Stripe:SecretKey"];
+
             app.UseAutoDbMigration(HostingEnvironment);
 
             app.UseStaticFiles();
-            app.UseRouting();
-            
             // Reverse proxy bypass for OpenID compatibility
             // https://github.com/IdentityServer/IdentityServer4/issues/1331#issuecomment-317049214
             var forwardOptions = new ForwardedHeadersOptions
@@ -276,19 +295,24 @@ namespace Nozomi.Auth
             forwardOptions.KnownNetworks.Clear();
             forwardOptions.KnownProxies.Clear();
 
-            // Cross origin requests DI
-            app.UseCors(NozomiSpecificOrigins);
-            
             // ref: https://github.com/aspnet/Docs/issues/2384
-            app.UseForwardedHeaders(forwardOptions);            
+            app.UseForwardedHeaders(forwardOptions);
+
             app.UseHttpsRedirection();
-            
+
             app.UseCookiePolicy();
             app.UseIdentityServer();
 
+            app.UseRouting();
+
+            // Cross origin requests DI
+            // With endpoint routing, the CORS middleware must be configured to execute between the calls to
+            // UseRouting and UseEndpoints. Incorrect configuration will cause the middleware to stop functioning correctly.
+            app.UseCors(NozomiSpecificOrigins);
+
             app.UseAuthentication();
             app.UseAuthorization();
-            
+
             // "default", "{controller=Home}/{action=Index}/{id?}"
             // app.UseMvcWithDefaultRoute();
 
@@ -297,22 +321,24 @@ namespace Nozomi.Auth
                 options.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
-                
+
                 options.MapRazorPages();
             });
         }
-        
+
         private SigningCredentials CreateSigningCredential()
         {
             var credentials = new SigningCredentials(GetSecurityKey(), SecurityAlgorithms.RsaSha256Signature);
 
             return credentials;
         }
+
         private RSA GetRSACryptoServiceProvider()
         {
             // https://stackoverflow.com/questions/54180171/cspkeycontainerinfo-requires-windows-cryptographic-api-capi-which-is-not-av
             return RSA.Create(2048);
         }
+
         private SecurityKey GetSecurityKey()
         {
             return new RsaSecurityKey(GetRSACryptoServiceProvider());

@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Nozomi.Auth.Controllers
 {
+    [Route("[controller]/[action]")]
     public class BaseController<T> : Controller where T : class
     {
         protected readonly ILogger<T> _logger;

@@ -62,6 +62,15 @@ namespace Nozomi.Auth
                     Required = true,
                     Emphasize = true
                 },
+                new IdentityResource
+                {
+                    Name = NozomiAuthConstants.StandardScopes.Stripe,
+                    DisplayName = "Stripe",
+                    Description = "Allow the service access to process payments through Stripe.",
+                    UserClaims = new[] { NozomiJwtClaimTypes.StripeCustomerId, NozomiJwtClaimTypes.StripeCustomerPaymentMethodId },
+                    ShowInDiscoveryDocument = true,
+                    Required = true
+                }, 
                 // new IdentityResource("roles", new[] { "role" })
             };
         }
@@ -89,7 +98,10 @@ namespace Nozomi.Auth
                         IdentityServerConstants.StandardScopes.Email,
                         IdentityServerConstants.StandardScopes.Phone,
                         JwtClaimTypes.Role,
-                        NozomiAuthConstants.StandardScopes.DefaultCryptoAddress },
+                        NozomiAuthConstants.StandardScopes.DefaultCryptoAddress,
+                        NozomiJwtClaimTypes.StripeCustomerId,
+                        NozomiJwtClaimTypes.StripeCustomerPaymentMethodId
+                    },
 
                     // this API has limit to its scopes
                     Scopes =
@@ -130,7 +142,9 @@ namespace Nozomi.Auth
                         IdentityServerConstants.StandardScopes.Email,
                         IdentityServerConstants.StandardScopes.Phone,
                         JwtClaimTypes.Role,
-                        NozomiAuthConstants.StandardScopes.DefaultCryptoAddress },
+                        NozomiAuthConstants.StandardScopes.DefaultCryptoAddress,
+                        NozomiJwtClaimTypes.StripeCustomerId,
+                        NozomiJwtClaimTypes.StripeCustomerPaymentMethodId },
 
                     // this API has limit to its scopes
                     Scopes =
@@ -167,7 +181,9 @@ namespace Nozomi.Auth
                             IdentityServerConstants.StandardScopes.Email,
                             IdentityServerConstants.StandardScopes.Phone,
                             JwtClaimTypes.Role, "nozomi.auth", "nozomi.web", "nozomi.web.read_only",
-                            NozomiAuthConstants.StandardScopes.DefaultCryptoAddress },
+                            NozomiAuthConstants.StandardScopes.DefaultCryptoAddress,
+                            NozomiAuthConstants.StandardScopes.Stripe
+                        },
                         RedirectUris = {"https://nozomi.one/oidc-callback", "https://nozomi.one/oidc-silent-renew" },
                         PostLogoutRedirectUris = {"https://nozomi.one/"},
                         AllowedCorsOrigins = {"https://nozomi.one"},
@@ -190,12 +206,10 @@ namespace Nozomi.Auth
                         IdentityServerConstants.StandardScopes.Email,
                         IdentityServerConstants.StandardScopes.Phone,
                         JwtClaimTypes.Role, "nozomi.auth", "nozomi.web", "nozomi.web.read_only",
-                        NozomiAuthConstants.StandardScopes.DefaultCryptoAddress },
-                    RedirectUris =
-                    {
-                        "https://localhost:5001/oidc-callback", "https://localhost:5001/oidc-silent-renew" 
-                        ,"https://localhost:443/oidc-callback", "https://localhost:443/oidc-silent-renew"
+                        NozomiAuthConstants.StandardScopes.DefaultCryptoAddress,
+                        NozomiAuthConstants.StandardScopes.Stripe
                     },
+                    RedirectUris = {"https://localhost:5001/oidc-callback", "https://localhost:5001/oidc-silent-renew"},
                     PostLogoutRedirectUris = {"https://localhost:5001/"},
                     AllowedCorsOrigins = {"https://localhost:5001"},
                     AccessTokenLifetime = 3600
