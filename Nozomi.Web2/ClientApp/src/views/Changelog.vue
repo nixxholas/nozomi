@@ -183,12 +183,23 @@
                         <div class="timeline-item is-info">
                             <div class="timeline-marker is-info"></div>
                             <div class="timeline-content">
-                                <p class="heading">04 January 2020 - <b>beta 9</b></p>
+                                <p class="heading">04 February 2020 - <b>beta 9</b></p>
                                 <ul>
                                     <li><b>Auth</b> - General UI updates</li>
                                     <li><b>Web</b> - Setup payments for your account! </li>
                                     <li><b>Web</b> - Add a card for payments </li>
                                     <li><b>Web</b> - Remove a card for payments! <i>Of course you gotta have more than one to do that.</i> </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="timeline-item is-info">
+                            <div class="timeline-marker is-info"></div>
+                            <div class="timeline-content">
+                                <p class="heading">08 February 2020 - <b>beta 10</b></p>
+                                <ul>
+                                    <li><b>Web</b> - Actual initial plans out! </li>
+                                    <li><b>Web</b> - General hotfixes and improvements to the payment flow </li>
+                                    <li><b>Web</b> - Subscribe to a plan! </li>
                                 </ul>
                             </div>
                         </div>
