@@ -1,15 +1,17 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nozomi.Base.Domain", "Nozomi.Base.Domain\Nozomi.Base.Domain.csproj", "{AA3857F1-A9AA-4156-A8D5-A10971C731CA}"
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29613.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nozomi.Base.Domain", "Nozomi.Base.Domain\Nozomi.Base.Domain.csproj", "{AA3857F1-A9AA-4156-A8D5-A10971C731CA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nozomi.Repo", "Nozomi.Repo\Nozomi.Repo.csproj", "{CB82BD49-6D8E-4808-8208-375B9AAA776C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nozomi.Repo", "Nozomi.Repo\Nozomi.Repo.csproj", "{CB82BD49-6D8E-4808-8208-375B9AAA776C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nozomi.Infra.Service", "Nozomi.Infra.Service\Nozomi.Infra.Service.csproj", "{66206D94-625E-4EC6-B2BA-2063C9CA7E25}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nozomi.Infra.Service", "Nozomi.Infra.Service\Nozomi.Infra.Service.csproj", "{66206D94-625E-4EC6-B2BA-2063C9CA7E25}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nozomi.Ticker", "Nozomi.Ticker\Nozomi.Ticker.csproj", "{C2DE3793-B136-4821-9DD6-27FCB355FB85}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nozomi.Ticker", "Nozomi.Ticker\Nozomi.Ticker.csproj", "{C2DE3793-B136-4821-9DD6-27FCB355FB85}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nozomi.Base.BCL", "Nozomi.Base.BCL\Nozomi.Base.BCL.csproj", "{08B57962-9841-4DFA-8DC3-E95042220750}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nozomi.Base.BCL", "Nozomi.Base.BCL\Nozomi.Base.BCL.csproj", "{08B57962-9841-4DFA-8DC3-E95042220750}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Nozomi.Infra", "Nozomi.Infra", "{D54DB59C-EB6F-4CBD-9FC0-EF423F88248E}"
 EndProject
@@ -19,39 +21,41 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Nozomi.DataAccess", "Nozomi
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Nozomi.Presentation", "Nozomi.Presentation", "{67D06790-261E-455B-BA5C-1033C2EC4A09}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nozomi.Infra.Preprocessing", "Nozomi.Infra.Preprocessing\Nozomi.Infra.Preprocessing.csproj", "{82F91DE5-FF08-4FA1-9EB5-03B73BA14E4E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nozomi.Infra.Preprocessing", "Nozomi.Infra.Preprocessing\Nozomi.Infra.Preprocessing.csproj", "{82F91DE5-FF08-4FA1-9EB5-03B73BA14E4E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nozomi.Repo.BCL", "Nozomi.Repo.BCL\Nozomi.Repo.BCL.csproj", "{D0EDBECA-0DE0-41E0-8675-70FF8D94B583}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nozomi.Repo.BCL", "Nozomi.Repo.BCL\Nozomi.Repo.BCL.csproj", "{D0EDBECA-0DE0-41E0-8675-70FF8D94B583}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nozomi.Base.Socket", "Nozomi.Base.Socket\Nozomi.Base.Socket.csproj", "{A9DF23FD-3E1C-47E3-834E-6F7BF96098A1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nozomi.Base.Socket", "Nozomi.Base.Socket\Nozomi.Base.Socket.csproj", "{A9DF23FD-3E1C-47E3-834E-6F7BF96098A1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nozomi.Infra.Preprocessing.SignalR", "Nozomi.Infra.Preprocessing.SignalR\Nozomi.Infra.Preprocessing.SignalR.csproj", "{E9349E75-B4FF-4622-A913-AE951FD10E52}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nozomi.Infra.Preprocessing.SignalR", "Nozomi.Infra.Preprocessing.SignalR\Nozomi.Infra.Preprocessing.SignalR.csproj", "{E9349E75-B4FF-4622-A913-AE951FD10E52}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nozomi.Infra.Analysis.Service", "Nozomi.Infra.Analysis.Service\Nozomi.Infra.Analysis.Service.csproj", "{52A95D05-B493-45F4-B914-72FC7C2C1003}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nozomi.Infra.Analysis.Service", "Nozomi.Infra.Analysis.Service\Nozomi.Infra.Analysis.Service.csproj", "{52A95D05-B493-45F4-B914-72FC7C2C1003}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nozomi.Infra.Admin.Service", "Nozomi.Infra.Admin.Service\Nozomi.Infra.Admin.Service.csproj", "{0D63C0B5-6148-4CE3-83A3-BB8EAABD32A6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nozomi.Infra.Admin.Service", "Nozomi.Infra.Admin.Service\Nozomi.Infra.Admin.Service.csproj", "{0D63C0B5-6148-4CE3-83A3-BB8EAABD32A6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nozomi.Base.Admin.Domain", "Nozomi.Base.Admin.Domain\Nozomi.Base.Admin.Domain.csproj", "{50E8C1ED-BFF4-4D6B-9FE8-9969338F05E9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nozomi.Base.Admin.Domain", "Nozomi.Base.Admin.Domain\Nozomi.Base.Admin.Domain.csproj", "{50E8C1ED-BFF4-4D6B-9FE8-9969338F05E9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nozomi.WSS", "Nozomi.WSS\Nozomi.WSS.csproj", "{60F5FF91-FB17-4016-BCB0-45F4ED061089}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nozomi.WSS", "Nozomi.WSS\Nozomi.WSS.csproj", "{60F5FF91-FB17-4016-BCB0-45F4ED061089}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nozomi.HttpSyncing", "Nozomi.HttpSyncing\Nozomi.HttpSyncing.csproj", "{6C7FF0F8-DD27-4055-B0CA-FD438B663EAA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nozomi.HttpSyncing", "Nozomi.HttpSyncing\Nozomi.HttpSyncing.csproj", "{6C7FF0F8-DD27-4055-B0CA-FD438B663EAA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nozomi.Compute", "Nozomi.Compute\Nozomi.Compute.csproj", "{DA615BA1-1DBD-49ED-A8D2-F131083401CE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nozomi.Compute", "Nozomi.Compute\Nozomi.Compute.csproj", "{DA615BA1-1DBD-49ED-A8D2-F131083401CE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nozomi.Infra.Blockchain.Auth", "Nozomi.Infra.Blockchain.Auth\Nozomi.Infra.Blockchain.Auth.csproj", "{CD1B9980-2FF7-44C3-9631-DCC08A002DA4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nozomi.Infra.Blockchain.Auth", "Nozomi.Infra.Blockchain.Auth\Nozomi.Infra.Blockchain.Auth.csproj", "{CD1B9980-2FF7-44C3-9631-DCC08A002DA4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nozomi.Base.Blockchain.Auth", "Nozomi.Base.Blockchain.Auth\Nozomi.Base.Blockchain.Auth.csproj", "{457A55DC-934D-4FD9-9F34-E2A510F54237}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nozomi.Base.Blockchain.Auth", "Nozomi.Base.Blockchain.Auth\Nozomi.Base.Blockchain.Auth.csproj", "{457A55DC-934D-4FD9-9F34-E2A510F54237}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nozomi.Auth", "Nozomi.Auth\Nozomi.Auth.csproj", "{7224769F-EAB4-4C0E-B7AE-C1CF5E01E775}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nozomi.Auth", "Nozomi.Auth\Nozomi.Auth.csproj", "{7224769F-EAB4-4C0E-B7AE-C1CF5E01E775}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nozomi.Repo.Auth", "Nozomi.Repo.Auth\Nozomi.Repo.Auth.csproj", "{2D0843BC-A8E1-41B0-88EF-4964D539655D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nozomi.Repo.Auth", "Nozomi.Repo.Auth\Nozomi.Repo.Auth.csproj", "{2D0843BC-A8E1-41B0-88EF-4964D539655D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nozomi.Base.Auth", "Nozomi.Base.Auth\Nozomi.Base.Auth.csproj", "{BD742A3F-F398-422E-A38B-1C22499D0722}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nozomi.Base.Auth", "Nozomi.Base.Auth\Nozomi.Base.Auth.csproj", "{BD742A3F-F398-422E-A38B-1C22499D0722}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nozomi.Infra.Auth", "Nozomi.Infra.Auth\Nozomi.Infra.Auth.csproj", "{33272289-714F-491F-B87B-2EC25A5B5C6B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nozomi.Infra.Auth", "Nozomi.Infra.Auth\Nozomi.Infra.Auth.csproj", "{33272289-714F-491F-B87B-2EC25A5B5C6B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nozomi.Web2", "Nozomi.Web2\Nozomi.Web2.csproj", "{E8116CCE-5778-40E6-9AE1-EEA22BAD632E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nozomi.Web2", "Nozomi.Web2\Nozomi.Web2.csproj", "{E8116CCE-5778-40E6-9AE1-EEA22BAD632E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nozomi.Payment", "Nozomi.Payment\Nozomi.Payment.csproj", "{F51E0D3B-DE5E-4640-91B0-F0393A4D9055}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -147,13 +151,20 @@ Global
 		{E8116CCE-5778-40E6-9AE1-EEA22BAD632E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E8116CCE-5778-40E6-9AE1-EEA22BAD632E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E8116CCE-5778-40E6-9AE1-EEA22BAD632E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F51E0D3B-DE5E-4640-91B0-F0393A4D9055}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F51E0D3B-DE5E-4640-91B0-F0393A4D9055}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F51E0D3B-DE5E-4640-91B0-F0393A4D9055}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F51E0D3B-DE5E-4640-91B0-F0393A4D9055}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{08B57962-9841-4DFA-8DC3-E95042220750} = {AE1F223F-EF2C-4237-81CE-435DCE9DF913}
 		{AA3857F1-A9AA-4156-A8D5-A10971C731CA} = {AE1F223F-EF2C-4237-81CE-435DCE9DF913}
 		{CB82BD49-6D8E-4808-8208-375B9AAA776C} = {CD7C95FA-AEB1-4EC4-AA8C-3F6391A864A2}
 		{66206D94-625E-4EC6-B2BA-2063C9CA7E25} = {D54DB59C-EB6F-4CBD-9FC0-EF423F88248E}
 		{C2DE3793-B136-4821-9DD6-27FCB355FB85} = {67D06790-261E-455B-BA5C-1033C2EC4A09}
+		{08B57962-9841-4DFA-8DC3-E95042220750} = {AE1F223F-EF2C-4237-81CE-435DCE9DF913}
 		{82F91DE5-FF08-4FA1-9EB5-03B73BA14E4E} = {D54DB59C-EB6F-4CBD-9FC0-EF423F88248E}
 		{D0EDBECA-0DE0-41E0-8675-70FF8D94B583} = {CD7C95FA-AEB1-4EC4-AA8C-3F6391A864A2}
 		{A9DF23FD-3E1C-47E3-834E-6F7BF96098A1} = {AE1F223F-EF2C-4237-81CE-435DCE9DF913}
@@ -171,5 +182,9 @@ Global
 		{BD742A3F-F398-422E-A38B-1C22499D0722} = {AE1F223F-EF2C-4237-81CE-435DCE9DF913}
 		{33272289-714F-491F-B87B-2EC25A5B5C6B} = {D54DB59C-EB6F-4CBD-9FC0-EF423F88248E}
 		{E8116CCE-5778-40E6-9AE1-EEA22BAD632E} = {67D06790-261E-455B-BA5C-1033C2EC4A09}
+		{F51E0D3B-DE5E-4640-91B0-F0393A4D9055} = {67D06790-261E-455B-BA5C-1033C2EC4A09}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {3DDD2207-30A6-4A5A-B901-D1250C52E847}
 	EndGlobalSection
 EndGlobal
