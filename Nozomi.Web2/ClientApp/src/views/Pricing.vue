@@ -19,8 +19,22 @@
     </section>
 </template>
 <script>
+    import {mapGetters} from "vuex";
     import Plans from "@/components/stripe/plans";
+    
     export default {
-        components: {Plans}
+        name: "Pricing",
+        computed: {
+            ...mapGetters('oidcStore', [
+                'oidcIsAuthenticated',
+                'oidcAuthenticationIsChecked',
+                'oidcUser',
+                'oidcIdToken',
+                'oidcIdTokenExp',
+            ]),
+        },
+        components: {
+            Plans
+        },
     }
 </script>
