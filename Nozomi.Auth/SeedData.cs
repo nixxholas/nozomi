@@ -166,64 +166,6 @@ namespace Nozomi.Auth
                     {
                         Console.WriteLine("alice already exists");
                     }
-                }
-            }
-        }
-        
-        public static void EnsureSeedData(string connectionString)
-        {
-            var services = new ServiceCollection();
-            services.AddDbContext<AuthDbContext>(options =>
-                options.UseSqlite(connectionString));
-
-            services.AddIdentity<User, IdentityRole>()
-                .AddEntityFrameworkStores<AuthDbContext>()
-                .AddDefaultTokenProviders();
-
-            using (var serviceProvider = services.BuildServiceProvider())
-            {
-                using (var scope = serviceProvider.GetRequiredService<IServiceScopeFactory>().CreateScope())
-                {
-                    var context = scope.ServiceProvider.GetService<AuthDbContext>();
-                    context.Database.Migrate();
-
-                    var userMgr = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
-                    var alice = userMgr.FindByNameAsync("alice").Result;
-                    if (alice == null)
-                    {
-                        alice = new User
-                        {
-                            UserName = "alice"
-                        };
-                        var result = userMgr.CreateAsync(alice, "Pass123$").Result;
-                        if (!result.Succeeded)
-                        {
-                            throw new Exception(result.Errors.First().Description);
-                        }
-
-                        result = userMgr.AddClaimsAsync(alice, new Claim[]
-                        {
-                            new Claim(JwtClaimTypes.Name, "Alice Smith"),
-                            new Claim(JwtClaimTypes.GivenName, "Alice"),
-                            new Claim(JwtClaimTypes.FamilyName, "Smith"),
-                            new Claim(JwtClaimTypes.Email, "AliceSmith@email.com"),
-                            new Claim(JwtClaimTypes.EmailVerified, "true", ClaimValueTypes.Boolean),
-                            new Claim(JwtClaimTypes.WebSite, "http://alice.com"),
-                            new Claim(JwtClaimTypes.Address,
-                                @"{ 'street_address': 'One Hacker Way', 'locality': 'Heidelberg', 'postal_code': 69118, 'country': 'Germany' }",
-                                IdentityServer4.IdentityServerConstants.ClaimValueTypes.Json)
-                        }).Result;
-                        if (!result.Succeeded)
-                        {
-                            throw new Exception(result.Errors.First().Description);
-                        }
-
-                        Console.WriteLine("alice created");
-                    }
-                    else
-                    {
-                        Console.WriteLine("alice already exists");
-                    }
 
                     var nicholas = userMgr.FindByNameAsync("nicholas").Result;
                     if (nicholas == null)
