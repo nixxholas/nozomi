@@ -38,10 +38,10 @@ namespace Nozomi.Infra.Auth.Services.Stripe
             _stripeConfiguration = stripeConfiguration;
             _stripeEvent = stripeEvent;
             _userManager = userManager;
-            _subscriptionService = new SubscriptionService();
             _planService = new PlanService();
             _customerService = new CustomerService();
             _paymentMethodService = new PaymentMethodService();
+            _subscriptionService = new SubscriptionService();
         }
 
         public StripeService(IHttpContextAccessor contextAccessor, ILogger<StripeService> logger,
@@ -52,6 +52,10 @@ namespace Nozomi.Infra.Auth.Services.Stripe
             _stripeConfiguration = stripeConfiguration;
             _stripeEvent = stripeEvent;
             _userManager = userManager;
+            _planService = new PlanService();
+            _customerService = new CustomerService();
+            _paymentMethodService = new PaymentMethodService();
+            _subscriptionService = new SubscriptionService();
         }
 
         public async Task PropagateCustomer(Base.Auth.Models.User user)
