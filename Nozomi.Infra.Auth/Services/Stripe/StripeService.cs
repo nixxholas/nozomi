@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using IdentityModel;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore.Internal;
@@ -63,7 +64,8 @@ namespace Nozomi.Infra.Auth.Services.Stripe
             if (user != null)
             {
                 // Check if he/she has stripe up or not first 
-                var stripeClaims = (await _userManager.GetClaimsAsync(user))
+                var userClaims = await _userManager.GetClaimsAsync(user);
+                var stripeClaims = userClaims
                     .Where(c => c.Type.Equals(NozomiJwtClaimTypes.StripeCustomerId));
 
                 if (stripeClaims.Any())
@@ -73,10 +75,20 @@ namespace Nozomi.Infra.Auth.Services.Stripe
                     return;
                 }
 
+                if (!userClaims.Any(c => c.Type.Equals(JwtClaimTypes.Email)) 
+                    || !userClaims.Any(c => c.Type.Equals(JwtClaimTypes.Name)))
+                {
+                    _logger.LogInformation($"{_serviceName} PropagateCustomer: User {user.Id} does not " +
+                                           $"have the required credentials; requires email and name.");
+                    return;
+                }
+
                 var customer = new CustomerCreateOptions
                 {
-                    Email = user.Email,
+                    Email = userClaims.FirstOrDefault(c => c.Type.Equals(JwtClaimTypes.Email))?.Value,
+                    Description = userClaims.FirstOrDefault(c => c.Type.Equals(JwtClaimTypes.Name))?.Value
                 };
+                
                 var customerService = new CustomerService();
                 var result = await customerService.CreateAsync(customer);
 
