@@ -225,27 +225,27 @@ namespace Nozomi.Auth
                         Console.WriteLine("alice already exists");
                     }
 
-                    var bob = userMgr.FindByNameAsync("bob").Result;
-                    if (bob == null)
+                    var nicholas = userMgr.FindByNameAsync("nicholas").Result;
+                    if (nicholas == null)
                     {
-                        bob = new User
+                        nicholas = new User
                         {
-                            UserName = "bob"
+                            UserName = "nicholas"
                         };
-                        var result = userMgr.CreateAsync(bob, "Pass123$").Result;
+                        var result = userMgr.CreateAsync(nicholas, "Pass123$").Result;
                         if (!result.Succeeded)
                         {
                             throw new Exception(result.Errors.First().Description);
                         }
 
-                        result = userMgr.AddClaimsAsync(bob, new Claim[]
+                        result = userMgr.AddClaimsAsync(nicholas, new Claim[]
                         {
-                            new Claim(JwtClaimTypes.Name, "Bob Smith"),
-                            new Claim(JwtClaimTypes.GivenName, "Bob"),
-                            new Claim(JwtClaimTypes.FamilyName, "Smith"),
-                            new Claim(JwtClaimTypes.Email, "BobSmith@email.com"),
+                            new Claim(JwtClaimTypes.Name, "Nicholas Chen"),
+                            new Claim(JwtClaimTypes.GivenName, "Nicholas"),
+                            new Claim(JwtClaimTypes.FamilyName, "Chen"),
+                            new Claim(JwtClaimTypes.Email, "nicholas@nozomi.one"),
                             new Claim(JwtClaimTypes.EmailVerified, "true", ClaimValueTypes.Boolean),
-                            new Claim(JwtClaimTypes.WebSite, "http://bob.com"),
+                            new Claim(JwtClaimTypes.WebSite, "http://nozomi.one"),
                             new Claim(JwtClaimTypes.Address,
                                 @"{ 'street_address': 'One Hacker Way', 'locality': 'Heidelberg', 'postal_code': 69118, 'country': 'Germany' }",
                                 IdentityServer4.IdentityServerConstants.ClaimValueTypes.Json),
@@ -256,11 +256,11 @@ namespace Nozomi.Auth
                             throw new Exception(result.Errors.First().Description);
                         }
 
-                        Console.WriteLine("bob created");
+                        Console.WriteLine("nicholas created");
                     }
                     else
                     {
-                        Console.WriteLine("bob already exists");
+                        Console.WriteLine("nicholas already exists");
                     }
                 }
             }
