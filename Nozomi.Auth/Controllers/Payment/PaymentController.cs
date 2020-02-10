@@ -44,6 +44,22 @@ namespace Nozomi.Auth.Controllers.Payment
             _userService = userService;
         }
 
+        [Authorize(AuthenticationSchemes = "Bearer")]
+        [HttpGet]
+        public async Task<IActionResult> CurrentPlan()
+        {
+            // Validate
+            var user = await _userManager.FindByIdAsync(((ClaimsIdentity) User.Identity)
+                .Claims.FirstOrDefault(c => c.Type.Equals(JwtClaimTypes.Subject)
+                                            || c.Type.Equals(ClaimTypes.NameIdentifier))?.Value);
+            
+            // Safetynet
+            if (user == null)
+                return BadRequest("Please reauthenticate again!");
+                
+            return Ok(await _stripeEvent.GetUserCurrentPlanIdAsync(user.Id));
+        }
+
         [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> Plans()
