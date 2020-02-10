@@ -15,16 +15,22 @@
                     </div>
                 </div>
                 <div class="plan-footer">
-                    <b-button v-if="oidcIsAuthenticated && plan.id === currentPlan" expanded
-                            disabled="disabled">Current plan
+                    <div v-if="oidcIsAuthenticated && plan.id === currentPlan" class="buttons">
+                        <b-button expanded
+                                  disabled="disabled">Current plan
+                        </b-button>
+                        <b-button expanded
+                                  type="is-danger"
+                                  @click="unsubscribe(plan.id)">
+                            Unsubscribe
+                        </b-button>
+                    </div>
+                    <b-button v-else-if="oidcIsAuthenticated && !currentPlan" @click="subscribe(plan.id)"
+                              type="is-primary" expanded>Choose
                     </b-button>
-                    <b-button v-if="oidcIsAuthenticated && plan.id === currentPlan" expanded 
-                              @click="unsubscribe(plan.id)">
-                        Delete
+                    <b-button v-else-if="oidcIsAuthenticated && currentPlan" @click="subscribe(plan.id)"
+                              type="is-primary" expanded>Switch
                     </b-button>
-                    <button v-else-if="oidcIsAuthenticated" @click="subscribe(plan.id)"
-                            class="button is-primary is-fullwidth">Choose
-                    </button>
                     <button v-else class="button is-success" @click="authenticateOidc(currentRoute)">Sign up now!
                     </button>
                 </div>
@@ -33,9 +39,9 @@
         <div v-else-if="currentPlan && viewMode" class="container">
             <h2 class="title">You are currently on </h2>
         </div>
-        <div v-else-if="viewMode" class="container p-4">
-            <h2 class="title">You currently <span class="has-text-danger">do not</span> have a plan.</h2>
-        </div>
+        <!--        <div v-else-if="viewMode" class="container p-4">-->
+        <!--            <h2 class="title">You currently <span class="has-text-danger">do not</span> have a plan.</h2>-->
+        <!--        </div>-->
         <b-loading :is-full-page="false" :active.sync="isLoading" :can-cancel="false"/>
     </div>
 </template>
@@ -48,7 +54,7 @@
     export default {
         name: 'plans',
         props: {
-            currentPlan: {
+            existingPlan: {
                 type: String,
                 default: null,
             },
@@ -59,6 +65,7 @@
         },
         data() {
             return {
+                currentPlan: this.existingPlan,
                 isLoading: true,
                 plans: [],
                 currentRoute: window.location.href, // https://forum.vuejs.org/t/how-to-get-path-from-route-instance/26934/2
@@ -76,6 +83,15 @@
         mounted() {
             let self = this;
 
+            if (!self.currentPlan) {
+                PaymentService.currentPlan()
+                    .then(function (res) {
+                        if (res && res.status === 200) {
+                            self.currentPlan = res.data;
+                        }
+                    });
+            }
+
             PaymentService.plans()
                 .then(function (res) {
                     self.plans = res.data;
@@ -92,14 +108,22 @@
 
                 PaymentService.subscribe(planId)
                     .then(function (res) {
-                        console.dir(res);
-                        Notification.open({
-                            duration: 2000,
-                            message: `Plan successfully subscribed!`,
-                            position: 'is-bottom-right',
-                            type: 'is-success',
-                            hasIcon: true
-                        });
+                        if (res && res.status === 200) {
+                            Notification.open({
+                                duration: 2000,
+                                message: res.data ? res.data : 'Plan successfully subscribed!',
+                                position: 'is-bottom-right',
+                                type: 'is-success',
+                                hasIcon: true
+                            });
+
+                            PaymentService.currentPlan()
+                                .then(function (res) {
+                                    if (res && res.status === 200) {
+                                        self.currentPlan = res.data;
+                                    }
+                                });
+                        }
                     })
                     .catch(function (err) {
                         console.dir(err);
@@ -121,14 +145,22 @@
 
                 PaymentService.unsubscribe(planId)
                     .then(function (res) {
-                        console.dir(res);
-                        Notification.open({
-                            duration: 2000,
-                            message: `Plan successfully unsubscribed!`,
-                            position: 'is-bottom-right',
-                            type: 'is-success',
-                            hasIcon: true
-                        });
+                        if (res && res.status === 200) {
+                            Notification.open({
+                                duration: 2000,
+                                message: res.data ? res.data : 'Plan successfully unsubscribed!',
+                                position: 'is-bottom-right',
+                                type: 'is-success',
+                                hasIcon: true
+                            });
+
+                            PaymentService.currentPlan()
+                                .then(function (res) {
+                                    if (res && res.status === 200) {
+                                        self.currentPlan = res.data;
+                                    }
+                                });
+                        }
                     })
                     .catch(function (err) {
                         console.dir(err);
