@@ -18,6 +18,20 @@ export default {
         });
     },
     
+    currentPlan() {
+        return new Promise((resolve, reject) => {
+            axios.get(oidcSettings.authority + '/Payment/CurrentPlan', {
+                headers: {
+                    Authorization: "Bearer " + store.state.oidcStore.access_token
+                }
+            }).then(function (response) {
+                resolve(response);
+            }).catch(function (error) {
+                reject(error);
+            });
+        });
+    },
+    
     getStripePubKey() {
         return new Promise((resolve, reject) => {
             axios.get(oidcSettings.authority + '/Payment/GetStripePubKey', {
