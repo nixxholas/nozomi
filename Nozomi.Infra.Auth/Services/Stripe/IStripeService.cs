@@ -15,7 +15,6 @@ namespace Nozomi.Infra.Auth.Services.Stripe
 
         Task Unsubscribe(Base.Auth.Models.User user);
 
-        void ChangeSubscription(string planId, Base.Auth.Models.User user);
-        
+        Task ChangeSubscription(string planId, Base.Auth.Models.User user);
     }
 }
