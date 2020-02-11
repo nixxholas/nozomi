@@ -105,6 +105,30 @@
             ...mapActions('oidcStore', ['authenticateOidc', 'signOutOidc']),
             changeSubscription: function(planId) {
                 let self = this;
+                self.isLoading = true;
+                
+                PaymentService.changeSubscription(planId)
+                .then(function(res) {
+                    if (res && res.status === 200) {
+                        Notification.open({
+                            duration: 2000,
+                            message: res.data ? res.data : 'Plan successfully changed!',
+                            position: 'is-bottom-right',
+                            type: 'is-success',
+                            hasIcon: true
+                        });
+
+                        PaymentService.currentPlan()
+                            .then(function (res) {
+                                if (res && res.status === 200) {
+                                    self.currentPlan = res.data;
+                                }
+                            });
+                    }
+                })
+                .finally(function() {
+                    self.isLoading = false;
+                });
             },
             subscribe: function (planId) {
                 let self = this;

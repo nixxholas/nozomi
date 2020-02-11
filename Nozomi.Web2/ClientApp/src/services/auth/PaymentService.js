@@ -118,7 +118,7 @@ export default {
             reject("Invalid plan id.");
 
         return new Promise((resolve, reject) => {
-            axios.post(oidcSettings.authority + '/Payment/ChangeSubscription/' + planId , null, {
+            axios.put(oidcSettings.authority + '/Payment/ChangeSubscription/' + planId , null, {
                 headers: {
                     Authorization: "Bearer " + store.state.oidcStore.access_token
                 }
