@@ -333,8 +333,15 @@ namespace Nozomi.Infra.Auth.Services.Stripe
                             uc.Type.Equals(NozomiJwtClaimTypes.StripeCustomerId)))
                     {
                         // This shouldn't happen, but just in case
-                        _logger.LogInformation($"{_serviceName} addsubscribePlanCard: user has yet to bind to stripe");
-                        throw new KeyNotFoundException($"{_serviceName} subscribePlan: user has yet to bind to stripe");
+                        _logger.LogInformation($"{_serviceName} Subscribe: user has yet to bind to stripe");
+                        throw new KeyNotFoundException($"{_serviceName} Subscribe: user has yet to bind to stripe");
+                    }
+
+                    // Ensure the user does not have an active subscription
+                    if (userClaims.Any(c => c.Type.Equals(NozomiJwtClaimTypes.StripeSubscriptionId)))
+                    {
+                        _logger.LogInformation($"{_serviceName} Subscribe: user already has a subscription.");
+                        throw new KeyNotFoundException($"{_serviceName} Subscribe: user already has a subscription.");
                     }
 
                     var customerIdClaim = userClaims.SingleOrDefault(uc => uc.Type.Equals(NozomiJwtClaimTypes.StripeCustomerId));
@@ -360,21 +367,21 @@ namespace Nozomi.Infra.Auth.Services.Stripe
                             var subscriptionUserClaim = new Claim(NozomiJwtClaimTypes.StripeSubscriptionId, subscription.Id);
                             await _userManager.AddClaimAsync(user, subscriptionUserClaim);
 
-                            _logger.LogInformation($"{_serviceName} subscribePlan: {user.Id} successfully subscribed to new plan " +
+                            _logger.LogInformation($"{_serviceName} Subscribe: {user.Id} successfully subscribed to new plan " +
                                                     $" tokenized as {subscriptionUserClaim.Value}");
                             return; // Done!
                         }
 
-                        _logger.LogInformation($"{_serviceName} subscribePlan: There was an issue subscribing " +
+                        _logger.LogInformation($"{_serviceName} Subscribe: There was an issue subscribing " +
                                     $"user {user.Id} to {plan.Id}");
-                        throw new StripeException($"{_serviceName} subscribePlan: There was an issue subscribing " +
+                        throw new StripeException($"{_serviceName} Subscribe: There was an issue subscribing " +
                                                         $"user {user.Id} to {plan.Id}");
                     }
-                    throw new NullReferenceException($"{_serviceName} subscribePlan: user has yet to bind to stripe");
+                    throw new NullReferenceException($"{_serviceName} Subscribe: user has yet to bind to stripe");
                 }
-                throw new NullReferenceException($"{_serviceName} subscribePlan: plan does not exist.");
+                throw new NullReferenceException($"{_serviceName} Subscribe: plan does not exist.");
             }
-            throw new NullReferenceException($"{_serviceName} subscribePlan: user is null.");
+            throw new NullReferenceException($"{_serviceName} Subscribe: user is null.");
         }
 
         public async Task Unsubscribe(Base.Auth.Models.User user)
