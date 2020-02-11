@@ -256,6 +256,32 @@ namespace Nozomi.Auth.Controllers.Payment
             return BadRequest("Invalid card token!");
         }
 
+        [Authorize(AuthenticationSchemes = "Bearer")]
+        [HttpPut("{id}")]
+        public async Task<IActionResult> ChangeSubscription(string id)
+        {
+            // Validate
+            var user = await _userManager.FindByIdAsync(((ClaimsIdentity) User.Identity)
+                .Claims.FirstOrDefault(c => c.Type.Equals(JwtClaimTypes.Subject)
+                                            || c.Type.Equals(ClaimTypes.NameIdentifier))?.Value);
+            
+            // Safetynet
+            if (user != null && !string.IsNullOrEmpty(id))
+                // This check is done at 
+                             // Ensure the plan in question exists and is enabled
+                             //&& _stripeEvent.PlanExists(id))
+            {
+                // Since the user has no existing subscriptions, proceed.
+                await _stripeService.ChangeSubscription(id, user);
+                
+                // Return
+                _logger.LogInformation($"Subscribe: plan of ID {id} added to {user.Id}");
+                return Ok("Plan has successfully been subscribed!");
+            }
+
+            return BadRequest("Invalid plan!");
+        }
+
         /// <summary>
         /// Plan Subscription API
         ///
