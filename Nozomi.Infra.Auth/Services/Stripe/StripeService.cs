@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using IdentityModel;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore.Internal;
@@ -38,10 +39,10 @@ namespace Nozomi.Infra.Auth.Services.Stripe
             _stripeConfiguration = stripeConfiguration;
             _stripeEvent = stripeEvent;
             _userManager = userManager;
-            _subscriptionService = new SubscriptionService();
             _planService = new PlanService();
             _customerService = new CustomerService();
             _paymentMethodService = new PaymentMethodService();
+            _subscriptionService = new SubscriptionService();
         }
 
         public StripeService(IHttpContextAccessor contextAccessor, ILogger<StripeService> logger,
@@ -52,6 +53,10 @@ namespace Nozomi.Infra.Auth.Services.Stripe
             _stripeConfiguration = stripeConfiguration;
             _stripeEvent = stripeEvent;
             _userManager = userManager;
+            _planService = new PlanService();
+            _customerService = new CustomerService();
+            _paymentMethodService = new PaymentMethodService();
+            _subscriptionService = new SubscriptionService();
         }
 
         public async Task PropagateCustomer(Base.Auth.Models.User user)
@@ -59,7 +64,8 @@ namespace Nozomi.Infra.Auth.Services.Stripe
             if (user != null)
             {
                 // Check if he/she has stripe up or not first 
-                var stripeClaims = (await _userManager.GetClaimsAsync(user))
+                var userClaims = await _userManager.GetClaimsAsync(user);
+                var stripeClaims = userClaims
                     .Where(c => c.Type.Equals(NozomiJwtClaimTypes.StripeCustomerId));
 
                 if (stripeClaims.Any())
@@ -69,10 +75,20 @@ namespace Nozomi.Infra.Auth.Services.Stripe
                     return;
                 }
 
+                if (!userClaims.Any(c => c.Type.Equals(JwtClaimTypes.Email)) 
+                    || !userClaims.Any(c => c.Type.Equals(JwtClaimTypes.Name)))
+                {
+                    _logger.LogInformation($"{_serviceName} PropagateCustomer: User {user.Id} does not " +
+                                           $"have the required credentials; requires email and name.");
+                    return;
+                }
+
                 var customer = new CustomerCreateOptions
                 {
-                    Email = user.Email,
+                    Email = userClaims.FirstOrDefault(c => c.Type.Equals(JwtClaimTypes.Email))?.Value,
+                    Description = userClaims.FirstOrDefault(c => c.Type.Equals(JwtClaimTypes.Name))?.Value
                 };
+                
                 var customerService = new CustomerService();
                 var result = await customerService.CreateAsync(customer);
 
@@ -317,8 +333,15 @@ namespace Nozomi.Infra.Auth.Services.Stripe
                             uc.Type.Equals(NozomiJwtClaimTypes.StripeCustomerId)))
                     {
                         // This shouldn't happen, but just in case
-                        _logger.LogInformation($"{_serviceName} addsubscribePlanCard: user has yet to bind to stripe");
-                        throw new KeyNotFoundException($"{_serviceName} subscribePlan: user has yet to bind to stripe");
+                        _logger.LogInformation($"{_serviceName} Subscribe: user has yet to bind to stripe");
+                        throw new KeyNotFoundException($"{_serviceName} Subscribe: user has yet to bind to stripe");
+                    }
+
+                    // Ensure the user does not have an active subscription
+                    if (userClaims.Any(c => c.Type.Equals(NozomiJwtClaimTypes.StripeSubscriptionId)))
+                    {
+                        _logger.LogInformation($"{_serviceName} Subscribe: user already has a subscription.");
+                        throw new KeyNotFoundException($"{_serviceName} Subscribe: user already has a subscription.");
                     }
 
                     var customerIdClaim = userClaims.SingleOrDefault(uc => uc.Type.Equals(NozomiJwtClaimTypes.StripeCustomerId));
@@ -344,21 +367,21 @@ namespace Nozomi.Infra.Auth.Services.Stripe
                             var subscriptionUserClaim = new Claim(NozomiJwtClaimTypes.StripeSubscriptionId, subscription.Id);
                             await _userManager.AddClaimAsync(user, subscriptionUserClaim);
 
-                            _logger.LogInformation($"{_serviceName} subscribePlan: {user.Id} successfully subscribed to new plan " +
+                            _logger.LogInformation($"{_serviceName} Subscribe: {user.Id} successfully subscribed to new plan " +
                                                     $" tokenized as {subscriptionUserClaim.Value}");
                             return; // Done!
                         }
 
-                        _logger.LogInformation($"{_serviceName} subscribePlan: There was an issue subscribing " +
+                        _logger.LogInformation($"{_serviceName} Subscribe: There was an issue subscribing " +
                                     $"user {user.Id} to {plan.Id}");
-                        throw new StripeException($"{_serviceName} subscribePlan: There was an issue subscribing " +
+                        throw new StripeException($"{_serviceName} Subscribe: There was an issue subscribing " +
                                                         $"user {user.Id} to {plan.Id}");
                     }
-                    throw new NullReferenceException($"{_serviceName} subscribePlan: user has yet to bind to stripe");
+                    throw new NullReferenceException($"{_serviceName} Subscribe: user has yet to bind to stripe");
                 }
-                throw new NullReferenceException($"{_serviceName} subscribePlan: plan does not exist.");
+                throw new NullReferenceException($"{_serviceName} Subscribe: plan does not exist.");
             }
-            throw new NullReferenceException($"{_serviceName} subscribePlan: user is null.");
+            throw new NullReferenceException($"{_serviceName} Subscribe: user is null.");
         }
 
         public async Task Unsubscribe(Base.Auth.Models.User user)
@@ -470,8 +493,19 @@ namespace Nozomi.Infra.Auth.Services.Stripe
             throw new NullReferenceException($"{_serviceName} Unsubscribe: user is null.");
         }
 
-        public async void ChangeSubscription(string planId, Base.Auth.Models.User user)
+        /// <summary>
+        /// Change Subscription API
+        /// </summary>
+        /// <param name="planId">The target plan to switch to</param>
+        /// <param name="user">The user that is requesting for a change</param>
+        /// <returns>Nothing</returns>
+        /// <exception cref="KeyNotFoundException"></exception>
+        /// <exception cref="StripeException"></exception>
+        /// <exception cref="InvalidOperationException"></exception>
+        /// <exception cref="NullReferenceException"></exception>
+        public async Task ChangeSubscription(string planId, Base.Auth.Models.User user)
         {
+            // Safetynets
             if (user != null)
             {
                 if (_stripeEvent.PlanExists(planId))
@@ -496,12 +530,14 @@ namespace Nozomi.Infra.Auth.Services.Stripe
 
                     if (subscriptionIdUserClaim != null)
                     {
+                        // Obtain the user's current subscription from Stripe
                         var subscription = await _subscriptionService.GetAsync(subscriptionIdUserClaim.Value);
 
-                        if (subscription != null && subscription.CanceledAt != null
+                        // Ensure that it is the active subscription and check if it carries the same plan as requested
+                        if (subscription != null && subscription.CanceledAt == null
                             && !subscription.Plan.Id.Equals(plan.Id))
                         {
-
+                            // Since it is valid for a change, do it
                             var subscriptionChangeOptions = new SubscriptionUpdateOptions {
                                 Items = new List<SubscriptionItemOptions> {
                                     new SubscriptionItemOptions
@@ -513,15 +549,23 @@ namespace Nozomi.Infra.Auth.Services.Stripe
 
                             subscription = await _subscriptionService.UpdateAsync(subscription.Id, 
                                 subscriptionChangeOptions);
-                            if (subscription.Plan.Id.Equals(plan.Id)) {
+
+                            // Ensure that the latest subscription item's plan is the one we set
+                            if (subscription.Items.Data.OrderByDescending(e => e.Created)
+                                .First().Plan.Id.Equals(planId))
+                            {
+                                // Since all is good, let's go ahead 
                                 _logger.LogInformation($"{_serviceName} ChangeSubscription: {user.Id} " +
-                                                       "successfully changed to new plan {subscription.Plan.Id}");
+                                                       $"successfully changed to new plan {planId}");
                                 return;
                             }
-                            _logger.LogInformation($"{_serviceName} ChangeSubscription: There was an issue " +
-                                                   $"changing user {user.Id} plan to {plan.Id}");
-                            throw new StripeException($"{_serviceName} ChangeSubscription: There was an " +
-                                                      $"issue changing user {user.Id} plan to {plan.Id}");
+                            
+                            _logger.LogInformation($"{_serviceName} ChangeSubscription: Can't validate " +
+                                                   $"the user {user.Id} for the newly updated subscription to " +
+                                                   $"{plan.Id}");
+                            throw new StripeException($"{_serviceName} ChangeSubscription: Can't validate " +
+                                                      $"the user {user.Id} for the newly updated subscription to " +
+                                                      $"{plan.Id}");
                         }
                         
                         if (subscription != null && subscription.Plan.Id.Equals(plan.Id))

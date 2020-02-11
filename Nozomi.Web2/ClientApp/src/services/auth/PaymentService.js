@@ -18,6 +18,20 @@ export default {
         });
     },
     
+    currentPlan() {
+        return new Promise((resolve, reject) => {
+            axios.get(oidcSettings.authority + '/Payment/CurrentPlan', {
+                headers: {
+                    Authorization: "Bearer " + store.state.oidcStore.access_token
+                }
+            }).then(function (response) {
+                resolve(response);
+            }).catch(function (error) {
+                reject(error);
+            });
+        });
+    },
+    
     getStripePubKey() {
         return new Promise((resolve, reject) => {
             axios.get(oidcSettings.authority + '/Payment/GetStripePubKey', {
@@ -98,6 +112,23 @@ export default {
             });
         });
     },
+
+    changeSubscription(planId) {
+        if (!planId)
+            reject("Invalid plan id.");
+
+        return new Promise((resolve, reject) => {
+            axios.put(oidcSettings.authority + '/Payment/ChangeSubscription/' + planId , null, {
+                headers: {
+                    Authorization: "Bearer " + store.state.oidcStore.access_token
+                }
+            }).then(function (response) {
+                resolve(response);
+            }).catch(function (error) {
+                reject(error);
+            });
+        });
+    },
     
     subscribe(planId) {
         if (!planId)
@@ -116,12 +147,9 @@ export default {
         });
     },
 
-    unsubscribe(planId) {
-        if (!planId)
-            reject("Invalid plan id.");
-
+    unsubscribe() {
         return new Promise((resolve, reject) => {
-            axios.delete(oidcSettings.authority + '/Payment/Subscribe/' + planId, {
+            axios.delete(oidcSettings.authority + '/Payment/Unsubscribe', {
                 headers: {
                     Authorization: "Bearer " + store.state.oidcStore.access_token
                 }
