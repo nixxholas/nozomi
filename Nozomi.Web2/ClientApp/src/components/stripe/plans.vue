@@ -20,6 +20,7 @@
                                   disabled="disabled">Current plan
                         </b-button>
                         <b-button expanded
+                                  v-if="plan.amount !== 0"
                                   type="is-danger"
                                   @click="unsubscribe(plan.id)">
                             Unsubscribe
@@ -28,7 +29,7 @@
                     <b-button v-else-if="oidcIsAuthenticated && !currentPlan" @click="subscribe(plan.id)"
                               type="is-primary" expanded>Choose
                     </b-button>
-                    <b-button v-else-if="oidcIsAuthenticated && currentPlan" @click="subscribe(plan.id)"
+                    <b-button v-else-if="oidcIsAuthenticated && currentPlan" @click="changeSubscription(plan.id)"
                               type="is-primary" expanded>Switch
                     </b-button>
                     <button v-else class="button is-success" @click="authenticateOidc(currentRoute)">Sign up now!
@@ -102,6 +103,9 @@
         },
         methods: {
             ...mapActions('oidcStore', ['authenticateOidc', 'signOutOidc']),
+            changeSubscription: function(planId) {
+                let self = this;
+            },
             subscribe: function (planId) {
                 let self = this;
                 self.isLoading = true;
@@ -139,11 +143,11 @@
                         self.isLoading = false;
                     });
             },
-            unsubscribe: function (planId) {
+            unsubscribe: function () {
                 let self = this;
                 self.isLoading = true;
 
-                PaymentService.unsubscribe(planId)
+                PaymentService.unsubscribe()
                     .then(function (res) {
                         if (res && res.status === 200) {
                             Notification.open({

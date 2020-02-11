@@ -147,12 +147,9 @@ export default {
         });
     },
 
-    unsubscribe(planId) {
-        if (!planId)
-            reject("Invalid plan id.");
-
+    unsubscribe() {
         return new Promise((resolve, reject) => {
-            axios.delete(oidcSettings.authority + '/Payment/Subscribe/' + planId, {
+            axios.delete(oidcSettings.authority + '/Payment/Unsubscribe', {
                 headers: {
                     Authorization: "Bearer " + store.state.oidcStore.access_token
                 }
