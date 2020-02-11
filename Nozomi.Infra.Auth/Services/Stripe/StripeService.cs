@@ -549,15 +549,23 @@ namespace Nozomi.Infra.Auth.Services.Stripe
 
                             subscription = await _subscriptionService.UpdateAsync(subscription.Id, 
                                 subscriptionChangeOptions);
-                            if (subscription.Plan.Id.Equals(plan.Id)) {
+
+                            // Ensure that the latest subscription item's plan is the one we set
+                            if (subscription.Items.Data.OrderByDescending(e => e.Created)
+                                .First().Plan.Id.Equals(planId))
+                            {
+                                // Since all is good, let's go ahead 
                                 _logger.LogInformation($"{_serviceName} ChangeSubscription: {user.Id} " +
-                                                       "successfully changed to new plan {subscription.Plan.Id}");
+                                                       $"successfully changed to new plan {subscription.Plan.Id}");
                                 return;
                             }
-                            _logger.LogInformation($"{_serviceName} ChangeSubscription: There was an issue " +
-                                                   $"changing user {user.Id} plan to {plan.Id}");
-                            throw new StripeException($"{_serviceName} ChangeSubscription: There was an " +
-                                                      $"issue changing user {user.Id} plan to {plan.Id}");
+                            
+                            _logger.LogInformation($"{_serviceName} ChangeSubscription: Can't validate " +
+                                                   $"the user {user.Id} for the newly updated subscription to " +
+                                                   $"{plan.Id}");
+                            throw new StripeException($"{_serviceName} ChangeSubscription: Can't validate " +
+                                                      $"the user {user.Id} for the newly updated subscription to " +
+                                                      $"{plan.Id}");
                         }
                         
                         if (subscription != null && subscription.Plan.Id.Equals(plan.Id))

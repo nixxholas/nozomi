@@ -194,6 +194,9 @@ namespace Nozomi.Infra.Auth.Events.Stripe
                         // Make sure this subscription is actually valid, through Stripe to ensure it is really legit
                         if ((sub.EndedAt == null || sub.EndedAt < DateTime.UtcNow) && sub.Plan != null)
                             return sub.Plan.Id; // Return since fulfilled
+                        else if ((sub.EndedAt == null || sub.EndedAt < DateTime.UtcNow) && sub.Items.Any())
+                            return sub.Items.OrderByDescending(s => s.Created)
+                                .First(e => e.Deleted == null).Plan.Id;
                     }
                 }
             }
