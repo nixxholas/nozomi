@@ -556,7 +556,7 @@ namespace Nozomi.Infra.Auth.Services.Stripe
                             {
                                 // Since all is good, let's go ahead 
                                 _logger.LogInformation($"{_serviceName} ChangeSubscription: {user.Id} " +
-                                                       $"successfully changed to new plan {subscription.Plan.Id}");
+                                                       $"successfully changed to new plan {planId}");
                                 return;
                             }
                             
