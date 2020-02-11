@@ -486,8 +486,19 @@ namespace Nozomi.Infra.Auth.Services.Stripe
             throw new NullReferenceException($"{_serviceName} Unsubscribe: user is null.");
         }
 
+        /// <summary>
+        /// Change Subscription API
+        /// </summary>
+        /// <param name="planId">The target plan to switch to</param>
+        /// <param name="user">The user that is requesting for a change</param>
+        /// <returns>Nothing</returns>
+        /// <exception cref="KeyNotFoundException"></exception>
+        /// <exception cref="StripeException"></exception>
+        /// <exception cref="InvalidOperationException"></exception>
+        /// <exception cref="NullReferenceException"></exception>
         public async Task ChangeSubscription(string planId, Base.Auth.Models.User user)
         {
+            // Safetynets
             if (user != null)
             {
                 if (_stripeEvent.PlanExists(planId))
@@ -512,12 +523,14 @@ namespace Nozomi.Infra.Auth.Services.Stripe
 
                     if (subscriptionIdUserClaim != null)
                     {
+                        // Obtain the user's current subscription from Stripe
                         var subscription = await _subscriptionService.GetAsync(subscriptionIdUserClaim.Value);
 
-                        if (subscription != null && subscription.CanceledAt != null
+                        // Ensure that it is the active subscription and check if it carries the same plan as requested
+                        if (subscription != null && subscription.CanceledAt == null
                             && !subscription.Plan.Id.Equals(plan.Id))
                         {
-
+                            // Since it is valid for a change, do it
                             var subscriptionChangeOptions = new SubscriptionUpdateOptions {
                                 Items = new List<SubscriptionItemOptions> {
                                     new SubscriptionItemOptions
