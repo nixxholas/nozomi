@@ -19,13 +19,19 @@ namespace Nozomi.Service.Events
         {
         }
 
-        public RequestProperty GetByGuid(string guid, string validatingUserId = null, bool ensureDisabledOrDeleted = true)
+        public RequestProperty GetByGuid(string guid, string validatingUserId = null, 
+            bool ensureDisabledOrDeleted = true, bool track = false)
         {
             if (!string.IsNullOrEmpty(guid) && Guid.TryParse(guid, out var requestPropertyGuid))
             {
                 var query = _unitOfWork.GetRepository<RequestProperty>()
-                    .GetQueryable()
-                    .AsNoTracking()
+                    .GetQueryable();
+                    
+                if (track)
+                    query = query.AsTracking()
+                            .Where(rp => rp.Guid.Equals(requestPropertyGuid));
+                else
+                    query = query.AsNoTracking()
                     .Where(rp => rp.Guid.Equals(requestPropertyGuid));
 
                 if (query.Any())
