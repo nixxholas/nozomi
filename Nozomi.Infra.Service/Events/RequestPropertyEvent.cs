@@ -44,7 +44,7 @@ namespace Nozomi.Service.Events
                 if (!string.IsNullOrEmpty(validatingUserId))
                     query = query.Where(rp => rp.CreatedById.Equals(validatingUserId));
 
-                return query.Select(rp => new RequestPropertyViewModel(rp.RequestPropertyType, 
+                return query.Select(rp => new RequestPropertyViewModel(rp.Guid, rp.RequestPropertyType, 
                     rp.Key, rp.Value));
             }
             
