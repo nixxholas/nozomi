@@ -20,6 +20,8 @@ namespace Nozomi.Data.ViewModels.RequestProperty
         
         public string Value { get; set; }
         
+        public string RequestGuid { get; set; }
+        
         public bool IsValid()
         {
             var validator = new CreateRequestPropertyValidator();
@@ -31,6 +33,7 @@ namespace Nozomi.Data.ViewModels.RequestProperty
             public CreateRequestPropertyValidator()
             {
                 RuleFor(e => e.Type).IsInEnum();
+                RuleFor(e => e.RequestGuid).NotEmpty().NotNull();
             }
         }
     }
