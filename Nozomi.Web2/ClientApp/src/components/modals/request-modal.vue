@@ -72,7 +72,7 @@
                             </b-tab-item>
                             <b-tab-item label="Currency Pair">
                                 <b-field>
-                                    <CurrencyPairsAutoComplete v-model="form.currencyPairGuid"/>
+                                    <CurrencyPairsAutoComplete :incoming-currency-pair-guid="form.currencyPairGuid" />
                                 </b-field>
                             </b-tab-item>
                             <b-tab-item label="Currency Type">
