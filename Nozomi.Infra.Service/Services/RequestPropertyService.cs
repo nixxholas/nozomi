@@ -92,6 +92,8 @@ namespace Nozomi.Service.Services
                     return Task.CompletedTask;
                 }
                 
+                throw new ArgumentNullException($"{_serviceName} Update: user {userId} either has no " +
+                                                "rights to this request property or it doesn't exist.");
             }
 
             throw new ArgumentNullException($"{_serviceName} Update: Invalid input model.");
@@ -99,7 +101,32 @@ namespace Nozomi.Service.Services
 
         public Task Delete(string guid, string userId)
         {
-            throw new System.NotImplementedException();
+            if (!string.IsNullOrEmpty(guid) && Guid.TryParse(guid, out var requestPropertyGuid)
+                                            && !string.IsNullOrEmpty(userId))
+            {
+                var requestProperty = _requestPropertyEvent.GetByGuid(guid, userId, 
+                    true, true);
+
+                if (requestProperty != null)
+                {
+                    // Delete
+                    requestProperty.DeletedAt = DateTime.UtcNow;
+                    requestProperty.DeletedById = userId;
+                    // Push
+                    _unitOfWork.GetRepository<RequestProperty>().Update(requestProperty);
+                    //Commit
+                    _unitOfWork.Commit(userId);
+                    // Complete
+                    _logger.LogInformation($"{_serviceName} Delete: user {userId} has successfully " +
+                                           $"deleted the request property {guid}.");
+                    return Task.CompletedTask;
+                }
+                
+                throw new ArgumentNullException($"{_serviceName} Delete: user {userId} either has no " +
+                                                "rights to this request property or it doesn't exist");
+            }
+
+            throw new ArgumentNullException($"{_serviceName} Delete: Invalid request property guid.");
         }
     }
 }
