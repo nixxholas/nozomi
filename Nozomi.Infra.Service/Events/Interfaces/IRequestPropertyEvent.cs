@@ -5,6 +5,6 @@ namespace Nozomi.Service.Events.Interfaces
 {
     public interface IRequestPropertyEvent
     {
-        IEnumerable<RequestPropertyViewModel> GetByRequest(string requestGuid);
+        IEnumerable<RequestPropertyViewModel> GetByRequest(string requestGuid, string validatingUserId);
     }
 }
