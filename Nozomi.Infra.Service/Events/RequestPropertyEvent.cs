@@ -24,18 +24,23 @@ namespace Nozomi.Service.Events
         /// </summary>
         /// <param name="requestGuid">The GUID of the request.</param>
         /// <param name="validatingUserId">Optional. The ID of the user to validate the requests against.</param>
+        /// <param name="ensureDisabledOrDeleted">Optional. Ensure the properties that are disabled or deleted
+        /// should be ignored.</param>
         /// <returns>List of matching properties for the request.</returns>
-        public IEnumerable<RequestPropertyViewModel> GetByRequest(string requestGuid, string validatingUserId)
+        public IEnumerable<RequestPropertyViewModel> GetByRequest(string requestGuid, string validatingUserId = null,
+            bool ensureDisabledOrDeleted = true)
         {
             if (!string.IsNullOrEmpty(requestGuid))
             {
                 var query = _unitOfWork.GetRepository<RequestProperty>()
                     .GetQueryable()
                     .AsNoTracking()
-                    .Where(rp => rp.DeletedAt == null && rp.IsEnabled)
                     .Include(rp => rp.Request)
                     .Where(rp => rp.Request.Guid.ToString().Equals(requestGuid));
 
+                if (!ensureDisabledOrDeleted)
+                    query = query.Where(rp => rp.DeletedAt == null && rp.IsEnabled);
+                
                 if (!string.IsNullOrEmpty(validatingUserId))
                     query = query.Where(rp => rp.CreatedById.Equals(validatingUserId));
 
