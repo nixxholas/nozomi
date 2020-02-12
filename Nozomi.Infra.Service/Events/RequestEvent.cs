@@ -128,13 +128,9 @@ namespace Nozomi.Service.Events
                             Type = rc.ComponentType,
                             Value = rc.Value,
                             IsDenominated = rc.IsDenominated
-                        }).ToList(), 
-                        r.RequestProperties.Select(rp => new RequestPropertyViewModel
-                        {
-                            Type = rp.RequestPropertyType,
-                            Key = rp.Key,
-                            Value = rp.Value
-                        }).ToList()));
+                        }).ToList(),
+                        r.RequestProperties.Select(rp => new RequestPropertyViewModel(rp.Guid, 
+                            rp.RequestPropertyType, rp.Key, rp.Value)).ToList()));
             
             return query
                 .Select(r => new RequestViewModel(r.Guid, r.RequestType, r.ResponseType, r.DataPath, r.Delay,
