@@ -1,3 +1,4 @@
+using FluentValidation;
 using Nozomi.Data.Models.Web;
 
 namespace Nozomi.Data.ViewModels.RequestProperty
@@ -18,5 +19,19 @@ namespace Nozomi.Data.ViewModels.RequestProperty
         public string Key { get; set; }
         
         public string Value { get; set; }
+        
+        public bool IsValid()
+        {
+            var validator = new CreateRequestPropertyValidator();
+            return validator.Validate(this).IsValid;
+        }
+
+        protected class CreateRequestPropertyValidator : AbstractValidator<CreateRequestPropertyInputModel>
+        {
+            public CreateRequestPropertyValidator()
+            {
+                RuleFor(e => e.Type).IsInEnum();
+            }
+        }
     }
 }
