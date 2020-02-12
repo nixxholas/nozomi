@@ -30,15 +30,28 @@ namespace Nozomi.Web2.Controllers.v1.RequestProperty
                 .Claims.SingleOrDefault(c => c.Type.Equals(JwtClaimTypes.Subject))?.Value;
 
             // Since we get the sub,
-            if (!string.IsNullOrWhiteSpace(sub))
+            if (!string.IsNullOrWhiteSpace(sub) && !string.IsNullOrEmpty(guid))
                 return Ok(_requestPropertyEvent.GetByGuid(guid, sub));
 
+            if (!string.IsNullOrWhiteSpace(sub) && string.IsNullOrEmpty(guid))
+                return BadRequest("Please enter a valid ID!");
             return BadRequest("Please re-authenticate again");
         }
 
+        [Authorize]
+        [HttpGet("{requestGuid}")]
         public IActionResult GetAllByRequest(string requestGuid)
         {
-            throw new System.NotImplementedException();
+            var sub = ((ClaimsIdentity) User.Identity)
+                .Claims.SingleOrDefault(c => c.Type.Equals(JwtClaimTypes.Subject))?.Value;
+
+            // Since we get the sub,
+            if (!string.IsNullOrWhiteSpace(sub) && !string.IsNullOrEmpty(requestGuid))
+                return Ok(_requestPropertyEvent.GetByRequest(requestGuid, sub));
+
+            if (!string.IsNullOrWhiteSpace(sub) && string.IsNullOrEmpty(requestGuid))
+                return BadRequest("Please enter a valid ID!");
+            return BadRequest("Please re-authenticate again");
         }
 
         public IActionResult Create(CreateRequestPropertyInputModel vm)
