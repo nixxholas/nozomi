@@ -91,9 +91,24 @@ namespace Nozomi.Web2.Controllers.v1.RequestProperty
             return BadRequest("Please re-authenticate again");
         }
 
-        public Task<IActionResult> Delete(string guid)
+        [Authorize]
+        [HttpDelete("{guid}")]
+        public async Task<IActionResult> Delete(string guid)
         {
-            throw new System.NotImplementedException();
+            var sub = ((ClaimsIdentity) User.Identity)
+                .Claims.SingleOrDefault(c => c.Type.Equals(JwtClaimTypes.Subject))?.Value;
+
+            // Since we get the sub,
+            if (!string.IsNullOrWhiteSpace(sub) && !string.IsNullOrEmpty(guid))
+            {
+                await _requestPropertyService.Delete(guid, sub);
+
+                return Ok();
+            }
+
+            if (!string.IsNullOrEmpty(sub) && string.IsNullOrEmpty(guid))
+                return BadRequest("Invalid request property ID!");
+            return BadRequest("Please re-authenticate again");
         }
     }
 }
