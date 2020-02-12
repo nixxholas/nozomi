@@ -1,5 +1,6 @@
 using System.Linq;
 using System.Security.Claims;
+using System.Threading.Tasks;
 using IdentityModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -54,9 +55,22 @@ namespace Nozomi.Web2.Controllers.v1.RequestProperty
             return BadRequest("Please re-authenticate again");
         }
 
-        public IActionResult Create(CreateRequestPropertyInputModel vm)
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> Create(CreateRequestPropertyInputModel vm)
         {
-            throw new System.NotImplementedException();
+            var sub = ((ClaimsIdentity) User.Identity)
+                .Claims.SingleOrDefault(c => c.Type.Equals(JwtClaimTypes.Subject))?.Value;
+
+            // Since we get the sub,
+            if (!string.IsNullOrWhiteSpace(sub))
+            {
+                await _requestPropertyService.Create(vm, sub);
+
+                return Ok();
+            }
+
+            return BadRequest("Please re-authenticate again");
         }
 
         public IActionResult Update(UpdateRequestPropertyInputModel vm)
