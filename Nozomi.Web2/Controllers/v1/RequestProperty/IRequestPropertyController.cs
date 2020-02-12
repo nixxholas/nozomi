@@ -12,8 +12,8 @@ namespace Nozomi.Web2.Controllers.v1.RequestProperty
         
         Task<IActionResult> Create(CreateRequestPropertyInputModel vm);
 
-        IActionResult Update(UpdateRequestPropertyInputModel vm);
+        Task<IActionResult> Update(UpdateRequestPropertyInputModel vm);
 
-        IActionResult Delete(string guid);
+        Task<IActionResult> Delete(string guid);
     }
 }

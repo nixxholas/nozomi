@@ -57,7 +57,7 @@ namespace Nozomi.Web2.Controllers.v1.RequestProperty
 
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> Create(CreateRequestPropertyInputModel vm)
+        public async Task<IActionResult> Create([FromBody]CreateRequestPropertyInputModel vm)
         {
             var sub = ((ClaimsIdentity) User.Identity)
                 .Claims.SingleOrDefault(c => c.Type.Equals(JwtClaimTypes.Subject))?.Value;
@@ -73,12 +73,25 @@ namespace Nozomi.Web2.Controllers.v1.RequestProperty
             return BadRequest("Please re-authenticate again");
         }
 
-        public IActionResult Update(UpdateRequestPropertyInputModel vm)
+        [Authorize]
+        [HttpPut]
+        public async Task<IActionResult> Update([FromBody]UpdateRequestPropertyInputModel vm)
         {
-            throw new System.NotImplementedException();
+            var sub = ((ClaimsIdentity) User.Identity)
+                .Claims.SingleOrDefault(c => c.Type.Equals(JwtClaimTypes.Subject))?.Value;
+
+            // Since we get the sub,
+            if (!string.IsNullOrWhiteSpace(sub))
+            {
+                await _requestPropertyService.Update(vm, sub);
+
+                return Ok();
+            }
+
+            return BadRequest("Please re-authenticate again");
         }
 
-        public IActionResult Delete(string guid)
+        public Task<IActionResult> Delete(string guid)
         {
             throw new System.NotImplementedException();
         }
