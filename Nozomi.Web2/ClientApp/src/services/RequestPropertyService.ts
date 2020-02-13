@@ -46,4 +46,32 @@ export default {
             });
         });
     },
+
+    update(vm: object) {
+        return new Promise((resolve, reject) => {
+            axios.put(baseUrl  + 'Update/',  vm, {
+                headers: {
+                    Authorization: "Bearer " + store.state.oidcStore.access_token
+                }
+            }).then(function (response) {
+                resolve(response.data);
+            }).catch(function (error) {
+                reject(error);
+            });
+        });
+    },
+
+    delete(guid: string) {
+        return new Promise((resolve, reject) => {
+            axios.delete(baseUrl  + 'Delete/' + guid, {
+                headers: {
+                    Authorization: "Bearer " + store.state.oidcStore.access_token
+                }
+            }).then(function (response) {
+                resolve(response.data);
+            }).catch(function (error) {
+                reject(error);
+            });
+        });
+    },
 }
