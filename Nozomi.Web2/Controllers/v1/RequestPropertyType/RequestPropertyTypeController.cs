@@ -17,7 +17,7 @@ namespace Nozomi.Web2.Controllers.v1.RequestPropertyType
             _requestPropertyTypeEvent = requestPropertyTypeEvent;
         }
 
-        [Authorize(Roles = NozomiPermissions.AllowHigherStaffRoles)]
+        [Authorize]
         [HttpGet]
         public NozomiResult<JsonResult> All()
         {
