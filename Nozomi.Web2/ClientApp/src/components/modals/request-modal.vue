@@ -72,7 +72,7 @@
                             </b-tab-item>
                             <b-tab-item label="Currency Pair">
                                 <b-field>
-                                    <CurrencyPairsAutoComplete :incoming-currency-pair-guid="form.currencyPairGuid" />
+                                    <CurrencyPairsAutoComplete :incoming-currency-pair-guid="form.currencyPairGuid" @input="setCurrencyPairGuid" />
                                 </b-field>
                             </b-tab-item>
                             <b-tab-item label="Currency Type">
@@ -129,6 +129,9 @@
         },
         methods: {
             ...mapActions('oidcStore', ['authenticateOidc', 'signOutOidc']),
+            setCurrencyPairGuid(val) {
+                this.form.currencyPairGuid = val;
+            },
             create: function () {
                 this.isLoading = true;
 
