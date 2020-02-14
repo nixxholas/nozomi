@@ -30,7 +30,7 @@
                             <b-select placeholder="Pick one!" v-model="form.type">
                                 <option
                                         v-for="option in requestPropertyTypes"
-                                        :value="option.key"
+                                        :value="option.value"
                                         :key="option.value">
                                     {{ option.key }}
                                 </option>
@@ -82,7 +82,10 @@
         name: "request-property-modal",
         props: {
             currentRoute: window.location.href, // https://forum.vuejs.org/t/how-to-get-path-from-route-instance/26934/2
-            guid: String,
+            guid: {
+                type: String,
+                default: null,
+            },
             requestGuid: String,
         },
         methods: {
@@ -94,7 +97,6 @@
                 if (!self.guid) {
                     RequestPropertyService.create(self.form)
                         .then(function (response) {
-                            console.dir(response);
                             // Reset the form data regardless
                             self.form = {
                                 type: 0,
@@ -189,6 +191,23 @@
                     // always executed
                     self.requestPropertyTypesIsLoading = false;
                 });
+        },
+        created: function() {
+            let self = this;
+            
+            if (self.guid) {
+                RequestPropertyService.get(self.guid)
+                    .then(function(res) {
+                        if (res) {
+                            if (res.requestPropertyType)
+                                self.form.type = res.requestPropertyType;
+                            if (res.key)
+                                self.form.key = res.key;
+                            if (res.value)
+                                self.form.value = res.value;
+                        }
+                    })
+            }
         },
         data: function () {
             return {
