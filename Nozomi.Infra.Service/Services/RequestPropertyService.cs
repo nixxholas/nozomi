@@ -41,18 +41,22 @@ namespace Nozomi.Service.Services
             {
                 var request = _requestEvent.GetByGuid(Guid.Parse(inputModel.RequestGuid), true);
                 
-                if (request != null && !request.RequestProperties
+                if (request != null && (request.RequestProperties == null || !request.RequestProperties
                         // Ensure we don't check for duplicate custom headers
                     .Any(rp => (!rp.RequestPropertyType.Equals(RequestPropertyType.HttpHeader_Custom)
                                 // Ignore invalids
                                || !rp.RequestPropertyType.Equals(RequestPropertyType.Invalid)) 
                                // And ensure there are no dupes among the defaults
-                               && rp.RequestPropertyType.Equals(inputModel.Type)))
+                               && rp.RequestPropertyType.Equals(inputModel.Type))))
                 {
                     // Initialise the soon to be added Request property
-                    var requestProperty = new RequestProperty(inputModel.Type, inputModel.Key, inputModel.Value);
-                    // Relation
-                    requestProperty.RequestId = request.Id;
+                    var requestProperty = new RequestProperty
+                    {
+                        RequestPropertyType = inputModel.Type,
+                        Key = inputModel.Key,
+                        Value = inputModel.Value,
+                        RequestId = request.Id
+                    };
                     // Push
                     _unitOfWork.GetRepository<RequestProperty>().Add(requestProperty);
                     // Commit
