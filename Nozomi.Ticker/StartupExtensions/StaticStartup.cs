@@ -497,12 +497,29 @@ namespace Nozomi.Ticker.StartupExtensions
                                         },
                                         RequestProperties = new List<RequestProperty>
                                         {
-                                            new RequestProperty(RequestPropertyType.HttpQuery, "apikey",
-                                                "TV5HJJHNP8094BRO"),
-                                            new RequestProperty(RequestPropertyType.HttpQuery, "function",
-                                                "CURRENCY_EXCHANGE_RATE"),
-                                            new RequestProperty(RequestPropertyType.HttpQuery, "from_currency", "USD"),
-                                            new RequestProperty(RequestPropertyType.HttpQuery, "to_currency", "EUR")
+                                            new RequestProperty
+                                            {
+                                                RequestPropertyType = RequestPropertyType.HttpQuery,
+                                                Key = "apikey",
+                                                Value = "TV5HJJHNP8094BRO"
+                                            }, new RequestProperty
+                                            {
+                                                RequestPropertyType = RequestPropertyType.HttpQuery,
+                                                Key = "function",
+                                                Value = "CURRENCY_EXCHANGE_RATE"
+                                            },
+                                            new RequestProperty
+                                            {
+                                                RequestPropertyType = RequestPropertyType.HttpQuery,
+                                                Key = "from_currency",
+                                                Value = "USD"
+                                            },
+                                            new RequestProperty
+                                            {
+                                                RequestPropertyType = RequestPropertyType.HttpQuery,
+                                                Key = "to_currency",
+                                                Value = "EUR"
+                                            }
                                         }
                                     }
                                 }
