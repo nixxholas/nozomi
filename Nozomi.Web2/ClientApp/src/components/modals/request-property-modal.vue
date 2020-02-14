@@ -130,20 +130,18 @@
                 } else if (self.guid) {
                     RequestPropertyService.update(self.form)
                     .then(function (response) {
-                        if (response.status === 200) {
-                            self.isModalActive = false; // Close the modal
-                            Notification.open({
-                                duration: 2500,
-                                message: `Component successfully updated!`,
-                                position: 'is-bottom-right',
-                                type: 'is-success',
-                                hasIcon: true
-                            });
+                        self.isModalActive = false; // Close the modal
+                        Notification.open({
+                            duration: 2500,
+                            message: `Component successfully updated!`,
+                            position: 'is-bottom-right',
+                            type: 'is-success',
+                            hasIcon: true
+                        });
 
-                            // Inform the parent that a new request has been created
-                            // https://forum.vuejs.org/t/passing-data-back-to-parent/1201
-                            self.$emit('created', true);
-                        }
+                        // Inform the parent that a new request has been created
+                        // https://forum.vuejs.org/t/passing-data-back-to-parent/1201
+                        self.$emit('updated', true);
                     })
                         .catch(function (error) {
                             //console.log(error);
