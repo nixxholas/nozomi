@@ -203,6 +203,17 @@
                                 </ul>
                             </div>
                         </div>
+                        <div class="timeline-item is-info">
+                            <div class="timeline-marker is-info"></div>
+                            <div class="timeline-content">
+                                <p class="heading">14 February 2020 - <b>beta 11</b></p>
+                                <ul>
+                                    <li><b>Web</b> - Infrastructure solidification, rock solid base right now! </li>
+                                    <li><b>Web</b> - Request properties are now available </li>
+                                    <li><b>Web</b> - General hotfixes and improvements to the request user interface </li>
+                                </ul>
+                            </div>
+                        </div>
                         <header class="timeline-header">
                             <span class="tag is-primary">Release Candidate</span>
                         </header>
