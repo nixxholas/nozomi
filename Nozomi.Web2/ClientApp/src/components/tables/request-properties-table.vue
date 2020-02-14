@@ -9,7 +9,8 @@
                 <RequestPropertyModal :request-guid="requestGuid"/>
             </template>
         </b-navbar>
-        <b-table :data="data">
+        <b-table :loading="tableLoading" 
+                :data="data">
             <template slot-scope="props">
                 <b-table-column field="type" label="Type" sortable centered>
                     <span class="tag is-info" 
@@ -18,36 +19,10 @@
                     </span>
                 </b-table-column>
 
-                <!--                    <b-table-column field="identifier" label="Identifier" sortable>-->
-                <!--                        <a @click="toggle(props.row)">-->
-                <!--                            {{ props.row.identifier }}-->
-                <!--                        </a>-->
-                <!--                    </b-table-column>-->
-
-                <!--                    <b-table-column field="queryComponent" label="Query Component" sortable>-->
-                <!--                        {{ props.row.queryComponent }}-->
-                <!--                    </b-table-column>-->
-
-                <!--                    <b-table-column field="storeHistorical" label="Store History">-->
-                <!--                        <b-checkbox v-model="form.storeHistorical"-->
-                <!--                                    true-value="Yes"-->
-                <!--                                    false-value="No">-->
-                <!--                            {{ form.storeHistorical }}-->
-                <!--                        </b-checkbox>-->
-                <!--                    </b-table-column>-->
-
                 <b-table-column field="key" label="Key">
                     {{ props.row.key }}
                 </b-table-column>
-
-                <!--                    <b-table-column field="anomalyIgnorance" label="Ignore Anomalies">-->
-                <!--                        <b-checkbox v-model="form.anomalyIgnorance"-->
-                <!--                                    true-value="Yes"-->
-                <!--                                    false-value="No">-->
-                <!--                            {{ form.anomalyIgnorance }}-->
-                <!--                        </b-checkbox>-->
-                <!--                    </b-table-column>-->
-
+                
                 <b-table-column field="value" label="Value">
                     {{ props.row.value ? props.row.value : "" }}
                 </b-table-column>
@@ -72,6 +47,7 @@
 <script>
     import RequestPropertyService from "../../services/RequestPropertyService";
     import RequestPropertyModal from "@/components/modals/request-property-modal";
+    import RequestPropertyTypeService from "@/services/RequestPropertyTypeService";
 
     export default {
         name: "request-properties-table",
@@ -88,6 +64,7 @@
         },
         data: function () {
             return {
+                tableLoading: true,
                 data: [],
                 propertyTypes: []
             }
@@ -97,10 +74,18 @@
 
             // If this is a request-specific 
             if (self.requestGuid) {
-                RequestPropertyService.getAllByRequest(self.requestGuid)
-                    .then(function (res) {
-                        self.data = res;
-                    });
+                RequestPropertyTypeService.all()
+                .then(function(res) {
+                    self.propertyTypes = res;
+
+                    RequestPropertyService.getAllByRequest(self.requestGuid)
+                        .then(function (res) {
+                            self.data = res;
+                        });
+                })
+                .finally(function() {
+                    self.tableLoading = false;
+                });
             }
         }
     }
