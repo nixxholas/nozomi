@@ -26,6 +26,10 @@
                 <b-table-column field="value" label="Value">
                     {{ props.row.value ? props.row.value : "" }}
                 </b-table-column>
+                
+                <b-table-column field="actions">
+                    <RequestPropertyModal :guid="props.row.guid" @updated="reload"/>
+                </b-table-column>
             </template>
             <template slot="empty">
                 <section class="section">
