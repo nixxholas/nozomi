@@ -6,14 +6,14 @@
             </template>
             <template v-if="showCreateFeature && requestGuid"
                       slot="end">
-                <RequestPropertyModal :request-guid="requestGuid"/>
+                <RequestPropertyModal :request-guid="requestGuid" @created="reload"/>
             </template>
         </b-navbar>
-        <b-table :loading="tableLoading" 
-                :data="data">
+        <b-table :loading="tableLoading"
+                 :data="data">
             <template slot-scope="props">
                 <b-table-column field="type" label="Type" sortable centered>
-                    <span class="tag is-info" 
+                    <span class="tag is-info"
                           v-if="propertyTypes && propertyTypes.length > 0">
                         {{ propertyTypes.filter(e => e.value == props.row.type)[0].key }}
                     </span>
@@ -22,7 +22,7 @@
                 <b-table-column field="key" label="Key">
                     {{ props.row.key }}
                 </b-table-column>
-                
+
                 <b-table-column field="value" label="Value">
                     {{ props.row.value ? props.row.value : "" }}
                 </b-table-column>
@@ -75,19 +75,33 @@
             // If this is a request-specific 
             if (self.requestGuid) {
                 RequestPropertyTypeService.all()
-                .then(function(res) {
-                    self.propertyTypes = res;
+                    .then(function (res) {
+                        self.propertyTypes = res;
 
-                    RequestPropertyService.getAllByRequest(self.requestGuid)
-                        .then(function (res) {
-                            self.data = res;
-                        });
-                })
-                .finally(function() {
-                    self.tableLoading = false;
-                });
+                        RequestPropertyService.getAllByRequest(self.requestGuid)
+                            .then(function (res) {
+                                self.data = res;
+                            });
+                    })
+                    .finally(function () {
+                        self.tableLoading = false;
+                    });
             }
-        }
+        },
+        methods: {
+            reload: function () {
+                let self = this;
+                self.tableLoading = true;
+
+                RequestPropertyService.getAllByRequest(self.requestGuid)
+                    .then(function (res) {
+                        self.data = res;
+                    })
+                    .finally(function () {
+                        self.tableLoading = false;
+                    });
+            }
+        },
     }
 </script>
 
