@@ -4,17 +4,17 @@
             <template slot="brand">
                 <b class="has-text-dark">Properties</b>
             </template>
-            <template v-if="showCreateFeature && guid"
+            <template v-if="showCreateFeature && requestGuid"
                       slot="end">
-<!--                <CreateRequestComponentModal v-bind:guid="guid"/>-->
+                <RequestPropertyModal :request-guid="requestGuid"/>
             </template>
         </b-navbar>
         <b-table :data="data">
             <template slot-scope="props">
                 <b-table-column field="type" label="Type" sortable centered>
                     <span class="tag is-info" 
-                          v-if="componentTypes && componentTypes.length > 0">
-                        {{ componentTypes.filter(e => e.value == props.row.type)[0].key }}
+                          v-if="propertyTypes && propertyTypes.length > 0">
+                        {{ propertyTypes.filter(e => e.value == props.row.type)[0].key }}
                     </span>
                 </b-table-column>
 
@@ -36,9 +36,8 @@
                 <!--                        </b-checkbox>-->
                 <!--                    </b-table-column>-->
 
-                <b-table-column field="isDenominated" label="Denominated">
-                    <b-icon v-if="props.row.isDenominated" icon="check"/>
-                    <b-icon v-else icon="times"/>
+                <b-table-column field="key" label="Key">
+                    {{ props.row.key }}
                 </b-table-column>
 
                 <!--                    <b-table-column field="anomalyIgnorance" label="Ignore Anomalies">-->
@@ -72,25 +71,25 @@
 
 <script>
     import RequestPropertyService from "../../services/RequestPropertyService";
+    import RequestPropertyModal from "@/components/modals/request-property-modal";
 
     export default {
         name: "request-properties-table",
-        components: {},
+        components: {RequestPropertyModal},
         props: {
             showCreateFeature: {
                 type: Boolean,
                 default: false
             },
-            guid: {
+            requestGuid: {
                 type: String,
                 default: null
             }
         },
         data: function () {
             return {
-                requestGuid: this.guid,
                 data: [],
-                componentTypes: []
+                propertyTypes: []
             }
         },
         mounted: function () {
@@ -100,8 +99,7 @@
             if (self.requestGuid) {
                 RequestPropertyService.getAllByRequest(self.requestGuid)
                     .then(function (res) {
-                        self.data = res.data;
-                        console.dir(self.data);
+                        self.data = res;
                     });
             }
         }

@@ -130,7 +130,7 @@
                             self.isModalLoading = false;
                         });
                 } else if (self.guid) {
-                    AnalysedComponentService.update(self.form)
+                    RequestPropertyService.update(self.form)
                     .then(function (response) {
                         if (response.status === 200) {
                             self.isModalActive = false; // Close the modal

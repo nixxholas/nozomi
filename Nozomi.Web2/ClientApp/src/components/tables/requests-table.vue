@@ -46,7 +46,7 @@
                 <b-tag type="is-info">{{ props.row.guid }}</b-tag>
             </b-taglist>
             
-            <RequestPropertiesTable :guid="props.row.guid"/>
+            <RequestPropertiesTable :show-create-feature="true" :request-guid="props.row.guid"/>
             
             <nav class="level is-mobile">
                 <div class="level-item has-text-centered">
