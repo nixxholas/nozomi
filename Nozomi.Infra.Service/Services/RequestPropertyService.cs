@@ -103,7 +103,7 @@ namespace Nozomi.Service.Services
             throw new ArgumentNullException($"{_serviceName} Update: Invalid input model.");
         }
 
-        public Task Delete(string guid, string userId)
+        public Task Delete(string guid, string userId, bool hardDelete = true)
         {
             if (!string.IsNullOrEmpty(guid) && Guid.TryParse(guid, out var requestPropertyGuid)
                                             && !string.IsNullOrEmpty(userId))
@@ -113,11 +113,19 @@ namespace Nozomi.Service.Services
 
                 if (requestProperty != null)
                 {
-                    // Delete
-                    requestProperty.DeletedAt = DateTime.UtcNow;
-                    requestProperty.DeletedById = userId;
-                    // Push
-                    _unitOfWork.GetRepository<RequestProperty>().Update(requestProperty);
+                    if (hardDelete)
+                    {
+                        _unitOfWork.GetRepository<RequestProperty>().Delete(requestProperty);
+                    }
+                    else
+                    {
+                        // Soft Delete
+                        requestProperty.DeletedAt = DateTime.UtcNow;
+                        requestProperty.DeletedById = userId;
+                        // Push
+                        _unitOfWork.GetRepository<RequestProperty>().Update(requestProperty);
+                    }
+                    
                     //Commit
                     _unitOfWork.Commit(userId);
                     // Complete

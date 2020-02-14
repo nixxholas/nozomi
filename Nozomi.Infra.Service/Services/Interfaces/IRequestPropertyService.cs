@@ -9,6 +9,6 @@ namespace Nozomi.Service.Services.Interfaces
         
         Task Update(UpdateRequestPropertyInputModel inputModel, string userId);
 
-        Task Delete(string guid, string userId);
+        Task Delete(string guid, string userId, bool hardDelete = true);
     }
 }
