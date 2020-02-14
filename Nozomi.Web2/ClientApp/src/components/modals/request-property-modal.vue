@@ -30,7 +30,7 @@
                                         v-for="option in requestPropertyTypes"
                                         :value="option.key"
                                         :key="option.value">
-                                    {{ option.value }}
+                                    {{ option.key }}
                                 </option>
                             </b-select>
                         </b-field>
