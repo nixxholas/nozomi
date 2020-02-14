@@ -71,7 +71,7 @@ namespace Nozomi.Service.Events
                     .Include(rp => rp.Request)
                     .Where(rp => rp.Request.Guid.ToString().Equals(requestGuid));
 
-                if (!ensureDisabledOrDeleted)
+                if (ensureDisabledOrDeleted)
                     query = query.Where(rp => rp.DeletedAt == null && rp.IsEnabled);
                 
                 if (!string.IsNullOrEmpty(validatingUserId))

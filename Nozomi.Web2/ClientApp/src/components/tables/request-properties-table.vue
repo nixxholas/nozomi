@@ -80,12 +80,14 @@
             if (self.requestGuid) {
                 RequestPropertyTypeService.all()
                     .then(function (res) {
-                        self.propertyTypes = res;
+                        if (res.status && res.status === 200) {
+                            self.propertyTypes = res.data;
 
-                        RequestPropertyService.getAllByRequest(self.requestGuid)
-                            .then(function (res) {
-                                self.data = res;
-                            });
+                            RequestPropertyService.getAllByRequest(self.requestGuid)
+                                .then(function (res) {
+                                    self.data = res.data;
+                                });
+                        }
                     })
                     .finally(function () {
                         self.tableLoading = false;
@@ -99,7 +101,7 @@
 
                 RequestPropertyService.getAllByRequest(self.requestGuid)
                     .then(function (res) {
-                        self.data = res;
+                        self.data = res.data;
                     })
                     .finally(function () {
                         self.tableLoading = false;

@@ -11,7 +11,7 @@ export default {
                 }
             })
                 .then(function (response) {
-                    resolve(response.data);
+                    resolve(response);
                 }).catch(function (error) {
                 reject(error);
             });

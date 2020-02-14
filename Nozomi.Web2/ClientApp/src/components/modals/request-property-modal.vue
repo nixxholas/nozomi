@@ -5,7 +5,9 @@
                     @click="isModalActive = true">
                 Modify
             </button>
-            <b-button type="is-danger"><b-icon size="is-small" icon="trash"></b-icon></b-button>
+            <b-button :loading="isDeleteLoading" @click="remove()" type="is-danger">
+                <b-icon size="is-small" icon="trash" />
+            </b-button>
         </div>
         <button v-else
                 class="button is-primary"
@@ -90,11 +92,28 @@
         },
         methods: {
             ...mapActions('oidcStore', ['authenticateOidc', 'signOutOidc']),
+            remove: function(guid) {
+                let self = this;
+                self.isDeleteLoading = true;
+                
+                RequestPropertyService.delete(self.guid)
+                .then(function(res) {
+                    console.dir(res);
+                    
+                    this.$emit('deleted', true);
+                })
+                .catch(function(err) {
+                    console.dir(err);
+                })
+                .finally(function() {
+                    self.isDeleteLoading = false;
+                });
+            },
             push: function () {
                 this.isModalLoading = true;
                 let self = this;
 
-                if (!self.guid) {
+                if (!self.guid && self.form.requestGuid) {
                     RequestPropertyService.create(self.form)
                         .then(function (response) {
                             // Reset the form data regardless
@@ -213,6 +232,7 @@
             return {
                 isModalActive: false,
                 isModalLoading: false,
+                isDeleteLoading: false,
                 currentTypeTab: 0,
                 form: {
                     guid: this.guid,
