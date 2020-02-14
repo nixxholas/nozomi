@@ -1,10 +1,12 @@
 <template>
     <div>
-        <button v-if="guid"
-                class="button is-warning"
-                @click="isModalActive = true">
-            Modify
-        </button>
+        <div class="buttons" v-if="guid">
+            <button class="button is-warning"
+                    @click="isModalActive = true">
+                Modify
+            </button>
+            <b-button type="is-danger"><b-icon size="is-small" icon="trash"></b-icon></b-button>
+        </div>
         <button v-else
                 class="button is-primary"
                 @click="isModalActive = true">
