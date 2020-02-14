@@ -7,7 +7,8 @@ using Nozomi.Service.Events.Interfaces;
 
 namespace Nozomi.Web2.Controllers.v1.RequestPropertyType
 {
-    public class RequestPropertyTypeController : BaseApiController<RequestPropertyTypeController>, IRequestPropertyTypeController
+    public class RequestPropertyTypeController : BaseApiController<RequestPropertyTypeController>, 
+        IRequestPropertyTypeController
     {
         private readonly IRequestPropertyTypeEvent _requestPropertyTypeEvent;
 
@@ -17,11 +18,11 @@ namespace Nozomi.Web2.Controllers.v1.RequestPropertyType
             _requestPropertyTypeEvent = requestPropertyTypeEvent;
         }
 
-        [Authorize(Roles = NozomiPermissions.AllowHigherStaffRoles)]
+        [Authorize]
         [HttpGet]
-        public NozomiResult<JsonResult> All()
+        public IActionResult All()
         {
-            return new NozomiResult<JsonResult>(new JsonResult(_requestPropertyTypeEvent.All()));
+            return Ok(_requestPropertyTypeEvent.All());
         }
     }
 }

@@ -45,6 +45,9 @@
                 <b-tag type="is-dark">Unique ID</b-tag>
                 <b-tag type="is-info">{{ props.row.guid }}</b-tag>
             </b-taglist>
+            
+            <RequestPropertiesTable :show-create-feature="true" :request-guid="props.row.guid"/>
+            
             <nav class="level is-mobile">
                 <div class="level-item has-text-centered">
                     <div>
@@ -57,6 +60,7 @@
                     </div>
                 </div>
             </nav>
+            
             <RequestComponentsTable :show-create-feature="true"
                                     v-if="props.row.guid" 
                                     v-bind:guid="props.row.guid"/>
@@ -94,10 +98,12 @@
     import AnalysedComponentsTable from "@/components/tables/analysed-components-table";
     import RequestComponentsTable from "@/components/tables/request-components-table";
     import {mapActions} from "vuex";
+    import RequestPropertiesTable from "@/components/tables/request-properties-table";
 
     export default {
         name: "requests-table",
-        components: { AnalysedComponentsTable, RequestComponentsTable, 
+        components: {
+            RequestPropertiesTable, AnalysedComponentsTable, RequestComponentsTable, 
             CreateRCComponent, RequestModal },
         props: {
             request: {

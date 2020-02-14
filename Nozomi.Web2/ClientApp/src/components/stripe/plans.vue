@@ -26,8 +26,11 @@
                             Unsubscribe
                         </b-button>
                     </div>
-                    <b-button v-else-if="oidcIsAuthenticated && !currentPlan" @click="subscribe(plan.id)"
+                    <b-button v-else-if="oidcIsAuthenticated && !currentPlan && stripeUserId" @click="subscribe(plan.id)"
                               type="is-primary" expanded>Choose
+                    </b-button>
+                    <b-button v-else-if="oidcIsAuthenticated && !currentPlan" tag="router-link"
+                              to="/settings" type="is-primary" expanded>Choose
                     </b-button>
                     <b-button v-else-if="oidcIsAuthenticated && currentPlan" @click="changeSubscription(plan.id)"
                               type="is-primary" expanded>Switch
@@ -69,6 +72,7 @@
                 currentPlan: this.existingPlan,
                 isLoading: true,
                 plans: [],
+                stripeUserId: null,
                 currentRoute: window.location.href, // https://forum.vuejs.org/t/how-to-get-path-from-route-instance/26934/2
             }
         },
@@ -80,6 +84,18 @@
                 'oidcIdToken',
                 'oidcIdTokenExp',
             ]),
+        },
+        beforeCreate() {
+            let self = this;
+            
+            if (!self.stripeUserId) {
+                PaymentService.getStripeCustId()
+                .then(function(res) {
+                    if (res && res.status === 200) {
+                        self.stripeUserId = res.data;
+                    }
+                });
+            }
         },
         mounted() {
             let self = this;

@@ -36,6 +36,7 @@ namespace Nozomi.Web2.Extensions
             services.AddTransient<ICurrencySourceEvent, CurrencySourceEvent>();
             services.AddTransient<ICurrencyTypeEvent, CurrencyTypeEvent>();
             services.AddTransient<IRequestEvent, RequestEvent>();
+            services.AddTransient<IRequestPropertyEvent, RequestPropertyEvent>();
             services.AddTransient<IRequestPropertyTypeEvent, RequestPropertyTypeEvent>();
             services.AddTransient<IRequestTypeEvent, RequestTypeEvent>();
             services.AddTransient<ISourceEvent, SourceEvent>();
@@ -51,6 +52,7 @@ namespace Nozomi.Web2.Extensions
             services.AddScoped<ICurrencySourceService, CurrencySourceService>();
             services.AddScoped<ICurrencyTypeService, CurrencyTypeService>();
             services.AddScoped<IRcdHistoricItemService, RcdHistoricItemService>();
+            services.AddScoped<IRequestPropertyService, RequestPropertyService>();
             services.AddScoped<ISourceService, SourceService>();
             services.AddScoped<ISourceTypeService, SourceTypeService>();
         }
