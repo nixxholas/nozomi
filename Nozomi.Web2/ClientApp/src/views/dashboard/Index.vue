@@ -22,9 +22,9 @@
                         <article class="tile is-child notification is-info">
                             <p class="title">Source Types</p>
                             <p class="subtitle">
-                                <SourceTypeModal />
+                                <SourceTypeModal @created="createdNewSourceType" />
                             </p>
-                            <SourceTypesTable />
+                            <SourceTypesTable ref="sourceTypeTable" />
                         </article>
                     </div>
                     <div class="tile is-parent">
@@ -84,10 +84,13 @@
         },
         methods: {
             ...mapActions('oidcStore', ['authenticateOidc', 'signOutOidc']),
-            createdNewRequest: function (value) {
+            createdNewRequest: function(value) {
                 if (value)
                     this.$refs.reqTable.updateRequests();
-            }
+            },
+            createdNewSourceType: function() {
+                this.$refs.sourceTypeTable.update();
+            },
         },
         mounted: function () {
         }
