@@ -2,7 +2,6 @@
     <b-table
             :loading="isLoading"
             :data="requestData"
-            :columns="requestColumns"
             detailed
             detail-key="guid">
         <template slot-scope="props">
@@ -117,37 +116,37 @@
                 requestTypes: [],
                 responseTypes: [],
                 requestData: [],
-                requestColumns: [
-                    {
-                        field: 'guid',
-                        label: 'ID',
-                        width: '40',
-                    },
-                    {
-                        field: 'requestType',
-                        label: 'Type',
-                    },
-                    {
-                        field: 'responseType',
-                        label: 'Response Type',
-                    },
-                    {
-                        field: 'dataPath',
-                        label: 'URL',
-                    },
-                    {
-                        field: 'delay',
-                        label: 'Delay',
-                        centered: true,
-                        numeric: true
-                    },
-                    {
-                        field: 'failureDelay',
-                        label: 'Failure Delay',
-                        centered: true,
-                        numeric: true
-                    }
-                ]
+                // requestColumns: [
+                //     {
+                //         field: 'guid',
+                //         label: 'ID',
+                //         width: '40',
+                //     },
+                //     {
+                //         field: 'requestType',
+                //         label: 'Type',
+                //     },
+                //     {
+                //         field: 'responseType',
+                //         label: 'Response Type',
+                //     },
+                //     {
+                //         field: 'dataPath',
+                //         label: 'URL',
+                //     },
+                //     {
+                //         field: 'delay',
+                //         label: 'Delay',
+                //         centered: true,
+                //         numeric: true
+                //     },
+                //     {
+                //         field: 'failureDelay',
+                //         label: 'Failure Delay',
+                //         centered: true,
+                //         numeric: true
+                //     }
+                // ]
             }
         },
         methods: {
