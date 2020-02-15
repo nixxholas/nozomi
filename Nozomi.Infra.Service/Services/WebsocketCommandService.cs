@@ -168,7 +168,23 @@ namespace Nozomi.Service.Services
 
         public void Delete(long commandId, string userId, bool hardDelete = true)
         {
-            throw new System.NotImplementedException();
+            if (commandId > 0)
+            {
+                var command = _unitOfWork.GetRepository<WebsocketCommand>()
+                    .GetQueryable()
+                    .AsTracking()
+                    .SingleOrDefault(c => c.Id.Equals(commandId));
+
+                if (command != null)
+                {
+                    _unitOfWork.GetRepository<WebsocketCommand>().Delete(command); // Delete
+                    _unitOfWork.Commit(userId); // Save
+
+                    return;
+                }
+            }
+            
+            throw new ArgumentException("Invalid Command ID!");
         }
     }
 }
