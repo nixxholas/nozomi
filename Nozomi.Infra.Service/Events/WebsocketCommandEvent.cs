@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using System.Linq;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data.Models.Web.Websocket;
 using Nozomi.Data.ViewModels.WebsocketCommand;
@@ -16,12 +18,21 @@ namespace Nozomi.Service.Events
         {
         }
 
-        public bool Exists(long requestId, CommandType type, string key)
+        public bool Exists(long requestId, CommandType type, string name)
         {
-            throw new System.NotImplementedException();
+            if (requestId > 0 && !string.IsNullOrEmpty(name))
+            {
+                return _unitOfWork.GetRepository<WebsocketCommand>()
+                    .GetQueryable()
+                    .AsNoTracking()
+                    .Any(c => c.RequestId.Equals(requestId) && c.CommandType.Equals(type) 
+                                                            && c.Name.Equals(name));
+            }
+
+            return false;
         }
 
-        public bool Exists(string requestGuid, CommandType type, string key)
+        public bool Exists(string requestGuid, CommandType type, string name)
         {
             throw new System.NotImplementedException();
         }
