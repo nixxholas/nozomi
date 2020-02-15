@@ -12,6 +12,8 @@ namespace Nozomi.Data.ViewModels.WebsocketCommandProperty
         
         public string Value { get; set; }
 
+        public bool IsEnabled { get; set; }
+
         protected class CreateWebsocketCommandPropertyValidator 
             : AbstractValidator<CreateWebsocketCommandPropertyInputModel>
         {

@@ -15,6 +15,8 @@ namespace Nozomi.Data.ViewModels.WebsocketCommand
         public long Delay { get; set; }
         
         public Guid RequestGuid { get; set; }
+
+        public bool IsEnabled { get; set; }
         
         public ICollection<CreateWebsocketCommandPropertyInputModel> Properties { get; set; }
         
