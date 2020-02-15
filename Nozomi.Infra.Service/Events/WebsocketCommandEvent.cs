@@ -50,7 +50,17 @@ namespace Nozomi.Service.Events
 
         public WebsocketCommand Get(long id, bool ensureNotDisabledOrDeleted = true, bool track = false)
         {
-            throw new System.NotImplementedException();
+            var command = _unitOfWork.GetRepository<WebsocketCommand>()
+                .GetQueryable()
+                .Where(c => c.Id.Equals(id));
+
+            if (ensureNotDisabledOrDeleted)
+                command = command.Where(c => c.IsEnabled && c.DeletedAt == null);
+
+            if (track)
+                command = command.AsTracking();
+
+            return command.SingleOrDefault();
         }
 
         public WebsocketCommand Get(string guid, bool ensureNotDisabledOrDeleted = true, bool track = false)
@@ -58,12 +68,14 @@ namespace Nozomi.Service.Events
             throw new System.NotImplementedException();
         }
 
-        public IEnumerable<WebsocketCommand> GetAllByRequest(long requestId, bool ensureNotDisabledOrDeleted = true, bool track = false)
+        public IEnumerable<WebsocketCommand> GetAllByRequest(long requestId, bool ensureNotDisabledOrDeleted = true, 
+            bool track = false)
         {
             throw new System.NotImplementedException();
         }
 
-        public IEnumerable<WebsocketCommand> GetAllByRequest(string requestGuid, bool ensureNotDisabledOrDeleted = true, bool track = false)
+        public IEnumerable<WebsocketCommand> GetAllByRequest(string requestGuid, bool ensureNotDisabledOrDeleted = true, 
+            bool track = false)
         {
             throw new System.NotImplementedException();
         }
@@ -78,12 +90,14 @@ namespace Nozomi.Service.Events
             throw new System.NotImplementedException();
         }
 
-        public IEnumerable<WebsocketCommandViewModel> ViewAllByRequest(long requestId, bool ensureNotDisabledOrDeleted = true, bool track = false)
+        public IEnumerable<WebsocketCommandViewModel> ViewAllByRequest(long requestId, 
+            bool ensureNotDisabledOrDeleted = true, bool track = false)
         {
             throw new System.NotImplementedException();
         }
 
-        public IEnumerable<WebsocketCommandViewModel> ViewAllByRequest(string requestGuid, bool ensureNotDisabledOrDeleted = true, bool track = false)
+        public IEnumerable<WebsocketCommandViewModel> ViewAllByRequest(string requestGuid, 
+            bool ensureNotDisabledOrDeleted = true, bool track = false)
         {
             throw new System.NotImplementedException();
         }
