@@ -45,7 +45,7 @@
                     </router-link>
                 </b-table-column>
 
-                <b-table-column field="currencyType" label="Type" sortable>
+                <b-table-column v-if="!type" field="currencyType" label="Type" sortable>
                     {{ getType(props.row.currencyTypeGuid).name }}
                 </b-table-column>
 
