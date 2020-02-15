@@ -18,7 +18,7 @@
         <b-modal has-modal-card trap-focus :active.sync="isModalActive">
             <b-loading :active.sync="isModalLoading" :can-cancel="false"/>
             <!--https://stackoverflow.com/questions/48028718/using-event-modifier-prevent-in-vue-to-submit-form-without-redirection-->
-            <form v-on:submit.prevent="push()" class="has-text-justified">
+            <form v-on:submit.prevent="push()" class="has-text-justified" style="z-index: 1;">
                 <div class="modal-card">
                     <header class="modal-card-head">
                         <p class="modal-card-title" v-if="guid">Edit</p>
@@ -26,10 +26,10 @@
                     </header>
                     <section class="modal-card-body">
                         <b-input type="hidden" v-model="form.guid" />
-                        <b-input type="hidden" v-model="form.requestGuid" />
                         
                         <b-field label="Type">
-                            <b-select placeholder="Pick one!" v-model="form.type">
+                            <b-select placeholder="Pick one!" v-model="form.type"
+                                      :loading="requestPropertyTypesIsLoading">
                                 <option
                                         v-for="option in requestPropertyTypes"
                                         :value="option.value"
@@ -112,6 +112,10 @@
             push: function () {
                 this.isModalLoading = true;
                 let self = this;
+                console.dir(self.form);
+                
+                if (!self.form.requestGuid)
+                    self.form.requestGuid = self.requestGuid;
 
                 if (!self.guid && self.form.requestGuid) {
                     RequestPropertyService.create(self.form)
@@ -196,10 +200,9 @@
             let self = this;
 
             // Synchronously call for data
-            self.requestPropertyTypesIsLoading = true;
             RequestPropertyTypeService.all()
                 .then(function (response) {
-                    self.requestPropertyTypes = response;
+                    self.requestPropertyTypes = response.data;
                 })
                 .catch(function (error) {
                     //console.dir(error);
@@ -242,7 +245,7 @@
                     requestGuid: this.requestGuid,
                 },
                 requestPropertyTypes: [],
-                requestPropertyTypesIsLoading: false
+                requestPropertyTypesIsLoading: true,
             }
         }
     }
