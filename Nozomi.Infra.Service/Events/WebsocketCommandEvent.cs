@@ -20,6 +20,23 @@ namespace Nozomi.Service.Events
         {
         }
 
+        public bool Exists(long websocketCommandId, string userId = null)
+        {
+            if (websocketCommandId > 0)
+            {
+                var query = _unitOfWork.GetRepository<WebsocketCommand>()
+                    .GetQueryable()
+                    .Where(c => c.Id.Equals(websocketCommandId));
+
+                if (!string.IsNullOrEmpty(userId))
+                    query = query.Where(c => c.CreatedById.Equals(userId));
+
+                return query.Any();
+            }
+            
+            throw new InvalidOperationException("Invalid Websocket Command ID!");
+        }
+
         public bool Exists(string websocketCommandGuid, string userId = null)
         {
             if (Guid.TryParse(websocketCommandGuid, out var guid))
