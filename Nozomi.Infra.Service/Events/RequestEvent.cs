@@ -46,6 +46,27 @@ namespace Nozomi.Service.Events
             return false;
         }
 
+        public bool Exists(string requestGuid, bool ignoreDeletedOrDisabled = false, string userId = null)
+        {
+            if (Guid.TryParse(requestGuid, out var parsedGuid))
+            {
+                var query = _unitOfWork.GetRepository<Request>()
+                    .GetQueryable()
+                    .AsNoTracking()
+                    .Where(r => r.Guid.Equals(parsedGuid));
+
+                if (!ignoreDeletedOrDisabled)
+                    query = query.Where(r => r.IsEnabled && r.DeletedAt == null);
+
+                if (!string.IsNullOrEmpty(userId))
+                    query = query.Where(r => r.CreatedById.Equals(userId));
+
+                return query.Any();
+            }
+
+            return false;
+        }
+
         public bool Exists(ComponentType type, long requestId)
         {
             return _unitOfWork.GetRepository<Component>()
