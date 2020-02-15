@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
@@ -34,7 +35,17 @@ namespace Nozomi.Service.Events
 
         public bool Exists(string requestGuid, CommandType type, string name)
         {
-            throw new System.NotImplementedException();
+            if (Guid.TryParse(requestGuid, out var guid) && !string.IsNullOrEmpty(name))
+            {
+                return _unitOfWork.GetRepository<WebsocketCommand>()
+                    .GetQueryable()
+                    .AsNoTracking()
+                    .Include(c => c.Request)
+                    .Any(c => c.Request.Guid.Equals(guid) && c.CommandType.Equals(type) 
+                                                            && c.Name.Equals(name));
+            }
+
+            return false;
         }
 
         public WebsocketCommand Get(long id, bool ensureNotDisabledOrDeleted = true, bool track = false)
