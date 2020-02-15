@@ -20,7 +20,7 @@ namespace Nozomi.Service.Events
         }
 
         public RequestProperty GetByGuid(string guid, string validatingUserId = null, 
-            bool ensureDisabledOrDeleted = true, bool track = false)
+            bool ensureNotDisabledOrDeleted = true, bool track = false)
         {
             if (!string.IsNullOrEmpty(guid) && Guid.TryParse(guid, out var requestPropertyGuid))
             {
@@ -39,7 +39,7 @@ namespace Nozomi.Service.Events
                     if (!string.IsNullOrEmpty(validatingUserId))
                         query = query.Where(rp => rp.CreatedById.Equals(validatingUserId));
 
-                    if (ensureDisabledOrDeleted)
+                    if (ensureNotDisabledOrDeleted)
                         query = query.Where(rp => rp.DeletedAt == null && rp.IsEnabled);
 
                     return query.SingleOrDefault();
@@ -57,11 +57,11 @@ namespace Nozomi.Service.Events
         /// </summary>
         /// <param name="requestGuid">The GUID of the request.</param>
         /// <param name="validatingUserId">Optional. The ID of the user to validate the requests against.</param>
-        /// <param name="ensureDisabledOrDeleted">Optional. Ensure the properties that are disabled or deleted
+        /// <param name="ensureNotDisabledOrDeleted">Optional. Ensure the properties that are disabled or deleted
         /// should be ignored.</param>
         /// <returns>List of matching properties for the request.</returns>
         public IEnumerable<RequestPropertyViewModel> GetByRequest(string requestGuid, string validatingUserId = null,
-            bool ensureDisabledOrDeleted = true)
+            bool ensureNotDisabledOrDeleted = true)
         {
             if (!string.IsNullOrEmpty(requestGuid))
             {
@@ -71,7 +71,7 @@ namespace Nozomi.Service.Events
                     .Include(rp => rp.Request)
                     .Where(rp => rp.Request.Guid.ToString().Equals(requestGuid));
 
-                if (ensureDisabledOrDeleted)
+                if (ensureNotDisabledOrDeleted)
                     query = query.Where(rp => rp.DeletedAt == null && rp.IsEnabled);
                 
                 if (!string.IsNullOrEmpty(validatingUserId))

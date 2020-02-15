@@ -108,14 +108,17 @@ namespace Nozomi.Service.Services
             if (!string.IsNullOrEmpty(guid) && Guid.TryParse(guid, out var requestPropertyGuid)
                                             && !string.IsNullOrEmpty(userId))
             {
-                var requestProperty = _requestPropertyEvent.GetByGuid(guid, userId, 
+                // Obtain an untracked entity
+                var requestProperty = _requestPropertyEvent.GetByGuid(guid, userId,
                     true, true);
 
                 if (requestProperty != null)
                 {
                     if (hardDelete)
                     {
-                        _unitOfWork.GetRepository<RequestProperty>().Delete(requestProperty);
+                        // Delete the entity directly
+                        _unitOfWork.GetRepository<RequestProperty>()
+                            .Delete(rp => rp.Id.Equals(requestProperty.Id));
                     }
                     else
                     {
