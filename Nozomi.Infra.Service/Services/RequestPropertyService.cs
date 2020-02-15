@@ -117,8 +117,7 @@ namespace Nozomi.Service.Services
                     if (hardDelete)
                     {
                         // Delete the entity directly
-                        _unitOfWork.GetRepository<RequestProperty>()
-                            .Delete(rp => rp.Id.Equals(requestProperty.Id));
+                        _unitOfWork.Context.Remove(requestProperty);
                     }
                     else
                     {
