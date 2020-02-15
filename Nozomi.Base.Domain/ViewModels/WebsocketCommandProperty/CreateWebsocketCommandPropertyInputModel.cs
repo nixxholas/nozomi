@@ -1,3 +1,4 @@
+using System;
 using FluentValidation;
 using Nozomi.Data.Models.Web.Websocket;
 
@@ -10,7 +11,7 @@ namespace Nozomi.Data.ViewModels.WebsocketCommandProperty
         public string Key { get; set; }
         
         public string Value { get; set; }
-        
+
         protected class CreateWebsocketCommandPropertyValidator 
             : AbstractValidator<CreateWebsocketCommandPropertyInputModel>
         {
