@@ -10,7 +10,7 @@ namespace Nozomi.Data.ViewModels.WebsocketCommand
         public WebsocketCommandViewModel() {}
 
         public WebsocketCommandViewModel(long id, CommandType type, string name, long delay,
-            ICollection<CreateWebsocketCommandPropertyInputModel> properties)
+            ICollection<WebsocketCommandPropertyViewModel> properties)
         {
             Id = id;
             Type = type;
@@ -20,7 +20,7 @@ namespace Nozomi.Data.ViewModels.WebsocketCommand
         }
 
         public WebsocketCommandViewModel(Guid guid, CommandType type, string name, long delay,
-            ICollection<CreateWebsocketCommandPropertyInputModel> properties)
+            ICollection<WebsocketCommandPropertyViewModel> properties)
         {
             Guid = guid;
             Type = type;
@@ -32,5 +32,7 @@ namespace Nozomi.Data.ViewModels.WebsocketCommand
         public long Id { get; set; }
         
         public Guid Guid { get; set; }
+        
+        public new ICollection<WebsocketCommandPropertyViewModel> Properties { get; set; }
     }
 }
