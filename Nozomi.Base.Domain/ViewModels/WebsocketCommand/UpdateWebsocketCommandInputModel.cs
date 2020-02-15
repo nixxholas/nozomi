@@ -19,5 +19,11 @@ namespace Nozomi.Data.ViewModels.WebsocketCommand
                 RuleFor(c => c.RequestGuid).NotEmpty().NotNull();
             }
         }
+
+        public new bool IsValid()
+        {
+            var validator = new UpdateWebsocketCommandValidator();
+            return validator.Validate(this).IsValid;
+        }
     }
 }
