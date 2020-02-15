@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data.Models.Web.Websocket;
 using Nozomi.Data.ViewModels.WebsocketCommand;
@@ -17,19 +18,23 @@ namespace Nozomi.Service.Services
         IWebsocketCommandService
     {
         private readonly IRequestEvent _requestEvent;
+        private readonly IWebsocketCommandEvent _websocketCommandEvent;
         
         public WebsocketCommandService(ILogger<WebsocketCommandService> logger, IUnitOfWork<NozomiDbContext> unitOfWork,
-            IRequestEvent requestEvent) 
+            IRequestEvent requestEvent, IWebsocketCommandEvent websocketCommandEvent) 
             : base(logger, unitOfWork)
         {
             _requestEvent = requestEvent;
+            _websocketCommandEvent = websocketCommandEvent;
         }
 
         public WebsocketCommandService(IHttpContextAccessor contextAccessor, ILogger<WebsocketCommandService> logger, 
-            IUnitOfWork<NozomiDbContext> unitOfWork, IRequestEvent requestEvent) 
+            IUnitOfWork<NozomiDbContext> unitOfWork, IRequestEvent requestEvent, 
+            IWebsocketCommandEvent websocketCommandEvent) 
             : base(contextAccessor, logger, unitOfWork)
         {
             _requestEvent = requestEvent;
+            _websocketCommandEvent = websocketCommandEvent;
         }
 
         public void Create(CreateWebsocketCommandInputModel vm, string userId)
@@ -75,7 +80,69 @@ namespace Nozomi.Service.Services
 
         public void Update(UpdateWebsocketCommandInputModel vm, string userId)
         {
-            throw new System.NotImplementedException();
+            if (vm.IsValid() && _websocketCommandEvent.Exists(vm.Guid, userId) 
+                             && Guid.TryParse(vm.Guid, out var parsedGuid))
+            {
+                var query = _unitOfWork.GetRepository<WebsocketCommand>()
+                    .GetQueryable()
+                    .Include(c => c.WebsocketCommandProperties)
+                    .AsTracking()
+                    .SingleOrDefault(c => c.Guid.Equals(parsedGuid));
+                
+                if (query == null)
+                    throw new KeyNotFoundException("Command not found!");
+                
+                // Update the command
+                if (query.CommandType != vm.Type)
+                    query.CommandType = vm.Type;
+                if (!string.IsNullOrEmpty(vm.Name))
+                    query.Name = vm.Name;
+                if (vm.Delay >= -1)
+                    query.Delay = vm.Delay;
+                if (query.IsEnabled != vm.IsEnabled)
+                    query.IsEnabled = vm.IsEnabled;
+                
+                // Now, the properties
+                if (vm.Properties != null && vm.Properties.Any())
+                {
+                    // Iterate the updated properties collection
+                    foreach (var updatedProperty in vm.Properties)
+                    {
+                        // Look for the property we're gonna update
+                        var currentProperty = query.WebsocketCommandProperties
+                            .SingleOrDefault(p => 
+                                p.Guid.Equals(updatedProperty.Guid) || (p.Id > 0 && p.Id.Equals(updatedProperty.Id)));
+
+                        // If there's something, means it exists
+                        if (currentProperty != null)
+                        {
+                            // Update its values
+                            if (currentProperty.CommandPropertyType != updatedProperty.Type)
+                                currentProperty.CommandPropertyType = updatedProperty.Type;
+                            if (!string.IsNullOrEmpty(updatedProperty.Key))
+                                currentProperty.Key = updatedProperty.Key;
+                            if (!string.IsNullOrEmpty(updatedProperty.Value))
+                                currentProperty.Value = updatedProperty.Value;
+                            currentProperty.IsEnabled = updatedProperty.IsEnabled;
+                        }
+                        else // Else we add it since its new
+                        {
+                            query.WebsocketCommandProperties.Add(new WebsocketCommandProperty
+                            {
+                                CommandPropertyType = updatedProperty.Type,
+                                Key = updatedProperty.Key,
+                                Value = updatedProperty.Value
+                            });
+                        }
+                    }
+                }
+                
+                // Then we update
+                _unitOfWork.GetRepository<WebsocketCommand>().Update(query); // Save
+                _unitOfWork.Commit(userId); // Commit
+            }
+            
+            throw new ArgumentException("Invalid payload!");
         }
 
         public void Delete(string commandGuid, string userId, bool hardDelete = true)
