@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data.Models.Web.Websocket;
 using Nozomi.Data.ViewModels.WebsocketCommand;
+using Nozomi.Data.ViewModels.WebsocketCommandProperty;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Data;
@@ -125,7 +126,23 @@ namespace Nozomi.Service.Events
 
         public WebsocketCommandViewModel View(long id, bool ensureNotDisabledOrDeleted = true, bool track = false)
         {
-            throw new System.NotImplementedException();
+            var command = _unitOfWork.GetRepository<WebsocketCommand>()
+                .GetQueryable()
+                .Include(c => c.WebsocketCommandProperties)
+                .Where(c => c.Id.Equals(id));
+
+            if (ensureNotDisabledOrDeleted)
+                command = command.Where(c => c.IsEnabled && c.DeletedAt == null);
+
+            if (track)
+                command = command.AsTracking();
+
+            return command.Select(c => new WebsocketCommandViewModel(c.Id, 
+                c.CommandType, c.Name, c.Delay, c.WebsocketCommandProperties
+                    .Select(p => 
+                        new WebsocketCommandPropertyViewModel(p.Guid, p.CommandPropertyType, p.Key, p.Value))
+                    .ToList()))
+                .SingleOrDefault();
         }
 
         public WebsocketCommandViewModel View(string guid, bool ensureNotDisabledOrDeleted = true, bool track = false)
