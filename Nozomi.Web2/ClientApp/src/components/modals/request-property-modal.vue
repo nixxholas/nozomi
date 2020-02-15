@@ -98,12 +98,27 @@
                 
                 RequestPropertyService.delete(self.guid)
                 .then(function(res) {
-                    console.dir(res);
+                    Notification.open({
+                        duration: 2500,
+                        message: res && res.data && res.data !== "" ? res.data : "Property successfully deleted!",
+                        position: 'is-bottom-right',
+                        type: 'is-success',
+                        hasIcon: true
+                    });
 
                     self.$emit('deleted', true);
                 })
                 .catch(function(err) {
                     console.dir(err);
+                    Notification.open({
+                        duration: 2500,
+                        message: err && err.statusText ? err.statusText : "There was an issue deleting this property!",
+                        position: 'is-bottom-right',
+                        type: 'is-danger',
+                        hasIcon: true
+                    });
+
+                    self.$emit('updated', true);
                 })
                 .finally(function() {
                     self.isDeleteLoading = false;
@@ -220,13 +235,13 @@
             if (self.guid) {
                 RequestPropertyService.get(self.guid)
                     .then(function(res) {
-                        if (res) {
-                            if (res.requestPropertyType)
-                                self.form.type = res.requestPropertyType;
-                            if (res.key)
-                                self.form.key = res.key;
-                            if (res.value)
-                                self.form.value = res.value;
+                        if (res && res.data) {
+                            if (res.data.requestPropertyType)
+                                self.form.type = res.data.requestPropertyType;
+                            if (res.data.key)
+                                self.form.key = res.data.key;
+                            if (res.data.value)
+                                self.form.value = res.data.value;
                         }
                     })
             }
