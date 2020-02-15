@@ -126,6 +126,9 @@ namespace Nozomi.Service.Events
 
         public WebsocketCommandViewModel View(long id, bool ensureNotDisabledOrDeleted = true, bool track = false)
         {
+            if (id <= 0)
+                throw new ArgumentOutOfRangeException(null, "Invalid command ID!");
+            
             var command = _unitOfWork.GetRepository<WebsocketCommand>()
                 .GetQueryable()
                 .Include(c => c.WebsocketCommandProperties)
