@@ -33,6 +33,6 @@ namespace Nozomi.Data.ViewModels.WebsocketCommand
         
         public Guid Guid { get; set; }
         
-        public new ICollection<WebsocketCommandPropertyViewModel> Properties { get; set; }
+        public new IEnumerable<WebsocketCommandPropertyViewModel> Properties { get; set; }
     }
 }

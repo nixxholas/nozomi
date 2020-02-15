@@ -175,13 +175,50 @@ namespace Nozomi.Service.Events
         public IEnumerable<WebsocketCommandViewModel> ViewAllByRequest(long requestId, 
             bool ensureNotDisabledOrDeleted = true, bool track = false)
         {
-            throw new System.NotImplementedException();
+            if (requestId <= 0)
+                throw new ArgumentException("Invalid request ID!");
+            
+            var command = _unitOfWork.GetRepository<WebsocketCommand>()
+                .GetQueryable()
+                .Include(c => c.WebsocketCommandProperties)
+                .Where(c => c.RequestId.Equals(requestId));
+
+            if (ensureNotDisabledOrDeleted)
+                command = command.Where(c => c.IsEnabled && c.DeletedAt == null);
+
+            if (track)
+                command = command.AsTracking();
+
+            return command.Select(c => new WebsocketCommandViewModel(c.Id, 
+                    c.CommandType, c.Name, c.Delay, c.WebsocketCommandProperties
+                        .Select(p => 
+                            new WebsocketCommandPropertyViewModel(p.Guid, p.CommandPropertyType, p.Key, p.Value))
+                        .ToList()));
         }
 
         public IEnumerable<WebsocketCommandViewModel> ViewAllByRequest(string requestGuid, 
             bool ensureNotDisabledOrDeleted = true, bool track = false)
         {
-            throw new System.NotImplementedException();
+            if (!Guid.TryParse(requestGuid, out var parsedGuid))
+                throw new ArgumentException("Invalid request GUID!");
+            
+            var command = _unitOfWork.GetRepository<WebsocketCommand>()
+                .GetQueryable()
+                .Include(c => c.Request)
+                .Include(c => c.WebsocketCommandProperties)
+                .Where(c => c.Request.Guid.Equals(parsedGuid));
+
+            if (ensureNotDisabledOrDeleted)
+                command = command.Where(c => c.IsEnabled && c.DeletedAt == null);
+
+            if (track)
+                command = command.AsTracking();
+
+            return command.Select(c => new WebsocketCommandViewModel(c.Id, 
+                c.CommandType, c.Name, c.Delay, c.WebsocketCommandProperties
+                    .Select(p => 
+                        new WebsocketCommandPropertyViewModel(p.Guid, p.CommandPropertyType, p.Key, p.Value))
+                    .ToList()));
         }
     }
 }
