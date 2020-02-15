@@ -22,7 +22,8 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.WebsocketModels
 
             entityTypeBuilder.HasOne(wscp => wscp.WebsocketCommand)
                 .WithMany(wsc => wsc.WebsocketCommandProperties)
-                .HasForeignKey(wscp => wscp.WebsocketCommandId);
+                .HasForeignKey(wscp => wscp.WebsocketCommandId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

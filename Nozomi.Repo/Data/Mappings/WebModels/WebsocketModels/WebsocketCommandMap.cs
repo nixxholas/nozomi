@@ -20,9 +20,13 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.WebsocketModels
             entityTypeBuilder.Property(wsc => wsc.Delay).HasDefaultValue(0);
 
             entityTypeBuilder.HasOne(wsc => wsc.Request)
-                .WithMany(wsr => wsr.WebsocketCommands).HasForeignKey(wsc => wsc.RequestId);
+                .WithMany(wsr => wsr.WebsocketCommands)
+                .HasForeignKey(wsc => wsc.RequestId)
+                .OnDelete(DeleteBehavior.Cascade);
             entityTypeBuilder.HasMany(wsc => wsc.WebsocketCommandProperties)
-                .WithOne(wscp => wscp.WebsocketCommand).HasForeignKey(wscp => wscp.WebsocketCommandId);
+                .WithOne(wscp => wscp.WebsocketCommand)
+                .HasForeignKey(wscp => wscp.WebsocketCommandId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }
