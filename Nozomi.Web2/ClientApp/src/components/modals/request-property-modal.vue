@@ -92,15 +92,15 @@
         },
         methods: {
             ...mapActions('oidcStore', ['authenticateOidc', 'signOutOidc']),
-            remove: function(guid) {
+            remove: function() {
                 let self = this;
                 self.isDeleteLoading = true;
                 
                 RequestPropertyService.delete(self.guid)
                 .then(function(res) {
                     console.dir(res);
-                    
-                    this.$emit('deleted', true);
+
+                    self.$emit('deleted', true);
                 })
                 .catch(function(err) {
                     console.dir(err);

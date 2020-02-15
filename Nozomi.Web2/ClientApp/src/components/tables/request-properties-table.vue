@@ -28,7 +28,7 @@
                 </b-table-column>
                 
                 <b-table-column field="actions">
-                    <RequestPropertyModal :guid="props.row.guid" @updated="reload"/>
+                    <RequestPropertyModal :guid="props.row.guid" @updated="reload" @deleted="reload"/>
                 </b-table-column>
             </template>
             <template slot="empty">
