@@ -214,6 +214,17 @@
                                 </ul>
                             </div>
                         </div>
+                        <div class="timeline-item is-info">
+                            <div class="timeline-marker is-info"></div>
+                            <div class="timeline-content">
+                                <p class="heading">15 February 2020 - <b>beta 12</b></p>
+                                <ul>
+                                    <li><b>Web/Dashboard</b> - Source types are now auto-syncing! <i><b>Every actions results in refresh</b></i> </li>
+                                    <li><b>Web/Dashboard</b> - Finally managed to resolve the duplicate column issue for requests listing</li>
+                                    <li><b>Web</b> - Some redundant elements were cleared up so that you get less worthless content </li>
+                                </ul>
+                            </div>
+                        </div>
                         <header class="timeline-header">
                             <span class="tag is-primary">Release Candidate</span>
                         </header>
