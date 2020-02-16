@@ -218,7 +218,7 @@ namespace Nozomi.Service.Events
             if (track)
                 property = property.AsTracking();
 
-            return property.Select(c => new WebsocketCommandPropertyViewModel(c.Guid, 
+            return property.Select(c => new WebsocketCommandPropertyViewModel(c.Guid.ToString(), 
                     c.CommandPropertyType, c.Key, c.Value))
                 .SingleOrDefault();
         }
@@ -242,7 +242,7 @@ namespace Nozomi.Service.Events
             if (track)
                 command = command.AsTracking();
 
-            return command.Select(c => new WebsocketCommandPropertyViewModel(c.Guid, 
+            return command.Select(c => new WebsocketCommandPropertyViewModel(c.Guid.ToString(), 
                     c.CommandPropertyType, c.Key, c.Value))
                 .SingleOrDefault();
         }

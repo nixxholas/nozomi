@@ -213,7 +213,8 @@ namespace Nozomi.Service.Events
             return command.Select(c => new WebsocketCommandViewModel(c.Id, 
                 c.CommandType, c.Name, c.Delay, c.WebsocketCommandProperties
                     .Select(p => 
-                        new WebsocketCommandPropertyViewModel(p.Guid, p.CommandPropertyType, p.Key, p.Value))
+                        new WebsocketCommandPropertyViewModel(p.Guid.ToString(), p.CommandPropertyType, 
+                            p.Key, p.Value))
                     .ToList()))
                 .SingleOrDefault();
         }
@@ -241,7 +242,8 @@ namespace Nozomi.Service.Events
             return command.Select(c => new WebsocketCommandViewModel(c.Id, 
                     c.CommandType, c.Name, c.Delay, c.WebsocketCommandProperties
                         .Select(p => 
-                            new WebsocketCommandPropertyViewModel(p.Guid, p.CommandPropertyType, p.Key, p.Value))
+                            new WebsocketCommandPropertyViewModel(p.Guid.ToString(), p.CommandPropertyType, 
+                                p.Key, p.Value))
                         .ToList()))
                 .SingleOrDefault();
         }
@@ -266,7 +268,8 @@ namespace Nozomi.Service.Events
             return command.Select(c => new WebsocketCommandViewModel(c.Id, 
                     c.CommandType, c.Name, c.Delay, c.WebsocketCommandProperties
                         .Select(p => 
-                            new WebsocketCommandPropertyViewModel(p.Guid, p.CommandPropertyType, p.Key, p.Value))
+                            new WebsocketCommandPropertyViewModel(p.Guid.ToString(), p.CommandPropertyType, 
+                                p.Key, p.Value))
                         .ToList()));
         }
 
@@ -291,7 +294,8 @@ namespace Nozomi.Service.Events
             return command.Select(c => new WebsocketCommandViewModel(c.Id, 
                 c.CommandType, c.Name, c.Delay, c.WebsocketCommandProperties
                     .Select(p => 
-                        new WebsocketCommandPropertyViewModel(p.Guid, p.CommandPropertyType, p.Key, p.Value))
+                        new WebsocketCommandPropertyViewModel(p.Guid.ToString(), p.CommandPropertyType, 
+                            p.Key, p.Value))
                     .ToList()));
         }
     }
