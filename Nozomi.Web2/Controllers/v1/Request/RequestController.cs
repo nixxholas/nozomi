@@ -98,5 +98,22 @@ namespace Nozomi.Web2.Controllers.v1.Request
 
             return BadRequest("Please re-authenticate again");
         }
+
+        [Authorize]
+        [HttpDelete("{guid}")]
+        public IActionResult Delete(string guid)
+        {
+            var sub = ((ClaimsIdentity) User.Identity)
+                .Claims.SingleOrDefault(c => c.Type.Equals(JwtClaimTypes.Subject))?.Value;
+
+            // Since we get the sub,
+            if (!string.IsNullOrWhiteSpace(sub))
+            {
+                _requestService.Delete(guid, true, sub);
+                return Ok("Request successfully deleted!");
+            }
+
+            return BadRequest("Please re-authenticate again");
+        }
     }
 }
