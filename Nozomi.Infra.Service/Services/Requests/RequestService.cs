@@ -323,7 +323,8 @@ namespace Nozomi.Service.Services.Requests
 
                 if (request != null)
                 {
-                    request.IsEnabled = vm.IsEnabled;
+                    if (vm.IsEnabled != null)
+                        request.IsEnabled = (bool)vm.IsEnabled;
                     request.RequestType = vm.RequestType;
                     request.ResponseType = vm.ResponseType;
                     request.DataPath = vm.DataPath;
