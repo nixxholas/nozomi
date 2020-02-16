@@ -29,7 +29,7 @@ namespace Nozomi.Web2.Controllers.v1.WebsocketCommand
             // Since we get the sub,
             if (!string.IsNullOrWhiteSpace(sub))
             {
-                return Ok(_websocketCommandEvent.Get(guid));
+                return Ok(_websocketCommandEvent.View(guid, true, sub));
             }
 
             return BadRequest("Please re-authenticate again");
@@ -45,7 +45,7 @@ namespace Nozomi.Web2.Controllers.v1.WebsocketCommand
             // Since we get the sub,
             if (!string.IsNullOrWhiteSpace(sub))
             {
-                return Ok(_websocketCommandEvent.GetAllByRequest(requestGuid, false, sub));
+                return Ok(_websocketCommandEvent.GetAllByRequest(requestGuid, true, sub));
             }
 
             return BadRequest("Please re-authenticate again");
