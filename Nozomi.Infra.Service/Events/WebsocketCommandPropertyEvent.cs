@@ -1,4 +1,7 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data.Models.Web.Websocket;
 using Nozomi.Data.ViewModels.WebsocketCommandProperty;
@@ -20,7 +23,19 @@ namespace Nozomi.Service.Events
 
         public bool Exists(long websocketCommandPropertyId, string userId = null)
         {
-            throw new System.NotImplementedException();
+            if (websocketCommandPropertyId > 0)
+            {
+                var query = _unitOfWork.GetRepository<WebsocketCommandProperty>()
+                    .GetQueryable()
+                    .AsNoTracking();
+
+                if (!string.IsNullOrEmpty(userId))
+                    query = query.Where(p => p.CreatedById.Equals(userId));
+
+                return query.Any(p => p.Id.Equals(websocketCommandPropertyId));
+            }
+            
+            throw new ArgumentOutOfRangeException("Invalid ID!");
         }
 
         public bool Exists(string websocketCommandPropertyGuid, string userId = null)
