@@ -1,19 +1,38 @@
+using System.Linq;
+using System.Security.Claims;
+using IdentityModel;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data.ViewModels.WebsocketCommand;
+using Nozomi.Service.Events.Interfaces;
 
 namespace Nozomi.Web2.Controllers.v1.WebsocketCommand
 {
     public class WebsocketCommandController : BaseApiController<WebsocketCommandController>, IWebsocketCommandController
-
     {
-        public WebsocketCommandController(ILogger<WebsocketCommandController> logger) : base(logger)
+        private readonly IWebsocketCommandEvent _websocketCommandEvent;
+        
+        public WebsocketCommandController(ILogger<WebsocketCommandController> logger,
+            IWebsocketCommandEvent websocketCommandEvent) : base(logger)
         {
+            _websocketCommandEvent = websocketCommandEvent;
         }
 
+        [Authorize]
+        [HttpGet("{guid}")]
         public IActionResult Get(string guid)
         {
-            throw new System.NotImplementedException();
+            var sub = ((ClaimsIdentity) User.Identity)
+                .Claims.SingleOrDefault(c => c.Type.Equals(JwtClaimTypes.Subject))?.Value;
+
+            // Since we get the sub,
+            if (!string.IsNullOrWhiteSpace(sub))
+            {
+                return Ok(_websocketCommandEvent.Get(guid));
+            }
+
+            return BadRequest("Please re-authenticate again");
         }
 
         public IActionResult GetByRequest(string requestGuid)
