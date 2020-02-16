@@ -29,7 +29,7 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                 .HasConversion(val => val.ToUpperInvariant(), 
                     val => val);
 
-            entityTypeBuilder.Property(cp => cp.APIUrl).IsRequired();
+            // entityTypeBuilder.Property(cp => cp.APIUrl).IsRequired();
             entityTypeBuilder.Property(cp => cp.DefaultComponent).IsRequired();
 
             entityTypeBuilder.HasOne(cp => cp.Source).WithMany(cs => cs.CurrencyPairs)
