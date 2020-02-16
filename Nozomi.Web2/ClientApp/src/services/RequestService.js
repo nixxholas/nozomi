@@ -49,4 +49,21 @@ export default {
             });
         });
     },
+    
+    delete(guid) {
+        if (!guid)
+            throw new Error("Invalid GUID. Please try again.");
+
+        return new Promise((resolve, reject) => {
+            axios.delete('/api/Request/Delete/' + guid, {
+                headers: {
+                    Authorization: "Bearer " + store.state.oidcStore.access_token
+                }
+            }).then(function (response) {
+                resolve(response);
+            }).catch(function (error) {
+                reject(error);
+            });
+        });
+    }
 }
