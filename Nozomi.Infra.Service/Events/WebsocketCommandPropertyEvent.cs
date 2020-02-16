@@ -55,6 +55,16 @@ namespace Nozomi.Service.Events
             throw new ArgumentOutOfRangeException("Invalid GUID!");
         }
 
+        public bool Exists(long commandId, CommandPropertyType type, string key)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool Exists(string commandGuid, CommandPropertyType type, string key)
+        {
+            throw new NotImplementedException();
+        }
+
         public WebsocketCommandProperty Get(long id, bool ensureNotDisabledOrDeleted = true, string userId = null, 
             bool track = false)
         {

@@ -10,6 +10,10 @@ namespace Nozomi.Service.Events.Interfaces
         
         bool Exists(string websocketCommandPropertyGuid, string userId = null);
 
+        bool Exists(long commandId, CommandPropertyType type, string key);
+        
+        bool Exists(string commandGuid, CommandPropertyType type, string key);
+
         WebsocketCommandProperty Get(long id, bool ensureNotDisabledOrDeleted = true, string userId = null, 
             bool track = false);
 
