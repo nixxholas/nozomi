@@ -12,8 +12,8 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
             entityTypeBuilder.HasKey(rc => rc.Id).HasName("RequestComponent_PK_Id");
             entityTypeBuilder.Property(rc => rc.Id).ValueGeneratedOnAdd();
 
+            entityTypeBuilder.HasAlternateKey(e => e.Guid);
             entityTypeBuilder.Property(e => e.Guid).ValueGeneratedOnAdd();
-            entityTypeBuilder.HasIndex(e => e.Guid).IsUnique();
 
             entityTypeBuilder.HasIndex(rc => new {rc.RequestId, rc.ComponentType})
                 .HasName("RequestComponent_AK_RequestId_ComponentType").IsUnique();
