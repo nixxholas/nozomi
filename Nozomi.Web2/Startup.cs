@@ -200,6 +200,8 @@ namespace Nozomi.Web2
             {
                 spa.Options.SourcePath = "ClientApp";
             });
+
+            app.UseAutoDbMigration(Environment);
         }
     }
 }

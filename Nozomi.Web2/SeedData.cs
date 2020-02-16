@@ -88,6 +88,7 @@ namespace Nozomi.Web2
                         var bitcoin = new Currency
                         {
                             CurrencyTypeId = type.Id,
+                            Abbreviation = "BTC",
                             LogoPath = "/assets/svg/icons/btc.svg",
                             Name = "Bitcoin",
                             Description = "Bitcoin (BTC) is a consensus network that enables a new payment system " +
@@ -97,7 +98,8 @@ namespace Nozomi.Web2
                                           "the pseudonym 'Satoshi Nakamoto' published the Bitcoin Whitepaper and " +
                                           "described it as: 'a purely peer-to-peer version of electronic cash, which " +
                                           "would allow online payments to be sent directly from one party to another " +
-                                          "without going through a financial institution.'"
+                                          "without going through a financial institution.'",
+                            Slug = "btc"
                         };
 
                         context.Currencies.Add(bitcoin);
@@ -131,6 +133,8 @@ namespace Nozomi.Web2
                         {
                             CurrencyTypeId = type.Id,
                             LogoPath = "/assets/svg/icons/usdt.svg",
+                            Abbreviation = "USDT",
+                            Slug = "usdt",
                             Name = "Tether"
                         };
 
