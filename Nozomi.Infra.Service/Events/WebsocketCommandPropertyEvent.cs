@@ -75,7 +75,22 @@ namespace Nozomi.Service.Events
 
         public bool Exists(string commandGuid, CommandPropertyType type, string key, string userId = null)
         {
-            throw new NotImplementedException();
+            if (Guid.TryParse(commandGuid, out var parsedGuid))
+            {
+                var query = _unitOfWork.GetRepository<WebsocketCommandProperty>()
+                    .GetQueryable()
+                    .AsNoTracking();
+
+                if (!string.IsNullOrEmpty(userId))
+                    query = query.Where(p => p.CreatedById.Equals(userId));
+
+                return query
+                    .Include(p => p.WebsocketCommand)
+                    .Any(p => p.WebsocketCommand.Guid.Equals(parsedGuid)
+                              && p.CommandPropertyType.Equals(type) && p.Key.Equals(key));
+            }
+            
+            throw new ArgumentOutOfRangeException("Invalid GUID!");
         }
 
         public WebsocketCommandProperty Get(long id, bool ensureNotDisabledOrDeleted = true, string userId = null, 
