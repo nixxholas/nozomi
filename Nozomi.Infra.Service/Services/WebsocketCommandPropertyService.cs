@@ -63,7 +63,52 @@ namespace Nozomi.Service.Services
 
         public void Update(UpdateWebsocketCommandPropertyInputModel vm, string userId)
         {
-            throw new System.NotImplementedException();
+            if (vm.IsValid())
+            {
+                // Since its a GUID
+                if (Guid.TryParse(vm.Guid, out var parsedGuid) 
+                    && _websocketCommandPropertyEvent.Exists(parsedGuid))
+                {
+                    var property = _websocketCommandPropertyEvent.Get(parsedGuid, false, 
+                        userId); // Obtain the property
+
+                    if (property != null) // Update it if not null
+                    {
+                        if (!string.IsNullOrEmpty(vm.Key))
+                            property.Key = vm.Key;
+                        if (!string.IsNullOrEmpty(vm.Value))
+                            property.Value = vm.Value;
+                        if (!vm.Type.Equals(property.CommandPropertyType))
+                            property.CommandPropertyType = vm.Type;
+                        
+                        _unitOfWork.GetRepository<WebsocketCommandProperty>().Update(property); // Update
+                        _unitOfWork.Commit(userId); // Save
+                        return;
+                    }
+                }
+                else if (vm.Id > 0 && _websocketCommandEvent.Exists(vm.Id)) // Since its an ID
+                {
+                    var property = _websocketCommandPropertyEvent.Get(vm.Id, false, 
+                        userId); // Obtain the property
+
+                    if (property != null) // Update it if not null
+                    {
+                        if (!string.IsNullOrEmpty(vm.Key))
+                            property.Key = vm.Key;
+                        if (!string.IsNullOrEmpty(vm.Value))
+                            property.Value = vm.Value;
+                        if (!vm.Type.Equals(property.CommandPropertyType))
+                            property.CommandPropertyType = vm.Type;
+                        
+                        _unitOfWork.GetRepository<WebsocketCommandProperty>().Update(property); // Update
+                        _unitOfWork.Commit(userId); // Save
+                        return;
+                    }
+                }
+            }
+            
+            _logger.LogInformation($"{_serviceName} Update: Invalid view model.");
+            throw new InvalidOperationException("Invalid payload!");
         }
 
         public void Delete(string propertyGuid, string userId, bool hardDelete = true)
