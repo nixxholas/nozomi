@@ -57,6 +57,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nozomi.Web2", "Nozomi.Web2\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nozomi.Payment", "Nozomi.Payment\Nozomi.Payment.csproj", "{F51E0D3B-DE5E-4640-91B0-F0393A4D9055}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nozomi.Infra.Payment", "Nozomi.Infra.Payment\Nozomi.Infra.Payment.csproj", "{28FD4907-82CC-435D-81B4-52587D24E554}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -155,6 +157,10 @@ Global
 		{F51E0D3B-DE5E-4640-91B0-F0393A4D9055}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F51E0D3B-DE5E-4640-91B0-F0393A4D9055}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F51E0D3B-DE5E-4640-91B0-F0393A4D9055}.Release|Any CPU.Build.0 = Release|Any CPU
+		{28FD4907-82CC-435D-81B4-52587D24E554}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{28FD4907-82CC-435D-81B4-52587D24E554}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{28FD4907-82CC-435D-81B4-52587D24E554}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{28FD4907-82CC-435D-81B4-52587D24E554}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -183,6 +189,7 @@ Global
 		{33272289-714F-491F-B87B-2EC25A5B5C6B} = {D54DB59C-EB6F-4CBD-9FC0-EF423F88248E}
 		{E8116CCE-5778-40E6-9AE1-EEA22BAD632E} = {67D06790-261E-455B-BA5C-1033C2EC4A09}
 		{F51E0D3B-DE5E-4640-91B0-F0393A4D9055} = {67D06790-261E-455B-BA5C-1033C2EC4A09}
+		{28FD4907-82CC-435D-81B4-52587D24E554} = {D54DB59C-EB6F-4CBD-9FC0-EF423F88248E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {3DDD2207-30A6-4A5A-B901-D1250C52E847}
