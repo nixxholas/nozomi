@@ -148,7 +148,35 @@ namespace Nozomi.Service.Services
 
         public void Delete(long propertyId, string userId, bool hardDelete = true)
         {
-            throw new System.NotImplementedException();
+            if (propertyId > 0)
+            {
+                var query = _unitOfWork.GetRepository<WebsocketCommandProperty>()
+                    .GetQueryable()
+                    .AsNoTracking()
+                    .Where(p => p.Id.Equals(propertyId));
+
+                if (!string.IsNullOrEmpty(userId))
+                    query = query.Where(p => p.CreatedById.Equals(userId));
+
+                var property = query.SingleOrDefault();
+
+                if (property == null)
+                    throw new NullReferenceException("You either have no control to this property or it " +
+                                                     "does not exist.");
+                
+                if (hardDelete)
+                    _unitOfWork.GetRepository<WebsocketCommandProperty>().Delete(property);
+                else {
+                    property.DeletedAt = DateTime.UtcNow;
+                    property.DeletedById = userId;
+                    _unitOfWork.GetRepository<WebsocketCommandProperty>().Update(property);
+                }
+
+                _unitOfWork.Commit(userId); // Save
+                return; // End
+            }
+            
+            throw new ArgumentNullException("Invalid ID.");
         }
     }
 }
