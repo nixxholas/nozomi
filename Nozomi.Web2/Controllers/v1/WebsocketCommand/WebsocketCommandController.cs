@@ -89,5 +89,23 @@ namespace Nozomi.Web2.Controllers.v1.WebsocketCommand
 
             return BadRequest("Please re-authenticate again");
         }
+
+        [Authorize]
+        [HttpDelete("{websocketCommandGuid}")]
+        public IActionResult Delete(string websocketCommandGuid)
+        {
+            var sub = ((ClaimsIdentity) User.Identity)
+                .Claims.SingleOrDefault(c => c.Type.Equals(JwtClaimTypes.Subject))?.Value;
+
+            // Since we get the sub,
+            if (!string.IsNullOrWhiteSpace(sub))
+            {
+                _websocketCommandService.Delete(websocketCommandGuid, sub);
+                
+                return Ok("Websocket Command successfully deleted!");
+            }
+
+            return BadRequest("Please re-authenticate again");
+        }
     }
 }

@@ -12,5 +12,7 @@ namespace Nozomi.Web2.Controllers.v1.WebsocketCommand
         IActionResult Create(CreateWebsocketCommandInputModel vm);
         
         IActionResult Update(UpdateWebsocketCommandInputModel vm);
+
+        IActionResult Delete(string websocketCommandGuid);
     }
 }
