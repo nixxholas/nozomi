@@ -140,7 +140,7 @@ namespace Nozomi.Service.Events
                 .SingleOrDefault(r => r.Id.Equals(id) && r.DeletedAt == null);
         }
 
-        public IQueryable<RequestViewModel> GetAll(string userId = null, bool enabledOnly = true, bool track = false)
+        public IQueryable<RequestViewModel> ViewAll(string userId = null, bool enabledOnly = true, bool track = false)
         {
             var query = _unitOfWork.GetRepository<Request>()
                 .GetQueryable()

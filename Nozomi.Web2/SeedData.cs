@@ -185,46 +185,40 @@ namespace Nozomi.Web2
                                     Delay = 0,
                                     UIFormatting = "$ 0[.]000"
                                 }
+                            },
+                            Requests = new List<Request>
+                            {
+                                new Request
+                                {
+                                    RequestType = RequestType.WebSocket,
+                                    ResponseType = ResponseType.Json,
+                                    DataPath = "wss://stream.binance.com:9443/ws/!ticker@arr",
+                                    Delay = 0,
+                                    FailureDelay = 10000,
+                                    RequestComponents = new List<Component>()
+                                    {
+                                        new Component
+                                        {
+                                            ComponentType = ComponentType.Bid,
+                                            Identifier = "s=>BTCUSDT",
+                                            QueryComponent = "b",
+                                            IsDenominated = true
+                                        },
+                                        new Component
+                                        {
+                                            ComponentType = ComponentType.Ask,
+                                            Identifier = "s=>BTCUSDT",
+                                            QueryComponent = "a",
+                                            IsDenominated = true
+                                        }
+                                    }
+                                }
                             }
                         };
 
                         context.CurrencyPairs.Add(btcusdtBinance);
                         context.SaveChanges();
                     }
-                }
-                
-                // Requests
-                if (!context.Requests
-                    .Any(r => r.DataPath.Equals("wss://stream.binance.com:9443/ws/!ticker@arr")))
-                {
-                    var binanceTickerWsRequest = new Request
-                    {
-                        RequestType = RequestType.WebSocket,
-                        ResponseType = ResponseType.Json,
-                        DataPath = "wss://stream.binance.com:9443/ws/!ticker@arr",
-                        Delay = 0,
-                        FailureDelay = 10000,
-                        RequestComponents = new List<Component>()
-                        {
-                            new Component
-                            {
-                                ComponentType = ComponentType.Bid,
-                                Identifier = "s=>BTCUSDT",
-                                QueryComponent = "b",
-                                IsDenominated = true
-                            },
-                            new Component
-                            {
-                                ComponentType = ComponentType.Ask,
-                                Identifier = "s=>BTCUSDT",
-                                QueryComponent = "a",
-                                IsDenominated = true
-                            }
-                        }
-                    };
-
-                    context.Requests.Add(binanceTickerWsRequest);
-                    context.SaveChanges();
                 }
             }
         }

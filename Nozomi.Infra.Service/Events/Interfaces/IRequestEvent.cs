@@ -28,7 +28,7 @@ namespace Nozomi.Service.Events.Interfaces
         
         Request GetActive(long id, bool track = false);
 
-        IQueryable<RequestViewModel> GetAll(string userId = null, bool enabledOnly = true, bool track = false);
+        IQueryable<RequestViewModel> ViewAll(string userId = null, bool enabledOnly = true, bool track = false);
 
         /// <summary>
         /// Select all Requests with a limit of 50.
