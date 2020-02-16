@@ -43,7 +43,8 @@ namespace Nozomi.Service.Events
                     .ToList();
         }
 
-        public IEnumerable<ComponentViewModel> GetAllByRequest(string guid, bool includeNested = false, int index = 0, int itemsPerPage = 50)
+        public IEnumerable<ComponentViewModel> GetAllByRequest(string guid, bool includeNested = false, int index = 0, 
+            int itemsPerPage = 50, string userId = null)
         {
             if (string.IsNullOrWhiteSpace(guid) || !Guid.TryParse(guid, out var parsedGuid) 
                                                 || index < 0 || itemsPerPage <= 0)
@@ -54,6 +55,9 @@ namespace Nozomi.Service.Events
                 .AsNoTracking()
                 .Include(c => c.Request)
                 .Where(c => c.DeletedAt == null && c.IsEnabled && c.Request.Guid.Equals(parsedGuid));
+
+            if (!string.IsNullOrEmpty(userId))
+                query = query.Where(c => c.CreatedById.Equals(userId));
 
             if (includeNested)
                 return query
