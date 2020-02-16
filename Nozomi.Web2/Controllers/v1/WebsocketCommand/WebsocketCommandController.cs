@@ -66,15 +66,28 @@ namespace Nozomi.Web2.Controllers.v1.WebsocketCommand
             {
                 _websocketCommandService.Create(vm, sub);
                 
-                return Ok();
+                return Ok("Websocket Command successfully created!");
             }
 
             return BadRequest("Please re-authenticate again");
         }
 
+        [Authorize]
+        [HttpPut]
         public IActionResult Update(UpdateWebsocketCommandInputModel vm)
         {
-            throw new System.NotImplementedException();
+            var sub = ((ClaimsIdentity) User.Identity)
+                .Claims.SingleOrDefault(c => c.Type.Equals(JwtClaimTypes.Subject))?.Value;
+
+            // Since we get the sub,
+            if (!string.IsNullOrWhiteSpace(sub))
+            {
+                _websocketCommandService.Update(vm, sub);
+                
+                return Ok("Websocket Command successfully updated!");
+            }
+
+            return BadRequest("Please re-authenticate again");
         }
     }
 }
