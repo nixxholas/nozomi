@@ -11,6 +11,8 @@ namespace Nozomi.Service.Events.Interfaces
         
         bool Exists(string websocketCommandPropertyGuid, string userId = null);
 
+        bool Exists(Guid propertyGuid, string userId = null);
+        
         bool Exists(long commandId, CommandPropertyType type, string key, string userId = null);
         
         bool Exists(string commandGuid, CommandPropertyType type, string key, string userId = null);

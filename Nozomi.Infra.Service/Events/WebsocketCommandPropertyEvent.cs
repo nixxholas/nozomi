@@ -55,6 +55,19 @@ namespace Nozomi.Service.Events
             throw new ArgumentOutOfRangeException("Invalid GUID!");
         }
 
+        public bool Exists(Guid propertyGuid, string userId = null)
+        {
+            var query = _unitOfWork.GetRepository<WebsocketCommandProperty>()
+                .GetQueryable()
+                .AsNoTracking()
+                .Where(p => p.Guid.Equals(propertyGuid));
+
+            if (!string.IsNullOrEmpty(userId))
+                query = query.Where(p => p.CreatedById.Equals(userId));
+
+            return query.Any();
+        }
+
         public bool Exists(long commandId, CommandPropertyType type, string key, string userId = null)
         {
             if (commandId > 0)
