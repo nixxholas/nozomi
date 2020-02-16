@@ -122,7 +122,24 @@ namespace Nozomi.Service.Events
         public IEnumerable<WebsocketCommandProperty> GetAllByCommand(string commandGuid, 
             bool ensureNotDisabledOrDeleted = true, string userId = null, bool track = false)
         {
-            throw new System.NotImplementedException();
+            if (!Guid.TryParse(commandGuid, out var parsedGuid))
+                throw new ArgumentOutOfRangeException($"{_eventName} GetAllByRequest (GUID): Invalid " +
+                                                      "requestId!");
+            
+            var properties = _unitOfWork.GetRepository<WebsocketCommandProperty>()
+                .GetQueryable()
+                .Where(c => c.Guid.Equals(parsedGuid));
+
+            if (!string.IsNullOrEmpty(userId))
+                properties = properties.Where(c => c.CreatedById.Equals(userId));
+
+            if (track)
+                properties = properties.AsTracking();
+
+            if (ensureNotDisabledOrDeleted)
+                properties = properties.Where(c => c.IsEnabled && c.DeletedAt == null);
+
+            return properties;
         }
 
         public WebsocketCommandPropertyViewModel View(long id, bool ensureNotDisabledOrDeleted = true, 
