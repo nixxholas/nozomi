@@ -58,7 +58,20 @@ namespace Nozomi.Service.Events
         public WebsocketCommandProperty Get(long id, bool ensureNotDisabledOrDeleted = true, string userId = null, 
             bool track = false)
         {
-            throw new System.NotImplementedException();
+            var property = _unitOfWork.GetRepository<WebsocketCommandProperty>()
+                .GetQueryable()
+                .Where(c => c.Id.Equals(id));
+
+            if (!string.IsNullOrEmpty(userId))
+                property = property.Where(c => c.CreatedById.Equals(userId));
+
+            if (ensureNotDisabledOrDeleted)
+                property = property.Where(c => c.IsEnabled && c.DeletedAt == null);
+
+            if (track)
+                property = property.AsTracking();
+
+            return property.SingleOrDefault();
         }
 
         public WebsocketCommandProperty Get(string guid, bool ensureNotDisabledOrDeleted = true, string userId = null,
