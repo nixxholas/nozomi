@@ -14,9 +14,11 @@ namespace Nozomi.Service.Events.Interfaces
 
         bool Exists(string requestGuid, CommandType type, string name);
 
-        WebsocketCommand Get(long id, bool ensureNotDisabledOrDeleted = true, bool track = false);
+        WebsocketCommand Get(long id, bool ensureNotDisabledOrDeleted = true, string userId = null, 
+            bool track = false);
 
-        WebsocketCommand Get(string guid, bool ensureNotDisabledOrDeleted = true, bool track = false);
+        WebsocketCommand Get(string guid, bool ensureNotDisabledOrDeleted = true, string userId = null, 
+            bool track = false);
 
         IEnumerable<WebsocketCommand> GetAllByRequest(long requestId, bool ensureNotDisabledOrDeleted = true,
             string userId = null, bool track = false);

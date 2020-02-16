@@ -83,11 +83,15 @@ namespace Nozomi.Service.Events
             return false;
         }
 
-        public WebsocketCommand Get(long id, bool ensureNotDisabledOrDeleted = true, bool track = false)
+        public WebsocketCommand Get(long id, bool ensureNotDisabledOrDeleted = true, string userId = null, 
+            bool track = false)
         {
             var command = _unitOfWork.GetRepository<WebsocketCommand>()
                 .GetQueryable()
                 .Where(c => c.Id.Equals(id));
+
+            if (!string.IsNullOrEmpty(userId))
+                command = command.Where(c => c.CreatedById.Equals(userId));
 
             if (ensureNotDisabledOrDeleted)
                 command = command.Where(c => c.IsEnabled && c.DeletedAt == null);
@@ -98,7 +102,8 @@ namespace Nozomi.Service.Events
             return command.SingleOrDefault();
         }
 
-        public WebsocketCommand Get(string guid, bool ensureNotDisabledOrDeleted = true, bool track = false)
+        public WebsocketCommand Get(string guid, bool ensureNotDisabledOrDeleted = true, string userId = null, 
+            bool track = false)
         {
             if (!Guid.TryParse(guid, out var parsedGuid))
                 return null;
@@ -107,6 +112,9 @@ namespace Nozomi.Service.Events
                 .GetQueryable()
                 .Include(c => c.Request)
                 .Where(c => c.Guid.Equals(parsedGuid));
+
+            if (!string.IsNullOrEmpty(userId))
+                command = command.Where(c => c.CreatedById.Equals(userId));
 
             if (ensureNotDisabledOrDeleted)
                 command = command.Where(c => c.IsEnabled && c.DeletedAt == null);
