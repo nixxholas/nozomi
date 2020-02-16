@@ -1,15 +1,19 @@
 <template>
     <div>
-        <button v-if="!request"
-                class="button is-primary"
+        <b-button v-if="!request"
+                type="is-primary"
                 @click="isActive = true">
             Create
-        </button>
-        <button v-else
-                class="button is-warning"
-                @click="isActive = true">
-            Edit
-        </button>
+        </b-button>
+        <div class="buttons pb-2" v-else>
+            <b-button type="is-warning"
+                    @click="isActive = true">
+                Edit
+            </b-button>
+            <b-button type="is-danger">
+                Delete
+            </b-button>
+        </div>
 
         <b-modal has-modal-card trap-focus :active.sync="isActive">
             <b-loading :active.sync="isLoading" :can-cancel="false"/>

@@ -32,10 +32,6 @@
             <b-table-column field="actions" label="">
                 <div class="buttons">
                   <RequestModal :request="props.row"/>
-                    <b-button type="is-danger"
-                              icon-left="trash">
-                        Delete
-                    </b-button>
                 </div>
             </b-table-column>
         </template>
