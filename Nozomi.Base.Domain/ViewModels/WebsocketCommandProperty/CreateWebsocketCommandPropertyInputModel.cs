@@ -13,7 +13,7 @@ namespace Nozomi.Data.ViewModels.WebsocketCommandProperty
         public string Value { get; set; }
 
         public bool IsEnabled { get; set; }
-        
+
         public string CommandGuid { get; set; }
 
         public long CommandId { get; set; }
@@ -24,10 +24,25 @@ namespace Nozomi.Data.ViewModels.WebsocketCommandProperty
             return validator.Validate(this).IsValid;
         }
 
+        public bool IsValidDependant()
+        {
+            var validator = new CreateDependentWebsocketCommandPropertyValidator();
+            return validator.Validate(this).IsValid;
+        }
+
         protected class CreateWebsocketCommandPropertyValidator 
             : AbstractValidator<CreateWebsocketCommandPropertyInputModel>
         {
             public CreateWebsocketCommandPropertyValidator()
+            {
+                RuleFor(e => e.Type).IsInEnum();
+            }
+        }
+
+        protected class CreateDependentWebsocketCommandPropertyValidator :
+            AbstractValidator<CreateWebsocketCommandPropertyInputModel>
+        {
+            public CreateDependentWebsocketCommandPropertyValidator()
             {
                 RuleFor(e => e.Type).IsInEnum();
                 
