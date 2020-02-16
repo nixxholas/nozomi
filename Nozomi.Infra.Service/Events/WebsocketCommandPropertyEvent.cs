@@ -197,18 +197,18 @@ namespace Nozomi.Service.Events
             if (commandId <= 0)
                 throw new ArgumentException("Invalid request ID!");
             
-            var command = _unitOfWork.GetRepository<WebsocketCommandProperty>()
+            var properties = _unitOfWork.GetRepository<WebsocketCommandProperty>()
                 .GetQueryable()
                 .Where(c => c.WebsocketCommandId.Equals(commandId));
 
             if (ensureNotDisabledOrDeleted)
-                command = command.Where(c => c.IsEnabled && c.DeletedAt == null);
+                properties = properties.Where(c => c.IsEnabled && c.DeletedAt == null);
 
             if (track)
-                command = command.AsTracking();
-
-            return command.Select(c => new WebsocketCommandPropertyViewModel(c.Guid, 
-                c.CommandPropertyType, c.Key, c.Value));
+                properties = properties.AsTracking();
+                
+            return properties.Select(p => new WebsocketCommandPropertyViewModel(p.Id, 
+                p.CommandPropertyType, p.Key, p.Value));
         }
 
         public IEnumerable<WebsocketCommandPropertyViewModel> ViewAllByCommand(string commandGuid, 
