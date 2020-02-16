@@ -6,17 +6,20 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data.ViewModels.WebsocketCommand;
 using Nozomi.Service.Events.Interfaces;
+using Nozomi.Service.Services.Interfaces;
 
 namespace Nozomi.Web2.Controllers.v1.WebsocketCommand
 {
     public class WebsocketCommandController : BaseApiController<WebsocketCommandController>, IWebsocketCommandController
     {
         private readonly IWebsocketCommandEvent _websocketCommandEvent;
+        private readonly IWebsocketCommandService _websocketCommandService;
         
         public WebsocketCommandController(ILogger<WebsocketCommandController> logger,
-            IWebsocketCommandEvent websocketCommandEvent) : base(logger)
+            IWebsocketCommandEvent websocketCommandEvent, IWebsocketCommandService websocketCommandService) : base(logger)
         {
             _websocketCommandEvent = websocketCommandEvent;
+            _websocketCommandService = websocketCommandService;
         }
 
         [Authorize]
@@ -51,9 +54,22 @@ namespace Nozomi.Web2.Controllers.v1.WebsocketCommand
             return BadRequest("Please re-authenticate again");
         }
 
+        [Authorize]
+        [HttpPost]
         public IActionResult Create(CreateWebsocketCommandInputModel vm)
         {
-            throw new System.NotImplementedException();
+            var sub = ((ClaimsIdentity) User.Identity)
+                .Claims.SingleOrDefault(c => c.Type.Equals(JwtClaimTypes.Subject))?.Value;
+
+            // Since we get the sub,
+            if (!string.IsNullOrWhiteSpace(sub))
+            {
+                _websocketCommandService.Create(vm, sub);
+                
+                return Ok();
+            }
+
+            return BadRequest("Please re-authenticate again");
         }
 
         public IActionResult Update(UpdateWebsocketCommandInputModel vm)
