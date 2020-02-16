@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Nozomi.Data.Models.Web.Websocket;
 using Nozomi.Data.ViewModels.WebsocketCommand;
@@ -18,6 +19,9 @@ namespace Nozomi.Service.Events.Interfaces
             bool track = false);
 
         WebsocketCommand Get(string guid, bool ensureNotDisabledOrDeleted = true, string userId = null, 
+            bool track = false);
+
+        WebsocketCommand Get(Guid guid, bool ensureNotDisabledOrDeleted = true, string userId = null, 
             bool track = false);
 
         IEnumerable<WebsocketCommand> GetAllByRequest(long requestId, bool ensureNotDisabledOrDeleted = true,

@@ -125,6 +125,24 @@ namespace Nozomi.Service.Events
             return command.SingleOrDefault();
         }
 
+        public WebsocketCommand Get(Guid guid, bool ensureNotDisabledOrDeleted = true, string userId = null, 
+            bool track = false)
+        {
+            var query = _unitOfWork.GetRepository<WebsocketCommand>()
+                .GetQueryable();
+
+            if (track)
+                query = query.AsTracking();
+            
+            if (ensureNotDisabledOrDeleted)
+                query = query.Where(c => c.DeletedAt == null && c.IsEnabled);
+
+            if (!string.IsNullOrEmpty(userId))
+                query = query.Where(c => c.CreatedById.Equals(userId));
+
+            return query.SingleOrDefault(c => c.Guid.Equals(guid));
+        }
+
         public IEnumerable<WebsocketCommand> GetAllByRequest(long requestId, bool ensureNotDisabledOrDeleted = true, 
             string userId = null, bool track = false)
         {
