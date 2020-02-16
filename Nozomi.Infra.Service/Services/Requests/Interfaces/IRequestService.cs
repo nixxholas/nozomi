@@ -25,6 +25,8 @@ namespace Nozomi.Service.Services.Requests.Interfaces
 
         bool Update(UpdateRequestViewModel vm, string userId = null);
 
+        void Delete(string requestGuid, bool hardDelete = true, string userId = null);
+
         NozomiResult<string> Delete(long reqId, bool hardDelete = false, string userId = null);
 
         bool ManualPoll(long id, string userId = null);
