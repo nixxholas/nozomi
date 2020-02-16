@@ -87,6 +87,13 @@
                                 </b-field>
                             </b-tab-item>
                         </b-tabs>
+                        
+                        <b-field>
+                            <b-switch :value="form.isEnabled"
+                                      type="is-info">
+                                Enabled
+                            </b-switch>
+                        </b-field>
                     </section>
 
                     <footer class="modal-card-foot">
@@ -200,7 +207,8 @@
                                 currencySlug: '',
                                 currencyPairGuid: null,
                                 currencyPairStr: null,
-                                currencyTypeGuid: 0
+                                currencyTypeGuid: 0,
+                                isEnabled: true,
                             };
 
                             if (response.status === 200) {
@@ -310,6 +318,9 @@
                     this.form.parentType = 2;
                     this.form.currencyTypeGuid = this.request.currencyTypeGuid;
                 }
+                
+                if (this.request.isEnabled && this.form.isEnabled !== this.request.isEnabled)
+                    this.form.isEnabled = this.request.isEnabled;
             }
         },
         data: function () {
@@ -328,7 +339,8 @@
                     currencySlug: '',
                     currencyPairGuid: null,
                     currencyPairStr: null,
-                    currencyTypeGuid: 0
+                    currencyTypeGuid: 0,
+                    isEnabled: true,
                 },
                 formHelper: {},
                 currencies: [],
