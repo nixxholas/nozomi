@@ -128,7 +128,8 @@ namespace Nozomi.Service.Events
             
             var properties = _unitOfWork.GetRepository<WebsocketCommandProperty>()
                 .GetQueryable()
-                .Where(c => c.Guid.Equals(parsedGuid));
+                .Include(p => p.WebsocketCommand)
+                .Where(c => c.WebsocketCommand.Guid.Equals(parsedGuid));
 
             if (!string.IsNullOrEmpty(userId))
                 properties = properties.Where(c => c.CreatedById.Equals(userId));
