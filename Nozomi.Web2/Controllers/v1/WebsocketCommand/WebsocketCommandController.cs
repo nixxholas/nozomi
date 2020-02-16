@@ -35,9 +35,20 @@ namespace Nozomi.Web2.Controllers.v1.WebsocketCommand
             return BadRequest("Please re-authenticate again");
         }
 
+        [Authorize]
+        [HttpGet("{requestGuid}")]
         public IActionResult GetByRequest(string requestGuid)
         {
-            throw new System.NotImplementedException();
+            var sub = ((ClaimsIdentity) User.Identity)
+                .Claims.SingleOrDefault(c => c.Type.Equals(JwtClaimTypes.Subject))?.Value;
+
+            // Since we get the sub,
+            if (!string.IsNullOrWhiteSpace(sub))
+            {
+                return Ok(_websocketCommandEvent.GetAllByRequest(requestGuid, false, sub));
+            }
+
+            return BadRequest("Please re-authenticate again");
         }
 
         public IActionResult Create(CreateWebsocketCommandInputModel vm)
