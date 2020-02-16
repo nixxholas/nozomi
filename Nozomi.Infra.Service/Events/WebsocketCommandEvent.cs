@@ -172,7 +172,8 @@ namespace Nozomi.Service.Events
             return commands;
         }
 
-        public WebsocketCommandViewModel View(long id, bool ensureNotDisabledOrDeleted = true, bool track = false)
+        public WebsocketCommandViewModel View(long id, bool ensureNotDisabledOrDeleted = true, string userId = null, 
+            bool track = false)
         {
             if (id <= 0)
                 throw new ArgumentOutOfRangeException(null, "Invalid command ID!");
@@ -181,6 +182,9 @@ namespace Nozomi.Service.Events
                 .GetQueryable()
                 .Include(c => c.WebsocketCommandProperties)
                 .Where(c => c.Id.Equals(id));
+
+            if (!string.IsNullOrEmpty(userId))
+                command = command.Where(c => c.CreatedById.Equals(userId));
 
             if (ensureNotDisabledOrDeleted)
                 command = command.Where(c => c.IsEnabled && c.DeletedAt == null);
@@ -196,7 +200,8 @@ namespace Nozomi.Service.Events
                 .SingleOrDefault();
         }
 
-        public WebsocketCommandViewModel View(string guid, bool ensureNotDisabledOrDeleted = true, bool track = false)
+        public WebsocketCommandViewModel View(string guid, bool ensureNotDisabledOrDeleted = true, string userId = null, 
+            bool track = false)
         {
             if (!Guid.TryParse(guid, out var parsedGuid))
                 throw new ArgumentException("Invalid guid!");
@@ -204,7 +209,10 @@ namespace Nozomi.Service.Events
             var command = _unitOfWork.GetRepository<WebsocketCommand>()
                 .GetQueryable()
                 .Include(c => c.WebsocketCommandProperties)
-                .Where(c => c.Guid.Equals(guid));
+                .Where(c => c.Guid.Equals(parsedGuid));
+
+            if (!string.IsNullOrEmpty(userId))
+                command = command.Where(c => c.CreatedById.Equals(userId));
 
             if (ensureNotDisabledOrDeleted)
                 command = command.Where(c => c.IsEnabled && c.DeletedAt == null);

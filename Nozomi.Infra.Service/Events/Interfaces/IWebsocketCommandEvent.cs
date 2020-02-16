@@ -26,9 +26,11 @@ namespace Nozomi.Service.Events.Interfaces
         IEnumerable<WebsocketCommand> GetAllByRequest(string requestGuid, bool ensureNotDisabledOrDeleted = true,
             string userId = null, bool track = false);
         
-        WebsocketCommandViewModel View(long id, bool ensureNotDisabledOrDeleted = true, bool track = false);
+        WebsocketCommandViewModel View(long id, bool ensureNotDisabledOrDeleted = true, string userId = null, 
+            bool track = false);
 
-        WebsocketCommandViewModel View(string guid, bool ensureNotDisabledOrDeleted = true, bool track = false);
+        WebsocketCommandViewModel View(string guid, bool ensureNotDisabledOrDeleted = true, string userId = null, 
+            bool track = false);
 
         IEnumerable<WebsocketCommandViewModel> ViewAllByRequest(long requestId, 
             bool ensureNotDisabledOrDeleted = true, bool track = false);
