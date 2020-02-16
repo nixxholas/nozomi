@@ -118,7 +118,7 @@ namespace Nozomi.Service.Events
         }
 
         public IEnumerable<WebsocketCommand> GetAllByRequest(long requestId, bool ensureNotDisabledOrDeleted = true, 
-            bool track = false)
+            string userId = null, bool track = false)
         {
             if (requestId <= 0)
                 throw new ArgumentOutOfRangeException($"{_eventName} GetAllByRequest (LONG): Invalid " +
@@ -127,6 +127,9 @@ namespace Nozomi.Service.Events
             var commands = _unitOfWork.GetRepository<WebsocketCommand>()
                 .GetQueryable()
                 .Where(c => c.RequestId.Equals(requestId));
+
+            if (!string.IsNullOrEmpty(userId))
+                commands = commands.Where(c => c.CreatedById.Equals(userId));
 
             if (track)
                 commands = commands.AsTracking();
@@ -138,7 +141,7 @@ namespace Nozomi.Service.Events
         }
 
         public IEnumerable<WebsocketCommand> GetAllByRequest(string requestGuid, bool ensureNotDisabledOrDeleted = true, 
-            bool track = false)
+            string userId = null, bool track = false)
         {
             if (!Guid.TryParse(requestGuid, out var parsedGuid))
                 throw new ArgumentOutOfRangeException($"{_eventName} GetAllByRequest (GUID): Invalid " +
@@ -148,6 +151,9 @@ namespace Nozomi.Service.Events
                 .GetQueryable()
                 .Include(c => c.Request)
                 .Where(c => c.Guid.Equals(parsedGuid));
+
+            if (!string.IsNullOrEmpty(userId))
+                commands = commands.Where(c => c.CreatedById.Equals(userId));
 
             if (track)
                 commands = commands.AsTracking();
