@@ -23,25 +23,22 @@ namespace Nozomi.Payment.Controllers
                 var stripeEvent = EventUtility.ParseEvent(json);
 
                 // Handle the event
-                if (stripeEvent.Type == Events.PaymentIntentSucceeded)
-                {
-                    var paymentIntent = stripeEvent.Data.Object as PaymentIntent;
-                    // Then define and call a method to handle the successful payment intent.
-                    // handlePaymentIntentSucceeded(paymentIntent);
+                switch (stripeEvent.Type) {
+                    case Events.ChargeSucceeded:
+                        //Charges Service: Handle Charge Event
+                        return Ok();
+
+                    case Events.ChargeFailed:
+                        //Charges Service: Handle Charge Event
+                        return Ok();
+
+                    case Events.ChargeRefunded:
+                        //Charges Service: Handle Charge Event
+                        return Ok();
+
+                    default:
+                        return BadRequest();
                 }
-                else if (stripeEvent.Type == Events.PaymentMethodAttached)
-                {
-                    var paymentMethod = stripeEvent.Data.Object as PaymentMethod;
-                    // Then define and call a method to handle the successful attachment of a PaymentMethod.
-                    // handlePaymentMethodAttached(paymentMethod);
-                }
-                // ... handle other event types
-                else
-                {
-                    // Unexpected event type
-                    return BadRequest();
-                }
-                return Ok();
             }
             catch (StripeException e)
             {
