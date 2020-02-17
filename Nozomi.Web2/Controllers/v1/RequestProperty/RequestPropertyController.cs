@@ -31,6 +31,12 @@ namespace Nozomi.Web2.Controllers.v1.RequestProperty
         {
             var sub = ((ClaimsIdentity) User.Identity)
                 .Claims.SingleOrDefault(c => c.Type.Equals(JwtClaimTypes.Subject))?.Value;
+            var roles = ((ClaimsIdentity) User.Identity)
+                .Claims.Where(c => c.Type.Equals(JwtClaimTypes.Role));
+
+            if (roles.Any(r => NozomiPermissions.AllStaffRoles
+                .Any(e => e.GetDescription().Equals(r.Value))))
+                return Ok(_requestPropertyEvent.GetByGuid(guid));
 
             // Since we get the sub,
             if (!string.IsNullOrWhiteSpace(sub) && !string.IsNullOrEmpty(guid))
