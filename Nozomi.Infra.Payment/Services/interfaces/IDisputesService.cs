@@ -8,10 +8,10 @@ namespace Nozomi.Infra.Payment.Services.Interfaces
 {
     public interface IDisputesService
     {
-        Task DisputeCreated(Event stripeEvent);
+        Task DisputeCreated(Dispute dispute);
 
-        Task DisputeUpdated(Event stripeEvent);
+        Task DisputeUpdated(Dispute dispute);
 
-        Task DisputeClosed(Event stipeEvent);
+        Task DisputeClosed(Dispute dispute);
     }
 }

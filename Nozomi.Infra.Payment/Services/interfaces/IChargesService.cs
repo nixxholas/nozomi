@@ -8,14 +8,14 @@ namespace Nozomi.Infra.Payment.Services.Interfaces
 {
     public interface IChargesService
     {
-        Task ChargeSucceeded(Event stripeEvent);
+        Task ChargeSucceeded(Charge charge);
 
-        Task ChargeFailed(Event stripeEvent);
+        Task ChargeFailed(Charge charge);
 
-        Task ChargeRefunded(Event stripeEvent);
+        Task ChargeRefunded(Charge charge);
 
-        Task ChargeUpdated(Event stripeEvent);
+        Task ChargeUpdated(Charge charge);
 
-        Task ChargExpired(Event stripeEvent);
+        Task ChargExpired(Charge charge);
     }
 }

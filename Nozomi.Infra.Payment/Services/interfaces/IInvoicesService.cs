@@ -8,15 +8,15 @@ namespace Nozomi.Infra.Payment.Services.Interfaces
 {
     public interface IInvoicesService
     {
-        Task InvoiceCreated(Event stripeEvent);
+        Task InvoiceCreated(Invoice invoice);
 
-        Task InvoiceFinalized(Event stripeEvent);
+        Task InvoiceFinalized(Invoice invoice);
 
-        Task InvoicePaid(Event stripeEvent);
+        Task InvoicePaid(Invoice invoice);
 
-        Task InvoicePaymentFailed(Event stripeEvent);
+        Task InvoicePaymentFailed(Invoice invoice);
 
-        Task InvoiceUpcoming(Event stripeEvent);
+        Task InvoiceUpcoming(Invoice invoice);
 
     }
 }
