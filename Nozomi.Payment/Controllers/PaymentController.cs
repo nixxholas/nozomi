@@ -45,5 +45,17 @@ namespace Nozomi.Payment.Controllers
                 return BadRequest();
             }
         }
+
+        private Charge ParseEventToCharge(Event stripeEvent) {
+            return stripeEvent.Data.Object as Charge;
+        }
+
+        private Dispute ParseEventToDispute(Event stripeEvent) {
+            return stripeEvent.Data.Object as Dispute;
+        }
+
+        private Invoice ParseEventToInvoice(Event stripeEvent) {
+            return stripeEvent.Data.Object as Invoice;
+        }
     }
 }
