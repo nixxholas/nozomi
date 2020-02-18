@@ -90,9 +90,18 @@ namespace Nozomi.Web2.Controllers.v1.AnalysedComponent
         {
             var sub = ((ClaimsIdentity) User.Identity)
                 .Claims.SingleOrDefault(c => c.Type.Equals(JwtClaimTypes.Subject))?.Value;
-
+            
             if (!string.IsNullOrWhiteSpace(sub) && Guid.TryParse(guid, out var acGuid))
             {
+                // Obtain the user's roles
+                var role = ((ClaimsIdentity) User.Identity).Claims
+                    .Where(c => c.Type.Equals(JwtClaimTypes.Role));
+                
+                // If the user is a staff, let him access the entity indefinitely
+                if (role.Any(r => NozomiPermissions.AllStaffRoles
+                    .Any(sr => sr.GetDescription().Equals(r.Value))))
+                    return Ok(_analysedComponentEvent.Get(acGuid));
+                
                 return Ok(_analysedComponentEvent.Get(acGuid, sub));
             }
 
