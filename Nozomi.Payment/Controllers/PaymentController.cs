@@ -24,16 +24,31 @@ namespace Nozomi.Payment.Controllers
 
                 // Handle the event
                 switch (stripeEvent.Type) {
-                    case Events.ChargeSucceeded:
+                    case Events.InvoiceUpcoming:
+                        return Ok();
+                    case Events.InvoiceCreated:
                         //Charges Service: Handle Charge Event
                         return Ok();
 
-                    case Events.ChargeFailed:
+                    case Events.InvoiceFinalized:
                         //Charges Service: Handle Charge Event
                         return Ok();
 
-                    case Events.ChargeRefunded:
+                    case Events.InvoicePaymentSucceeded:
                         //Charges Service: Handle Charge Event
+                        return Ok();
+
+                    case Events.InvoicePaymentFailed:
+                        //Invoices Service
+                        return Ok();
+
+                    case Events.ChargeDisputeCreated:
+                        return Ok();
+
+                    case Events.ChargeDisputeClosed:
+                        return Ok();
+
+                    case Events.ChargeDisputeUpdated:
                         return Ok();
 
                     default:
