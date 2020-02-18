@@ -1,6 +1,7 @@
 using System.Linq;
 using System.Security.Claims;
 using IdentityModel;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Nozomi.Base.BCL.Helpers.Enumerator;
@@ -21,6 +22,9 @@ namespace Nozomi.Web2.Controllers.v1.WebsocketCommandProperty
             _websocketCommandPropertyEvent = websocketCommandPropertyEvent;
         }
         
+        
+        [Authorize]
+        [HttpGet("{guid}")]
         public IActionResult Get(string guid)
         {
             var sub = ((ClaimsIdentity) User.Identity)
@@ -42,9 +46,27 @@ namespace Nozomi.Web2.Controllers.v1.WebsocketCommandProperty
             return BadRequest("Please re-authenticate again");
         }
 
+        [Authorize]
+        [HttpGet("{commandGuid}")]
         public IActionResult GetByCommand(string commandGuid)
         {
-            throw new System.NotImplementedException();
+            var sub = ((ClaimsIdentity) User.Identity)
+                .Claims.SingleOrDefault(c => c.Type.Equals(JwtClaimTypes.Subject))?.Value;
+
+            // Since we get the sub,
+            if (!string.IsNullOrWhiteSpace(sub))
+            {
+                var roles = ((ClaimsIdentity) User.Identity)
+                    .Claims.Where(c => c.Type.Equals(JwtClaimTypes.Role));
+                
+                if (roles.Any(r => NozomiPermissions.AllStaffRoles
+                    .Any(s => s.GetDescription().Equals(r.Value))))
+                    return Ok(_websocketCommandPropertyEvent.GetAllByCommand(commandGuid, false));
+                
+                return Ok(_websocketCommandPropertyEvent.GetAllByCommand(commandGuid, false));
+            }
+
+            return BadRequest("Please re-authenticate again");
         }
 
         public IActionResult Create(CreateWebsocketCommandPropertyInputModel vm)
