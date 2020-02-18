@@ -57,6 +57,13 @@ namespace Nozomi.Web2.Controllers.v1.WebsocketCommand
             // Since we get the sub,
             if (!string.IsNullOrWhiteSpace(sub))
             {
+                var roles = ((ClaimsIdentity) User.Identity)
+                    .Claims.Where(c => c.Type.Equals(JwtClaimTypes.Role));
+                
+                if (roles.Any(r => NozomiPermissions.AllStaffRoles
+                    .Any(s => s.GetDescription().Equals(r.Value))))
+                    return Ok(_websocketCommandEvent.GetAllByRequest(requestGuid, true));
+                
                 return Ok(_websocketCommandEvent.GetAllByRequest(requestGuid, true, sub));
             }
 
