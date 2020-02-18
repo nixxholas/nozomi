@@ -91,9 +91,22 @@ namespace Nozomi.Web2.Controllers.v1.WebsocketCommandProperty
             return BadRequest("Please re-authenticate again");
         }
 
+        [Authorize]
+        [HttpPut]
         public IActionResult Update(UpdateWebsocketCommandPropertyInputModel vm)
         {
-            throw new System.NotImplementedException();
+            var sub = ((ClaimsIdentity) User.Identity)
+                .Claims.SingleOrDefault(c => c.Type.Equals(JwtClaimTypes.Subject))?.Value;
+
+            // Since we get the sub,
+            if (!string.IsNullOrWhiteSpace(sub))
+            {
+                _websocketCommandPropertyService.Update(vm, sub);
+                
+                return Ok("Websocket Command property successfully updated!");
+            }
+
+            return BadRequest("Please re-authenticate again");
         }
 
         public IActionResult Delete(string websocketCommandPropertyGuid)
