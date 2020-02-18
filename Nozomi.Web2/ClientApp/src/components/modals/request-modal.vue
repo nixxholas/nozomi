@@ -10,7 +10,8 @@
                     @click="isActive = true">
                 Edit
             </b-button>
-            <b-button type="is-danger">
+            <b-button type="is-danger" 
+                      @click="">
                 Delete
             </b-button>
         </div>
@@ -245,7 +246,10 @@
                             self.isLoading = false;
                         });
                 }
-            }
+            },
+            delete: function() {
+                
+            },
         },
         beforeCreate: function () {
             let self = this;
