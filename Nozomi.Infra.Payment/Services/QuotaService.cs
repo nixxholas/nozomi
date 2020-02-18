@@ -8,17 +8,17 @@ namespace Nozomi.Infra.Payment.Services
 {
     class QuotaService : IQuotaService
     {
-        public Task DowngradeQuota()
+        public async Task DowngradeQuota()
         {
             throw new NotImplementedException();
         }
 
-        public Task ResetQuota()
+        public async Task ResetQuota()
         {
             throw new NotImplementedException();
         }
 
-        public Task UpgradeQuota()
+        public async Task UpgradeQuota()
         {
             throw new NotImplementedException();
         }
