@@ -4,7 +4,9 @@ using IdentityModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Nozomi.Base.BCL.Helpers.Enumerator;
 using Nozomi.Data.ViewModels.WebsocketCommand;
+using Nozomi.Preprocessing.Statics;
 using Nozomi.Service.Events.Interfaces;
 using Nozomi.Service.Services.Interfaces;
 
@@ -32,6 +34,13 @@ namespace Nozomi.Web2.Controllers.v1.WebsocketCommand
             // Since we get the sub,
             if (!string.IsNullOrWhiteSpace(sub))
             {
+                var roles = ((ClaimsIdentity) User.Identity)
+                    .Claims.Where(c => c.Type.Equals(JwtClaimTypes.Role));
+                
+                if (roles.Any(r => NozomiPermissions.AllStaffRoles
+                    .Any(s => s.GetDescription().Equals(r.Value))))
+                    return Ok(_websocketCommandEvent.View(guid, true));
+                    
                 return Ok(_websocketCommandEvent.View(guid, true, sub));
             }
 
