@@ -11,7 +11,8 @@
                 Edit
             </b-button>
             <b-button type="is-danger" 
-                      @click="">
+                      @click="isDeleteActive = true"
+                      :loading="isDeleteActive">
                 Delete
             </b-button>
         </div>
@@ -137,7 +138,14 @@
                 if (newVal) {
                     self.form = newVal; // Set first
                 }
-            }
+            },
+            isDeleteActive: function (newVal) {
+                let self = this;
+                
+                if (newVal) {
+                    self.delete();
+                }
+            },
         },
         methods: {
             ...mapActions('oidcStore', ['authenticateOidc', 'signOutOidc']),
@@ -248,7 +256,40 @@
                 }
             },
             delete: function() {
+                let self = this;
                 
+                if (self.request) {
+                    self.isLoading = true;
+                    
+                    RequestService.delete(self.request.guid)
+                        .then(function (response) {
+                            if (response.status === 200) {
+                                self.isActive = false; // Close the modal
+                                Notification.open({
+                                    duration: 2500,
+                                    message: `Request successfully deleted!`,
+                                    position: 'is-bottom-right',
+                                    type: 'is-success',
+                                    hasIcon: true
+                                });
+                            }
+                        })
+                        .catch(function (error) {
+                            //console.log(error);
+                            Notification.open({
+                                duration: 2500,
+                                message: `There was an issue attempting to delete this request!`,
+                                position: 'is-bottom-right',
+                                type: 'is-warning',
+                                hasIcon: true
+                            });
+                        })
+                        .finally(function () {
+                            // always executed
+                            self.isLoading = false;
+                        });
+                    self.isDeleteActive = false;
+                }
             },
         },
         beforeCreate: function () {
@@ -335,6 +376,7 @@
             return {
                 isActive: false,
                 isLoading: false,
+                isDeleteActive: false,
                 form: {
                     guid: null,
                     type: 0,
