@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Nozomi.Base.Auth.Global;
+using Nozomi.Base.Auth.Models;
 using Nozomi.Base.BCL.Configurations;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.Auth.Data;
@@ -237,6 +238,25 @@ namespace Nozomi.Infra.Auth.Events.Stripe
             }
 
             throw new NullReferenceException($"{_eventName} plans: Unable to load, Product is not configured.");
+        }
+
+        public async Task<User> GetUserByCustomerId(string id)
+        {
+            if (string.IsNullOrEmpty(id))
+                throw new NullReferenceException($"{_eventName} GetUserByCustomerId: Customer Id is null.");
+
+            var customerIdClaim = new UserClaim
+            {
+                ClaimType = NozomiJwtClaimTypes.StripeCustomerId,
+                ClaimValue = id
+            };
+
+            var users = await _userManager.GetUsersForClaimAsync(customerIdClaim.ToClaim());
+
+            if (users.Count > 1 || users.Count < 1)
+                throw new InvalidOperationException($"{_eventName} GetUserByCustomerId: More than one user binded to the same stripe customer id.");
+
+            return users.First();
         }
     }
 }
