@@ -8,6 +8,7 @@ using Nozomi.Base.BCL.Helpers.Enumerator;
 using Nozomi.Data.ViewModels.WebsocketCommandProperty;
 using Nozomi.Preprocessing.Statics;
 using Nozomi.Service.Events.Interfaces;
+using Nozomi.Service.Services.Interfaces;
 
 namespace Nozomi.Web2.Controllers.v1.WebsocketCommandProperty
 {
@@ -15,11 +16,14 @@ namespace Nozomi.Web2.Controllers.v1.WebsocketCommandProperty
     IWebsocketCommandPropertyController
     {
         private readonly IWebsocketCommandPropertyEvent _websocketCommandPropertyEvent;
+        private readonly IWebsocketCommandPropertyService _websocketCommandPropertyService;
         
         public WebsocketCommandPropertyController(ILogger<WebsocketCommandPropertyController> logger,
-            IWebsocketCommandPropertyEvent websocketCommandPropertyEvent) : base(logger)
+            IWebsocketCommandPropertyEvent websocketCommandPropertyEvent,
+            IWebsocketCommandPropertyService websocketCommandPropertyService) : base(logger)
         {
             _websocketCommandPropertyEvent = websocketCommandPropertyEvent;
+            _websocketCommandPropertyService = websocketCommandPropertyService;
         }
         
         
@@ -69,9 +73,22 @@ namespace Nozomi.Web2.Controllers.v1.WebsocketCommandProperty
             return BadRequest("Please re-authenticate again");
         }
 
+        [Authorize]
+        [HttpPost]
         public IActionResult Create(CreateWebsocketCommandPropertyInputModel vm)
         {
-            throw new System.NotImplementedException();
+            var sub = ((ClaimsIdentity) User.Identity)
+                .Claims.SingleOrDefault(c => c.Type.Equals(JwtClaimTypes.Subject))?.Value;
+
+            // Since we get the sub,
+            if (!string.IsNullOrWhiteSpace(sub))
+            {
+                _websocketCommandPropertyService.Create(vm, sub);
+                
+                return Ok("Websocket Command property successfully created!");
+            }
+
+            return BadRequest("Please re-authenticate again");
         }
 
         public IActionResult Update(UpdateWebsocketCommandPropertyInputModel vm)
