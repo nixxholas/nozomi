@@ -160,6 +160,17 @@
                             type: 'is-success',
                             hasIcon: true
                         });
+                        
+                        // Reset the form data regardless
+                        self.form = {
+                            type: 0,
+                            key: "",
+                            value: "",
+                            isEnabled: true,
+                            commandGuid: self.commandGuid ? self.commandGuid : null,
+                            commandId: self.commandId ? self.commandId : null,
+                        };
+                        
                         self.isWebsocketCommandPropertyModalActive = false;
                     } else {
                         Notification.open({
