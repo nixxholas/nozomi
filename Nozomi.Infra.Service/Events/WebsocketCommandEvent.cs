@@ -187,6 +187,10 @@ namespace Nozomi.Service.Events
             if (ensureNotDisabledOrDeleted)
                 commands = commands.Where(c => c.IsEnabled && c.DeletedAt == null);
 
+            #if DEBUG
+            var dbgCommands = commands.ToList();
+            #endif
+            
             return commands;
         }
 
