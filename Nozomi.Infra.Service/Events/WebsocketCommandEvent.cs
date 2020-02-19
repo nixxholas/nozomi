@@ -215,10 +215,10 @@ namespace Nozomi.Service.Events
                 command = command.AsTracking();
 
             return command.Select(c => new WebsocketCommandViewModel(c.Guid.ToString(), 
-                c.CommandType, c.Name, c.Delay, c.WebsocketCommandProperties
+                c.CommandType, c.Name, c.Delay, c.IsEnabled, c.WebsocketCommandProperties
                     .Select(p => 
                         new WebsocketCommandPropertyViewModel(p.Guid.ToString(), p.CommandPropertyType, 
-                            p.Key, p.Value))
+                            p.Key, p.Value, p.IsEnabled, c.Guid.ToString()))
                     .ToList()))
                 .SingleOrDefault();
         }
@@ -244,10 +244,10 @@ namespace Nozomi.Service.Events
                 command = command.AsTracking();
 
             return command.Select(c => new WebsocketCommandViewModel(c.Guid.ToString(), 
-                    c.CommandType, c.Name, c.Delay, c.WebsocketCommandProperties
+                    c.CommandType, c.Name, c.Delay, c.IsEnabled, c.WebsocketCommandProperties
                         .Select(p => 
                             new WebsocketCommandPropertyViewModel(p.Guid.ToString(), p.CommandPropertyType, 
-                                p.Key, p.Value))
+                                p.Key, p.Value, p.IsEnabled, c.Guid.ToString()))
                         .ToList()))
                 .SingleOrDefault();
         }
@@ -273,10 +273,10 @@ namespace Nozomi.Service.Events
                 command = command.AsTracking();
 
             return command.Select(c => new WebsocketCommandViewModel(c.Guid.ToString(), 
-                    c.CommandType, c.Name, c.Delay, c.WebsocketCommandProperties
+                    c.CommandType, c.Name, c.Delay, c.IsEnabled, c.WebsocketCommandProperties
                         .Select(p => 
                             new WebsocketCommandPropertyViewModel(p.Guid.ToString(), p.CommandPropertyType, 
-                                p.Key, p.Value))
+                                p.Key, p.Value, p.IsEnabled, c.Guid.ToString()))
                         .ToList()));
         }
 
@@ -302,10 +302,10 @@ namespace Nozomi.Service.Events
                 command = command.AsTracking();
 
             return command.Select(c => new WebsocketCommandViewModel(c.Guid.ToString(), 
-                c.CommandType, c.Name, c.Delay, c.WebsocketCommandProperties
+                c.CommandType, c.Name, c.Delay, c.IsEnabled, c.WebsocketCommandProperties
                     .Select(p => 
                         new WebsocketCommandPropertyViewModel(p.Guid.ToString(), p.CommandPropertyType, 
-                            p.Key, p.Value))
+                            p.Key, p.Value, p.IsEnabled, c.Guid.ToString()))
                     .ToList()));
         }
     }

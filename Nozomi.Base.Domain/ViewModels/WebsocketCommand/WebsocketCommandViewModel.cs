@@ -10,22 +10,24 @@ namespace Nozomi.Data.ViewModels.WebsocketCommand
         public WebsocketCommandViewModel() {}
 
         public WebsocketCommandViewModel(long id, CommandType type, string name, long delay,
-            ICollection<WebsocketCommandPropertyViewModel> properties)
+            bool isEnabled, ICollection<WebsocketCommandPropertyViewModel> properties)
         {
             Id = id;
             Type = type;
             Name = name;
             Delay = delay;
+            IsEnabled = isEnabled;
             Properties = properties;
         }
 
         public WebsocketCommandViewModel(string guid, CommandType type, string name, long delay,
-            ICollection<WebsocketCommandPropertyViewModel> properties)
+            bool isEnabled, ICollection<WebsocketCommandPropertyViewModel> properties)
         {
             Guid = guid;
             Type = type;
             Name = name;
             Delay = delay;
+            IsEnabled = isEnabled;
             Properties = properties;
         }
         

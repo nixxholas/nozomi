@@ -220,6 +220,7 @@ namespace Nozomi.Service.Events
             
             var property = _unitOfWork.GetRepository<WebsocketCommandProperty>()
                 .GetQueryable()
+                .Include(p => p.WebsocketCommand)
                 .Where(c => c.Id.Equals(id));
 
             if (!string.IsNullOrEmpty(userId))
@@ -232,7 +233,7 @@ namespace Nozomi.Service.Events
                 property = property.AsTracking();
 
             return property.Select(c => new WebsocketCommandPropertyViewModel(c.Guid.ToString(), 
-                    c.CommandPropertyType, c.Key, c.Value))
+                    c.CommandPropertyType, c.Key, c.Value, c.IsEnabled, c.WebsocketCommand.Guid.ToString()))
                 .SingleOrDefault();
         }
 
@@ -244,6 +245,7 @@ namespace Nozomi.Service.Events
             
             var command = _unitOfWork.GetRepository<WebsocketCommandProperty>()
                 .GetQueryable()
+                .Include(p => p.WebsocketCommand)
                 .Where(c => c.Guid.Equals(parsedGuid));
 
             if (!string.IsNullOrEmpty(userId))
@@ -256,7 +258,7 @@ namespace Nozomi.Service.Events
                 command = command.AsTracking();
 
             return command.Select(c => new WebsocketCommandPropertyViewModel(c.Guid.ToString(), 
-                    c.CommandPropertyType, c.Key, c.Value))
+                    c.CommandPropertyType, c.Key, c.Value, c.IsEnabled, c.WebsocketCommand.Guid.ToString()))
                 .SingleOrDefault();
         }
 
@@ -268,6 +270,7 @@ namespace Nozomi.Service.Events
             
             var properties = _unitOfWork.GetRepository<WebsocketCommandProperty>()
                 .GetQueryable()
+                .Include(p => p.WebsocketCommand)
                 .Where(c => c.WebsocketCommandId.Equals(commandId));
 
             if (ensureNotDisabledOrDeleted)
@@ -277,7 +280,7 @@ namespace Nozomi.Service.Events
                 properties = properties.AsTracking();
                 
             return properties.Select(p => new WebsocketCommandPropertyViewModel(p.Id, 
-                p.CommandPropertyType, p.Key, p.Value));
+                p.CommandPropertyType, p.Key, p.Value, p.IsEnabled, p.WebsocketCommand.Guid.ToString()));
         }
 
         public IEnumerable<WebsocketCommandPropertyViewModel> ViewAllByCommand(string commandGuid, 
@@ -298,7 +301,7 @@ namespace Nozomi.Service.Events
                 properties = properties.AsTracking();
 
             return properties.Select(p => new WebsocketCommandPropertyViewModel(p.Id, 
-                p.CommandPropertyType, p.Key, p.Value));
+                p.CommandPropertyType, p.Key, p.Value, p.IsEnabled, p.WebsocketCommand.Guid.ToString()));
         }
     }
 }
