@@ -75,7 +75,7 @@ namespace Nozomi.Service.Services
                     && _websocketCommandPropertyEvent.Exists(parsedGuid))
                 {
                     var property = _websocketCommandPropertyEvent.Get(parsedGuid, false, 
-                        userId); // Obtain the property
+                        userId, true); // Obtain the property
 
                     if (property != null) // Update it if not null
                     {
@@ -94,7 +94,7 @@ namespace Nozomi.Service.Services
                 else if (vm.Id > 0 && _websocketCommandEvent.Exists(vm.Id)) // Since its an ID
                 {
                     var property = _websocketCommandPropertyEvent.Get(vm.Id, false, 
-                        userId); // Obtain the property
+                        userId, true); // Obtain the property
 
                     if (property != null) // Update it if not null
                     {
