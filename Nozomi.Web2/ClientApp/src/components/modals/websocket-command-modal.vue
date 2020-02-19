@@ -81,7 +81,7 @@
 
                     <footer class="modal-card-foot">
                         <button class="button" type="button" @click="isCommandModalActive = false">Close</button>
-                        <b-button type="is-primary" native-type="button" @click="push" :disabled="!requestGuid">Submit</b-button>
+                        <b-button type="is-primary" native-type="button" @click="push" :disabled="!requestGuid && !command">Submit</b-button>
                     </footer>
                 </div>
             </form>
