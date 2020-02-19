@@ -37,7 +37,7 @@ namespace Nozomi.Service.Services
             _websocketCommandEvent = websocketCommandEvent;
         }
 
-        public void Create(CreateWebsocketCommandInputModel vm, string userId)
+        public void Create(CreateWebsocketCommandInputModel vm, string userId = null)
         {
             if (vm.IsValid() && !string.IsNullOrEmpty(userId))
             {
@@ -78,7 +78,7 @@ namespace Nozomi.Service.Services
             throw new ArgumentException("Invalid payload!");
         }
 
-        public void Update(UpdateWebsocketCommandInputModel vm, string userId)
+        public void Update(UpdateWebsocketCommandInputModel vm, string userId = null)
         {
             if (vm.IsValid() && _websocketCommandEvent.Exists(vm.Guid, userId) 
                              && Guid.TryParse(vm.Guid, out var parsedGuid))
