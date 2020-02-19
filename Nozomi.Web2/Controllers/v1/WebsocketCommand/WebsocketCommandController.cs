@@ -86,8 +86,8 @@ namespace Nozomi.Web2.Controllers.v1.WebsocketCommand
                 if (roles.Any(r => NozomiPermissions.AllStaffRoles
                     .Any(s => s.GetDescription().Equals(r.Value))))
                     _websocketCommandService.Create(vm);
-                
-                _websocketCommandService.Create(vm, sub);
+                else
+                    _websocketCommandService.Create(vm, sub);
                 
                 return Ok("Websocket Command successfully created!");
             }
@@ -105,7 +105,14 @@ namespace Nozomi.Web2.Controllers.v1.WebsocketCommand
             // Since we get the sub,
             if (!string.IsNullOrWhiteSpace(sub))
             {
-                _websocketCommandService.Update(vm, sub);
+                var roles = ((ClaimsIdentity) User.Identity)
+                    .Claims.Where(c => c.Type.Equals(JwtClaimTypes.Role));
+                
+                if (roles.Any(r => NozomiPermissions.AllStaffRoles
+                    .Any(s => s.GetDescription().Equals(r.Value))))
+                    _websocketCommandService.Update(vm, sub);
+                else
+                    _websocketCommandService.Update(vm, sub);
                 
                 return Ok("Websocket Command successfully updated!");
             }
