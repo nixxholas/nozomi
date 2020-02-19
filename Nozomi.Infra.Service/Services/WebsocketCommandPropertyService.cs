@@ -37,11 +37,14 @@ namespace Nozomi.Service.Services
             _websocketCommandPropertyEvent = websocketCommandPropertyEvent;
         }
 
-        public void Create(CreateWebsocketCommandPropertyInputModel vm, string userId)
+        public void Create(CreateWebsocketCommandPropertyInputModel vm, string userId = null)
         {
             // If it is a solo create
             if (vm.IsValidDependant())
             {
+                if (string.IsNullOrEmpty(userId))
+                    _logger.LogWarning($"{_serviceName} Create: UserId is null!");
+                
                 var property = new WebsocketCommandProperty
                 {
                     WebsocketCommandId = vm.CommandId,
@@ -63,7 +66,7 @@ namespace Nozomi.Service.Services
             throw new InvalidOperationException("Invalid payload!");
         }
 
-        public void Update(UpdateWebsocketCommandPropertyInputModel vm, string userId)
+        public void Update(UpdateWebsocketCommandPropertyInputModel vm, string userId = null)
         {
             if (vm.IsValid())
             {
@@ -113,7 +116,7 @@ namespace Nozomi.Service.Services
             throw new InvalidOperationException("Invalid payload!");
         }
 
-        public void Delete(string propertyGuid, string userId, bool hardDelete = true)
+        public void Delete(string propertyGuid, string userId = null, bool hardDelete = true)
         {
             if (Guid.TryParse(propertyGuid, out var parsedGuid))
             {
@@ -146,7 +149,7 @@ namespace Nozomi.Service.Services
             throw new ArgumentNullException("Invalid GUID.");
         }
 
-        public void Delete(long propertyId, string userId, bool hardDelete = true)
+        public void Delete(long propertyId, string userId = null, bool hardDelete = true)
         {
             if (propertyId > 0)
             {

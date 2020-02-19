@@ -83,6 +83,13 @@ namespace Nozomi.Web2.Controllers.v1.WebsocketCommandProperty
             // Since we get the sub,
             if (!string.IsNullOrWhiteSpace(sub))
             {
+                var roles = ((ClaimsIdentity) User.Identity)
+                    .Claims.Where(c => c.Type.Equals(JwtClaimTypes.Role));
+                
+                if (roles.Any(r => NozomiPermissions.AllStaffRoles
+                    .Any(s => s.GetDescription().Equals(r.Value))))
+                    _websocketCommandPropertyService.Create(vm);
+                
                 _websocketCommandPropertyService.Create(vm, sub);
                 
                 return Ok("Websocket Command property successfully created!");
@@ -101,6 +108,13 @@ namespace Nozomi.Web2.Controllers.v1.WebsocketCommandProperty
             // Since we get the sub,
             if (!string.IsNullOrWhiteSpace(sub))
             {
+                var roles = ((ClaimsIdentity) User.Identity)
+                    .Claims.Where(c => c.Type.Equals(JwtClaimTypes.Role));
+                
+                if (roles.Any(r => NozomiPermissions.AllStaffRoles
+                    .Any(s => s.GetDescription().Equals(r.Value))))
+                    _websocketCommandPropertyService.Update(vm);
+                
                 _websocketCommandPropertyService.Update(vm, sub);
                 
                 return Ok("Websocket Command property successfully updated!");
@@ -119,6 +133,13 @@ namespace Nozomi.Web2.Controllers.v1.WebsocketCommandProperty
             // Since we get the sub,
             if (!string.IsNullOrWhiteSpace(sub))
             {
+                var roles = ((ClaimsIdentity) User.Identity)
+                    .Claims.Where(c => c.Type.Equals(JwtClaimTypes.Role));
+                
+                if (roles.Any(r => NozomiPermissions.AllStaffRoles
+                    .Any(s => s.GetDescription().Equals(r.Value))))
+                    _websocketCommandPropertyService.Delete(websocketCommandPropertyGuid);
+                    
                 _websocketCommandPropertyService.Delete(websocketCommandPropertyGuid, sub);
                 
                 return Ok("Websocket Command property successfully deleted!");
