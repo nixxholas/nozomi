@@ -61,6 +61,10 @@ namespace Nozomi.Service.Events
                 if (!string.IsNullOrEmpty(userId))
                     query = query.Where(r => r.CreatedById.Equals(userId));
 
+                #if DEBUG
+                var hasAnything = query.Any();
+                #endif
+                
                 return query.Any();
             }
 
