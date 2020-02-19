@@ -41,6 +41,8 @@
                 <b-tag type="is-info">{{ props.row.guid }}</b-tag>
             </b-taglist>
             
+            <WebsocketCommandTable :show-create-feature="true" :request-guid="props.row.guid"/>
+            
             <RequestPropertiesTable :show-create-feature="true" :request-guid="props.row.guid"/>
             
             <nav class="level is-mobile">
@@ -94,10 +96,14 @@
     import RequestComponentsTable from "@/components/tables/request-components-table";
     import {mapActions} from "vuex";
     import RequestPropertiesTable from "@/components/tables/request-properties-table";
+    import WebsocketCommandModal from "@/components/modals/websocket-command-modal";
+    import WebsocketCommandTable from "@/components/tables/websocket-command-table";
 
     export default {
         name: "requests-table",
         components: {
+            WebsocketCommandTable,
+            WebsocketCommandModal,
             RequestPropertiesTable, AnalysedComponentsTable, RequestComponentsTable, 
             CreateRCComponent, RequestModal },
         props: {

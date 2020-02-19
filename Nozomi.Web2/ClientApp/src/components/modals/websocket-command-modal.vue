@@ -103,7 +103,10 @@
                 type: String,
                 default: null,
             },
-            requestGuid: String,
+            requestGuid: {
+                type: String,
+                default: null
+            },
         },
         methods: {
             ...mapActions('oidcStore', ['authenticateOidc', 'signOutOidc']),

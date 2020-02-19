@@ -2,11 +2,11 @@
     <div v-bind:class="{ section: isSection }">
         <b-navbar :spaced="isSection">
             <template slot="brand">
-                <b class="has-text-dark">Properties</b>
+                <b class="has-text-dark">Websocket Commands</b>
             </template>
             <template v-if="showCreateFeature"
                       slot="end">
-                <WebsocketCommandPropertyModal :child-mode="true" 
+                <WebsocketCommandModal :child-mode="true" 
                                                :request-guid="requestGuid"
                                                @added="addNewProperty"
                                                @created="reload"/>
@@ -18,16 +18,16 @@
                 <b-table-column field="type" label="Type" sortable centered>
                     <span class="tag is-info"
                           v-if="propertyTypes && propertyTypes.length > 0">
-                        {{ propertyTypes.filter(e => e.value == props.row.type)[0].key }}
+                        {{ propertyTypes.filter(e => e.value === props.row.type)[0].key }}
                     </span>
                 </b-table-column>
 
-                <b-table-column field="key" label="Key">
-                    {{ props.row.key }}
+                <b-table-column field="name" label="Name">
+                    {{ props.row.name }}
                 </b-table-column>
 
-                <b-table-column field="value" label="Value">
-                    {{ props.row.value ? props.row.value : "" }}
+                <b-table-column field="delay" label="Delay">
+                    {{ props.row.delay >= 0 ? props.row.delay : "" }}
                 </b-table-column>
                 
                 <b-table-column v-if="props.row.guid" field="actions">
@@ -43,7 +43,7 @@
                                     size="is-large">
                             </b-icon>
                         </p>
-                        <p>No properties yet.</p>
+                        <p>No commands yet.</p>
                     </div>
                 </section>
             </template>
@@ -52,21 +52,17 @@
 </template>
 
 <script>
-    import WebsocketCommandPropertyService from "@/services/WebsocketCommandPropertyService";
     import WebsocketCommandPropertyTypeService from "@/services/WebsocketCommandPropertyTypeService";
-    import WebsocketCommandPropertyModal from "../modals/websocket-command-property-modal";
+    import WebsocketCommandModal from "../modals/websocket-command-modal";
+    import WebsocketCommandService from "@/services/WebsocketCommandService";
 
     export default {
         name: "websocket-command-table",
-        components: {WebsocketCommandPropertyModal},
+        components: {WebsocketCommandModal},
         props: {
             showCreateFeature: {
                 type: Boolean,
                 default: false
-            },
-            commandGuid: {
-                type: String,
-                default: null
             },
             requestGuid: {
                 type: String,
@@ -92,9 +88,9 @@
                     if (res.status && res.status === 200) {
                         self.propertyTypes = res.data;
 
-                        // If this is a command-specific 
-                        if (self.commandGuid) {
-                            WebsocketCommandPropertyService.getByCommand(self.commandGuid)
+                        // If this is a request-specific 
+                        if (self.requestGuid) {
+                            WebsocketCommandService.viewByRequest(self.requestGuid)
                                 .then(function (res) {
                                     self.data = res.data;
                                 });
@@ -116,7 +112,7 @@
                 let self = this;
                 self.tableLoading = true;
 
-                WebsocketCommandPropertyService.getByCommand(self.commandGuid)
+                WebsocketCommandService.viewByRequest(self.requestGuid)
                     .then(function (res) {
                         self.data = res.data;
                     })
