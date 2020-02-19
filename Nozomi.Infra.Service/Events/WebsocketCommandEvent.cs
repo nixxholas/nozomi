@@ -214,7 +214,7 @@ namespace Nozomi.Service.Events
             if (track)
                 command = command.AsTracking();
 
-            return command.Select(c => new WebsocketCommandViewModel(c.Id, 
+            return command.Select(c => new WebsocketCommandViewModel(c.Guid.ToString(), 
                 c.CommandType, c.Name, c.Delay, c.WebsocketCommandProperties
                     .Select(p => 
                         new WebsocketCommandPropertyViewModel(p.Guid.ToString(), p.CommandPropertyType, 
@@ -243,7 +243,7 @@ namespace Nozomi.Service.Events
             if (track)
                 command = command.AsTracking();
 
-            return command.Select(c => new WebsocketCommandViewModel(c.Id, 
+            return command.Select(c => new WebsocketCommandViewModel(c.Guid.ToString(), 
                     c.CommandType, c.Name, c.Delay, c.WebsocketCommandProperties
                         .Select(p => 
                             new WebsocketCommandPropertyViewModel(p.Guid.ToString(), p.CommandPropertyType, 
@@ -272,7 +272,7 @@ namespace Nozomi.Service.Events
             if (track)
                 command = command.AsTracking();
 
-            return command.Select(c => new WebsocketCommandViewModel(c.Id, 
+            return command.Select(c => new WebsocketCommandViewModel(c.Guid.ToString(), 
                     c.CommandType, c.Name, c.Delay, c.WebsocketCommandProperties
                         .Select(p => 
                             new WebsocketCommandPropertyViewModel(p.Guid.ToString(), p.CommandPropertyType, 
@@ -301,7 +301,7 @@ namespace Nozomi.Service.Events
             if (track)
                 command = command.AsTracking();
 
-            return command.Select(c => new WebsocketCommandViewModel(c.Id, 
+            return command.Select(c => new WebsocketCommandViewModel(c.Guid.ToString(), 
                 c.CommandType, c.Name, c.Delay, c.WebsocketCommandProperties
                     .Select(p => 
                         new WebsocketCommandPropertyViewModel(p.Guid.ToString(), p.CommandPropertyType, 
