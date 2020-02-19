@@ -12,6 +12,7 @@
                                                @created="reload"/>
             </template>
         </b-navbar>
+        
         <b-table :loading="tableLoading"
                  :data="data">
             <template slot-scope="props">
@@ -29,9 +30,13 @@
                 <b-table-column field="delay" label="Delay">
                     {{ props.row.delay >= 0 ? props.row.delay : "" }}
                 </b-table-column>
+
+                <b-table-column field="isEnabled" label="Enabled">
+                    <b-checkbox v-model="props.row.isEnabled" disabled/>
+                </b-table-column>
                 
-                <b-table-column v-if="props.row.guid" label="">
-                    <WebsocketCommandModal :guid="props.row.guid" @updated="reload" @deleted="reload"/>
+                <b-table-column v-if="props.row.guid" field="guid" label="">
+                    <WebsocketCommandModal :command="props.row" @updated="reload" @deleted="reload"/>
                 </b-table-column>
             </template>
             <template slot="empty">

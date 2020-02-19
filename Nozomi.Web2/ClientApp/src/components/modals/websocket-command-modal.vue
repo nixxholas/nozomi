@@ -1,8 +1,8 @@
 <template>
     <div>
-        <div class="buttons" v-if="guid">
+        <div class="buttons" v-if="guid || command != null">
             <button class="button is-warning"
-                    @click="isModalActive = true">
+                    @click="isCommandModalActive = true">
                 Modify
             </button>
             <b-button :loading="isDeleteLoading" @click="remove()" type="is-danger">
@@ -11,14 +11,14 @@
         </div>
         <button v-else
                 class="button is-primary"
-                @click="isModalActive = true">
+                @click="isCommandModalActive = true">
             Create
         </button>
 
-        <b-modal has-modal-card trap-focus :active.sync="isModalActive">
+        <b-modal has-modal-card trap-focus :active.sync="isCommandModalActive">
             <b-loading :active.sync="isModalLoading" :can-cancel="false"/>
             <!--https://stackoverflow.com/questions/48028718/using-event-modifier-prevent-in-vue-to-submit-form-without-redirection-->
-            <form class="has-text-justified" style="z-index: 1;">
+            <form class="has-text-justified">
                 <div class="modal-card">
                     <header class="modal-card-head">
                         <p class="modal-card-title" v-if="guid">Edit</p>
@@ -71,14 +71,16 @@
                                 Properties
                             </template>
 
-                            <WebsocketCommandPropertiesTable @pushed="addFreshCommandProperty"
+                            <WebsocketCommandPropertiesTable
+                                    @pushed="addFreshCommandProperty"
+                                    :properties="form.properties"
                                     :is-section="false"
                                     :show-create-feature="true" />
                         </b-field>
                     </section>
 
                     <footer class="modal-card-foot">
-                        <button class="button" type="button" @click="isModalActive = false">Close</button>
+                        <button class="button" type="button" @click="isCommandModalActive = false">Close</button>
                         <b-button type="is-primary" native-type="button" @click="push" :disabled="!requestGuid">Submit</b-button>
                     </footer>
                 </div>
@@ -103,9 +105,13 @@
                 type: String,
                 default: null,
             },
+            command: {
+                type: Object,
+                default: null,
+            },
             requestGuid: {
                 type: String,
-                default: null
+                default: null,
             },
         },
         methods: {
@@ -158,7 +164,6 @@
                     self.form.requestGuid = self.requestGuid;
 
                 if (!self.guid && self.form.requestGuid) {
-                    console.dir(self.form);
                     WebsocketCommandService.create(JSON.stringify(self.form))
                         .then(function (response) {
                             // Reset the form data regardless
@@ -171,7 +176,7 @@
                                 requestGuid: self.requestGuid,
                             };
 
-                            self.isModalActive = false; // Close the modal
+                            self.isCommandModalActive = false; // Close the modal
                             Notification.open({
                                 duration: 2500,
                                 message: `Property successfully added!`,
@@ -204,7 +209,7 @@
                     
                     WebsocketCommandService.update(self.form)
                     .then(function (response) {
-                        self.isModalActive = false; // Close the modal
+                        self.isCommandModalActive = false; // Close the modal
                         Notification.open({
                             duration: 2500,
                             message: `Component successfully updated!`,
@@ -271,27 +276,37 @@
                             if (res.data.type)
                                 self.form.type = res.data.type;
                             if (res.data.name)
-                                self.form.key = res.data.name;
+                                self.form.name = res.data.name;
                             if (res.data.delay)
                                 self.form.delay = res.data.delay;
                             if (res.data.isEnabled)
                                 self.form.isEnabled = res.data.isEnabled;
                         }
                     });
+            } else if (self.command) {
+                if (self.command.type >= 0)
+                    self.form.type = self.command.type;
+                if (self.command.name)
+                    self.form.name = self.command.name;
+                if (self.command.delay >= -1)
+                    self.form.delay = self.command.delay;
+                self.form.isEnabled = self.command.isEnabled;
+                if (self.command.properties)
+                    self.form.properties = self.command.properties;
             }
             
             self.isModalLoading = false;
         },
         data: function () {
             return {
-                isModalActive: false,
+                isCommandModalActive: false,
                 isModalLoading: true,
                 isDeleteLoading: false,
                 currentTypeTab: 0,
                 form: {
-                    guid: this.guid,
+                    guid: null,
                     type: 0,
-                    name: "",
+                    name: null,
                     delay: 0,
                     isEnabled: true,
                     properties: [],

@@ -7,7 +7,7 @@
             <template v-if="showCreateFeature"
                       slot="end">
                 <WebsocketCommandPropertyModal :child-mode="true" 
-                                               :request-guid="commandGuid"
+                                               :command-guid="commandGuid"
                                                @added="addNewProperty"
                                                @created="reload"/>
             </template>
@@ -72,11 +72,15 @@
                 type: Boolean,
                 default: true
             },
+            properties: {
+                type: Array,
+                default: []
+            }
         },
         data: function () {
             return {
                 tableLoading: true,
-                data: [],
+                data: this.properties,
                 propertyTypes: []
             }
         },
