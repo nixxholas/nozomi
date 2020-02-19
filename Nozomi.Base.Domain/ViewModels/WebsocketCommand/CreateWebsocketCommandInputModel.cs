@@ -18,7 +18,7 @@ namespace Nozomi.Data.ViewModels.WebsocketCommand
 
         public bool IsEnabled { get; set; }
         
-        public ICollection<CreateWebsocketCommandPropertyInputModel> Properties { get; set; }
+        public List<CreateWebsocketCommandPropertyInputModel> Properties { get; set; }
 
         public bool IsValid()
         {
