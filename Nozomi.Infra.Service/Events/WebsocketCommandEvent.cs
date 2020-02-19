@@ -176,7 +176,7 @@ namespace Nozomi.Service.Events
             var commands = _unitOfWork.GetRepository<WebsocketCommand>()
                 .GetQueryable()
                 .Include(c => c.Request)
-                .Where(c => c.Guid.Equals(parsedGuid));
+                .Where(c => c.Request.Guid.Equals(parsedGuid));
 
             if (!string.IsNullOrEmpty(userId))
                 commands = commands.Where(c => c.CreatedById.Equals(userId));
