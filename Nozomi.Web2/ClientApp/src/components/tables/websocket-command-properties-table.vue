@@ -107,6 +107,7 @@
                     this.data = [];
                 
                 this.data.push(payload);
+                this.$emit('pushed', payload);
             },
             reload: function () {
                 let self = this;
