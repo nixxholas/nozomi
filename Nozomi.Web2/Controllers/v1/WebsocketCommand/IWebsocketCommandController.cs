@@ -7,7 +7,7 @@ namespace Nozomi.Web2.Controllers.v1.WebsocketCommand
     {
         IActionResult Get(string guid);
 
-        IActionResult GetByRequest(string requestGuid);
+        IActionResult ViewByRequest(string requestGuid);
         
         IActionResult Create(CreateWebsocketCommandInputModel vm);
         

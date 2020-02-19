@@ -49,7 +49,7 @@ namespace Nozomi.Web2.Controllers.v1.WebsocketCommand
 
         [Authorize]
         [HttpGet("{requestGuid}")]
-        public IActionResult GetByRequest(string requestGuid)
+        public IActionResult ViewByRequest(string requestGuid)
         {
             var sub = ((ClaimsIdentity) User.Identity)
                 .Claims.SingleOrDefault(c => c.Type.Equals(JwtClaimTypes.Subject))?.Value;
@@ -62,9 +62,9 @@ namespace Nozomi.Web2.Controllers.v1.WebsocketCommand
                 
                 if (roles.Any(r => NozomiPermissions.AllStaffRoles
                     .Any(s => s.GetDescription().Equals(r.Value))))
-                    return Ok(_websocketCommandEvent.GetAllByRequest(requestGuid, true));
+                    return Ok(_websocketCommandEvent.ViewAllByRequest(requestGuid, true));
                 
-                return Ok(_websocketCommandEvent.GetAllByRequest(requestGuid, true, sub));
+                return Ok(_websocketCommandEvent.ViewAllByRequest(requestGuid, true, sub));
             }
 
             return BadRequest("Please re-authenticate again");

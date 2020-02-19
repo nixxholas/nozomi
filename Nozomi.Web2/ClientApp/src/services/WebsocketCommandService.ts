@@ -18,9 +18,9 @@ export default {
         });
     },
 
-    getByRequest(requestGuid: string) {
+    viewByRequest(requestGuid: string) {
         return new Promise((resolve, reject) => {
-            axios.get(baseUrl  + 'GetByRequest/' + requestGuid, {
+            axios.get(baseUrl  + 'ViewByRequest/' + requestGuid, {
                 headers: {
                     Authorization: "Bearer " + store.state.oidcStore.access_token
                 }
