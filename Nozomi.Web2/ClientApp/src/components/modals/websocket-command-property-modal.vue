@@ -1,11 +1,16 @@
 <template>
     <div>
         <div class="buttons" v-if="guid">
-            <button class="button is-warning"
+            <b-button 
+                    native-type="button"
+                    type="is-warning"
                     @click="isWebsocketCommandPropertyModalActive = true">
                 Modify
-            </button>
-            <b-button :loading="isDeleteLoading" @click="remove()" type="is-danger">
+            </b-button>
+            <b-button :loading="isDeleteLoading"
+                      @click="remove()"
+                      native-type="button"
+                      type="is-danger">
                 <b-icon size="is-small" icon="trash" />
             </b-button>
         </div>
@@ -69,7 +74,7 @@
                     </section>
 
                     <footer class="modal-card-foot">
-                        <button class="button" type="button" @click="isWebsocketCommandPropertyModalActive = false">Close</button>
+                        <button class="button" native-type="button" type="button" @click="isWebsocketCommandPropertyModalActive = false">Close</button>
                         <b-button type="is-primary" native-type="button" @click="pushCommandPropertyForm()" :disabled="!isValid()">Submit</b-button>
                     </footer>
                 </div>
