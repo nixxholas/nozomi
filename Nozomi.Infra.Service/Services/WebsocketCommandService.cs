@@ -39,7 +39,7 @@ namespace Nozomi.Service.Services
 
         public void Create(CreateWebsocketCommandInputModel vm, string userId = null)
         {
-            if (vm.IsValid() && !string.IsNullOrEmpty(userId))
+            if (vm.IsValid())
             {
                 // Obtain the request and see if it is appropriate
                 if (!_requestEvent.Exists(vm.RequestGuid, false, userId) 
