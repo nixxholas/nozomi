@@ -253,7 +253,7 @@ namespace Nozomi.Service.Events
         }
 
         public IEnumerable<WebsocketCommandViewModel> ViewAllByRequest(long requestId, 
-            bool ensureNotDisabledOrDeleted = true, bool track = false)
+            bool ensureNotDisabledOrDeleted = true, string userId = null, bool track = false)
         {
             if (requestId <= 0)
                 throw new ArgumentException("Invalid request ID!");
@@ -262,6 +262,9 @@ namespace Nozomi.Service.Events
                 .GetQueryable()
                 .Include(c => c.WebsocketCommandProperties)
                 .Where(c => c.RequestId.Equals(requestId));
+
+            if (!string.IsNullOrEmpty(userId))
+                command = command.Where(c => c.CreatedById.Equals(userId));
 
             if (ensureNotDisabledOrDeleted)
                 command = command.Where(c => c.IsEnabled && c.DeletedAt == null);
@@ -278,7 +281,7 @@ namespace Nozomi.Service.Events
         }
 
         public IEnumerable<WebsocketCommandViewModel> ViewAllByRequest(string requestGuid, 
-            bool ensureNotDisabledOrDeleted = true, bool track = false)
+            bool ensureNotDisabledOrDeleted = true, string userId = null, bool track = false)
         {
             if (!Guid.TryParse(requestGuid, out var parsedGuid))
                 throw new ArgumentException("Invalid request GUID!");
@@ -288,6 +291,9 @@ namespace Nozomi.Service.Events
                 .Include(c => c.Request)
                 .Include(c => c.WebsocketCommandProperties)
                 .Where(c => c.Request.Guid.Equals(parsedGuid));
+
+            if (!string.IsNullOrEmpty(userId))
+                command = command.Where(c => c.CreatedById.Equals(userId));
 
             if (ensureNotDisabledOrDeleted)
                 command = command.Where(c => c.IsEnabled && c.DeletedAt == null);

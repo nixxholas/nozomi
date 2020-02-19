@@ -37,9 +37,9 @@ namespace Nozomi.Service.Events.Interfaces
             bool track = false);
 
         IEnumerable<WebsocketCommandViewModel> ViewAllByRequest(long requestId, 
-            bool ensureNotDisabledOrDeleted = true, bool track = false);
+            bool ensureNotDisabledOrDeleted = true, string userId = null, bool track = false);
         
         IEnumerable<WebsocketCommandViewModel> ViewAllByRequest(string requestGuid, 
-            bool ensureNotDisabledOrDeleted = true, bool track = false);
+            bool ensureNotDisabledOrDeleted = true, string userId = null, bool track = false);
     }
 }
