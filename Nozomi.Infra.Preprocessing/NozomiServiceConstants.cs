@@ -34,6 +34,8 @@ namespace Nozomi.Preprocessing
             EnumHelper.GetEnumValuesAndDescriptions<CurrencyPairType>();
         public static List<KeyValuePair<string, int>> websocketCommandType =
             EnumHelper.GetEnumValuesAndDescriptions<CommandType>();
+        public static List<KeyValuePair<string, int>> websocketCommandPropertyType =
+            EnumHelper.GetEnumValuesAndDescriptions<CommandPropertyType>();
 
         public static readonly List<KeyValuePair<int, string>> AnalysedComponentTypeMap =
             EnumHelper.GetEnumDescriptionsAndValues<AnalysedComponentType>();
