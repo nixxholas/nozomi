@@ -33,10 +33,11 @@ export default {
         });
     },
     
-    create(vm: object) {
+    create(vm: any) {
         return new Promise((resolve, reject) => {
-            axios.post(baseUrl  + 'Create/',  vm, {
+            axios.post(baseUrl  + 'Create',  vm, {
                 headers: {
+                    'Content-Type': "application/json", // Enforce the content type..
                     Authorization: "Bearer " + store.state.oidcStore.access_token
                 }
             }).then(function (response) {
@@ -47,10 +48,11 @@ export default {
         });
     },
 
-    update(vm: object) {
+    update(vm: any) {
         return new Promise((resolve, reject) => {
             axios.put(baseUrl  + 'Update/',  vm, {
                 headers: {
+                    'Content-Type': "application/json", // Enforce the content type..
                     Authorization: "Bearer " + store.state.oidcStore.access_token
                 }
             }).then(function (response) {
