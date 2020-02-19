@@ -72,7 +72,7 @@ namespace Nozomi.Web2.Controllers.v1.WebsocketCommand
 
         [Authorize]
         [HttpPost]
-        public IActionResult Create(CreateWebsocketCommandInputModel vm)
+        public IActionResult Create([FromBody]CreateWebsocketCommandInputModel vm)
         {
             var sub = ((ClaimsIdentity) User.Identity)
                 .Claims.SingleOrDefault(c => c.Type.Equals(JwtClaimTypes.Subject))?.Value;
@@ -90,7 +90,7 @@ namespace Nozomi.Web2.Controllers.v1.WebsocketCommand
 
         [Authorize]
         [HttpPut]
-        public IActionResult Update(UpdateWebsocketCommandInputModel vm)
+        public IActionResult Update([FromBody]UpdateWebsocketCommandInputModel vm)
         {
             var sub = ((ClaimsIdentity) User.Identity)
                 .Claims.SingleOrDefault(c => c.Type.Equals(JwtClaimTypes.Subject))?.Value;
