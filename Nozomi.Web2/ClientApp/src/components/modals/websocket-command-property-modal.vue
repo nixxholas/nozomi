@@ -96,10 +96,13 @@
                 type: String,
                 default: null,
             },
-            commandGuid: String,
+            commandGuid: {
+                type: String,
+                default: null,
+            },
             commandId: {
                 type: Number,
-                default: null,
+                default: 0,
             },
         },
         methods: {
