@@ -18,7 +18,7 @@
         <b-modal has-modal-card trap-focus :active.sync="isModalActive">
             <b-loading :active.sync="isModalLoading" :can-cancel="false"/>
             <!--https://stackoverflow.com/questions/48028718/using-event-modifier-prevent-in-vue-to-submit-form-without-redirection-->
-            <form v-on:submit.prevent="push()" class="has-text-justified">
+            <form v-on:submit.prevent="push()" class="has-text-justified" style="z-index: 1;">
                 <div class="modal-card">
                     <header class="modal-card-head">
                         <p class="modal-card-title" v-if="guid">Edit</p>
@@ -26,10 +26,10 @@
                     </header>
                     <section class="modal-card-body">
                         <b-input type="hidden" v-model="form.guid" />
-                        <b-input type="hidden" v-model="form.requestGuid" />
                         
                         <b-field label="Type">
-                            <b-select placeholder="Pick one!" v-model="form.type">
+                            <b-select placeholder="Pick one!" v-model="form.type"
+                                      :loading="requestPropertyTypesIsLoading">
                                 <option
                                         v-for="option in requestPropertyTypes"
                                         :value="option.value"
@@ -92,18 +92,33 @@
         },
         methods: {
             ...mapActions('oidcStore', ['authenticateOidc', 'signOutOidc']),
-            remove: function(guid) {
+            remove: function() {
                 let self = this;
                 self.isDeleteLoading = true;
                 
                 RequestPropertyService.delete(self.guid)
                 .then(function(res) {
-                    console.dir(res);
-                    
-                    this.$emit('deleted', true);
+                    Notification.open({
+                        duration: 2500,
+                        message: res && res.data && res.data !== "" ? res.data : "Property successfully deleted!",
+                        position: 'is-bottom-right',
+                        type: 'is-success',
+                        hasIcon: true
+                    });
+
+                    self.$emit('deleted', true);
                 })
                 .catch(function(err) {
                     console.dir(err);
+                    Notification.open({
+                        duration: 2500,
+                        message: err && err.statusText ? err.statusText : "There was an issue deleting this property!",
+                        position: 'is-bottom-right',
+                        type: 'is-danger',
+                        hasIcon: true
+                    });
+
+                    self.$emit('updated', true);
                 })
                 .finally(function() {
                     self.isDeleteLoading = false;
@@ -112,6 +127,10 @@
             push: function () {
                 this.isModalLoading = true;
                 let self = this;
+                console.dir(self.form);
+                
+                if (!self.form.requestGuid)
+                    self.form.requestGuid = self.requestGuid;
 
                 if (!self.guid && self.form.requestGuid) {
                     RequestPropertyService.create(self.form)
@@ -196,10 +215,9 @@
             let self = this;
 
             // Synchronously call for data
-            self.requestPropertyTypesIsLoading = true;
             RequestPropertyTypeService.all()
                 .then(function (response) {
-                    self.requestPropertyTypes = response;
+                    self.requestPropertyTypes = response.data;
                 })
                 .catch(function (error) {
                     //console.dir(error);
@@ -217,13 +235,13 @@
             if (self.guid) {
                 RequestPropertyService.get(self.guid)
                     .then(function(res) {
-                        if (res) {
-                            if (res.requestPropertyType)
-                                self.form.type = res.requestPropertyType;
-                            if (res.key)
-                                self.form.key = res.key;
-                            if (res.value)
-                                self.form.value = res.value;
+                        if (res && res.data) {
+                            if (res.data.requestPropertyType)
+                                self.form.type = res.data.requestPropertyType;
+                            if (res.data.key)
+                                self.form.key = res.data.key;
+                            if (res.data.value)
+                                self.form.value = res.data.value;
                         }
                     })
             }
@@ -242,7 +260,7 @@
                     requestGuid: this.requestGuid,
                 },
                 requestPropertyTypes: [],
-                requestPropertyTypesIsLoading: false
+                requestPropertyTypesIsLoading: true,
             }
         }
     }

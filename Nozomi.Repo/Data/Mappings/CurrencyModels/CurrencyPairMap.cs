@@ -12,8 +12,8 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
             entityTypeBuilder.HasKey(cp => cp.Id).HasName("CurrencyPair_PK_Id");
             entityTypeBuilder.Property(cp => cp.Id).ValueGeneratedOnAdd();
 
+            entityTypeBuilder.HasAlternateKey(e => e.Guid);
             entityTypeBuilder.Property(e => e.Guid).ValueGeneratedOnAdd();
-            entityTypeBuilder.HasIndex(e => e.Guid).IsUnique();
 
             entityTypeBuilder.HasIndex(cp => new
             {
@@ -29,7 +29,7 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
                 .HasConversion(val => val.ToUpperInvariant(), 
                     val => val);
 
-            entityTypeBuilder.Property(cp => cp.APIUrl).IsRequired();
+            // entityTypeBuilder.Property(cp => cp.APIUrl).IsRequired();
             entityTypeBuilder.Property(cp => cp.DefaultComponent).IsRequired();
 
             entityTypeBuilder.HasOne(cp => cp.Source).WithMany(cs => cs.CurrencyPairs)

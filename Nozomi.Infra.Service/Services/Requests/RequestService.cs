@@ -323,7 +323,8 @@ namespace Nozomi.Service.Services.Requests
 
                 if (request != null)
                 {
-                    request.IsEnabled = vm.IsEnabled;
+                    if (vm.IsEnabled != null)
+                        request.IsEnabled = (bool)vm.IsEnabled;
                     request.RequestType = vm.RequestType;
                     request.ResponseType = vm.ResponseType;
                     request.DataPath = vm.DataPath;
@@ -372,6 +373,38 @@ namespace Nozomi.Service.Services.Requests
             }
 
             return false;
+        }
+
+        public void Delete(string requestGuid, bool hardDelete = true, string userId = null)
+        {
+            if (Guid.TryParse(requestGuid, out var parsedGuid))
+            {
+                var query = _unitOfWork.GetRepository<Request>()
+                    .GetQueryable()
+                    .AsTracking()
+                    .Where(r => r.Guid.Equals(parsedGuid));
+
+                if (!string.IsNullOrEmpty(userId))
+                    query = query.Where(r => r.CreatedById.Equals(userId));
+
+                if (!query.Any())
+                    throw new NullReferenceException("No request found to delete.");
+
+                var request = query.SingleOrDefault();
+                if (hardDelete)
+                    _unitOfWork.GetRepository<Request>().Delete(request);
+                else
+                {
+                    request.DeletedAt = DateTime.UtcNow;
+                    request.DeletedById = userId;
+                    _unitOfWork.GetRepository<Request>().Update(request);
+                }
+
+                _unitOfWork.Commit(userId);
+                return;
+            }
+
+            throw new ArgumentNullException("Invalid GUID!");
         }
 
         public NozomiResult<string> Delete(long reqId, bool hardDelete = false, string userId = null)

@@ -13,5 +13,7 @@ namespace Nozomi.Web2.Controllers.v1.Request
         IActionResult GetAll();
 
         IActionResult Update(UpdateRequestViewModel vm);
+
+        IActionResult Delete(string guid);
     }
 }

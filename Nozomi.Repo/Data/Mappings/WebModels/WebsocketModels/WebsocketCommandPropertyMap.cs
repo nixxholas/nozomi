@@ -13,8 +13,8 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.WebsocketModels
             entityTypeBuilder.HasKey(wscp => wscp.Id).HasName("WebsocketCommandProperty_PK_Id");
             entityTypeBuilder.Property(wscp => wscp.Id).ValueGeneratedOnAdd();
 
+            entityTypeBuilder.HasAlternateKey(e => e.Guid);
             entityTypeBuilder.Property(e => e.Guid).ValueGeneratedOnAdd();
-            entityTypeBuilder.HasIndex(e => e.Guid).IsUnique();
 
             entityTypeBuilder.Property(wscp => wscp.CommandPropertyType).IsRequired();
             entityTypeBuilder.Property(wscp => wscp.Key).IsRequired(false).HasDefaultValue();
@@ -22,7 +22,8 @@ namespace Nozomi.Repo.Data.Mappings.WebModels.WebsocketModels
 
             entityTypeBuilder.HasOne(wscp => wscp.WebsocketCommand)
                 .WithMany(wsc => wsc.WebsocketCommandProperties)
-                .HasForeignKey(wscp => wscp.WebsocketCommandId);
+                .HasForeignKey(wscp => wscp.WebsocketCommandId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

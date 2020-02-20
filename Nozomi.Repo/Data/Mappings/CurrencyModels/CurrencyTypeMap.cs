@@ -12,8 +12,8 @@ namespace Nozomi.Repo.Data.Mappings.CurrencyModels
             entityTypeBuilder.HasKey(ct => ct.Id).HasName("CurrencyType_PK_Id");
             entityTypeBuilder.Property(ct => ct.Id).ValueGeneratedOnAdd();
 
+            entityTypeBuilder.HasAlternateKey(e => e.Guid);
             entityTypeBuilder.Property(e => e.Guid).ValueGeneratedOnAdd();
-            entityTypeBuilder.HasIndex(e => e.Guid).IsUnique();
 
             entityTypeBuilder.Property(ct => ct.Name).IsRequired();
             entityTypeBuilder.Property(ct => ct.TypeShortForm).IsRequired();

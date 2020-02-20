@@ -42,6 +42,8 @@ namespace Nozomi.Web2.Extensions
             services.AddTransient<ISourceEvent, SourceEvent>();
             services.AddTransient<ISourceTypeEvent, SourceTypeEvent>();
             services.AddTransient<ITickerEvent, TickerEvent>();
+            services.AddTransient<IWebsocketCommandEvent, WebsocketCommandEvent>();
+            services.AddTransient<IWebsocketCommandPropertyEvent, WebsocketCommandPropertyEvent>();
 
             // Services
             services.AddScoped<IAnalysedComponentService, AnalysedComponentService>();
@@ -55,6 +57,8 @@ namespace Nozomi.Web2.Extensions
             services.AddScoped<IRequestPropertyService, RequestPropertyService>();
             services.AddScoped<ISourceService, SourceService>();
             services.AddScoped<ISourceTypeService, SourceTypeService>();
+            services.AddScoped<IWebsocketCommandService, WebsocketCommandService>();
+            services.AddScoped<IWebsocketCommandPropertyService, WebsocketCommandPropertyService>();
         }
     }
 }

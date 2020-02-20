@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
 using Nozomi.Repo.BCL.Context;
 
 namespace Nozomi.Repo.BCL.Repository
@@ -21,13 +22,11 @@ namespace Nozomi.Repo.BCL.Repository
         public void Add(T entity)
         {
             var entry = _dbSet.Add(entity);
-
         }
 
         public void Delete(T entity)
         {
-            T existing = _dbSet.Find(entity);
-            if (existing != null) _dbSet.Remove(existing);
+            _dbSet.Remove(entity);
         }
 
         public void Delete(Expression<Func<T, bool>> predicate)

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data.AreaModels.v1.Requests;
 using Nozomi.Data.Models.Currency;
@@ -22,6 +23,52 @@ namespace Nozomi.Service.Events
         public RequestEvent(ILogger<RequestEvent> logger, IUnitOfWork<NozomiDbContext> unitOfWork)
             : base(logger, unitOfWork)
         {
+        }
+
+        public bool Exists(long requestId, bool ignoreDeletedOrDisabled = false, string userId = null)
+        {
+            if (requestId > 0)
+            {
+                var query = _unitOfWork.GetRepository<Request>()
+                    .GetQueryable()
+                    .AsNoTracking()
+                    .Where(r => r.Id.Equals(requestId));
+
+                if (!ignoreDeletedOrDisabled) // Filter if false
+                    query = query.Where(r => r.IsEnabled && r.DeletedAt == null);
+
+                if (!string.IsNullOrEmpty(userId))
+                    query = query.Where(r => r.CreatedById.Equals(userId));
+
+                return query.Any();
+            }
+
+            return false;
+        }
+
+        public bool Exists(string requestGuid, bool ignoreDeletedOrDisabled = false, string userId = null)
+        {
+            if (Guid.TryParse(requestGuid, out var parsedGuid))
+            {
+                var query = _unitOfWork.GetRepository<Request>()
+                    .GetQueryable()
+                    .AsNoTracking()
+                    .Where(r => r.Guid.Equals(parsedGuid));
+
+                if (!ignoreDeletedOrDisabled)
+                    query = query.Where(r => r.IsEnabled && r.DeletedAt == null);
+
+                if (!string.IsNullOrEmpty(userId))
+                    query = query.Where(r => r.CreatedById.Equals(userId));
+
+                #if DEBUG
+                var hasAnything = query.Any();
+                #endif
+                
+                return query.Any();
+            }
+
+            return false;
         }
 
         public bool Exists(ComponentType type, long requestId)
@@ -97,7 +144,7 @@ namespace Nozomi.Service.Events
                 .SingleOrDefault(r => r.Id.Equals(id) && r.DeletedAt == null);
         }
 
-        public IQueryable<RequestViewModel> GetAll(string userId = null, bool enabledOnly = true, bool track = false)
+        public IQueryable<RequestViewModel> ViewAll(string userId = null, bool enabledOnly = true, bool track = false)
         {
             var query = _unitOfWork.GetRepository<Request>()
                 .GetQueryable()

@@ -5,6 +5,7 @@ using IdentityModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Nozomi.Base.BCL.Helpers.Enumerator;
 using Nozomi.Data.ViewModels.Component;
 using Nozomi.Preprocessing.Statics;
 using Nozomi.Service.Events.Interfaces;
@@ -30,17 +31,37 @@ namespace Nozomi.Web2.Controllers.v1.Component
         public IActionResult AllByRequest([FromQuery]string requestGuid, [FromQuery]int index = 0, 
             [FromQuery]int itemsPerPage = 50, [FromQuery]bool includeNested = false)
         {
-            if (!Guid.TryParse(requestGuid, out var guid))
-                return BadRequest("Invalid request GUID, please make sure you are handing over a valid guid.");
-                
-            if (index < 0 || itemsPerPage <= 0)
-                return BadRequest("Invalid index or itemsPerIndex");
-            
-            return Ok(_componentEvent.GetAllByRequest(requestGuid, includeNested, index, itemsPerPage));
-        }
+            var sub = ((ClaimsIdentity) User.Identity)
+                .Claims.SingleOrDefault(c => c.Type.Equals(JwtClaimTypes.Subject))?.Value;
 
+            if (!string.IsNullOrWhiteSpace(sub))
+            {
+                if (!Guid.TryParse(requestGuid, out var guid))
+                    return BadRequest("Invalid request GUID, please make sure you are handing over a valid guid.");
+                
+                if (index < 0 || itemsPerPage <= 0)
+                    return BadRequest("Invalid index or itemsPerIndex");
+                
+                // Obtain the user's roles
+                var role = ((ClaimsIdentity) User.Identity).Claims
+                    .Where(c => c.Type.Equals(JwtClaimTypes.Role));
+                
+                // If the user is a staff, let him access the entity indefinitely
+                if (role.Any(r => NozomiPermissions.AllStaffRoles
+                    .Any(sr => sr.GetDescription().Equals(r.Value))))
+                {
+                    return Ok(_componentEvent.GetAllByRequest(requestGuid, includeNested, index, itemsPerPage));
+                }
+            
+                return Ok(_componentEvent.GetAllByRequest(requestGuid, includeNested, index, itemsPerPage, sub));
+            }
+
+            return BadRequest("Please login again. Your session may have expired!");
+        }
+        
         [HttpGet]
-        public IActionResult All([FromQuery]int index = 0, [FromQuery]int itemsPerPage = 50, [FromQuery]bool includeNested = false)
+        public IActionResult All([FromQuery]int index = 0, [FromQuery]int itemsPerPage = 50, 
+            [FromQuery]bool includeNested = false)
         {
             if (index < 0 || itemsPerPage <= 0)
                 return BadRequest("Invalid index or itemsPerIndex");

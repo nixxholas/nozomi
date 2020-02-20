@@ -1,15 +1,21 @@
 <template>
     <div>
-        <button v-if="!request"
-                class="button is-primary"
+        <b-button v-if="!request"
+                type="is-primary"
                 @click="isActive = true">
             Create
-        </button>
-        <button v-else
-                class="button is-warning"
-                @click="isActive = true">
-            Edit
-        </button>
+        </b-button>
+        <div class="buttons pb-2" v-else>
+            <b-button type="is-warning"
+                    @click="isActive = true">
+                Edit
+            </b-button>
+            <b-button type="is-danger" 
+                      @click="isDeleteActive = true"
+                      :loading="isDeleteActive">
+                Delete
+            </b-button>
+        </div>
 
         <b-modal has-modal-card trap-focus :active.sync="isActive">
             <b-loading :active.sync="isLoading" :can-cancel="false"/>
@@ -87,6 +93,13 @@
                                 </b-field>
                             </b-tab-item>
                         </b-tabs>
+                        
+                        <b-field>
+                            <b-switch :value="form.isEnabled"
+                                      type="is-info">
+                                Enabled
+                            </b-switch>
+                        </b-field>
                     </section>
 
                     <footer class="modal-card-foot">
@@ -125,7 +138,14 @@
                 if (newVal) {
                     self.form = newVal; // Set first
                 }
-            }
+            },
+            isDeleteActive: function (newVal) {
+                let self = this;
+                
+                if (newVal) {
+                    self.delete();
+                }
+            },
         },
         methods: {
             ...mapActions('oidcStore', ['authenticateOidc', 'signOutOidc']),
@@ -200,7 +220,8 @@
                                 currencySlug: '',
                                 currencyPairGuid: null,
                                 currencyPairStr: null,
-                                currencyTypeGuid: 0
+                                currencyTypeGuid: 0,
+                                isEnabled: true,
                             };
 
                             if (response.status === 200) {
@@ -233,7 +254,43 @@
                             self.isLoading = false;
                         });
                 }
-            }
+            },
+            delete: function() {
+                let self = this;
+                
+                if (self.request) {
+                    self.isLoading = true;
+                    
+                    RequestService.delete(self.request.guid)
+                        .then(function (response) {
+                            if (response.status === 200) {
+                                self.isActive = false; // Close the modal
+                                Notification.open({
+                                    duration: 2500,
+                                    message: `Request successfully deleted!`,
+                                    position: 'is-bottom-right',
+                                    type: 'is-success',
+                                    hasIcon: true
+                                });
+                            }
+                        })
+                        .catch(function (error) {
+                            //console.log(error);
+                            Notification.open({
+                                duration: 2500,
+                                message: `There was an issue attempting to delete this request!`,
+                                position: 'is-bottom-right',
+                                type: 'is-warning',
+                                hasIcon: true
+                            });
+                        })
+                        .finally(function () {
+                            // always executed
+                            self.isLoading = false;
+                        });
+                    self.isDeleteActive = false;
+                }
+            },
         },
         beforeCreate: function () {
             let self = this;
@@ -310,12 +367,16 @@
                     this.form.parentType = 2;
                     this.form.currencyTypeGuid = this.request.currencyTypeGuid;
                 }
+                
+                if (this.request.isEnabled && this.form.isEnabled !== this.request.isEnabled)
+                    this.form.isEnabled = this.request.isEnabled;
             }
         },
         data: function () {
             return {
                 isActive: false,
                 isLoading: false,
+                isDeleteActive: false,
                 form: {
                     guid: null,
                     type: 0,
@@ -328,7 +389,8 @@
                     currencySlug: '',
                     currencyPairGuid: null,
                     currencyPairStr: null,
-                    currencyTypeGuid: 0
+                    currencyTypeGuid: 0,
+                    isEnabled: true,
                 },
                 formHelper: {},
                 currencies: [],

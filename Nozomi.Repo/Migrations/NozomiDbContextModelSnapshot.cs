@@ -91,10 +91,9 @@ namespace Nozomi.Repo.Migrations
                     b.HasKey("Id")
                         .HasName("Currency_PK_Id");
 
-                    b.HasIndex("CurrencyTypeId");
+                    b.HasAlternateKey("Guid");
 
-                    b.HasIndex("Guid")
-                        .IsUnique();
+                    b.HasIndex("CurrencyTypeId");
 
                     b.HasIndex("Slug")
                         .IsUnique()
@@ -111,7 +110,6 @@ namespace Nozomi.Repo.Migrations
                         .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
                     b.Property<string>("APIUrl")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("CounterTicker")
@@ -163,8 +161,7 @@ namespace Nozomi.Repo.Migrations
                     b.HasKey("Id")
                         .HasName("CurrencyPair_PK_Id");
 
-                    b.HasIndex("Guid")
-                        .IsUnique();
+                    b.HasAlternateKey("Guid");
 
                     b.HasIndex("SourceId");
 
@@ -320,8 +317,7 @@ namespace Nozomi.Repo.Migrations
                     b.HasKey("Id")
                         .HasName("CurrencyType_PK_Id");
 
-                    b.HasIndex("Guid")
-                        .IsUnique();
+                    b.HasAlternateKey("Guid");
 
                     b.ToTable("CurrencyTypes");
                 });
@@ -380,11 +376,10 @@ namespace Nozomi.Repo.Migrations
                     b.HasKey("Id")
                         .HasName("Source_PK_Id");
 
+                    b.HasAlternateKey("Guid");
+
                     b.HasIndex("Abbreviation")
                         .HasName("Source_Index_Abbreviation");
-
-                    b.HasIndex("Guid")
-                        .IsUnique();
 
                     b.HasIndex("SourceTypeGuid");
 
@@ -482,6 +477,7 @@ namespace Nozomi.Repo.Migrations
                         .HasColumnType("text");
 
                     b.Property<Guid>("Guid")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
                     b.Property<bool>("IsDenominated")
@@ -520,8 +516,7 @@ namespace Nozomi.Repo.Migrations
                     b.HasKey("Id")
                         .HasName("AnalysedComponent_PK_Id");
 
-                    b.HasIndex("Guid")
-                        .IsUnique();
+                    b.HasAlternateKey("Guid");
 
                     b.HasIndex("CurrencyId", "ComponentType")
                         .IsUnique()
@@ -658,6 +653,8 @@ namespace Nozomi.Repo.Migrations
 
                     b.HasKey("Id")
                         .HasName("RequestComponent_PK_Id");
+
+                    b.HasAlternateKey("Guid");
 
                     b.HasIndex("Guid")
                         .IsUnique();
@@ -916,8 +913,7 @@ namespace Nozomi.Repo.Migrations
                     b.HasKey("Id")
                         .HasName("WebsocketCommand_PK_Id");
 
-                    b.HasIndex("Guid")
-                        .IsUnique();
+                    b.HasAlternateKey("Guid");
 
                     b.HasIndex("RequestId");
 
@@ -979,8 +975,7 @@ namespace Nozomi.Repo.Migrations
                     b.HasKey("Id")
                         .HasName("WebsocketCommandProperty_PK_Id");
 
-                    b.HasIndex("Guid")
-                        .IsUnique();
+                    b.HasAlternateKey("Guid");
 
                     b.HasIndex("WebsocketCommandId");
 
