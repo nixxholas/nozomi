@@ -117,13 +117,18 @@
                 let self = this;
                 self.tableLoading = true;
 
-                WebsocketCommandPropertyService.getByCommand(self.commandGuid)
-                    .then(function (res) {
-                        self.data = res.data;
-                    })
-                    .finally(function () {
-                        self.tableLoading = false;
-                    });
+                if (self.commandGuid) {
+                    WebsocketCommandPropertyService.getByCommand(self.commandGuid)
+                        .then(function (res) {
+                            self.data = res.data;
+                        })
+                        .finally(function () {
+                            self.tableLoading = false;
+                        });
+                } else {
+                    console.dir("Can't seem to obtain the commandGuid.");
+                    self.tableLoading = false;
+                }
             }
         },
     }
