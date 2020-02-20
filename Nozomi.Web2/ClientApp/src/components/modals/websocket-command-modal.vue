@@ -65,18 +65,6 @@
                         <b-field label="Make it active?">
                             <b-switch v-model="form.isEnabled" />
                         </b-field>
-                        
-                        <b-field>
-                            <template slot="Label">
-                                Properties
-                            </template>
-
-                            <WebsocketCommandPropertiesTable
-                                    @pushed="addFreshCommandProperty"
-                                    :properties="form.properties"
-                                    :is-section="false"
-                                    :show-create-feature="true" />
-                        </b-field>
                     </section>
 
                     <footer class="modal-card-foot">
@@ -93,12 +81,10 @@
     import {mapActions} from 'vuex';
     import {NotificationProgrammatic as Notification} from 'buefy';
     import WebsocketCommandTypeService from "../../services/WebsocketCommandTypeService";
-    import WebsocketCommandPropertiesTable from "@/components/tables/websocket-command-properties-table";
     import WebsocketCommandService from "@/services/WebsocketCommandService";
 
     export default {
         name: "websocket-command-modal",
-        components: {WebsocketCommandPropertiesTable},
         props: {
             currentRoute: window.location.href, // https://forum.vuejs.org/t/how-to-get-path-from-route-instance/26934/2
             guid: {
@@ -116,14 +102,6 @@
         },
         methods: {
             ...mapActions('oidcStore', ['authenticateOidc', 'signOutOidc']),
-            addFreshCommandProperty: function(prop) {
-                if (prop) {
-                    if (!this.form.properties)
-                        this.form.properties = [];
-                    
-                    this.form.properties.push(prop);
-                }
-            },
             remove: function() {
                 let self = this;
                 self.isDeleteLoading = true;
@@ -172,7 +150,6 @@
                                 name: "",
                                 delay: 0,
                                 isEnabled: false,
-                                properties: [],
                                 requestGuid: self.requestGuid,
                             };
 
@@ -309,7 +286,6 @@
                     name: null,
                     delay: 0,
                     isEnabled: true,
-                    properties: [],
                     requestGuid: this.requestGuid,
                 },
                 types: [],
