@@ -9,6 +9,19 @@
                 <b-icon size="is-small" icon="trash" />
             </b-button>
         </div>
+        <b-navbar v-else-if="hasNavbar" 
+                  :spaced="true">
+            <template slot="brand">
+                <b class="has-text-dark">Websocket Commands</b>
+            </template>
+            <template slot="end">
+                <b-button native-type="button"
+                          type="is-primary"
+                          @click="isCommandModalActive = true">
+                    Create
+                </b-button>
+            </template>
+        </b-navbar>
         <button v-else
                 class="button is-primary"
                 @click="isCommandModalActive = true">
@@ -90,6 +103,10 @@
             command: {
                 type: Object,
                 default: null,
+            },
+            hasNavbar: {
+                type: Boolean,
+                default: false,
             },
             requestGuid: {
                 type: String,

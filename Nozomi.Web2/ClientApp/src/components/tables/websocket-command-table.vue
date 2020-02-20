@@ -1,17 +1,9 @@
 <template>
     <div v-bind:class="{ section: isSection }">
-        <b-navbar :spaced="isSection">
-            <template slot="brand">
-                <b class="has-text-dark">Websocket Commands</b>
-            </template>
-            <template v-if="showCreateFeature"
-                      slot="end">
-                <WebsocketCommandModal :child-mode="true" 
-                                               :request-guid="requestGuid"
-                                               @added="addNewProperty"
-                                               @created="reload"/>
-            </template>
-        </b-navbar>
+        <WebsocketCommandModal :has-navbar="isSection"
+                               :request-guid="requestGuid"
+                               @added="addNewProperty"
+                               @created="reload"/>
         
         <b-table detailed
                  detail-key="guid"
