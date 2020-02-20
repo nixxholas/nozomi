@@ -76,7 +76,7 @@
                                 Value
                             </template>
                             <b-input
-                                    type="number"
+                                    type="text"
                                     v-model="form.value"
                                     expanded>
                             </b-input>
