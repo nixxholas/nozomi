@@ -13,7 +13,9 @@
             </template>
         </b-navbar>
         
-        <b-table :loading="tableLoading"
+        <b-table detailed
+                 detail-key="guid"
+                 :loading="tableLoading"
                  :data="data">
             <template slot-scope="props">
                 <b-table-column field="type" label="Type" sortable centered>
@@ -39,6 +41,12 @@
                     <WebsocketCommandModal :command="props.row" @updated="reload" @deleted="reload"/>
                 </b-table-column>
             </template>
+            <template slot="detail" slot-scope="props">
+                <WebsocketCommandPropertyTable
+                        @pushed="pushedCommandProperty"
+                        :properties="props.row.properties"
+                        :show-create-feature="false" />
+            </template>
             <template slot="empty">
                 <section class="section">
                     <div class="content has-text-grey has-text-centered">
@@ -59,11 +67,12 @@
 <script>
     import WebsocketCommandPropertyTypeService from "@/services/WebsocketCommandPropertyTypeService";
     import WebsocketCommandModal from "../modals/websocket-command-modal";
+    import WebsocketCommandPropertyTable from "../tables/websocket-command-properties-table";
     import WebsocketCommandService from "@/services/WebsocketCommandService";
 
     export default {
         name: "websocket-command-table",
-        components: {WebsocketCommandModal},
+        components: {WebsocketCommandModal, WebsocketCommandPropertyTable},
         props: {
             showCreateFeature: {
                 type: Boolean,
@@ -112,6 +121,9 @@
                     this.data = [];
                 
                 this.data.push(payload);
+            },
+            pushedCommandProperty: function() {
+                
             },
             reload: function () {
                 let self = this;

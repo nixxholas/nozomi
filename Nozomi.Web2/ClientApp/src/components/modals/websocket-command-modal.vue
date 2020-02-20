@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div class="buttons" v-if="guid || command != null">
+        <div class="buttons" v-if="command != null">
             <button class="button is-warning"
                     @click="isCommandModalActive = true">
                 Modify
@@ -21,7 +21,7 @@
             <form class="has-text-justified">
                 <div class="modal-card">
                     <header class="modal-card-head">
-                        <p class="modal-card-title" v-if="guid">Edit</p>
+                        <p class="modal-card-title" v-if="command && command.guid">Edit</p>
                         <p class="modal-card-title" v-else>Create a command</p>
                     </header>
                     <section class="modal-card-body">
@@ -87,10 +87,6 @@
         name: "websocket-command-modal",
         props: {
             currentRoute: window.location.href, // https://forum.vuejs.org/t/how-to-get-path-from-route-instance/26934/2
-            guid: {
-                type: String,
-                default: null,
-            },
             command: {
                 type: Object,
                 default: null,
@@ -106,7 +102,7 @@
                 let self = this;
                 self.isDeleteLoading = true;
                 
-                WebsocketCommandService.delete(self.guid)
+                WebsocketCommandService.delete(self.command.guid)
                 .then(function(res) {
                     Notification.open({
                         duration: 2500,
@@ -140,8 +136,8 @@
                 
                 if (!self.form.requestGuid)
                     self.form.requestGuid = self.requestGuid;
-
-                if (!self.guid && self.form.requestGuid) {
+                
+                if ((!self.command || !self.command.guid) && self.form.requestGuid) {
                     WebsocketCommandService.create(JSON.stringify(self.form))
                         .then(function (response) {
                             // Reset the form data regardless
@@ -180,7 +176,7 @@
                             // always executed
                             self.isModalLoading = false;
                         });
-                } else if (self.guid) {
+                } else if (self.command && self.command.guid) {
                     if (self.form.properties && self.form.properties.length > 0)
                         self.form.properties = []; // Don't permit the user to update properties just like that
                     
@@ -246,21 +242,11 @@
         created: function() {
             let self = this;
             
-            if (self.guid) {
-                WebsocketCommandService.get(self.guid)
-                    .then(function(res) {
-                        if (res && res.data) {
-                            if (res.data.type)
-                                self.form.type = res.data.type;
-                            if (res.data.name)
-                                self.form.name = res.data.name;
-                            if (res.data.delay)
-                                self.form.delay = res.data.delay;
-                            if (res.data.isEnabled)
-                                self.form.isEnabled = res.data.isEnabled;
-                        }
-                    });
-            } else if (self.command) {
+            if (self.command) {
+                if (self.command.id && self.command.id > 0)
+                    self.form.id = self.command.id;
+                if (self.command.guid)
+                    self.form.guid = self.command.guid;
                 if (self.command.type >= 0)
                     self.form.type = self.command.type;
                 if (self.command.name)
@@ -281,6 +267,7 @@
                 isDeleteLoading: false,
                 currentTypeTab: 0,
                 form: {
+                    id: 0,
                     guid: null,
                     type: 0,
                     name: null,

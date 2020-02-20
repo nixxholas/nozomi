@@ -2,7 +2,7 @@
     <div v-bind:class="{ section: isSection }">
         <b-navbar :spaced="isSection">
             <template slot="brand">
-                <b class="has-text-dark">Properties</b>
+                <b class="has-text-dark">Command Properties</b>
             </template>
             <template v-if="showCreateFeature"
                       slot="end">
