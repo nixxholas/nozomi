@@ -42,8 +42,12 @@
                 </b-table-column>
             </template>
             <template slot="detail" slot-scope="props">
+                <WebsocketCommandPropertyModal :has-navbar="true"
+                                               :command-guid="props.row.guid"
+                                               @created="reload"/>
+                <!--TODO: Make sure the table component updates the rows in UI as well-->
                 <WebsocketCommandPropertyTable
-                        @pushed="pushedCommandProperty"
+                        @pushed="reload"
                         :properties="props.row.properties"
                         :show-create-feature="false" />
             </template>
@@ -67,12 +71,14 @@
 <script>
     import WebsocketCommandPropertyTypeService from "@/services/WebsocketCommandPropertyTypeService";
     import WebsocketCommandModal from "../modals/websocket-command-modal";
+    import WebsocketCommandPropertyModal from "../modals/websocket-command-property-modal";
     import WebsocketCommandPropertyTable from "../tables/websocket-command-properties-table";
     import WebsocketCommandService from "@/services/WebsocketCommandService";
+    import WebsocketCommandPropertyService from "@/services/WebsocketCommandPropertyService";
 
     export default {
         name: "websocket-command-table",
-        components: {WebsocketCommandModal, WebsocketCommandPropertyTable},
+        components: {WebsocketCommandModal, WebsocketCommandPropertyModal, WebsocketCommandPropertyTable},
         props: {
             showCreateFeature: {
                 type: Boolean,
@@ -122,9 +128,6 @@
                 
                 this.data.push(payload);
             },
-            pushedCommandProperty: function() {
-                
-            },
             reload: function () {
                 let self = this;
                 self.tableLoading = true;
@@ -136,7 +139,22 @@
                     .finally(function () {
                         self.tableLoading = false;
                     });
-            }
+            },
+            reloadProperties: function(commandGuid) {
+                let self = this;
+                
+                if (commandGuid) {
+                    WebsocketCommandPropertyService.getByCommand(commandGuid)
+                    .then(function (res) {
+                        if (res.data) {
+                            // TODO: Ensure that filtered collection can be updated.
+                            self.data.filter(e => e.guid === commandGuid)[0].properties = res.data;
+                            console.dir(self.data.filter(e => e.guid === commandGuid)[0].properties);
+                            console.dir(res.data);
+                        }
+                    })
+                }
+            },
         },
     }
 </script>

@@ -4,7 +4,7 @@
             <b-button 
                     native-type="button"
                     type="is-warning"
-                    @click="isWebsocketCommandPropertyModalActive = true">
+                    @click="isModalActive = true">
                 Modify
             </b-button>
             <b-button :loading="isDeleteLoading"
@@ -14,14 +14,28 @@
                 <b-icon size="is-small" icon="trash" />
             </b-button>
         </div>
-        <b-button v-else
+        <b-navbar v-else-if="hasNavbar"
+                :spaced="hasNavbar">
+            <template slot="brand">
+                <b class="has-text-dark">Commands properties</b>
+            </template>
+            <template slot="end">
+                <b-button v-if="hasModalButton"
+                          native-type="button"
+                          type="is-primary"
+                          @click="isModalActive = true">
+                    Create
+                </b-button>
+            </template>
+        </b-navbar>
+        <b-button v-else-if="hasModalButton"
                   native-type="button"
                 type="is-primary"
-                @click="isWebsocketCommandPropertyModalActive = true">
+                @click="isModalActive = true">
             Create
         </b-button>
 
-        <b-modal has-modal-card trap-focus :active.sync="isWebsocketCommandPropertyModalActive">
+        <b-modal has-modal-card trap-focus :active.sync="isModalActive">
             <b-loading :active.sync="isModalLoading" :can-cancel="false"/>
             <!--https://stackoverflow.com/questions/48028718/using-event-modifier-prevent-in-vue-to-submit-form-without-redirection-->
             <form class="has-text-justified" style="z-index: 1;">
@@ -74,7 +88,7 @@
                     </section>
 
                     <footer class="modal-card-foot">
-                        <button class="button" native-type="button" type="button" @click="isWebsocketCommandPropertyModalActive = false">Close</button>
+                        <button class="button" native-type="button" type="button" @click="isModalActive = false">Close</button>
                         <b-button type="is-primary" native-type="button" @click="pushCommandPropertyForm()" :disabled="!isValid()">Submit</b-button>
                     </footer>
                 </div>
@@ -96,6 +110,14 @@
             childMode: {
                 type: Boolean,
                 default: false
+            },
+            hasNavbar: {
+                type: Boolean,
+                default: false
+            },
+            hasModalButton: {
+                type: Boolean,
+                default: true
             },
             guid: {
                 type: String,
@@ -179,7 +201,7 @@
                             commandId: self.commandId ? self.commandId : null,
                         };
                         
-                        self.isWebsocketCommandPropertyModalActive = false;
+                        self.isModalActive = false;
                     } else {
                         Notification.open({
                             duration: 2500,
@@ -208,7 +230,7 @@
                                 commandId: self.commandId ? self.commandId : null,
                             };
 
-                            self.isWebsocketCommandPropertyModalActive = false; // Close the modal
+                            self.isModalActive = false; // Close the modal
                             Notification.open({
                                 duration: 2500,
                                 message: `Property successfully added!`,
@@ -219,7 +241,7 @@
 
                             // Inform the parent that a new request has been created
                             // https://forum.vuejs.org/t/passing-data-back-to-parent/1201
-                            self.$emit('created', true);
+                            self.$emit('created', self.form.commandId ? self.form.commandId : self.form.commandGuid);
                         })
                         .catch(function (error) {
                             //console.log(error);
@@ -238,7 +260,7 @@
                 } else if (self.guid) {
                     WebsocketCommandPropertyService.update(self.form)
                     .then(function (response) {
-                        self.isWebsocketCommandPropertyModalActive = false; // Close the modal
+                        self.isModalActive = false; // Close the modal
                         Notification.open({
                             duration: 2500,
                             message: `Property successfully updated!`,
@@ -316,7 +338,7 @@
         },
         data: function () {
             return {
-                isWebsocketCommandPropertyModalActive: false,
+                isModalActive: false,
                 isModalLoading: true,
                 isDeleteLoading: false,
                 currentTypeTab: 0,
