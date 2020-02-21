@@ -74,7 +74,7 @@ namespace Nozomi.Repo.Data
             var webSocketCommandPropertyMap = new WebsocketCommandPropertyMap(modelBuilder.Entity<WebsocketCommandProperty>());
             modelBuilder.Entity<WebsocketCommandProperty>().UseXminAsConcurrencyToken();
 
-            var requestComponentMap = new RequestComponentMap(modelBuilder.Entity<Component>());
+            var requestComponentMap = new ComponentMap(modelBuilder.Entity<Component>());
             modelBuilder.Entity<Component>().UseXminAsConcurrencyToken();
 
             var rcdHistoricItemMap = new RcdHistoricItemMap(modelBuilder.Entity<ComponentHistoricItem>());
