@@ -56,7 +56,8 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
                 //============================= Update Sockets to keep =============================// 
 
                 // We will need to resync the Request collection to make sure we're polling only the ones we want to poll
-                var dataEndpoints = _websocketRequestEvent.GetAllByRequestTypeUniqueToURL(RequestType.WebSocket);
+                var dataEndpoints = _websocketRequestEvent
+                    .GetAllByRequestTypeUniqueToURL(RequestType.WebSocket);
 
                 if (dataEndpoints.Count > 0)
                 {
@@ -83,7 +84,8 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
                                 // Pre-request processing
                                 newSocket.OnOpen += (sender, args) =>
                                 {
-                                    var wsCommands = dataEndpoint.Value.SelectMany(de => de.WebsocketCommands).ToList();
+                                    var wsCommands = dataEndpoint.Value
+                                        .SelectMany(de => de.WebsocketCommands).ToList();
 
                                     foreach (var wsCommand in wsCommands)
                                     {
