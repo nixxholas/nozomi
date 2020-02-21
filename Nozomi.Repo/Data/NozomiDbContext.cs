@@ -77,7 +77,7 @@ namespace Nozomi.Repo.Data
             var requestComponentMap = new ComponentMap(modelBuilder.Entity<Component>());
             modelBuilder.Entity<Component>().UseXminAsConcurrencyToken();
 
-            var rcdHistoricItemMap = new RcdHistoricItemMap(modelBuilder.Entity<ComponentHistoricItem>());
+            var rcdHistoricItemMap = new ComponentHistoricItemMap(modelBuilder.Entity<ComponentHistoricItem>());
             modelBuilder.Entity<ComponentHistoricItem>().UseXminAsConcurrencyToken();
 
             var requestPropertyMap = new RequestPropertyMap(modelBuilder.Entity<RequestProperty>());

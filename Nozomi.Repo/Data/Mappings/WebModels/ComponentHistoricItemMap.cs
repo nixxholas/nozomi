@@ -7,10 +7,10 @@ using Nozomi.Data.Models.Web;
 
 namespace Nozomi.Repo.Data.Mappings.WebModels
 {
-    public class RcdHistoricItemMap : BaseMap<ComponentHistoricItem>
+    public class ComponentHistoricItemMap : BaseMap<ComponentHistoricItem>
     {
         
-        public RcdHistoricItemMap(EntityTypeBuilder<ComponentHistoricItem> entityTypeBuilder) : base(entityTypeBuilder)
+        public ComponentHistoricItemMap(EntityTypeBuilder<ComponentHistoricItem> entityTypeBuilder) : base(entityTypeBuilder)
         {
             entityTypeBuilder.HasKey(rcdhi => rcdhi.Guid).HasName("RcdHistoricItem_PK_Guid");
             entityTypeBuilder.Property(rcdhi => rcdhi.Guid).ValueGeneratedOnAdd()
