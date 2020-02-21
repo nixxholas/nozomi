@@ -10,7 +10,10 @@ namespace Nozomi.Data.ViewModels.Component
     {
         public Guid Guid { get; set; }
         
-        public ComponentType Type { get; set; }
+        /// <summary>
+        /// ComponentTypeId
+        /// </summary>
+        public long Type { get; set; }
         
         public string Value { get; set; }
         
