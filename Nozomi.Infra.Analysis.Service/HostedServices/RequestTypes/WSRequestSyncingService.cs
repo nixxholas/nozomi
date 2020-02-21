@@ -31,17 +31,12 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
         /// </summary>
         /// <key>The Id of the WebsocketRequest</key≥
         private readonly Dictionary<string, WebSocket> _wsrWebsockets;
-
         private readonly IRequestEvent _websocketRequestEvent;
-        private readonly IComponentService _componentService;
-        private readonly IRequestService _requestService;
 
         public WSRequestSyncingService(IServiceProvider serviceProvider) : base(serviceProvider)
         {
             _wsrWebsockets = new Dictionary<string, WebSocket>();
-            _componentService = _scope.ServiceProvider.GetRequiredService<IComponentService>();
             _websocketRequestEvent = _scope.ServiceProvider.GetRequiredService<IRequestEvent>();
-            _requestService = _scope.ServiceProvider.GetRequiredService<IRequestService>();
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -188,6 +183,8 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
 
         public bool Process(ICollection<Request> wsr, string payload)
         {
+            var requestService = _scope.ServiceProvider.GetRequiredService<IRequestService>();
+            
             // Are we processing anything?
             if (wsr.Count > 0 && !string.IsNullOrEmpty(payload))
             {
@@ -212,7 +209,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
                 if (wsrComponents.Any())
                 {
                     if (Update(payloadToken, wsr.FirstOrDefault().ResponseType, wsrComponents)
-                        && _requestService.HasUpdated(wsr))
+                        && requestService.HasUpdated(wsr))
                     {
                         _logger.LogInformation($"[{_hostedServiceName}] Process: Request object updated!");
                         return true;
@@ -234,6 +231,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
 
         public bool Update(JToken token, ResponseType resType, IEnumerable<Component> requestComponents)
         {
+            var componentService = _scope.ServiceProvider.GetRequiredService<IComponentService>();
             // Null Checks
             if (token == null)
                 return false;
@@ -258,7 +256,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
                     else
                     {
                         // Failed
-                        _componentService.Checked(component.Id);
+                        componentService.Checked(component.Id);
                         processingToken = null; // Set it to fail for the next statement
                     }
                 }
@@ -331,7 +329,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
                                                     if (val > 0)
                                                     {
                                                         // Update it
-                                                        _componentService.UpdatePairValue(component.Id, val);
+                                                        componentService.UpdatePairValue(component.Id, val);
                                                     }
                                                 }
                                             }
@@ -359,7 +357,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
                                                     if (val > 0)
                                                     {
                                                         // Update it
-                                                        _componentService.UpdatePairValue(component.Id, val);
+                                                        componentService.UpdatePairValue(component.Id, val);
                                                     }
                                                 }
                                             }
@@ -419,7 +417,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
                                                 if (val > 0)
                                                 {
                                                     // Update it
-                                                    _componentService.UpdatePairValue(component.Id, val);
+                                                    componentService.UpdatePairValue(component.Id, val);
                                                 }
                                             }
                                         }
@@ -447,7 +445,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
                                                 if (val > 0)
                                                 {
                                                     // Update it
-                                                    _componentService.UpdatePairValue(component.Id, val);
+                                                    componentService.UpdatePairValue(component.Id, val);
                                                 }
                                             }
                                         }
@@ -494,7 +492,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
                                             if (val > 0)
                                             {
                                                 // Update it
-                                                _componentService.UpdatePairValue(component.Id, val);
+                                                componentService.UpdatePairValue(component.Id, val);
                                             }
                                         }
                                     }
@@ -511,7 +509,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
                 else if (string.IsNullOrEmpty(component.Identifier))
                 {
                     _logger.LogInformation($"Marking Request Component as checked: {component.Id}");
-                    return _componentService.Checked(component.Id);
+                    return componentService.Checked(component.Id);
                 }
             }
 
