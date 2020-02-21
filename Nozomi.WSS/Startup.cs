@@ -51,8 +51,7 @@ namespace Nozomi.WSS
                             options.UseNpgsql(str);
                             options.EnableSensitiveDataLogging();
                             options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
-                        },
-                        ServiceLifetime.Transient);
+                        }, ServiceLifetime.Transient);
             }
             else
             {
