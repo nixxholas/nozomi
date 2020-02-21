@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using Nozomi.Data.Models.Currency;
-using Nozomi.Data.ResponseModels.Source;
 
 namespace Nozomi.Service.Events.Interfaces
 {
@@ -10,9 +9,6 @@ namespace Nozomi.Service.Events.Interfaces
         
         bool AbbreviationIsUsed(string abbrv);
         
-        XSourceResponse Get(long id);
-        XSourceResponse Get(string abbreviation);
-
         Source GetByGuid(string guid, bool filterActive = false);
 
         IEnumerable<Nozomi.Data.ViewModels.Source.SourceViewModel> GetAll();

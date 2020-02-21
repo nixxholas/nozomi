@@ -41,7 +41,6 @@ namespace Nozomi.Web2.Extensions
             services.AddTransient<IRequestTypeEvent, RequestTypeEvent>();
             services.AddTransient<ISourceEvent, SourceEvent>();
             services.AddTransient<ISourceTypeEvent, SourceTypeEvent>();
-            services.AddTransient<ITickerEvent, TickerEvent>();
             services.AddTransient<IWebsocketCommandEvent, WebsocketCommandEvent>();
             services.AddTransient<IWebsocketCommandPropertyEvent, WebsocketCommandPropertyEvent>();
 

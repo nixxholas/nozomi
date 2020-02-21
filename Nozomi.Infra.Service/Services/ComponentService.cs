@@ -128,9 +128,12 @@ namespace Nozomi.Service.Services
 
                 // Anomaly Detection
                 // Let's make it more efficient by checking if the price has changed
-                if (lastCompVal != null && !lastCompVal.HasAbnormalNumericalValue(val))
+                if (lastCompVal != null)
                 {
-                    if (lastCompVal.StoreHistoricals && !string.IsNullOrEmpty(lastCompVal.Value))
+                    if (lastCompVal.StoreHistoricals 
+                        // TODO: Ensure proper checks.
+                        // && !string.IsNullOrEmpty(lastCompVal.Value)
+                        )
                     {
                         // Save old data first
                         if (_rcdHistoricItemService.Push(lastCompVal))
@@ -147,7 +150,7 @@ namespace Nozomi.Service.Services
                         }
                     }
 
-                    lastCompVal.Value = val.ToString(CultureInfo.InvariantCulture);
+                    // lastCompVal.Value = val.ToString(CultureInfo.InvariantCulture);
                     _unitOfWork.Commit();
 
                     return new NozomiResult<string>
@@ -196,7 +199,10 @@ namespace Nozomi.Service.Services
 
                 if (lastCompVal != null)
                 {
-                    if (lastCompVal.StoreHistoricals && !string.IsNullOrEmpty(lastCompVal.Value))
+                    if (lastCompVal.StoreHistoricals 
+                        // TODO: Ensure proper checks
+                        // && !string.IsNullOrEmpty(lastCompVal.Value)
+                        )
                     {
                         // Save old data first
                         if (_rcdHistoricItemService.Push(lastCompVal))
@@ -213,7 +219,7 @@ namespace Nozomi.Service.Services
                         }
                     }
 
-                    lastCompVal.Value = val.ToString(CultureInfo.InvariantCulture);
+                    // lastCompVal.Value = val.ToString(CultureInfo.InvariantCulture);
 
                     _unitOfWork.GetRepository<Component>().Update(lastCompVal);
                     _unitOfWork.Commit();

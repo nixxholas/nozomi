@@ -352,11 +352,18 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                                         ComponentType.Ask, ComponentType.Bid
                                     });
 
-                            if (components.Any(c => NumberHelper.IsNumericDecimal(c.Value)))
+                            if (components.Any(c => 
+                                NumberHelper.IsNumericDecimal(c.RcdHistoricItems
+                                    .OrderByDescending(e => e.HistoricDateTime)
+                                    .FirstOrDefault()
+                                    ?.Value)))
                             {
                                 // Aggregate it
                                 avgPrice = components
-                                    .Average(rc => decimal.Parse(rc.Value));
+                                    .Average(c => decimal.Parse(c.RcdHistoricItems
+                                        .OrderByDescending(e => e.HistoricDateTime)
+                                        .FirstOrDefault()
+                                        ?.Value));
 
                                 // Now that's its computed, check again
                                 if (avgPrice > 0)

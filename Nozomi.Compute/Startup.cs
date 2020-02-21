@@ -108,7 +108,6 @@ namespace Nozomi.Compute
             services.AddScoped<IProcessAnalysedComponentService, ProcessAnalysedComponentService>();
             services.AddScoped<IRequestEvent, RequestEvent>();
             services.AddScoped<IComponentEvent, ComponentEvent>();
-            services.AddScoped<ITickerEvent, TickerEvent>();
             services.AddScoped<IXAnalysedComponentEvent, XAnalysedComponentEvent>();
             services.AddTransient<IAnalysedHistoricItemService, AnalysedHistoricItemService>();
             services.AddTransient<IRcdHistoricItemService, RcdHistoricItemService>();

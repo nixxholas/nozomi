@@ -66,7 +66,6 @@ namespace Nozomi.Service.Events
                 {
                     Guid = c.Guid,
                     Type = c.ComponentType,
-                    Value = c.Value,
                     IsDenominated = c.IsDenominated,
                     History = c.RcdHistoricItems
                         .Where(rcdhi => rcdhi.DeletedAt == null && rcdhi.IsEnabled)
@@ -81,7 +80,6 @@ namespace Nozomi.Service.Events
             {
                 Guid = c.Guid,
                 Type = c.ComponentType,
-                Value = c.Value,
                 IsDenominated = c.IsDenominated
             });
         }
@@ -122,7 +120,6 @@ namespace Nozomi.Service.Events
                 {
                     Guid = rc.Guid,
                     Type = rc.ComponentType,
-                    Value = rc.Value,
                     IsDenominated = rc.IsDenominated,
                     History = rc.RcdHistoricItems
                         .Any(rcdhi => rcdhi.DeletedAt == null && rcdhi.IsEnabled)
@@ -170,7 +167,6 @@ namespace Nozomi.Service.Events
                 {
                     Guid = rc.Guid,
                     Type = rc.ComponentType,
-                    Value = rc.Value,
                     IsDenominated = rc.IsDenominated,
                     History = rc.RcdHistoricItems
                         .Any(rcdhi => rcdhi.DeletedAt == null && rcdhi.IsEnabled)
@@ -198,7 +194,6 @@ namespace Nozomi.Service.Events
                     {
                         Guid = c.Guid,
                         Type = c.ComponentType,
-                        Value = c.Value,
                         IsDenominated = c.IsDenominated,
                         History = c.RcdHistoricItems
                             .Where(rcdhi => rcdhi.DeletedAt == null && rcdhi.IsEnabled)
@@ -217,7 +212,6 @@ namespace Nozomi.Service.Events
                 {
                     Guid = c.Guid,
                     Type = c.ComponentType,
-                    Value = c.Value,
                     IsDenominated = c.IsDenominated
                 });
         }
@@ -329,15 +323,15 @@ namespace Nozomi.Service.Events
             if (analysedComponent != null)
             {
                 var query = _unitOfWork.GetRepository<Request>()
-                    .GetQueryable()
-                    .Include(r => r.RequestComponents)
-                    .AsNoTracking();
+                    .GetQueryable();
 
                 if (track)
-                    query = query
-                        .Include(r => r.RequestComponents)
-                        .ThenInclude(rc => rc.RcdHistoricItems);
+                    query = query.AsTracking();
 
+                query = query
+                    .Include(r => r.RequestComponents)
+                    .ThenInclude(rc => rc.RcdHistoricItems);
+                
                 if (ensureValid)
                     query = query
                         .Where(r => r.DeletedAt == null && r.IsEnabled);
@@ -364,8 +358,9 @@ namespace Nozomi.Service.Events
                 {
                     return query
                         .SelectMany(cr => cr.RequestComponents)
+                        .Where(c => c.RcdHistoricItems.Any())
                         .AsEnumerable()
-                        .Where(rc => !string.IsNullOrEmpty(rc.Value) && componentTypes.Contains(rc.ComponentType))
+                        .Where(rc => componentTypes.Contains(rc.ComponentType))
                         .Select(rc => new Component(rc,
                             index, NozomiServiceConstants.RcdHistoricItemTakeoutLimit))
                         .ToList();
@@ -375,7 +370,7 @@ namespace Nozomi.Service.Events
                 {
                     return query
                         .SelectMany(cr => cr.RequestComponents)
-                        .Where(rc => !string.IsNullOrEmpty(rc.Value))
+                        .Where(c => c.RcdHistoricItems.Any())
                         .Select(rc => new Component(rc,
                             index, NozomiServiceConstants.RcdHistoricItemTakeoutLimit))
                         .ToList();

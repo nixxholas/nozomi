@@ -9,7 +9,6 @@ using Nozomi.Base.BCL.Extensions;
 using Nozomi.Data.Models.Currency;
 using Nozomi.Data.Models.Web;
 using Nozomi.Data.Models.Web.Analytical;
-using Nozomi.Data.ResponseModels.CurrencyPair;
 using Nozomi.Data.ViewModels.AnalysedComponent;
 using Nozomi.Data.ViewModels.CurrencyPair;
 using Nozomi.Data.ViewModels.Source;
@@ -58,30 +57,20 @@ namespace Nozomi.Service.Events
             {
                 var components = _unitOfWork.GetRepository<Component>()
                     .GetQueryable()
-                    .AsNoTracking()
-                    .Where(c => c.DeletedAt == null && c.IsEnabled)
-                    .Include(r => r.Request)
+                    .AsNoTracking();
+                    
+                if (ensureValid)
+                    components = components.Where(c => c.DeletedAt == null && c.IsEnabled);
+
+                components = components.Include(r => r.Request)
                     .ThenInclude(r => r.CurrencyPair)
                     .Where(c => c.Request.CurrencyPairId.Equals(aComp.CurrencyPairId))
+                    .Include(e => e.RcdHistoricItems)
                     .Skip(index * NozomiServiceConstants.RequestComponentTakeoutLimit)
                     .Take(NozomiServiceConstants.RequestComponentTakeoutLimit);
-
+                
                 if (components.Any())
                 {
-                    if (track)
-                    {
-                        var trackedComponents = components
-                            .Include(c => c.RcdHistoricItems);
-
-                        if (componentTypes != null && componentTypes.Any())
-                            return trackedComponents
-                                .AsEnumerable()
-                                .Where(c => componentTypes.Contains(c.ComponentType))
-                                .ToList();
-
-                        return trackedComponents.ToList();
-                    }
-
                     if (componentTypes != null && componentTypes.Any())
                         return components
                             .AsEnumerable()
@@ -384,26 +373,6 @@ namespace Nozomi.Service.Events
                 .GetQueryable()
                 .AsNoTracking()
                 .SingleOrDefault(cp => cp.Guid.Equals(guid) && cp.DeletedAt == null);
-        }
-
-        public ICollection<DistinctCurrencyPairResponse> ListAll()
-        {
-            return _unitOfWork.GetRepository<CurrencyPair>()
-                .GetQueryable()
-                .AsNoTracking()
-                .Where(cp => cp.DeletedAt == null && cp.IsEnabled)
-                .Include(cp => cp.Source)
-                .Select(cp => new DistinctCurrencyPairResponse()
-                {
-                    MainTicker = cp.MainTicker,
-                    CounterTicker = cp.CounterTicker,
-                    CurrencyPairType = cp.CurrencyPairType,
-                    Id = cp.Id,
-                    SourceAbbreviation = cp.Source.Abbreviation,
-                    SourceName = cp.Source.Name
-                })
-                .DefaultIfEmpty()
-                .ToList();
         }
 
         public IEnumerable<CurrencyPairViewModel> Search(string queryTickerPair = null, int page = 0, 

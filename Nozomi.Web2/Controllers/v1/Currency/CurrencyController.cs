@@ -9,8 +9,6 @@ using Microsoft.Extensions.Logging;
 using Nozomi.Base.BCL;
 using Nozomi.Base.BCL.Responses;
 using Nozomi.Data;
-using Nozomi.Data.ResponseModels;
-using Nozomi.Data.ResponseModels.Currency;
 using Nozomi.Data.ViewModels.Currency;
 using Nozomi.Preprocessing.Statics;
 using Nozomi.Service.Events.Analysis.Interfaces;
@@ -127,62 +125,11 @@ namespace Nozomi.Web2.Controllers.v1.Currency
             return _currencyEvent.ListAll(page, itemsPerPage, currencyTypeName, orderAscending, orderingParam).ToList();
         }
 
-        [HttpGet("{slug}")]
-        [Obsolete]
-        public NozomiResult<DetailedCurrencyResponse> Detailed(string slug)
-        {
-            return new NozomiResult<DetailedCurrencyResponse>(_currencyEvent.GetDetailedBySlug(slug,
-                new List<Data.Models.Currency.ComponentType>()
-                {
-                    Data.Models.Currency.ComponentType.CirculatingSupply
-                },
-                new List<Data.Models.Web.Analytical.AnalysedComponentType>()
-                {
-                    Data.Models.Web.Analytical.AnalysedComponentType.MarketCap,
-                    Data.Models.Web.Analytical.AnalysedComponentType.CurrentAveragePrice,
-                    Data.Models.Web.Analytical.AnalysedComponentType.HourlyAveragePrice
-                }));
-        }
-
-        [HttpGet("{index}")]
-        [Obsolete]
-        public ICollection<GeneralisedCurrencyResponse> GetAllDetailed([FromQuery]string currencyType = "CRYPTO",
-            int index = 0, int countPerIndex = 20)
-        {
-            return _currencyEvent.GetAllDetailed(currencyType, index, countPerIndex);
-        }
-
         [HttpGet]
         [Obsolete]
         public NozomiResult<IReadOnlyDictionary<string, long>> GetSlugToIdMap()
         {
             return new NozomiResult<IReadOnlyDictionary<string, long>>(_currencyEvent.ListAllMapped());
-        }
-
-        /// <summary>
-        /// Obtain the historical data for the currency.
-        ///
-        /// We'll integrate time scale as soon as possible.
-        /// </summary>
-        [HttpGet("{slug}/{index}/{perPage}")]
-        [Obsolete]
-        public NozomiPaginatedResult<EpochValuePair<decimal>> Historical(string slug, int index = 0, int perPage = 0)
-        {
-            var res = _analysedHistoricItemEvent.GetCurrencyPriceHistory(slug, index, perPage);
-
-            if (!res.Data.Any()) return new NozomiPaginatedResult<EpochValuePair<decimal>>();
-
-            return new NozomiPaginatedResult<EpochValuePair<decimal>>
-            {
-                Pages = res.Pages,
-                ElementsPerPage = res.ElementsPerPage,
-                Data = res.Data
-                   .Select(ahi => new EpochValuePair<decimal>
-                   {
-                       Time = (ahi.HistoricDateTime.ToUniversalTime() - CoreConstants.Epoch).TotalSeconds,
-                       Value = decimal.Parse(ahi.Value)
-                   }).ToList()
-            };
         }
     }
 }

@@ -173,7 +173,6 @@ namespace Nozomi.Service.Events
                         {
                             Guid = rc.Guid,
                             Type = rc.ComponentType,
-                            Value = rc.Value,
                             IsDenominated = rc.IsDenominated
                         }).ToList(),
                         r.RequestProperties.Select(rp => new RequestPropertyViewModel(rp.Guid, 
@@ -272,7 +271,6 @@ namespace Nozomi.Service.Events
                         {
                             id = rc.Id,
                             queryComponent = rc.QueryComponent,
-                            value = rc.Value,
                             isEnabled = rc.IsEnabled,
                             createdAt = rc.CreatedAt,
                             createdBy = rc.CreatedById,
@@ -374,7 +372,6 @@ namespace Nozomi.Service.Events
                         {
                             id = rc.Id,
                             queryComponent = rc.QueryComponent,
-                            value = rc.Value,
                             isEnabled = rc.IsEnabled,
                             createdAt = rc.CreatedAt,
                             createdBy = rc.CreatedById,

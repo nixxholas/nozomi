@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data;
-using Nozomi.Data.ResponseModels.Currency;
 using Nozomi.Data.ViewModels.Source;
 using Nozomi.Service.Events.Interfaces;
 using Nozomi.Service.Services.Interfaces;
@@ -42,26 +41,6 @@ namespace Nozomi.Web2.Controllers.v1.Source
         public IActionResult All()
         {
             return Ok(_sourceEvent.GetAll());
-        }
-
-        [HttpGet]
-        public NozomiResult<ICollection<CurrencyResponse>> History(long sourceId, long days = 7)
-        {
-            try
-            {
-                //TODO: Implementation again
-//                var res = _historicalDataEvent.GetSimpleCurrencyHistory(sourceId, days);
-//
-//                if (res == null) throw new ArgumentNullException();
-                return new NozomiResult<ICollection<CurrencyResponse>>(null);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.ToString());
-
-                return new NozomiResult<ICollection<CurrencyResponse>>(NozomiResultType.Failed,
-                    "Invalid source or days input.");
-            }
         }
 
         [Authorize]

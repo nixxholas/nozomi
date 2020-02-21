@@ -166,53 +166,5 @@ namespace Nozomi.Data.Models.Web
                                                     && RequestType >= 0)
                    && (RequestComponents != null) && RequestComponents.Count > 0;
         }
-
-        public RequestDTO ToDTO()
-        {
-            return new RequestDTO
-            {
-                Id = Id,
-                Guid = Guid,
-                RequestType = RequestType,
-                ResponseType = ResponseType,
-                DataPath = DataPath,
-                Delay = Delay,
-                FailureDelay = FailureDelay,
-                IsEnabled = IsEnabled,
-//                AnalysedComponents = AnalysedComponents
-//                    .Select(ac => new AnalysedComponentDTO
-//                    {
-//                        ComponentType = ac.ComponentType,
-//                        Delay = ac.Delay,
-//                        Id = ac.Id,
-//                        IsDenominated = ac.IsDenominated,
-//                        Value = ac.Value
-//                    })
-//                    .ToList(),
-                RequestComponents = RequestComponents
-                    .Where(rc => rc.DeletedAt == null)
-                    .Select(rc => new RequestComponentDTO
-                    {
-                        AnomalyIgnorance = rc.AnomalyIgnorance,
-                        ComponentType = rc.ComponentType,
-                        Id = rc.Id,
-                        Identifier = rc.Identifier,
-                        IsDenominated = rc.IsDenominated,
-                        QueryComponent = rc.QueryComponent,
-                        Value = rc.Value
-                    })
-                    .ToList(),
-                RequestProperties = RequestProperties
-                    .Where(rp => rp.DeletedAt == null)
-                    .Select(rp => new RequestPropertyDTO
-                    {
-                        Id = rp.Id,
-                        Key = rp.Key,
-                        RequestPropertyType = rp.RequestPropertyType,
-                        Value = rp.Value
-                    })
-                    .ToList()
-            };
-        }
     }
 }
