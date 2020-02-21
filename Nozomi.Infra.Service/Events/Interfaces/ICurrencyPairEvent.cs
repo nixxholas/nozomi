@@ -21,8 +21,9 @@ namespace Nozomi.Service.Events.Interfaces
         ICollection<CurrencyPair> GetAllByMainCurrency(
             string mainCurrencyAbbrv = CoreConstants.GenericCurrency);
 
+        [Obsolete]
         ICollection<Component> GetComponents(long analysedComponentId, bool track = false, int index = 0,
-            bool ensureValid = true, ICollection<ComponentType> componentTypes = null);
+            bool ensureValid = true, ICollection<GenericComponentType> componentTypes = null);
 
         ICollection<CurrencyPair> GetAllByTickerPairAbbreviation(string tickerPairAbbreviation, bool track = false);
 

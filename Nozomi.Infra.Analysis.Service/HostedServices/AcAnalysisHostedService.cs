@@ -348,9 +348,9 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                             var avgPrice = decimal.Zero;
                             var index = 0;
                             var components = _currencyPairEvent.GetComponents(entity.Id, true,
-                                    index, true, new List<ComponentType>()
+                                    index, true, new List<GenericComponentType>()
                                     {
-                                        ComponentType.Ask, ComponentType.Bid
+                                        GenericComponentType.Ask, GenericComponentType.Bid
                                     });
 
                             if (components.Any(c => 

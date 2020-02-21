@@ -235,14 +235,14 @@ namespace Nozomi.Service
                                     {
                                         new Component
                                         {
-                                            ComponentType = ComponentType.Bid,
+                                            ComponentTypeId = (long)GenericComponentType.Bid,
                                             Identifier = "s=>BTCUSDT",
                                             QueryComponent = "b",
                                             IsDenominated = true
                                         },
                                         new Component
                                         {
-                                            ComponentType = ComponentType.Ask,
+                                            ComponentTypeId = (long)GenericComponentType.Ask,
                                             Identifier = "s=>BTCUSDT",
                                             QueryComponent = "a",
                                             IsDenominated = true
@@ -298,14 +298,14 @@ namespace Nozomi.Service
                                     {
                                         new Component
                                         {
-                                            ComponentType = ComponentType.Bid,
+                                            ComponentTypeId = (long)GenericComponentType.Bid,
                                             // Identifier = "s=>ETHUSDT",
                                             QueryComponent = "b",
                                             IsDenominated = true
                                         },
                                         new Component
                                         {
-                                            ComponentType = ComponentType.Ask,
+                                            ComponentTypeId = (long)GenericComponentType.Ask,
                                             // Identifier = "s=>ETHUSDT",
                                             QueryComponent = "a",
                                             IsDenominated = true

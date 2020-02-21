@@ -38,8 +38,9 @@ namespace Nozomi.Service.Events
                 .ToList();
         }
 
+        [Obsolete]
         public ICollection<Component> GetComponents(long analysedComponentId, bool track = false, int index = 0, 
-            bool ensureValid = true, ICollection<ComponentType> componentTypes = null)
+            bool ensureValid = true, ICollection<GenericComponentType> componentTypes = null)
         {
             if (analysedComponentId <= 0 )
                 return new List<Component>();
@@ -74,7 +75,7 @@ namespace Nozomi.Service.Events
                     if (componentTypes != null && componentTypes.Any())
                         return components
                             .AsEnumerable()
-                            .Where(c => componentTypes.Contains(c.ComponentType))
+                            .Where(c => componentTypes.Contains((GenericComponentType)c.ComponentTypeId))
                             .ToList();
 
                     return components.ToList();

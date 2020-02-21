@@ -124,7 +124,7 @@ namespace Nozomi.Service.Services.Requests
                         createRequest.RequestComponents
                         .Select(rc => new Component()
                         {
-                            ComponentType = rc.ComponentType,
+                            ComponentTypeId = rc.ComponentType,
                             QueryComponent = rc.QueryComponent
                         })
                         .ToList() 
@@ -260,7 +260,7 @@ namespace Nozomi.Service.Services.Requests
                         // Updating?
                         else
                         {
-                            if (ucpc.ComponentType >= 0) cpc.ComponentType = ucpc.ComponentType;
+                            if (ucpc.ComponentType >= 0) cpc.ComponentTypeId = ucpc.ComponentType;
                             if (!string.IsNullOrEmpty(ucpc.QueryComponent)) cpc.QueryComponent = ucpc.QueryComponent;
 
                             _unitOfWork.GetRepository<Component>().Update(cpc);

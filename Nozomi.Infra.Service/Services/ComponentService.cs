@@ -63,7 +63,7 @@ namespace Nozomi.Service.Services
                 var newRequestComponent = new Component()
                 {
                     RequestId = createRequestComponent.RequestId,
-                    ComponentType = createRequestComponent.ComponentType,
+                    ComponentTypeId = createRequestComponent.ComponentType,
                     Identifier = createRequestComponent.Identifier,
                     QueryComponent = createRequestComponent.QueryComponent,
                     IsDenominated = createRequestComponent.IsDenominated,
@@ -258,7 +258,7 @@ namespace Nozomi.Service.Services
                 {
                     rcToUpd.QueryComponent = updateRequestComponent.QueryComponent;
                     rcToUpd.Identifier = updateRequestComponent.Identifier;
-                    rcToUpd.ComponentType = updateRequestComponent.ComponentType;
+                    rcToUpd.ComponentTypeId = updateRequestComponent.ComponentType;
                     rcToUpd.IsDenominated = updateRequestComponent.IsDenominated;
                     rcToUpd.AnomalyIgnorance = updateRequestComponent.AnomalyIgnorance;
 

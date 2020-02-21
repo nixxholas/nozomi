@@ -11,7 +11,7 @@ namespace Nozomi.Preprocessing.Swagger.Examples.Requests.v1.CurrencyPairComponen
         {
             return new CreateCurrencyPairComponent()
             {
-                ComponentType = ComponentType.High,
+                ComponentType = (long)GenericComponentType.High,
                 QueryComponent = "High",
                 RequestId = 1
             };

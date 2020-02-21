@@ -492,7 +492,7 @@ namespace Nozomi.Service.Events
 
         public decimal GetCirculatingSupply(AnalysedComponent analysedComponent)
         {
-            var circulatingSupplyEnum = ComponentType.CirculatingSupply;
+            var circulatingSupplyEnum = GenericComponentType.CirculatingSupply;
             // If its a currency-based ac
             if (analysedComponent.CurrencyId != null && analysedComponent.CurrencyId > 0)
             {
