@@ -7,7 +7,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes.Interfaces
 {
     public interface IWSRequestSyncingService
     {
-        Task<bool> Process(ICollection<Request> cpr, string payload);
+        bool Process(ICollection<Request> cpr, string payload);
 
         bool Update(JToken token, ResponseType resType, IEnumerable<Component> requestComponents);
     }

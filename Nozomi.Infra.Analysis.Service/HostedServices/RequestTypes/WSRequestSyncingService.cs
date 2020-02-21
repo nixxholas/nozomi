@@ -111,7 +111,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
                                     {
                                         try
                                         {
-                                            if (await Process(dataEndpoint.Value, args.Data))
+                                            if (Process(dataEndpoint.Value, args.Data))
                                             {
                                                 _logger.LogInformation(
                                                     $"{_hostedServiceName} " +
@@ -186,7 +186,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
             _logger.LogWarning($"{_hostedServiceName}: Background task is stopping.");
         }
 
-        public Task<bool> Process(ICollection<Request> wsr, string payload)
+        public bool Process(ICollection<Request> wsr, string payload)
         {
             // Are we processing anything?
             if (wsr.Count > 0 && !string.IsNullOrEmpty(payload))
@@ -215,7 +215,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
                         && _requestService.HasUpdated(wsr))
                     {
                         _logger.LogInformation($"[{_hostedServiceName}] Process: Request object updated!");
-                        return Task.FromResult(true);
+                        return true;
                     }
                     else
                     {
@@ -229,7 +229,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
                 }
             }
 
-            return Task.FromResult(false);
+            return false;
         }
 
         public bool Update(JToken token, ResponseType resType, IEnumerable<Component> requestComponents)
