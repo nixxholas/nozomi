@@ -69,14 +69,14 @@ namespace Nozomi.Service.Services
             return false;
         }
 
-        public void Remove(long id, string userId = null, bool hardDelete = false)
+        public void Remove(string guid, string userId = null, bool hardDelete = false)
         {
-            if (id > 0)
+            if (Guid.TryParse(guid, out var parsedGuid))
             {
                 var itemToDel = _unitOfWork.GetRepository<ComponentHistoricItem>()
                     .GetQueryable()
                     .AsNoTracking()
-                    .SingleOrDefault(e => e.Id.Equals(id));
+                    .SingleOrDefault(e => e.Guid.Equals(parsedGuid));
 
                 if (itemToDel != null) // Since it exists, let's delete it
                 {

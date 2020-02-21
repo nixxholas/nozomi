@@ -10,8 +10,8 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
         
         public RcdHistoricItemMap(EntityTypeBuilder<ComponentHistoricItem> entityTypeBuilder) : base(entityTypeBuilder)
         {
-            entityTypeBuilder.HasKey(rcdhi => rcdhi.Id).HasName("RcdHistoricItem_PK_Id");
-            entityTypeBuilder.Property(rcdhi => rcdhi.Id).ValueGeneratedOnAdd();
+            entityTypeBuilder.HasKey(rcdhi => rcdhi.Guid).HasName("RcdHistoricItem_PK_Id");
+            entityTypeBuilder.Property(rcdhi => rcdhi.Guid).ValueGeneratedOnAdd();
             
             entityTypeBuilder.Property(rcdhi => rcdhi.Value).HasDefaultValue(string.Empty);
             entityTypeBuilder.Property(rcdhi => rcdhi.HistoricDateTime).IsRequired();
