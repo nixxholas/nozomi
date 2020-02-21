@@ -4,4 +4,8 @@
         <TargetFramework>netcoreapp3.1</TargetFramework>
     </PropertyGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\Nozomi.Infra.Syncing\Nozomi.Infra.Syncing.csproj" />
+    </ItemGroup>
+
 </Project>
