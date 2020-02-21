@@ -32,27 +32,6 @@ namespace Nozomi.Service
                 #endif
                 
                 context.Database.Migrate();
-                
-                // Component Types
-                var genericComponentTypes = 
-                    EnumHelper.GetEnumDescriptionsAndValues<GenericComponentType>();
-                foreach (var gct in genericComponentTypes)
-                {
-                    if (!context.ComponentTypes.Any(c => c.Id.Equals(gct.Key)))
-                    {
-                        var componentType = new ComponentType
-                        {
-                            Id = gct.Key,
-                            Description = gct.Value,
-                            // https://stackoverflow.com/questions/16039037/get-the-name-of-enum-value
-                            Name = Enum.GetName(typeof(GenericComponentType), gct.Key),
-                            Slug = Enum.GetName(typeof(GenericComponentType), gct.Key)
-                        };
-
-                        context.ComponentTypes.Add(componentType);
-                        context.SaveChanges();
-                    }
-                }
 
                 // Source Types
                 if (!context.SourceTypes.Any(st => st.Abbreviation.Equals("EXC")))

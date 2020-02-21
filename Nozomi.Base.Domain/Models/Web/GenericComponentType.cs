@@ -7,7 +7,7 @@ namespace Nozomi.Data.Models.Web
     {
         [Comparable(false)]
         [Description("Unknown")]
-        Unknown = 0, // string
+        Unknown = 666, // string
         [Comparable(true)]
         [Description("Ask")]
         Ask = 1, // float

@@ -1,5 +1,7 @@
+using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Nozomi.Base.BCL.Helpers.Enumerator;
 using Nozomi.Base.BCL.Helpers.Mapping;
 using Nozomi.Data.Models.Web;
 
@@ -19,7 +21,24 @@ namespace Nozomi.Repo.Data.Mappings.WebModels
 
             entityTypeBuilder.HasMany(e => e.Components)
                 .WithOne(c => c.ComponentType)
-                .HasForeignKey(c => c.ComponentTypeId).OnDelete(DeleteBehavior.Cascade);
+                .HasForeignKey(c => c.ComponentTypeId).OnDelete(DeleteBehavior.Cascade).IsRequired(false);
+                
+            // Component Types
+            var genericComponentTypes = 
+                EnumHelper.GetEnumDescriptionsAndValues<GenericComponentType>();
+            foreach (var gct in genericComponentTypes)
+            {
+                var componentType = new ComponentType
+                {
+                    Id = gct.Key,
+                    Description = gct.Value,
+                    // https://stackoverflow.com/questions/16039037/get-the-name-of-enum-value
+                    Name = Enum.GetName(typeof(GenericComponentType), gct.Key),
+                    Slug = Enum.GetName(typeof(GenericComponentType), gct.Key)
+                };
+
+                entityTypeBuilder.HasData(componentType);
+            }
         }
     }
 }
