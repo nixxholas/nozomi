@@ -21,6 +21,7 @@ namespace Nozomi.Repo.Data
     {
         public DbSet<AnalysedComponent> AnalysedComponents { get; set; }
         public DbSet<AnalysedHistoricItem> AnalysedHistoricItems { get; set; }
+        public DbSet<ComponentType> ComponentTypes { get; set; }
         public DbSet<Currency> Currencies { get; set; }
         public DbSet<CurrencyPair> CurrencyPairs { get; set; }
         public DbSet<CurrencyType> CurrencyTypes { get; set; }
@@ -55,6 +56,9 @@ namespace Nozomi.Repo.Data
 
             var analysedHistoricItemMap = new AnalysedHistoricItemMap(modelBuilder.Entity<AnalysedHistoricItem>());
             modelBuilder.Entity<AnalysedHistoricItem>().UseXminAsConcurrencyToken();
+
+            var componentTypeMap = new ComponentTypeMap(modelBuilder.Entity<ComponentType>());
+            modelBuilder.Entity<ComponentType>().UseXminAsConcurrencyToken();
 
             var currencyMap = new CurrencyMap(modelBuilder.Entity<Currency>());
             modelBuilder.Entity<Currency>().UseXminAsConcurrencyToken();
