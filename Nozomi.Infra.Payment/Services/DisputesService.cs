@@ -20,14 +20,59 @@ namespace Nozomi.Infra.Payment.Services
             _stripeEvent = stripeEvent;
         }
 
-        public Task DisputeClosed(Dispute dispute)
+        public async Task DisputeClosed(Dispute dispute)
         {
-            throw new NotImplementedException();
+            var methodName = "DisputeClosed";
+            PerformDisputePreCheck(dispute, methodName);
+
+            var user = await _stripeEvent.GetUserByCustomerId(dispute.Charge.CustomerId);
+
+            if (user == null)
+                throw new NullReferenceException($"{_serviceName} {methodName}: Unable to find user tied to customer id.");
+
+            switch (dispute.Status.ToLower()) {
+                case "warning_needs_response":
+                    await _quotaService.DowngradeQuota();
+                    return;
+                case "warning_under_review":
+                    await _quotaService.DowngradeQuota();
+                    return;
+                case "warning_closed":
+                    await _quotaService.DowngradeQuota();
+                    return;
+                case "needs_response":
+                    await _quotaService.DowngradeQuota();
+                    return;
+                case "under_review":
+                    await _quotaService.DowngradeQuota();
+                    return;
+                case "charge_refunded":
+                    await _quotaService.DowngradeQuota();
+                    return;
+                case "won":
+                    await _quotaService.UpgradeQuota();
+                    return;
+                case "lost":
+                    await _quotaService.DowngradeQuota();
+                    return;
+                default:
+                    throw new InvalidOperationException($"{_serviceName} {methodName}: Unable to find user tied to customer id.");
+            }
         }
 
-        public Task DisputeCreated(Dispute dispute)
+        public async Task DisputeCreated(Dispute dispute)
         {
-            throw new NotImplementedException();
+            var methodName = "DisputeCreated";
+            PerformDisputePreCheck(dispute, methodName);
+
+            var user = await _stripeEvent.GetUserByCustomerId(dispute.Charge.CustomerId);
+
+            if(user == null)
+                throw new NullReferenceException($"{_serviceName} {methodName}: Unable to find user tied to customer id.");
+
+            await _quotaService.DowngradeQuota();
+
+            return;
         }
 
         public Task DisputeUpdated(Dispute dispute)
