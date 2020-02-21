@@ -52,7 +52,7 @@ namespace Nozomi.Web2.Extensions
             services.AddScoped<ICurrencyPairService, CurrencyPairService>();
             services.AddScoped<ICurrencySourceService, CurrencySourceService>();
             services.AddScoped<ICurrencyTypeService, CurrencyTypeService>();
-            services.AddScoped<IRcdHistoricItemService, RcdHistoricItemService>();
+            services.AddScoped<IComponentHistoricItemService, ComponentHistoricItemService>();
             services.AddScoped<IRequestPropertyService, RequestPropertyService>();
             services.AddScoped<ISourceService, SourceService>();
             services.AddScoped<ISourceTypeService, SourceTypeService>();
