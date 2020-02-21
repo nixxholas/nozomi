@@ -21,8 +21,8 @@ namespace Nozomi.Service.Services
     {
         private const string serviceName = "[CurrencyPairComponentService]";
 
-        private IRequestEvent _requestEvent;
-        private IComponentHistoricItemService _componentHistoricItemService;
+        private readonly IRequestEvent _requestEvent;
+        private readonly IComponentHistoricItemService _componentHistoricItemService;
 
         public ComponentService(ILogger<ComponentService> logger, IRequestEvent requestEvent,
             IComponentHistoricItemService componentHistoricItemService,
@@ -109,8 +109,6 @@ namespace Nozomi.Service.Services
 
         public NozomiResult<string> UpdatePairValue(long id, decimal val)
         {
-            try
-            {
                 if (id <= 0)
                 {
                     _logger.LogWarning($"[{serviceName}]: Invalid component datum id:{id}. Null payload");
@@ -126,24 +124,26 @@ namespace Nozomi.Service.Services
                     .FirstOrDefault(e => e.DeletedAt == null && e.IsEnabled
                                                     && e.RequestComponentId.Equals(id));
 
+                // Let's get the placeholder new value up first.
+                var newValueItem = new ComponentHistoricItem
+                {
+                    HistoricDateTime = DateTime.UtcNow,
+                    Value = val.ToString(),
+                    RequestComponentId = id
+                };
+                
+                // SCENARIO 1: WHEN THIS COMPONENT IS FRESH
                 // If there ain't a latest value
                 if (lastValue == null)
                 {
-                    // Simply create it
-                    var newValueItem = new ComponentHistoricItem
-                    {
-                        HistoricDateTime = DateTime.UtcNow,
-                        Value = val.ToString(),
-                        RequestComponentId = id
-                    };
-                    
                     _unitOfWork.GetRepository<ComponentHistoricItem>().Add(newValueItem); // Add
                     _unitOfWork.Commit(); // Save
                     
                     return new NozomiResult<string>
                         (NozomiResultType.Success, "Component successfully updated!");
                 }
-                // Ensure that the last time it was added wasn't recent.
+                // SCENARIO 2: WHEN THIS COMPONENT IS PENDING FOR AN UPDATE (RIPE)
+                // Ensure that the last time it was added wasn't recently.
                 else if (lastValue.Component != null && lastValue.Component.Request != null
                                                      && lastValue.CreatedAt
                                                          .AddMilliseconds(lastValue.Component.Request.Delay) 
@@ -152,83 +152,33 @@ namespace Nozomi.Service.Services
                     // Since it's not and it requires an update, let's perform a simply check.
                     if (lastValue.Component.StoreHistoricals) // Do we want to stash historicals?
                     {
-                        
+                        // Yes we do let's proceed to add it and move along
+                        _unitOfWork.GetRepository<ComponentHistoricItem>().Add(newValueItem); // Add
+                        _unitOfWork.Commit(); // Save
+                    
+                        return new NozomiResult<string>
+                            (NozomiResultType.Success, "Component successfully updated!");
                     }
-                    else // No? Let's hard delete the existing one.
+                    else // No? We need to hard delete the existing one if we can proceed with the update
                     {
-                        
+                        // Add first then delete.
+                        _unitOfWork.GetRepository<ComponentHistoricItem>().Add(newValueItem); // Add
+                        _componentHistoricItemService.Remove(lastValue.Id);
+                        _unitOfWork.Commit(); // Save
+                    
+                        return new NozomiResult<string>
+                            (NozomiResultType.Success, "Component successfully updated!");
                     }
                 }
+                // SCENARIO 3: WHEN THIS COMPONENT WAS ALREADY UPDATED BY ANOTHER INSTANCE? 
                 else
                 {
-                    
-                }
-
-                var lastCompVal = _unitOfWork
-                    .GetRepository<Component>()
-                    .GetQueryable()
-                    .AsTracking()
-                    .Include(rc => rc.Request)
-                    .Where(rc => rc.DeletedAt == null && rc.IsEnabled && rc.Id.Equals(id))
-                    .AsEnumerable()
-                    .SingleOrDefault(c => c.ModifiedAt.AddMilliseconds(c.Request.Delay) <= DateTime.UtcNow);
-
-                // Anomaly Detection
-                // Let's make it more efficient by checking if the price has changed
-                if (lastCompVal != null)
-                {
-                    if (lastCompVal.StoreHistoricals 
-                        // TODO: Ensure proper checks.
-                        // && !string.IsNullOrEmpty(lastCompVal.Value)
-                        )
-                    {
-                        // Save old data first
-                        if (_componentHistoricItemService.Push(lastCompVal))
-                        {
-                            _logger.LogInformation($"[{serviceName}]: UpdatePairValue successfully saved " +
-                                                   $"the current RCD value.");
-                        }
-                        // Old data failed to save. Something along the lines between the old data being new
-                        // or the old data having a similarity with the latest rcdhi.
-                        else
-                        {
-                            _logger.LogWarning($"[{serviceName}]: UpdatePairValue failed to save " +
-                                                   $"the current RCD value.");
-                        }
-                    }
-
-                    // lastCompVal.Value = val.ToString(CultureInfo.InvariantCulture);
-                    _unitOfWork.Commit();
-
-                    return new NozomiResult<string>
-                        (NozomiResultType.Success, "Currency Pair Component successfully updated!");
-                }
-                else if (lastCompVal == null)
-                {
-                    _logger.LogWarning($"[{serviceName}]: Component {id} is either deleted, " +
-                                       $"disabled or has been updated recently.");
-                    
-                    return new NozomiResult<string>
-                    (NozomiResultType.Limbo, $"[{serviceName}]: Component {id} is either deleted, " +
-                                             $"disabled or has been updated recently.");
-                }
-                else
-                {
-                    _logger.LogWarning($"[{serviceName}]: datum id:{id}. Value is the same.");
+                    _logger.LogWarning($"{serviceName} UpdatePairValue (decimal): datum id:{id}. " +
+                                       "Value is the same.");
                     
                     return new NozomiResult<string>
                         (NozomiResultType.Success, "Value is the same!");
                 }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogCritical($"{serviceName} " + ex);
-
-                return new NozomiResult<string>
-                (NozomiResultType.Failed,
-                    $"Invalid component datum id:{id}, val:{val}. Please make sure that the " +
-                    "Component is properly instantiated.");
-            }
         }
 
         public NozomiResult<string> UpdatePairValue(long id, string val)
