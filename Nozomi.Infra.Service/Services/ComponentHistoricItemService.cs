@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -9,9 +10,9 @@ using Nozomi.Service.Services.Interfaces;
 
 namespace Nozomi.Service.Services
 {
-    public class RcdHistoricItemService : BaseService<RcdHistoricItemService, NozomiDbContext>, IRcdHistoricItemService
+    public class ComponentHistoricItemService : BaseService<ComponentHistoricItemService, NozomiDbContext>, IComponentHistoricItemService
     {
-        public RcdHistoricItemService(ILogger<RcdHistoricItemService> logger, IUnitOfWork<NozomiDbContext> unitOfWork) 
+        public ComponentHistoricItemService(ILogger<ComponentHistoricItemService> logger, IUnitOfWork<NozomiDbContext> unitOfWork) 
             : base(logger, unitOfWork)
         {
         }
@@ -64,6 +65,37 @@ namespace Nozomi.Service.Services
 
             // Failed
             return false;
+        }
+
+        public void Remove(long id, string userId = null, bool hardDelete = false)
+        {
+            if (id > 0)
+            {
+                var itemToDel = _unitOfWork.GetRepository<ComponentHistoricItem>()
+                    .GetQueryable()
+                    .AsNoTracking()
+                    .SingleOrDefault(e => e.Id.Equals(id));
+
+                if (itemToDel != null) // Since it exists, let's delete it
+                {
+                    if (hardDelete)
+                    {
+                        _unitOfWork.GetRepository<ComponentHistoricItem>().Delete(itemToDel); // Delete
+                        _unitOfWork.Commit(userId); // Save
+                        return;
+                    }
+                    else
+                    {
+                        itemToDel.DeletedAt = DateTime.UtcNow;
+                        itemToDel.DeletedById = userId;
+                        _unitOfWork.GetRepository<ComponentHistoricItem>().Update(itemToDel); // Save
+                        _unitOfWork.Commit(userId); // Commit
+                        return;
+                    }
+                }
+            }
+
+            throw new NullReferenceException("Invalid id for removal.");
         }
     }
 }

@@ -3,6 +3,7 @@ using System.Globalization;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Nozomi.Base.BCL.Extensions;
 using Nozomi.Data;
 using Nozomi.Data.AreaModels.v1.RequestComponent;
 using Nozomi.Data.Models.Web;
@@ -21,14 +22,14 @@ namespace Nozomi.Service.Services
         private const string serviceName = "[CurrencyPairComponentService]";
 
         private IRequestEvent _requestEvent;
-        private IRcdHistoricItemService _rcdHistoricItemService;
+        private IComponentHistoricItemService _componentHistoricItemService;
 
         public ComponentService(ILogger<ComponentService> logger, IRequestEvent requestEvent,
-            IRcdHistoricItemService rcdHistoricItemService,
+            IComponentHistoricItemService componentHistoricItemService,
             IUnitOfWork<NozomiDbContext> unitOfWork) : base(logger, unitOfWork)
         {
             _requestEvent = requestEvent;
-            _rcdHistoricItemService = rcdHistoricItemService;
+            _componentHistoricItemService = componentHistoricItemService;
         }
 
         public void Create(CreateComponentViewModel vm, string userId = null)
@@ -116,7 +117,53 @@ namespace Nozomi.Service.Services
                     return new NozomiResult<string>(NozomiResultType.Failed, $"[{serviceName}]: " +
                                                                              $"Invalid component datum id:{id}. Null payload");
                 }
+
+                var lastValue = _unitOfWork.GetRepository<ComponentHistoricItem>()
+                    .GetQueryable()
+                    .Include(c => c.Component)
+                    .ThenInclude(c => c.Request)
+                    .OrderByDescending(e => e.HistoricDateTime)
+                    .FirstOrDefault(e => e.DeletedAt == null && e.IsEnabled
+                                                    && e.RequestComponentId.Equals(id));
+
+                // If there ain't a latest value
+                if (lastValue == null)
+                {
+                    // Simply create it
+                    var newValueItem = new ComponentHistoricItem
+                    {
+                        HistoricDateTime = DateTime.UtcNow,
+                        Value = val.ToString(),
+                        RequestComponentId = id
+                    };
                     
+                    _unitOfWork.GetRepository<ComponentHistoricItem>().Add(newValueItem); // Add
+                    _unitOfWork.Commit(); // Save
+                    
+                    return new NozomiResult<string>
+                        (NozomiResultType.Success, "Component successfully updated!");
+                }
+                // Ensure that the last time it was added wasn't recent.
+                else if (lastValue.Component != null && lastValue.Component.Request != null
+                                                     && lastValue.CreatedAt
+                                                         .AddMilliseconds(lastValue.Component.Request.Delay) 
+                                                     <= DateTime.UtcNow)
+                {
+                    // Since it's not and it requires an update, let's perform a simply check.
+                    if (lastValue.Component.StoreHistoricals) // Do we want to stash historicals?
+                    {
+                        
+                    }
+                    else // No? Let's hard delete the existing one.
+                    {
+                        
+                    }
+                }
+                else
+                {
+                    
+                }
+
                 var lastCompVal = _unitOfWork
                     .GetRepository<Component>()
                     .GetQueryable()
@@ -136,7 +183,7 @@ namespace Nozomi.Service.Services
                         )
                     {
                         // Save old data first
-                        if (_rcdHistoricItemService.Push(lastCompVal))
+                        if (_componentHistoricItemService.Push(lastCompVal))
                         {
                             _logger.LogInformation($"[{serviceName}]: UpdatePairValue successfully saved " +
                                                    $"the current RCD value.");
@@ -205,7 +252,7 @@ namespace Nozomi.Service.Services
                         )
                     {
                         // Save old data first
-                        if (_rcdHistoricItemService.Push(lastCompVal))
+                        if (_componentHistoricItemService.Push(lastCompVal))
                         {
                             _logger.LogInformation($"[{serviceName}]: UpdatePairValue successfully saved " +
                                                    $"the current RCD value.");
