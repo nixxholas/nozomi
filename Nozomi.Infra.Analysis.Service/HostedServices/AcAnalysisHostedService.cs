@@ -211,7 +211,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                             // obtain all related entities first
                             var currencyAveragePrice = _analysedComponentEvent.GetAllByCurrency(
                                     (long) entity.CurrencyId,
-                                    true, true)
+                                    true)
                                 .SingleOrDefault(ac =>
                                     !string.IsNullOrEmpty(ac.Value)
                                     && ac.ComponentType.Equals(AnalysedComponentType.CurrentAveragePrice)

@@ -338,11 +338,11 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
 
                         if (_requestService.HasUpdated(req.Id))
                         {
-                            _logger.LogInformation($"[{_name}] Process: Request object updated!");
+                            _logger.LogInformation($"[{_hostedServiceName}] Process: Request object updated!");
                         }
                         else
                         {
-                            _logger.LogCritical($"[{_name}] Process: Couldn't update the Request object.");
+                            _logger.LogCritical($"[{_hostedServiceName}] Process: Couldn't update the Request object.");
                         }
 
                         return true;

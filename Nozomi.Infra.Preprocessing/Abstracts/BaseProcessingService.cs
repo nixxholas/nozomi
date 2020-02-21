@@ -10,10 +10,11 @@ namespace Nozomi.Preprocessing.Abstracts
 {
     public abstract class BaseProcessingService<T> : BaseHostedService<T> where T : class
     {
-        public const string _name = nameof(T);
+        public readonly string _hostedServiceName;
         
         public BaseProcessingService(IServiceProvider serviceProvider) : base(serviceProvider)
         {
+            _hostedServiceName = typeof(T).FullName;
         }
 
         public NozomiResult<JToken> ProcessIdentifier(JToken token, string identifier)

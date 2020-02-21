@@ -46,10 +46,10 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            _logger.LogInformation($"{_name} ExecuteAsync: Starting...");
+            _logger.LogInformation($"{_hostedServiceName} ExecuteAsync: Starting...");
 
             stoppingToken.Register(() =>
-                _logger.LogInformation($"{_name} ExecuteAsync: Stopping..."));
+                _logger.LogInformation($"{_hostedServiceName} ExecuteAsync: Stopping..."));
 
             while (!stoppingToken.IsCancellationRequested)
             {
@@ -114,20 +114,20 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
                                             if (await Process(dataEndpoint.Value, args.Data))
                                             {
                                                 _logger.LogInformation(
-                                                    $"{_name} " +
+                                                    $"{_hostedServiceName} " +
                                                     $"RequestId: {dataEndpointItem.DataPath} successfully updated");
                                             }
                                         }
                                         catch (Exception ex)
                                         {
                                             _logger.LogCritical(
-                                                $"{_name} OnMessage: " +
+                                                $"{_hostedServiceName} OnMessage: " +
                                                 ex);
                                         }
                                     }
                                     else
                                     {
-                                        _logger.LogError($"{_name} OnMessage: " +
+                                        _logger.LogError($"{_hostedServiceName} OnMessage: " +
                                                          $"RequestId:{dataEndpointItem.DataPath} has an empty payload incoming.");
                                     }
                                 };
@@ -135,7 +135,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
                                 // Error processing
                                 newSocket.OnError += (sender, args) =>
                                 {
-                                    _logger.LogError($"{_name} OnError:" +
+                                    _logger.LogError($"{_hostedServiceName} OnError:" +
                                                      $" {args.Message}");
                                 };
 
@@ -149,7 +149,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
                                                          dataEndpointItem.DeletedAt != null)
                                                      && _wsrWebsockets.ContainsKey(dataEndpointItem.DataPath))
                         {
-                            _logger.LogInformation($"{_name} Removing " +
+                            _logger.LogInformation($"{_hostedServiceName} Removing " +
                                                    "Request: " + dataEndpointItem.Id);
 
                             // Stop the websocket from polling
@@ -159,13 +159,13 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
                             if (!_wsrWebsockets.Remove(dataEndpointItem.DataPath))
                             {
                                 _logger.LogInformation(
-                                    $"{_name} Error Removing Request: "
+                                    $"{_hostedServiceName} Error Removing Request: "
                                     + dataEndpointItem.DataPath);
                             }
                             else
                             {
                                 _logger.LogInformation(
-                                    $"{_name} Removed Request: "
+                                    $"{_hostedServiceName} Removed Request: "
                                     + dataEndpointItem.DataPath);
                             }
                         }
@@ -180,10 +180,10 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
                 //============================= End of check and update new data =============================// 
 
                 // No naps taken
-                await Task.Delay(10, stoppingToken);
+                // await Task.Delay(0, stoppingToken);
             }
 
-            _logger.LogWarning($"{_name}: Background task is stopping.");
+            _logger.LogWarning($"{_hostedServiceName}: Background task is stopping.");
         }
 
         public Task<bool> Process(ICollection<Request> wsr, string payload)
@@ -214,12 +214,12 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
                     if (Update(payloadToken, wsr.FirstOrDefault().ResponseType, wsrComponents)
                         && _requestService.HasUpdated(wsr))
                     {
-                        _logger.LogInformation($"[{_name}] Process: Request object updated!");
+                        _logger.LogInformation($"[{_hostedServiceName}] Process: Request object updated!");
                         return Task.FromResult(true);
                     }
                     else
                     {
-                        _logger.LogCritical($"[{_name}] Process: Couldn't update the Request object.");
+                        _logger.LogCritical($"[{_hostedServiceName}] Process: Couldn't update the Request object.");
                     }
                 }
                 else
