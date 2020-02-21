@@ -10,7 +10,7 @@ using Nozomi.Data.Models.Web;
 using Nozomi.Data.Models.Web.Analytical;
 using Nozomi.Repo.Data;
 
-namespace Nozomi.Web2
+namespace Nozomi.Service
 {
     public static class SeedData
     {

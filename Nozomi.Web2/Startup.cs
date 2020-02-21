@@ -13,6 +13,7 @@ using Microsoft.Extensions.Hosting;
 using Newtonsoft.Json;
 using Nozomi.Preprocessing;
 using Nozomi.Preprocessing.Filters;
+using Nozomi.Service;
 using Nozomi.Web2.Extensions;
 using Swashbuckle.AspNetCore.SwaggerUI;
 using VueCliMiddleware;
