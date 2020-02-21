@@ -85,9 +85,10 @@ namespace Nozomi.Data.Models.Web
         
         [DataMember]
         public Guid Guid { get; set; }
+        
+        public long ComponentTypeId { get; set; }
 
-        [DataMember]
-        public ComponentType ComponentType { get; set; } = ComponentType.Unknown;
+        public ComponentType ComponentType { get; set; }
         
         /// <summary>
         /// This is another QueryComponent, used for traversing to the object/array in question.
