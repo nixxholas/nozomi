@@ -2,8 +2,6 @@ using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using Nozomi.Base.BCL.Responses;
 using Nozomi.Data;
-using Nozomi.Data.ResponseModels;
-using Nozomi.Data.ResponseModels.Currency;
 using Nozomi.Data.ViewModels.Currency;
 
 namespace Nozomi.Web2.Controllers.v1.Currency
@@ -35,13 +33,6 @@ namespace Nozomi.Web2.Controllers.v1.Currency
             string currencyTypeName = null, bool orderAscending = true, 
             CurrencySortingEnum orderingParam = CurrencySortingEnum.None);
 
-        NozomiResult<DetailedCurrencyResponse> Detailed(string slug);
-
-        ICollection<GeneralisedCurrencyResponse> GetAllDetailed(string currencyType = "CRYPTO", int index = 0,
-            int countPerIndex = 20);
-
         NozomiResult<IReadOnlyDictionary<string, long>> GetSlugToIdMap();
-
-        NozomiPaginatedResult<EpochValuePair<decimal>> Historical(string slug, int index = 0, int perPage = 0);
     }
 }

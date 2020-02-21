@@ -68,7 +68,6 @@ namespace Nozomi.Data.Models.Web
                 IsDenominated = component.IsDenominated;
                 AnomalyIgnorance = component.AnomalyIgnorance;
                 StoreHistoricals = component.StoreHistoricals;
-                Value = component.Value;
                 RequestId = component.RequestId;
                 Request = component.Request;
             
@@ -86,9 +85,10 @@ namespace Nozomi.Data.Models.Web
         
         [DataMember]
         public Guid Guid { get; set; }
+        
+        public long ComponentTypeId { get; set; }
 
-        [DataMember]
-        public ComponentType ComponentType { get; set; } = ComponentType.Unknown;
+        public ComponentType ComponentType { get; set; }
         
         /// <summary>
         /// This is another QueryComponent, used for traversing to the object/array in question.
@@ -120,29 +120,26 @@ namespace Nozomi.Data.Models.Web
         
         public bool StoreHistoricals { get; set; }
 
-        [DataMember]
-        public string Value { get; set; }
-
         public long RequestId { get; set; }
         public Request Request { get; set; }
         
         public ICollection<ComponentHistoricItem> RcdHistoricItems { get; set; }
         
-        /// <summary>
-        /// Does it carry an abnormal value?
-        /// </summary>
-        /// <param name="val"></param>
-        /// <returns>true if the value is abnormal, false if not.</returns>
-        public bool HasAbnormalNumericalValue(decimal val)
-        {
-            if (AnomalyIgnorance || string.IsNullOrEmpty(Value))
-                return false;
-        
-            // Make sure the current value in the db is parse-able
-            if (!decimal.TryParse(Value, out var currVal)) return true;
-            
-            // Return true if they match, 
-            return currVal.Equals(val);
-        }
+        // /// <summary>
+        // /// Does it carry an abnormal value?
+        // /// </summary>
+        // /// <param name="val"></param>
+        // /// <returns>true if the value is abnormal, false if not.</returns>
+        // public bool HasAbnormalNumericalValue(decimal val)
+        // {
+        //     if (AnomalyIgnorance || string.IsNullOrEmpty(Value))
+        //         return false;
+        //
+        //     // Make sure the current value in the db is parse-able
+        //     if (!decimal.TryParse(Value, out var currVal)) return true;
+        //     
+        //     // Return true if they match, 
+        //     return currVal.Equals(val);
+        // }
     }
 }

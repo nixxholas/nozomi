@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Nozomi.Repo.Data;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
@@ -9,9 +10,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Nozomi.Repo.Migrations
 {
     [DbContext(typeof(NozomiDbContext))]
-    partial class NozomiDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200221095807_r9_ComponentHistoricItemGuidPK")]
+    partial class r9_ComponentHistoricItemGuidPK
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -597,10 +599,8 @@ namespace Nozomi.Repo.Migrations
                         .HasColumnType("boolean")
                         .HasDefaultValue(false);
 
-                    b.Property<long>("ComponentTypeId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasDefaultValue(666L);
+                    b.Property<int>("ComponentType")
+                        .HasColumnType("integer");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp without time zone");
@@ -656,9 +656,12 @@ namespace Nozomi.Repo.Migrations
 
                     b.HasAlternateKey("Guid");
 
-                    b.HasIndex("ComponentTypeId");
+                    b.HasIndex("Guid")
+                        .IsUnique();
 
-                    b.HasIndex("RequestId");
+                    b.HasIndex("RequestId", "ComponentType")
+                        .IsUnique()
+                        .HasName("RequestComponent_AK_RequestId_ComponentType");
 
                     b.ToTable("RequestComponents");
                 });
@@ -713,341 +716,6 @@ namespace Nozomi.Repo.Migrations
                     b.HasIndex("RequestComponentId");
 
                     b.ToTable("RcdHistoricItems");
-                });
-
-            modelBuilder.Entity("Nozomi.Data.Models.Web.ComponentType", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.Property<string>("CreatedById")
-                        .HasColumnType("text");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.Property<string>("DeletedById")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("text");
-
-                    b.Property<bool>("IsEnabled")
-                        .HasColumnType("boolean");
-
-                    b.Property<DateTime>("ModifiedAt")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.Property<string>("ModifiedById")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Slug")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<uint>("xmin")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("xid");
-
-                    b.HasKey("Id")
-                        .HasName("ComponentType_PK_Id");
-
-                    b.HasAlternateKey("Slug")
-                        .HasName("ComponentType_AK_Slug");
-
-                    b.ToTable("ComponentTypes");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1L,
-                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "Ask",
-                            IsEnabled = true,
-                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Name = "Ask",
-                            Slug = "Ask"
-                        },
-                        new
-                        {
-                            Id = 2L,
-                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "Bid",
-                            IsEnabled = true,
-                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Name = "Bid",
-                            Slug = "Bid"
-                        },
-                        new
-                        {
-                            Id = 3L,
-                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "Flash Return Rate",
-                            IsEnabled = true,
-                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Name = "FRR",
-                            Slug = "FRR"
-                        },
-                        new
-                        {
-                            Id = 4L,
-                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "Bid period covered in days",
-                            IsEnabled = true,
-                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Name = "BidPeriod",
-                            Slug = "BidPeriod"
-                        },
-                        new
-                        {
-                            Id = 5L,
-                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "Sum of the 25 highest bid sizes",
-                            IsEnabled = true,
-                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Name = "BidSize",
-                            Slug = "BidSize"
-                        },
-                        new
-                        {
-                            Id = 7L,
-                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "Ask period covered in days",
-                            IsEnabled = true,
-                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Name = "AskPeriod",
-                            Slug = "AskPeriod"
-                        },
-                        new
-                        {
-                            Id = 8L,
-                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "Sum of the 25 lowest ask sizes",
-                            IsEnabled = true,
-                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Name = "AskSize",
-                            Slug = "AskSize"
-                        },
-                        new
-                        {
-                            Id = 9L,
-                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "Daily price change",
-                            IsEnabled = true,
-                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Name = "DailyChange",
-                            Slug = "DailyChange"
-                        },
-                        new
-                        {
-                            Id = 10L,
-                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "Daily price change expressed in percentage terms",
-                            IsEnabled = true,
-                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Name = "DailyChangePerc",
-                            Slug = "DailyChangePerc"
-                        },
-                        new
-                        {
-                            Id = 12L,
-                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "Daily volume",
-                            IsEnabled = true,
-                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Name = "DailyVolume",
-                            Slug = "DailyVolume"
-                        },
-                        new
-                        {
-                            Id = 13L,
-                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "Daily high",
-                            IsEnabled = true,
-                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Name = "High",
-                            Slug = "High"
-                        },
-                        new
-                        {
-                            Id = 14L,
-                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "Daily low",
-                            IsEnabled = true,
-                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Name = "Low",
-                            Slug = "Low"
-                        },
-                        new
-                        {
-                            Id = 100L,
-                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "Order",
-                            IsEnabled = true,
-                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Name = "Order",
-                            Slug = "Order"
-                        },
-                        new
-                        {
-                            Id = 101L,
-                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "Price of the last successfully closed order",
-                            IsEnabled = true,
-                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Name = "LastPrice",
-                            Slug = "LastPrice"
-                        },
-                        new
-                        {
-                            Id = 200L,
-                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "Supply % interest",
-                            IsEnabled = true,
-                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Name = "SupplyRate",
-                            Slug = "SupplyRate"
-                        },
-                        new
-                        {
-                            Id = 201L,
-                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "Borrow % interest",
-                            IsEnabled = true,
-                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Name = "BorrowRate",
-                            Slug = "BorrowRate"
-                        },
-                        new
-                        {
-                            Id = 209L,
-                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "Supply reserve amount",
-                            IsEnabled = true,
-                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Name = "SupplyReserve",
-                            Slug = "SupplyReserve"
-                        },
-                        new
-                        {
-                            Id = 210L,
-                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "Borrowing collateral factor",
-                            IsEnabled = true,
-                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Name = "CollateralFactor",
-                            Slug = "CollateralFactor"
-                        },
-                        new
-                        {
-                            Id = 211L,
-                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "Total supply amount for loans",
-                            IsEnabled = true,
-                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Name = "TotalLoanSupply",
-                            Slug = "TotalLoanSupply"
-                        },
-                        new
-                        {
-                            Id = 666L,
-                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "Unknown",
-                            IsEnabled = true,
-                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Name = "Unknown",
-                            Slug = "Unknown"
-                        },
-                        new
-                        {
-                            Id = 1000L,
-                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "The current circulating supply of this asset.",
-                            IsEnabled = true,
-                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Name = "CirculatingSupply",
-                            Slug = "CirculatingSupply"
-                        },
-                        new
-                        {
-                            Id = 1005L,
-                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "The current block count of this crypto.",
-                            IsEnabled = true,
-                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Name = "BlockCount",
-                            Slug = "BlockCount"
-                        },
-                        new
-                        {
-                            Id = 1010L,
-                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "The current mining difficulty of this asset.",
-                            IsEnabled = true,
-                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Name = "Difficulty",
-                            Slug = "Difficulty"
-                        },
-                        new
-                        {
-                            Id = 2000L,
-                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "Money Supply (M1)",
-                            IsEnabled = true,
-                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Name = "MoneySupplyM1",
-                            Slug = "MoneySupplyM1"
-                        },
-                        new
-                        {
-                            Id = 2001L,
-                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "Money Supply (M2)",
-                            IsEnabled = true,
-                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Name = "MoneySupplyM2",
-                            Slug = "MoneySupplyM2"
-                        },
-                        new
-                        {
-                            Id = 2002L,
-                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "Money Supply (M3)",
-                            IsEnabled = true,
-                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Name = "MoneySupplyM3",
-                            Slug = "MoneySupplyM3"
-                        },
-                        new
-                        {
-                            Id = 2003L,
-                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "Money Supply (M4)",
-                            IsEnabled = true,
-                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Name = "MoneySupplyM4",
-                            Slug = "MoneySupplyM4"
-                        },
-                        new
-                        {
-                            Id = 2040L,
-                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "Quasi-money consists of highly liquid assets which are not cash but can easily be converted into cash",
-                            IsEnabled = true,
-                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Name = "QuasiMoneySupply",
-                            Slug = "QuasiMoneySupply"
-                        });
                 });
 
             modelBuilder.Entity("Nozomi.Data.Models.Web.Request", b =>
@@ -1400,11 +1068,6 @@ namespace Nozomi.Repo.Migrations
 
             modelBuilder.Entity("Nozomi.Data.Models.Web.Component", b =>
                 {
-                    b.HasOne("Nozomi.Data.Models.Web.ComponentType", "ComponentType")
-                        .WithMany("Components")
-                        .HasForeignKey("ComponentTypeId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
                     b.HasOne("Nozomi.Data.Models.Web.Request", "Request")
                         .WithMany("RequestComponents")
                         .HasForeignKey("RequestId")

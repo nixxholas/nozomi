@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data.Models.Currency;
-using Nozomi.Data.ResponseModels.Source;
+using Nozomi.Data.ViewModels.Source;
 using Nozomi.Data.ViewModels.SourceType;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.BCL.Repository;
@@ -88,12 +88,13 @@ namespace Nozomi.Service.Events
                     Abbreviation = st.Abbreviation,
                     Sources = st.Sources
                         .Where(s => s.DeletedAt == null && s.IsEnabled)
-                        .Select(s => new LegacySourceViewModel
+                        .Select(s => new SourceViewModel
                         {
-                            Id = s.Id,
+                            Guid = s.Guid,
                             Abbreviation = s.Abbreviation,
                             Name = s.Name,
-                            ApiDocsUrl = s.APIDocsURL
+                            ApiDocsUrl = s.APIDocsURL,
+                            SourceTypeGuid = st.Guid
                         })
                 });
         }

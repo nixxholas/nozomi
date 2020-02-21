@@ -10,7 +10,6 @@ using Nozomi.Data.AreaModels.v1.Currency;
 using Nozomi.Data.Models.Currency;
 using Nozomi.Data.Models.Web;
 using Nozomi.Data.Models.Web.Analytical;
-using Nozomi.Data.ResponseModels.Currency;
 using Nozomi.Data.ViewModels.AnalysedComponent;
 using Nozomi.Data.ViewModels.AnalysedHistoricItem;
 using Nozomi.Data.ViewModels.Component;
@@ -28,13 +27,9 @@ namespace Nozomi.Service.Events
 {
     public class CurrencyEvent : BaseEvent<CurrencyEvent, NozomiDbContext>, ICurrencyEvent
     {
-        private readonly ITickerEvent _tickerEvent;
-
-        public CurrencyEvent(ILogger<CurrencyEvent> logger, IUnitOfWork<NozomiDbContext> unitOfWork,
-            ITickerEvent tickerEvent)
+        public CurrencyEvent(ILogger<CurrencyEvent> logger, IUnitOfWork<NozomiDbContext> unitOfWork)
             : base(logger, unitOfWork)
         {
-            _tickerEvent = tickerEvent;
         }
 
         public bool Exists(string slug)
@@ -151,7 +146,6 @@ namespace Nozomi.Service.Events
                             {
                                 Type = rc.ComponentType,
                                 Guid = rc.Guid,
-                                Value = rc.Value,
                                 IsDenominated = rc.IsDenominated,
                                 History = typesToDeepen.Contains(rc.ComponentType)
                                     ? rc.RcdHistoricItems
@@ -184,7 +178,6 @@ namespace Nozomi.Service.Events
                             {
                                 Type = rc.ComponentType,
                                 Guid = rc.Guid,
-                                Value = rc.Value,
                                 IsDenominated = rc.IsDenominated
                             })
                     });
@@ -499,7 +492,7 @@ namespace Nozomi.Service.Events
 
         public decimal GetCirculatingSupply(AnalysedComponent analysedComponent)
         {
-            var circulatingSupplyEnum = ComponentType.CirculatingSupply;
+            var circulatingSupplyEnum = GenericComponentType.CirculatingSupply;
             // If its a currency-based ac
             if (analysedComponent.CurrencyId != null && analysedComponent.CurrencyId > 0)
             {
@@ -533,15 +526,19 @@ namespace Nozomi.Service.Events
                                                       && cr.CurrencyId.Equals(curr.Id))
                     .Include(cp => cp.Currency)
                     .Include(cpr => cpr.RequestComponents)
+                    .ThenInclude(rc => rc.RcdHistoricItems)
                     // Obtain only the circulating supply
                     .SelectMany(cpr => cpr.RequestComponents
                         .Where(rc => rc.DeletedAt == null && rc.IsEnabled
                                                           && rc.ComponentType.Equals(circulatingSupplyEnum)
-                                                          && !string.IsNullOrEmpty(rc.Value)))
+                                                          && rc.RcdHistoricItems.Count > 0))
                     .FirstOrDefault();
 
                 return reqComp != null
-                    ? decimal.Parse(reqComp.Value ?? "0") /
+                    ? decimal.Parse(reqComp.RcdHistoricItems
+                          .OrderByDescending(e => e.HistoricDateTime)
+                          .FirstOrDefault()
+                          ?.Value ?? "0") /
                       (reqComp.IsDenominated ? (decimal) Math.Pow(10, curr.Denominations) : decimal.One)
                     : decimal.Zero;
             }
@@ -568,14 +565,19 @@ namespace Nozomi.Service.Events
                 return mainTicker
                     .Include(c => c.Requests)
                     .ThenInclude(r => r.RequestComponents)
+                    .ThenInclude(rc => rc.RcdHistoricItems)
                     .SelectMany(c => c.Requests
                         .Where(r => r.DeletedAt == null && r.IsEnabled))
                     .SelectMany(r => r.RequestComponents
                         .Where(rc => rc.DeletedAt == null && rc.IsEnabled
-                                                          && rc.ComponentType.Equals(circulatingSupplyEnum)))
+                                                          && rc.ComponentType.Equals(circulatingSupplyEnum)
+                                                          && rc.RcdHistoricItems.Count > 0))
+                    .Select(rc => rc.RcdHistoricItems
+                        .OrderByDescending(e => e.HistoricDateTime))
                     .AsEnumerable()
-                    .Where(rc => NumberHelper.IsNumericDecimal(rc.Value))
-                    .Select(rc => decimal.Parse(rc.Value))
+                    .Where(e => 
+                        NumberHelper.IsNumericDecimal(e.FirstOrDefault()?.Value))
+                    .Select(e => decimal.Parse(e.FirstOrDefault()?.Value))
                     .DefaultIfEmpty(decimal.MinusOne) // Give it -1
                     .FirstOrDefault();
             }
@@ -688,164 +690,6 @@ namespace Nozomi.Service.Events
                     DenominationName = c.DenominationName,
                     IsEnabled = c.IsEnabled
                 }).ToList();
-        }
-
-        public ICollection<GeneralisedCurrencyResponse> GetAllDetailed(string typeShortForm = "CRYPTO",
-            int index = 0, int countPerIndex = 20, int daysOfData = 7)
-        {
-            if (countPerIndex <= 0)
-                countPerIndex = 20; // Defaulting checks
-
-            if (daysOfData <= 0 || daysOfData >= 32)
-                daysOfData = 7; // Defaulting checks
-
-            var currencies = _unitOfWork.GetRepository<CurrencyType>()
-                .GetQueryable()
-                .AsNoTracking()
-                .Where(ct => ct.TypeShortForm.Equals(typeShortForm, StringComparison.InvariantCultureIgnoreCase))
-                .Include(ct => ct.Currencies)
-                .ThenInclude(c => c.AnalysedComponents)
-                .ThenInclude(ac => ac.AnalysedHistoricItems)
-                .Include(ct => ct.Currencies)
-                .ThenInclude(c => c.Requests)
-                .ThenInclude(r => r.RequestComponents)
-                .SelectMany(ct => ct.Currencies
-                    .Where(c => c.DeletedAt == null && c.IsEnabled
-//                                                    && c.AnalysedComponents.Any(ac =>
-//                                                        ac.ComponentType.Equals(AnalysedComponentType.MarketCap)
-//                                                        && !string.IsNullOrEmpty(ac.Value)
-//                                                        && NumberHelper.IsNumericDecimal(ac.Value))
-                    )
-//                    .Where(c => c.AnalysedComponents
-//                        .Any(ac => ac.DeletedAt == null && ac.IsEnabled))
-//                    .OrderByDescending(c => decimal.Parse(c.AnalysedComponents
-//                        .SingleOrDefault(ac => ac.ComponentType == AnalysedComponentType.MarketCap).Value))
-                    .OrderBy(c => c.Id)
-                    .Skip(index * countPerIndex)
-                    .Take(countPerIndex)
-                    .Select(c => new Currency
-                    {
-                        Id = c.Id,
-                        CurrencyTypeId = c.CurrencyTypeId,
-                        Abbreviation = c.Abbreviation,
-                        Slug = c.Slug,
-                        Name = c.Name,
-                        Description = c.Description,
-                        Denominations = c.Denominations,
-                        DenominationName = c.DenominationName,
-                        LogoPath = c.LogoPath,
-                        AnalysedComponents = c.AnalysedComponents
-                            .Where(ac => ac.DeletedAt == null && ac.IsEnabled)
-                            .Select(ac => new AnalysedComponent(ac, index,
-                                NozomiServiceConstants.AnalysedComponentTakeoutLimit,
-                                ahi => ahi.DeletedAt == null && ahi.IsEnabled
-                                                             && ahi.HistoricDateTime >=
-                                                             DateTime.UtcNow.Subtract(
-                                                                 TimeSpan.FromDays(daysOfData))
-                                                             && NumberHelper.IsNumericDecimal(ahi.Value)))
-                            .ToList(),
-                        Requests = c.Requests
-                            .Where(r => r.DeletedAt == null && r.IsEnabled)
-                            .Select(r => new Request
-                            {
-                                Guid = r.Guid,
-                                RequestComponents = r.RequestComponents
-                                    .Where(rc => rc.DeletedAt == null && rc.IsEnabled)
-                                    .ToList()
-                            })
-                            .ToList()
-                    }))
-                .ToList();
-
-            var res = new List<GeneralisedCurrencyResponse>();
-
-            foreach (var currency in currencies)
-            {
-                res.Add(new GeneralisedCurrencyResponse(currency,
-                    _tickerEvent.GetCurrencyTickerPairs(currency.Abbreviation)));
-            }
-
-            return res.OrderByDescending(dcr => dcr.MarketCap).ToList();
-        }
-
-        public DetailedCurrencyResponse GetDetailedById(long currencyId,
-            ICollection<AnalysedComponentType> componentTypes)
-        {
-            var query = _unitOfWork.GetRepository<Currency>()
-                .GetQueryable()
-                .AsNoTracking()
-                .Where(c => c.Id.Equals(currencyId))
-                .Include(cp => cp.AnalysedComponents
-                    .Where(ac => componentTypes.Contains(ac.ComponentType)))
-                .ThenInclude(ac => ac.AnalysedHistoricItems)
-                .SingleOrDefault();
-
-            if (query == null) return null;
-
-            return new DetailedCurrencyResponse(query,
-                _tickerEvent.GetCurrencyTickerPairs(query.Abbreviation));
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="slug"></param>
-        /// <param name="componentTypes"></param>
-        /// <returns></returns>
-        public DetailedCurrencyResponse GetDetailedBySlug(string slug,
-            ICollection<ComponentType> componentTypes, ICollection<AnalysedComponentType> analysedComponentTypes,
-            int componentTypesIndex = 0, int analysedComponentTypesIndex = 0)
-        {
-            var query = _unitOfWork.GetRepository<Currency>()
-                .GetQueryable()
-                .AsNoTracking()
-                .Where(c => c.DeletedAt == null && c.IsEnabled
-                                                && c.Slug.Equals(slug, StringComparison.InvariantCultureIgnoreCase))
-                .Include(c => c.CurrencyProperties);
-
-            if (!query.Any() || componentTypesIndex < 0 || analysedComponentTypesIndex < 0) return null;
-
-            var analysedComponents = new List<AnalysedComponent>();
-            if (analysedComponentTypes != null)
-            {
-                // https://github.com/aspnet/EntityFrameworkCore/issues/1833
-//                query.AnalysedComponents = query.AnalysedComponents
-//                    .Where(ac => analysedComponentTypes.Contains(ac.ComponentType))
-//                    .ToList();
-                analysedComponents = query
-                    .Include(cp => cp.AnalysedComponents)
-                    .ThenInclude(ac => ac.AnalysedHistoricItems)
-                    .SelectMany(c => c.AnalysedComponents.Where(ac =>
-                        analysedComponentTypes.Contains(ac.ComponentType)))
-                    .Select(ac => new AnalysedComponent(ac, 0,
-                        NozomiServiceConstants.AnalysedHistoricItemTakeoutLimit))
-                    .OrderBy(ac => ac.Id)
-                    .Skip(analysedComponentTypesIndex * NozomiServiceConstants.AnalysedComponentTakeoutLimit)
-                    .Take(NozomiServiceConstants.AnalysedComponentTakeoutLimit)
-                    .ToList();
-            }
-
-            var requestComponents = new List<Component>();
-            if (componentTypes != null)
-            {
-                requestComponents = query.SelectMany(c => c.Requests)
-                    .Where(r => r.DeletedAt == null && r.IsEnabled)
-                    .SelectMany(r => r.RequestComponents)
-                    .Where(rc => rc.DeletedAt == null && rc.IsEnabled
-                                                      && componentTypes.Contains(rc.ComponentType))
-                    .OrderBy(rc => rc.Id)
-                    .Skip(componentTypesIndex * NozomiServiceConstants.RequestComponentTakeoutLimit)
-                    .Take(NozomiServiceConstants.RequestComponentTakeoutLimit)
-                    .ToList();
-            }
-
-            var resultantItem = query.SingleOrDefault();
-
-            if (resultantItem == null) return null;
-
-            resultantItem.AnalysedComponents = analysedComponents;
-
-            return new DetailedCurrencyResponse(resultantItem, requestComponents);
         }
 
         public bool Any(CreateCurrency createCurrency)
@@ -1144,7 +988,7 @@ namespace Nozomi.Service.Events
                     Abbreviation = cs.Source.Abbreviation,
                     Name = cs.Source.Name,
                     ApiDocsUrl = cs.Source.APIDocsURL,
-                    SourceTypeGuid = cs.Source.Guid.ToString()
+                    SourceTypeGuid = cs.Source.Guid
                 });
         }
     }

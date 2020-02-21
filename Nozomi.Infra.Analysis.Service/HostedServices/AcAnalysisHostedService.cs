@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 using Nozomi.Base.BCL;
 using Nozomi.Base.BCL.Helpers.Native.Numerals;
 using Nozomi.Data.Models.Currency;
+using Nozomi.Data.Models.Web;
 using Nozomi.Data.Models.Web.Analytical;
 using Nozomi.Infra.Analysis.Service.Events.Interfaces;
 using Nozomi.Infra.Analysis.Service.HostedServices.Interfaces;
@@ -211,7 +212,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                             // obtain all related entities first
                             var currencyAveragePrice = _analysedComponentEvent.GetAllByCurrency(
                                     (long) entity.CurrencyId,
-                                    true, true)
+                                    true)
                                 .SingleOrDefault(ac =>
                                     !string.IsNullOrEmpty(ac.Value)
                                     && ac.ComponentType.Equals(AnalysedComponentType.CurrentAveragePrice)
@@ -347,16 +348,23 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices
                             var avgPrice = decimal.Zero;
                             var index = 0;
                             var components = _currencyPairEvent.GetComponents(entity.Id, true,
-                                    index, true, new List<ComponentType>()
+                                    index, true, new List<GenericComponentType>()
                                     {
-                                        ComponentType.Ask, ComponentType.Bid
+                                        GenericComponentType.Ask, GenericComponentType.Bid
                                     });
 
-                            if (components.Any(c => NumberHelper.IsNumericDecimal(c.Value)))
+                            if (components.Any(c => 
+                                NumberHelper.IsNumericDecimal(c.RcdHistoricItems
+                                    .OrderByDescending(e => e.HistoricDateTime)
+                                    .FirstOrDefault()
+                                    ?.Value)))
                             {
                                 // Aggregate it
                                 avgPrice = components
-                                    .Average(rc => decimal.Parse(rc.Value));
+                                    .Average(c => decimal.Parse(c.RcdHistoricItems
+                                        .OrderByDescending(e => e.HistoricDateTime)
+                                        .FirstOrDefault()
+                                        ?.Value));
 
                                 // Now that's its computed, check again
                                 if (avgPrice > 0)

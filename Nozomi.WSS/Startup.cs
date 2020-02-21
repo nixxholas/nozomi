@@ -51,8 +51,7 @@ namespace Nozomi.WSS
                             options.UseNpgsql(str);
                             options.EnableSensitiveDataLogging();
                             options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
-                        },
-                        ServiceLifetime.Transient);
+                        }, ServiceLifetime.Transient);
             }
             else
             {
@@ -98,8 +97,7 @@ namespace Nozomi.WSS
             services.AddScoped<ICurrencyPairEvent, CurrencyPairEvent>();
             services.AddScoped<ICurrencyTypeEvent, CurrencyTypeEvent>();
             services.AddScoped<IRequestEvent, RequestEvent>();
-            services.AddScoped<ITickerEvent, TickerEvent>();
-            services.AddTransient<IRcdHistoricItemService, RcdHistoricItemService>();
+            services.AddTransient<IComponentHistoricItemService, ComponentHistoricItemService>();
             services.AddTransient<IComponentService, ComponentService>();
             services.AddTransient<IRequestService, RequestService>();
             services.AddHostedService<WSRequestSyncingService>();

@@ -12,6 +12,6 @@ namespace Nozomi.Data.ViewModels.Source
         
         public string ApiDocsUrl { get; set; }
         
-        public string SourceTypeGuid { get; set; }
+        public Guid SourceTypeGuid { get; set; }
     }
 }

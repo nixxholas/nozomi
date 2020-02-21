@@ -21,6 +21,7 @@ namespace Nozomi.Repo.Data
     {
         public DbSet<AnalysedComponent> AnalysedComponents { get; set; }
         public DbSet<AnalysedHistoricItem> AnalysedHistoricItems { get; set; }
+        public DbSet<ComponentType> ComponentTypes { get; set; }
         public DbSet<Currency> Currencies { get; set; }
         public DbSet<CurrencyPair> CurrencyPairs { get; set; }
         public DbSet<CurrencyType> CurrencyTypes { get; set; }
@@ -56,6 +57,9 @@ namespace Nozomi.Repo.Data
             var analysedHistoricItemMap = new AnalysedHistoricItemMap(modelBuilder.Entity<AnalysedHistoricItem>());
             modelBuilder.Entity<AnalysedHistoricItem>().UseXminAsConcurrencyToken();
 
+            var componentTypeMap = new ComponentTypeMap(modelBuilder.Entity<ComponentType>());
+            modelBuilder.Entity<ComponentType>().UseXminAsConcurrencyToken();
+
             var currencyMap = new CurrencyMap(modelBuilder.Entity<Currency>());
             modelBuilder.Entity<Currency>().UseXminAsConcurrencyToken();
 
@@ -74,10 +78,10 @@ namespace Nozomi.Repo.Data
             var webSocketCommandPropertyMap = new WebsocketCommandPropertyMap(modelBuilder.Entity<WebsocketCommandProperty>());
             modelBuilder.Entity<WebsocketCommandProperty>().UseXminAsConcurrencyToken();
 
-            var requestComponentMap = new RequestComponentMap(modelBuilder.Entity<Component>());
+            var requestComponentMap = new ComponentMap(modelBuilder.Entity<Component>());
             modelBuilder.Entity<Component>().UseXminAsConcurrencyToken();
 
-            var rcdHistoricItemMap = new RcdHistoricItemMap(modelBuilder.Entity<ComponentHistoricItem>());
+            var rcdHistoricItemMap = new ComponentHistoricItemMap(modelBuilder.Entity<ComponentHistoricItem>());
             modelBuilder.Entity<ComponentHistoricItem>().UseXminAsConcurrencyToken();
 
             var requestPropertyMap = new RequestPropertyMap(modelBuilder.Entity<RequestProperty>());
@@ -92,6 +96,9 @@ namespace Nozomi.Repo.Data
             // MTM
             var currencySourceMap = new CurrencySourceMap(modelBuilder.Entity<CurrencySource>());
             modelBuilder.Entity<CurrencySource>().UseXminAsConcurrencyToken();
+            
+            // https://stackoverflow.com/questions/37578359/how-do-i-configure-entity-framework-to-allow-database-generate-uuid-for-postgres
+            modelBuilder.HasPostgresExtension("uuid-ossp");
         }
         
         public int SaveChanges(string userId)

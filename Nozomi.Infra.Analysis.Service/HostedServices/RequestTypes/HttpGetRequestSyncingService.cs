@@ -54,10 +54,10 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            _logger.LogInformation($"{_name} is starting.");
+            _logger.LogInformation($"{_hostedServiceName} is starting.");
 
             stoppingToken.Register(
-                () => _logger.LogInformation($"{_name} is stopping."));
+                () => _logger.LogInformation($"{_hostedServiceName} is stopping."));
 
             while (!stoppingToken.IsCancellationRequested)
             {
@@ -80,17 +80,17 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
                         if (await ProcessRequest(cpRequest.Value))
                         {
                             // TODO: Broadcasting
-                            _logger.LogInformation($"[{_name}] GET requested processed successfully: {cpRequest.Key}");
+                            _logger.LogInformation($"[{_hostedServiceName}] GET requested processed successfully: {cpRequest.Key}");
                         }
                         else
                         {
-                            _logger.LogInformation($"[{_name}] Unable to process: {cpRequest.Key}");
+                            _logger.LogInformation($"[{_hostedServiceName}] Unable to process: {cpRequest.Key}");
                         }
                     }
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogCritical($"[{_name}]: " + ex);
+                    _logger.LogCritical($"[{_hostedServiceName}]: " + ex);
                 }
 
                 // No naps taken
@@ -468,11 +468,11 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
 
                     if (_requestService.HasUpdated(requests.ToList<Request>()))
                     {
-                        _logger.LogInformation($"[{_name}] ProcessRequest: Request objects updated!");
+                        _logger.LogInformation($"[{_hostedServiceName}] ProcessRequest: Request objects updated!");
                     }
                     else
                     {
-                        _logger.LogCritical($"[{_name}] ProcessRequest: Couldn't update all the Request objects.");
+                        _logger.LogCritical($"[{_hostedServiceName}] ProcessRequest: Couldn't update all the Request objects.");
                     }
                 }
 

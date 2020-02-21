@@ -31,32 +31,28 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
         /// </summary>
         /// <key>The Id of the WebsocketRequest</key≥
         private readonly Dictionary<string, WebSocket> _wsrWebsockets;
-
         private readonly IRequestEvent _websocketRequestEvent;
-        private readonly IComponentService _componentService;
-        private readonly IRequestService _requestService;
 
         public WSRequestSyncingService(IServiceProvider serviceProvider) : base(serviceProvider)
         {
             _wsrWebsockets = new Dictionary<string, WebSocket>();
-            _componentService = _scope.ServiceProvider.GetRequiredService<IComponentService>();
             _websocketRequestEvent = _scope.ServiceProvider.GetRequiredService<IRequestEvent>();
-            _requestService = _scope.ServiceProvider.GetRequiredService<IRequestService>();
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            _logger.LogInformation("WebsocketCurrencyPairRequestSyncingService is starting.");
+            _logger.LogInformation($"{_hostedServiceName} ExecuteAsync: Starting...");
 
             stoppingToken.Register(() =>
-                _logger.LogInformation("WebsocketCurrencyPairRequestSyncingService is stopping."));
+                _logger.LogInformation($"{_hostedServiceName} ExecuteAsync: Stopping..."));
 
             while (!stoppingToken.IsCancellationRequested)
             {
                 //============================= Update Sockets to keep =============================// 
 
                 // We will need to resync the Request collection to make sure we're polling only the ones we want to poll
-                var dataEndpoints = _websocketRequestEvent.GetAllByRequestTypeUniqueToURL(RequestType.WebSocket);
+                var dataEndpoints = _websocketRequestEvent
+                    .GetAllByRequestTypeUniqueToURL(RequestType.WebSocket);
 
                 if (dataEndpoints.Count > 0)
                 {
@@ -83,7 +79,8 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
                                 // Pre-request processing
                                 newSocket.OnOpen += (sender, args) =>
                                 {
-                                    var wsCommands = dataEndpoint.Value.SelectMany(de => de.WebsocketCommands).ToList();
+                                    var wsCommands = dataEndpoint.Value
+                                        .SelectMany(de => de.WebsocketCommands).ToList();
 
                                     foreach (var wsCommand in wsCommands)
                                     {
@@ -109,23 +106,23 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
                                     {
                                         try
                                         {
-                                            if (await Process(dataEndpoint.Value, args.Data))
+                                            if (Process(dataEndpoint.Value, args.Data))
                                             {
                                                 _logger.LogInformation(
-                                                    $"[WebsocketCurrencyPairRequestSyncingService] " +
+                                                    $"{_hostedServiceName} " +
                                                     $"RequestId: {dataEndpointItem.DataPath} successfully updated");
                                             }
                                         }
                                         catch (Exception ex)
                                         {
                                             _logger.LogCritical(
-                                                $"[WebsocketCurrencyPairRequestSyncingService] OnMessage: " +
+                                                $"{_hostedServiceName} OnMessage: " +
                                                 ex);
                                         }
                                     }
                                     else
                                     {
-                                        _logger.LogError($"[WebsocketCurrencyPairRequestSyncingService] OnMessage: " +
+                                        _logger.LogError($"{_hostedServiceName} OnMessage: " +
                                                          $"RequestId:{dataEndpointItem.DataPath} has an empty payload incoming.");
                                     }
                                 };
@@ -133,7 +130,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
                                 // Error processing
                                 newSocket.OnError += (sender, args) =>
                                 {
-                                    _logger.LogError($"[WebsocketCurrencyPairRequestSyncingService] OnError:" +
+                                    _logger.LogError($"{_hostedServiceName} OnError:" +
                                                      $" {args.Message}");
                                 };
 
@@ -147,7 +144,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
                                                          dataEndpointItem.DeletedAt != null)
                                                      && _wsrWebsockets.ContainsKey(dataEndpointItem.DataPath))
                         {
-                            _logger.LogInformation("[WebsocketCurrencyPairRequestSyncingService] Removing " +
+                            _logger.LogInformation($"{_hostedServiceName} Removing " +
                                                    "Request: " + dataEndpointItem.Id);
 
                             // Stop the websocket from polling
@@ -157,13 +154,13 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
                             if (!_wsrWebsockets.Remove(dataEndpointItem.DataPath))
                             {
                                 _logger.LogInformation(
-                                    "[WebsocketCurrencyPairRequestSyncingService] Error Removing Request: "
+                                    $"{_hostedServiceName} Error Removing Request: "
                                     + dataEndpointItem.DataPath);
                             }
                             else
                             {
                                 _logger.LogInformation(
-                                    "[WebsocketCurrencyPairRequestSyncingService] Removed Request: "
+                                    $"{_hostedServiceName} Removed Request: "
                                     + dataEndpointItem.DataPath);
                             }
                         }
@@ -178,14 +175,16 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
                 //============================= End of check and update new data =============================// 
 
                 // No naps taken
-                await Task.Delay(10, stoppingToken);
+                // await Task.Delay(0, stoppingToken);
             }
 
-            _logger.LogWarning("WebsocketCurrencyPairRequestSyncingService background task is stopping.");
+            _logger.LogWarning($"{_hostedServiceName}: Background task is stopping.");
         }
 
-        public Task<bool> Process(ICollection<Request> wsr, string payload)
+        public bool Process(ICollection<Request> wsr, string payload)
         {
+            var requestService = _scope.ServiceProvider.GetRequiredService<IRequestService>();
+            
             // Are we processing anything?
             if (wsr.Count > 0 && !string.IsNullOrEmpty(payload))
             {
@@ -210,14 +209,14 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
                 if (wsrComponents.Any())
                 {
                     if (Update(payloadToken, wsr.FirstOrDefault().ResponseType, wsrComponents)
-                        && _requestService.HasUpdated(wsr))
+                        && requestService.HasUpdated(wsr))
                     {
-                        _logger.LogInformation($"[{_name}] Process: Request object updated!");
-                        return Task.FromResult(true);
+                        _logger.LogInformation($"[{_hostedServiceName}] Process: Request object updated!");
+                        return true;
                     }
                     else
                     {
-                        _logger.LogCritical($"[{_name}] Process: Couldn't update the Request object.");
+                        _logger.LogCritical($"[{_hostedServiceName}] Process: Couldn't update the Request object.");
                     }
                 }
                 else
@@ -227,11 +226,12 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
                 }
             }
 
-            return Task.FromResult(false);
+            return false;
         }
 
         public bool Update(JToken token, ResponseType resType, IEnumerable<Component> requestComponents)
         {
+            var componentService = _scope.ServiceProvider.GetRequiredService<IComponentService>();
             // Null Checks
             if (token == null)
                 return false;
@@ -256,7 +256,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
                     else
                     {
                         // Failed
-                        _componentService.Checked(component.Id);
+                        componentService.Checked(component.Id);
                         processingToken = null; // Set it to fail for the next statement
                     }
                 }
@@ -329,7 +329,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
                                                     if (val > 0)
                                                     {
                                                         // Update it
-                                                        _componentService.UpdatePairValue(component.Id, val);
+                                                        componentService.UpdatePairValue(component.Id, val);
                                                     }
                                                 }
                                             }
@@ -357,7 +357,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
                                                     if (val > 0)
                                                     {
                                                         // Update it
-                                                        _componentService.UpdatePairValue(component.Id, val);
+                                                        componentService.UpdatePairValue(component.Id, val);
                                                     }
                                                 }
                                             }
@@ -417,7 +417,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
                                                 if (val > 0)
                                                 {
                                                     // Update it
-                                                    _componentService.UpdatePairValue(component.Id, val);
+                                                    componentService.UpdatePairValue(component.Id, val);
                                                 }
                                             }
                                         }
@@ -445,7 +445,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
                                                 if (val > 0)
                                                 {
                                                     // Update it
-                                                    _componentService.UpdatePairValue(component.Id, val);
+                                                    componentService.UpdatePairValue(component.Id, val);
                                                 }
                                             }
                                         }
@@ -492,7 +492,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
                                             if (val > 0)
                                             {
                                                 // Update it
-                                                _componentService.UpdatePairValue(component.Id, val);
+                                                componentService.UpdatePairValue(component.Id, val);
                                             }
                                         }
                                     }
@@ -509,7 +509,7 @@ namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
                 else if (string.IsNullOrEmpty(component.Identifier))
                 {
                     _logger.LogInformation($"Marking Request Component as checked: {component.Id}");
-                    return _componentService.Checked(component.Id);
+                    return componentService.Checked(component.Id);
                 }
             }
 

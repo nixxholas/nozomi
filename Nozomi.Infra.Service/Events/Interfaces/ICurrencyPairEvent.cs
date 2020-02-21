@@ -4,7 +4,6 @@ using Nozomi.Base.BCL;
 using Nozomi.Data.Models.Currency;
 using Nozomi.Data.Models.Web;
 using Nozomi.Data.Models.Web.Analytical;
-using Nozomi.Data.ResponseModels.CurrencyPair;
 using Nozomi.Data.ViewModels.CurrencyPair;
 
 namespace Nozomi.Service.Events.Interfaces
@@ -22,8 +21,9 @@ namespace Nozomi.Service.Events.Interfaces
         ICollection<CurrencyPair> GetAllByMainCurrency(
             string mainCurrencyAbbrv = CoreConstants.GenericCurrency);
 
+        [Obsolete]
         ICollection<Component> GetComponents(long analysedComponentId, bool track = false, int index = 0,
-            bool ensureValid = true, ICollection<ComponentType> componentTypes = null);
+            bool ensureValid = true, ICollection<GenericComponentType> componentTypes = null);
 
         ICollection<CurrencyPair> GetAllByTickerPairAbbreviation(string tickerPairAbbreviation, bool track = false);
 
@@ -48,8 +48,6 @@ namespace Nozomi.Service.Events.Interfaces
         CurrencyPair Get(string guid, bool track = false, string userId = null);
 
         CurrencyPair Get(Guid guid, bool track = false, string userId = null);
-
-        ICollection<DistinctCurrencyPairResponse> ListAll();
 
         IEnumerable<CurrencyPairViewModel> Search(string queryTickerPair = null, int page = 0, int itemsPerPage = 0);
     }

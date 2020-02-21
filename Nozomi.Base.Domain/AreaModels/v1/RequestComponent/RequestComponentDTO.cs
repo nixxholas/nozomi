@@ -1,4 +1,5 @@
 using Nozomi.Data.Models.Currency;
+using Nozomi.Data.Models.Web;
 
 namespace Nozomi.Data.AreaModels.v1.RequestComponent
 {
@@ -6,7 +7,7 @@ namespace Nozomi.Data.AreaModels.v1.RequestComponent
     {
         public long Id { get; set; }
 
-        public ComponentType ComponentType { get; set; } = ComponentType.Unknown;
+        public long ComponentType { get; set; }
         
         public string Identifier { get; set; }
         

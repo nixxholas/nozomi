@@ -1,10 +1,11 @@
 using Nozomi.Data.Models.Currency;
+using Nozomi.Data.Models.Web;
 
 namespace Nozomi.Data.AreaModels.v1.CurrencyPairComponent
 {
     public class CreateCurrencyPairComponent
     {
-        public ComponentType ComponentType { get; set; }
+        public long ComponentType { get; set; }
         
         public string QueryComponent { get; set; }
         
