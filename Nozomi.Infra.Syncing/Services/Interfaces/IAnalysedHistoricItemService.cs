@@ -1,7 +1,7 @@
 using System;
 using Nozomi.Data.Models.Web.Analytical;
 
-namespace Nozomi.Infra.Analysis.Service.Services.Interfaces
+namespace Nozomi.Infra.Syncing.Services.Interfaces
 {
     public interface IAnalysedHistoricItemService
     {

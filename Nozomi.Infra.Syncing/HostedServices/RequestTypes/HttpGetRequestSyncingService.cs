@@ -17,7 +17,7 @@ using Nozomi.Base.BCL.Helpers.Enumerator;
 using Nozomi.Base.BCL.Helpers.Exponent;
 using Nozomi.Data;
 using Nozomi.Data.Models.Web;
-using Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes.Interfaces;
+using Nozomi.Infra.Syncing.HostedServices.RequestTypes.Interfaces;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Service.Events.Interfaces;
 using Nozomi.Service.Services.Interfaces;
@@ -35,7 +35,7 @@ using Nozomi.Service.Services.Requests.Interfaces;
  *
  * Further development of writing a feature to prevent this limitless API calling will be done.
  */
-namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
+namespace Nozomi.Infra.Syncing.HostedServices.RequestTypes
 {
     public class HttpGetRequestSyncingService : BaseProcessingService<HttpGetRequestSyncingService>,
         IHttpGetRequestSyncingService

@@ -3,12 +3,12 @@ using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data.Models.Web.Analytical;
-using Nozomi.Infra.Analysis.Service.Services.Interfaces;
+using Nozomi.Infra.Syncing.Services.Interfaces;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Data;
 
-namespace Nozomi.Infra.Analysis.Service.Services
+namespace Nozomi.Infra.Syncing.Services
 {
     public class ProcessAnalysedComponentService : BaseService<ProcessAnalysedComponentService, NozomiDbContext>, 
         IProcessAnalysedComponentService

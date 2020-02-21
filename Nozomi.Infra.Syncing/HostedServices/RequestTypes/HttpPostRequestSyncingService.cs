@@ -13,13 +13,13 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Nozomi.Base.BCL.Helpers.Exponent;
 using Nozomi.Data.Models.Web;
-using Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes.Interfaces;
+using Nozomi.Infra.Syncing.HostedServices.RequestTypes.Interfaces;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Service.Events.Interfaces;
 using Nozomi.Service.Services.Interfaces;
 using Nozomi.Service.Services.Requests.Interfaces;
 
-namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
+namespace Nozomi.Infra.Syncing.HostedServices.RequestTypes
 {
     public class HttpPostRequestSyncingService : BaseProcessingService<HttpPostRequestSyncingService>, 
         IHttpPostRequestSyncingService

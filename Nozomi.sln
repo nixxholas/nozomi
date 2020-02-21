@@ -23,7 +23,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nozomi.Repo.BCL", "Nozomi.R
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nozomi.Base.Socket", "Nozomi.Base.Socket\Nozomi.Base.Socket.csproj", "{A9DF23FD-3E1C-47E3-834E-6F7BF96098A1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nozomi.Infra.Analysis.Service", "Nozomi.Infra.Analysis.Service\Nozomi.Infra.Analysis.Service.csproj", "{52A95D05-B493-45F4-B914-72FC7C2C1003}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nozomi.Infra.Syncing", "Nozomi.Infra.Syncing\Nozomi.Infra.Syncing.csproj", "{52A95D05-B493-45F4-B914-72FC7C2C1003}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nozomi.Base.Admin.Domain", "Nozomi.Base.Admin.Domain\Nozomi.Base.Admin.Domain.csproj", "{50E8C1ED-BFF4-4D6B-9FE8-9969338F05E9}"
 EndProject

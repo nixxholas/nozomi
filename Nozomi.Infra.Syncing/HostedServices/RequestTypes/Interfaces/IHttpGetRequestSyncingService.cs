@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using Nozomi.Data.Models.Web;
 
-namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes.Interfaces
+namespace Nozomi.Infra.Syncing.HostedServices.RequestTypes.Interfaces
 {
     public interface IHttpGetRequestSyncingService
     {

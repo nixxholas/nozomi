@@ -12,7 +12,7 @@ using Newtonsoft.Json.Linq;
 using Nozomi.Base.BCL.Helpers.Exponent;
 using Nozomi.Data;
 using Nozomi.Data.Models.Web;
-using Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes.Interfaces;
+using Nozomi.Infra.Syncing.HostedServices.RequestTypes.Interfaces;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Service.Events.Interfaces;
 using Nozomi.Service.Services.Interfaces;
@@ -20,7 +20,7 @@ using Nozomi.Service.Services.Requests.Interfaces;
 using WebSocketSharp;
 using WebSocket = WebSocketSharp.WebSocket;
 
-namespace Nozomi.Infra.Analysis.Service.HostedServices.RequestTypes
+namespace Nozomi.Infra.Syncing.HostedServices.RequestTypes
 {
     public class WSRequestSyncingService :
         BaseProcessingService<WSRequestSyncingService>,

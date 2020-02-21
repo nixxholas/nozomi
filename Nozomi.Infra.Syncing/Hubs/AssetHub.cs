@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
-using Nozomi.Infra.Analysis.Service.Hubs.Interfaces;
+using Nozomi.Infra.Syncing.Hubs.Interfaces;
 
-namespace Nozomi.Infra.Analysis.Service.Hubs
+namespace Nozomi.Infra.Syncing.Hubs
 {
     public class AssetHub : Hub<IAssetHubClient>
     {

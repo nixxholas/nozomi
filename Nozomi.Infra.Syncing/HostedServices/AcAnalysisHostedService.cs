@@ -11,15 +11,15 @@ using Nozomi.Base.BCL.Helpers.Native.Numerals;
 using Nozomi.Data.Models.Currency;
 using Nozomi.Data.Models.Web;
 using Nozomi.Data.Models.Web.Analytical;
-using Nozomi.Infra.Analysis.Service.Events.Interfaces;
-using Nozomi.Infra.Analysis.Service.HostedServices.Interfaces;
-using Nozomi.Infra.Analysis.Service.Services.Interfaces;
+using Nozomi.Infra.Syncing.Events.Interfaces;
+using Nozomi.Infra.Syncing.HostedServices.Interfaces;
+using Nozomi.Infra.Syncing.Services.Interfaces;
 using Nozomi.Preprocessing;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Service.Events.Analysis.Interfaces;
 using Nozomi.Service.Events.Interfaces;
 
-namespace Nozomi.Infra.Analysis.Service.HostedServices
+namespace Nozomi.Infra.Syncing.HostedServices
 {
     public class AcAnalysisHostedService : BaseHostedService<AcAnalysisHostedService>,
         IAnalysisHostedService<AnalysedComponent>

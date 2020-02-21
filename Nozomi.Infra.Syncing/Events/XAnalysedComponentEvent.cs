@@ -4,13 +4,13 @@ using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data.Models.Web.Analytical;
-using Nozomi.Infra.Analysis.Service.Events.Interfaces;
+using Nozomi.Infra.Syncing.Events.Interfaces;
 using Nozomi.Preprocessing;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Data;
 
-namespace Nozomi.Infra.Analysis.Service.Events
+namespace Nozomi.Infra.Syncing.Events
 {
     public class XAnalysedComponentEvent : BaseEvent<XAnalysedComponentEvent, NozomiDbContext>, 
         IXAnalysedComponentEvent

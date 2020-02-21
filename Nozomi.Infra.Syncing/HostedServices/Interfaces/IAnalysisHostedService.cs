@@ -1,4 +1,4 @@
-namespace Nozomi.Infra.Analysis.Service.HostedServices.Interfaces
+namespace Nozomi.Infra.Syncing.HostedServices.Interfaces
 {
     public interface IAnalysisHostedService<T>
     {

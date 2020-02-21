@@ -1,4 +1,4 @@
-namespace Nozomi.Infra.Analysis.Service.Hubs.Interfaces
+namespace Nozomi.Infra.Syncing.Hubs.Interfaces
 {
     public interface IAssetHubClient
     {

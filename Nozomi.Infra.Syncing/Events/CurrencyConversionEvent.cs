@@ -6,12 +6,12 @@ using Microsoft.Extensions.Logging;
 using Nozomi.Data;
 using Nozomi.Data.Models.Currency;
 using Nozomi.Data.Models.Web.Analytical;
-using Nozomi.Infra.Analysis.Service.Events.Interfaces;
+using Nozomi.Infra.Syncing.Events.Interfaces;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Data;
 
-namespace Nozomi.Infra.Analysis.Service.Events
+namespace Nozomi.Infra.Syncing.Events
 {
     public class CurrencyConversionEvent : BaseEvent<CurrencyConversionEvent, NozomiDbContext>, 
         ICurrencyConversionEvent
