@@ -158,6 +158,42 @@ namespace Nozomi.Web2
                     }
                 }
                 
+                if (!context.Currencies.Any(c => c.Slug.Equals("eth")))
+                {
+                    var type = context.CurrencyTypes
+                        .SingleOrDefault(ct => ct.TypeShortForm.Equals("CRYPTO"));
+
+                    if (type != null)
+                    {
+                        var ethereum = new Currency
+                        {
+                            CurrencyTypeId = type.Id,
+                            LogoPath = "/assets/svg/icons/eth.svg",
+                            Abbreviation = "ETH",
+                            Slug = "eth",
+                            Name = "Ethereum"
+                        };
+
+                        context.Currencies.Add(ethereum);
+                        context.SaveChanges();
+
+                        var binanceSource = context.Sources.SingleOrDefault(s => s.Abbreviation.Equals("bn"));
+                        if (binanceSource != null && !context.CurrencySources
+                            .Any(cs => cs.CurrencyId.Equals(ethereum.Id) 
+                                       && cs.SourceId.Equals(binanceSource.Id)))
+                        {
+                            var ethereumBinanceSource = new CurrencySource
+                            {
+                                CurrencyId = ethereum.Id,
+                                SourceId = binanceSource.Id
+                            };
+
+                            context.CurrencySources.Add(ethereumBinanceSource);
+                            context.SaveChanges();
+                        }
+                    }
+                }
+                
                 // Currency Pairs
                 if (!context.CurrencyPairs // For Binance's BTCUSDT
                     .Include(cp => cp.Source)
@@ -217,6 +253,69 @@ namespace Nozomi.Web2
                         };
 
                         context.CurrencyPairs.Add(btcusdtBinance);
+                        context.SaveChanges();
+                    }
+                }
+                
+                // Currency Pairs
+                if (!context.CurrencyPairs // For Binance's BTCUSDT
+                    .Include(cp => cp.Source)
+                    .Any(cp => cp.MainTicker.Equals("ETH")
+                                                     && cp.CounterTicker.Equals("USDT")
+                                                     && cp.Source.Abbreviation.Equals("bn")))
+                {
+                    var binanceSource = context.Sources.SingleOrDefault(s => s.Abbreviation.Equals("bn"));
+
+                    if (binanceSource != null)
+                    {
+                        var ethusdtBinance = new CurrencyPair
+                        {
+                            CurrencyPairType = CurrencyPairType.TRADEABLE,
+                            DefaultComponent = "b",
+                            SourceId = binanceSource.Id,
+                            MainTicker = "ETH",
+                            CounterTicker = "USDT",
+                            AnalysedComponents = new List<AnalysedComponent>()
+                            {
+                                new AnalysedComponent
+                                {
+                                    ComponentType = AnalysedComponentType.CurrentAveragePrice,
+                                    IsDenominated = true,
+                                    Delay = 0,
+                                    UIFormatting = "$ 0[.]000"
+                                }
+                            },
+                            Requests = new List<Request>
+                            {
+                                new Request
+                                {
+                                    RequestType = RequestType.WebSocket,
+                                    ResponseType = ResponseType.Json,
+                                    DataPath = "wss://stream.binance.com:9443/ws/ethusdt@bookTicker",
+                                    Delay = 0,
+                                    FailureDelay = 10000,
+                                    RequestComponents = new List<Component>()
+                                    {
+                                        new Component
+                                        {
+                                            ComponentType = ComponentType.Bid,
+                                            // Identifier = "s=>ETHUSDT",
+                                            QueryComponent = "b",
+                                            IsDenominated = true
+                                        },
+                                        new Component
+                                        {
+                                            ComponentType = ComponentType.Ask,
+                                            // Identifier = "s=>ETHUSDT",
+                                            QueryComponent = "a",
+                                            IsDenominated = true
+                                        }
+                                    }
+                                }
+                            }
+                        };
+
+                        context.CurrencyPairs.Add(ethusdtBinance);
                         context.SaveChanges();
                     }
                 }
