@@ -41,7 +41,9 @@
                 <b-tag type="is-info">{{ props.row.guid }}</b-tag>
             </b-taglist>
             
-            <WebsocketCommandTable :show-create-feature="true" :request-guid="props.row.guid"/>
+            <!-- 50 is the hardcoded type for websockets -->
+            <WebsocketCommandTable v-if="props.row.requestType === 50"
+                                   :show-create-feature="true" :request-guid="props.row.guid"/>
             
             <RequestPropertiesTable :show-create-feature="true" :request-guid="props.row.guid"/>
             
