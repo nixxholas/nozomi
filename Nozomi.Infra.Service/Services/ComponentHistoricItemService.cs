@@ -10,9 +10,11 @@ using Nozomi.Service.Services.Interfaces;
 
 namespace Nozomi.Service.Services
 {
-    public class ComponentHistoricItemService : BaseService<ComponentHistoricItemService, NozomiDbContext>, IComponentHistoricItemService
+    public class ComponentHistoricItemService : BaseService<ComponentHistoricItemService, NozomiDbContext>, 
+        IComponentHistoricItemService
     {
-        public ComponentHistoricItemService(ILogger<ComponentHistoricItemService> logger, IUnitOfWork<NozomiDbContext> unitOfWork) 
+        public ComponentHistoricItemService(ILogger<ComponentHistoricItemService> logger, 
+        IUnitOfWork<NozomiDbContext> unitOfWork) 
             : base(logger, unitOfWork)
         {
         }
@@ -96,6 +98,29 @@ namespace Nozomi.Service.Services
             }
 
             throw new NullReferenceException("Invalid id for removal.");
+        }
+
+        public void Remove(ComponentHistoricItem componentHistoricItem, string userId = null, bool hardDelete = false)
+        {
+            if (componentHistoricItem != null)
+            {
+                if (hardDelete)
+                {
+                    _unitOfWork.GetRepository<ComponentHistoricItem>().Delete(componentHistoricItem); // Delete
+                    _unitOfWork.Commit(userId); // Save
+                    return;
+                }
+                else
+                {
+                    componentHistoricItem.DeletedAt = DateTime.UtcNow;
+                    componentHistoricItem.DeletedById = userId;
+                    _unitOfWork.GetRepository<ComponentHistoricItem>().Update(componentHistoricItem); // Save
+                    _unitOfWork.Commit(userId); // Commit
+                    return;
+                }
+            }
+
+            throw new NullReferenceException("Invalid historic item for removal.");
         }
     }
 }
