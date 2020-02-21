@@ -34,5 +34,12 @@ namespace Nozomi.Infra.Payment.Services
         {
             throw new NotImplementedException();
         }
+
+        private void PerformDisputePreCheck(Dispute dispute, string methodName) {
+            if (dispute == null)
+                throw new NullReferenceException($"{_serviceName} {methodName}: Dispute is null.");
+            if (string.IsNullOrEmpty(dispute.Charge.CustomerId))
+                throw new NullReferenceException($"{_serviceName} {methodName}: CustomerId is null.");
+        }
     }
 }
