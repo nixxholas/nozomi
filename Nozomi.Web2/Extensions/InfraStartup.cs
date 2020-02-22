@@ -43,6 +43,7 @@ namespace Nozomi.Web2.Extensions
             services.AddTransient<ISourceTypeEvent, SourceTypeEvent>();
             services.AddTransient<IWebsocketCommandEvent, WebsocketCommandEvent>();
             services.AddTransient<IWebsocketCommandPropertyEvent, WebsocketCommandPropertyEvent>();
+            services.AddTransient<ITrelloEvent, TrelloEvent>();
 
             // Services
             services.AddScoped<IAnalysedComponentService, AnalysedComponentService>();
