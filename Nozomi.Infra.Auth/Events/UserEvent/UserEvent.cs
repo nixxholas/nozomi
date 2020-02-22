@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.Eventing.Reader;
 using System.Dynamic;
 using System.Linq;
@@ -73,6 +74,14 @@ namespace Nozomi.Infra.Auth.Events.UserEvent
         public void RemovePaymentMethod(string userId, string paymentMethodId)
         {
             const string methodName = "RemovePaymentMethod";
+            const string claimType = NozomiJwtClaimTypes.StripeCustomerPaymentMethodId;
+
+            var paymentMethodClaimToRemove = GetUserClaims(userId, claimType)
+                .SingleOrDefault(claim => claim.ClaimValue.Equals(paymentMethodId));
+            
+            
+            
+            throw new NotImplementedException();
         }
 
         public void SetDefaultPaymentMethod(string userId, string paymentMethodId)
@@ -102,6 +111,11 @@ namespace Nozomi.Infra.Auth.Events.UserEvent
             return _unitOfWork.GetRepository<UserClaim>().GetQueryable().AsTracking().SingleOrDefault(claim => claim.ClaimType.Equals(claimType) && claim.UserId.Equals(userId));
         }
 
+        private IEnumerable<UserClaim> GetUserClaims(string userId, string claimType)
+        {
+            return _unitOfWork.GetRepository<UserClaim>().GetQueryable().AsTracking().Where(claim => claim.ClaimType.Equals(claimType) && claim.UserId.Equals(userId));
+        }
+
         private void CreateUserClaim(string userId, string claimType, string claimValue, string methodName)
         {
             var userClaim = new UserClaim
@@ -121,6 +135,13 @@ namespace Nozomi.Infra.Auth.Events.UserEvent
             _unitOfWork.GetRepository<UserClaim>().Update(userClaim);
             if (_unitOfWork.Commit(userId) != 1)
                 throw new InvalidOperationException($"{_eventName} {methodName}: Failed to update user claim");
+        }
+
+        private void DeleteUserClaim(string userId, UserClaim userClaim, string methodName)
+        {
+            _unitOfWork.GetRepository<UserClaim>().Delete(userClaim);
+            if(_unitOfWork.Commit(userId) != 1)
+                throw new InvalidOperationException($"{_eventName} {methodName}: Failed to delete user claim");
         }
 
     }
