@@ -32,7 +32,7 @@ namespace Nozomi.Data.Models.Web
         ///
         /// Always unique along with Expression.
         /// </summary>
-        public string ComputeId { get; set; }
+        public Guid ComputeGuid { get; set; }
         
         public Compute Compute { get; set; }
     }

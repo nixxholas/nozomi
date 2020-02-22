@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Nozomi.Base.BCL;
 
 namespace Nozomi.Data.Models.Web

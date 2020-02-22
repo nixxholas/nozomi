@@ -27,6 +27,9 @@ namespace Nozomi.Data.Models.Web
         
         public ICollection<SubCompute> ChildComputes { get; set; }
         
-        public SubCompute ParentCompute { get; set; }
+
+        public ICollection<SubCompute> ParentComputes { get; set; }
+        
+        public ICollection<ComputeValue> Values { get; set; }
     }
 }
