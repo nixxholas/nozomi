@@ -41,6 +41,7 @@ namespace Nozomi.Web2.Extensions
             services.AddTransient<ISourceEvent, SourceEvent>();
             services.AddTransient<ISourceTypeEvent, SourceTypeEvent>();
             services.AddTransient<ITickerEvent, TickerEvent>();
+            services.AddTransient<ITrelloEvent, TrelloEvent>();
 
             // Services
             services.AddScoped<IAnalysedComponentService, AnalysedComponentService>();
