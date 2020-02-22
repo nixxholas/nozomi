@@ -40,7 +40,18 @@ namespace Nozomi.Infra.Compute.Events
 
         public bool IsOutdated(Guid computeGuid)
         {
-            throw new NotImplementedException();
+            return _unitOfWork.GetRepository<ComputeValue>()
+                .GetQueryable()
+                .AsNoTracking()
+                // Ensure it tallies and is active
+                .Where(cv => cv.DeletedAt == null && cv.IsEnabled && cv.Guid.Equals(computeGuid))
+                .Include(cv => cv.Compute)
+                // Always check against the most recent
+                .OrderByDescending(cv => cv.CreatedAt)
+                .Take(1)
+                .AsEnumerable()
+                .Select(cv => cv.CreatedAt.AddMilliseconds(cv.Compute.Delay))
+                .FirstOrDefault() <= DateTime.UtcNow;
         }
     }
 }
