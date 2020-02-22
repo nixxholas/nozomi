@@ -17,7 +17,7 @@ namespace Nozomi.Infra.Compute.Events
         {
         }
 
-        public bool IsOutdated(string computeGuid)
+        public bool IsOutdated(string computeGuid, bool ignoreFailing = true)
         {
             if (Guid.TryParse(computeGuid, out var parsedGuid))
             {
@@ -27,6 +27,7 @@ namespace Nozomi.Infra.Compute.Events
                     // Ensure it tallies and is active
                     .Where(cv => cv.DeletedAt == null && cv.IsEnabled && cv.Guid.Equals(parsedGuid))
                     .Include(cv => cv.Compute)
+                    .Where(cv => !cv.Compute.IsFailing)
                     // Always check against the most recent
                     .OrderByDescending(cv => cv.CreatedAt)
                     .Take(1)
@@ -38,7 +39,7 @@ namespace Nozomi.Infra.Compute.Events
             return false;
         }
 
-        public bool IsOutdated(Guid computeGuid)
+        public bool IsOutdated(Guid computeGuid, bool ignoreFailing = true)
         {
             return _unitOfWork.GetRepository<ComputeValue>()
                 .GetQueryable()
@@ -46,6 +47,7 @@ namespace Nozomi.Infra.Compute.Events
                 // Ensure it tallies and is active
                 .Where(cv => cv.DeletedAt == null && cv.IsEnabled && cv.Guid.Equals(computeGuid))
                 .Include(cv => cv.Compute)
+                .Where(cv => !cv.Compute.IsFailing)
                 // Always check against the most recent
                 .OrderByDescending(cv => cv.CreatedAt)
                 .Take(1)
