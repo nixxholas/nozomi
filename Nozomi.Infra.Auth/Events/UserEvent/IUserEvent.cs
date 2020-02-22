@@ -8,8 +8,8 @@ namespace Nozomi.Infra.Auth.Events.UserEvent
     {
         bool HasStripe(string userId);
 
-        Task AddPaymentMethod(string userId, string paymentMethodId);
+        void AddPaymentMethod(string userId, string paymentMethodId);
 
-        Task RemovePaymentMethod(string userId, string paymentMethodId);
+        void RemovePaymentMethod(string userId, string paymentMethodId);
     }
 }
