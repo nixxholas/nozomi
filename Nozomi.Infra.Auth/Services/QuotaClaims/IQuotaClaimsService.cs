@@ -4,11 +4,10 @@ namespace Nozomi.Infra.Auth.Services.QuotaClaims
 {
     public interface IQuotaClaimsService
     {
-        bool SetQuota(Base.Auth.Models.User user, int quotaAmt);
+        void SetQuota(Base.Auth.Models.User user, int quotaAmt);
 
-        bool AddUsage(Base.Auth.Models.User user, int usageAmt = 1);
+        void AddUsage(Base.Auth.Models.User user, int usageAmt = 1);
 
-        bool RestUsage(Base.Auth.Models.User user, int usageAmt = 0);
-
+        void RestUsage(Base.Auth.Models.User user, int usageAmt = 0);
     }
 }

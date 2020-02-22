@@ -4,6 +4,7 @@ using System.Data;
 using System.Globalization;
 using System.Linq;
 using System.Net;
+using System.Reflection.Metadata;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
@@ -36,7 +37,7 @@ namespace Nozomi.Infra.Auth.Services.QuotaClaims
             _stripeEvent = stripeEvent;
         }
 
-        public bool SetQuota(Base.Auth.Models.User user, int quotaAmt)
+        public void SetQuota(Base.Auth.Models.User user, int quotaAmt)
         {
             const string methodName = "SetQuota";
             const string claimType = NozomiJwtClaimTypes.UserQuota;
@@ -46,14 +47,16 @@ namespace Nozomi.Infra.Auth.Services.QuotaClaims
             
             if (quotaClaim == null)
             {
-                return CreateUserClaim(user, claimType, quotaAmt.ToString());
+                CreateUserClaim(user, claimType, quotaAmt.ToString(), methodName);
             }
-            
-            quotaClaim.ClaimValue = quotaAmt.ToString();
-            return UpdateUserClaim(user, quotaClaim);
+            else
+            {
+                quotaClaim.ClaimValue = quotaAmt.ToString();
+                UpdateUserClaim(user, quotaClaim, methodName);
+            }
         }
 
-        public bool AddUsage(Base.Auth.Models.User user, int usageAmt = 1)
+        public void AddUsage(Base.Auth.Models.User user, int usageAmt = 1)
         {
             const string methodName = "AddUsage";
             const string claimType = NozomiJwtClaimTypes.UserUsage;
@@ -63,16 +66,18 @@ namespace Nozomi.Infra.Auth.Services.QuotaClaims
 
             if (usageClaim == null)
             {
-                return CreateUserClaim(user, claimType, usageAmt.ToString());
+                CreateUserClaim(user, claimType, usageAmt.ToString(), methodName);
             }
+            else
+            {
+                var updatedUsage = ParseStringToInt(usageClaim.ClaimValue, methodName) + usageAmt;
+                usageClaim.ClaimValue = updatedUsage.ToString();
 
-            var updatedUsage = ParseStringToInt(usageClaim.ClaimValue, methodName) + usageAmt;
-            usageClaim.ClaimValue = updatedUsage.ToString();
-
-            return UpdateUserClaim(user, usageClaim);
+                UpdateUserClaim(user, usageClaim, methodName);
+            }
         }
 
-        public bool RestUsage(Base.Auth.Models.User user, int usageAmt = 0)
+        public void RestUsage(Base.Auth.Models.User user, int usageAmt = 0)
         {
             const string methodName = "ResetUsage";
             const string claimType = NozomiJwtClaimTypes.UserUsage;
@@ -82,11 +87,13 @@ namespace Nozomi.Infra.Auth.Services.QuotaClaims
             
             if (usageClaim == null)
             {
-                return CreateUserClaim(user, claimType, usageAmt.ToString());
+                CreateUserClaim(user, claimType, usageAmt.ToString(), methodName);
             }
-
-            usageClaim.ClaimValue = usageAmt.ToString();
-            return UpdateUserClaim(user, usageClaim);
+            else
+            {
+                usageClaim.ClaimValue = usageAmt.ToString();
+                UpdateUserClaim(user, usageClaim, methodName);
+            }
         }
 
         private void PerformUserPrecheck(Base.Auth.Models.User user, string methodName)
@@ -100,7 +107,7 @@ namespace Nozomi.Infra.Auth.Services.QuotaClaims
             return _unitOfWork.GetRepository<UserClaim>().GetQueryable().AsTracking().SingleOrDefault(claim => claim.ClaimType.Equals(claimType) && claim.UserId.Equals(userId));
         }
 
-        private bool CreateUserClaim(Base.Auth.Models.User user, string claimType, string claimValue)
+        private void CreateUserClaim(Base.Auth.Models.User user, string claimType, string claimValue, string methodName)
         {
             var userClaim = new UserClaim
             {
@@ -110,13 +117,15 @@ namespace Nozomi.Infra.Auth.Services.QuotaClaims
             };
             
             _unitOfWork.GetRepository<UserClaim>().Add(userClaim);
-            return (_unitOfWork.Commit(user.Id) == 1);
+            if(_unitOfWork.Commit(user.Id) != 1)
+                throw new InvalidOperationException($"{_serviceName} {methodName}: Failed to create user claim");
         }
 
-        private bool UpdateUserClaim(Base.Auth.Models.User user, UserClaim userClaim)
+        private void UpdateUserClaim(Base.Auth.Models.User user, UserClaim userClaim, string methodName)
         {
             _unitOfWork.GetRepository<UserClaim>().Update(userClaim);
-            return (_unitOfWork.Commit(user.Id) == 1);
+            if (_unitOfWork.Commit(user.Id) != 1)
+                throw new InvalidOperationException($"{_serviceName} {methodName}: Failed to update user claim");
         }
 
         private int ParseStringToInt(string value, string methodName)
@@ -124,7 +133,7 @@ namespace Nozomi.Infra.Auth.Services.QuotaClaims
             var parseSuccess = int.TryParse(value, out var parsedValue);
             
             if(!parseSuccess)
-                throw new InvalidOperationException($"{_serviceName} {methodName}: Error parsing {value} to int");
+                throw new InvalidCastException($"{_serviceName} {methodName}: Error parsing {value} to int");
 
             return parsedValue;
         }
