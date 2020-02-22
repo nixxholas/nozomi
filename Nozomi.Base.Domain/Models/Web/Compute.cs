@@ -31,7 +31,7 @@ namespace Nozomi.Data.Models.Web
         /// <summary>
         /// Tells us if the compute is failing its computation or not.
         /// </summary>
-        public bool IsFailing { get; set; }
+        public int FailCount { get; set; }
         
         public ICollection<ComputeExpression> Expressions { get; set; }
         
