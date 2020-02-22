@@ -54,9 +54,18 @@ namespace Nozomi.Infra.Payment.Services.Bootstripe
             return;
         }
 
-        public Task AddPaymentMethod(string paymentMethodId, User user)
+        public async Task AddPaymentMethod(string paymentMethodId, User user)
         {
-            throw new System.NotImplementedException();
+            const string methodName = "AddPaymentMethod";
+            PerformUserPrecheck(user, methodName);
+            
+            if(string.IsNullOrEmpty(paymentMethodId))
+                throw new NullReferenceException($"{_serviceName} {methodName}: Payment method id is null");
+            
+            if(!_userService.HasStripe(user.Id))
+                throw new InvalidOperationException($"{_serviceName} {methodName}: User is not registered for stripe.");
+
+            return;
         }
 
         public Task RemovePaymentMethod(string paymentMethodId, User user)
