@@ -1,9 +1,9 @@
 ﻿using System.Threading.Tasks;
 using Nozomi.Base.Auth.Models;
 
-namespace Nozomi.Infra.Payment.Services.Customer
+namespace Nozomi.Infra.Payment.Services.Bootstripe
 {
-    public interface ICustomerService
+    public interface IBootstripeService
     {
         Task RegisterCustomer(User user);
         
