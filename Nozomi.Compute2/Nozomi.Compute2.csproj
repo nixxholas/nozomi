@@ -8,4 +8,8 @@
       <ProjectReference Include="..\Nozomi.Infra.Compute\Nozomi.Infra.Compute.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="VaultSharp" Version="0.11.1002" />
+    </ItemGroup>
+
 </Project>

@@ -6,6 +6,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Nozomi.Infra.Syncing\Nozomi.Infra.Syncing.csproj" />
+      <ProjectReference Include="..\Nozomi.Repo.Compute\Nozomi.Repo.Compute.csproj" />
     </ItemGroup>
 
 </Project>
