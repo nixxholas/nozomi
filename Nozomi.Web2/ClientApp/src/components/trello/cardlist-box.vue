@@ -15,7 +15,7 @@
                                 <strong>{{ card.name }}</strong> 
                                 <small> @ {{ FormatDate(card.dateLastActivity) }}</small>
                                 <br />
-                                <div v-html="ReplaceBreakWithBR(card.desc)"></div>
+                                <span v-html="ReplaceBreakWithBR(card.desc)"></span>
                                 
                             </p>
                         </div>
