@@ -11,6 +11,7 @@
 
   <ItemGroup>
     <Folder Include="Events\" />
+    <Folder Include="Events\Interfaces" />
   </ItemGroup>
 
 </Project>
