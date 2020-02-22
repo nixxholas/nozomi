@@ -6,7 +6,7 @@ namespace Nozomi.Infra.Auth.Services.QuotaClaims
     {
         bool SetQuota(Base.Auth.Models.User user, int quotaAmt);
 
-        bool AddUsage(Base.Auth.Models.User user, int usageAmt);
+        bool AddUsage(Base.Auth.Models.User user, int usageAmt = 1);
 
         bool RestUsage(Base.Auth.Models.User user, int usageAmt = 0);
 

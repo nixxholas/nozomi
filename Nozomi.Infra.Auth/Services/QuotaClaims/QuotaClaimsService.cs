@@ -53,7 +53,7 @@ namespace Nozomi.Infra.Auth.Services.QuotaClaims
             return UpdateUserClaim(user, quotaClaim);
         }
 
-        public bool AddUsage(Base.Auth.Models.User user, int usageAmt)
+        public bool AddUsage(Base.Auth.Models.User user, int usageAmt = 1)
         {
             throw new NotImplementedException();
         }
