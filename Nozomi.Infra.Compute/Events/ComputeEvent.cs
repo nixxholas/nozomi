@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Nozomi.Data.Models.Web;
 using Nozomi.Infra.Compute.Events.Interfaces;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.BCL.Repository;
@@ -66,7 +67,23 @@ namespace Nozomi.Infra.Compute.Events
         public IEnumerable<Data.Models.Web.Compute> GetByParent(Guid parentGuid, bool includeChildren = false, 
             bool ensureNotDeletedOrDisabled = true)
         {
-            throw new NotImplementedException();
+            var query = _unitOfWork.GetRepository<SubCompute>()
+                .GetQueryable()
+                .Include(sc => sc.ParentCompute)
+                .Where(c => c.ParentComputeGuid.Equals(parentGuid));
+
+            if (ensureNotDeletedOrDisabled)
+                query = query.Where(c => c.DeletedAt == null && c.IsEnabled);
+
+            if (includeChildren)
+                query = query.Include(sc => sc.ParentCompute)
+                    .ThenInclude(pc => pc.ChildComputes)
+                    .ThenInclude(cc => cc.ChildCompute)
+                    .Include(sc => sc.ParentCompute)
+                    .ThenInclude(pc => pc.ParentComputes)
+                    .ThenInclude(pc => pc.ParentCompute);
+
+            return query.Select(sc => sc.ParentCompute);
         }
 
         public IEnumerable<Data.Models.Web.Compute> GetByParent(string parentGuid, bool includeChildren = false, 
