@@ -28,6 +28,11 @@ namespace Nozomi.Data.Models.Web
         /// </summary>
         public int Delay { get; set; }
         
+        /// <summary>
+        /// Tells us if the compute is failing its computation or not.
+        /// </summary>
+        public bool IsFailing { get; set; }
+        
         public ICollection<ComputeExpression> Expressions { get; set; }
         
         public ICollection<SubCompute> ChildComputes { get; set; }
