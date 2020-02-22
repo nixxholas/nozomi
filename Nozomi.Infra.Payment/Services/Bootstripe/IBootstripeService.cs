@@ -10,6 +10,7 @@ namespace Nozomi.Infra.Payment.Services.Bootstripe
         Task AddPaymentMethod(string paymentMethodId, User user);
         
         Task RemovePaymentMethod(string paymentMethodId, User user);
+        Task SetDefaultPaymentMethod(string paymentMethodId, User user);
         
         Task Subscribe(string planId, User user);
         

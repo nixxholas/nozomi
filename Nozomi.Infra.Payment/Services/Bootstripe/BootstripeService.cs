@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Nozomi.Base.Auth.Models;
 using Nozomi.Infra.Auth.Events.Stripe;
+using Nozomi.Infra.Auth.Events.UserEvent;
 using Nozomi.Infra.Auth.Services.User;
 using Nozomi.Preprocessing.Abstracts;
 using Stripe;
@@ -14,13 +15,18 @@ namespace Nozomi.Infra.Payment.Services.Bootstripe
     {
         private readonly IUserService _userService;
         private readonly IStripeEvent _stripeEvent;
-        private readonly CustomerService _customerService;
+        private readonly IUserEvent _userEvent;
         
-        public BootstripeService(ILogger<BootstripeService> logger, IUserService userService, IStripeEvent stripeEvent) : base(logger)
+        private readonly CustomerService _customerService;
+        private readonly PaymentMethodService _paymentMethodService;
+        
+        public BootstripeService(ILogger<BootstripeService> logger, IUserService userService, IUserEvent userEvent, IStripeEvent stripeEvent) : base(logger)
         {
             _userService = userService;
+            _userEvent = userEvent;
             _stripeEvent = stripeEvent;
             _customerService = new CustomerService();
+            _paymentMethodService = new PaymentMethodService();
         }
 
         public async Task RegisterCustomer(User user)
@@ -65,12 +71,33 @@ namespace Nozomi.Infra.Payment.Services.Bootstripe
             if(!_userService.HasStripe(user.Id))
                 throw new InvalidOperationException($"{_serviceName} {methodName}: User is not registered for stripe.");
 
+            var paymentMethod = await _paymentMethodService.GetAsync(paymentMethodId);
+
+            var stripeCustomerId = _userEvent.GetStripeCustomerId(user.Id);
+            
+            if(string.IsNullOrEmpty(stripeCustomerId))
+                throw new InvalidOperationException($"{_serviceName} {methodName}: An error occured while trying to retrieve stripe customer id.");
+            
+            if(!paymentMethod.CustomerId.Equals(stripeCustomerId))
+                throw new InvalidOperationException($"{_serviceName} {methodName}: Payment method does not belong to customer.");
+            
+            _userService.AddPaymentMethod(user.Id, paymentMethodId);
+
+            if (_userEvent.HasDefaultPaymentMethod(user.Id))
+                return;
+            //TODO: SET DEFAULT PAYMENT
             return;
         }
 
         public Task RemovePaymentMethod(string paymentMethodId, User user)
         {
             throw new System.NotImplementedException();
+        }
+
+        public Task SetDefaultPaymentMethod(string paymentMethodId, User user)
+        {
+            //TODO: IMPLEMENTATION
+            throw new NotImplementedException();
         }
 
         public Task Subscribe(string planId, User user)
