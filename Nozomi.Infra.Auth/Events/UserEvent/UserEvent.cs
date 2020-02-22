@@ -67,8 +67,6 @@ namespace Nozomi.Infra.Auth.Events.UserEvent
                 throw new NullReferenceException($"{_eventName} {methodName}: Payment method id is null.");
 
             CreateUserClaim(userId, claimType, paymentMethodId, methodName);
-            
-            //TODO: SET AS DEFAULT PAYMENT METHOD
         }
 
         public void RemovePaymentMethod(string userId, string paymentMethodId)
