@@ -18,6 +18,8 @@ namespace Nozomi.Data.Models.Web
         ///
         /// Could be [123129389] or [asdjkfn-dsafja]
         /// Basically the key of the value.
+        ///
+        /// EXPRESSION HAS TO MATCH IN THE FORMULA!!!! Without the '[]'
         /// </summary>
         public string Expression { get; set; }
         
