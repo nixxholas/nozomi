@@ -38,8 +38,8 @@ namespace Nozomi.Infra.Auth.Services.QuotaClaims
 
         public bool SetQuota(Base.Auth.Models.User user, int quotaAmt)
         {
-            var methodName = "SetQuota";
-            var claimType = NozomiJwtClaimTypes.UserQuota;
+            const string methodName = "SetQuota";
+            const string claimType = NozomiJwtClaimTypes.UserQuota;
             PerformUserPrecheck(user, methodName);
 
             var quotaClaim = GetUserClaim(user.Id, claimType);
@@ -55,7 +55,21 @@ namespace Nozomi.Infra.Auth.Services.QuotaClaims
 
         public bool AddUsage(Base.Auth.Models.User user, int usageAmt = 1)
         {
-            throw new NotImplementedException();
+            const string methodName = "AddUsage";
+            const string claimType = NozomiJwtClaimTypes.UserUsage;
+            PerformUserPrecheck(user,methodName);
+
+            var usageClaim = GetUserClaim(user.Id, claimType);
+
+            if (usageClaim == null)
+            {
+                return CreateUserClaim(user, claimType, usageAmt.ToString());
+            }
+
+            var updatedUsage = ParseStringToInt(usageClaim.ClaimValue, methodName) + usageAmt;
+            usageClaim.ClaimValue = updatedUsage.ToString();
+
+            return UpdateUserClaim(user, usageClaim);
         }
 
         public bool RestUsage(Base.Auth.Models.User user, int usageAmt = 0)
@@ -93,6 +107,15 @@ namespace Nozomi.Infra.Auth.Services.QuotaClaims
             return (_unitOfWork.Commit(user.Id) == 1);
         }
 
+        private int ParseStringToInt(string value, string methodName)
+        {
+            var parseSuccess = int.TryParse(value, out var parsedValue);
+            
+            if(!parseSuccess)
+                throw new InvalidOperationException($"{_serviceName} {methodName}: Error parsing {value} to int");
+
+            return parsedValue;
+        }
 
     }
 }
