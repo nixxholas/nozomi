@@ -17,7 +17,8 @@ namespace Nozomi.Infra.Compute.Events
         {
         }
 
-        public Data.Models.Web.Compute Get(Guid guid, bool includeChildren = false)
+        public Data.Models.Web.Compute Get(Guid guid, bool includeChildren = false, 
+            bool ensureNotDeletedOrDisabled = true)
         {
             var query = _unitOfWork.GetRepository<Data.Models.Web.Compute>()
                 .GetQueryable()
@@ -33,17 +34,20 @@ namespace Nozomi.Infra.Compute.Events
             return query.SingleOrDefault();
         }
 
-        public Data.Models.Web.Compute Get(string guid, bool includeChildren = false)
+        public Data.Models.Web.Compute Get(string guid, bool includeChildren = false, 
+            bool ensureNotDeletedOrDisabled = true)
         {
             throw new NotImplementedException();
         }
 
-        public IEnumerable<Data.Models.Web.Compute> GetByParent(Guid parentGuid, bool includeChildren = false)
+        public IEnumerable<Data.Models.Web.Compute> GetByParent(Guid parentGuid, bool includeChildren = false, 
+            bool ensureNotDeletedOrDisabled = true)
         {
             throw new NotImplementedException();
         }
 
-        public IEnumerable<Data.Models.Web.Compute> GetByParent(string parentGuid, bool includeChildren = false)
+        public IEnumerable<Data.Models.Web.Compute> GetByParent(string parentGuid, bool includeChildren = false, 
+            bool ensureNotDeletedOrDisabled = true)
         {
             throw new NotImplementedException();
         }
