@@ -10,10 +10,6 @@ namespace Nozomi.Infra.Auth.Events.UserEvent
 
         bool HasDefaultPaymentMethod(string userId);
 
-        void AddPaymentMethod(string userId, string paymentMethodId);
 
-        void RemovePaymentMethod(string userId, string paymentMethodId);
-
-        void SetDefaultPaymentMethod(string userId, string paymentMethodId);
     }
 }

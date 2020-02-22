@@ -10,5 +10,11 @@ namespace Nozomi.Infra.Auth.Services.User
         Task LinkStripe(string stripeCustId, string userId);
         
         Task Update(UpdateUserInputModel vm, string userId);
+        
+        void AddPaymentMethod(string userId, string paymentMethodId);
+
+        void RemovePaymentMethod(string userId, string paymentMethodId);
+
+        void SetDefaultPaymentMethod(string userId, string paymentMethodId);
     }
 }

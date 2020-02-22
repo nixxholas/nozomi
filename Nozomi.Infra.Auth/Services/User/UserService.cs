@@ -223,5 +223,90 @@ namespace Nozomi.Infra.Auth.Services.User
             
             throw new ArgumentNullException("Invalid input/s from UpdateUserInputModel.");
         }
+        
+        public void AddPaymentMethod(string userId, string paymentMethodId)
+        {
+            const string methodName = "AddPaymentMethod";
+            const string claimType = NozomiJwtClaimTypes.StripeCustomerPaymentMethodId;
+            
+            if(string.IsNullOrEmpty(userId))
+                throw new NullReferenceException($"{_serviceName} {methodName}: user Id is null.");
+            
+            if(string.IsNullOrEmpty(paymentMethodId))
+                throw new NullReferenceException($"{_serviceName} {methodName}: Payment method id is null.");
+
+            CreateUserClaim(userId, claimType, paymentMethodId, methodName);
+        }
+
+        public void RemovePaymentMethod(string userId, string paymentMethodId)
+        {
+            const string methodName = "RemovePaymentMethod";
+            const string claimType = NozomiJwtClaimTypes.StripeCustomerPaymentMethodId;
+
+            var paymentMethodClaimToRemove = GetUserClaims(userId, claimType)
+                .SingleOrDefault(claim => claim.ClaimValue.Equals(paymentMethodId));
+            
+            DeleteUserClaim(userId, paymentMethodClaimToRemove, methodName);
+        }
+
+        public void SetDefaultPaymentMethod(string userId, string paymentMethodId)
+        {
+            const string methodName = "SetDefaultPaymentMethod";
+            const string claimType = NozomiJwtClaimTypes.StripeCustomerDefaultPaymentId;
+            if(string.IsNullOrEmpty(userId))
+                throw new ArgumentNullException($"{_serviceName} {methodName}: User Id is null.");
+            if(string.IsNullOrEmpty(paymentMethodId))
+                throw  new ArgumentNullException($"{_serviceName} {methodName}: Payment Method Id is null.");
+
+            var defaultPaymentMethodClaim = GetUserClaim(userId, claimType);
+
+            if (defaultPaymentMethodClaim == null)
+            {
+                CreateUserClaim(userId, claimType,paymentMethodId,methodName);
+            }
+            else
+            {
+                defaultPaymentMethodClaim.ClaimValue = paymentMethodId;
+                UpdateUserClaim(userId, defaultPaymentMethodClaim,methodName);
+            }
+        }
+        
+        private UserClaim GetUserClaim(string userId, string claimType)
+        {
+            return _unitOfWork.GetRepository<UserClaim>().GetQueryable().AsTracking().SingleOrDefault(claim => claim.ClaimType.Equals(claimType) && claim.UserId.Equals(userId));
+        }
+
+        private IEnumerable<UserClaim> GetUserClaims(string userId, string claimType)
+        {
+            return _unitOfWork.GetRepository<UserClaim>().GetQueryable().AsTracking().Where(claim => claim.ClaimType.Equals(claimType) && claim.UserId.Equals(userId));
+        }
+
+        private void CreateUserClaim(string userId, string claimType, string claimValue, string methodName)
+        {
+            var userClaim = new UserClaim
+            {
+                ClaimType = claimType,
+                ClaimValue = claimValue,
+                UserId = userId
+            };
+            
+            _unitOfWork.GetRepository<UserClaim>().Add(userClaim);
+            if(_unitOfWork.Commit(userId) != 1)
+                throw new InvalidOperationException($"{_serviceName} {methodName}: Failed to create user claim");
+        }
+
+        private void UpdateUserClaim(string userId, UserClaim userClaim, string methodName)
+        {
+            _unitOfWork.GetRepository<UserClaim>().Update(userClaim);
+            if (_unitOfWork.Commit(userId) != 1)
+                throw new InvalidOperationException($"{_serviceName} {methodName}: Failed to update user claim");
+        }
+
+        private void DeleteUserClaim(string userId, UserClaim userClaim, string methodName)
+        {
+            _unitOfWork.GetRepository<UserClaim>().Delete(userClaim);
+            if(_unitOfWork.Commit(userId) != 1)
+                throw new InvalidOperationException($"{_serviceName} {methodName}: Failed to delete user claim");
+        }
     }
 }
