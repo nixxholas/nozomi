@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Diagnostics.Eventing.Reader;
 using System.Dynamic;
 using System.Linq;
@@ -55,7 +56,26 @@ namespace Nozomi.Infra.Auth.Events.UserEvent
                                                && u.UserClaims.Any(uc => uc.ClaimType.Equals(NozomiJwtClaimTypes.StripeCustomerDefaultPaymentId)));
         }
 
-        
+        public string GetStripeCustomerId(string userId)
+        {
+            const string methodName = "GetStripeCustomerId";
+            const string claimType = NozomiJwtClaimTypes.StripeCustomerId;
+            if (string.IsNullOrEmpty(userId))
+                throw new ArgumentNullException($"{_eventName} {methodName}: Invalid userId.");
 
+            var claim = GetUserClaim(userId, claimType);
+
+            return claim?.ClaimValue;
+        }
+        
+        private UserClaim GetUserClaim(string userId, string claimType)
+        {
+            return _unitOfWork.GetRepository<UserClaim>().GetQueryable().AsTracking().SingleOrDefault(claim => claim.ClaimType.Equals(claimType) && claim.UserId.Equals(userId));
+        }
+
+        private IEnumerable<UserClaim> GetUserClaims(string userId, string claimType)
+        {
+            return _unitOfWork.GetRepository<UserClaim>().GetQueryable().AsTracking().Where(claim => claim.ClaimType.Equals(claimType) && claim.UserId.Equals(userId));
+        }
     }
 }

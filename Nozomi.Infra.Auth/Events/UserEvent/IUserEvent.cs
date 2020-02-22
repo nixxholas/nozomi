@@ -10,6 +10,6 @@ namespace Nozomi.Infra.Auth.Events.UserEvent
 
         bool HasDefaultPaymentMethod(string userId);
 
-
+        string GetStripeCustomerId(string userId);
     }
 }
