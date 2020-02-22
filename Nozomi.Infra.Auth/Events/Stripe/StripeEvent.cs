@@ -240,7 +240,7 @@ namespace Nozomi.Infra.Auth.Events.Stripe
             throw new NullReferenceException($"{_eventName} plans: Unable to load, Product is not configured.");
         }
 
-        public async Task<User> GetUserByCustomerId(string id)
+        public async Task<Base.Auth.Models.User> GetUserByCustomerId(string id)
         {
             if (string.IsNullOrEmpty(id))
                 throw new NullReferenceException($"{_eventName} GetUserByCustomerId: Customer Id is null.");
