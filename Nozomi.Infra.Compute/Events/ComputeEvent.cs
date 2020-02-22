@@ -24,6 +24,9 @@ namespace Nozomi.Infra.Compute.Events
                 .GetQueryable()
                 .Where(c => c.Guid.Equals(guid));
 
+            if (ensureNotDeletedOrDisabled)
+                query = query.Where(c => c.DeletedAt == null && c.IsEnabled);
+
             if (includeChildren)
                 query = query.Include(c => c.Expressions)
                     .Include(c => c.ParentComputes)
