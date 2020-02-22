@@ -1,7 +1,10 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Nozomi.Infra.Compute.Abstracts;
+using Nozomi.Infra.Compute.Events.Interfaces;
 
 namespace Nozomi.Infra.Compute.HostedServices
 {
@@ -11,9 +14,25 @@ namespace Nozomi.Infra.Compute.HostedServices
         {
         }
 
-        protected override Task ExecuteAsync(CancellationToken stoppingToken)
+        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            throw new NotImplementedException();
+            _logger.LogInformation($"{_computeServiceName} is starting.");
+
+            stoppingToken.Register(() => _logger.LogInformation($"{_computeServiceName} is stopping."));
+
+            while (!stoppingToken.IsCancellationRequested)
+            {
+                // Initialize an event like that
+                var computeEvent = _scope.ServiceProvider.GetRequiredService<IComputeEvent>();
+                
+                // Execute!
+                ExecuteComputation(computeEvent.GetMostOutdated(true));
+
+                // Delay deliberately
+                await Task.Delay(1, stoppingToken);
+            }
+
+            _logger.LogWarning($"{_computeServiceName} background task is stopping.");
         }
     }
 }

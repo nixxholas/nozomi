@@ -13,5 +13,14 @@ namespace Nozomi.Infra.Compute.Abstracts
         {
             _computeServiceName = typeof(T).FullName;
         }
+
+        /// <summary>
+        /// Executes the computation via the Expression engine.
+        /// </summary>
+        /// <param name="compute">The most parent compute.</param>
+        protected void ExecuteComputation(Data.Models.Web.Compute compute)
+        {
+            
+        }
     }
 }
