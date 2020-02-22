@@ -23,6 +23,11 @@ namespace Nozomi.Data.Models.Web
         /// </summary>
         public string Formula { get; set; }
         
+        /// <summary>
+        /// Time of the delay between each compute.
+        /// </summary>
+        public int Delay { get; set; }
+        
         public ICollection<ComputeExpression> Expressions { get; set; }
         
         public ICollection<SubCompute> ChildComputes { get; set; }

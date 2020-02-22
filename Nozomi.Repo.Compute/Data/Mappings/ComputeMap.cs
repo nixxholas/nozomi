@@ -13,6 +13,7 @@ namespace Nozomi.Repo.Compute.Data.Mappings
 
             entityTypeBuilder.Property(e => e.Key).IsRequired(false);
             entityTypeBuilder.Property(e => e.Formula).IsRequired();
+            entityTypeBuilder.Property(e => e.Delay).HasDefaultValue(5000).IsRequired();
 
             entityTypeBuilder.HasMany(e => e.Expressions)
                 .WithOne(exp => exp.Compute)
