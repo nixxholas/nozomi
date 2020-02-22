@@ -42,7 +42,7 @@ namespace Nozomi.Infra.Auth.Services.QuotaClaims
             var claimType = NozomiJwtClaimTypes.UserQuota;
             PerformUserPrecheck(user, methodName);
 
-            var quotaClaim = GetUserClaim(user.Id, NozomiJwtClaimTypes.UserQuota);
+            var quotaClaim = GetUserClaim(user.Id, claimType);
             
             if (quotaClaim == null)
             {
