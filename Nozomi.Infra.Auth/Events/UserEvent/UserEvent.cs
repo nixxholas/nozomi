@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.Eventing.Reader;
 using System.Dynamic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -37,6 +38,21 @@ namespace Nozomi.Infra.Auth.Events.UserEvent
                     && u.UserClaims.Any(uc => uc.ClaimType.Equals(NozomiJwtClaimTypes.StripeCustomerId)));
         }
 
+        public bool HasDefaultPaymentMethod(string userId)
+        {
+            const string methodName = "HasDefaultPaymentMethod";
+            if(string.IsNullOrEmpty(userId))
+                throw new ArgumentNullException($"{_eventName} {methodName}: Invalid userId.");
+            
+            return _unitOfWork.GetRepository<Base.Auth.Models.User>()
+                .GetQueryable()
+                .AsNoTracking()
+                .Where(u => u.Id.Equals(userId))
+                .Include(u => u.UserClaims)
+                .Any(u => u.UserClaims != null && u.UserClaims.Count > 0
+                                               && u.UserClaims.Any(uc => uc.ClaimType.Equals(NozomiJwtClaimTypes.StripeCustomerDefaultPaymentId)));
+        }
+
         public void AddPaymentMethod(string userId, string paymentMethodId)
         {
             const string methodName = "AddPaymentMethod";
@@ -49,11 +65,13 @@ namespace Nozomi.Infra.Auth.Events.UserEvent
                 throw new NullReferenceException($"{_eventName} {methodName}: Payment method id is null.");
 
             CreateUserClaim(userId, claimType, paymentMethodId, methodName);
+            
+            //TODO: SET AS DEFAULT PAYMENT METHOD
         }
 
         public void RemovePaymentMethod(string userId, string paymentMethodId)
         {
-            throw new System.NotImplementedException();
+            const string methodName = "RemovePaymentMethod";
         }
         
         private void CreateUserClaim(string userId, string claimType, string claimValue, string methodName)
