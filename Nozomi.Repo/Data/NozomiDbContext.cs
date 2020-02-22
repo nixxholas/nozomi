@@ -22,6 +22,9 @@ namespace Nozomi.Repo.Data
         public DbSet<AnalysedComponent> AnalysedComponents { get; set; }
         public DbSet<AnalysedHistoricItem> AnalysedHistoricItems { get; set; }
         public DbSet<ComponentType> ComponentTypes { get; set; }
+        public DbSet<Compute> Computes { get; set; }
+        public DbSet<ComputeExpression> ComputeExpressions { get; set; }
+        public DbSet<ComputeValue> ComputeValues { get; set; }
         public DbSet<Currency> Currencies { get; set; }
         public DbSet<CurrencyPair> CurrencyPairs { get; set; }
         public DbSet<CurrencyType> CurrencyTypes { get; set; }
@@ -32,6 +35,7 @@ namespace Nozomi.Repo.Data
         public DbSet<RequestProperty> RequestProperties { get; set; }
         public DbSet<Source> Sources { get; set; }
         public DbSet<SourceType> SourceTypes { get; set; }
+        public DbSet<SubCompute> SubComputes { get; set; }
         public DbSet<WebsocketCommand> WebsocketCommands { get; set; }
         public DbSet<WebsocketCommandProperty> WebsocketCommandProperties { get; set; }
         
@@ -59,6 +63,15 @@ namespace Nozomi.Repo.Data
 
             var componentTypeMap = new ComponentTypeMap(modelBuilder.Entity<ComponentType>());
             modelBuilder.Entity<ComponentType>().UseXminAsConcurrencyToken();
+
+            var computeMap = new ComputeMap(modelBuilder.Entity<Compute>());
+            modelBuilder.Entity<Compute>().UseXminAsConcurrencyToken();
+
+            var computeExpressionMap = new ComputeExpressionMap(modelBuilder.Entity<ComputeExpression>());
+            modelBuilder.Entity<ComputeExpression>().UseXminAsConcurrencyToken();
+
+            var computeValueMap = new ComputeValueMap(modelBuilder.Entity<ComputeValue>());
+            modelBuilder.Entity<ComputeValue>().UseXminAsConcurrencyToken();
 
             var currencyMap = new CurrencyMap(modelBuilder.Entity<Currency>());
             modelBuilder.Entity<Currency>().UseXminAsConcurrencyToken();
@@ -92,6 +105,9 @@ namespace Nozomi.Repo.Data
 
             var sourceTypeMap = new SourceTypeMap(modelBuilder.Entity<SourceType>());
             modelBuilder.Entity<SourceType>().UseXminAsConcurrencyToken();
+
+            var subComputeMap = new SubComputeMap(modelBuilder.Entity<SubCompute>());
+            modelBuilder.Entity<SubCompute>().UseXminAsConcurrencyToken();
 
             // MTM
             var currencySourceMap = new CurrencySourceMap(modelBuilder.Entity<CurrencySource>());
