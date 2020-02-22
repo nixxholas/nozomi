@@ -91,7 +91,7 @@
                 },
                 
                 FormatDate(dateString) {
-                    return Date(dateString).toLocaleDateString();
+                    return (new Date(dateString)).toLocaleDateString();
                 }
             }
         }
