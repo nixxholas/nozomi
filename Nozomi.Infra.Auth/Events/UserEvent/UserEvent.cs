@@ -73,7 +73,12 @@ namespace Nozomi.Infra.Auth.Events.UserEvent
         {
             const string methodName = "RemovePaymentMethod";
         }
-        
+
+        public void SetDefaultPaymentMethod(string userId, string paymentMethodId)
+        {
+            throw new NotImplementedException();
+        }
+
         private void CreateUserClaim(string userId, string claimType, string claimValue, string methodName)
         {
             var userClaim = new UserClaim
