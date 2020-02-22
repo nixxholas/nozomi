@@ -89,7 +89,29 @@ namespace Nozomi.Infra.Compute.Events
         public IEnumerable<Data.Models.Web.Compute> GetByParent(string parentGuid, bool includeChildren = false, 
             bool ensureNotDeletedOrDisabled = true)
         {
-            throw new NotImplementedException();
+            if (!Guid.TryParse(parentGuid, out var parsedGuid))
+            {
+                _logger.LogWarning($"{_eventName} GetByParent (string): Invalid guid.");
+                return null;
+            }
+            
+            var query = _unitOfWork.GetRepository<SubCompute>()
+                .GetQueryable()
+                .Include(sc => sc.ParentCompute)
+                .Where(c => c.ParentComputeGuid.Equals(parsedGuid));
+
+            if (ensureNotDeletedOrDisabled)
+                query = query.Where(c => c.DeletedAt == null && c.IsEnabled);
+
+            if (includeChildren)
+                query = query.Include(sc => sc.ParentCompute)
+                    .ThenInclude(pc => pc.ChildComputes)
+                    .ThenInclude(cc => cc.ChildCompute)
+                    .Include(sc => sc.ParentCompute)
+                    .ThenInclude(pc => pc.ParentComputes)
+                    .ThenInclude(pc => pc.ParentCompute);
+
+            return query.Select(sc => sc.ParentCompute);
         }
     }
 }
