@@ -14,5 +14,7 @@ namespace Nozomi.Infra.Compute.Events.Interfaces
 
         IEnumerable<Data.Models.Web.Compute> GetByParent(string parentGuid, bool includeChildren = false, 
             bool ensureNotDeletedOrDisabled = true);
+
+        Data.Models.Web.Compute GetMostOutdated(bool includeChildren = false, bool ensureNotDeletedOrDisabled = true);
     }
 }
