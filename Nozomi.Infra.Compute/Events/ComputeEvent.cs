@@ -7,13 +7,14 @@ using Nozomi.Data.Models.Web;
 using Nozomi.Infra.Compute.Events.Interfaces;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.BCL.Repository;
+using Nozomi.Repo.Compute.Data;
 using Nozomi.Repo.Data;
 
 namespace Nozomi.Infra.Compute.Events
 {
-    public class ComputeEvent : BaseEvent<ComputeEvent, NozomiDbContext>, IComputeEvent
+    public class ComputeEvent : BaseEvent<ComputeEvent, NozomiComputeDbContext>, IComputeEvent
     {
-        public ComputeEvent(ILogger<ComputeEvent> logger, IUnitOfWork<NozomiDbContext> unitOfWork) 
+        public ComputeEvent(ILogger<ComputeEvent> logger, IUnitOfWork<NozomiComputeDbContext> unitOfWork) 
             : base(logger, unitOfWork)
         {
         }
