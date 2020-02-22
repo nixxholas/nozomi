@@ -38,12 +38,6 @@ namespace Nozomi.Repo.Data
         public NozomiDbContext(DbContextOptions<NozomiDbContext> options) : base(options)
         {
         }
-        
-//        public NozomiDbContext(DbContextOptions<NozomiDbContext> options,
-//            ILogger<NozomiDbContext> logger) : base(options)
-//        {
-//            _logger = logger;
-//        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
