@@ -23,5 +23,14 @@ namespace Nozomi.Base.Auth.Global
         /// The Ids of the user's previous subscriptions
         /// </summary>
         public const string PreviousStripeSubscriptionId = "ex_stripe_sud_id";
+        /// <summary>
+        /// The user's quota
+        /// </summary>
+        public const string UserQuota = "user_quota";
+        /// <summary>
+        /// The user's current usage
+        /// </summary>
+        public const string UserUsage = "user_usage";
+
     }
 }
