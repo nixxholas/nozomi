@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Nozomi.Base.Auth.Models;
@@ -34,11 +35,23 @@ namespace Nozomi.Infra.Payment.Services.Bootstripe
                 return;
             }
 
-            var customer = new CustomerCreateOptions
+            var createOptions = new CustomerCreateOptions
             {
                 Email = user.Email
             };
-            throw new System.NotImplementedException();
+
+            Customer stripeCustomer = await _customerService.CreateAsync(createOptions);
+
+            if (stripeCustomer.StripeResponse.StatusCode != HttpStatusCode.OK)
+            {
+                _logger.LogInformation($"{_serviceName} {methodName}: There was an issue " +
+                                       $"propagating the stripe id for user {user.Id}.");
+                throw new StripeException($"{_serviceName} {methodName}: There was an issue " +
+                                          $"propagating the stripe id for user {user.Id}.");
+            }
+
+            await _userService.LinkStripe(stripeCustomer.Id, user.Id);
+            return;
         }
 
         public Task AddPaymentMethod(string paymentMethodId, User user)
