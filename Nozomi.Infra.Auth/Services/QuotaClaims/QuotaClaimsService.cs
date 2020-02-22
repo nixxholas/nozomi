@@ -74,7 +74,19 @@ namespace Nozomi.Infra.Auth.Services.QuotaClaims
 
         public bool RestUsage(Base.Auth.Models.User user, int usageAmt = 0)
         {
-            throw new NotImplementedException();
+            const string methodName = "ResetUsage";
+            const string claimType = NozomiJwtClaimTypes.UserUsage;
+            PerformUserPrecheck(user, methodName);
+
+            var usageClaim = GetUserClaim(user.Id, claimType);
+            
+            if (usageClaim == null)
+            {
+                return CreateUserClaim(user, claimType, usageAmt.ToString());
+            }
+
+            usageClaim.ClaimValue = usageAmt.ToString();
+            return UpdateUserClaim(user, usageClaim);
         }
 
         private void PerformUserPrecheck(Base.Auth.Models.User user, string methodName)
