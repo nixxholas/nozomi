@@ -33,17 +33,17 @@ namespace Nozomi.Infra.Auth.Services.QuotaClaims
             _stripeEvent = stripeEvent;
         }
 
-        public Task SetQuota(Base.Auth.Models.User user)
+        public Task SetQuota(Base.Auth.Models.User user, int quotaAmt)
         {
             throw new NotImplementedException();
         }
 
-        public Task AddUsage(Base.Auth.Models.User user)
+        public Task AddUsage(Base.Auth.Models.User user, int usageAmt)
         {
             throw new NotImplementedException();
         }
 
-        public Task RestUsage(Base.Auth.Models.User user)
+        public Task RestUsage(Base.Auth.Models.User user, int usageAmt = 0)
         {
             throw new NotImplementedException();
         }
