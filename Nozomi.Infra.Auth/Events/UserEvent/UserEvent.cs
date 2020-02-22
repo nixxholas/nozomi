@@ -79,9 +79,7 @@ namespace Nozomi.Infra.Auth.Events.UserEvent
             var paymentMethodClaimToRemove = GetUserClaims(userId, claimType)
                 .SingleOrDefault(claim => claim.ClaimValue.Equals(paymentMethodId));
             
-            
-            
-            throw new NotImplementedException();
+            DeleteUserClaim(userId, paymentMethodClaimToRemove, methodName);
         }
 
         public void SetDefaultPaymentMethod(string userId, string paymentMethodId)
