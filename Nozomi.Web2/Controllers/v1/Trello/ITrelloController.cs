@@ -7,8 +7,8 @@ namespace Nozomi.Web2.Controllers.v1.Trello
     {
         Task<IActionResult> Lists(string boardId);
 
-        Task<IActionResult> Cards(string listId);
+        Task<IActionResult> Cards(string boardId, string listId);
 
-        Task<IActionResult> CheckLists(string cardId);
+        Task<IActionResult> CheckLists(string boardId, string listId, string cardId);
     }
 }

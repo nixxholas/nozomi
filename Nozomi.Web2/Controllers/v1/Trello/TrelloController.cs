@@ -4,6 +4,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Nozomi.Base.BCL.Helpers.Enumerator;
+using Nozomi.Data.Enums.Trello;
 using Nozomi.Data.ViewModels.Trello;
 using Nozomi.Service.Events.Interfaces;
 
@@ -25,31 +27,39 @@ namespace Nozomi.Web2.Controllers.v1.Trello
         [HttpGet("{boardId}")]
         public async Task<IActionResult> Lists(string boardId)
         {
-            // Hard coded board as current trello auth token has
-            // access to all the different boards.
-            // Making sure that private boards are not being exploited
-            // through this controller
-            boardId = "5e2c209ad3384a49871082bd";
-
-            List<ListViewModel> lists = await _trelloEvent.GetListsAsync(boardId);
-            return Ok(lists);
+            try
+            {
+                List<ListViewModel> lists = await _trelloEvent.GetPublicList(BoardType.PublicBoards , boardId);
+                return Ok(lists);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
         }
-
+        
         [AllowAnonymous]
-        [HttpGet("{listId}")]
-        public async Task<IActionResult> Cards(string listId)
-        {
-            List<CardViewModel> cards = await _trelloEvent.GetCardsAsync(listId);
-            return Ok(cards);
-        }
-
-        [AllowAnonymous]
-        [HttpGet("{cardId}")]
-        public async Task<IActionResult> CheckLists(string cardId)
+        [HttpGet("{boardId}/List/{listId}")]
+        public async Task<IActionResult> Cards(string boardId, string listId)
         {
             try
             {
-                List<CheckListViewModel> checklists = await _trelloEvent.GetCheckListsAsync(cardId);
+                List<CardViewModel> cards = await _trelloEvent.GetPublicCard(BoardType.PublicBoards, boardId, listId);
+                return Ok(cards);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+        
+        [AllowAnonymous]
+        [HttpGet("{boardId}/List/{listId}/Card/{cardId}")]
+        public async Task<IActionResult> CheckLists(string boardId, string listId, string cardId)
+        {
+            try
+            {
+                List<CheckListViewModel> checklists = await _trelloEvent.GetPublicChecklist(BoardType.PublicBoards, boardId, listId, cardId);
                 return Ok(checklists);
             }
             catch(Exception e)
@@ -57,6 +67,5 @@ namespace Nozomi.Web2.Controllers.v1.Trello
                 return BadRequest(e.Message);
             }
         }
-
     }
 }
