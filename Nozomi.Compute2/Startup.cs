@@ -122,6 +122,7 @@ namespace Nozomi.Compute2
             services.AddScoped<IComputeEvent, ComputeEvent>();
             services.AddScoped<IComputeValueEvent, ComputeValueEvent>();
 
+            services.AddTransient<IComputeService, ComputeService>();
             services.AddTransient<IComputeValueService, ComputeValueService>();
         }
 
