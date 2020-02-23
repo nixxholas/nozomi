@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Nozomi.Base.BCL.Extensions;
 using Nozomi.Data.Models.Web;
 using Nozomi.Infra.Compute.Events.Interfaces;
 using Nozomi.Preprocessing.Abstracts;
@@ -27,9 +28,10 @@ namespace Nozomi.Infra.Compute.Events
                     // Ensure it tallies and is active
                     .Where(cv => cv.DeletedAt == null && cv.IsEnabled && cv.Guid.Equals(parsedGuid))
                     .Include(cv => cv.Compute)
-                    .Where(cv => !cv.Compute.IsFailing)
+                    // Ensure we order by the failure rate first
+                    .OrderBy(cv => cv.Compute.FailCount)
                     // Always check against the most recent
-                    .OrderByDescending(cv => cv.CreatedAt)
+                    .ThenByDescending(cv => cv.CreatedAt)
                     .Take(1)
                     .AsEnumerable()
                     .Select(cv => cv.CreatedAt.AddMilliseconds(cv.Compute.Delay))
@@ -47,10 +49,11 @@ namespace Nozomi.Infra.Compute.Events
                 // Ensure it tallies and is active
                 .Where(cv => cv.DeletedAt == null && cv.IsEnabled && cv.Guid.Equals(computeGuid))
                 .Include(cv => cv.Compute)
-                .Where(cv => !cv.Compute.IsFailing)
+                // Ensure we order by the failure rate first
+                .OrderBy(cv => cv.Compute.FailCount)
                 // Always check against the most recent
-                .OrderByDescending(cv => cv.CreatedAt)
-                .Take(1)
+                .ThenByDescending(cv => cv.CreatedAt)
+                .Take(10)
                 .AsEnumerable()
                 .Select(cv => cv.CreatedAt.AddMilliseconds(cv.Compute.Delay))
                 .FirstOrDefault() <= DateTime.UtcNow;
