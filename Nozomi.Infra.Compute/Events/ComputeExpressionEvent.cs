@@ -92,7 +92,8 @@ namespace Nozomi.Infra.Compute.Events
             var query = _unitOfWork.GetRepository<ComputeExpression>()
                 .GetQueryable()
                 .AsNoTracking()
-                .OrderByDescending(e => e.ModifiedAt)
+                .OrderBy(e => e.ModifiedAt)
+                .ThenByDescending(e => e.Value)
                 .Where(e => !string.IsNullOrEmpty(e.Expression));
 
             if (includeParent)

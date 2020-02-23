@@ -132,7 +132,7 @@ namespace Nozomi.Infra.Compute.Events
                 //                                 .Values.Any(v => v.DeletedAt == null && v.IsEnabled))
                 //                         // Or computes that have no children.
                 //                         || !c.ChildComputes.Any())
-                .OrderByDescending(c => c.ModifiedAt) // Then we prioritize by the last modified/checked time
+                .OrderBy(c => c.ModifiedAt) // Then we prioritize by the last modified/checked time
                 .ThenBy(c => c.FailCount) // Ensure we prioritize non-failing computes
                 // Filter by computes with no children or computes that have children with values.
                 .Where(c => c.ChildComputes.Any(cc => cc.ChildCompute.Values
