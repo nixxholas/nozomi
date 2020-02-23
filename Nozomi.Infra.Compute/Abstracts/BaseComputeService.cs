@@ -26,11 +26,14 @@ namespace Nozomi.Infra.Compute.Abstracts
         /// <param name="compute">The most parent compute.</param>
         protected void ExecuteComputation(Data.Models.Web.Compute compute)
         {
+            var computeService = _scope.ServiceProvider.GetRequiredService<IComputeService>();
+            
             // Look for any expression without a value first
             if (compute.Expressions.Any(e => string.IsNullOrEmpty(e.Value)))
             {
                 _logger.LogInformation($"{_computeServiceName} ExecuteComputation: An expression in compute " +
                                        $"{compute.Guid} has no value.");
+                computeService.Modified(compute.Guid);
                 return;
             }
             
@@ -64,34 +67,35 @@ namespace Nozomi.Infra.Compute.Abstracts
                 {
                     _logger.LogInformation($"{_computeServiceName} ExecuteComputation: A child Compute has no " +
                                            "value.");
+                    computeService.Modified(compute.Guid);
                     return;
                 }
-                else
+                
+                // Populate the expression further
+                foreach (var childCompute in compute.ChildComputes)
                 {
-                    // Populate the expression further
-                    foreach (var childCompute in compute.ChildComputes)
-                    {
-                        // Obtain the latest child compute value
-                        var latestChildValue = childCompute.ChildCompute.Values
-                            .OrderByDescending(v => v.CreatedAt)
-                            .FirstOrDefault();
+                    // Obtain the latest child compute value
+                    var latestChildValue = childCompute.ChildCompute.Values
+                        .OrderByDescending(v => v.CreatedAt)
+                        .FirstOrDefault();
 
-                        // Pump it in
-                        if (latestChildValue != null && !string.IsNullOrEmpty(latestChildValue.Value)
-                                                     // Ensure we check against the parameters in the expression as well
-                        && expression.Parameters
-                            .Any(p => p.Key.Equals(childCompute.ChildComputeGuid.ToString())))
-                        {
-                            // Set
-                            expression.Parameters[childCompute.ChildComputeGuid.ToString()] = latestChildValue.Value;
-                        }
+                    // Pump it in
+                    if (latestChildValue != null && !string.IsNullOrEmpty(latestChildValue.Value)
+                                                 // Ensure we check against the parameters in the expression as well
+                                                 && expression.Parameters
+                                                     .Any(p => p.Key
+                                                         .Equals(childCompute.ChildComputeGuid.ToString())))
+                    {
+                        // Set
+                        expression.Parameters[childCompute.ChildComputeGuid.ToString()] = latestChildValue.Value;
                     }
                 }
             }
             else if (!compute.ChildComputes.Any() && missingExpressions)
             {
                 _logger.LogWarning($"{_computeServiceName} ExecuteComputation: Expression for compute " +
-                                   $"{compute.Guid} has an null parameter value.");
+                                   $"{compute.Guid} has a null parameter value.");
+                computeService.Modified(compute.Guid);
                 return;
             }
             
@@ -100,7 +104,7 @@ namespace Nozomi.Infra.Compute.Abstracts
             if (evaluatedExpression != null)
             {
                 var computeValueService = _scope.ServiceProvider.GetRequiredService<IComputeValueService>();
-                
+
                 var newComputeValue = new ComputeValue
                 {
                     Value = evaluatedExpression.ToString(),
@@ -109,6 +113,8 @@ namespace Nozomi.Infra.Compute.Abstracts
                 
                 computeValueService.Push(newComputeValue);
             }
+            
+            computeService.Modified(compute.Guid, true); // failed
         }
     }
 }
