@@ -30,7 +30,7 @@ namespace Nozomi.Service.Events
             if (includeNested)
                 query = query.Include(e => e.Component);
 
-            return query.SingleOrDefault();
+            return query.OrderByDescending(e => e.CreatedAt).FirstOrDefault();
         }
 
         public ComponentHistoricItem GetLastItem(string guid)
