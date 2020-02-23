@@ -6,9 +6,9 @@ namespace Nozomi.Infra.Compute.Events.Interfaces
 {
     public interface IComputeExpressionEvent
     {
-        ComputeExpression Get(Guid guid, bool includeChildren = false, bool ensureNotDeletedOrDisabled = true);
+        ComputeExpression Get(Guid guid, bool includeParent = false, bool ensureNotDeletedOrDisabled = true);
         
-        ComputeExpression Get(string guid, bool includeChildren = false, bool ensureNotDeletedOrDisabled = true);
+        ComputeExpression Get(string guid, bool includeParent = false, bool ensureNotDeletedOrDisabled = true);
         
         IEnumerable<ComputeExpression> GetByParent(Guid parentGuid, bool includeChildren = false, 
             bool ensureNotDeletedOrDisabled = true);

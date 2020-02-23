@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data.Models.Web;
 using Nozomi.Infra.Compute.Events.Interfaces;
@@ -18,12 +20,23 @@ namespace Nozomi.Infra.Compute.Events
         {
         }
 
-        public ComputeExpression Get(Guid guid, bool includeChildren = false, bool ensureNotDeletedOrDisabled = true)
+        public ComputeExpression Get(Guid guid, bool includeParent = false, bool ensureNotDeletedOrDisabled = true)
         {
-            throw new NotImplementedException();
+            var query =  _unitOfWork.GetRepository<ComputeExpression>()
+                .GetQueryable()
+                .AsNoTracking()
+                .Where(e => e.Guid.Equals(guid));
+
+            if (includeParent)
+                query = query.Include(e => e.Compute);
+
+            if (ensureNotDeletedOrDisabled)
+                query = query.Where(e => e.DeletedAt == null && e.IsEnabled);
+
+            return query.SingleOrDefault();
         }
 
-        public ComputeExpression Get(string guid, bool includeChildren = false, bool ensureNotDeletedOrDisabled = true)
+        public ComputeExpression Get(string guid, bool includeParent = false, bool ensureNotDeletedOrDisabled = true)
         {
             throw new NotImplementedException();
         }
