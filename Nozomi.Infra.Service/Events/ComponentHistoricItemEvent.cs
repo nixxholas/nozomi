@@ -50,7 +50,12 @@ namespace Nozomi.Service.Events
 
         public ComponentHistoricItem GetLastItem(Guid guid)
         {
-            throw new NotImplementedException();
+            return _unitOfWork.GetRepository<ComponentHistoricItem>()
+                .GetQueryable()
+                .AsNoTracking()
+                .OrderByDescending(e => e.CreatedAt)
+                .Include(e => e.Component)
+                .FirstOrDefault(e => e.Component.Guid.Equals(guid));
         }
     }
 }
