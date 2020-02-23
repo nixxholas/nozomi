@@ -5,6 +5,19 @@
                 :active.sync="isLoading"
                 :can-cancel="false"
             />
+
+            <section v-if="isLoaded && trelloCards.length === 0" 
+                class="section">
+                <div class="content has-text-grey has-text-centered">
+                    <p>
+                        <b-icon
+                                icon="sad-cry"
+                                size="is-large">
+                        </b-icon>
+                    </p>
+                    <p>No cards to display.</p>
+                </div>
+            </section>
             
             <div class="box" v-for="card in trelloCards" :key="card.id">
                 <article class="media">
