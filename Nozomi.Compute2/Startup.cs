@@ -9,6 +9,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Nozomi.Infra.Compute.Events;
+using Nozomi.Infra.Compute.Events.Interfaces;
+using Nozomi.Infra.Compute.Services;
+using Nozomi.Infra.Compute.Services.Interfaces;
 using Nozomi.Repo.Compute.Data;
 using Nozomi.Repo.Data;
 using VaultSharp;
@@ -113,6 +117,12 @@ namespace Nozomi.Compute2
                         },
                         ServiceLifetime.Transient);
             }
+            
+            // Service injections
+            services.AddScoped<IComputeEvent, ComputeEvent>();
+            services.AddScoped<IComputeValueEvent, ComputeValueEvent>();
+
+            services.AddTransient<IComputeValueService, ComputeValueService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -127,7 +137,8 @@ namespace Nozomi.Compute2
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapGet("/", async context => { await context.Response.WriteAsync("Hello World!"); });
+                endpoints.MapGet("/", async context => 
+                    { await context.Response.WriteAsync("Hello World!"); });
             });
         }
     }
