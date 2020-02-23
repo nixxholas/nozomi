@@ -23,7 +23,7 @@ namespace Nozomi.Infra.Compute.Services
         {
         }
 
-        public void Modified(Guid guid, string userId = null)
+        public void Modified(Guid guid, bool failed = false, string userId = null)
         {
             var compute = _unitOfWork.GetRepository<Data.Models.Web.Compute>()
                 .GetQueryable()
@@ -34,12 +34,15 @@ namespace Nozomi.Infra.Compute.Services
                 throw new NullReferenceException($"{_serviceName} Modified (GUID): Invalid guid.");
             
             compute.ModifiedAt = DateTime.UtcNow;
+
+            if (failed)
+                compute.FailCount += 1;
             
             _unitOfWork.GetRepository<Data.Models.Web.Compute>().Update(compute);
             _unitOfWork.Commit(userId);
         }
 
-        public void Modified(string guid, string userId = null)
+        public void Modified(string guid, bool failed = false, string userId = null)
         {
             if (!Guid.TryParse(guid, out var parsedGuid))
                 throw new ArgumentException($"{_serviceName} Modified (string): Invalid guid string.");
@@ -53,6 +56,9 @@ namespace Nozomi.Infra.Compute.Services
                 throw new NullReferenceException($"{_serviceName} Modified (string): Invalid guid.");
             
             compute.ModifiedAt = DateTime.UtcNow;
+
+            if (failed)
+                compute.FailCount += 1;
             
             _unitOfWork.GetRepository<Data.Models.Web.Compute>().Update(compute);
             _unitOfWork.Commit(userId);
