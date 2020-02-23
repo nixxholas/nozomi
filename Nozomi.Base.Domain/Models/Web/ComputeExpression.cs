@@ -1,8 +1,9 @@
 using System;
+using Nozomi.Base.BCL;
 
 namespace Nozomi.Data.Models.Web
 {
-    public class ComputeExpression
+    public class ComputeExpression : Entity
     {
         public Guid Guid { get; set; }
         
