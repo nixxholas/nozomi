@@ -55,16 +55,35 @@ namespace Nozomi.Infra.Compute.Events
             return query.SingleOrDefault();
         }
 
-        public IEnumerable<ComputeExpression> GetByParent(Guid parentGuid, bool includeChildren = false, 
-            bool ensureNotDeletedOrDisabled = true)
+        public IEnumerable<ComputeExpression> GetByParent(Guid parentGuid, bool ensureNotDeletedOrDisabled = true)
         {
-            throw new NotImplementedException();
+            var query = _unitOfWork.GetRepository<ComputeExpression>()
+                .GetQueryable()
+                .AsNoTracking()
+                .Include(e => e.Compute)
+                .Where(e => e.ComputeGuid.Equals(parentGuid));
+
+            if (ensureNotDeletedOrDisabled)
+                query = query.Where(e => e.DeletedAt == null && e.IsEnabled);
+
+            return query;
         }
 
-        public IEnumerable<ComputeExpression> GetByParent(string parentGuid, bool includeChildren = false, 
-            bool ensureNotDeletedOrDisabled = true)
+        public IEnumerable<ComputeExpression> GetByParent(string parentGuid, bool ensureNotDeletedOrDisabled = true)
         {
-            throw new NotImplementedException();
+            if (!Guid.TryParse(parentGuid, out var parsedGuid))
+                throw new NullReferenceException($"{_eventName} GetByParent (string): Invalid guid.");
+            
+            var query = _unitOfWork.GetRepository<ComputeExpression>()
+                .GetQueryable()
+                .AsNoTracking()
+                .Include(e => e.Compute)
+                .Where(e => e.ComputeGuid.Equals(parsedGuid));
+
+            if (ensureNotDeletedOrDisabled)
+                query = query.Where(e => e.DeletedAt == null && e.IsEnabled);
+
+            return query;
         }
 
         public ComputeExpression GetMostOutdated(bool includeChildren = false, bool ensureNotDeletedOrDisabled = true)
