@@ -13,6 +13,8 @@ using Nozomi.Infra.Compute.Events;
 using Nozomi.Infra.Compute.Events.Interfaces;
 using Nozomi.Infra.Compute.Services;
 using Nozomi.Infra.Compute.Services.Interfaces;
+using Nozomi.Repo.BCL.Context;
+using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Compute.Data;
 using Nozomi.Repo.Data;
 using VaultSharp;
@@ -117,6 +119,14 @@ namespace Nozomi.Compute2
                         },
                         ServiceLifetime.Transient);
             }
+            
+            services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+
+            services.AddTransient<IUnitOfWork<NozomiDbContext>, UnitOfWork<NozomiDbContext>>();
+            services.AddTransient<IDbContext, NozomiDbContext>();
+            
+            services.AddTransient<IUnitOfWork<NozomiComputeDbContext>, UnitOfWork<NozomiComputeDbContext>>();
+            services.AddTransient<IDbContext, NozomiComputeDbContext>();
             
             // Service injections
             services.AddScoped<IComputeEvent, ComputeEvent>();
