@@ -19,6 +19,13 @@
                                 
                             </p>
                         </div>
+                        
+                        <SubItemCards
+                            :hasSubItems="card.badges.checkItems > 0"
+                            :labels="card.labels"
+                            :trelloIds="{...trelloIds, card: card.id}"
+                        />
+                        
                     </div>
                 </article>
             </div>
@@ -26,6 +33,7 @@
     </template>
     
     <script>
+        import SubItemCards from "./card-subitem";
         import TrelloService from "@/services/TrelloService";
         
         export default {
@@ -46,6 +54,10 @@
                         }
                     }
                 }
+            },
+            
+            components: {
+                SubItemCards
             },
             
             data() {
