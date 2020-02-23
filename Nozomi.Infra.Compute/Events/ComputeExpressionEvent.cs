@@ -38,7 +38,21 @@ namespace Nozomi.Infra.Compute.Events
 
         public ComputeExpression Get(string guid, bool includeParent = false, bool ensureNotDeletedOrDisabled = true)
         {
-            throw new NotImplementedException();
+            if (!Guid.TryParse(guid, out var parsedGuid))
+                throw new NullReferenceException($"{_eventName} Get (string): Invalid guid.");
+            
+            var query =  _unitOfWork.GetRepository<ComputeExpression>()
+                .GetQueryable()
+                .AsNoTracking()
+                .Where(e => e.Guid.Equals(parsedGuid));
+
+            if (includeParent)
+                query = query.Include(e => e.Compute);
+
+            if (ensureNotDeletedOrDisabled)
+                query = query.Where(e => e.DeletedAt == null && e.IsEnabled);
+
+            return query.SingleOrDefault();
         }
 
         public IEnumerable<ComputeExpression> GetByParent(Guid parentGuid, bool includeChildren = false, 
