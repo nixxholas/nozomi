@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Nozomi.Base.BCL.Extensions;
 using Nozomi.Data.Models.Web;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.BCL.Repository;
@@ -34,7 +35,17 @@ namespace Nozomi.Service.Events
 
         public ComponentHistoricItem GetLastItem(string guid)
         {
-            throw new NotImplementedException();
+            if (Guid.TryParse(guid, out var parsedGuid))
+            {
+                return _unitOfWork.GetRepository<ComponentHistoricItem>()
+                    .GetQueryable()
+                    .AsNoTracking()
+                    .OrderByDescending(i => i.CreatedAt)
+                    .Include(i => i.Component)
+                    .FirstOrDefault(e => e.Component.Guid.Equals(parsedGuid));
+            }
+            
+            throw new NullReferenceException($"{_eventName} GetLastItem (String): Invalid guid.");
         }
 
         public ComponentHistoricItem GetLastItem(Guid guid)
