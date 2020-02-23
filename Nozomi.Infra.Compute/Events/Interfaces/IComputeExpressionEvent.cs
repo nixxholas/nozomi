@@ -14,6 +14,6 @@ namespace Nozomi.Infra.Compute.Events.Interfaces
 
         IEnumerable<ComputeExpression> GetByParent(string parentGuid, bool ensureNotDeletedOrDisabled = true);
 
-        ComputeExpression GetMostOutdated(bool includeChildren = false, bool ensureNotDeletedOrDisabled = true);
+        ComputeExpression GetMostOutdated(bool includeParent = false, bool ensureNotDeletedOrDisabled = true);
     }
 }

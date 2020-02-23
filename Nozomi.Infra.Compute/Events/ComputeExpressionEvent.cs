@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Nozomi.Base.BCL.Extensions;
 using Nozomi.Data.Models.Web;
 using Nozomi.Infra.Compute.Events.Interfaces;
 using Nozomi.Preprocessing.Abstracts;
@@ -86,9 +87,21 @@ namespace Nozomi.Infra.Compute.Events
             return query;
         }
 
-        public ComputeExpression GetMostOutdated(bool includeChildren = false, bool ensureNotDeletedOrDisabled = true)
+        public ComputeExpression GetMostOutdated(bool includeParent = false, bool ensureNotDeletedOrDisabled = true)
         {
-            throw new NotImplementedException();
+            var query = _unitOfWork.GetRepository<ComputeExpression>()
+                .GetQueryable()
+                .AsNoTracking()
+                .OrderByDescending(e => e.ModifiedAt)
+                .Where(e => !string.IsNullOrEmpty(e.Expression));
+
+            if (includeParent)
+                query = query.Include(e => e.Compute);
+
+            if (ensureNotDeletedOrDisabled)
+                query = query.Where(e => e.DeletedAt == null && e.IsEnabled);
+
+            return query.FirstOrDefault();
         }
     }
 }
