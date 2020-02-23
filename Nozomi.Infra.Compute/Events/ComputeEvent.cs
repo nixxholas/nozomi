@@ -121,15 +121,26 @@ namespace Nozomi.Infra.Compute.Events
         {
             var query = _unitOfWork.GetRepository<Data.Models.Web.Compute>()
                 .GetQueryable()
-                .AsTracking()
-                .OrderByDescending(c => c.ModifiedAt)
+                .AsNoTracking()
+                .Include(c => c.ChildComputes)
+                .ThenInclude(cc => cc.ChildCompute)
+                .ThenInclude(cc => cc.Values)
                 .Include(c => c.Values)
-                .Where(c => !c.IsFailing); // Hardcoded limit for now
+                // Order by the computes that have a child that has a values
+                // .OrderByDescending(c => c.ChildComputes
+                //                             .Any(cc => cc.ChildCompute
+                //                                 .Values.Any(v => v.DeletedAt == null && v.IsEnabled))
+                //                         // Or computes that have no children.
+                //                         || !c.ChildComputes.Any())
+                .OrderByDescending(c => c.ModifiedAt) // Then we prioritize by the last modified/checked time
+                .ThenBy(c => c.FailCount) // Ensure we prioritize non-failing computes
+                // Filter by computes with no children or computes that have children with values.
+                .Where(c => c.ChildComputes.Any(cc => cc.ChildCompute.Values
+                                .Any(v => v.DeletedAt == null && v.IsEnabled) 
+                        || !c.ChildComputes.Any()));
 
             if (includeChildren)
                 query = query.Include(c => c.Expressions)
-                    .Include(c => c.ChildComputes)
-                    .ThenInclude(cc => cc.ChildCompute)
                     .Include(c => c.ParentComputes)
                     .ThenInclude(c => c.ParentCompute);
 
