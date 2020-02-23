@@ -104,5 +104,21 @@ namespace Nozomi.Infra.Compute.Events
 
             return query.FirstOrDefault();
         }
+
+        public IEnumerable<ComputeExpression> GetByAge(int chunkOut = 100, bool ensureNotDeletedOrDisabled = true)
+        {
+            var query = _unitOfWork.GetRepository<ComputeExpression>()
+                .GetQueryable()
+                .AsNoTracking()
+                .OrderBy(e => e.ModifiedAt)
+                .Include(e => e.Compute)
+                .Take(chunkOut);
+
+            if (ensureNotDeletedOrDisabled)
+                query = query.Where(e => e.DeletedAt == null && e.IsEnabled
+                                                             && !e.Compute.IsEnabled && e.Compute.DeletedAt == null);
+
+            return query;
+        }
     }
 }
