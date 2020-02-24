@@ -19,7 +19,7 @@ namespace Nozomi.Infra.Compute.HostedServices
         {
         }
 
-        protected override Task ExecuteAsync(CancellationToken stoppingToken)
+        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             while (!stoppingToken.IsCancellationRequested)
             {
@@ -95,7 +95,7 @@ namespace Nozomi.Infra.Compute.HostedServices
             }
 
             _logger.LogCritical($"{_computeServiceName} ExecuteAsync: Shutting down!");
-            return Task.CompletedTask;
+            await Task.Delay(10, stoppingToken);
         }
     }
 }
