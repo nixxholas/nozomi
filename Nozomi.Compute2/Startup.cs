@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Nozomi.Data.Models.Web;
 using Nozomi.Infra.Compute.Events;
 using Nozomi.Infra.Compute.Events.Interfaces;
 using Nozomi.Infra.Compute.Services;
@@ -17,6 +18,8 @@ using Nozomi.Repo.BCL.Context;
 using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Compute.Data;
 using Nozomi.Repo.Data;
+using Nozomi.Service.Events;
+using Nozomi.Service.Events.Interfaces;
 using VaultSharp;
 using VaultSharp.V1.AuthMethods.Token;
 
@@ -128,7 +131,10 @@ namespace Nozomi.Compute2
             services.AddTransient<IUnitOfWork<NozomiComputeDbContext>, UnitOfWork<NozomiComputeDbContext>>();
             services.AddTransient<IDbContext, NozomiComputeDbContext>();
             
-            // Service injections
+            // Web Service Injections
+            services.AddScoped<IComponentHistoricItemEvent, ComponentHistoricItemEvent>();
+            
+            // Compute Service injections
             services.AddScoped<IComputeEvent, ComputeEvent>();
             services.AddScoped<IComputeValueEvent, ComputeValueEvent>();
             services.AddScoped<IComputeExpressionEvent, ComputeExpressionEvent>();
