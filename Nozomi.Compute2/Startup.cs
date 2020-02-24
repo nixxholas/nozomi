@@ -131,9 +131,11 @@ namespace Nozomi.Compute2
             // Service injections
             services.AddScoped<IComputeEvent, ComputeEvent>();
             services.AddScoped<IComputeValueEvent, ComputeValueEvent>();
+            services.AddScoped<IComputeExpressionEvent, ComputeExpressionEvent>();
 
             services.AddTransient<IComputeService, ComputeService>();
             services.AddTransient<IComputeValueService, ComputeValueService>();
+            services.AddTransient<IComputeExpressionService, ComputeExpressionService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
