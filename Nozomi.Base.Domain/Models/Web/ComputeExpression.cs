@@ -27,6 +27,8 @@ namespace Nozomi.Data.Models.Web
         /// <summary>
         /// The hardcoded value of the expression.
         /// Only works when Type == Generic.
+        ///
+        /// If you have a non-Generic type expression, it will dynamically update.
         /// </summary>
         public string Value { get; set; }
         
