@@ -58,5 +58,28 @@ namespace Nozomi.Infra.Compute.Events
                 .Select(cv => cv.CreatedAt.AddMilliseconds(cv.Compute.Delay))
                 .FirstOrDefault() <= DateTime.UtcNow;
         }
+
+        public ComputeValue GetLastItem(string computeGuid)
+        {
+            if (Guid.TryParse(computeGuid, out var parsedGuid))
+            {
+                return _unitOfWork.GetRepository<ComputeValue>()
+                    .GetQueryable()
+                    .AsNoTracking()
+                    .OrderByDescending(v => v.CreatedAt)
+                    .FirstOrDefault(v => v.ComputeGuid.Equals(parsedGuid));
+            }
+            
+            throw new NullReferenceException($"{_eventName} GetLastItem (string): Invalid Guid.");
+        }
+
+        public ComputeValue GetLastItem(Guid computeGuid)
+        {
+            return _unitOfWork.GetRepository<ComputeValue>()
+                .GetQueryable()
+                .AsNoTracking()
+                .OrderByDescending(v => v.CreatedAt)
+                .FirstOrDefault(v => v.ComputeGuid.Equals(computeGuid));
+        }
     }
 }
