@@ -4,6 +4,6 @@ namespace Nozomi.Service.Events.Interfaces
 {
     public interface IComponentTypeEvent
     {
-        ICollection<KeyValuePair<string, int>> All();
+        IEnumerable<KeyValuePair<string, long>> All();
     }
 }

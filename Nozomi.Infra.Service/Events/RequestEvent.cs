@@ -172,7 +172,7 @@ namespace Nozomi.Service.Events
                         r.RequestComponents.Select(rc => new ComponentViewModel
                         {
                             Guid = rc.Guid,
-                            Type = rc.ComponentType,
+                            Type = rc.ComponentTypeId,
                             IsDenominated = rc.IsDenominated
                         }).ToList(),
                         r.RequestProperties.Select(rp => new RequestPropertyViewModel(rp.Guid, 

@@ -144,7 +144,7 @@ namespace Nozomi.Service.Events
                             .Where(rc => typesToTake.Contains(rc.ComponentType))
                             .Select(rc => new ComponentViewModel
                             {
-                                Type = rc.ComponentType,
+                                Type = rc.ComponentTypeId,
                                 Guid = rc.Guid,
                                 IsDenominated = rc.IsDenominated,
                                 History = typesToDeepen.Contains(rc.ComponentType)
@@ -176,7 +176,7 @@ namespace Nozomi.Service.Events
                             .Where(rc => typesToTake.Contains(rc.ComponentType))
                             .Select(rc => new ComponentViewModel
                             {
-                                Type = rc.ComponentType,
+                                Type = rc.ComponentTypeId,
                                 Guid = rc.Guid,
                                 IsDenominated = rc.IsDenominated
                             })

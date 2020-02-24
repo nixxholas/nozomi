@@ -8,7 +8,7 @@ namespace Nozomi.Data.ViewModels.CurrencyType
         [DefaultValue(false)]
         public bool Delete { get; set; }
 
-        public bool IsValid()
+        public new bool IsValid()
         {
             var validator = new UpdateCurrencyTypeValidator();
             return validator.Validate(this).IsValid;

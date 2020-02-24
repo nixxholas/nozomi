@@ -19,8 +19,6 @@ namespace Nozomi.Repo.Auth.Data.Mappings
             entityTypeBuilder.HasIndex(u => u.NormalizedEmail).IsUnique()
                 .HasName("User_Index_NormalizedEmail");
 
-            entityTypeBuilder.ForNpgsqlUseXminAsConcurrencyToken();
-
             entityTypeBuilder.HasMany(u => u.UserClaims).WithOne(uc => uc.User)
                 .HasForeignKey(uc => uc.UserId);
             entityTypeBuilder.HasMany(u => u.UserLogins).WithOne(ul => ul.User)

@@ -65,7 +65,7 @@ namespace Nozomi.Service.Events
                     .Select(c => new ComponentViewModel
                 {
                     Guid = c.Guid,
-                    Type = c.ComponentType,
+                    Type = c.ComponentTypeId,
                     IsDenominated = c.IsDenominated,
                     History = c.RcdHistoricItems
                         .Where(rcdhi => rcdhi.DeletedAt == null && rcdhi.IsEnabled)
@@ -79,7 +79,7 @@ namespace Nozomi.Service.Events
             return query.Select(c => new ComponentViewModel
             {
                 Guid = c.Guid,
-                Type = c.ComponentType,
+                Type = c.ComponentTypeId,
                 IsDenominated = c.IsDenominated
             });
         }
@@ -119,7 +119,7 @@ namespace Nozomi.Service.Events
                 .Select(rc => new ComponentViewModel
                 {
                     Guid = rc.Guid,
-                    Type = rc.ComponentType,
+                    Type = rc.ComponentTypeId,
                     IsDenominated = rc.IsDenominated,
                     History = rc.RcdHistoricItems
                         .Any(rcdhi => rcdhi.DeletedAt == null && rcdhi.IsEnabled)
@@ -166,7 +166,7 @@ namespace Nozomi.Service.Events
                 .Select(rc => new ComponentViewModel
                 {
                     Guid = rc.Guid,
-                    Type = rc.ComponentType,
+                    Type = rc.ComponentTypeId,
                     IsDenominated = rc.IsDenominated,
                     History = rc.RcdHistoricItems
                         .Any(rcdhi => rcdhi.DeletedAt == null && rcdhi.IsEnabled)
@@ -193,7 +193,7 @@ namespace Nozomi.Service.Events
                     .Select(c => new ComponentViewModel
                     {
                         Guid = c.Guid,
-                        Type = c.ComponentType,
+                        Type = c.ComponentTypeId,
                         IsDenominated = c.IsDenominated,
                         History = c.RcdHistoricItems
                             .Where(rcdhi => rcdhi.DeletedAt == null && rcdhi.IsEnabled)
@@ -211,7 +211,7 @@ namespace Nozomi.Service.Events
                 .Select(c => new ComponentViewModel
                 {
                     Guid = c.Guid,
-                    Type = c.ComponentType,
+                    Type = c.ComponentTypeId,
                     IsDenominated = c.IsDenominated
                 });
         }
