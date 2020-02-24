@@ -33,6 +33,9 @@ namespace Nozomi.Infra.Compute.HostedServices
                 {
                     foreach (var exp in mostOutdatedExps)
                     {
+                        var computeExpressionService = _scope.ServiceProvider
+                            .GetRequiredService<IComputeExpressionService>();
+
                         switch (exp.Type)
                         {
                             case ComputeExpressionType.Raw:
@@ -44,14 +47,11 @@ namespace Nozomi.Infra.Compute.HostedServices
                                 if (lastRawValue != null)
                                 {
                                     // update the expression's value
-                                    var computeExpressionService = _scope.ServiceProvider
-                                        .GetRequiredService<IComputeExpressionService>();
-                                    
                                     computeExpressionService.UpdateValue(exp.Guid, lastRawValue.Value);
                                 }
                                 else
                                 {
-                                    // TODO: mark as failed
+                                    computeExpressionService.UpdateValue(exp.Guid, null);
                                 }
                                 
                                 break;
@@ -62,14 +62,11 @@ namespace Nozomi.Infra.Compute.HostedServices
                                 if (lastValue != null)
                                 {
                                     // update the expression's value
-                                    var computeExpressionService = _scope.ServiceProvider
-                                        .GetRequiredService<IComputeExpressionService>();
-                                    
                                     computeExpressionService.UpdateValue(exp.Guid, lastValue.Value);
                                 }
                                 else
                                 {
-                                    // TODO: mark as failed
+                                    computeExpressionService.UpdateValue(exp.Guid, null);
                                 }
                                 
                                 break;
@@ -80,14 +77,11 @@ namespace Nozomi.Infra.Compute.HostedServices
                                 var lastAnalysedValue = analysedComponentEvent.Get(exp.Expression);
                                 if (lastAnalysedValue != null)
                                 {
-                                    var computeExpressionService = _scope.ServiceProvider
-                                        .GetRequiredService<IComputeExpressionService>();
-                                    
                                     computeExpressionService.UpdateValue(exp.Guid, lastAnalysedValue.Value);
                                 }
                                 else
                                 {
-                                    // TODO: mark as failed
+                                    computeExpressionService.UpdateValue(exp.Guid, null);
                                 }
                                 
                                 break;
