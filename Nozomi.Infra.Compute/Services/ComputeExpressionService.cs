@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -50,6 +51,9 @@ namespace Nozomi.Infra.Compute.Services
                                            $"{query.Guid}.");
                     return;
                 }
+                
+                throw new KeyNotFoundException($"{_serviceName} UpdateValue (string): Can't find expression " +
+                                               $"{parsedGuid}.");
             }
             
             throw new NullReferenceException($"{_serviceName} UpdateValue (string): Invalid guid or value.");
@@ -57,7 +61,34 @@ namespace Nozomi.Infra.Compute.Services
 
         public void UpdateValue(Guid expressionGuid, string value)
         {
-            throw new NotImplementedException();
+            if (!string.IsNullOrEmpty(value))
+            {
+                var query = _unitOfWork.GetRepository<ComputeExpression>()
+                    .GetQueryable()
+                    .AsTracking()
+                    .SingleOrDefault(e => e.Guid.Equals(expressionGuid));
+
+                if (query != null)
+                {
+                    if (!value.Equals(query.Value)) // If value is the same, ignore and check for updated timestamp
+                    {
+                        // Else update the value
+                        query.Value = value;
+                    }
+                    
+                    query.ModifiedAt = DateTime.UtcNow;
+                    _unitOfWork.GetRepository<ComputeExpression>().Update(query);
+                    _unitOfWork.Commit();
+                    _logger.LogInformation($"{_serviceName} UpdateValue (Guid): Updated expression " +
+                                           $"{query.Guid}.");
+                    return;
+                }
+                
+                throw new KeyNotFoundException($"{_serviceName} UpdateValue (Guid): Can't find expression " +
+                                               $"{expressionGuid}.");
+            }
+            
+            throw new NullReferenceException($"{_serviceName} UpdateValue (Guid): Invalid value.");
         }
     }
 }
