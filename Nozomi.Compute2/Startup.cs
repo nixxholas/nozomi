@@ -10,8 +10,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Nozomi.Data.Models.Web;
+using Nozomi.Data.Models.Web.Analytical;
 using Nozomi.Infra.Compute.Events;
 using Nozomi.Infra.Compute.Events.Interfaces;
+using Nozomi.Infra.Compute.HostedServices;
 using Nozomi.Infra.Compute.Services;
 using Nozomi.Infra.Compute.Services.Interfaces;
 using Nozomi.Repo.BCL.Context;
@@ -19,6 +21,8 @@ using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Compute.Data;
 using Nozomi.Repo.Data;
 using Nozomi.Service.Events;
+using Nozomi.Service.Events.Analysis;
+using Nozomi.Service.Events.Analysis.Interfaces;
 using Nozomi.Service.Events.Interfaces;
 using VaultSharp;
 using VaultSharp.V1.AuthMethods.Token;
@@ -132,6 +136,7 @@ namespace Nozomi.Compute2
             services.AddTransient<IDbContext, NozomiComputeDbContext>();
             
             // Web Service Injections
+            services.AddScoped<IAnalysedComponentEvent, AnalysedComponentEvent>();
             services.AddScoped<IComponentHistoricItemEvent, ComponentHistoricItemEvent>();
             
             // Compute Service injections
@@ -142,6 +147,9 @@ namespace Nozomi.Compute2
             services.AddTransient<IComputeService, ComputeService>();
             services.AddTransient<IComputeValueService, ComputeValueService>();
             services.AddTransient<IComputeExpressionService, ComputeExpressionService>();
+            
+            // The actual hosted services
+            services.AddHostedService<ComputeExpressionHostedService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
