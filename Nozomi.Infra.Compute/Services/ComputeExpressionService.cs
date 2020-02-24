@@ -35,25 +35,23 @@ namespace Nozomi.Infra.Compute.Services
                     .GetQueryable()
                     .AsTracking()
                     .SingleOrDefault(e => e.Guid.Equals(parsedGuid));
+            
+                if (query == null)
+                    throw new KeyNotFoundException($"{_serviceName} UpdateValue (string): Can't find expression " +
+                                                   $"{parsedGuid}.");
 
-                if (query != null)
+                if (!value.Equals(query.Value)) // If value is the same, ignore and check for updated timestamp
                 {
-                    if (!value.Equals(query.Value)) // If value is the same, ignore and check for updated timestamp
-                    {
-                        // Else update the value
-                        query.Value = value;
-                    }
-                    
-                    query.ModifiedAt = DateTime.UtcNow;
-                    _unitOfWork.GetRepository<ComputeExpression>().Update(query);
-                    _unitOfWork.Commit();
-                    _logger.LogInformation($"{_serviceName} UpdateValue (string): Updated expression " +
-                                           $"{query.Guid}.");
-                    return;
+                    // Else update the value
+                    query.Value = value;
                 }
-                
-                throw new KeyNotFoundException($"{_serviceName} UpdateValue (string): Can't find expression " +
-                                               $"{parsedGuid}.");
+                    
+                query.ModifiedAt = DateTime.UtcNow;
+                _unitOfWork.GetRepository<ComputeExpression>().Update(query);
+                _unitOfWork.Commit();
+                _logger.LogInformation($"{_serviceName} UpdateValue (string): Updated expression " +
+                                       $"{query.Guid}.");
+                return;
             }
             
             throw new NullReferenceException($"{_serviceName} UpdateValue (string): Invalid guid or value.");
@@ -61,34 +59,29 @@ namespace Nozomi.Infra.Compute.Services
 
         public void UpdateValue(Guid expressionGuid, string value)
         {
-            if (!string.IsNullOrEmpty(value))
-            {
-                var query = _unitOfWork.GetRepository<ComputeExpression>()
-                    .GetQueryable()
-                    .AsTracking()
-                    .SingleOrDefault(e => e.Guid.Equals(expressionGuid));
-
-                if (query != null)
-                {
-                    if (!value.Equals(query.Value)) // If value is the same, ignore and check for updated timestamp
-                    {
-                        // Else update the value
-                        query.Value = value;
-                    }
-                    
-                    query.ModifiedAt = DateTime.UtcNow;
-                    _unitOfWork.GetRepository<ComputeExpression>().Update(query);
-                    _unitOfWork.Commit();
-                    _logger.LogInformation($"{_serviceName} UpdateValue (Guid): Updated expression " +
-                                           $"{query.Guid}.");
-                    return;
-                }
-                
+            var query = _unitOfWork.GetRepository<ComputeExpression>()
+                .GetQueryable()
+                .AsTracking()
+                .SingleOrDefault(e => e.Guid.Equals(expressionGuid));
+            
+            if (query == null)
                 throw new KeyNotFoundException($"{_serviceName} UpdateValue (Guid): Can't find expression " +
                                                $"{expressionGuid}.");
+
+            if (!string.IsNullOrEmpty(value))
+            {
+                if (!value.Equals(query.Value)) // If value is the same, ignore and check for updated timestamp
+                {
+                    // Else update the value
+                    query.Value = value;
+                }
             }
             
-            throw new NullReferenceException($"{_serviceName} UpdateValue (Guid): Invalid value.");
+            query.ModifiedAt = DateTime.UtcNow;
+            _unitOfWork.GetRepository<ComputeExpression>().Update(query);
+            _unitOfWork.Commit();
+            _logger.LogInformation($"{_serviceName} UpdateValue (Guid): Updated expression " +
+                                   $"{query.Guid}.");
         }
     }
 }
