@@ -178,6 +178,19 @@ namespace Nozomi.Service.Events.Analysis
             return query.SingleOrDefault();
         }
 
+        public AnalysedComponent Get(string guid)
+        {
+            if (Guid.TryParse(guid, out var parsedGuid))
+            {
+                return _unitOfWork.GetRepository<AnalysedComponent>()
+                    .GetQueryable()
+                    .AsNoTracking()
+                    .SingleOrDefault(ac => ac.Guid.Equals(parsedGuid));
+            }
+            
+            throw new NullReferenceException($"{_eventName} Get (string): Invalid guid.");
+        }
+
         public UpdateAnalysedComponentViewModel Get(Guid guid, string userId = null)
         {
             var query = _unitOfWork.GetRepository<AnalysedComponent>()
