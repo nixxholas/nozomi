@@ -9,6 +9,8 @@ namespace Nozomi.Data.Models.Web
         [Description("Raw value obtained from a component.")]
         Raw = 2,
         [Description("Another compute's value.")]
-        Computed = 3
+        Computed = 3,
+        [Description("An analysed component's value.")]
+        Analysed = 4, // DEPRECATED
     }
 }
