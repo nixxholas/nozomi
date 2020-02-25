@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
@@ -116,11 +117,33 @@ namespace Nozomi.Infra.Payment.Services.Bootstripe
 
             CheckPaymentMethodOwnership(user.Id, paymentMethodId, methodName);
 
-            //STRIPE LOGIC
+            var stripeCustomerId = _userEvent.GetStripeCustomerId(user.Id);
 
+            var paymentMethodOptions = new PaymentMethodListOptions
+            {
+                Customer = stripeCustomerId
+            };
+
+            var paymentMethods = _paymentMethodService.List(paymentMethodOptions);
+
+            if (paymentMethods.Count() <= 1)
+            {
+                _logger.LogInformation($"{_serviceName} {methodName}: {user.Id} only has one payment method, detachment prevented.");
+                throw new StripeException($"{_serviceName} {methodName}: {user.Id} only has one payment method, detachment prevented.");
+            }
+
+            var paymentMethod = _paymentMethodService.Detach(paymentMethodId);
+
+            if (paymentMethod == null || paymentMethod.Customer != null)
+            {
+                _logger.LogInformation($"{_serviceName} {methodName}: {user.Id} detachment of payment method {paymentMethodId} failed.");
+                throw new StripeException($"{_serviceName} {methodName}: {user.Id} detachment of payment method {paymentMethodId} failed.");
+            }
+                
             _userService.RemovePaymentMethod(user.Id, paymentMethodId);
-
-            throw new System.NotImplementedException();
+            _logger.LogInformation($"{_serviceName} RemovePaymentMethod: {user.Id} successfully " +
+                               $"removed a payment method that was tokenized as {paymentMethodId}");
+            return;
         }
 
         public Task SetDefaultPaymentMethod(string paymentMethodId, User user)
