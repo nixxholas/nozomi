@@ -195,8 +195,16 @@ namespace Nozomi.Auth.Controllers.Account
                     }
                     else
                     {
-                        ModelState.AddModelError(string.Empty, AccountOptions.CredentialsAlreadyTaken);
+                        foreach (IdentityError resultError in result.Errors)
+                        {
+                            ModelState.AddModelError(string.Empty, resultError.Description);    
+                        }
                     }
+                }
+                else
+                {
+                    // Default error state when empty form is being submitted
+                    ModelState.AddModelError(string.Empty, AccountOptions.InvalidCredentialsErrorMessage);
                 }
             }
             else if (!string.IsNullOrEmpty(button) && button.Equals("cancel") && !string.IsNullOrEmpty(model.ReturnUrl))
@@ -611,6 +619,11 @@ namespace Nozomi.Auth.Controllers.Account
 
                 await _events.RaiseAsync(new UserLoginFailureEvent(model.Address, "invalid web3 credentials",
                     clientId: context?.ClientId));
+                ModelState.AddModelError(string.Empty, AccountOptions.InvalidCredentialsErrorMessage);
+            }
+            else
+            {
+                // Default error message when empty invalid form is submitted
                 ModelState.AddModelError(string.Empty, AccountOptions.InvalidCredentialsErrorMessage);
             }
 
