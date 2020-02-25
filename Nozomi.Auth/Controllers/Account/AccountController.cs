@@ -195,7 +195,10 @@ namespace Nozomi.Auth.Controllers.Account
                     }
                     else
                     {
-                        ModelState.AddModelError(string.Empty, AccountOptions.CredentialsAlreadyTaken);
+                        foreach (IdentityError resultError in result.Errors)
+                        {
+                            ModelState.AddModelError(string.Empty, resultError.Description);    
+                        }
                     }
                 }
             }
