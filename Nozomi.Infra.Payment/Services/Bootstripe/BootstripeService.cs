@@ -143,6 +143,14 @@ namespace Nozomi.Infra.Payment.Services.Bootstripe
             _userService.RemovePaymentMethod(user.Id, paymentMethodId);
             _logger.LogInformation($"{_serviceName} RemovePaymentMethod: {user.Id} successfully " +
                                $"removed a payment method that was tokenized as {paymentMethodId}");
+
+            var customer = await _customerService.GetAsync(stripeCustomerId);
+
+            if(customer == null)
+                throw new StripeException($"{_serviceName} {methodName}: An error occured while trying to retrieve stripe customer {stripeCustomerId}");
+
+            _userService.SetDefaultPaymentMethod(user.Id, customer.InvoiceSettings.DefaultPaymentMethodId);
+
             return;
         }
 
@@ -176,6 +184,7 @@ namespace Nozomi.Infra.Payment.Services.Bootstripe
         public Task Subscribe(string planId, User user)
         {
             throw new System.NotImplementedException();
+
         }
 
         public Task Unsubscribe(User user)
