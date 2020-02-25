@@ -71,15 +71,7 @@ namespace Nozomi.Infra.Payment.Services.Bootstripe
             if(!_userService.HasStripe(user.Id))
                 throw new InvalidOperationException($"{_serviceName} {methodName}: User is not registered for stripe.");
 
-            var paymentMethod = await _paymentMethodService.GetAsync(paymentMethodId);
-
-            var stripeCustomerId = _userEvent.GetStripeCustomerId(user.Id);
-            
-            if(string.IsNullOrEmpty(stripeCustomerId))
-                throw new InvalidOperationException($"{_serviceName} {methodName}: An error occured while trying to retrieve stripe customer id.");
-            
-            if(!paymentMethod.CustomerId.Equals(stripeCustomerId))
-                throw new InvalidOperationException($"{_serviceName} {methodName}: Payment method does not belong to customer.");
+            CheckPaymentMethodOwnership(user.Id, paymentMethodId, methodName);
             
             _userService.AddPaymentMethod(user.Id, paymentMethodId);
 
@@ -100,15 +92,7 @@ namespace Nozomi.Infra.Payment.Services.Bootstripe
             if (!_userService.HasStripe(user.Id))
                 throw new InvalidOperationException($"{_serviceName} {methodName}: User is not registered for stripe.");
 
-            var paymentMethod = await _paymentMethodService.GetAsync(paymentMethodId);
-
-            var stripeCustomerId = _userEvent.GetStripeCustomerId(user.Id);
-
-            if (string.IsNullOrEmpty(stripeCustomerId))
-                throw new InvalidOperationException($"{_serviceName} {methodName}: An error occured while trying to retrieve stripe customer id.");
-
-            if (!paymentMethod.CustomerId.Equals(stripeCustomerId))
-                throw new InvalidOperationException($"{_serviceName} {methodName}: Payment method does not belong to customer.");
+            CheckPaymentMethodOwnership(user.Id, paymentMethodId, methodName);
 
             _userService.RemovePaymentMethod(user.Id, paymentMethodId);
 
@@ -117,7 +101,11 @@ namespace Nozomi.Infra.Payment.Services.Bootstripe
 
         public Task SetDefaultPaymentMethod(string paymentMethodId, User user)
         {
-            //TODO: IMPLEMENTATION
+            const string methodName = "SetDefaultPaymentMethod";
+            PerformUserPrecheck(user, methodName);
+
+            if (string.IsNullOrEmpty(paymentMethodId))
+                throw new ArgumentNullException($"{_serviceName} {methodName}: Payment method id is null");
             throw new NotImplementedException();
         }
 
@@ -140,6 +128,18 @@ namespace Nozomi.Infra.Payment.Services.Bootstripe
         {
             if(user == null)
                 throw new NullReferenceException($"{_serviceName} {methodName}: User is null.");
+        }
+
+        private async void CheckPaymentMethodOwnership(string userId, string paymentMethodId, string methodName) {
+            var paymentMethod = await _paymentMethodService.GetAsync(paymentMethodId);
+
+            var stripeCustomerId = _userEvent.GetStripeCustomerId(userId);
+
+            if (string.IsNullOrEmpty(stripeCustomerId))
+                throw new InvalidOperationException($"{_serviceName} {methodName}: An error occured while trying to retrieve stripe customer id.");
+
+            if (!paymentMethod.CustomerId.Equals(stripeCustomerId))
+                throw new InvalidOperationException($"{_serviceName} {methodName}: Payment method does not belong to customer.");
         }
     }
 }
