@@ -89,8 +89,29 @@ namespace Nozomi.Infra.Payment.Services.Bootstripe
             return;
         }
 
-        public Task RemovePaymentMethod(string paymentMethodId, User user)
+        public async Task RemovePaymentMethod(string paymentMethodId, User user)
         {
+            const string methodName = "RemovePaymentMethod";
+            PerformUserPrecheck(user, methodName);
+
+            if (string.IsNullOrEmpty(paymentMethodId))
+                throw new NullReferenceException($"{_serviceName} {methodName}: Payment method id is null");
+
+            if (!_userService.HasStripe(user.Id))
+                throw new InvalidOperationException($"{_serviceName} {methodName}: User is not registered for stripe.");
+
+            var paymentMethod = await _paymentMethodService.GetAsync(paymentMethodId);
+
+            var stripeCustomerId = _userEvent.GetStripeCustomerId(user.Id);
+
+            if (string.IsNullOrEmpty(stripeCustomerId))
+                throw new InvalidOperationException($"{_serviceName} {methodName}: An error occured while trying to retrieve stripe customer id.");
+
+            if (!paymentMethod.CustomerId.Equals(stripeCustomerId))
+                throw new InvalidOperationException($"{_serviceName} {methodName}: Payment method does not belong to customer.");
+
+            _userService.RemovePaymentMethod(user.Id, paymentMethodId);
+
             throw new System.NotImplementedException();
         }
 
