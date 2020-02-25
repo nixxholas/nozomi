@@ -270,7 +270,37 @@ namespace Nozomi.Infra.Auth.Services.User
                 UpdateUserClaim(userId, defaultPaymentMethodClaim,methodName);
             }
         }
-        
+
+        public void AddSubscription(string userId, string subscriptionId)
+        {
+            const string methodName = "AddSubscription";
+            const string claimType = NozomiJwtClaimTypes.StripeSubscriptionId;
+            const string archiveClaimType = NozomiJwtClaimTypes.PreviousStripeSubscriptionId;
+
+            if (string.IsNullOrEmpty(userId))
+                throw new ArgumentNullException($"{_serviceName} {methodName}: User Id is null.");
+            if (string.IsNullOrEmpty(subscriptionId))
+                throw new ArgumentNullException($"{_serviceName} {methodName}: Payment Method Id is null.");
+
+            var subscriptionClaim = GetUserClaim(userId, claimType);
+
+            if (subscriptionClaim != null)
+            {
+                CreateUserClaim(userId, archiveClaimType, subscriptionClaim.ClaimValue, methodName);
+                subscriptionClaim.ClaimValue = subscriptionId;
+                UpdateUserClaim(userId, subscriptionClaim, methodName);
+            }
+            else 
+            {
+                CreateUserClaim(userId, claimType, subscriptionId, methodName);
+            }
+        }
+
+        public void RemoveSubscription(string userId, string subscriptionId)
+        {
+            throw new NotImplementedException();
+        }
+
         private UserClaim GetUserClaim(string userId, string claimType)
         {
             return _unitOfWork.GetRepository<UserClaim>().GetQueryable().AsTracking().SingleOrDefault(claim => claim.ClaimType.Equals(claimType) && claim.UserId.Equals(userId));
@@ -308,5 +338,7 @@ namespace Nozomi.Infra.Auth.Services.User
             if(_unitOfWork.Commit(userId) != 1)
                 throw new InvalidOperationException($"{_serviceName} {methodName}: Failed to delete user claim");
         }
+
+        
     }
 }
