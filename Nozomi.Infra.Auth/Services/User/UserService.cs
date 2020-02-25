@@ -280,7 +280,7 @@ namespace Nozomi.Infra.Auth.Services.User
             if (string.IsNullOrEmpty(userId))
                 throw new ArgumentNullException($"{_serviceName} {methodName}: User Id is null.");
             if (string.IsNullOrEmpty(subscriptionId))
-                throw new ArgumentNullException($"{_serviceName} {methodName}: Payment Method Id is null.");
+                throw new ArgumentNullException($"{_serviceName} {methodName}: Subscription Id is null.");
 
             var subscriptionClaim = GetUserClaim(userId, claimType);
 
@@ -296,9 +296,22 @@ namespace Nozomi.Infra.Auth.Services.User
             }
         }
 
-        public void RemoveSubscription(string userId, string subscriptionId)
+        public void RemoveSubscription(string userId)
         {
-            throw new NotImplementedException();
+            const string methodName = "RemoveSubscription";
+            const string claimType = NozomiJwtClaimTypes.StripeSubscriptionId;
+            const string archiveClaimType = NozomiJwtClaimTypes.PreviousStripeSubscriptionId;
+
+            if (string.IsNullOrEmpty(userId))
+                throw new ArgumentNullException($"{_serviceName} {methodName}: User Id is null.");
+
+            var subscriptionClaim = GetUserClaim(userId, claimType);
+
+            if (subscriptionClaim == null)
+            {
+                CreateUserClaim(userId, archiveClaimType, subscriptionClaim.ClaimValue, methodName);
+                DeleteUserClaim(userId, subscriptionClaim, methodName);
+            }
         }
 
         private UserClaim GetUserClaim(string userId, string claimType)

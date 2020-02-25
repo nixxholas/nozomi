@@ -19,6 +19,6 @@ namespace Nozomi.Infra.Auth.Services.User
 
         void AddSubscription(string userId, string subscriptionId);
 
-        void RemoveSubscription(string userId, string subscriptionId);
+        void RemoveSubscription(string userId);
     }
 }
