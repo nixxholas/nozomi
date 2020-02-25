@@ -16,5 +16,9 @@ namespace Nozomi.Infra.Auth.Services.User
         void RemovePaymentMethod(string userId, string paymentMethodId);
 
         void SetDefaultPaymentMethod(string userId, string paymentMethodId);
+
+        void AddSubscription(string userId, string subscriptionId);
+
+        void RemoveSubscription(string userId, string subscriptionId);
     }
 }
