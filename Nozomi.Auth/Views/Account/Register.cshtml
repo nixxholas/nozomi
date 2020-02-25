@@ -10,6 +10,8 @@
 
 <section class="hero">
     <div class="hero-body">
+        <partial name="_ValidationSummary"/>
+    
         @if (string.IsNullOrEmpty(name))
         {
             <h1 class="title">Register</h1>
