@@ -1,4 +1,4 @@
-﻿@model Nozomi.Base.Auth.ViewModels.Account.LoginViewModel
+@model Nozomi.Base.Auth.ViewModels.Account.LoginViewModel
 @using IdentityServer4.Extensions
 @{
     string name = null;
@@ -77,7 +77,7 @@ else
                         </form>
                     </div>
                     <p class="has-text-grey">
-                        <a asp-action="Register">Sign Up</a> &nbsp;·&nbsp;
+                        <a asp-action="Register" asp-route-returnUrl="@Model.ReturnUrl">Sign Up</a> &nbsp;·&nbsp;
                         <a asp-action="ForgotPassword">Forgot Password</a> &nbsp;·&nbsp;
                     </p>
                 </div>
