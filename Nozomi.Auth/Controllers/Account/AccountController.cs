@@ -1,4 +1,4 @@
-﻿// Copyright (c) Brock Allen & Dominick Baier. All rights reserved.
+// Copyright (c) Brock Allen & Dominick Baier. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
 
@@ -611,6 +611,11 @@ namespace Nozomi.Auth.Controllers.Account
 
                 await _events.RaiseAsync(new UserLoginFailureEvent(model.Address, "invalid web3 credentials",
                     clientId: context?.ClientId));
+                ModelState.AddModelError(string.Empty, AccountOptions.InvalidCredentialsErrorMessage);
+            }
+            else
+            {
+                // Default error message when empty invalid form is submitted
                 ModelState.AddModelError(string.Empty, AccountOptions.InvalidCredentialsErrorMessage);
             }
 
