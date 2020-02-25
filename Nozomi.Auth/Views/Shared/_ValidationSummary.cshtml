@@ -1,8 +1,16 @@
-﻿@if (ViewContext.ModelState.IsValid == false)
+﻿@using Microsoft.AspNetCore.Mvc.ModelBinding
+@if (ViewContext.ModelState.IsValid == false)
 {
     <div class="notification is-danger">
         <button class="delete"></button>
         <strong>Error</strong> <br/>
-        <p asp-validation-summary="All" class="danger"></p>
+      
+         @foreach (ModelStateEntry modelStateEntries in ViewContext.ModelState.Values)
+         {
+             @foreach (ModelError modelError in modelStateEntries.Errors)
+             {
+                 <p>@modelError.ErrorMessage</p>
+             }
+         }
     </div>
 }
