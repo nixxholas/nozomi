@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -20,6 +21,8 @@ namespace Nozomi.Infra.Payment.Services.Bootstripe
         
         private readonly CustomerService _customerService;
         private readonly PaymentMethodService _paymentMethodService;
+        private readonly PlanService _planService;
+        private readonly SubscriptionService _subscriptionService;
         
         public BootstripeService(ILogger<BootstripeService> logger, IUserService userService, IUserEvent userEvent, IStripeEvent stripeEvent) : base(logger)
         {
@@ -28,6 +31,8 @@ namespace Nozomi.Infra.Payment.Services.Bootstripe
             _stripeEvent = stripeEvent;
             _customerService = new CustomerService();
             _paymentMethodService = new PaymentMethodService();
+            _planService = new PlanService();
+            _subscriptionService = new SubscriptionService();
         }
 
         public async Task RegisterCustomer(User user)
@@ -181,9 +186,39 @@ namespace Nozomi.Infra.Payment.Services.Bootstripe
             _userService.SetDefaultPaymentMethod(user.Id, paymentMethodId);
         }
 
-        public Task Subscribe(string planId, User user)
+        public async Task Subscribe(string planId, User user)
         {
-            throw new System.NotImplementedException();
+            const string methodName = "Subscribe";
+            PerformUserPrecheck(user, methodName);
+
+            if (!_userEvent.HasStripe(user.Id))
+                throw new InvalidOperationException($"{_serviceName} {methodName}: User is not registered for stripe");
+
+            var stripeCustomerId = _userEvent.GetStripeCustomerId(user.Id);
+
+            var plan = await _planService.GetAsync(planId);
+
+            if (plan == null)
+                throw new StripeException($"{_serviceName} {methodName}: Plan does not exist");
+
+            var subscriptionOptions = new SubscriptionCreateOptions
+            {
+                Customer = stripeCustomerId,
+                CancelAtPeriodEnd = false,
+                Items = new List<SubscriptionItemOptions> 
+                {
+                    new SubscriptionItemOptions
+                    {
+                        Plan = plan.Id
+                    }
+                }
+            };
+
+            var subscription = await _subscriptionService.CreateAsync(subscriptionOptions);
+            if (subscription == null)
+                throw new StripeException($"{_serviceName} {methodName}: An error occured while trying to create subscriptio for plan {planId} for {user.Id}");
+
+            //USERSERVICE: SUBSCRIBE
 
         }
 
