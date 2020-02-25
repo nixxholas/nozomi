@@ -72,12 +72,34 @@ namespace Nozomi.Infra.Payment.Services.Bootstripe
                 throw new InvalidOperationException($"{_serviceName} {methodName}: User is not registered for stripe.");
 
             CheckPaymentMethodOwnership(user.Id, paymentMethodId, methodName);
-            
-            _userService.AddPaymentMethod(user.Id, paymentMethodId);
+
+            var stripeCustomerId = _userEvent.GetStripeCustomerId(user.Id);
+
+            var options = new PaymentMethodAttachOptions
+            {
+                Customer = stripeCustomerId,
+            };
+
+            var result = _paymentMethodService.Attach(paymentMethodId, options);
+
+            if (result != null && result.StripeResponse != null && result.StripeResponse.StatusCode.Equals(HttpStatusCode.OK))
+            {
+                _logger.LogInformation($"{_serviceName} AddPaymentMethod: {user.Id} successfully added " +
+                                           $"a new payment method tokenized as {paymentMethodId}");
+                _userService.AddPaymentMethod(user.Id, paymentMethodId);
+            }
+            else
+            {
+                _logger.LogInformation($"{_serviceName} AddPaymentMethod: There was an issue related to binding " +
+                                       $"paymentMethodId {paymentMethodId} to user {user.Id}.");
+                throw new StripeException($"{_serviceName} AddPaymentMethod: There was a problem binding " +
+                                          $"the newly created payment method of {paymentMethodId} to {user.Id}");
+            }
 
             if (_userEvent.HasDefaultPaymentMethod(user.Id))
                 return;
-            //TODO: SET DEFAULT PAYMENT
+
+            await SetDefaultPaymentMethod(paymentMethodId, user);
             return;
         }
 
@@ -94,6 +116,8 @@ namespace Nozomi.Infra.Payment.Services.Bootstripe
 
             CheckPaymentMethodOwnership(user.Id, paymentMethodId, methodName);
 
+            //STRIPE LOGIC
+
             _userService.RemovePaymentMethod(user.Id, paymentMethodId);
 
             throw new System.NotImplementedException();
@@ -106,6 +130,13 @@ namespace Nozomi.Infra.Payment.Services.Bootstripe
 
             if (string.IsNullOrEmpty(paymentMethodId))
                 throw new ArgumentNullException($"{_serviceName} {methodName}: Payment method id is null");
+
+            CheckPaymentMethodOwnership(user.Id, paymentMethodId, methodName);
+
+            //STRIPE LOGIC
+
+            _userService.SetDefaultPaymentMethod(user.Id, paymentMethodId);
+
             throw new NotImplementedException();
         }
 
