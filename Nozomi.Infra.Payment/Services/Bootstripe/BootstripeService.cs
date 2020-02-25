@@ -146,7 +146,7 @@ namespace Nozomi.Infra.Payment.Services.Bootstripe
             return;
         }
 
-        public Task SetDefaultPaymentMethod(string paymentMethodId, User user)
+        public async Task SetDefaultPaymentMethod(string paymentMethodId, User user)
         {
             const string methodName = "SetDefaultPaymentMethod";
             PerformUserPrecheck(user, methodName);
@@ -156,11 +156,21 @@ namespace Nozomi.Infra.Payment.Services.Bootstripe
 
             CheckPaymentMethodOwnership(user.Id, paymentMethodId, methodName);
 
-            //STRIPE LOGIC
+            var stripeCustomerId = _userEvent.GetStripeCustomerId(user.Id);
+
+            var customerUpdateOptions = new CustomerUpdateOptions
+            {
+                InvoiceSettings = new CustomerInvoiceSettingsOptions
+                {
+                    DefaultPaymentMethod = paymentMethodId
+                }
+            };
+
+            var updatedCustomer = await _customerService.UpdateAsync(stripeCustomerId, customerUpdateOptions);
+            if (updatedCustomer.InvoiceSettings.DefaultPaymentMethodId != paymentMethodId)
+                throw new StripeException($"{_serviceName} {methodName}: An error occured while trying to update user's default payment method.");
 
             _userService.SetDefaultPaymentMethod(user.Id, paymentMethodId);
-
-            throw new NotImplementedException();
         }
 
         public Task Subscribe(string planId, User user)
