@@ -218,8 +218,7 @@ namespace Nozomi.Infra.Payment.Services.Bootstripe
             if (subscription == null)
                 throw new StripeException($"{_serviceName} {methodName}: An error occured while trying to create subscriptio for plan {planId} for {user.Id}");
 
-            //USERSERVICE: SUBSCRIBE
-
+            _userService.AddSubscription(user.Id, subscription.Id);
         }
 
         public Task Unsubscribe(User user)
