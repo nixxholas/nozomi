@@ -280,7 +280,7 @@ namespace Nozomi.Infra.Syncing.HostedServices.RequestTypes
             if (token == null)
                 return false;
 
-            var processingToken = token;
+            JToken processingToken;
 
             // For each component we're checking
             foreach (var component in requestComponents)
