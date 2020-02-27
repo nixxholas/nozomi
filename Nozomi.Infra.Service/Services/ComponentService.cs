@@ -181,6 +181,7 @@ namespace Nozomi.Service.Services
             }
         }
 
+        [Obsolete]
         public NozomiResult<string> UpdatePairValue(long id, string val)
         {
             try
