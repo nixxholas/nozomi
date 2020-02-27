@@ -100,6 +100,35 @@ namespace Nozomi.Service.Services
             throw new NullReferenceException("Invalid id for removal.");
         }
 
+        public void Remove(Guid guid, string userId = null, bool hardDelete = false)
+        {
+            var itemToDel = _unitOfWork.GetRepository<ComponentHistoricItem>()
+                .GetQueryable()
+                .AsTracking()
+                .SingleOrDefault(e => e.Guid.Equals(guid));
+            
+
+            if (itemToDel != null) // Since it exists, let's delete it
+            {
+                if (hardDelete)
+                {
+                    _unitOfWork.GetRepository<ComponentHistoricItem>().Delete(itemToDel); // Delete
+                    _unitOfWork.Commit(userId); // Save
+                    return;
+                }
+                else
+                {
+                    itemToDel.DeletedAt = DateTime.UtcNow;
+                    itemToDel.DeletedById = userId;
+                    _unitOfWork.GetRepository<ComponentHistoricItem>().Update(itemToDel); // Save
+                    _unitOfWork.Commit(userId); // Commit
+                    return;
+                }
+            }
+
+            throw new NullReferenceException($"{_serviceName } Remove (Guid): Invalid Guid for removal.");
+        }
+
         public void Remove(ComponentHistoricItem componentHistoricItem, string userId = null, bool hardDelete = false)
         {
             if (componentHistoricItem != null)
