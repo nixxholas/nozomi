@@ -117,12 +117,14 @@ namespace Nozomi.Infra.Syncing.HostedServices.RequestTypes
                                             _logger.LogCritical(
                                                 $"{_hostedServiceName} OnMessage: " +
                                                 ex);
+                                            newSocket.Close();
                                         }
                                     }
                                     else
                                     {
                                         _logger.LogError($"{_hostedServiceName} OnMessage: " +
                                                          $"RequestId:{dataEndpointItem.DataPath} has an empty payload incoming.");
+                                        newSocket.Close();
                                     }
 
                                     await Task.Delay(50, CancellationToken.None); // Always delay by 1ms in case of spam
@@ -133,7 +135,8 @@ namespace Nozomi.Infra.Syncing.HostedServices.RequestTypes
                                 {
                                     _logger.LogError($"{_hostedServiceName} OnError:" +
                                                      $" {args.Message}");
-                                    _webSockets.Remove(dataEndpointItem.DataPath);
+                                    if (_webSockets.ContainsKey(dataEndpointItem.DataPath))
+                                        _webSockets.Remove(dataEndpointItem.DataPath);
                                     GC.SuppressFinalize(this);
                                 };
 
@@ -141,7 +144,8 @@ namespace Nozomi.Infra.Syncing.HostedServices.RequestTypes
                                 {
                                     _logger.LogInformation($"{_hostedServiceName} onClose: " +
                                                            $"Closing socket connection for {dataEndpointItem.DataPath}");
-                                    _webSockets.Remove(dataEndpointItem.DataPath);
+                                    if (_webSockets.ContainsKey(dataEndpointItem.DataPath))
+                                        _webSockets.Remove(dataEndpointItem.DataPath);
                                     GC.SuppressFinalize(this);
                                 };
 
