@@ -124,6 +124,8 @@ namespace Nozomi.Infra.Syncing.HostedServices.RequestTypes
                                         _logger.LogError($"{_hostedServiceName} OnMessage: " +
                                                          $"RequestId:{dataEndpointItem.DataPath} has an empty payload incoming.");
                                     }
+
+                                    await Task.Delay(1, CancellationToken.None); // Always delay by 1ms in case of spam
                                 };
 
                                 // Error processing
