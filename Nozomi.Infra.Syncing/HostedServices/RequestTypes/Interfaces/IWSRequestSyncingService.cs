@@ -5,7 +5,7 @@ using Nozomi.Data.Models.Web;
 
 namespace Nozomi.Infra.Syncing.HostedServices.RequestTypes.Interfaces
 {
-    public interface IWSRequestSyncingService
+    public interface IWsRequestSyncingService
     {
         Task<bool> Process(ICollection<Request> cpr, string payload);
 

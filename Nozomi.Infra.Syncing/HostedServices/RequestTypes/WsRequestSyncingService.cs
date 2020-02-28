@@ -1,11 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
 using System.Linq;
-using System.Net.WebSockets;
-using System.Text;
-using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
@@ -21,26 +17,24 @@ using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Service.Events.Interfaces;
 using Nozomi.Service.Services.Interfaces;
 using Nozomi.Service.Services.Requests.Interfaces;
-using WebSocketSharp;
-using JsonSerializer = System.Text.Json.JsonSerializer;
-using WebSocket = WebSocketSharp.WebSocket;
+using sta_websocket_sharp_core;
 
 namespace Nozomi.Infra.Syncing.HostedServices.RequestTypes
 {
     public class WsRequestSyncingService :
         BaseProcessingService<WsRequestSyncingService>,
-        IWSRequestSyncingService
+        IWsRequestSyncingService
     {
         /// <summary>
         /// 
         /// </summary>
         /// <key>The Id of the WebsocketRequest</key≥
-        private readonly Dictionary<string, WebSocket> _webSockets;
+        private readonly Dictionary<string, WebSocketCore> _webSockets;
         private readonly IRequestEvent _websocketRequestEvent;
 
         public WsRequestSyncingService(IServiceProvider serviceProvider) : base(serviceProvider)
         {
-            _webSockets = new Dictionary<string, WebSocket>();
+            _webSockets = new Dictionary<string, WebSocketCore>();
             _websocketRequestEvent = _scope.ServiceProvider.GetRequiredService<IRequestEvent>();
         }
 
@@ -74,11 +68,11 @@ namespace Nozomi.Infra.Syncing.HostedServices.RequestTypes
                                 && !string.IsNullOrEmpty(dataEndpointItem.DataPath))
                             {
                                 // Start the websockets here
-                                var newSocket = new WebSocket(dataEndpointItem.DataPath)
+                                var newSocket = new WebSocketCore(dataEndpointItem.DataPath)
                                 {
                                     Compression = CompressionMethod.Deflate,
                                     EmitOnPing = true,
-                                    EnableRedirection = false
+                                    EnableRedirection = false,
                                 };
                                 
                                 // Pre-request processing
