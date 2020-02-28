@@ -1,4 +1,4 @@
-// Copyright (c) Brock Allen & Dominick Baier. All rights reserved.
+﻿// Copyright (c) Brock Allen & Dominick Baier. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
 
@@ -704,24 +704,33 @@ namespace Nozomi.Auth.Controllers.Account
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ForgotPassword(ForgotPasswordInputModel model)
+        public async Task<IActionResult> ForgotPassword(ForgotPasswordInputModel model, string button)
         {
-            if (ModelState.IsValid)
+            if (button.Equals("backToLogin") && !string.IsNullOrEmpty(model.ReturnUrl))
             {
-                var user = await _userManager.FindByEmailAsync(model.Email);
+                return Redirect(model.ReturnUrl);
+            }
+            
+            if (button.Equals("resetPassword") && model.IsValid())
+            {
+                User user = await _userManager.FindByEmailAsync(model.Email);
                 if (user == null || !(await _userManager.IsEmailConfirmedAsync(user)))
                 {
                     // Don't reveal that the user does not exist or is not confirmed
                     return View("ForgotPasswordConfirmation");
                 }
 
-                // Send an email with this link
-                var code = await _userManager.GeneratePasswordResetTokenAsync(user);
-                var callbackUrl = Url.Action("ResetPassword", "Account", 
-                    new ResetPasswordInputModel { Email = user.Email, Code = code }, protocol: HttpContext.Request.Scheme);
+                string code = await _userManager.GeneratePasswordResetTokenAsync(user);
+                string callbackUrl = Url.Action("ResetPassword", "Account", 
+                    new ResetPasswordInputModel{ Email = user.Email, Code = code}, protocol: HttpContext.Request.Scheme);
                 await _emailSender.SendEmailAsync(model.Email, "Reset Password",
                     "Please reset your password by clicking here: <a href=\"" + callbackUrl + "\">link</a>");
                 return View("ForgotPasswordConfirmation");
+            }
+            else
+            {
+                // Add default error message when empty form is submitted
+                ModelState.AddModelError(string.Empty, AccountOptions.EmptyFormSubmitted);
             }
 
             // If we got this far, something failed, redisplay form
