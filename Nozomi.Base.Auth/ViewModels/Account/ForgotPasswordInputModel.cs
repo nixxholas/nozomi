@@ -1,10 +1,12 @@
-using System.ComponentModel.DataAnnotations;
+using System;
+using FluentValidation;
 
 namespace Nozomi.Base.Auth.ViewModels.Account
 {
     public class ForgotPasswordInputModel
     {
-        [Required] [EmailAddress] public string Email { get; set; }
+        public string Email { get; set; }
+        
         public string ReturnUrl { get; set; }
 
         public bool IsValid()
