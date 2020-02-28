@@ -125,14 +125,24 @@ namespace Nozomi.Infra.Syncing.HostedServices.RequestTypes
                                                          $"RequestId:{dataEndpointItem.DataPath} has an empty payload incoming.");
                                     }
 
-                                    await Task.Delay(1, CancellationToken.None); // Always delay by 1ms in case of spam
+                                    await Task.Delay(50, CancellationToken.None); // Always delay by 1ms in case of spam
                                 };
 
                                 // Error processing
-                                newSocket.OnError += (sender, args) =>
+                                newSocket.OnError += async (sender, args) =>
                                 {
                                     _logger.LogError($"{_hostedServiceName} OnError:" +
                                                      $" {args.Message}");
+                                    _webSockets.Remove(dataEndpointItem.DataPath);
+                                    GC.SuppressFinalize(this);
+                                };
+
+                                newSocket.OnClose += (sender, args) =>
+                                {
+                                    _logger.LogInformation($"{_hostedServiceName} onClose: " +
+                                                           $"Closing socket connection for {dataEndpointItem.DataPath}");
+                                    _webSockets.Remove(dataEndpointItem.DataPath);
+                                    GC.SuppressFinalize(this);
                                 };
 
                                 newSocket.Connect();
