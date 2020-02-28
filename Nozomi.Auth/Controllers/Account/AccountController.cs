@@ -1,4 +1,4 @@
-﻿// Copyright (c) Brock Allen & Dominick Baier. All rights reserved.
+// Copyright (c) Brock Allen & Dominick Baier. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
 
@@ -1032,6 +1032,17 @@ namespace Nozomi.Auth.Controllers.Account
                 vm.Username = inputModel.Username;
                 vm.ReturnUrl = inputModel.ReturnUrl;
             }
+            
+            return vm;
+        }
+
+        private ForgotPasswordInputModel BuildForgotPasswordInputViewModel(string returnUrl, string email = null)
+        {
+            ForgotPasswordInputModel vm = new ForgotPasswordInputModel
+            {
+                Email = email,
+                ReturnUrl = returnUrl
+            };
 
             return vm;
         }
