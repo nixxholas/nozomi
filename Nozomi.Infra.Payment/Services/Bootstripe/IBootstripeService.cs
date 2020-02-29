@@ -14,8 +14,6 @@ namespace Nozomi.Infra.Payment.Services.Bootstripe
         
         Task Subscribe(string planId, User user);
         
-        Task Unsubscribe(User user);
-        
         Task ChangeSubscription(string planId, Base.Auth.Models.User user);
     }
 }
