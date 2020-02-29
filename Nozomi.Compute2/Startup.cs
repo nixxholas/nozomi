@@ -149,8 +149,8 @@ namespace Nozomi.Compute2
             services.AddTransient<IComputeExpressionService, ComputeExpressionService>();
             
             // The actual hosted services
-            services.AddHostedService<ComputeExpressionHostedService>();
             services.AddHostedService<ComputeHostedService>();
+            services.AddHostedService<ComputeExpressionHostedService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -160,6 +160,8 @@ namespace Nozomi.Compute2
             {
                 app.UseDeveloperExceptionPage();
             }
+            
+            app.UseAutoDbMigration(WebHostEnvironment);
 
             app.UseRouting();
 
