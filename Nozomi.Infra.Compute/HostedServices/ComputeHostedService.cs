@@ -25,6 +25,10 @@ namespace Nozomi.Infra.Compute.HostedServices
                 // Initialize an event like that
                 var computeEvent = _scope.ServiceProvider.GetRequiredService<IComputeEvent>();
                 
+                #if DEBUG
+                var oldCompute = computeEvent.GetMostOutdated(true);
+                #endif
+                
                 // Execute!
                 ExecuteComputation(computeEvent.GetMostOutdated(true));
 
