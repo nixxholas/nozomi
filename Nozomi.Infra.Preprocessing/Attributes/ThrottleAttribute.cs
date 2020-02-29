@@ -18,6 +18,13 @@ namespace Nozomi.Preprocessing.Attributes
     public class ThrottleAttribute : ActionFilterAttribute
     {
         /// <summary>
+        /// The cache 
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        private readonly IMemoryCache _memoryCache;
+
+        /// <summary>
         /// A unique name for this Throttle.
         /// </summary>
         /// <remarks>
@@ -36,9 +43,14 @@ namespace Nozomi.Preprocessing.Attributes
         /// </summary>
         public string Message { get; set; }
 
+        public ThrottleAttribute(IMemoryCache memoryCache)
+        {
+            _memoryCache = memoryCache;
+        }
+
         public override void OnActionExecuting(ActionExecutingContext c)
         {
-            var key = string.Concat(Name, "-", 
+            var key = string.Concat(Name, "-",
                 // https://stackoverflow.com/questions/28664686/how-do-i-get-client-ip-address-in-asp-net-core
                 c.HttpContext.Connection.RemoteIpAddress);
             var allowExecute = false;
@@ -56,6 +68,26 @@ namespace Nozomi.Preprocessing.Attributes
             //
             //     allowExecute = true;
             // }
+
+
+            var cacheItem = _memoryCache.Get(key);
+            // Ensure that the accessor didn't access recently
+            if (cacheItem == null)
+            {
+                // Setup the expiration timing
+                var cacheEntryOptions = new MemoryCacheEntryOptions()
+                {
+                    Priority = CacheItemPriority.Normal,
+                    AbsoluteExpiration = DateTime.Now.AddSeconds(Seconds),
+                };
+                // Ensure expiry in 3 seconds
+                // .SetSlidingExpiration(TimeSpan.FromSeconds(Seconds));
+
+                // Record down this request
+                _memoryCache.Set(key, DateTime.UtcNow.AddSeconds(Seconds), cacheEntryOptions);
+
+                allowExecute = true;
+            }
 
             if (!allowExecute)
             {
