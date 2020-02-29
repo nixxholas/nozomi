@@ -26,6 +26,12 @@ namespace Nozomi.Infra.Compute.Abstracts
         /// <param name="compute">The most parent compute.</param>
         protected void ExecuteComputation(Data.Models.Web.Compute compute)
         {
+            if (compute == null)
+                return;
+            
+            _logger.LogInformation($"{_computeServiceName} ExecuteComputation: Updating computation for " +
+                                   $"{compute.Guid}");
+            
             var computeService = _scope.ServiceProvider.GetRequiredService<IComputeService>();
             
             // Look for any expression without a value first
