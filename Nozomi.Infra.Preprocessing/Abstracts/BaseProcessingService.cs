@@ -15,7 +15,7 @@ namespace Nozomi.Preprocessing.Abstracts
         
         public BaseProcessingService(IServiceProvider serviceProvider) : base(serviceProvider)
         {
-            _hostedServiceName = typeof(T).FullName;
+            _hostedServiceName = typeof(T).Name;
         }
 
         // [Obsolete]
