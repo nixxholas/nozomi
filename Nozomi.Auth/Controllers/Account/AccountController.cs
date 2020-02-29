@@ -1,4 +1,4 @@
-﻿// Copyright (c) Brock Allen & Dominick Baier. All rights reserved.
+// Copyright (c) Brock Allen & Dominick Baier. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
 
@@ -158,62 +158,56 @@ namespace Nozomi.Auth.Controllers.Account
         // POST: /Account/Register
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Register(RegisterInputModel model, string button = null)
+        public async Task<IActionResult> Register(RegisterInputModel model)
         {
             ViewData["ReturnUrl"] = model.ReturnUrl;
 
-            if (!string.IsNullOrEmpty(button) && button.Equals("register"))
+            if (model.IsValid())
             {
-                if (model.IsValid())
+                var user = new User {UserName = model.Username, Email = model.Email};
+                var result = await _userManager.CreateAsync(user, model.Password);
+                if (result.Succeeded)
                 {
-                    var user = new User {UserName = model.Username, Email = model.Email};
-                    var result = await _userManager.CreateAsync(user, model.Password);
-                    if (result.Succeeded)
+                    // Default role binding
+                    var roleResult = await _userManager.AddToRoleAsync(user, "User");
+
+                    if (roleResult.Succeeded)
                     {
-                        // Default role binding
-                        var roleResult = await _userManager.AddToRoleAsync(user, "User");
+                        // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=532713
+                        // Send an email with this link
+                        var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                        var callbackUrl = Url.Action("ConfirmEmail", "Account",
+                            new {userId = user.Id, code = code, returnUrl = model.ReturnUrl}, protocol:
+                            HttpContext.Request.Scheme);
+                        await _authEmailSender.SendEmailConfirmationAsync(model.Email, callbackUrl);
+                        // await _signInManager.SignInAsync(user, isPersistent: false);
+                        _logger.LogInformation(3, "User created a new account with password.");
 
-                        if (roleResult.Succeeded)
+                        // TODO: Inform about successful registration, inform the user to confirm his email.
+
+                        return RedirectToAction("Login", "Account", new
                         {
-                            // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=532713
-                            // Send an email with this link
-                            var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                            var callbackUrl = Url.Action("ConfirmEmail", "Account",
-                                new {userId = user.Id, code = code, returnUrl = model.ReturnUrl}, protocol: 
-                                HttpContext.Request.Scheme);
-                            await _authEmailSender.SendEmailConfirmationAsync(model.Email, callbackUrl);
-                            // await _signInManager.SignInAsync(user, isPersistent: false);
-                            _logger.LogInformation(3, "User created a new account with password.");
-                            
-                            // TODO: Inform about successful registration, inform the user to confirm his email.
-
-                            return RedirectToAction("Login", "Account", new
-                            {
-                                returnUrl = model.ReturnUrl,
-                                userEmail = model.Email
-                            });
-                        }
-
-                        ModelState.AddModelError(user.Id, AccountOptions.FailedToJoinRole);
+                            returnUrl = model.ReturnUrl,
+                            userEmail = model.Email
+                        });
                     }
-                    else
-                    {
-                        foreach (IdentityError resultError in result.Errors)
-                        {
-                            ModelState.AddModelError(string.Empty, resultError.Description);    
-                        }
-                    }
+
+                    ModelState.AddModelError(user.Id, AccountOptions.FailedToJoinRole);
                 }
                 else
                 {
-                    // Default error state when empty form is being submitted
-                    ModelState.AddModelError(string.Empty, AccountOptions.InvalidCredentialsErrorMessage);
+                    foreach (IdentityError resultError in result.Errors)
+                    {
+                        ModelState.AddModelError(string.Empty, resultError.Description);
+                    }
                 }
             }
-            else if (!string.IsNullOrEmpty(button) && button.Equals("cancel") && !string.IsNullOrEmpty(model.ReturnUrl))
+            else
             {
-                return Redirect(model.ReturnUrl);
+                // Default error state when empty form is being submitted
+                ModelState.AddModelError(string.Empty, AccountOptions.InvalidCredentialsErrorMessage);
             }
+
 
             // If we got this far, something failed, redisplay form
             // return BadRequest(model);
