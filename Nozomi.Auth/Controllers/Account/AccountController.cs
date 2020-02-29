@@ -718,7 +718,8 @@ namespace Nozomi.Auth.Controllers.Account
                 if (user == null || !(await _userManager.IsEmailConfirmedAsync(user)))
                 {
                     // Don't reveal that the user does not exist or is not confirmed
-                    return View("ForgotPasswordConfirmation");
+                    return RedirectToAction(nameof(ForgotPasswordConfirmation), "Account",
+                        new {returnUrl = model.ReturnUrl});
                 }
 
                 string code = await _userManager.GeneratePasswordResetTokenAsync(user);
@@ -726,8 +727,10 @@ namespace Nozomi.Auth.Controllers.Account
                     new ResetPasswordInputModel{ Email = user.Email, Code = code, ReturnUrl = model.ReturnUrl}, 
                     protocol: HttpContext.Request.Scheme);
                 await _authEmailSender.SendPasswordResetLinkAsync(model.Email, callbackUrl);
-                return View("ForgotPasswordConfirmation");
+                return RedirectToAction(nameof(ForgotPasswordConfirmation), "Account",
+                    new {returnUrl = model.ReturnUrl});
             }
+            
             else
             {
                 // Add default error message when empty form is submitted
