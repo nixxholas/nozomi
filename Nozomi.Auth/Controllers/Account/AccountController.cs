@@ -745,8 +745,9 @@ namespace Nozomi.Auth.Controllers.Account
         // GET: /Account/ForgotPasswordConfirmation
         [HttpGet]
         [AllowAnonymous]
-        public IActionResult ForgotPasswordConfirmation()
+        public IActionResult ForgotPasswordConfirmation(string returnUrl)
         {
+            ViewData["ReturnUrl"] = returnUrl;
             return View();
         }
         
