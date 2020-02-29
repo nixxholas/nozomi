@@ -67,7 +67,19 @@ namespace Nozomi.Infra.Auth.Events.UserEvent
 
             return claim?.ClaimValue;
         }
-        
+
+        public string GetUserActiveSubscriptionId(string userId)
+        {
+            const string methodName = "GetUserActiveSubscriptionId";
+            const string claimType = NozomiJwtClaimTypes.StripeSubscriptionId;
+            if(string.IsNullOrEmpty(userId))
+                throw new ArgumentNullException($"{_eventName} {methodName}: Invalid userId.");
+
+            var claim = GetUserClaim(userId, claimType);
+
+            return claim?.ClaimValue;
+        }
+
         private UserClaim GetUserClaim(string userId, string claimType)
         {
             return _unitOfWork.GetRepository<UserClaim>().GetQueryable().AsTracking().SingleOrDefault(claim => claim.ClaimType.Equals(claimType) && claim.UserId.Equals(userId));
