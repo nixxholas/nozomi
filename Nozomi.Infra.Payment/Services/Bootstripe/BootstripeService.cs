@@ -232,7 +232,7 @@ namespace Nozomi.Infra.Payment.Services.Bootstripe
             _quotaClaimsService.SetQuota(user.Id, quotaValue);
         }
 
-        public Task ChangeSubscription(string planId, User user)
+        public Task ChangePlan(string planId, User user)
         {
             throw new System.NotImplementedException();
         }
