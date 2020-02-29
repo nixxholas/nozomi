@@ -786,7 +786,7 @@ namespace Nozomi.Auth.Controllers.Account
             }
             AddErrors(result);
             
-            return View();
+            return View(model);
         }
 
         //
