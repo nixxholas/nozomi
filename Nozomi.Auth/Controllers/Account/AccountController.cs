@@ -710,14 +710,9 @@ namespace Nozomi.Auth.Controllers.Account
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ForgotPassword(ForgotPasswordInputModel model, string button)
+        public async Task<IActionResult> ForgotPassword(ForgotPasswordInputModel model)
         {
-            if (button.Equals("backToLogin") && !string.IsNullOrEmpty(model.ReturnUrl))
-            {
-                return Redirect(model.ReturnUrl);
-            }
-            
-            if (button.Equals("resetPassword") && model.IsValid())
+            if (model.IsValid())
             {
                 User user = await _userManager.FindByEmailAsync(model.Email);
                 if (user == null || !(await _userManager.IsEmailConfirmedAsync(user)))
