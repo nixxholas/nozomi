@@ -28,7 +28,7 @@ else
                             <p class="title">Welcome</p>
                             <p class="subtitle">Login to Nozomi to continue</p>
 
-                            <form id="web3login" asp-route="login">
+                            <form id="web3login" asp-route="login" class="is-bottom-spaced">
                                 <input type="hidden" asp-for="Message"/>
                                 <input type="hidden" asp-for="Address"/>
                                 <input type="hidden" asp-for="Signature"/>
@@ -40,7 +40,9 @@ else
                                 </button>
                             </form>
 
-                            <hr/>
+                            <p class="is-bottom-spaced has-text-grey-light">
+                                OR
+                            </p>
 
                             <div class="container is-bottom-spaced is-1">
                                 <partial name="_ValidationSummary"/>
@@ -95,7 +97,7 @@ else
                         </div>
                         <footer class="card-footer">
                             <p class="card-footer-item">
-                                <span class="has-text-grey-light">
+                                <span class="has-text-grey">
                                     Don't have an account?
                                     <a asp-action="Register" asp-route-returnUrl="@Model.ReturnUrl">Sign Up</a>
                                 </span>
