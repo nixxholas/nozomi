@@ -1,4 +1,4 @@
-// Copyright (c) Brock Allen & Dominick Baier. All rights reserved.
+﻿// Copyright (c) Brock Allen & Dominick Baier. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
 
@@ -34,6 +34,7 @@ using Nozomi.Base.Auth.Models.Wallet;
 using Nozomi.Base.Auth.ViewModels.Account;
 using Nozomi.Base.BCL.Helpers.Native.Text;
 using Nozomi.Base.Blockchain.Auth.Query.Validating;
+using Nozomi.Infra.Auth.Events.EmailSender;
 using Nozomi.Infra.Auth.Services.Address;
 using Nozomi.Infra.Auth.Services.Stripe;
 using Nozomi.Infra.Auth.Services.User;
@@ -47,6 +48,7 @@ namespace Nozomi.Auth.Controllers.Account
     public class AccountController : BaseController<AccountController>
     {
         private readonly IEmailSender _emailSender;
+        private readonly IAuthEmailSender _authEmailSender;
         private readonly RoleManager<Role> _roleManager;
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
@@ -64,6 +66,7 @@ namespace Nozomi.Auth.Controllers.Account
             ILogger<AccountController> logger,
             IWebHostEnvironment webHostEnvironment,
             IEmailSender emailSender,
+            IAuthEmailSender authEmailSender,
             RoleManager<Role> roleManager,
             UserManager<User> userManager,
             SignInManager<User> signInManager,
@@ -78,6 +81,7 @@ namespace Nozomi.Auth.Controllers.Account
             IUserService userService) : base(logger, webHostEnvironment)
         {
             _emailSender = emailSender;
+            _authEmailSender = authEmailSender;
             _roleManager = roleManager;
             _userManager = userManager;
             _signInManager = signInManager;
@@ -177,9 +181,7 @@ namespace Nozomi.Auth.Controllers.Account
                             var callbackUrl = Url.Action("ConfirmEmail", "Account",
                                 new {userId = user.Id, code = code, returnUrl = model.ReturnUrl}, protocol: 
                                 HttpContext.Request.Scheme);
-                            await _emailSender.SendEmailAsync(model.Email, "Confirm your account",
-                                "Please confirm your account by clicking this link: <a href=\"" + callbackUrl +
-                                "\">link</a>");
+                            await _authEmailSender.SendEmailConfirmationAsync(model.Email, callbackUrl);
                             // await _signInManager.SignInAsync(user, isPersistent: false);
                             _logger.LogInformation(3, "User created a new account with password.");
                             
@@ -722,9 +724,9 @@ namespace Nozomi.Auth.Controllers.Account
 
                 string code = await _userManager.GeneratePasswordResetTokenAsync(user);
                 string callbackUrl = Url.Action("ResetPassword", "Account", 
-                    new ResetPasswordInputModel{ Email = user.Email, Code = code}, protocol: HttpContext.Request.Scheme);
-                await _emailSender.SendEmailAsync(model.Email, "Reset Password",
-                    "Please reset your password by clicking here: <a href=\"" + callbackUrl + "\">link</a>");
+                    new ResetPasswordInputModel{ Email = user.Email, Code = code, ReturnUrl = model.ReturnUrl}, 
+                    protocol: HttpContext.Request.Scheme);
+                await _authEmailSender.SendPasswordResetLinkAsync(model.Email, callbackUrl);
                 return View("ForgotPasswordConfirmation");
             }
             else
