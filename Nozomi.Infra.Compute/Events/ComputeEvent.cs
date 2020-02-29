@@ -151,10 +151,20 @@ namespace Nozomi.Infra.Compute.Events
             if (ensureNotDeletedOrDisabled)
                 query = query.Where(c => c.DeletedAt == null && c.IsEnabled);
 
-            var mostOutdated = query.Take(10).AsEnumerable()
-                .FirstOrDefault(c => c.Values
-                    .OrderByDescending(v => v.CreatedAt)
-                    .FirstOrDefault()?.CreatedAt.AddMilliseconds(c.Delay) <= DateTime.UtcNow);
+            // var mostOutdated = query.Take(10).AsEnumerable()
+            //     .FirstOrDefault(c => c.Values
+            //         .OrderByDescending(v => v.CreatedAt)
+            //         .FirstOrDefault()?.CreatedAt.AddMilliseconds(c.Delay) <= DateTime.UtcNow);
+            var mostOutdated = query
+                // Order by the computes that have no values and are not failing
+                .OrderBy(c => !c.Values.Any() && c.FailCount.Equals(0))
+                .Take(10)
+                .AsEnumerable()
+                // Then by those that are outdated and not failing
+                .OrderByDescending(c => c.Values
+                    .Any(v => v.CreatedAt.AddMilliseconds(c.Delay) > DateTime.UtcNow) 
+                                        && c.FailCount.Equals(0))
+                .FirstOrDefault();
             
 #if DEBUG
             var mostOutdatedRes = mostOutdated;
