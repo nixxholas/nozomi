@@ -24,16 +24,15 @@ namespace Nozomi.Infra.Compute.HostedServices
             {
                 // Initialize an event like that
                 var computeEvent = _scope.ServiceProvider.GetRequiredService<IComputeEvent>();
-                
-                #if DEBUG
+
                 var oldCompute = computeEvent.GetMostOutdated(true);
-                #endif
-                
-                // Execute!
-                ExecuteComputation(computeEvent.GetMostOutdated(true));
+                if (oldCompute != null)
+                    ExecuteComputation(oldCompute); // Execute!
+                else
+                    _logger.LogInformation($"{_computeServiceName} ExecuteAsync: Nothing to compute.");
 
                 // Delay deliberately
-                await Task.Delay(1, stoppingToken);
+                await Task.Delay(500, stoppingToken);
             }
 
             _logger.LogWarning($"{_computeServiceName} background task is stopping.");
