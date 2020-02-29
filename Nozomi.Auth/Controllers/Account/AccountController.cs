@@ -793,8 +793,9 @@ namespace Nozomi.Auth.Controllers.Account
         // GET: /Account/ResetPasswordConfirmation
         [HttpGet]
         [AllowAnonymous]
-        public IActionResult ResetPasswordConfirmation()
+        public IActionResult ResetPasswordConfirmation(string returnUrl)
         {
+            ViewData["ReturnUrl"] = returnUrl;
             return View();
         }
 
