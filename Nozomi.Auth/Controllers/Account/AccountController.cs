@@ -1,4 +1,4 @@
-﻿// Copyright (c) Brock Allen & Dominick Baier. All rights reserved.
+// Copyright (c) Brock Allen & Dominick Baier. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
 
@@ -750,9 +750,16 @@ namespace Nozomi.Auth.Controllers.Account
         // GET: /Account/ResetPassword
         [HttpGet]
         [AllowAnonymous]
-        public IActionResult ResetPassword(string code = null)
+        public IActionResult ResetPassword(string code = null, string email = null, string returnUrl = null)
         {
-            return code == null ? View("Error") : View();
+            ResetPasswordInputModel model = new ResetPasswordInputModel
+            {
+                Code = code,
+                Email = email,
+                ReturnUrl = returnUrl
+            };
+            
+            return code == null ? View("Error") : View(model);
         }
 
         //
