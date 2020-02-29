@@ -135,9 +135,13 @@ namespace Nozomi.Infra.Compute.Events
                 .OrderBy(c => c.ModifiedAt) // Then we prioritize by the last modified/checked time
                 .ThenBy(c => c.FailCount) // Ensure we prioritize non-failing computes
                 // Filter by computes with no children or computes that have children with values.
-                .Where(c => c.ChildComputes.Any(cc => cc.ChildCompute.Values
-                                .Any(v => v.DeletedAt == null && v.IsEnabled) 
-                        || !c.ChildComputes.Any()));
+                .Where(c => !c.ChildComputes.Any() || 
+                            (c.ChildComputes.Any(cc => cc.ChildCompute.Values
+                                .Any(v => v.CreatedAt == null && v.IsEnabled))));
+            
+            #if DEBUG
+            var initialQueryRes = query.ToList();
+            #endif
 
             if (includeChildren)
                 query = query.Include(c => c.Expressions)
@@ -151,6 +155,10 @@ namespace Nozomi.Infra.Compute.Events
                 .FirstOrDefault(c => c.Values
                     .OrderByDescending(v => v.CreatedAt)
                     .FirstOrDefault()?.CreatedAt.AddMilliseconds(c.Delay) <= DateTime.UtcNow);
+            
+#if DEBUG
+            var mostOutdatedRes = mostOutdated;
+#endif
             
             // Ensure we mark it as being updated.
             if (mostOutdated != null)
