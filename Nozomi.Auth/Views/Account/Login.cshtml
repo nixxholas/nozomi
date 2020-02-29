@@ -48,8 +48,11 @@ else
                                 <partial name="_ValidationSummary"/>
                                 @if (Model.UserRegistrationSuccessful)
                                 {
-                                    <div class="notification is-success">
-
+                                    <div class="message is-success">
+                                        <div class="message-body has-text-left">
+                                            <strong>Account created successfully!</strong> <br /><br />
+                                            Please proceed to your email to verify your account.
+                                        </div>
                                     </div>
                                 }
 
