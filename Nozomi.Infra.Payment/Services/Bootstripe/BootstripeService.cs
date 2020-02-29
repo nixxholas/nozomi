@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using Microsoft.VisualBasic.CompilerServices;
 using Nozomi.Base.Auth.Models;
 using Nozomi.Infra.Auth.Events.Stripe;
 using Nozomi.Infra.Auth.Events.UserEvent;
@@ -247,6 +248,23 @@ namespace Nozomi.Infra.Payment.Services.Bootstripe
 
             if (!paymentMethod.CustomerId.Equals(stripeCustomerId))
                 throw new InvalidOperationException($"{_serviceName} {methodName}: Payment method does not belong to customer.");
+        }
+
+        private async Task<int> GetPlanQuota(string planid, string methodName)
+        {
+            var stripePlan = await _planService.GetAsync(planid);
+
+            if (stripePlan == null)
+                throw new StripeException($"{_serviceName} {methodName}: Unable to find plan based on ID");
+
+            var quotaString = stripePlan.Metadata["Quota"];
+
+            var quotaValue = 0;
+            
+            if (!int.TryParse(quotaString, out quotaValue))
+                throw new FormatException($"{_serviceName} {methodName}: Failed to parse plan quota to int");
+            
+            return quotaValue;
         }
     }
 }
