@@ -229,8 +229,7 @@ namespace Nozomi.Infra.Payment.Services.Bootstripe
                 throw new StripeException($"{_serviceName} {methodName}: An error occured while trying to create subscription for plan {planId} for {user.Id}");
 
             _userService.AddSubscription(user.Id, subscription.Id);
-            
-            //TODO: QUOTA CLAIMS TO SET QUOTA
+            _quotaClaimsService.SetQuota(user.Id, quotaValue);
         }
 
         public Task Unsubscribe(User user)
