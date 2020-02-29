@@ -165,41 +165,51 @@ namespace Nozomi.Auth.Controllers.Account
             if (model.IsValid())
             {
                 var user = new User {UserName = model.Username, Email = model.Email};
-                var result = await _userManager.CreateAsync(user, model.Password);
-                if (result.Succeeded)
+                string email = await _userManager.GetEmailAsync(user);
+
+                if (email == null)
                 {
-                    // Default role binding
-                    var roleResult = await _userManager.AddToRoleAsync(user, "User");
-
-                    if (roleResult.Succeeded)
+                    var result = await _userManager.CreateAsync(user, model.Password);
+                    if (result.Succeeded)
                     {
-                        // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=532713
-                        // Send an email with this link
-                        var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                        var callbackUrl = Url.Action("ConfirmEmail", "Account",
-                            new {userId = user.Id, code = code, returnUrl = model.ReturnUrl}, protocol:
-                            HttpContext.Request.Scheme);
-                        await _authEmailSender.SendEmailConfirmationAsync(model.Email, callbackUrl);
-                        // await _signInManager.SignInAsync(user, isPersistent: false);
-                        _logger.LogInformation(3, "User created a new account with password.");
+                        // Default role binding
+                        var roleResult = await _userManager.AddToRoleAsync(user, "User");
 
-                        // TODO: Inform about successful registration, inform the user to confirm his email.
-
-                        return RedirectToAction("Login", "Account", new
+                        if (roleResult.Succeeded)
                         {
-                            returnUrl = model.ReturnUrl,
-                            userEmail = model.Email
-                        });
-                    }
+                            // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=532713
+                            // Send an email with this link
+                            var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                            var callbackUrl = Url.Action("ConfirmEmail", "Account",
+                                new {userId = user.Id, code = code, returnUrl = model.ReturnUrl}, protocol:
+                                HttpContext.Request.Scheme);
+                            await _authEmailSender.SendEmailConfirmationAsync(model.Email, callbackUrl);
+                            // await _signInManager.SignInAsync(user, isPersistent: false);
+                            _logger.LogInformation(3, "User created a new account with password.");
 
-                    ModelState.AddModelError(user.Id, AccountOptions.FailedToJoinRole);
+                            // TODO: Inform about successful registration, inform the user to confirm his email.
+
+                            return RedirectToAction("Login", "Account", new
+                            {
+                                returnUrl = model.ReturnUrl,
+                                userEmail = model.Email
+                            });
+                        }
+
+                        ModelState.AddModelError(user.Id, AccountOptions.FailedToJoinRole);
+                    }
+                    else
+                    {
+                        foreach (IdentityError resultError in result.Errors)
+                        {
+                            ModelState.AddModelError(string.Empty, resultError.Description);
+                        }
+                    }
                 }
                 else
                 {
-                    foreach (IdentityError resultError in result.Errors)
-                    {
-                        ModelState.AddModelError(string.Empty, resultError.Description);
-                    }
+                    // Email already taken
+                    ModelState.AddModelError(string.Empty, $"'{user.Email}' has already been taken.");
                 }
             }
             else
