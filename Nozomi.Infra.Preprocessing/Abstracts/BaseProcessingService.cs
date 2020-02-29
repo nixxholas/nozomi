@@ -64,14 +64,15 @@ namespace Nozomi.Preprocessing.Abstracts
 
                                     // An array of objects. Let's find the key comArrElArr[0] where
                                     // the value equals comArrElArr[1]
-                                    JToken originalToken = token;
+                                    // var originalToken = token;
+
                                     if (comArrElArr.Length == 2)
                                     {
-                                        var lastElementProp = comArrElArr.Last();
+                                        // var lastElementProp = comArrElArr.Last();
 
                                         // Pump in the array, treat it as anonymous.
                                         var dataList = token.ToList();
-
+                                        
                                         if (int.TryParse(comArrElArr[0], out var targetEl))
                                         {
                                             token = dataList
