@@ -8,6 +8,7 @@ using Microsoft.VisualBasic.CompilerServices;
 using Nozomi.Base.Auth.Models;
 using Nozomi.Infra.Auth.Events.Stripe;
 using Nozomi.Infra.Auth.Events.UserEvent;
+using Nozomi.Infra.Auth.Services.QuotaClaims;
 using Nozomi.Infra.Auth.Services.User;
 using Nozomi.Preprocessing.Abstracts;
 using Stripe;
@@ -17,6 +18,7 @@ namespace Nozomi.Infra.Payment.Services.Bootstripe
     public class BootstripeService : BaseService<BootstripeService>, IBootstripeService
     {
         private readonly IUserService _userService;
+        private readonly IQuotaClaimsService _quotaClaimsService;
         private readonly IStripeEvent _stripeEvent;
         private readonly IUserEvent _userEvent;
         
@@ -25,11 +27,13 @@ namespace Nozomi.Infra.Payment.Services.Bootstripe
         private readonly PlanService _planService;
         private readonly SubscriptionService _subscriptionService;
         
-        public BootstripeService(ILogger<BootstripeService> logger, IUserService userService, IUserEvent userEvent, IStripeEvent stripeEvent) : base(logger)
+        public BootstripeService(ILogger<BootstripeService> logger, IUserService userService, IUserEvent userEvent, IStripeEvent stripeEvent, IQuotaClaimsService quotaClaimsService) : base(logger)
         {
             _userService = userService;
+            _quotaClaimsService = quotaClaimsService;
             _userEvent = userEvent;
             _stripeEvent = stripeEvent;
+            
             _customerService = new CustomerService();
             _paymentMethodService = new PaymentMethodService();
             _planService = new PlanService();
@@ -201,6 +205,11 @@ namespace Nozomi.Infra.Payment.Services.Bootstripe
 
             if (plan == null)
                 throw new StripeException($"{_serviceName} {methodName}: Plan does not exist");
+            
+            var quotaValue = 0;
+            var quotaString = plan.Metadata["Quota"];
+            if (!int.TryParse(quotaString, out quotaValue))
+                throw new FormatException($"{_serviceName} {methodName}: Failed to parse plan quota to int");
 
             var subscriptionOptions = new SubscriptionCreateOptions
             {
@@ -217,9 +226,11 @@ namespace Nozomi.Infra.Payment.Services.Bootstripe
 
             var subscription = await _subscriptionService.CreateAsync(subscriptionOptions);
             if (subscription == null)
-                throw new StripeException($"{_serviceName} {methodName}: An error occured while trying to create subscriptio for plan {planId} for {user.Id}");
+                throw new StripeException($"{_serviceName} {methodName}: An error occured while trying to create subscription for plan {planId} for {user.Id}");
 
             _userService.AddSubscription(user.Id, subscription.Id);
+            
+            //TODO: QUOTA CLAIMS TO SET QUOTA
         }
 
         public Task Unsubscribe(User user)
