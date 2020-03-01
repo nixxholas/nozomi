@@ -45,7 +45,7 @@ namespace Nozomi.Payment.Controllers
                     
                     case Events.CustomerSubscriptionUpdated:
                         var subscription = ParseEventToSubscription(stripeEvent);
-                        if (subscription.Status.ToLower().Equals("cancelled"))
+                        if (subscription.Status.ToLower().Equals("canceled"))
                             await _subscriptionsHandlingService.SubscriptionCancelled(subscription);
                         return Ok();
 
