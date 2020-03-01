@@ -50,13 +50,13 @@ namespace Nozomi.Infra.Compute.Abstracts
                 // If there is a parameter in the expression
                 if (expression.Parameters.Any(p => p.Key.Equals(expVal.Expression)))
                 {
-                    expression.Parameters[expVal.Expression] = expVal.Value; // Add it in
+                    _logger.LogWarning($"{_computeServiceName} ExecuteComputation: An expression in " +
+                                       $"{compute.Guid} has a duplicate expression: {expVal.Expression}");
+                    expression.Parameters[expVal.Expression] = expVal.Value; // Replace it
                 }
                 else
                 {
-                    // Warn since this doesn't exist
-                    _logger.LogWarning($"{_computeServiceName} ExecuteComputation: Expression {expVal.Guid}" +
-                                       $" has no presence in compute {compute.Guid}.");
+                    expression.Parameters.Add(expVal.Expression, expVal.Value); // Add it in
                 }
             }
             
