@@ -11,6 +11,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Nozomi.Infra.Analysis.Service\Nozomi.Infra.Analysis.Service.csproj" />
+    <ProjectReference Include="..\Nozomi.Infra.Payment\Nozomi.Infra.Payment.csproj" />
   </ItemGroup>
 
 </Project>
