@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Nozomi.Preprocessing;
+using Nozomi.Preprocessing.Attributes;
 
 namespace Nozomi.Web2.Controllers.v1.WebsocketCommandPropertyType
 {
@@ -14,6 +15,7 @@ namespace Nozomi.Web2.Controllers.v1.WebsocketCommandPropertyType
 
         [Authorize]
         [HttpGet]
+        [Throttle(Milliseconds = 1000)]
         public IActionResult All()
         {
             return Ok(NozomiServiceConstants.websocketCommandPropertyType);

@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data;
+using Nozomi.Preprocessing.Attributes;
 using Nozomi.Service.Events.Analysis.Interfaces;
 
 namespace Nozomi.Web2.Controllers.v1.AnalysedHistoricItem
@@ -20,12 +21,14 @@ namespace Nozomi.Web2.Controllers.v1.AnalysedHistoricItem
         }
 
         [HttpGet("{analysedComponentId}")]
+        [Throttle(Milliseconds = 1000)]
         public Task<long> Count(long analysedComponentId)
         {
             return Task.FromResult(_analysedHistoricItemEvent.Count(analysedComponentId));
         }
 
         [HttpGet]
+        [Throttle(Milliseconds = 1000)]
         public Task<NozomiResult<ICollection<Data.Models.Web.Analytical.AnalysedHistoricItem>>> GetAll(
             long analysedComponentId, int index = 0)
         {
@@ -34,6 +37,7 @@ namespace Nozomi.Web2.Controllers.v1.AnalysedHistoricItem
         }
 
         [HttpGet("{guid}")]
+        [Throttle(Milliseconds = 1000)]
         public IActionResult List(string guid, [FromQuery]int page = 0, [FromQuery]int itemsPerPage = 50)
         {
             if (Guid.TryParse(guid, out var uniqueId) && page >= 0 && itemsPerPage >= 1)

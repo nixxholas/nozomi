@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Nozomi.Base.BCL.Helpers.Enumerator;
 using Nozomi.Data.ViewModels.RequestProperty;
+using Nozomi.Preprocessing.Attributes;
 using Nozomi.Preprocessing.Statics;
 using Nozomi.Service.Events.Interfaces;
 using Nozomi.Service.Services.Interfaces;
@@ -27,6 +28,7 @@ namespace Nozomi.Web2.Controllers.v1.RequestProperty
 
         [Authorize]
         [HttpGet("{guid}")]
+        [Throttle(Milliseconds = 1000)]
         public IActionResult Get(string guid)
         {
             var sub = ((ClaimsIdentity) User.Identity)
@@ -49,6 +51,7 @@ namespace Nozomi.Web2.Controllers.v1.RequestProperty
 
         [Authorize]
         [HttpGet("{requestGuid}")]
+        [Throttle(Milliseconds = 1000)]
         public IActionResult GetAllByRequest(string requestGuid)
         {
             var sub = ((ClaimsIdentity) User.Identity)
@@ -71,6 +74,7 @@ namespace Nozomi.Web2.Controllers.v1.RequestProperty
 
         [Authorize]
         [HttpPost]
+        [Throttle(Milliseconds = 2500)]
         public async Task<IActionResult> Create([FromBody]CreateRequestPropertyInputModel vm)
         {
             var sub = ((ClaimsIdentity) User.Identity)
@@ -89,6 +93,7 @@ namespace Nozomi.Web2.Controllers.v1.RequestProperty
 
         [Authorize]
         [HttpPut]
+        [Throttle(Milliseconds = 2500)]
         public async Task<IActionResult> Update([FromBody]UpdateRequestPropertyInputModel vm)
         {
             var sub = ((ClaimsIdentity) User.Identity)
@@ -107,6 +112,7 @@ namespace Nozomi.Web2.Controllers.v1.RequestProperty
 
         [Authorize]
         [HttpDelete("{guid}")]
+        [Throttle(Milliseconds = 2000)]
         public async Task<IActionResult> Delete(string guid)
         {
             var sub = ((ClaimsIdentity) User.Identity)
