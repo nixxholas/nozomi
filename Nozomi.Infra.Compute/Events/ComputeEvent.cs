@@ -166,18 +166,6 @@ namespace Nozomi.Infra.Compute.Events
                                         && c.FailCount.Equals(0))
                 .FirstOrDefault();
             
-#if DEBUG
-            var mostOutdatedRes = mostOutdated;
-#endif
-            
-            // Ensure we mark it as being updated.
-            if (mostOutdated != null)
-            {
-                mostOutdated.ModifiedAt = DateTime.UtcNow;
-                _unitOfWork.GetRepository<Data.Models.Web.Compute>().Update(mostOutdated);
-                _unitOfWork.Commit();
-            }
-
             return mostOutdated;
         }
     }

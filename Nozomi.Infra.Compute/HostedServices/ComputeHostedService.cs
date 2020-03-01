@@ -20,11 +20,11 @@ namespace Nozomi.Infra.Compute.HostedServices
 
             stoppingToken.Register(() => _logger.LogInformation($"{_computeServiceName} is stopping."));
 
+            // Initialize an event like that
+            var computeEvent = _scope.ServiceProvider.GetRequiredService<IComputeEvent>();
+
             while (!stoppingToken.IsCancellationRequested)
             {
-                // Initialize an event like that
-                var computeEvent = _scope.ServiceProvider.GetRequiredService<IComputeEvent>();
-
                 var oldCompute = computeEvent.GetMostOutdated(true);
                 if (oldCompute != null)
                     ExecuteComputation(oldCompute); // Execute!

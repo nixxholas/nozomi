@@ -118,6 +118,10 @@ namespace Nozomi.Infra.Compute.Abstracts
                 };
                 
                 computeValueService.Push(newComputeValue);
+                computeService.Modified(compute.Guid);
+                _logger.LogInformation($"{_computeServiceName} ExecuteCompuation: Computation {compute.Guid}" +
+                                       " successfully updated!");
+                return;
             }
             
             computeService.Modified(compute.Guid, true); // failed
