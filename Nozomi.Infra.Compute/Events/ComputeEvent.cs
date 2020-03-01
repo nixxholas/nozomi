@@ -126,18 +126,13 @@ namespace Nozomi.Infra.Compute.Events
                 .ThenInclude(cc => cc.ChildCompute)
                 .ThenInclude(cc => cc.Values)
                 .Include(c => c.Values)
-                // Order by the computes that have a child that has a values
-                // .OrderByDescending(c => c.ChildComputes
-                //                             .Any(cc => cc.ChildCompute
-                //                                 .Values.Any(v => v.DeletedAt == null && v.IsEnabled))
-                //                         // Or computes that have no children.
-                //                         || !c.ChildComputes.Any())
-                .OrderBy(c => c.ModifiedAt) // Then we prioritize by the last modified/checked time
-                .ThenBy(c => c.FailCount) // Ensure we prioritize non-failing computes
+                .OrderBy(c => c.ModifiedAt) // Order by the last modified/checked time
+                .ThenBy(c => c.FailCount <= 0) // Ensure we prioritize non-failing computes
                 // Filter by computes with no children or computes that have children with values.
-                .Where(c => !c.ChildComputes.Any() || 
-                            (c.ChildComputes.Any(cc => cc.ChildCompute.Values
-                                .Any(v => v.CreatedAt == null && v.IsEnabled))));
+                .Where(c => !c.ChildComputes.Any() || // Ensure there are no child computes
+                            // Or there are NO child computes without values 
+                            c.ChildComputes.Any(cc => cc.ChildCompute.Values
+                                .Any(v => v.DeletedAt == null && v.IsEnabled)));
             
             #if DEBUG
             var initialQueryRes = query.ToList();
