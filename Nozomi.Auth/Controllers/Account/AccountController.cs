@@ -165,9 +165,9 @@ namespace Nozomi.Auth.Controllers.Account
             if (model.IsValid())
             {
                 var user = new User {UserName = model.Username, Email = model.Email};
-                string email = await _userManager.GetEmailAsync(user);
+                bool isEmailUsed = await _userManager.FindByEmailAsync(user.Email) != null;
 
-                if (email == null)
+                if (!isEmailUsed)
                 {
                     var result = await _userManager.CreateAsync(user, model.Password);
                     if (result.Succeeded)
