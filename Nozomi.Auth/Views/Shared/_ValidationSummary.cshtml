@@ -2,15 +2,12 @@
 @if (ViewContext.ModelState.IsValid == false)
 {
     <div class="notification is-danger">
-        <button class="delete"></button>
-        <strong>Error</strong> <br/>
-      
-         @foreach (ModelStateEntry modelStateEntries in ViewContext.ModelState.Values)
-         {
-             @foreach (ModelError modelError in modelStateEntries.Errors)
-             {
-                 <p>@modelError.ErrorMessage</p>
-             }
-         }
+        @foreach (ModelStateEntry modelStateEntries in ViewContext.ModelState.Values)
+        {
+            @foreach (ModelError modelError in modelStateEntries.Errors)
+            {
+                <p>@modelError.ErrorMessage</p>
+            }
+        }
     </div>
 }

@@ -24,6 +24,7 @@ using Newtonsoft.Json;
 using Nozomi.Base.Auth.Global;
 using Nozomi.Base.Auth.Models;
 using Nozomi.Base.BCL.Configurations;
+using Nozomi.Infra.Auth.Events.EmailSender;
 using Nozomi.Infra.Auth.Events.Stripe;
 using Nozomi.Infra.Auth.Services.Address;
 using Nozomi.Infra.Auth.Services.Stripe;
@@ -261,6 +262,7 @@ namespace Nozomi.Auth
             services.AddTransient<IValidatingEvent, ValidatingEvent>();
 
             services.AddTransient<IEmailSender, EmailSender>();
+            services.AddTransient<IAuthEmailSender, AuthEmailSender>();
             services.AddScoped<IAddressService, AddressService>();
             services.AddScoped<IStripeService, StripeService>();
             services.AddScoped<IUserService, UserService>();
