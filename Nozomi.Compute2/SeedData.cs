@@ -69,6 +69,24 @@ namespace Nozomi.Compute2
 
                             dbContext.Computes.Add(basicMultiplicationCompute);
                             dbContext.SaveChanges();
+
+                            var twoTierMultiplicationCompute = new Compute
+                            {
+                                Formula = $"[{simpleMultiplicationCompute.Guid}] * 5",
+                                Delay = 5000,
+                                CreatedAt = DateTime.UtcNow,
+                                ModifiedAt = DateTime.UtcNow,
+                                ChildComputes = new List<SubCompute>
+                                {
+                                    new SubCompute
+                                    {
+                                        ChildComputeGuid = basicMultiplicationCompute.Guid
+                                    }
+                                }
+                            };
+
+                            dbContext.Computes.Add(twoTierMultiplicationCompute);
+                            dbContext.SaveChanges();
                         }
                     }
                 }
