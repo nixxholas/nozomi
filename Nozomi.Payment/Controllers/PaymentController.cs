@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Nozomi.Infra.Payment.Services.Interfaces;
+using Nozomi.Infra.Payment.Services.SubscriptionHandling;
 using Stripe;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -16,6 +17,7 @@ namespace Nozomi.Payment.Controllers
     {
         private readonly IInvoicesService _invoicesService;
         private readonly IDisputesService _disputesService;
+        private readonly ISubscriptionsHandlingService _subscriptionsHandlingService;
 
         [HttpPost]
         public async Task<IActionResult> Index()
@@ -42,7 +44,9 @@ namespace Nozomi.Payment.Controllers
                         return Ok();
                     
                     case Events.CustomerSubscriptionUpdated:
-                        var customerSubscription = ParseEventToSubscription(stripeEvent);
+                        var subscription = ParseEventToSubscription(stripeEvent);
+                        if (subscription.Status.ToLower().Equals("cancelled"))
+                            await _subscriptionsHandlingService.SubscriptionCancelled(subscription);
                         return Ok();
 
                     default:
