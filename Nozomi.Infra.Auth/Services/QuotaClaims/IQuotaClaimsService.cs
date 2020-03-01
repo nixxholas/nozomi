@@ -8,6 +8,6 @@ namespace Nozomi.Infra.Auth.Services.QuotaClaims
 
         void AddUsage(string userId, int usageAmt = 1);
 
-        void RestUsage(string userId, int usageAmt = 0);
+        void ResetUsage(string userId, int usageAmt = 0);
     }
 }

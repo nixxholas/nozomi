@@ -75,7 +75,7 @@ namespace Nozomi.Infra.Auth.Services.QuotaClaims
             }
         }
 
-        public void RestUsage(string userId, int usageAmt = 0)
+        public void ResetUsage(string userId, int usageAmt = 0)
         {
             const string methodName = "ResetUsage";
             const string claimType = NozomiJwtClaimTypes.UserUsage;

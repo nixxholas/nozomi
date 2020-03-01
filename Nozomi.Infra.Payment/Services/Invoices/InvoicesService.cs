@@ -34,7 +34,7 @@ namespace Nozomi.Infra.Payment.Services
             if(user == null)
                 throw new NullReferenceException($"{_serviceName} {methodName}: Unable to find user tied to customer id.");
             
-            _quotaClaimsService.RestUsage(user.Id);
+            _quotaClaimsService.ResetUsage(user.Id);
 
             return;
         }
