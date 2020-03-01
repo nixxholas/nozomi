@@ -2,6 +2,8 @@
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
 
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -34,10 +36,38 @@ namespace Nozomi.Compute2
                             var simpleMultiplicationCompute = new Compute()
                             {
                                 Formula = "4 * 3",
-                                Delay = 60000
+                                Delay = 60000,
+                                CreatedAt = DateTime.UtcNow,
+                                ModifiedAt = DateTime.UtcNow
                             };
 
                             dbContext.Computes.Add(simpleMultiplicationCompute);
+                            dbContext.SaveChanges();
+                            
+                            var basicMultiplicationCompute = new Compute
+                            {
+                                Formula = "[x] * [y]",
+                                Delay = 5000,
+                                CreatedAt = DateTime.UtcNow,
+                                ModifiedAt = DateTime.UtcNow,    
+                                Expressions = new List<ComputeExpression>
+                                {
+                                    new ComputeExpression
+                                    {
+                                        Type = ComputeExpressionType.Generic,
+                                        Expression = "x",
+                                        Value = "5"
+                                    },
+                                    new ComputeExpression
+                                    {
+                                        Type = ComputeExpressionType.Generic,
+                                        Expression = "y",
+                                        Value = "5"
+                                    }
+                                }
+                            };
+
+                            dbContext.Computes.Add(basicMultiplicationCompute);
                             dbContext.SaveChanges();
                         }
                     }
