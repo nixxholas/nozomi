@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using Nozomi.Base.Auth.Global;
 using Nozomi.Base.BCL.Configurations;
 using Nozomi.Infra.Auth.Events.Stripe;
+using Nozomi.Infra.Auth.Services.QuotaClaims;
 using Nozomi.Infra.Payment.Services.Interfaces;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.Auth.Data;
@@ -17,60 +18,29 @@ namespace Nozomi.Infra.Payment.Services
     class InvoicesService : BaseService<InvoicesService>, IInvoicesService
     {
         private readonly IStripeEvent _stripeEvent;
-        public InvoicesService(ILogger<InvoicesService> logger, IStripeEvent stripeEvent) : base(logger) {
+        private readonly IQuotaClaimsService _quotaClaimsService;
+        public InvoicesService(ILogger<InvoicesService> logger, IStripeEvent stripeEvent, IQuotaClaimsService quotaClaimsService) : base(logger) {
             _stripeEvent = stripeEvent;
-        }
-
-        public async Task InvoiceCreated(Invoice invoice)
-        {
-            throw new NotImplementedException();
+            _quotaClaimsService = quotaClaimsService;
         }
 
         public async Task InvoiceFinalized(Invoice invoice)
         {
-            throw new NotImplementedException();
-        }
-
-        public async Task InvoicePaid(Invoice invoice)
-        {
-            var methodName = "InvoicePaid";
+            var methodName = "InvoiceFinalized";
             PerformInvoicePrecheck(invoice, methodName);
-
-            if (!invoice.Paid)
-                throw new InvalidOperationException($"{_serviceName} {methodName}: Invoice is not paid.");
-
 
             var user = await _stripeEvent.GetUserByCustomerId(invoice.CustomerId);
 
             if(user == null)
                 throw new NullReferenceException($"{_serviceName} {methodName}: Unable to find user tied to customer id.");
+            
+            _quotaClaimsService.RestUsage(user.Id);
 
             return;
         }
 
-        public async Task InvoicePaymentFailed(Invoice invoice)
+        private void PerformInvoicePrecheck(Invoice invoice, string methodName)
         {
-            var methodName = "InvoicePaymentFailed";
-            PerformInvoicePrecheck(invoice, methodName);
-
-            if (invoice.Paid)
-                throw new InvalidOperationException($"{_serviceName} {methodName}: Invoice is paid.");
-
-
-            var user = await _stripeEvent.GetUserByCustomerId(invoice.CustomerId);
-
-            if (user == null)
-                throw new NullReferenceException($"{_serviceName} {methodName}: Unable to find user tied to customer id.");
-
-            return;
-        }
-
-        public async Task InvoiceUpcoming(Invoice invoice)
-        {
-            throw new NotImplementedException();
-        }
-
-        private void PerformInvoicePrecheck(Invoice invoice, string methodName) {
             if (invoice == null)
                 throw new NullReferenceException($"{_serviceName} {methodName}: Invoice is null.");
             if (string.IsNullOrEmpty(invoice.CustomerId))
