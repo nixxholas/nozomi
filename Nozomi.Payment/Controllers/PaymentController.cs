@@ -42,6 +42,7 @@ namespace Nozomi.Payment.Controllers
                         return Ok();
                     
                     case Events.CustomerSubscriptionUpdated:
+                        var customerSubscription = ParseEventToSubscription(stripeEvent);
                         return Ok();
 
                     default:
@@ -64,6 +65,10 @@ namespace Nozomi.Payment.Controllers
 
         private Invoice ParseEventToInvoice(Event stripeEvent) {
             return stripeEvent.Data.Object as Invoice;
+        }
+        
+        private Subscription ParseEventToSubscription(Event stripeEvent) {
+            return stripeEvent.Data.Object as Subscription;
         }
     }
 }
