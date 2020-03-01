@@ -68,12 +68,13 @@ namespace Nozomi.Preprocessing.Attributes
             if (!allowExecute)
             {
                 if (String.IsNullOrEmpty(Message))
-                    Message = "You may only perform this action every {n} seconds.";
+                    Message = Milliseconds >= 1000 ? "You may only perform this action every {n} seconds." 
+                        : "You may only perform this action every {n} milliseconds.";
 
                 c.Result = new ContentResult {Content = Message.Replace("{n}", 
-                    (Milliseconds/1000).ToString())};
+                    Milliseconds >= 1000 ? (Milliseconds/1000).ToString() : Milliseconds.ToString())};
                 // see 409 - http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html
-                c.HttpContext.Response.StatusCode = (int) HttpStatusCode.Conflict;
+                c.HttpContext.Response.StatusCode = (int) HttpStatusCode.TooManyRequests;
             }
         }
     }
