@@ -31,7 +31,7 @@ namespace Nozomi.Payment.Controllers
                 // Handle the event
                 switch (stripeEvent.Type) {
                     case Events.InvoiceFinalized:
-                        _invoicesService.InvoiceFinalized(ParseEventToInvoice(stripeEvent));
+                        await _invoicesService.InvoiceFinalized(ParseEventToInvoice(stripeEvent));
                         return Ok();
 
                     case Events.ChargeDisputeCreated:
