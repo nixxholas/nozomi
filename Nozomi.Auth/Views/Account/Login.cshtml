@@ -18,68 +18,95 @@
 }
 else
 {
-    <section class="hero is-medium">
+    <section class="hero">
         <div class="hero-body">
-            <partial name="_ValidationSummary"/>
-
-            @if (Model.UserRegistrationSuccessful)
-            {
-                <div class="notification is-success">
-                    <h4 class="title">Your account registration is sucessful!</h4> <br/>
-                    <p>
-                        <b>
-                            Oh and also, your email will receive a verification notification
-                            for your email account so don't forget to check it out!
-                        </b>
-                    </p>
-                </div>
-            }
-
             <div class="container has-text-centered">
-                <div class="column is-4 is-offset-4">
-                    <div class="box">
-                        <form asp-route="Login">
-                            <input type="hidden" asp-for="ReturnUrl"/>
+                <div class="column is-5 is-offset-4">
+                    <div class="card">
+                        <div class="card-content">
+                            <img src="~/logo.png" width="128" class="is-bottom-spaced is-1"/>
+                            <p class="title">Welcome</p>
+                            <p class="subtitle">Login to Nozomi to continue</p>
 
-                            <div class="field">
-                                <p class="control has-icons-left has-icons-right">
-                                    <input class="input" placeholder="Username" asp-for="Username" autofocus>
-                                    <span class="icon is-small is-left">
-                                        <i class="fas fa-envelope"></i>
+                            <form id="web3login" asp-route="login" class="is-bottom-spaced">
+                                <input type="hidden" asp-for="Message"/>
+                                <input type="hidden" asp-for="Address"/>
+                                <input type="hidden" asp-for="Signature"/>
+                                <button class="button is-medium is-fullwidth" id="metamaskBtn" value="metamask">
+                                    <span class="icon is-small">
+                                        <i class="fas fa-wallet"></i>
                                     </span>
-                                </p>
+                                    <span>Login with Wallet</span>
+                                </button>
+                            </form>
+
+                            <p class="is-bottom-spaced has-text-grey-light">
+                                OR
+                            </p>
+
+                            <div class="container is-bottom-spaced is-1">
+                                <partial name="_ValidationSummary"/>
+                                @if (Model.UserRegistrationSuccessful)
+                                {
+                                    <div class="message is-success">
+                                        <div class="message-body has-text-left">
+                                            <strong>Account created successfully!</strong> <br />
+                                            Please proceed to your email to verify your account.
+                                        </div>
+                                    </div>
+                                }
+
+                                <form asp-action="Login" method="post">
+                                    <input type="hidden" asp-for="ReturnUrl"/>
+
+                                    <div class="field">
+                                        <div class="control has-icons-left">
+                                            <input type="text" class="input" placeholder="Username" asp-for="Username" autofocus/>
+                                            <span class="icon is-small is-left">
+                                                <i class="fas fa-user"></i>
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    <div class="field">
+                                        <div class="control has-icons-left">
+                                            <input type="password" class="input" placeholder="Password" asp-for="Password"/>
+                                            <span class="icon is-small is-left">
+                                                <i class="fas fa-lock"></i>
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    <a asp-action="ForgotPassword" asp-route-returnUrl="@Model.ReturnUrl"
+                                       class="is-pulled-left is-bottom-spaced">
+                                        Forgot your password?
+                                    </a>
+
+                                    <button type="submit" class="button is-info is-medium is-fullwidth is-bottom-spaced">
+                                        Continue
+                                    </button>
+
+                                    @if (Model.AllowRememberLogin)
+                                    {
+                                        <div class="field">
+                                            <label class="checkbox" asp-for="RememberLogin">
+                                                <input type="checkbox" asp-for="RememberLogin"/>
+                                                Remember me
+                                            </label>
+                                        </div>
+                                    }
+                                </form>
                             </div>
-                            <div class="field">
-                                <p class="control has-icons-left has-icons-right">
-                                    <input type="password" class="input" placeholder="Password" asp-for="Password" autofocus>
-                                    <span class="icon is-small is-left">
-                                        <i class="fas fa-lock"></i>
-                                    </span>
-                                </p>
-                            </div>
-                            @if (Model.AllowRememberLogin)
-                            {
-                                <div class="field login-remember">
-                                    <label class="checkbox" asp-for="RememberLogin">
-                                        <input asp-for="RememberLogin" type="checkbox">
-                                        Remember me
-                                    </label>
-                                </div>
-                            }
-                            <button class="button is-info is-medium is-fullwidth">Login <i class="fa fa-sign-in" aria-hidden="true"></i></button>
-                        </form>
-                        <hr class="login-hr"/>
-                        <form id="web3login" asp-route="login">
-                            <input type="hidden" asp-for="Message"/>
-                            <input type="hidden" asp-for="Address"/>
-                            <input type="hidden" asp-for="Signature"/>
-                            <button class="button is-medium is-fullwidth" id="metamaskBtn" value="metamask">Metamask</button>
-                        </form>
+                        </div>
+                        <footer class="card-footer">
+                            <p class="card-footer-item">
+                                <span class="has-text-grey">
+                                    Don't have an account?
+                                    <a asp-action="Register" asp-route-returnUrl="@Model.ReturnUrl">Sign Up</a>
+                                </span>
+                            </p>
+                        </footer>
                     </div>
-                    <p class="has-text-grey">
-                        <a asp-action="Register" asp-route-returnUrl="@Model.ReturnUrl">Sign Up</a> &nbsp;·&nbsp;
-                        <a asp-action="ForgotPassword">Forgot Password</a> &nbsp;·&nbsp;
-                    </p>
                 </div>
             </div>
         </div>

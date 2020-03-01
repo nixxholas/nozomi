@@ -1,4 +1,4 @@
-﻿// Copyright (c) Brock Allen & Dominick Baier. All rights reserved.
+// Copyright (c) Brock Allen & Dominick Baier. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
 
@@ -23,6 +23,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Nozomi.Auth.Controllers.Home;
@@ -33,6 +34,7 @@ using Nozomi.Base.Auth.Models.Wallet;
 using Nozomi.Base.Auth.ViewModels.Account;
 using Nozomi.Base.BCL.Helpers.Native.Text;
 using Nozomi.Base.Blockchain.Auth.Query.Validating;
+using Nozomi.Infra.Auth.Events.EmailSender;
 using Nozomi.Infra.Auth.Services.Address;
 using Nozomi.Infra.Auth.Services.Stripe;
 using Nozomi.Infra.Auth.Services.User;
@@ -46,6 +48,7 @@ namespace Nozomi.Auth.Controllers.Account
     public class AccountController : BaseController<AccountController>
     {
         private readonly IEmailSender _emailSender;
+        private readonly IAuthEmailSender _authEmailSender;
         private readonly RoleManager<Role> _roleManager;
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
@@ -63,6 +66,7 @@ namespace Nozomi.Auth.Controllers.Account
             ILogger<AccountController> logger,
             IWebHostEnvironment webHostEnvironment,
             IEmailSender emailSender,
+            IAuthEmailSender authEmailSender,
             RoleManager<Role> roleManager,
             UserManager<User> userManager,
             SignInManager<User> signInManager,
@@ -77,6 +81,7 @@ namespace Nozomi.Auth.Controllers.Account
             IUserService userService) : base(logger, webHostEnvironment)
         {
             _emailSender = emailSender;
+            _authEmailSender = authEmailSender;
             _roleManager = roleManager;
             _userManager = userManager;
             _signInManager = signInManager;
@@ -153,15 +158,17 @@ namespace Nozomi.Auth.Controllers.Account
         // POST: /Account/Register
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Register(RegisterInputModel model, string button = null)
+        public async Task<IActionResult> Register(RegisterInputModel model)
         {
             ViewData["ReturnUrl"] = model.ReturnUrl;
 
-            if (!string.IsNullOrEmpty(button) && button.Equals("register"))
+            if (model.IsValid())
             {
-                if (model.IsValid())
+                var user = new User {UserName = model.Username, Email = model.Email};
+                bool isEmailUsed = await _userManager.FindByEmailAsync(user.Email) != null;
+
+                if (!isEmailUsed)
                 {
-                    var user = new User {UserName = model.Username, Email = model.Email};
                     var result = await _userManager.CreateAsync(user, model.Password);
                     if (result.Succeeded)
                     {
@@ -174,14 +181,12 @@ namespace Nozomi.Auth.Controllers.Account
                             // Send an email with this link
                             var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                             var callbackUrl = Url.Action("ConfirmEmail", "Account",
-                                new {userId = user.Id, code = code, returnUrl = model.ReturnUrl}, protocol: 
+                                new {userId = user.Id, code = code, returnUrl = model.ReturnUrl}, protocol:
                                 HttpContext.Request.Scheme);
-                            await _emailSender.SendEmailAsync(model.Email, "Confirm your account",
-                                "Please confirm your account by clicking this link: <a href=\"" + callbackUrl +
-                                "\">link</a>");
+                            await _authEmailSender.SendEmailConfirmationAsync(model.Email, callbackUrl);
                             // await _signInManager.SignInAsync(user, isPersistent: false);
                             _logger.LogInformation(3, "User created a new account with password.");
-                            
+
                             // TODO: Inform about successful registration, inform the user to confirm his email.
 
                             return RedirectToAction("Login", "Account", new
@@ -197,20 +202,22 @@ namespace Nozomi.Auth.Controllers.Account
                     {
                         foreach (IdentityError resultError in result.Errors)
                         {
-                            ModelState.AddModelError(string.Empty, resultError.Description);    
+                            ModelState.AddModelError(string.Empty, resultError.Description);
                         }
                     }
                 }
                 else
                 {
-                    // Default error state when empty form is being submitted
-                    ModelState.AddModelError(string.Empty, AccountOptions.InvalidCredentialsErrorMessage);
+                    // Email already taken
+                    ModelState.AddModelError(string.Empty, $"'{user.Email}' has already been taken.");
                 }
             }
-            else if (!string.IsNullOrEmpty(button) && button.Equals("cancel") && !string.IsNullOrEmpty(model.ReturnUrl))
+            else
             {
-                return Redirect(model.ReturnUrl);
+                // Default error state when empty form is being submitted
+                ModelState.AddModelError(string.Empty, AccountOptions.InvalidCredentialsErrorMessage);
             }
+
 
             // If we got this far, something failed, redisplay form
             // return BadRequest(model);
@@ -691,9 +698,11 @@ namespace Nozomi.Auth.Controllers.Account
         // GET: /Account/ForgotPassword
         [HttpGet]
         [AllowAnonymous]
-        public IActionResult ForgotPassword()
+        public IActionResult ForgotPassword(string returnUrl)
         {
-            return View();
+            ForgotPasswordInputModel model = BuildForgotPasswordInputViewModel(returnUrl);
+            
+            return View(model);
         }
 
         //
@@ -703,22 +712,29 @@ namespace Nozomi.Auth.Controllers.Account
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ForgotPassword(ForgotPasswordInputModel model)
         {
-            if (ModelState.IsValid)
+            if (model.IsValid())
             {
-                var user = await _userManager.FindByEmailAsync(model.Email);
+                User user = await _userManager.FindByEmailAsync(model.Email);
                 if (user == null || !(await _userManager.IsEmailConfirmedAsync(user)))
                 {
                     // Don't reveal that the user does not exist or is not confirmed
-                    return View("ForgotPasswordConfirmation");
+                    return RedirectToAction(nameof(ForgotPasswordConfirmation), "Account",
+                        new {returnUrl = model.ReturnUrl});
                 }
 
-                // Send an email with this link
-                var code = await _userManager.GeneratePasswordResetTokenAsync(user);
-                var callbackUrl = Url.Action("ResetPassword", "Account", 
-                    new ResetPasswordInputModel { Email = user.Email, Code = code }, protocol: HttpContext.Request.Scheme);
-                await _emailSender.SendEmailAsync(model.Email, "Reset Password",
-                    "Please reset your password by clicking here: <a href=\"" + callbackUrl + "\">link</a>");
-                return View("ForgotPasswordConfirmation");
+                string code = await _userManager.GeneratePasswordResetTokenAsync(user);
+                string callbackUrl = Url.Action("ResetPassword", "Account", 
+                    new ResetPasswordInputModel{ Email = user.Email, Code = code, ReturnUrl = model.ReturnUrl}, 
+                    protocol: HttpContext.Request.Scheme);
+                await _authEmailSender.SendPasswordResetLinkAsync(model.Email, callbackUrl);
+                return RedirectToAction(nameof(ForgotPasswordConfirmation), "Account",
+                    new {returnUrl = model.ReturnUrl});
+            }
+            
+            else
+            {
+                // Add default error message when empty form is submitted
+                ModelState.AddModelError(string.Empty, AccountOptions.EmptyFormSubmitted);
             }
 
             // If we got this far, something failed, redisplay form
@@ -729,8 +745,9 @@ namespace Nozomi.Auth.Controllers.Account
         // GET: /Account/ForgotPasswordConfirmation
         [HttpGet]
         [AllowAnonymous]
-        public IActionResult ForgotPasswordConfirmation()
+        public IActionResult ForgotPasswordConfirmation(string returnUrl)
         {
+            ViewData["ReturnUrl"] = returnUrl;
             return View();
         }
         
@@ -738,9 +755,16 @@ namespace Nozomi.Auth.Controllers.Account
         // GET: /Account/ResetPassword
         [HttpGet]
         [AllowAnonymous]
-        public IActionResult ResetPassword(string code = null)
+        public IActionResult ResetPassword(string code = null, string email = null, string returnUrl = null)
         {
-            return code == null ? View("Error") : View();
+            ResetPasswordInputModel model = new ResetPasswordInputModel
+            {
+                Code = code,
+                Email = email,
+                ReturnUrl = returnUrl
+            };
+            
+            return code == null ? View("Error") : View(model);
         }
 
         //
@@ -758,24 +782,25 @@ namespace Nozomi.Auth.Controllers.Account
             if (user == null)
             {
                 // Don't reveal that the user does not exist
-                return RedirectToAction(nameof(ResetPasswordConfirmation), "Account");
+                return RedirectToAction(nameof(ResetPasswordConfirmation), "Account", new { returnUrl = model.ReturnUrl});
             }
             var result = await _userManager.ResetPasswordAsync(user, model.Code, model.Password);
             if (result.Succeeded)
             {
-                return RedirectToAction(nameof(ResetPasswordConfirmation), "Account");
+                return RedirectToAction(nameof(ResetPasswordConfirmation), "Account", new { returnUrl = model.ReturnUrl});
             }
             AddErrors(result);
             
-            return View();
+            return View(model);
         }
 
         //
         // GET: /Account/ResetPasswordConfirmation
         [HttpGet]
         [AllowAnonymous]
-        public IActionResult ResetPasswordConfirmation()
+        public IActionResult ResetPasswordConfirmation(string returnUrl)
         {
+            ViewData["ReturnUrl"] = returnUrl;
             return View();
         }
 
@@ -1032,6 +1057,17 @@ namespace Nozomi.Auth.Controllers.Account
                 vm.Username = inputModel.Username;
                 vm.ReturnUrl = inputModel.ReturnUrl;
             }
+            
+            return vm;
+        }
+
+        private ForgotPasswordInputModel BuildForgotPasswordInputViewModel(string returnUrl, string email = null)
+        {
+            ForgotPasswordInputModel vm = new ForgotPasswordInputModel
+            {
+                Email = email,
+                ReturnUrl = returnUrl
+            };
 
             return vm;
         }
