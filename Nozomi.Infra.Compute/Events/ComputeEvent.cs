@@ -150,20 +150,38 @@ namespace Nozomi.Infra.Compute.Events
 
             if (ensureNotDeletedOrDisabled)
                 query = query.Where(c => c.DeletedAt == null && c.IsEnabled);
-
-            // var mostOutdated = query.Take(10).AsEnumerable()
-            //     .FirstOrDefault(c => c.Values
-            //         .OrderByDescending(v => v.CreatedAt)
-            //         .FirstOrDefault()?.CreatedAt.AddMilliseconds(c.Delay) <= DateTime.UtcNow);
-            var mostOutdated = query
-                // Order by the computes that have no values and are not failing
-                .OrderBy(c => !c.Values.Any() && c.FailCount.Equals(0))
+            
+            #if DEBUG
+            var outdatedOrderedList = query
+                .OrderBy(c => c.ModifiedAt)
+                .ThenByDescending(c => c.FailCount <= 0)
                 .Take(10)
                 .AsEnumerable()
+                // Order by the computes that have no values and are not failing
+                .OrderByDescending(c => !c.Values.Any() && c.FailCount <= 0)
                 // Then by those that are outdated and not failing
-                .OrderByDescending(c => c.Values
-                    .Any(v => v.CreatedAt.AddMilliseconds(c.Delay) > DateTime.UtcNow) 
-                                        && c.FailCount.Equals(0))
+                .ThenByDescending(c => c.Values
+                                           // Ensure that there is a value was computed and is now outdated
+                                           .Any(v => v.CreatedAt.AddMilliseconds(c.Delay) 
+                                                     > DateTime.UtcNow) 
+                                       && c.FailCount <= 0)
+                .ToList();
+            #endif
+
+            // Obtain the most outdated property
+            var mostOutdated = query
+                .OrderBy(c => c.ModifiedAt)
+                .ThenByDescending(c => c.FailCount <= 0)
+                .Take(10)
+                .AsEnumerable()
+                // Order by the computes that have no values and are not failing
+                .OrderByDescending(c => !c.Values.Any() && c.FailCount <= 0)
+                // Then by those that are outdated and not failing
+                .ThenByDescending(c => c.Values
+                                           // Ensure that there is a value was computed and is now outdated
+                                           .Any(v => v.CreatedAt.AddMilliseconds(c.Delay) 
+                                                     > DateTime.UtcNow) 
+                                       && c.FailCount <= 0)
                 .FirstOrDefault();
             
             return mostOutdated;
