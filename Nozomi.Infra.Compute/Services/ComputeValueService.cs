@@ -1,3 +1,4 @@
+using System;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data.Models.Web;
@@ -23,12 +24,26 @@ namespace Nozomi.Infra.Compute.Services
 
         public void Add(ComputeValue computeValue)
         {
-            throw new System.NotImplementedException();
+            if (computeValue != null)
+            {
+                _unitOfWork.GetRepository<ComputeValue>().Add(computeValue);
+                _unitOfWork.Commit(computeValue.CreatedById);
+                return;
+            }
+            
+            _logger.LogWarning($"{_serviceName} Add: Null compute value.");
         }
 
         public void Push(ComputeValue computeValue)
         {
-            throw new System.NotImplementedException();
+            if (computeValue != null)
+            {
+                _unitOfWork.GetRepository<ComputeValue>().Add(computeValue);
+                _unitOfWork.Commit(computeValue.CreatedById);
+                return;
+            }
+            
+            _logger.LogWarning($"{_serviceName} Push: Null compute value.");
         }
     }
 }
