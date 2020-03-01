@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using Nozomi.Infra.Auth.Events.Stripe;
 using Nozomi.Infra.Auth.Events.UserEvent;
 using Nozomi.Infra.Auth.Services.QuotaClaims;
+using Nozomi.Infra.Auth.Services.User;
 using Nozomi.Infra.Payment.Services.Interfaces;
 using Nozomi.Preprocessing.Abstracts;
 using Stripe;
@@ -15,13 +16,15 @@ namespace Nozomi.Infra.Payment.Services.SubscriptionHandling
     {
         private readonly IQuotaClaimsService _quotaClaimsService;
         private readonly IUserEvent _userEvent;
+        private readonly IUserService _userService;
         private readonly IStripeEvent _stripeEvent;
         
-        public SubscriptionsHandlingService(ILogger<SubscriptionsHandlingService> logger, IQuotaClaimsService quotaClaimsService, IUserEvent userEvent, IStripeEvent stripeEvent) : base(logger)
+        public SubscriptionsHandlingService(ILogger<SubscriptionsHandlingService> logger, IQuotaClaimsService quotaClaimsService, IUserEvent userEvent, IUserService userService, IStripeEvent stripeEvent) : base(logger)
         {
             _quotaClaimsService = quotaClaimsService;
             _userEvent = userEvent;
             _stripeEvent = stripeEvent;
+            _userService = userService;
         }
 
         public async Task SubscriptionCancelled(Subscription subscription)
@@ -42,6 +45,7 @@ namespace Nozomi.Infra.Payment.Services.SubscriptionHandling
             //TODO: Get default plan quota
             var quota = 5000;
             _quotaClaimsService.SetQuota(user.Id, quota);
+            _userService.RemoveSubscription(user.Id);
         }
 
         private void PerformSubscriptionPrecheck(Subscription subscription, string methodName)
