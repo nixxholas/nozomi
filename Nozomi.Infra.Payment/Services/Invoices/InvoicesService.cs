@@ -17,10 +17,8 @@ namespace Nozomi.Infra.Payment.Services
     class InvoicesService : BaseService<InvoicesService>, IInvoicesService
     {
         private readonly IStripeEvent _stripeEvent;
-        private readonly IQuotaService _quotaService;
-        public InvoicesService(ILogger<InvoicesService> logger, IStripeEvent stripeEvent, IQuotaService quotaService) : base(logger) {
+        public InvoicesService(ILogger<InvoicesService> logger, IStripeEvent stripeEvent) : base(logger) {
             _stripeEvent = stripeEvent;
-            _quotaService = quotaService;
         }
 
         public async Task InvoiceCreated(Invoice invoice)
@@ -47,8 +45,6 @@ namespace Nozomi.Infra.Payment.Services
             if(user == null)
                 throw new NullReferenceException($"{_serviceName} {methodName}: Unable to find user tied to customer id.");
 
-            await _quotaService.ResetQuota();
-
             return;
         }
 
@@ -65,8 +61,6 @@ namespace Nozomi.Infra.Payment.Services
 
             if (user == null)
                 throw new NullReferenceException($"{_serviceName} {methodName}: Unable to find user tied to customer id.");
-
-            await _quotaService.DowngradeQuota();
 
             return;
         }

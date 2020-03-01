@@ -12,11 +12,9 @@ namespace Nozomi.Infra.Payment.Services
 {
     class DisputesService : BaseService<DisputesService>, IDisputesService
     {
-        private readonly IQuotaService _quotaService;
         private readonly IStripeEvent _stripeEvent;
 
-        public DisputesService(ILogger<DisputesService> logger, IQuotaService quotaService, IStripeEvent stripeEvent) : base(logger) {
-            _quotaService = quotaService;
+        public DisputesService(ILogger<DisputesService> logger, IStripeEvent stripeEvent) : base(logger) {
             _stripeEvent = stripeEvent;
         }
 
@@ -32,28 +30,28 @@ namespace Nozomi.Infra.Payment.Services
 
             switch (dispute.Status.ToLower()) {
                 case "warning_needs_response":
-                    await _quotaService.DowngradeQuota();
+                    //await _quotaService.DowngradeQuota();
                     return;
                 case "warning_under_review":
-                    await _quotaService.DowngradeQuota();
+                    //await _quotaService.DowngradeQuota();
                     return;
                 case "warning_closed":
-                    await _quotaService.DowngradeQuota();
+                    //await _quotaService.DowngradeQuota();
                     return;
                 case "needs_response":
-                    await _quotaService.DowngradeQuota();
+                    //await _quotaService.DowngradeQuota();
                     return;
                 case "under_review":
-                    await _quotaService.DowngradeQuota();
+                    //await _quotaService.DowngradeQuota();
                     return;
                 case "charge_refunded":
-                    await _quotaService.DowngradeQuota();
+                    //await _quotaService.DowngradeQuota();
                     return;
                 case "won":
-                    await _quotaService.UpgradeQuota();
+                    //await _quotaService.UpgradeQuota();
                     return;
                 case "lost":
-                    await _quotaService.DowngradeQuota();
+                    //await _quotaService.DowngradeQuota();
                     return;
                 default:
                     throw new InvalidOperationException($"{_serviceName} {methodName}: Unable to find user tied to customer id.");
@@ -69,8 +67,6 @@ namespace Nozomi.Infra.Payment.Services
 
             if(user == null)
                 throw new NullReferenceException($"{_serviceName} {methodName}: Unable to find user tied to customer id.");
-
-            await _quotaService.DowngradeQuota();
 
             return;
         }
