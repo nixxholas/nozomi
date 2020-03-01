@@ -72,7 +72,7 @@ namespace Nozomi.Compute2
 
                             var twoTierMultiplicationCompute = new Compute
                             {
-                                Formula = $"[{simpleMultiplicationCompute.Guid}] * 5",
+                                Formula = $"[{basicMultiplicationCompute.Guid}] * 5",
                                 Delay = 5000,
                                 CreatedAt = DateTime.UtcNow,
                                 ModifiedAt = DateTime.UtcNow,
