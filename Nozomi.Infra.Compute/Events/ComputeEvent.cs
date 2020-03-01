@@ -126,18 +126,17 @@ namespace Nozomi.Infra.Compute.Events
                 .ThenInclude(cc => cc.ChildCompute)
                 .ThenInclude(cc => cc.Values)
                 .Include(c => c.Values)
-                // Order by the computes that have a child that has a values
-                // .OrderByDescending(c => c.ChildComputes
-                //                             .Any(cc => cc.ChildCompute
-                //                                 .Values.Any(v => v.DeletedAt == null && v.IsEnabled))
-                //                         // Or computes that have no children.
-                //                         || !c.ChildComputes.Any())
-                .OrderBy(c => c.ModifiedAt) // Then we prioritize by the last modified/checked time
-                .ThenBy(c => c.FailCount) // Ensure we prioritize non-failing computes
+                .OrderBy(c => c.ModifiedAt) // Order by the last modified/checked time
+                .ThenBy(c => c.FailCount <= 0) // Ensure we prioritize non-failing computes
                 // Filter by computes with no children or computes that have children with values.
-                .Where(c => c.ChildComputes.Any(cc => cc.ChildCompute.Values
-                                .Any(v => v.DeletedAt == null && v.IsEnabled) 
-                        || !c.ChildComputes.Any()));
+                .Where(c => !c.ChildComputes.Any() || // Ensure there are no child computes
+                            // Or there are NO child computes without values 
+                            c.ChildComputes.Any(cc => cc.ChildCompute.Values
+                                .Any(v => v.DeletedAt == null && v.IsEnabled)));
+            
+            #if DEBUG
+            var initialQueryRes = query.ToList();
+            #endif
 
             if (includeChildren)
                 query = query.Include(c => c.Expressions)
@@ -146,20 +145,40 @@ namespace Nozomi.Infra.Compute.Events
 
             if (ensureNotDeletedOrDisabled)
                 query = query.Where(c => c.DeletedAt == null && c.IsEnabled);
-
-            var mostOutdated = query.Take(10).AsEnumerable()
-                .FirstOrDefault(c => c.Values
-                    .OrderByDescending(v => v.CreatedAt)
-                    .FirstOrDefault()?.CreatedAt.AddMilliseconds(c.Delay) <= DateTime.UtcNow);
             
-            // Ensure we mark it as being updated.
-            if (mostOutdated != null)
-            {
-                mostOutdated.ModifiedAt = DateTime.UtcNow;
-                _unitOfWork.GetRepository<Data.Models.Web.Compute>().Update(mostOutdated);
-                _unitOfWork.Commit();
-            }
+            #if DEBUG
+            var outdatedOrderedList = query
+                .OrderBy(c => c.ModifiedAt)
+                .ThenByDescending(c => c.FailCount <= 0)
+                .Take(10)
+                .AsEnumerable()
+                // Order by the computes that have no values and are not failing
+                .OrderByDescending(c => !c.Values.Any() && c.FailCount <= 0)
+                // Then by those that are outdated and not failing
+                .ThenByDescending(c => c.Values
+                                           // Ensure that there is a value was computed and is now outdated
+                                           .Any(v => v.CreatedAt.AddMilliseconds(c.Delay) 
+                                                     > DateTime.UtcNow) 
+                                       && c.FailCount <= 0)
+                .ToList();
+            #endif
 
+            // Obtain the most outdated property
+            var mostOutdated = query
+                .OrderBy(c => c.ModifiedAt)
+                .ThenByDescending(c => c.FailCount <= 0)
+                .Take(10)
+                .AsEnumerable()
+                // Order by the computes that have no values and are not failing
+                .OrderByDescending(c => !c.Values.Any() && c.FailCount <= 0)
+                // Then by those that are outdated and not failing
+                .ThenByDescending(c => c.Values
+                                           // Ensure that there is a value was computed and is now outdated
+                                           .Any(v => v.CreatedAt.AddMilliseconds(c.Delay) 
+                                                     > DateTime.UtcNow) 
+                                       && c.FailCount <= 0)
+                .FirstOrDefault();
+            
             return mostOutdated;
         }
     }

@@ -163,7 +163,7 @@ namespace Nozomi.Service.Services
                 {
                     // Add first then delete.
                     _unitOfWork.GetRepository<ComponentHistoricItem>().Add(newValueItem); // Add
-                    _componentHistoricItemService.Remove(lastValue, null, true);
+                    _componentHistoricItemService.Remove(lastValue.Guid, null, true);
                     _unitOfWork.Commit(); // Save
 
                     return new NozomiResult<string>
@@ -181,6 +181,7 @@ namespace Nozomi.Service.Services
             }
         }
 
+        [Obsolete]
         public NozomiResult<string> UpdatePairValue(long id, string val)
         {
             try

@@ -87,6 +87,9 @@ namespace Nozomi.WSS
                     options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
                 }, ServiceLifetime.Transient);
             }
+
+            services.AddControllers()
+                .AddNewtonsoftJson();
             
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 
@@ -100,7 +103,7 @@ namespace Nozomi.WSS
             services.AddTransient<IComponentHistoricItemService, ComponentHistoricItemService>();
             services.AddTransient<IComponentService, ComponentService>();
             services.AddTransient<IRequestService, RequestService>();
-            services.AddHostedService<WSRequestSyncingService>();
+            services.AddHostedService<WsRequestSyncingService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

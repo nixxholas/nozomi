@@ -8,4 +8,8 @@
       <ProjectReference Include="..\Nozomi.Infra.Service\Nozomi.Infra.Service.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="sta-websocket-sharp-core" Version="3.1.1.1" />
+    </ItemGroup>
+
 </Project>
