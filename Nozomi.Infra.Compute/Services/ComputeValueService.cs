@@ -1,5 +1,7 @@
 using System;
+using System.Linq;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data.Models.Web;
 using Nozomi.Infra.Compute.Services.Interfaces;
@@ -38,6 +40,21 @@ namespace Nozomi.Infra.Compute.Services
         {
             if (computeValue != null)
             {
+                // Obtain the last value
+                var lastComputeValue = _unitOfWork.GetRepository<ComputeValue>()
+                    .GetQueryable()
+                    .AsNoTracking()
+                    .OrderByDescending(v => v.CreatedAt)
+                    .FirstOrDefault(v => v.ComputeGuid.Equals(computeValue.ComputeGuid));
+                
+                // Do not add if its the same
+                if (lastComputeValue != null && lastComputeValue.Value.Equals(computeValue.Value))
+                {
+                    _logger.LogInformation($"{_serviceName} Push: Incoming value is the same as the previous " +
+                                           $"value for Compute {computeValue.ComputeGuid}; Ignoring update.");
+                    return;
+                }
+                
                 _unitOfWork.GetRepository<ComputeValue>().Add(computeValue);
                 _unitOfWork.Commit(computeValue.CreatedById);
                 return;
