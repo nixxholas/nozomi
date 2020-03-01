@@ -60,11 +60,8 @@ namespace Nozomi.Infra.Compute.Abstracts
                 }
             }
             
-            // Are there any expressions missed out?
-            var missingExpressions = expression.Parameters.Any(p => p.Value == null);
-                
             // Any children? And ensure there are missing expressions too.
-            if (compute.ChildComputes.Any() && missingExpressions)
+            if (compute.ChildComputes.Any())
             {
                 // Look for any children without compute value next.
                 if (compute.ChildComputes.Any(cc =>
@@ -84,44 +81,45 @@ namespace Nozomi.Infra.Compute.Abstracts
                     var latestChildValue = childCompute.ChildCompute.Values
                         .OrderByDescending(v => v.CreatedAt)
                         .FirstOrDefault();
+                    
+                    // Ensure we check against the parameters in the expression as well
+                    if (!expression.Parameters.Any(p => p.Key
+                            .Equals(childCompute.ChildComputeGuid.ToString())))
+                        _logger.LogWarning($"{_computeServiceName} ExecuteComputation: compute {compute.Guid}" +
+                                           " has a duplicate child compute for expression " +
+                                           $"{childCompute.ChildCompute.Guid}");
 
                     // Pump it in
-                    if (latestChildValue != null && !string.IsNullOrEmpty(latestChildValue.Value)
-                                                 // Ensure we check against the parameters in the expression as well
-                                                 && expression.Parameters
-                                                     .Any(p => p.Key
-                                                         .Equals(childCompute.ChildComputeGuid.ToString())))
-                    {
-                        // Set
-                        expression.Parameters[childCompute.ChildComputeGuid.ToString()] = latestChildValue.Value;
-                    }
+                    if (latestChildValue != null && !string.IsNullOrEmpty(latestChildValue.Value))
+                        expression.Parameters[childCompute.ChildComputeGuid.ToString()] = latestChildValue.Value; // Set
                 }
             }
-            else if (!compute.ChildComputes.Any() && missingExpressions)
-            {
-                _logger.LogWarning($"{_computeServiceName} ExecuteComputation: Expression for compute " +
-                                   $"{compute.Guid} has a null parameter value.");
-                computeService.Modified(compute.Guid);
-                return;
-            }
-            
-            // Nope, let's compute
-            var evaluatedExpression = expression.Evaluate();
-            if (evaluatedExpression != null)
-            {
-                var computeValueService = _scope.ServiceProvider.GetRequiredService<IComputeValueService>();
 
-                var newComputeValue = new ComputeValue
+            try
+            {
+                // Nope, let's compute
+                var evaluatedExpression = expression.Evaluate();
+                if (evaluatedExpression != null)
                 {
-                    Value = evaluatedExpression.ToString(),
-                    ComputeGuid = compute.Guid
-                };
+                    var computeValueService = _scope.ServiceProvider.GetRequiredService<IComputeValueService>();
+
+                    var newComputeValue = new ComputeValue
+                    {
+                        Value = evaluatedExpression.ToString(),
+                        ComputeGuid = compute.Guid
+                    };
                 
-                computeValueService.Push(newComputeValue);
-                computeService.Modified(compute.Guid);
-                _logger.LogInformation($"{_computeServiceName} ExecuteCompuation: Computation {compute.Guid}" +
-                                       " successfully updated!");
-                return;
+                    computeValueService.Push(newComputeValue);
+                    computeService.Modified(compute.Guid);
+                    _logger.LogInformation($"{_computeServiceName} ExecuteCompuation: Computation {compute.Guid}" +
+                                           " successfully updated!");
+                    return;
+                }
+            }
+            catch (ArgumentException argumentException)
+            {
+                _logger.LogWarning($"{_computeServiceName} ExecuteComputation/Evaluation: compute " +
+                                   $"{compute.Guid} => {argumentException.Message}");
             }
             
             computeService.Modified(compute.Guid, true); // failed
