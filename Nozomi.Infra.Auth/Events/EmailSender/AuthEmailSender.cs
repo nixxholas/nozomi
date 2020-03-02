@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Preprocessing.Events.Interfaces;
-using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Data;
 
 namespace Nozomi.Infra.Auth.Events.EmailSender
@@ -12,8 +11,8 @@ namespace Nozomi.Infra.Auth.Events.EmailSender
     {
         private readonly IEmailSender _emailSender; 
         
-        public AuthEmailSender(ILogger<AuthEmailSender> logger, IUnitOfWork<NozomiDbContext> unitOfWork, IEmailSender emailSender) 
-            : base(logger, unitOfWork)
+        public AuthEmailSender(ILogger<AuthEmailSender> logger, NozomiDbContext context, IEmailSender emailSender) 
+            : base(logger, context)
         {
             _emailSender = emailSender;
         }

@@ -1,17 +1,15 @@
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Nozomi.Base.Auth.Models;
 using Nozomi.Base.Auth.Models.Wallet;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.Auth.Data;
-using Nozomi.Repo.BCL.Repository;
 
 namespace Nozomi.Infra.Auth.Services.Address
 {
     public class AddressService : BaseService<AddressService, AuthDbContext>, IAddressService
     {
-        public AddressService(ILogger<AddressService> logger, IUnitOfWork<AuthDbContext> context) 
+        public AddressService(ILogger<AddressService> logger, AuthDbContext context) 
             : base(logger, context)
         {
         }
@@ -21,8 +19,7 @@ namespace Nozomi.Infra.Auth.Services.Address
             if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(address))
                 return string.Empty;
 
-            var user = _context.GetRepository<Base.Auth.Models.User>()
-                .GetQueryable()
+            var user = _context.Users
                 .AsNoTracking()
                 .SingleOrDefault(u => u.Id.Equals(userId));
 
@@ -36,8 +33,8 @@ namespace Nozomi.Infra.Auth.Services.Address
                 Type = type
             };
             
-            _context.GetRepository<Base.Auth.Models.Wallet.Address>().Add(addr);
-            _context.Commit();
+            _context.Addresses.Add(addr);
+            _context.SaveChanges();
 
             return addr.Id;
         }

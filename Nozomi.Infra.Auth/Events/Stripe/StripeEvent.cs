@@ -11,7 +11,6 @@ using Nozomi.Base.Auth.Global;
 using Nozomi.Base.BCL.Configurations;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.Auth.Data;
-using Nozomi.Repo.BCL.Repository;
 using Stripe;
 
 namespace Nozomi.Infra.Auth.Events.Stripe
@@ -22,9 +21,9 @@ namespace Nozomi.Infra.Auth.Events.Stripe
         private readonly Product _stripeProduct;
         private readonly UserManager<Base.Auth.Models.User> _userManager;
 
-        public StripeEvent(ILogger<StripeEvent> logger, IUnitOfWork<AuthDbContext> unitOfWork, 
+        public StripeEvent(ILogger<StripeEvent> logger, AuthDbContext context, 
             UserManager<Base.Auth.Models.User> userManager, IOptions<StripeOptions> stripeOptions) 
-            : base(logger, unitOfWork)
+            : base(logger, context)
         {
             // apiKey = Secret Key
             StripeConfiguration.ApiKey = stripeOptions.Value.SecretKey;

@@ -6,15 +6,12 @@ using IdentityModel;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Logging;
 using Nozomi.Base.Auth.Global;
 using Nozomi.Base.Auth.Models;
 using Nozomi.Base.Auth.ViewModels.Account;
-using Nozomi.Preprocessing;
 using Nozomi.Preprocessing.Abstracts;
 using Nozomi.Repo.Auth.Data;
-using Nozomi.Repo.BCL.Repository;
 
 namespace Nozomi.Infra.Auth.Services.User
 {
@@ -22,7 +19,7 @@ namespace Nozomi.Infra.Auth.Services.User
     {
         private readonly UserManager<Base.Auth.Models.User> _userManager;
         
-        public UserService(ILogger<UserService> logger, IUnitOfWork<AuthDbContext> context,
+        public UserService(ILogger<UserService> logger, AuthDbContext context,
             UserManager<Base.Auth.Models.User> userManager) 
             : base(logger, context)
         {
@@ -30,7 +27,7 @@ namespace Nozomi.Infra.Auth.Services.User
         }
 
         public UserService(IHttpContextAccessor contextAccessor, ILogger<UserService> logger, 
-            IUnitOfWork<AuthDbContext> context, UserManager<Base.Auth.Models.User> userManager) 
+            AuthDbContext context, UserManager<Base.Auth.Models.User> userManager) 
             : base(contextAccessor, logger, context)
         {
             _userManager = userManager;
@@ -40,8 +37,7 @@ namespace Nozomi.Infra.Auth.Services.User
         {
             if (!string.IsNullOrEmpty(userId))
             {
-                return _context.GetRepository<Base.Auth.Models.User>()
-                    .GetQueryable()
+                return _context.Users
                     .AsNoTracking()
                     .Where(u => u.Id.Equals(userId))
                     .Include(u => u.UserClaims)
@@ -57,8 +53,7 @@ namespace Nozomi.Infra.Auth.Services.User
         {
             if (!string.IsNullOrEmpty(stripeCustId) && !string.IsNullOrEmpty(userId))
             {
-                var user = _context.GetRepository<Base.Auth.Models.User>()
-                    .GetQueryable()
+                var user = _context.Users
                     .AsNoTracking()
                     .Where(u => u.Id.Equals(userId))
                     .Include(u => u.UserClaims)
@@ -69,14 +64,14 @@ namespace Nozomi.Infra.Auth.Services.User
                 // Check!
                 if (user != null)
                 {
-                    _context.GetRepository<UserClaim>().Add(new UserClaim
+                    _context.UserClaims.Add(new UserClaim
                     {
                         UserId = userId,
                         ClaimType = NozomiJwtClaimTypes.StripeCustomerId,
                         ClaimValue = stripeCustId
                     });
 
-                    _context.Commit(userId);
+                    _context.SaveChanges(userId);
                     
                     return Task.CompletedTask;
                 }
@@ -89,8 +84,7 @@ namespace Nozomi.Infra.Auth.Services.User
         {
             if (vm.IsValid())
             {
-                var user = _context.GetRepository<Base.Auth.Models.User>()
-                    .GetQueryable()
+                var user = _context.Users
                     .AsTracking()
                     .Where(u => u.Id.Equals(userId))
                     .Include(u => u.UserClaims)
@@ -134,8 +128,7 @@ namespace Nozomi.Infra.Auth.Services.User
                             if (!string.IsNullOrEmpty(uClaim.Value.GetString())
                                 && !user.UserName.Equals(uClaim.Value.GetString())
                                 // Dupe checks
-                                && !_context.GetRepository<Base.Auth.Models.User>().GetQueryable()
-                                    .Any(u => u.NormalizedUserName.Equals(uClaim.Value.GetString())))
+                                && !_context.Users.Any(u => u.NormalizedUserName.Equals(uClaim.Value.GetString())))
                             {
                                 // Update the username
                                 user.UserName = uClaim.Value.GetString();
@@ -215,8 +208,8 @@ namespace Nozomi.Infra.Auth.Services.User
                 }
                 
                 // Push to DB
-                _context.GetRepository<Base.Auth.Models.User>().Update(user);
-                _context.Commit(userId);
+                _context.Users.Update(user);
+                _context.SaveChanges(userId);
 
                 return; // Done
             }
