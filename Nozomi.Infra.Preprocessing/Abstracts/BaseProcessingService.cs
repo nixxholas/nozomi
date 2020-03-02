@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -13,7 +14,7 @@ namespace Nozomi.Preprocessing.Abstracts
     {
         public readonly string _hostedServiceName;
         
-        public BaseProcessingService(IServiceProvider serviceProvider) : base(serviceProvider)
+        public BaseProcessingService(IServiceScopeFactory scopeFactory) : base(scopeFactory)
         {
             _hostedServiceName = typeof(T).Name;
         }
