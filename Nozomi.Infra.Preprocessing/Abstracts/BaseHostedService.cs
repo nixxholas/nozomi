@@ -11,14 +11,14 @@ namespace Nozomi.Preprocessing.Abstracts
     /// </summary>
     public abstract class BaseHostedService<T> : BackgroundService where T : class
     {
-        // Use a service provider to access scoped services.
+        // Use a service provider factory to access scoped services.
         // https://forums.asp.net/t/2134510.aspx?Inject+dbcontext+in+IHostedService
-        protected readonly IServiceScope _scope;
+        protected readonly IServiceScopeFactory _scopeFactory;
         public readonly ILogger<T> _logger;
 
-        protected BaseHostedService(IServiceProvider serviceProvider) {
-            _scope = serviceProvider.CreateScope();
-            _logger = _scope.ServiceProvider.GetRequiredService<ILogger<T>>();
+        protected BaseHostedService(IServiceScopeFactory scopeFactory) {
+            _scopeFactory = scopeFactory;
+            _logger = scopeFactory.CreateScope().ServiceProvider.GetRequiredService<ILogger<T>>();
         }
     }
 }
