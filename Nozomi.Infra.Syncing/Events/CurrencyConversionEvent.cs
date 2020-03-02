@@ -4,11 +4,9 @@ using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Nozomi.Data;
-using Nozomi.Data.Models.Currency;
 using Nozomi.Data.Models.Web.Analytical;
 using Nozomi.Infra.Syncing.Events.Interfaces;
 using Nozomi.Preprocessing.Abstracts;
-using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Data;
 
 namespace Nozomi.Infra.Syncing.Events
@@ -17,7 +15,7 @@ namespace Nozomi.Infra.Syncing.Events
         ICurrencyConversionEvent
     {
         public CurrencyConversionEvent(ILogger<CurrencyConversionEvent> logger, 
-            IUnitOfWork<NozomiDbContext> unitOfWork) 
+            NozomiDbContext unitOfWork) 
             : base(logger, unitOfWork)
         {
         }
@@ -28,9 +26,7 @@ namespace Nozomi.Infra.Syncing.Events
             var res = new Dictionary<string, decimal>();
             
             // Obtain all components.
-            var cPairs = _unitOfWork.GetRepository<CurrencyPair>()
-                .GetQueryable()
-                .AsNoTracking()
+            var cPairs = _context.CurrencyPairs.AsNoTracking()
                 .Where(cp => cp.IsEnabled && cp.DeletedAt == null
                              && cp.MainTicker.Equals(abbrv, StringComparison.InvariantCultureIgnoreCase))
                 .Include(cp => cp.AnalysedComponents
