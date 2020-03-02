@@ -1,7 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -9,15 +6,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Nozomi.Data.Models.Web;
-using Nozomi.Data.Models.Web.Analytical;
 using Nozomi.Infra.Compute.Events;
 using Nozomi.Infra.Compute.Events.Interfaces;
 using Nozomi.Infra.Compute.HostedServices;
 using Nozomi.Infra.Compute.Services;
 using Nozomi.Infra.Compute.Services.Interfaces;
-using Nozomi.Repo.BCL.Context;
-using Nozomi.Repo.BCL.Repository;
 using Nozomi.Repo.Compute.Data;
 using Nozomi.Repo.Data;
 using Nozomi.Service.Events;
@@ -55,7 +48,6 @@ namespace Nozomi.Compute2
                                                                    + @Environment.MachineName);
 
                 services
-                    .AddEntityFrameworkNpgsql()
                     .AddDbContextPool<NozomiDbContext>(options =>
                         {
                             options.UseNpgsql(str);
@@ -64,7 +56,6 @@ namespace Nozomi.Compute2
                         });
                 
                 services
-                    .AddEntityFrameworkNpgsql()
                     .AddDbContext<NozomiComputeDbContext>(options =>
                         {
                             options.UseNpgsql(computeStr);
@@ -112,7 +103,6 @@ namespace Nozomi.Compute2
                 if (string.IsNullOrEmpty(computeDb))
                     throw new SystemException("Invalid main database configuration");
                 services
-                    .AddEntityFrameworkNpgsql()
                     .AddDbContext<NozomiComputeDbContext>(options =>
                         {
                             options.UseNpgsql(computeDb
@@ -127,13 +117,13 @@ namespace Nozomi.Compute2
                         ServiceLifetime.Transient);
             }
             
-            services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
-
-            services.AddTransient<IUnitOfWork<NozomiDbContext>, UnitOfWork<NozomiDbContext>>();
-            services.AddTransient<IDbContext, NozomiDbContext>();
-            
-            services.AddTransient<IUnitOfWork<NozomiComputeDbContext>, UnitOfWork<NozomiComputeDbContext>>();
-            services.AddTransient<IDbContext, NozomiComputeDbContext>();
+            // services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+            //
+            // services.AddTransient<NozomiDbContext, UnitOfWork<NozomiDbContext>>();
+            // services.AddTransient<IDbContext, NozomiDbContext>();
+            //
+            // services.AddTransient<IUnitOfWork<NozomiComputeDbContext>, UnitOfWork<NozomiComputeDbContext>>();
+            // services.AddTransient<IDbContext, NozomiComputeDbContext>();
             
             // Web Service Injections
             services.AddScoped<IAnalysedComponentEvent, AnalysedComponentEvent>();
