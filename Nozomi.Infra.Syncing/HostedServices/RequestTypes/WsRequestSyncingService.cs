@@ -122,6 +122,7 @@ namespace Nozomi.Infra.Syncing.HostedServices.RequestTypes
                                                 $"{_hostedServiceName} OnMessage: " +
                                                 ex);
                                             newSocket.Close();
+                                            _webSockets.Remove(dataEndpointItem.DataPath);
                                             GC.SuppressFinalize(this);
                                         }
                                     }
@@ -130,6 +131,7 @@ namespace Nozomi.Infra.Syncing.HostedServices.RequestTypes
                                         _logger.LogError($"{_hostedServiceName} OnMessage: " +
                                                          $"RequestId:{dataEndpointItem.DataPath} has an empty payload incoming.");
                                         newSocket.Close();
+                                        _webSockets.Remove(dataEndpointItem.DataPath);
                                         GC.SuppressFinalize(this);
                                     }
 
